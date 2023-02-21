@@ -1,0 +1,42 @@
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+  <group>
+    <clip-path
+        android:pathData="M6,9C6,5.686 8.686,3 12,3H27.448C28.994,3 30.48,3.597 31.597,4.666L40.149,12.853C41.331,13.985 42,15.551 42,17.187V39C42,42.314 39.314,45 36,45H12C8.686,45 6,42.314 6,39V9Z"/>
+    <path
+        android:pathData="M6,9C6,5.686 8.686,3 12,3H27.448C28.994,3 30.48,3.597 31.597,4.666L40.149,12.853C41.331,13.985 42,15.551 42,17.187V39C42,42.314 39.314,45 36,45H12C8.686,45 6,42.314 6,39V9Z"
+        android:fillColor="#F47425"/>
+    <path
+        android:pathData="M35,-26.75C31.272,-26.75 28.25,-23.728 28.25,-20V11C28.25,14.176 30.824,16.75 34,16.75H59C62.728,16.75 65.75,13.728 65.75,10V-11.813C65.75,-13.654 64.998,-15.415 63.668,-16.689L55.116,-24.876C53.86,-26.079 52.187,-26.75 50.448,-26.75H35Z"
+        android:strokeWidth="1.5"
+        android:fillColor="#FCA73E"
+        android:strokeColor="#DE4F12"/>
+  </group>
+  <path
+      android:pathData="M23.491,22C19.341,22 16,25.367 16,29.491C16,33.615 19.341,36.982 23.491,36.982C27.615,36.982 30.982,33.641 30.982,29.491H23.491V22Z"
+      android:fillColor="#ffffff"/>
+  <path
+      android:pathData="M24.509,21V28.491H32C32,24.341 28.659,21 24.509,21Z"
+      android:fillColor="#ffffff"/>
+</vector>

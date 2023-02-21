@@ -1,0 +1,208 @@
+[versions]
+# Accompanist
+accompanist = "0.28.0"
+# Android
+material = "1.6.1"
+# AndroidX
+androidx-activity = "1.5.0"
+androidx-annotation = "1.4.0"
+androidx-appCompat = "1.4.2"
+androidx-compose = "1.3.2"
+androidx-compose-compiler = "1.3.2"
+androidx-compose-foundation = "1.3.1"
+androidx-compose-material = "1.3.1"
+androidx-compose-material3 = "1.0.1"
+androidx-core = "1.9.0"
+androidx-datastore = "1.0.0"
+androidx-exif = "1.3.3"
+androidx-hilt = "1.0.0"
+androidx-hilt-navigation-compose = "1.0.0"
+androidx-lifecycle = "2.5.1"
+androidx-media3 = "1.0.0-alpha03"
+androidx-navigation = "2.5.3"
+androidx-paging = "3.1.1"
+androidx-paging-compose = "1.0.0-alpha15"
+androidx-room = "2.4.3"
+androidx-test = "1.5.0"
+androidx-test-uiautomator = "2.2.0"
+androidx-work = "2.7.1"
+# Coil
+coil = "1.4.0"
+# Core
+core = "9.9.1"
+# Dagger
+dagger = "2.44.2"
+# Gradle
+android-gradle-plugin = "7.3.1"
+proton-detekt-plugin = "1.1.2"
+#Android tools
+android-tools = "1.1.5"
+# JaCoCo
+jaCoCo = "0.8.8"
+# JakeWharton
+timber = "5.0.1"
+# Kotlin
+kotlin = "1.7.20"
+coroutines = "1.6.4"
+serializationJson = "1.4.1"
+# Sentry
+sentry = "5.7.4"
+# Squareup
+leakCanary = "2.8.1"
+okhttp = "4.10.0"
+retrofit = "2.9.0"
+# Test
+junit = "4.13.2"
+mockk = "1.12.2"
+
+[libraries]
+# Gradle
+gradle-plugin-android = { module = "com.android.tools.build:gradle", version.ref = "android-gradle-plugin" }
+gradle-plugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradle-plugin-hilt-android = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "dagger" }
+gradle-plugin-jaCoCo = { module = "org.jacoco:org.jacoco.core", version.ref = "jaCoCo" }
+gradle-plugin-kotlin-serialization = { module = "org.jetbrains.kotlin:kotlin-serialization", version.ref = "kotlin" }
+
+# Android tools
+desugar-jdk-libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "android-tools" }
+
+# Accompanist
+accompanist-insets = { module = "com.google.accompanist:accompanist-insets", version.ref = "accompanist" }
+accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
+accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
+accompanist-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+accompanist-swipeRefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+
+# AndroidX
+## Activity
+androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity" }
+androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
+## Compose
+androidx-compose-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "androidx-compose-foundation" }
+androidx-compose-foundationLayout = { module = "androidx.compose.foundation:foundation-layout", version.ref = "androidx-compose-foundation" }
+androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "androidx-compose-material" }
+androidx-compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "androidx-compose-material3" }
+androidx-compose-runtime = { module = "androidx.compose.runtime:runtime", version.ref = "androidx-compose" }
+androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "androidx-compose" }
+androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "androidx-compose" }
+androidx-compose-uiTestManifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose" }
+## Core
+androidx-core-annotation = { module = "androidx.annotation:annotation", version.ref = "androidx-annotation" }
+androidx-core-appCompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appCompat" }
+androidx-core-core = { module = "androidx.core:core", version.ref = "androidx-core" }
+androidx-core-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
+## DataStore
+androidx-dataStore-core = { module = "androidx.datastore:datastore", version.ref = "androidx-datastore" }
+androidx-dataStore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
+# ExifInterface
+androidx-exif = { module = "androidx.exifinterface:exifinterface", version.ref = "androidx-exif" }
+## Hilt
+androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidx-hilt" }
+androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "androidx-hilt" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidx-hilt-navigation-compose" }
+## Lifecycle
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "androidx-lifecycle" }
+## Media3
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "androidx-media3" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "androidx-media3" }
+## Navigation
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
+## Paging
+androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
+androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "androidx-paging" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidx-paging-compose" }
+## Room
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
+## Work
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
+
+# Coil
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coil-gif = { module = "io.coil-kt:coil-gif", version.ref = "coil" }
+coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coil" }
+
+# Core
+core-account = { module = "me.proton.core:account", version.ref = "core" }
+core-accountManager = { module = "me.proton.core:account-manager", version.ref = "core" }
+core-auth = { module = "me.proton.core:auth", version.ref = "core" }
+core-challenge = { module = "me.proton.core:challenge", version.ref = "core" }
+core-country = { module = "me.proton.core:country", version.ref = "core" }
+core-crypto = { module = "me.proton.core:crypto", version.ref = "core" }
+core-cryptoCommon = { module = "me.proton.core:crypto-common", version.ref = "core" }
+core-cryptoValidator = { module = "me.proton.core:crypto-validator", version.ref = "core" }
+core-data = { module = "me.proton.core:data", version.ref = "core" }
+core-dataRoom = { module = "me.proton.core:data-room", version.ref = "core" }
+core-domain = { module = "me.proton.core:domain", version.ref = "core" }
+core-eventManager = { module = "me.proton.core:event-manager", version.ref = "core" }
+core-featureFlag = { module = "me.proton.core:feature-flag", version.ref = "core" }
+core-humanVerification = { module = "me.proton.core:human-verification", version.ref = "core" }
+core-key = { module = "me.proton.core:key", version.ref = "core" }
+core-network = { module = "me.proton.core:network", version.ref = "core" }
+core-payment = { module = "me.proton.core:payment", version.ref = "core" }
+# core-payment-iap = { module = "me.proton.core:payment-iap", version.ref = "core" }
+core-plan = { module = "me.proton.core:plan", version.ref = "core" }
+core-presentation = { module = "me.proton.core:presentation", version.ref = "core" }
+core-presentation-compose = { module = "me.proton.core:presentation-compose", version.ref = "core" }
+core-report = { module = "me.proton.core:report", version.ref = "core" }
+core-test-android = { module = "me.proton.core:test-android", version.ref = "core" }
+core-test-android-instrumented = { module = "me.proton.core:test-android-instrumented", version.ref = "core" }
+core-test-kotlin = { module = "me.proton.core:test-kotlin", version.ref = "core" }
+core-test-quark = { module = "me.proton.core:test-quark", version.ref = "core" }
+core-user = { module = "me.proton.core:user", version.ref = "core" }
+core-userSettings = { module = "me.proton.core:user-settings", version.ref = "core" }
+core-utilAndroidDagger = { module = "me.proton.core:util-android-dagger", version.ref = "core" }
+core-utilKotlin = { module = "me.proton.core:util-kotlin", version.ref = "core" }
+
+# Dagger
+dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
+dagger-hilt-android-testing = { module = "com.google.dagger:hilt-android-testing", version.ref = "dagger" }
+dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
+dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger" }
+
+# JakeWharton
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+# Kotlin
+# The version is locked by mockk, updating this fails to build tests
+# kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version = "1.5.31" }
+
+# Kotlinx
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationJson" }
+
+# Material
+material = { module = "com.google.android.material:material", version.ref = "material" }
+
+# Sentry
+sentry = { module = "io.sentry:sentry-android", version.ref = "sentry" }
+
+# Squareup
+leakCanary = { module = "com.squareup.leakcanary:leakcanary-android", version.ref = "leakCanary" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+plumber = { module = "com.squareup.leakcanary:plumber-android", version.ref = "leakCanary" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+
+# Test
+androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "androidx-test" }
+androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test" }
+androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
+androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "androidx-test-uiautomator" }
+androidx-compose-ui-test = { module = "androidx.compose.ui:ui-test", version.ref = "androidx-compose" }
+androidx-compose-ui-test-junit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose" }
+coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
+junit = { module = "junit:junit", version.ref = "junit" }
+mockk-jvm = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+
+[bundles]
+accompanist = ["accompanist-insets", "accompanist-navigation-animation", "accompanist-pager", "accompanist-systemUiController", "accompanist-swipeRefresh", "accompanist-permissions"]
+core = ["core-account", "core-accountManager", "core-auth", "core-challenge", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-network", "core-payment", "core-plan", "core-report", "core-presentation", "core-presentation-compose", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilKotlin"]
+test-android = ["junit", "mockk-android", "coroutines-test", "androidx-test-core-ktx", "androidx-test-runner", "androidx-test-rules", "androidx-compose-ui-test", "androidx-compose-ui-test-junit", "androidx-test-uiautomator", "core-test-android-instrumented" ]
+test-jvm = ["junit", "mockk-jvm", "coroutines-test", "core-test-kotlin", "core-test-quark"]
+
+[plugins]
+proton-detekt = { id = "me.proton.core.gradle-plugins.detekt", version.ref = "proton-detekt-plugin" }

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Drive.
+  ~
+  ~ Proton Drive is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Drive is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <!--
+     `WindowInsetsControllerCompat.setAppearanceLightStatusBars` which is used by
+     `systemUiController.setStatusBarColor` when setting the `darkIcons` to false doesn't actually
+     set the icons colors, it either forces the status bar icons to use the white color (light
+     status bar) or revert to the theme's default as described in
+     https://issuetracker.google.com/issues/180250984.
+     Making the status bar not light by default allows us to force the light status bar at runtime
+     and go back to dark when needed.
+     -->
+    <bool name="light_status_bar">false</bool>
+    <bool name="light_status_bar_splash">true</bool>
+</resources>

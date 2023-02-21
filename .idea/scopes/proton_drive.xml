@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="proton-drive" pattern="[ProtonDrive.app*]:*..*||file[ProtonDrive.app*]:*||[ProtonDrive.buildSrc]:*..*" />
+</component>

@@ -1,0 +1,14 @@
+*.iml
+.gradle
+local.properties
+private.properties
+.idea/*
+!.idea/copyright
+!.idea/copyright/*
+!.idea/scopes
+!.idea/scopes/*
+.DS_Store
+build/
+captures/
+config/
+

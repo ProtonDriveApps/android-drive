@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="settings_pin_biomtric_lock_entry"><![CDATA[PIN & Biometric lock]]></string>
+    <string name="settings_pin_biomtric_lock_status_off">Off</string>
+    <string name="settings_section_app_settings">App settings</string>
+    <string name="settings_section_about">About</string>
+    <!--
+        Variable %1$s is an entry in a list
+        Examples:
+            "Privacy Policy (opens in a browser)"
+    -->
+    <string name="settings_external_link_format">%1$s (opens in a browser)</string>
+    <string name="settings_section_appearance_settings">Appearance</string>
+    <string name="settings_theme_entry">Theme</string>
+    <string name="settings_theme_dialog_title">@string/settings_theme_entry</string>
+    <string name="settings_theme_dialog_cancel_action">@string/common_cancel_action</string>
+
+    <string name="debug_settings_section">Debug settings</string>
+    <string name="debug_settings_host">Host</string>
+    <string name="debug_settings_api_host">API Host</string>
+    <string name="debug_settings_base_url">Base URL</string>
+    <string name="debug_settings_app_version_header">App version header</string>
+    <string name="debug_settings_reset">Reset</string>
+    <string name="debug_settings_reset_description">Restore default value for debug settings</string>
+    <string name="debug_settings_use_exception_message">Show exception as error message</string>
+    <string name="debug_settings_use_exception_message_description">When enabled, instead of user friendly error message, exception error message will be shown</string>
+</resources>

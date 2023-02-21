@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+
+    <string name="title_app">App</string>
+    <string name="title_decrypting">Decrypting</string>
+    <string name="title_downloading">Downloading</string>
+    <string name="title_files">Files</string>
+    <string name="title_file_type">File type</string>
+    <string name="title_last_modified">Last modified</string>
+    <string name="title_shared">Shared</string>
+    <string name="title_link">Link</string>
+    <string name="title_password">Password</string>
+    <string name="title_make_available_offline">Make available offline</string>
+    <!--
+        Variable %1$s is a time indicator which is formatted based on the user's locale
+        Examples:
+            "Modified 10:46"
+            "Modified Feb 28"
+            "Modified Dec 22, 2021"
+    -->
+    <string name="title_modified_with_date">Modified %1$s</string>
+    <string name="title_my_files">My files</string>
+    <string name="title_name">Name</string>
+    <string name="title_not_found">Not found</string>
+    <string name="title_offline_available">Available offline</string>
+    <string name="title_online">Online</string>
+    <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+    <string name="title_percent_downloaded">%1$s downloaded</string>
+    <string name="title_remove_from_offline_available">Remove from offline available</string>
+    <string name="title_retry">Retry</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_sign_out">Sign out</string>
+    <string name="title_size">Size</string>
+    <string name="title_sort_by">Sort by</string>
+    <string name="title_trash">Trash</string>
+    <string name="title_uploading">Uploading</string>
+    <string name="title_get_link">Get link</string>
+    <string name="title_manage_link">Manage link</string>
+    <string name="title_share_via_link">Share via link</string>
+    <string name="title_copy_link">Copy link</string>
+    <string name="title_download">Download</string>
+    <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 Selected"
+            "13 Selected"
+    -->
+    <plurals name="title_selected">
+        <item quantity="other">%1$d Selected</item>
+    </plurals>
+
+    <string name="title_empty_files">Nothing to see here</string>
+    <string name="description_empty_files">This folder is empty</string>
+    <string name="title_empty_links">Share files with links</string>
+    <string name="description_empty_links">Create links and share files with others</string>
+    <string name="action_empty_files_add_files">Add files</string>
+    <string name="title_empty_offline_available">No offline files or folders</string>
+    <string name="title_empty_trash">Nothing in trash</string>
+    <string name="description_empty_trash">Move items you want to delete to Trash.</string>
+    <string name="title_empty_trash_action">Empty trash</string>
+    <string name="description_empty_offline_available">Tap “Make available offline” in a file’s or folder’s menu to access it without an internet connection</string>
+    <string name="description_remove_account">You will be signed out and all data associated with this account will be removed from this device.</string>
+    <string name="description_no_drive_scope">ProtonDrive is currently in early access and only available to invited users of ProtonMail.</string>
+    <string name="description_file_download_failed">Downloading failed. Check network connection and try again.</string>
+    <string name="description_file_decryption_failed">Could not decrypt file</string>
+    <string name="description_file_verify_signature_failed">The file\'s signature couldn\'t be verified</string>
+    <string name="ignore_file_signature_action">View anyway</string>
+
+    <string name="content_description_more_options">Show more options for a file</string>
+    <string name="content_description_select_all">Select all items in the list</string>
+    <string name="content_description_selected_options">Show more options for selected files and/or folders</string>
+
+    <string name="navigation_more_section_header">More</string>
+    <string name="navigation_storage_section_header">Storage</string>
+
+    <string name="navigation_item_home">@string/title_my_files</string>
+    <string name="navigation_item_trash">@string/title_trash</string>
+    <string name="navigation_item_offline">@string/title_offline_available</string>
+    <string name="navigation_item_settings">@string/title_settings</string>
+    <string name="navigation_item_bug_report">Report a bug</string>
+    <string name="navigation_item_sign_out">@string/title_sign_out</string>
+
+    <string name="common_delete_permanently_action">Delete permanently</string>
+
+    <string name="files_restore_from_trash_action">Restore</string>
+    <string name="files_send_to_trash_action">Move to trash</string>
+    <string name="files_delete_from_trash_action">@string/common_delete_permanently_action</string>
+    <string name="files_move_file_action">Move</string>
+    <string name="files_rename_file_action">@string/common_rename_action</string>
+    <string name="files_send_file_action">@string/common_send_action</string>
+
+    <string name="files_stop_sharing_title">Stop sharing</string>
+    <string name="files_stop_sharing_message">This will delete the link and remove access to your file or folder for anyone with the link.</string>
+    <string name="files_stop_sharing_action">Stop sharing</string>
+    <string name="files_stop_sharing_action_success">The link to your file has been deleted.</string>
+    <string name="files_stop_sharing_action_error">There was an error while deleting the link to your file.</string>
+
+    <string name="files_confirm_deletion_title">Delete permanently?</string>
+    <!--
+        Variable %1$s is a file/folder's name
+        Examples:
+            "'My folder' will be deleted permanently. You cannot undo this action."
+            "'My file.jpg' will be deleted permanently. You cannot undo this action."
+    -->
+    <string name="files_confirm_deletion_message_format">\'%1$s\' will be deleted permanently. You cannot undo this action.</string>
+    <string name="files_confirm_deletion_confirm_action">@string/common_delete_permanently_action</string>
+
+    <string name="files_confirm_empty_trash_title">Empty trash?</string>
+    <string name="files_confirm_empty_trash_message">Items in trash will be deleted permanently. You cannot undo this action.</string>
+    <string name="files_confirm_empty_trash_confirm_action">Empty trash</string>
+    <string name="files_display_file_info_action">File details</string>
+    <string name="files_display_folder_info_action">Folder details</string>
+
+    <string name="files_upload_content_description_upload_file">Upload a file</string>
+
+    <string name="error_could_not_send_file">An error occurred while trying to send the file</string>
+    <string name="error_could_not_load_folder_content">An error occurred while trying to load folder content</string>
+    <string name="error_main_share_locked">Your files are no longer accessible due to a password reset. Re-upload the old encryption key to regain the access.</string>
+    <string name="error_main_share_not_found">Main share is not found.</string>
+
+    <!-- region Notification -->
+    <string name="notification_content_title_storage_full">Storage full</string>
+    <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+    <string name="notification_content_title_upload_uploading">Uploading files to %1$s</string>
+    <string name="notification_content_title_upload_complete">Upload complete</string>
+    <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+    <plurals name="notification_content_text_upload_uploading">
+        <item quantity="one">Uploading %1$d file</item>
+        <item quantity="other">Uploading %1$d files</item>
+    </plurals>
+    <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+    <plurals name="notification_content_text_upload_uploaded">
+        <item quantity="one">%1$d file uploaded</item>
+        <item quantity="other">%1$d files uploaded</item>
+    </plurals>
+    <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+    <plurals name="notification_content_text_upload_cancelled">
+        <item quantity="one">%1$d file cancelled</item>
+        <item quantity="other">%1$d files cancelled</item>
+    </plurals>
+    <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+    <plurals name="notification_content_text_upload_failed">
+        <item quantity="one">%1$d file failed</item>
+        <item quantity="other">%1$d files failed</item>
+    </plurals>
+    <string name="notification_content_title_download_complete">Download complete</string>
+    <string name="notification_channel_transfer_title">Transfer</string>
+    <string name="notification_channel_transfer_description">Channel for cloud storage, upload and download notifications</string>
+    <!-- endregion -->
+
+    <!-- region In-app notification -->
+    <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+    <string name="in_app_notification_copied_to_clipboard">%1$s copied to clipboard</string>
+    <string name="in_app_notification_download_started">Download started</string>
+    <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+    <string name="in_app_notification_download_complete">%1$s successfully downloaded</string>
+    <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+    <plurals name="in_app_notification_files_download_complete">
+        <item quantity="one">%1$d file successfully downloaded</item>
+        <item quantity="other">%1$d files successfully downloaded</item>
+    </plurals>
+    <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+    <string name="in_app_notification_downloading_failed">Downloading %1$s failed</string>
+    <string name="in_app_notification_download_failed">Download failed</string>
+    <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+    <string name="in_app_notification_activity_not_found">System could not found any application that could %1$s</string>
+    <string name="operation_open_document">open a document</string>
+    <string name="operation_create_document">create a document</string>
+    <string name="operation_take_picture">take a picture</string>
+    <!-- endregion -->
+
+    <!-- region Welcome -->
+    <!--
+        Variable %1$s is an application name
+        Example:
+            "Welcome to Proton Drive!"
+    -->
+    <string name="title_welcome_to">Welcome to %1s!</string>
+    <string name="welcome_to_description">The creators of Proton Mail bring you end-to-end encrypted cloud storage from Switzerland.</string>
+    <string name="title_welcome_files">All files at your fingertips</string>
+    <string name="welcome_files_description">Upload and view your files on the go.\nZero-access technology guarantees only you have access.</string>
+    <string name="title_welcome_sharing">Secure sharing</string>
+    <string name="welcome_sharing_description">Add password protection to make your shared files even more secure.</string>
+    <string name="title_welcome_bonus">Get up to 1 GB total storage</string>
+    <string name="welcome_bonus_description">Just do the following within 30 days of creating your account:</string>
+    <string name="title_welcome_private_space">Enjoy your private space</string>
+    <string name="welcome_private_space_description">Make your cloud storage your own. Add personal photos, IDs cards and anything that needs to stay private.</string>
+    <string name="welcome_get_started_action">Get started</string>
+    <string name="welcome_bonus_description_action_upload_file">Upload a file</string>
+    <string name="welcome_bonus_description_action_create_share_url">Create a share link</string>
+    <string name="welcome_bonus_description_action_recovery_method">Set a recovery method</string>
+
+    <!-- endregion -->
+
+    <!-- region Share via link -->
+    <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+    <string name="shared_link_loading">Creating link to %1$s</string>
+    <string name="shared_link_getting_link">Getting link</string>
+    <string name="shared_link_file">file</string>
+    <string name="shared_link_folder">folder</string>
+    <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+    <string name="shared_link_accessibility_description_public">Anyone with this link can access %1$s</string>
+    <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+    <string name="shared_link_accessibility_description_password_protected">Only people with the link and the password can access %1$s</string>
+    <string name="shared_link_privacy_settings">Privacy settings</string>
+    <string name="shared_link_password_protection">Password protection</string>
+    <string name="shared_link_expiration_date">Expiration date</string>
+    <string name="shared_link_action_copy_link">Copy link</string>
+    <string name="shared_link_action_copy_password">Copy password</string>
+    <string name="shared_link_action_share_link">Share link</string>
+    <string name="shared_link_action_stop_sharing">@string/files_stop_sharing_action</string>
+    <string name="shared_link_dialog_title_discard_changes">Discard changes?</string>
+    <string name="shared_link_dialog_description">You will lose all unsaved changes.</string>
+    <string name="shared_link_hint_password_field">@string/title_password</string>
+    <string name="shared_link_hint_expiration_date_field">No expiration date</string>
+    <string name="shared_link_message_update_share_url">Sharing settings updated</string>
+    <string name="shared_link_error_message_update_share_url">Updating sharing settings failed</string>
+    <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+    <string name="shared_link_error_message_invalid_password_length">Password length must be between 1 and %1$d characters</string>
+    <string name="shared_link_error_message_not_found">Shared link either does not exist or has expired</string>
+    <string name="shared_link_error_message_expiration_date_too_soon">Expiration date must be at least tomorrow</string>
+    <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+    <string name="shared_link_error_message_expiration_date_too_late">Expiration date must not be after more then %1$d days</string>
+    <string name="shared_link_error_legacy_link">This is an old link whose management is not supported. It is recommend that you stop sharing this link and get a new link.</string>
+    <!-- endregion -->
+
+    <!-- region Common words -->
+    <string name="common_more">More</string>
+    <string name="common_mime_type">MIME type</string>
+    <string name="common_name">Name</string>
+    <string name="common_no">No</string>
+    <string name="common_shared">Shared</string>
+    <string name="common_size">Size</string>
+    <string name="common_type">Type</string>
+    <string name="common_yes">Yes</string>
+    <!-- endregion -->
+    <!-- region Common actions -->
+    <string name="common_close_action">Close</string>
+    <string name="common_retry_action">Retry</string>
+    <string name="common_undo_action">Undo</string>
+    <string name="common_rename_action">Rename</string>
+    <string name="common_send_action">Send</string>
+    <string name="common_create_action">Create</string>
+    <string name="common_cancel_action">Cancel</string>
+    <string name="common_cancel_all_action">Cancel all</string>
+    <string name="common_got_it_action">Got it</string>
+    <string name="common_next_action">Next</string>
+    <string name="common_save_action">Save</string>
+    <string name="common_discard_action">Discard</string>
+    <!-- endregion -->
+    <!-- region Common file types -->
+    <string name="common_type_audio">Audio</string>
+    <string name="common_type_calendar">iCalendar format</string>
+    <string name="common_type_doc">Document</string>
+    <string name="common_type_image">Image</string>
+    <string name="common_type_keynote">Keynote file</string>
+    <string name="common_type_numbers">Numbers file</string>
+    <string name="common_type_pages">Pages file</string>
+    <string name="common_type_pdf">PDF document</string>
+    <string name="common_type_ppt">Presentation</string>
+    <string name="common_type_text">Text</string>
+    <string name="common_type_trustedkey">Trusted key</string>
+    <string name="common_type_unknown">Binary</string>
+    <string name="common_type_video">Video</string>
+    <string name="common_type_xls">Spreadsheet</string>
+    <string name="common_type_xml">XML file</string>
+    <string name="common_type_zip">Archive</string>
+    <!-- endregion -->
+
+    <!-- region Common file and folder name validation errors -->
+    <string name="common_error_name_is_blank">Name must not be empty</string>
+
+    <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+    <string name="common_error_name_too_long">Name must not exceed %1$d characters</string>
+    <string name="common_error_name_with_forbidden_characters">Name cannot include invisible characters, \"/\" or \"\\\"</string>
+    <string name="common_error_name_periods">Name cannot be \".\" or \"..\"</string>
+
+    <string name="common_error_no_internet">No internet connection</string>
+    <string name="common_error_http_5xx">Server error occurred</string>
+    <string name="common_error_internal">Internal error occurred</string>
+    <string name="common_error_crypto">Encryption or decryption failed</string>
+    <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+    <string name="common_error_crypto_with_message">Encryption or decryption failed: %1$s</string>
+    <string name="common_error_io">Input or output operation failed</string>
+    <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+    <string name="common_error_io_with_message">Input or output operation failed: %1$s</string>
+    <!-- endregion -->
+
+    <!--
+        Variable %1$s is the file name if available
+        Variable %2$s is message field from exception
+        Example:
+            "Uploading file My file.jpg failed with reason: Something went wrong"
+    -->
+    <string name="files_upload_failure_with_description">Uploading file %1$s failed with reason: %2$s</string>
+    <!--
+        Variable %1$d is a quantity of files that are being uploaded
+        Variable %2$s is a folder name where files are being uploaded to
+        Example:
+            "1 file is being uploaded to: Files"
+            "3 files are being uploaded to: Pictures"
+    -->
+    <plurals name="files_upload_being_uploaded_notification">
+        <item quantity="one">%1$d file is being uploaded to: %2$s</item>
+        <item quantity="other">%1$d files are being uploaded to: %2$s</item>
+    </plurals>
+    <string name="files_upload_preparing">Preparing upload. This may take a while.</string>
+    <!--
+        Variable %1$s is the maximum number of uploading files
+        Example:
+            "Uploads are currently limited to 250 files at a time. Try again with fewer files."
+    -->
+    <string name="files_upload_limit_reached">Uploads are currently limited to %1$d files at a time. Try again with fewer files.</string>
+    <!--
+        Variable %1$d is a quantity of items that are being used
+        Example:
+            "1 item"
+            "33 items"
+    -->
+    <plurals name="number_of_items">
+        <item quantity="one">%1$d item</item>
+        <item quantity="other">%1$d items</item>
+    </plurals>
+</resources>

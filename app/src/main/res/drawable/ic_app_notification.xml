@@ -1,0 +1,28 @@
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Drive.
+  ~
+  ~ Proton Drive is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Drive is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <path
+      android:pathData="M4.514,4.506C3.738,4.506 3.1,5.095 3.022,5.851H5.2C6.119,5.851 7,6.22 7.644,6.875L7.692,6.924C8.055,7.292 8.55,7.5 9.067,7.5H12.812H16.5C17.328,7.5 18,8.172 18,9V19.494H19.495C20.324,19.494 20.995,18.823 20.995,17.994V7.568C20.995,6.74 20.324,6.068 19.495,6.068H10.377C9.814,6.068 9.262,5.914 8.78,5.624L7.305,4.735C7.056,4.585 6.772,4.506 6.482,4.506H4.514ZM1.514,6.004C1.516,4.348 2.859,3.006 4.514,3.006H6.482C7.044,3.006 7.597,3.159 8.079,3.45L9.554,4.339C9.803,4.489 10.087,4.568 10.377,4.568H19.495C21.152,4.568 22.495,5.911 22.495,7.568V17.994C22.495,19.651 21.152,20.994 19.495,20.994H4.505C2.847,20.994 1.504,19.65 1.505,17.992L1.514,6.004Z"
+      android:fillColor="#FFFFFF"
+      android:fillType="evenOdd"/>
+</vector>

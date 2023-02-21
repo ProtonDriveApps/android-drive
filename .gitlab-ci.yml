@@ -1,0 +1,417 @@
+default:
+  image: ${CI_REGISTRY}/android/shared/docker-android:v1.0.0
+
+variables:
+  # Use fastzip to improve cache times
+  #FF_USE_FASTZIP: "true"
+  # Use no compression for artifacts
+  ARTIFACT_COMPRESSION_LEVEL: "fastest"
+  GCLOUD_BUCKET_URL: "gs://test-lab-u7cps962nd0a4-kx5m7jhd4pki6"
+  FIREBASE_RESULT_ROOT: "${CI_BUILD_REF_NAME}/${CI_COMMIT_SHORT_SHA}"
+  ATLAS_DEPLOY_SCOPE: "drive-android"
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+
+before_script:
+  # We must keep these variables here. We can't do it inside the entrypoint, as idk how but
+  # gitlab is going to convert them as a variable content instead of a variable file...
+  - if [[ -f /load-env.sh ]]; then source /load-env.sh; fi
+  - base64 -d - < "$PROTON_KEYSTORE_FILE" > app/protonkey.jks
+  - base64 -d - < "$SERVICE_ACCOUNT_FILE" > app/service_account.json
+  - md5sum app/protonkey.jks
+  - md5sum app/service_account.json
+  - git fetch --tags
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .gradle
+    - config/detekt/config.yml
+
+stages:
+  - prepare
+  - analyze
+  - deploy
+  - build
+  - startReview
+  - test
+  - report
+  - publish
+  - cleanup
+
+.prepare:
+  stage: prepare
+  artifacts:
+    paths:
+      - deploy.env
+      - private.properties
+    reports:
+      dotenv: deploy.env
+    expire_in: 1 week
+  cache: []
+
+prepare-environment:
+  extends: .prepare
+  image: $CI_REGISTRY/proton/devops/atlas-cli
+  script:
+    # resulting variables will be stored in deploy.env
+    - get_name.py -v
+      -o deploy.env
+      -d "$ATLAS_BASE_DOMAIN"
+      --release "$ATLAS_RELEASE_SUFFIX" "${ENV_TAG:-$CI_COMMIT_REF_SLUG}-${ATLAS_DEPLOY_SCOPE}" "${CI_PROJECT_PATH}" "$CI_COMMIT_REF_NAME"
+
+prepare-build:
+  extends: .prepare
+  tags:
+    - large
+  script:
+    - export ARCHIVES_BASE_NAME=$(./gradlew -Dorg.gradle.jvmargs=-Xmx1024m -q getArchivesName | grep "\[ARCHIVES_NAME\]" | sed 's/\[ARCHIVES_NAME\]//')
+    - export ARCHIVES_VERSION=$(./gradlew -Dorg.gradle.jvmargs=-Xmx1024m -q getArchivesVersion | grep "\[ARCHIVES_VERSION\]" | sed 's/\[ARCHIVES_VERSION\]//')
+    - echo "ARCHIVES_BASE_NAME=${ARCHIVES_BASE_NAME}" >> deploy.env
+    - echo "ARCHIVES_VERSION=${ARCHIVES_VERSION}" >> deploy.env
+    - echo PROXY_TOKEN="$(curl -o - https://proxy.proton.black/token/get)" >> private.properties
+    - echo "$PROTON_KEYSTORE_PRIVATE_PROPERTIES" >> private.properties
+
+detekt analysis:
+  stage: analyze
+  tags:
+    - large
+  script:
+    - ./gradlew multiModuleDetekt --configuration-cache-problems=warn
+  allow_failure: true
+  artifacts:
+    expire_in: 1 week
+    reports:
+      codequality: config/detekt/reports/mergedReport.json
+  needs: []
+
+deploy:review:
+  needs:
+    - job: "prepare-environment"
+  tags:
+    - medium
+  allow_failure: true
+  retry: 1
+  cache: []
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_NAME =~ /^test/
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+
+.build:
+  stage: build
+  tags:
+    - xlarge-k8s
+  artifacts:
+    expire_in: 1 week
+  cache: []
+
+build dev debug:
+  extends: [.build]
+  needs:
+    - job: "detekt analysis"
+    - job: "prepare-environment"
+  script:
+    - ./gradlew assembleDevDebug
+  artifacts:
+    paths:
+      - ./app/**/*.apk
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_NAME =~ /^test/
+      when: manual
+      allow_failure: true
+
+build dynamic debug:
+  extends: [.build]
+  script:
+    - export $(cat deploy.env)
+    - echo HOST="$DYNAMIC_DOMAIN" >> private.properties
+    - ./gradlew assembleDynamicDebug assembleDynamicDebugAndroidTest assembleDebugAndroidTest
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_NAME =~ /^test/
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+  artifacts:
+    paths:
+      - ./app/**/*.apk
+      - ./drive/link/presentation/**/*.apk
+      - ./drive/files-list/**/*.apk
+      - ./drive/sorting/presentation/**/*.apk
+
+build alpha release:
+  extends: [.build]
+  script:
+    - ./gradlew assembleAlphaRelease
+  when: manual
+  artifacts:
+    paths:
+      - app/build/outputs/apk/alpha/release
+      - app/build/outputs/mapping/alphaRelease
+
+build beta release:
+  extends: [.build]
+  script:
+    - ./gradlew assembleBetaRelease
+  when: manual
+  artifacts:
+    paths:
+      - app/build/outputs/apk/beta/release
+      - app/build/outputs/mapping/betaRelease
+
+build prod release:
+  extends: [.build]
+  script:
+    - ./gradlew assembleProdRelease
+  when: manual
+  artifacts:
+    paths:
+      - app/build/outputs/apk/prod/release
+      - app/build/outputs/mapping/prodRelease
+
+dev debug unit test:
+  stage: test
+  needs:
+    - job: "build dynamic debug"
+  tags:
+    - xlarge-k8s
+  script:
+    - ./gradlew testDevDebugUnitTest testDebugUnitTest
+  allow_failure: true
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: ./**/build/test-results/test*DebugUnitTest/TEST-*.xml
+
+upload to firebase:
+  stage: startReview
+  variables:
+    PRODUCT_FLAVOR: "dynamic"
+  script:
+    - gcloud config set project $CLOUD_PROJECT_ID --quiet
+    - gcloud auth activate-service-account --key-file app/service_account.json --quiet
+    - export APK_NAME=${ARCHIVES_BASE_NAME}-${PRODUCT_FLAVOR}-debug.apk
+    - gsutil cp "app/build/outputs/apk/$PRODUCT_FLAVOR/debug/${APK_NAME}" "$GCLOUD_BUCKET_URL/$FIREBASE_RESULT_ROOT/${APK_NAME}"
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_REF_NAME =~ /^test/
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+  cache: []
+
+# Integration tests
+.tests_preparation_script:
+  image: $CI_REGISTRY/tpe/test-scripts
+  needs:
+    - job: "upload to firebase"
+    - job: "prepare-build"
+    - job: "build dynamic debug"
+  stage: test
+  tags:
+    - medium
+  variables:
+    RESULTS_DIR: "$FIREBASE_RESULT_ROOT/$CI_JOB_NAME"
+    PRODUCT_FLAVOR: "dynamic"
+    TARGET_APP: "${GCLOUD_BUCKET_URL}/${FIREBASE_RESULT_ROOT}/${ARCHIVES_BASE_NAME}-${PRODUCT_FLAVOR}-debug.apk"
+  script:
+    - echo ${ARCHIVES_BASE_NAME}
+    - if [ "$TEST_ARCHIVES_BASE_NAME" == "" ]; then export TEST_ARCHIVES_BASE_NAME=$ARCHIVES_BASE_NAME; fi
+    - echo ${TEST_ARCHIVES_BASE_NAME}
+    - TEST_APP="$TEST_APP_LOCATION"${TEST_ARCHIVES_BASE_NAME}-${TEST_APP_TYPE}
+    - echo $TEST_APP
+    - export RANDOM_COVERAGE_NAME=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 13 ; echo '')
+    - gcloud config set project $CLOUD_PROJECT_ID --quiet
+    - gcloud auth activate-service-account --key-file app/service_account.json --quiet
+    - gcloud firebase test android run firebase-device-config.yml:${TESTS_TYPE}
+      --app "$TARGET_APP"
+      --test "$TEST_APP"
+      --num-flaky-test-attempts=1
+      --environment-variables coverage=true,coverageFile="/sdcard/$RANDOM_COVERAGE_NAME$COVERAGE_FILE_NAME.ec"
+      --directories-to-pull /sdcard
+      --results-dir="$RESULTS_DIR"
+    - coverageFile=`gsutil ls $GCLOUD_BUCKET_URL/**/$RANDOM_COVERAGE_NAME$COVERAGE_FILE_NAME.ec | tail -1`
+    - gsutil cp $coverageFile $TEST_APP_LOCATION | true
+  after_script:
+    # Prepare and pull artifacts
+    - mkdir firebase_artifacts
+    - gsutil ls "$GCLOUD_BUCKET_URL/$RESULTS_DIR" | grep '/$' | gsutil -m cp -r -I ./firebase_artifacts
+    - export $(cat deploy.env)
+    - export ATLAS_LINK_APP=drive
+    # Attach screenshots and improve readability for Gitlab test report
+    - process_firebase_report.py
+      --path firebase_artifacts
+      --screenshots artifacts/sdcard/Pictures
+      --remove-prefix me.proton.
+    # Merge reports from multiple firebase devices into one
+    - merge_reports.py
+      --path firebase_artifacts
+      --output ${CI_JOB_NAME}_report.xml
+    # Send private slack message with test results
+    - test_reporter.py
+      --path .
+      --platform android
+      --job-name $CI_JOB_NAME
+      --slack-channel drive-android-ci-reports
+  rules:
+    # allow failure so non-run tests don't block pipeline
+    - allow_failure: true
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - ./**/*.ec
+      - firebase_artifacts
+      - ${CI_JOB_NAME}_report.xml
+    reports:
+      junit: ${CI_JOB_NAME}_report.xml
+    when: always
+  cache: []
+
+cleanup:review:
+  tags:
+    - medium
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+  cache: []
+
+drive-link-presentation-firebase-tests:
+  extends: .tests_preparation_script
+  variables:
+    TESTS_TYPE: quickTest
+    TEST_APP_LOCATION: "drive/link/presentation/build/outputs/apk/androidTest/debug/"
+    TEST_APP_TYPE: "debug-androidTest.apk"
+    TEST_ARCHIVES_BASE_NAME: "presentation"
+    COVERAGE_FILE_NAME: "driveLinkPresentationQuickCoverageMobile"
+
+drive-files-list-firebase-tests:
+  extends: .tests_preparation_script
+  variables:
+    TESTS_TYPE: quickTest
+    TEST_APP_LOCATION: "drive/files-list/build/outputs/apk/androidTest/debug/"
+    TEST_APP_TYPE: "debug-androidTest.apk"
+    TEST_ARCHIVES_BASE_NAME: "files-list"
+    COVERAGE_FILE_NAME: "driveFilesListQuickCoverageMobile"
+
+drive-sorting-presentation-firebase-tests:
+  extends: .tests_preparation_script
+  variables:
+    TESTS_TYPE: quickTest
+    TEST_APP_LOCATION: "drive/sorting/presentation/build/outputs/apk/androidTest/debug/"
+    TEST_APP_TYPE: "debug-androidTest.apk"
+    TEST_ARCHIVES_BASE_NAME: "presentation"
+    COVERAGE_FILE_NAME: "driveSortingPresentationQuickCoverageMobile"
+
+app-firebase-tests:
+  extends: .tests_preparation_script
+  variables:
+    TESTS_TYPE: quickTest
+    TEST_APP_LOCATION: "app/build/outputs/apk/androidTest/dynamic/debug/"
+    TEST_APP_TYPE: "${PRODUCT_FLAVOR}-debug-androidTest.apk"
+    TEST_ARCHIVES_BASE_NAME: ""
+    COVERAGE_FILE_NAME: "appQuickCoverageMobile"
+  rules:
+    # Allow failure always for e2e tests for now
+    # Change to false, once stability on dynamic atlas env is verified
+    - allow_failure: true
+
+coverage report:
+  stage: report
+  tags:
+    - xlarge-k8s
+  script:
+    - ./gradlew coberturaCoverageReport
+  allow_failure: true
+  coverage: '/Total coverage: \d+.\d+/'
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - ./**/build/reports/*
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: ./**/build/reports/cobertura-coverage.xml
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_REF_NAME =~ /^test/
+      when: on_success
+    - when: manual
+    - allow_failure: true
+
+testmo-upload:
+  stage: report
+  allow_failure: true
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      when: always
+    - when: manual
+  before_script:
+    - if [[ -f /load-env.sh ]]; then source /load-env.sh; fi
+  variables:
+    PROJECT_ID: "25"
+    NAME: $CI_COMMIT_TITLE
+    MILESTONE: $ARCHIVES_VERSION
+    TAGS: $CI_PIPELINE_SOURCE
+    SOURCE: $CI_COMMIT_REF_SLUG
+    RESULT_FOLDER: "./*.xml"
+  cache: []
+
+publish to firebase app distribution:
+  stage: publish
+  needs:
+    - job: "build dev debug"
+    - job: "prepare-build"
+  tags:
+    - xlarge-k8s
+  variables:
+    PRODUCT_FLAVOR: "dev"
+  script:
+    - export $(cat deploy.env)
+    - ./gradlew :app:publishGeneratedReleaseNotes --configuration-cache-problems=warn
+    - wget --quiet --output-document=/tmp/firebase https://firebase.tools/bin/linux/latest
+    - mkdir -p /opt/firebase-cli/
+    - cp /tmp/firebase /opt/firebase-cli/firebase
+    - chmod +x /opt/firebase-cli/firebase
+    - /opt/firebase-cli/firebase appdistribution:distribute app/build/outputs/apk/$PRODUCT_FLAVOR/debug/${ARCHIVES_BASE_NAME}-${PRODUCT_FLAVOR}-debug.apk
+      --app 1:141471569432:android:1ba11f1b1e26e08ab7956d
+      --release-notes-file "app/src/main/play/release-notes/en-US/default.txt"
+      --groups "qa-team, dev-team, management-team"
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+
+startReview:
+  rules:
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      variables:
+        PRODUCT_FLAVOR: "dev"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      variables:
+        PRODUCT_FLAVOR: "dynamic"
+  before_script:
+    - if [[ -f /load-env.sh ]]; then source /load-env.sh; fi
+    - export REVIEW_APP_ARTIFACT_PATH="app/build/outputs/apk/$PRODUCT_FLAVOR/debug/"${ARCHIVES_BASE_NAME}-${PRODUCT_FLAVOR}-debug.apk
+    - echo ${REVIEW_APP_ARTIFACT_PATH}
+  extends: .startReview
+  cache: []
+
+stopReview:
+  stage: cleanup
+  needs:
+    - job: "startReview"
+  before_script: []
+  extends: .stopReview
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      when: manual
+      allow_failure: true
+
+include:
+  - project: 'proton/mobile/android/proton-libs'
+    ref: main
+    file: '/ci/templates-shared/appetize-integration.yml'
+  - project: 'proton/devops/atlas-deploy'
+    ref: main
+    file: '/scenarios/pipeline-env.yml'
+  - project: 'tpe/testmo-reporter'
+    ref: master
+    file: '/scenarios/testmo-simple.yml'

@@ -1,0 +1,40 @@
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="55dp"
+    android:viewportWidth="48"
+    android:viewportHeight="55">
+  <group>
+    <clip-path
+        android:pathData="M6,9C6,5.686 8.686,3 12,3H27.448C28.994,3 30.48,3.597 31.597,4.666L40.149,12.853C41.331,13.985 42,15.551 42,17.187V39C42,42.314 39.314,45 36,45H12C8.686,45 6,42.314 6,39V9Z"/>
+    <path
+        android:pathData="M6,9C6,5.686 8.686,3 12,3H27.448C28.994,3 30.48,3.597 31.597,4.666L40.149,12.853C41.331,13.985 42,15.551 42,17.187V39C42,42.314 39.314,45 36,45H12C8.686,45 6,42.314 6,39V9Z"
+        android:fillColor="#DADBE0"/>
+    <path
+        android:pathData="M35,-26.75C31.272,-26.75 28.25,-23.728 28.25,-20V11C28.25,14.176 30.824,16.75 34,16.75H59C62.728,16.75 65.75,13.728 65.75,10V-11.813C65.75,-13.654 64.998,-15.415 63.668,-16.689L55.116,-24.876C53.86,-26.079 52.187,-26.75 50.448,-26.75H35Z"
+        android:strokeWidth="1.5"
+        android:fillColor="#EBECF0"
+        android:strokeColor="#BABBC5"/>
+  </group>
+  <path
+      android:pathData="M23,6C22.448,6 22,6.448 22,7C22,7.552 22.448,8 23,8H25C25.552,8 26,7.552 26,7C26,6.448 25.552,6 25,6H23ZM23,10C22.448,10 22,10.448 22,11C22,11.552 22.448,12 23,12H25C25.552,12 26,11.552 26,11C26,10.448 25.552,10 25,10H23ZM22,15C22,14.448 22.448,14 23,14H25C25.552,14 26,14.448 26,15C26,15.552 25.552,16 25,16H23C22.448,16 22,15.552 22,15ZM23,18C22.448,18 22,18.448 22,19C22,19.552 22.448,20 23,20H25C25.552,20 26,19.552 26,19C26,18.448 25.552,18 25,18H23ZM22,23C22,22.448 22.448,22 23,22H25C25.552,22 26,22.448 26,23C26,23.552 25.552,24 25,24H23C22.448,24 22,23.552 22,23ZM21.999,26H25.999C25.999,26.956 26.845,30.28 27.639,33.188C28.296,35.598 26.497,38 23.999,38C21.502,38 19.702,35.598 20.36,33.189C21.153,30.281 21.999,26.956 21.999,26ZM21.999,34.5C21.999,33.672 22.671,33 23.499,33H24.499C25.328,33 25.999,33.672 25.999,34.5C25.999,35.328 25.328,36 24.499,36H23.499C22.671,36 21.999,35.328 21.999,34.5Z"
+      android:fillColor="#3A3F4A"
+      android:fillType="evenOdd"/>
+</vector>

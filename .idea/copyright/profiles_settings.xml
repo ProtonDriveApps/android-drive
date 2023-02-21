@@ -1,0 +1,8 @@
+<component name="CopyrightManager">
+  <settings default="proton-drive">
+    <module2copyright>
+      <element module="proton-core" copyright="proton-core" />
+      <element module="proton-drive" copyright="proton-drive" />
+    </module2copyright>
+  </settings>
+</component>

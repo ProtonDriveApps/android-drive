@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Drive.
+  ~
+  ~ Proton Drive is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Drive is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="me.proton.android.drive">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- Empty task affinity is used to prevent task hijacking -->
+    <application
+        android:name=".App"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:taskAffinity=""
+        android:theme="@style/ProtonTheme.Drive"
+        tools:replace="android:theme">
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/ProtonTheme.Splash.Drive.StatusBarFix">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="@string/deeplink_host"
+                    android:scheme="@string/deeplink_scheme"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.OPENABLE" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.AuthHelpActivity"
+            android:theme="@style/ProtonTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.ChooseAddressActivity"
+            android:theme="@style/ProtonTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.CreateAddressActivity"
+            android:theme="@style/ProtonTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.AddAccountActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/ProtonTheme.Drive.AddAccount"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.LoginActivity"
+            android:theme="@style/ProtonTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.signup.SignupActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.TwoPassModeActivity"
+            android:theme="@style/ProtonTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.auth.presentation.ui.SecondFactorActivity"
+            android:theme="@style/ProtonTheme"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.payment.presentation.ui.BillingActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.payment.presentation.ui.PaymentOptionsActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.payment.presentation.ui.PaymentTokenApprovalActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name="me.proton.core.report.presentation.ui.BugReportActivity"
+            android:theme="@style/ProtonTheme.Drive"
+            tools:replace="android:theme" />
+        <activity
+            android:name="me.proton.core.presentation.ui.alert.ForceUpdateActivity"
+            android:excludeFromRecents="true" />
+        <activity
+            android:name="me.proton.core.crypto.validator.presentation.ui.CryptoValidatorErrorDialogActivity"
+            android:theme="@style/ProtonTheme.Transparent"
+            android:exported="false"/>
+
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="me.proton.android.drive.initializer.NotificationChannelInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="me.proton.android.drive.initializer.SentryInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+            <meta-data
+                android:name="me.proton.android.drive.initializer.WorkManagerInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="me.proton.android.drive.initializer.AccountStateHandlerInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="me.proton.android.drive.initializer.AccountRemovedHandlerInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="me.proton.android.drive.initializer.EventManagerInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="me.proton.android.drive.initializer.LoggerInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="me.proton.android.drive.initializer.UncaughtExceptionHandlerInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer"
+                android:value="androidx.startup" />
+        </provider>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+        <receiver
+            android:name=".receiver.NotificationBroadcastReceiver"
+            android:exported="false"/>
+
+        <meta-data
+            android:name="io.sentry.auto-init"
+            android:value="false" />
+
+        <meta-data
+            android:name="drive.documentsprovider.icon"
+            android:resource="@mipmap/ic_launcher" />
+
+    </application>
+
+</manifest>

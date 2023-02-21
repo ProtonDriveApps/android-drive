@@ -1,0 +1,53 @@
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="224dp"
+    android:height="140dp"
+    android:viewportWidth="224"
+    android:viewportHeight="140">
+  <path
+      android:pathData="M18,6C18,2.69 20.69,0 24,0H65.81C68.21,0 70.56,0.72 72.55,2.08L78.95,9.42C81.5,11.5 83.29,11.5 85.69,11.5H186C189.31,11.5 192,14.19 192,17.5V108C192,125.12 178.12,139 161,139H27C22.03,139 18,134.97 18,130V6Z">
+    <aapt:attr name="android:fillColor">
+      <gradient 
+          android:startX="192"
+          android:startY="-44.5"
+          android:endX="143.18"
+          android:endY="99.12"
+          android:type="linear">
+        <item android:offset="0" android:color="#FFEEBEFF"/>
+        <item android:offset="1" android:color="#FF6D4AFF"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path
+      android:pathData="M48.33,40.78C49.32,37.36 52.45,35 56.02,35H216.02C220.02,35 222.9,38.83 221.79,42.66L195.67,133.22C194.68,136.64 191.55,139 187.98,139H27.98C23.98,139 21.1,135.17 22.21,131.34L48.33,40.78Z">
+    <aapt:attr name="android:fillColor">
+      <gradient 
+          android:startX="160.5"
+          android:startY="7"
+          android:endX="214.5"
+          android:endY="168.63"
+          android:type="linear">
+        <item android:offset="0" android:color="#FFEEBEFF"/>
+        <item android:offset="1" android:color="#FF6D4AFF"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+</vector>

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="proton-core" pattern="[ProtonDrive.drive*]:*..*||file[ProtonDrive.drive*]:AndroidManifest.xml" />
+</component>

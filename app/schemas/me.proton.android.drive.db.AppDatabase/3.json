@@ -1,0 +1,3434 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "6048d4010a20b9ea2bd287890110105d",
+    "entities": [
+      {
+        "tableName": "AccountEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `username` TEXT NOT NULL, `email` TEXT, `state` TEXT NOT NULL, `sessionId` TEXT, `sessionState` TEXT, PRIMARY KEY(`userId`), FOREIGN KEY(`sessionId`) REFERENCES `SessionEntity`(`sessionId`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sessionId",
+            "columnName": "sessionId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sessionState",
+            "columnName": "sessionState",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_AccountEntity_sessionId",
+            "unique": false,
+            "columnNames": [
+              "sessionId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_AccountEntity_sessionId` ON `${TABLE_NAME}` (`sessionId`)"
+          },
+          {
+            "name": "index_AccountEntity_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_AccountEntity_userId` ON `${TABLE_NAME}` (`userId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "SessionEntity",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "sessionId"
+            ],
+            "referencedColumns": [
+              "sessionId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "AccountMetadataEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `product` TEXT NOT NULL, `primaryAtUtc` INTEGER NOT NULL, `migrations` TEXT, PRIMARY KEY(`userId`, `product`), FOREIGN KEY(`userId`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "product",
+            "columnName": "product",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "primaryAtUtc",
+            "columnName": "primaryAtUtc",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "migrations",
+            "columnName": "migrations",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId",
+            "product"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_AccountMetadataEntity_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_AccountMetadataEntity_userId` ON `${TABLE_NAME}` (`userId`)"
+          },
+          {
+            "name": "index_AccountMetadataEntity_product",
+            "unique": false,
+            "columnNames": [
+              "product"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_AccountMetadataEntity_product` ON `${TABLE_NAME}` (`product`)"
+          },
+          {
+            "name": "index_AccountMetadataEntity_primaryAtUtc",
+            "unique": false,
+            "columnNames": [
+              "primaryAtUtc"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_AccountMetadataEntity_primaryAtUtc` ON `${TABLE_NAME}` (`primaryAtUtc`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "SessionEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `sessionId` TEXT NOT NULL, `accessToken` TEXT NOT NULL, `refreshToken` TEXT NOT NULL, `scopes` TEXT NOT NULL, `product` TEXT NOT NULL, PRIMARY KEY(`sessionId`), FOREIGN KEY(`userId`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sessionId",
+            "columnName": "sessionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accessToken",
+            "columnName": "accessToken",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "refreshToken",
+            "columnName": "refreshToken",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scopes",
+            "columnName": "scopes",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "product",
+            "columnName": "product",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "sessionId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_SessionEntity_sessionId",
+            "unique": false,
+            "columnNames": [
+              "sessionId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SessionEntity_sessionId` ON `${TABLE_NAME}` (`sessionId`)"
+          },
+          {
+            "name": "index_SessionEntity_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SessionEntity_userId` ON `${TABLE_NAME}` (`userId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "SessionDetailsEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sessionId` TEXT NOT NULL, `initialEventId` TEXT NOT NULL, `requiredAccountType` TEXT NOT NULL, `secondFactorEnabled` INTEGER NOT NULL, `twoPassModeEnabled` INTEGER NOT NULL, `password` TEXT, PRIMARY KEY(`sessionId`), FOREIGN KEY(`sessionId`) REFERENCES `SessionEntity`(`sessionId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "sessionId",
+            "columnName": "sessionId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "initialEventId",
+            "columnName": "initialEventId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "requiredAccountType",
+            "columnName": "requiredAccountType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "secondFactorEnabled",
+            "columnName": "secondFactorEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "twoPassModeEnabled",
+            "columnName": "twoPassModeEnabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "password",
+            "columnName": "password",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "sessionId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_SessionDetailsEntity_sessionId",
+            "unique": false,
+            "columnNames": [
+              "sessionId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_SessionDetailsEntity_sessionId` ON `${TABLE_NAME}` (`sessionId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "SessionEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "sessionId"
+            ],
+            "referencedColumns": [
+              "sessionId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "UserEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `email` TEXT, `name` TEXT, `displayName` TEXT, `currency` TEXT NOT NULL, `credit` INTEGER NOT NULL, `usedSpace` INTEGER NOT NULL, `maxSpace` INTEGER NOT NULL, `maxUpload` INTEGER NOT NULL, `role` INTEGER, `private` INTEGER NOT NULL, `subscribed` INTEGER NOT NULL, `services` INTEGER NOT NULL, `delinquent` INTEGER, `passphrase` BLOB, PRIMARY KEY(`userId`), FOREIGN KEY(`userId`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "currency",
+            "columnName": "currency",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "credit",
+            "columnName": "credit",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "usedSpace",
+            "columnName": "usedSpace",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxSpace",
+            "columnName": "maxSpace",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxUpload",
+            "columnName": "maxUpload",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "role",
+            "columnName": "role",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isPrivate",
+            "columnName": "private",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subscribed",
+            "columnName": "subscribed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "services",
+            "columnName": "services",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "delinquent",
+            "columnName": "delinquent",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "passphrase",
+            "columnName": "passphrase",
+            "affinity": "BLOB",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_UserEntity_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_UserEntity_userId` ON `${TABLE_NAME}` (`userId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "UserKeyEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `keyId` TEXT NOT NULL, `version` INTEGER NOT NULL, `privateKey` TEXT NOT NULL, `isPrimary` INTEGER NOT NULL, `isUnlockable` INTEGER NOT NULL, `fingerprint` TEXT, `activation` TEXT, `active` INTEGER, PRIMARY KEY(`keyId`), FOREIGN KEY(`userId`) REFERENCES `UserEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "keyId",
+            "columnName": "keyId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "privateKey",
+            "columnName": "privateKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPrimary",
+            "columnName": "isPrimary",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isUnlockable",
+            "columnName": "isUnlockable",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fingerprint",
+            "columnName": "fingerprint",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "activation",
+            "columnName": "activation",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "active",
+            "columnName": "active",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "keyId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_UserKeyEntity_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_UserKeyEntity_userId` ON `${TABLE_NAME}` (`userId`)"
+          },
+          {
+            "name": "index_UserKeyEntity_keyId",
+            "unique": false,
+            "columnNames": [
+              "keyId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_UserKeyEntity_keyId` ON `${TABLE_NAME}` (`keyId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "UserEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "AddressEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `addressId` TEXT NOT NULL, `email` TEXT NOT NULL, `displayName` TEXT, `signature` TEXT, `domainId` TEXT, `canSend` INTEGER NOT NULL, `canReceive` INTEGER NOT NULL, `enabled` INTEGER NOT NULL, `type` INTEGER, `order` INTEGER NOT NULL, `signedKeyList_data` TEXT, `signedKeyList_signature` TEXT, PRIMARY KEY(`addressId`), FOREIGN KEY(`userId`) REFERENCES `UserEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addressId",
+            "columnName": "addressId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "signature",
+            "columnName": "signature",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "domainId",
+            "columnName": "domainId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "canSend",
+            "columnName": "canSend",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canReceive",
+            "columnName": "canReceive",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "enabled",
+            "columnName": "enabled",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "order",
+            "columnName": "order",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "signedKeyList.data",
+            "columnName": "signedKeyList_data",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "signedKeyList.signature",
+            "columnName": "signedKeyList_signature",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "addressId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_AddressEntity_addressId",
+            "unique": false,
+            "columnNames": [
+              "addressId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_AddressEntity_addressId` ON `${TABLE_NAME}` (`addressId`)"
+          },
+          {
+            "name": "index_AddressEntity_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_AddressEntity_userId` ON `${TABLE_NAME}` (`userId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "UserEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "AddressKeyEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`addressId` TEXT NOT NULL, `keyId` TEXT NOT NULL, `version` INTEGER NOT NULL, `privateKey` TEXT NOT NULL, `isPrimary` INTEGER NOT NULL, `isUnlockable` INTEGER NOT NULL, `flags` INTEGER NOT NULL, `passphrase` BLOB, `token` TEXT, `signature` TEXT, `fingerprint` TEXT, `fingerprints` TEXT, `activation` TEXT, `active` INTEGER NOT NULL, PRIMARY KEY(`keyId`), FOREIGN KEY(`addressId`) REFERENCES `AddressEntity`(`addressId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "addressId",
+            "columnName": "addressId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "keyId",
+            "columnName": "keyId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "version",
+            "columnName": "version",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "privateKey",
+            "columnName": "privateKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPrimary",
+            "columnName": "isPrimary",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isUnlockable",
+            "columnName": "isUnlockable",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flags",
+            "columnName": "flags",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "passphrase",
+            "columnName": "passphrase",
+            "affinity": "BLOB",
+            "notNull": false
+          },
+          {
+            "fieldPath": "token",
+            "columnName": "token",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "signature",
+            "columnName": "signature",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fingerprint",
+            "columnName": "fingerprint",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fingerprints",
+            "columnName": "fingerprints",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "activation",
+            "columnName": "activation",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "active",
+            "columnName": "active",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "keyId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_AddressKeyEntity_addressId",
+            "unique": false,
+            "columnNames": [
+              "addressId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_AddressKeyEntity_addressId` ON `${TABLE_NAME}` (`addressId`)"
+          },
+          {
+            "name": "index_AddressKeyEntity_keyId",
+            "unique": false,
+            "columnNames": [
+              "keyId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_AddressKeyEntity_keyId` ON `${TABLE_NAME}` (`keyId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AddressEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "addressId"
+            ],
+            "referencedColumns": [
+              "addressId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "KeySaltEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `keyId` TEXT NOT NULL, `keySalt` TEXT, PRIMARY KEY(`userId`, `keyId`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "keyId",
+            "columnName": "keyId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "keySalt",
+            "columnName": "keySalt",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId",
+            "keyId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_KeySaltEntity_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_KeySaltEntity_userId` ON `${TABLE_NAME}` (`userId`)"
+          },
+          {
+            "name": "index_KeySaltEntity_keyId",
+            "unique": false,
+            "columnNames": [
+              "keyId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_KeySaltEntity_keyId` ON `${TABLE_NAME}` (`keyId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "PublicAddressEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`email` TEXT NOT NULL, `recipientType` INTEGER NOT NULL, `mimeType` TEXT, `signedKeyList_data` TEXT, `signedKeyList_signature` TEXT, PRIMARY KEY(`email`))",
+        "fields": [
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recipientType",
+            "columnName": "recipientType",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mimeType",
+            "columnName": "mimeType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "signedKeyListEntity.data",
+            "columnName": "signedKeyList_data",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "signedKeyListEntity.signature",
+            "columnName": "signedKeyList_signature",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "email"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_PublicAddressEntity_email",
+            "unique": false,
+            "columnNames": [
+              "email"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_PublicAddressEntity_email` ON `${TABLE_NAME}` (`email`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "PublicAddressKeyEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`email` TEXT NOT NULL, `flags` INTEGER NOT NULL, `publicKey` TEXT NOT NULL, `isPrimary` INTEGER NOT NULL, PRIMARY KEY(`email`, `publicKey`), FOREIGN KEY(`email`) REFERENCES `PublicAddressEntity`(`email`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flags",
+            "columnName": "flags",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "publicKey",
+            "columnName": "publicKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isPrimary",
+            "columnName": "isPrimary",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "email",
+            "publicKey"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_PublicAddressKeyEntity_email",
+            "unique": false,
+            "columnNames": [
+              "email"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_PublicAddressKeyEntity_email` ON `${TABLE_NAME}` (`email`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "PublicAddressEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "email"
+            ],
+            "referencedColumns": [
+              "email"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "HumanVerificationEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`clientId` TEXT NOT NULL, `clientIdType` TEXT NOT NULL, `verificationMethods` TEXT NOT NULL, `captchaVerificationToken` TEXT, `state` TEXT NOT NULL, `humanHeaderTokenType` TEXT, `humanHeaderTokenCode` TEXT, PRIMARY KEY(`clientId`))",
+        "fields": [
+          {
+            "fieldPath": "clientId",
+            "columnName": "clientId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "clientIdType",
+            "columnName": "clientIdType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verificationMethods",
+            "columnName": "verificationMethods",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "captchaVerificationToken",
+            "columnName": "captchaVerificationToken",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "humanHeaderTokenType",
+            "columnName": "humanHeaderTokenType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "humanHeaderTokenCode",
+            "columnName": "humanHeaderTokenCode",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "clientId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "UserSettingsEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `news` INTEGER, `locale` TEXT, `logAuth` INTEGER, `invoiceText` TEXT, `density` INTEGER, `theme` TEXT, `themeType` INTEGER, `weekStart` INTEGER, `dateFormat` INTEGER, `timeFormat` INTEGER, `welcome` INTEGER, `earlyAccess` INTEGER, `email_value` TEXT, `email_status` INTEGER, `email_notify` INTEGER, `email_reset` INTEGER, `phone_value` TEXT, `phone_status` INTEGER, `phone_notify` INTEGER, `phone_reset` INTEGER, `password_mode` INTEGER, `password_expirationTime` INTEGER, `twoFA_enabled` INTEGER, `twoFA_allowed` INTEGER, `twoFA_expirationTime` INTEGER, `twoFA_u2fKeys` TEXT, `flags_welcomed` INTEGER, PRIMARY KEY(`userId`), FOREIGN KEY(`userId`) REFERENCES `UserEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "news",
+            "columnName": "news",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "locale",
+            "columnName": "locale",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "logAuth",
+            "columnName": "logAuth",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "invoiceText",
+            "columnName": "invoiceText",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "density",
+            "columnName": "density",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "theme",
+            "columnName": "theme",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "themeType",
+            "columnName": "themeType",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "weekStart",
+            "columnName": "weekStart",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dateFormat",
+            "columnName": "dateFormat",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "timeFormat",
+            "columnName": "timeFormat",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "welcome",
+            "columnName": "welcome",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "earlyAccess",
+            "columnName": "earlyAccess",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "email.value",
+            "columnName": "email_value",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "email.status",
+            "columnName": "email_status",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "email.notify",
+            "columnName": "email_notify",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "email.reset",
+            "columnName": "email_reset",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "phone.value",
+            "columnName": "phone_value",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "phone.status",
+            "columnName": "phone_status",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "phone.notify",
+            "columnName": "phone_notify",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "phone.reset",
+            "columnName": "phone_reset",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "password.mode",
+            "columnName": "password_mode",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "password.expirationTime",
+            "columnName": "password_expirationTime",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "twoFA.enabled",
+            "columnName": "twoFA_enabled",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "twoFA.allowed",
+            "columnName": "twoFA_allowed",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "twoFA.expirationTime",
+            "columnName": "twoFA_expirationTime",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "twoFA.u2fKeys",
+            "columnName": "twoFA_u2fKeys",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "flags.welcomed",
+            "columnName": "flags_welcomed",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "UserEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "OrganizationEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `name` TEXT NOT NULL, `displayName` TEXT, `planName` TEXT, `vpnPlanName` TEXT, `twoFactorGracePeriod` INTEGER, `theme` TEXT, `email` TEXT, `maxDomains` INTEGER, `maxAddresses` INTEGER, `maxSpace` INTEGER, `maxMembers` INTEGER, `maxVPN` INTEGER, `maxCalendars` INTEGER, `features` INTEGER, `flags` INTEGER, `usedDomains` INTEGER, `usedAddresses` INTEGER, `usedSpace` INTEGER, `assignedSpace` INTEGER, `usedMembers` INTEGER, `usedVPN` INTEGER, `usedCalendars` INTEGER, `hasKeys` INTEGER, `toMigrate` INTEGER, PRIMARY KEY(`userId`), FOREIGN KEY(`userId`) REFERENCES `UserEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "displayName",
+            "columnName": "displayName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "planName",
+            "columnName": "planName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "vpnPlanName",
+            "columnName": "vpnPlanName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "twoFactorGracePeriod",
+            "columnName": "twoFactorGracePeriod",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "theme",
+            "columnName": "theme",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "email",
+            "columnName": "email",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maxDomains",
+            "columnName": "maxDomains",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maxAddresses",
+            "columnName": "maxAddresses",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maxSpace",
+            "columnName": "maxSpace",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maxMembers",
+            "columnName": "maxMembers",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maxVPN",
+            "columnName": "maxVPN",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maxCalendars",
+            "columnName": "maxCalendars",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "features",
+            "columnName": "features",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "flags",
+            "columnName": "flags",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "usedDomains",
+            "columnName": "usedDomains",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "usedAddresses",
+            "columnName": "usedAddresses",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "usedSpace",
+            "columnName": "usedSpace",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "assignedSpace",
+            "columnName": "assignedSpace",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "usedMembers",
+            "columnName": "usedMembers",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "usedVPN",
+            "columnName": "usedVPN",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "usedCalendars",
+            "columnName": "usedCalendars",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hasKeys",
+            "columnName": "hasKeys",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "toMigrate",
+            "columnName": "toMigrate",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "UserEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "OrganizationKeysEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `publicKey` TEXT NOT NULL, `privateKey` TEXT NOT NULL, PRIMARY KEY(`userId`), FOREIGN KEY(`userId`) REFERENCES `UserEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "publicKey",
+            "columnName": "publicKey",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "privateKey",
+            "columnName": "privateKey",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "UserEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "EventMetadataEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT NOT NULL, `config` TEXT NOT NULL, `eventId` TEXT, `nextEventId` TEXT, `refresh` TEXT, `more` INTEGER, `response` TEXT, `retry` INTEGER NOT NULL, `state` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER, PRIMARY KEY(`userId`, `config`), FOREIGN KEY(`userId`) REFERENCES `UserEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "config",
+            "columnName": "config",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventId",
+            "columnName": "eventId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nextEventId",
+            "columnName": "nextEventId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "refresh",
+            "columnName": "refresh",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "more",
+            "columnName": "more",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "response",
+            "columnName": "response",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "retry",
+            "columnName": "retry",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "userId",
+            "config"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_EventMetadataEntity_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_EventMetadataEntity_userId` ON `${TABLE_NAME}` (`userId`)"
+          },
+          {
+            "name": "index_EventMetadataEntity_config",
+            "unique": false,
+            "columnNames": [
+              "config"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_EventMetadataEntity_config` ON `${TABLE_NAME}` (`config`)"
+          },
+          {
+            "name": "index_EventMetadataEntity_createdAt",
+            "unique": false,
+            "columnNames": [
+              "createdAt"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_EventMetadataEntity_createdAt` ON `${TABLE_NAME}` (`createdAt`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "UserEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "userId"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "FeatureFlagEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`userId` TEXT, `featureId` TEXT NOT NULL, `isGlobal` INTEGER NOT NULL, `defaultValue` INTEGER NOT NULL, `value` INTEGER NOT NULL, PRIMARY KEY(`featureId`))",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "featureId",
+            "columnName": "featureId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isGlobal",
+            "columnName": "isGlobal",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "defaultValue",
+            "columnName": "defaultValue",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "featureId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_FeatureFlagEntity_userId",
+            "unique": false,
+            "columnNames": [
+              "userId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_FeatureFlagEntity_userId` ON `${TABLE_NAME}` (`userId`)"
+          },
+          {
+            "name": "index_FeatureFlagEntity_featureId",
+            "unique": false,
+            "columnNames": [
+              "featureId"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_FeatureFlagEntity_featureId` ON `${TABLE_NAME}` (`featureId`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "VolumeEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `creation_time` INTEGER NOT NULL, `max_space` INTEGER, `used_space` INTEGER NOT NULL, `state` INTEGER NOT NULL, PRIMARY KEY(`user_id`, `id`), FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creationTime",
+            "columnName": "creation_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maxSpace",
+            "columnName": "max_space",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "usedSpace",
+            "columnName": "used_space",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_VolumeEntity_user_id",
+            "unique": false,
+            "columnNames": [
+              "user_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_VolumeEntity_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          },
+          {
+            "name": "index_VolumeEntity_share_id",
+            "unique": false,
+            "columnNames": [
+              "share_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_VolumeEntity_share_id` ON `${TABLE_NAME}` (`share_id`)"
+          },
+          {
+            "name": "index_VolumeEntity_id",
+            "unique": false,
+            "columnNames": [
+              "id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_VolumeEntity_id` ON `${TABLE_NAME}` (`id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ShareEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `volume_id` TEXT NOT NULL, `flags` INTEGER NOT NULL, `link_id` TEXT NOT NULL, `block_size` INTEGER NOT NULL, `locked` INTEGER NOT NULL, `key` TEXT NOT NULL, `passphrase` TEXT NOT NULL, `passphrase_signature` TEXT NOT NULL, PRIMARY KEY(`user_id`, `id`), FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "volumeId",
+            "columnName": "volume_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flags",
+            "columnName": "flags",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blockSize",
+            "columnName": "block_size",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLocked",
+            "columnName": "locked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "passphrase",
+            "columnName": "passphrase",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "passphraseSignature",
+            "columnName": "passphrase_signature",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_ShareEntity_user_id",
+            "unique": false,
+            "columnNames": [
+              "user_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ShareEntity_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          },
+          {
+            "name": "index_ShareEntity_volume_id",
+            "unique": false,
+            "columnNames": [
+              "volume_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ShareEntity_volume_id` ON `${TABLE_NAME}` (`volume_id`)"
+          },
+          {
+            "name": "index_ShareEntity_link_id",
+            "unique": false,
+            "columnNames": [
+              "link_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ShareEntity_link_id` ON `${TABLE_NAME}` (`link_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "ShareUrlEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `flags` INTEGER NOT NULL, `name` TEXT, `token` TEXT NOT NULL, `creatior_email` TEXT NOT NULL, `permissions` INTEGER NOT NULL, `creation_time` INTEGER NOT NULL, `expiration_time` INTEGER, `last_access_time` INTEGER, `max_accesses` INTEGER, `number_of_accesses` INTEGER NOT NULL, `url_password_salt` TEXT NOT NULL, `share_password_salt` TEXT NOT NULL, `srp_verifier` TEXT NOT NULL, `srp_modulus_id` TEXT NOT NULL, `password` TEXT NOT NULL, `share_passphrase_key_packet` TEXT NOT NULL, PRIMARY KEY(`user_id`, `share_id`, `id`), FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "flags",
+            "columnName": "flags",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "token",
+            "columnName": "token",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creatorEmail",
+            "columnName": "creatior_email",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "permissions",
+            "columnName": "permissions",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creationTime",
+            "columnName": "creation_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expirationTime",
+            "columnName": "expiration_time",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "lastAccessTime",
+            "columnName": "last_access_time",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "maxAccesses",
+            "columnName": "max_accesses",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "numberOfAccesses",
+            "columnName": "number_of_accesses",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "urlPasswordSalt",
+            "columnName": "url_password_salt",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sharePasswordSalt",
+            "columnName": "share_password_salt",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "srpVerifier",
+            "columnName": "srp_verifier",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "srpModulusId",
+            "columnName": "srp_modulus_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "password",
+            "columnName": "password",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sharePassphraseKeyPacket",
+            "columnName": "share_passphrase_key_packet",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "share_id",
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_ShareUrlEntity_user_id_share_id",
+            "unique": false,
+            "columnNames": [
+              "user_id",
+              "share_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_ShareUrlEntity_user_id_share_id` ON `${TABLE_NAME}` (`user_id`, `share_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "ShareEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "LinkEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `parent_id` TEXT, `type` INTEGER NOT NULL, `name` TEXT NOT NULL, `name_signature_email` TEXT, `hash` TEXT NOT NULL, `state` INTEGER NOT NULL, `expiration_time` INTEGER, `size` INTEGER NOT NULL, `mime_type` TEXT NOT NULL, `attributes` INTEGER NOT NULL, `permissions` INTEGER NOT NULL, `node_key` TEXT NOT NULL, `node_passphrase` TEXT NOT NULL, `node_passphrase_signature` TEXT NOT NULL, `signature_address` TEXT NOT NULL, `creation_time` INTEGER NOT NULL, `last_modified` INTEGER NOT NULL, `trashed_time` INTEGER, `is_shared` INTEGER NOT NULL, `number_of_accesses` INTEGER NOT NULL, `share_url_expiration_time` INTEGER, PRIMARY KEY(`user_id`, `share_id`, `id`), FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`user_id`, `share_id`, `parent_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parentId",
+            "columnName": "parent_id",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameSignatureEmail",
+            "columnName": "name_signature_email",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "hash",
+            "columnName": "hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expirationTime",
+            "columnName": "expiration_time",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "size",
+            "columnName": "size",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mimeType",
+            "columnName": "mime_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attributes",
+            "columnName": "attributes",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "permissions",
+            "columnName": "permissions",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nodeKey",
+            "columnName": "node_key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nodePassphrase",
+            "columnName": "node_passphrase",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nodePassphraseSignature",
+            "columnName": "node_passphrase_signature",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "signatureAddress",
+            "columnName": "signature_address",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "creationTime",
+            "columnName": "creation_time",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastModified",
+            "columnName": "last_modified",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trashedTime",
+            "columnName": "trashed_time",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "shared",
+            "columnName": "is_shared",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numberOfAccesses",
+            "columnName": "number_of_accesses",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareUrlExpirationTime",
+            "columnName": "share_url_expiration_time",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "share_id",
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_LinkEntity_user_id_share_id",
+            "unique": false,
+            "columnNames": [
+              "user_id",
+              "share_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkEntity_user_id_share_id` ON `${TABLE_NAME}` (`user_id`, `share_id`)"
+          },
+          {
+            "name": "index_LinkEntity_user_id_id",
+            "unique": false,
+            "columnNames": [
+              "user_id",
+              "id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkEntity_user_id_id` ON `${TABLE_NAME}` (`user_id`, `id`)"
+          },
+          {
+            "name": "index_LinkEntity_user_id_share_id_parent_id",
+            "unique": false,
+            "columnNames": [
+              "user_id",
+              "share_id",
+              "parent_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkEntity_user_id_share_id_parent_id` ON `${TABLE_NAME}` (`user_id`, `share_id`, `parent_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          },
+          {
+            "table": "ShareEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "id"
+            ]
+          },
+          {
+            "table": "LinkEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id",
+              "parent_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "share_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "LinkFilePropertiesEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`file_user_id` TEXT NOT NULL, `file_share_id` TEXT NOT NULL, `file_link_id` TEXT NOT NULL, `revision_id` TEXT NOT NULL, `has_thumbnail` INTEGER NOT NULL, `content_key_packet` TEXT NOT NULL, `content_key_packet_signature` TEXT, `file_signature_address` TEXT, PRIMARY KEY(`file_user_id`, `file_share_id`, `file_link_id`), FOREIGN KEY(`file_user_id`, `file_share_id`, `file_link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "file_user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "file_share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "file_link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "activeRevisionId",
+            "columnName": "revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hasThumbnail",
+            "columnName": "has_thumbnail",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contentKeyPacket",
+            "columnName": "content_key_packet",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contentKeyPacketSignature",
+            "columnName": "content_key_packet_signature",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "activeRevisionSignatureAddress",
+            "columnName": "file_signature_address",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "file_user_id",
+            "file_share_id",
+            "file_link_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_LinkFilePropertiesEntity_file_user_id_file_share_id_file_link_id",
+            "unique": false,
+            "columnNames": [
+              "file_user_id",
+              "file_share_id",
+              "file_link_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkFilePropertiesEntity_file_user_id_file_share_id_file_link_id` ON `${TABLE_NAME}` (`file_user_id`, `file_share_id`, `file_link_id`)"
+          },
+          {
+            "name": "index_LinkFilePropertiesEntity_revision_id",
+            "unique": false,
+            "columnNames": [
+              "revision_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkFilePropertiesEntity_revision_id` ON `${TABLE_NAME}` (`revision_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LinkEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "file_user_id",
+              "file_share_id",
+              "file_link_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "share_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "LinkFolderPropertiesEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`folder_user_id` TEXT NOT NULL, `folder_share_id` TEXT NOT NULL, `folder_link_id` TEXT NOT NULL, `node_hash_key` TEXT NOT NULL, PRIMARY KEY(`folder_user_id`, `folder_share_id`, `folder_link_id`), FOREIGN KEY(`folder_user_id`, `folder_share_id`, `folder_link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "folder_user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "folder_share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "folder_link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nodeHashKey",
+            "columnName": "node_hash_key",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "folder_user_id",
+            "folder_share_id",
+            "folder_link_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_LinkFolderPropertiesEntity_folder_user_id_folder_share_id_folder_link_id",
+            "unique": false,
+            "columnNames": [
+              "folder_user_id",
+              "folder_share_id",
+              "folder_link_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkFolderPropertiesEntity_folder_user_id_folder_share_id_folder_link_id` ON `${TABLE_NAME}` (`folder_user_id`, `folder_share_id`, `folder_link_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LinkEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "folder_user_id",
+              "folder_share_id",
+              "folder_link_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "share_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "LinkOfflineEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `link_id` TEXT NOT NULL, PRIMARY KEY(`user_id`, `share_id`, `link_id`), FOREIGN KEY(`user_id`, `share_id`, `link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "share_id",
+            "link_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_LinkOfflineEntity_user_id_share_id_link_id",
+            "unique": true,
+            "columnNames": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_LinkOfflineEntity_user_id_share_id_link_id` ON `${TABLE_NAME}` (`user_id`, `share_id`, `link_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LinkEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "share_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "LinkDownloadStateEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `link_id` TEXT NOT NULL, `revision_id` TEXT NOT NULL, `state` TEXT NOT NULL, PRIMARY KEY(`user_id`, `share_id`, `link_id`, `revision_id`), FOREIGN KEY(`user_id`, `share_id`, `link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revisionId",
+            "columnName": "revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "share_id",
+            "link_id",
+            "revision_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_LinkDownloadStateEntity_user_id_share_id_link_id",
+            "unique": false,
+            "columnNames": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkDownloadStateEntity_user_id_share_id_link_id` ON `${TABLE_NAME}` (`user_id`, `share_id`, `link_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LinkEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "share_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "DownloadBlockEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `link_id` TEXT NOT NULL, `revision_id` TEXT NOT NULL, `index` INTEGER NOT NULL, `uri` TEXT NOT NULL, `encrypted_signature` TEXT, PRIMARY KEY(`user_id`, `share_id`, `link_id`, `revision_id`, `index`), FOREIGN KEY(`user_id`, `share_id`, `link_id`, `revision_id`) REFERENCES `LinkDownloadStateEntity`(`user_id`, `share_id`, `link_id`, `revision_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revisionId",
+            "columnName": "revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uri",
+            "columnName": "uri",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "encryptedSignature",
+            "columnName": "encrypted_signature",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "share_id",
+            "link_id",
+            "revision_id",
+            "index"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_DownloadBlockEntity_user_id_share_id_link_id_revision_id",
+            "unique": false,
+            "columnNames": [
+              "user_id",
+              "share_id",
+              "link_id",
+              "revision_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_DownloadBlockEntity_user_id_share_id_link_id_revision_id` ON `${TABLE_NAME}` (`user_id`, `share_id`, `link_id`, `revision_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LinkDownloadStateEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id",
+              "link_id",
+              "revision_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "share_id",
+              "link_id",
+              "revision_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "LinkTrashStateEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `link_id` TEXT NOT NULL, `state` TEXT NOT NULL, PRIMARY KEY(`user_id`, `share_id`, `link_id`), FOREIGN KEY(`user_id`, `share_id`, `link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "share_id",
+            "link_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_LinkTrashStateEntity_user_id_share_id_link_id",
+            "unique": false,
+            "columnNames": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkTrashStateEntity_user_id_share_id_link_id` ON `${TABLE_NAME}` (`user_id`, `share_id`, `link_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LinkEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "share_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "TrashWorkEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `link_id` TEXT NOT NULL, `work_id` TEXT NOT NULL, PRIMARY KEY(`user_id`, `share_id`, `link_id`), FOREIGN KEY(`user_id`, `share_id`, `link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "workId",
+            "columnName": "work_id",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "share_id",
+            "link_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_TrashWorkEntity_user_id_share_id_link_id",
+            "unique": false,
+            "columnNames": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_TrashWorkEntity_user_id_share_id_link_id` ON `${TABLE_NAME}` (`user_id`, `share_id`, `link_id`)"
+          },
+          {
+            "name": "index_TrashWorkEntity_work_id",
+            "unique": false,
+            "columnNames": [
+              "work_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_TrashWorkEntity_work_id` ON `${TABLE_NAME}` (`work_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "LinkEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "share_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "MessageEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `user_id` TEXT NOT NULL, `content` TEXT NOT NULL, FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "content",
+            "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_MessageEntity_user_id",
+            "unique": false,
+            "columnNames": [
+              "user_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_MessageEntity_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "UiSettingsEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `layout_type` TEXT NOT NULL, `theme_style` TEXT NOT NULL, PRIMARY KEY(`user_id`), FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "layoutType",
+            "columnName": "layout_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "themeStyle",
+            "columnName": "theme_style",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "DriveLinkRemoteKeyEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` TEXT NOT NULL, `share_id` TEXT NOT NULL, `link_id` TEXT NOT NULL, `user_id` TEXT NOT NULL, `previous_key` INTEGER, `next_key` INTEGER, PRIMARY KEY(`key`, `user_id`, `share_id`, `link_id`), FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`user_id`, `share_id`, `link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "prevKey",
+            "columnName": "previous_key",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nextKey",
+            "columnName": "next_key",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "key",
+            "user_id",
+            "share_id",
+            "link_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_DriveLinkRemoteKeyEntity_user_id_share_id_link_id",
+            "unique": true,
+            "columnNames": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_DriveLinkRemoteKeyEntity_user_id_share_id_link_id` ON `${TABLE_NAME}` (`user_id`, `share_id`, `link_id`)"
+          },
+          {
+            "name": "index_DriveLinkRemoteKeyEntity_user_id",
+            "unique": false,
+            "columnNames": [
+              "user_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_DriveLinkRemoteKeyEntity_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          },
+          {
+            "table": "LinkEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "share_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "SortingEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `sorting_by` TEXT NOT NULL, `sorting_direction` TEXT NOT NULL, PRIMARY KEY(`user_id`), FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sortingBy",
+            "columnName": "sorting_by",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sortingDirection",
+            "columnName": "sorting_direction",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "LinkUploadEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `user_id` TEXT NOT NULL, `volume_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `parent_id` TEXT NOT NULL, `link_id` TEXT NOT NULL, `revision_id` TEXT NOT NULL, `name` TEXT NOT NULL, `mime_type` TEXT NOT NULL, `node_key` TEXT NOT NULL, `node_passphrase` TEXT NOT NULL, `node_passphrase_signature` TEXT NOT NULL, `content_key_packet` TEXT NOT NULL, `content_key_packet_signature` TEXT NOT NULL, `manifest_signature` TEXT NOT NULL, `state` TEXT NOT NULL, FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "volumeId",
+            "columnName": "volume_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parentId",
+            "columnName": "parent_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "revisionId",
+            "columnName": "revision_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mimeType",
+            "columnName": "mime_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nodeKey",
+            "columnName": "node_key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nodePassphrase",
+            "columnName": "node_passphrase",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nodePassphraseSignature",
+            "columnName": "node_passphrase_signature",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contentKeyPacket",
+            "columnName": "content_key_packet",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "contentKeyPacketSignature",
+            "columnName": "content_key_packet_signature",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "manifestSignature",
+            "columnName": "manifest_signature",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "state",
+            "columnName": "state",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_LinkUploadEntity_user_id",
+            "unique": false,
+            "columnNames": [
+              "user_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkUploadEntity_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          },
+          {
+            "name": "index_LinkUploadEntity_volume_id",
+            "unique": false,
+            "columnNames": [
+              "volume_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkUploadEntity_volume_id` ON `${TABLE_NAME}` (`volume_id`)"
+          },
+          {
+            "name": "index_LinkUploadEntity_share_id",
+            "unique": false,
+            "columnNames": [
+              "share_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkUploadEntity_share_id` ON `${TABLE_NAME}` (`share_id`)"
+          },
+          {
+            "name": "index_LinkUploadEntity_link_id",
+            "unique": false,
+            "columnNames": [
+              "link_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkUploadEntity_link_id` ON `${TABLE_NAME}` (`link_id`)"
+          },
+          {
+            "name": "index_LinkUploadEntity_revision_id",
+            "unique": false,
+            "columnNames": [
+              "revision_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkUploadEntity_revision_id` ON `${TABLE_NAME}` (`revision_id`)"
+          },
+          {
+            "name": "index_LinkUploadEntity_parent_id",
+            "unique": false,
+            "columnNames": [
+              "parent_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_LinkUploadEntity_parent_id` ON `${TABLE_NAME}` (`parent_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "UploadBlockEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`upload_link_id` INTEGER NOT NULL, `index` INTEGER NOT NULL, `size` INTEGER NOT NULL, `encrypted_signature` TEXT NOT NULL, `hash` TEXT NOT NULL, `token` TEXT NOT NULL, `url` TEXT NOT NULL, PRIMARY KEY(`upload_link_id`, `index`), FOREIGN KEY(`upload_link_id`) REFERENCES `LinkUploadEntity`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "uploadLinkId",
+            "columnName": "upload_link_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "index",
+            "columnName": "index",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "size",
+            "columnName": "size",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "encryptedSignature",
+            "columnName": "encrypted_signature",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hash",
+            "columnName": "hash",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "uploadToken",
+            "columnName": "token",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "upload_link_id",
+            "index"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "LinkUploadEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "upload_link_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "FolderMetadataEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `link_id` TEXT NOT NULL, `last_fetch_children_timestamp` INTEGER, PRIMARY KEY(`user_id`, `share_id`, `link_id`), FOREIGN KEY(`user_id`, `share_id`, `link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "linkId",
+            "columnName": "link_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchChildrenTimestamp",
+            "columnName": "last_fetch_children_timestamp",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "share_id",
+            "link_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "LinkEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id",
+              "link_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "share_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "TrashMetadataEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `share_id` TEXT NOT NULL, `last_fetch_trash_timestamp` INTEGER, PRIMARY KEY(`user_id`, `share_id`), FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "shareId",
+            "columnName": "share_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastFetchTrashTimestamp",
+            "columnName": "last_fetch_trash_timestamp",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "share_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "ShareEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "share_id"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "NotificationChannelEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `type` TEXT NOT NULL, PRIMARY KEY(`user_id`, `type`), FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "type"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_NotificationChannelEntity_user_id",
+            "unique": false,
+            "columnNames": [
+              "user_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_NotificationChannelEntity_user_id` ON `${TABLE_NAME}` (`user_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "AccountEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id"
+            ],
+            "referencedColumns": [
+              "userId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "NotificationEventEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`user_id` TEXT NOT NULL, `channel_type` TEXT NOT NULL, `notification_tag` TEXT NOT NULL, `notification_id` INTEGER NOT NULL, `notification_event_id` TEXT NOT NULL, `notification_event` TEXT NOT NULL, PRIMARY KEY(`user_id`, `channel_type`, `notification_tag`, `notification_id`, `notification_event_id`), FOREIGN KEY(`user_id`, `channel_type`) REFERENCES `NotificationChannelEntity`(`user_id`, `type`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "channelType",
+            "columnName": "channel_type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notificationTag",
+            "columnName": "notification_tag",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notificationId",
+            "columnName": "notification_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notificationEventId",
+            "columnName": "notification_event_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notificationEvent",
+            "columnName": "notification_event",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "user_id",
+            "channel_type",
+            "notification_tag",
+            "notification_id",
+            "notification_event_id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [
+          {
+            "name": "index_NotificationEventEntity_user_id_channel_type_notification_tag_notification_id",
+            "unique": false,
+            "columnNames": [
+              "user_id",
+              "channel_type",
+              "notification_tag",
+              "notification_id"
+            ],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_NotificationEventEntity_user_id_channel_type_notification_tag_notification_id` ON `${TABLE_NAME}` (`user_id`, `channel_type`, `notification_tag`, `notification_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "NotificationChannelEntity",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "user_id",
+              "channel_type"
+            ],
+            "referencedColumns": [
+              "user_id",
+              "type"
+            ]
+          }
+        ]
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6048d4010a20b9ea2bd287890110105d')"
+    ]
+  }
+}
