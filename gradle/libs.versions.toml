@@ -29,7 +29,7 @@ androidx-work = "2.7.1"
 # Coil
 coil = "1.4.0"
 # Core
-core = "9.9.1"
+core = "9.9.3"
 # Dagger
 dagger = "2.44.2"
 # Gradle

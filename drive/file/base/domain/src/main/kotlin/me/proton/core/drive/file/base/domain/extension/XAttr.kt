@@ -17,7 +17,19 @@
  */
 package me.proton.core.drive.file.base.domain.extension
 
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.proton.core.drive.file.base.domain.entity.XAttr
 
-fun XAttr.asJson(): String = Json.encodeToString(XAttr.serializer(), this)
+private val json = Json {
+    ignoreUnknownKeys = true
+}
+
+fun String.toXAttr(): Result<XAttr> = try {
+    Result.success(json.decodeFromString(this))
+} catch (e: SerializationException) {
+    Result.failure(e)
+}
+
+fun XAttr.asJson(): String = json.encodeToString(XAttr.serializer(), this)

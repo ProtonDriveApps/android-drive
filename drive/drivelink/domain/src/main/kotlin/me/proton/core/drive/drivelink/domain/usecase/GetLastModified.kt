@@ -20,8 +20,11 @@ package me.proton.core.drive.drivelink.domain.usecase
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
+import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.file.base.domain.extension.toXAttr
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class GetLastModified @Inject constructor(
@@ -30,7 +33,18 @@ class GetLastModified @Inject constructor(
     operator fun invoke(driveLink: DriveLink): TimestampS {
         if (driveLink.cryptoXAttr !is CryptoProperty.Decrypted) return driveLink.lastModified
         val xAttrString = driveLink.cryptoXAttr.value ?: return driveLink.lastModified
-        return dateTimeFormatter.parseFromIso8601String(iso8601 = xAttrString.toXAttr().common.modificationTime)
-            .getOrNull() ?: driveLink.lastModified
+        xAttrString.toXAttr().onSuccess { xAttr ->
+            return dateTimeFormatter.parseFromIso8601String(iso8601 = xAttr.common.modificationTime)
+                .getOrNull() ?: driveLink.lastModified
+        }.onFailure { error ->
+            CoreLogger.d(
+                LogTag.ENCRYPTION,
+                error,
+                "There was an error parsing xAttr of drive link: ${driveLink.id.id.logId()}"
+            )
+        }
+        return driveLink.lastModified
+
+
     }
 }
