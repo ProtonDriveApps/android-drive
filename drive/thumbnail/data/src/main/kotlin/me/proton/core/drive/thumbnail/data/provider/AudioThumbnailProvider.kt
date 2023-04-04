@@ -22,8 +22,11 @@ import android.media.ThumbnailUtils
 import android.os.Build
 import android.util.Size
 import dagger.hilt.android.qualifiers.ApplicationContext
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.presentation.entity.FileTypeCategory
+import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 
 @Suppress("BlockingMethodInNonBlockingContext")
@@ -37,11 +40,16 @@ class AudioThumbnailProvider @Inject constructor(
 
     override fun fileToBitmap(file: File, size: Size) =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ThumbnailUtils.createAudioThumbnail(
-                file,
-                size,
+            try {
+                ThumbnailUtils.createAudioThumbnail(
+                    file,
+                    size,
+                    null
+                )
+            } catch (e: IOException) {
+                CoreLogger.d(LogTag.THUMBNAIL, e, "Create audio thumbnail failed")
                 null
-            )
+            }
         } else {
             null
         }

@@ -22,13 +22,16 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Size
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.presentation.entity.FileTypeCategory
 import me.proton.core.drive.base.presentation.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.extension.compress
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
+import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.IOException
 
 @Suppress("BlockingMethodInNonBlockingContext")
 abstract class FileThumbnailProvider(
@@ -63,9 +66,14 @@ abstract class FileThumbnailProvider(
                 bitmap.recycle()
             }
         } catch (e: OutOfMemoryError) {
+            CoreLogger.d(LogTag.THUMBNAIL, e, "Create file thumbnail failed")
             System.gc()
             null
         } catch (e: IllegalArgumentException) {
+            CoreLogger.d(LogTag.THUMBNAIL, e, "Create file thumbnail failed")
+            null
+        } catch (e: IOException) {
+            CoreLogger.d(LogTag.THUMBNAIL, e, "Create file thumbnail failed")
             null
         } finally {
             tmpFile?.delete()

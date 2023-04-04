@@ -36,6 +36,7 @@ object LogTag {
     const val BROADCAST_RECEIVER = "$DEFAULT.broadcast.receiver"
     const val NOTIFICATION = "$DEFAULT.notification"
     const val TRASH = "$DEFAULT.trash"
+    const val THUMBNAIL = "$DEFAULT.thumbnail"
     val ViewModel.VIEW_MODEL: String get() = "$DEFAULT.view.model[${this.javaClass.simpleName}]"
 
     object UploadTag {
