@@ -36,7 +36,8 @@ class RenamingFolderFlowErrorTest(
     private val itemToBeRenamed: String,
     private val newItemName: String,
     private val errorMessage: String,
-): BaseTest() {
+    private val friendlyName: String
+) : BaseTest() {
 
     private val user
         get() = User(
@@ -53,7 +54,7 @@ class RenamingFolderFlowErrorTest(
     @Test
     fun renameError() {
         FilesTabRobot
-            .swipeUpToItemWithName(itemToBeRenamed)
+            .scrollToItemWithName(itemToBeRenamed)
             .clickMoreOnFolder(itemToBeRenamed)
             .clickRename()
             .clearName()
@@ -65,13 +66,33 @@ class RenamingFolderFlowErrorTest(
     }
 
     companion object {
-        @get:Parameterized.Parameters(name = "folderToBeRenamed={0}, newFolderName={1}, errorMessage={2}")
+        @get:Parameterized.Parameters(name = "{3}")
         @get:JvmStatic
         val data = listOf(
-            arrayOf("folder1", "folder2", "An item with that name already exists in current folder"),
-            arrayOf("folder1", "", StringUtils.stringFromResource(R.string.common_error_name_is_blank)),
-            arrayOf("folder1", getRandomString(256), StringUtils.stringFromResource(R.string.common_error_name_too_long, 255)),
-            arrayOf("folder2", "folder1", "An item with that name already exists in current folder"),
+            arrayOf(
+                "folder1",
+                "folder2",
+                "An item with that name already exists in current folder",
+                "Existing folder"
+            ),
+            arrayOf(
+                "folder1",
+                "",
+                StringUtils.stringFromResource(R.string.common_error_name_is_blank),
+                "Empty folder name"
+            ),
+            arrayOf(
+                "folder1",
+                getRandomString(256),
+                StringUtils.stringFromResource(R.string.common_error_name_too_long, 255),
+                "Very long name"
+            ),
+            arrayOf(
+                "folder2",
+                "folder1",
+                "An item with that name already exists in current folder",
+                "Existing folder 2"
+            )
         )
     }
 }

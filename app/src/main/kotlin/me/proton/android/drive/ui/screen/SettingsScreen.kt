@@ -41,6 +41,8 @@ import me.proton.core.drive.settings.presentation.Settings
 @Composable
 fun SettingsScreen(
     navigateBack: () -> Unit,
+    navigateToAppAccess: () -> Unit,
+    navigateToAutoLockDurations: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<SettingsViewModel>()
@@ -54,15 +56,19 @@ fun SettingsScreen(
         }.launchIn(this)
     }
 
-    settingsViewState?.let { viewState ->
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .systemBarsPadding()
-        ) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .systemBarsPadding()
+    ) {
+        settingsViewState?.let { viewState ->
             Settings(
                 viewState = viewState,
-                viewEvent = viewModel.viewEvent(navigateBack),
+                viewEvent = viewModel.viewEvent(
+                    navigateBack = navigateBack,
+                    navigateToAppAccess = navigateToAppAccess,
+                    navigateToAutoLockDurations = navigateToAutoLockDurations,
+                ),
             )
 
             ProtonSnackbarHost(

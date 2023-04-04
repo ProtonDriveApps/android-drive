@@ -17,8 +17,8 @@
  */
 package me.proton.core.drive.file.base.domain.entity
 
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 @Serializable
 data class XAttr(
@@ -35,6 +35,8 @@ data class XAttr(
         val size: Long? = null,
         @SerialName("BlockSizes")
         val blockSizes: List<Long>? = null,
+        @SerialName("Digests")
+        val digests: Map<String, String>? = null,
     )
 
     @Serializable

@@ -37,10 +37,12 @@ import me.proton.core.drive.linkupload.data.extension.toUploadBulkEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
+import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.factory.UploadBlockFactory
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
+import me.proton.core.util.kotlin.serialize
 import javax.inject.Inject
 
 class LinkUploadRepositoryImpl @Inject constructor(
@@ -142,6 +144,11 @@ class LinkUploadRepositoryImpl @Inject constructor(
             id = uploadFileLinkId,
             mediaResolutionWidth = mediaResolution.width,
             mediaResolutionHeight = mediaResolution.height,
+        )
+    override suspend fun updateUploadFileLinkDigests(uploadFileLinkId: Long, digests: UploadDigests) =
+        db.linkUploadDao.updateDigests(
+            id = uploadFileLinkId,
+            digests = digests.values.serialize()
         )
 
     override suspend fun removeUploadFileLink(uploadFileLinkId: Long) =

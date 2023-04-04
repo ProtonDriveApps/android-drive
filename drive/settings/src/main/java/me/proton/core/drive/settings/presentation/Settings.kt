@@ -32,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,10 +47,12 @@ import me.proton.core.drive.settings.presentation.component.DebugSettings
 import me.proton.core.drive.settings.presentation.component.ExternalSettingsEntry
 import me.proton.core.drive.settings.presentation.component.ThemeChooserDialog
 import me.proton.core.drive.settings.presentation.event.SettingsViewEvent
+import me.proton.core.drive.settings.presentation.extension.toString
 import me.proton.core.drive.settings.presentation.state.LegalLink
 import me.proton.core.drive.settings.presentation.state.SettingsViewState
 import me.proton.core.usersettings.presentation.compose.view.CrashReportSettingToggleItem
 import me.proton.core.usersettings.presentation.compose.view.TelemetrySettingToggleItem
+import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.presentation.R as CorePresentation
 
@@ -80,6 +83,24 @@ fun Settings(
         )
         Column(Modifier.verticalScroll(rememberScrollState())) {
 
+            ProtonSettingsHeader(title = R.string.settings_section_security)
+
+            ProtonSettingsItem(
+                name = stringResource(id = R.string.settings_app_lock),
+                hint = stringResource(id = viewState.appAccessSubtitleResId),
+            ) {
+                viewEvent.onAppAccess()
+            }
+
+            if (viewState.isAutoLockDurationsVisible) {
+                ProtonSettingsItem(
+                    name = stringResource(id = R.string.settings_auto_lock),
+                    hint = viewState.autoLockDuration.toString(LocalContext.current),
+                ) {
+                    viewEvent.onAutoLockDurations()
+                }
+            }
+
             ProtonSettingsHeader(title = R.string.settings_section_appearance_settings)
 
             ProtonSettingsItem(
@@ -89,14 +110,7 @@ fun Settings(
                 showThemeDialog = true
             }
 
-            if (viewState.isAppLockEnabled) {
-                ProtonSettingsHeader(title = R.string.settings_section_app_settings)
 
-                ProtonSettingsItem(
-                    name = stringResource(id = R.string.settings_pin_biomtric_lock_entry),
-                    hint = stringResource(R.string.settings_pin_biomtric_lock_status_off),
-                )
-            }
 
             if (viewState.legalLinks.isNotEmpty()) {
                 ProtonSettingsHeader(title = R.string.settings_section_about)
@@ -158,11 +172,16 @@ private fun SettingsPreview() {
                 ),
                 availableStyles = emptyList(),
                 currentStyle = BasePresentation.string.common_cancel_action,
+                appAccessSubtitleResId = BasePresentation.string.common_cancel_action,
+                isAutoLockDurationsVisible = true,
+                autoLockDuration = 0.seconds,
             ),
             viewEvent = SettingsViewEvent(
                 navigateBack = {},
                 onLinkClicked = {},
                 onThemeStyleChanged = {},
+                onAppAccess = {},
+                onAutoLockDurations = {}
             )
         )
     }

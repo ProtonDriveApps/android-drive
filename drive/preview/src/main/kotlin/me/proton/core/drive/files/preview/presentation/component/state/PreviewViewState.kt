@@ -40,10 +40,6 @@ data class PreviewViewState(
     )
 }
 
-sealed class ZoomEffect {
-    object Reset : ZoomEffect()
-}
-
 sealed interface PreviewContentState {
     object Loading : PreviewContentState
     object Empty : PreviewContentState

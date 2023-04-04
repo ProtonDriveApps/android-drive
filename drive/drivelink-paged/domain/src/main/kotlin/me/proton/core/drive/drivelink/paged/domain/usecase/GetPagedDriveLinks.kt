@@ -34,6 +34,7 @@ import javax.inject.Inject
 class GetPagedDriveLinks @Inject constructor(
     private val factory: DriveLinkRemoteMediatorFactory,
     private val configurationProvider: ConfigurationProvider,
+    private val getObservablePageSize: GetObservablePageSize,
 ) {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -53,6 +54,35 @@ class GetPagedDriveLinks @Inject constructor(
             ),
             remoteMediator = factory.create(userId, pagedListKey, remoteDriveLinks),
             pagingSourceFactory = { localDriveLinks().asPagingSource(processPage = processPage) }
+        ).flow
+    }
+
+    @OptIn(ExperimentalPagingApi::class)
+    operator fun invoke(
+        userId: UserId,
+        pagedListKey: String,
+        remoteDriveLinks: suspend (page: Int, pageSize: Int) -> Result<LinksPage>,
+        localPagedDriveLinks: (Int, Int) -> Flow<Result<List<DriveLink>>>,
+        localDriveLinksCount: () -> Flow<Int>,
+        pageSize: Int = configurationProvider.uiPageSize,
+        processPage: (suspend (List<DriveLink>) -> List<DriveLink>)? = null,
+    ): Flow<PagingData<DriveLink>> {
+        return Pager(
+            PagingConfig(
+                pageSize = pageSize,
+                initialLoadSize = pageSize,
+                enablePlaceholders = false,
+            ),
+            remoteMediator = factory.create(userId, pagedListKey, remoteDriveLinks),
+            pagingSourceFactory = {
+                { fromIndex: Int, count: Int ->
+                    localPagedDriveLinks(fromIndex, count)
+                }.asPagingSource(
+                    sourceSize = localDriveLinksCount(),
+                    observablePageSize = getObservablePageSize(),
+                    processPage = processPage,
+                )
+            }
         ).flow
     }
 }

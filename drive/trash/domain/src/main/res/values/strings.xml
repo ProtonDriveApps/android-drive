@@ -17,6 +17,6 @@
   -->
 
 <resources>
-    <string name="trash_action_undo">@string/common_undo_action</string>
-    <string name="trash_action_retry">@string/common_retry_action</string>
+    <item name="trash_action_undo" type="string" />
+    <item name="trash_action_retry" type="string" />
 </resources>

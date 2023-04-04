@@ -50,7 +50,8 @@ fun ProtonListItem(
     @StringRes title: Int,
     modifier: Modifier = Modifier,
     iconTitlePadding: Dp = ListItemTextStartPadding,
-) = ProtonListItem(painterResource(icon), stringResource(title), modifier, iconTitlePadding)
+    iconTintColor: Color = ProtonTheme.colors.iconNorm,
+) = ProtonListItem(painterResource(icon), stringResource(title), modifier, iconTitlePadding, iconTintColor)
 
 @Composable
 fun ProtonListItem(
@@ -58,6 +59,7 @@ fun ProtonListItem(
     title: String,
     modifier: Modifier = Modifier,
     iconTitlePadding: Dp = ListItemTextStartPadding,
+    iconTintColor: Color = ProtonTheme.colors.iconNorm,
 ) {
     Row(
         modifier = modifier
@@ -72,7 +74,7 @@ fun ProtonListItem(
             modifier = Modifier
                 .size(DefaultIconSize),
             painter = icon,
-            tint = ProtonTheme.colors.iconNorm,
+            tint = iconTintColor,
             contentDescription = null,
         )
         Text(

@@ -206,7 +206,7 @@ private fun PreviewExternalSettingsEntry() {
             modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
             link = LegalLink.External(
                 text = BasePresentation.string.title_app,
-                url = R.string.settings_section_app_settings,
+                url = R.string.settings_section_security,
             )) {
         }
     }

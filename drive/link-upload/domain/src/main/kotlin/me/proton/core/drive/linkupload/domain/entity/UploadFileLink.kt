@@ -47,4 +47,5 @@ data class UploadFileLink(
     val uriString: String? = null,
     val shouldDeleteSourceUri: Boolean = false,
     val mediaResolution: MediaResolution? = null,
+    val digests : UploadDigests = UploadDigests()
 )

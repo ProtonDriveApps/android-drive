@@ -17,13 +17,13 @@
  */
 package me.proton.core.drive.files.preview.presentation.component
 
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -35,7 +35,9 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,11 +47,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -61,7 +63,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emptyFlow
@@ -80,12 +81,12 @@ import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.entity.FileTypeCategory
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.debugOnly
+import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.files.preview.R
 import me.proton.core.drive.files.preview.presentation.component.event.PreviewViewEvent
 import me.proton.core.drive.files.preview.presentation.component.state.ContentState
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewContentState
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewViewState
-import me.proton.core.drive.files.preview.presentation.component.state.ZoomEffect
 import me.proton.core.util.kotlin.exhaustive
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -98,19 +99,11 @@ import me.proton.core.presentation.R as CorePresentation
 fun Preview(
     viewState: PreviewViewState,
     viewEvent: PreviewViewEvent,
-    zoomEffect: Flow<ZoomEffect>,
     modifier: Modifier = Modifier,
     onPageChanged: FlowCollector<Int>? = null,
 ) {
-    val detectTapGestureModifier = Modifier
-        .pointerInput(Unit) {
-            detectTapGestures(
-                onTap = { viewEvent.onSingleTap() },
-                onDoubleTap = { viewEvent.onDoubleTap() }
-            )
-        }
     val pagerState = rememberPagerState(initialPage = viewState.currentIndex)
-
+    val userScrollEnabled = remember { mutableStateOf(true) }
     val isFullScreen by rememberFlowWithLifecycle(viewState.isFullscreen).collectAsState(false)
 
     onPageChanged?.let {
@@ -133,16 +126,16 @@ fun Preview(
         HorizontalPager(
             state = pagerState,
             count = viewState.items.size,
+            userScrollEnabled = userScrollEnabled.value,
             key = { page -> viewState.items[page].key }
         ) { page ->
             PreviewContent(
                 viewState.items[page],
                 isFullScreen,
                 viewEvent,
-                zoomEffect,
                 with(LocalDensity.current) { topBarHeightAnimated.toDp() },
                 isFocused = pagerState.currentPage == page,
-                detectTapGestureModifier,
+                userScrollEnabled,
             )
         }
         AnimatedVisibility(
@@ -150,7 +143,7 @@ fun Preview(
             enter = slideInVertically(initialOffsetY = { fullHeight: Int -> -fullHeight }),
             exit = slideOutVertically(targetOffsetY = { fullHeight: Int -> -fullHeight }),
         ) {
-            val item = viewState.items.getOrNull(viewState.currentIndex)
+            val item = viewState.items.getOrNull(pagerState.currentPage)
             TopAppBar(
                 modifier = Modifier
                     .background(appBarGradient)
@@ -160,7 +153,8 @@ fun Preview(
                     }
                     .onSizeChanged { size ->
                         topBarHeight = size.height
-                    }.testTag(PreviewComponentTestTag.screen),
+                    }
+                    .testTag(PreviewComponentTestTag.screen),
                 navigationIcon = painterResource(id = viewState.navigationIconResId),
                 onNavigationIcon = { viewEvent.onTopAppBarNavigation() },
                 title = item?.title ?: "",
@@ -178,9 +172,6 @@ fun Preview(
     }
 }
 
-private val isLandscape: Boolean @Composable get() =
-    LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-
 private val appBarGradient: Brush @Composable get() = Brush.verticalGradient(
     colors = listOf(0.8f, 0.7f, 0.6f, 0.5f, 0f).map { alpha ->
         ProtonTheme.colors.backgroundNorm.copy(alpha = alpha)
@@ -192,10 +183,9 @@ fun PreviewContent(
     item: PreviewViewState.Item,
     isFullScreen: Boolean,
     viewEvent: PreviewViewEvent,
-    zoomEffect: Flow<ZoomEffect>,
     topBarHeight: Dp,
     isFocused: Boolean,
-    modifier: Modifier = Modifier,
+    userScrollEnabled: MutableState<Boolean>,
 ) {
     val contentState by rememberFlowWithLifecycle(item.contentState).collectAsState(
         ContentState.Downloading(null)
@@ -215,10 +205,9 @@ fun PreviewContent(
             item.category.toComposable(),
             isFullScreen,
             viewEvent,
-            zoomEffect,
             topBarHeight,
             isFocused,
-            modifier,
+            userScrollEnabled
         )
         ContentState.NotFound -> PreviewNotFound()
         is ContentState.Error -> {
@@ -275,21 +264,55 @@ fun PreviewContentAvailable(
     previewComposable: PreviewComposable,
     isFullScreen: Boolean,
     viewEvent: PreviewViewEvent,
-    zoomEffect: Flow<ZoomEffect>,
     topBarHeight: Dp,
     isFocused: Boolean,
+    userScrollEnabled: MutableState<Boolean>,
+    transformationState : TransformationState = rememberTransformationState(),
+    onDoubleTap : () -> Unit = { transformationState.scale = 2F },
     modifier: Modifier = Modifier,
 ) {
+    val dragEnable = transformationState.hasScale()
+
+    if (isFocused) {
+        DisposableEffect(dragEnable) {
+            userScrollEnabled.value = !dragEnable
+            onDispose {
+                userScrollEnabled.value = true
+            }
+        }
+    }
+
+    val pointerInputModifier = modifier
+        .pointerInput(Unit) {
+            detectTapGestures(
+                onTap = { viewEvent.onSingleTap() },
+                onDoubleTap = {
+                    if (transformationState.scale == 1F) {
+                        onDoubleTap()
+                    } else {
+                        transformationState.scale = 1F
+                        transformationState.offset = Offset.Zero
+                    }
+                }
+            )
+        }
+        .pointerInput(Unit, dragEnable) {
+            if (!dragEnable) return@pointerInput
+            detectDragGestures { _, dragAmount ->
+                transformationState.addOffset(dragAmount)
+            }
+        }
+
     when (previewComposable) {
         PreviewComposable.Image -> ImagePreview(
-            modifier = modifier,
+            modifier = pointerInputModifier,
             uri = contentState.uri,
-            zoomEffect = zoomEffect,
+            transformationState = transformationState,
             isFullScreen = isFullScreen,
         )
         PreviewComposable.Sound,
         PreviewComposable.Video -> MediaPreview(
-            modifier = modifier,
+            modifier = pointerInputModifier,
             uri = contentState.uri,
             isFullScreen = isFullScreen,
             play = isFocused,
@@ -297,13 +320,13 @@ fun PreviewContentAvailable(
         )
         PreviewComposable.Pdf -> PdfPreview(
             uri = contentState.uri,
-            modifier = modifier.padding(top = topBarHeight),
-            zoomEffect = zoomEffect,
+            modifier = pointerInputModifier.padding(top = topBarHeight),
+            transformationState = transformationState,
             onRenderFailed = viewEvent.onRenderFailed,
         )
         PreviewComposable.Text -> TextPreview(
             uri = contentState.uri,
-            modifier = modifier.padding(top = topBarHeight),
+            modifier = pointerInputModifier.padding(top = topBarHeight),
             onRenderFailed = viewEvent.onRenderFailed,
         )
         PreviewComposable.Unknown -> UnknownPreview()
@@ -448,11 +471,9 @@ fun PreviewPreviewLoadingState() {
                 override val onTopAppBarNavigation: () -> Unit = {}
                 override val onMoreOptions: () -> Unit = {}
                 override val onSingleTap: () -> Unit = {}
-                override val onDoubleTap: () -> Unit = {}
                 override val onRenderFailed: (Throwable) -> Unit = {}
                 override val mediaControllerVisibility: (Boolean) -> Unit = {}
             },
-            zoomEffect = emptyFlow(),
         )
     }
 }

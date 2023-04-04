@@ -19,26 +19,25 @@
 package me.proton.android.drive.ui.test
 
 import android.app.Application
-import androidx.compose.ui.test.junit4.AndroidComposeTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.EntryPointAccessors
 import me.proton.android.drive.test.BuildConfig
 import me.proton.android.drive.ui.MainActivity
 import me.proton.android.drive.ui.robot.Robot
 import me.proton.android.drive.ui.rules.LogoutAllRule
+import me.proton.android.drive.ui.toolkits.screenshot
 import me.proton.core.auth.presentation.testing.ProtonTestEntryPoint
 import me.proton.core.test.quark.Quark
 import me.proton.core.test.quark.data.User
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.deserializeList
+import me.proton.test.fusion.FusionConfig
 import org.junit.Rule
 import org.junit.rules.RuleChain
 import org.junit.rules.TestName
-
-typealias AndroidComposeRule = AndroidComposeTestRule<ActivityScenarioRule<MainActivity>, MainActivity>
+import java.util.concurrent.atomic.AtomicInteger
 
 open class BaseTest {
     @Rule
@@ -46,17 +45,19 @@ open class BaseTest {
     val ruleChain: RuleChain = RuleChain.outerRule(testName)
 
     @get:Rule
-    val composeTestRule: AndroidComposeRule = createAndroidComposeRule()
+    val composeTestRule = createAndroidComposeRule<MainActivity>()
 
     @get:Rule(order = 0)
     val logoutAllRule = LogoutAllRule()
 
     init {
-        setGlobalComposeRule(composeTestRule)
+        FusionConfig.Compose.testRule.set(composeTestRule)
+        FusionConfig.Compose.useUnmergedTree.set(true)
+        FusionConfig.Compose.onFailure = { screenshot() }
+        screenshotCounter.set(0)
     }
 
-    inline fun <T : Robot> T.   verify(crossinline block: T.() -> Any): T =
-        apply { waitFor(this) { block() } }
+    inline fun <T : Robot> T.verify(crossinline block: T.() -> Any): T = apply { block() }
 
     companion object {
         private val protonTestEntryPoint by lazy {
@@ -73,17 +74,11 @@ open class BaseTest {
             )
         }
 
-        private var globalComposeRule: AndroidComposeRule? = null
-
         val loginTestHelper by lazy { protonTestEntryPoint.loginTestHelper }
         val uiTestHelper by lazy { uiTestEntryPoint.uiTestHelper }
         val testName = TestName()
-        val screenshotLocation: String get() = "/sdcard/Pictures"
-        val composeTestRule: AndroidComposeRule
-            get() = globalComposeRule
-                ?: throw AssertionError(
-                    "Compose test rule was not set. Make sure to call setGlobalComposeRule(rule) first"
-                )
+        val screenshotLocation get() = "/sdcard/Pictures/Screenshots/${testName.methodName}/"
+        val screenshotCounter = AtomicInteger(0)
 
         // TODO: before publishing to github, this information should be moved from assets into gitlab vars
         val users = User.Users(InstrumentationRegistry.getInstrumentation().context
@@ -102,9 +97,5 @@ open class BaseTest {
                 .bufferedReader()
                 .use { it.readText() }
                 .deserialize())
-
-        fun setGlobalComposeRule(rule: AndroidComposeRule) {
-            globalComposeRule = rule
-        }
     }
 }

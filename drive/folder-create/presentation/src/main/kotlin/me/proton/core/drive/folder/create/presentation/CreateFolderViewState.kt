@@ -24,7 +24,7 @@ import androidx.compose.runtime.Immutable
 data class CreateFolderViewState(
     @StringRes val titleResId: Int,
     val name: String,
-    val selection: IntRange = IntRange(name.length, name.length),
+    val selection: IntRange? = null,
     val error: String? = null,
     val inProgress: Boolean = false
 )

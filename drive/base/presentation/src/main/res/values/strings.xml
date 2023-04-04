@@ -424,4 +424,24 @@
         <item quantity="one">%1$d item</item>
         <item quantity="other">%1$d items</item>
     </plurals>
+
+    <!-- region App lock -->
+    <string name="app_lock_biometric_title_app_locked">App locked</string>
+    <string name="app_lock_biometric_subtitle_app_locked">Unlock using your device lock</string>
+    <string name="app_lock_biometric_title_confirmation">Confirmation</string>
+    <string name="app_lock_biometric_subtitle_confirmation_enable">To enable unlock, confirm with your device lock</string>
+    <string name="app_lock_biometric_subtitle_confirmation_disable">To disable unlock, confirm with your device lock</string>
+    <string name="app_lock_option_never_set">Enable biometrics or device lock</string>
+    <string name="app_lock_option_none">Keep unlocked</string>
+    <string name="app_lock_option_system">Biometrics or device lock</string>
+    <string name="app_lock_system_dialog_title">Turn on biometrics access</string>
+    <string name="app_lock_system_dialog_description">Set up biometrics or device lock access on this device.</string>
+    <string name="app_lock_system_dialog_settings_button">Settings</string>
+    <string name="app_lock_system_not_available">Biometrics or device lock is not available on your device</string>
+    <string name="app_lock_system_biometrics_authentication_failed">Biometrics authentication failed</string>
+    <string name="app_lock_enabled">Biometrics or device lock access activated</string>
+    <string name="app_lock_disabled">App lock has been deactivated</string>
+    <string name="app_lock_access_title">Choose how to lock the app</string>
+    <string name="app_lock_unlock_the_app">Unlock the app</string>
+    <!-- endregion -->
 </resources>

@@ -71,7 +71,7 @@ class CreateFolderViewModel @Inject constructor(
     ) { name, error, inProgress ->
         initialViewState.copy(
             name = name,
-            selection = if (error != null) name.selectAll else name.endPosition,
+            selection = if (error != null) name.selectAll else null,
             error = error,
             inProgress = inProgress
         )
@@ -132,9 +132,6 @@ class CreateFolderViewModel @Inject constructor(
 
     private val String.selectAll
         get() = IntRange(0, length)
-
-    private val String.endPosition
-        get() = IntRange(length, length)
 
     companion object {
         const val KEY_SHARE_ID = "shareId"

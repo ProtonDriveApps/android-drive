@@ -22,5 +22,5 @@ plugins {
 driveModule(hilt = true) {
     api(project(":drive:drivelink:domain"))
     api(libs.androidx.paging.common)
-    implementation(project(":drive:base:data"))
+    implementation(project(":drive:base:data")) // use for asPagingSource
 }

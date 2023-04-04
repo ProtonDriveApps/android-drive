@@ -131,6 +131,12 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
         WHERE id = :id
     """)
     abstract fun updateMediaResolution(id: Long, mediaResolutionWidth: Long, mediaResolutionHeight: Long)
+    @Query("""
+        UPDATE LinkUploadEntity SET
+            digests = :digests
+        WHERE id = :id
+    """)
+    abstract fun updateDigests(id: Long, digests: String)
 
     open fun getDistinctFlow(id: Long) = getFlow(id).distinctUntilChanged()
 }

@@ -17,8 +17,8 @@
  */
 package me.proton.core.drive.upload.domain.usecase
 
-import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.link.EncryptAndSignXAttr
 import me.proton.core.drive.file.base.domain.usecase.CreateXAttr
 import me.proton.core.drive.file.base.domain.usecase.UpdateRevision
@@ -73,6 +73,7 @@ class UpdateRevision @Inject constructor(
                                 .filterNot { uploadBlock -> uploadBlock.isThumbnail }
                                 .map { uploadBlock -> uploadBlock.rawSize },
                             mediaResolution = uploadFileLink.mediaResolution,
+                            digests = uploadFileLink.digests.values,
                         ),
                     ).getOrThrow()
                 ).getOrThrow()

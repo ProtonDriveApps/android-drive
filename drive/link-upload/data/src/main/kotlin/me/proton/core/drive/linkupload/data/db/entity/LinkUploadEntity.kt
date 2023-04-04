@@ -27,6 +27,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.CONTENT_KEY_PACKET
 import me.proton.core.drive.base.data.db.Column.CONTENT_KEY_PACKET_SIGNATURE
+import me.proton.core.drive.base.data.db.Column.DIGESTS
 import me.proton.core.drive.base.data.db.Column.ID
 import me.proton.core.drive.base.data.db.Column.LAST_MODIFIED
 import me.proton.core.drive.base.data.db.Column.LINK_ID
@@ -113,4 +114,6 @@ data class LinkUploadEntity(
     val mediaResolutionWidth: Long? = null,
     @ColumnInfo(name = MEDIA_RESOLUTION_HEIGHT, defaultValue = "NULL")
     val mediaResolutionHeight: Long? = null,
+    @ColumnInfo(name = DIGESTS, defaultValue = "NULL")
+    val digests: String? = null,
 )

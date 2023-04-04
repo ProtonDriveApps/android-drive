@@ -24,4 +24,6 @@ data class SettingsViewEvent(
     val navigateBack: () -> Unit,
     val onLinkClicked: (LegalLink) -> Unit,
     val onThemeStyleChanged: (Int) -> Unit,
+    val onAppAccess: () -> Unit,
+    val onAutoLockDurations: () -> Unit,
 )

@@ -28,7 +28,7 @@ sealed class Sorter {
 
     companion object Factory {
         operator fun get(by: By): Sorter = when (by) {
-            By.NAME -> NameSorter
+            By.NAME -> LocaleNameSorter
             By.LAST_MODIFIED -> LastModifiedSorter
             By.SIZE -> SizeSorter
             By.TYPE -> TypeSorter

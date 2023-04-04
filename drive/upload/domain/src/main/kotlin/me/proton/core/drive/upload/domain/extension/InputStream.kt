@@ -18,9 +18,14 @@
 package me.proton.core.drive.upload.domain.extension
 
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.upload.domain.outputstream.MultipleFileOutputStream
+import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
 import java.io.InputStream
+import java.security.DigestInputStream
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 
 fun InputStream.saveToBlocks(
     destinationFolder: File,
@@ -29,3 +34,18 @@ fun InputStream.saveToBlocks(
     MultipleFileOutputStream(destinationFolder, blockMaxSize)
         .apply { use { outputStream -> copyTo(outputStream) } }
         .files
+
+internal fun InputStream.injectMessageDigests(algorithms: List<String>): Pair<InputStream, List<MessageDigest>> {
+    val messageDigests = algorithms.mapNotNull { algorithm ->
+        try {
+            MessageDigest.getInstance(algorithm)
+        } catch (e: NoSuchAlgorithmException) {
+            CoreLogger.i(LogTag.UPLOAD, e, "Algorithm not supported")
+            null
+        }
+    }
+    val digestsInputStream = messageDigests.fold(this) { acc, messageDigest ->
+        DigestInputStream(acc, messageDigest)
+    }
+    return digestsInputStream to messageDigests
+}

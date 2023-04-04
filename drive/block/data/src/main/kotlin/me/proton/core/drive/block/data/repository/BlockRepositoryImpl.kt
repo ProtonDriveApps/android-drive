@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 class BlockRepositoryImpl @Inject constructor(
     private val api: BlockApiDataSource,
-): BlockRepository {
+) : BlockRepository {
     override suspend fun getUploadBlocksUrl(
         userId: UserId,
         addressId: AddressId,
@@ -39,13 +39,17 @@ class BlockRepositoryImpl @Inject constructor(
         uploadBlocks: List<UploadBlock>,
         uploadThumbnail: UploadBlock?,
     ): Result<UploadBlocksUrl> = coRunCatching {
-        api.uploadBlock(
-            userId = userId,
-            addressId = addressId,
-            fileId = fileId,
-            revisionId = revisionId,
-            uploadBlocks = uploadBlocks,
-            uploadThumbnail = uploadThumbnail,
-        ).toUploadBlocksUrl()
+        if (uploadThumbnail != null || uploadBlocks.isNotEmpty()) {
+            api.uploadBlock(
+                userId = userId,
+                addressId = addressId,
+                fileId = fileId,
+                revisionId = revisionId,
+                uploadBlocks = uploadBlocks,
+                uploadThumbnail = uploadThumbnail,
+            ).toUploadBlocksUrl()
+        } else {
+            UploadBlocksUrl(emptyList(), null)
+        }
     }
 }

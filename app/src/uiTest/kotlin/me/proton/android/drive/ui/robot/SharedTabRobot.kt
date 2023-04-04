@@ -18,15 +18,13 @@
 
 package me.proton.android.drive.ui.robot
 
-import androidx.compose.ui.test.assertCountEquals
+import me.proton.test.fusion.Fusion.allNodes
+import me.proton.test.fusion.Fusion.node
 import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.filter
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
 import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag
 
 object SharedTabRobot : HomeRobot {
-    private val filesListItems get() = nodes(hasTestTag(FilesListItemComponentTestTag.item))
+    private val filesListItems get() = allNodes.withTag(FilesListItemComponentTestTag.item)
 
     override fun robotDisplayed() {
         homeScreenDisplayed()
@@ -34,6 +32,6 @@ object SharedTabRobot : HomeRobot {
     }
 
     fun itemWithTextDisplayed(text: String) {
-        filesListItems.filter(hasText(text)).assertCountEquals(1)
+        filesListItems.filter(node.withText(text)).assertCountEquals(1)
     }
 }

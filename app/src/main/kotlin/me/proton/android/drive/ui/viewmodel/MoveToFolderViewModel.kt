@@ -141,13 +141,13 @@ class MoveToFolderViewModel @Inject constructor(
         override val onAppendErrorAction: () -> Unit = this@MoveToFolderViewModel.onRetry
     }
 
-    fun confirmMove() {
+    suspend fun confirmMove() {
         parentLink.value?.let { folder ->
             if (folder.id != parentId) {
                 viewModelScope.launch {
                     moveFile(userId, driveLinksToMove.value.map { driveLink -> driveLink.id }, folder.id)
                     selectionId?.let{ deselectLinks(selectionId) }
-                }
+                }.join()
             }
         }
     }

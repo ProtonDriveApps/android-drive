@@ -17,11 +17,11 @@
  */
 package me.proton.core.drive.files.presentation.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
@@ -48,6 +48,7 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
+import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -125,6 +126,7 @@ private inline fun ListContent(
     viewEvent: FilesViewEvent,
     uploadFileLinkList: List<UploadFileLink>,
     lazyListState: LazyListState,
+    verticalArrangement : Arrangement.Vertical = Arrangement.Top,
     crossinline content: LazyListScope.() -> Unit,
 ) {
     val modifier = if (viewState.listContentState is ListContentState.Content) {
@@ -132,7 +134,11 @@ private inline fun ListContent(
     } else {
         Modifier
     }
-    LazyColumn(modifier = modifier.fillMaxSize(), state = lazyListState) {
+    LazyColumn(
+        modifier = modifier.fillMaxSize(),
+        state = lazyListState,
+        verticalArrangement = verticalArrangement,
+    ) {
         itemsIndexed(uploadFileLinkList, key = { _, uploadFileLink -> uploadFileLink.id }) { index, uploadFileLink ->
             UploadItem(viewState, viewEvent, index, uploadFileLink)
         }
@@ -188,8 +194,14 @@ private fun LazyColumnItems.DisplayAsGrid(
     BoxWithConstraints {
         val itemsPerRow = floor(maxWidth / GridItemWidth).roundToInt().coerceAtLeast(1)
         val lazyListState = this@DisplayAsGrid.rememberLazyListState()
-        ListContent(viewState, viewEvent, uploadFileLinkList, lazyListState) {
-            FilesGridContent(this@DisplayAsGrid, GridItemWidth, itemsPerRow) { driveLink: DriveLink ->
+        ListContent(
+            viewState = viewState,
+            viewEvent = viewEvent,
+            uploadFileLinkList = uploadFileLinkList,
+            lazyListState = lazyListState,
+            verticalArrangement = Arrangement.spacedBy(ExtraSmallSpacing)
+        ) {
+            FilesGridContent(this@DisplayAsGrid, itemsPerRow) { driveLink: DriveLink ->
                 val selected = selectedDriveLinks.contains(driveLink.id)
                 FilesGridItem(
                     link = driveLink,
@@ -200,7 +212,7 @@ private fun LazyColumnItems.DisplayAsGrid(
                     isClickEnabled = viewState.isClickEnabled,
                     isTextEnabled = viewState.isTextEnabled,
                     transferProgressFlow = remember(driveLink.downloadState) { getTransferProgress(driveLink) },
-                    modifier = Modifier.width(GridItemWidth),
+                    modifier = Modifier.weight(1F),
                     isSelected = selected,
                     inMultiselect = selected || selectedDriveLinks.isNotEmpty(),
                 )

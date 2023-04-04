@@ -66,15 +66,18 @@ fun FilesScreen(
     val selected by rememberFlowWithLifecycle(flow = viewState.selected)
         .collectAsState(initial = null)
     val inMultiselect = remember(selected) { selected?.isNotEmpty() ?: false }
-    val viewEvent = viewModel.viewEvent(
-        navigateToFiles,
-        navigateToPreview,
-        navigateToSortingDialog,
-        navigateToFileOrFolderOptions,
-        navigateToMultipleFileOrFolderOptions,
-        navigateToParentFolderOptions,
-        navigateBack,
-    )
+
+    val viewEvent = remember {
+        viewModel.viewEvent(
+            navigateToFiles,
+            navigateToPreview,
+            navigateToSortingDialog,
+            navigateToFileOrFolderOptions,
+            navigateToMultipleFileOrFolderOptions,
+            navigateToParentFolderOptions,
+            navigateBack,
+        )
+    }
     BackHandler(enabled = inMultiselect) { viewEvent.onBack() }
     LaunchedEffect(viewState) {
         homeScaffoldState.topAppBar.value = {

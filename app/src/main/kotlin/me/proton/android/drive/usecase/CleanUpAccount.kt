@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.usecase
 
+import me.proton.android.drive.lock.domain.usecase.DisableAppLock
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.usecase.DeleteAllFolders
 import me.proton.core.drive.drivelink.crypto.domain.usecase.RemoveAllDecryptedText
@@ -28,11 +29,13 @@ class CleanUpAccount @Inject constructor(
     private val deleteAllFolders: DeleteAllFolders,
     private val removeAllKeys: RemoveAllKeys,
     private val removeAllDecryptedText: RemoveAllDecryptedText,
+    private val disableAppLock: DisableAppLock,
 ) {
 
     suspend operator fun invoke(userId: UserId) {
         deleteAllFolders(userId)
         removeAllKeys(userId)
         removeAllDecryptedText(userId)
+        disableAppLock(userAuthenticationRequired = false)
     }
 }

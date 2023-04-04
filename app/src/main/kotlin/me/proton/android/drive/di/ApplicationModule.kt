@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.di
 
+import android.app.ActivityManager
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
@@ -29,15 +30,19 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.BuildConfig
+import me.proton.android.drive.lock.data.usecase.BuildAppKeyImpl
+import me.proton.android.drive.lock.domain.usecase.BuildAppKey
 import me.proton.android.drive.log.DriveLogger
 import me.proton.android.drive.notification.AppNotificationBuilderProvider
 import me.proton.android.drive.notification.AppNotificationEventHandler
 import me.proton.android.drive.provider.BuildConfigurationProvider
 import me.proton.android.drive.settings.DebugSettings
+import me.proton.android.drive.usecase.GetDocumentsProviderRootsImpl
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.domain.entity.AppStore
 import me.proton.core.domain.entity.Product
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentsProviderRoots
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
 import me.proton.core.drive.notification.domain.handler.NotificationEventHandler
 import me.proton.drive.android.settings.data.datastore.AppUiSettingsDataStore
@@ -79,7 +84,7 @@ object ApplicationModule {
 
     @Provides
     @Singleton
-    fun provideDriveLogger(): DriveLogger = DriveLogger()
+    fun provideDriveLogger(@ApplicationContext context: Context): DriveLogger = DriveLogger(context)
 
     @Provides
     @Singleton
@@ -105,6 +110,11 @@ object ApplicationModule {
     @Singleton
     fun provideClipboardManager(@ApplicationContext context: Context): ClipboardManager =
         context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    @Provides
+    @Singleton
+    fun provideActivityManager(@ApplicationContext context: Context): ActivityManager =
+        context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
 }
 
 @Module
@@ -119,4 +129,8 @@ abstract class ApplicationBindsModule {
     abstract fun bindsNotificationBuilderProvider(
         impl: AppNotificationBuilderProvider
     ): NotificationBuilderProvider
+
+    @Binds
+    @Singleton
+    abstract fun bindsGetDocumentsProviderRootsImpl(impl: GetDocumentsProviderRootsImpl): GetDocumentsProviderRoots
 }

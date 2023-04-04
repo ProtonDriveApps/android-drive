@@ -34,4 +34,10 @@ class GetDecryptedDriveLinks @Inject constructor(
             .mapCatching { driveLinks ->
                 decryptDriveLinks(driveLinks)
             }
+
+    operator fun invoke(parentId: FolderId, fromIndex: Int, count: Int,): Flow<Result<List<DriveLink>>> =
+        getFolderChildrenDriveLinks(parentId, fromIndex, count)
+            .mapCatching { driveLinks ->
+                decryptDriveLinks(driveLinks)
+            }
 }

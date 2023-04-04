@@ -19,9 +19,9 @@ package me.proton.core.drive.base.domain.repository
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.FlowCollector
-import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.drive.base.domain.extension.toDataResult
 import me.proton.core.network.domain.ApiException
 
 suspend inline fun <T> FlowCollector<DataResult<T>>.fetcher(fetchAction: () -> Unit) {
@@ -31,7 +31,7 @@ suspend inline fun <T> FlowCollector<DataResult<T>>.fetcher(fetchAction: () -> U
     } catch (e: CancellationException) {
         throw e
     } catch (e: ApiException) {
-        emit(e.error.toDataResult())
+        emit(e.toDataResult())
     } catch (e: RuntimeException) {
         emit(DataResult.Error.Local(e.message, e))
     }
@@ -44,7 +44,7 @@ suspend inline fun <T> FlowCollector<DataResult<List<T>>>.listFetcherEmitOnEmpty
     } catch (e: CancellationException) {
         throw e
     } catch (e: ApiException) {
-        emit(e.error.toDataResult())
+        emit(e.toDataResult())
     } catch (e: RuntimeException) {
         emit(DataResult.Error.Local(e.message, e))
     }

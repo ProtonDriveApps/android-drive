@@ -24,16 +24,16 @@ import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.user.domain.repository.UserAddressRepository
 
 suspend fun UserAddressRepository.getAddressKeys(userId: UserId, email: String): KeyHolder =
-    getAddresses(userId)
-        .first { userAddress -> userAddress.email == email }
-        .keys
-        .keyHolder()
+    with (getAddresses(userId)) {
+        firstOrNull { userAddress -> userAddress.email == email }?.keys?.keyHolder()
+            ?: flatMap { userAddress -> userAddress.keys }.keyHolder()
+    }
 
 suspend fun UserAddressRepository.getAddressKeys(userId: UserId, addressId: AddressId): KeyHolder =
-    getAddresses(userId)
-        .first { userAddress -> userAddress.addressId == addressId }
-        .keys
-        .keyHolder()
+    with (getAddresses(userId)) {
+        firstOrNull { userAddress -> userAddress.addressId == addressId }?.keys?.keyHolder()
+            ?: flatMap { userAddress -> userAddress.keys }.keyHolder()
+    }
 
 fun List<KeyHolderPrivateKey>.keyHolder() = object : KeyHolder {
     override val keys: List<KeyHolderPrivateKey> = this@keyHolder

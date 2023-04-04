@@ -26,5 +26,4 @@ driveModule(
 ) {
     api(project(":drive:link:domain"))
     implementation(project(":drive:event-manager:base:domain"))
-    implementation(project(":drive:base:data"))
 }

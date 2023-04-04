@@ -23,10 +23,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.usecase.GetUserEmail
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.report.presentation.ReportOrchestrator
 import me.proton.core.report.presentation.entity.BugReportInput
@@ -38,6 +42,7 @@ class BugReportViewModel @Inject constructor(
     accountManager: AccountManager,
     private val reportOrchestrator: ReportOrchestrator,
     private val broadcastMessages: BroadcastMessages,
+    private val getUserEmail: GetUserEmail,
 ) : ViewModel() {
 
     private val primaryAccount = accountManager
@@ -57,11 +62,12 @@ class BugReportViewModel @Inject constructor(
     }
 
     fun sendBugReport() {
-        primaryAccount.value?.let { account ->
+        viewModelScope.launch {
+            val account = primaryAccount.filterNotNull().first()
             reportOrchestrator.startBugReport(
                 input = BugReportInput(
-                    email = account.email.orEmpty(),
-                    username = account.username
+                    email = getUserEmail(account.userId),
+                    username = account.username,
                 ),
             )
         }

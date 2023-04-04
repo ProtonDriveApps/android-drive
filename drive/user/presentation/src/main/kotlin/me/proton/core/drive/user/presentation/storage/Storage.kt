@@ -61,7 +61,7 @@ fun StorageIndicator(
         Row {
             Icon(
                 painter = painterResource(CorePresentation.drawable.ic_proton_cloud),
-                tint = ProtonTheme.colors.iconNorm,
+                tint = ProtonTheme.colors.iconWeak,
                 contentDescription = null,
             )
             Text(

@@ -20,6 +20,7 @@ package me.proton.core.drive.base.domain.extension
 import me.proton.core.drive.base.domain.entity.Bytes
 import java.io.File
 
+inline val Int.GiB: Bytes get() = (this * 1_073_741_824L).bytes
 inline val Int.MiB: Bytes get() = (this * 1_048_576L).bytes
 inline val Int.KiB: Bytes get() = (this * 1_024L).bytes
 

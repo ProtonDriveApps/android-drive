@@ -17,15 +17,15 @@
  */
 package me.proton.core.drive.base.data.api
 
-import me.proton.core.data.arch.toDataResult
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.drive.base.domain.extension.toDataResult
 import me.proton.core.network.domain.ApiException
 
 inline fun <T> runCatchingApiException(block: () -> T): DataResult<T> {
     return try {
         DataResult.Success(ResponseSource.Remote, block())
     } catch (e: ApiException) {
-        e.error.toDataResult()
+        e.toDataResult()
     }
 }

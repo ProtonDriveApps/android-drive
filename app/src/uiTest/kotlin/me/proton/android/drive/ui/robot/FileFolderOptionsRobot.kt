@@ -18,22 +18,22 @@
 
 package me.proton.android.drive.ui.robot
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasTestTag
+import me.proton.test.fusion.Fusion.node
 import me.proton.android.drive.ui.dialog.FileFolderOptionsDialogTestTag
 import me.proton.core.drive.base.presentation.R
 
-object FileFolderOptionsRobot : Robot {
-    private val fileFolderOptionsScreen get() = node(hasTestTag(FileFolderOptionsDialogTestTag.fileOrFolderOptions))
-    private val moveButton get() = node(hasTextResource(R.string.files_move_file_action))
-    private val moveToTrash get() = node(hasTextResource(R.string.files_send_to_trash_action))
-    private val makeAvailableOfflineButton get() = node(hasTextResource(R.string.title_make_available_offline))
-    private val getLinkButton get() = node(hasTextResource(R.string.title_get_link))
-    private val renameButton get() = node(hasTextResource(R.string.files_rename_file_action))
-    private val folderDetailsButton get() = node(hasTextResource(R.string.files_display_folder_info_action))
 
-    fun clickMove() = moveButton.tryToClickAndGoTo(MoveToFolderRobot)
-    fun clickRename() = renameButton.tryToClickAndGoTo(RenameRobot)
+object FileFolderOptionsRobot : Robot {
+    private val fileFolderOptionsScreen get() = node.withTag(FileFolderOptionsDialogTestTag.fileOrFolderOptions)
+    private val moveButton get() = node.withText(R.string.files_move_file_action)
+    private val moveToTrash get() = node.withText(R.string.files_send_to_trash_action)
+    private val makeAvailableOfflineButton get() = node.withText(R.string.title_make_available_offline)
+    private val getLinkButton get() = node.withText(R.string.title_get_link)
+    private val renameButton get() = node.withText(R.string.files_rename_file_action)
+    private val folderDetailsButton get() = node.withText(R.string.files_display_folder_info_action)
+
+    fun clickMove() = moveButton.clickTo(MoveToFolderRobot)
+    fun clickRename() = renameButton.clickTo(RenameRobot)
 
     override fun robotDisplayed() {
         fileFolderOptionsScreen.assertIsDisplayed()

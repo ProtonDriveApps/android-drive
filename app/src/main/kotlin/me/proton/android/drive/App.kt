@@ -20,6 +20,12 @@ package me.proton.android.drive
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
+import me.proton.android.drive.initializer.MainInitializer
 
 @HiltAndroidApp
-class App : Application()
+class App : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        MainInitializer.init(this)
+    }
+}

@@ -271,6 +271,22 @@ sealed class Screen(val route: String) {
         operator fun invoke(userId: UserId) = "settings/${userId.id}"
 
         const val USER_ID = Screen.USER_ID
+
+        object AppAccess : Screen("settings/{userId}/appAccess") {
+
+            operator fun invoke(userId: UserId) = "settings/${userId.id}/appAccess"
+
+            object Dialogs {
+
+                object SystemAccess : Screen("settings/{userId}/appAccess/systemAccess") {
+                    operator fun invoke(userId: UserId) = "settings/${userId.id}/appAccess/systemAccess"
+                }
+            }
+        }
+
+        object AutoLockDurations : Screen("settings/{userId}/autoLockDurations") {
+            operator fun invoke(userId: UserId) = "settings/${userId.id}/autoLockDurations"
+        }
     }
 
     object SendFile : Screen("send/{userId}/shares/{shareId}/files/{fileId}") {

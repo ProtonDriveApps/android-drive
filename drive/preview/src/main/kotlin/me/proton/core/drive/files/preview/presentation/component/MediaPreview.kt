@@ -42,6 +42,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.compose.theme.isNightMode
 import me.proton.core.drive.base.presentation.extension.conditional
 
 @Composable
@@ -54,7 +55,7 @@ fun MediaPreview(
     mediaControllerVisibility: (Boolean) -> Unit = {}
 ) {
     val backgroundColor by animateColorAsState(
-        targetValue = if (isFullScreen) {
+        targetValue = if (isFullScreen && isNightMode().not()) {
             MaterialTheme.colors.onBackground
         } else {
             MaterialTheme.colors.background

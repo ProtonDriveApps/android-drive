@@ -18,28 +18,20 @@
 
 package me.proton.android.drive.ui.robot
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasAnyAncestor
-import androidx.compose.ui.test.hasSetTextAction
-import androidx.compose.ui.test.hasTestTag
+import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.drivelink.rename.presentation.R
 import me.proton.core.drive.drivelink.rename.presentation.RenameScreenTestTag
 
 object RenameRobot : Robot {
+    private val renameScreen get() = node.withTag(RenameScreenTestTag.screen)
+    private val cancelRenameButton get() = node.withText(R.string.link_rename_dismiss_button)
+    private val confirmRenameButton get() = node.withText(R.string.link_rename_button)
+    private val renameTextField get() = node.isSetText().hasAncestor(node.withTag(RenameScreenTestTag.textField))
 
-    private val renameScreen get() = node(hasTestTag(RenameScreenTestTag.screen))
-    private val cancelRenameButton get() = node(hasTextResource(R.string.link_rename_dismiss_button))
-    private val confirmRenameButton get() = node(hasTextResource(R.string.link_rename_button))
-    private val renameTextField
-        get() = node(
-            hasSetTextAction(),
-            hasAnyAncestor(hasTestTag(RenameScreenTestTag.textField))
-        )
-
-    fun clickCancel() = cancelRenameButton.tryToClickAndGoTo(FilesTabRobot)
-    fun clickRename() = confirmRenameButton.tryToClickAndGoTo(FilesTabRobot)
-    fun typeName(text: String) = renameTextField.tryToTypeText(text, RenameRobot)
-    fun clearName() = renameTextField.clearText(RenameRobot)
+    fun clickCancel() = cancelRenameButton.clickTo(FilesTabRobot)
+    fun clickRename() = confirmRenameButton.clickTo(FilesTabRobot)
+    fun typeName(text: String) = apply { renameTextField.typeText(text) }
+    fun clearName() = apply { renameTextField.clearText() }
 
     override fun robotDisplayed() {
         renameScreen.assertIsDisplayed()

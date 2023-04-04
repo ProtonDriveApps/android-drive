@@ -36,7 +36,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -44,6 +43,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.R
@@ -66,9 +66,9 @@ import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLin
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgress
-import me.proton.core.drive.drivelink.list.domain.usecase.GetDriveLinks
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
+import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
 import me.proton.core.drive.files.presentation.state.ListContentAppendingState
@@ -110,14 +110,15 @@ class FilesViewModel @Inject constructor(
     private val getUploadFileLinks: GetUploadFileLinks,
     private val getUploadProgress: GetUploadProgress,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
-    private val getDriveLinks: GetDriveLinks,
     private val selectLinks: SelectLinks,
+    private val selectAll: SelectAll,
     private val deselectLinks: DeselectLinks,
     private val getSelectedDriveLinks: GetSelectedDriveLinks,
     private val savedStateHandle: SavedStateHandle,
     getSorting: GetSorting,
     private val configurationProvider: ConfigurationProvider,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle), HomeTabViewModel {
+
     private val shareId = savedStateHandle.get<String>(Screen.Files.SHARE_ID)
     private val folderId = savedStateHandle.get<String>(Screen.Files.FOLDER_ID)?.let { folderId ->
         shareId?.let { FolderId(ShareId(userId, shareId), folderId) }
@@ -141,9 +142,6 @@ class FilesViewModel @Inject constructor(
                 }
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
-    private val encryptedDriveLinks: Flow<List<DriveLink>> =
-        driveLink.filterNotNull()
-            .flatMapLatest { folder -> getDriveLinks(folder.id) }
 
     val driveLinks: Flow<PagingData<DriveLink>> =
         driveLink.filterNotNull()
@@ -175,9 +173,9 @@ class FilesViewModel @Inject constructor(
         contentDescriptionResId = BasePresentation.string.content_description_select_all,
         onAction = {
             viewModelScope.launch {
-                addSelected(
-                    encryptedDriveLinks.first().map { driveLink -> driveLink.id }
-                )
+                driveLink.value?.let { parent ->
+                    selectAll(parent.id, selectionId.value)
+                }
             }
         }
     )
@@ -187,23 +185,20 @@ class FilesViewModel @Inject constructor(
         onAction = { viewEvent?.onSelectedOptions?.invoke() }
     )
     private val topBarActions: MutableStateFlow<Set<FilesViewState.Action>> = MutableStateFlow(setOf(addFilesAction))
-    private val selected: StateFlow<Set<LinkId>> = combine(
-        selectionId.filterNotNull().flatMapLatest { selectionId -> getSelectedDriveLinks(selectionId) },
-        encryptedDriveLinks,
-    ) { selectedDriveLinks, availableDriveLinks ->
-        val selectedDriveLinkIds = selectedDriveLinks.map { driveLink -> driveLink.id }.toSet()
-        val availableDriveLinkIds = availableDriveLinks.map { driveLink -> driveLink.id }.toSet()
-        val removedDriveLinkIds = selectedDriveLinkIds.subtract(availableDriveLinkIds)
-        if (removedDriveLinkIds.isNotEmpty()) {
-            removeSelected(removedDriveLinkIds.toList())
-        }
-        if (selectedDriveLinkIds.isEmpty()) {
-            topBarActions.value = setOf(addFilesAction)
-        } else {
-            topBarActions.value = setOf(selectAllAction, selectedOptionsAction)
-        }
-        selectedDriveLinkIds
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, setOf())
+    private val selected: StateFlow<Set<LinkId>> = selectionId
+        .filterNotNull()
+        .transformLatest { id ->
+            emitAll(
+                getSelectedDriveLinks(id).map { driveLinks ->
+                    if (driveLinks.isEmpty()) {
+                        topBarActions.value = setOf(addFilesAction)
+                    } else {
+                        topBarActions.value = setOf(selectAllAction, selectedOptionsAction)
+                    }
+                    driveLinks.map { driveLink -> driveLink.id }.toSet()
+                }
+            )
+        }.stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
     val isBottomNavigationEnabled: Flow<Boolean> = selected.map { set -> set.isEmpty() }
     val initialViewState = FilesViewState(
         title = savedStateHandle[Screen.Files.FOLDER_NAME],
@@ -269,7 +264,6 @@ class FilesViewModel @Inject constructor(
         actionResId = BasePresentation.string.action_empty_files_add_files,
     )
     private var viewEvent: FilesViewEvent? = null
-
     fun viewEvent(
         navigateToFiles: (folderId: FolderId, folderName: String?) -> Unit,
         navigateToPreview: (fileId: FileId) -> Unit,
@@ -279,6 +273,15 @@ class FilesViewModel @Inject constructor(
         navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
         navigateBack: () -> Unit,
     ): FilesViewEvent = object : FilesViewEvent {
+
+        private val driveLinkShareFlow = MutableSharedFlow<DriveLink>(extraBufferCapacity = 1).also { flow ->
+            viewModelScope.launch {
+                flow.take(1).collect { driveLink ->
+                    driveLink.onClick(navigateToFiles, navigateToPreview)
+                }
+            }
+        }
+
         override val onTopAppBarNavigation = {
             if (selected.value.isNotEmpty()) {
                 selectionId.value?.let { viewModelScope.launch { deselectLinks(it) } }
@@ -301,7 +304,8 @@ class FilesViewModel @Inject constructor(
                     addSelected(listOf(driveLink.id))
                 }
             } else {
-                driveLink.onClick(navigateToFiles, navigateToPreview)
+                driveLinkShareFlow.tryEmit(driveLink)
+                Unit
             }
         }
         override val onLoadState = onLoadState(

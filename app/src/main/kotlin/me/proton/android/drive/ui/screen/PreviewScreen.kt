@@ -107,7 +107,6 @@ fun PreviewScreen(
                         navigateBack = navigateBack,
                         navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
                     ),
-                    zoomEffect = viewModel.zoomEffect,
                     modifier = modifier,
                 ) { page ->
                     viewModel.onPageChanged(page)

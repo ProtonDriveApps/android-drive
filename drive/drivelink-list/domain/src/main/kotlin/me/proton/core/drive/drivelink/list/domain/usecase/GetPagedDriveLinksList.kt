@@ -27,6 +27,7 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.mapCatching
 import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptDriveLinks
+import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinksCount
 import me.proton.core.drive.drivelink.paged.domain.usecase.GetPagedDriveLinks
 import me.proton.core.drive.drivelink.sorting.domain.usecase.SortDriveLinks
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -42,6 +43,7 @@ class GetPagedDriveLinksList @Inject constructor(
     private val getMainShare: GetMainShare,
     private val getPagedDriveLinks: GetPagedDriveLinks,
     private val getDecryptedDriveLinks: GetDecryptedDriveLinks,
+    private val getDriveLinksCount: GetDriveLinksCount,
     private val getFolderChildrenDriveLinks: GetFolderChildrenDriveLinks,
     private val fetchDriveLinksListPage: FetchDriveLinksListPage,
     private val getSorting: GetSorting,
@@ -74,22 +76,23 @@ class GetPagedDriveLinksList @Inject constructor(
                         pageSize
                     )
                 },
-                localDriveLinks = {
+                localPagedDriveLinks = { fromIndex, count ->
                     if (sorting.by == By.NAME || sorting.by == By.LAST_MODIFIED) {
-                        getDecryptedDriveLinks(folderId)
+                        getDecryptedDriveLinks(folderId, fromIndex, count)
                             .mapCatching { driveLinks ->
                                 sortDriveLinks(sorting, driveLinks)
                             }
                     } else {
-                        getFolderChildrenDriveLinks(folderId)
+                        getFolderChildrenDriveLinks(folderId, fromIndex, count)
                             .mapCatching { driveLinks ->
                                 sortDriveLinks(sorting, driveLinks)
                             }
                     }
                 },
+                localDriveLinksCount = { getDriveLinksCount(parentId = folderId) },
                 processPage = takeIf { sorting.by != By.NAME && sorting.by != By.LAST_MODIFIED }?.let {
                     { page -> decryptDriveLinks(page) }
-                }
+                },
             )
         }
 }

@@ -54,7 +54,7 @@ class RenamingFileSuccessFlowTest: BaseTest() {
         val newName = "picture.jpg"
 
         FilesTabRobot
-            .swipeUpToItemWithName(oldName)
+            .scrollToItemWithName(oldName)
             .clickOnFile(oldName)
             .verify {
                 robotDisplayed()

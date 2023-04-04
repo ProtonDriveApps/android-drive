@@ -18,76 +18,59 @@
 
 package me.proton.android.drive.ui.robot
 
-import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsSelected
-import androidx.compose.ui.test.filter
-import androidx.compose.ui.test.hasAnyChild
-import androidx.compose.ui.test.hasAnySibling
-import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.hasTextExactly
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeUp
+
 import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.files.presentation.component.FilesTestTag
-import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag
+import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag.threeDotsButton
+import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag.item
 import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag.ItemType
-import me.proton.core.test.android.instrumented.utils.StringUtils
+import me.proton.test.fusion.Fusion.allNodes
+import me.proton.test.fusion.Fusion.node
+import me.proton.test.fusion.ui.common.enums.SwipeDirection
 
 object FilesTabRobot : HomeRobot {
-    private val uploadFileDesc =
-        StringUtils.stringFromResource(R.string.files_upload_content_description_upload_file)
-    private val plusButton get() = node(hasContentDescription(uploadFileDesc))
-    private val filesListItems get() = nodes(hasTestTag(FilesListItemComponentTestTag.item))
-
+    private val plusButton get() = node.withContentDescription(R.string.files_upload_content_description_upload_file)
+    private fun itemWithName(name: String) = node.withTag(item).withText(name)
+    private val fileList get() = node.withTag(FilesTestTag.content)
     private fun moreButton(itemName: String, itemType: ItemType) =
-        node(
-            hasTestTag(FilesListItemComponentTestTag.threeDotsButton(itemType)),
-            hasAnySibling(hasTextExactly(itemName))
-        )
-
-    private val filesContent get() = node(hasTestTag(FilesTestTag.content))
+        node
+            .withTag(threeDotsButton(itemType))
+            .hasSibling(node.withText(itemName))
 
     fun itemWithTextDisplayed(text: String) {
-        filesListItems.filter(hasText(text)).assertCountEquals(1)
+        itemWithName(text).await { assertIsDisplayed() }
     }
 
-    fun swipeUpToItemWithName(itemName: String): FilesTabRobot = waitFor(this) {
-        try {
-            node(hasText(itemName)).assertIsDisplayed()
-        } catch (error: AssertionError) {
-            filesContent.performTouchInput { swipeUp(durationMillis = 1000L) }
-            throw error
-        }
+    fun scrollToItemWithName(itemName: String): FilesTabRobot = apply {
+        allNodes.withTag(item).assertAny(node.isEnabled())
+        fileList.scrollTo(node.withText(itemName))
     }
 
-    fun clickPlusButton() = plusButton.tryToClickAndGoTo(ParentFolderOptionsRobot)
+    fun clickPlusButton() = plusButton.clickTo(ParentFolderOptionsRobot)
 
     fun clickMoreOnItem(title: String) =
-        node(
-            hasTestTag(FilesListItemComponentTestTag.threeDotsButton(ItemType.File)) or hasTestTag(FilesListItemComponentTestTag.threeDotsButton(ItemType.Folder)),
-            hasAnySibling(hasTextExactly(title))
-        ).tryToClickAndGoTo(FileFolderOptionsRobot)
+        node
+            .withAnyTag(threeDotsButton(ItemType.File), threeDotsButton(ItemType.Folder))
+            .hasSibling(node.withText(title))
+            .clickTo(FileFolderOptionsRobot)
 
     fun clickMoreOnFolder(title: String) =
-        moreButton(title, ItemType.Folder).tryToClickAndGoTo(FileFolderOptionsRobot)
+        moreButton(title, ItemType.Folder).clickTo(FileFolderOptionsRobot)
 
     fun clickMoreOnFile(title: String) =
-        moreButton(title, ItemType.File).tryToClickAndGoTo(FileFolderOptionsRobot)
+        moreButton(title, ItemType.File).clickTo(FileFolderOptionsRobot)
 
     fun clickOnFile(name: String) =
-        node(
-            hasTestTag(FilesListItemComponentTestTag.threeDotsButton(ItemType.File)),
-            hasAnyChild(hasText(name))
-        ).tryToClickAndGoTo(PreviewRobot)
+        node
+            .withTag(threeDotsButton(ItemType.File))
+            .hasChild(node.withText(name))
+            .clickTo(this)
 
     fun clickOnFolder(name: String) =
-        node(
-            hasAnySibling(hasTestTag(FilesListItemComponentTestTag.threeDotsButton(ItemType.Folder))),
-            hasText(name)
-        ).tryToClickAndGoTo(FilesTabRobot)
+        node
+            .withText(name)
+            .hasSibling(node.withTag(threeDotsButton(ItemType.Folder)))
+            .clickTo(this)
 
     override fun robotDisplayed() {
         homeScreenDisplayed()

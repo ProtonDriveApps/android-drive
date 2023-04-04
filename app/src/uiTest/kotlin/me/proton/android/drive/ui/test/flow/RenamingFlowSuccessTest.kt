@@ -50,7 +50,7 @@ class RenamingFlowSuccessTest(
     @Test
     fun renameSuccess() {
         FilesTabRobot
-            .swipeUpToItemWithName(itemToBeRenamed)
+            .scrollToItemWithName(itemToBeRenamed)
             .clickMoreOnItem(itemToBeRenamed)
             .clickRename()
             .clearName()
@@ -62,7 +62,7 @@ class RenamingFlowSuccessTest(
     }
 
     companion object {
-        @get:Parameterized.Parameters(name = "folderToBeRenamed={0}, newFolderName={1}")
+        @get:Parameterized.Parameters(name = "folderToBeRenamed={0}_newFolderName={1}")
         @get:JvmStatic
         val data = listOf(
             arrayOf("folder1", "...folder1"),

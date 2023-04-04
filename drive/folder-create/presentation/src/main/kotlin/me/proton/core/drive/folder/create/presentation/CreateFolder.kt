@@ -27,11 +27,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
@@ -77,7 +81,7 @@ fun CreateFolder(
 fun CreateFolder(
     @StringRes titleResId: Int,
     folderName: String,
-    selection: IntRange,
+    selection: IntRange?,
     showProgress: Boolean,
     modifier: Modifier = Modifier,
     inputError: String? = null,
@@ -116,7 +120,7 @@ fun CreateFolder(
 @Composable
 fun CreateFolderContent(
     folderName: String,
-    selection: IntRange,
+    selection: IntRange?,
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester = remember { FocusRequester() },
     inputError: String? = null,
@@ -127,12 +131,38 @@ fun CreateFolderContent(
             .height(intrinsicSize = IntrinsicSize.Max)
     ) {
         Spacer(modifier = Modifier.size(DefaultSpacing))
+        var state by remember {
+            mutableStateOf(
+                TextFieldValue(
+                    text = folderName,
+                    selection = if (selection == null) {
+                        TextRange.Zero
+                    } else {
+                        TextRange(selection.first, selection.last)
+                    }
+                )
+            )
+        }
+        LaunchedEffect(folderName, selection) {
+            state = state.copy(
+                text = folderName,
+                selection = if (selection != null) {
+                    TextRange(selection.first, selection.last)
+                } else {
+                    state.selection
+                }
+            )
+        }
         OutlinedTextFieldWithError(
-            text = folderName,
-            selection = selection,
+            textFieldValue = state,
             errorText = inputError,
             focusRequester = focusRequester,
-            onValueChanged = onValueChanged,
+            onValueChanged = { textFieldValue ->
+                if (state != textFieldValue) {
+                    state = textFieldValue
+                    onValueChanged(textFieldValue.text)
+                }
+            },
             modifier = Modifier
                 .testTag(CreateFolderComponentTestTag.folderNameTextField),
         )

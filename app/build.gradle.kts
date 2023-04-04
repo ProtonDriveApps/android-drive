@@ -16,7 +16,6 @@
  * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
@@ -49,6 +48,7 @@ driveModule(
     serialization = true,
 ) {
     implementation(files("../../proton-libs/gopenpgp/gopenpgp.aar"))
+    implementation(project(":app-lock"))
     implementation(project(":app-ui-settings"))
     implementation(project(":drive"))
 
@@ -67,13 +67,14 @@ driveModule(
     implementation(libs.timber)
 
     androidTestImplementation(libs.androidx.navigation.compose)
+    androidTestImplementation(libs.fusion)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
 
 val privateProperties = Properties().apply {
     try {
-        load(FileInputStream("private.properties"))
+        load(rootDir.resolve("private.properties").inputStream())
     } catch (exception: java.io.FileNotFoundException) {
         // Provide empty properties to allow the app to be built without secrets
         logger.warn("private.properties file not found", exception)

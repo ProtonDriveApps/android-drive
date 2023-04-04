@@ -69,6 +69,8 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.extension.deepLinkBaseUrl
+import me.proton.android.drive.lock.data.provider.BiometricPromptProvider
+import me.proton.android.drive.lock.domain.manager.AppLockManager
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.ui.navigation.AppNavGraph
 import me.proton.android.drive.ui.provider.LocalSnackbarPadding
@@ -100,6 +102,8 @@ class MainActivity : FragmentActivity() {
     @Inject lateinit var actionProvider: ActionProvider
     @Inject lateinit var getThemeStyle: GetThemeStyle
     @Inject lateinit var processIntent: ProcessIntent
+    @Inject lateinit var biometricPromptProvider: BiometricPromptProvider
+    @Inject lateinit var appLockManager: AppLockManager
     lateinit var configurationProvider: ConfigurationProvider
     private val accountViewModel: AccountViewModel by viewModels()
     private val bugReportViewModel: BugReportViewModel by viewModels()
@@ -121,6 +125,7 @@ class MainActivity : FragmentActivity() {
         applySecureFlag()
         setTheme(CorePresentation.style.ProtonTheme_Drive)
         super.onCreate(savedInstanceState)
+        biometricPromptProvider.bindToActivity(this)
         setupAccountsViewModel()
         bugReportViewModel.initialize(this)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -145,12 +150,13 @@ class MainActivity : FragmentActivity() {
                         deepLinkBaseUrl = this@MainActivity.deepLinkBaseUrl,
                         clearBackstackTrigger = clearBackstackTrigger,
                         deepLinkIntent = deepLinkIntent,
+                        locked = appLockManager.locked,
+                        primaryAccount = accountViewModel.primaryAccount,
                         exitApp = { finish() },
                         sendBugReport = bugReportViewModel::sendBugReport,
                     ) { isOpen ->
                         isDrawerOpen = isOpen
                     }
-
                     HeadlessSnackBar(snackbarHostState)
                 }
             }

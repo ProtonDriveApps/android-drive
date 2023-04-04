@@ -33,4 +33,8 @@ class GetDriveLinks @Inject constructor(
     operator fun invoke(parentId: FolderId): Flow<List<DriveLink>> =
         repository.getDriveLinks(parentId)
             .map { driveLinks -> updateIsAnyAncestorMarkedAsOffline(driveLinks) }
+
+    operator fun invoke(parentId: FolderId, fromIndex: Int, count: Int): Flow<List<DriveLink>> =
+        repository.getDriveLinks(parentId, fromIndex, count)
+            .map { driveLinks -> updateIsAnyAncestorMarkedAsOffline(driveLinks) }
 }

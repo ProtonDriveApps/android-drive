@@ -98,6 +98,7 @@ fun MoveToFolder(
         modifier
             .systemBarsPadding()
             .padding(vertical = DefaultSpacing)
+            .testTag(MoveToFolderScreenTestTag.screen)
     ) {
         Column {
             Title(
@@ -198,5 +199,5 @@ fun TitleText(
 
 object MoveToFolderScreenTestTag {
     const val screen = "move to folder screen"
-    const val plusFolderButton = "plus folder button"
+    const val plusFolderButton = "move to folder plus folder button"
 }

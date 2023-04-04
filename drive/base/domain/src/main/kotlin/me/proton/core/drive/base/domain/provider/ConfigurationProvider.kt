@@ -23,6 +23,8 @@ import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.drive.base.domain.extension.bytes
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 interface ConfigurationProvider {
     val host: String
@@ -30,6 +32,7 @@ interface ConfigurationProvider {
     val appVersionHeader: String
     val uiPageSize: Int get() = 50
     val apiPageSize: Int get() = 150
+    val dbPageSize: Int get() = 500
     val cacheMaxEntries: Int get() = 10_000
     val linkMaxNameLength: Int get() = 255
     val blockMaxSize: Bytes get() = 4.MiB
@@ -49,4 +52,8 @@ interface ConfigurationProvider {
     val validateUploadLimit: Boolean get() = true
     val uploadLimitThreshold: Int get() = 250
     val useExceptionMessage: Boolean get() = false
+    val digestAlgorithms: List<String> get() = listOf("SHA1")
+    val autoLockDurations: Set<Duration> get() = setOf(
+        0.seconds, 60.seconds, 2.minutes, 5.minutes, 15.minutes, 30.minutes
+    )
 }

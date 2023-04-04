@@ -29,12 +29,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.viewmodel.OfflineViewModel
+import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
 import me.proton.core.drive.files.presentation.component.Files
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.sorting.domain.entity.Sorting
 
 @Composable

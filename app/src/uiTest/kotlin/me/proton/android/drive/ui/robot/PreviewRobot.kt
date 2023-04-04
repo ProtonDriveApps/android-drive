@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.ui.robot
 
+import me.proton.test.fusion.Fusion.node
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
@@ -25,18 +26,16 @@ import androidx.compose.ui.test.hasText
 import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag
 import me.proton.core.drive.files.preview.presentation.component.PreviewComponentTestTag
-import me.proton.core.test.android.instrumented.utils.StringUtils
 
 object PreviewRobot : Robot {
 
-    private val contextualButtonDesc = StringUtils.stringFromResource(R.string.content_description_more_options)
-    private val previewScreen get() = node(hasTestTag(PreviewComponentTestTag.screen))
-    private val contextualButton get() = node(hasContentDescription(contextualButtonDesc))
+    private val previewScreen get() = node.withTag(PreviewComponentTestTag.screen)
+    private val contextualButton get() = node.withContentDescription(R.string.content_description_more_options)
 
-    fun clickOnContextualButton() = contextualButton.tryToClickAndGoTo(FileFolderOptionsRobot)
+    fun clickOnContextualButton() = contextualButton.clickTo(FileFolderOptionsRobot)
 
     fun topBarWithTextDisplayed(itemName: String) {
-        node(hasTestTag(TopAppBarComponentTestTag.appBar) and hasText(text = itemName, substring = true)).assertExists()
+        node.withTag(TopAppBarComponentTestTag.appBar).withTextSubstring(itemName).assertExists()
     }
 
     override fun robotDisplayed() {

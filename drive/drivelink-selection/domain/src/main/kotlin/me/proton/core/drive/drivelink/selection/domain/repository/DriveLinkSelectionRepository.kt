@@ -19,9 +19,18 @@ package me.proton.core.drive.drivelink.selection.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 
 interface DriveLinkSelectionRepository {
 
     fun getSelectedDriveLinks(selectionId: SelectionId): Flow<List<DriveLink>>
+
+    suspend fun selectAll(
+        parentId: FolderId,
+        selectionId: SelectionId?,
+        getDriveLinks: (fromIndex: Int, count: Int) -> Flow<List<DriveLink>>,
+        selectLinks: suspend (SelectionId?, List<LinkId>) -> Result<SelectionId>,
+    )
 }

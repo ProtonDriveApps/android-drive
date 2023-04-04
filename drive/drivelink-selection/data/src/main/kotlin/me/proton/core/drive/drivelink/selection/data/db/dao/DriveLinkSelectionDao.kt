@@ -25,6 +25,7 @@ import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
 import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
 import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.SELECTION_PREFIX
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
+import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 
 @Dao
 interface DriveLinkSelectionDao : DriveLinkDao {
@@ -32,7 +33,7 @@ interface DriveLinkSelectionDao : DriveLinkDao {
     @Query(
         """
         SELECT ${DriveLinkDao.DRIVE_LINK_SELECT} FROM ${DriveLinkDao.DRIVE_LINK_ENTITY} 
-        WHERE ${SELECTION_PREFIX}_${Column.SELECTION_ID} = :selectionId 
+        WHERE ${SELECTION_PREFIX}_${Column.SELECTION_ID} = :selectionId AND ${LinkTrashDao.NOT_TRASHED_CONDITION}
         """
     )
     fun getSelectedLinks(selectionId: SelectionId): Flow<List<DriveLinkEntityWithBlock>>

@@ -26,6 +26,7 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
+import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 
@@ -74,6 +75,8 @@ interface LinkUploadRepository {
     suspend fun updateUploadFileLinkLastModified(uploadFileLinkId: Long, lastModified: TimestampMs?)
 
     suspend fun updateUploadFileLinkMediaResolution(uploadFileLinkId: Long, mediaResolution: MediaResolution)
+
+    suspend fun updateUploadFileLinkDigests(uploadFileLinkId: Long, digests: UploadDigests)
 
     suspend fun removeUploadFileLink(uploadFileLinkId: Long)
 

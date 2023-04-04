@@ -18,14 +18,8 @@
 
 package me.proton.core.drive.documentsprovider.domain.usecase
 
-import kotlinx.coroutines.flow.first
-import me.proton.core.accountmanager.domain.AccountManager
-import javax.inject.Inject
+import me.proton.core.account.domain.entity.Account
 
-class GetDocumentsProviderRoots @Inject constructor(
-    private val accountManager: AccountManager,
-) {
-
-    suspend operator fun invoke() =
-        accountManager.getAccounts().first()
+interface GetDocumentsProviderRoots {
+    suspend operator fun invoke(): List<Account>
 }

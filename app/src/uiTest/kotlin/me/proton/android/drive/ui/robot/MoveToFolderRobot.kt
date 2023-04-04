@@ -18,38 +18,33 @@
 
 package me.proton.android.drive.ui.robot
 
-import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.filter
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeDown
+import me.proton.test.fusion.Fusion.node
 import me.proton.android.drive.R
 import me.proton.android.drive.ui.screen.MoveToFolderScreenTestTag
 import me.proton.core.drive.files.presentation.component.FilesTestTag
 import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag
-import me.proton.core.test.android.instrumented.utils.StringUtils
 
 object MoveToFolderRobot : Robot {
-    private val moveToFolderScreen get() = node(hasTestTag(MoveToFolderScreenTestTag.screen))
-    private val addFolderButton get() = node(hasTestTag(MoveToFolderScreenTestTag.plusFolderButton))
-    private val cancelButton get() = node(hasText(StringUtils.stringFromResource(R.string.move_file_dismiss_action)))
-    private val moveButton get() = node(hasText(StringUtils.stringFromResource(R.string.move_file_confirm_action)))
-    private val filesListItems get() = nodes(hasTestTag(FilesListItemComponentTestTag.item))
-    private val filesContent get() = node(hasTestTag(FilesTestTag.content))
+    private val moveToFolderScreen get() = node.withTag(MoveToFolderScreenTestTag.screen)
+    private val addFolderButton get() = node.withTag(MoveToFolderScreenTestTag.plusFolderButton)
+    private val cancelButton get() = node.withText(R.string.move_file_dismiss_action)
+    private val moveButton get() = node.withText(R.string.move_file_confirm_action)
+    private val fileList get() = node.withTag(FilesTestTag.content)
+    private fun itemWithName(name: String) =
+        node.withTag(FilesListItemComponentTestTag.item).withText(name)
 
-    fun clickAddFolder() = addFolderButton.tryToClickAndGoTo(CreateFolderRobot)
-    fun clickCancel() = cancelButton.tryToClickAndGoTo(CreateFolderRobot)
-    fun clickMove() = moveButton.tryToClickAndGoTo(CreateFolderRobot)
+    fun clickAddFolder() = addFolderButton.clickTo(CreateFolderRobot)
+    fun clickCancel() = cancelButton.clickTo(CreateFolderRobot)
+    fun clickMove() = moveButton.clickTo(CreateFolderRobot)
 
-    fun swipeDown() = filesContent.tryPerformTouchInputAndGoTo(this) { swipeDown()}
-
-    fun itemListWithTextDisplayed(text: String, count: Int = 1) {
-        filesListItems.filter(hasText(text)).assertCountEquals(count)
+    fun itemWithTextDisplayed(text: String) {
+        fileList.scrollTo(node.withText(text))
     }
 
     override fun robotDisplayed() {
         moveToFolderScreen.assertIsDisplayed()
+        addFolderButton.assertIsDisplayed()
+        cancelButton.assertIsDisplayed()
+        moveButton.assertIsDisplayed()
     }
 }

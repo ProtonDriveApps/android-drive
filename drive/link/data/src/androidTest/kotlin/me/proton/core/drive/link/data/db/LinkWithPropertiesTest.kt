@@ -18,11 +18,13 @@
 package me.proton.core.drive.link.data.db
 
 import android.content.Context
+import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import me.proton.android.drive.db.DriveDatabase
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.domain.entity.AccountState
 import me.proton.core.domain.entity.UserId
@@ -40,12 +42,12 @@ import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
 class LinkWithPropertiesTest {
-    private lateinit var db: TestDatabase
+    private lateinit var db: DriveDatabase
 
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        db = buildDatabase(context)
+        db = Room.inMemoryDatabaseBuilder(context, DriveDatabase::class.java).build()
         runBlocking { prepareDb(db) }
     }
 
@@ -93,10 +95,10 @@ class LinkWithPropertiesTest {
         val link = insertAndGetLink(LinkWithProperties(testParentLink, testFolderProperties(testParentLink.id)))
         // endregion
         // region When
-        db.linkDao().delete(link)
+        db.linkDao.delete(link)
         // endregion
         //region Then
-        assertFalse(db.linkDao().hasLinkEntity(testParentLink.userId, testParentLink.shareId, testParentLink.id).first())
+        assertFalse(db.linkDao.hasLinkEntity(testParentLink.userId, testParentLink.shareId, testParentLink.id).first())
         // endregion
     }
 
@@ -107,14 +109,14 @@ class LinkWithPropertiesTest {
         insertAndGetLink(LinkWithProperties(testLink, testFileProperties(testLink.id)))
         // endregion
         // region When
-        db.linkDao().delete(parentLink)
+        db.linkDao.delete(parentLink)
         // endregion
         //region Then
-        assertFalse(db.linkDao().hasLinkEntity(testLink.userId, testLink.shareId, testLink.id).first())
+        assertFalse(db.linkDao.hasLinkEntity(testLink.userId, testLink.shareId, testLink.id).first())
         // endregion
     }
 
-    private suspend fun insertAndGetLink(linkWithProperties: LinkWithProperties) = with (db.linkDao()) {
+    private suspend fun insertAndGetLink(linkWithProperties: LinkWithProperties) = with (db.linkDao) {
         insertOrUpdate(linkWithProperties)
         getLinkWithPropertiesFlow(
             userId = linkWithProperties.link.userId,
@@ -125,9 +127,9 @@ class LinkWithPropertiesTest {
             .first()
     }
 
-    private suspend fun prepareDb(db: TestDatabase) {
+    private suspend fun prepareDb(db: DriveDatabase) {
         db.accountDao().insertOrUpdate(testAccount)
-        db.shareDao().insertOrUpdate(testShare)
+        db.shareDao.insertOrUpdate(testShare)
     }
 
     private val testAccount =

@@ -31,8 +31,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -44,7 +42,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -65,31 +62,20 @@ import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.default
-import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.entity.Attributes
-import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.Percentage
-import me.proton.core.drive.base.domain.entity.Permissions
-import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
-import me.proton.core.drive.base.presentation.component.protonColors
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
 import me.proton.core.drive.base.presentation.extension.currentLocale
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
-import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.Folder
-import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.isSharedUrlExpired
 import me.proton.core.drive.link.presentation.extension.getSize
 import me.proton.core.drive.link.presentation.extension.lastModifiedRelative
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.presentation.R as CorePresentation
 
@@ -118,7 +104,7 @@ fun FilesListItem(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = if (isSelected) ProtonTheme.colors.interactionWeakNorm else Color.Transparent)
+            .background(color = if (isSelected) ProtonTheme.colors.backgroundSecondary else Color.Transparent)
             .combinedClickable(
                 enabled = onClick != null && isClickEnabled(link),
                 onClick = { onClick?.invoke(link) },
@@ -135,30 +121,14 @@ fun FilesListItem(
                 .padding(start = StartPadding, end = EndPadding)
                 .padding(vertical = VerticalPadding),
         ) {
-            Crossfade(isSelected) { isSelected ->
-                if (isSelected) {
-                    Box(
-                        modifier = Modifier
-                            .size(IconSize),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Checkbox(
-                            checked = true,
-                            onCheckedChange = null,
-                            modifier = Modifier.scale(1.75f),
-                            colors = CheckboxDefaults.protonColors(),
-                        )
-                    }
-                } else {
-                    Image(
-                        modifier = Modifier
-                            .size(IconSize)
-                            .clip(RoundedCornerShape(DefaultCornerRadius)),
-                        painter = link.thumbnailPainter().painter,
-                        contentDescription = null,
-                    )
-                }
-            }
+
+            Image(
+                modifier = Modifier
+                    .size(IconSize)
+                    .clip(RoundedCornerShape(DefaultCornerRadius)),
+                painter = link.thumbnailPainter().painter,
+                contentDescription = null,
+            )
             Details(
                 modifier = Modifier
                     .weight(1f)
@@ -184,6 +154,15 @@ fun FilesListItem(
                                     .align(Alignment.CenterVertically),
                                 strokeWidth = 1.dp,
                             )
+                        }
+                    }
+                } else {
+                    Crossfade(isSelected) { isSelected ->
+                        Box(
+                            modifier = Modifier.size(DefaultButtonMinHeight),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            CircleSelection(isSelected)
                         }
                     }
                 }
@@ -409,6 +388,67 @@ fun PreviewListItem() {
         }
     }
 }
+@Preview(
+    name = "ListItem in multiselect, selected,  in light mode",
+    group = "light mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    showBackground = true,
+)
+@Preview(
+    name = "ListItem in multiselect, selected,  in dark mode",
+    group = "dark mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true,
+)
+@Suppress("unused")
+@Composable
+fun PreviewSelectedListItem() {
+    ProtonTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            FilesListItem(
+                link = PREVIEW_DRIVELINK,
+                onClick = {},
+                onLongClick = {},
+                onMoreOptionsClick = {},
+                isClickEnabled = { false },
+                isTextEnabled = { true },
+                isSelected = true,
+                inMultiselect = true,
+            )
+        }
+    }
+}
+
+@Preview(
+    name = "ListItem in multiselect, unselected, in light mode",
+    group = "light mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    showBackground = true,
+)
+@Preview(
+    name = "ListItem in multiselect, unselected, in dark mode",
+    group = "dark mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true,
+)
+@Suppress("unused")
+@Composable
+fun PreviewUnselectedListItem() {
+    ProtonTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            FilesListItem(
+                link = PREVIEW_DRIVELINK,
+                onClick = {},
+                onLongClick = {},
+                onMoreOptionsClick = {},
+                isClickEnabled = { false },
+                isTextEnabled = { true },
+                isSelected = false,
+                inMultiselect = true,
+            )
+        }
+    }
+}
 
 @Preview(
     name = "ListItem downloaded but not favorite, not shared in light mode",
@@ -552,49 +592,6 @@ val VerticalPadding = 14.dp
 val Height = 68.dp
 val TitleStartPadding = 20.dp
 val ExtraSmallIconSize = 12.dp
-
-private val PREVIEW_LINK = Link.File(
-    id = FileId(ShareId(UserId("USER_ID"), "SHARE_ID"), "FILE_ID"),
-    parentId = FolderId(ShareId(UserId("USER_ID"), "SHARE_ID"), "PARENT_ID"),
-    name = "revision_id",
-    size = Bytes(0L),
-    lastModified = TimestampS(0),
-    mimeType = "text/plain",
-    isShared = false,
-    key = "",
-    passphrase = "",
-    passphraseSignature = "",
-    numberOfAccesses = 0L,
-    uploadedBy = "He-Who-Must-Not-Be-Named",
-    isFavorite = false,
-    hasThumbnail = false,
-    activeRevisionId = "",
-    xAttr = null,
-    contentKeyPacket = "",
-    contentKeyPacketSignature = "",
-    attributes = Attributes(0),
-    permissions = Permissions(0),
-    state = Link.State.ACTIVE,
-    nameSignatureEmail = "",
-    hash = "",
-    expirationTime = null,
-    nodeKey = "",
-    nodePassphrase = "",
-    nodePassphraseSignature = "",
-    signatureAddress = "",
-    creationTime = TimestampS(0),
-    trashedTime = null,
-    shareUrlExpirationTime = null,
-    shareUrlId = null,
-)
-private val PREVIEW_DRIVELINK = DriveLink.File(
-    link = PREVIEW_LINK,
-    volumeId = VolumeId("VOLUME_ID"),
-    isMarkedAsOffline = false,
-    isAnyAncestorMarkedAsOffline = false,
-    downloadState = null,
-    trashState = null,
-)
 
 object FilesListItemComponentTestTag {
     const val item = "file list item"

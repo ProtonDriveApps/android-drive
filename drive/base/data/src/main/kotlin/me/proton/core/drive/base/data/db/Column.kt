@@ -27,6 +27,8 @@ object Column {
     const val CONTENT_KEY_PACKET_SIGNATURE = "content_key_packet_signature"
     const val CREATION_TIME = "creation_time"
     const val CREATOR_EMAIL = "creatior_email"
+    const val DIGESTS = "digests"
+    const val DURATION = "duration"
     const val ENCRYPTED = "encrypted"
     const val ENCRYPTED_NAME = "encrypted_name"
     const val ENCRYPTED_SIGNATURE = "encrypted_signature"

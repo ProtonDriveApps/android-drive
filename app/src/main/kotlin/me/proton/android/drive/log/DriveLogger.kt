@@ -20,21 +20,28 @@
 
 package me.proton.android.drive.log
 
+import android.content.Context
 import android.os.Build
 import android.os.LocaleList
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.sentry.Breadcrumb
 import io.sentry.Sentry
 import io.sentry.SentryEvent
 import io.sentry.SentryLevel
 import io.sentry.protocol.Message
+import me.proton.core.drive.base.presentation.extension.getDefaultMessage
 import me.proton.core.util.kotlin.Logger
 import me.proton.core.util.kotlin.LoggerLogTag
 import timber.log.Timber
 import java.util.Locale
+import javax.inject.Inject
 import javax.inject.Singleton
+import me.proton.core.drive.base.presentation.R as BasePresentation
 
 @Singleton
-class DriveLogger : Logger {
+class DriveLogger @Inject constructor(
+    @ApplicationContext private val appContext: Context,
+) : Logger {
 
     override fun v(tag: String, message: String) {
         DriveSentry.addBreadcrumb(tag, message)
@@ -61,11 +68,11 @@ class DriveLogger : Logger {
         Timber.tag(tag).i(e, message)
     }
     override fun e(tag: String, e: Throwable) {
-        DriveSentry.captureException(tag, e)
+        DriveSentry.captureException(appContext, tag, e)
         Timber.tag(tag).e(e)
     }
     override fun e(tag: String, e: Throwable, message: String) {
-        DriveSentry.captureException(tag, e, message)
+        DriveSentry.captureException(appContext, tag, e, message)
         Timber.tag(tag).e(e, message)
     }
     override fun log(tag: LoggerLogTag, message: String) = i(tag.name, message)
@@ -85,12 +92,24 @@ class DriveLogger : Logger {
 
     private object DriveSentry {
 
-        fun captureException(tag: String, e: Throwable) {
+        fun captureException(
+            context: Context,
+            tag: String,
+            e: Throwable,
+        ) {
+            setInternalErrorTag(context, e)
             Sentry.setTag("CoreLogger", tag)
             Sentry.captureException(e)
         }
 
-        fun captureException(tag: String, e: Throwable, message: String, level: SentryLevel = SentryLevel.ERROR) {
+        fun captureException(
+            context: Context,
+            tag: String,
+            e: Throwable,
+            message: String,
+            level: SentryLevel = SentryLevel.ERROR,
+        ) {
+            setInternalErrorTag(context, e)
             Sentry.setTag("CoreLogger", tag)
             Sentry.captureEvent(
                 SentryEvent(e).apply {
@@ -121,6 +140,15 @@ class DriveLogger : Logger {
                     this.setData("Throwable", e.stackTraceToString())
                 }
             )
+        }
+
+        private fun setInternalErrorTag(context: Context, e: Throwable) {
+            val internalErrorMessage = context.getString(BasePresentation.string.common_error_internal)
+            val errorMessage = e.getDefaultMessage(
+                context = context,
+                useExceptionMessage = false,
+            )
+            Sentry.setTag("InternalError", (errorMessage == internalErrorMessage).toString())
         }
     }
 }

@@ -21,7 +21,7 @@ plugins {
 
 driveModule(hilt = true) {
     api(project(":drive:base:domain"))
-    api(libs.core.auth)
-    api(libs.core.crypto)
-    api(libs.core.key)
+    api(libs.core.auth.domain)
+    api(libs.core.cryptoCommon)
+    api(libs.core.key.domain)
 }

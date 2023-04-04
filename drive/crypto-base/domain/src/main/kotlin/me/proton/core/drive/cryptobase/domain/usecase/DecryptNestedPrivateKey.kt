@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.cryptobase.domain.usecase
 
+import kotlinx.coroutines.withContext
 import me.proton.core.crypto.common.context.CryptoContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -70,12 +71,14 @@ class DecryptNestedPrivateKey @Inject constructor(
         signatureAddress: String,
         allowCompromisedVerificationKeys: Boolean = false,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
-    ): Result<NestedPrivateKey> =
+    ): Result<NestedPrivateKey> = withContext(coroutineContext) {
         invoke(
             decryptKey = decryptKey,
             key = key,
-            verifyKeyRing = userAddressRepository.getAddressKeys(userId, signatureAddress).publicKeyRing(cryptoContext),
+            verifyKeyRing = userAddressRepository.getAddressKeys(userId, signatureAddress)
+                .publicKeyRing(cryptoContext),
             allowCompromisedVerificationKeys = allowCompromisedVerificationKeys,
             coroutineContext = coroutineContext,
         )
+    }
 }

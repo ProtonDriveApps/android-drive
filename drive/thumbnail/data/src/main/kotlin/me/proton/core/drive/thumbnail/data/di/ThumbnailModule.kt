@@ -23,14 +23,20 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
+import me.proton.core.drive.thumbnail.data.provider.AudioThumbnailProvider
 import me.proton.core.drive.thumbnail.data.provider.ImageThumbnailProvider
 import me.proton.core.drive.thumbnail.data.provider.PdfThumbnailProvider
 import me.proton.core.drive.thumbnail.data.provider.SvgThumbnailProvider
+import me.proton.core.drive.thumbnail.data.provider.VideoThumbnailProvider
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface ThumbnailModule {
+
+    @Binds
+    @IntoSet
+    fun bindsAudioThumbnailProviderIntoList(provider: AudioThumbnailProvider): CreateThumbnail.Provider
 
     @Binds
     @IntoSet
@@ -43,4 +49,8 @@ interface ThumbnailModule {
     @Binds
     @IntoSet
     fun bindsSvgThumbnailProviderIntoList(provider: SvgThumbnailProvider): CreateThumbnail.Provider
+
+    @Binds
+    @IntoSet
+    fun bindsVideoThumbnailProviderIntoList(provider: VideoThumbnailProvider): CreateThumbnail.Provider
 }

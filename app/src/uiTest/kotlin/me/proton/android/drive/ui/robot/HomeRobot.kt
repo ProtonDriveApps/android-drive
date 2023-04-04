@@ -18,28 +18,26 @@
 
 package me.proton.android.drive.ui.robot
 
+import me.proton.test.fusion.Fusion.node
 import androidx.annotation.StringRes
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasAnyChild
-import androidx.compose.ui.test.hasTestTag
 import me.proton.android.drive.ui.screen.HomeScreenTestTag
 import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.base.presentation.component.BottomNavigationComponentTestTag
 
 interface HomeRobot : Robot {
-    private val homeScreen get() = node(hasTestTag(HomeScreenTestTag.screen))
+    private val homeScreen get() = node.withTag(HomeScreenTestTag.screen)
     val filesTab get() = tabWithText(R.string.title_files)
     val sharedTab get() = tabWithText(R.string.title_shared)
 
-    fun clickFilesTab() = filesTab.tryToClickAndGoTo(FilesTabRobot)
-    fun clickSharedTab() = sharedTab.tryToClickAndGoTo(SharedTabRobot)
+    fun clickFilesTab() = filesTab.clickTo(FilesTabRobot)
+    fun clickSharedTab() = sharedTab.clickTo(SharedTabRobot)
 
     fun homeScreenDisplayed() {
         homeScreen.assertIsDisplayed()
     }
 
-    private fun tabWithText(@StringRes textRes: Int) = node(
-        hasTestTag(BottomNavigationComponentTestTag.tab),
-        hasAnyChild(hasTextResource(textRes)),
-    )
+    private fun tabWithText(@StringRes textRes: Int) =
+        node
+            .withTag(BottomNavigationComponentTestTag.tab)
+            .hasChild(node.withText(textRes))
 }

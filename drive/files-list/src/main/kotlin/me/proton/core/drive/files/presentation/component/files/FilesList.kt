@@ -24,11 +24,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.paging.compose.items
 import me.proton.core.compose.component.DeferredCircularProgressIndicator
 import me.proton.core.compose.component.ErrorPadding
@@ -47,6 +46,7 @@ import me.proton.core.compose.component.ProtonErrorMessage
 import me.proton.core.compose.component.ProtonErrorMessageWithAction
 import me.proton.core.compose.component.ProtonSecondaryButton
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
+import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
@@ -199,22 +199,21 @@ fun LazyListScope.FilesListContent(
 
 fun LazyListScope.FilesGridContent(
     driveLinks: LazyColumnItems,
-    itemSize: Dp,
     itemsPerRow: Int,
-    onItemsIndexed: @Composable (DriveLink) -> Unit,
+    onItemsIndexed: @Composable RowScope.(DriveLink) -> Unit,
 ) {
     require(itemsPerRow > 0) { "itemsPerRow must be > 0, value passed $itemsPerRow" }
     items(ceil(driveLinks.size.toFloat() / itemsPerRow).toInt()) { row ->
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = ExtraSmallSpacing),
+            horizontalArrangement = Arrangement.spacedBy(ExtraSmallSpacing),
         ) {
             repeat(itemsPerRow) { repeat ->
                 val driveLink = driveLinks[row * itemsPerRow + repeat]
                 if (driveLink != null) {
                     onItemsIndexed(driveLink)
                 } else {
-                    Spacer(modifier = Modifier.width(itemSize))
+                    Spacer(modifier = Modifier.weight(1F))
                 }
             }
         }

@@ -39,12 +39,14 @@ class CreateXAttr @Inject constructor(
         size: Bytes,
         blockSizes: List<Bytes>,
         mediaResolution: MediaResolution? = null,
+        digests: Map<String, String>? = null,
     ) =
         XAttr(
             common = XAttr.Common(
                 modificationTime = dateTimeFormatter.formatToIso8601String(modificationTime),
                 size = size.value,
-                blockSizes = blockSizes.map { blockSize -> blockSize.value }
+                blockSizes = blockSizes.map { blockSize -> blockSize.value },
+                digests = digests,
             ),
             media = mediaResolution?.let {
                 XAttr.Media(

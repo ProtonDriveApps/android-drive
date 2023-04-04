@@ -26,12 +26,12 @@ driveModule(
     api(project(":drive:message-queue:domain"))
     api(libs.core.cryptoCommon)
     api(libs.core.domain)
-    api(libs.core.user)
+    api(libs.core.user.domain)
 
-    implementation(libs.core.accountManager)
+    implementation(libs.core.accountManager.domain)
     implementation(libs.core.data)
-    implementation(libs.core.key)
-    implementation(libs.core.network)
+    implementation(libs.core.key.domain)
+    implementation(libs.core.network.domain)
 }
 
 configureJacoco()

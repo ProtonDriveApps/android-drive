@@ -54,36 +54,22 @@ class EncryptUploadBlocks @Inject constructor(
                     coroutineContext = coroutineContext,
                 ) { sessionKey ->
                     input.mapIndexed { index, input ->
-                        if (input.length() == 0L) {
-                            block(
-                                index,
-                                input,
-                                output[index].apply { createNewFile() },
-                                encryptedSignature(
-                                    unlockedEncryptKey = unlockedSignatureEncryptionKey,
-                                    unlockedSignKey = unlockedFileSignKey,
-                                    input = ByteArray(size = 0),
-                                    coroutineContext = coroutineContext,
-                                ).getOrThrow()
-                            )
-                        } else {
-                            block(
-                                index,
-                                input,
-                                encryptFile(
-                                    encryptKey = sessionKey,
-                                    source = input,
-                                    destination = output[index],
-                                    coroutineContext = coroutineContext,
-                                ).getOrThrow(),
-                                encryptedSignature(
-                                    unlockedEncryptKey = unlockedSignatureEncryptionKey,
-                                    unlockedSignKey = unlockedFileSignKey,
-                                    file = input,
-                                    coroutineContext = coroutineContext,
-                                ).getOrThrow()
-                            )
-                        }
+                        block(
+                            index,
+                            input,
+                            encryptFile(
+                                encryptKey = sessionKey,
+                                source = input,
+                                destination = output[index],
+                                coroutineContext = coroutineContext,
+                            ).getOrThrow(),
+                            encryptedSignature(
+                                unlockedEncryptKey = unlockedSignatureEncryptionKey,
+                                unlockedSignKey = unlockedFileSignKey,
+                                file = input,
+                                coroutineContext = coroutineContext,
+                            ).getOrThrow()
+                        )
                     }
                 }.getOrThrow()
             }.getOrThrow()

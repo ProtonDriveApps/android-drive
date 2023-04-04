@@ -18,20 +18,54 @@
 package me.proton.core.drive.drivelink.selection.data.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.drivelink.data.extension.toDriveLinks
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.selection.data.db.DriveLinkSelectionDatabase
 import javax.inject.Inject
 import me.proton.core.drive.drivelink.selection.domain.repository.DriveLinkSelectionRepository
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 
 class DriveLinkSelectionRepositoryImpl @Inject constructor(
     private val db: DriveLinkSelectionDatabase,
+    private val configurationProvider: ConfigurationProvider,
 ) : DriveLinkSelectionRepository {
 
     override fun getSelectedDriveLinks(selectionId: SelectionId): Flow<List<DriveLink>> =
         db.driveLinkSelectionDao.getSelectedLinks(selectionId).map { entities ->
             entities.toDriveLinks()
         }
+
+    override suspend fun selectAll(
+        parentId: FolderId,
+        selectionId: SelectionId?,
+        getDriveLinks: (fromIndex: Int, count: Int) -> Flow<List<DriveLink>>,
+        selectLinks: suspend (SelectionId?, List<LinkId>) -> Result<SelectionId>,
+    ) {
+        val pageSize = configurationProvider.dbPageSize
+        var id = selectionId
+        db.inTransaction {
+            var pageIndex = 0
+            while (true) {
+                val driveLinks = getDriveLinks(
+                    pageIndex++ * pageSize,
+                    pageSize,
+                )
+                    .map { driveLinks -> driveLinks.map { driveLink -> driveLink.id } }
+                    .first()
+                if (driveLinks.isNotEmpty()) {
+                    id = selectLinks(
+                        id,
+                        driveLinks,
+                    ).getOrNull()
+                } else {
+                    break
+                }
+            }
+        }
+    }
 }

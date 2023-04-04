@@ -53,9 +53,12 @@ class CreatingFolderFlowSuccessTest : BaseTest() {
         val newFolderName = getRandomString()
 
         FilesTabRobot
-            .swipeUpToItemWithName(subFolderName)
+            .scrollToItemWithName(subFolderName)
             .clickMoreOnFolder(subFolderName)
             .clickMove()
+            .verify {
+                robotDisplayed()
+            }
             .clickAddFolder()
             .typeFolderName(newFolderName)
             .clickCreate()
@@ -63,10 +66,7 @@ class CreatingFolderFlowSuccessTest : BaseTest() {
         CreateFolderRobot
             .dismissSuccessGrowler(newFolderName, MoveToFolderRobot)
             .verify {
-                // Workaround (possibly a bug?)
-                // For some reason does not auto swipe to top on emulators only
-                swipeDown()
-                itemListWithTextDisplayed(newFolderName)
+                itemWithTextDisplayed(newFolderName)
             }
     }
 

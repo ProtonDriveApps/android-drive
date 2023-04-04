@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.size
+import me.proton.core.drive.base.domain.extension.toHex
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -37,17 +38,19 @@ import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.link.domain.entity.Link.Companion.THUMBNAIL_INDEX
 import me.proton.core.drive.link.domain.entity.Link.Companion.THUMBNAIL_NAME
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
+import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.factory.UploadBlockFactory
+import me.proton.core.drive.linkupload.domain.usecase.UpdateDigests
 import me.proton.core.drive.linkupload.domain.usecase.UpdateManifestSignature
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import me.proton.core.drive.upload.domain.extension.blockFile
+import me.proton.core.drive.upload.domain.extension.injectMessageDigests
 import me.proton.core.drive.upload.domain.extension.saveToBlocks
 import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
-import me.proton.core.util.kotlin.takeIfNotEmpty
 import java.io.File
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -70,6 +73,7 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
     private val updateManifestSignature: UpdateManifestSignature,
     private val fileProvider: FileProvider,
     private val getSignatureAddress: GetSignatureAddress,
+    private val updateDigests: UpdateDigests,
 ) {
     suspend operator fun invoke(
         uploadFileLink: UploadFileLink,
@@ -77,9 +81,16 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
         shouldDeleteSource: Boolean = false,
         coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
     ): Result<UploadFileLink> = coRunCatching(coroutineContext) {
+        val (unencryptedBlocks, digests) = uploadFileLink.splitUriToBlocks(
+            uriString = uriString
+        )
+        updateDigests(
+            uploadFileLinkId = uploadFileLink.id,
+            digests = digests
+        )
         encryptBlocks(
             uploadFileLink = uploadFileLink,
-            unencryptedBlocks = uploadFileLink.splitUriToBlocks(uriString),
+            unencryptedBlocks = unencryptedBlocks,
             uriString = uriString,
             coroutineContext = coroutineContext,
         ).getOrThrow().also {
@@ -107,14 +118,14 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
                         signKey = addressKey,
                         coroutineContext = coroutineContext,
                     ) +
-                    listOfNotNull(
-                        getThumbnailUploadBlock(
-                            uploadFileContentKey = uploadFileContentKey,
-                            signKey = addressKey,
-                            uriString = uriString,
-                            coroutineContext = coroutineContext,
+                        listOfNotNull(
+                            getThumbnailUploadBlock(
+                                uploadFileContentKey = uploadFileContentKey,
+                                signKey = addressKey,
+                                uriString = uriString,
+                                coroutineContext = coroutineContext,
+                            )
                         )
-                    )
                 addUploadBlocks(uploadBlocks)
                 updateManifestSignature(
                     uploadFileLinkId = id,
@@ -146,13 +157,23 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
             fileKey = uploadFileKey,
         ).getOrThrow()
 
-    private suspend fun UploadFileLink.splitUriToBlocks(uriString: String): List<File> =
+    private suspend fun UploadFileLink.splitUriToBlocks(
+        uriString: String,
+    ): Pair<List<File>, UploadDigests> =
         uriResolver.useInputStream(uriString) { inputStream ->
-            inputStream.saveToBlocks(
+            val (digestsInputStream, messageDigests) = inputStream.injectMessageDigests(
+                algorithms = configurationProvider.digestAlgorithms,
+            )
+            val files = digestsInputStream.saveToBlocks(
                 destinationFolder = getBlockFolder(userId, this).getOrThrow(),
                 blockMaxSize = configurationProvider.blockMaxSize,
-            ).takeIfNotEmpty()
-        } ?: listOf(File(getBlockFolder(userId, this).getOrThrow(), "empty"))
+            )
+            val uploadDigests = messageDigests
+                .associate { messageDigest ->
+                    messageDigest.algorithm to messageDigest.digest().toHex()
+                }.let(::UploadDigests)
+            files to uploadDigests
+        } ?: (emptyList<File>() to UploadDigests())
 
     private suspend fun List<File>.encryptBlocksAndDeleteSourceFiles(
         uploadFileContentKey: ContentKey,

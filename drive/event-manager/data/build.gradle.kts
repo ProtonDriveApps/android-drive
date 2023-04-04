@@ -32,4 +32,5 @@ driveModule(
     implementation(libs.core.dataRoom)
     implementation(libs.core.presentation) // AppLifecycleProvider
     implementation(libs.core.userSettings)
+    implementation(libs.core.user.data)
 }

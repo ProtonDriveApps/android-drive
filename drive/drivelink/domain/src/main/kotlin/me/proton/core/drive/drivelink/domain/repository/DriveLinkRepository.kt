@@ -29,5 +29,9 @@ interface DriveLinkRepository {
 
     fun getDriveLinks(parentId: FolderId): Flow<List<DriveLink>>
 
+    fun getDriveLinks(parentId: FolderId, fromIndex: Int, count: Int): Flow<List<DriveLink>>
+
+    fun getDriveLinksCount(parentId: FolderId): Flow<Int>
+
     fun getDriveLinks(linkIds: List<LinkId>): Flow<List<DriveLink>>
 }

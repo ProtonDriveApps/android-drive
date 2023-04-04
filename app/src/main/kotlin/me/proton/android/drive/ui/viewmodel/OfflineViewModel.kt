@@ -25,6 +25,7 @@ import androidx.paging.CombinedLoadStates
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -34,16 +35,23 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.OfflineViewEvent
 import me.proton.android.drive.ui.viewstate.OfflineViewState
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.entity.onProcessing
+import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.presentation.extension.log
+import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgress
 import me.proton.core.drive.drivelink.list.domain.usecase.GetSortedDecryptedDriveLinks
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetDecryptedOfflineDriveLinks
@@ -53,12 +61,6 @@ import me.proton.core.drive.files.presentation.state.ListContentState
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.android.drive.ui.common.onClick
-import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.base.domain.entity.onProcessing
-import me.proton.core.drive.base.domain.extension.onFailure
-import me.proton.core.drive.base.presentation.extension.log
-import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
@@ -165,20 +167,30 @@ class OfflineViewModel @Inject constructor(
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
         navigateBack: () -> Unit,
     ): OfflineViewEvent = object : OfflineViewEvent {
+
+        private val driveLinkShareFlow = MutableSharedFlow<DriveLink>(extraBufferCapacity = 1).also { flow ->
+            viewModelScope.launch {
+                flow.take(1).collect { driveLink ->
+                    driveLink.onClick(
+                        navigateToFolder = navigateToFiles,
+                        navigateToPreview = { fileId ->
+                            navigateToPreview(
+                                if (folderId == null) PagerType.OFFLINE else PagerType.FOLDER,
+                                fileId
+                            )
+                        }
+                    )
+                }
+            }
+        }
+
         override val onTopAppBarNavigation = {
             navigateBack()
         }
         override val onSorting = navigateToSortingDialog
         override val onDriveLink = { driveLink: DriveLink ->
-            driveLink.onClick(
-                navigateToFolder = navigateToFiles,
-                navigateToPreview = { fileId ->
-                    navigateToPreview(
-                        if (folderId == null) PagerType.OFFLINE else PagerType.FOLDER,
-                        fileId
-                    )
-                }
-            )
+            driveLinkShareFlow.tryEmit(driveLink)
+            Unit
         }
         override val onLoadState = { _: CombinedLoadStates, _: Int -> }
         override val onMoreOptions = { driveLink: DriveLink -> navigateToFileOrFolderOptions(driveLink.id) }

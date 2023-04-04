@@ -21,6 +21,7 @@ package me.proton.core.drive.settings.presentation.state
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import me.proton.core.drive.settings.presentation.component.DebugSettingsStateAndEvent
+import kotlin.time.Duration
 
 data class SettingsViewState(
     @DrawableRes val navigationIcon: Int,
@@ -30,7 +31,9 @@ data class SettingsViewState(
     val availableStyles: List<Int>,
     @StringRes val currentStyle: Int,
     val debugSettingsStateAndEvent: DebugSettingsStateAndEvent? = null,
-    val isAppLockEnabled: Boolean = false,
+    @StringRes val appAccessSubtitleResId: Int,
+    val isAutoLockDurationsVisible: Boolean,
+    val autoLockDuration: Duration,
 )
 
 sealed class LegalLink(

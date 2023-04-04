@@ -17,14 +17,18 @@
  */
 package me.proton.core.drive.linkupload.data.extension
 
+import kotlinx.serialization.SerializationException
+import me.proton.core.data.room.BuildConfig
 import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
+import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.takeIfNotEmpty
 
 fun LinkUploadEntity.toUploadFileLink() =
@@ -54,5 +58,15 @@ fun LinkUploadEntity.toUploadFileLink() =
                 width = requireNotNull(mediaResolutionWidth),
                 height = requireNotNull(mediaResolutionHeight),
             )
-        }
+        },
+        digests = digests?.let { json ->
+            try {
+                UploadDigests(json.deserialize())
+            }catch (e: SerializationException){
+                if (BuildConfig.DEBUG) {
+                    throw e
+                }
+                UploadDigests()
+            }
+        } ?: UploadDigests()
     )

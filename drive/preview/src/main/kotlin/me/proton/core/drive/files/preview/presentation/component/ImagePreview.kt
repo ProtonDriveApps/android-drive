@@ -27,41 +27,31 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.compose.theme.isNightMode
 import me.proton.core.drive.files.preview.R
-import me.proton.core.drive.files.preview.presentation.component.state.ZoomEffect
 
 @Composable
-@OptIn(ExperimentalCoilApi::class)
 fun ImagePreview(
     uri: Uri,
-    zoomEffect: Flow<ZoomEffect>,
+    transformationState: TransformationState,
     isFullScreen: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val backgroundColor by animateColorAsState(
-        targetValue = if (isFullScreen) {
+        targetValue = if (isFullScreen && isNightMode().not()) {
             MaterialTheme.colors.onBackground
         } else {
             MaterialTheme.colors.background
@@ -76,37 +66,24 @@ fun ImagePreview(
     ImagePreview(
         modifier = modifier.background(backgroundColor),
         painter = painter,
-        zoomEffect = zoomEffect,
+        transformationState = transformationState,
     )
 }
 
 @Composable
 fun ImagePreview(
     painter: Painter,
-    zoomEffect: Flow<ZoomEffect>,
+    transformationState: TransformationState,
     modifier: Modifier = Modifier,
 ) {
-    var scale by remember { mutableStateOf(1f) }
-    var offset by remember { mutableStateOf(Offset.Zero) }
-
-    LaunchedEffect(LocalContext.current) {
-        zoomEffect
-            .onEach { zoomEffect ->
-                if (zoomEffect is ZoomEffect.Reset) {
-                    scale = 1f
-                    offset = Offset.Zero
-                }
-            }
-            .launchIn(this)
-    }
-
     val state = rememberTransformableState { zoomChange, offsetChange, _ ->
-        scale *= zoomChange
-        if (scale < 1f) scale = 1f
-        offset += offsetChange
+        transformationState.scale = (transformationState.scale * zoomChange)
+        transformationState.addOffset(offsetChange)
     }
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .onPlaced { transformationState.containerLayout = it },
         contentAlignment = Alignment.Center
     ) {
         Image(
@@ -114,12 +91,13 @@ fun ImagePreview(
             contentDescription = stringResource(id = R.string.content_description_file_preview),
             contentScale = ContentScale.Fit,
             modifier = modifier
-                .fillMaxSize()
+                .onPlaced { transformationState.contentLayout = it }
                 .graphicsLayer(
-                    scaleX = scale,
-                    scaleY = scale,
-                    translationX = offset.x,
-                    translationY = offset.y
+                    scaleX = transformationState.scale,
+                    scaleY = transformationState.scale,
+                    translationX = transformationState.offset.x,
+                    translationY = transformationState.offset.y,
+                    clip = true,
                 )
                 .transformable(
                     state = state
@@ -134,7 +112,7 @@ fun PreviewImagePreview() {
     ProtonTheme {
         ImagePreview(
             uri = Uri.parse("https://protonmail.com/images/media/live/protonmail-shot-decrypt.jpg"),
-            zoomEffect = emptyFlow(),
+            transformationState = rememberTransformationState(),
             isFullScreen = false,
         )
     }

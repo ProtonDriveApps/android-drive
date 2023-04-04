@@ -18,34 +18,22 @@
 
 package me.proton.android.drive.ui.robot
 
-import androidx.compose.ui.test.assertCountEquals
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.filter
-import androidx.compose.ui.test.hasAnyAncestor
-import androidx.compose.ui.test.hasSetTextAction
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasText
-import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag
 import me.proton.core.drive.folder.create.presentation.CreateFolderComponentTestTag
+import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.base.presentation.R as BasePresentation
 
 object CreateFolderRobot : Robot {
-    private val createFolderScreen get() = node(hasTestTag(CreateFolderComponentTestTag.screen))
-    private val cancelButton get() = node(hasTextResource(BasePresentation.string.common_cancel_action))
-    private val createButton get() = node(hasTextResource(BasePresentation.string.common_create_action))
-    private val folderNameField
-        get() = node(
-            hasSetTextAction(),
-            hasAnyAncestor(hasTestTag(CreateFolderComponentTestTag.folderNameTextField))
-        )
+    private val createFolderScreen get() = node.withTag(CreateFolderComponentTestTag.screen)
+    private val cancelButton get() = node.withText(BasePresentation.string.common_cancel_action)
+    private val createButton get() = node.withText(BasePresentation.string.common_create_action)
+    private val folderNameField get() = node.isSetText().hasAncestor(
+        node.withTag(CreateFolderComponentTestTag.folderNameTextField)
+    )
 
-    fun clickCancel() = cancelButton.tryToClickAndGoTo(FilesTabRobot)
-    fun typeFolderName(text: String) = folderNameField.tryToTypeText(text, CreateFolderRobot)
-    fun clearName() = folderNameField.clearText(CreateFolderRobot)
-
-    fun clickCreate() {
-        createButton.tryToClickAndGoTo(this)
-    }
+    fun clickCancel() = cancelButton.clickTo(FilesTabRobot)
+    fun typeFolderName(text: String) = apply { folderNameField.typeText(text) }
+    fun clearName() = apply { folderNameField.clearText() }
+    fun clickCreate() = Unit.also { createButton.clickTo(this) }
 
     override fun robotDisplayed() {
         createFolderScreen.assertIsDisplayed()

@@ -18,11 +18,14 @@
 
 package me.proton.android.drive.ui.viewmodel
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,6 +35,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -41,6 +45,7 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
+import me.proton.android.drive.extension.getDefaultMessage
 import me.proton.android.drive.ui.effect.PreviewEffect
 import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.navigation.Screen
@@ -51,11 +56,12 @@ import me.proton.core.domain.arch.transformSuccess
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentUri
+import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
@@ -66,7 +72,6 @@ import me.proton.core.drive.files.preview.presentation.component.event.PreviewVi
 import me.proton.core.drive.files.preview.presentation.component.state.ContentState
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewContentState
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewViewState
-import me.proton.core.drive.files.preview.presentation.component.state.ZoomEffect
 import me.proton.core.drive.files.preview.presentation.component.toComposable
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -77,8 +82,11 @@ import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
+@SuppressLint("StaticFieldLeak")
 @OptIn(ExperimentalCoroutinesApi::class)
 class PreviewViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
+    private val configurationProvider: ConfigurationProvider,
     getDriveLink: GetDecryptedDriveLink,
     private val getFile: GetFile,
     private val getDocumentUri: GetDocumentUri,
@@ -110,11 +118,12 @@ class PreviewViewModel @Inject constructor(
             PagerType.OFFLINE -> OfflineContentProvider(userId, getOfflineDriveNodes)
         }
 
+    private val contentStatesCache = mutableMapOf<FileId, Flow<ContentState>>()
+
     private val driveLinks: StateFlow<List<DriveLink.File>?> = provider.getDriveLinks()
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val _previewEffect = MutableSharedFlow<PreviewEffect>()
-    private val _zoomEffect = MutableSharedFlow<ZoomEffect>()
     private val isFullscreen = MutableStateFlow(false)
     private val renderFailed = MutableStateFlow<Throwable?>(null)
     val initialViewState = PreviewViewState(
@@ -151,7 +160,6 @@ class PreviewViewModel @Inject constructor(
 
     val previewEffect: Flow<PreviewEffect> = _previewEffect.asSharedFlow()
         .onStart { emit(PreviewEffect.Fullscreen(isFullscreen.value)) }
-    val zoomEffect: Flow<ZoomEffect> = _zoomEffect.asSharedFlow()
 
     fun viewEvent(
         navigateBack: () -> Unit,
@@ -160,7 +168,6 @@ class PreviewViewModel @Inject constructor(
         override val onTopAppBarNavigation = { navigateBack() }
         override val onMoreOptions = { navigateToFileOrFolderOptions(fileId) }
         override val onSingleTap = { toggleFullscreen() }
-        override val onDoubleTap = { resetZoom() }
         override val onRenderFailed = { throwable: Throwable -> renderFailed.value = throwable }
         override val mediaControllerVisibility = { visible: Boolean ->
             if ((visible && isFullscreen.value) || (!visible && !isFullscreen.value)) {
@@ -197,48 +204,37 @@ class PreviewViewModel @Inject constructor(
         }
     }
 
-    private fun resetZoom() {
-        viewModelScope.launch {
-            _zoomEffect.emit(ZoomEffect.Reset)
-        }
-    }
-
     private fun getContentState(
         getFileState: GetFile.State,
         renderFailed: Throwable? = null,
     ): ContentState {
         return renderFailed?.let { throwable ->
-            ContentState.Error.NonRetryable(throwable.message, 0)
+            ContentState.Error.NonRetryable(
+                message = throwable.getDefaultMessage(
+                    context = appContext,
+                    useExceptionMessage = configurationProvider.useExceptionMessage,
+                ),
+                messageResId = 0,
+            )
         } ?: getFileState.toContentState(this)
     }
 
     fun getUri(fileId: FileId) = getDocumentUri(userId, fileId)
-
-    private fun DriveLink.File.getContentStateFlow(): Flow<ContentState> {
-        if (mimeType.toFileTypeCategory().toComposable() == PreviewComposable.Unknown) {
-            return NO_PREVIEW_SUPPORTED
-        }
-        var savedFlow: Flow<ContentState.Available>? = null
-        return trigger.flatMapLatest { trigger ->
-            val availableFlow = savedFlow
-            when {
-                availableFlow != null -> availableFlow
-                trigger.fileId == id -> {
+    private fun DriveLink.File.getContentStateFlow(): Flow<ContentState> =
+        contentStatesCache.getOrPut(id) {
+            if (mimeType.toFileTypeCategory().toComposable() == PreviewComposable.Unknown) {
+                NO_PREVIEW_SUPPORTED
+            } else {
+                trigger.filter { trigger -> trigger.fileId == id }.flatMapLatest { trigger ->
                     combine(
                         getFile(this, trigger.verifySignature),
                         renderFailed,
                     ) { fileState, renderFailed ->
-                        getContentState(fileState, renderFailed).also { state ->
-                            if (state is ContentState.Available) {
-                                savedFlow = flowOf(state)
-                            }
-                        }
+                        getContentState(fileState, renderFailed)
                     }
                 }
-                else -> DEFAULT_STATE
             }
         }
-    }
 
     private data class Trigger(
         val fileId: FileId,
@@ -247,7 +243,6 @@ class PreviewViewModel @Inject constructor(
 
     companion object {
         private val NO_PREVIEW_SUPPORTED = flowOf(ContentState.Available(Uri.EMPTY))
-        private val DEFAULT_STATE = flowOf(ContentState.Downloading(null))
     }
 }
 

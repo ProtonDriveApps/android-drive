@@ -18,6 +18,7 @@
 
 package me.proton.core.drive.files.presentation.component.files
 
+import android.content.res.Configuration
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -29,14 +30,17 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -44,29 +48,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
+import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
-import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallIconSize
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
+import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmall
 import me.proton.core.drive.base.domain.entity.Percentage
-import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
-import me.proton.core.drive.base.presentation.component.protonColors
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
+import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
 import me.proton.core.presentation.R as CorePresentation
 
@@ -102,6 +106,10 @@ fun FilesGridItem(
                     onLongClick(link)
                 },
             )
+            .background(
+                color = if (isSelected) ProtonTheme.colors.backgroundSecondary else Color.Transparent,
+                shape = ProtonTheme.shapes.medium,
+            )
             .padding(SmallSpacing),
     ) {
         Column(
@@ -113,16 +121,11 @@ fun FilesGridItem(
                 Crossfade(inMultiselect) { inMultiselect ->
                     if (inMultiselect) {
                         Box(
-                            modifier = Modifier
-                                .size(IconSize)
-                                .padding(MoreButtonPadding),
+                            modifier = Modifier.size(DefaultButtonMinHeight),
                             contentAlignment = Alignment.Center,
                         ) {
-                            Checkbox(
-                                checked = isSelected,
-                                onCheckedChange = null,
-                                modifier = Modifier.scale(1.25f),
-                                colors = CheckboxDefaults.protonColors(),
+                            CircleSelection(
+                                isSelected = isSelected,
                             )
                         }
                     } else {
@@ -189,7 +192,9 @@ fun GridItemImage(
 ) {
     Box(
         modifier = modifier
-            .size(ImageWidth, ImageHeight)
+            .defaultMinSize(ImageWidth, ImageHeight)
+            .fillMaxWidth()
+            .aspectRatio(ImageRatio)
             .border(1.dp, ProtonTheme.colors.separatorNorm, ProtonTheme.shapes.medium)
             .clip(ProtonTheme.shapes.medium)
     ) {
@@ -252,5 +257,96 @@ private fun GridItemMoreButton(
 
 private val ImageHeight = 96.dp
 private val ImageWidth = 158.dp
+private val ImageRatio = ImageWidth/ImageHeight
 private val MoreButtonPadding = 12.dp
 private const val MoreButtonAlpha = 0.7f
+
+@Preview(
+    name = "GridItem not downloaded, not favorite, not shared in light mode",
+    group = "light mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    showBackground = true,
+)
+@Preview(
+    name = "GridItem not downloaded, not favorite, not shared in dark mode",
+    group = "dark mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true,
+)
+@Suppress("unused")
+@Composable
+private fun PreviewGridItem() {
+    ProtonTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            FilesGridItem(
+                link = PREVIEW_DRIVELINK,
+                onClick = {},
+                onLongClick = {},
+                onMoreOptionsClick = {},
+                isClickEnabled = { false },
+                isTextEnabled = { true },
+            )
+        }
+    }
+}
+@Preview(
+    name = "GridItem in multi select, selected in light mode",
+    group = "light mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    showBackground = true,
+)
+@Preview(
+    name = "GridItem in multi select, selected in dark mode",
+    group = "dark mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true,
+)
+@Suppress("unused")
+@Composable
+private fun PreviewSelectedGridItem() {
+    ProtonTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            FilesGridItem(
+                link = PREVIEW_DRIVELINK,
+                onClick = {},
+                onLongClick = {},
+                onMoreOptionsClick = {},
+                isClickEnabled = { false },
+                isTextEnabled = { true },
+                isSelected = true,
+                inMultiselect = true,
+            )
+        }
+    }
+}
+@Preview(
+    name = "GridItem in multi select, unselected in light mode",
+    group = "light mode",
+    uiMode = Configuration.UI_MODE_NIGHT_NO,
+    showBackground = true,
+)
+@Preview(
+    name = "GridItem in multi select, unselected in dark mode",
+    group = "dark mode",
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true,
+)
+@Suppress("unused")
+@Composable
+private fun PreviewUnselectedGridItem() {
+    ProtonTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            FilesGridItem(
+                link = PREVIEW_DRIVELINK,
+                onClick = {},
+                onLongClick = {},
+                onMoreOptionsClick = {},
+                isClickEnabled = { false },
+                isTextEnabled = { true },
+                isSelected = false,
+                inMultiselect = true,
+            )
+        }
+    }
+}
+

@@ -127,6 +127,17 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
+                android:name="me.proton.android.drive.initializer.MainInitializer"
+                android:value="androidx.startup"
+                tools:node="remove"/>
+            <meta-data
+                android:name="me.proton.android.drive.initializer.DocumentsProviderInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+                android:name="me.proton.android.drive.initializer.AutoLockInitializer"
+                android:value="androidx.startup"
+                tools:node="remove"/><!-- Initialized by MainInitializer -->
+            <meta-data
                 android:name="me.proton.android.drive.initializer.NotificationChannelInitializer"
                 android:value="androidx.startup" />
             <meta-data
@@ -137,8 +148,17 @@
                 android:value="androidx.startup"
                 tools:node="remove" />
             <meta-data
+                android:name="me.proton.core.humanverification.presentation.HumanVerificationInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
+            <meta-data
                 android:name="me.proton.android.drive.initializer.WorkManagerInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
+            <meta-data
+                android:name="me.proton.core.plan.presentation.UnredeemedPurchaseInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.android.drive.initializer.AccountStateHandlerInitializer"
                 android:value="androidx.startup" />
@@ -147,7 +167,16 @@
                 android:value="androidx.startup" />
             <meta-data
                 android:name="me.proton.android.drive.initializer.EventManagerInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
+            <meta-data
+                android:name="me.proton.core.auth.presentation.MissingScopeInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
+            <meta-data
+                android:name="me.proton.core.network.presentation.init.UnAuthSessionFetcherInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.android.drive.initializer.LoggerInitializer"
                 android:value="androidx.startup" />

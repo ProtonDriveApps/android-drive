@@ -32,5 +32,6 @@ driveModule(
     implementation(project(":drive:share:data"))
     implementation(libs.retrofit)
     androidTestImplementation(libs.bundles.core)
+    androidTestImplementation(project(":drive:db"))
     kaptAndroidTest(libs.androidx.room.compiler)
 }

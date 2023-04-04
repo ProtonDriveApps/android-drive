@@ -100,6 +100,15 @@ fun Project.driveModule(
 
     extensions.findByType<LibraryExtension>()?.apply {
         compileSdk = Config.compileSdk
+
+        defaultConfig {
+            javaCompileOptions {
+                annotationProcessorOptions {
+                    arguments["room.schemaLocation"] = "$projectDir/schemas"
+                }
+            }
+        }
+
         buildTypes {
             debug {
                 enableUnitTestCoverage = true
@@ -189,7 +198,7 @@ fun Project.driveModule(
         }
         if (includeSubmodules) {
             val fullName = project.fullName
-            projectDir.findModules().forEach { module ->
+            projectDir.findModules().filterNot { it.endsWith("-test") }.forEach { module ->
                 add("api", project(":$fullName$module"))
             }
         }
@@ -202,7 +211,7 @@ fun Project.driveModule(
 }
 
 // first alpha and fourth beta were not tagged in git so we add them to list of all git tags
-val Project.tags get() = "1.0.0-alpha01\n1.0.0_cancelled(16)\n1.0.0_cancelled(18)\n1.0.0_cancelled(20)\n1.0.0-beta04\n" + "git tag".runCommand(workingDir = rootDir)
+val Project.tags get() = "1.0.0-alpha01\n1.0.0_cancelled(16)\n1.0.0_cancelled(18)\n1.0.0_cancelled(20)\n1.0.0-beta04\n1.0.3_iap(26)\n" + "git tag".runCommand(workingDir = rootDir)
 
 val Project.versionCodeFromTags: Int get() = tags.countSubstrings("\n") + 2 // last new line + next tag
 

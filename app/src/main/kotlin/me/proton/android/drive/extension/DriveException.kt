@@ -19,18 +19,19 @@
 package me.proton.android.drive.extension
 
 import android.content.Context
+import me.proton.android.drive.lock.domain.exception.LockException
 import me.proton.core.drive.base.domain.exception.DriveException
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.share.domain.exception.ShareException
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.android.drive.lock.presentation.extension.getDefaultMessage as lockGetDefaultMessage
 
-fun DriveException.getDefaultMessage(context: Context): String = context.getString(
-    when (this) {
-        is ShareException.MainShareLocked -> BasePresentation.string.error_main_share_locked
-        is ShareException.MainShareNotFound -> BasePresentation.string.error_main_share_not_found
-        else -> throw IllegalStateException("Default message for exception is missing")
-    }
-)
+fun DriveException.getDefaultMessage(context: Context): String = when (this) {
+    is ShareException.MainShareLocked -> context.getString(BasePresentation.string.error_main_share_locked)
+    is ShareException.MainShareNotFound -> context.getString(BasePresentation.string.error_main_share_not_found)
+    is LockException -> lockGetDefaultMessage(context)
+    else -> throw IllegalStateException("Default message for exception is missing")
+}
 
 fun DriveException.log(tag: String, message: String = this.message.orEmpty()): DriveException = also {
     CoreLogger.d(tag, this, message)

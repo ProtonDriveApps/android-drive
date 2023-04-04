@@ -35,7 +35,8 @@ import org.junit.runners.Parameterized
 class CreatingFolderFlowErrorTest(
     private val folderName: String,
     private val errorMessage: String,
-): BaseTest() {
+    private val friendlyName: String
+) : BaseTest() {
 
     private val user
         get() = User(
@@ -64,11 +65,15 @@ class CreatingFolderFlowErrorTest(
     }
 
     companion object {
-        @get:Parameterized.Parameters(name = "folderName={0}, errorMessage={2}")
+        @get:Parameterized.Parameters(name = "{2}")
         @get:JvmStatic
         val data = listOf(
-            arrayOf("folder1", "A file or folder with that name already exists"),
-            arrayOf(getRandomString(256), StringUtils.stringFromResource(R.string.common_error_name_too_long, 255)),
+            arrayOf("folder1", "A file or folder with that name already exists", "alreadyExists"),
+            arrayOf(
+                getRandomString(256),
+                StringUtils.stringFromResource(R.string.common_error_name_too_long, 255),
+                "tooLongFilename"
+            ),
         )
     }
 }

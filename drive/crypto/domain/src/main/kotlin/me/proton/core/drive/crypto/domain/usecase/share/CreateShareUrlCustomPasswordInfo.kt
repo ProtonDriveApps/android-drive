@@ -53,7 +53,7 @@ class CreateShareUrlCustomPasswordInfo @Inject constructor(
                 .getOrThrow()
                 .take(RANDOM_URL_PASSWORD_SIZE)
             val urlPassword = "$randomPassword$customPassword"
-            val srpForShareUrl = generateSrpForShareUrl(urlPassword.toByteArray()).getOrThrow()
+            val srpForShareUrl = generateSrpForShareUrl(userId, urlPassword.toByteArray()).getOrThrow()
             val addressKeys = getAddressKeys(userId, addressId)
             val reencryptedSharePassphrase = reencryptSharePassphraseWithUrlPassword(
                 decryptKey = addressKeys.keyHolder,

@@ -26,8 +26,17 @@ driveModule(
 ) {
     api(project(":drive:link-trash:domain"))
     api(libs.androidx.paging.common)
-    implementation(project(":drive:base:presentation"))
     implementation(project(":drive:crypto:domain"))
     implementation(project(":drive:message-queue:domain"))
     implementation(project(":drive:share:domain"))
+
+    testImplementation(libs.dagger.hilt.android.testing)
+    add("kaptTest", libs.dagger.hilt.compiler)
+
+    testImplementation(project(":drive:trash:data-test"))
+    testImplementation(project(":drive:link-trash:data-test"))
+    testImplementation(project(":drive:link:data-test"))
+    testImplementation(project(":drive:share:data-test"))
 }
+
+configureJacoco()

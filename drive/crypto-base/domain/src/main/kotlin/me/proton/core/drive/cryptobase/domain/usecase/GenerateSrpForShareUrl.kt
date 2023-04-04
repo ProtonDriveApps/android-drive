@@ -19,16 +19,20 @@ package me.proton.core.drive.cryptobase.domain.usecase
 
 import me.proton.core.auth.domain.repository.AuthRepository
 import me.proton.core.crypto.common.context.CryptoContext
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.entity.SrpForShareUrl
+import me.proton.core.network.domain.session.SessionProvider
 import javax.inject.Inject
 
 class GenerateSrpForShareUrl @Inject constructor(
     private val cryptoContext: CryptoContext,
     private val authRepository: AuthRepository,
+    private val sessionProvider: SessionProvider,
 ) {
-    suspend operator fun invoke(urlPassword: ByteArray) = coRunCatching {
-        val modulus = authRepository.randomModulus()
+    suspend operator fun invoke(userId: UserId, urlPassword: ByteArray) = coRunCatching {
+        val sessionId = sessionProvider.getSessionId(userId)
+        val modulus = authRepository.randomModulus(sessionId)
         val auth = cryptoContext.srpCrypto.calculatePasswordVerifier(
             username = "",
             password = urlPassword,

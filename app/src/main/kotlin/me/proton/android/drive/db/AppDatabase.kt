@@ -19,247 +19,33 @@
 package me.proton.android.drive.db
 
 import android.content.Context
-import androidx.room.AutoMigration
 import androidx.room.Database
-import androidx.room.TypeConverters
-import me.proton.core.account.data.db.AccountConverters
-import me.proton.core.account.data.db.AccountDatabase
-import me.proton.core.account.data.entity.AccountEntity
-import me.proton.core.account.data.entity.AccountMetadataEntity
-import me.proton.core.account.data.entity.SessionDetailsEntity
-import me.proton.core.account.data.entity.SessionEntity
-import me.proton.core.challenge.data.db.ChallengeConverters
-import me.proton.core.challenge.data.db.ChallengeDatabase
-import me.proton.core.challenge.data.entity.ChallengeFrameEntity
-import me.proton.core.crypto.android.keystore.CryptoConverters
+import androidx.room.migration.Migration
+import me.proton.android.drive.lock.data.db.AppLockDatabase
+import me.proton.android.drive.lock.data.db.entity.AppLockEntity
+import me.proton.android.drive.lock.data.db.entity.AutoLockDurationEntity
+import me.proton.android.drive.lock.data.db.entity.EnableAppLockEntity
+import me.proton.android.drive.lock.data.db.entity.LockEntity
 import me.proton.core.data.room.db.BaseDatabase
-import me.proton.core.data.room.db.CommonConverters
-import me.proton.core.drive.drivelink.data.db.DriveLinkDatabase
-import me.proton.core.drive.drivelink.download.data.db.DriveLinkDownloadDatabase
-import me.proton.core.drive.drivelink.offline.data.db.DriveLinkOfflineDatabase
-import me.proton.core.drive.drivelink.paged.data.db.DriveLinkPagedDatabase
-import me.proton.core.drive.drivelink.paged.data.db.entity.DriveLinkRemoteKeyEntity
-import me.proton.core.drive.drivelink.selection.data.db.DriveLinkSelectionDatabase
-import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
-import me.proton.core.drive.drivelink.trash.data.db.DriveLinkTrashDatabase
-import me.proton.core.drive.folder.data.db.FolderDatabase
-import me.proton.core.drive.folder.data.db.FolderMetadataEntity
-import me.proton.core.drive.link.data.db.LinkDatabase
-import me.proton.core.drive.link.data.db.entity.LinkEntity
-import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
-import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
-import me.proton.core.drive.link.selection.data.db.LinkSelectionConverters
-import me.proton.core.drive.link.selection.data.db.LinkSelectionDatabase
-import me.proton.core.drive.link.selection.data.db.entity.LinkSelectionEntity
-import me.proton.core.drive.linkdownload.data.db.LinkDownloadDatabase
-import me.proton.core.drive.linkdownload.data.db.entity.DownloadBlockEntity
-import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadStateEntity
-import me.proton.core.drive.linknode.data.db.LinkAncestorDatabase
-import me.proton.core.drive.linkoffline.data.db.LinkOfflineDatabase
-import me.proton.core.drive.linkoffline.data.db.LinkOfflineEntity
-import me.proton.core.drive.linktrash.data.db.LinkTrashDatabase
-import me.proton.core.drive.linktrash.data.db.entity.LinkTrashStateEntity
-import me.proton.core.drive.linktrash.data.db.entity.TrashMetadataEntity
-import me.proton.core.drive.linktrash.data.db.entity.TrashWorkEntity
-import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
-import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
-import me.proton.core.drive.linkupload.data.db.entity.UploadBlockEntity
-import me.proton.core.drive.linkupload.data.db.entity.UploadBulkEntity
-import me.proton.core.drive.linkupload.data.db.entity.UploadBulkUriStringEntity
-import me.proton.core.drive.messagequeue.data.storage.db.MessageQueueDatabase
-import me.proton.core.drive.messagequeue.data.storage.db.entity.MessageEntity
-import me.proton.core.drive.notification.data.db.NotificationConverters
-import me.proton.core.drive.notification.data.db.NotificationDatabase
-import me.proton.core.drive.notification.data.db.entity.NotificationChannelEntity
-import me.proton.core.drive.notification.data.db.entity.NotificationEventEntity
-import me.proton.core.drive.share.data.db.ShareDatabase
-import me.proton.core.drive.share.data.db.ShareEntity
-import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
-import me.proton.core.drive.shareurl.base.data.db.entity.ShareUrlEntity
-import me.proton.core.drive.sorting.data.db.SortingDatabase
-import me.proton.core.drive.sorting.data.db.entity.SortingEntity
-import me.proton.core.drive.volume.data.db.VolumeDatabase
-import me.proton.core.drive.volume.data.db.VolumeEntity
-import me.proton.core.eventmanager.data.db.EventManagerConverters
-import me.proton.core.eventmanager.data.db.EventMetadataDatabase
-import me.proton.core.eventmanager.data.entity.EventMetadataEntity
-import me.proton.core.featureflag.data.db.FeatureFlagDatabase
-import me.proton.core.featureflag.data.entity.FeatureFlagEntity
-import me.proton.core.humanverification.data.db.HumanVerificationConverters
-import me.proton.core.humanverification.data.db.HumanVerificationDatabase
-import me.proton.core.humanverification.data.entity.HumanVerificationEntity
-import me.proton.core.key.data.db.KeySaltDatabase
-import me.proton.core.key.data.db.PublicAddressDatabase
-import me.proton.core.key.data.entity.KeySaltEntity
-import me.proton.core.key.data.entity.PublicAddressEntity
-import me.proton.core.key.data.entity.PublicAddressKeyEntity
-import me.proton.core.payment.data.local.db.PaymentDatabase
-import me.proton.core.payment.data.local.entity.GooglePurchaseEntity
-import me.proton.core.user.data.db.AddressDatabase
-import me.proton.core.user.data.db.UserConverters
-import me.proton.core.user.data.db.UserDatabase
-import me.proton.core.user.data.entity.AddressEntity
-import me.proton.core.user.data.entity.AddressKeyEntity
-import me.proton.core.user.data.entity.UserEntity
-import me.proton.core.user.data.entity.UserKeyEntity
-import me.proton.core.usersettings.data.db.OrganizationDatabase
-import me.proton.core.usersettings.data.db.UserSettingsConverters
-import me.proton.core.usersettings.data.db.UserSettingsDatabase
-import me.proton.core.usersettings.data.entity.OrganizationEntity
-import me.proton.core.usersettings.data.entity.OrganizationKeysEntity
-import me.proton.core.usersettings.data.entity.UserSettingsEntity
-import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
-import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
 
 @Database(
     entities = [
-        // Core
-        AccountEntity::class,
-        AccountMetadataEntity::class,
-        SessionEntity::class,
-        SessionDetailsEntity::class,
-        UserEntity::class,
-        UserKeyEntity::class,
-        AddressEntity::class,
-        AddressKeyEntity::class,
-        KeySaltEntity::class,
-        PublicAddressEntity::class,
-        PublicAddressKeyEntity::class,
-        HumanVerificationEntity::class,
-        UserSettingsEntity::class,
-        OrganizationEntity::class,
-        OrganizationKeysEntity::class,
-        EventMetadataEntity::class,
-        FeatureFlagEntity::class,
-        ChallengeFrameEntity::class,
-        GooglePurchaseEntity::class,
-        // Drive
-        VolumeEntity::class,
-        ShareEntity::class,
-        ShareUrlEntity::class,
-        LinkEntity::class,
-        LinkFilePropertiesEntity::class,
-        LinkFolderPropertiesEntity::class,
-        LinkOfflineEntity::class,
-        LinkDownloadStateEntity::class,
-        DownloadBlockEntity::class,
-        LinkTrashStateEntity::class,
-        // Trash
-        TrashWorkEntity::class,
-        // MessageQueue
-        MessageEntity::class,
-        // AppUiSettings
-        UiSettingsEntity::class,
-        // DriveLinkPaged
-        DriveLinkRemoteKeyEntity::class,
-        // Sorting
-        SortingEntity::class,
-        // Upload
-        LinkUploadEntity::class,
-        UploadBlockEntity::class,
-        UploadBulkEntity::class,
-        UploadBulkUriStringEntity::class,
-        FolderMetadataEntity::class,
-        TrashMetadataEntity::class,
-        // Notification
-        NotificationChannelEntity::class,
-        NotificationEventEntity::class,
-        // Selection
-        LinkSelectionEntity::class,
+        // AppLock
+        AppLockEntity::class,
+        LockEntity::class,
+        AutoLockDurationEntity::class,
+        EnableAppLockEntity::class,
     ],
     version = AppDatabase.VERSION,
-    autoMigrations = [
-        AutoMigration(from = 4, to = 5),
-        AutoMigration(from = 5, to = 6),
-        AutoMigration(from = 7, to = 8),
-        AutoMigration(from = 9, to = 10),
-        AutoMigration(from = 13, to = 14),
-        AutoMigration(from = 15, to = 16),
-        AutoMigration(from = 16, to = 17),
-        AutoMigration(from = 17, to = 18, spec = ShareDatabase.DeleteBlockSizeFromShareEntity::class),
-        AutoMigration(from = 18, to = 19),
-    ],
-    exportSchema = true,
 )
-@TypeConverters(
-    // Core
-    CommonConverters::class,
-    AccountConverters::class,
-    UserConverters::class,
-    CryptoConverters::class,
-    HumanVerificationConverters::class,
-    UserSettingsConverters::class,
-    EventManagerConverters::class,
-    ChallengeConverters::class,
-    // Drive
-    NotificationConverters::class,
-    LinkSelectionConverters::class,
-)
-abstract class AppDatabase :
-    BaseDatabase(),
-    AccountDatabase,
-    UserDatabase,
-    AddressDatabase,
-    KeySaltDatabase,
-    HumanVerificationDatabase,
-    PublicAddressDatabase,
-    UserSettingsDatabase,
-    OrganizationDatabase,
-    FeatureFlagDatabase,
-    VolumeDatabase,
-    ShareDatabase,
-    ShareUrlDatabase,
-    LinkDatabase,
-    FolderDatabase,
-    LinkAncestorDatabase,
-    LinkOfflineDatabase,
-    LinkDownloadDatabase,
-    LinkTrashDatabase,
-    LinkSelectionDatabase,
-    MessageQueueDatabase,
-    AppUiSettingsDatabase,
-    EventMetadataDatabase,
-    ChallengeDatabase,
-    SortingDatabase,
-    LinkUploadDatabase,
-    DriveLinkDatabase,
-    DriveLinkPagedDatabase,
-    DriveLinkTrashDatabase,
-    DriveLinkOfflineDatabase,
-    DriveLinkDownloadDatabase,
-    DriveLinkSharedDatabase,
-    DriveLinkSelectionDatabase,
-    NotificationDatabase,
-    PaymentDatabase {
+abstract class AppDatabase : BaseDatabase(), AppLockDatabase {
 
     companion object {
-        const val VERSION = 21
-
-        private val migrations = listOf(
-            AppDatabaseMigrations.MIGRATION_1_2,
-            AppDatabaseMigrations.MIGRATION_2_3,
-            AppDatabaseMigrations.MIGRATION_3_4,
-            //AutoMigration(from = 4, to = 5)
-            //AutoMigration(from = 5, to = 6)
-            AppDatabaseMigrations.MIGRATION_6_7,
-            //AutoMigration(from = 7, to = 8)
-            AppDatabaseMigrations.MIGRATION_8_9,
-            //AutoMigration(from = 9, to = 10)
-            AppDatabaseMigrations.MIGRATION_10_11,
-            AppDatabaseMigrations.MIGRATION_11_12,
-            AppDatabaseMigrations.MIGRATION_12_13,
-            //AutoMigration(from = 13, to = 14)
-            AppDatabaseMigrations.MIGRATION_14_15,
-            //AutoMigration(from = 15, to = 16)
-            //AutoMigration(from = 16, to = 17)
-            //AutoMigration(from = 17, to = 18)
-            //AutoMigration(from = 18, to = 19)
-            AppDatabaseMigrations.MIGRATION_19_20,
-            AppDatabaseMigrations.MIGRATION_20_21,
-        )
+        const val VERSION = 1
+        private val migrations = listOf<Migration>()
 
         fun buildDatabase(context: Context): AppDatabase =
-            databaseBuilder<AppDatabase>(context, "db-drive")
+            databaseBuilder<AppDatabase>(context, "db-app")
                 .apply { migrations.forEach { addMigrations(it) } }
                 .build()
     }

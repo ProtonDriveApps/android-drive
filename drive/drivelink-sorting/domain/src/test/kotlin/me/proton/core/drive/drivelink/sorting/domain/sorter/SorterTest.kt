@@ -18,18 +18,14 @@
 
 package me.proton.core.drive.drivelink.sorting.domain.sorter
 
-import io.mockk.every
-import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
-import me.proton.core.crypto.common.pgp.VerificationStatus
-import me.proton.core.drive.base.domain.entity.Bytes
-import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.base.domain.entity.CryptoProperty
-import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.sorting.domain.entity.By
 import me.proton.core.drive.sorting.domain.entity.Direction
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
+@RunWith(RobolectricTestRunner::class)
 class SorterTest {
 
     private val drivelinks = listOf(
@@ -774,26 +770,4 @@ class SorterTest {
     }
     // endregion
     // endregion
-
-    private fun file(name: String, type: String, lastModified: Long, size: Long) = mockk<DriveLink.File>()
-        .apply(name, type, lastModified, size)
-
-    private fun cryptedFile(name: String, type: String, lastModified: Long, size: Long) = mockk<DriveLink.File>()
-        .apply(name, type, lastModified, size)
-        .apply { every { cryptoName } returns CryptoProperty.Encrypted(name) }
-
-    private fun folder(name: String, lastModified: Long, size: Long) = mockk<DriveLink.Folder>()
-        .apply(name, "Folder", lastModified, size)
-
-    private fun cryptedFolder(name: String, lastModified: Long, size: Long) = mockk<DriveLink.Folder>()
-        .apply(name, "Folder", lastModified, size)
-        .apply { every { cryptoName } returns CryptoProperty.Encrypted(name) }
-
-    private fun <T : DriveLink> T.apply(name: String, type: String, lastModifiedS: Long, sizeB: Long) = apply {
-        every { cryptoName } returns CryptoProperty.Decrypted(name, VerificationStatus.Success)
-        every { this@apply.name } returns name
-        every { mimeType } returns type
-        every { lastModified } returns TimestampS(lastModifiedS)
-        every { size } returns Bytes(sizeB)
-    }
 }

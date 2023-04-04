@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.common.onClick
@@ -114,7 +115,7 @@ class SharedViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = DataResult.Processing(ResponseSource.Local))
 
     val driveLinksFlow = driveLinks.mapSuccessValueOrNull()
-        .map { driveLinks -> driveLinks.orEmpty() }
+        .filterNotNull()
         .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     val initialViewState = SharedViewState(
@@ -146,7 +147,11 @@ class SharedViewModel @Inject constructor(
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     private fun DataResult<List<DriveLink>>.toListContentState(): ListContentState = when (val cause = this) {
-        is DataResult.Processing -> ListContentState.Loading
+        is DataResult.Processing -> if (driveLinksFlow.replayCache.isNotEmpty()) {
+            ListContentState.Content(true)
+        } else {
+            ListContentState.Loading
+        }
         is DataResult.Success -> if (cause.value.isNotEmpty()) {
             ListContentState.Content(false)
         } else {
@@ -171,18 +176,22 @@ class SharedViewModel @Inject constructor(
         navigateToSortingDialog: (Sorting) -> Unit,
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
     ): SharedViewEvent = object : SharedViewEvent {
+
+        private val driveLinkShareFlow = MutableSharedFlow<DriveLink>(extraBufferCapacity = 1).also { flow ->
+            viewModelScope.launch {
+                flow.take(1).collect { driveLink ->
+                    driveLink.onClick(navigateToFiles, navigateToPreview)
+                }
+            }
+        }
         override val onTopAppBarNavigation = {
             viewModelScope.launch { _effects.emit(HomeEffect.OpenDrawer) }
             Unit
         }
         override val onSorting = navigateToSortingDialog
-        override val onDriveLink = { driveNode: DriveLink ->
-            driveNode.onClick(
-                navigateToFolder = navigateToFiles,
-                navigateToPreview = { fileId ->
-                    navigateToPreview(fileId)
-                }
-            )
+        override val onDriveLink = { driveLink: DriveLink ->
+            driveLinkShareFlow.tryEmit(driveLink)
+            Unit
         }
         override val onLoadState = { _: CombinedLoadStates, _: Int -> }
         override val onMoreOptions = { driveLink: DriveLink -> navigateToFileOrFolderOptions(driveLink.id) }

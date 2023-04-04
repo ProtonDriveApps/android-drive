@@ -1,7 +1,3 @@
-import org.gradle.api.Plugin
-import org.gradle.api.Project
-import org.gradle.api.tasks.Delete
-
 /*
  * Copyright (c) 2023 Proton AG.
  * This file is part of Proton Drive.
@@ -19,6 +15,11 @@ import org.gradle.api.tasks.Delete
  * You should have received a copy of the GNU General Public License
  * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+import org.gradle.api.tasks.Delete
+
 
 class DeleteTestPlugin : Plugin<Project> {
 

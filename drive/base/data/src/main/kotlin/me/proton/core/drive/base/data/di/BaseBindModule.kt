@@ -21,17 +21,13 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import dagger.multibindings.IntoSet
 import me.proton.core.drive.base.data.formatter.DateTimeFormatterImpl
-import me.proton.core.drive.base.data.provider.ExifImageResolutionProvider
-import me.proton.core.drive.base.data.provider.MetadataRetrieverVideoResolutionProvider
-import me.proton.core.drive.base.data.provider.MimeTypeProviderImpl
 import me.proton.core.drive.base.data.usecase.CopyToClipboardImpl
+import me.proton.core.drive.base.data.usecase.GetMemoryInfoImpl
 import me.proton.core.drive.base.data.usecase.Sha256Impl
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
-import me.proton.core.drive.base.domain.provider.MediaResolutionProvider
-import me.proton.core.drive.base.domain.provider.MimeTypeProvider
 import me.proton.core.drive.base.domain.usecase.CopyToClipboard
+import me.proton.core.drive.base.domain.usecase.GetMemoryInfo
 import me.proton.core.drive.base.domain.usecase.Sha256
 import javax.inject.Singleton
 
@@ -50,4 +46,8 @@ interface BaseBindModule {
     @Binds
     @Singleton
     fun bindsSha256Impl(impl: Sha256Impl): Sha256
+
+    @Binds
+    @Singleton
+    fun bindsGetMemoryInfoImpl(impl: GetMemoryInfoImpl): GetMemoryInfo
 }

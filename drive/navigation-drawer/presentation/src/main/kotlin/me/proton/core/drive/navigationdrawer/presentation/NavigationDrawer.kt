@@ -246,6 +246,7 @@ fun NavigationDrawerListItem(
 ) {
     ProtonListItem(
         icon = icon,
+        iconTintColor = ProtonTheme.colors.iconWeak,
         title = title,
         modifier = modifier
             .clickable {

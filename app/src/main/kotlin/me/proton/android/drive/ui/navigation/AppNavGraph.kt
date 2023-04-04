@@ -43,6 +43,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import com.google.accompanist.navigation.animation.composable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import me.proton.android.drive.extension.get
@@ -50,7 +51,9 @@ import me.proton.android.drive.extension.popAllBackStack
 import me.proton.android.drive.extension.require
 import me.proton.android.drive.extension.requireArguments
 import me.proton.android.drive.extension.runFromRoute
+import me.proton.android.drive.lock.presentation.component.AppLock
 import me.proton.android.drive.log.DriveLogTag
+import me.proton.android.drive.ui.dialog.AutoLockDurations
 import me.proton.android.drive.ui.dialog.ConfirmDeletionDialog
 import me.proton.android.drive.ui.dialog.ConfirmEmptyTrashDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopSharingDialog
@@ -59,6 +62,7 @@ import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
 import me.proton.android.drive.ui.dialog.SortingList
+import me.proton.android.drive.ui.dialog.SystemAccessDialog
 import me.proton.android.drive.ui.navigation.animation.defaultEnterSlideTransition
 import me.proton.android.drive.ui.navigation.animation.defaultPopExitSlideTransition
 import me.proton.android.drive.ui.navigation.animation.slideComposable
@@ -67,6 +71,7 @@ import me.proton.android.drive.ui.navigation.internal.MutableNavControllerSaver
 import me.proton.android.drive.ui.navigation.internal.createNavController
 import me.proton.android.drive.ui.navigation.internal.modalBottomSheet
 import me.proton.android.drive.ui.navigation.internal.rememberAnimatedNavController
+import me.proton.android.drive.ui.screen.AppAccessScreen
 import me.proton.android.drive.ui.screen.FileInfoScreen
 import me.proton.android.drive.ui.screen.HomeScreen
 import me.proton.android.drive.ui.screen.LauncherScreen
@@ -78,6 +83,7 @@ import me.proton.android.drive.ui.screen.SigningOutScreen
 import me.proton.android.drive.ui.screen.TrashScreen
 import me.proton.android.drive.ui.screen.UploadToScreen
 import me.proton.android.drive.ui.screen.WelcomeScreen
+import me.proton.core.account.domain.entity.Account
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.domain.entity.UserId
@@ -101,6 +107,8 @@ fun AppNavGraph(
     deepLinkBaseUrl: String,
     clearBackstackTrigger: SharedFlow<Unit>,
     deepLinkIntent: SharedFlow<Intent>,
+    locked: Flow<Boolean>,
+    primaryAccount: Flow<Account?>,
     exitApp: () -> Unit,
     sendBugReport: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
@@ -136,14 +144,16 @@ fun AppNavGraph(
                 homeNavController = createNavController(localContext)
             }
     }
-    AppNavGraph(
-        navController = navController,
-        homeNavController = homeNavController,
-        deepLinkBaseUrl = deepLinkBaseUrl,
-        exitApp = exitApp,
-        sendBugReport = sendBugReport,
-        onDrawerStateChanged = onDrawerStateChanged,
-    )
+    AppLock(locked = locked, primaryAccount = primaryAccount) {
+        AppNavGraph(
+            navController = navController,
+            homeNavController = homeNavController,
+            deepLinkBaseUrl = deepLinkBaseUrl,
+            exitApp = exitApp,
+            sendBugReport = sendBugReport,
+            onDrawerStateChanged = onDrawerStateChanged,
+        )
+    }
 }
 
 @Composable
@@ -188,6 +198,9 @@ fun AppNavGraph(
         addShareViaLink(navController)
         addDiscardShareViaLinkChanges(navController)
         addUploadTo(navController, deepLinkBaseUrl, exitApp)
+        addAppAccess(navController)
+        addSystemAccessDialog(navController)
+        addAutoLockDurations(navController)
     }
 }
 
@@ -673,9 +686,16 @@ fun NavGraphBuilder.addSettings(navController: NavHostController) = composable(
     arguments = listOf(
         navArgument(Screen.PagerPreview.USER_ID) { type = NavType.StringType },
     ),
-) {
+) { navBackStackEntry ->
+    val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
     SettingsScreen(
         navigateBack = { navController.popBackStack() },
+        navigateToAppAccess = {
+            navController.navigate(Screen.Settings.AppAccess(userId))
+        },
+        navigateToAutoLockDurations = {
+            navController.navigate(Screen.Settings.AutoLockDurations(userId))
+        },
     )
 }
 
@@ -870,5 +890,49 @@ fun NavGraphBuilder.addUploadTo(
             navController.navigate(Screen.Files.Dialogs.CreateFolder(userId, parentId))
         },
         exitApp = exitApp,
+    )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addAppAccess(navController: NavHostController) = composable(
+    route = Screen.Settings.AppAccess.route,
+    enterTransition = defaultEnterSlideTransition { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition { true },
+    arguments = listOf(
+        navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry ->
+    val userId = UserId(navBackStackEntry.require(Screen.Settings.USER_ID))
+    AppAccessScreen(
+        navigateToSystemAccess = {
+            navController.navigate(Screen.Settings.AppAccess.Dialogs.SystemAccess(userId))
+        },
+        navigateBack = {
+            navController.popBackStack()
+        },
+    )
+}
+
+@ExperimentalCoroutinesApi
+fun NavGraphBuilder.addSystemAccessDialog(navController: NavHostController) = dialog(
+    route = Screen.Settings.AppAccess.Dialogs.SystemAccess.route,
+    arguments = listOf(
+        navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
+    ),
+) {
+    SystemAccessDialog(onDismiss = { navController.popBackStack() })
+}
+
+fun NavGraphBuilder.addAutoLockDurations(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.Settings.AutoLockDurations.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+) { _, runAction ->
+    AutoLockDurations(
+        runAction = runAction,
+        dismiss = { navController.popBackStack() }
     )
 }

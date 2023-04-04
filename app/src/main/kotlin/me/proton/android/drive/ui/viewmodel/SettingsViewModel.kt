@@ -23,6 +23,7 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,12 +33,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.R
-import me.proton.core.presentation.R as CorePresentation
+import me.proton.android.drive.lock.domain.manager.AppLockManager
+import me.proton.android.drive.lock.domain.usecase.GetAutoLockDuration
+import me.proton.android.drive.lock.domain.usecase.HasEnableAppLockTimestamp
 import me.proton.android.drive.settings.DebugSettings
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.settings.presentation.component.DebugSettingsStateAndEvent
@@ -46,10 +48,13 @@ import me.proton.core.drive.settings.presentation.event.SettingsViewEvent
 import me.proton.core.drive.settings.presentation.state.DebugSettingsViewState
 import me.proton.core.drive.settings.presentation.state.LegalLink
 import me.proton.core.drive.settings.presentation.state.SettingsViewState
+import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
 import me.proton.drive.android.settings.domain.usecase.UpdateThemeStyle
-import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import javax.inject.Inject
+import me.proton.core.drive.base.domain.extension.combine as baseCombine
+import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
 @SuppressLint("StaticFieldLeak")
@@ -59,18 +64,23 @@ class SettingsViewModel @Inject constructor(
     getThemeStyle: GetThemeStyle,
     private val updateThemeStyle: UpdateThemeStyle,
     savedStateHandle: SavedStateHandle,
+    appLockManager: AppLockManager,
+    getAutoLockDuration: GetAutoLockDuration,
+    private val hasEnableAppLockTimestamp: HasEnableAppLockTimestamp,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage: SharedFlow<String> = _errorMessage
 
-    val viewState: Flow<SettingsViewState> = combine(
+    val viewState: Flow<SettingsViewState> = baseCombine(
         debugSettings.baseUrlFlow,
         debugSettings.hostFlow,
         debugSettings.appVersionHeaderFlow,
         debugSettings.useExceptionMessageFlow,
         getThemeStyle(userId),
-    ) { baseUrl, host, appVersionHeader, useExceptionMessage, themeStyle ->
+        appLockManager.enabled,
+        getAutoLockDuration(),
+    ) { baseUrl, host, appVersionHeader, useExceptionMessage, themeStyle, enabled, autoLockDuration ->
         SettingsViewState(
             navigationIcon = CorePresentation.drawable.ic_arrow_back,
             appNameResId = R.string.app_name,
@@ -92,11 +102,18 @@ class SettingsViewModel @Inject constructor(
                 baseUrl = baseUrl,
                 appVersionHeader = appVersionHeader,
                 useExceptionMessage = useExceptionMessage,
-            )
+            ),
+            appAccessSubtitleResId = getAppAccessSubtitleResId(enabled),
+            isAutoLockDurationsVisible = enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O,
+            autoLockDuration = autoLockDuration,
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
-    fun viewEvent(navigateBack: () -> Unit) = SettingsViewEvent(
+    fun viewEvent(
+        navigateBack: () -> Unit,
+        navigateToAppAccess: () -> Unit,
+        navigateToAutoLockDurations: () -> Unit,
+    ) = SettingsViewEvent(
         navigateBack = navigateBack,
         onLinkClicked = { link ->
             when (link) {
@@ -107,8 +124,20 @@ class SettingsViewModel @Inject constructor(
             viewModelScope.launch {
                 updateThemeStyle(userId, enumValues<ThemeStyle>().first { style -> style.resId == newStyle })
             }
+        },
+        onAppAccess = {
+            navigateToAppAccess()
+        },
+        onAutoLockDurations = {
+            navigateToAutoLockDurations()
         }
     )
+
+    private suspend fun getAppAccessSubtitleResId(isAppLockEnabled: Boolean): Int = when {
+        isAppLockEnabled -> BasePresentation.string.app_lock_option_system
+        hasEnableAppLockTimestamp().not() -> BasePresentation.string.app_lock_option_never_set
+        else -> BasePresentation.string.app_lock_option_none
+    }
 
     private fun onExternalLinkClicked(link: LegalLink.External) {
         try {

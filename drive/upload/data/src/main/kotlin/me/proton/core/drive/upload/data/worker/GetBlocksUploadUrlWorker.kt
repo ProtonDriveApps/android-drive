@@ -122,13 +122,18 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
                     else latest + continuations.subList(requests.size, continuations.size)
                 }
             }.also { continuations ->
-                WorkContinuation.combine(continuations)
-                    .then(
+                if (continuations.isNotEmpty()) {
+                    WorkContinuation.combine(continuations)
+                        .then(
+                            UpdateRevisionWorker.getWorkRequest(userId, uploadFileLinkId, uploadTag)
+                        )
+                } else {
+                    workManager.beginWith(
                         UpdateRevisionWorker.getWorkRequest(userId, uploadFileLinkId, uploadTag)
                     )
-                    .then(
-                        UploadSuccessCleanupWorker.getWorkRequest(userId, uploadFileLinkId, uploadTag)
-                    )
+                }.then(
+                    UploadSuccessCleanupWorker.getWorkRequest(userId, uploadFileLinkId, uploadTag)
+                )
                     .enqueue()
             }
     }

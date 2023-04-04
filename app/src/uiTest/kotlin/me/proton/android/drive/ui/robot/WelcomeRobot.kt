@@ -18,33 +18,31 @@
 
 package me.proton.android.drive.ui.robot
 
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.onFirst
-import androidx.compose.ui.test.swipeLeft
-import androidx.compose.ui.test.swipeRight
+import me.proton.test.fusion.Fusion.node
+import me.proton.test.fusion.Fusion.allNodes
 import me.proton.android.drive.ui.screen.WelcomeScreenTestTag
+import me.proton.test.fusion.ui.common.enums.SwipeDirection
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.presentation.R as CorePresentation
 
 object WelcomeRobot : Robot {
-    private val skipButton get() = nodes(hasTextResource(CorePresentation.string.presentation_skip)).onFirst()
-    private val nextButton get() = nodes(hasTextResource(BasePresentation.string.common_next_action)).onFirst()
-    private val getStartedButton get() = node(hasTextResource(BasePresentation.string.welcome_get_started_action))
-    private val welcomeLabel get() = node(hasTextResource(BasePresentation.string.welcome_to_description))
-    private val filesTitle get() = node(hasTextResource(BasePresentation.string.title_welcome_files))
-    private val titleSharing get() = node(hasTextResource(BasePresentation.string.title_welcome_sharing))
-    private val filesDescription get() = node(hasTextResource(BasePresentation.string.welcome_files_description))
-    private val sharingDescription get() = node(hasTextResource(BasePresentation.string.welcome_sharing_description))
-    private val welcomeScreen get() = node(hasTestTag(WelcomeScreenTestTag.screen))
+    private val skipButton get() = allNodes.withText(CorePresentation.string.presentation_skip).onFirst()
+    private val nextButton get() = allNodes.withText(BasePresentation.string.common_next_action).onFirst()
+    private val getStartedButton get() = node.withText(BasePresentation.string.welcome_get_started_action)
+    private val welcomeLabel get() = node.withText(BasePresentation.string.welcome_to_description)
+    private val filesTitle get() = node.withText(BasePresentation.string.title_welcome_files)
+    private val titleSharing get() = node.withText(BasePresentation.string.title_welcome_sharing)
+    private val filesDescription get() = node.withText(BasePresentation.string.welcome_files_description)
+    private val sharingDescription get() = node.withText(BasePresentation.string.welcome_sharing_description)
+    private val welcomeScreen get() = node.withTag(WelcomeScreenTestTag.screen)
 
-    fun clickNext() = nextButton.tryToClickAndGoTo(this)
-    fun clickSkip() = skipButton.tryToClickAndGoTo(FilesTabRobot)
-    fun clickGetStarted() = getStartedButton.tryToClickAndGoTo(FilesTabRobot)
-    fun swipeLeft() = welcomeScreen.tryPerformTouchInputAndGoTo(this) { this.swipeLeft() }
-    fun swipeRight() = welcomeScreen.tryPerformTouchInputAndGoTo(this) { this.swipeRight() }
+    fun clickNext() = nextButton.clickTo(this)
+    fun clickSkip() = skipButton.clickTo(FilesTabRobot)
+    fun clickGetStarted() = getStartedButton.clickTo(FilesTabRobot)
+    fun swipeLeft() = apply { welcomeScreen.swipe(SwipeDirection.Left) }
+    fun swipeRight() = apply { welcomeScreen.swipe(SwipeDirection.Right) }
 
     override fun robotDisplayed() {
-        welcomeScreen.assertIsDisplayed()
+        welcomeScreen.await { assertIsDisplayed() }
     }
 }

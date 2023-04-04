@@ -46,7 +46,7 @@ class CreateShareUrlInfo @Inject constructor(
             "Random URL password size (${randomUrlPassword.length}) does not match requirement (${RANDOM_URL_PASSWORD_SIZE})"
         }
         val addressKeys = getAddressKeys(userId, addressId)
-        val srpForShareUrl = generateSrpForShareUrl(randomUrlPassword.toByteArray()).getOrThrow()
+        val srpForShareUrl = generateSrpForShareUrl(userId, randomUrlPassword.toByteArray()).getOrThrow()
         val reencryptedSharePassphrase = reencryptSharePassphraseWithUrlPassword(
             decryptKey = addressKeys.keyHolder,
             urlPassword = randomUrlPassword.toByteArray(),

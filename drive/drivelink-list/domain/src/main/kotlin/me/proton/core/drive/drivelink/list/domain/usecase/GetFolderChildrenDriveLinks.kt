@@ -59,4 +59,25 @@ class GetFolderChildrenDriveLinks @Inject constructor(
             }
             emitAll(getDriveLinks(folderId).map { driveLinks -> driveLinks.asSuccess })
         }
+
+    operator fun invoke(
+        folderId: FolderId,
+        fromIndex: Int,
+        count: Int,
+        refresh: Flow<Boolean> = flowOf { folderRepository.shouldInitiallyFetchFolderChildren(folderId) }
+    ): Flow<DataResult<List<DriveLink>>> =
+        refresh.transform { shouldRefresh ->
+            if (shouldRefresh) {
+                fetcher<List<DriveLink>> {
+                    val (_, saveAction) = folderRepository.fetchFolderChildren(
+                        folderId = folderId,
+                        pageIndex = 0,
+                        pageSize = configurationProvider.uiPageSize,
+                        sorting = getSorting(folderId.userId).first().toFolderSorting()
+                    ).getOrThrow()
+                    saveAction()
+                }
+            }
+            emitAll(getDriveLinks(folderId, fromIndex, count).map { driveLinks -> driveLinks.asSuccess })
+        }
 }
