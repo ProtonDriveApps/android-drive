@@ -48,6 +48,7 @@ fun Throwable.getDefaultMessage(
         is SQLException -> getDefaultMessage(context)
         is UnsupportedOperationException -> getDefaultMessage(context)
         is IOException -> getDefaultMessage(context)
+        is SecurityException -> getDefaultMessage(context)
         is RuntimeException -> getDefaultMessage(context)
         else -> unhandled
     }
@@ -65,6 +66,7 @@ fun Throwable.log(tag: String, message: String? = null): Throwable = this.also {
         is SQLException -> message?.let { log(tag, message) } ?: log(tag)
         is UnsupportedOperationException -> message?.let { log(tag, message) } ?: log(tag)
         is IOException -> message?.let { log(tag, message) } ?: log(tag)
+        is SecurityException -> message?.let { log(tag, message) } ?: log(tag)
         is RuntimeException -> message?.let { log(tag, message) } ?: log(tag)
         else -> message?.let { CoreLogger.e(tag, this, message) } ?: CoreLogger.e(tag, this)
     }

@@ -387,6 +387,13 @@
             "Input or output operation failed: Key cannot be used while inactive."
     -->
     <string name="common_error_io_with_message">Input or output operation failed: %1$s</string>
+    <string name="common_error_security">Security error occurred</string>
+    <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+    <string name="common_error_security_with_message">Security error occurred: %1$s</string>
     <!-- endregion -->
 
     <!--

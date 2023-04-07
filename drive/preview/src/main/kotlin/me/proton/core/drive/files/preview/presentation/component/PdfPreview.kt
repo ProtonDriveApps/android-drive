@@ -82,7 +82,9 @@ fun PdfPreview(
         value = PdfReader(context).apply {
             try {
                 openPdf(uri)
-            } catch (e: IOException){
+            } catch (e: IOException) {
+                onRenderFailed(e)
+            } catch (e: SecurityException) {
                 onRenderFailed(e)
             }
         }
@@ -220,8 +222,8 @@ class PdfReader(private val context: Context) {
     @SuppressLint("Recycle")
     suspend fun openPdf(uri: Uri) {
         withContext(Dispatchers.IO) {
-            pdfRenderer = context.contentResolver.openAssetFileDescriptor(uri, "r")?.let {
-                PdfRenderer(it.parcelFileDescriptor)
+            pdfRenderer = context.contentResolver.openAssetFileDescriptor(uri, "r")?.let { fileDescriptor ->
+                PdfRenderer(fileDescriptor.parcelFileDescriptor)
             }
         }
     }
