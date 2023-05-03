@@ -18,7 +18,6 @@
 package me.proton.core.drive.upload.data.worker
 
 import android.content.Context
-import androidx.work.CoroutineWorker
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.CancellationException
@@ -30,7 +29,6 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.extension.logDefaultMessage
-import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
@@ -39,8 +37,13 @@ import me.proton.core.drive.upload.data.extension.getDefaultMessage
 import me.proton.core.drive.upload.data.extension.log
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.worker.data.LimitedRetryCoroutineWorker
+import me.proton.core.drive.worker.domain.usecase.CanRun
+import me.proton.core.drive.worker.domain.usecase.Done
+import me.proton.core.drive.worker.domain.usecase.Run
 import me.proton.core.util.kotlin.CoreLogger
 import java.io.IOException
+import me.proton.core.drive.i18n.R as I18N
 
 @ExperimentalCoroutinesApi
 abstract class UploadCoroutineWorker(
@@ -50,15 +53,19 @@ abstract class UploadCoroutineWorker(
     protected val broadcastMessages: BroadcastMessages,
     private val getUploadFileLink: GetUploadFileLink,
     protected val configurationProvider: ConfigurationProvider,
-) : CoroutineWorker(appContext, workerParams) {
+    canRun: CanRun,
+    run: Run,
+    done: Done,
+) : LimitedRetryCoroutineWorker(appContext, workerParams, canRun, run, done) {
 
-    protected val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)) { "User id is required" })
+    override val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)) { "User id is required" })
     protected val uploadFileLinkId: Long = inputData.getLong(KEY_UPLOAD_FILE_LINK_ID, -1L)
+    override val logTag: String get() = logTag()
 
-    override suspend fun doWork(): Result {
+    override suspend fun doLimitedRetryWork(): Result {
         return try {
             val uploadFileLink = getUploadFileLink(uploadFileLinkId).toResult().getOrThrow()
-            doUploadWork(uploadFileLink)
+            doLimitedRetryUploadWork(uploadFileLink)
         } catch (e: CancellationException) {
             CoreLogger.d(logTag(), "Retrying due to cancellation exception")
             Result.retry()
@@ -76,7 +83,7 @@ abstract class UploadCoroutineWorker(
                     broadcastMessages(
                         userId = userId,
                         message = applicationContext.getString(
-                            BasePresentation.string.files_upload_failure_with_description,
+                            I18N.string.files_upload_failure_with_description,
                             if (e is UploadCleanupException) e.fileName else "",
                             when (e) {
                                 is UploadCleanupException -> e.log(logTag()).getDefaultMessage(
@@ -99,5 +106,5 @@ abstract class UploadCoroutineWorker(
         uploadFileLinkId.logTag()
     }
 
-    abstract suspend fun doUploadWork(uploadFileLink: UploadFileLink): Result
+    abstract suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result
 }

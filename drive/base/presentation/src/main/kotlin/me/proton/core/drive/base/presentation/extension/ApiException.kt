@@ -21,14 +21,14 @@ import android.content.Context
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.CoreLogger
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 fun ApiException.getDefaultMessage(context: Context): String = when (val cause = error) {
     is ApiResult.Error.Certificate,
-    is ApiResult.Error.Parse -> context.getString(BasePresentation.string.common_error_internal)
-    is ApiResult.Error.Connection -> context.getString(BasePresentation.string.common_error_no_internet)
+    is ApiResult.Error.Parse -> context.getString(I18N.string.common_error_internal)
+    is ApiResult.Error.Connection -> context.getString(I18N.string.common_error_no_internet)
     is ApiResult.Error.Http -> when (cause.httpCode) {
-        in 500..599 -> context.getString(BasePresentation.string.common_error_http_5xx)
+        in 500..599 -> context.getString(I18N.string.common_error_http_5xx)
         else -> cause.proton?.error ?: cause.message
     }
 }

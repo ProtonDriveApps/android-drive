@@ -51,6 +51,16 @@ sealed class NotificationEvent {
         override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
     }
 
+    object ForcedSignOut : NotificationEvent() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+    }
+
+    object NoSpaceLeftOnDevice : NotificationEvent() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+    }
+
     companion object {
         private const val EVENT_ID_PREFIX = "NOTIFICATION_EVENT_ID_"
     }

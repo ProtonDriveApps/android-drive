@@ -34,6 +34,7 @@ driveModule(
     api(libs.core.payment.data)
     api(libs.core.user.data)
     api(libs.core.userSettings.data)
+    api(libs.core.keyTransparency.data)
     // TODO: Extract from drive db
     api(project(":app-ui-settings"))
     api(project(":drive:drivelink:data"))
@@ -57,4 +58,5 @@ driveModule(
     api(project(":drive:share-url:base:data"))
     api(project(":drive:sorting:data"))
     api(project(":drive:volume:data"))
+    api(project(":drive:worker:data"))
 }

@@ -82,7 +82,6 @@ import me.proton.core.drive.base.presentation.entity.FileTypeCategory
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.debugOnly
 import me.proton.core.drive.base.presentation.extension.isLandscape
-import me.proton.core.drive.files.preview.R
 import me.proton.core.drive.files.preview.presentation.component.event.PreviewViewEvent
 import me.proton.core.drive.files.preview.presentation.component.state.ContentState
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewContentState
@@ -90,7 +89,7 @@ import me.proton.core.drive.files.preview.presentation.component.state.PreviewVi
 import me.proton.core.util.kotlin.exhaustive
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -163,7 +162,7 @@ fun Preview(
                 actions = {
                     ActionButton(
                         icon = CorePresentation.drawable.ic_proton_three_dots_vertical,
-                        contentDescription = BasePresentation.string.content_description_more_options,
+                        contentDescription = I18N.string.content_description_more_options,
                         onClick = viewEvent.onMoreOptions,
                     )
                 },
@@ -240,9 +239,9 @@ fun PreviewDownloadingAndDecrypting(
                 val progress = state.progress?.let {
                     rememberFlowWithLifecycle(state.progress).collectAsState(null)
                 }
-                progress?.value?.value to stringResource(id = R.string.preview_downloading_state).debugOnly()
+                progress?.value?.value to stringResource(id = I18N.string.preview_downloading_state).debugOnly()
             }
-            is ContentState.Decrypting -> null to stringResource(id = R.string.preview_processing_state).debugOnly()
+            is ContentState.Decrypting -> null to stringResource(id = I18N.string.preview_processing_state).debugOnly()
             else -> throw IllegalStateException("Allowed states are Downloading or Decrypting but was $state")
         }
         LinearProgressIndicator(
@@ -436,7 +435,7 @@ fun PreviewNotFound(
     }
     if (showPreviewNotFound) {
         PreviewError(
-            message = stringResource(id = BasePresentation.string.title_not_found),
+            message = stringResource(id = I18N.string.title_not_found),
             fileTypeCategory = FileTypeCategory.Unknown,
             modifier = modifier.navigationBarsPadding(),
         )

@@ -70,6 +70,7 @@ import me.proton.drive.android.settings.domain.usecase.GetLayoutType
 import me.proton.drive.android.settings.domain.usecase.ToggleLayoutType
 import javax.inject.Inject
 import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
@@ -113,7 +114,7 @@ class OfflineViewModel @Inject constructor(
     val initialViewState = OfflineViewState(
         filesViewState = FilesViewState(
             title = savedStateHandle.get(Screen.Files.FOLDER_NAME),
-            titleResId = BasePresentation.string.title_offline_available,
+            titleResId = I18N.string.title_offline_available,
             navigationIconResId = CorePresentation.drawable.ic_arrow_back,
             drawerGesturesEnabled = false,
             sorting = Sorting.DEFAULT,
@@ -148,14 +149,14 @@ class OfflineViewModel @Inject constructor(
         else -> if (folderId == null) {
             ListContentState.Empty(
                 BasePresentation.drawable.empty_offline,
-                BasePresentation.string.title_empty_offline_available,
-                BasePresentation.string.description_empty_offline_available
+                I18N.string.title_empty_offline_available,
+                I18N.string.description_empty_offline_available
             )
         } else {
             ListContentState.Empty(
                 BasePresentation.drawable.empty_folder,
-                BasePresentation.string.title_empty_files,
-                BasePresentation.string.description_empty_files,
+                I18N.string.title_empty_folder,
+                I18N.string.description_empty_folder,
             )
         }
     }

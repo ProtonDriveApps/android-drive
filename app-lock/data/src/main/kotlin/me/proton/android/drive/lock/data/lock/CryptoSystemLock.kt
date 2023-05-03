@@ -33,7 +33,7 @@ import me.proton.android.drive.lock.domain.lock.LockState
 import me.proton.android.drive.lock.domain.repository.AppLockRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 class CryptoSystemLock @Inject constructor(
     @ApplicationContext private val appContext: Context,
@@ -50,8 +50,8 @@ class CryptoSystemLock @Inject constructor(
         require(systemLockKey.appKey == key)
         val initializationVector = systemLockKey.appKeyPassphrase.copyOf(Config.DEFAULT_CIPHER_IV_BYTES)
         val cipher = biometricPromptProvider.authenticate(
-            title = appContext.getString(BasePresentation.string.app_lock_biometric_title_app_locked),
-            subtitle = appContext.getString(BasePresentation.string.app_lock_biometric_subtitle_app_locked),
+            title = appContext.getString(I18N.string.app_lock_biometric_title_app_locked),
+            subtitle = appContext.getString(I18N.string.app_lock_biometric_subtitle_app_locked),
             cryptoObject = BiometricPrompt.CryptoObject(
                 keyProperties.getInitializedCipherForDecryption(
                     initializationVector = initializationVector,
@@ -71,9 +71,9 @@ class CryptoSystemLock @Inject constructor(
     override suspend fun lock(passphrase: ByteArray): Result<ByteArray> = coRunCatching {
         val cipher = requireNotNull(
             biometricPromptProvider.authenticate(
-                title = appContext.getString(BasePresentation.string.app_lock_biometric_title_confirmation),
+                title = appContext.getString(I18N.string.app_lock_biometric_title_confirmation),
                 subtitle = appContext.getString(
-                    BasePresentation.string.app_lock_biometric_subtitle_confirmation_enable
+                    I18N.string.app_lock_biometric_subtitle_confirmation_enable
                 ),
                 cryptoObject = BiometricPrompt.CryptoObject(
                     keyProperties.getInitializedCipherForEncryption()
@@ -88,9 +88,9 @@ class CryptoSystemLock @Inject constructor(
     override suspend fun disable(userAuthenticationRequired: Boolean) {
         if (userAuthenticationRequired) {
             biometricPromptProvider.authenticate(
-                title = appContext.getString(BasePresentation.string.app_lock_biometric_title_confirmation),
+                title = appContext.getString(I18N.string.app_lock_biometric_title_confirmation),
                 subtitle = appContext.getString(
-                    BasePresentation.string.app_lock_biometric_subtitle_confirmation_disable
+                    I18N.string.app_lock_biometric_subtitle_confirmation_disable
                 ),
                 cryptoObject = null,
             ).getOrThrow()

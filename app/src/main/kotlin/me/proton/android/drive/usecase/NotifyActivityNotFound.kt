@@ -24,7 +24,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Suppress("StaticFieldLeak")
 class NotifyActivityNotFound @Inject constructor(
@@ -35,7 +35,7 @@ class NotifyActivityNotFound @Inject constructor(
         broadcastMessages(
             userId = userId,
             message = appContext.getString(
-                BasePresentation.string.in_app_notification_activity_not_found,
+                I18N.string.common_in_app_notification_activity_not_found,
                 appContext.getString(operation)
             )
         )

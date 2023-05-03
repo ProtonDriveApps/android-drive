@@ -77,6 +77,7 @@ import me.proton.core.drive.link.presentation.extension.lastModifiedRelative
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
 import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -124,6 +125,7 @@ fun FilesListItem(
 
             Image(
                 modifier = Modifier
+                    .testTag(FilesListItemComponentTestTag.thumbnail(link))
                     .size(IconSize)
                     .clip(RoundedCornerShape(DefaultCornerRadius)),
                 painter = link.thumbnailPainter().painter,
@@ -291,7 +293,9 @@ fun SharedIcon(
         return
     }
     Icon(
-        modifier = modifier.size(ExtraSmallIconSize),
+        modifier = modifier
+            .size(ExtraSmallIconSize)
+            .testTag(FilesListItemComponentTestTag.itemWithSharedIcon),
         painter = painterResource(id = CorePresentation.drawable.ic_proton_link),
         tint = ProtonTheme.colors.iconNorm,
         contentDescription = null
@@ -308,11 +312,11 @@ fun RowScope.DetailsDescription(
     Text(
         modifier = modifier.alignByBaseline(),
         text = if (link is Folder) {
-            stringResource(BasePresentation.string.title_modified_with_date, link.lastModifiedRelative(context))
+            stringResource(I18N.string.title_modified_with_date, link.lastModifiedRelative(context))
         } else {
             link.downloadStateDescription(progress) ?: "%s, %s".format(
                 link.getSize(context),
-                stringResource(BasePresentation.string.title_modified_with_date, link.lastModifiedRelative(context)),
+                stringResource(I18N.string.title_modified_with_date, link.lastModifiedRelative(context)),
             )
         },
         style = ProtonTheme.typography.captionWeak,
@@ -326,7 +330,7 @@ fun DriveLink.downloadStateDescription(progress: Percentage?): String? {
     }
     return if (this is Folder) {
         if (downloadState == DownloadState.Downloading) {
-            stringResource(id = BasePresentation.string.title_downloading)
+            stringResource(id = I18N.string.common_downloading)
         } else {
             null
         }
@@ -334,10 +338,10 @@ fun DriveLink.downloadStateDescription(progress: Percentage?): String? {
         if (downloadState is DownloadState.Downloading) {
             progress?.let {
                 stringResource(
-                    id = BasePresentation.string.title_percent_downloaded,
+                    id = I18N.string.common_percent_downloaded,
                     progress.toPercentString(LocalContext.current.currentLocale)
                 )
-            } ?: stringResource(id = BasePresentation.string.title_downloading)
+            } ?: stringResource(id = I18N.string.common_downloading)
         } else null
     }
 }
@@ -597,6 +601,9 @@ object FilesListItemComponentTestTag {
     const val item = "file list item"
     const val folder = "folder item"
     const val file = "file item"
+    const val imageWithThumbnail = "image with thumbnail"
+    const val imageWithoutThumbnail = "image without thumbnail"
+    const val itemWithSharedIcon = "item with shared icon"
 
     enum class ItemType {
         Folder,
@@ -617,4 +624,13 @@ object FilesListItemComponentTestTag {
             is DriveLink.Folder -> ItemType.Folder
         }
     )
+
+    fun thumbnail(link: DriveLink) = when (link) {
+        is DriveLink.File -> if (link.hasThumbnail) {
+            imageWithThumbnail
+        } else {
+            imageWithoutThumbnail
+        }
+        else -> imageWithoutThumbnail
+    }
 }

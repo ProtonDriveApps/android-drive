@@ -68,12 +68,12 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonDimens.LargeSpacing
 import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
+import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
 import me.proton.core.compose.theme.headline
 import me.proton.core.compose.theme.headlineSmall
-import me.proton.core.presentation.R as CorePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun WelcomeScreen(
@@ -237,7 +237,7 @@ fun WelcomeGraphics(
                         .align(Alignment.CenterEnd)
                 ) {
                     Text(
-                        text = stringResource(id = CorePresentation.string.presentation_skip),
+                        text = stringResource(id = I18N.string.common_skip_action),
                         style = ProtonTheme.typography.headlineSmall,
                         color = ProtonTheme.colors.interactionNorm,
                     )

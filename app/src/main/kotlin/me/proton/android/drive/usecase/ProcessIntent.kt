@@ -44,13 +44,14 @@ import me.proton.android.drive.ui.viewmodel.AccountViewModel
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.drivelink.upload.domain.usecase.ValidateUploadLimit
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.drive.notification.domain.usecase.RemoveNotification
 import me.proton.core.drive.upload.domain.usecase.GetUploadFileName
 import me.proton.core.util.kotlin.CoreLogger
-import me.proton.core.util.kotlin.deserialize
+import me.proton.core.util.kotlin.deserializeOrNull
 import me.proton.core.util.kotlin.takeIfNotEmpty
 import javax.inject.Inject
-import me.proton.android.drive.R as Presentation
+import me.proton.core.drive.i18n.R as I18N
 
 class ProcessIntent @Inject constructor(
     @ApplicationContext private val appContext: Context,
@@ -72,7 +73,9 @@ class ProcessIntent @Inject constructor(
     }
 
     private suspend fun processExtraNotificationId(extraNotificationId: String) =
-        removeNotification(extraNotificationId.deserialize())
+        extraNotificationId.deserializeOrNull<NotificationId.User>()?.let { notificationId ->
+            removeNotification(notificationId)
+        }
 
     private suspend fun processActionSend(
         intent: Intent,
@@ -137,8 +140,8 @@ class ProcessIntent @Inject constructor(
             } ?: broadcastMessages(
                 userId = userId,
                 message = appContext.getString(
-                    Presentation.string.in_app_notification_upload_files_only,
-                    appContext.getString(Presentation.string.app_name)
+                    I18N.string.in_app_notification_upload_files_only,
+                    appContext.getString(I18N.string.app_name)
                 ),
                 type = BroadcastMessage.Type.INFO,
             )

@@ -30,6 +30,7 @@ import me.proton.core.drive.eventmanager.usecase.UpdateEventActionImpl
 import me.proton.core.eventmanager.domain.EventListener
 import me.proton.core.user.data.UserAddressEventListener
 import me.proton.core.user.data.UserEventListener
+import me.proton.core.user.data.UserSpaceEventListener
 import me.proton.core.usersettings.data.UserSettingsEventListener
 import javax.inject.Singleton
 
@@ -42,11 +43,13 @@ object EventManagerModule {
     @JvmSuppressWildcards
     fun provideEventListenerSet(
         userEventListener: UserEventListener,
+        userSpaceEventListener: UserSpaceEventListener,
         userAddressEventListener: UserAddressEventListener,
         userSettingsEventListener: UserSettingsEventListener,
         linkEventListener: LinkEventListener,
     ): Set<EventListener<*, *>> = setOf(
         userEventListener,
+        userSpaceEventListener,
         userAddressEventListener,
         userSettingsEventListener,
         linkEventListener,

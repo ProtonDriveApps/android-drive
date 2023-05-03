@@ -56,7 +56,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class ParentFolderOptionsViewModel @Inject constructor(
@@ -100,7 +100,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
                     is Option.CreateFolder -> option.build(runAction, navigateToCreateFolder)
                     is Option.TakeAPhoto -> option.build { onTakeAPhoto(takeAPhoto) }
                     is Option.UploadFile -> option.build {
-                        showFilePicker { handleActivityNotFound(BasePresentation.string.operation_open_document) }
+                        showFilePicker { handleActivityNotFound(I18N.string.operation_open_document) }
                     }
                     else -> throw IllegalStateException(
                         "Option ${option.javaClass.simpleName} is not found. Did you forget to add it?"
@@ -167,7 +167,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
                 }
                 .onSuccess { uri ->
                     viewModelScope.launch {
-                        takeAPhoto(uri) { handleActivityNotFound(BasePresentation.string.operation_take_picture) }
+                        takeAPhoto(uri) { handleActivityNotFound(I18N.string.operation_take_picture) }
                     }
                 }
         }

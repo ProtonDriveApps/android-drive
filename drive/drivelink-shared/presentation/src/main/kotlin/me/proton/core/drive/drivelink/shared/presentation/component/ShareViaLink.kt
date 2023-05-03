@@ -55,7 +55,7 @@ import me.proton.core.drive.drivelink.shared.presentation.viewmodel.SharedDriveL
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.LoadingViewState
 import me.proton.core.drive.link.domain.entity.LinkId
 import kotlin.time.Duration
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -92,7 +92,7 @@ fun ShareViaLink(
         TopAppBar(
             navigationIcon = painterResource(id = CorePresentation.drawable.ic_arrow_back),
             onNavigationIcon = viewEvent.onBackPressed,
-            title = stringResource(id = BasePresentation.string.title_share_via_link),
+            title = stringResource(id = I18N.string.title_share_via_link),
             modifier = Modifier.statusBarsPadding(),
             actions = {
                 if (saveButtonViewState.isVisible) {
@@ -108,7 +108,7 @@ fun ShareViaLink(
                         )
                     ) {
                         Text(
-                            text = stringResource(id = BasePresentation.string.common_save_action),
+                            text = stringResource(id = I18N.string.common_save_action),
                             style = ProtonTheme.typography.headlineSmall,
                             color = ProtonTheme.colors.interactionNorm,
                         )
@@ -195,7 +195,7 @@ fun ShareViaLinkErrorWithRetry(
     ) {
         ProtonErrorMessageWithAction(
             errorMessage = message,
-            action = stringResource(BasePresentation.string.common_retry_action),
+            action = stringResource(I18N.string.common_retry_action),
             onAction = retry
         )
     }

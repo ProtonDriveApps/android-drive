@@ -20,12 +20,12 @@ package me.proton.android.drive.ui.robot
 
 import me.proton.core.drive.folder.create.presentation.CreateFolderComponentTestTag
 import me.proton.test.fusion.Fusion.node
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 object CreateFolderRobot : Robot {
     private val createFolderScreen get() = node.withTag(CreateFolderComponentTestTag.screen)
-    private val cancelButton get() = node.withText(BasePresentation.string.common_cancel_action)
-    private val createButton get() = node.withText(BasePresentation.string.common_create_action)
+    private val cancelButton get() = node.withText(I18N.string.common_cancel_action)
+    private val createButton get() = node.withText(I18N.string.common_create_action)
     private val folderNameField get() = node.isSetText().hasAncestor(
         node.withTag(CreateFolderComponentTestTag.folderNameTextField)
     )

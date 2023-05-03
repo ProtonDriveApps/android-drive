@@ -16,8 +16,6 @@
  * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import org.gradle.kotlin.dsl.`kotlin-dsl`
-
 plugins {
     `kotlin-dsl`
 }
@@ -29,6 +27,9 @@ dependencies {
 }
 
 repositories {
+    providers.environmentVariable("INTERNAL_REPOSITORY").orNull?.let { path ->
+        maven { url = uri(path) }
+    }
     google()
     maven("https://plugins.gradle.org/m2/")
 }

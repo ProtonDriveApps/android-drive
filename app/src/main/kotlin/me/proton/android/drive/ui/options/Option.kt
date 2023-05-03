@@ -41,7 +41,7 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.isSharedUrlExpired
-import me.proton.android.drive.R as Presentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 sealed class Option(
@@ -59,7 +59,7 @@ sealed class Option(
             navigateToCreateFolder: (FolderId) -> Unit,
         ) = folderEntry(
             icon = CorePresentation.drawable.ic_proton_folder_plus,
-            labelResId = Presentation.string.folder_option_create_folder,
+            labelResId = I18N.string.folder_option_create_folder,
             runAction = runAction,
         ) {
             navigateToCreateFolder(id)
@@ -182,7 +182,7 @@ sealed class Option(
             takeAPhoto: () -> Unit,
         ) = FolderEntry(
             icon = CorePresentation.drawable.ic_proton_camera,
-            labelResId = Presentation.string.folder_option_take_a_photo,
+            labelResId = I18N.string.folder_option_take_a_photo,
             onClick = { takeAPhoto() }
         )
     }
@@ -220,7 +220,7 @@ sealed class Option(
             showFilePicker: () -> Unit,
         ) = FolderEntry(
             icon = CorePresentation.drawable.ic_proton_file_arrow_in_up,
-            labelResId = Presentation.string.folder_option_import_file,
+            labelResId = I18N.string.folder_option_import_file,
             onClick = { showFilePicker() }
         )
     }

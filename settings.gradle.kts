@@ -30,7 +30,8 @@ fun File.findModules(recursive: Boolean = false): Iterable<String> {
         "src"
     )
 
-    fun File.childrenDirectories() = listFiles { _, name -> name !in blacklist }!!.filter { it.isDirectory }
+    fun File.childrenDirectories() =
+        listFiles { _, name -> name !in blacklist }!!.filter { it.isDirectory }
 
     fun File.isProject() =
         File(this, "settings.gradle.kts").exists() || File(this, "settings.gradle").exists()
@@ -40,17 +41,21 @@ fun File.findModules(recursive: Boolean = false): Iterable<String> {
 
     val modules = mutableSetOf<String>()
 
-    fun File.find(name: String? = null, includeModules: Boolean = true): List<File> = childrenDirectories().flatMap {
-        val newName = (name ?: "") + it.name
-        when {
-            it.isProject() -> if (recursive) it.find("$newName:", includeModules = false) else emptySet()
-            it.isModule() && includeModules -> {
-                modules += ":$newName"
-                it.find("$newName:")
+    fun File.find(name: String? = null, includeModules: Boolean = true): List<File> =
+        childrenDirectories().flatMap {
+            val newName = (name ?: "") + it.name
+            when {
+                it.isProject() -> if (recursive) it.find(
+                    "$newName:",
+                    includeModules = false
+                ) else emptySet()
+                it.isModule() && includeModules -> {
+                    modules += ":$newName"
+                    it.find("$newName:")
+                }
+                else -> if (recursive) it.find("$newName:") else emptySet()
             }
-            else -> if (recursive) it.find("$newName:") else emptySet()
         }
-    }
 
     find()
 
@@ -61,8 +66,26 @@ rootDir.findModules(true).forEach { module -> include(module) }
 
 enableFeaturePreview("VERSION_CATALOGS")
 
+pluginManagement {
+    repositories {
+        providers.environmentVariable("INTERNAL_REPOSITORY").orNull?.let { path ->
+            maven { url = uri(path) }
+        }
+        gradlePluginPortal()
+    }
+}
+
 plugins {
     id("me.proton.core.gradle-plugins.include-core-build") version "1.1.2"
+    id("com.gradle.enterprise") version "3.12.6"
+}
+
+gradleEnterprise {
+    buildScan {
+        publishAlwaysIf(!System.getenv("BUILD_SCAN_PUBLISH").isNullOrEmpty())
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+    }
 }
 
 includeCoreBuild {

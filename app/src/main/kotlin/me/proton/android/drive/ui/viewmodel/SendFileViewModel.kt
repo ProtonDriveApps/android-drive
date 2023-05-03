@@ -39,7 +39,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import me.proton.core.drive.base.presentation.R
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.mapSuccessValueOrNull
@@ -49,14 +48,14 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.isConnectedToNetwork
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.documentsprovider.domain.usecase.GetFileUri
+import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.base.presentation.R as BasePresentation
 import javax.inject.Inject
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
@@ -79,7 +78,7 @@ class SendFileViewModel @Inject constructor(
             if (result is DataResult.Error) {
                 broadcastMessage(
                     userId = userId,
-                    message = context.getString(R.string.error_could_not_send_file),
+                    message = context.getString(I18N.string.error_could_not_send_file),
                     type = BroadcastMessage.Type.ERROR,
                 )
             }
@@ -105,7 +104,7 @@ class SendFileViewModel @Inject constructor(
                             GetFile.State.Error.NotFound -> {
                                 broadcastMessage(
                                     userId = userId,
-                                    message = context.getString(R.string.error_could_not_send_file),
+                                    message = context.getString(I18N.string.error_could_not_send_file),
                                     type = BroadcastMessage.Type.ERROR,
                                 )
                                 ShareState.Error
@@ -113,7 +112,7 @@ class SendFileViewModel @Inject constructor(
                             GetFile.State.Error.NoConnection -> {
                                 broadcastMessage(
                                     userId = userId,
-                                    message = context.getString(BasePresentation.string.description_file_download_failed),
+                                    message = context.getString(I18N.string.description_file_download_failed),
                                     type = BroadcastMessage.Type.ERROR,
                                 )
                                 ShareState.Error

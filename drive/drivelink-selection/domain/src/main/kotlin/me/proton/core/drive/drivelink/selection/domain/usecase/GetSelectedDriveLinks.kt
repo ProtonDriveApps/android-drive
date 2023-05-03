@@ -18,15 +18,32 @@
 package me.proton.core.drive.drivelink.selection.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.selection.domain.repository.DriveLinkSelectionRepository
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
+import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import javax.inject.Inject
 
 class GetSelectedDriveLinks @Inject constructor(
     private val repository: DriveLinkSelectionRepository,
+    private val deselectLinks: DeselectLinks,
 ) {
 
     operator fun invoke(selectionId: SelectionId): Flow<List<DriveLink>> =
         repository.getSelectedDriveLinks(selectionId)
+
+    operator fun invoke(selectionId: SelectionId, parentId: FolderId): Flow<List<DriveLink>> =
+        repository
+            .getSelectedDriveLinks(selectionId)
+            .map { driveLinks ->
+                driveLinks.filter { driveLink -> driveLink.parentId == parentId }
+                    .also { children ->
+                        deselectLinks(
+                            selectionId,
+                            (driveLinks - children.toSet()).map { driveLink -> driveLink.id },
+                        )
+                    }
+            }
 }

@@ -19,15 +19,15 @@
 package me.proton.core.drive.base.presentation.extension
 
 import android.content.Context
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.drive.i18n.R as I18N
 
 fun SecurityException.getDefaultMessage(context: Context): String = message?.let {
     context.getString(
-        R.string.common_error_security_with_message,
+        I18N.string.common_error_security_with_message,
         message,
     )
-} ?: context.getString(R.string.common_error_security)
+} ?: context.getString(I18N.string.common_error_security)
 
 fun SecurityException.log(tag: String, message: String = this.message.orEmpty()): SecurityException = also {
     CoreLogger.d(tag, this, message)

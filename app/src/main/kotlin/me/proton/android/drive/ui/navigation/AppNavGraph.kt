@@ -110,7 +110,8 @@ fun AppNavGraph(
     locked: Flow<Boolean>,
     primaryAccount: Flow<Account?>,
     exitApp: () -> Unit,
-    sendBugReport: () -> Unit,
+    navigateToBugReport: () -> Unit,
+    navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) {
     val navController = rememberAnimatedNavController(keyStoreCrypto)
@@ -150,7 +151,8 @@ fun AppNavGraph(
             homeNavController = homeNavController,
             deepLinkBaseUrl = deepLinkBaseUrl,
             exitApp = exitApp,
-            sendBugReport = sendBugReport,
+            navigateToBugReport = navigateToBugReport,
+            navigateToSubscription = navigateToSubscription,
             onDrawerStateChanged = onDrawerStateChanged,
         )
     }
@@ -164,7 +166,8 @@ fun AppNavGraph(
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
     exitApp: () -> Unit,
-    sendBugReport: () -> Unit,
+    navigateToBugReport: () -> Unit,
+    navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) {
     AnimatedNavHost(
@@ -175,9 +178,30 @@ fun AppNavGraph(
         addWelcome(navController)
         addSignOutConfirmationDialog(navController)
         addSigningOut()
-        addHome(navController, homeNavController, deepLinkBaseUrl, sendBugReport, onDrawerStateChanged)
-        addHomeFiles(navController, homeNavController, deepLinkBaseUrl, sendBugReport, onDrawerStateChanged)
-        addHomeShared(navController, homeNavController, deepLinkBaseUrl, sendBugReport, onDrawerStateChanged)
+        addHome(
+            navController = navController,
+            homeNavController = homeNavController,
+            deepLinkBaseUrl = deepLinkBaseUrl,
+            navigateToBugReport = navigateToBugReport,
+            navigateToSubscription = navigateToSubscription,
+            onDrawerStateChanged = onDrawerStateChanged,
+        )
+        addHomeFiles(
+            navController = navController,
+            homeNavController = homeNavController,
+            deepLinkBaseUrl = deepLinkBaseUrl,
+            navigateToBugReport = navigateToBugReport,
+            navigateToSubscription = navigateToSubscription,
+            onDrawerStateChanged = onDrawerStateChanged,
+        )
+        addHomeShared(
+            navController = navController,
+            homeNavController = homeNavController,
+            deepLinkBaseUrl = deepLinkBaseUrl,
+            navigateToBugReport = navigateToBugReport,
+            navigateToSubscription = navigateToSubscription,
+            onDrawerStateChanged = onDrawerStateChanged,
+        )
         addSortingList()
         addFileOrFolderOptions(navController)
         addMultipleFileOrFolderOptions(navController)
@@ -457,7 +481,8 @@ internal fun NavGraphBuilder.addHome(
     deepLinkBaseUrl: String,
     route: String,
     startDestination: String,
-    sendBugReport: () -> Unit,
+    navigateToBugReport: () -> Unit,
+    navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
     arguments: List<NamedNavArgument> = listOf(
         navArgument(Screen.Home.USER_ID) {
@@ -481,7 +506,7 @@ internal fun NavGraphBuilder.addHome(
         deepLinkBaseUrl,
         startDestination,
         navBackStackEntry.requireArguments(),
-        sendBugReport = sendBugReport,
+        navigateToBugReport = navigateToBugReport,
         onDrawerStateChanged = onDrawerStateChanged,
         navigateToSigningOut = {
             navController.navigate(Screen.Dialogs.SignOut(userId))
@@ -518,6 +543,7 @@ internal fun NavGraphBuilder.addHome(
                 Screen.ParentFolderOptions(userId, folderId)
             )
         },
+        navigateToSubscription = navigateToSubscription,
     )
 }
 
@@ -527,7 +553,8 @@ fun NavGraphBuilder.addHome(
     navController: NavHostController,
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
-    sendBugReport: () -> Unit,
+    navigateToBugReport: () -> Unit,
+    navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -535,7 +562,8 @@ fun NavGraphBuilder.addHome(
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Home.route,
     startDestination = Screen.Files.route,
-    sendBugReport = sendBugReport,
+    navigateToBugReport = navigateToBugReport,
+    navigateToSubscription = navigateToSubscription,
     onDrawerStateChanged= onDrawerStateChanged
 )
 
@@ -545,7 +573,8 @@ fun NavGraphBuilder.addHomeFiles(
     navController: NavHostController,
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
-    sendBugReport: () -> Unit,
+    navigateToBugReport: () -> Unit,
+    navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -553,7 +582,8 @@ fun NavGraphBuilder.addHomeFiles(
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Files.route,
     startDestination = Screen.Files.route,
-    sendBugReport = sendBugReport,
+    navigateToBugReport = navigateToBugReport,
+    navigateToSubscription = navigateToSubscription,
     onDrawerStateChanged= onDrawerStateChanged,
     arguments = listOf(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
@@ -576,7 +606,8 @@ fun NavGraphBuilder.addHomeShared(
     navController: NavHostController,
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
-    sendBugReport: () -> Unit,
+    navigateToBugReport: () -> Unit,
+    navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -584,7 +615,8 @@ fun NavGraphBuilder.addHomeShared(
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Shared.route,
     startDestination = Screen.Shared.route,
-    sendBugReport = sendBugReport,
+    navigateToBugReport = navigateToBugReport,
+    navigateToSubscription = navigateToSubscription,
     onDrawerStateChanged = onDrawerStateChanged
 )
 

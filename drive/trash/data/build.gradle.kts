@@ -25,6 +25,7 @@ driveModule(
     room = true,
     serialization = true,
     workManager = true,
+    i18n = true,
 ) {
     api(project(":drive:base:data"))
     api(project(":drive:link:data"))

@@ -36,10 +36,9 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.SmallIconSize
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.drive.files.R
 import me.proton.core.drive.sorting.presentation.Sorting
 import me.proton.core.drive.sorting.presentation.state.SortingViewState
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -67,9 +66,9 @@ fun FilesListHeader(
             onClick = onToggleLayout
         ) {
             val (icon, contentDescription) = if (isDisplayingGridView) {
-                CorePresentation.drawable.ic_proton_list_bullets to R.string.files_toggle_layout_to_list_content_description
+                CorePresentation.drawable.ic_proton_list_bullets to I18N.string.files_toggle_layout_to_list_content_description
             } else {
-                CorePresentation.drawable.ic_proton_grid_2 to R.string.files_toggle_layout_to_grid_content_description
+                CorePresentation.drawable.ic_proton_grid_2 to I18N.string.files_toggle_layout_to_grid_content_description
             }
             Icon(
                 modifier = Modifier
@@ -90,7 +89,7 @@ fun PreviewFileListHeader() {
         FilesListHeader(
             sortingViewState = SortingViewState(
                 icon = CorePresentation.drawable.ic_proton_arrow_down,
-                title = BasePresentation.string.title_file_type
+                title = I18N.string.title_file_type
             ),
             isDisplayingGridView = false,
             onSorting = {},

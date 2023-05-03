@@ -23,9 +23,9 @@ import me.proton.core.accountmanager.domain.SessionManager
 import me.proton.core.auth.domain.usecase.PostLoginAccountSetup
 import me.proton.core.auth.presentation.DefaultUserCheck
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.User
+import me.proton.core.drive.i18n.R as I18N
 
 /**
  * Drive API requires following scopes: "full", "nondelinquent" and "drive".
@@ -54,7 +54,7 @@ class DriveUserCheck(
         } ?: false
 
     private fun errorNoDriveScope() = PostLoginAccountSetup.UserCheckResult.Error(
-        localizedMessage = context.getString(R.string.description_no_drive_scope)
+        localizedMessage = context.getString(I18N.string.description_no_drive_scope)
     )
 
     companion object {

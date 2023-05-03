@@ -51,6 +51,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.insets.ProvideWindowInsets
@@ -77,6 +78,7 @@ import me.proton.android.drive.ui.provider.LocalSnackbarPadding
 import me.proton.android.drive.ui.provider.ProvideLocalSnackbarPadding
 import me.proton.android.drive.ui.viewmodel.AccountViewModel
 import me.proton.android.drive.ui.viewmodel.BugReportViewModel
+import me.proton.android.drive.ui.viewmodel.PlansViewModel
 import me.proton.android.drive.usecase.ProcessIntent
 import me.proton.core.compose.component.ProtonSnackbarHost
 import me.proton.core.compose.component.ProtonSnackbarHostState
@@ -107,6 +109,7 @@ class MainActivity : FragmentActivity() {
     lateinit var configurationProvider: ConfigurationProvider
     private val accountViewModel: AccountViewModel by viewModels()
     private val bugReportViewModel: BugReportViewModel by viewModels()
+    private val plansViewModel: PlansViewModel by viewModels()
     private val rootView: View by lazy { findViewById(android.R.id.content) }
     private val clearBackstackTrigger = MutableSharedFlow<Unit>()
     private val deepLinkIntent = MutableSharedFlow<Intent>()
@@ -126,8 +129,7 @@ class MainActivity : FragmentActivity() {
         setTheme(CorePresentation.style.ProtonTheme_Drive)
         super.onCreate(savedInstanceState)
         biometricPromptProvider.bindToActivity(this)
-        setupAccountsViewModel()
-        bugReportViewModel.initialize(this)
+        initializeViewModels()
         WindowCompat.setDecorFitsSystemWindows(window, false)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             window.attributes.layoutInDisplayCutoutMode =
@@ -153,7 +155,8 @@ class MainActivity : FragmentActivity() {
                         locked = appLockManager.locked,
                         primaryAccount = accountViewModel.primaryAccount,
                         exitApp = { finish() },
-                        sendBugReport = bugReportViewModel::sendBugReport,
+                        navigateToBugReport = bugReportViewModel::sendBugReport,
+                        navigateToSubscription = plansViewModel::showCurrentPlans,
                     ) { isOpen ->
                         isDrawerOpen = isOpen
                     }
@@ -254,14 +257,21 @@ class MainActivity : FragmentActivity() {
             .show(WindowInsetsCompat.Type.systemBars())
     }
 
+    private fun initializeViewModels() {
+        setupAccountsViewModel()
+        bugReportViewModel.initialize(this)
+        plansViewModel.initialize(this)
+    }
+
     private fun setupAccountsViewModel() {
         accountViewModel.initialize(this)
         accountViewModel.state
-            .flowWithLifecycle(lifecycle)
+            .flowWithLifecycle(lifecycle, minActiveState = Lifecycle.State.RESUMED)
             .onEach { state ->
                 CoreLogger.d(DriveLogTag.UI, "AccountViewModel state = $state")
                 when (state) {
-                    is AccountViewModel.State.Processing -> Unit
+                    is AccountViewModel.State.Processing,
+                    is AccountViewModel.State.StepNeeded,
                     is AccountViewModel.State.AccountReady -> Unit
                     is AccountViewModel.State.PrimaryNeeded -> {
                         clearBackstackTrigger.emit(Unit)
@@ -285,6 +295,7 @@ class MainActivity : FragmentActivity() {
     override fun onDestroy() {
         accountViewModel.deInitialize()
         bugReportViewModel.deInitialize()
+        plansViewModel.deInitialize()
         super.onDestroy()
     }
 

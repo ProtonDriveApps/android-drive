@@ -19,12 +19,12 @@ package me.proton.core.drive.base.presentation.extension
 
 import android.content.Context
 import me.proton.core.domain.arch.DataResult
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 fun DataResult.Error.getDefaultMessage(
     context: Context,
     useExceptionMessage: Boolean,
-    unhandled: String = context.getString(BasePresentation.string.common_error_internal),
+    unhandled: String = context.getString(I18N.string.common_error_internal),
 ): String =
     this.cause?.getDefaultMessage(context, useExceptionMessage) ?: unhandled
 
@@ -36,7 +36,7 @@ fun DataResult.Error.logDefaultMessage(
     context: Context,
     useExceptionMessage: Boolean,
     tag: String,
-    unhandled: String = context.getString(BasePresentation.string.common_error_internal)
+    unhandled: String = context.getString(I18N.string.common_error_internal)
 ): String = getDefaultMessage(
     context = context,
     useExceptionMessage = useExceptionMessage,

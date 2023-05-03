@@ -35,7 +35,7 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
 import me.proton.core.util.kotlin.CoreLogger
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 abstract class ExportCoroutineWorker constructor(
     appContext: Context,
@@ -49,7 +49,7 @@ abstract class ExportCoroutineWorker constructor(
     abstract protected val downloadId: String
 
     override suspend fun doWork(): Result {
-        showInfo(applicationContext.getString(BasePresentation.string.in_app_notification_download_started))
+        showInfo(applicationContext.getString(I18N.string.common_in_app_notification_download_started))
         val driveLinks = getDriveLinks()
         val succeeded = mutableListOf<DriveLink>()
         driveLinks.forEach { driveLink ->
@@ -83,11 +83,11 @@ abstract class ExportCoroutineWorker constructor(
 
     private val List<DriveLink>.message: String get() = when (size) {
         1 -> applicationContext.getString(
-                BasePresentation.string.in_app_notification_download_complete,
+                I18N.string.common_in_app_notification_download_complete,
                 first().name,
             )
         else -> applicationContext.quantityString(
-            BasePresentation.plurals.in_app_notification_files_download_complete,
+            I18N.plurals.common_in_app_notification_files_download_complete,
             size,
         )
     }
@@ -102,10 +102,10 @@ abstract class ExportCoroutineWorker constructor(
     protected fun showError(driveLink : DriveLink.File? = null) {
         val message = driveLink?.let {
             applicationContext.getString(
-                BasePresentation.string.in_app_notification_downloading_failed,
+                I18N.string.common_in_app_notification_downloading_failed,
                 driveLink.name,
             )
-        } ?: applicationContext.getString(BasePresentation.string.in_app_notification_download_failed)
+        } ?: applicationContext.getString(I18N.string.common_in_app_notification_download_failed)
         broadcastMessages(
             userId = userId,
             message = message,

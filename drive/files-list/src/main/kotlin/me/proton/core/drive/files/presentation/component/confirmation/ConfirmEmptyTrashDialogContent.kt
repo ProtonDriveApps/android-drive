@@ -24,8 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import me.proton.core.compose.component.ProtonAlertDialog
 import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.component.ProtonAlertDialogText
-import me.proton.core.drive.base.presentation.R
-import me.proton.core.presentation.R as CorePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun ConfirmEmptyTrashDialogContent(
@@ -35,20 +34,20 @@ fun ConfirmEmptyTrashDialogContent(
 ) {
     ProtonAlertDialog(
         modifier = modifier,
-        titleResId = R.string.files_confirm_empty_trash_title,
+        titleResId = I18N.string.files_confirm_empty_trash_title,
         text = {
-            ProtonAlertDialogText(textResId = R.string.files_confirm_empty_trash_message)
+            ProtonAlertDialogText(textResId = I18N.string.files_confirm_empty_trash_message)
         },
         onDismissRequest = onDismiss,
         dismissButton = {
             ProtonAlertDialogButton(
-                titleResId = CorePresentation.string.presentation_alert_cancel,
+                titleResId = I18N.string.common_cancel_action,
                 onClick = onDismiss,
             )
         },
         confirmButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.files_confirm_empty_trash_confirm_action,
+                titleResId = I18N.string.files_confirm_empty_trash_confirm_action,
                 onClick = onConfirm,
             )
         }

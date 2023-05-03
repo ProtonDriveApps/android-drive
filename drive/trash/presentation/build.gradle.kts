@@ -20,7 +20,9 @@ plugins {
     id("com.android.library")
 }
 
-driveModule {
+driveModule(
+    i18n = true,
+) {
     implementation(project(":drive:trash:domain"))
     implementation(project(":drive:base:presentation"))
 }

@@ -18,18 +18,17 @@
 
 package me.proton.android.drive.ui.robot
 
-import me.proton.test.fusion.Fusion.node
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasTestTag
-import me.proton.android.drive.R
 import me.proton.android.drive.ui.dialog.ParentFolderOptionsDialogTestTag
+import me.proton.test.fusion.Fusion.node
+import me.proton.core.drive.i18n.R as I18N
 
 object ParentFolderOptionsRobot : Robot {
     private val contextMenu get() = node.withTag(ParentFolderOptionsDialogTestTag.contextMenu)
-    private val createFolderButton get() = node.withText(R.string.folder_option_create_folder)
-    private val uploadAFileButton get() = node.withText(R.string.folder_option_import_file)
-    private val takePhotoButton get() = node.withText(R.string.folder_option_take_a_photo)
+    private val createFolderButton get() = node.withText(I18N.string.folder_option_create_folder)
+    private val uploadAFileButton get() = node.withText(I18N.string.folder_option_import_file)
+    private val takePhotoButton get() = node.withText(I18N.string.folder_option_take_a_photo)
 
+    fun clickUploadAFile() = uploadAFileButton.clickTo(FilesTabRobot)
     fun clickCreateFolder() = createFolderButton.clickTo(CreateFolderRobot)
 
     override fun robotDisplayed() {

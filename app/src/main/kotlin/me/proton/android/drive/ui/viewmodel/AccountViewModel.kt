@@ -21,14 +21,14 @@ package me.proton.android.drive.ui.viewmodel
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.account.domain.entity.isDisabled
@@ -52,34 +52,35 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
+    private val requiredAccountType: AccountType,
     private val accountManager: AccountManager,
     private val authOrchestrator: AuthOrchestrator,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<State>(State.Processing)
-    private val _primaryAccount = MutableStateFlow<Account?>(null)
+    private val exitApp = MutableStateFlow(false)
 
-    private fun onAccountReady() {
-        _state.value = State.AccountReady
-    }
+    val primaryAccount: StateFlow<Account?> = accountManager.getPrimaryAccount()
+        .stateIn(viewModelScope, SharingStarted.Lazily, null)
 
-    private fun onPrimaryNeeded() {
-        _state.value = State.PrimaryNeeded
-    }
-
-    private fun onStepNeeded() {
-        _state.value = State.Processing
-    }
-
-    val state = _state.asStateFlow()
-    val primaryAccount: StateFlow<Account?> = _primaryAccount.asStateFlow()
+    val state: StateFlow<State> = combine(
+        exitApp,
+        accountManager.getAccounts()
+    ) { exitApp, accounts ->
+        when {
+            exitApp -> State.ExitApp
+            accounts.isEmpty() || accounts.all { it.isDisabled() } -> State.PrimaryNeeded
+            accounts.any { it.isReady() } -> State.AccountReady
+            accounts.any { it.isStepNeeded() } -> State.StepNeeded
+            else -> State.Processing
+        }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, State.Processing)
 
     fun initialize(context: FragmentActivity) {
         // Account state handling.
         with(authOrchestrator) {
             register(context)
             onAddAccountResult { result ->
-                if (result == null) _state.value = State.ExitApp
+                if (result == null && primaryAccount.value == null) exitApp.value = true
             }
             accountManager.observe(context.lifecycle, minActiveState = Lifecycle.State.CREATED)
                 .onSessionSecondFactorNeeded { startSecondFactorWorkflow(it) }
@@ -91,22 +92,6 @@ class AccountViewModel @Inject constructor(
                 .onUserKeyCheckFailed { /* errorToast("UserKeyCheckFailed")*/ }
                 .onUserAddressKeyCheckFailed { /*errorToast("UserAddressKeyCheckFailed")*/ }
         }
-
-        // Check if we already have Ready account.
-        accountManager.getAccounts()
-            .flowWithLifecycle(context.lifecycle, Lifecycle.State.CREATED)
-            .onEach { accounts ->
-                when {
-                    accounts.isEmpty() || accounts.all { it.isDisabled() } -> onPrimaryNeeded()
-                    accounts.any { it.isReady() } -> onAccountReady()
-                    accounts.any { it.isStepNeeded() } -> onStepNeeded()
-                }
-            }.launchIn(context.lifecycleScope)
-
-        accountManager.getPrimaryAccount()
-            .flowWithLifecycle(context.lifecycle, Lifecycle.State.CREATED)
-            .onEach { account -> _primaryAccount.value = account }
-            .launchIn(context.lifecycleScope)
     }
 
     fun deInitialize() {
@@ -115,8 +100,8 @@ class AccountViewModel @Inject constructor(
 
     fun addAccount() {
         authOrchestrator.startAddAccountWorkflow(
-            requiredAccountType = AccountType.External,
-            creatableAccountType = AccountType.Internal,
+            requiredAccountType = requiredAccountType,
+            creatableAccountType = requiredAccountType,
             product = Product.Drive
         )
     }
@@ -124,6 +109,7 @@ class AccountViewModel @Inject constructor(
     sealed class State {
         object PrimaryNeeded : State()
         object AccountReady : State()
+        object StepNeeded : State()
         object Processing : State()
         object ExitApp : State()
     }

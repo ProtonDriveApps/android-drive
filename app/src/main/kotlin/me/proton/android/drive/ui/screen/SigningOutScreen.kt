@@ -34,10 +34,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import me.proton.android.drive.R
 import me.proton.android.drive.ui.viewmodel.SigningOutViewModel
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.i18n.R as I18N
 
 @ExperimentalCoroutinesApi
 @Composable
@@ -65,7 +65,7 @@ private fun SigningOut(
             CircularProgressIndicator()
             Text(
                 modifier = Modifier.padding(top = DefaultSpacing),
-                text = stringResource(id = R.string.description_signing_out),
+                text = stringResource(id = I18N.string.description_signing_out),
                 color = ProtonTheme.colors.textNorm,
             )
         }

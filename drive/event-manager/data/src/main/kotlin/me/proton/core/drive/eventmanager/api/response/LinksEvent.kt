@@ -21,6 +21,7 @@ package me.proton.core.drive.eventmanager.api.response
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import me.proton.core.drive.base.data.api.Dto.CONTEXT_SHARE_ID
 import me.proton.core.drive.base.data.api.Dto.DATA
 import me.proton.core.drive.base.data.api.Dto.DELETED_URL_ID
 import me.proton.core.drive.base.data.api.Dto.LINK
@@ -36,6 +37,8 @@ sealed class LinksEvent
 data class DeleteLinksEvent(
     @SerialName(LINK)
     val link: Link,
+    @SerialName(CONTEXT_SHARE_ID)
+    val contextShareId: String? = null,
 ) : LinksEvent() {
 
     @Serializable
@@ -62,6 +65,8 @@ data class Data(
 data class CreateLinksEvent(
     @SerialName(LINK)
     override val link: LinkDto,
+    @SerialName(CONTEXT_SHARE_ID)
+    val contextShareId: String,
     @SerialName(DATA)
     override val data: Data? = null,
 ) : LinksEvent(), WithLinkDto {
@@ -74,6 +79,8 @@ data class CreateLinksEvent(
 data class UpdateLinksEvent(
     @SerialName(LINK)
     override val link: LinkDto,
+    @SerialName(CONTEXT_SHARE_ID)
+    val contextShareId: String,
     @SerialName(DATA)
     override val data: Data? = null,
 ) : LinksEvent(), WithLinkDto {
@@ -87,6 +94,8 @@ data class UpdateLinksEvent(
 data class UpdateMetadataLinksEvent(
     @SerialName(LINK)
     override val link: LinkDto,
+    @SerialName(CONTEXT_SHARE_ID)
+    val contextShareId: String,
     @SerialName(DATA)
     override val data: Data? = null,
 ) : LinksEvent(), WithLinkDto {

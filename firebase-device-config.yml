@@ -17,3 +17,11 @@ quickTest:
       version: 28
     - model: Nexus5X
       version: 26
+quickPhysicalTest:
+  timeout: 30m
+  device:
+    - model: walleye # aka Google Pixel 2
+      version: 27
+    - model: sailfish # aka Google Pixel
+      version: 25
+

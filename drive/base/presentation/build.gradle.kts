@@ -20,7 +20,8 @@ plugins {
 }
 
 driveModule(
-    compose = true
+    compose = true,
+    i18n = true,
 ) {
     api(project(":drive:base:domain"))
     api(libs.androidx.activity.compose)

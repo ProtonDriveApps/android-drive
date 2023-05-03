@@ -58,7 +58,7 @@ import me.proton.core.drive.upload.domain.usecase.CreateUploadFile
 import me.proton.core.drive.upload.domain.usecase.UpdateUploadFileInfo
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 class UploadWorkManagerImpl @Inject constructor(
     @ApplicationContext private val appContext: Context,
@@ -138,7 +138,7 @@ class UploadWorkManagerImpl @Inject constructor(
         if (!silently) {
             broadcastMessages(
                 userId = uploadBulk.userId,
-                message = appContext.getString(BasePresentation.string.files_upload_preparing),
+                message = appContext.getString(I18N.string.files_upload_preparing),
                 type = BroadcastMessage.Type.INFO,
             )
         }
@@ -207,7 +207,7 @@ class UploadWorkManagerImpl @Inject constructor(
         broadcastMessages(
             userId = folder.userId,
             message = appContext.resources.getQuantityString(
-                BasePresentation.plurals.files_upload_being_uploaded_notification,
+                I18N.plurals.files_upload_being_uploaded_notification,
                 uriStrings.size,
                 uriStrings.size,
                 folder.getName(appContext),
@@ -219,7 +219,7 @@ class UploadWorkManagerImpl @Inject constructor(
         broadcastMessages(
             userId = userId,
             message = appContext.getString(
-                BasePresentation.string.files_upload_limit_reached,
+                I18N.string.files_upload_limit_reached,
                 configurationProvider.uploadLimitThreshold,
             ),
             type = BroadcastMessage.Type.WARNING,

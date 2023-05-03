@@ -21,27 +21,28 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import me.proton.core.drive.base.presentation.R
 import java.util.Locale
+import me.proton.core.drive.i18n.R as I18N
 
 enum class FileTypeCategory(
     @DrawableRes val iconResId: Int,
     @StringRes val labelResId: Int,
 ) {
-    Audio(R.drawable.ic_audio_48, R.string.common_type_audio),
-    Calendar(R.drawable.ic_calendar_48, R.string.common_type_calendar),
-    Doc(R.drawable.ic_doc_48, R.string.common_type_doc),
-    Image(R.drawable.ic_image_48, R.string.common_type_image),
-    Keynote(R.drawable.ic_keynote_48, R.string.common_type_keynote),
-    Numbers(R.drawable.ic_numbers_48, R.string.common_type_numbers),
-    Pages(R.drawable.ic_pages_48, R.string.common_type_pages),
-    Pdf(R.drawable.ic_pdf_48, R.string.common_type_pdf),
-    Ppt(R.drawable.ic_ppt_48, R.string.common_type_ppt),
-    Text(R.drawable.ic_text_48, R.string.common_type_text),
-    TrustedKey(R.drawable.ic_trust_key_48, R.string.common_type_trustedkey),
-    Unknown(R.drawable.ic_unknown_48, R.string.common_type_unknown),
-    Video(R.drawable.ic_video_48, R.string.common_type_video),
-    Xls(R.drawable.ic_xls_48, R.string.common_type_xls),
-    Xml(R.drawable.ic_xml_48, R.string.common_type_xml),
-    Zip(R.drawable.ic_zip_48, R.string.common_type_zip),
+    Audio(R.drawable.ic_audio_48, I18N.string.common_type_audio),
+    Calendar(R.drawable.ic_calendar_48, I18N.string.common_type_calendar),
+    Doc(R.drawable.ic_doc_48, I18N.string.common_type_doc),
+    Image(R.drawable.ic_image_48, I18N.string.common_type_image),
+    Keynote(R.drawable.ic_keynote_48, I18N.string.common_type_keynote),
+    Numbers(R.drawable.ic_numbers_48, I18N.string.common_type_numbers),
+    Pages(R.drawable.ic_pages_48, I18N.string.common_type_pages),
+    Pdf(R.drawable.ic_pdf_48, I18N.string.common_type_pdf),
+    Ppt(R.drawable.ic_ppt_48, I18N.string.common_type_ppt),
+    Text(R.drawable.ic_text_48, I18N.string.common_type_text),
+    TrustedKey(R.drawable.ic_trust_key_48, I18N.string.common_type_trustedkey),
+    Unknown(R.drawable.ic_unknown_48, I18N.string.common_type_unknown),
+    Video(R.drawable.ic_video_48, I18N.string.common_type_video),
+    Xls(R.drawable.ic_xls_48, I18N.string.common_type_xls),
+    Xml(R.drawable.ic_xml_48, I18N.string.common_type_xml),
+    Zip(R.drawable.ic_zip_48, I18N.string.common_type_zip),
 }
 
 fun String.toFileTypeCategory(): FileTypeCategory = with(lowercase(Locale.getDefault())) {

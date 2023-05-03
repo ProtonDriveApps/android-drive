@@ -26,9 +26,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material.Button
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
-import androidx.compose.material.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -50,7 +50,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.ui.effect.SnackbarEffect
 import me.proton.android.drive.ui.viewevent.UploadToViewEvent
-import me.proton.core.drive.files.presentation.component.Files
 import me.proton.android.drive.ui.viewmodel.UploadToViewModel
 import me.proton.android.drive.ui.viewstate.UploadToViewState
 import me.proton.core.compose.component.ProtonSnackbarHost
@@ -61,12 +60,12 @@ import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.default
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
+import me.proton.core.drive.files.presentation.component.Files
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.android.drive.R as Presentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @ExperimentalCoroutinesApi
@@ -139,7 +138,7 @@ fun UploadTo(
                 ActionButton(
                     modifier = Modifier.testTag(UploadToScreenTestTag.plusFolderButton),
                     icon = CorePresentation.drawable.ic_proton_folder_plus,
-                    contentDescription = Presentation.string.folder_option_create_folder,
+                    contentDescription = I18N.string.folder_option_create_folder,
                     onClick = viewEvent.onCreateFolder,
                 )
             }
@@ -165,14 +164,14 @@ fun UploadTo(
                         exitApp()
                     }
                 ) {
-                    Text(text = stringResource(id = Presentation.string.upload_to_dismiss_action))
+                    Text(text = stringResource(id = I18N.string.upload_to_dismiss_action))
                 }
 
                 Button(
                     modifier = Modifier.padding(start = SmallSpacing),
                     onClick = { viewEvent.upload() }
                 ) {
-                    Text(text = stringResource(id = Presentation.string.upload_title))
+                    Text(text = stringResource(id = I18N.string.upload_title))
                 }
             }
 
@@ -197,7 +196,7 @@ fun SingleRowLinkNames(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = linkNames.joinToString(),
+                text = linkNames.filter { name -> name.isNotBlank() }.joinToString(),
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 style = ProtonTheme.typography.default,
@@ -205,7 +204,7 @@ fun SingleRowLinkNames(
             )
             Text(
                 text = pluralStringResource(
-                    id = R.plurals.number_of_items,
+                    id = I18N.plurals.number_of_items,
                     count = numberOfLinks,
                     numberOfLinks,
                 ),

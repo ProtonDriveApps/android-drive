@@ -38,7 +38,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.android.drive.R
 import me.proton.android.drive.ui.common.ProtonSwipeRefresh
 import me.proton.android.drive.ui.effect.TrashEffect
 import me.proton.android.drive.ui.viewmodel.TrashViewModel
@@ -61,7 +60,7 @@ import me.proton.core.drive.files.presentation.component.Files
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.util.kotlin.exhaustive
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -133,7 +132,7 @@ fun TrashScreen(
                             EmptyTrashIconState.VISIBLE -> ActionButton(
                                 modifier = Modifier.padding(end = ExtraSmallSpacing),
                                 icon = CorePresentation.drawable.ic_proton_three_dots_vertical,
-                                contentDescription = R.string.trash_more_options,
+                                contentDescription = I18N.string.trash_more_options,
                                 onClick = viewModel::onMoreOptionsClicked,
                             )
                         }.exhaustive
@@ -158,7 +157,7 @@ fun TrashMoreOptions(
         modifier = modifier.navigationBarsPadding(),
         header = {
             Text(
-                text = stringResource(R.string.trash_more_options),
+                text = stringResource(I18N.string.trash_more_options),
                 color = ProtonTheme.colors.textWeak,
                 style = ProtonTheme.typography.defaultSmallStrong,
             )
@@ -166,7 +165,7 @@ fun TrashMoreOptions(
         content = {
             BottomSheetEntry(
                 icon = CorePresentation.drawable.ic_proton_trash_cross,
-                title = stringResource(id = BasePresentation.string.title_empty_trash_action),
+                title = stringResource(id = I18N.string.title_empty_trash_action),
                 onClick = navigateToEmptyTrash,
             )
         },

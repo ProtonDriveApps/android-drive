@@ -30,15 +30,15 @@ import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
-import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.extension.log
+import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.trash.data.R
 import me.proton.core.drive.trash.domain.notification.EmptyTrashExtra
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
 import java.util.concurrent.TimeUnit
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltWorker
 class EmptyTrashWorker @AssistedInject constructor(
@@ -61,7 +61,7 @@ class EmptyTrashWorker @AssistedInject constructor(
             driveTrashRepository.refreshTrashContent(shareId)
             broadcastMessages(
                 userId = userId,
-                message = applicationContext.getString(R.string.trash_empty_operation_successful),
+                message = applicationContext.getString(I18N.string.trash_empty_operation_successful),
                 type = BroadcastMessage.Type.SUCCESS,
                 extra = EmptyTrashExtra(userId, shareId)
             )
@@ -70,7 +70,7 @@ class EmptyTrashWorker @AssistedInject constructor(
             e.log(LogTag.TRASH)
             broadcastMessages(
                 userId = userId,
-                message = applicationContext.getString(R.string.trash_error_occurred_emptying_trash),
+                message = applicationContext.getString(I18N.string.trash_error_occurred_emptying_trash),
                 type = BroadcastMessage.Type.ERROR,
                 extra = EmptyTrashExtra(userId, shareId, e)
             )

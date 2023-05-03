@@ -18,22 +18,21 @@
 
 package me.proton.android.drive.ui.robot
 
-import me.proton.test.fusion.Fusion.node
-import me.proton.test.fusion.Fusion.allNodes
 import me.proton.android.drive.ui.screen.WelcomeScreenTestTag
+import me.proton.test.fusion.Fusion.allNodes
+import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.ui.common.enums.SwipeDirection
-import me.proton.core.drive.base.presentation.R as BasePresentation
-import me.proton.core.presentation.R as CorePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 object WelcomeRobot : Robot {
-    private val skipButton get() = allNodes.withText(CorePresentation.string.presentation_skip).onFirst()
-    private val nextButton get() = allNodes.withText(BasePresentation.string.common_next_action).onFirst()
-    private val getStartedButton get() = node.withText(BasePresentation.string.welcome_get_started_action)
-    private val welcomeLabel get() = node.withText(BasePresentation.string.welcome_to_description)
-    private val filesTitle get() = node.withText(BasePresentation.string.title_welcome_files)
-    private val titleSharing get() = node.withText(BasePresentation.string.title_welcome_sharing)
-    private val filesDescription get() = node.withText(BasePresentation.string.welcome_files_description)
-    private val sharingDescription get() = node.withText(BasePresentation.string.welcome_sharing_description)
+    private val skipButton get() = allNodes.withText(I18N.string.common_skip_action).onFirst()
+    private val nextButton get() = allNodes.withText(I18N.string.common_next_action).onFirst()
+    private val getStartedButton get() = node.withText(I18N.string.welcome_get_started_action)
+    private val welcomeLabel get() = node.withText(I18N.string.welcome_to_description)
+    private val filesTitle get() = node.withText(I18N.string.title_welcome_files)
+    private val titleSharing get() = node.withText(I18N.string.title_welcome_sharing)
+    private val filesDescription get() = node.withText(I18N.string.welcome_files_description)
+    private val sharingDescription get() = node.withText(I18N.string.welcome_sharing_description)
     private val welcomeScreen get() = node.withTag(WelcomeScreenTestTag.screen)
 
     fun clickNext() = nextButton.clickTo(this)

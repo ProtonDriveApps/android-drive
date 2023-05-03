@@ -22,7 +22,9 @@ import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 
 interface NotificationEventHandler {
-    fun createNotificationId(userId: UserId, notificationEvent: NotificationEvent): NotificationId
+    fun createUserNotificationId(userId: UserId, notificationEvent: NotificationEvent): NotificationId.User
+
+    fun createAppNotificationId(notificationEvent: NotificationEvent): NotificationId.App
 
     suspend fun onNotificationEvent(
         notificationId: NotificationId,

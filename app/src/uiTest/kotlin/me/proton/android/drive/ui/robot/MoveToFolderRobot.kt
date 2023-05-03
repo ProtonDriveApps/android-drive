@@ -18,24 +18,67 @@
 
 package me.proton.android.drive.ui.robot
 
-import me.proton.test.fusion.Fusion.node
-import me.proton.android.drive.R
 import me.proton.android.drive.ui.screen.MoveToFolderScreenTestTag
+import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag
 import me.proton.core.drive.files.presentation.component.FilesTestTag
-import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag
+import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag.item
+import me.proton.test.fusion.Fusion.allNodes
+import me.proton.test.fusion.Fusion.node
+import me.proton.test.fusion.ui.compose.builders.OnNode
+import me.proton.core.drive.i18n.R as I18N
 
-object MoveToFolderRobot : Robot {
+object MoveToFolderRobot : NavigationBarRobot, Robot {
     private val moveToFolderScreen get() = node.withTag(MoveToFolderScreenTestTag.screen)
+    private val appBar get() = node.withTag(TopAppBarComponentTestTag.appBar)
+    private val rootDirectoryTitle = node.withText(I18N.string.title_my_files)
     private val addFolderButton get() = node.withTag(MoveToFolderScreenTestTag.plusFolderButton)
-    private val cancelButton get() = node.withText(R.string.move_file_dismiss_action)
-    private val moveButton get() = node.withText(R.string.move_file_confirm_action)
+    private val cancelButton get() = node.withText(I18N.string.move_file_dismiss_action)
+    private val moveButton get() = node.withText(I18N.string.move_file_confirm_action).isEnabled()
     private val fileList get() = node.withTag(FilesTestTag.content)
     private fun itemWithName(name: String) =
-        node.withTag(FilesListItemComponentTestTag.item).withText(name)
+        node.withTag(item).withText(name)
 
-    fun clickAddFolder() = addFolderButton.clickTo(CreateFolderRobot)
-    fun clickCancel() = cancelButton.clickTo(CreateFolderRobot)
-    fun clickMove() = moveButton.clickTo(CreateFolderRobot)
+    /**
+     * Wait the folder to be loaded before clicking back,
+     * to ensure that parent id is known
+     * @param folder the folder
+     */
+    fun clickBackFromFolder(folder: String) = navigationBackButton
+        .hasSibling(node.hasDescendant(node.withText(folder)))
+        .clickTo(MoveToFolderRobot)
+
+    fun clickAddFolder(folder: String) = clickAddFolder(node.withText(folder))
+
+    fun clickAddFolderToRoot() = clickAddFolder(rootDirectoryTitle)
+
+    private fun clickAddFolder(onNode: OnNode) = addFolderButton
+        .hasSibling(node.hasDescendant(onNode))
+        .clickTo(CreateFolderRobot)
+
+    fun clickCancel() = cancelButton.clickTo(FilesTabRobot)
+    /**
+     * Wait the folder to be loaded before clicking on move,
+     * to ensure that folder id is known
+     * @param folder the folder
+     */
+    fun clickMoveToFolder(folder: String) = clickMoveToFolder(node.withText(folder))
+    /**
+     * Wait the root folder to be loaded before clicking on move,
+     * to ensure that folder id is known
+     */
+    fun clickMoveToRoot() = clickMoveToFolder(rootDirectoryTitle)
+
+    private fun clickMoveToFolder(onNode: OnNode) = moveButton
+        .hasAncestor(node.hasDescendant(appBar.hasDescendant(onNode)))
+        .clickTo(FilesTabRobot)
+
+    fun clickOnFolder(name: String) =
+        itemWithName(name).clickTo(MoveToFolderRobot)
+
+    fun scrollToItemWithName(itemName: String) = apply {
+        allNodes.withTag(item).assertAny(node.isEnabled())
+        fileList.scrollTo(node.withText(itemName))
+    }
 
     fun itemWithTextDisplayed(text: String) {
         fileList.scrollTo(node.withText(text))

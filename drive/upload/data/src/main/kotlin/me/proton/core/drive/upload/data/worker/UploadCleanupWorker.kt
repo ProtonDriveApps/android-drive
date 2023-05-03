@@ -43,6 +43,9 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_I
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.usecase.GetBlockFolder
 import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
+import me.proton.core.drive.worker.domain.usecase.CanRun
+import me.proton.core.drive.worker.domain.usecase.Done
+import me.proton.core.drive.worker.domain.usecase.Run
 import me.proton.core.util.kotlin.CoreLogger
 import java.util.concurrent.TimeUnit
 
@@ -58,6 +61,9 @@ class UploadCleanupWorker @AssistedInject constructor(
     private val removeUploadFile: RemoveUploadFile,
     private val announceEvent: AnnounceEvent,
     configurationProvider: ConfigurationProvider,
+    canRun: CanRun,
+    run: Run,
+    done: Done,
 ) : UploadCoroutineWorker(
     appContext = appContext,
     workerParams = workerParams,
@@ -65,10 +71,13 @@ class UploadCleanupWorker @AssistedInject constructor(
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
     configurationProvider = configurationProvider,
+    canRun = canRun,
+    run = run,
+    done = done,
 ) {
     private val isCancelled = inputData.getBoolean(KEY_IS_CANCELLED, false)
 
-    override suspend fun doUploadWork(uploadFileLink: UploadFileLink): Result {
+    override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
         try {
             getBlockFolder(userId, uploadFileLink)
                 .onFailure { error -> error.log(uploadFileLink.logTag()) }

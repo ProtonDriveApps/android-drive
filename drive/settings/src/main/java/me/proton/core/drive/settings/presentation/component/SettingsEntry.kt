@@ -56,9 +56,8 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
 import me.proton.core.drive.base.presentation.component.protonOutlineTextFieldColors
-import me.proton.core.drive.settings.R
 import me.proton.core.drive.settings.presentation.state.LegalLink
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -67,7 +66,7 @@ fun ExternalSettingsEntry(
     modifier: Modifier = Modifier,
     onLinkClicked: (LegalLink) -> Unit,
 ) {
-    val description = stringResource(R.string.settings_external_link_format, link.text)
+    val description = stringResource(I18N.string.settings_external_link_format, link.text)
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -205,8 +204,8 @@ private fun PreviewExternalSettingsEntry() {
         ExternalSettingsEntry(
             modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
             link = LegalLink.External(
-                text = BasePresentation.string.title_app,
-                url = R.string.settings_section_security,
+                text = I18N.string.common_app,
+                url = I18N.string.settings_section_security,
             )) {
         }
     }

@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -60,6 +61,7 @@ fun SettingsScreen(
         modifier = modifier
             .fillMaxSize()
             .systemBarsPadding()
+            .testTag(SettingsScreenTestTag.screen)
     ) {
         settingsViewState?.let { viewState ->
             Settings(
@@ -77,4 +79,8 @@ fun SettingsScreen(
             )
         }
     }
+}
+
+object SettingsScreenTestTag {
+    const val screen = "settings screen"
 }

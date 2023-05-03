@@ -24,4 +24,5 @@ interface NavigationDrawerViewEvent {
     val onSettings: () -> Unit
     val onBugReport: () -> Unit
     val onSignOut: () -> Unit
+    val onSubscription: () -> Unit
 }

@@ -20,8 +20,22 @@ package me.proton.core.drive.notification.domain.entity
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class NotificationId(
-    val channel: Channel,
-    val tag: String,
-    val id: Int,
-)
+sealed class NotificationId {
+    abstract val channel: Channel
+    abstract val tag: String
+    abstract val id: Int
+
+    @Serializable
+    data class User(
+        override val channel: Channel.User,
+        override val tag: String,
+        override val id: Int,
+    ) : NotificationId()
+
+    @Serializable
+    data class App(
+        override val channel: Channel.App,
+        override val tag: String,
+        override val id: Int,
+    ) : NotificationId()
+}

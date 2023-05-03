@@ -17,7 +17,7 @@
  */
 package me.proton.core.drive.files.presentation.entry
 
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 interface OptionEntry<in T : Any> {
@@ -30,19 +30,19 @@ class DownloadEntry(
     override val onClick: (Unit) -> Unit,
 ) : OptionEntry<Unit> {
     override val icon: Int = CorePresentation.drawable.ic_proton_arrow_down_line
-    override val label: Int = BasePresentation.string.title_download
+    override val label: Int = I18N.string.common_download
 }
 
 class MoveEntry(
     override val onClick: (Unit) -> Unit,
 ) : OptionEntry<Unit> {
     override val icon: Int = CorePresentation.drawable.ic_proton_arrows_cross
-    override val label: Int = BasePresentation.string.files_move_file_action
+    override val label: Int = I18N.string.files_move_file_action
 }
 
 class TrashEntry(
     override val onClick: (Unit) -> Unit,
 ) : OptionEntry<Unit> {
     override val icon: Int = CorePresentation.drawable.ic_proton_trash
-    override val label: Int = BasePresentation.string.files_send_to_trash_action
+    override val label: Int = I18N.string.files_send_to_trash_action
 }

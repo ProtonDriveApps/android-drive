@@ -18,11 +18,11 @@
 package me.proton.core.drive.base.presentation.extension
 
 import android.content.Context
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.drive.i18n.R as I18N
 
 fun RuntimeException.getDefaultMessage(context: Context): String =
-    context.getString(R.string.common_error_internal)
+    context.getString(I18N.string.common_error_internal)
 
 fun RuntimeException.log(tag: String, message: String = this.message.orEmpty()): RuntimeException = also {
     CoreLogger.e(tag, this, message)

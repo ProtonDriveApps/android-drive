@@ -43,17 +43,18 @@ import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.drivelink.rename.domain.usecase.RenameLink
+import me.proton.core.drive.drivelink.rename.presentation.selection.NameWithSelection
+import me.proton.core.drive.drivelink.rename.presentation.selection.Selection
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.Empty
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.ExceedsMaxLength
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.ForbiddenCharacters
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.Periods
-import me.proton.core.drive.drivelink.rename.domain.usecase.RenameLink
-import me.proton.core.drive.drivelink.rename.presentation.selection.NameWithSelection
-import me.proton.core.drive.drivelink.rename.presentation.selection.Selection
 import me.proton.core.drive.share.domain.entity.ShareId
 import javax.inject.Inject
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 @Suppress("StaticFieldLeak")
@@ -81,8 +82,8 @@ class RenameViewModel @Inject constructor(
     val viewState: Flow<RenameViewState> = isRenaming.map {
         RenameViewState(
             titleResId = when (linkId) {
-                is FileId -> R.string.link_rename_title_file
-                is FolderId -> R.string.link_rename_title_folder
+                is FileId -> I18N.string.link_rename_title_file
+                is FolderId -> I18N.string.link_rename_title_folder
             },
             isRenaming = isRenaming.value
         )
@@ -125,7 +126,7 @@ class RenameViewModel @Inject constructor(
                     broadcastMessages(
                         userId = userId,
                         message = context.getString(
-                            R.string.link_rename_successful,
+                            I18N.string.link_rename_successful,
                             name.ellipsizeMiddle(MAX_DISPLAY_FILENAME_LENGTH)
                         )
                     )
@@ -149,20 +150,20 @@ class RenameViewModel @Inject constructor(
             emit(
                 RenameEffect.ShowInputError(
                     when (this@handle) {
-                        Empty -> context.getString(R.string.link_rename_error_name_is_blank)
+                        Empty -> context.getString(I18N.string.link_rename_error_name_is_blank)
                         is ExceedsMaxLength ->
                             context.getString(
-                                R.string.link_rename_error_name_too_long,
+                                I18N.string.link_rename_error_name_too_long,
                                 this@handle.maxLength
                             )
                         ForbiddenCharacters -> context.getString(
-                            R.string.link_rename_error_name_with_forbidden_characters
+                            I18N.string.link_rename_error_name_with_forbidden_characters
                         )
-                        Periods -> context.getString(R.string.link_rename_error_name_periods)
+                        Periods -> context.getString(I18N.string.link_rename_error_name_periods)
                         else -> logDefaultMessage(
                             context = context,
                             tag = VIEW_MODEL,
-                            unhandled = context.getString(R.string.link_rename_error_general),
+                            unhandled = context.getString(I18N.string.link_rename_error_general),
                         )
                     }
                 )

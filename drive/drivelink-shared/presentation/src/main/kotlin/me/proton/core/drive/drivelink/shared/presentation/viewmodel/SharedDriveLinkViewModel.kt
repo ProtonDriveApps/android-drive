@@ -76,7 +76,7 @@ import java.util.Date
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.base.domain.extension.combine as baseCombine
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -115,7 +115,7 @@ class SharedDriveLinkViewModel @Inject constructor(
             is DataResult.Error -> {
                 if (sharedDriveLink.cause is NoSuchElementException) {
                     LoadingViewState.Error.NonRetryable(
-                        appContext.getString(BasePresentation.string.shared_link_error_message_not_found),
+                        appContext.getString(I18N.string.shared_link_error_message_not_found),
                         1.seconds
                     )
                 } else {
@@ -133,7 +133,7 @@ class SharedDriveLinkViewModel @Inject constructor(
             }
             is DataResult.Success -> if (sharedDriveLink.value.isLegacy) {
                 LoadingViewState.Error.NonRetryable(
-                    appContext.getString(BasePresentation.string.shared_link_error_legacy_link),
+                    appContext.getString(I18N.string.shared_link_error_legacy_link),
                     0.seconds,
                 )
             } else {
@@ -232,15 +232,15 @@ class SharedDriveLinkViewModel @Inject constructor(
     ) { initialViewState, driveLink, password, passwordEnabled, expirationDate, expirationDateEnabled, hasUnsavedChanges, saveInProgress->
         val link = appContext.getString(
             if (driveLink.id is FolderId) {
-                BasePresentation.string.shared_link_folder
+                I18N.string.shared_link_folder
             } else {
-                BasePresentation.string.shared_link_file
+                I18N.string.shared_link_file
             }
         )
         val accessibilityDescription = if (passwordEnabled) {
-            appContext.getString(BasePresentation.string.shared_link_accessibility_description_password_protected, link)
+            appContext.getString(I18N.string.shared_link_accessibility_description_password_protected, link)
         } else {
-            appContext.getString(BasePresentation.string.shared_link_accessibility_description_public, link)
+            appContext.getString(I18N.string.shared_link_accessibility_description_public, link)
         }
         initialViewState.copy(
             accessibilityDescription = accessibilityDescription,
@@ -310,25 +310,25 @@ class SharedDriveLinkViewModel @Inject constructor(
     }
 
     private fun copyLink(publicUrl: String) {
-        copyToClipboard(userId, appContext.getString(BasePresentation.string.title_link), publicUrl)
+        copyToClipboard(userId, appContext.getString(I18N.string.common_link), publicUrl)
     }
 
     private fun copyPassword(password: String) {
-        copyToClipboard(userId, appContext.getString(BasePresentation.string.title_password), password)
+        copyToClipboard(userId, appContext.getString(I18N.string.common_password), password)
     }
 
     private fun DriveLink.toLoadingMessage(): String {
         return if (isShared) {
-            appContext.getString(BasePresentation.string.shared_link_getting_link)
+            appContext.getString(I18N.string.shared_link_getting_link)
         } else {
             val suffix = appContext.getString(
                 if (id is FolderId) {
-                    BasePresentation.string.shared_link_folder
+                    I18N.string.shared_link_folder
                 } else {
-                    BasePresentation.string.shared_link_file
+                    I18N.string.shared_link_file
                 }
             )
-            appContext.getString(BasePresentation.string.shared_link_loading, suffix,)
+            appContext.getString(I18N.string.shared_link_loading, suffix,)
         }
     }
 
@@ -394,7 +394,7 @@ class SharedDriveLinkViewModel @Inject constructor(
     private fun validatePassword(password: String): Result<String> = coRunCatching {
         requireField(password.length in 1..configurationProvider.maxSharedLinkPasswordLength) {
             appContext.getString(
-                BasePresentation.string.shared_link_error_message_invalid_password_length,
+                I18N.string.shared_link_error_message_invalid_password_length,
                 configurationProvider.maxSharedLinkPasswordLength
             )
         }
@@ -403,11 +403,11 @@ class SharedDriveLinkViewModel @Inject constructor(
 
     private fun validateExpirationDate(expirationDate: Date): Result<Date> = coRunCatching {
         requireField(expirationDate.isNotBeforeStartOfFirstDay) {
-            appContext.getString(BasePresentation.string.shared_link_error_message_expiration_date_too_soon)
+            appContext.getString(I18N.string.shared_link_error_message_expiration_date_too_soon)
         }
         requireField(expirationDate.isNotAfterEndOfLastDay) {
             appContext.getString(
-                BasePresentation.string.shared_link_error_message_expiration_date_too_late,
+                I18N.string.shared_link_error_message_expiration_date_too_late,
                 configurationProvider.maxSharedLinkExpirationDuration.inWholeDays,
             )
         }
@@ -431,7 +431,7 @@ class SharedDriveLinkViewModel @Inject constructor(
                 broadcastMessage(
                     userId = userId,
                     message = appContext.getString(
-                        BasePresentation.string.shared_link_error_message_update_share_url
+                        I18N.string.shared_link_error_message_update_share_url
                     ),
                     type = BroadcastMessage.Type.ERROR,
                 )
@@ -443,7 +443,7 @@ class SharedDriveLinkViewModel @Inject constructor(
                 broadcastMessage(
                     userId = userId,
                     message = appContext.getString(
-                        BasePresentation.string.shared_link_message_update_share_url
+                        I18N.string.shared_link_message_update_share_url
                     ),
                     type = BroadcastMessage.Type.INFO,
                 )

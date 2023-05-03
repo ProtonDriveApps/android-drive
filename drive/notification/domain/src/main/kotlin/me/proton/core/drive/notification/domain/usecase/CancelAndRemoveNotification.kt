@@ -27,6 +27,8 @@ class CancelAndRemoveNotification @Inject constructor(
 ) {
     suspend operator fun invoke(notificationId: NotificationId) {
         notificationManager.cancel(notificationId)
-        removeNotification(notificationId)
+        if (notificationId is NotificationId.User) {
+            removeNotification(notificationId)
+        }
     }
 }

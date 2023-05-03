@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="trash_action_undo">@string/common_undo_action</string>
+    <string name="trash_action_retry">@string/common_retry_action</string>
+
+    <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items sent to trash"
+    -->
+    <plurals name="trash_operation_successful_format">
+        <item quantity="one">1 item sent to trash</item>
+        <item quantity="other">%1$d items sent to trash</item>
+    </plurals>
+    <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items restored"
+    -->
+    <plurals name="trash_restore_operation_successful_format">
+        <item quantity="one">1 item restored</item>
+        <item quantity="other">%d items restored</item>
+    </plurals>
+    <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items deleted permanently"
+    -->
+    <plurals name="trash_delete_operation_successful_format">
+        <item quantity="one">1 item deleted permanently</item>
+        <item quantity="other">%d items deleted permanently</item>
+    </plurals>
+    <string name="trash_empty_operation_successful">Trash emptied</string>
+    <string name="trash_error_occurred_sending_to_trash">An error occurred while trying to send your file(s) to the trash</string>
+    <string name="trash_error_occurred_restoring_from_trash">An error occurred while trying to restore your file(s)</string>
+    <string name="trash_error_occurred_deleting_from_trash">An error occurred while trying to delete the file(s)</string>
+    <string name="trash_error_occurred_emptying_trash">An error occurred while trying to empty the trash</string>
+</resources>

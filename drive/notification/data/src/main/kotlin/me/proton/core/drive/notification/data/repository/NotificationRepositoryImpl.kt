@@ -34,38 +34,40 @@ class NotificationRepositoryImpl @Inject constructor(
     private val db: NotificationDatabase,
 ) : NotificationRepository {
 
-    override suspend fun insertChannels(channels: List<Channel>) {
+    override suspend fun insertChannels(channels: List<Channel.User>) {
         db.channelDao.insertOrIgnore(
             *channels.map { channel -> channel.toNotificationChannelEntity() }.toTypedArray()
         )
     }
 
-    override suspend fun getAllChannels(userId: UserId): List<Channel> =
+    override suspend fun getAllChannels(userId: UserId): List<Channel.User> =
         db.channelDao.getAll(userId).map { notificationChannelEntity -> notificationChannelEntity.toChannel() }
 
     override suspend fun removeChannels(userId: UserId) =
         db.channelDao.deleteAll(userId)
 
-    override suspend fun insertNotificationEvent(notificationId: NotificationId, notificationEvent: NotificationEvent) =
-        coRunCatching {
-            with (notificationId) {
-                db.eventDao.insertOrUpdate(
-                    NotificationEventEntity(
-                        userId = channel.userId,
-                        channelType = channel.type,
-                        notificationTag = tag,
-                        notificationId = id,
-                        notificationEventId = notificationEvent.id,
-                        notificationEvent = notificationEvent,
-                    )
+    override suspend fun insertNotificationEvent(
+        notificationId: NotificationId.User,
+        notificationEvent: NotificationEvent,
+    ) = coRunCatching {
+        with (notificationId) {
+            db.eventDao.insertOrUpdate(
+                NotificationEventEntity(
+                    userId = channel.userId,
+                    channelType = channel.type,
+                    notificationTag = tag,
+                    notificationId = id,
+                    notificationEventId = notificationEvent.id,
+                    notificationEvent = notificationEvent,
                 )
-            }
+            )
         }
+    }
 
-    override suspend fun getAllNotificationIds(userId: UserId): List<NotificationId> =
+    override suspend fun getAllNotificationIds(userId: UserId): List<NotificationId.User> =
         db.eventDao.getAll(userId).map { notificationEventEntity -> notificationEventEntity.toNotificationId() }
 
-    override suspend fun getAllNotificationEvents(notificationId: NotificationId): List<NotificationEvent> =
+    override suspend fun getAllNotificationEvents(notificationId: NotificationId.User): List<NotificationEvent> =
         with (notificationId) {
             db.eventDao.getAll(channel.userId, channel.type, tag, id).map { notificationEventEntity ->
                 notificationEventEntity.notificationEvent
@@ -73,13 +75,13 @@ class NotificationRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getNotificationEvent(
-        notificationId: NotificationId,
+        notificationId: NotificationId.User,
         notificationEventId: String,
     ): NotificationEvent? = with (notificationId) {
         db.eventDao.get(channel.userId, channel.type, tag, id, notificationEventId)?.notificationEvent
     }
 
-    override suspend fun removeNotificationEvents(notificationId: NotificationId) =
+    override suspend fun removeNotificationEvents(notificationId: NotificationId.User) =
         with (notificationId) {
             db.eventDao.deleteAll(channel.userId, channel.type, tag, id)
         }

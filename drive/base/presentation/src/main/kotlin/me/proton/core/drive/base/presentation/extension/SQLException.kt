@@ -19,11 +19,11 @@ package me.proton.core.drive.base.presentation.extension
 
 import android.content.Context
 import android.database.SQLException
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.drive.i18n.R as I18N
 
 fun SQLException.getDefaultMessage(context: Context): String =
-    context.getString(R.string.common_error_internal)
+    context.getString(I18N.string.common_error_internal)
 
 fun SQLException.log(tag: String, message: String = this.message.orEmpty()): SQLException = also {
     CoreLogger.e(tag, this, message)

@@ -29,4 +29,6 @@ driveModule(
     api(project(":drive:link-trash:data"))
     api(project(":drive:link-selection:data"))
     api(project(":drive:drivelink:domain"))
+
+    testImplementation(project(":drive:db-test"))
 }

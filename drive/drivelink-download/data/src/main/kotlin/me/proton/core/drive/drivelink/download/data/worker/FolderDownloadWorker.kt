@@ -21,7 +21,6 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
-import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
@@ -50,6 +49,10 @@ import me.proton.core.drive.linknode.domain.extension.ancestors
 import me.proton.core.drive.linknode.domain.usecase.GetLinkNode
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.worker.data.LimitedRetryCoroutineWorker
+import me.proton.core.drive.worker.domain.usecase.CanRun
+import me.proton.core.drive.worker.domain.usecase.Done
+import me.proton.core.drive.worker.domain.usecase.Run
 import me.proton.core.util.kotlin.CoreLogger
 import java.util.concurrent.TimeUnit
 
@@ -61,14 +64,17 @@ class FolderDownloadWorker @AssistedInject constructor(
     private val getLink: GetLink,
     private val getLinkNode: GetLinkNode,
     private val getDescendants: GetDescendants,
-) : CoroutineWorker(appContext, workerParams) {
-    private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
+    canRun: CanRun,
+    run: Run,
+    done: Done,
+) : LimitedRetryCoroutineWorker(appContext, workerParams, canRun, run, done) {
+    override val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
     private val volumeId = VolumeId(requireNotNull(inputData.getString(KEY_VOLUME_ID)))
     private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)))
     private val folderId = FolderId(shareId, requireNotNull(inputData.getString(KEY_FOLDER_ID)))
-    private val logTag = folderId.logTag
+    override val logTag = folderId.logTag
 
-    override suspend fun doWork(): Result {
+    override suspend fun doLimitedRetryWork(): Result {
         CoreLogger.d(logTag, "Started downloading folder")
         val folder = getLink(folderId).toResult().getOrNull() ?: return Result.failure()
         val descendants = getDescendants(folder, true).getOrNull() ?: return Result.retry().also {

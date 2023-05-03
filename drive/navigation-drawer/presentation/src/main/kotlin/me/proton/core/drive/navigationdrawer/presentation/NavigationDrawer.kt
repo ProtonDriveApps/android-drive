@@ -40,14 +40,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.launch
 import me.proton.core.compose.component.ProtonListSectionTitle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
+import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.presentation.component.NavigationDrawerAppVersion
 import me.proton.core.drive.base.presentation.component.ProtonListItem
 import me.proton.core.drive.user.presentation.storage.StorageIndicator
 import me.proton.core.drive.user.presentation.user.PREVIEW_USER
 import me.proton.core.drive.user.presentation.user.UserSelector
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.presentation.R as CorePresentation
 
@@ -109,9 +110,11 @@ fun NavigationDrawer(
 
                     OfflineListItem(closeDrawerAction, viewEvent)
 
-                    ProtonListSectionTitle(title = BasePresentation.string.navigation_more_section_header)
+                    ProtonListSectionTitle(title = I18N.string.navigation_more_section_header)
 
                     SettingsListItem(closeDrawerAction, viewEvent)
+
+                    SubscriptionListItem(closeDrawerAction, viewEvent)
 
                     ReportBugListItem(closeDrawerAction, viewEvent)
 
@@ -119,7 +122,7 @@ fun NavigationDrawer(
 
                     if (viewState.currentUser != null) {
                         ProtonListSectionTitle(
-                            title = stringResource(BasePresentation.string.navigation_storage_section_header),
+                            title = stringResource(I18N.string.navigation_storage_section_header),
                             modifier = Modifier.padding(bottom = SmallSpacing)
                         )
 
@@ -147,7 +150,7 @@ private fun MyFilesListItem(
     modifier: Modifier = Modifier,
 ) {
     NavigationDrawerListItem(
-        title = BasePresentation.string.navigation_item_home,
+        title = I18N.string.navigation_item_home,
         icon = CorePresentation.drawable.ic_proton_drive,
         closeDrawerAction = closeDrawerAction,
         modifier = modifier,
@@ -163,7 +166,7 @@ private fun TrashListItem(
     modifier: Modifier = Modifier,
 ) {
     NavigationDrawerListItem(
-        title = BasePresentation.string.navigation_item_trash,
+        title = I18N.string.navigation_item_trash,
         icon = CorePresentation.drawable.ic_proton_trash,
         closeDrawerAction = closeDrawerAction,
         modifier = modifier,
@@ -179,7 +182,7 @@ private fun OfflineListItem(
     modifier: Modifier = Modifier,
 ) {
     NavigationDrawerListItem(
-        title = BasePresentation.string.navigation_item_offline,
+        title = I18N.string.navigation_item_offline,
         icon = CorePresentation.drawable.ic_proton_arrow_down_line,
         closeDrawerAction = closeDrawerAction,
         modifier = modifier,
@@ -195,12 +198,28 @@ private fun SettingsListItem(
     modifier: Modifier = Modifier,
 ) {
     NavigationDrawerListItem(
-        title = BasePresentation.string.navigation_item_settings,
+        title = I18N.string.navigation_item_settings,
         icon = CorePresentation.drawable.ic_proton_cog_wheel,
         closeDrawerAction = closeDrawerAction,
         modifier = modifier,
     ) {
         viewEvent.onSettings()
+    }
+}
+
+@Composable
+private fun SubscriptionListItem(
+    closeDrawerAction: (() -> Unit) -> Unit,
+    viewEvent: NavigationDrawerViewEvent,
+    modifier: Modifier = Modifier,
+) {
+    NavigationDrawerListItem(
+        title = I18N.string.navigation_item_subscription,
+        icon = BasePresentation.drawable.ic_proton_arrow_up_circle_line,
+        closeDrawerAction = closeDrawerAction,
+        modifier = modifier,
+    ) {
+        viewEvent.onSubscription()
     }
 }
 
@@ -211,7 +230,7 @@ private fun ReportBugListItem(
     modifier: Modifier = Modifier,
 ) {
     NavigationDrawerListItem(
-        title = BasePresentation.string.navigation_item_bug_report,
+        title = I18N.string.navigation_item_bug_report,
         icon = CorePresentation.drawable.ic_proton_bug,
         closeDrawerAction = closeDrawerAction,
         modifier = modifier,
@@ -228,7 +247,7 @@ private fun SignOutListItem(
 ) {
     NavigationDrawerListItem(
         icon = CorePresentation.drawable.ic_proton_arrow_out_from_rectangle,
-        title = BasePresentation.string.navigation_item_sign_out,
+        title = I18N.string.navigation_item_sign_out,
         closeDrawerAction = closeDrawerAction,
         modifier = modifier,
     ) {
@@ -263,7 +282,7 @@ fun PreviewDrawerWithUser() {
         NavigationDrawer(
             drawerState = DrawerState(DrawerValue.Open) { true },
             viewState = NavigationDrawerViewState(
-                BasePresentation.string.title_app,
+                I18N.string.common_app,
                 "Version",
                 currentUser = PREVIEW_USER
             ),
@@ -274,6 +293,7 @@ fun PreviewDrawerWithUser() {
                 override val onSettings = {}
                 override val onSignOut = {}
                 override val onBugReport = {}
+                override val onSubscription = {}
             }
         )
     }
@@ -285,7 +305,7 @@ fun PreviewDrawerWithoutUser() {
     ProtonTheme {
         NavigationDrawer(
             drawerState = DrawerState(DrawerValue.Open) { true },
-            viewState = NavigationDrawerViewState(BasePresentation.string.title_app, "Version"),
+            viewState = NavigationDrawerViewState(I18N.string.common_app, "Version"),
             viewEvent = object : NavigationDrawerViewEvent {
                 override val onMyFiles = {}
                 override val onTrash = {}
@@ -293,6 +313,7 @@ fun PreviewDrawerWithoutUser() {
                 override val onSettings = {}
                 override val onSignOut = {}
                 override val onBugReport = {}
+                override val onSubscription = {}
             }
         )
     }

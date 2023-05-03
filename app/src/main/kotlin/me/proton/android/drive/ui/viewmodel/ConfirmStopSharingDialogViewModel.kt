@@ -45,7 +45,7 @@ import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
@@ -78,12 +78,12 @@ class ConfirmStopSharingDialogViewModel @Inject constructor(
                     .onSuccess {
                         broadcastMessages(
                             userId = linkId.userId,
-                            message = context.getString(BasePresentation.string.files_stop_sharing_action_success),
+                            message = context.getString(I18N.string.description_files_stop_sharing_action_success),
                             type = BroadcastMessage.Type.SUCCESS,
                         )
                         confirm()
                     }.onFailure { error ->
-                        errorMessage.emit(context.getString(BasePresentation.string.files_stop_sharing_action_error))
+                        errorMessage.emit(context.getString(I18N.string.description_files_stop_sharing_action_error))
                         error.log(VIEW_MODEL)
                     }
             }

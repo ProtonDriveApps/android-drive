@@ -40,10 +40,10 @@ class GetRevision @Inject constructor(
                 fileId = fileId,
                 revisionId = revisionId,
                 fromBlockIndex = blocks.size + 1,
-                pageSize = configurationProvider.uiPageSize,
+                pageSize = configurationProvider.apiBlockPageSize,
             )
             blocks.addAll(revision.blocks)
-        } while (revision.blocks.size == configurationProvider.uiPageSize)
+        } while (revision.blocks.size == configurationProvider.apiBlockPageSize)
         revision.copy(
             blocks = blocks
         )

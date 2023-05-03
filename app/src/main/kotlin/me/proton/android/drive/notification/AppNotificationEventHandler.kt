@@ -42,12 +42,15 @@ class AppNotificationEventHandler @Inject constructor(
 ) : NotificationEventHandler {
     private val mutex = Mutex()
 
-    override fun createNotificationId(userId: UserId, notificationEvent: NotificationEvent) = when (notificationEvent) {
+    override fun createUserNotificationId(userId: UserId, notificationEvent: NotificationEvent) = when (notificationEvent) {
         is NotificationEvent.Download -> notificationEvent.createNotificationId(userId).copy(
             tag = "${notificationEvent.tag}_${notificationEvent.downloadId}"
         )
         else -> notificationEvent.createNotificationId(userId)
     }
+
+    override fun createAppNotificationId(notificationEvent: NotificationEvent) =
+        notificationEvent.createNotificationId()
 
     override suspend fun onNotificationEvent(
         notificationId: NotificationId,

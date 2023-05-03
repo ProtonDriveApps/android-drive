@@ -20,11 +20,11 @@ package me.proton.core.drive.sorting.presentation.state
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
-import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.entity.By
 import me.proton.core.drive.sorting.domain.entity.Direction
+import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.util.kotlin.exhaustive
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Immutable
@@ -41,10 +41,10 @@ fun Sorting.toSortingViewState() =
 
 fun By.toTitleResId() =
     when (this) {
-        By.NAME -> BasePresentation.string.title_name
-        By.LAST_MODIFIED -> BasePresentation.string.title_last_modified
-        By.SIZE -> BasePresentation.string.title_size
-        By.TYPE -> BasePresentation.string.title_file_type
+        By.NAME -> I18N.string.common_name
+        By.LAST_MODIFIED -> I18N.string.title_last_modified
+        By.SIZE -> I18N.string.title_size
+        By.TYPE -> I18N.string.title_file_type
     }.exhaustive
 
 private fun Direction.toIconResId() =

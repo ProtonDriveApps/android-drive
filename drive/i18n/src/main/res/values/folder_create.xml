@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="folder_create_button">@string/common_create_action</string>
+    <string name="folder_create_dismiss_button">@string/common_cancel_action</string>
+    <string name="folder_create_title">Create a new folder</string>
+    <string name="folder_create_successful">\"%1$s\" created successfully</string>
+    <string name="folder_create_error_name_is_blank">@string/common_error_name_is_blank</string>
+    <string name="folder_create_error_name_too_long">@string/common_error_name_too_long</string>
+    <string name="folder_create_error_name_with_forbidden_characters">@string/common_error_name_with_forbidden_characters</string>
+    <string name="folder_create_error_name_periods">@string/common_error_name_periods</string>
+    <string name="folder_create_error_general">Creating folder failed for unknown reason</string>
+</resources>

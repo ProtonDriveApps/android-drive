@@ -54,6 +54,7 @@ class GetFile @Inject constructor(
     private val getCacheFolder: GetCacheFolder,
     private val getDriveLink: GetDriveLink,
     private val isConnectedToNetwork: isConnectedToNetwork,
+    private val verifyDownloadedState: VerifyDownloadedState,
 ) {
     operator fun invoke(
         driveLink: DriveLink.File,
@@ -69,6 +70,10 @@ class GetFile @Inject constructor(
             return@flow
         }
         CoreLogger.d(LogTag.GET_FILE, "Cache file for ${driveLink.id.id.logId()} doesn't exists")
+        verifyDownloadedState(driveLink)
+            .onFailure { error ->
+                CoreLogger.d(LogTag.GET_FILE, error, "Downloaded state verification failed")
+            }
         val downloadedDriveLink: DriveLink.File = if (!driveLink.isDownloaded()) {
             CoreLogger.d(LogTag.GET_FILE, "File ${driveLink.id.id.logId()} is not downloaded yet, let's download it!")
             if (!retryable && !isConnectedToNetwork()) {

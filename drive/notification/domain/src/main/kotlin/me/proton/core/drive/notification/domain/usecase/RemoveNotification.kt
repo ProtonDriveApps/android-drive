@@ -24,6 +24,6 @@ import javax.inject.Inject
 class RemoveNotification @Inject constructor(
     private val notificationRepository: NotificationRepository,
 ) {
-    suspend operator fun invoke(notificationId: NotificationId) =
+    suspend operator fun invoke(notificationId: NotificationId.User) =
         notificationRepository.removeNotificationEvents(notificationId)
 }

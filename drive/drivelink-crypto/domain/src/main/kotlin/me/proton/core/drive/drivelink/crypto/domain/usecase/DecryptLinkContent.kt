@@ -19,6 +19,7 @@ package me.proton.core.drive.drivelink.crypto.domain.usecase
 
 import me.proton.core.crypto.common.pgp.DecryptedFile
 import me.proton.core.crypto.common.pgp.VerificationStatus
+import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -55,9 +56,7 @@ class DecryptLinkContent @Inject constructor(
         checkSignature: Boolean,
     ): Result<File> = coRunCatching {
         val link = getLink(driveLink.id).toResult().getOrThrow()
-        val downloadState = requireNotNull(driveLink.downloadState as? DownloadState.Downloaded) {
-            "Expected DownloadState.Downloaded, actual ${driveLink.downloadState?.javaClass?.simpleName}"
-        }
+        val downloadState = requireIsInstance<DownloadState.Downloaded>(driveLink.downloadState)
         val encryptedBlocks = downloadState.blocks.also { blocks -> blocks.requireSortedAscending() }
         val contentKey = getContentKey(link).getOrThrow()
         val fileKey = getNodeKey(link).getOrThrow()

@@ -23,13 +23,13 @@ import me.proton.android.drive.ui.rules.UserLoginRule
 import me.proton.android.drive.ui.rules.WelcomeScreenRule
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.ui.toolkits.getRandomString
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.core.test.quark.data.User
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import me.proton.core.drive.i18n.R as I18N
 
 @RunWith(Parameterized::class)
 class RenamingFolderFlowErrorTest(
@@ -78,13 +78,13 @@ class RenamingFolderFlowErrorTest(
             arrayOf(
                 "folder1",
                 "",
-                StringUtils.stringFromResource(R.string.common_error_name_is_blank),
+                StringUtils.stringFromResource(I18N.string.common_error_name_is_blank),
                 "Empty folder name"
             ),
             arrayOf(
                 "folder1",
                 getRandomString(256),
-                StringUtils.stringFromResource(R.string.common_error_name_too_long, 255),
+                StringUtils.stringFromResource(I18N.string.common_error_name_too_long, 255),
                 "Very long name"
             ),
             arrayOf(

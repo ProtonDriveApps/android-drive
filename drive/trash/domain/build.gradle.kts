@@ -23,6 +23,7 @@ plugins {
 driveModule(
     hilt = true,
     room = true,
+    i18n = true,
 ) {
     api(project(":drive:link-trash:domain"))
     api(libs.androidx.paging.common)

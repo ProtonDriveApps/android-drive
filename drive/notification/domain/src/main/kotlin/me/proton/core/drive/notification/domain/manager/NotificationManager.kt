@@ -26,6 +26,8 @@ interface NotificationManager {
     fun notify(notificationId: NotificationId, notificationEvents: List<NotificationEvent>)
     fun cancel(notificationId: NotificationId)
 
-    fun createChannels(userId: UserId, username: String, channels: List<Channel>)
-    fun removeChannels(userId: UserId, channels: List<Channel>)
+    fun createUserChannels(userId: UserId, username: String, channels: List<Channel.User>)
+    fun removeUserChannels(userId: UserId, channels: List<Channel.User>)
+
+    fun createAppChannels(name: String, channels: List<Channel.App>)
 }

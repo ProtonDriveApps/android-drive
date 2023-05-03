@@ -23,3 +23,12 @@ dependencyResolutionManagement {
         }
     }
 }
+
+pluginManagement {
+    repositories {
+        providers.environmentVariable("INTERNAL_REPOSITORY").orNull?.let { path ->
+            maven { url = uri(path) }
+        }
+        gradlePluginPortal()
+    }
+}

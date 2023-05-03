@@ -27,7 +27,7 @@ import me.proton.android.drive.ui.viewmodel.SystemAccessDialogViewModel
 import me.proton.core.compose.component.ProtonAlertDialog
 import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.component.ProtonAlertDialogText
-import me.proton.core.drive.base.presentation.R
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun SystemAccessDialog(
@@ -50,22 +50,22 @@ fun SystemAccessDialog(
 ) {
     ProtonAlertDialog(
         modifier = modifier,
-        titleResId = R.string.app_lock_system_dialog_title,
+        titleResId = I18N.string.app_lock_system_dialog_title,
         text = {
             Column {
-                ProtonAlertDialogText(textResId = R.string.app_lock_system_dialog_description)
+                ProtonAlertDialogText(textResId = I18N.string.app_lock_system_dialog_description)
             }
         },
         onDismissRequest = onDismiss,
         dismissButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.common_cancel_action,
+                titleResId = I18N.string.common_cancel_action,
                 onClick = onDismiss,
             )
         },
         confirmButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.app_lock_system_dialog_settings_button,
+                titleResId = I18N.string.app_lock_system_dialog_settings_button,
                 onClick = onSettings,
             )
         }

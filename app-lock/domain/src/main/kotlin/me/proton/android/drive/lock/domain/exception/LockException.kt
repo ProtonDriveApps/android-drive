@@ -21,6 +21,5 @@ package me.proton.android.drive.lock.domain.exception
 import me.proton.core.drive.base.domain.exception.DriveException
 
 sealed class LockException : DriveException() {
-    object BiometricAuthenticationFailed : LockException()
     data class BiometricAuthenticationError(val errorMessage: String) : LockException()
 }

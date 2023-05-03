@@ -41,7 +41,7 @@ import coil.compose.rememberImagePainter
 import coil.request.ImageRequest
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.isNightMode
-import me.proton.core.drive.files.preview.R
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun ImagePreview(
@@ -88,7 +88,7 @@ fun ImagePreview(
     ) {
         Image(
             painter = painter,
-            contentDescription = stringResource(id = R.string.content_description_file_preview),
+            contentDescription = stringResource(id = I18N.string.content_description_file_preview),
             contentScale = ContentScale.Fit,
             modifier = modifier
                 .onPlaced { transformationState.contentLayout = it }

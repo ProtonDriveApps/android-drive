@@ -44,6 +44,9 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_I
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_URI_STRING
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.usecase.SplitFileToBlocksAndEncrypt
+import me.proton.core.drive.worker.domain.usecase.CanRun
+import me.proton.core.drive.worker.domain.usecase.Done
+import me.proton.core.drive.worker.domain.usecase.Run
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -56,6 +59,9 @@ class EncryptBlocksWorker @AssistedInject constructor(
     getUploadFileLink: GetUploadFileLink,
     private val splitFileToBlocksAndEncrypt: SplitFileToBlocksAndEncrypt,
     configurationProvider: ConfigurationProvider,
+    canRun: CanRun,
+    run: Run,
+    done: Done,
 ) : UploadCoroutineWorker(
     appContext = appContext,
     workerParams = workerParams,
@@ -63,23 +69,31 @@ class EncryptBlocksWorker @AssistedInject constructor(
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
     configurationProvider = configurationProvider,
+    canRun = canRun,
+    run = run,
+    done = done,
 ) {
 
     private val uriString = requireNotNull(inputData.getString(KEY_URI_STRING))
     private val shouldDeleteSource = inputData.getBoolean(KEY_SHOULD_DELETE_SOURCE, false)
 
-    override suspend fun doUploadWork(uploadFileLink: UploadFileLink): Result {
+    override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
         splitFileToBlocksAndEncrypt(
             uploadFileLink = uploadFileLink,
             uriString = uriString,
             shouldDeleteSource = shouldDeleteSource,
         )
             .onFailure { error ->
+                val retryable = error.isRetryable
+                val canRetry = canRetry()
                 error.log(
                     tag = uploadFileLink.logTag(),
-                    message = """Encrypting blocks failed "${error.message}""""
+                    message = """
+                        Encrypting blocks failed "${error.message}" retryable $retryable, 
+                        max retries reached ${!canRetry}
+                        """.trimIndent()
                 )
-                return retryOrAbort(error.isRetryable, error, uploadFileLink.name)
+                return retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
             }
         return Result.success()
     }

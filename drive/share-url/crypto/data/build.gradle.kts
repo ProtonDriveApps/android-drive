@@ -22,9 +22,9 @@ plugins {
 
 driveModule(
     hilt = true,
+    i18n = true,
 ) {
     api(project(":drive:link:domain"))
     api(project(":drive:share-url:base:domain"))
     api(project(":drive:share-url:crypto:domain"))
-    implementation(project(":drive:base:presentation"))
 }

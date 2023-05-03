@@ -24,12 +24,16 @@ import me.proton.core.drive.notification.domain.entity.NotificationId
 
 val NotificationEvent.tag: String get() = "NOTIFICATION_TAG_${this.javaClass.simpleName.uppercase()}"
 
-fun NotificationEvent.createNotificationId(userId: UserId) =
-    NotificationId(
-        channel = Channel(
-            userId = userId,
-            type = Channel.Type.TRANSFER,
-        ),
+fun NotificationEvent.createNotificationId(userId: UserId, type: Channel.Type = Channel.Type.TRANSFER) =
+    NotificationId.User(
+        channel = Channel.User(userId, type),
+        tag = tag,
+        id = 1,
+    )
+
+fun NotificationEvent.createNotificationId(type: Channel.Type = Channel.Type.WARNING) =
+    NotificationId.App(
+        channel = Channel.App(type),
         tag = tag,
         id = 1,
     )

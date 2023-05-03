@@ -80,6 +80,8 @@ import me.proton.core.drive.sorting.data.db.SortingDatabase
 import me.proton.core.drive.sorting.data.db.entity.SortingEntity
 import me.proton.core.drive.volume.data.db.VolumeDatabase
 import me.proton.core.drive.volume.data.db.VolumeEntity
+import me.proton.core.drive.worker.data.db.WorkerDatabase
+import me.proton.core.drive.worker.data.db.WorkerRunEntity
 import me.proton.core.eventmanager.data.db.EventManagerConverters
 import me.proton.core.eventmanager.data.db.EventMetadataDatabase
 import me.proton.core.eventmanager.data.entity.EventMetadataEntity
@@ -93,6 +95,9 @@ import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.key.data.entity.KeySaltEntity
 import me.proton.core.key.data.entity.PublicAddressEntity
 import me.proton.core.key.data.entity.PublicAddressKeyEntity
+import me.proton.core.keytransparency.data.local.KeyTransparencyDatabase
+import me.proton.core.keytransparency.data.local.entity.AddressChangeEntity
+import me.proton.core.keytransparency.data.local.entity.SelfAuditResultEntity
 import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.observability.data.entity.ObservabilityEventEntity
 import me.proton.core.payment.data.local.db.PaymentDatabase
@@ -136,6 +141,8 @@ import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
         ChallengeFrameEntity::class,
         GooglePurchaseEntity::class,
         ObservabilityEventEntity::class,
+        AddressChangeEntity::class,
+        SelfAuditResultEntity::class,
         // Drive
         VolumeEntity::class,
         ShareEntity::class,
@@ -169,6 +176,8 @@ import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
         NotificationEventEntity::class,
         // Selection
         LinkSelectionEntity::class,
+        // Worker
+        WorkerRunEntity::class,
     ],
     version = DriveDatabase.VERSION,
     autoMigrations = [
@@ -182,6 +191,7 @@ import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
         AutoMigration(from = 17, to = 18, spec = ShareDatabase.DeleteBlockSizeFromShareEntity::class),
         AutoMigration(from = 18, to = 19),
         AutoMigration(from = 22, to = 23),
+        AutoMigration(from = 23, to = 24),
     ],
     exportSchema = true,
 )
@@ -235,10 +245,12 @@ abstract class DriveDatabase :
     DriveLinkSelectionDatabase,
     NotificationDatabase,
     PaymentDatabase,
-    ObservabilityDatabase {
+    ObservabilityDatabase,
+    KeyTransparencyDatabase,
+    WorkerDatabase {
 
     companion object {
-        const val VERSION = 23
+        const val VERSION = 26
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -263,6 +275,9 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_20_21,
             DriveDatabaseMigrations.MIGRATION_21_22,
             //AutoMigration(from = 22, to = 23)
+            //AutoMigration(from = 23, to = 24)
+            DriveDatabaseMigrations.MIGRATION_24_25,
+            DriveDatabaseMigrations.MIGRATION_25_26,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

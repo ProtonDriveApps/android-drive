@@ -53,8 +53,9 @@ fun TextPreview(
         withContext(Dispatchers.IO) {
             try {
                 content =
-                    context.contentResolver.openAssetFileDescriptor(uri, "r")?.createInputStream()
-                        ?.readTextLines().orEmpty()
+                    context.contentResolver.openAssetFileDescriptor(uri, "r").use { fd ->
+                        fd?.createInputStream()?.readTextLines().orEmpty()
+                    }
             } catch (t: Throwable) {
                 onRenderFailed(t)
             }

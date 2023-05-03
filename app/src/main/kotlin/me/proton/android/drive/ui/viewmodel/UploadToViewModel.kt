@@ -55,8 +55,7 @@ import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.usecase.CopyUriToCacheTempFolder
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
-import me.proton.android.drive.R as Presentation
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @ExperimentalCoroutinesApi
@@ -83,8 +82,8 @@ class UploadToViewModel @Inject constructor(
     }
     private val uploadParameters = savedStateHandle.get<UploadParameters>(URIS)
     val rootTitle = appContext.getString(
-        Presentation.string.upload_to_title_format,
-        appContext.getString(Presentation.string.title_my_files)
+        I18N.string.upload_to_title_format,
+        appContext.getString(I18N.string.title_my_files)
     )
     val initialViewState = UploadToViewState(
         filesViewState = initialFilesViewState,
@@ -145,7 +144,7 @@ class UploadToViewModel @Inject constructor(
             coRunCatching {
                 val job = launch {
                     delay(1.seconds)
-                    showInfo(BasePresentation.string.files_upload_preparing)
+                    showInfo(I18N.string.files_upload_preparing)
                 }
                 uploadParameters?.uris?.map { uriWithFileName ->
                     copyUriToCacheTempFolder(
@@ -171,7 +170,7 @@ class UploadToViewModel @Inject constructor(
                 when (error) {
                     is NotEnoughSpaceException -> navigateToStorageFull()
                     is FileAlreadyExistsException -> showError(
-                        Presentation.string.in_app_notification_importing_file_already_exists
+                        I18N.string.in_app_notification_importing_file_already_exists
                     )
                     else -> with (error) {
                         log(LogTag.UPLOAD)

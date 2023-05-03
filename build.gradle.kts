@@ -20,6 +20,9 @@
 
 buildscript {
     repositories {
+        providers.environmentVariable("INTERNAL_REPOSITORY").orNull?.let { path ->
+            maven { url = uri(path) }
+        }
         google()
         mavenCentral()
     }
@@ -38,6 +41,9 @@ buildscript {
 
 allprojects {
     repositories {
+        providers.environmentVariable("INTERNAL_REPOSITORY").orNull?.let { path ->
+            maven { url = uri(path) }
+        }
         google()
         mavenCentral()
         maven("https://plugins.gradle.org/m2/")

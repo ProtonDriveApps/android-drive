@@ -18,22 +18,28 @@
 
 package me.proton.android.drive.ui.robot
 
-import me.proton.test.fusion.Fusion.node
 import androidx.annotation.StringRes
 import me.proton.android.drive.ui.screen.HomeScreenTestTag
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.base.presentation.component.BottomNavigationComponentTestTag
+import me.proton.test.fusion.Fusion.node
+import me.proton.test.fusion.ui.common.enums.SwipeDirection
+import kotlin.time.Duration.Companion.seconds
+import me.proton.core.drive.i18n.R as I18N
 
 interface HomeRobot : Robot {
     private val homeScreen get() = node.withTag(HomeScreenTestTag.screen)
-    val filesTab get() = tabWithText(R.string.title_files)
-    val sharedTab get() = tabWithText(R.string.title_shared)
+    val filesTab get() = tabWithText(I18N.string.title_files)
+    val sharedTab get() = tabWithText(I18N.string.title_shared)
 
     fun clickFilesTab() = filesTab.clickTo(FilesTabRobot)
     fun clickSharedTab() = sharedTab.clickTo(SharedTabRobot)
 
     fun homeScreenDisplayed() {
-        homeScreen.assertIsDisplayed()
+        homeScreen.await(30.seconds) { assertIsDisplayed() }
+    }
+
+    fun openSidebarBySwipe() = SidebarRobot.apply {
+        homeScreen.swipe(SwipeDirection.Right)
     }
 
     private fun tabWithText(@StringRes textRes: Int) =

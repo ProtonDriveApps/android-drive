@@ -39,7 +39,7 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
 import me.proton.core.drive.sorting.presentation.entity.SortingOption
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -101,13 +101,13 @@ private fun PreviewSortingList() {
             listOf(
                 SortingOption(
                     icon = CorePresentation.drawable.ic_proton_arrow_up,
-                    title = BasePresentation.string.title_app,
+                    title = I18N.string.common_app,
                     isApplied = true,
                     toggleDirection = me.proton.core.drive.sorting.domain.entity.Sorting.DEFAULT,
                 ),
                 SortingOption(
                     icon = CorePresentation.drawable.ic_proton_arrow_down,
-                    title = BasePresentation.string.title_empty_files,
+                    title = I18N.string.title_empty_my_files,
                     isApplied = true,
                     toggleDirection = me.proton.core.drive.sorting.domain.entity.Sorting.DEFAULT,
                 ),

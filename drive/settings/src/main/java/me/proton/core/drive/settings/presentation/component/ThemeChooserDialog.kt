@@ -37,7 +37,7 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
-import me.proton.core.drive.settings.R
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun ThemeChooserDialog(
@@ -48,11 +48,11 @@ fun ThemeChooserDialog(
     onThemeSelected: (Int) -> Unit,
 ) {
     ProtonAlertDialog(
-        titleResId = R.string.settings_theme_entry,
+        titleResId = I18N.string.settings_theme_entry,
         modifier = modifier,
         confirmButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.settings_theme_dialog_cancel_action,
+                titleResId = I18N.string.settings_theme_dialog_cancel_action,
                 onClick = onDismiss,
             )
         },

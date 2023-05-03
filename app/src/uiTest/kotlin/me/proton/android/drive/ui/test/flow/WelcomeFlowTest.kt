@@ -24,6 +24,7 @@ import me.proton.android.drive.ui.rules.WelcomeScreenRule
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.test.android.robots.auth.AddAccountRobot
 import me.proton.core.test.android.robots.auth.login.LoginRobot
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -35,6 +36,11 @@ class WelcomeFlowTest : BaseTest() {
 
     @get:Rule
     val welcomeScreenRule = WelcomeScreenRule(true)
+
+    @Before
+    fun preventHumanVerification() {
+        quark.jailUnban()
+    }
 
     @Test
     fun goThroughWelcomeScreenBySwipingAndClickingNext() {

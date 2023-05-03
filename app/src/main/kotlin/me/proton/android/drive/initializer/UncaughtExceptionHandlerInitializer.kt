@@ -20,26 +20,47 @@ package me.proton.android.drive.initializer
 
 import android.content.Context
 import androidx.startup.Initializer
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.log.DriveLogTag
+import me.proton.android.drive.usecase.HandleUncaughtException
 import me.proton.core.util.kotlin.CoreLogger
 
 @Suppress("unused")
 class UncaughtExceptionHandlerInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         Thread.setDefaultUncaughtExceptionHandler(
-            UncaughtExceptionHandler(Thread.getDefaultUncaughtExceptionHandler())
+            UncaughtExceptionHandler(
+                Thread.getDefaultUncaughtExceptionHandler(),
+                EntryPointAccessors.fromApplication(
+                    context.applicationContext,
+                    UncaughtExceptionHandlerInitializerEntryPoint::class.java,
+                ).handleUncaughtException
+            )
         )
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> = listOf(LoggerInitializer::class.java)
 
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    interface UncaughtExceptionHandlerInitializerEntryPoint {
+        val handleUncaughtException: HandleUncaughtException
+    }
+
     private class UncaughtExceptionHandler(
         val defaultHandler: Thread.UncaughtExceptionHandler?,
+        val handleUncaughtException: HandleUncaughtException,
     ) : Thread.UncaughtExceptionHandler {
 
         override fun uncaughtException(thread: Thread, error: Throwable) {
-            CoreLogger.e(DriveLogTag.CRASH, error)
-            defaultHandler?.uncaughtException(thread, error)
+            val isExceptionHandled = handleUncaughtException(error).getOrNull() ?: false
+            if (!isExceptionHandled) {
+                CoreLogger.e(DriveLogTag.CRASH, error)
+                defaultHandler?.uncaughtException(thread, error)
+            }
         }
     }
 }

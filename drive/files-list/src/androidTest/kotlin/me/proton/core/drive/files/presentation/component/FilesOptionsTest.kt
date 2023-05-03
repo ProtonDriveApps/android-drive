@@ -34,7 +34,6 @@ import androidx.test.rule.GrantPermissionRule
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.files.R
 import me.proton.core.drive.files.presentation.component.files.FilesOptions
 import me.proton.core.drive.files.presentation.component.folder.ParentFolderOptions
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
@@ -44,6 +43,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.Locale
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @RunWith(AndroidJUnit4::class)
@@ -105,7 +105,7 @@ class FilesOptionsTest {
         // endregion
         // region Assert
         assert(entry.wasClicked)
-        val title = composeTestRule.activity.getString(R.string.folder_options_header_title, "FOLDER")
+        val title = composeTestRule.activity.getString(I18N.string.folder_options_header_title, "FOLDER")
         composeTestRule.onNodeWithText(title).assertExists()
         // Note: the space between 123 and B is an non-breakable space, not a regular one
         composeTestRule.onNodeWithText("123 B | Oct 25, 2020").assertDoesNotExist()

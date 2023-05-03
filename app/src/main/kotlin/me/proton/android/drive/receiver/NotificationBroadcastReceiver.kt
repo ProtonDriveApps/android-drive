@@ -44,13 +44,15 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
                     tag = LogTag.BROADCAST_RECEIVER,
                     message = "Received $action for ${notificationId.tag} ${notificationId.id}"
                 )
-                when (action) {
-                    ACTION_DELETE -> removeNotification(notificationId)
-                    ACTION_CANCEL_ALL -> cancelAllUpload(notificationId.channel.userId)
-                    else -> CoreLogger.e(
-                        tag = LogTag.BROADCAST_RECEIVER,
-                        e = RuntimeException("Received unknown action '$action'")
-                    )
+                if (notificationId is NotificationId.User) {
+                    when (action) {
+                        ACTION_DELETE -> removeNotification(notificationId)
+                        ACTION_CANCEL_ALL -> cancelAllUpload(notificationId.channel.userId)
+                        else -> CoreLogger.e(
+                            tag = LogTag.BROADCAST_RECEIVER,
+                            e = RuntimeException("Received unknown action '$action'")
+                        )
+                    }
                 }
             }
         }

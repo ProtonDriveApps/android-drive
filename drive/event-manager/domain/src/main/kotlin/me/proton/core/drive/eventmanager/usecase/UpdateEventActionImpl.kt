@@ -18,16 +18,22 @@
 
 package me.proton.core.drive.eventmanager.usecase
 
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.eventmanager.domain.EventManagerConfig
 import me.proton.core.eventmanager.domain.EventManagerProvider
 import javax.inject.Inject
 
 class UpdateEventActionImpl @Inject constructor(
     private val eventManagerProvider: EventManagerProvider,
+    private val getShare: GetShare,
 ) : UpdateEventAction {
 
     override suspend fun <T> invoke(shareId: ShareId, block: suspend () -> T): T =
-        eventManagerProvider.get(EventManagerConfig.Drive(shareId.userId, shareId.id)).suspend(block)
+        eventManagerProvider.get(EventManagerConfig.Drive.Volume(
+            userId = shareId.userId,
+            volumeId = getShare(shareId).toResult().getOrThrow().volumeId.id
+        )).suspend(block)
 }

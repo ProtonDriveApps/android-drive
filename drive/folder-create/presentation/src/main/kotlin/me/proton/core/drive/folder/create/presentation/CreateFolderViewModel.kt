@@ -43,6 +43,7 @@ import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.Forbidd
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.Periods
 import me.proton.core.drive.share.domain.entity.ShareId
 import javax.inject.Inject
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 @Suppress("StaticFieldLeak")
@@ -59,7 +60,7 @@ class CreateFolderViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<CreateFolderEffect>()
     private val inProgress = MutableStateFlow(false)
     val initialViewState = CreateFolderViewState(
-        titleResId = R.string.folder_create_title,
+        titleResId = I18N.string.folder_create_title,
         name = name.value,
         error = error.value,
         inProgress = inProgress.value
@@ -108,7 +109,7 @@ class CreateFolderViewModel @Inject constructor(
                 broadcastMessages(
                     userId = userId,
                     message = context.getString(
-                        R.string.folder_create_successful,
+                        I18N.string.folder_create_successful,
                         name.ellipsizeMiddle(MAX_DISPLAY_FOLDER_NAME_LENGTH)
                     )
                 )
@@ -118,14 +119,14 @@ class CreateFolderViewModel @Inject constructor(
 
     private suspend fun Throwable.handle() = error.emit(
         when (this) {
-            Empty -> context.getString(R.string.folder_create_error_name_is_blank)
-            is ExceedsMaxLength -> context.getString(R.string.folder_create_error_name_too_long, this.maxLength)
-            ForbiddenCharacters -> context.getString(R.string.folder_create_error_name_with_forbidden_characters)
-            Periods -> context.getString(R.string.folder_create_error_name_periods)
+            Empty -> context.getString(I18N.string.folder_create_error_name_is_blank)
+            is ExceedsMaxLength -> context.getString(I18N.string.folder_create_error_name_too_long, this.maxLength)
+            ForbiddenCharacters -> context.getString(I18N.string.folder_create_error_name_with_forbidden_characters)
+            Periods -> context.getString(I18N.string.folder_create_error_name_periods)
             else -> logDefaultMessage(
                 context = context,
                 tag = VIEW_MODEL,
-                unhandled = context.getString(R.string.folder_create_error_general),
+                unhandled = context.getString(I18N.string.folder_create_error_general),
             )
         }
     )

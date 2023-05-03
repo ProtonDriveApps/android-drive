@@ -33,6 +33,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.biometric.BiometricPrompt.CryptoObject
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
 import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 import me.proton.android.drive.lock.domain.exception.LockException
@@ -46,19 +47,12 @@ class BiometricPromptProviderImpl @Inject constructor(
     private val biometricManager: BiometricManager,
 ) : BiometricPromptProvider {
     private val listeners = ConcurrentHashMap<AuthenticationListener, Unit>()
-    private var activity: WeakReference<FragmentActivity> = WeakReference(null)
+    private val activities: MutableList<WeakReference<FragmentActivity>> = mutableListOf()
     private val callback = object : BiometricPrompt.AuthenticationCallback() {
         override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
             super.onAuthenticationError(errorCode, errString)
             listeners.keys().toList().forEach { listener ->
                 listener.onError(LockException.BiometricAuthenticationError(errString.toString()))
-            }
-        }
-
-        override fun onAuthenticationFailed() {
-            super.onAuthenticationFailed()
-            listeners.keys().toList().forEach { listener ->
-                listener.onError(LockException.BiometricAuthenticationFailed)
             }
         }
 
@@ -74,11 +68,11 @@ class BiometricPromptProviderImpl @Inject constructor(
     }
 
     override fun bindToActivity(activity: FragmentActivity) {
-        this.activity = WeakReference(activity)
+        activities.flush().add(WeakReference(activity))
     }
 
     private fun buildBiometricPrompt(): BiometricPrompt {
-        val activity = this.activity.get()
+        val activity = activities.flush().firstResumedOrNull()
         requireNotNull(activity)
         val executor = ContextCompat.getMainExecutor(activity)
         return BiometricPrompt(
@@ -87,6 +81,20 @@ class BiometricPromptProviderImpl @Inject constructor(
             callback,
         )
     }
+
+    private fun List<WeakReference<FragmentActivity>>.firstResumedOrNull(): FragmentActivity? =
+        firstOrNull { weakReference ->
+            val activity = weakReference.get()
+            activity != null && activity.lifecycle.currentState == Lifecycle.State.RESUMED
+        }?.get()
+
+    private fun MutableList<WeakReference<FragmentActivity>>.flush(): MutableList<WeakReference<FragmentActivity>> =
+        this.apply {
+            removeAll { weakReference ->
+                val activity = weakReference.get()
+                activity == null || activity.lifecycle.currentState == Lifecycle.State.DESTROYED
+            }
+        }
 
     override suspend fun authenticate(
         title: String,
@@ -109,7 +117,6 @@ class BiometricPromptProviderImpl @Inject constructor(
                     listeners.remove(this)
                     continuation.resume(Result.failure(error))
                 }
-
             }
             listeners[listener] = Unit
             continuation.invokeOnCancellation {

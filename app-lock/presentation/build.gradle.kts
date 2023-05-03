@@ -23,6 +23,7 @@ plugins {
 driveModule(
     hilt = true,
     compose = true,
+    i18n = true,
 ) {
     api(project(":app-lock:domain"))
     implementation(project(":drive:base:presentation"))

@@ -40,6 +40,7 @@ fun Project.driveModule(
     workManager: Boolean = false,
     compose: Boolean = false,
     includeSubmodules: Boolean = false,
+    i18n: Boolean = false,
     kapt: Boolean = hilt || room,
     dependencies: DependencyHandler.() -> Unit = {},
 ) {
@@ -158,6 +159,12 @@ fun Project.driveModule(
             resources.excludes.add("META-INF/AL2.0")
             resources.excludes.add("META-INF/LGPL2.1")
         }
+
+        testOptions {
+            unitTests {
+                isIncludeAndroidResources = true
+            }
+        }
     }
 
     extensions.configure<KotlinAndroidProjectExtension> {
@@ -202,6 +209,9 @@ fun Project.driveModule(
                 add("api", project(":$fullName$module"))
             }
         }
+        if (i18n) {
+            add("implementation", project(":drive:i18n"))
+        }
 
         // region Test
         add("testImplementation", catalog.findBundle("test.jvm").get())
@@ -211,7 +221,7 @@ fun Project.driveModule(
 }
 
 // first alpha and fourth beta were not tagged in git so we add them to list of all git tags
-val Project.tags get() = "1.0.0-alpha01\n1.0.0_cancelled(16)\n1.0.0_cancelled(18)\n1.0.0_cancelled(20)\n1.0.0-beta04\n1.0.3_iap(26)\n" + "git tag".runCommand(workingDir = rootDir)
+val Project.tags get() = "1.0.0-alpha01\n1.0.0_cancelled(16)\n1.0.0_cancelled(18)\n1.0.0_cancelled(20)\n1.0.0-beta04\n1.0.3_iap(26)\n1.2.0-alpha01\n" + "git tag".runCommand(workingDir = rootDir)
 
 val Project.versionCodeFromTags: Int get() = tags.countSubstrings("\n") + 2 // last new line + next tag
 

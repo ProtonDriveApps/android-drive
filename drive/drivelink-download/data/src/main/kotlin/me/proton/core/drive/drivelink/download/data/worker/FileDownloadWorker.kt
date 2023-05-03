@@ -54,6 +54,10 @@ import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.usecase.SetDownloadState
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.worker.data.LimitedRetryCoroutineWorker
+import me.proton.core.drive.worker.domain.usecase.CanRun
+import me.proton.core.drive.worker.domain.usecase.Done
+import me.proton.core.drive.worker.domain.usecase.Run
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.isRetryable
 import me.proton.core.util.kotlin.CoreLogger
@@ -67,16 +71,19 @@ class FileDownloadWorker @AssistedInject constructor(
     private val setDownloadingAndGetRevision: SetDownloadingAndGetRevision,
     private val setDownloadState: SetDownloadState,
     private val configurationProvider: ConfigurationProvider,
-) : CoroutineWorker(appContext, workerParams) {
-    private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
+    canRun: CanRun,
+    run: Run,
+    done: Done,
+) : LimitedRetryCoroutineWorker(appContext, workerParams, canRun, run, done) {
+    override val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
     private val volumeId = requireNotNull(inputData.getString(KEY_VOLUME_ID))
     private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)))
     private val fileId = FileId(shareId, requireNotNull(inputData.getString(KEY_FILE_ID)))
     private val revisionId = requireNotNull(inputData.getString(KEY_REVISION_ID))
     private val isRetryable = inputData.getBoolean(KEY_RETRYABLE, false)
-    private val logTag = fileId.logTag
+    override val logTag = fileId.logTag
 
-    override suspend fun doWork(): Result =
+    override suspend fun doLimitedRetryWork(): Result =
         try {
             CoreLogger.d(logTag, "Started downloading file with revision ${revisionId.logId()}")
             downloadBlocks(setDownloadingAndGetRevision(fileId, revisionId).getOrThrow())

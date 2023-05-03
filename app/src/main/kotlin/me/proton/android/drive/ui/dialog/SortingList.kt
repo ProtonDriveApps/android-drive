@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import me.proton.core.drive.base.presentation.R
 import me.proton.android.drive.ui.viewmodel.SortingDialogViewModel
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.compose.theme.ProtonDimens.DefaultBottomSheetHeaderMinHeight
@@ -38,6 +37,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmall
 import me.proton.core.drive.sorting.presentation.SortingList
 import me.proton.core.drive.sorting.presentation.entity.toSortingOptions
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun SortingList(
@@ -69,7 +69,7 @@ fun SortingHeader(
         contentAlignment = Alignment.CenterStart
     ) {
         Text(
-            text = stringResource(id = R.string.title_sort_by),
+            text = stringResource(id = I18N.string.title_sort_by),
             style = ProtonTheme.typography.headlineSmall
         )
     }

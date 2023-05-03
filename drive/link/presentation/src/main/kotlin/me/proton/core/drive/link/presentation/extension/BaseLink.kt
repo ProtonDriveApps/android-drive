@@ -18,12 +18,12 @@
 package me.proton.core.drive.link.presentation.extension
 
 import android.content.Context
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.lastModified
 import me.proton.core.drive.base.presentation.extension.lastModifiedRelative
 import me.proton.core.drive.link.domain.entity.BaseLink
 import java.text.DateFormat
+import me.proton.core.drive.i18n.R as I18N
 
 fun BaseLink.lastModified(format: Int = DateFormat.MEDIUM): String = lastModified.lastModified(format)
 
@@ -32,4 +32,4 @@ fun BaseLink.getSize(context: Context): String = size.asHumanReadableString(cont
 fun BaseLink.lastModifiedRelative(context: Context, now: Long = System.currentTimeMillis()): CharSequence =
     lastModified.lastModifiedRelative(context, now)
 
-fun BaseLink.getName(context: Context) = name.takeIf { parentId != null } ?: context.getString(R.string.title_my_files)
+fun BaseLink.getName(context: Context) = name.takeIf { parentId != null } ?: context.getString(I18N.string.title_my_files)

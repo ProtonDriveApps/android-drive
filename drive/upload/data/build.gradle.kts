@@ -24,14 +24,15 @@ driveModule(
     hilt = true,
     room = true,
     workManager = true,
+    i18n = true,
 ) {
     api(project(":drive:base:data"))
     api(project(":drive:upload:domain"))
 
     implementation(project(":drive:folder:domain"))
-    implementation(project(":drive:base:presentation"))
     implementation(project(":drive:link:presentation"))
     implementation(project(":drive:notification:domain"))
+    implementation(project(":drive:worker:data"))
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.core.crypto)
     implementation(libs.core.network)

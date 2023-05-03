@@ -32,6 +32,7 @@ interface ConfigurationProvider {
     val appVersionHeader: String
     val uiPageSize: Int get() = 50
     val apiPageSize: Int get() = 150
+    val apiBlockPageSize: Int get() = 50
     val dbPageSize: Int get() = 500
     val cacheMaxEntries: Int get() = 10_000
     val linkMaxNameLength: Int get() = 255
@@ -56,4 +57,5 @@ interface ConfigurationProvider {
     val autoLockDurations: Set<Duration> get() = setOf(
         0.seconds, 60.seconds, 2.minutes, 5.minutes, 15.minutes, 30.minutes
     )
+    val maxApiAutoRetries: Int get() = 10
 }

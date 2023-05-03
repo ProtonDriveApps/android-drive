@@ -44,15 +44,15 @@ import me.proton.core.compose.theme.ProtonColors
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.LargeSpacing
 import me.proton.core.compose.theme.ProtonDimens.LargerSpacing
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
+import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
 import me.proton.core.compose.theme.defaultSmallWeak
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.extension.currentLocale
-import me.proton.core.drive.user.presentation.R
-import me.proton.core.presentation.R as CorePresentation
 import me.proton.core.user.domain.entity.User
+import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 fun UserSelector(
@@ -62,7 +62,7 @@ fun UserSelector(
     onClick: () -> Unit,
 ) {
     val userSelectorContentDescription =
-        stringResource(R.string.user_select_other_account_content_description)
+        stringResource(I18N.string.user_select_other_account_content_description)
     Row(
         modifier = modifier
             .clickable(enabled = canChangeUser, onClick = onClick)

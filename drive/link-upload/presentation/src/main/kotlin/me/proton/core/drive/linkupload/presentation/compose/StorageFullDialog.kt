@@ -22,8 +22,7 @@ import androidx.compose.ui.Modifier
 import me.proton.core.compose.component.ProtonAlertDialog
 import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.component.ProtonAlertDialogText
-import me.proton.core.drive.base.presentation.R as BasePresentation
-import me.proton.core.drive.linkupload.presentation.R as Presentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun StorageFullDialog(
@@ -33,13 +32,13 @@ fun StorageFullDialog(
     ProtonAlertDialog(
         modifier = modifier,
         onDismissRequest = onDismiss,
-        titleResId = Presentation.string.files_upload_failure_storage_full_title,
+        titleResId = I18N.string.files_upload_failure_storage_full_title,
         text = {
-            ProtonAlertDialogText(textResId = Presentation.string.files_upload_failure_storage_full_description)
+            ProtonAlertDialogText(textResId = I18N.string.files_upload_failure_storage_full_description)
         },
         confirmButton = {
             ProtonAlertDialogButton(
-                titleResId = BasePresentation.string.common_got_it_action,
+                titleResId = I18N.string.common_got_it_action,
                 onClick = onDismiss,
             )
         },

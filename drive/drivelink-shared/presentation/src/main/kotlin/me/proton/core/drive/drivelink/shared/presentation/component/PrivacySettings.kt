@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -63,7 +64,7 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.PrivacySetti
 import java.text.DateFormat
 import java.util.Calendar
 import java.util.Date
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -81,14 +82,14 @@ internal fun PrivacySettings(
             .padding(horizontal = DefaultSpacing)
     ) {
         Text(
-            text = stringResource(id = BasePresentation.string.shared_link_privacy_settings),
+            text = stringResource(id = I18N.string.shared_link_privacy_settings),
             style = ProtonTheme.typography.headlineSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(bottom = MediumSpacing),
         )
         Text(
-            text = stringResource(id = BasePresentation.string.shared_link_password_protection),
+            text = stringResource(id = I18N.string.shared_link_password_protection),
             style = ProtonTheme.typography.defaultSmallStrong,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -135,7 +136,7 @@ internal fun PrivacySettings(
                 },
                 placeholder = {
                     Text(
-                        text = stringResource(id = BasePresentation.string.shared_link_hint_password_field),
+                        text = stringResource(id = I18N.string.shared_link_hint_password_field),
                         style = ProtonTheme.typography.defaultHint,
                     )
                 },
@@ -146,7 +147,8 @@ internal fun PrivacySettings(
                 textStyle = ProtonTheme.typography.default,
                 modifier = Modifier
                     .padding(end = TextFieldSwitchSpacing)
-                    .weight(1f),
+                    .weight(1f)
+                    .testTag(PrivacySettingsTestTag.passwordTextField),
             )
             Switch(
                 checked = viewState.passwordChecked,
@@ -154,14 +156,16 @@ internal fun PrivacySettings(
                 onCheckedChange = { enabled ->
                     viewEvent.onPasswordEnabledChanged(enabled)
                     focusManager.clearFocus()
-                }
+                },
+                modifier = Modifier
+                    .testTag(PrivacySettingsTestTag.passwordSwitch),
             )
         }
         if (passwordSource.collectIsPressedAsState().value) {
             viewEvent.onPasswordEnabledChanged(true)
         }
         Text(
-            text = stringResource(id = BasePresentation.string.shared_link_expiration_date),
+            text = stringResource(id = I18N.string.shared_link_expiration_date),
             style = ProtonTheme.typography.defaultSmallStrong,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -192,14 +196,15 @@ internal fun PrivacySettings(
                 maxLines = 1,
                 placeholder = {
                     Text(
-                        text = stringResource(id = BasePresentation.string.shared_link_hint_expiration_date_field),
+                        text = stringResource(id = I18N.string.shared_link_hint_expiration_date_field),
                         style = ProtonTheme.typography.defaultHint,
                     )
                 },
                 textStyle = ProtonTheme.typography.default,
                 modifier = Modifier
                     .padding(end = TextFieldSwitchSpacing)
-                    .weight(1f),
+                    .weight(1f)
+                    .testTag(PrivacySettingsTestTag.expirationDateTextField),
             )
             Switch(
                 checked = viewState.expirationDateChecked,
@@ -208,6 +213,8 @@ internal fun PrivacySettings(
                     viewEvent.onExpirationDateEnabledChanged(enabled)
                     focusManager.clearFocus()
                 },
+                modifier = Modifier
+                    .testTag(PrivacySettingsTestTag.expirationDateSwitch),
             )
         }
         if (expirationDateSource.collectIsPressedAsState().value) {
@@ -242,3 +249,10 @@ val Date.asDayOfMonth: Int get() = Calendar.getInstance()
     .get(Calendar.DAY_OF_MONTH)
 
 private val TextFieldSwitchSpacing = 18.dp
+
+object PrivacySettingsTestTag {
+    const val passwordTextField = "password text field"
+    const val passwordSwitch = "password switch"
+    const val expirationDateTextField = "expiration date text field"
+    const val expirationDateSwitch = "expiration date switch"
+}

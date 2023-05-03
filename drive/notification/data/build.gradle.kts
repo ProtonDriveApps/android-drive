@@ -24,6 +24,7 @@ driveModule(
     hilt = true,
     room = true,
     serialization = true,
+    i18n = true,
 ) {
     api(project(":drive:notification:domain"))
     api(libs.androidx.core.core)

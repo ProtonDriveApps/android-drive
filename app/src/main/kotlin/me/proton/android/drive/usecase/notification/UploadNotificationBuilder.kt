@@ -25,7 +25,6 @@ import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import me.proton.android.drive.R
 import me.proton.android.drive.extension.deepLinkBaseUrl
 import me.proton.android.drive.receiver.NotificationBroadcastReceiver
 import me.proton.android.drive.receiver.NotificationBroadcastReceiver.Companion.ACTION_CANCEL_ALL
@@ -36,14 +35,14 @@ import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.util.kotlin.serialize
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 class UploadNotificationBuilder @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val commonBuilder: CommonNotificationBuilder,
     private val contentIntent: CreateContentPendingIntent,
 ) {
-    operator fun invoke(notificationId: NotificationId, notificationEvents: List<NotificationEvent.Upload>) =
+    operator fun invoke(notificationId: NotificationId.User, notificationEvents: List<NotificationEvent.Upload>) =
         with (notificationEvents) {
             commonBuilder(notificationId, first())
                 .setContentTitle(title)
@@ -64,15 +63,15 @@ class UploadNotificationBuilder @Inject constructor(
     private val List<NotificationEvent.Upload>.title: String get() =
         if (uploadingCount > 0) {
             appContext.getString(
-                BasePresentation.string.notification_content_title_upload_uploading,
-                appContext.getString(R.string.app_name)
+                I18N.string.notification_content_title_upload_uploading,
+                appContext.getString(I18N.string.app_name)
             )
         } else {
-            appContext.getString(BasePresentation.string.notification_content_title_upload_complete)
+            appContext.getString(I18N.string.notification_content_title_upload_complete)
         }
 
     private fun NotificationCompat.Builder.setContentIntent(
-        notificationId: NotificationId
+        notificationId: NotificationId.User
     ): NotificationCompat.Builder = setContentIntent(
         contentIntent(
             notificationId = notificationId,
@@ -84,7 +83,7 @@ class UploadNotificationBuilder @Inject constructor(
         val uploading = uploadingCount
         return if (uploading > 0) {
             appContext.resources.getQuantityString(
-                BasePresentation.plurals.notification_content_text_upload_uploading,
+                I18N.plurals.notification_content_text_upload_uploading,
                 uploading,
                 uploading,
             )
@@ -94,7 +93,7 @@ class UploadNotificationBuilder @Inject constructor(
             if (succeeded > 0) {
                 completedString.add(
                     appContext.quantityString(
-                        BasePresentation.plurals.notification_content_text_upload_uploaded,
+                        I18N.plurals.notification_content_text_upload_uploaded,
                         succeeded,
                     )
                 )
@@ -103,7 +102,7 @@ class UploadNotificationBuilder @Inject constructor(
             if (cancelled > 0) {
                 completedString.add(
                     appContext.quantityString(
-                        BasePresentation.plurals.notification_content_text_upload_cancelled,
+                        I18N.plurals.notification_content_text_upload_cancelled,
                         cancelled,
                     )
                 )
@@ -112,7 +111,7 @@ class UploadNotificationBuilder @Inject constructor(
             if (failed > 0) {
                 completedString.add(
                     appContext.quantityString(
-                        BasePresentation.plurals.notification_content_text_upload_failed,
+                        I18N.plurals.notification_content_text_upload_failed,
                         failed,
                     )
                 )
@@ -141,9 +140,9 @@ class UploadNotificationBuilder @Inject constructor(
                     0,
                     appContext.getString(
                         if (uploadNotificationEvents.uploadingCount > 1) {
-                            BasePresentation.string.common_cancel_all_action
+                            I18N.string.common_cancel_all_action
                         } else {
-                            BasePresentation.string.common_cancel_action
+                            I18N.string.common_cancel_action
                         }
                     ),
                     cancelAllIntent(notificationId),

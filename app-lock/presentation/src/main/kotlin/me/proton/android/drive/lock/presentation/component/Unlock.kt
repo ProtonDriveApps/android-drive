@@ -30,19 +30,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,16 +48,16 @@ import me.proton.android.drive.lock.presentation.viewevent.UnlockViewEvent
 import me.proton.android.drive.lock.presentation.viewmodel.UnlockViewModel
 import me.proton.core.compose.component.ProtonSolidButton
 import me.proton.core.compose.component.ProtonTextButton
-import me.proton.core.compose.theme.ProtonDimens.LargeSpacing
 import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
+import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait
-import me.proton.core.drive.base.presentation.extension.shadow
 import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -127,25 +122,6 @@ private fun LogoHeader(
             contentDescription = null,
             contentScale = ContentScale.None,
         )
-        val y = LogoTranslationY
-        Image(
-            painter = painterResource(id = CorePresentation.drawable.ic_logo_drive),
-            contentDescription = null,
-            modifier = Modifier
-                .size(LogoSize)
-                .align(Alignment.BottomCenter)
-                .graphicsLayer {
-                    translationX = 0f
-                    translationY = y
-                }
-                .shadow(
-                    color = ShadowColor,
-                    alpha = DriveLogoShadowAlpha,
-                    cornersRadius = DriveLogoShadowCornerRadius,
-                    blurRadius = DriveLogoShadowBlurRadius,
-                    offsetY = DriveLogoShadowOffsetY,
-                )
-        )
     }
 }
 
@@ -162,15 +138,14 @@ private fun Actions(
         Image(
             painter = rememberDrawablePainter(
                 drawable = getDrawable(
-                    light = CorePresentation.drawable.logo_drive_dark,
-                    dark = CorePresentation.drawable.logo_drive_light,
-                    dayNight = CorePresentation.drawable.logo_drive_daylight,
+                    light = CorePresentation.drawable.logo_drive_with_text_light,
+                    dark = CorePresentation.drawable.logo_drive_with_text_dark,
+                    dayNight = BasePresentation.drawable.logo_drive_with_text_daylight,
                 )
             ),
             contentDescription = null,
             modifier = Modifier
                 .padding(top = DriveLogoTopPadding)
-                .heightIn(max = DriveLogoHeight)
                 .align(Alignment.TopCenter)
         )
         val buttonModifier = Modifier
@@ -185,14 +160,14 @@ private fun Actions(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(all = LargeSpacing)
+                .padding(all = MediumSpacing)
                 .align(Alignment.BottomCenter)
         ) {
             ProtonSolidButton(
                 onClick = onUnlock,
                 modifier = buttonModifier,
             ) {
-                Text(text = stringResource(id = BasePresentation.string.app_lock_unlock_the_app))
+                Text(text = stringResource(id = I18N.string.app_lock_unlock_the_app))
             }
             Spacer(
                 modifier = Modifier
@@ -203,7 +178,7 @@ private fun Actions(
                 onClick = onSignOut,
                 modifier = buttonModifier,
             ) {
-                Text(text = stringResource(id = BasePresentation.string.title_sign_out))
+                Text(text = stringResource(id = I18N.string.common_sign_out))
             }
         }
     }
@@ -234,18 +209,6 @@ private fun UnlockPreview() {
     }
 }
 
-private val ShadowColor = Color(0xFF0D052E)
-private val LogoSize = 106.dp
-private val LogoTranslationY: Float @Composable get() = if (isPortrait) {
-    LocalDensity.current.run { 44.dp.toPx() }
-} else {
-    LocalDensity.current.run { 42.dp.toPx() }
-}
-private val LogoHeaderWeight: Float @Composable get() = if (isPortrait) 0.3f else 0.25f
+private val LogoHeaderWeight: Float @Composable get() = if (isPortrait) 0.44f else 0.3f
 private val ButtonMinWidth = 300.dp
-private val DriveLogoHeight = 32.dp
-private val DriveLogoTopPadding = 60.dp
-private const val DriveLogoShadowAlpha = 0.07f
-private val DriveLogoShadowCornerRadius = 24.dp
-private val DriveLogoShadowBlurRadius = 16.dp
-private val DriveLogoShadowOffsetY = 8.dp
+private val DriveLogoTopPadding = 24.dp

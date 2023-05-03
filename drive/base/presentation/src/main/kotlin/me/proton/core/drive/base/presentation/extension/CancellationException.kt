@@ -20,10 +20,10 @@ package me.proton.core.drive.base.presentation.extension
 import android.content.Context
 import kotlinx.coroutines.CancellationException
 import me.proton.core.util.kotlin.CoreLogger
-import me.proton.core.drive.base.presentation.R as Presentation
+import me.proton.core.drive.i18n.R as I18N
 
 fun CancellationException.getDefaultMessage(context: Context): String =
-    context.getString(Presentation.string.common_error_internal)
+    context.getString(I18N.string.common_error_internal)
 
 fun CancellationException.log(
     tag: String,

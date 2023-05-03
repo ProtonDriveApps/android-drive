@@ -25,4 +25,6 @@ data class MoveFileViewState(
     val isMoveButtonEnabled: Boolean,
     val title: String,
     val isTitleEncrypted: Boolean = false,
+    val navigationIconResId: Int = 0,
+    val driveLinks: List<String> = emptyList(),
 )

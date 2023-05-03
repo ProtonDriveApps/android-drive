@@ -35,8 +35,8 @@ import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
-import me.proton.core.drive.files.preview.R
 
 @Composable
 fun PreviewEmpty(
@@ -57,7 +57,7 @@ fun PreviewEmpty(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = stringResource(id = R.string.preview_empty),
+                text = stringResource(id = I18N.string.preview_empty),
                 style = ProtonTheme.typography.default.copy(textAlign = TextAlign.Center),
                 modifier = Modifier
                     .fillMaxWidth()

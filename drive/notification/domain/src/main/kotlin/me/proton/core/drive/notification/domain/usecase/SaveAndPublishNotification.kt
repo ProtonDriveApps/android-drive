@@ -31,7 +31,12 @@ class SaveAndPublishNotification @Inject constructor(
         notificationId: NotificationId,
         notificationEvent: NotificationEvent,
     ) = coRunCatching {
-        notificationRepository.insertNotificationEvent(notificationId, notificationEvent)
-        publishNotification(notificationId, notificationRepository.getAllNotificationEvents(notificationId))
+        when (notificationId) {
+            is NotificationId.User -> {
+                notificationRepository.insertNotificationEvent(notificationId, notificationEvent)
+                publishNotification(notificationId, notificationRepository.getAllNotificationEvents(notificationId))
+            }
+            is NotificationId.App -> publishNotification(notificationId, listOf(notificationEvent))
+        }
     }
 }

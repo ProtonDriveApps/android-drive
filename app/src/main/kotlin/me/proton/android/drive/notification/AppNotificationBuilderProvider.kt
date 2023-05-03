@@ -20,8 +20,11 @@ package me.proton.android.drive.notification
 
 import androidx.core.app.NotificationCompat
 import me.proton.android.drive.usecase.notification.DownloadNotificationBuilder
+import me.proton.android.drive.usecase.notification.ForcedSignOutNotificationBuilder
+import me.proton.android.drive.usecase.notification.NoSpaceLeftOnDeviceNotificationBuilder
 import me.proton.android.drive.usecase.notification.StorageFullNotificationBuilder
 import me.proton.android.drive.usecase.notification.UploadNotificationBuilder
+import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
 import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
@@ -31,6 +34,8 @@ class AppNotificationBuilderProvider @Inject constructor(
     private val storageFullBuilder: StorageFullNotificationBuilder,
     private val uploadNotificationBuilder: UploadNotificationBuilder,
     private val downloadNotificationBuilder: DownloadNotificationBuilder,
+    private val forcedSignOutNotificationBuilder: ForcedSignOutNotificationBuilder,
+    private val noSpaceLeftOnDeviceNotificationBuilder: NoSpaceLeftOnDeviceNotificationBuilder,
 ) : NotificationBuilderProvider {
 
     @Suppress("UNCHECKED_CAST")
@@ -40,19 +45,29 @@ class AppNotificationBuilderProvider @Inject constructor(
     ): NotificationCompat.Builder = when {
         notificationEvents.size == 1 && notificationEvents.first() is NotificationEvent.StorageFull ->
             storageFullBuilder(
-                notificationId,
-                notificationEvents.first() as NotificationEvent.StorageFull,
+                notificationId = requireIsInstance(notificationId),
+                notificationEvent = notificationEvents.first() as NotificationEvent.StorageFull,
             )
         notificationEvents.isNotEmpty() && notificationEvents.all { event -> event is NotificationEvent.Upload } ->
             uploadNotificationBuilder(
-                notificationId,
-                notificationEvents as List<NotificationEvent.Upload>,
+                notificationId = requireIsInstance(notificationId),
+                notificationEvents = notificationEvents as List<NotificationEvent.Upload>,
             )
         notificationEvents.size == 1 && notificationEvents.first() is NotificationEvent.Download ->
             downloadNotificationBuilder(
-                notificationId,
-                notificationEvents.first() as NotificationEvent.Download,
+                notificationId = requireIsInstance(notificationId),
+                notificationEvent = notificationEvents.first() as NotificationEvent.Download,
             )
-        else -> throw IllegalStateException("Unhandled notification events")
+        notificationEvents.size == 1 && notificationEvents.first() is NotificationEvent.ForcedSignOut ->
+            forcedSignOutNotificationBuilder(
+                notificationId = requireIsInstance(notificationId),
+                notificationEvent = notificationEvents.first() as NotificationEvent.ForcedSignOut,
+            )
+        notificationEvents.size == 1 && notificationEvents.first() is NotificationEvent.NoSpaceLeftOnDevice ->
+            noSpaceLeftOnDeviceNotificationBuilder(
+                notificationId = requireIsInstance(notificationId),
+                notificationEvent = notificationEvents.first() as NotificationEvent.NoSpaceLeftOnDevice,
+            )
+        else -> error("Unhandled notification events")
     }
 }

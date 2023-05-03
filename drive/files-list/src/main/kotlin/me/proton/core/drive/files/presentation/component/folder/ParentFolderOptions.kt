@@ -33,9 +33,8 @@ import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
-import me.proton.core.drive.files.R
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun ParentFolderOptions(
@@ -47,9 +46,9 @@ fun ParentFolderOptions(
         modifier = modifier,
         header = {
             val title = if (folder.isNameEncrypted) {
-                stringResource(id = R.string.folder_options_header_title_encrypted)
+                stringResource(id = I18N.string.folder_options_header_title_encrypted)
             } else {
-                stringResource(id = R.string.folder_options_header_title, folder.title)
+                stringResource(id = I18N.string.folder_options_header_title, folder.title)
             }
             ParentFolderOptionsHeader(
                 title = title,
@@ -74,7 +73,7 @@ fun ParentFolderOptions(
 
 internal val DriveLink.Folder.title
     @Composable
-    get() = if (parentId == null) stringResource(id = BasePresentation.string.title_my_files) else name
+    get() = if (parentId == null) stringResource(id = I18N.string.title_my_files) else name
 
 @Composable
 internal fun ParentFolderOptionsHeader(

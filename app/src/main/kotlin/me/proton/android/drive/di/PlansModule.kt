@@ -33,11 +33,11 @@ object PlansModule {
 
     @Provides
     @SupportSignupPaidPlans
-    fun provideSupportSignupPaidPlans() = false
+    fun provideSupportSignupPaidPlans() = true
 
     @Provides
     @SupportUpgradePaidPlans
-    fun provideSupportUpgradePaidPlans() = false
+    fun provideSupportUpgradePaidPlans() = true
 
     @Provides
     @ProductOnlyPaidPlans

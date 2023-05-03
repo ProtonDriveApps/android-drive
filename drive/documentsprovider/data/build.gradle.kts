@@ -23,10 +23,10 @@ driveModule(
     hilt = true,
     serialization = true,
     workManager = true,
+    i18n = true,
 ) {
     api(project(":drive:documentsprovider:domain"))
     implementation(project(":drive:base:data"))
-    implementation(project(":drive:base:presentation"))
     implementation(project(":drive:drivelink-rename:domain"))
     implementation(project(":drive:drivelink-selection:domain"))
     implementation(project(":drive:notification:domain"))

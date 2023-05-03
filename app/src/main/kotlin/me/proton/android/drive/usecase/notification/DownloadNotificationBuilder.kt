@@ -28,21 +28,21 @@ import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 class DownloadNotificationBuilder @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val commonBuilder: CommonNotificationBuilder,
     private val contentIntent: CreateContentPendingIntent,
 ) {
-    operator fun invoke(notificationId: NotificationId, notificationEvent: NotificationEvent.Download) =
+    operator fun invoke(notificationId: NotificationId.User, notificationEvent: NotificationEvent.Download) =
         commonBuilder(notificationId, notificationEvent)
-            .setContentTitle(appContext.getString(BasePresentation.string.notification_content_title_download_complete))
+            .setContentTitle(appContext.getString(I18N.string.notification_content_title_download_complete))
             .setContentText(notificationEvent.text)
             .setContentIntent(notificationId)
 
     private fun NotificationCompat.Builder.setContentIntent(
-        notificationId: NotificationId
+        notificationId: NotificationId.User
     ): NotificationCompat.Builder = setContentIntent(
         contentIntent(
             notificationId = notificationId,
@@ -52,7 +52,7 @@ class DownloadNotificationBuilder @Inject constructor(
 
     private val NotificationEvent.Download.text: String get() =
         appContext.quantityString(
-            BasePresentation.plurals.in_app_notification_files_download_complete,
+            I18N.plurals.common_in_app_notification_files_download_complete,
             downloadedFiles,
         )
 }

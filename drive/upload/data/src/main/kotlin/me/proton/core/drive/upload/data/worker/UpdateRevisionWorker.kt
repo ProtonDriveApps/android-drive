@@ -44,6 +44,9 @@ import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.usecase.UpdateRevision
+import me.proton.core.drive.worker.domain.usecase.CanRun
+import me.proton.core.drive.worker.domain.usecase.Done
+import me.proton.core.drive.worker.domain.usecase.Run
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -56,6 +59,9 @@ class UpdateRevisionWorker @AssistedInject constructor(
     getUploadFileLink: GetUploadFileLink,
     private val updateRevision: UpdateRevision,
     configurationProvider: ConfigurationProvider,
+    canRun: CanRun,
+    run: Run,
+    done: Done,
 ) : UploadCoroutineWorker(
     appContext = appContext,
     workerParams = workerParams,
@@ -63,19 +69,27 @@ class UpdateRevisionWorker @AssistedInject constructor(
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
     configurationProvider = configurationProvider,
+    canRun = canRun,
+    run = run,
+    done = done,
 ) {
 
-    override suspend fun doUploadWork(uploadFileLink: UploadFileLink): Result {
+    override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
         updateRevision(uploadFileLink)
             .onFailure { error ->
+                val retryable = error.isRetryable
+                val canRetry = canRetry()
                 error.log(
                     tag = logTag(),
-                    message = """Updating revision failed "${error.message}" retryable ${error.isRetryable}"""
+                    message = """
+                        Updating revision failed "${error.message}" retryable $retryable, 
+                        max retries reached ${!canRetry}
+                        """.trimIndent()
                 )
                 return if (error.handle()) {
                     Result.failure()
                 } else {
-                    retryOrAbort(error.isRetryable, error, uploadFileLink.name)
+                    retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
                 }
             }
         return Result.success()
@@ -85,9 +99,10 @@ class UpdateRevisionWorker @AssistedInject constructor(
         onProtonHttpException { protonCode ->
             if (protonCode == INVALID_REQUIREMENTS) {
                 retryGetBlocksUploadUrl()
-                return@onProtonHttpException true
+                true
+            } else {
+                false
             }
-            return@onProtonHttpException false
         } ?: false
 
     private fun retryGetBlocksUploadUrl() {

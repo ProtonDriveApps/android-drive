@@ -78,7 +78,7 @@ fun HomeScreen(
     deepLinkBaseUrl: String,
     startDestination: String,
     arguments: Bundle,
-    sendBugReport: () -> Unit,
+    navigateToBugReport: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
     navigateToSigningOut: () -> Unit,
     navigateToTrash: () -> Unit,
@@ -89,6 +89,7 @@ fun HomeScreen(
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
     navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
+    navigateToSubscription: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     setLocalSnackbarPadding(BottomNavigationHeight)
@@ -128,7 +129,8 @@ fun HomeScreen(
             },
             navigateToOffline = navigateToOffline,
             navigateToSettings = navigateToSettings,
-            sendBugReport = sendBugReport,
+            navigateToBugReport = navigateToBugReport,
+            navigateToSubscription = navigateToSubscription,
         ),
         modifier = modifier
             .navigationBarsPadding()
@@ -179,6 +181,7 @@ internal fun Home(
                     viewState = viewState.navigationDrawerViewState,
                     viewEvent = viewEvent.navigationDrawerViewEvent,
                     modifier = Modifier
+                        .testTag(HomeScreenTestTag.sidebar)
                         .statusBarsPadding()
                         .navigationBarsPadding(),
                     onCloseOnActionStarted = {
@@ -251,5 +254,6 @@ private val BottomNavigationHeight = 56.dp
 
 object HomeScreenTestTag {
     const val screen = "home screen"
+    const val sidebar = "home sidebar"
     const val bottomBar = "home bottom bar"
 }

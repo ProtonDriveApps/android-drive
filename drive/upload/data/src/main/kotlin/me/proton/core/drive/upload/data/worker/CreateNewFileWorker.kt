@@ -47,6 +47,9 @@ import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.usecase.CreateNewFile
+import me.proton.core.drive.worker.domain.usecase.CanRun
+import me.proton.core.drive.worker.domain.usecase.Done
+import me.proton.core.drive.worker.domain.usecase.Run
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -60,6 +63,9 @@ class CreateNewFileWorker @AssistedInject constructor(
     private val createNewFile: CreateNewFile,
     private val updateName: UpdateName,
     configurationProvider: ConfigurationProvider,
+    canRun: CanRun,
+    run: Run,
+    done: Done,
 ) : UploadCoroutineWorker(
     appContext = appContext,
     workerParams = workerParams,
@@ -67,17 +73,24 @@ class CreateNewFileWorker @AssistedInject constructor(
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
     configurationProvider = configurationProvider,
+    canRun = canRun,
+    run = run,
+    done = done,
 ) {
 
-    override suspend fun doUploadWork(uploadFileLink: UploadFileLink): Result {
+    override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
         createNewFile(uploadFileLink)
             .onFailure { error ->
                 val retryable = error.isRetryable || error.handle(uploadFileLink)
+                val canRetry = canRetry()
                 error.log(
                     tag = uploadFileLink.logTag(),
-                    message = """Creating new file failed "${error.message}" retryable $retryable"""
+                    message = """
+                        Creating new file failed "${error.message}" retryable $retryable, 
+                        max retries reached ${!canRetry}
+                        """.trimIndent()
                 )
-                return retryOrAbort(retryable, error, uploadFileLink.name)
+                return retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
             }
         return Result.success()
     }
@@ -91,9 +104,10 @@ class CreateNewFileWorker @AssistedInject constructor(
                         .trimForbiddenChars()
                         .avoidDuplicateFileName()
                 )
-                return@onProtonHttpException true
+                true
+            } else {
+                false
             }
-            return@onProtonHttpException false
         } ?: false
 
 

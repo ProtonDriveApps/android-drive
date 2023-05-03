@@ -23,6 +23,7 @@ plugins {
 driveModule(
     hilt = true,
     compose = true,
+    i18n = true,
 ) {
     api(project(":drive:base:presentation"))
     api(libs.core.key) // Needed for the User object from Core

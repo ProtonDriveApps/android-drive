@@ -22,8 +22,8 @@ import me.proton.core.drive.notification.domain.entity.Channel
 import me.proton.core.drive.notification.domain.entity.NotificationId
 
 fun NotificationEventEntity.toNotificationId() =
-    NotificationId(
-        channel = Channel(
+    NotificationId.User(
+        channel = Channel.User(
             userId = userId,
             type = channelType,
         ),

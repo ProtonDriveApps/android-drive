@@ -27,12 +27,12 @@ interface NotificationRepository {
      * Inserts channels into cache
      * Channels cannot be updated so if channel already exists it will be ignored
      */
-    suspend fun insertChannels(channels: List<Channel>)
+    suspend fun insertChannels(channels: List<Channel.User>)
 
     /**
      * Gets list of all channels for given user
      */
-    suspend fun getAllChannels(userId: UserId): List<Channel>
+    suspend fun getAllChannels(userId: UserId): List<Channel.User>
 
     /**
      * Removes channels from cache
@@ -42,29 +42,29 @@ interface NotificationRepository {
     /**
      * Inserts or updates [NotificationEvent] in cache based on [NotificationId]
      */
-    suspend fun insertNotificationEvent(notificationId: NotificationId, notificationEvent: NotificationEvent): Result<Unit>
+    suspend fun insertNotificationEvent(notificationId: NotificationId.User, notificationEvent: NotificationEvent): Result<Unit>
 
     /**
      * Gets all [NotificationId] for a given user
      */
-    suspend fun getAllNotificationIds(userId: UserId): List<NotificationId>
+    suspend fun getAllNotificationIds(userId: UserId): List<NotificationId.User>
 
     /**
      * Gets all [NotificationEvent] for a given [NotificationId]
      */
-    suspend fun getAllNotificationEvents(notificationId: NotificationId): List<NotificationEvent>
+    suspend fun getAllNotificationEvents(notificationId: NotificationId.User): List<NotificationEvent>
 
     /**
      * Get [NotificationEvent] for given [NotificationId] and [NotificationEvent] id
      * Note that [NotificationId] does not necessarily provides single [NotificationEvent] but when provided with
      * [NotificationEvent] id then it is unique
      */
-    suspend fun getNotificationEvent(notificationId: NotificationId, notificationEventId: String): NotificationEvent?
+    suspend fun getNotificationEvent(notificationId: NotificationId.User, notificationEventId: String): NotificationEvent?
 
     /**
      * Removes all [NotificationEvent] for a given [NotificationId]
      */
-    suspend fun removeNotificationEvents(notificationId: NotificationId)
+    suspend fun removeNotificationEvents(notificationId: NotificationId.User)
 
     /**
      * Removes all [NotificationEvent] for a given user

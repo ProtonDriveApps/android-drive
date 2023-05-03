@@ -47,6 +47,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.ProtonListItem
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -95,14 +96,14 @@ fun AppAccessOptions(
     ) {
         AppAccessOption(
             iconResId = BasePresentation.drawable.ic_proton_lock_open,
-            titleResId = BasePresentation.string.app_lock_option_none,
+            titleResId = I18N.string.app_lock_option_none,
             isSelected = enabledOption == AccessOption.NONE,
         ) {
             viewEvent.onDisable()
         }
         AppAccessOption(
             iconResId = CorePresentation.drawable.ic_proton_fingerprint,
-            titleResId = BasePresentation.string.app_lock_option_system,
+            titleResId = I18N.string.app_lock_option_system,
             isSelected = enabledOption == AccessOption.SYSTEM,
         ) {
             viewEvent.onSystem()

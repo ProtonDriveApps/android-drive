@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +43,6 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.NavigationDrawerAppVersion
 import me.proton.core.drive.base.presentation.component.TopAppBar
-import me.proton.core.drive.settings.R
 import me.proton.core.drive.settings.presentation.component.DebugSettings
 import me.proton.core.drive.settings.presentation.component.ExternalSettingsEntry
 import me.proton.core.drive.settings.presentation.component.ThemeChooserDialog
@@ -53,7 +53,7 @@ import me.proton.core.drive.settings.presentation.state.SettingsViewState
 import me.proton.core.usersettings.presentation.compose.view.CrashReportSettingToggleItem
 import me.proton.core.usersettings.presentation.compose.view.TelemetrySettingToggleItem
 import kotlin.time.Duration.Companion.seconds
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -79,14 +79,18 @@ fun Settings(
         TopAppBar(
             navigationIcon = painterResource(id = viewState.navigationIcon),
             onNavigationIcon = viewEvent.navigateBack,
-            title = stringResource(id = BasePresentation.string.title_settings),
+            title = stringResource(id = I18N.string.common_settings),
         )
-        Column(Modifier.verticalScroll(rememberScrollState())) {
+        Column(
+            Modifier
+                .verticalScroll(rememberScrollState())
+                .testTag(SettingsTestTag.list)
+        ) {
 
-            ProtonSettingsHeader(title = R.string.settings_section_security)
+            ProtonSettingsHeader(title = I18N.string.settings_section_security)
 
             ProtonSettingsItem(
-                name = stringResource(id = R.string.settings_app_lock),
+                name = stringResource(id = I18N.string.settings_app_lock),
                 hint = stringResource(id = viewState.appAccessSubtitleResId),
             ) {
                 viewEvent.onAppAccess()
@@ -94,17 +98,17 @@ fun Settings(
 
             if (viewState.isAutoLockDurationsVisible) {
                 ProtonSettingsItem(
-                    name = stringResource(id = R.string.settings_auto_lock),
+                    name = stringResource(id = I18N.string.settings_auto_lock),
                     hint = viewState.autoLockDuration.toString(LocalContext.current),
                 ) {
                     viewEvent.onAutoLockDurations()
                 }
             }
 
-            ProtonSettingsHeader(title = R.string.settings_section_appearance_settings)
+            ProtonSettingsHeader(title = I18N.string.settings_section_appearance_settings)
 
             ProtonSettingsItem(
-                name = stringResource(id = R.string.settings_theme_entry),
+                name = stringResource(id = I18N.string.settings_theme_entry),
                 hint = stringResource(viewState.currentStyle),
             ) {
                 showThemeDialog = true
@@ -113,7 +117,7 @@ fun Settings(
 
 
             if (viewState.legalLinks.isNotEmpty()) {
-                ProtonSettingsHeader(title = R.string.settings_section_about)
+                ProtonSettingsHeader(title = I18N.string.settings_section_about)
 
                 viewState.legalLinks.forEach { link ->
                     when (link) {
@@ -134,6 +138,14 @@ fun Settings(
 
             TelemetrySettingToggleItem(divider = {})
             CrashReportSettingToggleItem(divider = {})
+
+            ProtonSettingsHeader(title = I18N.string.settings_section_system)
+
+            ProtonSettingsItem(
+                name = stringResource(id = I18N.string.settings_clear_local_cache_entry),
+            ) {
+                viewEvent.onClearLocalCache()
+            }
 
             NavigationDrawerAppVersion(
                 modifier = Modifier.padding(top = DefaultSpacing),
@@ -162,17 +174,17 @@ private fun SettingsPreview() {
             modifier = Modifier.background(MaterialTheme.colors.background),
             viewState = SettingsViewState(
                 CorePresentation.drawable.ic_proton_arrow_up,
-                BasePresentation.string.title_app,
+                I18N.string.common_app,
                 "1.0.0",
                 listOf(
                     LegalLink.External(
-                        text = BasePresentation.string.navigation_more_section_header,
-                        url = BasePresentation.string.title_app
+                        text = I18N.string.navigation_more_section_header,
+                        url = I18N.string.common_app
                     )
                 ),
                 availableStyles = emptyList(),
-                currentStyle = BasePresentation.string.common_cancel_action,
-                appAccessSubtitleResId = BasePresentation.string.common_cancel_action,
+                currentStyle = I18N.string.common_cancel_action,
+                appAccessSubtitleResId = I18N.string.common_cancel_action,
                 isAutoLockDurationsVisible = true,
                 autoLockDuration = 0.seconds,
             ),
@@ -181,8 +193,13 @@ private fun SettingsPreview() {
                 onLinkClicked = {},
                 onThemeStyleChanged = {},
                 onAppAccess = {},
-                onAutoLockDurations = {}
+                onAutoLockDurations = {},
+                onClearLocalCache = {},
             )
         )
     }
+}
+
+object SettingsTestTag {
+    const val list = "settings list"
 }

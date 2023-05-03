@@ -31,6 +31,7 @@ object Dto {
     const val CODE = "Code"
     const val CONTENT_KEY_PACKET = "ContentKeyPacket"
     const val CONTENT_KEY_PACKET_SIGNATURE = "ContentKeyPacketSignature"
+    const val CONTEXT_SHARE_ID = "ContextShareID"
     const val CREATION_TIME = "CreationTime"
     const val CREATE_TIME = "CreateTime"
     const val CREATOR = "Creator"

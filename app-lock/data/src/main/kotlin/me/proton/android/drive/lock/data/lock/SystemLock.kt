@@ -33,7 +33,7 @@ import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.crypto.common.keystore.PlainByteArray
 import me.proton.core.drive.base.domain.util.coRunCatching
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 class SystemLock @Inject constructor(
     @ApplicationContext private val appContext: Context,
@@ -53,8 +53,8 @@ class SystemLock @Inject constructor(
         val lockKey = appLockRepository.getLockKey(AppLockType.SYSTEM)
         require(lockKey.appKey == key)
         biometricPromptProvider.authenticate(
-            title = appContext.getString(BasePresentation.string.app_lock_biometric_title_app_locked),
-            subtitle = appContext.getString(BasePresentation.string.app_lock_biometric_subtitle_app_locked),
+            title = appContext.getString(I18N.string.app_lock_biometric_title_app_locked),
+            subtitle = appContext.getString(I18N.string.app_lock_biometric_subtitle_app_locked),
             cryptoObject = null,
         ).getOrThrow()
         block(secretKey.decrypt(EncryptedByteArray(lockKey.appKeyPassphrase)).array)
@@ -62,8 +62,8 @@ class SystemLock @Inject constructor(
 
     override suspend fun lock(passphrase: ByteArray): Result<ByteArray> = coRunCatching {
         biometricPromptProvider.authenticate(
-            title = appContext.getString(BasePresentation.string.app_lock_biometric_title_confirmation),
-            subtitle = appContext.getString(BasePresentation.string.app_lock_biometric_subtitle_confirmation_enable),
+            title = appContext.getString(I18N.string.app_lock_biometric_title_confirmation),
+            subtitle = appContext.getString(I18N.string.app_lock_biometric_subtitle_confirmation_enable),
             cryptoObject = null,
         ).getOrThrow()
         secretKey.encrypt(PlainByteArray(passphrase)).array
@@ -72,9 +72,9 @@ class SystemLock @Inject constructor(
     override suspend fun disable(userAuthenticationRequired: Boolean) {
         if (userAuthenticationRequired) {
             biometricPromptProvider.authenticate(
-                title = appContext.getString(BasePresentation.string.app_lock_biometric_title_confirmation),
+                title = appContext.getString(I18N.string.app_lock_biometric_title_confirmation),
                 subtitle = appContext.getString(
-                    BasePresentation.string.app_lock_biometric_subtitle_confirmation_disable
+                    I18N.string.app_lock_biometric_subtitle_confirmation_disable
                 ),
                 cryptoObject = null,
             ).getOrThrow()

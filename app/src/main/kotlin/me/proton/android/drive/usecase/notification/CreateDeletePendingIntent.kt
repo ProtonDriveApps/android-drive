@@ -48,6 +48,8 @@ class CreateDeletePendingIntent @Inject constructor(
         is NotificationEvent.StorageFull -> REQUEST_CODE_STORAGE_FULL
         is NotificationEvent.Upload -> REQUEST_CODE_UPLOAD
         is NotificationEvent.Download -> REQUEST_CODE_DOWNLOAD
+        is NotificationEvent.ForcedSignOut -> REQUEST_CODE_FORCED_SIGN_OUT
+        is NotificationEvent.NoSpaceLeftOnDevice -> REQUEST_CODE_NO_SPACE_LEFT_ON_DEVICE
     }
 
     companion object {
@@ -55,5 +57,7 @@ class CreateDeletePendingIntent @Inject constructor(
         const val REQUEST_CODE_STORAGE_FULL = BASE_REQUEST_CODE + 1
         const val REQUEST_CODE_UPLOAD = BASE_REQUEST_CODE + 2
         const val REQUEST_CODE_DOWNLOAD = BASE_REQUEST_CODE + 3
+        const val REQUEST_CODE_FORCED_SIGN_OUT = BASE_REQUEST_CODE + 4
+        const val REQUEST_CODE_NO_SPACE_LEFT_ON_DEVICE = BASE_REQUEST_CODE + 5
     }
 }

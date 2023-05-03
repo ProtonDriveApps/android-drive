@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,7 +57,7 @@ import me.proton.core.drive.drivelink.shared.presentation.viewevent.ActionViewEv
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.SharedDriveLinkViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SharedDriveLinkViewState
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -72,6 +73,7 @@ fun SharedDriveLink(
             .fillMaxSize()
             .padding(top = LinkSpacing)
             .verticalScroll(rememberScrollState())
+            .testTag(SharedDriveLinkTestTag.content)
     ) {
         Link(
             publicUrl = viewState.publicUrl,
@@ -117,7 +119,7 @@ private fun Link(
             .padding(horizontal = DefaultSpacing)
     ) {
         Text(
-            text = stringResource(id = BasePresentation.string.title_link),
+            text = stringResource(id = I18N.string.common_link),
             style = ProtonTheme.typography.headlineSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -149,6 +151,7 @@ private fun Link(
         Text(
             text = accessibilityDescription,
             style = ProtonTheme.typography.defaultSmall,
+            modifier = Modifier.testTag(SharedDriveLinkTestTag.accessibilityDescription)
         )
         Crossfade(targetState = isLinkNameEncrypted) { isEncrypted ->
             if (isEncrypted) {
@@ -177,7 +180,7 @@ fun ShareDriveLinkActions(
     ) {
         ShareDriveLinkAction(
             icon = CorePresentation.drawable.ic_proton_squares,
-            title = BasePresentation.string.shared_link_action_copy_link,
+            title = I18N.string.shared_link_action_copy_link,
             onClick = { viewEvent.onCopyLink(publicUrl) }
         )
         password
@@ -185,13 +188,13 @@ fun ShareDriveLinkActions(
             ?.let {
                 ShareDriveLinkAction(
                     icon = CorePresentation.drawable.ic_proton_squares,
-                    title = BasePresentation.string.shared_link_action_copy_password,
+                    title = I18N.string.shared_link_action_copy_password,
                     onClick = { viewEvent.onCopyPassword(password) }
                 )
             }
         ShareDriveLinkAction(
             icon = CorePresentation.drawable.ic_proton_arrow_up_from_square,
-            title = BasePresentation.string.shared_link_action_share_link,
+            title = I18N.string.shared_link_action_share_link,
             onClick = {
                 context.startActivity(
                     Intent.createChooser(
@@ -206,7 +209,7 @@ fun ShareDriveLinkActions(
         )
         ShareDriveLinkAction(
             icon = CorePresentation.drawable.ic_proton_link_slash,
-            title = BasePresentation.string.shared_link_action_stop_sharing,
+            title = I18N.string.shared_link_action_stop_sharing,
             onClick = { viewEvent.onStopSharing(linkId) }
         )
     }
@@ -230,3 +233,8 @@ fun ShareDriveLinkAction(
 }
 
 private val LinkSpacing = 20.dp
+
+object SharedDriveLinkTestTag {
+    const val content = "content"
+    const val accessibilityDescription = "accessibility description"
+}

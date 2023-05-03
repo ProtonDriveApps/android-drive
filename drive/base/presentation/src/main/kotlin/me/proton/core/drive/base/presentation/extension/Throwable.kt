@@ -22,17 +22,17 @@ import android.database.SQLException
 import kotlinx.coroutines.CancellationException
 import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.drive.base.domain.exception.InvalidFieldException
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.network.data.ProtonErrorException
 import me.proton.core.network.domain.ApiException
 import me.proton.core.util.kotlin.CoreLogger
 import retrofit2.HttpException
 import java.io.IOException
+import me.proton.core.drive.i18n.R as I18N
 
 fun Throwable.getDefaultMessage(
     context: Context,
     useExceptionMessage: Boolean,
-    unhandled: String = context.getString(R.string.common_error_internal),
+    unhandled: String = context.getString(I18N.string.common_error_internal),
 ): String = if (useExceptionMessage) {
     "${this.javaClass.simpleName}: $message"
 } else {
@@ -76,7 +76,7 @@ fun <T : Throwable>T.logDefaultMessage(
     context: Context,
     tag: String,
     useExceptionMessage: Boolean = false,
-    unhandled: String = context.getString(R.string.common_error_internal),
+    unhandled: String = context.getString(I18N.string.common_error_internal),
 ): String = getDefaultMessage(
     context = context,
     useExceptionMessage = useExceptionMessage,

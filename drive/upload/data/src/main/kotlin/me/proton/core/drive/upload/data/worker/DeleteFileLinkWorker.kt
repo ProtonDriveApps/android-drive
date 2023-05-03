@@ -21,7 +21,6 @@ import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
-import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
@@ -41,6 +40,10 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.worker.data.LimitedRetryCoroutineWorker
+import me.proton.core.drive.worker.domain.usecase.CanRun
+import me.proton.core.drive.worker.domain.usecase.Done
+import me.proton.core.drive.worker.domain.usecase.Run
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -48,18 +51,22 @@ class DeleteFileLinkWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val deleteFolderChildren: DeleteFolderChildren,
-) : CoroutineWorker(appContext, workerParams) {
+    canRun: CanRun,
+    run: Run,
+    done: Done,
+) : LimitedRetryCoroutineWorker(appContext, workerParams, canRun, run, done) {
 
-    private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
+    override val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
     private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)))
     private val folderId = FolderId(shareId, requireNotNull(inputData.getString(KEY_FOLDER_ID)))
     private val uploadFileId = FileId(shareId, requireNotNull(inputData.getString(KEY_UPLOAD_FILE_ID)))
+    override val logTag: String = LogTag.UPLOAD
 
-    override suspend fun doWork(): Result {
+    override suspend fun doLimitedRetryWork(): Result {
         deleteFolderChildren(folderId, listOf(uploadFileId))
             .onFailure { error ->
                 error.log(
-                    tag = LogTag.UPLOAD,
+                    tag = logTag,
                     message = """Deleting file link failed "${error.message}" retryable ${error.isRetryable}""",
                 )
                 return if (error.isRetryable) Result.retry() else Result.failure()

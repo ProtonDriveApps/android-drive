@@ -54,7 +54,7 @@ import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
 import me.proton.core.drive.base.presentation.extension.currentLocale
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -102,7 +102,7 @@ internal fun ProgressDialog(
         title = {
             Column {
                 Text(
-                    text = stringResource(id = BasePresentation.string.title_downloading),
+                    text = stringResource(id = I18N.string.common_downloading),
                     style = ProtonTheme.typography.headline,
                 )
                 Text(
@@ -117,7 +117,7 @@ internal fun ProgressDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             ProtonAlertDialogButton(
-                titleResId = BasePresentation.string.common_cancel_action,
+                titleResId = I18N.string.common_cancel_action,
                 onClick = onDismiss,
                 modifier = Modifier.testTag(CancelButtonTestTag)
             )
@@ -170,11 +170,11 @@ private fun ProgressDialogStatus(
                 modifier = Modifier.padding(start = SmallSpacing),
                 maxLines = 1,
                 text = when (state) {
-                    is ShareState.Decrypting -> stringResource(id = BasePresentation.string.title_decrypting)
+                    is ShareState.Decrypting -> stringResource(id = I18N.string.title_decrypting)
                     is ShareState.Downloading -> progress?.let {
-                        stringResource(id = BasePresentation.string.title_percent_downloaded,
+                        stringResource(id = I18N.string.common_percent_downloaded,
                             progress.toPercentString(LocalContext.current.currentLocale))
-                    } ?: stringResource(id = BasePresentation.string.title_downloading)
+                    } ?: stringResource(id = I18N.string.common_downloading)
                     else -> ""
                 },
                 style = ProtonTheme.typography.captionHint,

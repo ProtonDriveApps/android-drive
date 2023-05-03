@@ -46,7 +46,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
-import me.proton.android.drive.R
 import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
@@ -94,6 +93,7 @@ import me.proton.drive.android.settings.domain.usecase.ToggleLayoutType
 import javax.inject.Inject
 import me.proton.core.drive.base.domain.extension.combine as baseCombine
 import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
@@ -165,12 +165,12 @@ class FilesViewModel @Inject constructor(
     private val selectionId = MutableStateFlow(savedStateHandle.get<String?>(KEY_SELECTION_ID)?.let { SelectionId(it) })
     private val addFilesAction = FilesViewState.Action(
         iconResId = CorePresentation.drawable.ic_proton_plus,
-        contentDescriptionResId = BasePresentation.string.files_upload_content_description_upload_file,
+        contentDescriptionResId = I18N.string.content_description_files_upload_upload_file,
         onAction = { viewEvent?.onParentFolderOptions?.invoke() },
     )
     private val selectAllAction = FilesViewState.Action(
         iconResId = CorePresentation.drawable.ic_proton_check_triple,
-        contentDescriptionResId = BasePresentation.string.content_description_select_all,
+        contentDescriptionResId = I18N.string.content_description_select_all,
         onAction = {
             viewModelScope.launch {
                 driveLink.value?.let { parent ->
@@ -181,15 +181,16 @@ class FilesViewModel @Inject constructor(
     )
     private val selectedOptionsAction = FilesViewState.Action(
         iconResId = CorePresentation.drawable.ic_proton_three_dots_vertical,
-        contentDescriptionResId = BasePresentation.string.content_description_selected_options,
+        contentDescriptionResId = I18N.string.content_description_selected_options,
         onAction = { viewEvent?.onSelectedOptions?.invoke() }
     )
     private val topBarActions: MutableStateFlow<Set<FilesViewState.Action>> = MutableStateFlow(setOf(addFilesAction))
     private val selected: StateFlow<Set<LinkId>> = selectionId
         .filterNotNull()
         .transformLatest { id ->
+            val parentId = driveLink.filterNotNull().first().id
             emitAll(
-                getSelectedDriveLinks(id).map { driveLinks ->
+                getSelectedDriveLinks(id, parentId).map { driveLinks ->
                     if (driveLinks.isEmpty()) {
                         topBarActions.value = setOf(addFilesAction)
                     } else {
@@ -202,7 +203,7 @@ class FilesViewModel @Inject constructor(
     val isBottomNavigationEnabled: Flow<Boolean> = selected.map { set -> set.isEmpty() }
     val initialViewState = FilesViewState(
         title = savedStateHandle[Screen.Files.FOLDER_NAME],
-        titleResId = R.string.title_my_files,
+        titleResId = I18N.string.title_my_files,
         sorting = Sorting.DEFAULT,
         navigationIconResId = if (isRootFolder && selected.value.isEmpty()) {
             CorePresentation.drawable.ic_proton_hamburger
@@ -228,7 +229,7 @@ class FilesViewModel @Inject constructor(
         initialViewState.copy(
             title = if (selected.isNotEmpty()) {
                 appContext.quantityString(
-                    BasePresentation.plurals.title_selected,
+                    I18N.plurals.common_selected,
                     selected.size
                 )
             } else {
@@ -259,9 +260,9 @@ class FilesViewModel @Inject constructor(
 
     private val emptyState = ListContentState.Empty(
         imageResId = BasePresentation.drawable.empty_folder,
-        titleId = BasePresentation.string.title_empty_files,
-        descriptionResId = BasePresentation.string.description_empty_files,
-        actionResId = BasePresentation.string.action_empty_files_add_files,
+        titleId = if (isRootFolder) I18N.string.title_empty_my_files else I18N.string.title_empty_folder,
+        descriptionResId = if (isRootFolder) I18N.string.description_empty_my_files else I18N.string.description_empty_folder,
+        actionResId = I18N.string.action_empty_files_add_files,
     )
     private var viewEvent: FilesViewEvent? = null
     fun viewEvent(

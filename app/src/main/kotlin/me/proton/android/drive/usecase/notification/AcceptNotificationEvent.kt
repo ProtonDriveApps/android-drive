@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.usecase.notification
 
+import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationEvent.Upload.UploadState
 import me.proton.core.drive.notification.domain.entity.NotificationId
@@ -28,11 +29,16 @@ class AcceptNotificationEvent @Inject constructor(
     private val notificationRepository: NotificationRepository,
 ) {
     suspend operator fun invoke(notificationId: NotificationId, newEvent: NotificationEvent): Boolean =
-        notificationRepository.getNotificationEvent(notificationId, newEvent.id).let { oldEvent ->
-            when (newEvent) {
-                is NotificationEvent.StorageFull -> true
-                is NotificationEvent.Upload -> oldEvent != null || newEvent.state == UploadState.NEW_UPLOAD
-                is NotificationEvent.Download -> true
+        when (newEvent) {
+            is NotificationEvent.StorageFull -> true
+            is NotificationEvent.Upload -> notificationRepository.getNotificationEvent(
+                notificationId = requireIsInstance(notificationId),
+                notificationEventId = newEvent.id,
+            ).let { oldEvent ->
+                oldEvent != null || newEvent.state == UploadState.NEW_UPLOAD
             }
+            is NotificationEvent.Download -> true
+            is NotificationEvent.ForcedSignOut -> true
+            is NotificationEvent.NoSpaceLeftOnDevice -> true
         }
 }

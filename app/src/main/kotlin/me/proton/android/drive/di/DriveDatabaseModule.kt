@@ -49,11 +49,13 @@ import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
 import me.proton.core.drive.sorting.data.db.SortingDatabase
 import me.proton.core.drive.volume.data.db.VolumeDatabase
+import me.proton.core.drive.worker.data.db.WorkerDatabase
 import me.proton.core.eventmanager.data.db.EventMetadataDatabase
 import me.proton.core.featureflag.data.db.FeatureFlagDatabase
 import me.proton.core.humanverification.data.db.HumanVerificationDatabase
 import me.proton.core.key.data.db.KeySaltDatabase
 import me.proton.core.key.data.db.PublicAddressDatabase
+import me.proton.core.keytransparency.data.local.KeyTransparencyDatabase
 import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.payment.data.local.db.PaymentDatabase
 import me.proton.core.user.data.db.AddressDatabase
@@ -180,4 +182,10 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideObservabilityDatabase(db: DriveDatabase): ObservabilityDatabase
+
+    @Binds
+    abstract fun provideKeyTransparencyDatabase(db: DriveDatabase): KeyTransparencyDatabase
+
+    @Binds
+    abstract fun provideWorkerDatabase(db: DriveDatabase): WorkerDatabase
 }

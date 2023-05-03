@@ -33,6 +33,8 @@ class StorageLocationProviderImpl @Inject constructor(
     private val coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
 ) : StorageLocationProvider {
 
+    override suspend fun getCacheFolder(): File = appContext.cacheDir
+
     override suspend fun getCacheFolder(userId: UserId, path: String): File = coRunCatching(coroutineContext) {
         with (userId.getFolder(appContext.cacheDir)) {
             if (path.isBlank()) {

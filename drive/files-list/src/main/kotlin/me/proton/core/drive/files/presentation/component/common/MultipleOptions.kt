@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import me.proton.core.compose.component.bottomsheet.BottomSheetContent
 import me.proton.core.compose.component.bottomsheet.BottomSheetEntry
 import me.proton.core.drive.files.presentation.entry.OptionEntry
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -39,7 +39,7 @@ fun MultipleOptions(
         header = {
             OptionsHeader(
                 title = pluralStringResource(
-                    id = BasePresentation.plurals.title_selected,
+                    id = I18N.plurals.common_selected,
                     count = count,
                     count,
                 )

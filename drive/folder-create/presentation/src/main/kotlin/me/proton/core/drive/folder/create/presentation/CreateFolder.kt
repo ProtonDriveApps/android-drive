@@ -46,6 +46,7 @@ import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.drive.base.presentation.component.OutlinedTextFieldWithError
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun CreateFolder(
@@ -103,14 +104,14 @@ fun CreateFolder(
         },
         confirmButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.folder_create_button,
+                titleResId = I18N.string.folder_create_button,
                 onClick = { onCreateFolder() },
                 loading = showProgress,
             )
         },
         dismissButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.folder_create_dismiss_button,
+                titleResId = I18N.string.folder_create_dismiss_button,
                 onClick = onDismiss,
             )
         }

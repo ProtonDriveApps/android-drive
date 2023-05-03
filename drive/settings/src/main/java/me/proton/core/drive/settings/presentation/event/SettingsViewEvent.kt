@@ -26,4 +26,5 @@ data class SettingsViewEvent(
     val onThemeStyleChanged: (Int) -> Unit,
     val onAppAccess: () -> Unit,
     val onAutoLockDurations: () -> Unit,
+    val onClearLocalCache: () -> Unit,
 )

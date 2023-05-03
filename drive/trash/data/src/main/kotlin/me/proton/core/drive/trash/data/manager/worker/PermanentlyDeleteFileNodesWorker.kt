@@ -29,8 +29,8 @@ import dagger.assisted.AssistedInject
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.workmanager.addTags
-import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.ids
@@ -39,10 +39,10 @@ import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.trash.data.R
 import me.proton.core.drive.trash.domain.notification.DeleteFilesExtra
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
 import java.util.concurrent.TimeUnit
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltWorker
 class PermanentlyDeleteFileNodesWorker @AssistedInject constructor(
@@ -70,7 +70,7 @@ class PermanentlyDeleteFileNodesWorker @AssistedInject constructor(
         broadcastMessages(
             userId = userId,
             message = applicationContext.resources.getQuantityString(
-                R.plurals.trash_delete_operation_successful_format,
+                I18N.plurals.trash_delete_operation_successful_format,
                 linkIds.size,
                 linkIds.size,
             ),
@@ -83,7 +83,7 @@ class PermanentlyDeleteFileNodesWorker @AssistedInject constructor(
         trashRepository.insertOrUpdateTrashState(linkIds, TrashState.TRASHED)
         broadcastMessages(
             userId = userId,
-            message = message ?: applicationContext.getString(R.string.trash_error_occurred_deleting_from_trash),
+            message = message ?: applicationContext.getString(I18N.string.trash_error_occurred_deleting_from_trash),
             type = BroadcastMessage.Type.ERROR,
             extra = DeleteFilesExtra(userId, shareId, linkIds, exception ?: RuntimeException(message))
         )

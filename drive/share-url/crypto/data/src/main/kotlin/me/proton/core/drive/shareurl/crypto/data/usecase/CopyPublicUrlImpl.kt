@@ -29,7 +29,7 @@ import me.proton.core.drive.shareurl.base.domain.usecase.GetShareUrl
 import me.proton.core.drive.shareurl.crypto.domain.usecase.CopyPublicUrl
 import me.proton.core.drive.shareurl.crypto.domain.usecase.GetPublicUrl
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 class CopyPublicUrlImpl @Inject constructor(
     private val getShareUrl: GetShareUrl,
@@ -46,7 +46,7 @@ class CopyPublicUrlImpl @Inject constructor(
         val publicUrl = getPublicUrl(userId, shareUrl).getOrThrow()
         copyToClipboard(
             userId = userId,
-            label = appContext.getString(BasePresentation.string.title_link),
+            label = appContext.getString(I18N.string.common_link),
             text = publicUrl,
         ).getOrThrow()
     }

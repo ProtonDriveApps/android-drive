@@ -39,8 +39,8 @@ import me.proton.core.user.domain.extension.hasSubscription
 import me.proton.core.user.domain.repository.UserRepository
 import me.proton.drive.android.settings.domain.usecase.UpdateWelcomeShown
 import javax.inject.Inject
-import me.proton.android.drive.R as AppPresentation
 import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
@@ -56,25 +56,25 @@ class WelcomeViewModel @Inject constructor(
             hasSkip = true,
             graphicResId = BasePresentation.drawable.img_welcome,
             title = appContext.getString(
-                BasePresentation.string.title_welcome_to,
-                appContext.getString(AppPresentation.string.app_name)
+                I18N.string.title_welcome_to,
+                appContext.getString(I18N.string.app_name)
             ),
-            descriptionResId = BasePresentation.string.welcome_to_description,
-            actionTitleResId = BasePresentation.string.common_next_action,
+            descriptionResId = I18N.string.welcome_to_description,
+            actionTitleResId = I18N.string.common_next_action,
         ),
         WelcomeViewState(
             hasSkip = true,
             graphicResId = BasePresentation.drawable.img_welcome_files,
-            title = appContext.getString(BasePresentation.string.title_welcome_files),
-            descriptionResId = BasePresentation.string.welcome_files_description,
-            actionTitleResId = BasePresentation.string.common_next_action,
+            title = appContext.getString(I18N.string.title_welcome_files),
+            descriptionResId = I18N.string.welcome_files_description,
+            actionTitleResId = I18N.string.common_next_action,
         ),
         WelcomeViewState(
             hasSkip = true,
             graphicResId = BasePresentation.drawable.img_welcome_sharing,
-            title = appContext.getString(BasePresentation.string.title_welcome_sharing),
-            descriptionResId = BasePresentation.string.welcome_sharing_description,
-            actionTitleResId = BasePresentation.string.common_next_action,
+            title = appContext.getString(I18N.string.title_welcome_sharing),
+            descriptionResId = I18N.string.welcome_sharing_description,
+            actionTitleResId = I18N.string.common_next_action,
         ),
     )
     val items: Flow<List<WelcomeViewState>> = userRepository.observeUser(userId)
@@ -84,29 +84,29 @@ class WelcomeViewModel @Inject constructor(
                 WelcomeViewState(
                     hasSkip = false,
                     graphicResId = BasePresentation.drawable.img_welcome_private_space,
-                    title = appContext.getString(BasePresentation.string.title_welcome_private_space),
-                    descriptionResId = BasePresentation.string.welcome_private_space_description,
-                    actionTitleResId = BasePresentation.string.welcome_get_started_action,
+                    title = appContext.getString(I18N.string.title_welcome_private_space),
+                    descriptionResId = I18N.string.welcome_private_space_description,
+                    actionTitleResId = I18N.string.welcome_get_started_action,
                 )
             } else {
                 WelcomeViewState(
                     hasSkip = false,
                     graphicResId = BasePresentation.drawable.img_welcome_bonus,
-                    title = appContext.getString(BasePresentation.string.title_welcome_bonus),
-                    descriptionResId = BasePresentation.string.welcome_bonus_description,
-                    actionTitleResId = BasePresentation.string.welcome_get_started_action,
+                    title = appContext.getString(I18N.string.title_welcome_bonus),
+                    descriptionResId = I18N.string.welcome_bonus_description,
+                    actionTitleResId = I18N.string.welcome_get_started_action,
                     descriptionActions = listOf(
                         WelcomeDescriptionAction(
                             CorePresentation.drawable.ic_proton_checkmark_circle,
-                            BasePresentation.string.welcome_bonus_description_action_upload_file,
+                            I18N.string.welcome_bonus_description_action_upload_file,
                         ),
                         WelcomeDescriptionAction(
                             CorePresentation.drawable.ic_proton_checkmark_circle,
-                            BasePresentation.string.welcome_bonus_description_action_create_share_url,
+                            I18N.string.welcome_bonus_description_action_create_share_url,
                         ),
                         WelcomeDescriptionAction(
                             CorePresentation.drawable.ic_proton_checkmark_circle,
-                            BasePresentation.string.welcome_bonus_description_action_recovery_method,
+                            I18N.string.welcome_bonus_description_action_recovery_method,
                         )
                     )
                 )

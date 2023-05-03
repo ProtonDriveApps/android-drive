@@ -56,15 +56,13 @@ class CreatingFolderFlowSuccessTest : BaseTest() {
             .scrollToItemWithName(subFolderName)
             .clickMoreOnFolder(subFolderName)
             .clickMove()
-            .verify {
-                robotDisplayed()
-            }
-            .clickAddFolder()
+            .clickAddFolderToRoot()
             .typeFolderName(newFolderName)
             .clickCreate()
 
-        CreateFolderRobot
+        MoveToFolderRobot
             .dismissSuccessGrowler(newFolderName, MoveToFolderRobot)
+            .scrollToItemWithName(newFolderName) // Can be removed after DRVAND-569 is fixed
             .verify {
                 itemWithTextDisplayed(newFolderName)
             }

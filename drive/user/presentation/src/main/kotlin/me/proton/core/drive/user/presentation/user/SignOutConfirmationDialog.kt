@@ -22,8 +22,7 @@ import androidx.compose.ui.Modifier
 import me.proton.core.compose.component.ProtonAlertDialog
 import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.component.ProtonAlertDialogText
-import me.proton.core.drive.base.presentation.R
-import me.proton.core.presentation.R as CorePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun SignOutConfirmationDialog(
@@ -32,19 +31,19 @@ fun SignOutConfirmationDialog(
     modifier: Modifier = Modifier,
 ) {
     ProtonAlertDialog(
-        titleResId = R.string.title_sign_out,
+        titleResId = I18N.string.common_sign_out,
         modifier = modifier,
         onDismissRequest = onDismiss,
-        text = { ProtonAlertDialogText(textResId = R.string.description_remove_account) },
+        text = { ProtonAlertDialogText(textResId = I18N.string.description_remove_account) },
         confirmButton = {
             ProtonAlertDialogButton(
-                titleResId = CorePresentation.string.presentation_alert_ok,
+                titleResId = I18N.string.common_ok_action,
                 onClick = onRemove,
             )
         },
         dismissButton = {
             ProtonAlertDialogButton(
-                titleResId = CorePresentation.string.presentation_alert_cancel,
+                titleResId = I18N.string.common_cancel_action,
                 onClick = onDismiss,
             )
         }

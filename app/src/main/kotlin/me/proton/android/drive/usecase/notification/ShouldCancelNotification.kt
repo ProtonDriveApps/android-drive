@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.usecase.notification
 
+import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationEvent.Upload.UploadState
 import me.proton.core.drive.notification.domain.entity.NotificationId
@@ -30,11 +31,15 @@ class ShouldCancelNotification @Inject constructor(
     suspend operator fun invoke(notificationId: NotificationId, event: NotificationEvent): Boolean = when (event) {
         is NotificationEvent.StorageFull -> false
         is NotificationEvent.Upload -> {
-            val uploadEvents = notificationRepository.getAllNotificationEvents(notificationId)
+            val uploadEvents = notificationRepository.getAllNotificationEvents(
+                notificationId = requireIsInstance(notificationId),
+            )
                 .filterIsInstance<NotificationEvent.Upload>()
             (uploadEvents.isEmpty() || uploadEvents.allFinished()) && event.state == UploadState.UPLOAD_CANCELLED
         }
         is NotificationEvent.Download -> false
+        is NotificationEvent.ForcedSignOut -> false
+        is NotificationEvent.NoSpaceLeftOnDevice -> false
     }
 
     private fun List<NotificationEvent.Upload>.allFinished(): Boolean = all { uploadEvent ->

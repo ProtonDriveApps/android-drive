@@ -19,10 +19,10 @@
 package me.proton.android.drive.extension
 
 import android.content.Context
-import me.proton.android.drive.R
+import me.proton.core.drive.i18n.R as I18N
 
 val Context.deepLinkBaseUrl: String get() = getString(
-    R.string.deeplink_url,
-    getString(R.string.deeplink_scheme),
-    getString(R.string.deeplink_host),
+    I18N.string.deeplink_url,
+    getString(I18N.string.deeplink_scheme),
+    getString(I18N.string.deeplink_host),
 )

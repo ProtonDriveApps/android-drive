@@ -23,7 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.Folder
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 sealed interface FileOptionEntry<in T : DriveLink> {
@@ -54,9 +54,9 @@ class ToggleOfflineEntry(
     @Composable
     override fun getLabel(driveLink: DriveLink): String = stringResource(
         if (driveLink.isMarkedAsOffline) {
-            BasePresentation.string.title_remove_from_offline_available
+            I18N.string.common_remove_from_offline_available_action
         } else {
-            BasePresentation.string.title_make_available_offline
+            I18N.string.common_make_available_offline_action
         }
     )
 
@@ -74,9 +74,9 @@ class ToggleTrashEntry(
     @Composable
     override fun getLabel(driveLink: DriveLink): String = stringResource(
         if (driveLink.isTrashed) {
-            BasePresentation.string.files_restore_from_trash_action
+            I18N.string.files_restore_from_trash_action
         } else {
-            BasePresentation.string.files_send_to_trash_action
+            I18N.string.files_send_to_trash_action
         }
     )
 
@@ -94,7 +94,7 @@ class DeletePermanentlyEntry(
     override val icon: Int = CorePresentation.drawable.ic_proton_trash
 
     @Composable
-    override fun getLabel(): String = stringResource(BasePresentation.string.files_delete_from_trash_action)
+    override fun getLabel(): String = stringResource(I18N.string.files_delete_from_trash_action)
 }
 
 class FileInfoEntry(
@@ -105,9 +105,9 @@ class FileInfoEntry(
 
     @Composable
     override fun getLabel(driveLink: DriveLink): String = if (driveLink is Folder) {
-        stringResource(id = BasePresentation.string.files_display_folder_info_action)
+        stringResource(id = I18N.string.files_display_folder_info_action)
     } else {
-        stringResource(id = BasePresentation.string.files_display_file_info_action)
+        stringResource(id = I18N.string.files_display_file_info_action)
     }
 }
 
@@ -119,7 +119,7 @@ class MoveFileEntry(
         get() = CorePresentation.drawable.ic_proton_arrows_cross
 
     @Composable
-    override fun getLabel(): String = stringResource(BasePresentation.string.files_move_file_action)
+    override fun getLabel(): String = stringResource(I18N.string.files_move_file_action)
 }
 
 class RenameFileEntry(
@@ -129,7 +129,7 @@ class RenameFileEntry(
     override val icon: Int = CorePresentation.drawable.ic_proton_pen_square
 
     @Composable
-    override fun getLabel(): String = stringResource(id = BasePresentation.string.files_rename_file_action)
+    override fun getLabel(): String = stringResource(id = I18N.string.files_rename_file_action)
 }
 
 class SendFileEntry(
@@ -139,7 +139,7 @@ class SendFileEntry(
     override val icon: Int = CorePresentation.drawable.ic_proton_paper_plane
 
     @Composable
-    override fun getLabel(): String = stringResource(id = BasePresentation.string.files_send_file_action)
+    override fun getLabel(): String = stringResource(id = I18N.string.files_send_file_action)
 }
 
 class StopSharingEntry(
@@ -148,7 +148,7 @@ class StopSharingEntry(
     override val icon: Int = CorePresentation.drawable.ic_proton_link_slash
 
     @Composable
-    override fun getLabel(): String = stringResource(id = BasePresentation.string.files_stop_sharing_action)
+    override fun getLabel(): String = stringResource(id = I18N.string.common_stop_sharing_action)
 }
 
 class ShareViaLinkEntry(
@@ -157,9 +157,9 @@ class ShareViaLinkEntry(
     @Composable
     override fun getLabel(driveLink: DriveLink): String = stringResource(
         if (driveLink.isShared) {
-            BasePresentation.string.title_manage_link
+            I18N.string.common_manage_link_action
         } else {
-            BasePresentation.string.title_get_link
+            I18N.string.common_get_link_action
         }
     )
 
@@ -176,7 +176,7 @@ class CopySharedLinkEntity(
     override val icon: Int = CorePresentation.drawable.ic_proton_link
 
     @Composable
-    override fun getLabel(): String = stringResource(id = BasePresentation.string.title_copy_link)
+    override fun getLabel(): String = stringResource(id = I18N.string.common_copy_link_action)
 }
 
 class DownloadFileEntity(
@@ -185,5 +185,5 @@ class DownloadFileEntity(
     override val icon: Int = CorePresentation.drawable.ic_proton_arrow_down_line
 
     @Composable
-    override fun getLabel(): String = stringResource(id = BasePresentation.string.title_download)
+    override fun getLabel(): String = stringResource(id = I18N.string.common_download)
 }

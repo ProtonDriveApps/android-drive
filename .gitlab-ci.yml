@@ -1,5 +1,5 @@
 default:
-  image: ${CI_REGISTRY}/android/shared/docker-android:v1.0.3
+  image: ${CI_REGISTRY}/android/shared/docker-android:v1.1.1
 
 variables:
   # Use fastzip to improve cache times
@@ -8,12 +8,11 @@ variables:
   ARTIFACT_COMPRESSION_LEVEL: "fastest"
   GCLOUD_BUCKET_URL: "gs://test-lab-u7cps962nd0a4-kx5m7jhd4pki6"
   FIREBASE_RESULT_ROOT: "${CI_BUILD_REF_NAME}/${CI_COMMIT_SHORT_SHA}"
-  ATLAS_DEPLOY_SCOPE: "drive-android"
+  ATLAS_DEPLOY_ENV: "true"
 
 workflow:
   rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH || $CI_COMMIT_REF_NAME =~ /^test/
 
 before_script:
   # We must keep these variables here. We can't do it inside the entrypoint, as idk how but
@@ -57,11 +56,22 @@ prepare-environment:
   extends: .prepare
   image: $CI_REGISTRY/proton/devops/atlas-cli
   script:
+    # DEBUG NS 500 error
+    - echo 
+      -d "$ATLAS_BASE_DOMAIN"
+      --release "$ATLAS_RELEASE_SUFFIX" 
+      "${ENV_TAG:?}" 
+      "${CI_PROJECT_PATH}" 
+      "$CI_COMMIT_REF_NAME"
+
     # resulting variables will be stored in deploy.env
     - get_name.py -v
       -o deploy.env
       -d "$ATLAS_BASE_DOMAIN"
-      --release "$ATLAS_RELEASE_SUFFIX" "${ENV_TAG:-$CI_COMMIT_REF_SLUG}-${ATLAS_DEPLOY_SCOPE}" "${CI_PROJECT_PATH}" "$CI_COMMIT_REF_NAME"
+      --release "$ATLAS_RELEASE_SUFFIX" "${ENV_TAG:?}" "${CI_PROJECT_PATH}" "$CI_COMMIT_REF_NAME"
+  environment:
+    name: $CI_COMMIT_REF_SLUG/$ATLAS_DEPLOY_SCOPE
+    action: prepare
 
 prepare-build:
   extends: .prepare
@@ -74,6 +84,17 @@ prepare-build:
     - echo "ARCHIVES_VERSION=${ARCHIVES_VERSION}" >> deploy.env
     - echo PROXY_TOKEN="$(curl -o - https://proxy.proton.black/token/get)" >> private.properties
     - echo "$PROTON_KEYSTORE_PRIVATE_PROPERTIES" >> private.properties
+
+prepare-gradle-build-scan:
+  stage: prepare
+  script:
+    - echo "BUILD_SCAN_PUBLISH=true" >> build_scan.env
+  artifacts:
+    reports:
+      dotenv: build_scan.env
+  rules:
+    - if: $CI_COMMIT_REF_NAME =~ /^build/
+    - if: $CI_COMMIT_REF_NAME =~ /^ci/
 
 detekt analysis:
   stage: analyze
@@ -88,18 +109,6 @@ detekt analysis:
       codequality: config/detekt/reports/mergedReport.json
   needs: []
 
-deploy:review:
-  needs:
-    - job: "prepare-environment"
-  tags:
-    - medium
-  allow_failure: true
-  retry: 1
-  cache: []
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" || $CI_COMMIT_REF_NAME =~ /^test/
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-
 .build:
   stage: build
   tags:
@@ -113,6 +122,8 @@ build dev debug:
   needs:
     - job: "prepare-environment"
     - job: "prepare-build"
+    - job: "prepare-gradle-build-scan"
+      optional: true
   script:
     - ./gradlew assembleDevDebug
   artifacts:
@@ -124,6 +135,8 @@ build dynamic debug:
   needs:
     - job: "prepare-environment"
     - job: "prepare-build"
+    - job: "prepare-gradle-build-scan"
+      optional: true
   script:
     - export $(cat deploy.env)
     - echo HOST="$DYNAMIC_DOMAIN" >> private.properties
@@ -174,6 +187,8 @@ dev debug unit test:
   stage: test
   needs:
     - job: "build dynamic debug"
+    - job: "prepare-gradle-build-scan"
+      optional: true
   tags:
     - xlarge-k8s
   script:
@@ -268,23 +283,6 @@ upload to firebase:
     when: always
   cache: []
 
-cleanup:review:
-  tags:
-    - medium
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-      when: manual
-      allow_failure: true
-  cache: []
-
-drive-link-presentation-firebase-tests:
-  extends: .tests_preparation_script
-  variables:
-    TESTS_TYPE: quickTest
-    TEST_APP_LOCATION: "drive/link/presentation/build/outputs/apk/androidTest/debug/"
-    TEST_APP_TYPE: "debug-androidTest.apk"
-    TEST_ARCHIVES_BASE_NAME: "presentation"
-    COVERAGE_FILE_NAME: "driveLinkPresentationQuickCoverageMobile"
 
 drive-files-list-firebase-tests:
   extends: .tests_preparation_script

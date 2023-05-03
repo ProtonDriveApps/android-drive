@@ -20,10 +20,12 @@ plugins {
     id("com.android.library")
 }
 
-driveModule(hilt = true) {
+driveModule(
+    hilt = true,
+    i18n = true,
+) {
     api(project(":drive:base:presentation"))
     api(project(":drive:link:domain"))
-    androidTestImplementation(libs.kotlin.reflect)
 }
 
 configureJacoco()

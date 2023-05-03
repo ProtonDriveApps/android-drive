@@ -36,15 +36,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
+import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallStrong
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.currentLocale
-import me.proton.core.drive.user.presentation.R
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -65,7 +65,7 @@ fun StorageIndicator(
                 contentDescription = null,
             )
             Text(
-                text = stringResource(R.string.storage_total_usage),
+                text = stringResource(I18N.string.storage_total_usage),
                 style = ProtonTheme.typography.defaultSmallStrong,
                 modifier = Modifier
                     .padding(start = SmallSpacing)
@@ -90,7 +90,7 @@ fun StorageIndicator(
         Text(
             style = ProtonTheme.typography.defaultSmallStrong,
             text = stringResource(
-                R.string.storage_details_format,
+                I18N.string.storage_details_format,
                 usedBytes.asHumanReadableString(LocalContext.current),
                 availableBytes.asHumanReadableString(LocalContext.current),
             ),

@@ -64,7 +64,6 @@ import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.toReadableDate
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
-import me.proton.core.drive.file.info.R
 import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.Folder
@@ -74,7 +73,7 @@ import me.proton.core.drive.link.presentation.extension.lastModified
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.drive.base.presentation.R as Presentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun FileInfoContent(
@@ -89,53 +88,53 @@ fun FileInfoContent(
             isTitleEncrypted = driveLink.isNameEncrypted,
         )
         EncryptedInfoItem(
-            name = stringResource(id = R.string.file_info_name_entry),
+            name = stringResource(id = I18N.string.file_info_name_entry),
             value = driveLink.name,
             isValueEncrypted = driveLink.isNameEncrypted,
         )
         InfoItem(
-            name = stringResource(id = R.string.file_info_uploaded_by_entry),
+            name = stringResource(id = I18N.string.file_info_uploaded_by_entry),
             value = driveLink.uploadedBy,
         )
         InfoItem(
-            name = stringResource(id = R.string.file_info_location_entry),
+            name = stringResource(id = I18N.string.file_info_location_entry),
             value = pathToFileNode,
         )
         InfoItem(
-            name = stringResource(id = R.string.file_info_last_modified_entry),
+            name = stringResource(id = I18N.string.file_info_last_modified_entry),
             value = driveLink.lastModified(),
         )
         if (driveLink !is Folder) {
             InfoItem(
-                name = stringResource(id = R.string.file_info_type_entry),
+                name = stringResource(id = I18N.string.file_info_type_entry),
                 value = driveLink.getType(),
             )
             InfoItem(
-                name = stringResource(id = R.string.file_info_mime_type_entry),
+                name = stringResource(id = I18N.string.file_info_mime_type_entry),
                 value = driveLink.mimeType,
             )
             InfoItem(
-                name = stringResource(id = R.string.file_info_size_entry),
+                name = stringResource(id = I18N.string.file_info_size_entry),
                 value = driveLink.size.asHumanReadableString(LocalContext.current),
             )
         }
         InfoItem(
-            name = stringResource(id = R.string.file_info_shared_entry),
+            name = stringResource(id = I18N.string.file_info_shared_entry),
             value = stringResource(id = if (driveLink.isShared) {
-                Presentation.string.common_yes
+                I18N.string.common_yes
             } else {
-                Presentation.string.common_no
+                I18N.string.common_no
             }),
         )
         if (driveLink.isShared) {
             InfoItem(
-                name = stringResource(id = R.string.file_info_number_of_accesses_entry),
+                name = stringResource(id = I18N.string.file_info_number_of_accesses_entry),
                 value = driveLink.numberOfAccesses.toString(),
             )
             InfoItem(
-                name = stringResource(id = R.string.file_info_share_url_expiration_time),
+                name = stringResource(id = I18N.string.file_info_share_url_expiration_time),
                 value = driveLink.shareUrlExpirationTime?.toReadableDate()
-                    ?: stringResource(id = R.string.file_info_share_url_no_expiration_time),
+                    ?: stringResource(id = I18N.string.file_info_share_url_no_expiration_time),
             )
         }
     }

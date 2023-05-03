@@ -20,13 +20,13 @@ package me.proton.core.drive.trash.domain.notification
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.drive.messagequeue.domain.ActionProvider
-import me.proton.core.drive.trash.domain.R
 import me.proton.core.drive.trash.domain.usecase.DeleteFromTrash
 import me.proton.core.drive.trash.domain.usecase.EmptyTrash
 import me.proton.core.drive.trash.domain.usecase.RestoreFromTrash
 import me.proton.core.drive.trash.domain.usecase.SendToTrash
 import java.io.Serializable
 import javax.inject.Inject
+import me.proton.core.drive.i18n.R as I18N
 
 @ExperimentalCoroutinesApi
 class TrashExtraActionProvider @Inject constructor(
@@ -44,11 +44,11 @@ class TrashExtraActionProvider @Inject constructor(
     }
 
     private fun TrashFilesExtra.provideAction(): ActionProvider.Action = if (exception == null) {
-        ActionProvider.Action(R.string.trash_action_undo) {
+        ActionProvider.Action(I18N.string.trash_action_undo) {
             restoreFromTrash(userId, folderId.shareId, links)
         }
     } else {
-        ActionProvider.Action(R.string.trash_action_retry) {
+        ActionProvider.Action(I18N.string.trash_action_retry) {
             sendToTrash(userId, folderId, links)
         }
     }
@@ -56,7 +56,7 @@ class TrashExtraActionProvider @Inject constructor(
     private fun RestoreFilesExtra.provideAction(): ActionProvider.Action? = if (exception == null) {
         null // We don't have the folder to send them back
     } else {
-        ActionProvider.Action(R.string.trash_action_retry) {
+        ActionProvider.Action(I18N.string.trash_action_retry) {
             restoreFromTrash(userId, shareId, links)
         }
     }
@@ -64,7 +64,7 @@ class TrashExtraActionProvider @Inject constructor(
     private fun DeleteFilesExtra.provideAction(): ActionProvider.Action? = if (exception == null) {
         null // Can't undo a delete operation
     } else {
-        ActionProvider.Action(R.string.trash_action_retry) {
+        ActionProvider.Action(I18N.string.trash_action_retry) {
             deleteFromTrash(userId, shareId, links)
         }
     }
@@ -72,7 +72,7 @@ class TrashExtraActionProvider @Inject constructor(
     private fun EmptyTrashExtra.provideAction(): ActionProvider.Action? = if (exception == null) {
         null // Can't undo a delete operation
     } else {
-        ActionProvider.Action(R.string.trash_action_retry) {
+        ActionProvider.Action(I18N.string.trash_action_retry) {
             emptyTrash(userId, shareId)
         }
     }

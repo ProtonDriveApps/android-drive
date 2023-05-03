@@ -33,13 +33,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.ProtonDimens.SmallIconSize
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
+import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallWeak
 import me.proton.core.drive.sorting.presentation.state.SortingViewState
 import me.proton.core.drive.sorting.presentation.state.toSortingViewState
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -103,7 +103,7 @@ fun PreviewFileListHeader() {
         Sorting(
             viewState = SortingViewState(
                 icon = CorePresentation.drawable.ic_proton_arrow_down,
-                title = BasePresentation.string.title_file_type
+                title = I18N.string.title_file_type
             ),
         ) {}
     }

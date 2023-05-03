@@ -43,7 +43,7 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Suppress("StaticFieldLeak")
 @HiltViewModel
@@ -58,7 +58,7 @@ class AppAccessViewModel @Inject constructor(
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     val initialViewState: AppAccessViewState = AppAccessViewState(
-        title = appContext.getString(BasePresentation.string.app_lock_access_title),
+        title = appContext.getString(I18N.string.app_lock_access_title),
         enabledOption = AccessOption.NONE,
     )
     val viewState: Flow<AppAccessViewState> = appLockManager.enabled.map { enabled ->
@@ -77,7 +77,7 @@ class AppAccessViewModel @Inject constructor(
                 .onNotAvailable {
                     broadcastMessages(
                         userId = userId,
-                        message = appContext.getString(BasePresentation.string.app_lock_system_not_available),
+                        message = appContext.getString(I18N.string.app_lock_system_not_available),
                         type = BroadcastMessage.Type.WARNING,
                     )
                 }
@@ -103,7 +103,7 @@ class AppAccessViewModel @Inject constructor(
             .onSuccess {
                 broadcastMessages(
                     userId = userId,
-                    message = appContext.getString(BasePresentation.string.app_lock_disabled),
+                    message = appContext.getString(I18N.string.app_lock_disabled),
                     type = BroadcastMessage.Type.INFO,
                 )
                 navigateBack()
@@ -123,10 +123,10 @@ class AppAccessViewModel @Inject constructor(
             .onSuccess {
                 broadcastMessages(
                     userId = userId,
-                    message = appContext.getString(BasePresentation.string.app_lock_enabled),
+                    message = appContext.getString(I18N.string.app_lock_enabled),
                     type = BroadcastMessage.Type.INFO,
                 )
+                navigateBack()
             }
-        navigateBack()
     }
 }

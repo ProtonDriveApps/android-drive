@@ -25,8 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import me.proton.core.compose.component.ProtonAlertDialog
 import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.component.ProtonAlertDialogText
-import me.proton.core.drive.base.presentation.R
-import me.proton.core.presentation.R as CorePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun ConfirmDeletionDialogContent(
@@ -37,18 +36,18 @@ fun ConfirmDeletionDialogContent(
 ) {
     ProtonAlertDialog(
         modifier = modifier,
-        titleResId = R.string.files_confirm_deletion_title,
-        text = { ProtonAlertDialogText(text = stringResource(id = R.string.files_confirm_deletion_message_format, name)) },
+        titleResId = I18N.string.title_files_confirm_deletion,
+        text = { ProtonAlertDialogText(text = stringResource(id = I18N.string.files_confirm_deletion_message_format, name)) },
         onDismissRequest = onDismiss,
         dismissButton = {
             ProtonAlertDialogButton(
-                titleResId = CorePresentation.string.presentation_alert_cancel,
+                titleResId = I18N.string.common_cancel_action,
                 onClick = onDismiss,
             )
         },
         confirmButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.files_confirm_deletion_confirm_action,
+                titleResId = I18N.string.files_confirm_deletion_confirm_action,
                 onClick = onConfirm,
             )
         }

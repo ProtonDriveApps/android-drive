@@ -67,6 +67,7 @@ driveModule(
     implementation(libs.timber)
 
     androidTestImplementation(libs.androidx.navigation.compose)
+    androidTestImplementation(libs.bundles.core.test)
     androidTestImplementation(libs.fusion)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)

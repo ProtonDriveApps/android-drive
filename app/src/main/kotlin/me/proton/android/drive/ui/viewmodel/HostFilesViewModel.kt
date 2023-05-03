@@ -38,7 +38,6 @@ import me.proton.android.drive.ui.effect.SnackbarEffect
 import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
@@ -49,7 +48,8 @@ import me.proton.core.drive.files.presentation.state.ListEffect
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.sorting.domain.entity.Sorting
-import me.proton.android.drive.R as Presentation
+import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("StaticFieldLeak")
@@ -72,7 +72,7 @@ abstract class HostFilesViewModel(
         MutableStateFlow<ListContentAppendingState>(ListContentAppendingState.Idle)
     protected val initialFilesViewState = FilesViewState(
         title = null,
-        titleResId = Presentation.string.title_my_files,
+        titleResId = I18N.string.title_my_files,
         sorting = Sorting.DEFAULT,
         navigationIconResId = 0,
         drawerGesturesEnabled = false,
@@ -98,10 +98,11 @@ abstract class HostFilesViewModel(
                 emitAll(getPagedDriveLinks(folderId = driveLink.id))
             }
         }.cachedIn(viewModelScope)
+    private val isRootFolder: Boolean get() = parentId == null
     protected val emptyState = ListContentState.Empty(
-        imageResId = R.drawable.empty_folder,
-        titleId = R.string.title_empty_files,
-        descriptionResId = R.string.description_empty_files,
+        imageResId = BasePresentation.drawable.empty_folder,
+        titleId = if (isRootFolder) I18N.string.title_empty_my_files else I18N.string.title_empty_folder,
+        descriptionResId = if (isRootFolder) I18N.string.description_empty_my_files else I18N.string.description_empty_folder,
     )
     protected val onSorting: (Sorting) -> Unit = { _: Sorting -> }
     protected val onLoadState = onLoadState(

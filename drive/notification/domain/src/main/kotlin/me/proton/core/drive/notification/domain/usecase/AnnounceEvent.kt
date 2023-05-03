@@ -29,7 +29,17 @@ class AnnounceEvent @Inject constructor(
         userId: UserId,
         notificationEvent: NotificationEvent,
     ) = with (notificationEventHandler) {
-        val notificationId = createNotificationId(userId, notificationEvent)
+        val notificationId = createUserNotificationId(userId, notificationEvent)
+        onNotificationEvent(
+            notificationId = notificationId,
+            event = notificationEvent,
+        )
+    }
+
+    suspend operator fun invoke(
+        notificationEvent: NotificationEvent,
+    ) = with (notificationEventHandler) {
+        val notificationId = createAppNotificationId(notificationEvent)
         onNotificationEvent(
             notificationId = notificationId,
             event = notificationEvent,

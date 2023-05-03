@@ -40,6 +40,7 @@ import me.proton.android.drive.ui.effect.TrashEffect
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.screen.EmptyTrashIconState
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.trash.domain.usecase.GetPagedTrashedDriveLinks
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
@@ -48,7 +49,6 @@ import me.proton.core.drive.files.presentation.state.ListContentAppendingState
 import me.proton.core.drive.files.presentation.state.ListContentState
 import me.proton.core.drive.files.presentation.state.ListEffect
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.core.drive.trash.domain.TrashManager
@@ -58,6 +58,7 @@ import me.proton.drive.android.settings.domain.usecase.GetLayoutType
 import me.proton.drive.android.settings.domain.usecase.ToggleLayoutType
 import javax.inject.Inject
 import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
@@ -80,7 +81,7 @@ class TrashViewModel @Inject constructor(
     private val _trashEffect = MutableSharedFlow<TrashEffect>()
     val initialViewState = FilesViewState(
         title = savedStateHandle.get(Screen.Files.FOLDER_NAME),
-        titleResId = BasePresentation.string.title_trash,
+        titleResId = I18N.string.common_trash,
         sorting = Sorting.DEFAULT,
         navigationIconResId = CorePresentation.drawable.ic_arrow_back,
         drawerGesturesEnabled = true,
@@ -116,8 +117,8 @@ class TrashViewModel @Inject constructor(
 
     private val emptyState = ListContentState.Empty(
         imageResId = BasePresentation.drawable.empty_trash,
-        titleId = BasePresentation.string.title_empty_trash,
-        descriptionResId = BasePresentation.string.description_empty_trash,
+        titleId = I18N.string.title_empty_trash,
+        descriptionResId = I18N.string.description_empty_trash,
     )
 
     fun viewEvent(

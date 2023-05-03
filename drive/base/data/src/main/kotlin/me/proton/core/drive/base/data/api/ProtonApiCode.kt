@@ -24,7 +24,8 @@ object ProtonApiCode {
     const val SUCCESS = 1000
     const val INVALID_REQUIREMENTS = 2000
     const val ALREADY_EXISTS = 2500
-    const val VOLUMES_QUOTE_REACHED = 200001
+    const val NOT_EXISTS = 2501
+    const val INSUFFICIENT_QUOTA = 200001
 
     val Long.isSuccessful: Boolean get() = this == SUCCESS.toLong()
 }

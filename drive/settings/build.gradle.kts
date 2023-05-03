@@ -20,7 +20,10 @@ plugins {
     id("com.android.library")
 }
 
-driveModule(compose = true) {
+driveModule(
+    compose = true,
+    i18n = true,
+) {
     implementation(project(":drive:base:presentation"))
     implementation(libs.core.userSettings)
 }

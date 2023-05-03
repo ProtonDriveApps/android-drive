@@ -32,5 +32,10 @@
     "name": "twofa",
     "password": "a",
     "twoFa": "Not implemented"
+  },
+  {
+    "name": "mailplus",
+    "password": "12341234",
+    "plan": "MailPlus"
   }
 ]

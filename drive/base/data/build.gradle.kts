@@ -23,6 +23,7 @@ driveModule(
     hilt = true,
     workManager = true,
     serialization = true,
+    i18n = true,
 ) {
     api(project(":drive:base:domain"))
     api(libs.core.account) // for database which depends on Core's UserId

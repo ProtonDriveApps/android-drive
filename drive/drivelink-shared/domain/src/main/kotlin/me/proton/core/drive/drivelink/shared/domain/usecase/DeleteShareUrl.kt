@@ -19,6 +19,7 @@ package me.proton.core.drive.drivelink.shared.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import javax.inject.Inject
@@ -26,9 +27,15 @@ import javax.inject.Inject
 class DeleteShareUrl @Inject constructor(
     private val getLink: GetLink,
     private val deleteShareUrl: me.proton.core.drive.shareurl.base.domain.usecase.DeleteShareUrl,
+    private val updateEventAction: UpdateEventAction,
 ) {
     suspend operator fun invoke(linkId: LinkId): Result<Unit> = coRunCatching {
-        val shareUrlId = requireNotNull(getLink(linkId).toResult().getOrThrow().shareUrlId) { "ShareUrlId not found" }
-        deleteShareUrl(shareUrlId).getOrThrow()
+        updateEventAction(linkId.shareId) {
+            deleteShareUrl(
+                shareUrlId = requireNotNull(getLink(linkId).toResult().getOrThrow().shareUrlId) {
+                    "ShareUrlId not found"
+                },
+            ).getOrThrow()
+        }
     }
 }

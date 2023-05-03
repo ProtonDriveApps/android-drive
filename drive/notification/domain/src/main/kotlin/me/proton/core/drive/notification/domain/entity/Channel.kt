@@ -21,11 +21,17 @@ import kotlinx.serialization.Serializable
 import me.proton.core.domain.entity.UserId
 
 @Serializable
-data class Channel(
-    val userId: UserId,
-    val type: Type
-) {
+sealed class Channel {
+    abstract val type: Type
+
+    @Serializable
+    data class User(val userId: UserId, override val type: Type) : Channel()
+
+    @Serializable
+    data class App(override val type: Type) : Channel()
+
     enum class Type {
         TRANSFER,
+        WARNING,
     }
 }

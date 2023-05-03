@@ -19,6 +19,7 @@
 package me.proton.android.drive.usecase.notification
 
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -42,6 +43,16 @@ class CreateContentPendingIntent @Inject constructor(
                     appContext,
                     MainActivity::class.java
                 ).apply {
+                    putExtra(EXTRA_NOTIFICATION_ID, notificationId.serialize())
+                }
+            )
+            getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
+        }
+
+    operator fun invoke(notificationId: NotificationId): PendingIntent? =
+        TaskStackBuilder.create(appContext).run {
+            addNextIntentWithParentStack(
+                Intent.makeMainActivity(ComponentName(appContext, MainActivity::class.java)).apply {
                     putExtra(EXTRA_NOTIFICATION_ID, notificationId.serialize())
                 }
             )

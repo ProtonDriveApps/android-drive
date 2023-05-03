@@ -18,12 +18,11 @@
 package me.proton.core.drive.base.presentation.extension
 
 import android.content.Context
-import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.util.kotlin.CoreLogger
-import me.proton.core.drive.base.presentation.R as Presentation
+import me.proton.core.drive.i18n.R as I18N
 
 fun IllegalArgumentException.getDefaultMessage(context: Context): String =
-    context.getString(Presentation.string.common_error_internal)
+    context.getString(I18N.string.common_error_internal)
 
 fun IllegalArgumentException.log(tag: String, message: String = this.message.orEmpty()): IllegalArgumentException = also {
     CoreLogger.e(tag, this, message)

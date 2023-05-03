@@ -27,12 +27,12 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.files.presentation.state.ListContentState
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.exception.ShareException
 import javax.inject.Inject
+import me.proton.core.drive.i18n.R as I18N
 
 class OnFilesDriveLinkError @Inject constructor(
     @ApplicationContext private val appContext: Context,
@@ -64,7 +64,7 @@ class OnFilesDriveLinkError @Inject constructor(
 
     private fun DataResult.Error.toListContentState() = ListContentState.Error(
         message = errorMessage,
-        actionResId = if (this.isRetryable) R.string.title_retry else null
+        actionResId = if (this.isRetryable) I18N.string.common_retry else null
     )
 
     private val DataResult.Error.broadcastMessage: String? get() =
@@ -76,6 +76,6 @@ class OnFilesDriveLinkError @Inject constructor(
 
     private val DataResult.Error.errorMessage: String get() =
         broadcastMessage ?: appContext.getString(
-            R.string.error_could_not_load_folder_content
+            I18N.string.error_could_not_load_folder_content
         )
 }

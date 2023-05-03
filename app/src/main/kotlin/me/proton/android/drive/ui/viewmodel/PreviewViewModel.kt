@@ -78,7 +78,7 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
@@ -254,18 +254,18 @@ fun GetFile.State.toContentState(viewModel: PreviewViewModel): ContentState {
         is GetFile.State.Ready -> ContentState.Available(viewModel.getUri(fileId))
         GetFile.State.Error.NoConnection,
         is GetFile.State.Error.Downloading -> ContentState.Error.Retryable(
-            messageResId = BasePresentation.string.description_file_download_failed,
-            actionResId = BasePresentation.string.title_retry
+            messageResId = I18N.string.description_file_download_failed,
+            actionResId = I18N.string.common_retry
         ) {
             viewModel.retry(verifySignature = true)
         }
         is GetFile.State.Error.Decrypting -> ContentState.Error.NonRetryable(
             message = null,
-            messageResId = BasePresentation.string.description_file_decryption_failed
+            messageResId = I18N.string.description_file_decryption_failed
         )
         is GetFile.State.Error.VerifyingSignature -> ContentState.Error.Retryable(
-            messageResId = BasePresentation.string.description_file_verify_signature_failed,
-            actionResId = BasePresentation.string.ignore_file_signature_action
+            messageResId = I18N.string.description_file_verify_signature_failed,
+            actionResId = I18N.string.ignore_file_signature_action
         ) {
             viewModel.retry(verifySignature = false)
         }

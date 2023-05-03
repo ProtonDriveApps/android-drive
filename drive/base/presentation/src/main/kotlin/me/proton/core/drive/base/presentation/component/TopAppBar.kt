@@ -43,6 +43,7 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmall
+import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag.navigationButton
 
 @Composable
 fun TopAppBar(
@@ -54,25 +55,40 @@ fun TopAppBar(
     backgroundColor: Color = ProtonTheme.colors.backgroundNorm,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
+    TopAppBar(
+        navigationIcon = navigationIcon,
+        onNavigationIcon = onNavigationIcon,
+        title = { modifier ->
+            Title(
+                title = title,
+                isTitleEncrypted = isTitleEncrypted,
+                modifier = modifier,
+            )
+        },
+        modifier = modifier,
+        backgroundColor = backgroundColor,
+        actions = actions,
+    )
+}
 
+@Composable
+fun TopAppBar(
+    navigationIcon: Painter?,
+    onNavigationIcon: () -> Unit,
+    title: @Composable (Modifier) -> Unit,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = ProtonTheme.colors.backgroundNorm,
+    actions: @Composable RowScope.() -> Unit = {},
+) {
     TopAppBar(
         modifier = modifier,
-        title = {
-            if (isTitleEncrypted) {
-                EncryptedItem(modifier = Modifier.height(LARGE_HEIGHT))
-            } else {
-                Text(
-                    text = title,
-                    style = ProtonTheme.typography.headlineSmall,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.testTag(TopAppBarComponentTestTag.appBar)
-                )
-            }
-        },
+        title = { title(Modifier.testTag(TopAppBarComponentTestTag.appBar)) },
         navigationIcon = {
             if (navigationIcon != null) {
-                IconButton(onClick = { onNavigationIcon() }) {
+                IconButton(
+                    onClick = { onNavigationIcon() },
+                    modifier = Modifier.testTag(navigationButton),
+                ) {
                     Icon(
                         painter = navigationIcon,
                         contentDescription = null
@@ -85,6 +101,24 @@ fun TopAppBar(
         contentColor = ProtonTheme.colors.textNorm,
         elevation = 0.dp
     )
+}
+@Composable
+private fun Title(
+    title: String,
+    isTitleEncrypted: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    if (isTitleEncrypted) {
+        EncryptedItem(modifier = modifier.height(LARGE_HEIGHT))
+    } else {
+        Text(
+            text = title,
+            style = ProtonTheme.typography.headlineSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = modifier,
+        )
+    }
 }
 
 @Composable
@@ -120,4 +154,5 @@ val TopAppBarHeight = 56.dp
 
 object TopAppBarComponentTestTag {
     const val appBar = "top app bar"
+    const val navigationButton = "top app bar navigation button"
 }

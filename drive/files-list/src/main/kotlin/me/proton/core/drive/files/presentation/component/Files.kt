@@ -71,7 +71,7 @@ import me.proton.core.drive.linkupload.presentation.compose.FilesUploadingListIt
 import me.proton.core.drive.sorting.presentation.state.toSortingViewState
 import kotlin.math.floor
 import kotlin.math.roundToInt
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun Files(
@@ -275,7 +275,7 @@ private fun UploadItem(
             rememberFlowWithLifecycle(flow = uploadProgressFlow).collectAsState(initial = null)
         }
     if (index == 0) {
-        FilesSectionHeader(titleResId = BasePresentation.string.title_uploading)
+        FilesSectionHeader(titleResId = I18N.string.common_uploading)
     }
     FilesUploadingListItem(
         uploadFileLink = uploadFileLink,

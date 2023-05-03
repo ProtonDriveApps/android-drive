@@ -33,25 +33,28 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
-import me.proton.android.drive.R
 import me.proton.android.drive.ui.navigation.Screen
+import me.proton.android.drive.ui.viewevent.MoveToFolderViewEvent
 import me.proton.android.drive.ui.viewstate.MoveFileViewState
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptDriveLinks
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.files.domain.usecase.MoveFile
-import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Sorting
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @ExperimentalCoroutinesApi
@@ -63,6 +66,7 @@ class MoveToFolderViewModel @Inject constructor(
     getSelectedDriveLinks: GetSelectedDriveLinks,
     private val moveFile: MoveFile,
     private val deselectLinks: DeselectLinks,
+    private val decryptDriveLinks: DecryptDriveLinks,
     savedStateHandle: SavedStateHandle,
     configurationProvider: ConfigurationProvider,
 ) : HostFilesViewModel(appContext, getDriveLink, getPagedDriveLinks, savedStateHandle, configurationProvider) {
@@ -91,43 +95,49 @@ class MoveToFolderViewModel @Inject constructor(
             .transformLatest { link -> emit(listOfNotNull(link)) }
             .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     } else {
-        throw IllegalStateException("")
+        error("Move without any drive link")
     }
     val initialViewState = MoveFileViewState(
         filesViewState = initialFilesViewState,
         isMoveButtonEnabled = false,
         title = "",
+        navigationIconResId = CorePresentation.drawable.ic_proton_cross,
     )
     val viewState: Flow<MoveFileViewState> = combine(
         driveLinksToMove,
         parentLink,
         listContentState,
         listContentAppendingState
-    ) { filesToMove, parentLink, contentState, appendingState ->
+    ) { driveLinksToMove, parentLink, contentState, appendingState ->
         val isRoot = parentLink != null && parentLink.parentId == null
         initialViewState.copy(
             filesViewState = initialViewState.filesViewState.copy(
-                title = if (isRoot) null else parentLink?.name.orEmpty(),
-                isTitleEncrypted = isRoot.not() && parentLink.isNameEncrypted,
-                navigationIconResId = if (isRoot) 0 else CorePresentation.drawable.ic_arrow_back,
                 listContentState = contentState,
                 listContentAppendingState = appendingState
             ),
             isMoveButtonEnabled = parentLink?.id != parentId,
-            title = filesToMove.title,
-            isTitleEncrypted = (filesToMove.size == 1 && filesToMove.first().isNameEncrypted)
+            title = if (isRoot) appContext.getString(I18N.string.title_my_files) else parentLink?.name.orEmpty(),
+            isTitleEncrypted = parentLink?.isNameEncrypted ?: false,
+            navigationIconResId = if (parentLink == null || isRoot) {
+                CorePresentation.drawable.ic_proton_cross
+            } else {
+                CorePresentation.drawable.ic_arrow_back
+            },
+            driveLinks = decryptDriveLinks(driveLinksToMove)
+                .map { driveLink -> if (driveLink.isNameEncrypted) "" else driveLink.name },
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     fun viewEvent(
-        onDismissRequest: () -> Unit,
-    ): FilesViewEvent = object : FilesViewEvent {
+        navigateToCreateFolder: (FolderId) -> Unit,
+        navigateBack: () -> Unit,
+    ): MoveToFolderViewEvent = object : MoveToFolderViewEvent {
         override val onDriveLink = { driveLink: DriveLink ->
             if (driveLink is DriveLink.Folder) {
                 viewModelScope.launch {
                     if ((driveLink.id.shareId == shareId && driveLink.id.id == linkId) ||
                         driveLinksToMove.value.map { driveLink -> driveLink.id }.contains(driveLink.id)) {
-                        showError(R.string.move_file_error_cannot_move_folder_into_itself)
+                        showError(I18N.string.move_file_error_cannot_move_folder_into_itself)
                     } else {
                         trigger.emit(driveLink.id)
                     }
@@ -136,32 +146,26 @@ class MoveToFolderViewModel @Inject constructor(
         }
         override val onLoadState: (CombinedLoadStates, Int) -> Unit = this@MoveToFolderViewModel.onLoadState
         override val onSorting: (Sorting) -> Unit = this@MoveToFolderViewModel.onSorting
-        override val onTopAppBarNavigation: () -> Unit = this@MoveToFolderViewModel.onTopAppBarNavigation(onDismissRequest)
+        override val onTopAppBarNavigation: () -> Unit = this@MoveToFolderViewModel.onTopAppBarNavigation(navigateBack)
         override val onErrorAction: () -> Unit = this@MoveToFolderViewModel.onRetry
         override val onAppendErrorAction: () -> Unit = this@MoveToFolderViewModel.onRetry
+        override val move: () -> Unit = { confirmMove(navigateBack) }
+        override val onCreateFolder: () -> Unit = { this@MoveToFolderViewModel.onCreateFolder(navigateToCreateFolder) }
     }
 
-    suspend fun confirmMove() {
-        parentLink.value?.let { folder ->
+    private fun confirmMove(navigateBack: () -> Unit) = viewModelScope.launch {
+        val folder = parentLink.value
+        if (folder != null) {
             if (folder.id != parentId) {
-                viewModelScope.launch {
-                    moveFile(userId, driveLinksToMove.value.map { driveLink -> driveLink.id }, folder.id)
-                    selectionId?.let{ deselectLinks(selectionId) }
-                }.join()
+                moveFile(userId, driveLinksToMove.value.map { driveLink -> driveLink.id }, folder.id)
+                selectionId?.let{ deselectLinks(selectionId) }
+                navigateBack()
+            } else {
+                CoreLogger.i(LogTag.MOVE, "folder same as parent, move aborted")
             }
+        } else {
+            CoreLogger.i(LogTag.MOVE, "no parent link, move aborted")
         }
-    }
-
-    private val List<DriveLink>.title: String get() = when (size) {
-        0 -> ""
-        1 -> appContext.getString(R.string.move_file_to_title_format, if (first().isNameEncrypted) "" else first().name)
-        else -> appContext.getString(R.string.move_multiple_to, size, moveSuffix)
-    }
-
-    private val List<DriveLink>.moveSuffix: String get() = when {
-        all { driveLink -> driveLink is DriveLink.File } -> appContext.getString(R.string.move_files)
-        all { driveLink -> driveLink is DriveLink.Folder } -> appContext.getString(R.string.move_folders)
-        else -> appContext.getString(R.string.move_items)
     }
 
     companion object {

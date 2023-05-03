@@ -58,7 +58,7 @@ import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.exhaustive
-import me.proton.core.drive.linkupload.presentation.R as Presentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -100,7 +100,7 @@ fun FilesUploadingListItem(
                 Icon(
                     painter = painterResource(id = CorePresentation.drawable.ic_proton_cross),
                     contentDescription = stringResource(
-                        id = Presentation.string.files_upload_content_description_cancel_upload
+                        id = I18N.string.files_upload_content_description_cancel_upload
                     ),
                     tint = ProtonTheme.colors.iconNorm
                 )
@@ -181,19 +181,19 @@ fun DetailsSubtitle(
 private fun UploadState.title(progress: Percentage? = null): String = when (this) {
     UploadState.UNPROCESSED,
     UploadState.IDLE,
-    UploadState.CREATING_NEW_FILE -> stringResource(id = Presentation.string.files_upload_stage_waiting)
-    UploadState.ENCRYPTING_BLOCKS -> stringResource(id = Presentation.string.files_upload_stage_encrypting)
-    UploadState.GETTING_UPLOAD_LINKS -> stringResource(id = Presentation.string.files_upload_stage_uploading)
+    UploadState.CREATING_NEW_FILE -> stringResource(id = I18N.string.files_upload_stage_waiting)
+    UploadState.ENCRYPTING_BLOCKS -> stringResource(id = I18N.string.files_upload_stage_encrypting)
+    UploadState.GETTING_UPLOAD_LINKS -> stringResource(id = I18N.string.files_upload_stage_uploading)
     UploadState.UPLOADING_BLOCKS -> progress?.let {
         stringResource(
-            id = Presentation.string.files_upload_stage_uploading_with_progress, progress.toPercentString(
+            id = I18N.string.files_upload_stage_uploading_with_progress, progress.toPercentString(
                 locale = LocalContext.current.currentLocale
             )
         )
-    } ?: stringResource(id = Presentation.string.files_upload_stage_uploading)
+    } ?: stringResource(id = I18N.string.files_upload_stage_uploading)
     UploadState.UPDATING_REVISION,
     UploadState.CLEANUP -> stringResource(
-        id = Presentation.string.files_upload_stage_uploading_with_progress, Percentage(100).toPercentString(
+        id = I18N.string.files_upload_stage_uploading_with_progress, Percentage(100).toPercentString(
             locale = LocalContext.current.currentLocale
         )
     )

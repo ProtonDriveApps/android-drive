@@ -20,12 +20,8 @@ package me.proton.android.drive.lock.presentation.extension
 
 import android.content.Context
 import me.proton.android.drive.lock.domain.exception.LockException
-import me.proton.core.drive.base.presentation.R as BasePresentation
 
 fun LockException.getDefaultMessage(context: Context): String = when (this) {
-    is LockException.BiometricAuthenticationFailed -> context.getString(
-        BasePresentation.string.app_lock_system_biometrics_authentication_failed
-    )
     is LockException.BiometricAuthenticationError -> errorMessage
     else -> error("Default message for exception is missing")
 }

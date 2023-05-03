@@ -27,7 +27,7 @@ import me.proton.core.drive.base.domain.usecase.CopyToClipboard
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 class CopyToClipboardImpl @Inject constructor(
     private val clipboardManager: ClipboardManager,
@@ -43,7 +43,7 @@ class CopyToClipboardImpl @Inject constructor(
         broadcastMessages(
             userId = userId,
             message = appContext.getString(
-                BasePresentation.string.in_app_notification_copied_to_clipboard,
+                I18N.string.common_in_app_notification_copied_to_clipboard,
                 label,
             ),
             type = BroadcastMessage.Type.INFO,

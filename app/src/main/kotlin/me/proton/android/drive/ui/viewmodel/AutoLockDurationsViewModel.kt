@@ -34,7 +34,7 @@ import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import javax.inject.Inject
 import kotlin.time.Duration
-import me.proton.core.drive.settings.R as SettingsPresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class AutoLockDurationsViewModel @Inject constructor(
@@ -44,7 +44,7 @@ class AutoLockDurationsViewModel @Inject constructor(
     private val updateAutoLockDuration: UpdateAutoLockDuration,
 ) : ViewModel() {
     val initialViewState: AutoLockDurationsViewState = AutoLockDurationsViewState(
-        title = appContext.getString(SettingsPresentation.string.settings_auto_lock),
+        title = appContext.getString(I18N.string.settings_auto_lock),
         durations = configurationProvider.autoLockDurations,
         selected = configurationProvider.autoLockDurations.first(),
     )

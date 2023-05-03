@@ -21,12 +21,12 @@ package me.proton.core.drive.settings.presentation.extension
 import android.content.Context
 import me.proton.core.drive.base.presentation.extension.quantityString
 import kotlin.time.Duration
-import me.proton.core.drive.settings.R as SettingsPresentation
+import me.proton.core.drive.i18n.R as I18N
 
 fun Duration.toString(context: Context): String = when {
-    inWholeSeconds == 0L -> context.getString(SettingsPresentation.string.settings_auto_lock_durations_immediately)
-    inWholeSeconds < 60 -> context.quantityString(SettingsPresentation.plurals.settings_auto_lock_durations_seconds, inWholeSeconds.toInt())
-    inWholeMinutes < 60 -> context.quantityString(SettingsPresentation.plurals.settings_auto_lock_durations_minutes, inWholeMinutes.toInt())
-    inWholeHours < 24 -> context.quantityString(SettingsPresentation.plurals.settings_auto_lock_durations_hours, inWholeHours.toInt())
-    else -> context.quantityString(SettingsPresentation.plurals.settings_auto_lock_durations_days, inWholeDays.toInt())
+    inWholeSeconds == 0L -> context.getString(I18N.string.settings_auto_lock_durations_immediately)
+    inWholeSeconds < 60 -> context.quantityString(I18N.plurals.settings_auto_lock_durations_seconds, inWholeSeconds.toInt())
+    inWholeMinutes < 60 -> context.quantityString(I18N.plurals.settings_auto_lock_durations_minutes, inWholeMinutes.toInt())
+    inWholeHours < 24 -> context.quantityString(I18N.plurals.settings_auto_lock_durations_hours, inWholeHours.toInt())
+    else -> context.quantityString(I18N.plurals.settings_auto_lock_durations_days, inWholeDays.toInt())
 }

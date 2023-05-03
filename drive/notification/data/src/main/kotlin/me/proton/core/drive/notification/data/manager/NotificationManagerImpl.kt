@@ -57,7 +57,7 @@ class NotificationManagerImpl @Inject constructor(
             notificationId.id,
         )
 
-    override fun createChannels(userId: UserId, username: String, channels: List<Channel>) {
+    override fun createUserChannels(userId: UserId, username: String, channels: List<Channel.User>) {
         notificationManagerCompat.createNotificationChannelGroup(
             NotificationChannelGroupCompat.Builder(userId.id)
                 .setName(username)
@@ -70,11 +70,24 @@ class NotificationManagerImpl @Inject constructor(
         }
     }
 
-    override fun removeChannels(userId: UserId, channels: List<Channel>) {
+    override fun removeUserChannels(userId: UserId, channels: List<Channel.User>) {
         channels.forEach { channel ->
             notificationManagerCompat.deleteNotificationChannel(channel.id)
         }
         notificationManagerCompat.deleteNotificationChannelGroup(userId.id)
+    }
+
+    override fun createAppChannels(name: String, channels: List<Channel.App>) {
+        notificationManagerCompat.createNotificationChannelGroup(
+            NotificationChannelGroupCompat.Builder(APP_GROUP_ID)
+                .setName(name)
+                .build()
+        )
+        channels.forEach { channel ->
+            notificationManagerCompat.createNotificationChannel(
+                channel.buildNotificationChannelCompat(appContext, APP_GROUP_ID)
+            )
+        }
     }
 
     private fun runIfPermissionGranted(block: () -> Unit) {
@@ -85,5 +98,9 @@ class NotificationManagerImpl @Inject constructor(
         ) {
             block()
         }
+    }
+
+    companion object {
+        const val APP_GROUP_ID = "app_group_id"
     }
 }

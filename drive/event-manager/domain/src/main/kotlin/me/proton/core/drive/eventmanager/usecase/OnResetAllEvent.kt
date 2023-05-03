@@ -18,11 +18,17 @@
 
 package me.proton.core.drive.eventmanager.usecase
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.usecase.SignOut
+import me.proton.core.drive.notification.domain.entity.NotificationEvent
+import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.DeleteShare
 import me.proton.core.drive.share.domain.usecase.GetShare
@@ -33,18 +39,24 @@ class OnResetAllEvent @Inject constructor(
     private val getShare: GetShare,
     private val deleteShare: DeleteShare,
     private val signOut: SignOut,
+    private val announceEvent: AnnounceEvent,
 ) {
 
-    suspend operator fun invoke(shareId: ShareId) {
-        CoreLogger.d(LogTag.EVENTS, "onResetAll: ${shareId.id.logId()}")
-        getShare(shareId, flowOf(false)).toResult().onSuccess { share ->
-            if (share.isMain) {
-                // TODO: until notification is implemented we need to know why some users experience app sign out
-                //      this will cause log to Sentry
-                CoreLogger.e(LogTag.EVENTS, RuntimeException("Sign out due to reset all event"), "Sign out due to reset all event")
-                signOut(shareId.userId)
-            } else {
-                deleteShare(shareId, locallyOnly = true)
+    operator fun invoke(shareId: ShareId) {
+        CoroutineScope(Job() + Dispatchers.Main).launch {
+            CoreLogger.d(LogTag.EVENTS, "onResetAll: ${shareId.id.logId()}")
+            getShare(shareId, flowOf(false)).toResult().onSuccess { share ->
+                if (share.isMain) {
+                    CoreLogger.e(
+                        tag = LogTag.EVENTS,
+                        e = RuntimeException("Sign out due to reset all event"),
+                        message = "Sign out due to reset all event",
+                    )
+                    signOut(shareId.userId)
+                    announceEvent(NotificationEvent.ForcedSignOut)
+                } else {
+                    deleteShare(shareId, locallyOnly = true)
+                }
             }
         }
     }

@@ -28,10 +28,10 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.getDefaultMessage
-import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.files.presentation.state.ListContentAppendingState
 import me.proton.core.drive.files.presentation.state.ListContentState
 import me.proton.core.util.kotlin.exhaustive
+import me.proton.core.drive.i18n.R as I18N
 
 fun onLoadState(
     appContext: Context,
@@ -101,7 +101,7 @@ private fun MutableStateFlow<ListContentState>.processRefreshState(
                     onError(message)
                     ListContentState.Content()
                 } else {
-                    ListContentState.Error(message, BasePresentation.string.title_retry)
+                    ListContentState.Error(message, I18N.string.common_retry)
                 }
             } ?: ListContentState.Content()
         }
@@ -126,7 +126,7 @@ private fun MutableStateFlow<ListContentAppendingState>.processAppendState(
             is LoadState.NotLoading -> ListContentAppendingState.Idle
             is LoadState.Loading -> ListContentAppendingState.Loading
             is LoadState.Error -> append.error.message?.run {
-                ListContentAppendingState.Error(this, BasePresentation.string.title_retry)
+                ListContentAppendingState.Error(this, I18N.string.common_retry)
             } ?: ListContentAppendingState.Idle
         }.exhaustive
     }

@@ -18,12 +18,12 @@
 package me.proton.core.drive.base.presentation.extension
 
 import android.content.Context
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.util.kotlin.CoreLogger
 import retrofit2.HttpException
+import me.proton.core.drive.i18n.R as I18N
 
 fun HttpException.getDefaultMessage(context: Context): String = when (code()) {
-    in 500..599 -> context.getString(R.string.common_error_http_5xx)
+    in 500..599 -> context.getString(I18N.string.common_error_http_5xx)
     else -> this.message()
 }
 

@@ -26,15 +26,15 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
-import me.proton.core.drive.sorting.domain.entity.Sorting
-import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.sorting.domain.entity.By
 import me.proton.core.drive.sorting.domain.entity.Direction
+import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.presentation.entity.SortingOption
 import me.proton.core.drive.sorting.presentation.entity.toSortingOptions
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import me.proton.core.drive.i18n.R as I18N
 
 @RunWith(AndroidJUnit4::class)
 class SortingListTest {
@@ -63,10 +63,10 @@ class SortingListTest {
                 onSortingOption = onSortingOption,
             )
         }
-        composeTestRule.onNodeWithText(context.getString(BasePresentation.string.title_name)).performClick()
-        composeTestRule.onNodeWithText(context.getString(BasePresentation.string.title_last_modified)).performClick()
-        composeTestRule.onNodeWithText(context.getString(BasePresentation.string.title_size)).performClick()
-        composeTestRule.onNodeWithText(context.getString(BasePresentation.string.title_file_type)).performClick()
+        composeTestRule.onNodeWithText(context.getString(I18N.string.common_name)).performClick()
+        composeTestRule.onNodeWithText(context.getString(I18N.string.title_last_modified)).performClick()
+        composeTestRule.onNodeWithText(context.getString(I18N.string.title_size)).performClick()
+        composeTestRule.onNodeWithText(context.getString(I18N.string.title_file_type)).performClick()
         // endregion
         // region Assert
         assert(selectedOptions[0].toggleDirection.direction == Direction.DESCENDING)

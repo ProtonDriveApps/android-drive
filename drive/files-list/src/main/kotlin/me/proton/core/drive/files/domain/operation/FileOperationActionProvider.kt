@@ -18,12 +18,12 @@
 
 package me.proton.core.drive.files.domain.operation
 
-import me.proton.core.drive.files.R
 import me.proton.core.drive.files.domain.operation.notification.MoveFileExtra
 import me.proton.core.drive.files.domain.usecase.MoveFile
 import me.proton.core.drive.messagequeue.domain.ActionProvider
 import java.io.Serializable
 import javax.inject.Inject
+import me.proton.core.drive.i18n.R as I18N
 
 class FileOperationActionProvider @Inject constructor(
     private val moveFile: MoveFile,
@@ -37,11 +37,11 @@ class FileOperationActionProvider @Inject constructor(
         }
 
     private fun MoveFileExtra.provideAction(): ActionProvider.Action? = if (exception != null) {
-        ActionProvider.Action(R.string.files_operation_retry_action) {
+        ActionProvider.Action(I18N.string.files_operation_retry_action) {
             moveFile(userId, links.map { pair -> pair.second }, folderId)
         }
     } else if (allowUndo) {
-        ActionProvider.Action(R.string.files_operation_undo_action) {
+        ActionProvider.Action(I18N.string.files_operation_undo_action) {
             val folderChildren = links.groupBy { pair -> pair.first }
             folderChildren.keys.forEach { originalFolderId ->
                 originalFolderId?.let {

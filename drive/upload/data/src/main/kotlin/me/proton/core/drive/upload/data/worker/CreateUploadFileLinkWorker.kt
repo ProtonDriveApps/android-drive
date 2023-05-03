@@ -30,7 +30,6 @@ import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.usecase.DeleteUploadBulk
@@ -40,6 +39,7 @@ import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
 import me.proton.core.drive.upload.data.manager.enqueueUpload
 import me.proton.core.drive.upload.domain.usecase.CreateUploadFile
 import me.proton.core.drive.upload.domain.usecase.HasEnoughAvailableSpace
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltWorker
 class CreateUploadFileLinkWorker @AssistedInject constructor(
@@ -95,7 +95,7 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
                         broadcastMessages(
                             userId = userId,
                             message = appContext.resources.getQuantityString(
-                                R.plurals.files_upload_being_uploaded_notification,
+                                I18N.plurals.files_upload_being_uploaded_notification,
                                 uriStrings.size,
                                 uriStrings.size,
                                 folderName,

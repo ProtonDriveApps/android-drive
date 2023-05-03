@@ -25,9 +25,9 @@ import androidx.compose.ui.res.stringResource
 import me.proton.core.compose.component.ProtonSettingsHeader
 import me.proton.core.compose.component.ProtonSettingsItem
 import me.proton.core.compose.component.ProtonSettingsToggleItem
-import me.proton.core.drive.settings.R
 import me.proton.core.drive.settings.presentation.event.DebugSettingsViewEvent
 import me.proton.core.drive.settings.presentation.state.DebugSettingsViewState
+import me.proton.core.drive.i18n.R as I18N
 
 @Immutable
 data class DebugSettingsStateAndEvent(
@@ -44,34 +44,34 @@ fun DebugSettings(
     Column(
         modifier = modifier
     ) {
-        ProtonSettingsHeader(title = R.string.debug_settings_section)
+        ProtonSettingsHeader(title = I18N.string.debug_settings_section)
 
         EditableSettingsEntry(
-            label = R.string.debug_settings_host,
+            label = I18N.string.debug_settings_host,
             value = viewState.host,
             onUpdate = viewEvent.onUpdateHost
         )
         EditableSettingsEntry(
-            label = R.string.debug_settings_base_url,
+            label = I18N.string.debug_settings_base_url,
             value = viewState.baseUrl,
             onUpdate = viewEvent.onUpdateBaseUrl
         )
         EditableSettingsEntry(
-            label = R.string.debug_settings_app_version_header,
+            label = I18N.string.debug_settings_app_version_header,
             value = viewState.appVersionHeader,
             onUpdate = viewEvent.onUpdateAppVersionHeader
         )
         ProtonSettingsToggleItem(
-            name = stringResource(id = R.string.debug_settings_use_exception_message),
-            hint = stringResource(id = R.string.debug_settings_use_exception_message_description),
+            name = stringResource(id = I18N.string.debug_settings_use_exception_message),
+            hint = stringResource(id = I18N.string.debug_settings_use_exception_message_description),
             value = viewState.useExceptionMessage,
         ) { useExceptionMessage ->
             viewEvent.onToggleUseExceptionMessage(useExceptionMessage)
         }
 
         ProtonSettingsItem(
-            name = stringResource(id = R.string.debug_settings_reset),
-            hint = stringResource(id = R.string.debug_settings_reset_description),
+            name = stringResource(id = I18N.string.debug_settings_reset),
+            hint = stringResource(id = I18N.string.debug_settings_reset_description),
         ) {
             viewEvent.onReset
         }

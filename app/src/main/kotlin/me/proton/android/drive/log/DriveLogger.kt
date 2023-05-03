@@ -36,7 +36,7 @@ import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Singleton
 class DriveLogger @Inject constructor(
@@ -143,7 +143,7 @@ class DriveLogger @Inject constructor(
         }
 
         private fun setInternalErrorTag(context: Context, e: Throwable) {
-            val internalErrorMessage = context.getString(BasePresentation.string.common_error_internal)
+            val internalErrorMessage = context.getString(I18N.string.common_error_internal)
             val errorMessage = e.getDefaultMessage(
                 context = context,
                 useExceptionMessage = false,

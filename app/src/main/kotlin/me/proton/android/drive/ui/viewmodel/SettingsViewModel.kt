@@ -36,12 +36,16 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.BuildConfig
-import me.proton.android.drive.R
+import me.proton.android.drive.extension.getDefaultMessage
 import me.proton.android.drive.lock.domain.manager.AppLockManager
 import me.proton.android.drive.lock.domain.usecase.GetAutoLockDuration
 import me.proton.android.drive.lock.domain.usecase.HasEnableAppLockTimestamp
 import me.proton.android.drive.settings.DebugSettings
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.usecase.ClearCacheFolder
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.settings.presentation.component.DebugSettingsStateAndEvent
 import me.proton.core.drive.settings.presentation.event.DebugSettingsViewEvent
 import me.proton.core.drive.settings.presentation.event.SettingsViewEvent
@@ -53,7 +57,7 @@ import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
 import me.proton.drive.android.settings.domain.usecase.UpdateThemeStyle
 import javax.inject.Inject
 import me.proton.core.drive.base.domain.extension.combine as baseCombine
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
@@ -67,6 +71,9 @@ class SettingsViewModel @Inject constructor(
     appLockManager: AppLockManager,
     getAutoLockDuration: GetAutoLockDuration,
     private val hasEnableAppLockTimestamp: HasEnableAppLockTimestamp,
+    private val clearCacheFolder: ClearCacheFolder,
+    private val broadcastMessages: BroadcastMessages,
+    private val configurationProvider: ConfigurationProvider,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -83,16 +90,16 @@ class SettingsViewModel @Inject constructor(
     ) { baseUrl, host, appVersionHeader, useExceptionMessage, themeStyle, enabled, autoLockDuration ->
         SettingsViewState(
             navigationIcon = CorePresentation.drawable.ic_arrow_back,
-            appNameResId = R.string.app_name,
+            appNameResId = I18N.string.app_name,
             appVersion = BuildConfig.VERSION_NAME,
             legalLinks = listOf(
                 LegalLink.External(
-                    text = R.string.settings_about_links_privacy_policy_title,
-                    url = R.string.settings_about_links_privacy_policy_url,
+                    text = I18N.string.settings_about_links_privacy_policy_title,
+                    url = I18N.string.settings_about_links_privacy_policy_url,
                 ),
                 LegalLink.External(
-                    text = R.string.settings_about_links_terms_of_service_title,
-                    url = R.string.settings_about_links_terms_of_service_url,
+                    text = I18N.string.settings_about_links_terms_of_service_title,
+                    url = I18N.string.settings_about_links_terms_of_service_url,
                 ),
             ),
             availableStyles = enumValues<ThemeStyle>().map { style -> style.resId },
@@ -130,13 +137,32 @@ class SettingsViewModel @Inject constructor(
         },
         onAutoLockDurations = {
             navigateToAutoLockDurations()
+        },
+        onClearLocalCache = {
+            viewModelScope.launch {
+                clearCacheFolder()
+                    .onSuccess {
+                        broadcastMessages(
+                            userId = userId,
+                            message = context.getString(I18N.string.in_app_notification_clear_local_cache_success),
+                            type = BroadcastMessage.Type.INFO,
+                        )
+                    }
+                    .onFailure { error ->
+                        broadcastMessages(
+                            userId = userId,
+                            message = error.getDefaultMessage(context, configurationProvider.useExceptionMessage),
+                            type = BroadcastMessage.Type.ERROR,
+                        )
+                    }
+            }
         }
     )
 
     private suspend fun getAppAccessSubtitleResId(isAppLockEnabled: Boolean): Int = when {
-        isAppLockEnabled -> BasePresentation.string.app_lock_option_system
-        hasEnableAppLockTimestamp().not() -> BasePresentation.string.app_lock_option_never_set
-        else -> BasePresentation.string.app_lock_option_none
+        isAppLockEnabled -> I18N.string.app_lock_option_system
+        hasEnableAppLockTimestamp().not() -> I18N.string.app_lock_option_never_set
+        else -> I18N.string.app_lock_option_none
     }
 
     private fun onExternalLinkClicked(link: LegalLink.External) {
@@ -147,7 +173,7 @@ class SettingsViewModel @Inject constructor(
             )
         } catch (ignored: ActivityNotFoundException) {
             viewModelScope.launch {
-                _errorMessage.emit(context.getString(R.string.common_error_no_browser_available))
+                _errorMessage.emit(context.getString(I18N.string.common_error_no_browser_available))
             }
         }
     }
@@ -176,8 +202,8 @@ class SettingsViewModel @Inject constructor(
     }
 
     private val ThemeStyle.resId: Int get() = when (this) {
-        ThemeStyle.SYSTEM -> R.string.settings_theme_system_default
-        ThemeStyle.DARK -> R.string.settings_theme_dark
-        ThemeStyle.LIGHT -> R.string.settings_theme_light
+        ThemeStyle.SYSTEM -> I18N.string.settings_theme_system_default
+        ThemeStyle.DARK -> I18N.string.settings_theme_dark
+        ThemeStyle.LIGHT -> I18N.string.settings_theme_light
     }
 }

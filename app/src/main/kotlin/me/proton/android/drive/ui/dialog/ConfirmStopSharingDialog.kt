@@ -28,8 +28,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import me.proton.android.drive.ui.dialog.ConfirmStopSharingDialogTestTag.confirmStopSharing
 import me.proton.android.drive.ui.viewmodel.ConfirmStopSharingDialogViewModel
 import me.proton.core.compose.component.ProtonAlertDialog
 import me.proton.core.compose.component.ProtonAlertDialogButton
@@ -38,7 +40,7 @@ import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultHint
-import me.proton.core.drive.base.presentation.R
+import me.proton.core.drive.i18n.R as I18N
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -54,10 +56,10 @@ fun ConfirmStopSharingDialog(
 
     ProtonAlertDialog(
         modifier = modifier,
-        titleResId = R.string.files_stop_sharing_title,
+        titleResId = I18N.string.title_files_stop_sharing,
         text = {
             Column {
-                ProtonAlertDialogText(textResId = R.string.files_stop_sharing_message)
+                ProtonAlertDialogText(textResId = I18N.string.description_files_stop_sharing)
                 viewState.errorMessage?.let { errorMessage ->
                     Text(
                         modifier = Modifier.padding(top =  SmallSpacing),
@@ -71,17 +73,22 @@ fun ConfirmStopSharingDialog(
         onDismissRequest = onDismiss,
         dismissButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.common_cancel_action,
+                titleResId = I18N.string.common_cancel_action,
                 onClick = onDismiss,
                 enabled = !viewState.isLoading,
             )
         },
         confirmButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.files_stop_sharing_action,
+                modifier = Modifier.testTag(confirmStopSharing),
+                titleResId = I18N.string.common_stop_sharing_action,
                 onClick = viewEvent.onConfirm,
                 loading = viewState.isLoading,
             )
         }
     )
+}
+
+object ConfirmStopSharingDialogTestTag {
+    const val confirmStopSharing = "confirm stop sharing"
 }

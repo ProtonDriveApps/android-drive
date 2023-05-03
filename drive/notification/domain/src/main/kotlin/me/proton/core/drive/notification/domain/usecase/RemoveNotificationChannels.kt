@@ -30,7 +30,7 @@ class RemoveNotificationChannels @Inject constructor(
     suspend operator fun invoke(userId: UserId) {
         cancelAllNotifications(userId)
         val channels = notificationRepository.getAllChannels(userId)
-        notificationManager.removeChannels(userId, channels)
+        notificationManager.removeUserChannels(userId, channels)
         notificationRepository.removeChannels(userId)
     }
 }

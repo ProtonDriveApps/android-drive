@@ -23,6 +23,7 @@ plugins {
 driveModule(
     hilt = true,
     serialization = true,
+    i18n = true,
 ) {
     api(project(":drive:base:data"))
     api(project(":drive:thumbnail:domain"))

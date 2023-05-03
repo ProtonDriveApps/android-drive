@@ -21,7 +21,7 @@ import me.proton.core.drive.notification.data.db.entity.NotificationChannelEntit
 import me.proton.core.drive.notification.domain.entity.Channel
 
 fun NotificationChannelEntity.toChannel() =
-    Channel(
+    Channel.User(
         userId = userId,
         type = type,
     )

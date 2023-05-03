@@ -78,6 +78,7 @@ import me.proton.drive.android.settings.domain.usecase.GetLayoutType
 import me.proton.drive.android.settings.domain.usecase.ToggleLayoutType
 import javax.inject.Inject
 import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
@@ -121,7 +122,7 @@ class SharedViewModel @Inject constructor(
     val initialViewState = SharedViewState(
         filesViewState = FilesViewState(
             title = savedStateHandle[Screen.Files.FOLDER_NAME],
-            titleResId = BasePresentation.string.title_shared,
+            titleResId = I18N.string.title_shared,
             navigationIconResId = CorePresentation.drawable.ic_proton_hamburger,
             drawerGesturesEnabled = true,
             sorting = Sorting.DEFAULT,
@@ -157,13 +158,13 @@ class SharedViewModel @Inject constructor(
         } else {
             ListContentState.Empty(
                 BasePresentation.drawable.empty_links,
-                BasePresentation.string.title_empty_links,
-                BasePresentation.string.description_empty_links,
+                I18N.string.title_empty_shared,
+                I18N.string.description_empty_shared,
             )
         }
         is DataResult.Error -> ListContentState.Error(
             message = cause.logDefaultMessage(appContext, configurationProvider.useExceptionMessage, VIEW_MODEL),
-            actionResId = BasePresentation.string.title_retry,
+            actionResId = I18N.string.common_retry,
         )
     }
 

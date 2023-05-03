@@ -46,7 +46,7 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.crypto.domain.usecase.CopyPublicUrl
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class FileOrFolderOptionsViewModel @Inject constructor(
@@ -134,7 +134,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
 
     private fun handleActivityNotFound() {
         this.dismiss?.invoke()
-        notifyActivityNotFound(userId, BasePresentation.string.operation_create_document)
+        notifyActivityNotFound(userId, I18N.string.operation_create_document)
     }
 
     companion object {

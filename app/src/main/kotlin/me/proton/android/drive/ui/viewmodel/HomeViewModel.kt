@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.shareIn
 import me.proton.android.drive.BuildConfig
-import me.proton.android.drive.R
 import me.proton.android.drive.ui.navigation.HomeTab
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.HomeViewEvent
@@ -42,7 +41,7 @@ import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewSt
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.User
 import javax.inject.Inject
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
@@ -53,8 +52,8 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val tabs: Map<HomeTab, NavigationTab> = mapOf(
-        Screen.Files to NavigationTab(CorePresentation.drawable.ic_proton_folder_filled, BasePresentation.string.title_files),
-        Screen.Shared to NavigationTab(CorePresentation.drawable.ic_proton_link, BasePresentation.string.title_shared)
+        Screen.Files to NavigationTab(CorePresentation.drawable.ic_proton_folder_filled, I18N.string.title_files),
+        Screen.Shared to NavigationTab(CorePresentation.drawable.ic_proton_link, I18N.string.title_shared)
     )
     private val currentDestination = MutableStateFlow(Screen.Files.route)
     fun setCurrentDestination(route: String) {
@@ -76,7 +75,8 @@ class HomeViewModel @Inject constructor(
         navigateToTab: (route: String) -> Unit,
         navigateToOffline: () -> Unit,
         navigateToSettings: () -> Unit,
-        sendBugReport: () -> Unit,
+        navigateToBugReport: () -> Unit,
+        navigateToSubscription: () -> Unit,
     ): HomeViewEvent = object : HomeViewEvent {
         override val onTab = { tab: NavigationTab -> navigateToTab(tab.screen(userId)) }
         override val navigationDrawerViewEvent: NavigationDrawerViewEvent =
@@ -86,7 +86,8 @@ class HomeViewModel @Inject constructor(
                 override val onOffline = navigateToOffline
                 override val onSettings = navigateToSettings
                 override val onSignOut = navigateToSigningOut
-                override val onBugReport = sendBugReport
+                override val onBugReport = navigateToBugReport
+                override val onSubscription = navigateToSubscription
             }
     }
 
@@ -103,7 +104,7 @@ class HomeViewModel @Inject constructor(
                 tab.takeIf { screen.route == startDestination }
             },
             navigationDrawerViewState = NavigationDrawerViewState(
-                R.string.app_name,
+                I18N.string.app_name,
                 BuildConfig.VERSION_NAME,
                 currentUser = user
             )

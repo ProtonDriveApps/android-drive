@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import me.proton.core.compose.component.ProtonAlertDialog
 import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.component.ProtonAlertDialogText
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun DiscardChangesDialog(
@@ -35,20 +35,20 @@ fun DiscardChangesDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             ProtonAlertDialogButton(
-                title = stringResource(id = BasePresentation.string.common_discard_action),
+                title = stringResource(id = I18N.string.common_discard_action),
                 onClick = onConfirm,
             )
         },
-        title =  stringResource(id = BasePresentation.string.shared_link_dialog_title_discard_changes),
+        title =  stringResource(id = I18N.string.shared_link_dialog_title_discard_changes),
         dismissButton = {
             ProtonAlertDialogButton(
-                title = stringResource(id = BasePresentation.string.common_cancel_action),
+                title = stringResource(id = I18N.string.common_cancel_action),
                 onClick = onDismiss,
             )
         },
         text = {
             ProtonAlertDialogText(
-                text = stringResource(id = BasePresentation.string.shared_link_dialog_description)
+                text = stringResource(id = I18N.string.shared_link_dialog_description)
             )
         },
         modifier = modifier,

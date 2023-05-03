@@ -28,8 +28,11 @@ import me.proton.core.drive.notification.data.db.NotificationDatabase
 import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.featureflag.data.db.FeatureFlagDatabase
 import me.proton.core.humanverification.data.db.HumanVerificationDatabase
+import me.proton.core.key.data.db.PublicAddressDatabase
+import me.proton.core.keytransparency.data.local.KeyTransparencyDatabase
 import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.payment.data.local.db.PaymentDatabase
+import me.proton.core.user.data.db.AddressDatabase
 import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
 
@@ -108,6 +111,20 @@ object DriveDatabaseMigrations {
     val MIGRATION_21_22 = object : Migration(21, 22) {
         override fun migrate(database: SupportSQLiteDatabase) {
             ObservabilityDatabase.MIGRATION_0.migrate(database)
+        }
+    }
+
+    val MIGRATION_24_25 = object : Migration(24, 25) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            OrganizationDatabase.MIGRATION_2.migrate(database)
+        }
+    }
+
+    val MIGRATION_25_26 = object : Migration(25, 26) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            AddressDatabase.MIGRATION_4.migrate(database)
+            PublicAddressDatabase.MIGRATION_2.migrate(database)
+            KeyTransparencyDatabase.MIGRATION_0.migrate(database)
         }
     }
 }

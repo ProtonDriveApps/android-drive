@@ -43,7 +43,6 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
-import me.proton.core.drive.files.R
 import me.proton.core.drive.files.domain.operation.notification.MoveFileExtra
 import me.proton.core.drive.files.domain.usecase.ChangeParent
 import me.proton.core.drive.link.domain.entity.Folder
@@ -57,6 +56,7 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.util.kotlin.CoreLogger
 import java.util.Collections
 import java.util.concurrent.TimeUnit
+import me.proton.core.drive.i18n.R as I18N
 
 @ExperimentalCoroutinesApi
 @HiltWorker
@@ -84,7 +84,7 @@ class MoveFileWorker @AssistedInject constructor(
         if (driveLinks.isEmpty() || folder == null) {
             broadcastMessages(
                 userId = userId,
-                message = applicationContext.getString(R.string.file_operation_error_occurred_moving_file),
+                message = applicationContext.getString(I18N.string.file_operation_error_occurred_moving_file),
                 type = BroadcastMessage.Type.ERROR
             )
             deselectLinks(selectionId)
@@ -102,7 +102,7 @@ class MoveFileWorker @AssistedInject constructor(
                             CoreLogger.d(LogTag.MOVE, error, "An error occurred while moving the file")
                             broadcastMessages(
                                 userId = userId,
-                                message = applicationContext.getString(R.string.file_operation_error_occurred_moving_file),
+                                message = applicationContext.getString(I18N.string.file_operation_error_occurred_moving_file),
                                 type = BroadcastMessage.Type.ERROR,
                                 extra = MoveFileExtra(
                                     userId = userId,
@@ -141,13 +141,13 @@ class MoveFileWorker @AssistedInject constructor(
     private val List<DriveLink>.message: String get() = when (size) {
         1 -> applicationContext.getString(
             if (first() is Folder) {
-                R.string.file_operation_moving_folder_successful
+                I18N.string.file_operation_moving_folder_successful
             } else {
-                R.string.file_operation_moving_file_successful
+                I18N.string.file_operation_moving_file_successful
             }
         )
         else -> applicationContext.getString(
-            R.string.file_operation_moving_multiple_successful,
+            I18N.string.file_operation_moving_multiple_successful,
             size,
         )
     }
@@ -158,13 +158,14 @@ class MoveFileWorker @AssistedInject constructor(
                 broadcastMessages(
                     userId = userId,
                     message = applicationContext.getString(
-                        R.string.file_operation_error_file_already_exists_at_destination
+                        I18N.string.file_operation_error_file_already_exists_at_destination
                     ),
                     type = BroadcastMessage.Type.ERROR,
                 )
-                return@onProtonHttpException true
+                true
+            } else {
+                false
             }
-            return@onProtonHttpException false
         } ?: false
 
     companion object {
