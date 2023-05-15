@@ -52,8 +52,8 @@ fun AppLock(
             }
             .launchIn(this)
     }
-    Crossfade(targetState = isLocked) { appLocked ->
-        if (appLocked) {
+    Crossfade(targetState = isLocked to userId) { (appLocked, userId) ->
+        if (appLocked && userId != null) {
             Unlock(
                 userId = userId,
                 modifier = Modifier,

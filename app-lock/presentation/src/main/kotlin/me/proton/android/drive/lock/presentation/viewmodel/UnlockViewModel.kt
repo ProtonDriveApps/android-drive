@@ -22,7 +22,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.proton.android.drive.lock.domain.exception.LockException
 import me.proton.android.drive.lock.domain.usecase.UnlockApp
@@ -30,7 +29,6 @@ import me.proton.android.drive.lock.presentation.viewevent.UnlockViewEvent
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.usecase.SignOut
 import me.proton.android.drive.lock.presentation.extension.getDefaultMessage
-import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.extension.getDefaultMessage
@@ -45,19 +43,18 @@ class UnlockViewModel @Inject constructor(
     private val unlockApp: UnlockApp,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
-    private val accountManager: AccountManager,
 ) : ViewModel() {
 
     val viewEvent = object : UnlockViewEvent {
-        override val onShowBiometric: () -> Unit = { showBiometrics() }
-        override val onSignOut: (userId: UserId?) -> Unit = { userId -> userId?.let { doSignOut(userId) }}
+        override val onShowBiometric: (userId: UserId) -> Unit = { userId -> showBiometrics(userId) }
+        override val onSignOut: (userId: UserId) -> Unit = { userId -> doSignOut(userId) }
     }
 
-    private fun showBiometrics() = viewModelScope.launch {
+    private fun showBiometrics(userId: UserId) = viewModelScope.launch {
         unlockApp()
             .onFailure { error ->
                 broadcastMessages(
-                    userId = accountManager.getAccounts().first().first().userId,
+                    userId = userId,
                     message = when (error) {
                         is LockException -> error.getDefaultMessage(appContext)
                         else -> error.getDefaultMessage(appContext, configurationProvider.useExceptionMessage)

@@ -62,7 +62,7 @@ import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 fun Unlock(
-    userId: UserId?,
+    userId: UserId,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<UnlockViewModel>()
@@ -75,12 +75,12 @@ fun Unlock(
 
 @Composable
 fun Unlock(
-    userId: UserId?,
+    userId: UserId,
     viewEvent: UnlockViewEvent,
     modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(Unit) {
-        viewEvent.onShowBiometric()
+        viewEvent.onShowBiometric(userId)
     }
     Column(
         modifier = modifier
@@ -96,7 +96,7 @@ fun Unlock(
         Actions(
             modifier = Modifier
                 .weight(1f - LogoHeaderWeight),
-            onUnlock = { viewEvent.onShowBiometric() },
+            onUnlock = { viewEvent.onShowBiometric(userId) },
             onSignOut = { viewEvent.onSignOut(userId) },
         )
     }
@@ -200,10 +200,10 @@ private fun getDrawable(@DrawableRes light: Int, @DrawableRes dark: Int, @Drawab
 private fun UnlockPreview() {
     ProtonTheme {
         Unlock(
-            userId = null,
+            userId = UserId("123"),
             viewEvent = object : UnlockViewEvent {
-                override val onShowBiometric = {}
-                override val onSignOut: (UserId?) -> Unit = {}
+                override val onShowBiometric: (UserId) -> Unit = {}
+                override val onSignOut: (UserId) -> Unit = {}
             }
         )
     }

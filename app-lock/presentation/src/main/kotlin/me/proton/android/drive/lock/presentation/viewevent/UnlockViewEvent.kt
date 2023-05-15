@@ -20,6 +20,6 @@ package me.proton.android.drive.lock.presentation.viewevent
 import me.proton.core.domain.entity.UserId
 
 interface UnlockViewEvent {
-    val onShowBiometric: () -> Unit
-    val onSignOut: (UserId?) -> Unit
+    val onShowBiometric: (UserId) -> Unit
+    val onSignOut: (UserId) -> Unit
 }

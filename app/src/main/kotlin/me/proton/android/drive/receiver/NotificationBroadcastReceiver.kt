@@ -23,7 +23,9 @@ import android.content.Context
 import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
+import me.proton.android.drive.extension.log
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.drive.notification.domain.usecase.RemoveNotification
 import me.proton.core.drive.upload.domain.usecase.CancelAllUpload
@@ -38,25 +40,36 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     @Inject lateinit var cancelAllUpload: CancelAllUpload
 
     override fun onReceive(context: Context?, intent: Intent?) = intent?.action?.let { action ->
-        intent.getStringExtra(EXTRA_NOTIFICATION_ID)?.deserialize<NotificationId>()?.let { notificationId ->
-            runBlocking {
-                CoreLogger.d(
-                    tag = LogTag.BROADCAST_RECEIVER,
-                    message = "Received $action for ${notificationId.tag} ${notificationId.id}"
-                )
-                if (notificationId is NotificationId.User) {
-                    when (action) {
-                        ACTION_DELETE -> removeNotification(notificationId)
-                        ACTION_CANCEL_ALL -> cancelAllUpload(notificationId.channel.userId)
-                        else -> CoreLogger.e(
-                            tag = LogTag.BROADCAST_RECEIVER,
-                            e = RuntimeException("Received unknown action '$action'")
-                        )
-                    }
+        val notificationIdString = intent.getStringExtra(EXTRA_NOTIFICATION_ID) ?: return
+        val notificationId =
+            deserialize<NotificationId>(notificationIdString).getOrNull() ?:
+            deserialize<NotificationId.User>(notificationIdString)
+                .onFailure { error ->
+                    error.log(LogTag.BROADCAST_RECEIVER)
+                    return@let
+                }
+                .getOrThrow()
+        runBlocking {
+            CoreLogger.d(
+                tag = LogTag.BROADCAST_RECEIVER,
+                message = "Received $action for ${notificationId.tag} ${notificationId.id}"
+            )
+            if (notificationId is NotificationId.User) {
+                when (action) {
+                    ACTION_DELETE -> removeNotification(notificationId)
+                    ACTION_CANCEL_ALL -> cancelAllUpload(notificationId.channel.userId)
+                    else -> CoreLogger.e(
+                        tag = LogTag.BROADCAST_RECEIVER,
+                        e = RuntimeException("Received unknown action '$action'")
+                    )
                 }
             }
         }
     } ?: Unit
+
+    private inline fun<reified T: Any> deserialize(value: String): Result<T> = coRunCatching {
+        value.deserialize()
+    }
 
     companion object {
         const val EXTRA_NOTIFICATION_ID = "EXTRA_NOTIFICATION_ID"
