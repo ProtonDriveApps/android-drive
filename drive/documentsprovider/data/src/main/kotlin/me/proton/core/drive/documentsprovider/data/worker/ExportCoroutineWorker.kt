@@ -25,7 +25,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.presentation.extension.getDefaultMessage
+import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.documentsprovider.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.documentsprovider.domain.usecase.GetFileUri
@@ -42,6 +45,7 @@ abstract class ExportCoroutineWorker constructor(
     workerParams: WorkerParameters,
     private val getFile: GetFile,
     private val getFileUri: GetFileUri,
+    private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
     private val announceEvent: AnnounceEvent,
 ) : CoroutineWorker(appContext, workerParams) {
@@ -67,9 +71,13 @@ abstract class ExportCoroutineWorker constructor(
                     showError(driveLink)
                     return@forEach
                 }
-            exportFileUri(getFileUri(userId, driveLink.id), driveLink)
+            val uri = getFileUri(userId, driveLink.id)
+            exportFileUri(uri, driveLink)
                 .onSuccess { succeeded.add(driveLink) }
-                .onFailure { exception -> CoreLogger.d(LogTag.DOCUMENTS_PROVIDER, exception, "") }
+                .onFailure { error ->
+                    error.log(LogTag.DOCUMENTS_PROVIDER, "Cannot export file: $uri")
+                    showExportError(error)
+                }
         }
         if (succeeded.isNotEmpty()) {
             showInfo(succeeded.message)
@@ -109,6 +117,14 @@ abstract class ExportCoroutineWorker constructor(
         broadcastMessages(
             userId = userId,
             message = message,
+            type = BroadcastMessage.Type.ERROR,
+        )
+    }
+
+    private fun showExportError(error:Throwable) {
+        broadcastMessages(
+            userId = userId,
+            message = error.getDefaultMessage(applicationContext, configurationProvider.useExceptionMessage),
             type = BroadcastMessage.Type.ERROR,
         )
     }

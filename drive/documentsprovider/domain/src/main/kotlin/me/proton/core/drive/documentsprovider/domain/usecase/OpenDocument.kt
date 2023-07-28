@@ -79,7 +79,7 @@ class OpenDocument @Inject constructor(
                 handlerThread
             ) { exception ->
                 if (exception != null) {
-                    cancelUploadFile(uploadFileLink)
+                    runBlocking { cancelUploadFile(uploadFileLink) }
                 } else runBlocking {
                     withDriveLinkFolder(DocumentId(userId, uploadFileLink.parentLinkId)) { _, driveLink ->
                         uploadFiles(

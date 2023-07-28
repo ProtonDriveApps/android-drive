@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import me.proton.core.compose.component.ProtonSettingsHeader
 import me.proton.core.compose.component.ProtonSettingsItem
@@ -69,11 +70,27 @@ fun DebugSettings(
             viewEvent.onToggleUseExceptionMessage(useExceptionMessage)
         }
 
+        ProtonSettingsToggleItem(
+            name = stringResource(id = I18N.string.debug_settings_log_to_file),
+            hint = stringResource(id = I18N.string.debug_settings_log_to_file_description),
+            value = viewState.logToFileEnabled,
+        ) { logToFileEnabled ->
+            viewEvent.onToggleLogToFileEnabled(logToFileEnabled)
+        }
+
+        val localContext = LocalContext.current
+        ProtonSettingsItem(
+            name = stringResource(id = I18N.string.debug_settings_send_log),
+        ) {
+            viewEvent.sendDebugLog(localContext)
+        }
+
         ProtonSettingsItem(
             name = stringResource(id = I18N.string.debug_settings_reset),
             hint = stringResource(id = I18N.string.debug_settings_reset_description),
         ) {
             viewEvent.onReset
         }
+
     }
 }

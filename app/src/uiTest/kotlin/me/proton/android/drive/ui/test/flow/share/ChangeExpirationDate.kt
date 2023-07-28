@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.ui.test.flow.share
 
+import me.proton.android.drive.ui.extension.tomorrow
 import me.proton.android.drive.ui.robot.FileFolderOptionsRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.ShareRobot
@@ -28,8 +29,18 @@ import me.proton.android.drive.ui.toolkits.getRandomString
 import me.proton.core.test.quark.data.User
 import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-class ChangeExpirationDate : BaseTest() {
+typealias ClickToShareAction = FileFolderOptionsRobot.() -> ShareRobot
+
+@RunWith(Parameterized::class)
+class ChangeExpirationDate(
+    private val fileName: String,
+    private val clickToShareAction: ClickToShareAction,
+    @Suppress("unused") private val testName: String,
+) : BaseTest() {
+
     private val user
         get() = User(
             dataSetScenario = "4",
@@ -43,60 +54,40 @@ class ChangeExpirationDate : BaseTest() {
     val userLoginRule = UserLoginRule(testUser = user, shouldSeedUser = true)
 
     @Test
-    fun setExpirationDate() {
-        val file = FILE
-        showShareViaLinkScreen(file) {
-            clickGetLink()
-        }
-        setExpirationDateToTomorrowSaveAndCheck(file)
-    }
-
-    @Test
-    fun changeExpirationDateOfExpiredLink() {
-        val file = FILE_EXPIRED_SHARED
-        showShareViaLinkScreen(file) {
-            clickManageLink()
-        }
-        setExpirationDateToTomorrowSaveAndCheck(file)
-    }
-
-    private fun showShareViaLinkScreen(file: String, clickToShareRobot: FileFolderOptionsRobot.() -> ShareRobot) {
+    fun expirationDate() {
         FilesTabRobot
-            .verify { robotDisplayed() }
-            .scrollToItemWithName(file)
-            .clickMoreOnItem(file)
-            .clickToShareRobot()
-            .verify { robotDisplayed() }
-    }
-
-    private fun setExpirationDateToTomorrowSaveAndCheck(file: String) {
-        ShareRobot
+            .scrollToItemWithName(fileName)
+            .clickMoreOnItem(fileName)
+            .clickToShareAction()
             .clickExpirationDateTextField()
-            .verify { robotDisplayed() }
+            .selectDate(tomorrow)
             .clickOk()
-            .verify { robotDisplayed() }
             .clickSave()
             .verify {
                 shareUpdateSuccessWasShown()
                 saveDoesNotExists()
             }
+            .clickUpdateSuccessfulGrowler()
             .clickBack(FilesTabRobot)
-            .verify {
-                robotDisplayed()
-                sharedItemWithText(file)
-            }
-            .scrollToItemWithName(file)
-            .clickMoreOnItem(file)
+            .scrollToItemWithName(fileName)
+            .clickMoreOnItem(fileName)
             .clickManageLink()
             .verify {
                 robotDisplayed()
                 expirationDateToggleIsOn()
-                tomorrowExpirationDateIsShown()
+                expirationDateIsShown(tomorrow)
             }
     }
 
     companion object {
-        private const val FILE = "image.jpg"
-        private const val FILE_EXPIRED_SHARED = "expiredSharedFile.jpg"
+        private val GetLink: ClickToShareAction = { clickGetLink() }
+        private val ManageLink: ClickToShareAction = { clickGetLink() }
+
+        @get:Parameterized.Parameters(name = "{2}")
+        @get:JvmStatic
+        val data = listOf(
+            arrayOf("image.jpg", GetLink, "setExpirationDate"),
+            arrayOf("expiredSharedFile.jpg", ManageLink, "changeExpirationDateOfExpiredLink")
+        )
     }
 }

@@ -128,14 +128,16 @@ class ProcessIntent @Inject constructor(
                 )
                 with (deepLinkIntent) {
                     subscriptionCount.first { count -> count > 0 }
-                    emit(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            "${appContext.deepLinkBaseUrl}/$uploadRoute".toUri(),
-                            appContext,
-                            MainActivity::class.java
+                    launch(Dispatchers.Main) {
+                        emit(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                "${appContext.deepLinkBaseUrl}/$uploadRoute".toUri(),
+                                appContext,
+                                MainActivity::class.java
+                            )
                         )
-                    )
+                    }
                 }
             } ?: broadcastMessages(
                 userId = userId,

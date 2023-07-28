@@ -34,9 +34,11 @@ import me.proton.core.drive.linkupload.data.extension.toUploadBlock
 import me.proton.core.drive.linkupload.data.extension.toUploadBlockEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadBulk
 import me.proton.core.drive.linkupload.data.extension.toUploadBulkEntity
+import me.proton.core.drive.linkupload.data.extension.toUploadCount
 import me.proton.core.drive.linkupload.data.extension.toUploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
+import me.proton.core.drive.linkupload.domain.entity.UploadCount
 import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
@@ -88,11 +90,36 @@ class LinkUploadRepositoryImpl @Inject constructor(
                 }
             }
 
+    override suspend fun getUploadFileLinksWithUri(
+        userId: UserId,
+        states: Set<UploadState>,
+        count: Int,
+    ): Flow<List<UploadFileLink>> =
+        db.linkUploadDao.getAllWithUri(userId, states, count)
+            .map { linkUploadEntities ->
+                linkUploadEntities
+                    .map { linkUploadEntity ->
+                        linkUploadEntity.toUploadFileLink()
+                    }
+            }
+
+    override fun getUploadFileLinksCount(userId: UserId): Flow<UploadCount> =
+        db.linkUploadDao.getUploadCount(userId).map { linkUploadCountEntity ->
+            linkUploadCountEntity.toUploadCount()
+        }
+
     override suspend fun updateUploadFileLink(uploadFileLink: UploadFileLink) =
         db.linkUploadDao.insertOrUpdate(uploadFileLink.toLinkUploadEntity())
 
     override suspend fun updateUploadFileLinkUploadState(uploadFileLinkId: Long, uploadState: UploadState) =
         db.linkUploadDao.updateUploadState(uploadFileLinkId, uploadState)
+
+    override suspend fun updateUploadFileLinkUploadState(uploadFileLinkIds: Set<Long>, uploadState: UploadState) =
+        db.inTransaction {
+            uploadFileLinkIds.forEach { uploadFileLinkId ->
+                updateUploadFileLinkUploadState(uploadFileLinkId, uploadState)
+            }
+        }
 
     override suspend fun updateUploadFileLinkFileInfo(
         uploadFileLinkId: Long,
@@ -153,6 +180,9 @@ class LinkUploadRepositoryImpl @Inject constructor(
 
     override suspend fun removeUploadFileLink(uploadFileLinkId: Long) =
         db.linkUploadDao.delete(uploadFileLinkId)
+
+    override suspend fun removeAllUploadFileLinks(userId: UserId, uploadState: UploadState) =
+        db.linkUploadDao.deleteAll(userId, uploadState)
 
     override suspend fun insertUploadBlocks(uploadFileLink: UploadFileLink, uploadBlocks: List<UploadBlock>) =
         db.inTransaction {

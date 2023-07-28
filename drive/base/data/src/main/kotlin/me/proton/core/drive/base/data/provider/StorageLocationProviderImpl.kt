@@ -59,6 +59,10 @@ class StorageLocationProviderImpl @Inject constructor(
         userId.getTempFolder(appContext.cacheDir)
     }.getOrThrow()
 
+    override fun getDebugLogFolder(): File = coRunCatching {
+        File(appContext.cacheDir, TEMP_FOLDER).apply { mkdirs() }
+    }.getOrThrow()
+
     private fun UserId.getFolder(parent: File) = File(parent, id).apply { mkdirs() }
     private fun UserId.getTempFolder(parent: File) = File(parent, "$TEMP_FOLDER/$id/").apply { mkdirs() }
 

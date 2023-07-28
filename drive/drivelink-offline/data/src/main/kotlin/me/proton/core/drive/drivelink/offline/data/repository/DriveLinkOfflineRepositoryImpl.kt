@@ -21,6 +21,7 @@ package me.proton.core.drive.drivelink.offline.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import javax.inject.Inject
 import me.proton.core.drive.drivelink.data.extension.toDriveLinks
@@ -28,11 +29,16 @@ import me.proton.core.drive.drivelink.offline.data.db.DriveLinkOfflineDatabase
 import me.proton.core.drive.drivelink.offline.domain.repository.DriveLinkOfflineRepository
 
 class DriveLinkOfflineRepositoryImpl @Inject constructor(
-    private val driveLinkOfflineDatabase: DriveLinkOfflineDatabase,
+    private val db: DriveLinkOfflineDatabase,
 ) : DriveLinkOfflineRepository {
 
-    override fun getOfflineDriveLinks(userId: UserId): Flow<List<DriveLink>> =
-        driveLinkOfflineDatabase.driveLinkOfflineDao.getOfflineLinks(userId).map { entities ->
-            entities.toDriveLinks()
+    override fun getOfflineDriveLinksCount(userId: UserId): Flow<Int> =
+        db.driveLinkOfflineDao.getOfflineLinksCountFlow(userId)
+
+    override fun getOfflineDriveLinks(userId: UserId, fromIndex: Int, count: Int): Flow<Result<List<DriveLink>>> =
+        db.driveLinkOfflineDao.getOfflineLinks(userId, count, fromIndex).map { entities ->
+            coRunCatching {
+                entities.toDriveLinks()
+            }
         }
 }

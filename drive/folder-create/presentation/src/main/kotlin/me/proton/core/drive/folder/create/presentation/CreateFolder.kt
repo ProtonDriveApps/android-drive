@@ -160,8 +160,10 @@ fun CreateFolderContent(
             focusRequester = focusRequester,
             onValueChanged = { textFieldValue ->
                 if (state != textFieldValue) {
+                    if (state.text != textFieldValue.text) {
+                        onValueChanged(textFieldValue.text)
+                    }
                     state = textFieldValue
-                    onValueChanged(textFieldValue.text)
                 }
             },
             modifier = Modifier

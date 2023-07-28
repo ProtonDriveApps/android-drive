@@ -26,6 +26,7 @@ driveModule(
     api(project(":drive:block:domain"))
     api(project(":drive:file:create:domain"))
     api(project(":drive:link-upload:domain"))
+    api(project(":drive:notification:domain"))
     api(project(":drive:thumbnail:domain"))
 
     implementation(project(":drive:crypto:domain"))

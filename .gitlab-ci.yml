@@ -9,6 +9,7 @@ variables:
   GCLOUD_BUCKET_URL: "gs://test-lab-u7cps962nd0a4-kx5m7jhd4pki6"
   FIREBASE_RESULT_ROOT: "${CI_BUILD_REF_NAME}/${CI_COMMIT_SHORT_SHA}"
   ATLAS_DEPLOY_ENV: "true"
+  ATLAS_DEPLOY_PREP: "true"
 
 workflow:
   rules:
@@ -31,6 +32,7 @@ cache:
     - config/detekt/config.yml
 
 stages:
+  - i18n
   - prepare
   - analyze
   - deploy
@@ -41,7 +43,7 @@ stages:
   - publish
   - cleanup
 
-.prepare:
+prepare-build:
   stage: prepare
   artifacts:
     paths:
@@ -51,30 +53,6 @@ stages:
       dotenv: deploy.env
     expire_in: 1 week
   cache: []
-
-prepare-environment:
-  extends: .prepare
-  image: $CI_REGISTRY/proton/devops/atlas-cli
-  script:
-    # DEBUG NS 500 error
-    - echo 
-      -d "$ATLAS_BASE_DOMAIN"
-      --release "$ATLAS_RELEASE_SUFFIX" 
-      "${ENV_TAG:?}" 
-      "${CI_PROJECT_PATH}" 
-      "$CI_COMMIT_REF_NAME"
-
-    # resulting variables will be stored in deploy.env
-    - get_name.py -v
-      -o deploy.env
-      -d "$ATLAS_BASE_DOMAIN"
-      --release "$ATLAS_RELEASE_SUFFIX" "${ENV_TAG:?}" "${CI_PROJECT_PATH}" "$CI_COMMIT_REF_NAME"
-  environment:
-    name: $CI_COMMIT_REF_SLUG/$ATLAS_DEPLOY_SCOPE
-    action: prepare
-
-prepare-build:
-  extends: .prepare
   tags:
     - large
   script:
@@ -120,7 +98,7 @@ detekt analysis:
 build dev debug:
   extends: [.build]
   needs:
-    - job: "prepare-environment"
+    - job: "claim:review"
     - job: "prepare-build"
     - job: "prepare-gradle-build-scan"
       optional: true
@@ -133,7 +111,7 @@ build dev debug:
 build dynamic debug:
   extends: [.build]
   needs:
-    - job: "prepare-environment"
+    - job: "claim:review"
     - job: "prepare-build"
     - job: "prepare-gradle-build-scan"
       optional: true
@@ -357,9 +335,6 @@ testmo-upload:
 
 publish to firebase app distribution:
   stage: publish
-  needs:
-    - job: "build dev debug"
-    - job: "prepare-build"
   tags:
     - xlarge-k8s
   variables:
@@ -412,3 +387,27 @@ include:
   - project: 'tpe/testmo-reporter'
     ref: master
     file: '/scenarios/testmo-simple.yml'
+
+  - project: 'translations/generator'
+    ref: master
+    file: '/jobs/sync-crowdin.gitlab-ci.yml'
+
+  - project: 'translations/generator'
+    ref: master
+    file: '/jobs/commit-locales.gitlab-ci.yml'
+
+i18n-sync-crowdin:
+  stage: i18n
+  variables:
+      I18N_SYNC_BRANCH: develop
+      I18N_SYNC_CROWDIN_PROJECT: 'android-drive'
+  extends: .i18n-sync-crowdin-shared
+
+i18n-commit-locales:
+  stage: i18n
+  variables:
+      I18N_COMMIT_BRANCH_PUSH: develop
+      I18N_COMMIT_BRANCH_ALLOWED: develop
+      I18N_COMMIT_CROWDIN_PROJECT: 'android-drive'
+  extends: .i18n-commit-locales-shared
+

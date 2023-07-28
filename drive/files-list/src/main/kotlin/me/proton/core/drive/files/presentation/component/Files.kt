@@ -62,6 +62,8 @@ import me.proton.core.drive.files.presentation.component.files.FilesListHeader
 import me.proton.core.drive.files.presentation.component.files.FilesListItem
 import me.proton.core.drive.files.presentation.component.files.FilesListLoading
 import me.proton.core.drive.files.presentation.component.files.FilesSectionHeader
+import me.proton.core.drive.files.presentation.extension.LayoutType
+import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
 import me.proton.core.drive.files.presentation.state.ListContentState
@@ -212,7 +214,9 @@ private fun LazyColumnItems.DisplayAsGrid(
                     isClickEnabled = viewState.isClickEnabled,
                     isTextEnabled = viewState.isTextEnabled,
                     transferProgressFlow = remember(driveLink.downloadState) { getTransferProgress(driveLink) },
-                    modifier = Modifier.weight(1F),
+                    modifier = Modifier
+                        .weight(1F)
+                        .driveLinkSemantics(driveLink, LayoutType.Grid),
                     isSelected = selected,
                     inMultiselect = selected || selectedDriveLinks.isNotEmpty(),
                 )
@@ -245,6 +249,7 @@ private fun LazyColumnItems.DisplayAsList(
                 transferProgressFlow = remember(driveLink.downloadState) { getTransferProgress(driveLink) },
                 isSelected = selected,
                 inMultiselect = selected || selectedDriveLinks.isNotEmpty(),
+                modifier = Modifier.driveLinkSemantics(driveLink, LayoutType.List),
             )
         }
     }
@@ -372,6 +377,11 @@ sealed class LazyColumnItems {
 
 object FilesTestTag {
     const val content = "files content"
+    const val gridDetailsTitle = "grid item"
+    const val listDetailsTitle = "list item"
+    const val multiSelectionTag = "multiSelectionTag"
+    const val moreButton = "three dots button"
+    const val itemWithSharedIcon = "item with shared icon"
 }
 
 private val GridItemWidth = 174.dp

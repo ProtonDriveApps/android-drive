@@ -21,7 +21,9 @@ import kotlinx.serialization.Serializable
 
 @JvmInline
 @Serializable
-value class Percentage private constructor(val value: Float) {
+value class Percentage private constructor(val value: Float) : Comparable<Percentage> {
+
+    override fun compareTo(other: Percentage): Int = value.compareTo(other.value)
 
     companion object {
         operator fun invoke(value: Float) = Percentage(value.coerceIn(0f, 1f))

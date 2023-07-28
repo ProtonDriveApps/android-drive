@@ -18,9 +18,7 @@
 
 package me.proton.core.drive.drivelink.list.domain.usecase
 
-import kotlinx.coroutines.flow.flowOf
 import me.proton.core.drive.base.domain.entity.SaveAction
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.drivelink.list.domain.extension.toFolderSorting
 import me.proton.core.drive.drivelink.paged.domain.entity.LinksPage
 import me.proton.core.drive.folder.domain.repository.FolderRepository
@@ -45,8 +43,8 @@ class FetchDriveLinksListPage @Inject constructor(
         when (sorting.by) {
             By.NAME -> getAllFolderChildren(
                 folderId = folderId,
-                refresh = flowOf(true),
-            ).toResult().map { links -> LinksPage(links, EMPTY_SAVE_ACTION) }
+                refresh = true,
+            ).map { links -> LinksPage(links, EMPTY_SAVE_ACTION) }
             else -> folderRepository.fetchFolderChildren(folderId, page, pageSize, sorting.toFolderSorting())
                 .map { (links, saveAction) ->
                     LinksPage(links, saveAction)

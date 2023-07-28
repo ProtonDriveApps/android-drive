@@ -39,11 +39,11 @@
     <string name="description_signing_out">Signing out…</string>
     <string name="trash_more_options">@string/common_more</string>
     <string name="settings_about_links_acknowledgments_title">Acknowledgments</string>
-    <string name="settings_about_links_acknowledgments_url">https://proton.me/legal/transparency</string>
+    <string name="settings_about_links_acknowledgments_url" translatable="false">https://proton.me/legal/transparency</string>
     <string name="settings_about_links_privacy_policy_title">Privacy policy</string>
-    <string name="settings_about_links_privacy_policy_url">https://proton.me/legal/privacy</string>
+    <string name="settings_about_links_privacy_policy_url" translatable="false">https://proton.me/legal/privacy</string>
     <string name="settings_about_links_terms_of_service_title">Terms of service</string>
-    <string name="settings_about_links_terms_of_service_url">https://proton.me/legal/terms</string>
+    <string name="settings_about_links_terms_of_service_url" translatable="false">https://proton.me/legal/terms</string>
     <string name="common_error_no_browser_available">We couldn\'t open the link as you don\'t seem to have a browser installed</string>
     <string name="move_to">Move to</string>
     <string name="move_file_confirm_action">Move</string>
@@ -172,7 +172,7 @@
     <string name="description_empty_shared">Linked files appear here so you can easily track and manage what\'s shared.</string>
     <string name="description_empty_trash">This is where trashed items remain until you delete or restore them.</string>
     <string name="description_empty_offline_available">Make essential files always available even when your network isn\'t.</string>
-    <string name="description_no_drive_scope">ProtonDrive is currently in early access and only available to invited users of ProtonMail.</string>
+    <string name="description_no_drive_scope">User is missing drive scope.</string>
     <string name="description_file_download_failed">Downloading failed. Check network connection and try again.</string>
     <string name="description_file_decryption_failed">Could not decrypt file</string>
     <string name="description_file_verify_signature_failed">The file\'s signature couldn\'t be verified</string>

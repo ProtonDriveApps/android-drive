@@ -24,5 +24,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 
 interface DriveLinkOfflineRepository {
 
-    fun getOfflineDriveLinks(userId: UserId): Flow<List<DriveLink>>
+    fun getOfflineDriveLinksCount(userId: UserId): Flow<Int>
+
+    fun getOfflineDriveLinks(userId: UserId, fromIndex: Int, count: Int): Flow<Result<List<DriveLink>>>
 }

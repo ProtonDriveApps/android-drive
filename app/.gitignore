@@ -1,3 +1,5 @@
 build/
 release/
+!release/kotlin/me/proton/android/drive/usecase/GetFileLoggerTree.kt
 play/
+

@@ -51,13 +51,16 @@
     <string name="settings_section_system">System</string>
     <string name="settings_clear_local_cache_entry">Clear local cache</string>
 
-    <string name="debug_settings_section">Debug settings</string>
-    <string name="debug_settings_host">Host</string>
-    <string name="debug_settings_api_host">API Host</string>
-    <string name="debug_settings_base_url">Base URL</string>
-    <string name="debug_settings_app_version_header">App version header</string>
-    <string name="debug_settings_reset">Reset</string>
-    <string name="debug_settings_reset_description">Restore default value for debug settings</string>
-    <string name="debug_settings_use_exception_message">Show exception as error message</string>
-    <string name="debug_settings_use_exception_message_description">When enabled, instead of user friendly error message, exception error message will be shown</string>
+    <string name="debug_settings_section" translatable="false">Debug settings</string>
+    <string name="debug_settings_host" translatable="false">Host</string>
+    <string name="debug_settings_api_host" translatable="false">API Host</string>
+    <string name="debug_settings_base_url" translatable="false">Base URL</string>
+    <string name="debug_settings_app_version_header" translatable="false">App version header</string>
+    <string name="debug_settings_reset" translatable="false">Reset</string>
+    <string name="debug_settings_reset_description" translatable="false">Restore default value for debug settings</string>
+    <string name="debug_settings_use_exception_message" translatable="false">Show exception as error message</string>
+    <string name="debug_settings_use_exception_message_description" translatable="false">When enabled, instead of user friendly error message, exception error message will be shown</string>
+    <string name="debug_settings_log_to_file" translatable="false">Log to file</string>
+    <string name="debug_settings_log_to_file_description" translatable="false">When enabled, debug logs will be written into file which can then be sent to developers</string>
+    <string name="debug_settings_send_log" translatable="false">Send log</string>
 </resources>

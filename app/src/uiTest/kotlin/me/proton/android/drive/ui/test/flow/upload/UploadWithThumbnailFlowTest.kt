@@ -90,11 +90,10 @@ class UploadWithThumbnailFlowTest(
                     count = 1,
                     folderName = StringUtils.stringFromResource(I18N.string.title_my_files)
                 )
-                if (hasThumbnail()) {
-                    itemWithThumbnail(fileName)
-                } else {
-                    imageWithoutThumbnail(fileName)
-                }
+                itemIsDisplayed(
+                    name = fileName,
+                    hasThumbnail = hasThumbnail()
+                )
             }
     }
 

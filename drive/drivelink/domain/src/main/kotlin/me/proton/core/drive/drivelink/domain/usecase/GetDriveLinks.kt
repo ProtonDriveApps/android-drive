@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.drivelink.domain.usecase
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.repository.DriveLinkRepository
@@ -28,7 +27,6 @@ import javax.inject.Inject
 class GetDriveLinks @Inject constructor(
     private val driveLinkRepository: DriveLinkRepository,
 ) {
-    @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
         linkIds: List<LinkId>,
     ): Flow<List<DriveLink>> =

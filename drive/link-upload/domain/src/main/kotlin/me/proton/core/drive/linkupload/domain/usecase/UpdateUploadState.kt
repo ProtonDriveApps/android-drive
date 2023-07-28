@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.linkupload.domain.usecase
 
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
@@ -31,5 +32,12 @@ class UpdateUploadState @Inject constructor(
         uploadState: UploadState
     ): Result<UploadFileLink> = getUploadFileLinkAfterOperation(uploadFileLinkId) {
         linkUploadRepository.updateUploadFileLinkUploadState(uploadFileLinkId, uploadState)
+    }
+
+    suspend operator fun invoke(
+        uploadFileLinkIds: Set<Long>,
+        uploadState: UploadState,
+    ): Result<Unit> = coRunCatching {
+        linkUploadRepository.updateUploadFileLinkUploadState(uploadFileLinkIds, uploadState)
     }
 }

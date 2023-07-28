@@ -80,6 +80,7 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
                     }
                     .onSuccess { uploadFileLinks ->
                         uploadFileLinks.forEach { uploadFileLink ->
+                            if (isStopped) return Result.failure()
                             announceEvent(
                                 userId = userId,
                                 notificationEvent = NotificationEvent.Upload(

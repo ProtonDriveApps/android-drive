@@ -51,6 +51,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,6 +71,7 @@ import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.files.presentation.component.FilesTestTag
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
 import me.proton.core.presentation.R as CorePresentation
@@ -170,7 +172,7 @@ fun GridDetailsTitle(
 ) {
     Crossfade(
         targetState = isTitleEncrypted,
-        modifier = modifier,
+        modifier = modifier
     ) { isEncrypted ->
         if (isEncrypted) {
             EncryptedItem()
@@ -225,6 +227,7 @@ private fun GridItemMoreButton(
         if (link.isProcessing.not()) {
             Box(
                 modifier = modifier
+                    .testTag(FilesTestTag.moreButton)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(bounded = false, radius = DefaultIconSize / 2),

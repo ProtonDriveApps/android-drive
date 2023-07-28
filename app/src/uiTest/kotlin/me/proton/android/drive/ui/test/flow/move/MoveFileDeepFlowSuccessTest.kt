@@ -60,7 +60,7 @@ class MoveFileDeepFlowSuccessTest : BaseTest() {
             }
             .clickBack(FilesTabRobot)
             .verify {
-                itemWithTextDisplayed(file)
+                itemIsDisplayed(file)
             }
     }
     @Test
@@ -76,7 +76,7 @@ class MoveFileDeepFlowSuccessTest : BaseTest() {
             .clickMove()
             .clickBackFromFolder(folder5)
             .clickBackFromFolder(folder2)
-            .clickOnFolder(folder1)
+            .clickOnFolderToMove(folder1)
             .clickMoveToFolder(folder1)
             .verify {
                 nodeWithTextDisplayed(I18N.string.file_operation_moving_file_successful)
@@ -86,7 +86,7 @@ class MoveFileDeepFlowSuccessTest : BaseTest() {
             .clickBack(FilesTabRobot)
             .clickOnFolder(folder1)
             .verify {
-                itemWithTextDisplayed(file)
+                itemIsDisplayed(file)
             }
     }
 }

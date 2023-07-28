@@ -66,7 +66,10 @@ driveModule(
     implementation(libs.sentry)
     implementation(libs.timber)
 
+    debugImplementation(libs.treessence)
+
     androidTestImplementation(libs.androidx.navigation.compose)
+    androidTestImplementation(libs.androidx.test.espresso.contrib)
     androidTestImplementation(libs.bundles.core.test)
     androidTestImplementation(libs.fusion)
 

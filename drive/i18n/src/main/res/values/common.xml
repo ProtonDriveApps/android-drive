@@ -128,11 +128,11 @@
     <!--
         Variable %1$d is a quantity of files or folders that have been selected
         Example:
-            "1 Selected"
-            "13 Selected"
+            "1 selected"
+            "13 selected"
     -->
     <plurals name="common_selected">
-        <item quantity="other">%1$d Selected</item>
+        <item quantity="other">%1$d selected</item>
     </plurals>
 
     <!-- region In-app notification -->
@@ -172,6 +172,6 @@
             "System could not found any application that could open a document"
             "System could not found any application that could take a picture"
     -->
-    <string name="common_in_app_notification_activity_not_found">System could not found any application that could %1$s</string>
+    <string name="common_in_app_notification_activity_not_found">System could not find any application that could %1$s</string>
     <!-- endregion -->
 </resources>

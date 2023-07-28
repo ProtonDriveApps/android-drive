@@ -47,6 +47,12 @@ allprojects {
         google()
         mavenCentral()
         maven("https://plugins.gradle.org/m2/")
+        maven {
+            url = uri("https://jitpack.io")
+            content {
+                includeGroupByRegex("com.github.bastienpaulfr.*")
+            }
+        }
     }
     afterEvaluate {
         configurations.findByName("androidTestImplementation")?.run {

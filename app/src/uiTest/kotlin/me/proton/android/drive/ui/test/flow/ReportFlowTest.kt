@@ -20,8 +20,8 @@ package me.proton.android.drive.ui.test.flow
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.robot.SidebarRobot
 import me.proton.android.drive.ui.rules.WelcomeScreenRule
+import me.proton.android.drive.ui.test.AbstractBaseTest
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.report.test.MinimalReportInternalTests
 import me.proton.core.test.quark.Quark
@@ -36,12 +36,12 @@ class ReportFlowTest : BaseTest(), MinimalReportInternalTests {
     @get:Rule
     val welcomeScreenRule = WelcomeScreenRule(false)
 
-    override val quark: Quark = BaseTest.quark
-    override val users: User.Users = BaseTest.users
+    override val quark: Quark = AbstractBaseTest.quark
+    override val users: User.Users = AbstractBaseTest.users
 
     @Before
     fun preventHumanVerification() {
-        Companion.quark.jailUnban()
+        quark.jailUnban()
     }
 
     override fun verifyBefore() {

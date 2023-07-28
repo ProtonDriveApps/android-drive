@@ -91,7 +91,9 @@ fun TopAppBar(
                 ) {
                     Icon(
                         painter = navigationIcon,
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier.testTag(TopAppBarComponentTestTag.navigationButton),
+
                     )
                 }
             }

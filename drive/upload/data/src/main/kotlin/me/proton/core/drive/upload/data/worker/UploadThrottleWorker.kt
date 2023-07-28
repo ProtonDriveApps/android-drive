@@ -26,17 +26,16 @@ import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.takeWhile
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.workmanager.addTags
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
-import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
-import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
+import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksCount
+import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksWithUri
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
 import me.proton.core.util.kotlin.CoreLogger
@@ -45,37 +44,29 @@ import me.proton.core.util.kotlin.CoreLogger
 class UploadThrottleWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
-    private val linkUploadRepository: LinkUploadRepository,
     private val workManager: WorkManager,
     private val configurationProvider: ConfigurationProvider,
     private val updateUploadState: UpdateUploadState,
-    private val getUploadFileLink: GetUploadFileLink,
+    private val getUploadFileLinksCount: GetUploadFileLinksCount,
+    private val getUploadFileLinksWithUri: GetUploadFileLinksWithUri,
 ) : CoroutineWorker(appContext, workerParams) {
     private val userId = UserId(requireNotNull(inputData.getString(WorkerKeys.KEY_USER_ID)) { "User id is required" })
 
     override suspend fun doWork(): Result {
         CoreLogger.d(LogTag.UPLOAD, "UploadThrottleWorker started")
-        linkUploadRepository.getUploadFileLinks(userId)
-            .map { uploadFleLinks ->
-                uploadFleLinks.filterNot { uploadFileLink -> uploadFileLink.uriString.isNullOrEmpty() }
-            }
-            .takeWhile { uploadFileLinks -> uploadFileLinks.isNotEmpty() }
-            .collect { uploadFileLinks ->
-                val running = uploadFileLinks.filter { uploadFileLink ->
-                    getUploadFileLink(uploadFileLink.id).toResult().getOrNull()?.state != UploadState.UNPROCESSED
+        getUploadFileLinksCount(userId)
+            .takeWhile { uploadCount -> uploadCount.total > 0 }
+            .collect { uploadCount ->
+                val running = uploadCount.totalWithUri - uploadCount.totalUnprocessedWithUri
+                val notRunning = uploadCount.totalUnprocessedWithUri
+                val availableUploadSlots = configurationProvider.uploadsInParallel - running
+                if (notRunning > 0 && availableUploadSlots > 0) {
+                    getUploadFileLinksWithUri(userId, setOf(UploadState.UNPROCESSED), availableUploadSlots).first()
+                        .apply {
+                            forEach { uploadFileLink -> uploadFileLink.enqueue(userId) }
+                            updateUploadState(map { uploadFileLink -> uploadFileLink.id }.toSet(), UploadState.IDLE)
+                        }
                 }
-                val notRunning = uploadFileLinks.subtract(running.toSet())
-                val availableUploadSlots = configurationProvider.uploadsInParallel - running.size
-                if (notRunning.isNotEmpty() && availableUploadSlots > 0) {
-                    notRunning.take(availableUploadSlots).forEach { uploadFileLink ->
-                        uploadFileLink.enqueue(userId)
-                        updateUploadState(uploadFileLink.id, UploadState.IDLE)
-                    }
-                }
-                CoreLogger.d(
-                    tag = LogTag.UPLOAD,
-                    message = "UploadThrottleWorker collecting ${uploadFileLinks.map { uploadFileLink -> uploadFileLink.state }.joinToString()}",
-                )
             }
         CoreLogger.d(LogTag.UPLOAD, "UploadThrottleWorker finished")
         return Result.success()

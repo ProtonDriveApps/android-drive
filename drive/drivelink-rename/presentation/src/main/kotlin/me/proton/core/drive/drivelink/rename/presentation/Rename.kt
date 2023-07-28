@@ -155,8 +155,10 @@ fun RenameContent(
             maxLines = MaxLines,
             focusRequester = focusRequester,
         ) { textField ->
+            if (textField.text != textFieldValue.value.text) {
+                onValueChanged(textField.text)
+            }
             textFieldValue.value = textField
-            onValueChanged(textField.text)
         }
     }
 

@@ -127,6 +127,7 @@ fun UploadTo(
         modifier
             .fillMaxSize()
             .systemBarsPadding()
+            .testTag(UploadToScreenTestTag.screen)
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             TopAppBar(

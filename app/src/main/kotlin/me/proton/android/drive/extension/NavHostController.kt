@@ -18,13 +18,7 @@
 
 package me.proton.android.drive.extension
 
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-
-@Suppress("ControlFlowWithEmptyBody")
-fun NavHostController.popAllBackStack() {
-    do while (popBackStack())
-}
 
 fun NavHostController.runFromRoute(route: String, block: () -> Unit) = takeIf {
     currentDestination?.route == route

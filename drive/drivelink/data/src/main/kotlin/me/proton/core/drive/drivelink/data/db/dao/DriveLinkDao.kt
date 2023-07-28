@@ -38,31 +38,16 @@ import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 @Dao
 interface DriveLinkDao : LinkDao {
 
-    @Query(
-        """
+    @Query("""
         SELECT $DRIVE_LINK_SELECT FROM $DRIVE_LINK_ENTITY 
         WHERE 
             LinkEntity.user_id = :userId AND 
             LinkEntity.share_id = :shareId AND
             LinkEntity.id = :linkId
-            """
-    )
+    """)
     fun getLink(userId: UserId, shareId: String, linkId: String?): Flow<List<DriveLinkEntityWithBlock>>
 
-    @Query(
-        """
-        SELECT $DRIVE_LINK_SELECT FROM $DRIVE_LINK_ENTITY
-        WHERE
-            LinkEntity.user_id = :userId AND
-            LinkEntity.share_id = :shareId AND
-            LinkEntity.parent_id = :parentId AND
-            ${LinkTrashDao.NOT_TRASHED_CONDITION}
-        """
-    )
-    fun getLinks(userId: UserId, shareId: String, parentId: String): Flow<List<DriveLinkEntityWithBlock>>
-
-    @Query(
-        """
+    @Query("""
         SELECT $DRIVE_LINK_SELECT FROM $DRIVE_LINK_ENTITY 
         WHERE 
             LinkEntity.user_id = :userId AND 
@@ -70,9 +55,14 @@ interface DriveLinkDao : LinkDao {
             LinkEntity.parent_id = :parentId AND
             ${LinkTrashDao.NOT_TRASHED_CONDITION}
         LIMIT :limit OFFSET :offset
-        """
-    )
-    fun getLinks(userId: UserId, shareId: String, parentId: String?, limit: Int, offset: Int): Flow<List<DriveLinkEntityWithBlock>>
+    """)
+    fun getLinks(
+        userId: UserId,
+        shareId: String,
+        parentId: String?,
+        limit: Int,
+        offset: Int,
+    ): Flow<List<DriveLinkEntityWithBlock>>
 
     @Query("""
         SELECT COUNT(*) FROM (SELECT DISTINCT LinkEntity.id FROM $DRIVE_LINK_ENTITY
@@ -84,15 +74,13 @@ interface DriveLinkDao : LinkDao {
     """)
     fun getLinksCountFlow(userId: UserId, shareId: String, parentId: String?): Flow<Int>
 
-    @Query(
-        """
+    @Query("""
         SELECT $DRIVE_LINK_SELECT FROM $DRIVE_LINK_ENTITY 
         WHERE 
             LinkEntity.user_id = :userId AND 
             LinkEntity.share_id = :shareId AND
             LinkEntity.id in (:ids)
-            """
-    )
+    """)
     fun getLinks(userId: UserId, shareId: String, ids: List<String>): Flow<List<DriveLinkEntityWithBlock>>
 
     companion object {

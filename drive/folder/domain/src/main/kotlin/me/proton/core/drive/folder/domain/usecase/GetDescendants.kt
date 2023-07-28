@@ -17,8 +17,6 @@
  */
 package me.proton.core.drive.folder.domain.usecase
 
-import kotlinx.coroutines.flow.flowOf
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.Link
 import javax.inject.Inject
@@ -32,14 +30,13 @@ class GetDescendants @Inject constructor(
     ): Result<List<Link>> = coRunCatching {
         val folders = mutableListOf(folderLink)
         val descendants = mutableListOf<Link>()
-        val refreshFolderChildren = if (refresh) flowOf(refresh) else null
+        val refreshFolderChildren = if (refresh) true else null
         while (folders.isNotEmpty()) {
             val parent = folders.removeFirst()
             getAllFolderChildren(
                 parent.id,
                 refreshFolderChildren,
             )
-                .toResult()
                 .getOrThrow()
                 .let { links ->
                     links.forEach { link ->

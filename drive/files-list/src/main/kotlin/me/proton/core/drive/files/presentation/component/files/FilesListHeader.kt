@@ -28,6 +28,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -62,7 +63,9 @@ fun FilesListHeader(
             onSorting = onSorting,
         )
         IconButton(
-            modifier = Modifier.size(DefaultButtonMinHeight),
+            modifier = Modifier
+                .size(DefaultButtonMinHeight)
+                .testTag(FilesListHeaderTestTag.layoutSwitcher),
             onClick = onToggleLayout
         ) {
             val (icon, contentDescription) = if (isDisplayingGridView) {
@@ -102,3 +105,7 @@ private val ToggleLayoutPaddingTop = 21.dp
 private val ToggleLayoutPaddingBottom = 11.dp
 private val ToggleLayoutSize = SmallIconSize
 private val ListHeaderHeight = 52.dp
+
+object FilesListHeaderTestTag {
+    const val layoutSwitcher = "files list layout switcher"
+}

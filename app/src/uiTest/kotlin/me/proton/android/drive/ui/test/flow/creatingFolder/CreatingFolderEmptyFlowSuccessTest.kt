@@ -16,12 +16,11 @@
  * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.proton.android.drive.ui.test.flow
+package me.proton.android.drive.ui.test.flow.creatingFolder
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import me.proton.android.drive.ui.robot.CreateFolderRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.robot.MoveToFolderRobot
 import me.proton.android.drive.ui.rules.UserLoginRule
 import me.proton.android.drive.ui.rules.WelcomeScreenRule
 import me.proton.android.drive.ui.test.BaseTest
@@ -32,12 +31,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class CreatingFolderFlowSuccessTest : BaseTest() {
+class CreatingFolderEmptyFlowSuccessTest : BaseTest() {
 
     private val randomFolderName get() = getRandomString()
     private val user
         get() = User(
-            dataSetScenario = "4",
             name = "proton_drive_${getRandomString(20)}"
         )
 
@@ -46,27 +44,6 @@ class CreatingFolderFlowSuccessTest : BaseTest() {
 
     @get:Rule
     val userLoginRule = UserLoginRule(testUser = user, shouldSeedUser = true)
-
-    @Test
-    fun createFolderViaMoveWindow() {
-        val subFolderName = "folder2" // from data set scenario 4
-        val newFolderName = getRandomString()
-
-        FilesTabRobot
-            .scrollToItemWithName(subFolderName)
-            .clickMoreOnFolder(subFolderName)
-            .clickMove()
-            .clickAddFolderToRoot()
-            .typeFolderName(newFolderName)
-            .clickCreate()
-
-        MoveToFolderRobot
-            .dismissSuccessGrowler(newFolderName, MoveToFolderRobot)
-            .scrollToItemWithName(newFolderName) // Can be removed after DRVAND-569 is fixed
-            .verify {
-                itemWithTextDisplayed(newFolderName)
-            }
-    }
 
     @Test
     fun createAFolderViaPlusButton() {
@@ -78,12 +55,10 @@ class CreatingFolderFlowSuccessTest : BaseTest() {
     }
 
     @Test
-    fun createAFolderViaSubFolderPlusButton() {
-        val subFolderName = "folder1" // from data set scenario 4
+    fun createChildFolderViaCTAButton() {
 
         FilesTabRobot
-            .clickOnFolder(subFolderName)
-            .clickPlusButton()
+            .clickAddFilesButton()
             .clickCreateFolder()
 
         createFolder(randomFolderName)
@@ -95,9 +70,9 @@ class CreatingFolderFlowSuccessTest : BaseTest() {
             .clickCreate()
 
         FilesTabRobot
-            .dismissSuccessGrowler(folderName, FilesTabRobot)
+            .dismissFolderCreateSuccessGrowler(folderName, FilesTabRobot)
             .verify {
-                itemWithTextDisplayed(folderName)
+                itemIsDisplayed(folderName)
             }
     }
 }

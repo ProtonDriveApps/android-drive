@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,12 +35,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -49,24 +52,29 @@ import me.proton.android.drive.extension.getDefaultMessage
 import me.proton.android.drive.ui.effect.PreviewEffect
 import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.navigation.Screen
-import me.proton.core.domain.arch.DataResult
-import me.proton.core.domain.arch.mapSuccess
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.transformSuccess
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.extension.asSuccess
+import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.entity.toFileTypeCategory
+import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentUri
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
+import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinksCount
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
-import me.proton.core.drive.drivelink.list.domain.usecase.GetSortedDecryptedDriveLinks
+import me.proton.core.drive.drivelink.list.domain.usecase.GetDecryptedDriveLinks
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetDecryptedOfflineDriveLinks
+import me.proton.core.drive.drivelink.offline.domain.usecase.GetOfflineDriveLinksCount
+import me.proton.core.drive.drivelink.sorting.domain.usecase.SortDriveLinks
 import me.proton.core.drive.files.preview.presentation.component.PreviewComposable
 import me.proton.core.drive.files.preview.presentation.component.event.PreviewViewEvent
 import me.proton.core.drive.files.preview.presentation.component.state.ContentState
@@ -74,8 +82,10 @@ import me.proton.core.drive.files.preview.presentation.component.state.PreviewCo
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewViewState
 import me.proton.core.drive.files.preview.presentation.component.toComposable
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
@@ -87,11 +97,16 @@ import me.proton.core.presentation.R as CorePresentation
 class PreviewViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val configurationProvider: ConfigurationProvider,
-    getDriveLink: GetDecryptedDriveLink,
+    getDriveLink: GetDriveLink,
+    getDecryptedDriveLink: GetDecryptedDriveLink,
     private val getFile: GetFile,
     private val getDocumentUri: GetDocumentUri,
-    getDecryptedDriveLinks: GetSortedDecryptedDriveLinks,
-    getOfflineDriveNodes: GetDecryptedOfflineDriveLinks,
+    getDecryptedDriveLinks: GetDecryptedDriveLinks,
+    getDecryptedOfflineDriveLinks: GetDecryptedOfflineDriveLinks,
+    getOfflineDriveLinksCount: GetOfflineDriveLinksCount,
+    getDriveLinksCount: GetDriveLinksCount,
+    getSorting: GetSorting,
+    sortDriveLinks: SortDriveLinks,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
@@ -108,20 +123,35 @@ class PreviewViewModel @Inject constructor(
             PagerType.FOLDER -> FolderContentProvider(
                 userId = userId,
                 getDriveLink = getDriveLink,
+                getDecryptedDriveLink = getDecryptedDriveLink,
+                getDriveLinksCount = getDriveLinksCount,
                 getDecryptedDriveLinks = getDecryptedDriveLinks,
+                getSorting = getSorting,
+                sortDriveLinks = sortDriveLinks,
+                coroutineScope = viewModelScope,
                 fileId = fileId,
             )
             PagerType.SINGLE -> SingleContentProvider(
-                getDriveLink = getDriveLink,
-                fileId = fileId,
+                getDecryptedDriveLink = getDecryptedDriveLink,
             )
-            PagerType.OFFLINE -> OfflineContentProvider(userId, getOfflineDriveNodes)
+            PagerType.OFFLINE -> OfflineContentProvider(
+                userId = userId,
+                getDecryptedOfflineDriveLinks = getDecryptedOfflineDriveLinks,
+                getSorting = getSorting,
+                getDecryptedDriveLink = getDecryptedDriveLink,
+                sortDriveLinks = sortDriveLinks,
+                getOfflineDriveLinksCount = getOfflineDriveLinksCount,
+                coroutineScope = viewModelScope,
+            )
         }
 
     private val contentStatesCache = mutableMapOf<FileId, Flow<ContentState>>()
 
-    private val driveLinks: StateFlow<List<DriveLink.File>?> = provider.getDriveLinks()
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    private val driveLinks: StateFlow<List<DriveLink.File>?> = trigger.transformLatest { trigger ->
+        emitAll(
+            provider.getDriveLinks(trigger.fileId)
+        )
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val _previewEffect = MutableSharedFlow<PreviewEffect>()
     private val isFullscreen = MutableStateFlow(false)
@@ -134,11 +164,13 @@ class PreviewViewModel @Inject constructor(
         currentIndex = 0,
     )
     val viewState: Flow<PreviewViewState> = driveLinks.filterNotNull().transformLatest { driveLinks ->
-        val index = driveLinks.indexOfFirst { link -> link.id == fileId }
+        val indexOfFirst = driveLinks.indexOfFirst { link -> link.id == fileId }
         val contentStates =
             driveLinks.associateBy({ link -> link.id }) { link -> link.getContentStateFlow() }
-        val previewContentState = if (driveLinks.isEmpty()) PreviewContentState.Empty
-        else PreviewContentState.Content
+        val (previewContentState, index) = when {
+            driveLinks.isEmpty() || indexOfFirst == -1 -> PreviewContentState.Empty to 0
+            else -> PreviewContentState.Content to indexOfFirst
+        }
         val previewViewState = initialViewState.copy(
             isFullscreen = isFullscreen,
             previewContentState = previewContentState,
@@ -274,59 +306,146 @@ fun GetFile.State.toContentState(viewModel: PreviewViewModel): ContentState {
 }
 
 interface PreviewContentProvider {
-    fun getDriveLinks(): Flow<List<DriveLink.File>>
+    fun getDriveLinks(fileId: FileId): Flow<List<DriveLink.File>>
 }
 
 @ExperimentalCoroutinesApi
 class FolderContentProvider(
     private val userId: UserId,
-    private val getDriveLink: GetDecryptedDriveLink,
-    private val getDecryptedDriveLinks: GetSortedDecryptedDriveLinks,
-    private val fileId: FileId,
+    private val getDriveLink: GetDriveLink,
+    private val getDecryptedDriveLink: GetDecryptedDriveLink,
+    private val getDriveLinksCount: GetDriveLinksCount,
+    private val getDecryptedDriveLinks: GetDecryptedDriveLinks,
+    private val getSorting: GetSorting,
+    private val sortDriveLinks: SortDriveLinks,
+    coroutineScope: CoroutineScope,
+    fileId: FileId,
 ) : PreviewContentProvider {
 
-    override fun getDriveLinks(): Flow<List<DriveLink.File>> =
+    private val folderId: StateFlow<FolderId?> =
         getDriveLink(fileId)
-            .transformSuccess<DriveLink.File, List<DriveLink.File>> { (_, driveLink) ->
+            .transformSuccess { (_, driveLink) ->
                 emitAll(
                     getDriveLink(userId, folderId = driveLink.parentId)
-                        .transformSuccess { (_, folder) ->
-                            emitAll(
-                                getDecryptedDriveLinks(folder.id).map { driveLinksResult ->
-                                    driveLinksResult.getOrNull()?.filterIsInstance<DriveLink.File>()?.asSuccess
-                                        ?: DataResult.Error.Local(null, driveLinksResult.exceptionOrNull())
-                                }
-                            )
-                        }
                 )
             }
             .mapSuccessValueOrNull()
-            .filterNotNull()
+            .map { driveLink -> driveLink?.id }
+            .stateIn(coroutineScope, SharingStarted.Eagerly, null)
+
+    private val decryptedDriveLinks: StateFlow<List<DriveLink.File>> =
+        folderId
+            .transformLatest { folderId ->
+                folderId?.let {
+                    emitAll(
+                        getDriveLinksCount(folderId)
+                            .distinctUntilChanged()
+                            .mapLatest {
+                                getDecryptedDriveLinks(folderId)
+                                    .getOrNull()
+                                    ?.filterIsInstance<DriveLink.File>()
+                                    ?: emptyList<DriveLink.File>()
+                            }
+                    )
+                } ?: emit(emptyList())
+            }
+            .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+
+    override fun getDriveLinks(fileId: FileId): Flow<List<DriveLink.File>> = combine(
+        getSorting(userId),
+        getDecryptedDriveLink(fileId).filterSuccessOrError().mapSuccessValueOrNull(),
+        decryptedDriveLinks,
+    ) { sorting, driveLink, links ->
+        val driveLinks = if (driveLink == null) {
+            links.toMutableList().apply {
+                removeIf { link -> link.id == fileId }
+            }
+        } else {
+            links.toMutableList().apply {
+                if (removeIf { link -> link.id == fileId }) {
+                    add(driveLink)
+                }
+            }
+        }
+        coRunCatching {
+            sortDriveLinks(
+                sorting = sorting,
+                driveLinks = driveLinks,
+            ).filterIsInstance<DriveLink.File>()
+        }.fold(
+            onSuccess = { sortedDriveLinks -> sortedDriveLinks },
+            onFailure = { error ->
+                error.log(LogTag.DEFAULT, "Sorting failed fallback to unsorted list")
+                driveLinks
+            }
+        )
+    }
 }
 
 
 @ExperimentalCoroutinesApi
 class SingleContentProvider(
-    private val getDriveLink: GetDecryptedDriveLink,
-    private val fileId: FileId,
+    private val getDecryptedDriveLink: GetDecryptedDriveLink,
 ) : PreviewContentProvider {
 
-    override fun getDriveLinks(): Flow<List<DriveLink.File>> =
-        getDriveLink(fileId)
-            .mapSuccess { (_, driveLink) -> listOf(driveLink).asSuccess }
+    override fun getDriveLinks(fileId: FileId): Flow<List<DriveLink.File>> =
+        getDecryptedDriveLink(fileId)
+            .filterSuccessOrError()
             .mapSuccessValueOrNull()
-            .filterNotNull()
+            .transformLatest { driveLink ->
+                emit(listOfNotNull(driveLink))
+            }
 }
 
 @ExperimentalCoroutinesApi
 class OfflineContentProvider(
     private val userId: UserId,
-    private val getOfflineDriveLinks: GetDecryptedOfflineDriveLinks,
+    private val getDecryptedOfflineDriveLinks: GetDecryptedOfflineDriveLinks,
+    private val getSorting: GetSorting,
+    private val getDecryptedDriveLink: GetDecryptedDriveLink,
+    private val sortDriveLinks: SortDriveLinks,
+    getOfflineDriveLinksCount: GetOfflineDriveLinksCount,
+    coroutineScope: CoroutineScope,
 ) : PreviewContentProvider {
 
-    override fun getDriveLinks(): Flow<List<DriveLink.File>> =
-        getOfflineDriveLinks(userId)
-            .map { driveLinks ->
-                driveLinks.filterIsInstance<DriveLink.File>()
+    private val decryptedOfflineDriveLinks: StateFlow<List<DriveLink.File>> =
+        getOfflineDriveLinksCount(userId)
+            .distinctUntilChanged()
+            .mapLatest {
+                getDecryptedOfflineDriveLinks(userId,)
+                    .getOrNull()
+                    ?.filterIsInstance<DriveLink.File>()
+                    ?: emptyList<DriveLink.File>()
             }
+            .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+
+    override fun getDriveLinks(fileId: FileId): Flow<List<DriveLink.File>> = combine(
+        getSorting(userId),
+        getDecryptedDriveLink(fileId).filterSuccessOrError().mapSuccessValueOrNull(),
+        decryptedOfflineDriveLinks,
+    ) { sorting, driveLink, links ->
+        val driveLinks = if (driveLink == null) {
+            links.toMutableList().apply {
+                removeIf { link -> link.id == fileId }
+            }
+        } else {
+            links.toMutableList().apply {
+                if (removeIf { link -> link.id == fileId }) {
+                    add(driveLink)
+                }
+            }
+        }
+        coRunCatching {
+            sortDriveLinks(
+                sorting = sorting,
+                driveLinks = driveLinks,
+            ).filterIsInstance<DriveLink.File>()
+        }.fold(
+            onSuccess = { sortedDriveLinks -> sortedDriveLinks },
+            onFailure = { error ->
+                error.log(LogTag.DEFAULT, "Sorting failed fallback to unsorted list")
+                driveLinks
+            }
+        )
+    }
 }

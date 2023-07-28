@@ -29,14 +29,22 @@ import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 @Dao
 interface DriveLinkOfflineDao : DriveLinkDao {
 
-    @Query(
-        """
-        SELECT ${DriveLinkDao.DRIVE_LINK_SELECT} FROM ${DriveLinkDao.DRIVE_LINK_ENTITY} 
-        WHERE 
-            LinkEntity.user_id = :userId AND 
+    @Query("""
+        SELECT COUNT(*) FROM (SELECT DISTINCT LinkEntity.id FROM ${DriveLinkDao.DRIVE_LINK_ENTITY}
+        WHERE
+            LinkEntity.user_id = :userId AND
+            ${LinkOfflineDao.OFFLINE_CONDITION} AND
+            ${LinkTrashDao.NOT_TRASHED_CONDITION})
+    """)
+    fun getOfflineLinksCountFlow(userId: UserId): Flow<Int>
+
+    @Query("""
+        SELECT ${DriveLinkDao.DRIVE_LINK_SELECT} FROM ${DriveLinkDao.DRIVE_LINK_ENTITY}
+        WHERE
+            LinkEntity.user_id = :userId AND
             ${LinkOfflineDao.OFFLINE_CONDITION} AND
             ${LinkTrashDao.NOT_TRASHED_CONDITION}
-            """
-    )
-    fun getOfflineLinks(userId: UserId): Flow<List<DriveLinkEntityWithBlock>>
+        LIMIT :limit OFFSET :offset
+    """)
+    fun getOfflineLinks(userId: UserId, limit: Int, offset: Int): Flow<List<DriveLinkEntityWithBlock>>
 }

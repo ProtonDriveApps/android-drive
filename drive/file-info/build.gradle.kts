@@ -27,4 +27,5 @@ driveModule(
     api(project(":drive:drivelink"))
     api(project(":drive:link"))
     implementation(project(":drive:thumbnail"))
+    implementation(libs.coil.compose)
 }

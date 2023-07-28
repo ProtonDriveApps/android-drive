@@ -31,11 +31,13 @@ import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.log.DriveLogger
 import me.proton.android.drive.log.NoOpLogger
 import me.proton.android.drive.log.deviceInfo
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.usersettings.domain.DeviceSettingsHandler
 import me.proton.core.usersettings.domain.onDeviceSettingsChanged
 import me.proton.core.util.kotlin.CoreLogger
 import timber.log.Timber
 import java.util.concurrent.Executors
+import me.proton.android.drive.usecase.GetFileLoggerTree
 
 class LoggerInitializer : Initializer<Unit> {
 
@@ -55,7 +57,14 @@ class LoggerInitializer : Initializer<Unit> {
 
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
-            strictMode(logger)
+            if (entryPoint.configurationProvider().logToFileInDebugEnabled) {
+                entryPoint.getFileLoggerTree().invoke()
+                    .onSuccess { fileLoggerTree ->
+                        Timber.plant(fileLoggerTree)
+                    }
+            } else {
+                strictMode(logger)
+            }
         }
         CoreLogger.set(logger)
         logger.deviceInfo()
@@ -88,5 +97,7 @@ class LoggerInitializer : Initializer<Unit> {
     interface LoggerInitializerEntryPoint {
         fun driveLogger(): DriveLogger
         fun deviceSettingsHandler(): DeviceSettingsHandler
+        fun configurationProvider(): ConfigurationProvider
+        fun getFileLoggerTree(): GetFileLoggerTree
     }
 }

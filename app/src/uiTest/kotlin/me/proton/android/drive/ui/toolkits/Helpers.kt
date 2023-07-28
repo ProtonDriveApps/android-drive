@@ -24,7 +24,7 @@ import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onFirst
 import androidx.test.platform.app.InstrumentationRegistry
-import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.test.AbstractBaseTest
 import me.proton.core.test.android.instrumented.ProtonTest
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.test.fusion.FusionConfig
@@ -38,7 +38,7 @@ fun getRandomString(length: Int = 10): String {
         .joinToString("")
 }
 
-fun BaseTest.Companion.screenshot() {
+fun AbstractBaseTest.Companion.screenshot() {
     val screenshotNumber = screenshotCounter.getAndIncrement()
     val fileName = "${screenshotLocation}/${screenshotNumber}_${testName.methodName}.png"
 

@@ -18,34 +18,42 @@
 
 package me.proton.core.drive.drivelink.offline.domain.usecase
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.mapCatching
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptDriveLinks
-import me.proton.core.drive.drivelink.sorting.domain.usecase.SortDriveLinks
+import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.linktrash.domain.usecase.IsLinkOrAnyAncestorTrashed
-import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import javax.inject.Inject
 
 class GetDecryptedOfflineDriveLinks @Inject constructor(
     private val decryptDriveLinks: DecryptDriveLinks,
     private val getOfflineDriveLinks: GetOfflineDriveLinks,
-    private val getSorting: GetSorting,
-    private val sortDriveLinks: SortDriveLinks,
     private val isLinkOrAnyAncestorTrashed: IsLinkOrAnyAncestorTrashed,
+    private val configurationProvider: ConfigurationProvider,
 ) {
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(userId: UserId) =
-        getSorting(userId).flatMapLatest { sorting ->
-            getOfflineDriveLinks(userId).map { driveLinks ->
-                sortDriveLinks(
-                    sorting = sorting,
-                    driveLinks = decryptDriveLinks(
-                        driveLinks.filterNot { driveLink -> isLinkOrAnyAncestorTrashed(driveLink.id) }
-                    )
-                )
-            }
+    operator fun invoke(userId: UserId, fromIndex: Int, count: Int): Flow<Result<List<DriveLink>>> =
+        getOfflineDriveLinks(userId, fromIndex, count).mapCatching { driveLinks ->
+            decryptDriveLinks(
+                driveLinks.filterNot { driveLink -> isLinkOrAnyAncestorTrashed(driveLink.id) }
+            )
         }
+
+    suspend operator fun invoke(userId: UserId): Result<List<DriveLink>> = coRunCatching {
+        val count = configurationProvider.dbPageSize
+        val driveLinks = mutableListOf<DriveLink>()
+        var loaded: Int
+        var fromIndex = 0
+        do {
+            val decryptedOfflineDriveLinks = invoke(userId, fromIndex, count).first().getOrThrow()
+            fromIndex += count
+            loaded = decryptedOfflineDriveLinks.size
+            driveLinks.addAll(decryptedOfflineDriveLinks)
+        } while (loaded == count)
+        driveLinks
+    }
 }

@@ -22,4 +22,5 @@ data class DebugSettingsViewState(
     val baseUrl: String,
     val appVersionHeader: String,
     val useExceptionMessage: Boolean,
+    val logToFileEnabled: Boolean,
 )

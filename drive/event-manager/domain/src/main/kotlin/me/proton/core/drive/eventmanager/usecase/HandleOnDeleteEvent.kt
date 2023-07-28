@@ -19,8 +19,6 @@
 package me.proton.core.drive.eventmanager.usecase
 
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinks
 import me.proton.core.drive.drivelink.download.domain.usecase.CancelDownload
@@ -50,8 +48,7 @@ class HandleOnDeleteEvent @Inject constructor(
                 cancelDownload(driveLink)
                 when (driveLink) {
                     is DriveLink.File -> deleteLocalContent(driveLink)
-                    is DriveLink.Folder -> getChildren(driveLink.id, flowOf(false))
-                        .toResult()
+                    is DriveLink.Folder -> getChildren(driveLink.id, false)
                         .onSuccess { children ->
                             invoke(children.ids)
                         }

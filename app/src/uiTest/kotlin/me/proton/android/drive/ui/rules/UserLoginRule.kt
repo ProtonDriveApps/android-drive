@@ -19,8 +19,8 @@
 package me.proton.android.drive.ui.rules
 
 import kotlinx.coroutines.runBlocking
-import me.proton.android.drive.ui.test.BaseTest.Companion.loginTestHelper
-import me.proton.android.drive.ui.test.BaseTest.Companion.quark
+import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.loginTestHelper
+import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.quark
 import me.proton.core.test.android.instrumented.ProtonTest.Companion.testTag
 import me.proton.core.test.quark.data.User
 import me.proton.core.util.kotlin.CoreLogger

@@ -18,7 +18,6 @@
 
 package me.proton.android.drive.ui.viewmodel
 
-import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -41,6 +40,7 @@ import me.proton.android.drive.lock.domain.manager.AppLockManager
 import me.proton.android.drive.lock.domain.usecase.GetAutoLockDuration
 import me.proton.android.drive.lock.domain.usecase.HasEnableAppLockTimestamp
 import me.proton.android.drive.settings.DebugSettings
+import me.proton.android.drive.usecase.SendDebugLog
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.ClearCacheFolder
@@ -61,7 +61,7 @@ import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
-@SuppressLint("StaticFieldLeak")
+@Suppress("StaticFieldLeak", "LongParameterList")
 class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val debugSettings: DebugSettings,
@@ -74,6 +74,7 @@ class SettingsViewModel @Inject constructor(
     private val clearCacheFolder: ClearCacheFolder,
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
+    private val sendDebugLog: SendDebugLog,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -84,10 +85,11 @@ class SettingsViewModel @Inject constructor(
         debugSettings.hostFlow,
         debugSettings.appVersionHeaderFlow,
         debugSettings.useExceptionMessageFlow,
+        debugSettings.logToFileEnabledFlow,
         getThemeStyle(userId),
         appLockManager.enabled,
         getAutoLockDuration(),
-    ) { baseUrl, host, appVersionHeader, useExceptionMessage, themeStyle, enabled, autoLockDuration ->
+    ) { baseUrl, host, appVersionHeader, useExceptionMessage, logToFileEnabled, themeStyle, enabled, autoLockDuration ->
         SettingsViewState(
             navigationIcon = CorePresentation.drawable.ic_arrow_back,
             appNameResId = I18N.string.app_name,
@@ -109,6 +111,7 @@ class SettingsViewModel @Inject constructor(
                 baseUrl = baseUrl,
                 appVersionHeader = appVersionHeader,
                 useExceptionMessage = useExceptionMessage,
+                logToFileEnabled = logToFileEnabled,
             ),
             appAccessSubtitleResId = getAppAccessSubtitleResId(enabled),
             isAutoLockDurationsVisible = enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O,
@@ -183,12 +186,15 @@ class SettingsViewModel @Inject constructor(
         baseUrl: String,
         appVersionHeader: String,
         useExceptionMessage: Boolean,
+        logToFileEnabled: Boolean,
     ): DebugSettingsStateAndEvent? =
         BuildConfig.DEBUG
             .takeIf { isDebug -> isDebug }
             ?.let {
                 DebugSettingsStateAndEvent(
-                    viewState = DebugSettingsViewState(host, baseUrl, appVersionHeader, useExceptionMessage),
+                    viewState = DebugSettingsViewState(
+                        host, baseUrl, appVersionHeader, useExceptionMessage, logToFileEnabled,
+                    ),
                     viewEvent = debugSettingsViewEvent
                 )
             }
@@ -197,7 +203,28 @@ class SettingsViewModel @Inject constructor(
         override val onUpdateHost = { host: String -> debugSettings.host = host }
         override val onUpdateBaseUrl = { baseUrl: String -> debugSettings.baseUrl = baseUrl }
         override val onUpdateAppVersionHeader = { header: String -> debugSettings.appVersionHeader = header }
-        override val onToggleUseExceptionMessage = { useExceptionMessage: Boolean -> debugSettings.useExceptionMessage = useExceptionMessage }
+        override val onToggleUseExceptionMessage = { useExceptionMessage: Boolean ->
+            debugSettings.useExceptionMessage = useExceptionMessage
+        }
+        override val onToggleLogToFileEnabled = { logToFileEnabled: Boolean ->
+            debugSettings.logToFileInDebugEnabled = logToFileEnabled
+        }
+        override val sendDebugLog = { context: Context ->
+            viewModelScope.launch {
+                sendDebugLog(context)
+                    .onFailure { error ->
+                        broadcastMessages(
+                            userId = userId,
+                            message = error.getDefaultMessage(
+                                context = context,
+                                useExceptionMessage = true,
+                            ),
+                            type = BroadcastMessage.Type.ERROR,
+                        )
+                    }
+            }
+            Unit
+        }
         override val onReset = { debugSettings.reset(viewModelScope) }
     }
 

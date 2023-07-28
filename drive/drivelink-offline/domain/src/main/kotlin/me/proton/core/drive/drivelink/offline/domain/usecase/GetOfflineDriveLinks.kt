@@ -26,6 +26,6 @@ class GetOfflineDriveLinks @Inject constructor(
     private val driveLinkOfflineRepository: DriveLinkOfflineRepository,
 ) {
 
-    operator fun invoke(userId: UserId) =
-        driveLinkOfflineRepository.getOfflineDriveLinks(userId)
+    operator fun invoke(userId: UserId, fromIndex: Int, count: Int) =
+        driveLinkOfflineRepository.getOfflineDriveLinks(userId, fromIndex, count)
 }

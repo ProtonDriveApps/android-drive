@@ -48,7 +48,7 @@ interface UploadWorkManager {
         shouldDeleteSource: Boolean
     )
 
-    fun cancel(uploadFileLink: UploadFileLink)
+    suspend fun cancel(uploadFileLink: UploadFileLink)
 
     suspend fun cancelAll(userId: UserId)
 

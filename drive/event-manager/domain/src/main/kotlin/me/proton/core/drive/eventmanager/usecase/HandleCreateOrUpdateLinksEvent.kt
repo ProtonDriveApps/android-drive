@@ -38,15 +38,15 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
 
     suspend operator fun invoke(vos: List<LinkEventVO>) {
         val links = vos.map { vo -> vo.link }
-        val modifiedStateLinks = links.modifiedStateLinks()
+        val modifiedStateOrParentLinks = links.modifiedStateOrParentLinks()
         insertOrUpdateLinks(links)
         setOrRemoveTrashState(links)
-        updateOfflineContent(modifiedStateLinks.ids)
+        updateOfflineContent(modifiedStateOrParentLinks.ids)
     }
 
-    private suspend fun List<Link>.modifiedStateLinks() = filter { link ->
+    private suspend fun List<Link>.modifiedStateOrParentLinks() = filter { link ->
         getLink(link.id, flowOf { false }).toResult().getOrNull()?.let { staleLink ->
-            staleLink.state != link.state
+            (staleLink.state != link.state) or (staleLink.parentId != link.parentId)
         } ?: true
     }
 }

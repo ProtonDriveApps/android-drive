@@ -22,11 +22,16 @@ import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTa
 import me.proton.test.fusion.Fusion.node
 
 interface NavigationBarRobot : Robot {
-    val navigationBackButton get() = node.withTag(TopAppBarComponentTestTag.navigationButton) //TODO: find proper button
-    val navigationCloseButton get() = node.withTag("Not yet implemented")
-    val navigationHamburgerButton get() = node.withTag("Not yet implemented")
+    /** Ideally, different selectors should be used for 'back' and 'hamburger' icons **/
+    private val navigationButton
+        get() = node.withTag(TopAppBarComponentTestTag.navigationButton).isClickable()
+    val navigationHamburgerButton get() = navigationButton
+    val navigationBackButton get() = navigationButton
+    val navigationCloseButton get() = navigationButton
 
     fun <T : Robot> clickBack(goesTo: T) = navigationBackButton.clickTo(goesTo)
+
     fun <T : Robot> close(goesTo: T) = navigationCloseButton.clickTo(goesTo)
-    fun openSidebar() = navigationHamburgerButton.clickTo(SidebarRobot)
+
+    fun clickSidebarButton() = navigationHamburgerButton.clickTo(SidebarRobot)
 }

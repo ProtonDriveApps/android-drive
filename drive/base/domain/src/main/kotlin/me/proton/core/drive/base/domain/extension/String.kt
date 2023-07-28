@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.base.domain.extension
 
+import me.proton.core.drive.base.domain.entity.Percentage
 import java.io.ByteArrayOutputStream
 import java.util.zip.GZIPOutputStream
 
@@ -63,3 +64,7 @@ fun String.gzipCompress(): ByteArray = ByteArrayOutputStream().use { outputStrea
     GZIPOutputStream(outputStream).bufferedWriter(Charsets.UTF_8).use { writer -> writer.write(this) }
     outputStream.toByteArray()
 }
+
+val String.asciiCharacters get() = count { c -> c.code in 34..126 }
+
+val String.percentageOfAsciiChars: Percentage get() = Percentage(asciiCharacters / length.toFloat())

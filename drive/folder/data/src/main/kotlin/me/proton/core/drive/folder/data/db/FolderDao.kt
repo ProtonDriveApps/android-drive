@@ -19,18 +19,11 @@ package me.proton.core.drive.folder.data.db
 
 import androidx.room.Dao
 import androidx.room.Query
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.mapLatest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.data.db.LinkDao
 import me.proton.core.drive.link.data.db.LinkDao.Companion.LINK_WITH_PROPERTIES_ENTITY
-import me.proton.core.drive.link.data.db.entity.LinkWithProperties
 import me.proton.core.drive.link.data.db.entity.LinkWithPropertiesEntity
-import me.proton.core.drive.link.data.extension.toLinkWithProperties
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @Dao
 interface FolderDao : LinkDao {
 
@@ -50,23 +43,18 @@ interface FolderDao : LinkDao {
     suspend fun hasFolderChildrenWithHash(userId: UserId, shareId: String, folderId: String, hash: String): Boolean
 
     @Query("""
-        SELECT * FROM $LINK_WITH_PROPERTIES_ENTITY WHERE
+        SELECT * FROM $LINK_WITH_PROPERTIES_ENTITY
+        WHERE
             user_id = :userId AND 
             share_id = :shareId AND 
             parent_id = :folderLinkId
+        LIMIT :limit OFFSET :offset
     """)
-    fun getFolderChildren(
+    suspend fun getFolderChildren(
         userId: UserId,
         shareId: String,
-        folderLinkId: String
-    ): Flow<List<LinkWithPropertiesEntity>>
-
-    fun getFolderChildrenFlow(userId: UserId, shareId: String, folderLinkId: String): Flow<List<LinkWithProperties>> =
-        getFolderChildren(userId, shareId, folderLinkId)
-            .distinctUntilChanged()
-            .mapLatest { links ->
-                links.map { linkWithPropertiesEntity ->
-                    linkWithPropertiesEntity.toLinkWithProperties()
-                }
-            }
+        folderLinkId: String,
+        limit: Int,
+        offset: Int,
+    ): List<LinkWithPropertiesEntity>
 }

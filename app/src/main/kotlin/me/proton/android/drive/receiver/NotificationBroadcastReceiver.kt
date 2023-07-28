@@ -27,6 +27,7 @@ import me.proton.android.drive.extension.log
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.notification.domain.entity.NotificationId
+import me.proton.core.drive.notification.domain.usecase.CancelAndRemoveNotification
 import me.proton.core.drive.notification.domain.usecase.RemoveNotification
 import me.proton.core.drive.upload.domain.usecase.CancelAllUpload
 import me.proton.core.util.kotlin.CoreLogger
@@ -37,6 +38,7 @@ import javax.inject.Inject
 class NotificationBroadcastReceiver : BroadcastReceiver() {
 
     @Inject lateinit var removeNotification: RemoveNotification
+    @Inject lateinit var cancelAndRemoveNotification: CancelAndRemoveNotification
     @Inject lateinit var cancelAllUpload: CancelAllUpload
 
     override fun onReceive(context: Context?, intent: Intent?) = intent?.action?.let { action ->

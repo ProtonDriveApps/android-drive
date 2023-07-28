@@ -18,62 +18,15 @@
 
 package me.proton.android.drive.ui.robot
 
-
-import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag
-import me.proton.core.drive.files.presentation.component.FilesTestTag
-import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag
-import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag.ItemType
-import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag.item
-import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag.threeDotsButton
-import me.proton.test.fusion.Fusion.allNodes
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.FusionConfig.targetContext
-import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
-object FilesTabRobot : NavigationBarRobot, HomeRobot {
+object FilesTabRobot : NavigationBarRobot, HomeRobot, LinksRobot, GrowlerRobot {
     private val addFilesButton get() = node.withText(I18N.string.action_empty_files_add_files)
     private val plusButton get() = node.withContentDescription(I18N.string.content_description_files_upload_upload_file)
-    private val selectedOptionsButton get() = node.withContentDescription(I18N.string.content_description_selected_options)
-    private fun itemWithName(name: String) = node.withTag(item).withText(name)
-    private val fileList get() = node.withTag(FilesTestTag.content)
     private val cancelUploadButton get() = node.withContentDescription(I18N.string.files_upload_content_description_cancel_upload)
-    private fun moreButton(itemName: String, itemType: ItemType) =
-        node
-            .withTag(threeDotsButton(itemType))
-            .hasSibling(node.withText(itemName))
-
-    fun itemWithTextDisplayed(text: String) {
-        itemWithName(text).await { assertIsDisplayed() }
-    }
-
-    fun itemWithThumbnail(text: String) {
-        node
-            .withAnyTag(FilesListItemComponentTestTag.imageWithThumbnail)
-            .hasSibling(node.withText(text))
-            .await { assertIsDisplayed() }
-    }
-    fun sharedItemWithText(text: String) {
-        node
-            .withAnyTag(FilesListItemComponentTestTag.itemWithSharedIcon)
-            .hasSibling(node.withText(text))
-            .await(20.seconds) { assertIsDisplayed() }
-    }
-    fun imageWithoutThumbnail(text: String) {
-        node
-            .withAnyTag(FilesListItemComponentTestTag.imageWithoutThumbnail)
-            .hasSibling(node.withText(text))
-            .await { assertIsDisplayed() }
-    }
-
-    fun itemWithTextDoesNotExist(text: String) {
-        itemWithName(text).await { assertDoesNotExist() }
-    }
-
-    fun scrollToItemWithName(itemName: String): FilesTabRobot = apply {
-        allNodes.withTag(item).assertAny(node.isEnabled())
-        fileList.scrollTo(node.withText(itemName))
-    }
+    private val selectedOptionsButton get() = node.withContentDescription(I18N.string.content_description_selected_options)
 
     fun clickOptions() =
         selectedOptionsButton
@@ -81,37 +34,6 @@ object FilesTabRobot : NavigationBarRobot, HomeRobot {
 
     fun clickPlusButton() = plusButton.clickTo(ParentFolderOptionsRobot)
     fun clickAddFilesButton() = addFilesButton.clickTo(ParentFolderOptionsRobot)
-
-    fun clickMoreOnItem(title: String) =
-        node
-            .withAnyTag(threeDotsButton(ItemType.File), threeDotsButton(ItemType.Folder))
-            .hasSibling(node.withText(title))
-            .clickTo(FileFolderOptionsRobot)
-
-    fun clickMoreOnFolder(title: String) =
-        moreButton(title, ItemType.Folder).clickTo(FileFolderOptionsRobot)
-
-    fun clickMoreOnFile(title: String) =
-        moreButton(title, ItemType.File).clickTo(FileFolderOptionsRobot)
-
-    fun clickOnFile(name: String) =
-        node
-            .withText(name)
-            .hasSibling(node.withTag(threeDotsButton(ItemType.File)))
-            .clickTo(PreviewRobot)
-
-    fun longClickOnFile(name: String) =
-        node
-            .withText(name)
-            .hasSibling(node.withTag(threeDotsButton(ItemType.File)))
-            .longClickTo(this)
-
-    fun clickOnFolder(name: String) =
-        node
-            .withText(name)
-            .hasSibling(node.withTag(threeDotsButton(ItemType.Folder)))
-            .clickTo(this)
-
     fun clickCancelUpload() = cancelUploadButton.clickTo(this)
 
     fun assertFilesBeingUploaded(count: Int, folderName: String) = node.withText(

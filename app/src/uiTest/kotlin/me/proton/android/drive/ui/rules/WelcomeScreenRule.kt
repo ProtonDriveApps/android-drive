@@ -19,7 +19,7 @@
 package me.proton.android.drive.ui.rules
 
 import kotlinx.coroutines.runBlocking
-import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.test.AbstractBaseTest
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -27,7 +27,7 @@ import org.junit.runners.model.Statement
 class WelcomeScreenRule(private val showWelcomeScreen: Boolean) : TestRule {
     override fun apply(base: Statement, description: Description): Statement {
         runBlocking {
-            BaseTest.uiTestHelper.showWelcomeScreenAfterLogin(showWelcomeScreen)
+            AbstractBaseTest.uiTestHelper.showWelcomeScreenAfterLogin(showWelcomeScreen)
         }
         return base
     }

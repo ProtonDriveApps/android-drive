@@ -24,7 +24,7 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.drive.cryptobase.domain.extension.getAddressKeys
 import me.proton.core.drive.domain.extension.isUnlockable
-import me.proton.core.key.domain.decryptAndVerifyNestedKeyOrThrow
+import me.proton.core.key.domain.decryptNestedKeyOrThrow
 import me.proton.core.key.domain.entity.key.NestedPrivateKey
 import me.proton.core.key.domain.entity.key.PublicKeyRing
 import me.proton.core.key.domain.entity.keyholder.KeyHolder
@@ -51,7 +51,7 @@ class DecryptNestedPrivateKey @Inject constructor(
             key
         } else {
             decryptKey.useKeysAs(cryptoContext) { keys ->
-                keys.decryptAndVerifyNestedKeyOrThrow(
+                keys.decryptNestedKeyOrThrow(
                     nestedPrivateKey = key,
                     verifyKeyRing = if (allowCompromisedVerificationKeys) {
                         verifyKeyRing.allowCompromisedKeys()

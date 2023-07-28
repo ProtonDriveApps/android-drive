@@ -61,7 +61,7 @@ class MoveFileFlowSuccessTest : BaseTest() {
             .clickBack(FilesTabRobot)
             .scrollToItemWithName(file)
             .verify {
-                itemWithTextDisplayed(file)
+                itemIsDisplayed(file)
             }
     }
 
@@ -74,7 +74,7 @@ class MoveFileFlowSuccessTest : BaseTest() {
             .clickMoreOnItem(file)
             .clickMove()
             .scrollToItemWithName(folder)
-            .clickOnFolder(folder)
+            .clickOnFolderToMove(folder)
             .clickMoveToFolder(folder)
             .verify {
                 nodeWithTextDisplayed(I18N.string.file_operation_moving_file_successful)
@@ -83,7 +83,7 @@ class MoveFileFlowSuccessTest : BaseTest() {
             .scrollToItemWithName(folder)
             .clickOnFolder(folder)
             .verify {
-                itemWithTextDisplayed(file)
+                itemIsDisplayed(file)
             }
     }
 
@@ -93,10 +93,10 @@ class MoveFileFlowSuccessTest : BaseTest() {
         val folder = "folder3"
         FilesTabRobot
             .scrollToItemWithName(file)
-            .longClickOnFile(file)
+            .longClickOnItem(file)
             .clickOptions()
             .clickMove()
-            .clickOnFolder(folder)
+            .clickOnFolderToMove(folder)
             .clickMoveToFolder(folder)
             .verify {
                 nodeWithTextDisplayed(I18N.string.file_operation_moving_file_successful)

@@ -20,23 +20,22 @@ package me.proton.android.drive.ui.robot
 
 import me.proton.android.drive.ui.screen.MoveToFolderScreenTestTag
 import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag
-import me.proton.core.drive.files.presentation.component.FilesTestTag
-import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag.item
-import me.proton.test.fusion.Fusion.allNodes
+import me.proton.core.drive.files.presentation.component.FilesTestTag.listDetailsTitle
+import me.proton.core.drive.files.presentation.extension.ItemType
+import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.ui.compose.builders.OnNode
 import me.proton.core.drive.i18n.R as I18N
 
-object MoveToFolderRobot : NavigationBarRobot, Robot {
+object MoveToFolderRobot : NavigationBarRobot, Robot, LinksRobot, GrowlerRobot {
     private val moveToFolderScreen get() = node.withTag(MoveToFolderScreenTestTag.screen)
     private val appBar get() = node.withTag(TopAppBarComponentTestTag.appBar)
     private val rootDirectoryTitle = node.withText(I18N.string.title_my_files)
     private val addFolderButton get() = node.withTag(MoveToFolderScreenTestTag.plusFolderButton)
     private val cancelButton get() = node.withText(I18N.string.move_file_dismiss_action)
     private val moveButton get() = node.withText(I18N.string.move_file_confirm_action).isEnabled()
-    private val fileList get() = node.withTag(FilesTestTag.content)
-    private fun itemWithName(name: String) =
-        node.withTag(item).withText(name)
+
+    private fun itemWithName(name: String) = node.withTag(listDetailsTitle).withText(name)
 
     /**
      * Wait the folder to be loaded before clicking back,
@@ -71,18 +70,6 @@ object MoveToFolderRobot : NavigationBarRobot, Robot {
     private fun clickMoveToFolder(onNode: OnNode) = moveButton
         .hasAncestor(node.hasDescendant(appBar.hasDescendant(onNode)))
         .clickTo(FilesTabRobot)
-
-    fun clickOnFolder(name: String) =
-        itemWithName(name).clickTo(MoveToFolderRobot)
-
-    fun scrollToItemWithName(itemName: String) = apply {
-        allNodes.withTag(item).assertAny(node.isEnabled())
-        fileList.scrollTo(node.withText(itemName))
-    }
-
-    fun itemWithTextDisplayed(text: String) {
-        fileList.scrollTo(node.withText(text))
-    }
 
     override fun robotDisplayed() {
         moveToFolderScreen.assertIsDisplayed()

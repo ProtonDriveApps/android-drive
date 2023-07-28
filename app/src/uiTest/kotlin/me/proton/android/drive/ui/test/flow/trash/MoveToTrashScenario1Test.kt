@@ -16,29 +16,24 @@
  * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.proton.android.drive.ui.test.flow
+package me.proton.android.drive.ui.test.flow.trash
 
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.rules.UserLoginRule
 import me.proton.android.drive.ui.rules.WelcomeScreenRule
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.ui.toolkits.getRandomString
+import me.proton.core.drive.files.presentation.extension.LayoutType.Grid
 import me.proton.core.test.quark.data.User
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 
-@RunWith(Parameterized::class)
-class RenamingFlowSuccessTest(
-    private val itemToBeRenamed: String,
-    private val newItemName: String
-): BaseTest() {
+class MoveToTrashScenario1Test : BaseTest() {
 
     private val user
         get() = User(
-            dataSetScenario = "4",
-            name = "proton_drive_${getRandomString(20)}"
+            dataSetScenario = "1",
+            name = "proton_drive_${getRandomString(12)}"
         )
 
     @get:Rule
@@ -48,28 +43,35 @@ class RenamingFlowSuccessTest(
     val userLoginRule = UserLoginRule(testUser = user, shouldSeedUser = true)
 
     @Test
-    fun renameSuccess() {
+    fun removeEmptyFolderInGrid() {
+        val folder1 = "folder1"
+        val folder4 = "folder4"
+        val folder6 = "folder6"
+        val folder7 = "folder7"
+        val emptyFolder = "folder8"
+
         FilesTabRobot
-            .scrollToItemWithName(itemToBeRenamed)
-            .clickMoreOnItem(itemToBeRenamed)
-            .clickRename()
-            .clearName()
-            .typeName(newItemName)
-            .clickRename()
+            .verify { robotDisplayed() }
+            .clickLayoutSwitcher()
+            .clickOnFolder(folder1, Grid)
+            .clickOnFolder(folder4, Grid)
+            .clickOnFolder(folder6, Grid)
+            .clickOnFolder(folder7, Grid)
             .verify {
-                itemWithTextDisplayed(newItemName)
+                itemIsDisplayed(emptyFolder, Grid)
+            }
+            .clickMoreOnItem(emptyFolder)
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
+            .verify {
+                itemWithTextDoesNotExist(emptyFolder)
+            }
+            .openSidebarBySwipe()
+            .clickTrash()
+            .verify {
+                robotDisplayed()
+                itemIsDisplayed(emptyFolder, layoutType = Grid)
             }
     }
-
-    companion object {
-        @get:Parameterized.Parameters(name = "folderToBeRenamed={0}_newFolderName={1}")
-        @get:JvmStatic
-        val data = listOf(
-            arrayOf("folder1", "...folder1"),
-            arrayOf("folder2", "folder2..."),
-            arrayOf("folder3", "FoLdEr3"),
-            arrayOf("conf.json", "conf"),
-            arrayOf("index.html", ".index.html."),
-        )
-    }
 }
+

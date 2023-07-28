@@ -47,7 +47,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import me.proton.android.drive.extension.get
-import me.proton.android.drive.extension.popAllBackStack
 import me.proton.android.drive.extension.require
 import me.proton.android.drive.extension.requireArguments
 import me.proton.android.drive.extension.runFromRoute
@@ -132,8 +131,9 @@ fun AppNavGraph(
     LaunchedEffect(clearBackstackTrigger) {
         clearBackstackTrigger
             .collectLatest {
-                navController.popAllBackStack()
-                navController.navigate(Screen.Launcher.route)
+                navController.navigate(Screen.Launcher.route) {
+                    popUpTo(0)
+                }
                 homeNavController = createNavController(localContext)
             }
     }

@@ -16,33 +16,30 @@
  * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.proton.android.drive.ui.test.flow
+package me.proton.android.drive.ui.test.flow.trash
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.rules.UserLoginRule
 import me.proton.android.drive.ui.rules.WelcomeScreenRule
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.ui.toolkits.getRandomString
-import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.core.test.quark.data.User
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-import me.proton.core.drive.i18n.R as I18N
 
-@RunWith(Parameterized::class)
-class CreatingFolderFlowErrorTest(
-    private val folderName: String,
-    private val errorMessage: String,
-    private val friendlyName: String
-) : BaseTest() {
+@RunWith(AndroidJUnit4::class)
+class MoveToTrashScenario2Test : BaseTest() {
 
     private val user
         get() = User(
-            dataSetScenario = "4",
-            name = "proton_drive_${getRandomString(20)}"
+            dataSetScenario = "2",
+            name = "proton_drive_${getRandomString(12)}"
         )
+
+    private val fileName = "image.jpg"
+    private val folderName = "folder1"
 
     @get:Rule
     val welcomeScreenRule = WelcomeScreenRule(false)
@@ -51,29 +48,38 @@ class CreatingFolderFlowErrorTest(
     val userLoginRule = UserLoginRule(testUser = user, shouldSeedUser = true)
 
     @Test
-    fun createFolderError() {
+    fun moveAFileToTrash() {
         FilesTabRobot
-            .clickPlusButton()
-            .clickCreateFolder()
-            .typeFolderName(folderName)
-            .clickCreate()
+            .clickMoreOnItem(fileName)
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
+            .verify {
+                itemWithTextDoesNotExist(fileName)
+            }
 
         FilesTabRobot
+            .clickSidebarButton()
+            .clickTrash()
             .verify {
-                nodeWithTextDisplayed(errorMessage)
+                itemIsDisplayed(fileName)
             }
     }
 
-    companion object {
-        @get:Parameterized.Parameters(name = "{2}")
-        @get:JvmStatic
-        val data = listOf(
-            arrayOf("folder1", "A file or folder with that name already exists", "alreadyExists"),
-            arrayOf(
-                getRandomString(256),
-                StringUtils.stringFromResource(I18N.string.common_error_name_too_long, 255),
-                "tooLongFilename"
-            ),
-        )
+    @Test
+    fun removeFolderWithFiles() {
+        FilesTabRobot
+            .clickMoreOnItem(folderName)
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
+            .verify {
+                itemWithTextDoesNotExist(folderName)
+            }
+
+        FilesTabRobot
+            .clickSidebarButton()
+            .clickTrash()
+            .verify {
+                itemIsDisplayed(folderName)
+            }
     }
 }

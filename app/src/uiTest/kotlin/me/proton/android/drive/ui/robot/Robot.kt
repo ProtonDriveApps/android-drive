@@ -20,15 +20,15 @@ package me.proton.android.drive.ui.robot
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.longClick
-import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.ui.compose.builders.OnNode
-import me.proton.core.drive.i18n.R as I18N
+import me.proton.test.fusion.ui.compose.wrappers.NodeActions
 
 interface Robot {
+
     fun robotDisplayed()
 
-    fun <T : Robot> OnNode.clickTo(goesTo: T): T = goesTo.apply { click() }
+    fun <T : Robot> NodeActions.clickTo(goesTo: T): T = goesTo.apply { click() }
 
     fun <T : Robot> OnNode.longClickTo(goesTo: T): T = goesTo.apply {
         sendGesture {
@@ -36,17 +36,10 @@ interface Robot {
         }
     }
 
-    /** Common actions **/
-    fun <T : Robot> dismissSuccessGrowler(itemName: String, goesTo: T) =
-        node
-            .withText(StringUtils.stringFromResource(I18N.string.folder_create_successful, itemName))
-            .clickTo(goesTo)
-
     /** Common assertions **/
     fun nodeWithTextDisplayed(text: String) =
         node.withText(text).await { assertIsDisplayed() }
 
     fun nodeWithTextDisplayed(@StringRes stringRes: Int) =
         node.withText(stringRes).await { assertIsDisplayed() }
-
 }

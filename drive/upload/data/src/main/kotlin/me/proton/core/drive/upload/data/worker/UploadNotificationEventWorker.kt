@@ -32,14 +32,17 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.sample
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
@@ -48,9 +51,12 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
+import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksCount
+import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksWithUri
 import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
 import me.proton.core.drive.upload.domain.usecase.GetUploadProgress
@@ -65,56 +71,87 @@ class UploadNotificationEventWorker @AssistedInject constructor(
     private val linkUploadRepository: LinkUploadRepository,
     private val getUploadProgress: GetUploadProgress,
     private val announceEvent: AnnounceEvent,
+    private val getUploadFileLinksCount: GetUploadFileLinksCount,
+    private val getUploadFileLinksWithUri: GetUploadFileLinksWithUri,
+    private val configurationProvider: ConfigurationProvider,
 ) : CoroutineWorker(appContext, workerParams) {
 
     private val userId = UserId(requireNotNull(inputData.getString(WorkerKeys.KEY_USER_ID)) { "User id is required" })
 
     override suspend fun doWork(): Result = supervisorScope {
-        val uploadFileLinks = linkUploadRepository.getUploadFileLinks(userId).first()
         CoreLogger.d(
             tag = LogTag.NOTIFICATION,
-            message = "Starting upload notification event worker for ${uploadFileLinks.size} files",
+            message = "Starting upload notification event worker",
         )
-        val deferred = uploadFileLinks.map { uploadFileLink ->
-            async {
-                val progressScope = CoroutineScope(Job() + Dispatchers.IO)
-                linkUploadRepository.getUploadFileLinkFlow(uploadFileLink.id)
-                    .transformWhile { uploadFileLink ->
-                        if (uploadFileLink != null && uploadFileLink.state != UploadState.UNPROCESSED && uploadFileLink.state != UploadState.IDLE) emit(uploadFileLink)
-                        if (uploadFileLink == null) progressScope.cancel()
-                        uploadFileLink != null
-                    }
-                    .distinctUntilChangedBy { uploadFileLink -> uploadFileLink.state }
-                    .transformLatest { uploadFileLink ->
-                        progressScope.launch {
-                            val flow = getUploadProgress(uploadFileLink)
-                            flow?.let {
-                                emitAll(
-                                    flow
-                                        .sample(2.seconds)
-                                        .mapLatest { percentage ->
-                                            uploadFileLink.toNotificationEvent(percentage)
-                                        }
-                                )
-                            } ?: emit(uploadFileLink.toNotificationEvent())
-                        }
-                    }
-                    .collectLatest { event ->
-                        announceEvent(
-                            userId = userId,
-                            notificationEvent = event,
-                        )
-                    }
-            }
-        }
         try {
-            deferred.awaitAll()
+            getUploadFileLinksCount(userId)
+                .transformLatest { uploadCount ->
+                    if (uploadCount.total == 0) emit(false)
+                    else emit(true)
+                }
+                .takeWhile { hasUploadingFiles -> hasUploadingFiles }
+                .distinctUntilChanged()
+                .collect {
+                    val previousIds = mutableSetOf<Long>()
+                    getUploadFileLinksWithUri(
+                        userId = userId,
+                        states = setOf(
+                            UploadState.CREATING_NEW_FILE,
+                            UploadState.ENCRYPTING_BLOCKS,
+                            UploadState.GETTING_UPLOAD_LINKS,
+                            UploadState.UPLOADING_BLOCKS,
+                            UploadState.UPDATING_REVISION,
+                        ),
+                        count = configurationProvider.uploadsInParallel * 2,
+                    )
+                        .map { uploadFileLinks -> uploadFileLinks.map { uploadFileLink -> uploadFileLink.id } }
+                        .distinctUntilChanged()
+                        .onEach { uploadFileLinksIds ->
+                            (uploadFileLinksIds - previousIds).forEach { uploadFileLinkId ->
+                                async { announceProgress(uploadFileLinkId) }
+                            }
+                            previousIds.clear()
+                            previousIds.addAll(uploadFileLinksIds)
+                        }
+                        .launchIn(this)
+                }
         } catch (e: CancellationException) {
             CoreLogger.d(LogTag.NOTIFICATION, e, e.message.orEmpty())
             cancel()
         }
         CoreLogger.d(LogTag.NOTIFICATION, "Upload notification event worker finished")
         return@supervisorScope Result.success()
+    }
+
+    private suspend fun announceProgress(uploadFileLinkId: Long) {
+        val progressScope = CoroutineScope(Job() + Dispatchers.IO)
+        linkUploadRepository.getUploadFileLinkFlow(uploadFileLinkId)
+            .transformWhile { uploadFileLink ->
+                if (uploadFileLink != null) emit(uploadFileLink)
+                else progressScope.cancel()
+                uploadFileLink != null
+            }
+            .distinctUntilChangedBy { uploadFileLink -> uploadFileLink.state }
+            .transformLatest { uploadFileLink ->
+                progressScope.launch {
+                    val flow = getUploadProgress(uploadFileLink)
+                    flow?.let {
+                        emitAll(
+                            flow
+                                .sample(1.seconds)
+                                .mapLatest { percentage ->
+                                    uploadFileLink.toNotificationEvent(percentage)
+                                }
+                        )
+                    } ?: emit(uploadFileLink.toNotificationEvent())
+                }
+            }
+            .collectLatest { event ->
+                announceEvent(
+                    userId = userId,
+                    notificationEvent = event,
+                )
+            }
     }
 
     companion object {
@@ -132,7 +169,7 @@ class UploadNotificationEventWorker @AssistedInject constructor(
                 .build()
     }
 
-    fun UploadFileLink.toNotificationEvent(percentage: Percentage = Percentage(0)) = NotificationEvent.Upload(
+    private fun UploadFileLink.toNotificationEvent(percentage: Percentage = Percentage(0)) = NotificationEvent.Upload(
         state = this.state.toNotificationUploadState(),
         uploadFileLinkId = id,
         percentage = this.state.toPercentage(percentage)

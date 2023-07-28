@@ -80,7 +80,7 @@ class UploadFlowTest : BaseTest() {
             .clickUploadAFile()
             .verify {
                 assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
-                itemWithTextDisplayed("empty.txt")
+                itemIsDisplayed("empty.txt")
             }
     }
     @Test
@@ -96,7 +96,7 @@ class UploadFlowTest : BaseTest() {
             .clickUploadAFile()
             .verify {
                 assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
-                itemWithTextDisplayed("empty.txt")
+                itemIsDisplayed("empty.txt")
             }
     }
 
@@ -135,7 +135,7 @@ class UploadFlowTest : BaseTest() {
                 assertStageUploading()
                 assertStageUploadedProgress(0)
                 assertStageUploadedProgress(100)
-                itemWithTextDisplayed("4MB.txt")
+                itemIsDisplayed("4MB.txt")
             }
     }
 
@@ -167,9 +167,9 @@ class UploadFlowTest : BaseTest() {
             .clickUploadAFile()
             .verify {
                 assertFilesBeingUploaded(3, StringUtils.stringFromResource(I18N.string.title_my_files))
-                itemWithTextDisplayed("file1.txt")
-                itemWithTextDisplayed("file2.txt")
-                itemWithTextDisplayed("file3.txt")
+                itemIsDisplayed("file1.txt")
+                itemIsDisplayed("file2.txt")
+                itemIsDisplayed("file3.txt")
             }
     }
 

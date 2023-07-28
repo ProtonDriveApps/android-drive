@@ -27,9 +27,11 @@ object ParentFolderOptionsRobot : Robot {
     private val createFolderButton get() = node.withText(I18N.string.folder_option_create_folder)
     private val uploadAFileButton get() = node.withText(I18N.string.folder_option_import_file)
     private val takePhotoButton get() = node.withText(I18N.string.folder_option_take_a_photo)
+    private val moveToTrashButton get() = node.withText(I18N.string.files_send_to_trash_action)
 
     fun clickUploadAFile() = uploadAFileButton.clickTo(FilesTabRobot)
     fun clickCreateFolder() = createFolderButton.clickTo(CreateFolderRobot)
+    fun clickMoveToTrash() = moveToTrashButton.clickTo(FilesTabRobot)
 
     override fun robotDisplayed() {
         contextMenu.assertIsDisplayed()

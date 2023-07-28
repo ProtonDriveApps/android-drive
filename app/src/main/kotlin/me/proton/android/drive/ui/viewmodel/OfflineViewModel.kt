@@ -18,18 +18,22 @@
 
 package me.proton.android.drive.ui.viewmodel
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.CombinedLoadStates
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -47,17 +51,19 @@ import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.onProcessing
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgress
-import me.proton.core.drive.drivelink.list.domain.usecase.GetSortedDecryptedDriveLinks
-import me.proton.core.drive.drivelink.offline.domain.usecase.GetDecryptedOfflineDriveLinks
+import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
+import me.proton.core.drive.drivelink.offline.domain.usecase.GetPagedOfflineDriveLinksList
 import me.proton.core.drive.files.presentation.state.FilesViewState
 import me.proton.core.drive.files.presentation.state.ListContentAppendingState
 import me.proton.core.drive.files.presentation.state.ListContentState
+import me.proton.core.drive.files.presentation.state.ListEffect
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -75,14 +81,17 @@ import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
+@Suppress("StaticFieldLeak")
 class OfflineViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     getDriveLink: GetDecryptedDriveLink,
-    private val getDriveLinks: GetSortedDecryptedDriveLinks,
     getSorting: GetSorting,
-    getOfflineDriveLinks: GetDecryptedOfflineDriveLinks,
+    getPagedOfflineDriveLinksList: GetPagedOfflineDriveLinksList,
+    getPagedDriveLinksList: GetPagedDriveLinksList,
     private val getDownloadProgress: GetDownloadProgress,
     getLayoutType: GetLayoutType,
     private val toggleLayoutType: ToggleLayoutType,
+    private val configurationProvider: ConfigurationProvider,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val shareId = savedStateHandle.get<String>(Screen.Files.SHARE_ID)
@@ -100,16 +109,19 @@ class OfflineViewModel @Inject constructor(
                 .onFailure { error -> error.log(VIEW_MODEL) }
             return@map null
         }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
-    val driveLinks: Flow<List<DriveLink>> = flowOf(folderId).flatMapLatest { folderId ->
+    val driveLinks: Flow<PagingData<DriveLink>> = flowOf(folderId).flatMapLatest { folderId ->
         if (folderId == null) {
-            getOfflineDriveLinks(userId)
+            getPagedOfflineDriveLinksList(userId)
         } else {
-            getDriveLinks(folderId)
-                .map { driveLinksResult -> driveLinksResult.getOrNull() }
-                .filterNotNull()
+            getPagedDriveLinksList(folderId)
         }
-    }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+    }
+        .cachedIn(viewModelScope)
+        .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
     private val isRootFolder: Boolean = folderId == null || folderId.id.isEmpty()
+    private val _listEffect = MutableSharedFlow<ListEffect>()
+    private val listContentState = MutableStateFlow<ListContentState>(ListContentState.Loading)
+    private val listContentAppendingState = MutableStateFlow<ListContentAppendingState>(ListContentAppendingState.Idle)
 
     val initialViewState = OfflineViewState(
         filesViewState = FilesViewState(
@@ -118,8 +130,8 @@ class OfflineViewModel @Inject constructor(
             navigationIconResId = CorePresentation.drawable.ic_arrow_back,
             drawerGesturesEnabled = false,
             sorting = Sorting.DEFAULT,
-            listContentState = ListContentState.Loading,
-            listContentAppendingState = ListContentAppendingState.Idle,
+            listContentState = listContentState.value,
+            listContentAppendingState = listContentAppendingState.value,
         )
     )
 
@@ -127,9 +139,10 @@ class OfflineViewModel @Inject constructor(
     val viewState: Flow<OfflineViewState> = combine(
         driveLink,
         getSorting(userId),
-        driveLinks,
+        listContentState,
+        listContentAppendingState,
         layoutType,
-    ) { driveLink, sorting, driveLinks, layoutType ->
+    ) { driveLink, sorting, contentState, appendingContentState, layoutType ->
         initialViewState.copy(
             filesViewState = initialViewState.filesViewState.copy(
                 title = if (isRootFolder) null else {
@@ -137,29 +150,30 @@ class OfflineViewModel @Inject constructor(
                 },
                 isTitleEncrypted = isRootFolder.not() && driveLink.isNameEncrypted,
                 sorting = sorting,
-                listContentState = driveLinks.toListContentState(),
+                listContentState = contentState,
+                listContentAppendingState = appendingContentState,
                 isGrid = layoutType == LayoutType.GRID,
             )
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
-    private fun List<DriveLink>?.toListContentState(): ListContentState = when {
-        this == null -> ListContentState.Loading
-        isNotEmpty() -> ListContentState.Content(false)
-        else -> if (folderId == null) {
-            ListContentState.Empty(
-                BasePresentation.drawable.empty_offline,
-                I18N.string.title_empty_offline_available,
-                I18N.string.description_empty_offline_available
-            )
+    private val emptyState = ListContentState.Empty(
+        imageResId = if (isRootFolder) {
+            BasePresentation.drawable.empty_offline
         } else {
-            ListContentState.Empty(
-                BasePresentation.drawable.empty_folder,
-                I18N.string.title_empty_folder,
-                I18N.string.description_empty_folder,
-            )
-        }
-    }
+            BasePresentation.drawable.empty_folder
+        },
+        titleId = if (isRootFolder) {
+            I18N.string.title_empty_offline_available
+        } else {
+            I18N.string.title_empty_folder
+        },
+        descriptionResId = if (isRootFolder) {
+            I18N.string.description_empty_offline_available
+        } else {
+            I18N.string.description_empty_folder
+        },
+    )
 
     fun viewEvent(
         navigateToFiles: (FolderId, String?) -> Unit,
@@ -176,7 +190,7 @@ class OfflineViewModel @Inject constructor(
                         navigateToFolder = navigateToFiles,
                         navigateToPreview = { fileId ->
                             navigateToPreview(
-                                if (folderId == null) PagerType.OFFLINE else PagerType.FOLDER,
+                                if (isRootFolder) PagerType.OFFLINE else PagerType.FOLDER,
                                 fileId
                             )
                         }
@@ -193,10 +207,22 @@ class OfflineViewModel @Inject constructor(
             driveLinkShareFlow.tryEmit(driveLink)
             Unit
         }
-        override val onLoadState = { _: CombinedLoadStates, _: Int -> }
+        override val onLoadState = onLoadState(
+            appContext = appContext,
+            useExceptionMessage = configurationProvider.useExceptionMessage,
+            listContentState = listContentState,
+            listAppendContentState = listContentAppendingState,
+            coroutineScope = viewModelScope,
+            emptyState = emptyState,
+        ) { }
         override val onMoreOptions = { driveLink: DriveLink -> navigateToFileOrFolderOptions(driveLink.id) }
         override val onToggleLayout = this@OfflineViewModel::onToggleLayout
+        override val onErrorAction = { retryList() }
+        override val onAppendErrorAction = { retryList() }
     }
+
+    val listEffect: Flow<ListEffect>
+        get() = _listEffect.asSharedFlow()
 
     fun getDownloadProgressFlow(driveLink: DriveLink): Flow<Percentage>? = if (driveLink is DriveLink.File) {
         getDownloadProgress(driveLink)
@@ -206,5 +232,11 @@ class OfflineViewModel @Inject constructor(
 
     private fun onToggleLayout() {
         viewModelScope.launch { toggleLayoutType(userId = userId, currentLayoutType = layoutType.value) }
+    }
+
+    private fun retryList() {
+        viewModelScope.launch {
+            _listEffect.emit(ListEffect.RETRY)
+        }
     }
 }

@@ -405,7 +405,9 @@ class FilesViewModel @Inject constructor(
     }
 
     private fun onCancelUpload(uploadFileLink: UploadFileLink) {
-        cancelUploadFile(uploadFileLink)
+        viewModelScope.launch {
+            cancelUploadFile(uploadFileLink)
+        }
     }
 
     private fun onSelectedOptions(

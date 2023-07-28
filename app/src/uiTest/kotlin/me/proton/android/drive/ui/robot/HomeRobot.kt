@@ -21,8 +21,10 @@ package me.proton.android.drive.ui.robot
 import androidx.annotation.StringRes
 import me.proton.android.drive.ui.screen.HomeScreenTestTag
 import me.proton.core.drive.base.presentation.component.BottomNavigationComponentTestTag
+import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.ui.common.enums.SwipeDirection
+import me.proton.test.fusion.ui.compose.builders.OnNode
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
@@ -34,10 +36,6 @@ interface HomeRobot : Robot {
     fun clickFilesTab() = filesTab.clickTo(FilesTabRobot)
     fun clickSharedTab() = sharedTab.clickTo(SharedTabRobot)
 
-    fun homeScreenDisplayed() {
-        homeScreen.await(30.seconds) { assertIsDisplayed() }
-    }
-
     fun openSidebarBySwipe() = SidebarRobot.apply {
         homeScreen.swipe(SwipeDirection.Right)
     }
@@ -46,4 +44,8 @@ interface HomeRobot : Robot {
         node
             .withTag(BottomNavigationComponentTestTag.tab)
             .hasChild(node.withText(textRes))
+
+    fun homeScreenDisplayed() {
+        homeScreen.await(30.seconds) { assertIsDisplayed() }
+    }
 }

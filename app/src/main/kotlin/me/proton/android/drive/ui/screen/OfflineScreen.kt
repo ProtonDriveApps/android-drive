@@ -61,7 +61,7 @@ fun OfflineScreen(
     }
 
     Files(
-        driveLinks = DriveLinksFlow.NonPagingList(viewModel.driveLinks),
+        driveLinks = DriveLinksFlow.PagingList(viewModel.driveLinks, viewModel.listEffect),
         viewState = viewState.filesViewState,
         viewEvent = viewEvent,
         modifier = modifier

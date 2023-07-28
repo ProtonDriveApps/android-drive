@@ -16,9 +16,11 @@
  * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.proton.android.drive.ui.test.flow
+package me.proton.android.drive.ui.test.flow.rename
 
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PreviewRobot
 import me.proton.android.drive.ui.rules.UserLoginRule
 import me.proton.android.drive.ui.rules.WelcomeScreenRule
 import me.proton.android.drive.ui.test.BaseTest
@@ -28,16 +30,10 @@ import me.proton.core.test.quark.data.User
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import me.proton.core.drive.i18n.R as I18N
 
-@RunWith(Parameterized::class)
-class RenamingFolderFlowErrorTest(
-    private val itemToBeRenamed: String,
-    private val newItemName: String,
-    private val errorMessage: String,
-    private val friendlyName: String
-) : BaseTest() {
+@RunWith(AndroidJUnit4::class)
+class RenamingFileSuccessFlowTest : BaseTest() {
 
     private val user
         get() = User(
@@ -49,50 +45,24 @@ class RenamingFolderFlowErrorTest(
     val welcomeScreenRule = WelcomeScreenRule(false)
 
     @get:Rule
-    val userLoginRule = UserLoginRule(testUser = user)
+    val userLoginRule = UserLoginRule(testUser = user, shouldSeedUser = true)
 
     @Test
-    fun renameError() {
+    fun renameViaPreviewWindowSucceeds() {
+        val oldName = "image.jpg"
+        val newName = "picture.jpg"
+
         FilesTabRobot
-            .scrollToItemWithName(itemToBeRenamed)
-            .clickMoreOnFolder(itemToBeRenamed)
+            .scrollToItemWithName(oldName)
+            .clickOnFile(oldName)
+            .clickOnContextualButton()
             .clickRename()
             .clearName()
-            .typeName(newItemName)
-            .clickRename()
+            .typeName(newName)
+            .clickRename(PreviewRobot)
             .verify {
-                nodeWithTextDisplayed(errorMessage)
+                nodeWithTextDisplayed(StringUtils.stringFromResource(I18N.string.link_rename_successful, newName))
+                topBarWithTextDisplayed(newName)
             }
-    }
-
-    companion object {
-        @get:Parameterized.Parameters(name = "{3}")
-        @get:JvmStatic
-        val data = listOf(
-            arrayOf(
-                "folder1",
-                "folder2",
-                "An item with that name already exists in current folder",
-                "Existing folder"
-            ),
-            arrayOf(
-                "folder1",
-                "",
-                StringUtils.stringFromResource(I18N.string.common_error_name_is_blank),
-                "Empty folder name"
-            ),
-            arrayOf(
-                "folder1",
-                getRandomString(256),
-                StringUtils.stringFromResource(I18N.string.common_error_name_too_long, 255),
-                "Very long name"
-            ),
-            arrayOf(
-                "folder2",
-                "folder1",
-                "An item with that name already exists in current folder",
-                "Existing folder 2"
-            )
-        )
     }
 }

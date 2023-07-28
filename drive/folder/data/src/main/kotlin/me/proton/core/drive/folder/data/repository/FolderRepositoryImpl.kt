@@ -52,10 +52,19 @@ class FolderRepositoryImpl @Inject constructor(
     override suspend fun hasFolderChildren(folderId: FolderId): Boolean =
         folderDao.hasFolderChildren(folderId.userId, folderId.shareId.id, folderId.id)
 
-    override fun getAllFolderChildrenFlow(folderId: FolderId): Flow<DataResult<List<Link>>> =
-        folderDao.getFolderChildrenFlow(folderId.userId, folderId.shareId.id, folderId.id).map { links ->
-            links.map { linkWithProperties -> linkWithProperties.toLink() }.asSuccess
-        }
+    override suspend fun getFolderChildren(
+        folderId: FolderId,
+        fromIndex: Int,
+        count: Int,
+    ): Result<List<Link>> = coRunCatching {
+        folderDao.getFolderChildren(
+            folderId.userId,
+            folderId.shareId.id,
+            folderId.id,
+            count,
+            fromIndex,
+        ).map { linkWithPropertiesEntity -> linkWithPropertiesEntity.toLinkWithProperties().toLink() }
+    }
 
     override suspend fun fetchAllFolderChildren(
         folderId: FolderId,

@@ -18,14 +18,7 @@
 package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
-import javax.inject.Inject
 
-class RemoveUploadFile @Inject constructor(
-    private val linkUploadRepository: LinkUploadRepository,
-) {
-    suspend operator fun invoke(uploadFileLink: UploadFileLink) {
-        linkUploadRepository.removeUploadBlocks(uploadFileLink)
-        linkUploadRepository.removeUploadFileLink(uploadFileLink.id)
-    }
+interface RemoveUploadFile {
+    suspend operator fun invoke(uploadFileLink: UploadFileLink): Result<Unit>
 }

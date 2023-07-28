@@ -70,6 +70,7 @@ import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllip
 import me.proton.core.drive.base.presentation.extension.currentLocale
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.files.presentation.component.FilesTestTag
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.extension.isSharedUrlExpired
 import me.proton.core.drive.link.presentation.extension.getSize
@@ -125,7 +126,6 @@ fun FilesListItem(
 
             Image(
                 modifier = Modifier
-                    .testTag(FilesListItemComponentTestTag.thumbnail(link))
                     .size(IconSize)
                     .clip(RoundedCornerShape(DefaultCornerRadius)),
                 painter = link.thumbnailPainter().painter,
@@ -217,7 +217,7 @@ fun DetailsTitle(
                 text = title,
                 style = ProtonTheme.typography.default(enabled = isEnabled),
                 maxLines = 1,
-                modifier = Modifier.testTag(FilesListItemComponentTestTag.item)
+                modifier = Modifier.testTag(FilesTestTag.listDetailsTitle)
             )
         }
     }
@@ -295,7 +295,7 @@ fun SharedIcon(
     Icon(
         modifier = modifier
             .size(ExtraSmallIconSize)
-            .testTag(FilesListItemComponentTestTag.itemWithSharedIcon),
+            .testTag(FilesTestTag.itemWithSharedIcon),
         painter = painterResource(id = CorePresentation.drawable.ic_proton_link),
         tint = ProtonTheme.colors.iconNorm,
         contentDescription = null
@@ -353,7 +353,7 @@ fun MoreOptions(
     onClick: (DriveLink) -> Unit,
 ) {
     IconButton(
-        modifier = modifier.testTag(FilesListItemComponentTestTag.threeDotsButton(link)),
+        modifier = modifier.testTag(FilesTestTag.moreButton),
         onClick = { onClick(link) }
     ) {
         Icon(
@@ -596,41 +596,3 @@ val VerticalPadding = 14.dp
 val Height = 68.dp
 val TitleStartPadding = 20.dp
 val ExtraSmallIconSize = 12.dp
-
-object FilesListItemComponentTestTag {
-    const val item = "file list item"
-    const val folder = "folder item"
-    const val file = "file item"
-    const val imageWithThumbnail = "image with thumbnail"
-    const val imageWithoutThumbnail = "image without thumbnail"
-    const val itemWithSharedIcon = "item with shared icon"
-
-    enum class ItemType {
-        Folder,
-        File
-    }
-
-    fun threeDotsButton(itemType: ItemType): String {
-        val item = when (itemType) {
-            ItemType.Folder -> folder
-            ItemType.File -> file
-        }
-        return "three dots - $item"
-    }
-
-    fun threeDotsButton(link: DriveLink): String = threeDotsButton(
-        when (link) {
-            is DriveLink.File -> ItemType.File
-            is DriveLink.Folder -> ItemType.Folder
-        }
-    )
-
-    fun thumbnail(link: DriveLink) = when (link) {
-        is DriveLink.File -> if (link.hasThumbnail) {
-            imageWithThumbnail
-        } else {
-            imageWithoutThumbnail
-        }
-        else -> imageWithoutThumbnail
-    }
-}

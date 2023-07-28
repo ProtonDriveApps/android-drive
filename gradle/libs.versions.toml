@@ -27,17 +27,19 @@ androidx-room = "2.4.3"
 androidx-test = "1.5.0"
 androidx-test-uiautomator = "2.2.0"
 androidx-work = "2.7.1"
+# Android tools
+android-tools = "1.1.5"
 # Coil
 coil = "1.4.0"
 # Core
-core = "10.3.0"
+core = "10.3.1"
 # Dagger
 dagger = "2.44.2"
+# Github
+treessence = "1.0.5"
 # Gradle
 android-gradle-plugin = "7.4.2"
 proton-detekt-plugin = "1.1.2"
-#Android tools
-android-tools = "1.1.5"
 # JaCoCo
 jaCoCo = "0.8.8"
 # JakeWharton
@@ -57,6 +59,7 @@ junit = "4.13.2"
 mockk = "1.12.2"
 robolectric = "4.9.2"
 fusion = "0.9.50"
+espresso-contrib = "3.5.0"
 
 [libraries]
 # Gradle
@@ -193,6 +196,9 @@ dagger-hilt-android-testing = { module = "com.google.dagger:hilt-android-testing
 dagger-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "dagger" }
 dagger-hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "dagger" }
 
+#Github
+treessence = { module = "com.github.bastienpaulfr:treessence", version.ref = "treessence" }
+
 # JakeWharton
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
@@ -222,6 +228,7 @@ androidx-test-core-ktx = { module = "androidx.test:core-ktx", version.ref = "and
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
 androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "androidx-test-uiautomator" }
+androidx-test-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espresso-contrib"}
 androidx-compose-ui-test = { module = "androidx.compose.ui:ui-test", version.ref = "androidx-compose" }
 androidx-compose-ui-test-junit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }

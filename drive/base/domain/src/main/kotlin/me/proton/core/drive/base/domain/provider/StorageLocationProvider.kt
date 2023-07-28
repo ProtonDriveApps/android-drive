@@ -25,4 +25,5 @@ interface StorageLocationProvider {
     suspend fun getCacheFolder(userId: UserId, path: String = ""): File
     suspend fun getPermanentFolder(userId: UserId, path: String = ""): File
     suspend fun getCacheTempFolder(userId: UserId): File
+    fun getDebugLogFolder(): File
 }

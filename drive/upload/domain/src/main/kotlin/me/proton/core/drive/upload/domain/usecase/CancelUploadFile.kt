@@ -24,6 +24,6 @@ import javax.inject.Inject
 class CancelUploadFile @Inject constructor(
     private val uploadWorkManager: UploadWorkManager,
 ) {
-    operator fun invoke(uploadFileLink: UploadFileLink) =
+    suspend operator fun invoke(uploadFileLink: UploadFileLink) =
         uploadWorkManager.cancel(uploadFileLink)
 }

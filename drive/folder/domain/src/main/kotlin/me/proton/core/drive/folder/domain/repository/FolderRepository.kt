@@ -35,9 +35,9 @@ interface FolderRepository {
     suspend fun hasFolderChildren(folderId: FolderId): Boolean
 
     /**
-     * Get reactive list of all children for a given folder
+     * Get list of folder children for a given folder and range
      */
-    fun getAllFolderChildrenFlow(folderId: FolderId): Flow<DataResult<List<Link>>>
+    suspend fun getFolderChildren(folderId: FolderId, fromIndex: Int, count: Int): Result<List<Link>>
 
     /**
      * Fetches all children of a given folder from the server and stores it into cache

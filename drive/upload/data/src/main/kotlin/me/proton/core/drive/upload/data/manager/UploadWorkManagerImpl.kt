@@ -21,12 +21,16 @@ import android.content.Context
 import androidx.lifecycle.asFlow
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
+import androidx.work.await
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.workmanager.getLong
 import me.proton.core.drive.base.domain.entity.Percentage
@@ -43,6 +47,7 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadBlocks
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinks
+import me.proton.core.drive.linkupload.domain.usecase.RemoveAllUploadFileLinks
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.notification.domain.entity.NotificationEvent
@@ -55,6 +60,7 @@ import me.proton.core.drive.upload.data.worker.UploadThrottleWorker
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_SIZE
 import me.proton.core.drive.upload.domain.manager.UploadWorkManager
 import me.proton.core.drive.upload.domain.usecase.CreateUploadFile
+import me.proton.core.drive.upload.domain.usecase.RemoveUploadFileAndAnnounceCancelled
 import me.proton.core.drive.upload.domain.usecase.UpdateUploadFileInfo
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
@@ -71,6 +77,8 @@ class UploadWorkManagerImpl @Inject constructor(
     private val updateUploadState: UpdateUploadState,
     private val announceEvent: AnnounceEvent,
     private val configurationProvider: ConfigurationProvider,
+    private val removeUploadFileAndAnnounceCancelled: RemoveUploadFileAndAnnounceCancelled,
+    private val removeAllUploadFileLinks: RemoveAllUploadFileLinks,
 ) : UploadWorkManager {
 
 
@@ -156,21 +164,29 @@ class UploadWorkManagerImpl @Inject constructor(
         workManager.enqueueUpload(userId)
     }
 
-    override fun cancel(uploadFileLink: UploadFileLink): Unit = with (uploadFileLink) {
+    override suspend fun cancel(uploadFileLink: UploadFileLink): Unit = with (uploadFileLink) {
         workManager.cancelAllWorkByTag(id.uniqueUploadWorkName)
-        workManager.enqueue(
-            UploadCleanupWorker.getWorkRequest(
-                userId = userId,
-                uploadFileLinkId = id,
-                isCancelled = true
+        if (!linkId.isNullOrEmpty()) {
+            workManager.enqueue(
+                UploadCleanupWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = id,
+                    isCancelled = true
+                )
             )
-        )
+        } else {
+            removeUploadFileAndAnnounceCancelled(userId, uploadFileLink)
+        }
     }
 
-    override suspend fun cancelAll(userId: UserId) {
-        getUploadFileLinks(userId).first().forEach { uploadFileLink ->
-            cancel(uploadFileLink)
-        }
+    override suspend fun cancelAll(userId: UserId) = withContext(Job() + Dispatchers.IO) {
+        workManager.cancelUniqueWork(userId.uniqueUploadBulkWorkName).await()
+        removeAllUploadFileLinks(userId, UploadState.UNPROCESSED)
+        getUploadFileLinks(userId)
+            .first()
+            .forEach { uploadFileLink ->
+                cancel(uploadFileLink)
+            }
     }
 
     override fun getProgressFlow(uploadFileLink: UploadFileLink): Flow<Percentage>? {

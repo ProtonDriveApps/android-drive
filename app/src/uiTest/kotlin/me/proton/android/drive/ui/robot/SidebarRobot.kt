@@ -26,6 +26,7 @@ import me.proton.core.drive.i18n.R as I18N
 object SidebarRobot : Robot {
 
     private val sidebar get() = node.withTag(HomeScreenTestTag.sidebar)
+    private val trashNavigationItem get() = node.withText(I18N.string.navigation_item_trash)
 
     private fun clickSidebarMenuItem(@StringRes menuItemName: Int) {
         node.withText(menuItemName).click()
@@ -38,6 +39,8 @@ object SidebarRobot : Robot {
     fun clickSubscription() {
         clickSidebarMenuItem(I18N.string.navigation_item_subscription)
     }
+
+    fun clickTrash() = trashNavigationItem.clickTo(TrashRobot)
 
     fun clickSettings() = SettingsRobot.apply {
         clickSidebarMenuItem(I18N.string.navigation_item_settings)

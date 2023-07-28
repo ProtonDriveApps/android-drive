@@ -17,11 +17,8 @@
  */
 package me.proton.core.drive.folder.domain.usecase
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.transform
-import me.proton.core.drive.base.domain.extension.flowOf
-import me.proton.core.drive.base.domain.repository.listFetcherEmitOnEmpty
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.folder.domain.repository.FolderRepository
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
@@ -29,19 +26,30 @@ import javax.inject.Inject
 
 class GetAllFolderChildren @Inject constructor(
     private val folderRepository: FolderRepository,
+    private val configurationProvider: ConfigurationProvider,
 ) {
-    operator fun invoke(
+    suspend operator fun invoke(
         folderId: FolderId,
-        refresh: Flow<Boolean>? = null,
-    ) =
-        (refresh ?: defaultRefresh(folderId)).transform { shouldRefresh ->
-            if (shouldRefresh) {
-                listFetcherEmitOnEmpty<Link> { folderRepository.fetchAllFolderChildren(folderId).getOrThrow() }
-            }
-            emitAll(folderRepository.getAllFolderChildrenFlow(folderId))
+        refresh: Boolean? = null,
+    ): Result<List<Link>> = coRunCatching {
+        val shouldRefresh = refresh ?: !folderRepository.hasFolderChildren(folderId)
+        if (shouldRefresh) {
+            folderRepository.fetchAllFolderChildren(folderId).getOrThrow()
         }
+        getAllChildren(folderId).getOrThrow()
+    }
 
-    private fun defaultRefresh(folderId: FolderId): Flow<Boolean> = flowOf {
-        !folderRepository.hasFolderChildren(folderId)
+    private suspend fun getAllChildren(folderId: FolderId): Result<List<Link>> = coRunCatching {
+        val count = configurationProvider.dbPageSize
+        val links = mutableListOf<Link>()
+        var loaded: Int
+        var fromIndex = 0
+        do {
+            val children = folderRepository.getFolderChildren(folderId, fromIndex, count).getOrThrow()
+            fromIndex += count
+            loaded = children.size
+            links.addAll(children)
+        } while (loaded == count)
+        links
     }
 }

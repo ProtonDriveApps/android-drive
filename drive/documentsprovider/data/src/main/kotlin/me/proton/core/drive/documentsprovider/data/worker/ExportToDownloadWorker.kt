@@ -32,6 +32,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.documentsprovider.data.extension.exportToMediaStoreDownloads
 import me.proton.core.drive.documentsprovider.data.worker.WorkerKeys.KEY_SELECTION_ID
@@ -51,11 +52,12 @@ class ExportToDownloadWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     getFile: GetFile,
     getFileUri: GetFileUri,
+    configurationProvider: ConfigurationProvider,
     broadcastMessages: BroadcastMessages,
     announceEvent: AnnounceEvent,
     private val getSelectedDecryptedDriveLinks: GetSelectedDecryptedDriveLinks,
     private val deselectLinks: DeselectLinks,
-) : ExportCoroutineWorker(appContext, workerParams, getFile, getFileUri, broadcastMessages, announceEvent) {
+) : ExportCoroutineWorker(appContext, workerParams, getFile, getFileUri, configurationProvider, broadcastMessages, announceEvent) {
     private val selectionId = SelectionId(
         requireNotNull(inputData.getString(KEY_SELECTION_ID)) { "Selection id is required" }
     )

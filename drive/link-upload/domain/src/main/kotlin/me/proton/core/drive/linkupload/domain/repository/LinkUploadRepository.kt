@@ -26,6 +26,7 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
+import me.proton.core.drive.linkupload.domain.entity.UploadCount
 import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
@@ -46,9 +47,19 @@ interface LinkUploadRepository {
 
     fun getUploadFileLinks(userId: UserId, parentId: FolderId): Flow<List<UploadFileLink>>
 
+    suspend fun getUploadFileLinksWithUri(
+        userId: UserId,
+        states: Set<UploadState>,
+        count: Int,
+    ): Flow<List<UploadFileLink>>
+
+    fun getUploadFileLinksCount(userId: UserId): Flow<UploadCount>
+
     suspend fun updateUploadFileLink(uploadFileLink: UploadFileLink)
 
     suspend fun updateUploadFileLinkUploadState(uploadFileLinkId: Long, uploadState: UploadState)
+
+    suspend fun updateUploadFileLinkUploadState(uploadFileLinkIds: Set<Long>, uploadState: UploadState)
 
     suspend fun updateUploadFileLinkFileInfo(
         uploadFileLinkId: Long,
@@ -79,6 +90,8 @@ interface LinkUploadRepository {
     suspend fun updateUploadFileLinkDigests(uploadFileLinkId: Long, digests: UploadDigests)
 
     suspend fun removeUploadFileLink(uploadFileLinkId: Long)
+
+    suspend fun removeAllUploadFileLinks(userId: UserId, uploadState: UploadState)
 
     suspend fun insertUploadBlocks(uploadFileLink: UploadFileLink, uploadBlocks: List<UploadBlock>)
 

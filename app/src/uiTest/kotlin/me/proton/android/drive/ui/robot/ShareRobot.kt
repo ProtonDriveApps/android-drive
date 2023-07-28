@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.robot
 
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
+import me.proton.android.drive.ui.extension.setDate
 import me.proton.core.drive.drivelink.shared.presentation.component.PrivacySettingsTestTag
 import me.proton.core.drive.drivelink.shared.presentation.component.SharedDriveLinkTestTag
 import me.proton.test.fusion.Fusion.node
@@ -27,7 +28,6 @@ import me.proton.test.fusion.Fusion.view
 import me.proton.test.fusion.FusionConfig.targetContext
 import java.text.DateFormat
 import java.util.Date
-import kotlin.time.Duration.Companion.days
 import me.proton.core.drive.i18n.R as I18N
 
 object ShareRobot : NavigationBarRobot, Robot {
@@ -39,32 +39,42 @@ object ShareRobot : NavigationBarRobot, Robot {
     private val saveButton get() = node.withText(I18N.string.common_save_action)
     private val copyPasswordAction get() = node.withText(I18N.string.shared_link_action_copy_password)
     private val accessibilityDescription get() = node.withTag(SharedDriveLinkTestTag.accessibilityDescription)
-    private val messageNotificationPasswordCopiedToClipboard get() = node
-        .withText(
-            targetContext.getString(
-                I18N.string.common_in_app_notification_copied_to_clipboard,
-                targetContext.getString(I18N.string.common_password),
+    private val messageNotificationPasswordCopiedToClipboard
+        get() = node
+            .withText(
+                targetContext.getString(
+                    I18N.string.common_in_app_notification_copied_to_clipboard,
+                    targetContext.getString(I18N.string.common_password),
+                )
             )
-        )
+
     private fun messageNotificationPasswordLengthError(maxLength: Int) = node
         .withText(
-            targetContext.getString(I18N.string.shared_link_error_message_invalid_password_length, maxLength)
+            targetContext.getString(
+                I18N.string.shared_link_error_message_invalid_password_length,
+                maxLength
+            )
         )
-    private val messageNotificationSharingSettingsUpdated get() = node
-        .withText(I18N.string.shared_link_message_update_share_url)
+
+    private val messageNotificationSharingSettingsUpdated
+        get() = node
+            .withText(I18N.string.shared_link_message_update_share_url)
 
     fun clickPasswordToggle() = passwordToggle.clickTo(this)
     fun clickSave() = saveButton.isEnabled().clickTo(this)
+    fun clickUpdateSuccessfulGrowler() = apply { messageNotificationSharingSettingsUpdated.click() }
     fun typePassword(password: String) = apply {
         passwordTextField.clearText()
         passwordTextField.typeText(password)
     }
+
     fun clearPassword() = apply {
         passwordTextField.clearText()
     }
+
     fun clickCopyPassword() = copyPasswordAction.clickTo(this)
     fun clickExpirationDateTextField() = expirationDateTextField
-        .clickTo(DatePicker)
+        .clickTo(PickerRobot)
 
     fun saveDoesNotExists() = saveButton.await { assertDoesNotExist() }
     fun passwordToggleIsOn() = passwordToggle.interaction.assertIsOn()
@@ -79,6 +89,7 @@ object ShareRobot : NavigationBarRobot, Robot {
             if (isFile) "file" else "folder",
         )
     )
+
     fun passwordProtectedAccessibilityDescriptionWasShown(
         isFile: Boolean = true,
     ) = accessibilityDescription.assertContainsText(
@@ -87,20 +98,25 @@ object ShareRobot : NavigationBarRobot, Robot {
             if (isFile) "file" else "folder",
         )
     )
+
     fun passwordCopiedToClipboardWasShown() = messageNotificationPasswordCopiedToClipboard
         .await { assertIsDisplayed() }
-    fun passwordLengthErrorWasShown(maxLength: Int) = messageNotificationPasswordLengthError(maxLength)
-        .await { assertIsDisplayed() }
+
+    fun passwordLengthErrorWasShown(maxLength: Int) =
+        messageNotificationPasswordLengthError(maxLength)
+            .await { assertIsDisplayed() }
+
     fun shareUpdateSuccessWasShown() = messageNotificationSharingSettingsUpdated
         .await { assertIsDisplayed() }
-    fun tomorrowExpirationDateIsShown() = expirationDateTextField
-        .assertContainsText(
-            DateFormat
-                .getDateInstance(DateFormat.MEDIUM)
-                .format(
-                    Date(System.currentTimeMillis() + 1.days.inWholeMilliseconds)
-                )
-        )
+
+    fun expirationDateIsShown(date: Date) = expirationDateTextField
+        .await {
+            assertContainsText(
+                DateFormat
+                    .getDateInstance(DateFormat.MEDIUM)
+                    .format(date)
+            )
+        }
 
     fun verifyShareLinkFolder(name: String) = verifyShareLink(name, "folder")
     fun verifyShareLinkFile(name: String) = verifyShareLink(name, "file")
@@ -129,10 +145,15 @@ object ShareRobot : NavigationBarRobot, Robot {
         }
     }
 
-    object DatePicker : Robot {
+    object PickerRobot : Robot {
         private val okButton get() = view.withText("OK")
+        private val picker get() = view.instanceOf(android.widget.DatePicker::class.java)
 
         fun clickOk() = ShareRobot.apply { okButton.click() }
+
+        fun selectDate(date: Date) = apply {
+            picker.setDate(date, normalizeMonthOfYear = false)
+        }
 
         override fun robotDisplayed() {
             okButton.await { checkIsDisplayed() }

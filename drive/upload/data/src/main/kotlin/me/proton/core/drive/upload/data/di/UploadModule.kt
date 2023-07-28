@@ -28,9 +28,13 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoMap
 import dagger.multibindings.StringKey
 import me.proton.core.drive.base.domain.provider.MimeTypeProvider
+import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import me.proton.core.drive.upload.data.resolver.ContentUriResolver
 import me.proton.core.drive.upload.data.resolver.FileUriResolver
+import me.proton.core.drive.upload.data.usecase.RemoveUploadFileImpl
 import me.proton.core.drive.upload.domain.resolver.UriResolver
+import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -44,4 +48,9 @@ object UploadModule {
     @StringKey(SCHEME_CONTENT)
     fun provideContentUriResolver(@ApplicationContext appContext: Context): UriResolver =
         ContentUriResolver(appContext)
+
+    @Provides
+    @Singleton
+    fun provideRemoveUploadFile(linkUploadRepository: LinkUploadRepository): RemoveUploadFile =
+        RemoveUploadFileImpl(linkUploadRepository)
 }

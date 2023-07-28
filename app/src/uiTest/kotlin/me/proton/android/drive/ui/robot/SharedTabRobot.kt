@@ -18,20 +18,10 @@
 
 package me.proton.android.drive.ui.robot
 
-import me.proton.test.fusion.Fusion.allNodes
-import me.proton.test.fusion.Fusion.node
-import androidx.compose.ui.test.assertIsSelected
-import me.proton.core.drive.files.presentation.component.files.FilesListItemComponentTestTag
-
-object SharedTabRobot : HomeRobot {
-    private val filesListItems get() = allNodes.withTag(FilesListItemComponentTestTag.item)
+object SharedTabRobot : HomeRobot, LinksRobot {
 
     override fun robotDisplayed() {
         homeScreenDisplayed()
         sharedTab.assertIsSelected()
-    }
-
-    fun itemWithTextDisplayed(text: String) {
-        filesListItems.filter(node.withText(text)).assertCountEquals(1)
     }
 }

@@ -38,6 +38,8 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraph
 import androidx.navigation.NavGraphBuilder
@@ -88,17 +90,33 @@ fun AnimatedNavHost(
 private fun NavHostController.runIfNavControllerViewModelCanBeSet(
     block: @Composable (NavHostController) -> Unit
 ) {
-    try {
-        getViewModelStoreOwner(0)
-    } catch (e: IllegalStateException) {
-        CoreLogger.d(DriveLogTag.UI, e, "getViewModelStoreOwner failed (backQueue.size=${backQueue.size})")
-        if (backQueue.isNotEmpty()) {
-            return
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    if (lifecycle.currentState != Lifecycle.State.DESTROYED) {
+        try {
+            getViewModelStoreOwner(0)
+        } catch (e: IllegalStateException) {
+            CoreLogger.d(
+                DriveLogTag.UI,
+                e,
+                "getViewModelStoreOwner failed (backQueue.size=${backQueue.size})"
+            )
+            if (backQueue.isNotEmpty()) {
+                return
+            }
+        } catch (e: IllegalArgumentException) {
+            CoreLogger.d(
+                DriveLogTag.UI,
+                e,
+                "getViewModelStoreOwner failed (backQueue.size=${backQueue.size})"
+            )
         }
-    } catch (e: IllegalArgumentException) {
-        CoreLogger.d(DriveLogTag.UI, e, "getViewModelStoreOwner failed (backQueue.size=${backQueue.size})")
+        block(this)
+    } else {
+        CoreLogger.d(
+            DriveLogTag.UI,
+            "getViewModelStoreOwner would failed with lifecycle currentState: ${lifecycle.currentState}"
+        )
     }
-    block(this)
 }
 
 /**

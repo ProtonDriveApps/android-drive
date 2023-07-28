@@ -43,11 +43,6 @@ class DriveLinkRepositoryImpl @Inject constructor(
             .distinctUntilChanged()
             .map { entities -> entities.toDriveLinks().firstOrNull() }
 
-    override fun getDriveLinks(parentId: FolderId): Flow<List<DriveLink>> =
-        driveLinkDao.getLinks(parentId.userId, parentId.shareId.id, parentId.id)
-            .distinctUntilChanged()
-            .map { entities -> entities.toDriveLinks() }
-
     override fun getDriveLinksCount(parentId: FolderId): Flow<Int> =
         driveLinkDao.getLinksCountFlow(parentId.userId, parentId.shareId.id, parentId.id)
 

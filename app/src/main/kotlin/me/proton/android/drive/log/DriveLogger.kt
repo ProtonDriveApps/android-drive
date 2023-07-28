@@ -29,6 +29,9 @@ import io.sentry.Sentry
 import io.sentry.SentryEvent
 import io.sentry.SentryLevel
 import io.sentry.protocol.Message
+import me.proton.android.drive.BuildConfig
+import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.extension.percentageOfAsciiChars
 import me.proton.core.drive.base.presentation.extension.getDefaultMessage
 import me.proton.core.util.kotlin.Logger
 import me.proton.core.util.kotlin.LoggerLogTag
@@ -79,11 +82,7 @@ class DriveLogger @Inject constructor(
 
     private fun withoutUploadFileContent(tag: String, message: String, block: (tag: String, message: String) -> Unit) {
         val isCoreNetwork = tag.startsWith("core.network")
-        var numAsciiChars = 0
-        message.forEach { c ->
-            if (c.code > 33 && c.code < 127) numAsciiChars += 1
-        }
-        if (isCoreNetwork && numAsciiChars < (message.length / 2)) {
+        if (isCoreNetwork && message.percentageOfAsciiChars < Percentage(50)) {
             // upload file content detected, do nothing
         } else {
             block(tag, message)
@@ -181,5 +180,6 @@ fun Logger.deviceInfo() {
     } else {
         i("LOCALE:      ${LocaleList.getDefault().toLanguageTags()}")
     }
+    i("APP VERSION: ${BuildConfig.VERSION_NAME}")
     i("-----------------------------------------")
 }

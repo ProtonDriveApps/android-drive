@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.test.flow.move
 
 import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.MoveToFolderRobot
 import me.proton.android.drive.ui.rules.UserLoginRule
 import me.proton.android.drive.ui.rules.WelcomeScreenRule
 import me.proton.android.drive.ui.test.BaseTest
@@ -58,7 +59,7 @@ class MoveFolderFlowTest : BaseTest() {
             }
             .clickBack(FilesTabRobot)
             .verify {
-                itemWithTextDisplayed(folder)
+                itemIsDisplayed(folder)
             }
     }
 
@@ -69,7 +70,7 @@ class MoveFolderFlowTest : BaseTest() {
         FilesTabRobot
             .clickMoreOnItem(folder)
             .clickMove()
-            .clickOnFolder(folderDestination)
+            .clickOnFolderToMove(folderDestination)
             .clickMoveToFolder(folderDestination)
             .verify {
                 nodeWithTextDisplayed(I18N.string.file_operation_moving_folder_successful)
@@ -77,7 +78,7 @@ class MoveFolderFlowTest : BaseTest() {
             }
             .clickOnFolder(folderDestination)
             .verify {
-                itemWithTextDisplayed(folder)
+                itemIsDisplayed(folder)
             }
     }
 
@@ -92,6 +93,8 @@ class MoveFolderFlowTest : BaseTest() {
             .clickMove()
             .clickBackFromFolder(parent)
             .clickOnFolder(folderDestination)
+
+        MoveToFolderRobot
             .clickMoveToFolder(folderDestination)
             .verify {
                 nodeWithTextDisplayed(I18N.string.file_operation_moving_folder_successful)
@@ -100,7 +103,7 @@ class MoveFolderFlowTest : BaseTest() {
             .clickBack(FilesTabRobot)
             .clickOnFolder(folderDestination)
             .verify {
-                itemWithTextDisplayed(folder)
+                itemIsDisplayed(folder)
             }
     }
     @Test

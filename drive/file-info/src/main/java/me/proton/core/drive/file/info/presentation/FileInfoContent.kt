@@ -37,7 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -47,9 +49,9 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultCornerRadius
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.compose.theme.defaultSmall
+import me.proton.core.compose.theme.defaultSmallNorm
 import me.proton.core.compose.theme.defaultSmallWeak
-import me.proton.core.compose.theme.subheadline
+import me.proton.core.compose.theme.subheadlineNorm
 import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Attributes
@@ -64,6 +66,7 @@ import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.toReadableDate
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.file.info.presentation.extension.headerSemantics
 import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.Folder
@@ -81,11 +84,17 @@ fun FileInfoContent(
     pathToFileNode: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier.verticalScroll(rememberScrollState())) {
+    Column(
+        modifier
+            .verticalScroll(rememberScrollState())
+            .testTag(FileInfoTestTag.screen)
+    ) {
+        val painter = driveLink.thumbnailPainter().painter
         Header(
-            painter = driveLink.thumbnailPainter().painter,
+            painter = painter,
             title = driveLink.name,
             isTitleEncrypted = driveLink.isNameEncrypted,
+            modifier = Modifier.headerSemantics(driveLink, painter),
         )
         EncryptedInfoItem(
             name = stringResource(id = I18N.string.file_info_name_entry),
@@ -177,7 +186,7 @@ private fun Header(
                 Text(
                     text = title,
                     modifier = Modifier.padding(start = DefaultSpacing),
-                    style = ProtonTheme.typography.subheadline,
+                    style = ProtonTheme.typography.subheadlineNorm,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
                 )
@@ -225,7 +234,7 @@ private fun EncryptedInfoItem(
             } else {
                 Text(
                     text = value,
-                    style = ProtonTheme.typography.defaultSmall
+                    style = ProtonTheme.typography.defaultSmallNorm
                 )
             }
         }
@@ -283,4 +292,19 @@ private fun PreviewFileInfoContent() {
         ),
         pathToFileNode = "/My files/deep nested/Aaaa/3/",
     )
+}
+
+object FileInfoTestTag {
+    const val screen = "file info screen"
+
+    object Header {
+        val Title = SemanticsPropertyKey<String>(name = "Title")
+        val IconType = SemanticsPropertyKey<HeaderIconType>(name = "IconType")
+
+        enum class HeaderIconType {
+            PLACEHOLDER,
+            THUMBNAIL,
+            UNKNOWN,
+        }
+    }
 }

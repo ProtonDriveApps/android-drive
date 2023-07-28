@@ -58,7 +58,7 @@ class MoveFileFlowErrorTest: BaseTest() {
             .clickMove()
             .clickBackFromFolder(folderSource)
             .scrollToItemWithName(folderDestination)
-            .clickOnFolder(folderDestination)
+            .clickOnFolderToMove(folderDestination)
             .clickMoveToFolder(folderDestination)
             .verify {
                 nodeWithTextDisplayed(I18N.string.file_operation_error_file_already_exists_at_destination)

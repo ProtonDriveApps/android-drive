@@ -39,6 +39,7 @@ class DebugSettings(
     private val prefsKeyBaseUrl = stringPreferencesKey(BASE_URL)
     private val prefsKeyAppVersionHeader = stringPreferencesKey(APP_VERSION_HEADER)
     private val prefsUseExceptionMessage = booleanPreferencesKey(USE_EXCEPTION_MESSAGE)
+    private val prefsLogToFileEnabled = booleanPreferencesKey(LOG_TO_FILE_ENABLED)
     val baseUrlFlow: Flow<String> = prefsKeyBaseUrl.asFlow(
         dataStore = context.dataStore,
         default = buildConfig.baseUrl
@@ -54,6 +55,10 @@ class DebugSettings(
     val useExceptionMessageFlow: Flow<Boolean> = prefsUseExceptionMessage.asFlow(
         dataStore = context.dataStore,
         default = buildConfig.useExceptionMessage,
+    )
+    val logToFileEnabledFlow: Flow<Boolean> = prefsLogToFileEnabled.asFlow(
+        dataStore = context.dataStore,
+        default = buildConfig.logToFileInDebugEnabled,
     )
 
     override var baseUrl by Delegate(
@@ -76,6 +81,11 @@ class DebugSettings(
         key = prefsUseExceptionMessage,
         default = buildConfig.useExceptionMessage,
     )
+    override var logToFileInDebugEnabled by Delegate(
+        dataStore = context.dataStore,
+        key = prefsLogToFileEnabled,
+        default = buildConfig.logToFileInDebugEnabled,
+    )
 
     fun reset(coroutineScope: CoroutineScope) {
         coroutineScope.launch {
@@ -91,5 +101,6 @@ class DebugSettings(
         const val HOST = "host"
         const val APP_VERSION_HEADER = "app_version_header"
         const val USE_EXCEPTION_MESSAGE = "use_exception_message"
+        const val LOG_TO_FILE_ENABLED = "log_to_file_enabled"
     }
 }

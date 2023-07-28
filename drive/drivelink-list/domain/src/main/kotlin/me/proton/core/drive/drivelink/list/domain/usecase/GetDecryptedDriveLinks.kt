@@ -19,7 +19,10 @@
 package me.proton.core.drive.drivelink.list.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import me.proton.core.drive.base.domain.extension.mapCatching
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptDriveLinks
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -28,16 +31,26 @@ import javax.inject.Inject
 class GetDecryptedDriveLinks @Inject constructor(
     private val getFolderChildrenDriveLinks: GetFolderChildrenDriveLinks,
     private val decryptDriveLinks: DecryptDriveLinks,
+    private val configurationProvider: ConfigurationProvider,
 ) {
-    operator fun invoke(parentId: FolderId): Flow<Result<List<DriveLink>>> =
-        getFolderChildrenDriveLinks(parentId)
-            .mapCatching { driveLinks ->
-                decryptDriveLinks(driveLinks)
-            }
 
     operator fun invoke(parentId: FolderId, fromIndex: Int, count: Int,): Flow<Result<List<DriveLink>>> =
         getFolderChildrenDriveLinks(parentId, fromIndex, count)
             .mapCatching { driveLinks ->
                 decryptDriveLinks(driveLinks)
             }
+
+    suspend operator fun invoke(parentId: FolderId): Result<List<DriveLink>> = coRunCatching {
+        val count = configurationProvider.dbPageSize
+        val driveLinks = mutableListOf<DriveLink>()
+        var loaded: Int
+        var fromIndex = 0
+        do {
+            val decryptedFolderChildren = invoke(parentId, fromIndex, count).first().getOrThrow()
+            fromIndex += count
+            loaded = decryptedFolderChildren.size
+            driveLinks.addAll(decryptedFolderChildren)
+        } while (loaded == count)
+        driveLinks
+    }
 }

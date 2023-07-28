@@ -33,6 +33,7 @@ import me.proton.core.drive.base.domain.extension.firstSuccessOrError
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.documentsprovider.data.extension.exportTo
@@ -54,10 +55,11 @@ class ExportToDestinationUriWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     getFile: GetFile,
     getFileUri: GetFileUri,
+    configurationProvider: ConfigurationProvider,
     broadcastMessages: BroadcastMessages,
     private val getDriveLink: GetDecryptedDriveLink,
     announceEvent: AnnounceEvent,
-) : ExportCoroutineWorker(appContext, workerParams, getFile, getFileUri, broadcastMessages, announceEvent) {
+) : ExportCoroutineWorker(appContext, workerParams, getFile, getFileUri, configurationProvider, broadcastMessages, announceEvent) {
     private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)) { "Share id is required" })
     private val fileId = FileId(shareId, requireNotNull(inputData.getString(KEY_FILE_ID)) { "File id is required" })
     private val destinationUri = requireNotNull(

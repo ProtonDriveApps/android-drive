@@ -58,4 +58,5 @@ interface ConfigurationProvider {
         0.seconds, 60.seconds, 2.minutes, 5.minutes, 15.minutes, 30.minutes
     )
     val maxApiAutoRetries: Int get() = 10
+    val logToFileInDebugEnabled: Boolean get() = true
 }
