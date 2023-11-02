@@ -127,6 +127,8 @@ object Dto {
     const val URL_PASSWORD_SALT = "UrlPasswordSalt"
     const val URLS_EXPIRED = "UrlsExpired"
     const val USED_SPACE = "UsedSpace"
+    const val VERIFICATION_CODE = "VerificationCode"
+    const val VERIFIER = "Verifier"
     const val VOLUME = "Volume"
     const val VOLUMES = "Volumes"
     const val VOLUME_ID = "VolumeID"

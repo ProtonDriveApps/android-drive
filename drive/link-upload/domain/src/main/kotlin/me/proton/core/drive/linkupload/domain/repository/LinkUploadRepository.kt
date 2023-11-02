@@ -110,6 +110,12 @@ interface LinkUploadRepository {
         token: String,
     )
 
+    suspend fun updateUploadBlockVerifierToken(
+        uploadFileLinkId: Long,
+        uploadBlockIndex: Long,
+        verifierToken: ByteArray,
+    )
+
     suspend fun removeUploadBlocks(uploadFileLink: UploadFileLink)
 
     suspend fun insertUploadBulk(uploadBulk: UploadBulk): UploadBulk

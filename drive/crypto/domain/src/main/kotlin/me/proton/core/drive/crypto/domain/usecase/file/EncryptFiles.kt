@@ -32,11 +32,12 @@ class EncryptFiles @Inject constructor(
 ) {
     suspend operator fun invoke(
         contentKey: ContentKey,
+        checkSignature: Boolean = false,
         input: List<File>,
         output: List<File>,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecryptWithIO.coroutineContext,
     ): Result<List<File>> = coRunCatching {
-        useSessionKey(contentKey = contentKey) { sessionKey ->
+        useSessionKey(contentKey = contentKey, checkSignature = checkSignature) { sessionKey ->
             input.mapIndexed { index, file ->
                 encryptFile(sessionKey, file, output[index], coroutineContext).getOrThrow()
             }

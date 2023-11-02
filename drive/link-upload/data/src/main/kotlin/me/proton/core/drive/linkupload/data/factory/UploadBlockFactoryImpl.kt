@@ -33,7 +33,8 @@ class UploadBlockFactoryImpl @Inject constructor() : UploadBlockFactory {
         encSignature: String,
         rawSize: Bytes,
         size: Bytes,
-        token: String
+        token: String,
+        verifierToken: String?,
     ): UploadBlock =
         UploadBlock(
             index = index,
@@ -44,6 +45,7 @@ class UploadBlockFactoryImpl @Inject constructor() : UploadBlockFactory {
             size = size,
             token = token,
             file = block,
+            verifierToken = verifierToken,
         )
 
     override fun create(
@@ -53,7 +55,8 @@ class UploadBlockFactoryImpl @Inject constructor() : UploadBlockFactory {
         encSignature: String,
         rawSize: Bytes,
         size: Bytes,
-        token: String
+        token: String,
+        verifierToken: String?,
     ): UploadBlock =
         UploadBlock(
             index = index,
@@ -64,5 +67,6 @@ class UploadBlockFactoryImpl @Inject constructor() : UploadBlockFactory {
             size = size,
             token = token,
             file = File(requireNotNull(Uri.parse(url)?.path)),
+            verifierToken = verifierToken,
         )
 }

@@ -26,6 +26,7 @@ object ProtonApiCode {
     const val ALREADY_EXISTS = 2500
     const val NOT_EXISTS = 2501
     const val INSUFFICIENT_QUOTA = 200001
+    const val ENCRYPTION_VERIFICATION_FAILED = 200501
 
     val Long.isSuccessful: Boolean get() = this == SUCCESS.toLong()
 }

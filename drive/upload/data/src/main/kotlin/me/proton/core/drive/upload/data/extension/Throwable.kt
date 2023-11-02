@@ -17,6 +17,9 @@
  */
 package me.proton.core.drive.upload.data.extension
 
+import me.proton.android.drive.verifier.data.extension.log
+import me.proton.android.drive.verifier.domain.exception.VerifierException
+import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
 import me.proton.core.network.domain.isRetryable
@@ -30,5 +33,13 @@ internal val Throwable.isRetryable: Boolean
                 else -> this.error.isRetryable()
             }
         }
+        is VerifierException -> this.cause.isRetryable
         else -> false
     }
+
+internal fun Throwable.log(tag: String, message: String? = null): Throwable = this.also {
+    when (this) {
+        is VerifierException -> this.log(tag, message.orEmpty())
+        else -> this.log(tag, message)
+    }
+}

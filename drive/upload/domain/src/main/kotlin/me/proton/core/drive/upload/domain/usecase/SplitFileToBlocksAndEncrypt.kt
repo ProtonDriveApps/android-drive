@@ -197,6 +197,7 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
                 rawSize = rawBlock.size,
                 size = encryptedBlock.size,
                 token = "",
+                verifierToken = null,
             ).also { rawBlock.delete() }
         }.getOrThrow()
 
@@ -231,6 +232,7 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
                 rawSize = thumbnail.size.bytes,
                 size = encryptedUploadThumbnail.size,
                 token = "",
+                verifierToken = null,
             )
         }
 

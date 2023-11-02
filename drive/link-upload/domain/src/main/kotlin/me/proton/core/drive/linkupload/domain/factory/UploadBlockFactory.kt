@@ -30,6 +30,7 @@ interface UploadBlockFactory {
         rawSize: Bytes,
         size: Bytes,
         token: String,
+        verifierToken: String?,
     ): UploadBlock
 
     fun create(
@@ -40,5 +41,6 @@ interface UploadBlockFactory {
         rawSize: Bytes,
         size: Bytes,
         token: String,
+        verifierToken: String?,
     ): UploadBlock
 }

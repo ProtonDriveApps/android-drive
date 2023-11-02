@@ -18,15 +18,24 @@
 package me.proton.core.drive.upload.data.extension
 
 import android.content.Context
+import me.proton.android.drive.verifier.data.extension.log
+import me.proton.android.drive.verifier.domain.exception.VerifierException
 import me.proton.core.drive.base.presentation.extension.getDefaultMessage
 import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.upload.data.exception.UploadCleanupException
+import me.proton.core.drive.i18n.R as I18N
 
 internal fun UploadCleanupException.getDefaultMessage(
     context: Context,
     useExceptionMessage: Boolean,
-): String = error.getDefaultMessage(context, useExceptionMessage)
+): String = when (error) {
+    is VerifierException -> context.getString(I18N.string.files_upload_verification_failed)
+    else -> error.getDefaultMessage(context, useExceptionMessage)
+}
 
 internal fun UploadCleanupException.log(tag: String, message: String? = null): UploadCleanupException = also {
-    message?.let { error.log(tag, message) } ?: error.log(tag)
+    when (error) {
+        is VerifierException -> message?.let { error.log(tag, message) } ?: error.log(tag)
+        else -> message?.let { error.log(tag, message) } ?: error.log(tag)
+    }
 }

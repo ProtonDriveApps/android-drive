@@ -53,4 +53,5 @@
         <item quantity="one">%1$d item</item>
         <item quantity="other">%1$d items</item>
     </plurals>
+    <string name="files_upload_verification_failed">Upload failed: Verification of data failed</string>
 </resources>

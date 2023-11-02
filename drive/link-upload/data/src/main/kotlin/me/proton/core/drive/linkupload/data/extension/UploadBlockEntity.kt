@@ -30,4 +30,5 @@ fun UploadBlockEntity.toUploadBlock(uploadBlockFactory: UploadBlockFactory) =
         rawSize = rawSize.bytes,
         size = size.bytes,
         token = uploadToken,
+        verifierToken = verifierToken,
     )

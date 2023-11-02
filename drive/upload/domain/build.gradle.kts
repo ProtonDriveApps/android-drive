@@ -28,6 +28,7 @@ driveModule(
     api(project(":drive:link-upload:domain"))
     api(project(":drive:notification:domain"))
     api(project(":drive:thumbnail:domain"))
+    api(project(":verifier:domain"))
 
     implementation(project(":drive:crypto:domain"))
 }

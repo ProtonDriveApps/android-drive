@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.linkupload.data.repository
 
+import android.util.Base64
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
@@ -225,6 +226,17 @@ class LinkUploadRepositoryImpl @Inject constructor(
             uploadLinkId = uploadFileLinkId,
             index = uploadBlockIndex,
             token = token,
+        )
+
+    override suspend fun updateUploadBlockVerifierToken(
+        uploadFileLinkId: Long,
+        uploadBlockIndex: Long,
+        verifierToken: ByteArray
+    ) =
+        db.uploadBlockDao.updateVerifierToken(
+            uploadLinkId = uploadFileLinkId,
+            index = uploadBlockIndex,
+            verifierToken = Base64.encodeToString(verifierToken, Base64.NO_WRAP),
         )
 
     override suspend fun removeUploadBlocks(uploadFileLink: UploadFileLink) =

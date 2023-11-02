@@ -27,6 +27,7 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import me.proton.android.drive.verifier.domain.usecase.CleanupVerifier
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
@@ -60,6 +61,7 @@ class UploadCleanupWorker @AssistedInject constructor(
     private val getBlockFolder: GetBlockFolder,
     private val removeUploadFile: RemoveUploadFile,
     private val announceEvent: AnnounceEvent,
+    private val cleanupVerifier: CleanupVerifier,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
     run: Run,
@@ -95,6 +97,14 @@ class UploadCleanupWorker @AssistedInject constructor(
                     percentage = Percentage(0)
                 )
             )
+            uploadFileLink.linkId?.let { linkId ->
+                cleanupVerifier(
+                    userId = userId,
+                    shareId = uploadFileLink.shareId.id,
+                    linkId = linkId,
+                    revisionId = uploadFileLink.draftRevisionId,
+                )
+            }
         } finally {
             uploadFileLink.deleteOnServer()
         }

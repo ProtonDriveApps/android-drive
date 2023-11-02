@@ -46,6 +46,7 @@ import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.UpdateToken
 import me.proton.core.drive.upload.data.extension.getSizeData
 import me.proton.core.drive.upload.data.extension.isRetryable
+import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.extension.setSize
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_BLOCK_INDEX
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_BLOCK_TOKEN
@@ -132,11 +133,7 @@ class BlockUploadWorker @AssistedInject constructor(
                             max retries reached ${!canRetry}
                         """.trimIndent(),
                     )
-                    return@coroutineScope if (retryable && canRetry) {
-                        Result.retry()
-                    } else {
-                        Result.success(getSizeData(progress.value))
-                    }
+                    return@coroutineScope retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
                 }
         } finally {
             job.cancel()

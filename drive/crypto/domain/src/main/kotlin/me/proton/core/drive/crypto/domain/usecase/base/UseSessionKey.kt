@@ -35,7 +35,7 @@ class UseSessionKey @Inject constructor(
 ) {
     suspend operator fun <T> invoke(
         contentKey: ContentKey,
-        checkSignature: Boolean = false,
+        checkSignature: Boolean,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecryptWithIO.coroutineContext,
         block: suspend (SessionKey) -> T
     ) =
@@ -52,6 +52,19 @@ class UseSessionKey @Inject constructor(
                     throw VerificationException("Verification of session key failed")
                 }
             }
+            block(sessionKey)
+        }
+
+    suspend operator fun <T> invoke(
+        contentKey: ContentKey,
+        coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecryptWithIO.coroutineContext,
+        block: suspend (SessionKey) -> T
+    ) =
+        useSessionKey(
+            decryptKey = contentKey.decryptKey.keyHolder,
+            encryptedKeyPacket = contentKey.encryptedKeyPacket,
+            coroutineContext = coroutineContext,
+        ) { sessionKey ->
             block(sessionKey)
         }
 }

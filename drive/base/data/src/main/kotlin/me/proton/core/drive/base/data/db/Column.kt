@@ -109,6 +109,7 @@ object Column {
     const val URL_PASSWORD_SALT = "url_password_salt"
     const val USED_SPACE = "used_space"
     const val USER_ID = "user_id"
+    const val VERIFIER_TOKEN = "verifier_token"
     const val VOLUME_ID = "volume_id"
     const val WORK_ID = "work_id"
     const val WORKER_ID = "worker_id"

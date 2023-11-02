@@ -192,6 +192,7 @@ import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
         AutoMigration(from = 18, to = 19),
         AutoMigration(from = 22, to = 23),
         AutoMigration(from = 23, to = 24),
+        AutoMigration(from = 26, to = 27),
     ],
     exportSchema = true,
 )
@@ -250,7 +251,7 @@ abstract class DriveDatabase :
     WorkerDatabase {
 
     companion object {
-        const val VERSION = 26
+        const val VERSION = 27
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -278,6 +279,7 @@ abstract class DriveDatabase :
             //AutoMigration(from = 23, to = 24)
             DriveDatabaseMigrations.MIGRATION_24_25,
             DriveDatabaseMigrations.MIGRATION_25_26,
+            //AutoMigration(from = 26, to = 27)
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

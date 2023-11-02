@@ -118,8 +118,8 @@ class UploadFlowTest : BaseTest() {
     }
 
     @Test
-    fun upload4MBFile() {
-        val file = externalFilesRule.createFile("4MB.txt", 4 * 1024 * 1024)
+    fun upload6MBFile() {
+        val file = externalFilesRule.createFile("6MB.txt", 6 * 1024 * 1024)
 
         Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFunction {
             Instrumentation.ActivityResult(Activity.RESULT_OK, Intent().setData(Uri.fromFile(file)))
@@ -135,7 +135,7 @@ class UploadFlowTest : BaseTest() {
                 assertStageUploading()
                 assertStageUploadedProgress(0)
                 assertStageUploadedProgress(100)
-                itemIsDisplayed("4MB.txt")
+                itemIsDisplayed("6MB.txt")
             }
     }
 

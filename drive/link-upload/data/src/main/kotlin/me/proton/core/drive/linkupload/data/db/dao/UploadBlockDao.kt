@@ -56,4 +56,14 @@ abstract class UploadBlockDao : BaseDao<UploadBlockEntity>() {
         index: Long,
         token: String,
     )
+
+    @Query("""
+        UPDATE UploadBlockEntity SET verifier_token = :verifierToken WHERE
+            upload_link_id = :uploadLinkId AND `index` = :index
+    """)
+    abstract fun updateVerifierToken(
+        uploadLinkId: Long,
+        index: Long,
+        verifierToken: String,
+    )
 }

@@ -18,6 +18,7 @@
 package me.proton.core.drive.block.data.extension
 
 import me.proton.core.drive.block.data.api.entity.UploadBlockDto
+import me.proton.core.drive.block.data.api.entity.VerifierDto
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 
 fun UploadBlock.toUploadBlockDto() =
@@ -26,4 +27,5 @@ fun UploadBlock.toUploadBlockDto() =
         size = size.value,
         hash = hashSha256,
         encSignature = encSignature,
+        verifier = verifierToken?.let { token -> VerifierDto(token) },
     )

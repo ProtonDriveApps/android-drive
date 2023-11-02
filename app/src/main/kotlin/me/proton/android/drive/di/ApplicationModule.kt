@@ -30,8 +30,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.BuildConfig
-import me.proton.android.drive.lock.data.usecase.BuildAppKeyImpl
-import me.proton.android.drive.lock.domain.usecase.BuildAppKey
 import me.proton.android.drive.log.DriveLogger
 import me.proton.android.drive.notification.AppNotificationBuilderProvider
 import me.proton.android.drive.notification.AppNotificationEventHandler

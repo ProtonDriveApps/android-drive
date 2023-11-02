@@ -30,4 +30,5 @@ data class UploadBlock(
     val size: Bytes,
     val token: String,
     val file: File,
+    val verifierToken: String?,
 ) : Block

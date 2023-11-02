@@ -51,6 +51,7 @@ driveModule(
     implementation(project(":app-lock"))
     implementation(project(":app-ui-settings"))
     implementation(project(":drive"))
+    implementation(project(":verifier"))
 
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.compose.foundationLayout)

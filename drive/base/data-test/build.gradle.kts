@@ -22,6 +22,7 @@ plugins {
 driveModule(
     hilt = true,
 ) {
+    api(project(":drive:base:domain"))
     api(libs.core.domain)
 }
 

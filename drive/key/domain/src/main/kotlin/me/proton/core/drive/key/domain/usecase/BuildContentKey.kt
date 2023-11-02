@@ -54,12 +54,24 @@ class BuildContentKey @Inject constructor(
         userId: UserId,
         uploadFile: UploadFileLink,
         fileKey: Key.Node,
+    ): Result<ContentKey> = invoke(
+        userId = userId,
+        contentKeyPacket = uploadFile.contentKeyPacket,
+        contentKeyPacketSignature = uploadFile.contentKeyPacketSignature,
+        fileKey = fileKey,
+    )
+
+    suspend operator fun invoke(
+        userId: UserId,
+        contentKeyPacket: String,
+        contentKeyPacketSignature: String,
+        fileKey: Key.Node,
     ): Result<ContentKey> = coRunCatching {
         contentKeyFactory.createContentKey(
             decryptKey = fileKey,
             verifyKey = listOf(fileKey, getAddressKeys(userId, getSignatureAddress(userId))),
-            contentKeyPacket = uploadFile.contentKeyPacket,
-            contentKeyPacketSignature = uploadFile.contentKeyPacketSignature
+            contentKeyPacket = contentKeyPacket,
+            contentKeyPacketSignature = contentKeyPacketSignature
         )
     }
 }

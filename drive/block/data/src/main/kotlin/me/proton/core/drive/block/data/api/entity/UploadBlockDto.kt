@@ -23,6 +23,7 @@ import me.proton.core.drive.base.data.api.Dto.ENC_SIGNATURE
 import me.proton.core.drive.base.data.api.Dto.HASH
 import me.proton.core.drive.base.data.api.Dto.INDEX
 import me.proton.core.drive.base.data.api.Dto.SIZE
+import me.proton.core.drive.base.data.api.Dto.VERIFIER
 
 @Serializable
 data class UploadBlockDto(
@@ -33,5 +34,7 @@ data class UploadBlockDto(
     @SerialName(ENC_SIGNATURE)
     val encSignature: String,
     @SerialName(HASH)
-    val hash: String
+    val hash: String,
+    @SerialName(VERIFIER)
+    val verifier: VerifierDto? = null,
 )

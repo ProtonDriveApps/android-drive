@@ -32,6 +32,24 @@ class DecryptFiles @Inject constructor(
 ) {
     suspend operator fun invoke(
         contentKey: ContentKey,
+        checkSignature: Boolean,
+        input: List<File>,
+        output: List<File>,
+    ): Result<List<DecryptedFile>> = coRunCatching {
+        useSessionKey(contentKey = contentKey, checkSignature = checkSignature) { sessionKey ->
+            input.mapIndexed { index, file ->
+                DecryptedFile(
+                    file = decryptFile(sessionKey, file, output[index]).getOrThrow(),
+                    status = VerificationStatus.Unknown,
+                    filename = "",
+                    lastModifiedEpochSeconds = -1,
+                )
+            }
+        }.getOrThrow()
+    }
+
+    suspend operator fun invoke(
+        contentKey: ContentKey,
         input: List<File>,
         output: List<File>,
     ): Result<List<DecryptedFile>> = coRunCatching {

@@ -46,13 +46,19 @@ internal sealed class FileUploadFlow {
                     uploadFileLinkId = uploadFileLinkId,
                     uriString = uriString,
                     shouldDeleteSource = shouldDeleteSource,
-                    tags = uploadTags
+                    tags = uploadTags,
+                )
+            ).then(
+                VerifyBlocksWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    tags = uploadTags,
                 )
             ).then(
                 GetBlocksUploadUrlWorker.getWorkRequest(
                     userId = userId,
                     uploadFileLinkId = uploadFileLinkId,
-                    tags = uploadTags
+                    tags = uploadTags,
                 )
             ).enqueue()
     }
@@ -72,6 +78,12 @@ internal sealed class FileUploadFlow {
                     uriString = uriString,
                     shouldDeleteSource = shouldDeleteSource,
                     tags = uploadTags
+                )
+            ).then(
+                VerifyBlocksWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    tags = uploadTags,
                 )
             ).then(
                 GetBlocksUploadUrlWorker.getWorkRequest(

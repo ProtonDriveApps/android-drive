@@ -33,7 +33,9 @@ driveModule(
     implementation(project(":drive:link:presentation"))
     implementation(project(":drive:notification:domain"))
     implementation(project(":drive:worker:data"))
+    implementation(project(":verifier:data"))
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.core.crypto)
     implementation(libs.core.network)
+    testImplementation(libs.bundles.test.jvm)
 }

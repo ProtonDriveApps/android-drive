@@ -231,6 +231,7 @@ androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", 
 androidx-test-espresso-contrib = { module = "androidx.test.espresso:espresso-contrib", version.ref = "espresso-contrib"}
 androidx-compose-ui-test = { module = "androidx.compose.ui:ui-test", version.ref = "androidx-compose" }
 androidx-compose-ui-test-junit = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose" }
+androidx-work-testing = { module = "androidx.work:work-testing", version.ref = "androidx-work" }
 coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 junit = { module = "junit:junit", version.ref = "junit" }
 mockk-jvm = { module = "io.mockk:mockk", version.ref = "mockk" }
@@ -243,7 +244,7 @@ accompanist = ["accompanist-insets", "accompanist-navigation-animation", "accomp
 core = ["core-account", "core-accountManager", "core-auth", "core-challenge", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-keyTransparency", "core-network", "core-observability", "core-payment", "core-payment-iap", "core-plan", "core-report", "core-presentation", "core-presentation-compose", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilKotlin"]
 core-test = ["core-auth-test", "core-humanVerification-test", "core-report-test"]
 test-android = ["junit", "mockk-android", "coroutines-test", "androidx-test-core-ktx", "androidx-test-runner", "androidx-test-rules", "androidx-compose-ui-test", "androidx-compose-ui-test-junit", "androidx-test-uiautomator", "core-test-android-instrumented"]
-test-jvm = ["junit", "mockk-jvm", "coroutines-test", "core-test-kotlin", "core-test-quark", "robolectric"]
+test-jvm = ["junit", "mockk-jvm", "coroutines-test", "androidx-test-core-ktx", "androidx-work-testing", "core-test-kotlin", "core-test-quark", "robolectric"]
 
 [plugins]
 proton-detekt = { id = "me.proton.core.gradle-plugins.detekt", version.ref = "proton-detekt-plugin" }
