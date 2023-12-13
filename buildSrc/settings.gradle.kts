@@ -32,3 +32,15 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
+buildCache {
+    local {
+        isEnabled = !providers.environmentVariable("CI_SERVER").isPresent
+    }
+    providers.environmentVariable("BUILD_CACHE_URL").orNull?.let { buildCacheUrl ->
+        remote<HttpBuildCache> {
+            isPush = providers.environmentVariable("CI_SERVER").isPresent
+            url = uri(buildCacheUrl)
+        }
+    }
+}

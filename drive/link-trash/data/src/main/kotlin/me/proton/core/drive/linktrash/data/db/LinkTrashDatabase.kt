@@ -17,7 +17,10 @@
  */
 package me.proton.core.drive.linktrash.data.db
 
+import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
+import me.proton.core.data.room.db.migration.DatabaseMigration
+import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 import me.proton.core.drive.linktrash.data.db.dao.TrashMetadataDao
 import me.proton.core.drive.linktrash.data.db.dao.TrashWorkDao
@@ -26,4 +29,28 @@ interface LinkTrashDatabase : Database {
     val linkTrashDao: LinkTrashDao
     val trashWorkDao: TrashWorkDao
     val trashMetadataDao: TrashMetadataDao
+
+    companion object {
+        val MIGRATION_0 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        DROP TABLE `TrashMetadataEntity`
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        CREATE TABLE `TrashMetadataEntity` (
+                            `${Column.USER_ID}` TEXT NOT NULL,
+                            `${Column.VOLUME_ID}` TEXT NOT NULL,
+                            `${Column.LAST_FETCH_TRASH_TIMESTAMP}` INTEGER,
+                            PRIMARY KEY(`${Column.USER_ID}`, `${Column.VOLUME_ID}`),
+                            FOREIGN KEY(`${Column.USER_ID}`, `${Column.VOLUME_ID}`)
+                                REFERENCES `VolumeEntity`(`${Column.USER_ID}`, `${Column.ID}`)
+                                ON UPDATE NO ACTION ON DELETE CASCADE
+                        )
+                    """.trimIndent())
+            }
+        }
+    }
 }

@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.data.test.NullableFile
 import me.proton.core.drive.link.data.test.NullableFolder
 import me.proton.core.drive.link.domain.entity.BaseLink
@@ -29,16 +30,18 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class StubbedLinkTrashRepository @Inject constructor() : LinkTrashRepository {
 
     private val workIds = MutableStateFlow(emptyMap<String, List<LinkId>>())
     private val stateFlow = MutableStateFlow(emptyMap<List<LinkId>, TrashState>())
-    private var trashContent = emptyList<ShareId>()
+    private var trashContent = emptyList<VolumeId>()
 
     val state: Map<List<LinkId>, TrashState>
         get() = stateFlow.value
@@ -61,10 +64,10 @@ class StubbedLinkTrashRepository @Inject constructor() : LinkTrashRepository {
         }.toMap()
     }
 
-    override fun hasTrashContent(shareId: ShareId): Flow<Boolean> {
+    override fun hasTrashContent(userId: UserId, volumeId: VolumeId): Flow<Boolean> {
         return stateFlow.transform { state ->
             emit(
-                state.filterKeys { it.any { linkId -> linkId.shareId == shareId } }
+                state.filterKeys { it.any { linkId -> linkId.userId == userId } }
                     .filterValues { it in listOf(TrashState.TRASHING, TrashState.DELETED) }
                     .isNotEmpty()
             )
@@ -99,12 +102,12 @@ class StubbedLinkTrashRepository @Inject constructor() : LinkTrashRepository {
         }.flatten()
     }
 
-    override suspend fun markTrashContentAsFetched(shareId: ShareId) {
-        trashContent = trashContent + shareId
+    override suspend fun markTrashContentAsFetched(userId: UserId, volumeId: VolumeId) {
+        trashContent = trashContent + volumeId
     }
 
-    override suspend fun shouldInitiallyFetchTrashContent(shareId: ShareId): Boolean {
-        return trashContent.contains(shareId).not()
+    override suspend fun shouldInitiallyFetchTrashContent(userId: UserId, volumeId: VolumeId): Boolean {
+        return trashContent.contains(volumeId).not()
     }
 
     override suspend fun isTrashed(linkId: LinkId): Boolean {

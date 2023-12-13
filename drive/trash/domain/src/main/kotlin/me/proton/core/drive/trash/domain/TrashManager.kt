@@ -24,6 +24,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface TrashManager {
 
@@ -33,9 +34,9 @@ interface TrashManager {
 
     suspend fun delete(userId: UserId, shareId: ShareId, linkIds: List<LinkId>): DataResult<String>
 
-    fun emptyTrash(userId: UserId, shareId: ShareId)
+    fun emptyTrash(userId: UserId, shareIds: Set<ShareId>)
 
-    fun getEmptyTrashState(userId: UserId, shareId: ShareId): Flow<EmptyTrashState>
+    fun getEmptyTrashState(userId: UserId, volumeId: VolumeId): Flow<EmptyTrashState>
 
     enum class EmptyTrashState {
         NO_FILES_TO_TRASH, INACTIVE, TRASHING

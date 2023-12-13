@@ -24,6 +24,7 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlInfo
 import me.proton.core.drive.shareurl.base.domain.repository.ShareUrlRepository
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class CreateShareUrl @Inject constructor(
@@ -31,9 +32,13 @@ class CreateShareUrl @Inject constructor(
     private val updateEventAction: UpdateEventAction,
     private val getMainShare: GetMainShare,
 ) {
-    suspend operator fun invoke(shareId: ShareId, shareUrlInfo: ShareUrlInfo) = coRunCatching {
+    suspend operator fun invoke(
+        volumeId: VolumeId,
+        shareId: ShareId,
+        shareUrlInfo: ShareUrlInfo,
+    ) = coRunCatching {
         updateEventAction(getMainShare(shareId.userId).toResult().getOrThrow().id) {
-            shareUrlRepository.createShareUrl(shareId, shareUrlInfo).getOrThrow()
+            shareUrlRepository.createShareUrl(volumeId, shareId, shareUrlInfo).getOrThrow()
         }
     }
 }

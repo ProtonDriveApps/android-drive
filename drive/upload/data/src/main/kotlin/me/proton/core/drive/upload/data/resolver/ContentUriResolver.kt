@@ -23,12 +23,17 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.entity.toTimestampMs
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.base.domain.extension.extensionOrEmpty
+import me.proton.core.drive.base.domain.provider.MimeTypeProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import java.io.InputStream
@@ -37,6 +42,7 @@ import kotlin.coroutines.CoroutineContext
 @SuppressLint("Range")
 class ContentUriResolver(
     private val applicationContext: Context,
+    private val mimeTypeProvider: MimeTypeProvider,
     private val coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
 ) : UriResolver {
 
@@ -66,17 +72,32 @@ class ContentUriResolver(
         }
     }
 
-    override suspend fun getMimeType(uriString: String): String? = withContentResolver(uriString) { uri ->
-        getType(uri)
+    override suspend fun getMimeType(
+        uriString: String,
+    ): String? = withContentResolver(uriString) { uri ->
+        getType(uri) ?: getName(uriString)?.let { name ->
+            mimeTypeProvider.getMimeTypeFromExtension(name.extensionOrEmpty)
+                ?: UriResolver.DEFAULT_MIME_TYPE
+        }
     }
 
-    override suspend fun getLastModified(uriString: String): TimestampMs? = withContentResolver(uriString) { uri ->
+    override suspend fun getLastModified(
+        uriString: String,
+    ): TimestampMs? = withContentResolver(uriString) { uri ->
         query(uri, null, null, null, null)?.use { cursor ->
             if (cursor.moveToFirst()) {
-                cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
-                    .takeIf { column -> column != -1 }?.let { column ->
-                        TimestampMs(cursor.getLong(column))
-                    }
+                val documentLastModified =
+                    cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
+                val mediaDateModified =
+                    cursor.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED)
+
+                if (documentLastModified != -1) {
+                    TimestampMs(cursor.getLong(documentLastModified))
+                } else if (mediaDateModified != 1) {
+                    TimestampS(cursor.getLong(mediaDateModified)).toTimestampMs()
+                } else {
+                    null
+                }
             } else {
                 null
             }
@@ -85,7 +106,7 @@ class ContentUriResolver(
 
     private suspend fun<T> withContentResolver(
         uriString: String,
-        block: ContentResolver.(Uri) -> T,
+        block: suspend ContentResolver.(Uri) -> T,
     ): T? = coRunCatching(coroutineContext) {
         with (applicationContext.contentResolver) {
             val uri = Uri.parse(uriString)

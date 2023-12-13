@@ -30,7 +30,10 @@ class CreateNotificationChannels @Inject constructor(
     suspend operator fun invoke(
         userId: UserId,
         username: String,
-        channels: List<Channel.User> = listOf(Channel.User(userId, Channel.Type.TRANSFER))
+        channels: List<Channel.User> = listOf(
+            Channel.User(userId, Channel.Type.BACKGROUND),
+            Channel.User(userId, Channel.Type.TRANSFER),
+        )
     ) {
         notificationManager.createUserChannels(userId, username, channels)
         notificationRepository.insertChannels(channels)

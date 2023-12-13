@@ -23,4 +23,7 @@ data class DebugSettingsViewState(
     val appVersionHeader: String,
     val useExceptionMessage: Boolean,
     val logToFileEnabled: Boolean,
+    val allowBackupDeletedFiles: Boolean,
+    val featureFlagFreshDuration: String,
+    val useVerifier: Boolean,
 )

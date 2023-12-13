@@ -18,6 +18,7 @@
 package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.upload.domain.manager.UploadWorkManager
 import javax.inject.Inject
 
@@ -26,4 +27,7 @@ class CancelAllUpload @Inject constructor(
 ) {
     suspend operator fun invoke(userId: UserId) =
         uploadWorkManager.cancelAll(userId)
+
+    suspend operator fun invoke(userId: UserId, shareId: ShareId) =
+        uploadWorkManager.cancelAllByShare(userId, shareId)
 }

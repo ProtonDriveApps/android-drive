@@ -24,4 +24,4 @@ fun ByteArray.gzipDecompress(): Result<String> = coRunCatching {
     GZIPInputStream(inputStream()).bufferedReader(Charsets.UTF_8).use { reader -> reader.readText() }
 }
 
-fun ByteArray.toHex(): String = joinToString("") { byte -> "%02X".format(byte) }
+fun ByteArray.toHex(): String = joinToString("") { byte -> "%02x".format(byte) }

@@ -23,15 +23,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
+import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.usecase.SignOut
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
-import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.DeleteShare
 import me.proton.core.drive.share.domain.usecase.GetShare
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
@@ -41,23 +43,35 @@ class OnResetAllEvent @Inject constructor(
     private val signOut: SignOut,
     private val announceEvent: AnnounceEvent,
 ) {
+    private val coroutineScope = CoroutineScope(Job() + Dispatchers.Main)
 
     operator fun invoke(shareId: ShareId) {
-        CoroutineScope(Job() + Dispatchers.Main).launch {
-            CoreLogger.d(LogTag.EVENTS, "onResetAll: ${shareId.id.logId()}")
+        coroutineScope.launch {
+            CoreLogger.d(LogTag.EVENTS, "onResetAll: shareId ${shareId.id.logId()}")
             getShare(shareId, flowOf(false)).toResult().onSuccess { share ->
                 if (share.isMain) {
-                    CoreLogger.e(
-                        tag = LogTag.EVENTS,
-                        e = RuntimeException("Sign out due to reset all event"),
-                        message = "Sign out due to reset all event",
-                    )
-                    signOut(shareId.userId)
-                    announceEvent(NotificationEvent.ForcedSignOut)
+                    signOutUser(shareId.userId)
                 } else {
                     deleteShare(shareId, locallyOnly = true)
                 }
             }
         }
+    }
+
+    operator fun invoke(userId: UserId, volumeId: VolumeId) {
+        coroutineScope.launch {
+            CoreLogger.d(LogTag.EVENTS, "onResetAll: volumeId ${volumeId.id.logId()}")
+            signOutUser(userId)
+        }
+    }
+
+    private suspend fun signOutUser(userId: UserId) {
+        CoreLogger.e(
+            tag = LogTag.EVENTS,
+            e = RuntimeException("Sign out due to reset all event"),
+            message = "Sign out due to reset all event",
+        )
+        signOut(userId)
+        announceEvent(Event.ForcedSignOut)
     }
 }

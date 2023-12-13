@@ -34,7 +34,8 @@ class UploadAlreadyCreatedFiles @Inject constructor(
     suspend operator fun invoke(
         folder: DriveLink.Folder,
         uploadFiles: List<Pair<UploadFileLink, String>>,
-        shouldDeleteSource: Boolean = false
+        shouldDeleteSource: Boolean = false,
+        showFilesBeingUploaded: Boolean = true,
     ): Result<Unit> = coRunCatching {
         validateUploadLimit(folder.userId, uploadFiles.size).getOrThrow()
         with (uploadWorkManager) {
@@ -53,10 +54,12 @@ class UploadAlreadyCreatedFiles @Inject constructor(
                         shouldDeleteSource = shouldDeleteSource,
                     )
                 }
-                broadcastFilesBeingUploaded(
-                    folder = folder,
-                    uriStrings = uriStrings,
-                )
+                if (showFilesBeingUploaded) {
+                    broadcastFilesBeingUploaded(
+                        folder = folder,
+                        uriStrings = uriStrings,
+                    )
+                }
             }
         }
     }

@@ -41,7 +41,7 @@ class GetOrCreateMainShare @Inject constructor(
                 is DataResult.Error -> {
                     when (result.cause) {
                         is ShareException -> {
-                            if (result.cause is ShareException.MainShareLocked) {
+                            if (result.cause is ShareException.ShareLocked) {
                                 emit(result)
                             }
                             emitAll(getOrCreateMainShare(userId))

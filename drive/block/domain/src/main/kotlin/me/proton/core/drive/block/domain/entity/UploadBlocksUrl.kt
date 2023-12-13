@@ -19,5 +19,5 @@ package me.proton.core.drive.block.domain.entity
 
 data class UploadBlocksUrl(
     val blockLinks: List<UploadBlockLink>,
-    val thumbnailLink: UploadBlockLink?,
+    val thumbnailLinks: List<UploadBlockLink>,
 )

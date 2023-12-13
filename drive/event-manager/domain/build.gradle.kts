@@ -20,9 +20,14 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.eventmanager.domain"
+}
+
 driveModule(
     hilt = true,
 ) {
+    api(project(":drive:announce-event:domain"))
     api(project(":drive:drivelink:domain"))
     api(project(":drive:drivelink-download:domain"))
     api(project(":drive:drivelink-offline:domain"))
@@ -30,7 +35,6 @@ driveModule(
     api(project(":drive:folder:domain"))
     api(project(":drive:link:domain"))
     api(project(":drive:link-trash:domain"))
-    api(project(":drive:notification:domain"))
     api(project(":drive:share:domain"))
     api(project(":drive:share-crypto:domain"))
     api(project(":drive:share-url:base:domain"))

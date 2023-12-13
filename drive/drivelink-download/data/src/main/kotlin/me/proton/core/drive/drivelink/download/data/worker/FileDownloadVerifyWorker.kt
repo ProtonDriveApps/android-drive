@@ -26,12 +26,13 @@ import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
-import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.drivelink.download.data.extension.logTag
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FILE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_RETRYABLE
@@ -113,7 +114,7 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
             )
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
-                OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
             .addTags(listOf(userId.id) + tags)

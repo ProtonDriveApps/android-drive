@@ -29,10 +29,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import me.proton.core.drive.base.data.extension.logDefaultMessage
 import me.proton.core.drive.base.domain.extension.ellipsizeMiddle
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.extension.logDefaultMessage
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.folder.create.domain.usecase.CreateFolder

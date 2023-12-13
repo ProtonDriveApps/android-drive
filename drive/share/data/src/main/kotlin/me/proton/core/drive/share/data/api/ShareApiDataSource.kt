@@ -22,14 +22,16 @@ import me.proton.core.drive.share.data.api.response.shareDto
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.entity.ShareInfo
 import me.proton.core.drive.share.data.extension.toCreateShareRequest
+import me.proton.core.drive.share.data.extension.toLong
+import me.proton.core.drive.share.domain.entity.Share.Type
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiException
 
 class ShareApiDataSource(private val apiProvider: ApiProvider) {
     @Throws(ApiException::class)
-    suspend fun getShares(userId: UserId): List<ShareDto> =
-        apiProvider.get<ShareApi>(userId).invoke { getShares() }.valueOrThrow.shareDtos
+    suspend fun getShares(userId: UserId, shareType: Type): List<ShareDto> =
+        apiProvider.get<ShareApi>(userId).invoke { getShares(shareType.toLong()) }.valueOrThrow.shareDtos
 
     @Throws(ApiException::class)
     suspend fun getShareBootstrap(shareId: ShareId): ShareDto =

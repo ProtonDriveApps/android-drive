@@ -23,6 +23,7 @@ import androidx.compose.runtime.Immutable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -54,6 +55,4 @@ data class FilesViewState(
                 !(link.isTrashed && link.isProcessing)
             }
     }
-
-    data class Action(val iconResId: Int, val contentDescriptionResId: Int, val onAction: () -> Unit)
 }

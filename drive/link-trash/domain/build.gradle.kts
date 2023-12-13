@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.linktrash.domain"
+}
+
 driveModule(hilt = true) {
     api(project(":drive:link:domain"))
     implementation(project(":drive:link-node:domain"))

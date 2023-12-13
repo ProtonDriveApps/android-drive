@@ -20,7 +20,8 @@ package me.proton.core.drive.thumbnail.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.usecase.GetCacheFolder
-import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.file.base.domain.entity.ThumbnailType
+import me.proton.core.drive.file.base.domain.extension.fileName
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.io.File
 import javax.inject.Inject
@@ -29,9 +30,14 @@ class GetThumbnailCacheFile @Inject constructor(
     private val getCacheFolder: GetCacheFolder,
 ) {
 
-    suspend operator fun invoke(userId: UserId, volumeId: VolumeId, revisionId: String) =
+    suspend operator fun invoke(
+        userId: UserId,
+        volumeId: VolumeId,
+        revisionId: String,
+        type: ThumbnailType,
+    ) =
         File(
             getCacheFolder(userId, volumeId.id, revisionId),
-            Link.THUMBNAIL_NAME
+            type.fileName,
         )
 }

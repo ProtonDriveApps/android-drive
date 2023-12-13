@@ -18,7 +18,7 @@
 package me.proton.core.drive.volume.data.extension
 
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.volume.data.api.VolumeDto
+import me.proton.core.drive.volume.data.api.entity.VolumeDto
 import me.proton.core.drive.volume.data.db.VolumeEntity
 
 fun VolumeDto.toVolumeEntity(userId: UserId) =

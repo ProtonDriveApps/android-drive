@@ -19,25 +19,24 @@
 package me.proton.core.drive.thumbnail.domain.usecase
 
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.file.base.domain.repository.FileRepository
+import me.proton.core.drive.file.base.domain.entity.ThumbnailId
+import me.proton.core.drive.file.base.domain.extension.url
+import me.proton.core.drive.file.base.domain.usecase.FetchThumbnailUrl
 import me.proton.core.drive.file.base.domain.usecase.GetUrlInputStream
-import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.extension.userId
 import java.io.InputStream
 import javax.inject.Inject
 
 class GetThumbnailInputStream @Inject constructor(
     private val getUrlInputStream: GetUrlInputStream,
-    private val fileRepository: FileRepository,
+    private val fetchThumbnailUrl: FetchThumbnailUrl,
 ) {
 
     suspend operator fun invoke(
-        fileId: FileId,
-        revisionId: String,
+        thumbnailId: ThumbnailId,
     ): Result<InputStream> = coRunCatching {
         getUrlInputStream(
-            userId = fileId.userId,
-            url = fileRepository.fetchThumbnailUrl(fileId, revisionId).getOrThrow()
+            userId = thumbnailId.userId,
+            url = fetchThumbnailUrl(thumbnailId).getOrThrow().url,
         ).getOrThrow()
     }
 }

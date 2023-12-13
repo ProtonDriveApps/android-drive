@@ -22,18 +22,23 @@ import me.proton.android.drive.ui.dialog.FileFolderOptionsDialogTestTag
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
 
-
+@Suppress("TooManyFunctions")
 object FileFolderOptionsRobot : Robot {
     private val fileFolderOptionsScreen get() = node.withTag(FileFolderOptionsDialogTestTag.fileOrFolderOptions)
     private val moveButton get() = node.withText(I18N.string.files_move_file_action)
     private val moveToTrashButton get() = node.withText(I18N.string.files_send_to_trash_action)
+    private val restoreFromTrashButton get() = node.withText(I18N.string.files_restore_from_trash_action)
     private val makeAvailableOfflineButton get() = node.withText(I18N.string.common_make_available_offline_action)
+    private val removeAvailableOfflineButton get() = node
+        .withText(I18N.string.common_remove_from_offline_available_action)
     private val getLinkButton get() = node.withText(I18N.string.common_get_link_action)
     private val manageLinkButton get() = node.withText(I18N.string.common_manage_link_action)
     private val renameButton get() = node.withText(I18N.string.files_rename_file_action)
     private val fileDetailsButton get() = node.withText(I18N.string.files_display_file_info_action)
     private val folderDetailsButton get() = node.withText(I18N.string.files_display_folder_info_action)
     private val stopSharingButton get() = node.withText(I18N.string.common_stop_sharing_action)
+    private val deletePermanentlyButton get() = node.withText(I18N.string.common_delete_permanently_action)
+    private val deleteConfirm get() = node.withText(I18N.string.title_files_confirm_deletion)
 
     fun clickMove() = MoveToFolderRobot.apply {
         moveButton.scrollTo().click()
@@ -58,6 +63,26 @@ object FileFolderOptionsRobot : Robot {
     }
     fun clickMoveToTrash() = FilesTabRobot.apply {
         moveToTrashButton.scrollTo().click()
+    }
+    fun clickRestoreTrash() = FilesTabRobot.apply {
+        restoreFromTrashButton.scrollTo().click()
+    }
+    fun clickMakeAvailableOffline() = FilesTabRobot.apply {
+        makeAvailableOfflineButton.scrollTo().click()
+    }
+    fun clickDeletePermanently() = apply {
+        deletePermanentlyButton.scrollTo().click()
+    }
+    fun confirmDelete() = TrashRobot.apply {
+        deleteConfirm.await { assertIsDisplayed() }
+        deletePermanentlyButton.click()
+    }
+    fun <T : Robot> clickRemoveAvailableOffline(goesTo: T): T = goesTo.apply {
+        removeAvailableOfflineButton.scrollTo().click()
+    }
+
+    fun <T : Robot> clickMakeAvailableOffline(goesTo: T) = goesTo.apply {
+        makeAvailableOfflineButton.scrollTo().click()
     }
 
     override fun robotDisplayed() {

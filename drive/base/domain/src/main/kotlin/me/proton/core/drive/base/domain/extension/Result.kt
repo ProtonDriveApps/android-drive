@@ -17,18 +17,30 @@
  */
 package me.proton.core.drive.base.domain.extension
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.network.domain.ApiException
 
-fun <T> Result<T>.toDataResult(): DataResult<T> {
-    onSuccess { value ->
-        return DataResult.Success(ResponseSource.Local, value)
-    }.onFailure { throwable ->
-        return when (throwable) {
-            is ApiException -> DataResult.Error.Remote(throwable.message, throwable)
-            else -> DataResult.Error.Local(throwable.message, throwable)
+fun <T> Result<T>.toDataResult(): DataResult<T> =
+    fold(
+        onSuccess = { value -> DataResult.Success(ResponseSource.Local, value) },
+        onFailure = { throwable ->
+            when (throwable) {
+                is ApiException -> DataResult.Error.Remote(throwable.message, throwable)
+                else -> DataResult.Error.Local(throwable.message, throwable)
+            }
         }
+    )
+
+inline fun<T, R> Flow<Result<T>>.transformSuccess(
+    crossinline onSuccess: suspend FlowCollector<Result<R>>.(value: T) -> Unit,
+): Flow<Result<R>> =
+    transform { result ->
+        result.fold(
+            onSuccess = { value -> onSuccess(value) },
+            onFailure = { throwable -> emit(Result.failure(throwable)) }
+        )
     }
-    throw IllegalStateException()
-}

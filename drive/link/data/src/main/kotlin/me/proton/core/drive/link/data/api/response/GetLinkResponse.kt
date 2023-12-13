@@ -26,7 +26,7 @@ import me.proton.core.drive.link.data.api.entity.LinkDto
 @Serializable
 data class GetLinkResponse(
     @SerialName(CODE)
-    val code: Int,
+    val code: Long,
     @SerialName(LINK)
     val linkDto: LinkDto
 )

@@ -26,6 +26,7 @@ data class UploadBlock(
     override val url: String,
     override val hashSha256: String,
     override val encSignature: String,
+    override val type: Block.Type,
     val rawSize: Bytes,
     val size: Bytes,
     val token: String,

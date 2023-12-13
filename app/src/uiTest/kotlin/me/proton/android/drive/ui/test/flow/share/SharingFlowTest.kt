@@ -18,30 +18,18 @@
 
 package me.proton.android.drive.ui.test.flow.share
 
+import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.data.ImageName
+import me.proton.android.drive.ui.robot.FileFolderOptionsRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.rules.WelcomeScreenRule
-import me.proton.android.drive.ui.test.BaseTest
-import me.proton.android.drive.ui.toolkits.getRandomString
-import me.proton.core.test.quark.data.User
-import org.junit.Rule
+import me.proton.android.drive.ui.rules.Scenario
+import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
 
-class SharingFlowTest : BaseTest() {
-
-    private val user
-        get() = User(
-            dataSetScenario = "2",
-            name = "proton_drive_${getRandomString(20)}"
-        )
-
-    @get:Rule
-    val welcomeScreenRule = WelcomeScreenRule(false)
-
-    @get:Rule
-    val userLoginRule = UserLoginRule(testUser = user)
-
+@HiltAndroidTest
+class SharingFlowTest : AuthenticatedBaseTest() {
     @Test
+    @Scenario(2)
     fun shareFile() {
         val file = "image.jpg"
         FilesTabRobot
@@ -49,7 +37,21 @@ class SharingFlowTest : BaseTest() {
             .clickGetLink()
             .verifyShareLinkFile(file)
     }
+
     @Test
+    @Scenario(2, isPhotos = true)
+    fun sharePhoto() {
+        val image = ImageName.Main
+        FilesTabRobot
+            .clickPhotosTab()
+            .longClickOnPhoto(image.fileName)
+            .clickOptions()
+            .clickGetLink()
+            .verifyShareLinkFile(image.fileName)
+    }
+
+    @Test
+    @Scenario(2)
     fun shareFolder() {
         val folder = "folder1"
         FilesTabRobot

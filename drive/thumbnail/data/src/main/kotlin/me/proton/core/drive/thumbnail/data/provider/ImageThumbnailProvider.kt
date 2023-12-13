@@ -28,10 +28,10 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.graphics.applyCanvas
 import androidx.exifinterface.media.ExifInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
+import me.proton.core.drive.base.data.extension.compress
 import me.proton.core.drive.base.domain.entity.Bytes
-import me.proton.core.drive.base.presentation.entity.FileTypeCategory
-import me.proton.core.drive.base.presentation.entity.toFileTypeCategory
-import me.proton.core.drive.base.presentation.extension.compress
+import me.proton.core.drive.base.domain.entity.FileTypeCategory
+import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import javax.inject.Inject
 import kotlin.math.ceil

@@ -21,7 +21,10 @@ package me.proton.core.drive.linkupload.data.db.entity
 import androidx.room.ColumnInfo
 import me.proton.core.drive.base.data.db.Column.TOTAL
 import me.proton.core.drive.base.data.db.Column.TOTAL_UNPROCESSED_WITH_URI
+import me.proton.core.drive.base.data.db.Column.TOTAL_UNPROCESSED_WITH_URI_NON_USER_PRIORITY
+import me.proton.core.drive.base.data.db.Column.TOTAL_WITH_ANNOUNCE
 import me.proton.core.drive.base.data.db.Column.TOTAL_WITH_URI
+import me.proton.core.drive.base.data.db.Column.TOTAL_WITH_URI_NON_USER_PRIORITY
 
 data class LinkUploadCountEntity(
     @ColumnInfo(name = TOTAL)
@@ -30,4 +33,10 @@ data class LinkUploadCountEntity(
     val totalWithUri: Int,
     @ColumnInfo(name = TOTAL_UNPROCESSED_WITH_URI)
     val totalUnprocessedWithUri: Int,
+    @ColumnInfo(name = TOTAL_WITH_URI_NON_USER_PRIORITY)
+    val totalWithUriNonUserPriority: Int,
+    @ColumnInfo(name = TOTAL_UNPROCESSED_WITH_URI_NON_USER_PRIORITY)
+    val totalUnprocessedWithUriNonUserPriority: Int,
+    @ColumnInfo(name = TOTAL_WITH_ANNOUNCE)
+    val totalWithAnnounce: Int,
 )

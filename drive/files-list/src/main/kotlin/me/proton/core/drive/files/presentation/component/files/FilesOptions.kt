@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import me.proton.core.compose.component.bottomsheet.BottomSheetContent
 import me.proton.core.compose.component.bottomsheet.BottomSheetEntry
-import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.files.presentation.component.common.OptionsHeader

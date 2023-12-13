@@ -18,19 +18,40 @@
 package me.proton.core.drive.link.data.api
 
 import me.proton.core.drive.link.data.api.entity.LinkDto
+import me.proton.core.drive.link.data.api.request.CheckAvailableHashesRequest
+import me.proton.core.drive.link.data.api.request.GetLinksRequest
 import me.proton.core.drive.link.data.api.request.MoveLinkRequest
 import me.proton.core.drive.link.data.api.request.RenameLinkRequest
+import me.proton.core.drive.link.domain.entity.CheckAvailableHashesInfo
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.MoveInfo
 import me.proton.core.drive.link.domain.entity.RenameInfo
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiException
 
 class LinkApiDataSource(private val apiProvider: ApiProvider) {
     @Throws(ApiException::class)
     suspend fun getLink(linkId: LinkId): LinkDto =
-        apiProvider.get<LinkApi>(linkId.userId).invoke { getLink(linkId.shareId.id, linkId.id) }.valueOrThrow.linkDto
+        apiProvider.get<LinkApi>(linkId.userId)
+            .invoke { getLink(linkId.shareId.id, linkId.id) }.valueOrThrow.linkDto
+
+    @Throws(ApiException::class)
+    suspend fun checkAvailableHashes(
+        linkId: LinkId,
+        checkAvailableHashesInfo: CheckAvailableHashesInfo,
+    ) =
+        apiProvider.get<LinkApi>(linkId.userId).invoke {
+            checkAvailableHashes(
+                linkId.shareId.id,
+                linkId.id,
+                CheckAvailableHashesRequest(
+                    hashes = checkAvailableHashesInfo.hashes,
+                    clientUid = listOfNotNull(checkAvailableHashesInfo.clientUid),
+                )
+            )
+        }.valueOrThrow
 
     @Throws(ApiException::class)
     suspend fun moveLink(
@@ -64,6 +85,17 @@ class LinkApiDataSource(private val apiProvider: ApiProvider) {
                     originalHash = renameInfo.previousHash,
                     mimeType = renameInfo.mimeType,
                     signatureAddress = renameInfo.signatureAddress
+                )
+            )
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun getLinks(shareId: ShareId, linkIds: Set<String>) =
+        apiProvider.get<LinkApi>(shareId.userId).invoke {
+            getLinks(
+                shareId = shareId.id,
+                request = GetLinksRequest(
+                    linkIds = linkIds.toList(),
                 )
             )
         }.valueOrThrow

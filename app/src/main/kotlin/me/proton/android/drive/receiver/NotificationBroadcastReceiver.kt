@@ -24,11 +24,13 @@ import android.content.Intent
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.extension.log
+import me.proton.core.drive.base.domain.extension.resultValueOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.drive.notification.domain.usecase.CancelAndRemoveNotification
 import me.proton.core.drive.notification.domain.usecase.RemoveNotification
+import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.upload.domain.usecase.CancelAllUpload
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.deserialize
@@ -40,6 +42,7 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
     @Inject lateinit var removeNotification: RemoveNotification
     @Inject lateinit var cancelAndRemoveNotification: CancelAndRemoveNotification
     @Inject lateinit var cancelAllUpload: CancelAllUpload
+    @Inject lateinit var getMainShare: GetMainShare
 
     override fun onReceive(context: Context?, intent: Intent?) = intent?.action?.let { action ->
         val notificationIdString = intent.getStringExtra(EXTRA_NOTIFICATION_ID) ?: return
@@ -59,7 +62,12 @@ class NotificationBroadcastReceiver : BroadcastReceiver() {
             if (notificationId is NotificationId.User) {
                 when (action) {
                     ACTION_DELETE -> removeNotification(notificationId)
-                    ACTION_CANCEL_ALL -> cancelAllUpload(notificationId.channel.userId)
+                    ACTION_CANCEL_ALL -> getMainShare(notificationId.channel.userId).resultValueOrNull()?.id?.let { shareId ->
+                        cancelAllUpload(
+                            notificationId.channel.userId,
+                            shareId,
+                        )
+                    }
                     else -> CoreLogger.e(
                         tag = LogTag.BROADCAST_RECEIVER,
                         e = RuntimeException("Received unknown action '$action'")

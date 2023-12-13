@@ -30,6 +30,6 @@ interface BlockRepository {
         fileId: FileId,
         revisionId: String,
         uploadBlocks: List<UploadBlock>,
-        uploadThumbnail: UploadBlock?,
+        uploadThumbnails: List<UploadBlock>,
     ): Result<UploadBlocksUrl>
 }

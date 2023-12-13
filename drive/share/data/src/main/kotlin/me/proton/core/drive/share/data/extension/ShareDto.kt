@@ -35,4 +35,5 @@ fun ShareDto.toShareEntity(userId: UserId) =
         passphrase = passphrase ?: "",
         passphraseSignature = passphraseSignature ?: "",
         creationTime = creationTime,
+        type = type,
     )

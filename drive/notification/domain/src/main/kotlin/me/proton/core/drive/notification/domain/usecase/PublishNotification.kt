@@ -17,7 +17,7 @@
  */
 package me.proton.core.drive.notification.domain.usecase
 
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.drive.notification.domain.manager.NotificationManager
 import javax.inject.Inject
@@ -25,6 +25,6 @@ import javax.inject.Inject
 class PublishNotification @Inject constructor(
     private val notificationManager: NotificationManager
 ) {
-    operator fun invoke(notificationId: NotificationId, notificationEvents: List<NotificationEvent>) =
-        notificationManager.notify(notificationId, notificationEvents)
+    operator fun invoke(notificationId: NotificationId, events: List<Event>) =
+        notificationManager.notify(notificationId, events)
 }

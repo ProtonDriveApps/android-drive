@@ -21,7 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.drive.base.presentation.entity.FileTypeCategory
+import me.proton.core.drive.base.domain.entity.FileTypeCategory
 
 @Composable
 fun UnknownPreview(

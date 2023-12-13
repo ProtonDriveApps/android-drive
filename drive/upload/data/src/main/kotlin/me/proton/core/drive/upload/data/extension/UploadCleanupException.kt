@@ -20,8 +20,8 @@ package me.proton.core.drive.upload.data.extension
 import android.content.Context
 import me.proton.android.drive.verifier.data.extension.log
 import me.proton.android.drive.verifier.domain.exception.VerifierException
-import me.proton.core.drive.base.presentation.extension.getDefaultMessage
-import me.proton.core.drive.base.presentation.extension.log
+import me.proton.core.drive.base.data.extension.getDefaultMessage
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.upload.data.exception.UploadCleanupException
 import me.proton.core.drive.i18n.R as I18N
 

@@ -18,31 +18,18 @@
 
 package me.proton.android.drive.ui.test.flow.share
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FileFolderOptionsRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.ShareRobot
-import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.rules.WelcomeScreenRule
-import me.proton.android.drive.ui.test.BaseTest
-import me.proton.android.drive.ui.toolkits.getRandomString
-import me.proton.core.test.quark.data.User
-import org.junit.Rule
+import me.proton.android.drive.ui.rules.Scenario
+import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
 
-class SetCustomPasswordFlowTest : BaseTest() {
-    private val user
-        get() = User(
-            dataSetScenario = "4",
-            name = "proton_drive_${getRandomString(20)}"
-        )
-
-    @get:Rule
-    val welcomeScreenRule = WelcomeScreenRule(false)
-
-    @get:Rule
-    val userLoginRule = UserLoginRule(testUser = user, shouldSeedUser = true)
-
+@HiltAndroidTest
+class SetCustomPasswordFlowTest : AuthenticatedBaseTest() {
     @Test
+    @Scenario(4)
     fun deleteCustomPassword() {
         val file = FOLDER_SHARED_WITH_PASSWORD
         showShareViaLinkScreen(file) {
@@ -52,10 +39,7 @@ class SetCustomPasswordFlowTest : BaseTest() {
         ShareRobot
             .clickPasswordToggle()
             .clickSave()
-            .verify {
-                shareUpdateSuccessWasShown()
-                saveDoesNotExists()
-            }
+            .clickUpdateSuccessfulGrowler()
             .clickBack(FilesTabRobot)
             .verify { robotDisplayed() }
             .scrollToItemWithName(file)
@@ -68,6 +52,7 @@ class SetCustomPasswordFlowTest : BaseTest() {
     }
 
     @Test
+    @Scenario(4)
     fun setCustomPassword() {
         val file = FILE_SHARED
         showShareViaLinkScreen(file) {
@@ -79,10 +64,7 @@ class SetCustomPasswordFlowTest : BaseTest() {
             .typePassword(FILE_SHARE_PASSWORD)
             .verify { passwordProtectedAccessibilityDescriptionWasShown() }
             .clickSave()
-            .verify {
-                shareUpdateSuccessWasShown()
-                saveDoesNotExists()
-            }
+            .clickUpdateSuccessfulGrowler()
             .clickBack(FilesTabRobot)
             .verify { robotDisplayed() }
             .scrollToItemWithName(file)
@@ -95,6 +77,7 @@ class SetCustomPasswordFlowTest : BaseTest() {
     }
 
     @Test
+    @Scenario(4)
     fun copyPasswordAndVerifyAllowedLength() {
         val file = FILE_SHARED_WITH_PASSWORD
         showShareViaLinkScreen(file) {
@@ -110,6 +93,7 @@ class SetCustomPasswordFlowTest : BaseTest() {
     }
 
     @Test
+    @Scenario(4)
     fun discardPasswordChanges() {
         val file = FILE
         showShareViaLinkScreen(file) {

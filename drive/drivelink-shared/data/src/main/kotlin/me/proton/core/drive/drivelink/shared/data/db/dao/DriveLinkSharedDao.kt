@@ -26,7 +26,6 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
 import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
 import me.proton.core.drive.link.data.db.LinkDao
-import me.proton.core.drive.link.selection.data.db.dao.LinkSelectionDao
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDao
 import me.proton.core.drive.linkoffline.data.db.LinkOfflineDao
 import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
@@ -45,12 +44,11 @@ interface DriveLinkSharedDao : DriveLinkDao {
             ${LinkOfflineDao.LINK_JOIN_STATEMENT}
             ${LinkDownloadDao.LINK_JOIN_STATEMENT}
             ${LinkTrashDao.LINK_JOIN_STATEMENT}
-            ${LinkSelectionDao.LINK_JOIN_STATEMENT}
         WHERE 
             LinkEntity.user_id = :userId AND 
-            LinkEntity.share_id = :shareId AND
+            ShareUrlEntity.volume_id = :volumeId AND
             ${LinkTrashDao.NOT_TRASHED_CONDITION}
             """
     )
-    fun getSharedLinks(userId: UserId, shareId: String): Flow<List<DriveLinkEntityWithBlock>>
+    fun getSharedLinks(userId: UserId, volumeId: String): Flow<List<DriveLinkEntityWithBlock>>
 }

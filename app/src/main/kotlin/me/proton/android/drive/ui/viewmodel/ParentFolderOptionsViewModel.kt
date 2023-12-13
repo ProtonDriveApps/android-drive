@@ -48,6 +48,7 @@ import me.proton.core.drive.drivelink.upload.domain.usecase.UploadFiles
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.upload.domain.exception.NotEnoughSpaceException
 import me.proton.core.util.kotlin.CoreLogger
@@ -116,6 +117,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
                 uploadFiles(
                     folder = folder,
                     uriStrings = uriStrings,
+                    priority = UploadFileLink.USER_PRIORITY,
                 )
                     .onFailure { error ->
                         if (error is NotEnoughSpaceException) {
@@ -137,6 +139,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
                         folder = folder,
                         uriStrings = listOf(uri.toString()),
                         shouldDeleteSource = true,
+                        priority = UploadFileLink.USER_PRIORITY,
                     )
                         .onFailure { error ->
                             if (error is NotEnoughSpaceException) {

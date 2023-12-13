@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.upload.data.worker
 
+import androidx.work.NetworkType
 import androidx.work.Operation
 import androidx.work.WorkManager
 import me.proton.core.domain.entity.UserId
@@ -31,6 +32,7 @@ internal sealed class FileUploadFlow {
         private val userId: UserId,
         override val uploadFileLinkId: Long,
         private val shouldDeleteSource: Boolean,
+        private val networkType: NetworkType,
     ) : FileUploadFlow() {
 
         override suspend fun enqueueWork(uploadTags: List<String>, uriString: String) = workManager
@@ -38,6 +40,7 @@ internal sealed class FileUploadFlow {
                 CreateNewFileWorker.getWorkRequest(
                     userId = userId,
                     uploadFileLinkId = uploadFileLinkId,
+                    networkType = networkType,
                     tags = uploadTags,
                 )
             ).then(
@@ -58,8 +61,43 @@ internal sealed class FileUploadFlow {
                 GetBlocksUploadUrlWorker.getWorkRequest(
                     userId = userId,
                     uploadFileLinkId = uploadFileLinkId,
+                    networkType = networkType,
                     tags = uploadTags,
                 )
+            ).enqueue()
+    }
+
+    class EmptyFileFromScratch(
+        private val workManager: WorkManager,
+        private val userId: UserId,
+        override val uploadFileLinkId: Long,
+        private val networkType: NetworkType,
+        private val cleanupWorkers: CleanupWorkers,
+    ) : FileUploadFlow() {
+
+        override suspend fun enqueueWork(uploadTags: List<String>, uriString: String) = workManager
+            .beginWith(
+                CreateNewFileWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    networkType = networkType,
+                    tags = uploadTags,
+                )
+            ).then(
+                UpdateEmptyFileLinkWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    tags = uploadTags,
+                )
+            ).then(
+                UpdateRevisionWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    networkType = networkType,
+                    tags = uploadTags,
+                )
+            ).then(
+                cleanupWorkers(userId, uploadFileLinkId, uploadTags, emptyList())
             ).enqueue()
     }
 
@@ -68,6 +106,7 @@ internal sealed class FileUploadFlow {
         private val userId: UserId,
         override val uploadFileLinkId: Long,
         private val shouldDeleteSource: Boolean,
+        private val networkType: NetworkType,
     ) : FileUploadFlow() {
 
         override suspend fun enqueueWork(uploadTags: List<String>, uriString: String) = workManager
@@ -77,7 +116,7 @@ internal sealed class FileUploadFlow {
                     uploadFileLinkId = uploadFileLinkId,
                     uriString = uriString,
                     shouldDeleteSource = shouldDeleteSource,
-                    tags = uploadTags
+                    tags = uploadTags,
                 )
             ).then(
                 VerifyBlocksWorker.getWorkRequest(
@@ -89,8 +128,36 @@ internal sealed class FileUploadFlow {
                 GetBlocksUploadUrlWorker.getWorkRequest(
                     userId = userId,
                     uploadFileLinkId = uploadFileLinkId,
-                    tags = uploadTags
+                    networkType = networkType,
+                    tags = uploadTags,
                 )
+            ).enqueue()
+    }
+
+    class EmptyFileAlreadyCreated(
+        private val workManager: WorkManager,
+        private val userId: UserId,
+        override val uploadFileLinkId: Long,
+        private val networkType: NetworkType,
+        private val cleanupWorkers: CleanupWorkers,
+    ) : FileUploadFlow() {
+
+        override suspend fun enqueueWork(uploadTags: List<String>, uriString: String) = workManager
+            .beginWith(
+                UpdateEmptyFileLinkWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    tags = uploadTags,
+                )
+            ).then(
+                UpdateRevisionWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    networkType = networkType,
+                    tags = uploadTags,
+                )
+            ).then(
+                cleanupWorkers(userId, uploadFileLinkId, uploadTags, emptyList())
             ).enqueue()
     }
 }

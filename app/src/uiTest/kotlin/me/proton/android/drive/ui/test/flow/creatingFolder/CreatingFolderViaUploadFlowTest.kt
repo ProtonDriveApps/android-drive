@@ -18,28 +18,25 @@
 
 package me.proton.android.drive.ui.test.flow.creatingFolder
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.rule.GrantPermissionRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.CreateFolderRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.LauncherRobot
 import me.proton.android.drive.ui.rules.ExternalFilesRule
 import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.rules.WelcomeScreenRule
 import me.proton.android.drive.ui.test.EmptyBaseTest
-import me.proton.android.drive.ui.toolkits.getRandomString
+import me.proton.android.drive.utils.getRandomString
 import me.proton.core.test.quark.data.User
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
+@HiltAndroidTest
 class CreatingFolderViaUploadFlowTest : EmptyBaseTest() {
+    private val testUser = User(name = "proton_drive_${getRandomString(15)}")
 
-    private val user
-        get() = User(
-            name = "proton_drive_${getRandomString(20)}"
-        )
+    @get:Rule(order = 1)
+    val userLoginRule: UserLoginRule = UserLoginRule(testUser, quarkCommands = quarkRule.quarkCommands)
 
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
@@ -50,17 +47,11 @@ class CreatingFolderViaUploadFlowTest : EmptyBaseTest() {
     @get:Rule
     val externalFilesRule = ExternalFilesRule()
 
-    @get:Rule
-    val welcomeScreenRule = WelcomeScreenRule(false)
-
-    @get:Rule
-    val userLoginRule = UserLoginRule(testUser = user)
-
     @Test
     fun createFolderWhenUploadingViaThirdPartyApp() {
         val randomFolderName = getRandomString()
 
-        val file = externalFilesRule.createFile("empty.txt")
+        val file = externalFilesRule.create1BFile("empty.txt")
 
         LauncherRobot.uploadTo(file)
             .verify {

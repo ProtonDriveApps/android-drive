@@ -26,13 +26,15 @@ import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.mapCatching
+import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptDriveLinks
 import me.proton.core.drive.drivelink.paged.domain.entity.LinksPage
 import me.proton.core.drive.drivelink.paged.domain.usecase.GetPagedDriveLinks
 import me.proton.core.drive.drivelink.sorting.domain.usecase.SortDriveLinks
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetMainShare
+import me.proton.core.drive.sorting.domain.entity.By
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.exhaustive
 import javax.inject.Inject
 
@@ -40,6 +42,9 @@ class GetPagedTrashedDriveLinks @Inject constructor(
     private val getMainShare: GetMainShare,
     private val getPagedDriveLinks: GetPagedDriveLinks,
     private val getDecryptedTrashedDriveLinks: GetDecryptedTrashedDriveLinks,
+    private val getTrashedDriveLinks: GetTrashedDriveLinks,
+    private val getTrashedDriveLinksCount: GetTrashedDriveLinksCount,
+    private val decryptDriveLinks: DecryptDriveLinks,
     private val trashRepository: DriveTrashRepository,
     private val getSorting: GetSorting,
     private val sortDriveLinks: SortDriveLinks,
@@ -49,28 +54,40 @@ class GetPagedTrashedDriveLinks @Inject constructor(
         .transform { result ->
             when (result) {
                 is DataResult.Processing -> Unit
-                is DataResult.Success -> emitAll(invoke(result.value.id))
+                is DataResult.Success -> emitAll(invoke(userId, result.value.volumeId))
                 is DataResult.Error -> emit(PagingData.empty())
             }.exhaustive
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(shareId: ShareId) =
-        getSorting(shareId.userId).flatMapLatest { sorting ->
+    operator fun invoke(userId: UserId, volumeId: VolumeId) =
+        getSorting(userId).flatMapLatest { sorting ->
             getPagedDriveLinks(
-                userId = shareId.userId,
-                pagedListKey = "TRASH_${shareId.userId.id}_${shareId.id}",
-                remoteDriveLinks = { page, pageSize ->
-                    trashRepository.fetchTrashContent(shareId, page, pageSize).map { (links, onSaveAction) ->
-                        LinksPage(links, onSaveAction)
+                userId = userId,
+                pagedListKey = "TRASH_${userId.id}_${volumeId.id}",
+                remoteDriveLinks = { pageIndex, pageSize ->
+                    trashRepository.fetchTrashContent(userId, volumeId, pageIndex, pageSize)
+                        .map { (links, onSaveAction) ->
+                            LinksPage(links, onSaveAction)
+                        }
+                },
+                localPagedDriveLinks = { fromIndex, count ->
+                    if (sorting.by == By.NAME || sorting.by == By.LAST_MODIFIED) {
+                        getDecryptedTrashedDriveLinks(userId, volumeId, fromIndex, count)
+                            .mapCatching { driveLinks ->
+                                sortDriveLinks(sorting, driveLinks)
+                            }
+                    } else {
+                        getTrashedDriveLinks(userId, volumeId, fromIndex, count)
+                            .mapCatching { driveLinks ->
+                                sortDriveLinks(sorting, driveLinks)
+                            }
                     }
                 },
-                localDriveLinks = {
-                    getDecryptedTrashedDriveLinks(shareId)
-                        .mapCatching { driveLinks ->
-                            sortDriveLinks(sorting, driveLinks)
-                        }
-                }
+                localDriveLinksCount = { getTrashedDriveLinksCount(userId, volumeId) },
+                processPage = takeIf { sorting.by != By.NAME && sorting.by != By.LAST_MODIFIED }?.let {
+                    { page -> decryptDriveLinks(page) }
+                },
             )
         }
 }

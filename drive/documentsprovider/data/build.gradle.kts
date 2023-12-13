@@ -19,6 +19,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.documentsprovider.data"
+}
+
 driveModule(
     hilt = true,
     serialization = true,
@@ -26,10 +30,10 @@ driveModule(
     i18n = true,
 ) {
     api(project(":drive:documentsprovider:domain"))
+    implementation(project(":drive:announce-event:domain"))
     implementation(project(":drive:base:data"))
     implementation(project(":drive:drivelink-rename:domain"))
     implementation(project(":drive:drivelink-selection:domain"))
-    implementation(project(":drive:notification:domain"))
     implementation(project(":drive:trash:domain"))
     implementation(libs.core.account)
 }

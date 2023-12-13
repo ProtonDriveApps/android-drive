@@ -21,40 +21,48 @@
 package me.proton.android.drive.ui.navigation
 
 import android.content.Intent
-import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NamedNavArgument
-import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import com.google.accompanist.navigation.animation.composable
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.extension.get
 import me.proton.android.drive.extension.require
 import me.proton.android.drive.extension.requireArguments
+import me.proton.android.drive.extension.requireSerializable
 import me.proton.android.drive.extension.runFromRoute
 import me.proton.android.drive.lock.presentation.component.AppLock
 import me.proton.android.drive.log.DriveLogTag
+import me.proton.android.drive.photos.presentation.component.PhotosPermissionRationale
 import me.proton.android.drive.ui.dialog.AutoLockDurations
 import me.proton.android.drive.ui.dialog.ConfirmDeletionDialog
 import me.proton.android.drive.ui.dialog.ConfirmEmptyTrashDialog
+import me.proton.android.drive.ui.dialog.ConfirmSkipIssuesDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopSharingDialog
 import me.proton.android.drive.ui.dialog.FileOrFolderOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
@@ -64,18 +72,20 @@ import me.proton.android.drive.ui.dialog.SortingList
 import me.proton.android.drive.ui.dialog.SystemAccessDialog
 import me.proton.android.drive.ui.navigation.animation.defaultEnterSlideTransition
 import me.proton.android.drive.ui.navigation.animation.defaultPopExitSlideTransition
-import me.proton.android.drive.ui.navigation.animation.slideComposable
-import me.proton.android.drive.ui.navigation.internal.AnimatedNavHost
+import me.proton.android.drive.ui.navigation.internal.DriveNavHost
 import me.proton.android.drive.ui.navigation.internal.MutableNavControllerSaver
 import me.proton.android.drive.ui.navigation.internal.createNavController
 import me.proton.android.drive.ui.navigation.internal.modalBottomSheet
 import me.proton.android.drive.ui.navigation.internal.rememberAnimatedNavController
+import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.screen.AppAccessScreen
+import me.proton.android.drive.ui.screen.BackupIssuesScreen
 import me.proton.android.drive.ui.screen.FileInfoScreen
 import me.proton.android.drive.ui.screen.HomeScreen
 import me.proton.android.drive.ui.screen.LauncherScreen
 import me.proton.android.drive.ui.screen.MoveToFolder
 import me.proton.android.drive.ui.screen.OfflineScreen
+import me.proton.android.drive.ui.screen.PhotosBackupScreen
 import me.proton.android.drive.ui.screen.PreviewScreen
 import me.proton.android.drive.ui.screen.SettingsScreen
 import me.proton.android.drive.ui.screen.SigningOutScreen
@@ -118,15 +128,23 @@ fun AppNavGraph(
     var homeNavController by rememberSaveable(saver = MutableNavControllerSaver(localContext, keyStoreCrypto)) {
         mutableStateOf(createNavController(localContext))
     }
-    DisposableEffect(navController) {
-        val listener = NavController.OnDestinationChangedListener { controller, _, _ ->
-            val destinations = controller.backQueue.map { entry -> entry.destination.route }.joinToString()
-            CoreLogger.d(DriveLogTag.UI, "Destination changed: $destinations")
-        }
-        navController.addOnDestinationChangedListener(listener)
-        onDispose {
-            navController.removeOnDestinationChangedListener(listener)
-        }
+    LaunchedEffect(navController) {
+        navController
+            .currentBackStack
+            .onEach { backStackEntries ->
+                val destinations = backStackEntries.map { entry -> entry.destination.route }.joinToString()
+                CoreLogger.d(DriveLogTag.UI, "App current back stack: $destinations")
+            }
+            .launchIn(this)
+    }
+    LaunchedEffect(homeNavController) {
+        homeNavController
+            .currentBackStack
+            .onEach { backStackEntries ->
+                val destinations = backStackEntries.map { entry -> entry.destination.route }.joinToString()
+                CoreLogger.d(DriveLogTag.UI, "Home current back stack: $destinations")
+            }
+            .launchIn(this)
     }
     LaunchedEffect(clearBackstackTrigger) {
         clearBackstackTrigger
@@ -170,9 +188,10 @@ fun AppNavGraph(
     navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) {
-    AnimatedNavHost(
-        navHostController = navController,
+    DriveNavHost(
+        navController = navController,
         startDestination = Screen.Launcher.route,
+        modifier = Modifier.fillMaxSize()
     ) {
         addLauncher(navController)
         addWelcome(navController)
@@ -202,6 +221,17 @@ fun AppNavGraph(
             navigateToSubscription = navigateToSubscription,
             onDrawerStateChanged = onDrawerStateChanged,
         )
+        addHomePhotos(
+            navController = navController,
+            homeNavController = homeNavController,
+            deepLinkBaseUrl = deepLinkBaseUrl,
+            navigateToBugReport = navigateToBugReport,
+            navigateToSubscription = navigateToSubscription,
+            onDrawerStateChanged = onDrawerStateChanged,
+        )
+        addPhotosIssues(navController)
+        addConfirmSkipIssues(navController)
+        addPhotosPermissionRationale(navController)
         addSortingList()
         addFileOrFolderOptions(navController)
         addMultipleFileOrFolderOptions(navController)
@@ -225,6 +255,7 @@ fun AppNavGraph(
         addAppAccess(navController)
         addSystemAccessDialog(navController)
         addAutoLockDurations(navController)
+        addPhotosBackup(navController)
     }
 }
 
@@ -289,7 +320,12 @@ fun NavGraphBuilder.addSignOutConfirmationDialog(navController: NavHostControlle
                 popUpTo(Screen.Home.route) { inclusive = true }
             }
         },
-        onDismiss = { navController.popBackStack() }
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.Dialogs.SignOut.route,
+                inclusive = true,
+            )
+        }
     )
 }
 
@@ -326,6 +362,10 @@ fun NavGraphBuilder.addFileOrFolderOptions(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
         navArgument(Screen.FileOrFolderOptions.SHARE_ID) { type = NavType.StringType },
         navArgument(Screen.FileOrFolderOptions.LINK_ID) { type = NavType.StringType },
+        navArgument(Screen.FileOrFolderOptions.OPTIONS_FILTER) {
+            type = NavType.EnumType(OptionsFilter::class.java)
+            defaultValue = OptionsFilter.FILES
+        },
     ),
 ) { navBackStackEntry, runAction ->
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
@@ -366,7 +406,12 @@ fun NavGraphBuilder.addFileOrFolderOptions(
                 popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
             }
         },
-        dismiss = { navController.popBackStack() }
+        dismiss = {
+            navController.popBackStack(
+                route = Screen.FileOrFolderOptions.route,
+                inclusive = true,
+            )
+        }
     )
 }
 
@@ -378,6 +423,10 @@ fun NavGraphBuilder.addMultipleFileOrFolderOptions(
     arguments = listOf(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
         navArgument(Screen.MultipleFileOrFolderOptions.SELECTION_ID) { type = NavType.StringType },
+        navArgument(Screen.MultipleFileOrFolderOptions.OPTIONS_FILTER) {
+            type = NavType.EnumType(OptionsFilter::class.java)
+            defaultValue = OptionsFilter.FILES
+        },
     ),
 ) { navBackStackEntry, runAction ->
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
@@ -388,7 +437,12 @@ fun NavGraphBuilder.addMultipleFileOrFolderOptions(
                 popUpTo(Screen.MultipleFileOrFolderOptions.route) { inclusive = true }
             }
         },
-        dismiss = { navController.popBackStack() },
+        dismiss = {
+            navController.popBackStack(
+                route = Screen.MultipleFileOrFolderOptions.route,
+                inclusive = true,
+            )
+        },
     )
 }
 
@@ -417,7 +471,10 @@ fun NavGraphBuilder.addParentFolderOptions(
             }
         },
         dismiss = {
-            navController.popBackStack()
+            navController.popBackStack(
+                route = Screen.ParentFolderOptions.route,
+                inclusive = true,
+            )
         }
     )
 }
@@ -431,7 +488,14 @@ fun NavGraphBuilder.addConfirmDeletionDialog(navController: NavHostController) =
         navArgument(Screen.Files.Dialogs.ConfirmDeletion.SHARE_ID) { type = NavType.StringType },
     ),
 ) {
-    ConfirmDeletionDialog(onDismiss = { navController.popBackStack() })
+    ConfirmDeletionDialog(
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.Files.Dialogs.ConfirmDeletion.route,
+                inclusive = true,
+            )
+        }
+    )
 }
 
 @ExperimentalCoroutinesApi
@@ -450,7 +514,12 @@ fun NavGraphBuilder.addConfirmStopSharingDialog(navController: NavHostController
     ),
 ) { navBackStackEntry ->
     val confirmPopUpRoute = navBackStackEntry.get<String>(Screen.Files.Dialogs.ConfirmStopSharing.CONFIRM_POP_UP_ROUTE)
-    val onDismiss: () -> Unit = { navController.popBackStack() }
+    val onDismiss: () -> Unit = {
+        navController.popBackStack(
+            route = Screen.Files.Dialogs.ConfirmStopSharing.route,
+            inclusive = true,
+        )
+    }
     val onConfirm: () -> Unit = confirmPopUpRoute?.let {
         val confirmPopUpRouteInclusive = navBackStackEntry.get<Boolean>(
             Screen.Files.Dialogs.ConfirmStopSharing.CONFIRM_POP_UP_ROUTE_INCLUSIVE
@@ -470,7 +539,14 @@ fun NavGraphBuilder.addConfirmEmptyTrashDialog(navController: NavHostController)
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
     ),
 ) {
-    ConfirmEmptyTrashDialog(onDismiss = { navController.popBackStack() })
+    ConfirmEmptyTrashDialog(
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.Files.Dialogs.ConfirmEmptyTrash.route,
+                inclusive = true,
+            )
+        }
+    )
 }
 
 @ExperimentalCoroutinesApi
@@ -517,8 +593,8 @@ internal fun NavGraphBuilder.addHome(
         navigateToOffline = {
             navController.navigate(Screen.OfflineFiles(userId))
         },
-        navigateToPreview = { linkId, pagerType ->
-            navController.navigate(Screen.PagerPreview(pagerType, userId, linkId))
+        navigateToPreview = { fileId, pagerType, optionsFilter ->
+            navController.navigate(Screen.PagerPreview(pagerType, userId, fileId, optionsFilter))
         },
         navigateToSorting = { sorting ->
             navController.navigate(
@@ -528,14 +604,14 @@ internal fun NavGraphBuilder.addHome(
         navigateToSettings = {
             navController.navigate(Screen.Settings(userId))
         },
-        navigateToFileOrFolderOptions = { linkId ->
+        navigateToFileOrFolderOptions = { linkId, optionsFilter ->
             navController.navigate(
-                Screen.FileOrFolderOptions(userId, linkId)
+                Screen.FileOrFolderOptions(userId, linkId, optionsFilter)
             )
         },
-        navigateToMultipleFileOrFolderOptions = { selectionId ->
+        navigateToMultipleFileOrFolderOptions = { selectionId, optionsFilter ->
             navController.navigate(
-                Screen.MultipleFileOrFolderOptions(userId, selectionId)
+                Screen.MultipleFileOrFolderOptions(userId, selectionId, optionsFilter)
             )
         },
         navigateToParentFolderOptions = { folderId ->
@@ -544,6 +620,17 @@ internal fun NavGraphBuilder.addHome(
             )
         },
         navigateToSubscription = navigateToSubscription,
+        navigateToPhotosIssues = { folderId ->
+            navController.navigate(
+                Screen.BackupIssues.invoke(folderId)
+            )
+        },
+        navigateToPhotosPermissionRationale = {
+            navController.navigate(
+                Screen.PhotosPermissionRationale(userId)
+            )
+        },
+        modifier = Modifier.fillMaxSize(),
     )
 }
 
@@ -620,6 +707,126 @@ fun NavGraphBuilder.addHomeShared(
     onDrawerStateChanged = onDrawerStateChanged
 )
 
+@ExperimentalAnimationApi
+@ExperimentalCoroutinesApi
+fun NavGraphBuilder.addHomePhotos(
+    navController: NavHostController,
+    homeNavController: NavHostController,
+    deepLinkBaseUrl: String,
+    navigateToBugReport: () -> Unit,
+    navigateToSubscription: () -> Unit,
+    onDrawerStateChanged: (Boolean) -> Unit,
+) = addHome(
+    navController = navController,
+    homeNavController = homeNavController,
+    deepLinkBaseUrl = deepLinkBaseUrl,
+    route = Screen.Photos.route,
+    startDestination = Screen.Photos.route,
+    navigateToBugReport = navigateToBugReport,
+    navigateToSubscription = navigateToSubscription,
+    onDrawerStateChanged = onDrawerStateChanged
+)
+
+fun NavGraphBuilder.addPhotosPermissionRationale(
+    navController: NavHostController,
+) = composable(
+    route = Screen.PhotosPermissionRationale.route,
+    arguments = listOf(
+        navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
+    ),
+) {
+    PhotosPermissionRationale(
+        modifier = Modifier
+            .navigationBarsPadding()
+            .offset(y = (-8).dp), // remove default modalBottomSheet top space
+        // me.proton.core.compose.component.bottomsheet.ModalBottomSheet:59
+        onBack = {
+            navController.popBackStack(
+                route = Screen.PhotosPermissionRationale.route,
+                inclusive = true,
+            )
+        },
+    )
+}
+fun NavGraphBuilder.addPhotosIssues(
+    navController: NavHostController,
+) = composable(
+    route = Screen.BackupIssues.route,
+    arguments = listOf(
+        navArgument(Screen.BackupIssues.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.BackupIssues.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.BackupIssues.FOLDER_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry ->
+    val userId = UserId(navBackStackEntry.require(Screen.BackupIssues.USER_ID))
+    val shareId = ShareId(userId, navBackStackEntry.require(Screen.BackupIssues.SHARE_ID))
+    val folderId = FolderId(shareId, navBackStackEntry.require(Screen.BackupIssues.FOLDER_ID))
+    BackupIssuesScreen(
+        modifier = Modifier
+            .navigationBarsPadding(),
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.BackupIssues.route,
+                inclusive = true,
+            )
+        },
+        navigateToSkipIssues = {
+            navController.navigate(
+                Screen.BackupIssues.Dialogs.ConfirmSkipIssues(
+                    folderId,
+                    Screen.BackupIssues.route
+                )
+            )
+        }
+    )
+}
+
+fun NavGraphBuilder.addConfirmSkipIssues(
+    navController: NavHostController,
+) = dialog(
+    route = Screen.BackupIssues.Dialogs.ConfirmSkipIssues.route,
+    arguments = listOf(
+        navArgument(Screen.BackupIssues.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.BackupIssues.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.BackupIssues.FOLDER_ID) { type = NavType.StringType },
+        navArgument(Screen.BackupIssues.Dialogs.ConfirmSkipIssues.CONFIRM_POP_UP_ROUTE) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = null
+        },
+        navArgument(Screen.BackupIssues.Dialogs.ConfirmSkipIssues.CONFIRM_POP_UP_ROUTE_INCLUSIVE) {
+            type =
+                NavType.BoolType
+        },
+    ),
+) { navBackStackEntry ->
+    val confirmPopUpRoute =
+        navBackStackEntry.get<String>(Screen.BackupIssues.Dialogs.ConfirmSkipIssues.CONFIRM_POP_UP_ROUTE)
+    val onDismiss: () -> Unit = {
+        navController.popBackStack(
+            route = Screen.BackupIssues.Dialogs.ConfirmSkipIssues.route,
+            inclusive = true,
+        )
+    }
+    val onConfirm: () -> Unit = confirmPopUpRoute?.let {
+        val confirmPopUpRouteInclusive = navBackStackEntry.get<Boolean>(
+            Screen.BackupIssues.Dialogs.ConfirmSkipIssues.CONFIRM_POP_UP_ROUTE_INCLUSIVE
+        ) ?: true
+        {
+            navController.popBackStack(
+                route = confirmPopUpRoute,
+                inclusive = confirmPopUpRouteInclusive
+            )
+        }
+    } ?: onDismiss
+    ConfirmSkipIssuesDialog(
+        modifier = Modifier
+            .navigationBarsPadding(),
+        onDismiss = onDismiss,
+        onConfirm = onConfirm,
+    )
+}
+
 @ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addTrash(navController: NavHostController) = composable(
@@ -630,7 +837,12 @@ fun NavGraphBuilder.addTrash(navController: NavHostController) = composable(
 ) { navBackStackEntry ->
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
     TrashScreen(
-        navigateBack = { navController.popBackStack() },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Trash.route,
+                inclusive = true,
+            )
+        },
         navigateToEmptyTrash = {
             navController.navigate(Screen.Files.Dialogs.ConfirmEmptyTrash(userId))
         },
@@ -645,7 +857,7 @@ fun NavGraphBuilder.addTrash(navController: NavHostController) = composable(
 
 @ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
-fun NavGraphBuilder.addOffline(navController: NavHostController) = slideComposable(
+fun NavGraphBuilder.addOffline(navController: NavHostController) = composable(
     route = Screen.OfflineFiles.route,
     arguments = listOf(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
@@ -673,7 +885,12 @@ fun NavGraphBuilder.addOffline(navController: NavHostController) = slideComposab
                 Screen.PagerPreview(pagerType, userId, fileId)
             )
         },
-        navigateBack = { navController.popBackStack() },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.OfflineFiles.route,
+                inclusive = true,
+            )
+        },
         navigateToSortingDialog = { sorting ->
             navController.navigate(
                 Screen.Sorting(userId, null, sorting.by, sorting.direction)
@@ -689,7 +906,7 @@ fun NavGraphBuilder.addOffline(navController: NavHostController) = slideComposab
 
 @ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
-fun NavGraphBuilder.addPagerPreview(navController: NavHostController) = slideComposable(
+fun NavGraphBuilder.addPagerPreview(navController: NavHostController) = composable(
     route = Screen.PagerPreview.route,
     enterTransition = defaultEnterSlideTransition { true },
     exitTransition = { ExitTransition.None },
@@ -699,14 +916,24 @@ fun NavGraphBuilder.addPagerPreview(navController: NavHostController) = slideCom
         navArgument(Screen.PagerPreview.PAGER_TYPE) { type = NavType.EnumType(PagerType::class.java) },
         navArgument(Screen.PagerPreview.USER_ID) { type = NavType.StringType },
         navArgument(Screen.PagerPreview.FILE_ID) { type = NavType.StringType },
+        navArgument(Screen.PagerPreview.OPTIONS_FILTER) {
+            type = NavType.EnumType(OptionsFilter::class.java)
+            defaultValue = OptionsFilter.FILES
+        },
     ),
 ) { navBackStackEntry ->
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
+    val optionsFilter = navBackStackEntry.requireSerializable(Screen.PagerPreview.OPTIONS_FILTER, OptionsFilter::class.java)
     PreviewScreen(
-        navigateBack = { navController.popBackStack() },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.PagerPreview.route,
+                inclusive = true,
+            )
+        },
         navigateToFileOrFolderOptions = { linkId ->
             navController.navigate(
-                Screen.FileOrFolderOptions(userId, linkId)
+                Screen.FileOrFolderOptions(userId, linkId, optionsFilter)
             )
         },
     )
@@ -721,12 +948,20 @@ fun NavGraphBuilder.addSettings(navController: NavHostController) = composable(
 ) { navBackStackEntry ->
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
     SettingsScreen(
-        navigateBack = { navController.popBackStack() },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Settings.route,
+                inclusive = true,
+            )
+        },
         navigateToAppAccess = {
             navController.navigate(Screen.Settings.AppAccess(userId))
         },
         navigateToAutoLockDurations = {
             navController.navigate(Screen.Settings.AutoLockDurations(userId))
+        },
+        navigateToPhotosBackup = {
+            navController.navigate(Screen.Settings.PhotosBackup(userId))
         },
     )
 }
@@ -735,17 +970,22 @@ fun NavGraphBuilder.addSettings(navController: NavHostController) = composable(
 @OptIn(ExperimentalCoroutinesApi::class)
 fun NavGraphBuilder.addFileInfo(navController: NavHostController) = composable(
     route = Screen.Info.route,
-    enterTransition = defaultEnterSlideTransition(towards = AnimatedContentScope.SlideDirection.Up) { true },
+    enterTransition = defaultEnterSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Up) { true },
     exitTransition = { ExitTransition.None },
     popEnterTransition = { EnterTransition.None },
-    popExitTransition = defaultPopExitSlideTransition(towards = AnimatedContentScope.SlideDirection.Down) { true },
+    popExitTransition = defaultPopExitSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Down) { true },
     arguments = listOf(
         navArgument(Screen.Info.USER_ID) { type = NavType.StringType },
         navArgument(Screen.Info.LINK_ID) { type = NavType.StringType },
     ),
 ) {
     FileInfoScreen(
-        navigateBack = { navController.popBackStack() },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Info.route,
+                inclusive = true,
+            )
+        },
     )
 }
 
@@ -766,7 +1006,14 @@ fun NavGraphBuilder.addRenameDialog(navController: NavHostController) = dialog(
         },
     ),
 ) {
-    Rename(onDismiss = { navController.popBackStack() })
+    Rename(
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.Files.Dialogs.Rename.route,
+                inclusive = true,
+            )
+        }
+    )
 }
 
 @ExperimentalCoroutinesApi
@@ -778,7 +1025,14 @@ fun NavGraphBuilder.addCreateFolderDialog(navController: NavHostController) = di
         navArgument(Screen.Files.Dialogs.CreateFolder.PARENT_ID) { type = NavType.StringType },
     ),
 ) {
-    CreateFolder(onDismiss = { navController.popBackStack() })
+    CreateFolder(
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.Files.Dialogs.CreateFolder.route,
+                inclusive = true,
+            )
+        }
+    )
 }
 
 @ExperimentalCoroutinesApi
@@ -820,7 +1074,10 @@ fun NavGraphBuilder.addMoveToFolder(navController: NavHostController) = composab
             navController.navigate(Screen.Files.Dialogs.CreateFolder(userId, parentId))
         }
     ) {
-        navController.popBackStack()
+        navController.popBackStack(
+            route = Screen.Move.route,
+            inclusive = true,
+        )
     }
 }
 
@@ -831,7 +1088,10 @@ fun NavGraphBuilder.addStorageFull(navController: NavHostController, deepLinkBas
     )
 ) {
     StorageFullDialog {
-        navController.popBackStack()
+        navController.popBackStack(
+            route = Screen.Dialogs.StorageFull.route,
+            inclusive = true,
+        )
     }
 }
 
@@ -844,16 +1104,21 @@ fun NavGraphBuilder.addSendFile(navController: NavHostController) = dialog(
         navArgument(Screen.SendFile.FILE_ID) { type = NavType.StringType },
     ),
 ) {
-    SendFileDialog { navController.popBackStack() }
+    SendFileDialog {
+        navController.popBackStack(
+            route = Screen.SendFile.route,
+            inclusive = true,
+        )
+    }
 }
 
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addShareViaLink(navController: NavHostController) = composable(
     route = Screen.ShareViaLink.route,
-    enterTransition = defaultEnterSlideTransition(towards = AnimatedContentScope.SlideDirection.Up) { true },
+    enterTransition = defaultEnterSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Up) { true },
     exitTransition = { ExitTransition.None },
     popEnterTransition = { EnterTransition.None },
-    popExitTransition = defaultPopExitSlideTransition(towards = AnimatedContentScope.SlideDirection.Down) { true },
+    popExitTransition = defaultPopExitSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Down) { true },
     arguments = listOf(
         navArgument(Screen.ShareViaLink.USER_ID) { type = NavType.StringType },
         navArgument(Screen.ShareViaLink.LINK_ID) { type = NavType.StringType },
@@ -867,7 +1132,12 @@ fun NavGraphBuilder.addShareViaLink(navController: NavHostController) = composab
         navigateToDiscardChanges = { linkId ->
             navController.navigate(Screen.ShareViaLink.Dialogs.DiscardChanges(userId, linkId))
         },
-        navigateBack = { navController.popBackStack() },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.ShareViaLink.route,
+                inclusive = true,
+            )
+        },
     )
 }
 
@@ -880,8 +1150,18 @@ fun NavGraphBuilder.addDiscardShareViaLinkChanges(navController: NavHostControll
     ),
 ) {
     DiscardChangesDialog(
-        onDismiss = { navController.popBackStack() },
-        onConfirm = { navController.popBackStack(route = Screen.ShareViaLink.route, inclusive = true) }
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.ShareViaLink.Dialogs.DiscardChanges.route,
+                inclusive = true,
+            )
+        },
+        onConfirm = {
+            navController.popBackStack(
+                route = Screen.ShareViaLink.route,
+                inclusive = true,
+            )
+        }
     )
 }
 
@@ -942,7 +1222,10 @@ fun NavGraphBuilder.addAppAccess(navController: NavHostController) = composable(
             navController.navigate(Screen.Settings.AppAccess.Dialogs.SystemAccess(userId))
         },
         navigateBack = {
-            navController.popBackStack()
+            navController.popBackStack(
+                route = Screen.Settings.AppAccess.route,
+                inclusive = true,
+            )
         },
     )
 }
@@ -954,7 +1237,14 @@ fun NavGraphBuilder.addSystemAccessDialog(navController: NavHostController) = di
         navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
     ),
 ) {
-    SystemAccessDialog(onDismiss = { navController.popBackStack() })
+    SystemAccessDialog(
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.Settings.AppAccess.Dialogs.SystemAccess.route,
+                inclusive = true,
+            )
+        }
+    )
 }
 
 fun NavGraphBuilder.addAutoLockDurations(
@@ -965,6 +1255,38 @@ fun NavGraphBuilder.addAutoLockDurations(
 ) { _, runAction ->
     AutoLockDurations(
         runAction = runAction,
-        dismiss = { navController.popBackStack() }
+        dismiss = {
+            navController.popBackStack(
+                route = Screen.Settings.AutoLockDurations.route,
+                inclusive = true,
+            )
+        }
+    )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addPhotosBackup(navController: NavHostController) = composable(
+    route = Screen.Settings.PhotosBackup.route,
+    enterTransition = defaultEnterSlideTransition { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition { true },
+    arguments = listOf(
+        navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry ->
+    val userId = UserId(navBackStackEntry.require(Screen.Settings.USER_ID))
+    PhotosBackupScreen(
+        navigateToPhotosPermissionRationale = {
+            navController.navigate(
+                Screen.PhotosPermissionRationale(userId)
+            )
+        },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Settings.PhotosBackup.route,
+                inclusive = true,
+            )
+        },
     )
 }

@@ -18,15 +18,15 @@
 
 package me.proton.core.drive.shareurl.base.domain.usecase
 
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.shareurl.base.domain.repository.ShareUrlRepository
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class HasShareUrls @Inject constructor(
     private val repository: ShareUrlRepository,
 ) {
 
-    suspend operator fun invoke(shareId: ShareId) =
-        repository.hasShareUrls(shareId)
-
+    suspend operator fun invoke(userId: UserId, volumeId: VolumeId) =
+        repository.hasShareUrls(userId, volumeId)
 }

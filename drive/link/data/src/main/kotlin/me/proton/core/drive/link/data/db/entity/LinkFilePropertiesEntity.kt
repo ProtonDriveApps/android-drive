@@ -22,14 +22,19 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.db.Column.CAPTURE_TIME
+import me.proton.core.drive.base.data.db.Column.CONTENT_HASH
 import me.proton.core.drive.base.data.db.Column.CONTENT_KEY_PACKET
 import me.proton.core.drive.base.data.db.Column.CONTENT_KEY_PACKET_SIGNATURE
 import me.proton.core.drive.base.data.db.Column.HAS_THUMBNAIL
 import me.proton.core.drive.base.data.db.Column.ID
 import me.proton.core.drive.base.data.db.Column.LINK_ID
+import me.proton.core.drive.base.data.db.Column.MAIN_PHOTO_LINK_ID
 import me.proton.core.drive.base.data.db.Column.REVISION_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
 import me.proton.core.drive.base.data.db.Column.SIGNATURE_ADDRESS
+import me.proton.core.drive.base.data.db.Column.THUMBNAIL_ID_DEFAULT
+import me.proton.core.drive.base.data.db.Column.THUMBNAIL_ID_PHOTO
 import me.proton.core.drive.base.data.db.Column.USER_ID
 
 private const val PREFIX = "file"
@@ -72,4 +77,14 @@ data class LinkFilePropertiesEntity(
     val contentKeyPacketSignature: String? = null,
     @ColumnInfo(name = FILE_SIGNATURE_ADDRESS)
     val activeRevisionSignatureAddress: String? = null,
+    @ColumnInfo(name = CAPTURE_TIME, defaultValue = "NULL")
+    val photoCaptureTime: Long? = null,
+    @ColumnInfo(name = CONTENT_HASH, defaultValue = "NULL")
+    val photoContentHash: String? = null,
+    @ColumnInfo(name = MAIN_PHOTO_LINK_ID, defaultValue = "NULL")
+    val mainPhotoLinkId: String? = null,
+    @ColumnInfo(name = THUMBNAIL_ID_DEFAULT)
+    val defaultThumbnailId: String? = null,
+    @ColumnInfo(name = THUMBNAIL_ID_PHOTO)
+    val photoThumbnailId: String? = null,
 ) : LinkPropertiesEntity

@@ -19,6 +19,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.cryptobase.domain"
+}
+
 driveModule(hilt = true) {
     api(project(":drive:base:domain"))
     api(libs.core.auth.domain)

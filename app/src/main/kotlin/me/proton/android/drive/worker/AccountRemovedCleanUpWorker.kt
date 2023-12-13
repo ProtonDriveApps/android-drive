@@ -26,6 +26,7 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -60,7 +61,7 @@ class AccountRemovedCleanUpWorker @AssistedInject constructor(
                         Data.Builder().putString(KEY_USER_ID, userId.id).build()
                     ).setBackoffCriteria(
                         BackoffPolicy.EXPONENTIAL,
-                        OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                        WorkRequest.MIN_BACKOFF_MILLIS,
                         TimeUnit.MILLISECONDS
                     )
                     .build(),

@@ -19,4 +19,8 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.drivelink.list"
+}
+
 driveModule(includeSubmodules = true)

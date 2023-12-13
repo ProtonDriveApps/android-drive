@@ -22,6 +22,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.db.Column.CHANNEL_TYPE
 import me.proton.core.drive.base.data.db.Column.NOTIFICATION_EVENT
 import me.proton.core.drive.base.data.db.Column.NOTIFICATION_EVENT_ID
@@ -30,7 +31,6 @@ import me.proton.core.drive.base.data.db.Column.NOTIFICATION_TAG
 import me.proton.core.drive.base.data.db.Column.TYPE
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.notification.domain.entity.Channel
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 
 @Entity(
     primaryKeys = [USER_ID, CHANNEL_TYPE, NOTIFICATION_TAG, NOTIFICATION_ID, NOTIFICATION_EVENT_ID],
@@ -58,5 +58,5 @@ data class NotificationEventEntity(
     @ColumnInfo(name = NOTIFICATION_EVENT_ID)
     val notificationEventId: String,
     @ColumnInfo(name = NOTIFICATION_EVENT)
-    val notificationEvent: NotificationEvent
+    val notificationEvent: Event
 )

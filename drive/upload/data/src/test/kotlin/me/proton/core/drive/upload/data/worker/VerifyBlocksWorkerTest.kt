@@ -42,6 +42,7 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
+import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.VerifyBlocks
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -61,6 +62,7 @@ class VerifyBlocksWorkerTest {
     private val workManager = mockk<WorkManager>()
     private val broadcastMessages = mockk<BroadcastMessages>()
     private val getUploadFileLink = mockk<GetUploadFileLink>()
+    private val uploadErrorManager = mockk<UploadErrorManager>()
     private val verifyBlocks = mockk<VerifyBlocks>()
     private val configurationProvider = mockk<ConfigurationProvider>()
     private val canRun = mockk<CanRun>()
@@ -74,8 +76,11 @@ class VerifyBlocksWorkerTest {
     fun before() {
         coEvery { canRun(any(), any()) } returns Result.success(true)
         coEvery { getUploadFileLink(any() as Long) } returns DataResult.Success(ResponseSource.Local, uploadFileLink)
+        coEvery { uploadErrorManager.post(any()) } returns Unit
         coEvery { uploadFileLink.id } returns 123L
         coEvery { uploadFileLink.name } returns "secret.jpg"
+        coEvery { uploadFileLink.uriString } returns "uriString"
+        coEvery { uploadFileLink.shouldBroadcastErrorMessage } returns true
         coEvery { workManager.enqueue(any() as WorkRequest) } returns operation
         coEvery { configurationProvider.useExceptionMessage } returns false
         coEvery { broadcastMessages(userId, any(), any(), any()) } returns Unit
@@ -101,9 +106,9 @@ class VerifyBlocksWorkerTest {
                 tag = "core.drive.upload.$uploadFileLinkId",
                 e = error,
                 message = """
-                        Verify blocks failed with "${error.message}" retryable false, 
-                        max retries reached false
-                        """.trimIndent(),
+                    Verify blocks failed with "${error.message}" retryable false, 
+                    max retries reached false
+                """.trimIndent().replace("\n", " "),
             )
         }
     }
@@ -125,6 +130,7 @@ class VerifyBlocksWorkerTest {
                         workManager = workManager,
                         broadcastMessages = broadcastMessages,
                         getUploadFileLink = getUploadFileLink,
+                        uploadErrorManager = uploadErrorManager,
                         verifyBlocks = verifyBlocks,
                         configurationProvider = configurationProvider,
                         canRun = canRun,

@@ -27,6 +27,7 @@ import me.proton.core.drive.folder.domain.usecase.GetAllFolderChildren
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.ids
 import me.proton.core.drive.link.domain.usecase.DeleteLinks
+import me.proton.core.drive.photo.domain.usecase.DeletePhotoListings
 import me.proton.core.drive.share.crypto.domain.usecase.DeleteLocalShares
 import javax.inject.Inject
 
@@ -37,6 +38,7 @@ class HandleOnDeleteEvent @Inject constructor(
     private val deleteLocalContent: DeleteLocalContent,
     private val getChildren: GetAllFolderChildren,
     private val deleteLocalShares: DeleteLocalShares,
+    private val deletePhotoListings: DeletePhotoListings,
 ) {
 
     suspend operator fun invoke(linkIds: List<LinkId>) {
@@ -57,5 +59,6 @@ class HandleOnDeleteEvent @Inject constructor(
             }
         deleteLocalShares(linkIds)
         deleteLinks(linkIds)
+        deletePhotoListings(linkIds)
     }
 }

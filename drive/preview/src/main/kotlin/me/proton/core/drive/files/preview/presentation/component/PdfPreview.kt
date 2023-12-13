@@ -74,7 +74,7 @@ fun PdfPreview(
     uri: Uri,
     transformationState: TransformationState,
     modifier: Modifier = Modifier,
-    onRenderFailed: (Throwable) -> Unit,
+    onRenderFailed: (Throwable, Any) -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -83,9 +83,9 @@ fun PdfPreview(
             try {
                 openPdf(uri)
             } catch (e: IOException) {
-                onRenderFailed(e)
+                onRenderFailed(e, uri)
             } catch (e: SecurityException) {
-                onRenderFailed(e)
+                onRenderFailed(e, uri)
             }
         }
         awaitDispose {
@@ -99,6 +99,7 @@ fun PdfPreview(
         PdfLoading(modifier)
     } else {
         PdfPreview(
+            uri = uri,
             modifier = modifier,
             transformationState = transformationState,
             onRenderFailed = onRenderFailed,
@@ -120,9 +121,10 @@ fun PdfLoading(modifier: Modifier = Modifier) {
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 fun PdfPreview(
+    uri: Uri,
     transformationState: TransformationState,
     reader: PdfReader,
-    onRenderFailed: (Throwable) -> Unit,
+    onRenderFailed: (Throwable, Any) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val lazyListState = rememberLazyListState()
@@ -150,13 +152,12 @@ fun PdfPreview(
                 } catch (e: CancellationException) {
                     throw e
                 } catch (e: Throwable) {
-                    onRenderFailed(e)
+                    onRenderFailed(e, uri)
                 }
             }
-
             val transformableState = rememberTransformableState { zoomChange, offsetChange, _ ->
                 transformationState.scale = transformationState.scale * zoomChange
-                transformationState.addOffset(offsetChange)
+                transformationState.addOffset(offsetChange * transformationState.scale)
             }
             Box(
                 modifier = Modifier
@@ -176,8 +177,11 @@ fun PdfPreview(
                                 translationX = transformationState.offset.x,
                                 translationY = transformationState.offset.y,
                             )
-                            .transformable(transformableState),
-                    )
+                            .transformable(
+                                state = transformableState,
+                                canPan = transformationState::hasScale
+                            ),
+                        )
                 }
                 PageNumber(
                     pageNumber = index + 1,

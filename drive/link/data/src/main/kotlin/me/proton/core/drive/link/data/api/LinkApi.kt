@@ -18,12 +18,17 @@
 package me.proton.core.drive.link.data.api
 
 import me.proton.core.drive.base.data.api.response.CodeResponse
+import me.proton.core.drive.link.data.api.request.CheckAvailableHashesRequest
+import me.proton.core.drive.link.data.api.request.GetLinksRequest
 import me.proton.core.drive.link.data.api.request.MoveLinkRequest
 import me.proton.core.drive.link.data.api.request.RenameLinkRequest
+import me.proton.core.drive.link.data.api.response.CheckAvailableHashesResponse
 import me.proton.core.drive.link.data.api.response.GetLinkResponse
+import me.proton.core.drive.link.data.api.response.GetLinksResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
@@ -33,6 +38,13 @@ interface LinkApi : BaseRetrofitApi {
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") linkId: String
     ): GetLinkResponse
+
+    @POST("drive/shares/@{enc_shareID}/links/@{enc_linkID}/checkAvailableHashes")
+    suspend fun checkAvailableHashes(
+        @Path("enc_shareID") shareId: String,
+        @Path("enc_linkID") linkId: String,
+        @Body request: CheckAvailableHashesRequest,
+    ): CheckAvailableHashesResponse
 
     @PUT("drive/shares/@{enc_shareID}/links/@{enc_linkID}/move")
     suspend fun moveLink(
@@ -47,4 +59,10 @@ interface LinkApi : BaseRetrofitApi {
         @Path("enc_linkID") linkId: String,
         @Body request: RenameLinkRequest,
     ): CodeResponse
+
+    @POST("drive/shares/@{enc_shareID}/links/fetch_metadata")
+    suspend fun getLinks(
+        @Path("enc_shareID") shareId: String,
+        @Body request: GetLinksRequest,
+    ): GetLinksResponse
 }

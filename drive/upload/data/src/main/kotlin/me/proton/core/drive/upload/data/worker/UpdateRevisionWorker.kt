@@ -25,28 +25,38 @@ import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.api.ProtonApiCode
 import me.proton.core.drive.base.data.api.ProtonApiCode.INVALID_REQUIREMENTS
+import me.proton.core.drive.base.data.api.ProtonApiCode.INVALID_VALUE
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.extension.log
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
+import me.proton.core.drive.upload.data.manager.UploadWorkManagerImpl.Companion.TAG_UPLOAD_WORKER
+import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.upload.domain.manager.UploadErrorManager
+import me.proton.core.drive.upload.domain.usecase.ApplyCacheOption
 import me.proton.core.drive.upload.domain.usecase.UpdateRevision
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
+import me.proton.core.network.domain.hasProtonErrorCode
+import me.proton.core.util.kotlin.CoreLogger
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -57,7 +67,10 @@ class UpdateRevisionWorker @AssistedInject constructor(
     workManager: WorkManager,
     broadcastMessages: BroadcastMessages,
     getUploadFileLink: GetUploadFileLink,
+    uploadErrorManager: UploadErrorManager,
     private val updateRevision: UpdateRevision,
+    private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
+    private val applyCacheOption: ApplyCacheOption,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
     run: Run,
@@ -68,6 +81,7 @@ class UpdateRevisionWorker @AssistedInject constructor(
     workManager = workManager,
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
+    uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
     canRun = canRun,
     run = run,
@@ -75,8 +89,15 @@ class UpdateRevisionWorker @AssistedInject constructor(
 ) {
 
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
-        updateRevision(uploadFileLink)
-            .onFailure { error ->
+        uploadFileLink.logWorkState()
+        updateRevision(uploadFileLink, runAttemptCount > 0)
+            .recoverCatching { cause ->
+                if (cause.hasProtonErrorCode(ProtonApiCode.INCOMPATIBLE_STATE)) {
+                    CoreLogger.d(logTag(), cause, "Ignoring revision to commit must be a draft")
+                } else {
+                    throw cause
+                }
+            }.onFailure { error ->
                 val retryable = error.isRetryable
                 val canRetry = canRetry()
                 error.log(
@@ -84,32 +105,38 @@ class UpdateRevisionWorker @AssistedInject constructor(
                     message = """
                         Updating revision failed "${error.message}" retryable $retryable, 
                         max retries reached ${!canRetry}
-                        """.trimIndent()
+                    """.trimIndent().replace("\n", " ")
                 )
-                return if (error.handle()) {
+                return if (error.handle(uploadFileLink)) {
                     Result.failure()
                 } else {
                     retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
                 }
+            }.onSuccess {
+                applyCacheOption(uploadFileLink)
             }
         return Result.success()
     }
 
-    private fun Throwable.handle(): Boolean =
+    private fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean =
         onProtonHttpException { protonCode ->
-            if (protonCode == INVALID_REQUIREMENTS) {
-                retryGetBlocksUploadUrl()
-                true
-            } else {
-                false
+            when (protonCode) {
+                INVALID_REQUIREMENTS,
+                INVALID_VALUE,
+                -> true.also { retryGetBlocksUploadUrl(uploadFileLink) }
+
+                else -> false
             }
         } ?: false
 
-    private fun retryGetBlocksUploadUrl() {
+    private fun retryGetBlocksUploadUrl(uploadFileLink: UploadFileLink) {
+        val networkType =
+            requireNotNull(networkTypeProviders[uploadFileLink.networkTypeProviderType]).get()
         workManager.enqueue(
             GetBlocksUploadUrlWorker.getWorkRequest(
                 userId = userId,
                 uploadFileLinkId = uploadFileLinkId,
+                networkType = networkType,
                 tags = listOf(uploadFileLinkId.uniqueUploadWorkName)
             )
         )
@@ -119,12 +146,13 @@ class UpdateRevisionWorker @AssistedInject constructor(
         fun getWorkRequest(
             userId: UserId,
             uploadFileLinkId: Long,
+            networkType: NetworkType,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(UpdateRevisionWorker::class.java)
                 .setConstraints(
                     Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiredNetworkType(networkType)
                         .build()
                 )
                 .setInputData(
@@ -135,10 +163,10 @@ class UpdateRevisionWorker @AssistedInject constructor(
                 )
                 .setBackoffCriteria(
                     BackoffPolicy.EXPONENTIAL,
-                    OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                    WorkRequest.MIN_BACKOFF_MILLIS,
                     TimeUnit.MILLISECONDS
                 )
-                .addTags(listOf(userId.id) + tags)
+                .addTags(listOf(userId.id) + TAG_UPLOAD_WORKER + tags)
                 .build()
     }
 }

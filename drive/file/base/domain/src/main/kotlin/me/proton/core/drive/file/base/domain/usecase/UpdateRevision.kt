@@ -19,7 +19,7 @@ package me.proton.core.drive.file.base.domain.usecase
 
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
-import me.proton.core.drive.file.base.domain.entity.BlockTokenInfo
+import me.proton.core.drive.file.base.domain.entity.PhotoAttributes
 import me.proton.core.drive.file.base.domain.repository.FileRepository
 import me.proton.core.drive.link.domain.entity.FileId
 import javax.inject.Inject
@@ -31,28 +31,22 @@ class UpdateRevision @Inject constructor(
     suspend operator fun invoke(
         fileId: FileId,
         revisionId: String,
-        blockTokenInfos: List<BlockTokenInfo>,
         manifestSignature: String,
         signatureAddress: String,
         blockNumber: Long,
-        state: Long,
         xAttr: String,
+        photoAttributes: PhotoAttributes?,
     ) = coRunCatching {
         updateEventAction(fileId.shareId) {
             fileRepository.updateRevision(
                 fileId = fileId,
                 revisionId = revisionId,
-                blockTokenInfos = blockTokenInfos,
                 manifestSignature = manifestSignature,
                 signatureAddress = signatureAddress,
                 blockNumber = blockNumber,
-                state = state,
                 xAttr = xAttr,
+                photoAttributes = photoAttributes,
             ).getOrThrow()
         }
-    }
-
-    companion object {
-        const val STATE_ACTIVE = 1L
     }
 }

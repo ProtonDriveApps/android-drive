@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.eventmanager.data"
+}
+
 driveModule(
     hilt = true,
     serialization = true,
@@ -33,4 +37,6 @@ driveModule(
     implementation(libs.core.presentation) // AppLifecycleProvider
     implementation(libs.core.userSettings)
     implementation(libs.core.user.data)
+    implementation(libs.core.notification.data)
+    implementation(libs.core.push.data)
 }

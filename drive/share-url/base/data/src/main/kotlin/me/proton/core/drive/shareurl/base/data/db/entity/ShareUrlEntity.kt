@@ -42,10 +42,11 @@ import me.proton.core.drive.base.data.db.Column.SRP_VERIFIER
 import me.proton.core.drive.base.data.db.Column.TOKEN
 import me.proton.core.drive.base.data.db.Column.URL_PASSWORD_SALT
 import me.proton.core.drive.base.data.db.Column.USER_ID
+import me.proton.core.drive.base.data.db.Column.VOLUME_ID
 import me.proton.core.drive.share.data.db.ShareEntity
 
 @Entity(
-    primaryKeys = [USER_ID, SHARE_ID, ID],
+    primaryKeys = [USER_ID, VOLUME_ID, SHARE_ID, ID],
     foreignKeys = [
         ForeignKey(
             entity = ShareEntity::class,
@@ -56,6 +57,7 @@ import me.proton.core.drive.share.data.db.ShareEntity
     ],
     indices = [
         Index(value = [USER_ID]),
+        Index(value = [VOLUME_ID]),
         Index(value = [SHARE_ID]),
         Index(value = [USER_ID, SHARE_ID]),
     ],
@@ -65,6 +67,8 @@ data class ShareUrlEntity(
     val id: String,
     @ColumnInfo(name = USER_ID)
     val userId: UserId,
+    @ColumnInfo(name = VOLUME_ID)
+    val volumeId: String,
     @ColumnInfo(name = SHARE_ID)
     val shareId: String,
     @ColumnInfo(name = FLAGS)

@@ -57,6 +57,7 @@ interface File : BaseLink {
     override val parentId: FolderId
     val hasThumbnail: Boolean
     val activeRevisionId: String
+    val photoCaptureTime: TimestampS?
 }
 
 interface Folder : BaseLink {
@@ -115,6 +116,13 @@ sealed class Link : BaseLink {
         override val shareUrlId: ShareUrlId?,
         val contentKeyPacket: String,
         val contentKeyPacketSignature: String?,
+        override val photoCaptureTime: TimestampS? = null,
+        val photoContentHash: String? = null,
+        val mainPhotoLinkId: String? = null,
+        val defaultThumbnailId: String? = null,
+        val defaultThumbnailContentHash: String? = null,
+        val photoThumbnailId: String? = null,
+        val photoThumbnailContentHash: String? = null,
     ) : Link(), me.proton.core.drive.link.domain.entity.File
 
     data class Folder(
@@ -151,10 +159,5 @@ sealed class Link : BaseLink {
 
     enum class State {
         DRAFT, ACTIVE, TRASHED, DELETED, RESTORING
-    }
-
-    companion object {
-        const val THUMBNAIL_NAME = "thumbnail"
-        const val THUMBNAIL_INDEX = 0L
     }
 }

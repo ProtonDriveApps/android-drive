@@ -20,6 +20,7 @@ package me.proton.core.drive.db.test
 
 import me.proton.android.drive.db.DriveDatabase
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.share.data.api.ShareDto
 import me.proton.core.drive.share.data.db.ShareEntity
 import me.proton.core.user.data.entity.UserEntity
 
@@ -31,14 +32,14 @@ data class ShareContext(
 ) : BaseContext()
 
 const val shareId = "share-id"
-const val volumeId = "volume-id"
 
-suspend fun UserContext.share(
+suspend fun VolumeContext.share(
     shareEntity: ShareEntity = NullableShareEntity(
         id = shareId,
         userId = user.userId,
-        volumeId = volumeId,
-        linkId = "link-id"
+        volumeId = volume.id,
+        linkId = "root-id",
+        type = ShareDto.TYPE_MAIN,
     ),
     block: suspend ShareContext.() -> Unit
 ) {
@@ -52,6 +53,7 @@ fun NullableShareEntity(
     userId: UserId,
     volumeId: String,
     linkId: String,
+    type: Long = ShareDto.TYPE_STANDARD,
 ): ShareEntity {
     return ShareEntity(
         id = id,
@@ -64,6 +66,7 @@ fun NullableShareEntity(
         key = "",
         passphrase = "",
         passphraseSignature = "",
-        creationTime = null
+        creationTime = null,
+        type = type,
     )
 }

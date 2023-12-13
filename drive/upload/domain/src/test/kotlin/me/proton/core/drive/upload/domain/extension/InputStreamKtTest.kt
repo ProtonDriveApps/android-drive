@@ -19,7 +19,7 @@
 package me.proton.core.drive.upload.domain.extension
 
 import me.proton.core.drive.base.domain.extension.toHex
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -46,4 +46,4 @@ class InputStreamKtTest {
     }
 }
 
-private const val sha1_empty = "DA39A3EE5E6B4B0D3255BFEF95601890AFD80709"
+private const val sha1_empty = "da39a3ee5e6b4b0d3255bfef95601890afd80709"

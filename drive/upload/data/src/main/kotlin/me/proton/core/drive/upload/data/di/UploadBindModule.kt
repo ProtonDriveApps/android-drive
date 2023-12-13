@@ -21,9 +21,11 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.drive.upload.data.manager.UploadErrorManagerImpl
 import me.proton.core.drive.upload.data.manager.UploadWorkManagerImpl
 import me.proton.core.drive.upload.data.provider.FileProviderImpl
 import me.proton.core.drive.upload.data.resolver.AggregatedUriResolver
+import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.manager.UploadWorkManager
 import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
@@ -44,4 +46,8 @@ interface UploadBindModule {
     @Binds
     @Singleton
     fun bindsUploadWorkManagerImpl(impl: UploadWorkManagerImpl): UploadWorkManager
+
+    @Binds
+    @Singleton
+    fun bindsUploadErrorManagerImpl(impl: UploadErrorManagerImpl): UploadErrorManager
 }

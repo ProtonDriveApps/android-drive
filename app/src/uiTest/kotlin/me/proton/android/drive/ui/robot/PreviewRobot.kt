@@ -18,25 +18,60 @@
 
 package me.proton.android.drive.ui.robot
 
+import androidx.compose.ui.semantics.SemanticsActions.PageDown
+import androidx.compose.ui.semantics.SemanticsActions.PageLeft
+import androidx.compose.ui.semantics.SemanticsActions.PageRight
+import androidx.compose.ui.semantics.SemanticsActions.PageUp
+import androidx.compose.ui.test.performSemanticsAction
 import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag
+import me.proton.core.drive.files.preview.presentation.component.ImagePreviewComponentTestTag
 import me.proton.core.drive.files.preview.presentation.component.PreviewComponentTestTag
+import me.proton.test.fusion.Fusion.allNodes
 import me.proton.test.fusion.Fusion.node
+import me.proton.test.fusion.ui.common.enums.SwipeDirection
+import me.proton.test.fusion.ui.compose.ComposeWaiter.waitFor
+import me.proton.test.fusion.ui.compose.wrappers.NodeActions
 import me.proton.core.drive.i18n.R as I18N
 
-object PreviewRobot : Robot {
+object PreviewRobot : NavigationBarRobot {
 
     private val previewScreen get() = node.withTag(PreviewComponentTestTag.screen)
     private val contextualButton get() = node.withContentDescription(I18N.string.content_description_more_options)
+    private val preview get() = allNodes.withTag(ImagePreviewComponentTestTag.image).onFirst()
+    private val pager get() = node.withTag(PreviewComponentTestTag.pager)
 
     fun clickOnContextualButton() = contextualButton.clickTo(FileFolderOptionsRobot)
 
     fun topBarWithTextDisplayed(itemName: String) {
         node.withTag(TopAppBarComponentTestTag.appBar)
             .withText(itemName)
-            .await { assertIsDisplayed() }
+            .await {
+                assertIsDisplayed()
+            }
+    }
+
+    fun assertPreviewIsDisplayed(itemName: String) {
+        preview.await { assertIsDisplayed() }
+        topBarWithTextDisplayed(itemName)
+    }
+
+    fun swipePage(direction: SwipeDirection) = apply {
+        pager.swipePage(direction)
     }
 
     override fun robotDisplayed() {
         previewScreen.assertIsDisplayed()
+    }
+}
+
+fun NodeActions.swipePage(direction: SwipeDirection) = apply {
+    val action = when(direction) {
+        SwipeDirection.Left -> PageRight
+        SwipeDirection.Right -> PageLeft
+        SwipeDirection.Up -> PageDown
+        SwipeDirection.Down -> PageUp
+    }
+    waitFor {
+        interaction.performSemanticsAction(action)
     }
 }

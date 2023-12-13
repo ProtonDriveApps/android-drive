@@ -15,10 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
  */
+@file:OptIn(ExperimentalFoundationApi::class)
+
 package me.proton.core.drive.files.preview.presentation.component
 
 import android.net.Uri
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -27,7 +30,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -35,19 +40,26 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import coil.size.Scale
+import coil.size.Size
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.isNightMode
+import me.proton.core.drive.base.presentation.extension.conditional
+import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun ImagePreview(
-    uri: Uri,
+    source: Any,
     transformationState: TransformationState,
     isFullScreen: Boolean,
+    onRenderFailed: (Throwable, Any) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val backgroundColor by animateColorAsState(
@@ -57,19 +69,39 @@ fun ImagePreview(
             MaterialTheme.colors.background
         }
     )
+    val cacheKey = remember(source) {
+        when (source) {
+            is Uri -> source.path
+            is ThumbnailVO -> "${source.revisionId}_${source.thumbnailId.type}"
+            else -> error("Unhandled cache key for source type $source")
+        }
+    }
 
     val request = ImageRequest.Builder(LocalContext.current)
-        .data(uri)
-        .memoryCacheKey(uri.path)
+        .scale(Scale.FIT)
+        .data(source)
+        .memoryCacheKey(cacheKey)
+        .size(Size.ORIGINAL)
         .build()
-    val painter = rememberImagePainter(request)
+    val painter = rememberAsyncImagePainter(request)
+    LaunchedEffect(painter.state) {
+        val state = painter.state
+        if (state is AsyncImagePainter.State.Error) {
+            onRenderFailed(state.result.throwable, source)
+        }
+    }
     ImagePreview(
-        modifier = modifier.background(backgroundColor),
+        modifier = modifier
+            .background(backgroundColor)
+            .conditional(source !is Uri) {
+                fillMaxSize()
+            },
         painter = painter,
         transformationState = transformationState,
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ImagePreview(
     painter: Painter,
@@ -78,7 +110,7 @@ fun ImagePreview(
 ) {
     val state = rememberTransformableState { zoomChange, offsetChange, _ ->
         transformationState.scale = (transformationState.scale * zoomChange)
-        transformationState.addOffset(offsetChange)
+        transformationState.addOffset( offsetChange * transformationState.scale)
     }
     Box(
         modifier = modifier
@@ -100,8 +132,10 @@ fun ImagePreview(
                     clip = true,
                 )
                 .transformable(
-                    state = state
+                    state = state,
+                    canPan = transformationState::hasScale,
                 )
+                .testTag(ImagePreviewComponentTestTag.image)
         )
     }
 }
@@ -111,9 +145,15 @@ fun ImagePreview(
 fun PreviewImagePreview() {
     ProtonTheme {
         ImagePreview(
-            uri = Uri.parse("https://protonmail.com/images/media/live/protonmail-shot-decrypt.jpg"),
+            source = Uri.parse("https://protonmail.com/images/media/live/protonmail-shot-decrypt.jpg"),
             transformationState = rememberTransformationState(),
             isFullScreen = false,
+            onRenderFailed = { _, _ -> }
         )
     }
+}
+
+
+object ImagePreviewComponentTestTag {
+    const val image = "preview image"
 }

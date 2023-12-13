@@ -18,15 +18,20 @@
 
 package me.proton.core.drive.eventmanager.usecase
 
+import kotlinx.coroutines.flow.first
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.download.domain.usecase.Download
 import me.proton.core.drive.drivelink.offline.domain.usecase.DeleteLocalContent
 import me.proton.core.drive.eventmanager.entity.LinkEventVO
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.usecase.HasLink
 import me.proton.core.drive.link.domain.usecase.InsertOrUpdateLinks
 import me.proton.core.drive.linkoffline.domain.usecase.GetFirstMarkedOfflineLink
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class OnUpdateContentEvent @Inject constructor(
@@ -35,17 +40,24 @@ class OnUpdateContentEvent @Inject constructor(
     private val deleteLocalContent: DeleteLocalContent,
     private val download: Download,
     private val insertOrUpdateLinks: InsertOrUpdateLinks,
+    private val hasLink: HasLink,
 ) {
 
     suspend operator fun invoke(vos: List<LinkEventVO>) {
+        CoreLogger.d(LogTag.EVENTS, "OnUpdateContentEvent: ${vos.joinToString { vo -> vo.link.id.id.logId() }}")
         val links = vos.map { vo -> vo.link }
         links.forEach { link -> link.deleteLocalContent() }
-        insertOrUpdateLinks(links)
-        download(
-            links.mapNotNull { link ->
-                getFirstMarkedOfflineLink(link.id)?.let { getDriveLink(it.id).toResult().getOrNull() }
-            }
-        )
+        val linksWithParentInCache = links.filter { link: Link ->
+            link.parentId?.let { parentId -> hasLink(parentId).first() } == true
+        }
+        if (linksWithParentInCache.isNotEmpty()) {
+            insertOrUpdateLinks(linksWithParentInCache)
+            download(
+                linksWithParentInCache.mapNotNull { link ->
+                    getFirstMarkedOfflineLink(link.id)?.let { getDriveLink(it.id).toResult().getOrNull() }
+                }
+            )
+        }
     }
 
     private suspend fun Link.deleteLocalContent() =

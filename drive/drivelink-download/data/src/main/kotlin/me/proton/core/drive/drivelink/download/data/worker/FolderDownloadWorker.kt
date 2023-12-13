@@ -25,6 +25,7 @@ import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -196,7 +197,7 @@ class FolderDownloadWorker @AssistedInject constructor(
                 )
                 .setBackoffCriteria(
                     BackoffPolicy.EXPONENTIAL,
-                    OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                    WorkRequest.MIN_BACKOFF_MILLIS,
                     TimeUnit.MILLISECONDS
                 )
                 .addTags(listOf(driveLink.userId.id, driveLink.uniqueWorkName) + tags)

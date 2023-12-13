@@ -59,29 +59,29 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.LARGE_HEIGHT
-import me.proton.core.drive.base.presentation.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
+import me.proton.core.drive.base.presentation.extension.labelResId
 import me.proton.core.drive.base.presentation.extension.toReadableDate
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.file.info.presentation.entity.Item
 import me.proton.core.drive.file.info.presentation.extension.headerSemantics
+import me.proton.core.drive.file.info.presentation.extension.toItems
 import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
-import me.proton.core.drive.link.presentation.extension.lastModified
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun FileInfoContent(
     driveLink: DriveLink,
-    pathToFileNode: String,
+    items: List<Item>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -96,54 +96,11 @@ fun FileInfoContent(
             isTitleEncrypted = driveLink.isNameEncrypted,
             modifier = Modifier.headerSemantics(driveLink, painter),
         )
-        EncryptedInfoItem(
-            name = stringResource(id = I18N.string.file_info_name_entry),
-            value = driveLink.name,
-            isValueEncrypted = driveLink.isNameEncrypted,
-        )
-        InfoItem(
-            name = stringResource(id = I18N.string.file_info_uploaded_by_entry),
-            value = driveLink.uploadedBy,
-        )
-        InfoItem(
-            name = stringResource(id = I18N.string.file_info_location_entry),
-            value = pathToFileNode,
-        )
-        InfoItem(
-            name = stringResource(id = I18N.string.file_info_last_modified_entry),
-            value = driveLink.lastModified(),
-        )
-        if (driveLink !is Folder) {
-            InfoItem(
-                name = stringResource(id = I18N.string.file_info_type_entry),
-                value = driveLink.getType(),
-            )
-            InfoItem(
-                name = stringResource(id = I18N.string.file_info_mime_type_entry),
-                value = driveLink.mimeType,
-            )
-            InfoItem(
-                name = stringResource(id = I18N.string.file_info_size_entry),
-                value = driveLink.size.asHumanReadableString(LocalContext.current),
-            )
-        }
-        InfoItem(
-            name = stringResource(id = I18N.string.file_info_shared_entry),
-            value = stringResource(id = if (driveLink.isShared) {
-                I18N.string.common_yes
-            } else {
-                I18N.string.common_no
-            }),
-        )
-        if (driveLink.isShared) {
-            InfoItem(
-                name = stringResource(id = I18N.string.file_info_number_of_accesses_entry),
-                value = driveLink.numberOfAccesses.toString(),
-            )
-            InfoItem(
-                name = stringResource(id = I18N.string.file_info_share_url_expiration_time),
-                value = driveLink.shareUrlExpirationTime?.toReadableDate()
-                    ?: stringResource(id = I18N.string.file_info_share_url_no_expiration_time),
+        items.forEach { item ->
+            EncryptedInfoItem(
+                name = item.name,
+                value = item.value,
+                isValueEncrypted = item.isValueEncrypted,
             )
         }
     }
@@ -247,50 +204,54 @@ private val HeaderIconSize = 40.dp
 @Composable
 @Suppress("unused")
 private fun PreviewFileInfoContent() {
-    FileInfoContent(
-        driveLink = DriveLink.File(
-            link = Link.File(
-                id = FileId(ShareId(UserId("USER_ID"), "SHARE_ID"), "ID"),
-                parentId = FolderId(ShareId(UserId("USER_ID"), "SHARE_ID"), "PARENT_ID"),
-                activeRevisionId = "revision",
-                size = Bytes(123),
-                lastModified = TimestampS(System.currentTimeMillis() / 1000),
-                mimeType = "image/jpg",
-                numberOfAccesses = 2,
-                isShared = true,
-                uploadedBy = "m4@proton.black",
-                hasThumbnail = false,
-                name = "Link name",
-                key = "key",
-                passphrase = "passphrase",
-                passphraseSignature = "signature",
-                contentKeyPacket = "contentKeyPacket",
-                contentKeyPacketSignature = null,
-                isFavorite = false,
-                attributes = Attributes(0),
-                permissions = Permissions(0),
-                state = Link.State.ACTIVE,
-                nameSignatureEmail = "",
-                hash = "",
-                expirationTime = null,
-                nodeKey = "",
-                nodePassphrase = "",
-                nodePassphraseSignature = "",
-                signatureAddress = "",
-                creationTime = TimestampS(0),
-                trashedTime = null,
-                shareUrlExpirationTime = null,
-                xAttr = null,
-                shareUrlId = null,
-            ),
-            volumeId = VolumeId("VOLUME_ID"),
-            isMarkedAsOffline = false,
-            isAnyAncestorMarkedAsOffline = false,
-            downloadState = null,
-            trashState = null,
-            cryptoName = CryptoProperty.Decrypted("Link name", VerificationStatus.Success),
+    val driveLink = DriveLink.File(
+        link = Link.File(
+            id = FileId(ShareId(UserId("USER_ID"), "SHARE_ID"), "ID"),
+            parentId = FolderId(ShareId(UserId("USER_ID"), "SHARE_ID"), "PARENT_ID"),
+            activeRevisionId = "revision",
+            size = Bytes(123),
+            lastModified = TimestampS(System.currentTimeMillis() / 1000),
+            mimeType = "image/jpg",
+            numberOfAccesses = 2,
+            isShared = true,
+            uploadedBy = "m4@proton.black",
+            hasThumbnail = false,
+            name = "Link name",
+            key = "key",
+            passphrase = "passphrase",
+            passphraseSignature = "signature",
+            contentKeyPacket = "contentKeyPacket",
+            contentKeyPacketSignature = null,
+            isFavorite = false,
+            attributes = Attributes(0),
+            permissions = Permissions(0),
+            state = Link.State.ACTIVE,
+            nameSignatureEmail = "",
+            hash = "",
+            expirationTime = null,
+            nodeKey = "",
+            nodePassphrase = "",
+            nodePassphraseSignature = "",
+            signatureAddress = "",
+            creationTime = TimestampS(0),
+            trashedTime = null,
+            shareUrlExpirationTime = null,
+            xAttr = null,
+            shareUrlId = null,
         ),
-        pathToFileNode = "/My files/deep nested/Aaaa/3/",
+        volumeId = VolumeId("VOLUME_ID"),
+        isMarkedAsOffline = false,
+        isAnyAncestorMarkedAsOffline = false,
+        downloadState = null,
+        trashState = null,
+        cryptoName = CryptoProperty.Decrypted("Link name", VerificationStatus.Success),
+    )
+    FileInfoContent(
+        driveLink = driveLink,
+        items = driveLink.toItems(
+            context = LocalContext.current,
+            parentPath = "/My files/deep nested/Aaaa/3/",
+        )
     )
 }
 

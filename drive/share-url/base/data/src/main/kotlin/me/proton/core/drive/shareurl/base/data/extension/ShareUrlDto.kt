@@ -21,14 +21,16 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.shareurl.base.data.api.entity.ShareUrlDto
 import me.proton.core.drive.shareurl.base.data.db.entity.ShareUrlEntity
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrl
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlPasswordFlags
+import me.proton.core.drive.volume.data.api.entity.ShareUrlDto
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
-fun ShareUrlDto.toShareUrl(userId: UserId) = ShareUrl(
+fun ShareUrlDto.toShareUrl(userId: UserId, volumeId: VolumeId) = ShareUrl(
     id = ShareUrlId(ShareId(userId, shareId), shareUrlId),
+    volumeId = volumeId,
     name = name,
     token = token,
     creatorEmail = creatorEmail,
@@ -48,9 +50,10 @@ fun ShareUrlDto.toShareUrl(userId: UserId) = ShareUrl(
     publicUrl = publicUrl,
 )
 
-fun ShareUrlDto.toShareUrlEntity(userId: UserId) = ShareUrlEntity(
+fun ShareUrlDto.toShareUrlEntity(userId: UserId, volumeId: VolumeId) = ShareUrlEntity(
     id = shareUrlId,
     userId = userId,
+    volumeId = volumeId.id,
     shareId = shareId,
     name = name,
     token = token,

@@ -33,4 +33,6 @@ object WorkerKeys {
     const val KEY_IS_CANCELLED = "key.isCancelled"
     const val KEY_UPLOAD_BULK_ID = "key.uploadBulkId"
     const val KEY_FOLDER_NAME = "key.folderName"
+    const val KEY_SHOW_FILES_BEING_UPLOADED = "key.showFilesBeingUploaded"
+    const val KEY_REASON = "key.reason"
 }

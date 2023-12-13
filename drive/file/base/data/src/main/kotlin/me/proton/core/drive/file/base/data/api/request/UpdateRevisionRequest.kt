@@ -19,26 +19,23 @@ package me.proton.core.drive.file.base.data.api.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import me.proton.core.drive.base.data.api.Dto.BLOCK_LIST
 import me.proton.core.drive.base.data.api.Dto.BLOCK_NUMBER
 import me.proton.core.drive.base.data.api.Dto.MANIFEST_SIGNATURE
+import me.proton.core.drive.base.data.api.Dto.PHOTO
 import me.proton.core.drive.base.data.api.Dto.SIGNATURE_ADDRESS
-import me.proton.core.drive.base.data.api.Dto.STATE
 import me.proton.core.drive.base.data.api.Dto.X_ATTR
-import me.proton.core.drive.file.base.data.api.entity.BlockTokenDto
+import me.proton.core.drive.file.base.data.api.entity.PhotoDto
 
 @Serializable
 data class UpdateRevisionRequest(
-    @SerialName(BLOCK_LIST)
-    val blockList: List<BlockTokenDto>,
     @SerialName(MANIFEST_SIGNATURE)
     val manifestSignature: String,
     @SerialName(SIGNATURE_ADDRESS)
     val signatureAddress: String,
     @SerialName(BLOCK_NUMBER)
     val blockNumber: Long,
-    @SerialName(STATE)
-    val state: Long,
     @SerialName(X_ATTR)
     val xAttr: String,
+    @SerialName(PHOTO)
+    val photo: PhotoDto?,
 )

@@ -26,6 +26,7 @@ import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlCustomPasswordIn
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlExpirationDurationInfo
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlInfo
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface ShareUrlRepository {
 
@@ -37,7 +38,7 @@ interface ShareUrlRepository {
     /**
      * Fetch the given page share url
      */
-    suspend fun fetchShareUrl(shareUrlId: ShareUrlId): Result<ShareUrl>
+    suspend fun fetchShareUrl(volumeId: VolumeId, shareUrlId: ShareUrlId): Result<ShareUrl>
 
     /**
      * Get reactive share url
@@ -50,24 +51,28 @@ interface ShareUrlRepository {
     suspend fun getShareUrl(userId: UserId, shareUrlId: String): ShareUrl?
 
     /**
-     * Returns true if the cache has at least one share url for the given share
+     * Returns true if the cache has at least one share url for the given volume
      */
-    suspend fun hasShareUrls(shareId: ShareId): Boolean
+    suspend fun hasShareUrls(userId: UserId, volumeId: VolumeId): Boolean
 
     /**
-     * Fetch all share urls for a given share
+     * Fetch all share urls for a given volume
      */
-    suspend fun fetchAllShareUrls(shareId: ShareId, saveLinks: Boolean): Result<List<ShareUrl>>
+    suspend fun fetchAllShareUrls(userId: UserId, volumeId: VolumeId, saveLinks: Boolean): Result<List<ShareUrl>>
 
     /**
-     * Get reactive list of all share urls for a given share
+     * Get reactive list of all share urls for a given volume
      */
-    fun getAllShareUrls(shareId: ShareId): Flow<List<ShareUrl>>
+    fun getAllShareUrls(userId: UserId, volumeId: VolumeId): Flow<List<ShareUrl>>
 
     /**
      * Create a share URL for a given share
      */
-    suspend fun createShareUrl(shareId: ShareId, shareUrlInfo: ShareUrlInfo): Result<ShareUrl>
+    suspend fun createShareUrl(
+        volumeId: VolumeId,
+        shareId: ShareId,
+        shareUrlInfo: ShareUrlInfo,
+    ): Result<ShareUrl>
 
     /**
      * Delete a given share URL
@@ -78,6 +83,7 @@ interface ShareUrlRepository {
      * Update share URL custom password and/or expiration duration
      */
     suspend fun updateShareUrl(
+        volumeId: VolumeId,
         shareUrlId: ShareUrlId,
         shareUrlCustomPasswordInfo: ShareUrlCustomPasswordInfo?,
         shareUrlExpirationDurationInfo: ShareUrlExpirationDurationInfo?,

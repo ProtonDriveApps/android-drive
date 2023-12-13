@@ -18,13 +18,17 @@
 
 package me.proton.core.drive.thumbnail.presentation.coil.fetch
 
-import coil.bitmap.BitmapPool
+import android.content.Context
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
 import coil.decode.DataSource
-import coil.decode.Options
+import coil.decode.ImageSource
 import coil.fetch.FetchResult
 import coil.fetch.Fetcher
 import coil.fetch.SourceResult
-import coil.size.Size
+import coil.key.Keyer
+import coil.request.Options
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailCacheFile
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailInputStream
@@ -34,39 +38,53 @@ import okio.buffer
 import okio.source
 import java.io.File
 import java.io.InputStream
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class ThumbnailFetcher @Inject constructor(
+object ThumbnailKeyer : Keyer<ThumbnailVO> {
+    override fun key(data: ThumbnailVO, options: Options): String = with(data) {
+        "$volumeId-$revisionId-${thumbnailId.type}"
+    }
+}
+
+@OptIn(ExperimentalCoilApi::class)
+class ThumbnailFetcher(
+    private val context: Context,
     private val getThumbnailInputStream: GetThumbnailInputStream,
     private val getThumbnailCacheFile: GetThumbnailCacheFile,
-) : Fetcher<ThumbnailVO> {
+    private val data: ThumbnailVO,
+    private val options: Options
+) : Fetcher {
 
-    override suspend fun fetch(pool: BitmapPool, data: ThumbnailVO, size: Size, options: Options): FetchResult {
+    class ThumbnailMetadata(val fileId: FileId) : ImageSource.Metadata()
+
+    private fun getSource(data: ThumbnailVO, bufferedSource: BufferedSource) = ImageSource(
+        source = bufferedSource,
+        context = context,
+        metadata = ThumbnailMetadata(data.fileId)
+    )
+
+    override suspend fun fetch(): FetchResult? {
         val revisionId = requireNotNull(data.revisionId) { "A file without a revision doesn't have a thumbnail" }
-        val cacheFile = getThumbnailCacheFile(data.fileId.userId, data.volumeId, data.revisionId)
+        val cacheFile = getThumbnailCacheFile(data.fileId.userId, data.volumeId, data.revisionId, data.thumbnailId.type)
         val allowNetwork = options.networkCachePolicy.readEnabled
         val allowDiskRead = options.diskCachePolicy.readEnabled
         return when {
             allowDiskRead && cacheFile.exists() && cacheFile.length() > 0 -> SourceResult(
-                Source(data, cacheFile.inputStream()),
+                getSource(data, cacheFile.source().buffer()),
                 mimeType = MIME_TYPE,
                 dataSource = DataSource.DISK,
             )
-            allowNetwork -> fetchFromNetwork(data, revisionId, options, cacheFile)
+
+            allowNetwork -> fetchFromNetwork(data, options, cacheFile)
             else -> throw IllegalArgumentException("Couldn't access the thumbnail")
         }
     }
 
     private suspend fun fetchFromNetwork(
         data: ThumbnailVO,
-        revisionId: String,
         options: Options,
         cacheFile: File,
     ): SourceResult = getThumbnailInputStream(
-        fileId = data.fileId,
-        revisionId = revisionId,
+        thumbnailId = data.thumbnailId,
     ).map { inputStream ->
         inputStream.use {
             writeOnDiskIfNeeded(options, cacheFile, inputStream, data)
@@ -92,21 +110,32 @@ class ThumbnailFetcher @Inject constructor(
             networkInputStream
         }.let { inputStream ->
             SourceResult(
-                source = Source(data, inputStream),
+                source = getSource(data, inputStream.source().buffer()),
                 mimeType = MIME_TYPE,
                 dataSource = DataSource.NETWORK,
             )
         }
     }
 
-    override fun key(data: ThumbnailVO): String = with(data) {
-        "$volumeId-$revisionId"
+    class Factory constructor(
+        private val context: Context,
+        private val getThumbnailInputStream: GetThumbnailInputStream,
+        private val getThumbnailCacheFile: GetThumbnailCacheFile,
+    ) : Fetcher.Factory<ThumbnailVO> {
+        override fun create(
+            data: ThumbnailVO,
+            options: Options,
+            imageLoader: ImageLoader
+        ): Fetcher? {
+            return ThumbnailFetcher(
+                context = context,
+                getThumbnailInputStream = getThumbnailInputStream,
+                getThumbnailCacheFile = getThumbnailCacheFile,
+                data = data,
+                options = options,
+            )
+        }
     }
-
-    class Source(
-        val thumbnailVO: ThumbnailVO,
-        inputStream: InputStream,
-    ) : BufferedSource by inputStream.source().buffer()
 
     companion object {
         const val MIME_TYPE = "image/proton-encrypted"

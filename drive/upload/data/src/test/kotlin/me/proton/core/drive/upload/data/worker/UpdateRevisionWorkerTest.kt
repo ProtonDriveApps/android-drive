@@ -38,9 +38,13 @@ import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
+import me.proton.core.drive.upload.domain.manager.UploadErrorManager
+import me.proton.core.drive.upload.domain.usecase.ApplyCacheOption
 import me.proton.core.drive.upload.domain.usecase.UpdateRevision
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -60,7 +64,10 @@ class UpdateRevisionWorkerTest {
     private val workManager = mockk<WorkManager>()
     private val broadcastMessages = mockk<BroadcastMessages>()
     private val getUploadFileLink = mockk<GetUploadFileLink>()
+    private val uploadErrorManager = mockk<UploadErrorManager>()
     private val updateRevision = mockk<UpdateRevision>()
+    private val networkTypeProvider = mockk<NetworkTypeProvider>()
+    private val applyCacheOption = mockk<ApplyCacheOption>()
     private val configurationProvider = mockk<ConfigurationProvider>()
     private val canRun = mockk<CanRun>()
     private val run = mockk<Run>()
@@ -72,9 +79,14 @@ class UpdateRevisionWorkerTest {
     fun before() {
         coEvery { canRun(any(), any()) } returns Result.success(true)
         coEvery { getUploadFileLink(any() as Long) } returns DataResult.Success(ResponseSource.Local, uploadFileLink)
+        coEvery { uploadErrorManager.post(any()) } returns Unit
         coEvery { workManager.enqueue(any() as WorkRequest) } returns operation
         coEvery { configurationProvider.useExceptionMessage } returns false
         coEvery { broadcastMessages(userId, any(), any(), any()) } returns Unit
+        coEvery { uploadFileLink.id } returns 0L
+        coEvery { uploadFileLink.uriString } returns "uriString"
+        coEvery { uploadFileLink.shouldBroadcastErrorMessage } returns true
+        coEvery { applyCacheOption(any()) } returns Result.success(Unit)
     }
 
     @Test
@@ -83,7 +95,7 @@ class UpdateRevisionWorkerTest {
         val uploadFile = "proton_drive.pdf"
         coEvery { uploadFileLink.name } returns uploadFile
         val errorFromServer = "Upload failed: Verification of data failed"
-        coEvery { updateRevision(any()) } returns Result.failure(
+        coEvery { updateRevision(any(), any()) } returns Result.failure(
             ApiException(
                 ApiResult.Error.Http(
                     httpCode = 422,
@@ -128,7 +140,13 @@ class UpdateRevisionWorkerTest {
                         workManager = workManager,
                         broadcastMessages = broadcastMessages,
                         getUploadFileLink = getUploadFileLink,
+                        uploadErrorManager = uploadErrorManager,
                         updateRevision = updateRevision,
+                        networkTypeProviders = mapOf(
+                            NetworkTypeProviderType.DEFAULT to networkTypeProvider,
+                            NetworkTypeProviderType.BACKUP to networkTypeProvider,
+                        ),
+                        applyCacheOption = applyCacheOption,
                         configurationProvider = configurationProvider,
                         canRun = canRun,
                         run = run,

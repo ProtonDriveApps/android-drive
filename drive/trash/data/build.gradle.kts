@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.trash.data"
+}
+
 driveModule(
     hilt = true,
     room = true,
@@ -30,10 +34,11 @@ driveModule(
     api(project(":drive:base:data"))
     api(project(":drive:link:data"))
     api(project(":drive:trash:domain"))
+    api(project(":drive:volume:data"))
 
-    implementation(project(":drive:base:presentation"))
     implementation(project(":drive:link-trash:data"))
     implementation(project(":drive:event-manager:base:domain"))
+    implementation(project(":drive:event-manager:domain"))
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.retrofit)
 }

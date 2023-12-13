@@ -20,4 +20,8 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.navigationdrawer"
+}
+
 driveModule(includeSubmodules = true)

@@ -20,11 +20,15 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.linktrash.data"
+}
+
 driveModule(
     hilt = true,
     room = true,
 ) {
     api(project(":drive:link:data"))
     api(project(":drive:link-trash:domain"))
-    implementation(project(":drive:share:data"))
+    implementation(project(":drive:volume:data"))
 }

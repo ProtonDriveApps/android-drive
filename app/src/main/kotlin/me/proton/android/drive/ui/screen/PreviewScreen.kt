@@ -38,11 +38,11 @@ import me.proton.android.drive.ui.MainActivity
 import me.proton.android.drive.ui.effect.PreviewEffect
 import me.proton.android.drive.ui.viewmodel.PreviewViewModel
 import me.proton.core.compose.activity.KeepScreenOn
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheet
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.compose.component.bottomsheet.rememberModalBottomSheetContentState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.base.presentation.component.Deferred
+import me.proton.core.drive.base.presentation.component.ModalBottomSheet
 import me.proton.core.drive.files.preview.presentation.component.Preview
 import me.proton.core.drive.files.preview.presentation.component.PreviewEmpty
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewContentState

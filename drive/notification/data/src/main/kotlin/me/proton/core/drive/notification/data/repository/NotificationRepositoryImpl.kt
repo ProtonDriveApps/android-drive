@@ -18,14 +18,15 @@
 package me.proton.core.drive.notification.data.repository
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.notification.data.db.NotificationDatabase
 import me.proton.core.drive.notification.data.db.entity.NotificationEventEntity
+import me.proton.core.drive.notification.data.db.entity.TaglessNotificationEventEntity
 import me.proton.core.drive.notification.data.extension.toChannel
 import me.proton.core.drive.notification.data.extension.toNotificationChannelEntity
 import me.proton.core.drive.notification.data.extension.toNotificationId
 import me.proton.core.drive.notification.domain.entity.Channel
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.drive.notification.domain.repository.NotificationRepository
 import javax.inject.Inject
@@ -41,51 +42,103 @@ class NotificationRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllChannels(userId: UserId): List<Channel.User> =
-        db.channelDao.getAll(userId).map { notificationChannelEntity -> notificationChannelEntity.toChannel() }
+        db.channelDao.getAll(userId)
+            .map { notificationChannelEntity -> notificationChannelEntity.toChannel() }
 
     override suspend fun removeChannels(userId: UserId) =
         db.channelDao.deleteAll(userId)
 
     override suspend fun insertNotificationEvent(
         notificationId: NotificationId.User,
-        notificationEvent: NotificationEvent,
+        event: Event,
     ) = coRunCatching {
-        with (notificationId) {
-            db.eventDao.insertOrUpdate(
-                NotificationEventEntity(
-                    userId = channel.userId,
-                    channelType = channel.type,
-                    notificationTag = tag,
-                    notificationId = id,
-                    notificationEventId = notificationEvent.id,
-                    notificationEvent = notificationEvent,
+        with(notificationId) {
+            val notificationTag = tag
+            if (notificationTag == null) {
+                db.taglessEventDao.insertOrUpdate(
+                    TaglessNotificationEventEntity(
+                        userId = channel.userId,
+                        channelType = channel.type,
+                        notificationId = id,
+                        notificationEventId = event.id,
+                        notificationEvent = event,
+                    )
                 )
-            )
+            } else {
+                db.eventDao.insertOrUpdate(
+                    NotificationEventEntity(
+                        userId = channel.userId,
+                        channelType = channel.type,
+                        notificationTag = notificationTag,
+                        notificationId = id,
+                        notificationEventId = event.id,
+                        notificationEvent = event,
+                    )
+                )
+            }
         }
     }
 
-    override suspend fun getAllNotificationIds(userId: UserId): List<NotificationId.User> =
-        db.eventDao.getAll(userId).map { notificationEventEntity -> notificationEventEntity.toNotificationId() }
+    override suspend fun getAllNotificationIds(
+        userId: UserId,
+    ): List<NotificationId.User> = db.inTransaction {
+        val notificationIds = db.eventDao.getAll(userId)
+            .map { entity -> entity.toNotificationId() }
+        val taglessNotificationIds = db.taglessEventDao.getAll(userId)
+            .map { entity -> entity.toNotificationId() }
+        notificationIds + taglessNotificationIds
+    }
 
-    override suspend fun getAllNotificationEvents(notificationId: NotificationId.User): List<NotificationEvent> =
-        with (notificationId) {
-            db.eventDao.getAll(channel.userId, channel.type, tag, id).map { notificationEventEntity ->
-                notificationEventEntity.notificationEvent
-            }
+    override suspend fun getAllNotificationEvents(
+        notificationId: NotificationId.User,
+    ): List<Event> = with(notificationId) {
+        val notificationTag = tag
+        if (notificationTag == null) {
+            db.taglessEventDao.getAll(channel.userId, channel.type, id)
+                .map { entity -> entity.notificationEvent }
+        } else {
+            db.eventDao.getAll(channel.userId, channel.type, notificationTag, id)
+                .map { entity -> entity.notificationEvent }
         }
+    }
 
     override suspend fun getNotificationEvent(
         notificationId: NotificationId.User,
         notificationEventId: String,
-    ): NotificationEvent? = with (notificationId) {
-        db.eventDao.get(channel.userId, channel.type, tag, id, notificationEventId)?.notificationEvent
+    ): Event? = with(notificationId) {
+        val notificationTag = tag
+        if (notificationTag == null) {
+            db.taglessEventDao.get(
+                userId = channel.userId,
+                channelType = channel.type,
+                notificationId = id,
+                eventId = notificationEventId
+            )?.notificationEvent
+        } else {
+            db.eventDao.get(
+                userId = channel.userId,
+                channelType = channel.type,
+                tag = notificationTag,
+                notificationId = id,
+                eventId = notificationEventId
+            )?.notificationEvent
+        }
     }
 
-    override suspend fun removeNotificationEvents(notificationId: NotificationId.User) =
-        with (notificationId) {
-            db.eventDao.deleteAll(channel.userId, channel.type, tag, id)
+    override suspend fun removeNotificationEvents(
+        notificationId: NotificationId.User,
+    ) = with(notificationId) {
+        val notificationTag = tag
+        if (notificationTag == null) {
+            db.taglessEventDao.deleteAll(channel.userId, channel.type, id)
+        } else {
+            db.eventDao.deleteAll(channel.userId, channel.type, notificationTag, id)
         }
+    }
 
-    override suspend fun removeNotificationEvents(userId: UserId) =
+    override suspend fun removeNotificationEvents(userId: UserId) = db.inTransaction {
+        db.taglessEventDao.deleteAll(userId)
         db.eventDao.deleteAll(userId)
+    }
 }
+

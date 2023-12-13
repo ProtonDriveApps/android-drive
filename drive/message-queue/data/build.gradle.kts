@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.messagequeue.data"
+}
+
 driveModule(room = true) {
     api(project(":drive:base:data"))
     api(project(":drive:message-queue:domain"))

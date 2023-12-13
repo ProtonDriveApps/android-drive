@@ -19,6 +19,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.android.drive.db"
+}
+
 driveModule(
     hilt = true,
     room = true,
@@ -30,20 +34,26 @@ driveModule(
     api(libs.core.featureFlag.data)
     api(libs.core.humanVerification.data)
     api(libs.core.key.data)
+    api(libs.core.notification.data)
     api(libs.core.observability.data)
     api(libs.core.payment.data)
+    api(libs.core.push.data)
+    api(libs.core.telemetry.data)
     api(libs.core.user.data)
     api(libs.core.userSettings.data)
     api(libs.core.keyTransparency.data)
     // TODO: Extract from drive db
     api(project(":app-ui-settings"))
+    api(project(":drive:backup:data"))
     api(project(":drive:drivelink:data"))
     api(project(":drive:drivelink-download:data"))
     api(project(":drive:drivelink-offline:data"))
     api(project(":drive:drivelink-paged:data"))
+    api(project(":drive:drivelink-photo:data"))
     api(project(":drive:drivelink-selection:data"))
     api(project(":drive:drivelink-shared:data"))
     api(project(":drive:drivelink-trash:data"))
+    api(project(":drive:feature-flag:data"))
     api(project(":drive:folder:data"))
     api(project(":drive:link:data"))
     api(project(":drive:link-download:data"))
@@ -54,9 +64,13 @@ driveModule(
     api(project(":drive:link-upload:data"))
     api(project(":drive:message-queue:data"))
     api(project(":drive:notification:data"))
+    api(project(":drive:photo:data"))
     api(project(":drive:share:data"))
     api(project(":drive:share-url:base:data"))
     api(project(":drive:sorting:data"))
+    api(project(":drive:stats:data"))
+    api(project(":drive:user:data"))
     api(project(":drive:volume:data"))
     api(project(":drive:worker:data"))
+    api(project(":photos:data"))
 }

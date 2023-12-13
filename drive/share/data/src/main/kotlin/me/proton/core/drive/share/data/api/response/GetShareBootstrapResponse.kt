@@ -42,7 +42,7 @@ data class GetShareBootstrapResponse(
     @SerialName(SHARE_ID)
     val shareId: String,
     @SerialName(TYPE)
-    val type: Long? = null,
+    val type: Long,
     @SerialName(STATE)
     val state: Long,
     @SerialName(LINK_ID)

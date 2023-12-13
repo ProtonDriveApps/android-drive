@@ -18,57 +18,42 @@
 
 package me.proton.android.drive.ui.test.flow.share
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.extension.tomorrow
 import me.proton.android.drive.ui.robot.FileFolderOptionsRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.ShareRobot
-import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.rules.WelcomeScreenRule
-import me.proton.android.drive.ui.test.BaseTest
-import me.proton.android.drive.ui.toolkits.getRandomString
-import me.proton.core.test.quark.data.User
-import org.junit.Rule
+import me.proton.android.drive.ui.rules.Scenario
+import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
 typealias ClickToShareAction = FileFolderOptionsRobot.() -> ShareRobot
 
+@HiltAndroidTest
 @RunWith(Parameterized::class)
 class ChangeExpirationDate(
     private val fileName: String,
     private val clickToShareAction: ClickToShareAction,
     @Suppress("unused") private val testName: String,
-) : BaseTest() {
-
-    private val user
-        get() = User(
-            dataSetScenario = "4",
-            name = "proton_drive_${getRandomString(20)}"
-        )
-
-    @get:Rule
-    val welcomeScreenRule = WelcomeScreenRule(false)
-
-    @get:Rule
-    val userLoginRule = UserLoginRule(testUser = user, shouldSeedUser = true)
+) : AuthenticatedBaseTest() {
 
     @Test
+    @Scenario(4)
     fun expirationDate() {
         FilesTabRobot
             .scrollToItemWithName(fileName)
             .clickMoreOnItem(fileName)
             .clickToShareAction()
             .clickExpirationDateTextField()
+            .verify { robotDisplayed() }
             .selectDate(tomorrow)
             .clickOk()
             .clickSave()
-            .verify {
-                shareUpdateSuccessWasShown()
-                saveDoesNotExists()
-            }
             .clickUpdateSuccessfulGrowler()
             .clickBack(FilesTabRobot)
+            .verify { robotDisplayed() }
             .scrollToItemWithName(fileName)
             .clickMoreOnItem(fileName)
             .clickManageLink()
@@ -81,7 +66,7 @@ class ChangeExpirationDate(
 
     companion object {
         private val GetLink: ClickToShareAction = { clickGetLink() }
-        private val ManageLink: ClickToShareAction = { clickGetLink() }
+        private val ManageLink: ClickToShareAction = { clickManageLink() }
 
         @get:Parameterized.Parameters(name = "{2}")
         @get:JvmStatic

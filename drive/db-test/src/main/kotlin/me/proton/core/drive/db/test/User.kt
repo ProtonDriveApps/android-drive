@@ -50,20 +50,25 @@ suspend fun DriveDatabase.user(
 val userId = UserId("user-id")
 
 @Suppress("FunctionName")
-fun NullableUserEntity() = UserEntity(
+fun NullableUserEntity(
+    userId: UserId = me.proton.core.drive.db.test.userId,
+    maxSpace: Long = 0,
+) = UserEntity(
     userId = userId,
     email = null,
     name = null,
     displayName = null,
     currency = "EUR",
     credit = 0,
+    createdAtUtc = 0,
     usedSpace = 0,
-    maxSpace = 0,
+    maxSpace = maxSpace,
     maxUpload = 0,
     role = null,
     isPrivate = false,
     subscribed = 0,
     services = 0,
     delinquent = null,
-    passphrase = null
+    passphrase = null,
+    recovery = null
 )

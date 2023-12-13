@@ -23,9 +23,9 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.trash.domain.TrashManager
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class GetEmptyTrashState @Inject constructor(
@@ -38,11 +38,11 @@ class GetEmptyTrashState @Inject constructor(
         .mapSuccessValueOrNull()
         .flatMapLatest { share ->
             if (share != null) {
-                invoke(userId, share.id)
+                invoke(userId, share.volumeId)
             } else {
                 flowOf(TrashManager.EmptyTrashState.NO_FILES_TO_TRASH)
             }
         }
 
-    operator fun invoke(userId: UserId, shareId: ShareId) = trashManager.getEmptyTrashState(userId, shareId)
+    operator fun invoke(userId: UserId, volumeId: VolumeId) = trashManager.getEmptyTrashState(userId, volumeId)
 }

@@ -29,20 +29,29 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.ElementsIntoSet
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.log.DriveLogger
 import me.proton.android.drive.notification.AppNotificationBuilderProvider
-import me.proton.android.drive.notification.AppNotificationEventHandler
+import me.proton.android.drive.notification.NotificationEventHandler
+import me.proton.android.drive.photos.domain.handler.PhotosEventHandler
 import me.proton.android.drive.provider.BuildConfigurationProvider
+import me.proton.android.drive.repository.BridgeFindDuplicatesRepository
+import me.proton.android.drive.repository.ClientUidRepositoryImpl
 import me.proton.android.drive.settings.DebugSettings
+import me.proton.android.drive.stats.StatsEventHandler
+import me.proton.android.drive.telemetry.TelemetryEventHandler
 import me.proton.android.drive.usecase.GetDocumentsProviderRootsImpl
+import me.proton.android.drive.usecase.notification.UploadNotificationEventWorkerNotifier
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.domain.entity.AppStore
 import me.proton.core.domain.entity.Product
+import me.proton.core.drive.backup.domain.repository.FindDuplicatesRepository
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.repository.ClientUidRepository
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentsProviderRoots
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
-import me.proton.core.drive.notification.domain.handler.NotificationEventHandler
+import me.proton.core.drive.upload.data.worker.UploadEventWorker
 import me.proton.drive.android.settings.data.datastore.AppUiSettingsDataStore
 import javax.inject.Singleton
 
@@ -78,7 +87,11 @@ object ApplicationModule {
         debugSettings: DebugSettings,
         buildConfigurationProvider: BuildConfigurationProvider,
     ): ConfigurationProvider =
-        if (BuildConfig.DEBUG) debugSettings else buildConfigurationProvider
+        if (BuildConfig.DEBUG || BuildConfig.FLAVOR == BuildConfig.FLAVOR_ALPHA) {
+            debugSettings
+        } else {
+            buildConfigurationProvider
+        }
 
     @Provides
     @Singleton
@@ -113,22 +126,40 @@ object ApplicationModule {
     @Singleton
     fun provideActivityManager(@ApplicationContext context: Context): ActivityManager =
         context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+    @Provides
+    @Singleton
+    @ElementsIntoSet
+    fun provideEventHandlers(
+        notification: NotificationEventHandler,
+        stats: StatsEventHandler,
+        photos: PhotosEventHandler,
+        telemetry: TelemetryEventHandler,
+    ) = setOf(notification, telemetry, photos, stats)
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class ApplicationBindsModule {
-    @Binds
-    @Singleton
-    abstract fun bindsNotificationEventHandler(impl: AppNotificationEventHandler): NotificationEventHandler
 
     @Binds
     @Singleton
     abstract fun bindsNotificationBuilderProvider(
-        impl: AppNotificationBuilderProvider
+        impl: AppNotificationBuilderProvider,
     ): NotificationBuilderProvider
 
     @Binds
     @Singleton
     abstract fun bindsGetDocumentsProviderRootsImpl(impl: GetDocumentsProviderRootsImpl): GetDocumentsProviderRoots
+
+    @Binds
+    @Singleton
+    abstract fun bindsClientUidRepositoryImpl(impl: ClientUidRepositoryImpl): ClientUidRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsBridgeFindDuplicatesRepository(impl: BridgeFindDuplicatesRepository): FindDuplicatesRepository
+
+    @Binds
+    abstract fun bindsUploadNotificationEventWorkerNotifier(impl: UploadNotificationEventWorkerNotifier): UploadEventWorker.Notifier
 }

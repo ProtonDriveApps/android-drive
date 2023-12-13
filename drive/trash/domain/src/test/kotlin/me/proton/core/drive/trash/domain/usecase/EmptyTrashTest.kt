@@ -24,8 +24,8 @@ import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.data.test.manager.StubbedWorkManager
 import me.proton.core.drive.base.data.test.manager.assertHasWork
 import me.proton.core.drive.share.data.test.repository.StubbedShareRepository.Companion.mainShareId
+import me.proton.core.drive.share.data.test.repository.StubbedShareRepository.Companion.photoShareId
 import me.proton.core.drive.share.domain.repository.ShareRepository
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -56,7 +56,7 @@ class EmptyTrashTest {
 
     @Test
     fun `with shareId`() = runTest {
-        emptyTrash(userId, shareId)
+        emptyTrash(userId, setOf(shareId))
 
         manager.assertHasWork("emptyTrash", userId, shareId)
     }
@@ -66,6 +66,6 @@ class EmptyTrashTest {
     fun `without shareId`() = runTest {
         emptyTrash(userId)
 
-        manager.assertHasWork("emptyTrash", userId, mainShareId)
+        manager.assertHasWork("emptyTrash", userId, mainShareId, photoShareId)
     }
 }

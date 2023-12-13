@@ -28,19 +28,21 @@ object DetailsRobot : NavigationBarRobot, Robot {
 
     fun hasHeaderTitle(title: String) = node
         .addSemanticMatcher(SemanticsMatcher.expectValue(FileInfoTestTag.Header.Title, title))
-        .assertIsDisplayed()
+        .await { assertIsDisplayed() }
+
     fun hasHeaderWithIconType(iconType: FileInfoTestTag.Header.HeaderIconType) = node
         .addSemanticMatcher(SemanticsMatcher.expectValue(FileInfoTestTag.Header.IconType, iconType))
-        .assertIsDisplayed()
+        .await { assertIsDisplayed() }
+
     fun hasInfoItem(name: String, value: String) {
         detailsContent.scrollTo(node.withText(name))
         node
             .withContentDescription("$name: $value")
-            .assertIsDisplayed()
+            .await { assertIsDisplayed() }
     }
 
     fun hasNotInfoItem(name: String) {
-        node.withText(name).assertDoesNotExist()
+        node.withText(name).await { assertDoesNotExist() }
     }
 
     override fun robotDisplayed() {

@@ -33,9 +33,9 @@ import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.ConfirmStopSharingViewEvent
 import me.proton.android.drive.ui.viewstate.ConfirmStopSharingViewState
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.shared.domain.usecase.DeleteShareUrl

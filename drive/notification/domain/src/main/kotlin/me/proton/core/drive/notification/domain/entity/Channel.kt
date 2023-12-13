@@ -31,6 +31,7 @@ sealed class Channel {
     data class App(override val type: Type) : Channel()
 
     enum class Type {
+        BACKGROUND,
         TRANSFER,
         WARNING,
     }

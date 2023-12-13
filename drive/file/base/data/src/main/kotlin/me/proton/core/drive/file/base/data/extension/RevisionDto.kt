@@ -19,6 +19,7 @@ package me.proton.core.drive.file.base.data.extension
 
 import me.proton.core.drive.file.base.data.api.entity.RevisionDto
 import me.proton.core.drive.file.base.domain.entity.Revision
+import me.proton.core.drive.file.base.domain.entity.RevisionState
 
 fun RevisionDto.toRevisionInfo() =
     Revision(
@@ -28,4 +29,15 @@ fun RevisionDto.toRevisionInfo() =
         blocks = blocks.map { blockDto -> blockDto.toBlock() },
         manifestSignature = manifestSignature,
         signatureAddress = signatureAddress,
+        state = state.toRevisionState()
     )
+
+private fun Long.toRevisionState(): RevisionState? {
+    return when(this){
+        0L -> RevisionState.DRAFT
+        1L -> RevisionState.ACTIVE
+        2L -> RevisionState.OBSOLETE
+        4L -> RevisionState.DELETED
+        else -> null
+    }
+}

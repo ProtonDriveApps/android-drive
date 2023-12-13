@@ -18,31 +18,17 @@
 
 package me.proton.android.drive.ui.test.flow.move
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.rules.WelcomeScreenRule
-import me.proton.android.drive.ui.test.BaseTest
-import me.proton.android.drive.ui.toolkits.getRandomString
-import me.proton.core.test.quark.data.User
-import org.junit.Rule
+import me.proton.android.drive.ui.rules.Scenario
+import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
-class MoveFileFlowSuccessTest : BaseTest() {
-
-    private val user
-        get() = User(
-            dataSetScenario = "4",
-            name = "proton_drive_${getRandomString(20)}"
-        )
-
-    @get:Rule
-    val welcomeScreenRule = WelcomeScreenRule(false)
-
-    @get:Rule
-    val userLoginRule = UserLoginRule(testUser = user)
-
+@HiltAndroidTest
+class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
     @Test
+    @Scenario(4)
     fun moveAFileToRoot() {
         val file = "sharedChild.html"
         val folder = "sharedFolder"
@@ -66,6 +52,7 @@ class MoveFileFlowSuccessTest : BaseTest() {
     }
 
     @Test
+    @Scenario(4)
     fun moveRootFileToFolder() {
         val file = "shared.jpg"
         val folder = "folder3"
@@ -88,6 +75,7 @@ class MoveFileFlowSuccessTest : BaseTest() {
     }
 
     @Test
+    @Scenario(4)
     fun moveFilesFromRootFolderToAnotherFolder() {
         val file = "shared.jpg"
         val folder = "folder3"

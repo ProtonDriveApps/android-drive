@@ -17,6 +17,28 @@
  */
 package me.proton.core.drive.files.presentation.state
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.paging.compose.LazyPagingItems
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+
 enum class ListEffect {
     REFRESH, RETRY
+}
+
+@Composable
+fun <T : Any> Flow<ListEffect>.HandleListEffect(items: LazyPagingItems<T>) {
+    LaunchedEffect(this, LocalContext.current) {
+        this@HandleListEffect
+            .onEach { effect ->
+                when (effect) {
+                    ListEffect.REFRESH -> items.apply { refresh() }
+                    ListEffect.RETRY -> items.apply { retry() }
+                }
+            }
+            .launchIn(this)
+    }
 }

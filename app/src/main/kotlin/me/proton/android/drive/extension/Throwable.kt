@@ -20,8 +20,8 @@ package me.proton.android.drive.extension
 
 import android.content.Context
 import me.proton.core.drive.base.domain.exception.DriveException
-import me.proton.core.drive.base.presentation.extension.getDefaultMessage as baseGetDefaultMessage
-import me.proton.core.drive.base.presentation.extension.log as baseLog
+import me.proton.core.drive.base.data.extension.getDefaultMessage as baseGetDefaultMessage
+import me.proton.core.drive.base.data.extension.log as baseLog
 
 fun Throwable.getDefaultMessage(
     context: Context,

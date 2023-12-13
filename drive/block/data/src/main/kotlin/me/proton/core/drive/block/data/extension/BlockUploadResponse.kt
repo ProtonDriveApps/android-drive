@@ -23,5 +23,5 @@ import me.proton.core.drive.block.domain.entity.UploadBlocksUrl
 fun BlockUploadResponse.toUploadBlocksUrl() =
     UploadBlocksUrl(
         blockLinks = blockUploadLinks.map { uploadLinkDto -> uploadLinkDto.toUploadBlockLink() },
-        thumbnailLink = thumbnailUploadLink?.toUploadBlockLink()
+        thumbnailLinks = thumbnailUploadLinks.orEmpty().map { uploadLinkDto -> uploadLinkDto.toUploadBlockLink() }
     )

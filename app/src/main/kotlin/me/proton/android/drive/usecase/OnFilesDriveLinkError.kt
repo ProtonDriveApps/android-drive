@@ -30,6 +30,7 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.files.presentation.state.ListContentState
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.exception.ShareException
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
@@ -44,15 +45,20 @@ class OnFilesDriveLinkError @Inject constructor(
         previous: DataResult<DriveLink.Folder>?,
         error: DataResult.Error,
         contentState: MutableStateFlow<ListContentState>,
+        shareType: Share.Type = Share.Type.MAIN,
     ) {
         when {
-            error.isTransient(previous) -> error.broadcastMessage(userId)
+            error.isTransient(previous, shareType) -> error.broadcastMessage(userId)
             else -> contentState.emit(error.toListContentState())
         }
     }
 
-    private fun DataResult.Error.isTransient(previous: DataResult<DriveLink.Folder>?): Boolean =
-        (previous != null && previous !is DataResult.Error) || cause is ShareException.MainShareLocked
+    private fun DataResult.Error.isTransient(
+        previous: DataResult<DriveLink.Folder>?,
+        shareType: Share.Type,
+    ): Boolean =
+        (previous != null && previous !is DataResult.Error) ||
+                ((cause as? ShareException.ShareLocked)?.let { e -> e.shareType == shareType } ?: false)
 
     private fun DataResult.Error.broadcastMessage(userId: UserId) = broadcastMessage?.let { message ->
         broadcastMessages(

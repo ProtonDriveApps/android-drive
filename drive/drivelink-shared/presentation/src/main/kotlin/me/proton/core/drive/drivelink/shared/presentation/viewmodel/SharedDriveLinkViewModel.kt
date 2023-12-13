@@ -41,6 +41,7 @@ import kotlinx.coroutines.launch
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.domain.entity.toTimestampMs
 import me.proton.core.drive.base.domain.exception.requireField
@@ -49,7 +50,6 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.CopyToClipboard
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.base.presentation.extension.getDefaultMessage
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
@@ -71,6 +71,7 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.shareurl.crypto.domain.usecase.UpdateShareUrl
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
@@ -363,9 +364,10 @@ class SharedDriveLinkViewModel @Inject constructor(
                     .getOrNull()
             } else { "" }
 
-            val shareUrlId = sharedDriveLink.filterNotNull().mapSuccessValueOrNull().filterNotNull().first().shareUrlId
+            val driveLink = sharedDriveLink.filterNotNull().mapSuccessValueOrNull().filterNotNull().first()
             updateShareUrl(
-                shareUrlId = shareUrlId,
+                volumeId = driveLink.volumeId,
+                shareUrlId = driveLink.shareUrlId,
                 password = password,
                 expirationDateIso8601 = expirationDate,
                 hasUnsavedExpirationDateChanges = hasUnsavedExpirationDateChanges,
@@ -415,6 +417,7 @@ class SharedDriveLinkViewModel @Inject constructor(
     }
 
     private suspend fun updateShareUrl(
+        volumeId: VolumeId,
         shareUrlId: ShareUrlId,
         password: String?,
         expirationDateIso8601: String?,
@@ -422,6 +425,7 @@ class SharedDriveLinkViewModel @Inject constructor(
     ) {
         saveInProgress.emit(true)
         updateShareUrl(
+            volumeId = volumeId,
             shareUrlId = shareUrlId,
             customPassword = password,
             expirationDateIso8601 = expirationDateIso8601,
@@ -458,6 +462,7 @@ class SharedDriveLinkViewModel @Inject constructor(
                 time = Date()
                 add(Calendar.DATE, 1)
                 set(time.asYear, time.asMonth, time.asDayOfMonth, 0, 0, 0)
+                set(Calendar.MILLISECOND, 0)
             }
     private val endOfLastDay: Calendar get() =
         Calendar.getInstance()
@@ -467,6 +472,7 @@ class SharedDriveLinkViewModel @Inject constructor(
                         configurationProvider.maxSharedLinkExpirationDuration.inWholeMilliseconds
                 )
                 set(time.asYear, time.asMonth, time.asDayOfMonth, 23, 59, 59)
+                set(Calendar.MILLISECOND, 999)
             }
     private val Date.isNotBeforeStartOfFirstDay: Boolean get() {
         val selected = Calendar.getInstance().apply { time = this@isNotBeforeStartOfFirstDay }

@@ -26,9 +26,10 @@
     <string name="file_info_mime_type_entry">@string/common_mime_type</string>
     <string name="file_info_size_entry">@string/common_size</string>
     <string name="file_info_shared_entry">@string/common_shared</string>
-    <string name="file_info_number_of_accesses_entry"># of accesses</string>
+    <string name="file_info_number_of_accesses_entry"># of downloads</string>
     <string name="file_info_share_url_expiration_time">Link expiration time</string>
     <string name="file_info_share_url_no_expiration_time">Never</string>
     <string name="file_info_title_folder">Folder details</string>
     <string name="file_info_title_file">File details</string>
+    <string name="file_info_captured_on">Captured on</string>
 </resources>

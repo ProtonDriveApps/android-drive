@@ -79,6 +79,9 @@ class MultipleFileOutputStream(
 
     private fun addNewFile() {
         val newFile = fileGenerator.newFile(destinationFolder)
+        if (::_current.isInitialized) {
+            _current.outputStream.close()
+        }
         _current = FileWithOutputStream(newFile, MaxSizeFileOutputStream(newFile,blockMaxSize))
         _files.add(_current)
     }

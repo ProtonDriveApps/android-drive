@@ -20,8 +20,10 @@ package me.proton.core.drive.linkupload.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
+import me.proton.core.drive.share.domain.entity.ShareId
 import javax.inject.Inject
 
 class RemoveAllUploadFileLinks @Inject constructor(
@@ -29,5 +31,21 @@ class RemoveAllUploadFileLinks @Inject constructor(
 ) {
     suspend operator fun invoke(userId: UserId, uploadState: UploadState) = coRunCatching {
         linkUploadRepository.removeAllUploadFileLinks(userId, uploadState)
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        shareId: ShareId,
+        uploadState: UploadState,
+    ) = coRunCatching {
+        linkUploadRepository.removeAllUploadFileLinks(userId, shareId, uploadState)
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        folderId: FolderId,
+        uploadState: UploadState,
+    ) = coRunCatching {
+        linkUploadRepository.removeAllUploadFileLinks(userId, folderId, uploadState)
     }
 }

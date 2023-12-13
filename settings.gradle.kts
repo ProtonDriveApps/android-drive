@@ -49,10 +49,12 @@ fun File.findModules(recursive: Boolean = false): Iterable<String> {
                     "$newName:",
                     includeModules = false
                 ) else emptySet()
+
                 it.isModule() && includeModules -> {
                     modules += ":$newName"
                     it.find("$newName:")
                 }
+
                 else -> if (recursive) it.find("$newName:") else emptySet()
             }
         }
@@ -64,8 +66,6 @@ fun File.findModules(recursive: Boolean = false): Iterable<String> {
 
 rootDir.findModules(true).forEach { module -> include(module) }
 
-enableFeaturePreview("VERSION_CATALOGS")
-
 pluginManagement {
     repositories {
         providers.environmentVariable("INTERNAL_REPOSITORY").orNull?.let { path ->
@@ -76,7 +76,7 @@ pluginManagement {
 }
 
 plugins {
-    id("me.proton.core.gradle-plugins.include-core-build") version "1.1.2"
+    id("me.proton.core.gradle-plugins.include-core-build") version "1.2.0"
     id("com.gradle.enterprise") version "3.12.6"
 }
 
@@ -85,6 +85,18 @@ gradleEnterprise {
         publishAlwaysIf(!System.getenv("BUILD_SCAN_PUBLISH").isNullOrEmpty())
         termsOfServiceUrl = "https://gradle.com/terms-of-service"
         termsOfServiceAgree = "yes"
+    }
+}
+
+buildCache {
+    local {
+        isEnabled = !providers.environmentVariable("CI_SERVER").isPresent
+    }
+    providers.environmentVariable("BUILD_CACHE_URL").orNull?.let { buildCacheUrl ->
+        remote<HttpBuildCache> {
+            isPush = providers.environmentVariable("CI_SERVER").isPresent
+            url = uri(buildCacheUrl)
+        }
     }
 }
 

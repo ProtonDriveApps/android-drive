@@ -21,6 +21,7 @@ package me.proton.android.drive.ui.navigation.internal
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.SwipeableDefaults
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -45,7 +46,7 @@ import androidx.navigation.NavigatorState
 import androidx.navigation.compose.LocalOwnersProvider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheet
+import me.proton.core.drive.base.presentation.component.ModalBottomSheet
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.compose.component.bottomsheet.RunAction
 
@@ -63,7 +64,7 @@ class ModalBottomSheetNavigator : Navigator<ModalBottomSheetNavigator.Destinatio
      * Dismiss the dialog destination associated with the given [backStackEntry].
      */
     internal fun dismiss(backStackEntry: NavBackStackEntry) {
-        popBackStack(backStackEntry, false)
+        state.popWithTransition(backStackEntry, false)
     }
 
     override fun onAttach(state: NavigatorState) {
@@ -78,9 +79,13 @@ class ModalBottomSheetNavigator : Navigator<ModalBottomSheetNavigator.Destinatio
     ) {
         entries.lastOrNull { entry -> entry.destination is Destination }?.let { toBeAdded ->
             if (backStack.value.none { entry -> entry.destination is Destination }) {
-                state.push(toBeAdded)
+                state.pushWithTransition(toBeAdded)
             }
         }
+    }
+
+    override fun popBackStack(popUpTo: NavBackStackEntry, savedState: Boolean) {
+        state.popWithTransition(popUpTo, savedState)
     }
 
     override fun createDestination() =
@@ -104,11 +109,16 @@ class ModalBottomSheetNavigator : Navigator<ModalBottomSheetNavigator.Destinatio
 internal fun ModalBottomSheetHost(
     navigator: ModalBottomSheetNavigator,
 ) {
+    val saveableStateHolder = rememberSaveableStateHolder()
     val modalBackStack by remember(navigator.attached) { navigator.backStack }.collectAsState()
     val visibleBackStack = rememberVisibleList(modalBackStack)
     visibleBackStack.PopulateVisibleList(modalBackStack)
     visibleBackStack.forEach { backStackEntry ->
-        ModalBottomSheetContent(backStackEntry) { navigator.dismiss(backStackEntry) }
+        backStackEntry.LocalOwnersProvider(saveableStateHolder) {
+            ModalBottomSheetContent(backStackEntry) {
+                navigator.dismiss(backStackEntry)
+            }
+        }
     }
 }
 
@@ -121,12 +131,17 @@ private fun ModalBottomSheetContent(
 ) {
     val destination = backStackEntry.destination as ModalBottomSheetNavigator.Destination
     var dismissTrigger by remember(destination) { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden) { value ->
-        if (value == ModalBottomSheetValue.Hidden) {
-            dismissTrigger = true
-        }
-        true
-    }
+    val sheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        animationSpec = SwipeableDefaults.AnimationSpec,
+        skipHalfExpanded = true,
+        confirmValueChange = { value ->
+            if (value == ModalBottomSheetValue.Hidden) {
+                dismissTrigger = true
+            }
+            true
+        },
+    )
     ModalBottomSheet(
         viewState = destination.viewState,
         sheetContent = { runAction ->
@@ -147,7 +162,7 @@ private fun ModalBottomSheetContent(
     LaunchedEffect(destination) { sheetState.show() }
     LaunchedEffect(destination, dismissTrigger) {
         if (dismissTrigger) {
-            while (sheetState.isAnimationRunning) {
+            while (sheetState.isVisible) {
                 delay(10)
             }
             onDismiss()

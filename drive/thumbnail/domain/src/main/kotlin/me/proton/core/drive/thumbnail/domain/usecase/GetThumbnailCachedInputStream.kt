@@ -19,6 +19,7 @@
 package me.proton.core.drive.thumbnail.domain.usecase
 
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.file.base.domain.entity.ThumbnailId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -34,9 +35,10 @@ class GetThumbnailCachedInputStream @Inject constructor(
         fileId: FileId,
         volumeId: VolumeId,
         revisionId: String,
-        fetchFromNetworkIfDoesNotExist: Boolean = true
+        thumbnailId: ThumbnailId,
+        fetchFromNetworkIfDoesNotExist: Boolean = true,
     ): Result<InputStream> = coRunCatching {
-        val cacheFile = getThumbnailCacheFile(fileId.userId, volumeId, revisionId)
+        val cacheFile = getThumbnailCacheFile(fileId.userId, volumeId, revisionId, thumbnailId.type)
         if (!cacheFile.exists() && !fetchFromNetworkIfDoesNotExist) {
             return Result.failure(
                 IllegalStateException("${cacheFile.path} doesn't exists and fetchFromNetworkIfDoesNotExist is false")
@@ -45,7 +47,7 @@ class GetThumbnailCachedInputStream @Inject constructor(
         if (!cacheFile.exists()) {
             cacheFile.createNewFile()
             cacheFile.outputStream().use { outputStream ->
-                getThumbnailInputStream(fileId, revisionId)
+                getThumbnailInputStream(thumbnailId)
                     .getOrThrow().use { inputStream ->
                         inputStream.copyTo(outputStream)
                     }

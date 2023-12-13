@@ -24,18 +24,13 @@ import android.content.Context
 import android.os.Build
 import android.os.LocaleList
 import dagger.hilt.android.qualifiers.ApplicationContext
-import io.sentry.Breadcrumb
 import io.sentry.Sentry
-import io.sentry.SentryEvent
-import io.sentry.SentryLevel
-import io.sentry.protocol.Message
 import me.proton.android.drive.BuildConfig
+import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.percentageOfAsciiChars
-import me.proton.core.drive.base.presentation.extension.getDefaultMessage
+import me.proton.core.util.android.sentry.TimberLogger
 import me.proton.core.util.kotlin.Logger
-import me.proton.core.util.kotlin.LoggerLogTag
-import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,41 +39,22 @@ import me.proton.core.drive.i18n.R as I18N
 @Singleton
 class DriveLogger @Inject constructor(
     @ApplicationContext private val appContext: Context,
-) : Logger {
+) : Logger by TimberLogger {
 
-    override fun v(tag: String, message: String) {
-        DriveSentry.addBreadcrumb(tag, message)
-        Timber.tag(tag).v(message)
-    }
-    override fun v(tag: String, e: Throwable, message: String) {
-        DriveSentry.addBreadcrumb(tag, e, message)
-        Timber.tag(tag).v(e, message)
-    }
-    override fun d(tag: String, message: String) {
-        DriveSentry.addBreadcrumb(tag, message)
-        Timber.tag(tag).d(message)
-    }
-    override fun d(tag: String, e: Throwable, message: String) {
-        DriveSentry.addBreadcrumb(tag, e, message)
-        Timber.tag(tag).d(e, message)
-    }
-    override fun i(tag: String, message: String) {
-        DriveSentry.addBreadcrumb(tag, message, SentryLevel.INFO)
-        Timber.tag(tag).i(message)
-    }
-    override fun i(tag: String, e: Throwable, message: String) {
-        DriveSentry.addBreadcrumb(tag, e, message, SentryLevel.INFO)
-        Timber.tag(tag).i(e, message)
-    }
     override fun e(tag: String, e: Throwable) {
-        DriveSentry.captureException(appContext, tag, e)
-        Timber.tag(tag).e(e)
+        DriveSentry.setInternalErrorTag(appContext, e)
+        TimberLogger.e(tag, e)
     }
+
+    override fun e(tag: String, message: String) {
+        DriveSentry.setInternalErrorTag(appContext, message)
+        TimberLogger.e(tag, message)
+    }
+
     override fun e(tag: String, e: Throwable, message: String) {
-        DriveSentry.captureException(appContext, tag, e, message)
-        Timber.tag(tag).e(e, message)
+        DriveSentry.setInternalErrorTag(appContext, e)
+        TimberLogger.e(tag, e, message)
     }
-    override fun log(tag: LoggerLogTag, message: String) = i(tag.name, message)
 
     private fun withoutUploadFileContent(tag: String, message: String, block: (tag: String, message: String) -> Unit) {
         val isCoreNetwork = tag.startsWith("core.network")
@@ -90,63 +66,18 @@ class DriveLogger @Inject constructor(
     }
 
     private object DriveSentry {
-
-        fun captureException(
-            context: Context,
-            tag: String,
-            e: Throwable,
-        ) {
-            setInternalErrorTag(context, e)
-            Sentry.setTag("CoreLogger", tag)
-            Sentry.captureException(e)
-        }
-
-        fun captureException(
-            context: Context,
-            tag: String,
-            e: Throwable,
-            message: String,
-            level: SentryLevel = SentryLevel.ERROR,
-        ) {
-            setInternalErrorTag(context, e)
-            Sentry.setTag("CoreLogger", tag)
-            Sentry.captureEvent(
-                SentryEvent(e).apply {
-                    this.level = level
-                    this.message = Message().apply {
-                        this.message = message
-                    }
-                }
-            )
-        }
-
-        fun addBreadcrumb(tag: String, message: String, level: SentryLevel = SentryLevel.DEBUG) {
-            Sentry.addBreadcrumb(
-                Breadcrumb().apply {
-                    this.category = tag.substringAfterLast('.')
-                    this.level = level
-                    this.message = message
-                }
-            )
-        }
-
-        fun addBreadcrumb(tag: String, e: Throwable, message: String, level: SentryLevel = SentryLevel.DEBUG) {
-            Sentry.addBreadcrumb(
-                Breadcrumb().apply {
-                    this.category = tag.substringAfterLast('.')
-                    this.level = level
-                    this.message = message
-                    this.setData("Throwable", e.stackTraceToString())
-                }
-            )
-        }
-
-        private fun setInternalErrorTag(context: Context, e: Throwable) {
-            val internalErrorMessage = context.getString(I18N.string.common_error_internal)
-            val errorMessage = e.getDefaultMessage(
+        fun setInternalErrorTag(context: Context, e: Throwable) {
+            setInternalErrorTag(
                 context = context,
-                useExceptionMessage = false,
+                errorMessage = e.getDefaultMessage(
+                    context = context,
+                    useExceptionMessage = false,
+                )
             )
+        }
+
+        fun setInternalErrorTag(context: Context, errorMessage: String) {
+            val internalErrorMessage = context.getString(I18N.string.common_error_internal)
             Sentry.setTag("InternalError", (errorMessage == internalErrorMessage).toString())
         }
     }
@@ -155,11 +86,14 @@ class DriveLogger @Inject constructor(
 class NoOpLogger : Logger {
     override fun d(tag: String, message: String) = Unit
     override fun d(tag: String, e: Throwable, message: String) = Unit
+    override fun e(tag: String, message: String) = Unit
     override fun e(tag: String, e: Throwable) = Unit
     override fun e(tag: String, e: Throwable, message: String) = Unit
+    override fun w(tag: String, message: String) = Unit
+    override fun w(tag: String, e: Throwable) = Unit
+    override fun w(tag: String, e: Throwable, message: String) = Unit
     override fun i(tag: String, message: String) = Unit
     override fun i(tag: String, e: Throwable, message: String) = Unit
-    override fun log(tag: LoggerLogTag, message: String) = Unit
     override fun v(tag: String, message: String) = Unit
     override fun v(tag: String, e: Throwable, message: String) = Unit
 }
@@ -167,6 +101,7 @@ class NoOpLogger : Logger {
 fun Logger.v(message: String) = v(DriveLogTag.DEFAULT, message)
 fun Logger.d(message: String) = d(DriveLogTag.DEFAULT, message)
 fun Logger.i(message: String) = i(DriveLogTag.DEFAULT, message)
+fun Logger.w(message: String) = w(DriveLogTag.DEFAULT, message)
 fun Logger.e(throwable: Throwable) = e(DriveLogTag.DEFAULT, throwable)
 
 fun Logger.deviceInfo() {

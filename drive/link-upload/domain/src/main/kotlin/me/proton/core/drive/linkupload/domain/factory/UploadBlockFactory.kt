@@ -18,6 +18,7 @@
 package me.proton.core.drive.linkupload.domain.factory
 
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import java.io.File
 
@@ -30,6 +31,7 @@ interface UploadBlockFactory {
         rawSize: Bytes,
         size: Bytes,
         token: String,
+        type: Block.Type,
         verifierToken: String?,
     ): UploadBlock
 
@@ -41,6 +43,7 @@ interface UploadBlockFactory {
         rawSize: Bytes,
         size: Bytes,
         token: String,
+        type: Block.Type,
         verifierToken: String?,
     ): UploadBlock
 }

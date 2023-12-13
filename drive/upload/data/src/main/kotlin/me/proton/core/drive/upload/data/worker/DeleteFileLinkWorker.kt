@@ -24,13 +24,14 @@ import androidx.work.Constraints
 import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
-import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.folder.domain.usecase.DeleteFolderChildren
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -67,7 +68,9 @@ class DeleteFileLinkWorker @AssistedInject constructor(
             .onFailure { error ->
                 error.log(
                     tag = logTag,
-                    message = """Deleting file link failed "${error.message}" retryable ${error.isRetryable}""",
+                    message = """
+                        Deleting file link failed "${error.message}" retryable ${error.isRetryable}
+                    """.trimIndent(),
                 )
                 return if (error.isRetryable) Result.retry() else Result.failure()
             }
@@ -80,12 +83,13 @@ class DeleteFileLinkWorker @AssistedInject constructor(
             shareId: String,
             folderId: String,
             uploadFileId: String,
+            networkType: NetworkType,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(DeleteFileLinkWorker::class.java)
                 .setConstraints(
                     Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiredNetworkType(networkType)
                         .build()
                 )
                 .setInputData(
@@ -98,7 +102,7 @@ class DeleteFileLinkWorker @AssistedInject constructor(
                 )
                 .setBackoffCriteria(
                     BackoffPolicy.EXPONENTIAL,
-                    OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                    WorkRequest.MIN_BACKOFF_MILLIS,
                     TimeUnit.MILLISECONDS
                 )
                 .addTags(listOf(userId.id) + tags)

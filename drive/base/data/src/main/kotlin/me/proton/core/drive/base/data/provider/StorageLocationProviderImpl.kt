@@ -18,6 +18,7 @@
 package me.proton.core.drive.base.data.provider
 
 import android.content.Context
+import android.os.Environment
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -60,8 +61,11 @@ class StorageLocationProviderImpl @Inject constructor(
     }.getOrThrow()
 
     override fun getDebugLogFolder(): File = coRunCatching {
-        File(appContext.cacheDir, TEMP_FOLDER).apply { mkdirs() }
+        File(appContext.cacheDir, "$TEMP_FOLDER/log").apply { mkdirs() }
     }.getOrThrow()
+
+    override suspend fun getCameraFolder(): File =
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
 
     private fun UserId.getFolder(parent: File) = File(parent, id).apply { mkdirs() }
     private fun UserId.getTempFolder(parent: File) = File(parent, "$TEMP_FOLDER/$id/").apply { mkdirs() }

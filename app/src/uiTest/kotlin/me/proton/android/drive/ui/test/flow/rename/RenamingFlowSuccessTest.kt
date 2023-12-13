@@ -18,36 +18,23 @@
 
 package me.proton.android.drive.ui.test.flow.rename
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.rules.WelcomeScreenRule
-import me.proton.android.drive.ui.test.BaseTest
-import me.proton.android.drive.ui.toolkits.getRandomString
-import me.proton.core.test.quark.data.User
-import org.junit.Rule
+import me.proton.android.drive.ui.rules.Scenario
+import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
+@HiltAndroidTest
 @RunWith(Parameterized::class)
 class RenamingFlowSuccessTest(
     private val itemToBeRenamed: String,
     private val newItemName: String
-): BaseTest() {
-
-    private val user
-        get() = User(
-            dataSetScenario = "4",
-            name = "proton_drive_${getRandomString(20)}"
-        )
-
-    @get:Rule
-    val welcomeScreenRule = WelcomeScreenRule(false)
-
-    @get:Rule
-    val userLoginRule = UserLoginRule(testUser = user, shouldSeedUser = true)
+): AuthenticatedBaseTest() {
 
     @Test
+    @Scenario(4)
     fun renameSuccess() {
         FilesTabRobot
             .scrollToItemWithName(itemToBeRenamed)
@@ -56,6 +43,7 @@ class RenamingFlowSuccessTest(
             .clearName()
             .typeName(newItemName)
             .clickRename()
+            .scrollToItemWithName(newItemName)
             .verify {
                 itemIsDisplayed(newItemName)
             }

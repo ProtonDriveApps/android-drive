@@ -25,7 +25,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.android.drive.receiver.NotificationBroadcastReceiver
 import me.proton.android.drive.receiver.NotificationBroadcastReceiver.Companion.ACTION_DELETE
 import me.proton.android.drive.receiver.NotificationBroadcastReceiver.Companion.EXTRA_NOTIFICATION_ID
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.util.kotlin.serialize
 import javax.inject.Inject
@@ -33,7 +33,7 @@ import javax.inject.Inject
 class CreateDeletePendingIntent @Inject constructor(
     @ApplicationContext private val appContext: Context,
 ) {
-    operator fun invoke(notificationId: NotificationId, notificationEvent: NotificationEvent): PendingIntent? =
+    operator fun invoke(notificationId: NotificationId, notificationEvent: Event): PendingIntent? =
         PendingIntent.getBroadcast(
             appContext,
             notificationEvent.deleteRequestCode,
@@ -44,12 +44,14 @@ class CreateDeletePendingIntent @Inject constructor(
             PendingIntent.FLAG_IMMUTABLE
         )
 
-    private val NotificationEvent.deleteRequestCode: Int get() = when (this) {
-        is NotificationEvent.StorageFull -> REQUEST_CODE_STORAGE_FULL
-        is NotificationEvent.Upload -> REQUEST_CODE_UPLOAD
-        is NotificationEvent.Download -> REQUEST_CODE_DOWNLOAD
-        is NotificationEvent.ForcedSignOut -> REQUEST_CODE_FORCED_SIGN_OUT
-        is NotificationEvent.NoSpaceLeftOnDevice -> REQUEST_CODE_NO_SPACE_LEFT_ON_DEVICE
+    private val Event.deleteRequestCode: Int get() = when (this) {
+        is Event.StorageFull -> REQUEST_CODE_STORAGE_FULL
+        is Event.Upload -> REQUEST_CODE_UPLOAD
+        is Event.Download -> REQUEST_CODE_DOWNLOAD
+        is Event.ForcedSignOut -> REQUEST_CODE_FORCED_SIGN_OUT
+        is Event.NoSpaceLeftOnDevice -> REQUEST_CODE_NO_SPACE_LEFT_ON_DEVICE
+        is Event.Backup -> REQUEST_CODE_BACKUP
+        else -> 0
     }
 
     companion object {
@@ -59,5 +61,6 @@ class CreateDeletePendingIntent @Inject constructor(
         const val REQUEST_CODE_DOWNLOAD = BASE_REQUEST_CODE + 3
         const val REQUEST_CODE_FORCED_SIGN_OUT = BASE_REQUEST_CODE + 4
         const val REQUEST_CODE_NO_SPACE_LEFT_ON_DEVICE = BASE_REQUEST_CODE + 5
+        const val REQUEST_CODE_BACKUP = BASE_REQUEST_CODE + 6
     }
 }

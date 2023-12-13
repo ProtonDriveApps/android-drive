@@ -18,17 +18,12 @@
 
 package me.proton.android.drive.ui.test
 
-import androidx.compose.ui.test.junit4.ComposeContentTestRule
-import androidx.compose.ui.test.junit4.createEmptyComposeRule
-import me.proton.test.fusion.FusionConfig
+import me.proton.android.drive.ui.extension.createFusionComposeRule
 import org.junit.Rule
 
-open class EmptyBaseTest : AbstractBaseTest() {
-
-    @get:Rule
-    val composeTestRule = createEmptyComposeRule()
-
-    init {
-        FusionConfig.Compose.testRule.set(composeTestRule as ComposeContentTestRule)
-    }
+abstract class EmptyBaseTest : AbstractBaseTest(
+    showWelcomeScreen = false
+) {
+    @get:Rule(order = 2)
+    val composeContentTestRule = createFusionComposeRule()
 }

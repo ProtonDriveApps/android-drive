@@ -26,4 +26,7 @@ fun LinkUploadCountEntity.toUploadCount() =
         total = total,
         totalWithUri = totalWithUri,
         totalUnprocessedWithUri = totalUnprocessedWithUri,
+        totalWithUriNonUserPriority = totalWithUriNonUserPriority,
+        totalUnprocessedWithUriNonUserPriority = totalUnprocessedWithUriNonUserPriority,
+        totalWithAnnounce = totalWithAnnounce,
     )

@@ -84,6 +84,9 @@ fun NullableFile(
     shareUrlId: ShareUrlId? = null,
     contentKeyPacket: String = "",
     contentKeyPacketSignature: String? = null,
+    photoCaptureTime: TimestampS? = null,
+    photoContentHash: String? = null,
+    mainPhotoLinkId: String? = null,
 ): File {
     return Link.File(
         id = id,
@@ -118,6 +121,9 @@ fun NullableFile(
         shareUrlId = shareUrlId,
         contentKeyPacket = contentKeyPacket,
         contentKeyPacketSignature = contentKeyPacketSignature,
+        photoCaptureTime = photoCaptureTime,
+        photoContentHash = photoContentHash,
+        mainPhotoLinkId = mainPhotoLinkId,
     )
 }
 

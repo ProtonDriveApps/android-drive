@@ -23,20 +23,24 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.transform.RoundedCornersTransformation
+import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.R
-import me.proton.core.drive.base.presentation.entity.toFileTypeCategory
+import me.proton.core.drive.base.presentation.extension.iconResId
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.thumbnailIds
+import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import me.proton.core.drive.thumbnail.presentation.painter.ThumbnailPainterWrapper
 
-private val DriveLink.File.thumbnailVO get() = ThumbnailVO(
+fun DriveLink.File.thumbnailVO(type: ThumbnailType = ThumbnailType.DEFAULT) = ThumbnailVO(
     volumeId = volumeId,
     fileId = id,
     revisionId = activeRevisionId,
+    thumbnailId = thumbnailIds.first { thumbnailId -> thumbnailId.type == type }
 )
 
 @Composable
@@ -45,14 +49,14 @@ fun DriveLink.thumbnailPainter(radius: Dp = 0.dp) = ThumbnailPainterWrapper(
         this is DriveLink.Folder -> painterResource(id = R.drawable.ic_folder_48)
         this is DriveLink.File && hasThumbnail -> with(LocalDensity.current) {
             val iconResId = mimeType.toFileTypeCategory().iconResId
-            rememberImagePainter(
+            rememberAsyncImagePainter(
                 ImageRequest.Builder(LocalContext.current)
                     .transformations(RoundedCornersTransformation(radius.toPx()))
                     .scale(Scale.FILL)
                     .crossfade(true)
                     .placeholder(iconResId)
                     .error(iconResId)
-                    .data(thumbnailVO)
+                    .data(thumbnailVO())
                     .build()
             )
         }

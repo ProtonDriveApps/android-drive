@@ -21,13 +21,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
-import coil.bitmap.BitmapPool
-import coil.decode.Options
+import coil.decode.ImageSource
 import coil.decode.SvgDecoder
-import coil.size.PixelSize
+import coil.request.Options
+import coil.size.Size
 import dagger.hilt.android.qualifiers.ApplicationContext
+import me.proton.core.drive.base.data.extension.compress
 import me.proton.core.drive.base.domain.entity.Bytes
-import me.proton.core.drive.base.presentation.extension.compress
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import okio.buffer
 import okio.source
@@ -37,15 +37,12 @@ class SvgThumbnailProvider @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : CreateThumbnail.Provider {
 
-    private val decoder = SvgDecoder(context)
-    private val bitmapPool = BitmapPool(maxSize = 0)
     private val options = Options(
         context = context,
         config = Bitmap.Config.RGB_565,
         allowRgb565 = true,
     )
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun getThumbnail(
         uriString: String,
         mimeType: String,
@@ -60,12 +57,11 @@ class SvgThumbnailProvider @Inject constructor(
         return try {
             val uri = Uri.parse(uriString)
             context.contentResolver.openInputStream(uri)?.use { stream ->
-                val result = decoder.decode(
-                    bitmapPool,
-                    stream.source().buffer(),
-                    PixelSize(maxWidth, maxHeight),
-                    options
+                val decoder = SvgDecoder(
+                    source = ImageSource(stream.source().buffer(), context),
+                    options = options.copy(size = Size(maxWidth, maxHeight))
                 )
+                val result = decoder.decode()
                 (result.drawable as? BitmapDrawable)?.bitmap?.compress(maxSize)
             }
         } catch (e: OutOfMemoryError) {

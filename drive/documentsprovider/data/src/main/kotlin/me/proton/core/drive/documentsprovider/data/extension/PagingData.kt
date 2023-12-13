@@ -31,7 +31,6 @@ import androidx.paging.NullPaddedList
 import androidx.paging.PagingData
 import androidx.paging.PagingDataDiffer
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
@@ -80,14 +79,14 @@ suspend fun <T : Any> Flow<PagingData<T>>.asCursor(
             if (job.isCancelled) {
                 return@collectLatest
             }
-            if (list != null && !loadState.isLoading) {
+            if (list != null && loadState != null && !loadState.isLoading) {
                 context.contentResolver.notifyChange(uri, null)
             }
         }
     }
     return mutex.withLock { // We wait for the first collect to happen
         val loadState = collector.differ.loadStateFlow.first()
-        val isLoading = loadState.isLoading
+        val isLoading = loadState?.isLoading ?: false
         list?.let { list ->
             if (list.isNotEmpty()) {
                 // We want to trigger the next call if needed

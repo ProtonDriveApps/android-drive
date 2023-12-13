@@ -18,36 +18,24 @@
 
 package me.proton.android.drive.ui.test.flow.creatingFolder
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.CreateFolderRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.MoveToFolderRobot
-import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.rules.WelcomeScreenRule
-import me.proton.android.drive.ui.test.BaseTest
-import me.proton.android.drive.ui.toolkits.getRandomString
-import me.proton.core.test.quark.data.User
-import org.junit.Rule
+import me.proton.android.drive.ui.rules.Scenario
+import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.SmokeTest
+import me.proton.android.drive.utils.getRandomString
 import org.junit.Test
-import org.junit.runner.RunWith
 
-@RunWith(AndroidJUnit4::class)
-class CreatingFolderFlowSuccessTest : BaseTest() {
+@HiltAndroidTest
+class CreatingFolderFlowSuccessTest : AuthenticatedBaseTest() {
 
     private val randomFolderName get() = getRandomString()
-    private val user
-        get() = User(
-            dataSetScenario = "2",
-            name = "proton_drive_${getRandomString(20)}"
-        )
-
-    @get:Rule
-    val welcomeScreenRule = WelcomeScreenRule(false)
-
-    @get:Rule
-    val userLoginRule = UserLoginRule(testUser = user, shouldSeedUser = true)
 
     @Test
+    @Scenario(2)
+    @SmokeTest
     fun createFolderViaMoveWindow() {
         val subFolderName = "folder1"
         val newFolderName = getRandomString()
@@ -69,6 +57,7 @@ class CreatingFolderFlowSuccessTest : BaseTest() {
     }
 
     @Test
+    @Scenario(2)
     fun createFolderInGridLayout() {
         FilesTabRobot
             .clickLayoutSwitcher()
@@ -79,6 +68,7 @@ class CreatingFolderFlowSuccessTest : BaseTest() {
     }
 
     @Test
+    @Scenario(2)
     fun createAFolderViaSubFolderPlusButton() {
         val subFolderName = "folder1"
 

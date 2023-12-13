@@ -20,7 +20,7 @@ package me.proton.core.drive.thumbnail.presentation.painter
 
 import androidx.compose.ui.graphics.painter.Painter
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
+import coil.compose.AsyncImagePainter
 
 /**
  * Unfortunately, this class cannot implement [Painter] and delegate to its wrapped [painter].
@@ -32,5 +32,8 @@ class ThumbnailPainterWrapper(
     val painter: Painter,
 ) {
     @OptIn(ExperimentalCoilApi::class)
-    val isLoaded get() = painter is ImagePainter && painter.state is ImagePainter.State.Success
+    val isLoaded get() = painter is AsyncImagePainter && painter.state is AsyncImagePainter.State.Success
+
+    @OptIn(ExperimentalCoilApi::class)
+    val isLoading get() = painter is AsyncImagePainter && painter.state is AsyncImagePainter.State.Loading
 }

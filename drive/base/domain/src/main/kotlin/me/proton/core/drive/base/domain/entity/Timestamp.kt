@@ -21,7 +21,7 @@ package me.proton.core.drive.base.domain.entity
 import kotlinx.serialization.Serializable
 import java.util.concurrent.TimeUnit
 
-sealed interface Timestamp {
+sealed interface Timestamp : Comparable<Timestamp> {
     companion object {
         val now get() = TimestampMs()
     }
@@ -29,11 +29,13 @@ sealed interface Timestamp {
 
 @JvmInline
 @Serializable
-value class TimestampS(val value: Long = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())) : Timestamp {
-    operator fun compareTo(other: Timestamp): Int {
+value class TimestampS(
+    val value: Long = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+) : Timestamp {
+    override operator fun compareTo(other: Timestamp): Int {
         val otherValue = when (other) {
             is TimestampMs -> other.toTimestampS().value
-            is TimestampS -> value
+            is TimestampS -> other.value
         }
         return value.compareTo(otherValue)
     }
@@ -45,9 +47,9 @@ fun TimestampS.toTimestampMs() = TimestampMs(TimeUnit.SECONDS.toMillis(value))
 @JvmInline
 @Serializable
 value class TimestampMs(val value: Long = System.currentTimeMillis()) : Timestamp {
-    operator fun compareTo(other: Timestamp): Int {
+    override operator fun compareTo(other: Timestamp): Int {
         val otherValue = when (other) {
-            is TimestampMs -> value
+            is TimestampMs -> other.value
             is TimestampS -> other.toTimestampMs().value
         }
         return value.compareTo(otherValue)

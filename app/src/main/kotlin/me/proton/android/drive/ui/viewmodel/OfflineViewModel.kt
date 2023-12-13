@@ -47,12 +47,12 @@ import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.OfflineViewEvent
 import me.proton.android.drive.ui.viewstate.OfflineViewState
 import me.proton.core.domain.arch.onSuccess
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.onProcessing
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink

@@ -51,9 +51,10 @@ class GetOrCreateSharedDriveLink @Inject constructor(
             .distinctUntilChanged()
             .transformSuccess { (_, share) ->
                 emitAll(
-                    getOrCreateShareUrl(share, driveLink.id).transformSuccess { (_, shareUrl) ->
+                    getOrCreateShareUrl(driveLink.volumeId, share, driveLink.id).transformSuccess { (_, shareUrl) ->
                         emit(
                             SharedDriveLink(
+                                volumeId = driveLink.volumeId,
                                 shareUrlId = shareUrl.id,
                                 publicUrl = getPublicUrlProperty(driveLink.userId, shareUrl),
                                 customPassword = getCustomUrlPasswordProperty(driveLink.userId, shareUrl),

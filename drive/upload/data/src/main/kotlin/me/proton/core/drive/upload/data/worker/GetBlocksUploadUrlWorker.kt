@@ -27,25 +27,32 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkContinuation
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
+import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.isRetryable
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.block.domain.entity.UploadBlocksUrl
-import me.proton.core.drive.link.domain.entity.Link.Companion.THUMBNAIL_INDEX
+import me.proton.core.drive.file.base.domain.entity.Block
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
-import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
+import me.proton.core.drive.upload.data.manager.UploadWorkManagerImpl.Companion.TAG_UPLOAD_WORKER
+import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.GetBlocksUploadUrl
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -60,7 +67,10 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
     workManager: WorkManager,
     broadcastMessages: BroadcastMessages,
     getUploadFileLink: GetUploadFileLink,
+    uploadErrorManager: UploadErrorManager,
     private val getBlocksUploadUrl: GetBlocksUploadUrl,
+    private val cleanUpWorkers: CleanupWorkers,
+    private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
     run: Run,
@@ -71,6 +81,7 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
     workManager = workManager,
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
+    uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
     canRun = canRun,
     run = run,
@@ -78,8 +89,9 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
 ) {
 
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
-        getBlocksUploadUrl(uploadFileLink)
-            .onFailure { error ->
+        uploadFileLink.logWorkState("get block urls")
+        return getBlocksUploadUrl(uploadFileLink).fold(
+            onFailure = { error ->
                 val retryable = error.isRetryable
                 val canRetry = canRetry()
                 error.log(
@@ -87,19 +99,39 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
                     message = """
                         Get blocks URL failed "${error.message}" retryable $retryable, 
                         max retries reached ${!canRetry}
-                        """.trimIndent()
+                    """.trimIndent().replace("\n", " ")
                 )
-                return retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
+                retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
+            },
+            onSuccess = { uploadBlocksUrl ->
+                uploadBlocks(uploadBlocksUrl, uploadFileLink).fold(
+                    onFailure = { error ->
+                        error.log(
+                            tag = uploadFileLink.logTag(),
+                            message = "GetBlocksUploadUrlWorker($runAttemptCount) Cannot enqueue files to be uploaded"
+                        )
+                        when {
+                            error is CancellationException -> throw error
+                            error.isRetryable -> Result.retry()
+                            else -> Result.failure()
+                        }
+                    },
+                    onSuccess = { Result.success() }
+                )
             }
-            .onSuccess { uploadBlocksUrl ->
-                uploadBlocks(uploadBlocksUrl)
-            }
-        return Result.success()
+        )
     }
 
     @SuppressLint("EnqueueWork")
-    private fun uploadBlocks(uploadBlocksUrl: UploadBlocksUrl) {
-        val uploadTag = listOf(uploadFileLinkId.uniqueUploadWorkName)
+    private suspend fun uploadBlocks(
+        uploadBlocksUrl: UploadBlocksUrl,
+        uploadFileLink: UploadFileLink,
+    ) = runCatching{
+        uploadFileLink.logWorkState("enqueueing worker")
+        val uploadTag = listOf(uploadFileLinkId.uniqueUploadWorkName) + tags
+        val networkType =
+            requireNotNull(networkTypeProviders[uploadFileLink.networkTypeProviderType]).get()
+        require(isNotEnqueued()){ "Workers are already enqueued" }
         (uploadBlocksUrl.blockLinks.mapIndexed { index, uploadLink ->
             BlockUploadWorker.getWorkRequest(
                 userId = userId,
@@ -107,16 +139,23 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
                 token = uploadLink.token,
                 uploadFileLinkId = uploadFileLinkId,
                 blockIndex = index + 1L,
-                tags = uploadTag
+                networkType = networkType,
+                tags = uploadTag,
             )
-        } + listOfNotNull(uploadBlocksUrl.thumbnailLink?.let { uploadLink ->
+        } + (uploadBlocksUrl.thumbnailLinks.mapIndexed { index, uploadLink ->
+            val blockIndex = when (index) {
+                0 -> Block.THUMBNAIL_DEFAULT_INDEX
+                1 -> Block.THUMBNAIL_PHOTO_INDEX
+                else -> error("Unexpected number of thumbnails")
+            }
             BlockUploadWorker.getWorkRequest(
                 userId = userId,
                 url = uploadLink.url,
                 token = uploadLink.token,
                 uploadFileLinkId = uploadFileLinkId,
-                blockIndex = THUMBNAIL_INDEX,
-                tags = uploadTag
+                blockIndex = blockIndex,
+                networkType = networkType,
+                tags = uploadTag,
             )
         }))
             .chunked(configurationProvider.uploadBlocksInParallel)
@@ -135,33 +174,47 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
                     if (requests.size == continuations.size) latest
                     else latest + continuations.subList(requests.size, continuations.size)
                 }
-            }.also { continuations ->
+            }.let { continuations ->
                 if (continuations.isNotEmpty()) {
                     WorkContinuation.combine(continuations)
                         .then(
-                            UpdateRevisionWorker.getWorkRequest(userId, uploadFileLinkId, uploadTag)
+                            UpdateRevisionWorker.getWorkRequest(
+                                userId = userId,
+                                uploadFileLinkId = uploadFileLinkId,
+                                networkType = networkType,
+                                tags = uploadTag,
+                            )
                         )
                 } else {
                     workManager.beginWith(
-                        UpdateRevisionWorker.getWorkRequest(userId, uploadFileLinkId, uploadTag)
+                        UpdateRevisionWorker.getWorkRequest(
+                            userId = userId,
+                            uploadFileLinkId = uploadFileLinkId,
+                            networkType = networkType,
+                            tags = uploadTag,
+                        )
                     )
-                }.then(
-                    UploadSuccessCleanupWorker.getWorkRequest(userId, uploadFileLinkId, uploadTag)
-                )
-                    .enqueue()
+                }.then(cleanUpWorkers(userId, uploadFileLink, uploadTag, tags.toList()))
+                    .enqueue().await()
             }
     }
+
+    private suspend fun isNotEnqueued(): Boolean =
+        workManager.getWorkInfosByTag(uploadFileLinkId.uniqueUploadWorkName).await()
+            .filter { workInfo -> workInfo.tags.contains(BlockUploadWorker.TAG) }
+            .none { workInfo -> !workInfo.state.isFinished }
 
     companion object {
         fun getWorkRequest(
             userId: UserId,
             uploadFileLinkId: Long,
+            networkType: NetworkType,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(GetBlocksUploadUrlWorker::class.java)
                 .setConstraints(
                     Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiredNetworkType(networkType)
                         .build()
                 )
                 .setInputData(
@@ -172,10 +225,10 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
                 )
                 .setBackoffCriteria(
                     BackoffPolicy.EXPONENTIAL,
-                    OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                    WorkRequest.MIN_BACKOFF_MILLIS,
                     TimeUnit.MILLISECONDS
                 )
-                .addTags(listOf(userId.id) + tags)
+                .addTags(listOf(userId.id) + TAG_UPLOAD_WORKER + tags)
                 .build()
     }
 }

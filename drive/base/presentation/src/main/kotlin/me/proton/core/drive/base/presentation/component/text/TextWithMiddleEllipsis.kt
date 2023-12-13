@@ -66,7 +66,7 @@ fun TextWithMiddleEllipsis(
     var showText by remember(text) { mutableStateOf(false) }
     Text(
         text = AnnotatedString(ellipsizedText),
-        modifier = modifier.alpha(if (showText) 1f else 0f),
+        modifier = modifier.alpha(1f),//TODO: on latest Compose recomposition does not apply alpha according showText
         color = color,
         fontSize = fontSize,
         fontStyle = fontStyle,

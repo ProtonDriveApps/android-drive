@@ -27,6 +27,7 @@ import me.proton.core.drive.crypto.domain.usecase.file.DecryptAndVerifyFiles
 import me.proton.core.drive.crypto.domain.usecase.file.VerifyManifestSignature
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.file.base.domain.extension.getThumbnailIds
 import me.proton.core.drive.file.base.domain.extension.requireSortedAscending
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetContentKey
@@ -41,6 +42,7 @@ import java.io.File
 import java.util.UUID
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class DecryptLinkContent @Inject constructor(
     private val getLink: GetLink,
     private val decryptAndVerifyFiles: DecryptAndVerifyFiles,
@@ -57,7 +59,17 @@ class DecryptLinkContent @Inject constructor(
     ): Result<File> = coRunCatching {
         val link = getLink(driveLink.id).toResult().getOrThrow()
         val downloadState = requireIsInstance<DownloadState.Downloaded>(driveLink.downloadState)
-        val encryptedBlocks = downloadState.blocks.also { blocks -> blocks.requireSortedAscending() }
+        val encryptedFileBlocks = downloadState.blocks.also { blocks ->
+            blocks.requireSortedAscending()
+        }
+        val encryptedThumbnailBlocks = link.getThumbnailIds(driveLink.volumeId).map { thumbnailId ->
+            getThumbnailBlock(
+                fileId = link.id,
+                volumeId = driveLink.volumeId,
+                revisionId = link.activeRevisionId,
+                thumbnailId = thumbnailId
+            ).getOrThrow()
+        }
         val contentKey = getContentKey(link).getOrThrow()
         val fileKey = getNodeKey(link).getOrThrow()
         val signatureAddress = requireNotNull(downloadState.signatureAddress) {
@@ -66,26 +78,23 @@ class DecryptLinkContent @Inject constructor(
         val manifestSignatureVerified = verifyManifestSignature(
             userId = link.userId,
             signatureAddress = signatureAddress,
-            blocks = encryptedBlocks + listOfNotNull(
-                if (link.hasThumbnail) getThumbnailBlock(link.id, driveLink.volumeId, link.activeRevisionId).getOrNull()
-                else null
-            ),
+            blocks = encryptedFileBlocks + encryptedThumbnailBlocks,
             manifestSignature = requireNotNull(downloadState.manifestSignature) {
                 "Download state manifest signature is null"
             },
-        ).getOrNull().also { verified ->
-            if (verified != true) {
-                CoreLogger.d(LogTag.DOWNLOAD, "Verification of manifest signature failed")
-            }
-        } ?: false
+        ).onFailure { error ->
+            CoreLogger.d(LogTag.DOWNLOAD, error, "Verification of manifest signature failed")
+        }.getOrNull() ?: false
         decryptAndVerifyFiles(
             contentKey = contentKey,
             decryptSignatureKey = fileKey,
             verifySignatureKey = getAddressKeys(link.shareId.userId, signatureAddress),
-            input = encryptedBlocks.map { block -> block.encSignature to File(block.url) },
-            output = encryptedBlocks.map { block -> File("${block.url}.${UUID.randomUUID()}") },
+            input = encryptedFileBlocks.map { block -> block.encSignature to File(block.url) },
+            output = encryptedFileBlocks.map { block -> File("${block.url}.${UUID.randomUUID()}") },
         ).map { decryptedBlocks ->
-            val verificationFailed  = decryptedBlocks.any { decryptedFile -> decryptedFile.status != VerificationStatus.Success }
+            val verificationFailed = decryptedBlocks.any { decryptedFile ->
+                decryptedFile.status != VerificationStatus.Success
+            }
             if ((verificationFailed || !manifestSignatureVerified) && checkSignature) {
                 throw VerificationException("Verification of blocks failed")
             }

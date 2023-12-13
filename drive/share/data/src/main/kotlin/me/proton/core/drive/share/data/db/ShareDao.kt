@@ -52,15 +52,15 @@ abstract class ShareDao : BaseDao<ShareEntity>() {
 
     @Transaction
     @Query(
-        "SELECT EXISTS(SELECT * FROM ShareEntity WHERE user_id = :userId)"
+        "SELECT EXISTS(SELECT * FROM ShareEntity WHERE user_id = :userId AND type = :type)"
     )
-    abstract suspend fun hasShareEntities(userId: UserId): Boolean
+    abstract suspend fun hasShareEntities(userId: UserId, type: Long): Boolean
 
     @Transaction
     @Query(
-        "SELECT EXISTS(SELECT * FROM ShareEntity WHERE user_id = :userId AND volume_id = :volumeId)"
+        "SELECT EXISTS(SELECT * FROM ShareEntity WHERE user_id = :userId AND volume_id = :volumeId AND type = :type)"
     )
-    abstract suspend fun hasShareEntities(userId: UserId, volumeId: String): Boolean
+    abstract suspend fun hasShareEntities(userId: UserId, volumeId: String, type: Long): Boolean
 
     @Query(
         QUERY_GET_SHARE

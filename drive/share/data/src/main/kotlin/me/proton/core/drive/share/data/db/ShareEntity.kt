@@ -33,6 +33,7 @@ import me.proton.core.drive.base.data.db.Column.LINK_ID
 import me.proton.core.drive.base.data.db.Column.LOCKED
 import me.proton.core.drive.base.data.db.Column.PASSPHRASE
 import me.proton.core.drive.base.data.db.Column.PASSPHRASE_SIGNATURE
+import me.proton.core.drive.base.data.db.Column.TYPE
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.base.data.db.Column.VOLUME_ID
 import me.proton.core.user.domain.entity.AddressId
@@ -77,6 +78,8 @@ data class ShareEntity(
     val passphraseSignature: String,
     @ColumnInfo(name = CREATION_TIME)
     val creationTime: Long? = null,
+    @ColumnInfo(name = TYPE)
+    val type: Long,
 ) {
     companion object {
         const val PRIMARY_BIT = 1L

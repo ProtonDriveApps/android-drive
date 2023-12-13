@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.volume.data"
+}
+
 driveModule(
     hilt = true,
     room = true,

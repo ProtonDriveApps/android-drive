@@ -70,6 +70,7 @@ class VerifierTest {
                 contentKey = contentKey,
                 input = any(),
                 output = any(),
+                processDecryptedFile = any(),
             )
         } returns Result.success(emptyList())
 
@@ -127,7 +128,14 @@ class VerifierTest {
     @Test
     fun `verifyBlock throws VerifyBlock when decrypt blocks fails`() = runTest {
         // Given
-        coEvery { decryptFiles(contentKey, any(), any()) } returns Result.failure(CryptoException())
+        coEvery {
+            decryptFiles(
+                contentKey = contentKey,
+                input = any(),
+                output = any(),
+                processDecryptedFile = any(),
+            )
+        } returns Result.failure(CryptoException())
 
         // When
         val exception = verifier.verifyBlocks(listOf(file64B)).exceptionOrNull()

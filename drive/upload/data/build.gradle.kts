@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.upload.data"
+}
+
 driveModule(
     hilt = true,
     room = true,
@@ -29,9 +33,12 @@ driveModule(
     api(project(":drive:base:data"))
     api(project(":drive:upload:domain"))
 
+    implementation(project(":drive:announce-event:domain"))
+    implementation(project(":drive:feature-flag:domain"))
     implementation(project(":drive:folder:domain"))
+    implementation(project(":drive:link:data"))
     implementation(project(":drive:link:presentation"))
-    implementation(project(":drive:notification:domain"))
+    implementation(project(":drive:share:data"))
     implementation(project(":drive:worker:data"))
     implementation(project(":verifier:data"))
     implementation(libs.androidx.lifecycle.livedata.ktx)

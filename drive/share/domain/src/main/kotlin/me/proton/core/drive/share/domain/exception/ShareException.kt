@@ -19,10 +19,16 @@ package me.proton.core.drive.share.domain.exception
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.exception.DriveException
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 sealed class ShareException : DriveException() {
-    data class MainShareLocked(val locked: List<ShareId>) : ShareException()
-    data class MainShareNotFound(val userId: UserId, val volumeId: VolumeId? = null) : ShareException()
+    data class ShareLocked(val locked: List<ShareId>, val shareType: Share.Type) : ShareException()
+    data class ShareNotFound(
+        val userId: UserId,
+        val volumeId: VolumeId? = null,
+        val shareType: Share.Type,
+    ) : ShareException()
+    data class CreatingShareNotAllowed(val userId: UserId, val shareType: Share.Type) : ShareException()
 }

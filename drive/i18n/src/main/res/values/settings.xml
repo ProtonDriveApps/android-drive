@@ -20,6 +20,7 @@
     <string name="settings_app_lock">App Lock</string>
     <string name="settings_section_security">Security</string>
     <string name="settings_section_about">About</string>
+    <string name="settings_section_statistics">Usage statistics</string>
     <string name="settings_auto_lock">Automatically lock the app</string>
     <string name="settings_auto_lock_durations_immediately">Immediately</string>
     <plurals name="settings_auto_lock_durations_seconds">
@@ -38,6 +39,8 @@
         <item quantity="one">After %1$d day</item>
         <item quantity="other">After %1$d days</item>
     </plurals>
+    <string name="settings_section_backup">Backup</string>
+    <string name="settings_photos_backup">@string/photos_backup_title</string>
     <!--
         Variable %1$s is an entry in a list
         Examples:
@@ -56,11 +59,16 @@
     <string name="debug_settings_api_host" translatable="false">API Host</string>
     <string name="debug_settings_base_url" translatable="false">Base URL</string>
     <string name="debug_settings_app_version_header" translatable="false">App version header</string>
+    <string name="debug_settings_feature_flag_fresh_duration" translatable="false">Feature flag fresh duration (in minutes)</string>
     <string name="debug_settings_reset" translatable="false">Reset</string>
     <string name="debug_settings_reset_description" translatable="false">Restore default value for debug settings</string>
     <string name="debug_settings_use_exception_message" translatable="false">Show exception as error message</string>
     <string name="debug_settings_use_exception_message_description" translatable="false">When enabled, instead of user friendly error message, exception error message will be shown</string>
     <string name="debug_settings_log_to_file" translatable="false">Log to file</string>
     <string name="debug_settings_log_to_file_description" translatable="false">When enabled, debug logs will be written into file which can then be sent to developers</string>
+    <string name="debug_settings_allow_backup_deleted_files" translatable="false">Allow backup deleted files</string>
+    <string name="debug_settings_allow_backup_deleted_files_description" translatable="false">When enabled, backup will reupload files that were permanently deleted, during the next full scan</string>
     <string name="debug_settings_send_log" translatable="false">Send log</string>
+    <string name="debug_settings_use_verifier" translatable="false">Verify uploads</string>
+    <string name="debug_settings_use_verifier_description" translatable="false">When enabled, all uploaded blocks will have verification token</string>
 </resources>

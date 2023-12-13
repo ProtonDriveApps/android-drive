@@ -18,6 +18,8 @@
 package me.proton.core.drive.volume.data.api
 
 import me.proton.core.drive.volume.data.api.request.CreateVolumeRequest
+import me.proton.core.drive.volume.data.api.response.GetShareTrashesResponse
+import me.proton.core.drive.volume.data.api.response.GetShareUrlsResponse
 import me.proton.core.drive.volume.data.api.response.GetVolumeResponse
 import me.proton.core.drive.volume.data.api.response.GetVolumesResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
@@ -25,6 +27,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface VolumeApi : BaseRetrofitApi {
     @GET("drive/volumes")
@@ -35,4 +38,18 @@ interface VolumeApi : BaseRetrofitApi {
 
     @POST("drive/volumes")
     suspend fun createVolume(@Body request: CreateVolumeRequest): GetVolumeResponse
+
+    @GET("drive/volumes/{enc_volumeId}/trash")
+    suspend fun getShareTrashes(
+        @Path("enc_volumeId") volumeId: String,
+        @Query("Page") page: Int,
+        @Query("PageSize") pageSize: Int,
+    ): GetShareTrashesResponse
+
+    @GET("drive/volumes/{enc_volumeId}/urls")
+    suspend fun getShareUrls(
+        @Path("enc_volumeId") volumeId: String,
+        @Query("Page") page: Int,
+        @Query("PageSize") pageSize: Int,
+    ): GetShareUrlsResponse
 }

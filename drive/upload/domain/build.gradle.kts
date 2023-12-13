@@ -20,15 +20,21 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.upload.domain"
+}
+
 driveModule(
     hilt = true,
 ) {
+    api(project(":drive:announce-event:domain"))
     api(project(":drive:block:domain"))
     api(project(":drive:file:create:domain"))
     api(project(":drive:link-upload:domain"))
-    api(project(":drive:notification:domain"))
     api(project(":drive:thumbnail:domain"))
     api(project(":verifier:domain"))
 
     implementation(project(":drive:crypto:domain"))
+    testImplementation(project(":drive:db-test"))
+    testImplementation(project(":drive:upload:data"))
 }

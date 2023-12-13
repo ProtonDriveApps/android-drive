@@ -17,8 +17,7 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.proton.core.drive.documentsprovider.data">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application>
         <provider

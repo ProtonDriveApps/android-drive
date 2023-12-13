@@ -17,8 +17,8 @@
  */
 package me.proton.core.drive.notification.domain.usecase
 
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.drive.notification.domain.repository.NotificationRepository
 import javax.inject.Inject
@@ -29,14 +29,14 @@ class SaveAndPublishNotification @Inject constructor(
 ) {
     suspend operator fun invoke(
         notificationId: NotificationId,
-        notificationEvent: NotificationEvent,
+        event: Event,
     ) = coRunCatching {
         when (notificationId) {
             is NotificationId.User -> {
-                notificationRepository.insertNotificationEvent(notificationId, notificationEvent)
+                notificationRepository.insertNotificationEvent(notificationId, event)
                 publishNotification(notificationId, notificationRepository.getAllNotificationEvents(notificationId))
             }
-            is NotificationId.App -> publishNotification(notificationId, listOf(notificationEvent))
+            is NotificationId.App -> publishNotification(notificationId, listOf(event))
         }
     }
 }

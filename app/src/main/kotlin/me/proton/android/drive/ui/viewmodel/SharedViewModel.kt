@@ -51,12 +51,12 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.onSuccess
+import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.data.extension.logDefaultMessage
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.presentation.extension.log
-import me.proton.core.drive.base.presentation.extension.logDefaultMessage
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -71,6 +71,7 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.isSharedUrlExpired
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetMainShare
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.drive.android.settings.domain.entity.LayoutType
@@ -95,24 +96,31 @@ class SharedViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val appContext: Context,
     private val configurationProvider: ConfigurationProvider,
+    private val getShare: GetShare,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle), HomeTabViewModel {
     private val _effects = MutableSharedFlow<HomeEffect>()
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
-    private val shareId = refreshTrigger.transformLatest {
+    private val volumeId = refreshTrigger.transformLatest {
         savedStateHandle.get<String>(Screen.Shared.SHARE_ID)?.takeIf { shareId -> shareId != "null" }?.let { shareId ->
-            emit(ShareId(userId, shareId))
+            emitAll(
+                getShare(ShareId(userId, shareId))
+                    .mapSuccessValueOrNull()
+                    .filterNotNull()
+                    .map { share -> share.volumeId }
+                    .distinctUntilChanged()
+            )
         } ?: emitAll(
             getMainShare(userId)
                 .map { dataResult -> dataResult.onFailure { error -> error.log(VIEW_MODEL) }}
                 .mapSuccessValueOrNull()
                 .filterNotNull()
-                .map { share -> share.id }
+                .map { share -> share.volumeId }
                 .distinctUntilChanged()
         )
     }
 
-    private val driveLinks: Flow<DataResult<List<DriveLink>>> = shareId.flatMapLatest { shareId ->
-        getSharedDriveLinks(shareId, refresh = true)
+    private val driveLinks: Flow<DataResult<List<DriveLink>>> = volumeId.flatMapLatest { volumeId ->
+        getSharedDriveLinks(userId, volumeId, refresh = true)
     }.stateIn(viewModelScope, SharingStarted.Eagerly, initialValue = DataResult.Processing(ResponseSource.Local))
 
     val driveLinksFlow = driveLinks.mapSuccessValueOrNull()

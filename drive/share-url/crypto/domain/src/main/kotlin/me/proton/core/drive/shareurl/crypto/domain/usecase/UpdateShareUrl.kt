@@ -31,7 +31,9 @@ import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlExpirationDurati
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.shareurl.base.domain.repository.ShareUrlRepository
 import me.proton.core.drive.shareurl.base.domain.usecase.GetShareUrl
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 
 class UpdateShareUrl @Inject constructor(
     private val getShare: GetShare,
@@ -44,12 +46,15 @@ class UpdateShareUrl @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
 ) {
     suspend operator fun invoke(
+        volumeId: VolumeId,
         shareUrlId: ShareUrlId,
         customPassword: String?,
         expirationDateIso8601: String?,
         updateExpirationDate: Boolean,
     ): Result<ShareUrl> = coRunCatching {
-        val shareUrlCustomPasswordInfo = customPassword?.let { shareUrlCustomPasswordInfo(shareUrlId, customPassword) }
+        val shareUrlCustomPasswordInfo = customPassword?.let {
+            shareUrlCustomPasswordInfo(volumeId, shareUrlId, customPassword)
+        }
         val shareUrlExpirationDurationInfo = if (updateExpirationDate) {
             expirationDateIso8601?.let {
                 shareUrlExpirationDurationInfo(expirationDateIso8601)
@@ -58,6 +63,7 @@ class UpdateShareUrl @Inject constructor(
             null
         }
         return invoke(
+            volumeId = volumeId,
             shareUrlId = shareUrlId,
             shareUrlCustomPasswordInfo = shareUrlCustomPasswordInfo,
             shareUrlExpirationDurationInfo = shareUrlExpirationDurationInfo,
@@ -65,12 +71,14 @@ class UpdateShareUrl @Inject constructor(
     }
 
     private suspend operator fun invoke(
+        volumeId: VolumeId,
         shareUrlId: ShareUrlId,
         shareUrlCustomPasswordInfo: ShareUrlCustomPasswordInfo?,
         shareUrlExpirationDurationInfo : ShareUrlExpirationDurationInfo?,
     ): Result<ShareUrl> = coRunCatching {
         updateEventAction(getMainShare(shareUrlId.shareId.userId).toResult().getOrThrow().id) {
             shareUrlRepository.updateShareUrl(
+                volumeId = volumeId,
                 shareUrlId = shareUrlId,
                 shareUrlCustomPasswordInfo = shareUrlCustomPasswordInfo,
                 shareUrlExpirationDurationInfo = shareUrlExpirationDurationInfo,
@@ -79,12 +87,13 @@ class UpdateShareUrl @Inject constructor(
     }
 
     private suspend fun shareUrlCustomPasswordInfo(
+        volumeId: VolumeId,
         shareUrlId: ShareUrlId,
         customPassword: String,
     ): ShareUrlCustomPasswordInfo =
         createShareUrlCustomPasswordInfo(
             share = getShare(shareUrlId.shareId).toResult().getOrThrow(),
-            shareUrl = getShareUrl(shareUrlId).toResult().getOrThrow(),
+            shareUrl = getShareUrl(volumeId, shareUrlId).toResult().getOrThrow(),
             customPassword = customPassword,
         ).getOrThrow()
 
@@ -94,12 +103,20 @@ class UpdateShareUrl @Inject constructor(
         val futureInSeconds = dateTimeFormatter.parseFromIso8601String(expirationDateIso8601).getOrThrow().value
         val nowInSeconds = System.currentTimeMillis() / 1000
         require(futureInSeconds >= nowInSeconds) { "Share Url expiration date cannot be in the past" }
-        val expirationDuration = futureInSeconds - nowInSeconds
+        val expirationDuration = futureInSeconds - nowInSeconds + delta
         require(expirationDuration <= configurationProvider.maxSharedLinkExpirationDuration.inWholeSeconds) {
-            "Share Url expiration duration is too big ($expirationDuration/${configurationProvider.maxSharedLinkExpirationDuration.inWholeSeconds})"
+            """
+                Share Url expiration duration is too big
+                ($expirationDuration/${configurationProvider.maxSharedLinkExpirationDuration.inWholeSeconds})
+            """.trimIndent().replace("\n", " ")
         }
         return ShareUrlExpirationDurationInfo(
             expirationDuration = expirationDuration
         )
+    }
+
+    private companion object {
+        val delta = 1.minutes.inWholeSeconds // to avoid miscalculation of expirationTime by the backend
+                                             // (few seconds in the past)
     }
 }

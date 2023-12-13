@@ -6,7 +6,8 @@
     "USER_CREATE_ADDRESS": "/api/internal/quark/raw::user:create:address",
     "PAYMENTS_SEED_PAYMENT_METHOD": "/api/internal/quark/raw::payments:seed-payment-method",
     "DRIVE_POPULATE_USER_WITH_DATA": "/api/internal/quark/drive:populate",
-    "PAYMENTS_SEED_SUBSCRIBER": "/api/internal/quark/raw::payments:seed-subscriber"
+    "PAYMENTS_SEED_SUBSCRIBER": "/api/internal/quark/raw::payments:seed-subscriber",
+    "EXPIRE_SESSION": "/api/internal/quark/raw::user:expire:sessions"
   },
   "constants": {
     "DEFAULT_VERIFICATION_CODE": "666666",

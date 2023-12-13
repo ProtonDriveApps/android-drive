@@ -24,8 +24,8 @@ import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.android.drive.extension.deepLinkBaseUrl
 import me.proton.android.drive.ui.navigation.Screen
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.presentation.extension.quantityString
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
@@ -35,10 +35,10 @@ class DownloadNotificationBuilder @Inject constructor(
     private val commonBuilder: CommonNotificationBuilder,
     private val contentIntent: CreateContentPendingIntent,
 ) {
-    operator fun invoke(notificationId: NotificationId.User, notificationEvent: NotificationEvent.Download) =
-        commonBuilder(notificationId, notificationEvent)
+    operator fun invoke(notificationId: NotificationId.User, event: Event.Download) =
+        commonBuilder(notificationId, event)
             .setContentTitle(appContext.getString(I18N.string.notification_content_title_download_complete))
-            .setContentText(notificationEvent.text)
+            .setContentText(event.text)
             .setContentIntent(notificationId)
 
     private fun NotificationCompat.Builder.setContentIntent(
@@ -50,7 +50,7 @@ class DownloadNotificationBuilder @Inject constructor(
         )
     )
 
-    private val NotificationEvent.Download.text: String get() =
+    private val Event.Download.text: String get() =
         appContext.quantityString(
             I18N.plurals.common_in_app_notification_files_download_complete,
             downloadedFiles,

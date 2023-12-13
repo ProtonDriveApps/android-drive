@@ -20,19 +20,20 @@ package me.proton.core.drive.drivelink.shared.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.data.extension.toDriveLinks
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
 import me.proton.core.drive.drivelink.shared.domain.repository.DriveLinkSharedRepository
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class DriveLinkSharedRepositoryImpl @Inject constructor(
     private val database: DriveLinkSharedDatabase,
 ) : DriveLinkSharedRepository {
 
-    override fun getSharedDriveLinks(shareId: ShareId): Flow<List<DriveLink>> =
-        database.driveLinkSharedDao.getSharedLinks(shareId.userId, shareId.id).map { entities ->
+    override fun getSharedDriveLinks(userId: UserId, volumeId: VolumeId): Flow<List<DriveLink>> =
+        database.driveLinkSharedDao.getSharedLinks(userId, volumeId.id).map { entities ->
             entities.toDriveLinks()
         }
 }

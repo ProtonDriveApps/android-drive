@@ -31,13 +31,12 @@ import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.log.DriveLogger
 import me.proton.android.drive.log.NoOpLogger
 import me.proton.android.drive.log.deviceInfo
+import me.proton.android.drive.usecase.GetFileLoggerTree
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.usersettings.domain.DeviceSettingsHandler
-import me.proton.core.usersettings.domain.onDeviceSettingsChanged
+import me.proton.core.usersettings.domain.UsersSettingsHandler
 import me.proton.core.util.kotlin.CoreLogger
 import timber.log.Timber
 import java.util.concurrent.Executors
-import me.proton.android.drive.usecase.GetFileLoggerTree
 
 class LoggerInitializer : Initializer<Unit> {
 
@@ -47,15 +46,16 @@ class LoggerInitializer : Initializer<Unit> {
             LoggerInitializerEntryPoint::class.java
         )
         val logger = entryPoint.driveLogger()
-        val handler = entryPoint.deviceSettingsHandler()
-
-        handler.onDeviceSettingsChanged { deviceSettings ->
+        entryPoint.userSettingsHandler().onUsersSettingsChanged(
+            merge = { usersSettings ->
+                usersSettings.none { userSettings -> userSettings?.crashReports == false }
+            }
+        ) { crashReports ->
             CoreLogger.set(
-                logger = if (deviceSettings.isCrashReportEnabled) logger else NoOpLogger()
+                logger = if (crashReports) logger else NoOpLogger()
             )
         }
-
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG || BuildConfig.FLAVOR == BuildConfig.FLAVOR_ALPHA) {
             Timber.plant(Timber.DebugTree())
             if (entryPoint.configurationProvider().logToFileInDebugEnabled) {
                 entryPoint.getFileLoggerTree().invoke()
@@ -96,7 +96,7 @@ class LoggerInitializer : Initializer<Unit> {
     @InstallIn(SingletonComponent::class)
     interface LoggerInitializerEntryPoint {
         fun driveLogger(): DriveLogger
-        fun deviceSettingsHandler(): DeviceSettingsHandler
+        fun userSettingsHandler(): UsersSettingsHandler
         fun configurationProvider(): ConfigurationProvider
         fun getFileLoggerTree(): GetFileLoggerTree
     }

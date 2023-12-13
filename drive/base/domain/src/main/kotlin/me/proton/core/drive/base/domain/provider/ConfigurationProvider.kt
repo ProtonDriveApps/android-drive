@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.base.domain.provider
 
+import android.os.Build
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.extension.KiB
 import me.proton.core.drive.base.domain.extension.MiB
@@ -26,6 +27,7 @@ import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
+@Suppress("MagicNumber", "AnnotateVersionCheck")
 interface ConfigurationProvider {
     val host: String
     val baseUrl: String
@@ -33,13 +35,21 @@ interface ConfigurationProvider {
     val uiPageSize: Int get() = 50
     val apiPageSize: Int get() = 150
     val apiBlockPageSize: Int get() = 50
+    val apiListingPageSize: Int get() = 500
     val dbPageSize: Int get() = 500
     val cacheMaxEntries: Int get() = 10_000
     val linkMaxNameLength: Int get() = 255
     val blockMaxSize: Bytes get() = 4.MiB
-    val thumbnailMaxWidth: Int get() = 512
-    val thumbnailMaxHeight: Int get() = 512
-    val thumbnailMaxSize: Bytes get() = 60.KiB
+    val thumbnailDefault: Thumbnail get() = Thumbnail(
+        maxWidth = 512,
+        maxHeight = 512,
+        maxSize = 64.KiB,
+    )
+    val thumbnailPhoto: Thumbnail get() = Thumbnail(
+        maxWidth = 1920,
+        maxHeight = 1920,
+        maxSize = 1.MiB
+    )
     val downloadsInParallel: Int get() = 4
     val maxFileSizeToSendWithoutDownload: Bytes get() = blockMaxSize
     val preventScreenCapture: Boolean get() = false
@@ -47,16 +57,35 @@ interface ConfigurationProvider {
     val maxSharedLinkPasswordLength: Int get() = 50
     val maxSharedLinkExpirationDuration: Duration get() = 90.days
     val uploadBlocksInParallel: Int get() = 4
-    val uploadsInParallel: Int get() = 4
+    val uploadsInParallel: Int get() = 6
+    val nonUserUploadsInParallel: Int get() = 4
     val decryptionInParallel: Int get() = 4
     val bulkUploadThreshold: Int get() = 10
     val validateUploadLimit: Boolean get() = true
-    val uploadLimitThreshold: Int get() = 250
+    val uploadLimitThreshold: Int get() = Int.MAX_VALUE
     val useExceptionMessage: Boolean get() = false
-    val digestAlgorithms: List<String> get() = listOf("SHA1")
+    val photosFeatureFlag: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
+    val photosSavedCounter: Boolean get() = false
+    val backupLeftSpace: Bytes get() = 25.MiB
+    val contentDigestAlgorithm: String get() = "SHA1"
+    val digestAlgorithms: List<String> get() = listOf(contentDigestAlgorithm)
     val autoLockDurations: Set<Duration> get() = setOf(
         0.seconds, 60.seconds, 2.minutes, 5.minutes, 15.minutes, 30.minutes
     )
     val maxApiAutoRetries: Int get() = 10
     val logToFileInDebugEnabled: Boolean get() = true
+    val allowBackupDeletedFilesEnabled: Boolean get() = false
+    val scanBackupPageSize: Int get() = 100
+    val backupDefaultBucketName: String get() = "Camera"
+    val backupMaxAttempts: Long get() = 5
+    val photoExportData: Boolean get() = false
+    val checkDuplicatesPageSize: Int get() = 50
+    val featureFlagFreshDuration: Duration get() = 10.minutes
+    val useVerifier: Boolean get() = true
+
+    data class Thumbnail(
+        val maxWidth: Int,
+        val maxHeight: Int,
+        val maxSize: Bytes,
+    )
 }

@@ -42,4 +42,10 @@ interface Robot {
 
     fun nodeWithTextDisplayed(@StringRes stringRes: Int) =
         node.withText(stringRes).await { assertIsDisplayed() }
+
+    fun nodeWithContentDescriptionDisplayed(contentDescription: String) =
+        node.withContentDescription(contentDescription).await { assertIsDisplayed() }
+
+    fun nodeWithContentDescriptionDisplayed(@StringRes stringRes: Int) =
+        node.withContentDescription(stringRes).await { assertIsDisplayed() }
 }

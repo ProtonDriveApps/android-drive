@@ -18,40 +18,28 @@
 
 package me.proton.android.drive.ui.test.flow.rename
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.rules.WelcomeScreenRule
-import me.proton.android.drive.ui.test.BaseTest
-import me.proton.android.drive.ui.toolkits.getRandomString
+import me.proton.android.drive.ui.rules.Scenario
+import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.utils.getRandomString
 import me.proton.core.test.android.instrumented.utils.StringUtils
-import me.proton.core.test.quark.data.User
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import me.proton.core.drive.i18n.R as I18N
 
+@HiltAndroidTest
 @RunWith(Parameterized::class)
 class RenamingFolderFlowErrorTest(
     private val itemToBeRenamed: String,
     private val newItemName: String,
     private val errorMessage: String,
-    private val friendlyName: String
-) : BaseTest() {
-
-    private val user
-        get() = User(
-            dataSetScenario = "4",
-            name = "proton_drive_${getRandomString(20)}"
-        )
-
-    @get:Rule
-    val welcomeScreenRule = WelcomeScreenRule(false)
-
-    @get:Rule
-    val userLoginRule = UserLoginRule(testUser = user)
+    @Suppress("unused") private val friendlyName: String
+) : AuthenticatedBaseTest() {
 
     @Test
+    @Scenario(4)
     fun renameError() {
         FilesTabRobot
             .scrollToItemWithName(itemToBeRenamed)

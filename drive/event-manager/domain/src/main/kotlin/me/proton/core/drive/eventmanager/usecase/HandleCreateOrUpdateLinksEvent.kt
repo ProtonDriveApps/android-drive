@@ -27,6 +27,9 @@ import me.proton.core.drive.link.domain.extension.ids
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.link.domain.usecase.InsertOrUpdateLinks
 import me.proton.core.drive.linktrash.domain.usecase.SetOrRemoveTrashState
+import me.proton.core.drive.photo.domain.usecase.InsertOrDeletePhotoListings
+import me.proton.core.drive.photo.domain.usecase.InsertOrIgnorePhotoListings
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class HandleCreateOrUpdateLinksEvent @Inject constructor(
@@ -34,14 +37,18 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
     private val setOrRemoveTrashState: SetOrRemoveTrashState,
     private val updateOfflineContent: UpdateOfflineContent,
     private val getLink: GetLink,
+    private val insertOrDeletePhotoListings: InsertOrDeletePhotoListings,
 ) {
 
     suspend operator fun invoke(vos: List<LinkEventVO>) {
-        val links = vos.map { vo -> vo.link }
-        val modifiedStateOrParentLinks = links.modifiedStateOrParentLinks()
-        insertOrUpdateLinks(links)
-        setOrRemoveTrashState(links)
-        updateOfflineContent(modifiedStateOrParentLinks.ids)
+        if (vos.isNotEmpty()) {
+            val links = vos.map { vo -> vo.link }
+            val modifiedStateOrParentLinks = links.modifiedStateOrParentLinks()
+            insertOrUpdateLinks(links)
+            setOrRemoveTrashState(links)
+            updateOfflineContent(modifiedStateOrParentLinks.ids)
+            insertOrDeletePhotoListings(vos.first().volumeId, links.filterIsInstance<Link.File>())
+        }
     }
 
     private suspend fun List<Link>.modifiedStateOrParentLinks() = filter { link ->

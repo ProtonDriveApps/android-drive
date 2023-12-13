@@ -72,11 +72,14 @@ object ShareRobot : NavigationBarRobot, Robot {
         passwordTextField.clearText()
     }
 
-    fun clickCopyPassword() = copyPasswordAction.clickTo(this)
+    fun clickCopyPassword() = apply {
+        contentShareScreen.scrollTo(copyPasswordAction)
+        copyPasswordAction.click()
+    }
+
     fun clickExpirationDateTextField() = expirationDateTextField
         .clickTo(PickerRobot)
 
-    fun saveDoesNotExists() = saveButton.await { assertDoesNotExist() }
     fun passwordToggleIsOn() = passwordToggle.interaction.assertIsOn()
     fun passwordToggleIsOff() = passwordToggle.interaction.assertIsOff()
     fun expirationDateToggleIsOn() = expirationDateToggle.interaction.assertIsOn()
@@ -105,9 +108,6 @@ object ShareRobot : NavigationBarRobot, Robot {
     fun passwordLengthErrorWasShown(maxLength: Int) =
         messageNotificationPasswordLengthError(maxLength)
             .await { assertIsDisplayed() }
-
-    fun shareUpdateSuccessWasShown() = messageNotificationSharingSettingsUpdated
-        .await { assertIsDisplayed() }
 
     fun expirationDateIsShown(date: Date) = expirationDateTextField
         .await {
@@ -146,7 +146,7 @@ object ShareRobot : NavigationBarRobot, Robot {
     }
 
     object PickerRobot : Robot {
-        private val okButton get() = view.withText("OK")
+        private val okButton get() = view.withId(android.R.id.button1)
         private val picker get() = view.instanceOf(android.widget.DatePicker::class.java)
 
         fun clickOk() = ShareRobot.apply { okButton.click() }

@@ -46,13 +46,15 @@ import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.defaultWeak
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
-import me.proton.core.drive.base.presentation.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.extension.currentLocale
+import me.proton.core.drive.base.presentation.extension.iconResId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.share.domain.entity.ShareId
@@ -240,4 +242,6 @@ private val DEFAULT_UPLOAD_FILE_LINK = UploadFileLink(
     state = UploadState.IDLE,
     size = 123.bytes,
     lastModified = null,
+    networkTypeProviderType = NetworkTypeProviderType.DEFAULT,
+    priority = UploadFileLink.USER_PRIORITY,
 )

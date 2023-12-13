@@ -25,11 +25,13 @@ import me.proton.core.domain.arch.onSuccess
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.share.data.test.nullable.NullableShare
 import me.proton.core.drive.share.data.test.repository.StubbedShareRepository.Companion.mainShareId
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.entity.ShareInfo
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.user.domain.entity.AddressId
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -47,6 +49,16 @@ class StubbedShareRepositoryTest {
         assertNotNull(repository.getSharesFlow(userId).first())
     }
 
+    @Test
+    fun getSharesFlowMain() = runTest {
+        assertNotNull(repository.getSharesFlow(userId, Share.Type.MAIN).first())
+    }
+
+    @Test
+    fun getSharesFlowPhoto() = runTest {
+        assertNotNull(repository.getSharesFlow(userId, Share.Type.PHOTO).first())
+    }
+
 
     @Test
     fun `getSharesFlow volumeId`() = runTest {
@@ -54,13 +66,23 @@ class StubbedShareRepositoryTest {
     }
 
     @Test
-    fun `hasShares userId`() = runTest {
-        assertTrue(repository.hasShares(userId))
+    fun `hasShares userId type main`() = runTest {
+        assertTrue(repository.hasShares(userId, Share.Type.MAIN))
     }
 
     @Test
-    fun `hasShares userId volumeId`() = runTest {
-        assertTrue(repository.hasShares(userId, volumeId))
+    fun `hasShares userId type photos`() = runTest {
+        assertFalse(repository.hasShares(userId, Share.Type.PHOTO))
+    }
+
+    @Test
+    fun `hasShares userId volumeId type main`() = runTest {
+        assertTrue(repository.hasShares(userId, volumeId, Share.Type.MAIN))
+    }
+
+    @Test
+    fun `hasShares userId volumeId type photo`() = runTest {
+        assertFalse(repository.hasShares(userId, volumeId, Share.Type.PHOTO))
     }
 
     @Test
@@ -112,6 +134,7 @@ class StubbedShareRepositoryTest {
                 key = "shareKey",
                 passphrase = "sharePassphrase",
                 passphraseSignature = "sharePassphraseSignature",
+                type = Share.Type.STANDARD,
             ), shares.first { it.id == shareIdResult.getOrThrow() })
         }
     }

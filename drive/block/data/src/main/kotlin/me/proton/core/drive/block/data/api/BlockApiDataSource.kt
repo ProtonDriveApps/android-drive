@@ -21,6 +21,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.block.data.api.request.BlockUploadRequest
 import me.proton.core.drive.block.data.api.response.BlockUploadResponse
 import me.proton.core.drive.block.data.extension.toUploadBlockDto
+import me.proton.core.drive.block.data.extension.toUploadThumbnailDto
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.network.data.ApiProvider
@@ -36,7 +37,7 @@ class BlockApiDataSource(private val apiProvider: ApiProvider) {
         fileId: FileId,
         revisionId: String,
         uploadBlocks: List<UploadBlock>,
-        uploadThumbnail: UploadBlock?,
+        uploadThumbnails: List<UploadBlock>,
     ): BlockUploadResponse =
         apiProvider.get<BlockApi>(userId).invoke {
             blockUploadInfo(
@@ -46,9 +47,7 @@ class BlockApiDataSource(private val apiProvider: ApiProvider) {
                     shareId = fileId.shareId.id,
                     linkId = fileId.id,
                     revisionId = revisionId,
-                    thumbnail = if (uploadThumbnail != null) 1 else 0,
-                    thumbnailHash = uploadThumbnail?.hashSha256,
-                    thumbnailSize = uploadThumbnail?.size?.value,
+                    thumbnailList = uploadThumbnails.map { uploadBlock -> uploadBlock.toUploadThumbnailDto() },
                 )
             )
         }.valueOrThrow

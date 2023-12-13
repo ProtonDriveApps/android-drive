@@ -27,7 +27,9 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.data.extension.isRetryable
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.extension.firstSuccessOrError
 import me.proton.core.drive.base.domain.extension.onFailure
@@ -35,7 +37,6 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.documentsprovider.data.extension.exportTo
 import me.proton.core.drive.documentsprovider.data.worker.WorkerKeys.KEY_DESTINATION_URI
 import me.proton.core.drive.documentsprovider.data.worker.WorkerKeys.KEY_FILE_ID
@@ -46,7 +47,6 @@ import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLin
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
 import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
 import me.proton.core.drive.share.domain.entity.ShareId
 
 @HiltWorker

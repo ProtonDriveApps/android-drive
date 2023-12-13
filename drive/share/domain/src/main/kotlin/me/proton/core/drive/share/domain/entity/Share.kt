@@ -35,4 +35,13 @@ data class Share(
     val passphrase: String,
     val passphraseSignature: String,
     val creationTime: TimestampS? = null,
-)
+    val type: Type,
+) {
+    enum class Type {
+        UNKNOWN,
+        MAIN,
+        STANDARD,
+        DEVICE,
+        PHOTO,
+    }
+}

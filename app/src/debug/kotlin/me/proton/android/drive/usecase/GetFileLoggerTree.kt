@@ -38,7 +38,7 @@ class GetFileLoggerTree @Inject constructor(
             .withFileName(debugLog.name)
             .withDir(requireNotNull(debugLog.parentFile))
             .withSizeLimit(25.MiB.value.toInt())
-            .withFileLimit(1)
+            .withFileLimit(10)
             .withMinPriority(Log.DEBUG)
             .appendToFile(true)
             .withFilter(

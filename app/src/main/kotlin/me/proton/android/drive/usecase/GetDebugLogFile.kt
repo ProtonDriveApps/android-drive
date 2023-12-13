@@ -25,5 +25,5 @@ import javax.inject.Inject
 class GetDebugLogFile @Inject constructor(
     private val storageLocationProvider: StorageLocationProvider,
 ) {
-    operator fun invoke(): File = File(storageLocationProvider.getDebugLogFolder(), "debug.log")
+    operator fun invoke(): File = File(storageLocationProvider.getDebugLogFolder(), "debug_%g.log")
 }

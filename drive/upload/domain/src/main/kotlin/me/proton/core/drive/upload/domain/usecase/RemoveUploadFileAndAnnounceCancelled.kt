@@ -18,26 +18,25 @@
 
 package me.proton.core.drive.upload.domain.usecase
 
-import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
-import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
 import javax.inject.Inject
 
 class RemoveUploadFileAndAnnounceCancelled @Inject constructor(
     private val removeUploadFile: RemoveUploadFile,
-    private val announceEvent: AnnounceEvent,
+    private val announceUploadEvent: AnnounceUploadEvent,
 ) {
-    suspend operator fun invoke(userId: UserId, uploadFileLink: UploadFileLink) = coRunCatching {
+    suspend operator fun invoke(uploadFileLink: UploadFileLink) = coRunCatching {
         removeUploadFile(uploadFileLink).getOrThrow()
-        announceEvent(
-            userId = userId,
-            notificationEvent = NotificationEvent.Upload(
-                state = NotificationEvent.Upload.UploadState.UPLOAD_CANCELLED,
+        announceUploadEvent(
+            uploadFileLink = uploadFileLink,
+            uploadEvent = Event.Upload(
+                state = Event.Upload.UploadState.UPLOAD_CANCELLED,
                 uploadFileLinkId = uploadFileLink.id,
-                percentage = Percentage(0)
+                percentage = Percentage(0),
+                shouldShow = uploadFileLink.shouldAnnounceEvent,
             )
         )
     }

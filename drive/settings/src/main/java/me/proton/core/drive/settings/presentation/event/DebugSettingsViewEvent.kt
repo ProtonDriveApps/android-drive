@@ -25,6 +25,9 @@ interface DebugSettingsViewEvent {
     val onUpdateAppVersionHeader: (String) -> Unit
     val onToggleUseExceptionMessage: (Boolean) -> Unit
     val onToggleLogToFileEnabled: (Boolean) -> Unit
+    val onToggleAllowBackupDeletedFile: (Boolean) -> Unit
     val sendDebugLog: (Context) -> Unit
     val onReset: () -> Unit
+    val onUpdateFeatureFlagFreshDuration: (String) -> Unit
+    val onToggleUseVerifier: (Boolean) -> Unit
 }

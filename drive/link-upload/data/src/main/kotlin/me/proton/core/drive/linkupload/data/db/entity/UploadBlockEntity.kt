@@ -27,9 +27,12 @@ import me.proton.core.drive.base.data.db.Column.INDEX
 import me.proton.core.drive.base.data.db.Column.RAW_SIZE
 import me.proton.core.drive.base.data.db.Column.SIZE
 import me.proton.core.drive.base.data.db.Column.TOKEN
+import me.proton.core.drive.base.data.db.Column.TYPE
 import me.proton.core.drive.base.data.db.Column.UPLOAD_LINK_ID
 import me.proton.core.drive.base.data.db.Column.URL
 import me.proton.core.drive.base.data.db.Column.VERIFIER_TOKEN
+import me.proton.core.drive.file.base.domain.entity.Block
+
 
 @Entity(
     primaryKeys = [UPLOAD_LINK_ID, INDEX],
@@ -59,6 +62,8 @@ data class UploadBlockEntity(
     val url: String,
     @ColumnInfo(name = RAW_SIZE, defaultValue = "0")
     val rawSize: Long,
+    @ColumnInfo(name = TYPE, defaultValue = "FILE")
+    val type: Block.Type,
     @ColumnInfo(name = VERIFIER_TOKEN, defaultValue = "NULL")
     val verifierToken: String? = null,
 )

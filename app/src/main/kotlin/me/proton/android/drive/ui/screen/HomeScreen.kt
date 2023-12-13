@@ -35,9 +35,9 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
@@ -48,20 +48,22 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.ui.navigation.HomeNavGraph
 import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.navigation.Screen
+import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.provider.setLocalSnackbarPadding
 import me.proton.android.drive.ui.viewevent.HomeViewEvent
 import me.proton.android.drive.ui.viewmodel.HomeViewModel
 import me.proton.android.drive.ui.viewstate.HomeViewState
 import me.proton.android.drive.ui.viewstate.rememberHomeScaffoldState
+import me.proton.core.compose.component.DeferredCircularProgressIndicator
 import me.proton.core.compose.component.ProtonSnackbarHost
 import me.proton.core.compose.component.ProtonSnackbarHostState
 import me.proton.core.compose.component.ProtonSnackbarType
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheet
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.BottomNavigation
+import me.proton.core.drive.base.presentation.component.ModalBottomSheet
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -83,13 +85,15 @@ fun HomeScreen(
     navigateToSigningOut: () -> Unit,
     navigateToTrash: () -> Unit,
     navigateToOffline: () -> Unit,
-    navigateToPreview: (fileId: FileId, pagerType: PagerType) -> Unit,
+    navigateToPreview: (fileId: FileId, pagerType: PagerType, optionsFilter: OptionsFilter) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
     navigateToSettings: () -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
-    navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
+    navigateToFileOrFolderOptions: (linkId: LinkId, optionsFilter: OptionsFilter) -> Unit,
+    navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId, optionsFilter: OptionsFilter) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     navigateToSubscription: () -> Unit,
+    navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToPhotosPermissionRationale: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     setLocalSnackbarPadding(BottomNavigationHeight)
@@ -105,37 +109,42 @@ fun HomeScreen(
         }
     }
     val viewState by rememberFlowWithLifecycle(flow = homeViewModel.viewState)
-        .collectAsState(initial = homeViewModel.initialViewState)
-    Home(
-        homeNavController = homeNavController,
-        deepLinkBaseUrl = deepLinkBaseUrl,
-        startDestination = startDestination,
-        onDrawerStateChanged = onDrawerStateChanged,
-        navigateToPreview = navigateToPreview,
-        navigateToSorting = navigateToSorting,
-        navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
-        navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
-        navigateToParentFolderOptions = navigateToParentFolderOptions,
-        arguments = arguments,
-        viewState = viewState,
-        viewEvent = homeViewModel.viewEvent(
-            navigateToSigningOut = navigateToSigningOut,
-            navigateToTrash = navigateToTrash,
-            navigateToTab = { route ->
-                homeNavController.navigate(route) {
-                    popUpTo(Screen.Files.route) { inclusive = route == Screen.Files(userId) }
-                    launchSingleTop = true
-                }
-            },
-            navigateToOffline = navigateToOffline,
-            navigateToSettings = navigateToSettings,
-            navigateToBugReport = navigateToBugReport,
+        .collectAsState(initial = null)
+    viewState?.let { currentViewState ->
+        Home(
+            homeNavController = homeNavController,
+            deepLinkBaseUrl = deepLinkBaseUrl,
+            startDestination = startDestination,
+            onDrawerStateChanged = onDrawerStateChanged,
+            navigateToPreview = navigateToPreview,
+            navigateToSorting = navigateToSorting,
+            navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+            navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
+            navigateToParentFolderOptions = navigateToParentFolderOptions,
+            navigateToPhotosPermissionRationale = navigateToPhotosPermissionRationale,
             navigateToSubscription = navigateToSubscription,
-        ),
-        modifier = modifier
-            .navigationBarsPadding()
-            .testTag(HomeScreenTestTag.screen),
-    )
+            navigateToPhotosIssues = navigateToPhotosIssues,
+            arguments = arguments,
+            viewState = currentViewState,
+            viewEvent = homeViewModel.viewEvent(
+                navigateToSigningOut = navigateToSigningOut,
+                navigateToTrash = navigateToTrash,
+                navigateToTab = { route ->
+                    homeNavController.navigate(route) {
+                        popUpTo(Screen.Files.route) { inclusive = route == Screen.Files(userId) }
+                        launchSingleTop = true
+                    }
+                },
+                navigateToOffline = navigateToOffline,
+                navigateToSettings = navigateToSettings,
+                navigateToBugReport = navigateToBugReport,
+                navigateToSubscription = navigateToSubscription,
+            ),
+            modifier = modifier
+                .navigationBarsPadding()
+                .testTag(HomeScreenTestTag.screen),
+        )
+    } ?: DeferredCircularProgressIndicator(modifier)
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -147,15 +156,18 @@ internal fun Home(
     deepLinkBaseUrl: String,
     startDestination: String,
     onDrawerStateChanged: (Boolean) -> Unit,
-    navigateToPreview: (fileId: FileId, pagerType: PagerType) -> Unit,
+    navigateToPreview: (fileId: FileId, pagerType: PagerType, optionsFilter: OptionsFilter) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
-    navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
+    navigateToFileOrFolderOptions: (linkId: LinkId, optionsFilter: OptionsFilter) -> Unit,
+    navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId, optionsFilter: OptionsFilter) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     arguments: Bundle,
     viewState: HomeViewState,
     viewEvent: HomeViewEvent,
     modifier: Modifier = Modifier,
+    navigateToPhotosPermissionRationale: () -> Unit,
+    navigateToSubscription: () -> Unit,
+    navigateToPhotosIssues: (FolderId) -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
     val isDrawerOpen = with(homeScaffoldState.scaffoldState.drawerState) {
@@ -244,6 +256,9 @@ internal fun Home(
                     navigateToFileOrFolderOptions,
                     navigateToMultipleFileOrFolderOptions,
                     navigateToParentFolderOptions,
+                    navigateToPhotosPermissionRationale,
+                    navigateToSubscription,
+                    navigateToPhotosIssues,
                 )
             }
         }

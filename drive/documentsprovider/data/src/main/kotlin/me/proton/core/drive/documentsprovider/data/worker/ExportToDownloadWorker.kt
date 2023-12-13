@@ -31,6 +31,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.firstOrNull
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -43,7 +44,6 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDecryptedDriveLinks
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
-import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
 
 @HiltWorker
 @RequiresApi(Build.VERSION_CODES.Q)

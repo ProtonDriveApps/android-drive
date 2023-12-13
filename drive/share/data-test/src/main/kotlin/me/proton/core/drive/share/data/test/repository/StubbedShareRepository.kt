@@ -36,7 +36,6 @@ package me.proton.core.drive.share.data.test.repository
  */
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -61,6 +60,7 @@ class StubbedShareRepository @Inject constructor() : ShareRepository {
                 key = "key",
                 passphrase = "passphrase",
                 passphraseSignature = "passphraseSignature",
+                type = Share.Type.MAIN,
             )
         )
     )
@@ -71,16 +71,34 @@ class StubbedShareRepository @Inject constructor() : ShareRepository {
     override fun getSharesFlow(userId: UserId, volumeId: VolumeId): Flow<DataResult<List<Share>>> =
         filterShares { share -> share.id.userId == userId && share.volumeId == volumeId }.map { it.asSuccess }
 
-    override suspend fun hasShares(userId: UserId): Boolean {
-        return fetchShares(userId).isNotEmpty()
+    override fun getSharesFlow(
+        userId: UserId,
+        shareType: Share.Type
+    ): Flow<DataResult<List<Share>>> =
+        filterShares { share -> share.id.userId == userId && share.type == shareType }.map { it.asSuccess }
+
+    override suspend fun hasShares(userId: UserId, shareType: Share.Type): Boolean {
+        return filterShares { share ->
+            share.id.userId == userId && share.type == shareType
+        }.first().isNotEmpty()
     }
 
-    override suspend fun hasShares(userId: UserId, volumeId: VolumeId): Boolean {
-        return filterShares { share -> share.id.userId == userId }.first().isNotEmpty()
+    override suspend fun hasShares(
+        userId: UserId,
+        volumeId: VolumeId,
+        shareType: Share.Type
+    ): Boolean {
+        return filterShares { share ->
+            share.id.userId == userId && share.volumeId == volumeId && share.type == shareType
+        }.first().isNotEmpty()
     }
 
-    override suspend fun fetchShares(userId: UserId): List<Share> {
-        return filterShares { share -> share.id.userId == userId }.first()
+    override suspend fun fetchShares(userId: UserId, shareType: Share.Type): List<Share> {
+        val id = ShareId(userId, "share-${userId.id}-${shareType.name}")
+        if (sharesFlow.value.none { share -> share.id == id }) {
+            sharesFlow.value = sharesFlow.value + NullableShare(id = id, type = shareType)
+        }
+        return filterShares { share -> share.id.userId == userId && share.type == shareType }.first()
     }
 
     override fun getShareFlow(shareId: ShareId): Flow<DataResult<Share>> {
@@ -110,7 +128,7 @@ class StubbedShareRepository @Inject constructor() : ShareRepository {
     override suspend fun createShare(
         userId: UserId,
         volumeId: VolumeId,
-        shareInfo: ShareInfo
+        shareInfo: ShareInfo,
     ): Result<ShareId> {
         val id = ShareId(userId, "share-${shareInfo.name}")
         sharesFlow.value = sharesFlow.value + NullableShare(
@@ -121,15 +139,17 @@ class StubbedShareRepository @Inject constructor() : ShareRepository {
             passphrase = shareInfo.sharePassphrase,
             passphraseSignature = shareInfo.sharePassphraseSignature,
             rootLinkId = shareInfo.rootLinkId,
+            type = Share.Type.STANDARD
         )
         return Result.success(id)
     }
 
     private fun filterShares(
-        filter: (Share) -> Boolean
-    ) = sharesFlow.filter { shares -> shares.any(filter) }
+        filter: (Share) -> Boolean,
+    ) = sharesFlow.map { shares -> shares.filter(filter) }
 
     companion object {
-        val mainShareId = ShareId(UserId("user-id"), "share-main")
+        val mainShareId = ShareId(UserId("user-id"), "share-user-id-MAIN")
+        val photoShareId = ShareId(UserId("user-id"), "share-user-id-PHOTO")
     }
 }

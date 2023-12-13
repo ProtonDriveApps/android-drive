@@ -22,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.VectorPainter
 import androidx.compose.ui.semantics.semantics
-import coil.compose.ImagePainter
+import coil.compose.AsyncImagePainter
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.file.info.presentation.FileInfoTestTag
 
@@ -31,7 +31,7 @@ fun Modifier.headerSemantics(driveLink: DriveLink, painter: Painter, mergeDescen
         this[FileInfoTestTag.Header.Title] = driveLink.name
         this[FileInfoTestTag.Header.IconType] = when (painter) {
             is VectorPainter -> FileInfoTestTag.Header.HeaderIconType.PLACEHOLDER
-            is ImagePainter -> FileInfoTestTag.Header.HeaderIconType.THUMBNAIL
+            is AsyncImagePainter -> FileInfoTestTag.Header.HeaderIconType.THUMBNAIL
             else -> FileInfoTestTag.Header.HeaderIconType.UNKNOWN
         }
     }

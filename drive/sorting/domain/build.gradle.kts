@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.sorting.domain"
+}
+
 driveModule(hilt = true) {
     api(project(":drive:base:domain"))
 }

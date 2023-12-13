@@ -20,7 +20,6 @@ package me.proton.android.drive.ui.rules
 
 import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.loginTestHelper
-import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.quark
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -28,7 +27,6 @@ import org.junit.runners.model.Statement
 class LogoutAllRule : TestRule {
     override fun apply(base: Statement, description: Description): Statement {
         runBlocking {
-            quark.jailUnban()
             loginTestHelper.logoutAll()
         }
         return base

@@ -17,7 +17,8 @@
  */
 package me.proton.core.drive.linkupload.domain.extension
 
-import me.proton.core.drive.link.domain.entity.Link.Companion.THUMBNAIL_INDEX
+import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 
-val UploadBlock.isThumbnail: Boolean get() = index == THUMBNAIL_INDEX
+val UploadBlock.isThumbnail: Boolean get() =
+    type in setOf(Block.Type.THUMBNAIL_DEFAULT, Block.Type.THUMBNAIL_PHOTO)

@@ -19,8 +19,11 @@ package me.proton.core.drive.linkupload.data.extension
 
 import kotlinx.serialization.SerializationException
 import me.proton.core.data.room.BuildConfig
+import me.proton.core.drive.base.domain.entity.CameraExifTags
+import me.proton.core.drive.base.domain.entity.Location
 import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
@@ -30,6 +33,7 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.deserialize
 import me.proton.core.util.kotlin.takeIfNotEmpty
+import kotlin.time.Duration.Companion.seconds
 
 fun LinkUploadEntity.toUploadFileLink() =
     UploadFileLink(
@@ -68,5 +72,26 @@ fun LinkUploadEntity.toUploadFileLink() =
                 }
                 UploadDigests()
             }
-        } ?: UploadDigests()
+        } ?: UploadDigests(),
+        networkTypeProviderType = networkTypeProviderType,
+        mediaDuration = mediaDuration?.seconds,
+        fileCreationDateTime = cameraCreationDateTime?.let(::TimestampS),
+        location = takeIf { latitude != null && longitude != null }?.let {
+            Location(
+                latitude = requireNotNull(latitude),
+                longitude = requireNotNull(longitude),
+            )
+        },
+        cameraExifTags = takeIf { cameraModel != null && cameraOrientation != null }?.let {
+            CameraExifTags(
+                model = requireNotNull(cameraModel),
+                orientation = requireNotNull(cameraOrientation).toInt(),
+                subjectArea = cameraSubjectArea,
+            )
+        },
+        shouldAnnounceEvent = shouldAnnounceEvent,
+        cacheOption = cacheOption,
+        priority = priority,
+        uploadCreationDateTime = uploadCreationDateTime?.let(::TimestampS),
+        shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
     )

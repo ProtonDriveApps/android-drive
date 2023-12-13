@@ -46,8 +46,10 @@ import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLin
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
+import me.proton.core.drive.drivelink.upload.domain.entity.Notifications
 import me.proton.core.drive.drivelink.upload.domain.usecase.UploadFiles
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.upload.domain.exception.NotEnoughSpaceException
@@ -160,7 +162,8 @@ class UploadToViewModel @Inject constructor(
                         folder = folder,
                         uriStrings = localUris,
                         shouldDeleteSource = true,
-                        silently = true,
+                        notifications = Notifications.TurnedOnExceptPreparingUpload,
+                        priority = UploadFileLink.USER_PRIORITY,
                     ).getOrThrow()
                     delay(2.seconds)
                     exitApp()

@@ -21,11 +21,12 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.util.Size
+import me.proton.core.drive.base.data.extension.compress
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.entity.FileTypeCategory
+import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.log.LogTag
-import me.proton.core.drive.base.presentation.entity.FileTypeCategory
-import me.proton.core.drive.base.presentation.entity.toFileTypeCategory
-import me.proton.core.drive.base.presentation.extension.compress
+import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
@@ -64,6 +65,12 @@ abstract class FileThumbnailProvider(
             val bitmap = fileToBitmap(tmpFile, Size(maxWidth, maxHeight))
             bitmap?.compress(maxSize)?.also {
                 bitmap.recycle()
+            }?.takeIf { bytes ->
+                bytes.isNotEmpty().also { isNotEmpty ->
+                    if (!isNotEmpty) {
+                        CoreLogger.d(UPLOAD, "Thumbnail is empty for: $uriString")
+                    }
+                }
             }
         } catch (e: OutOfMemoryError) {
             CoreLogger.d(LogTag.THUMBNAIL, e, "Create file thumbnail failed")

@@ -38,7 +38,7 @@ data class ShareDto(
     @SerialName(SHARE_ID)
     val id: String,
     @SerialName(TYPE)
-    val type: Long? = null,
+    val type: Long,
     @SerialName(STATE)
     val state: Long,
     @SerialName(LINK_ID)
@@ -61,4 +61,13 @@ data class ShareDto(
     val addressId: String? = null,
     @SerialName(CREATION_TIME)
     val creationTime: Long?,
-)
+) {
+    val isActive: Boolean get() = state == 1L
+
+    companion object {
+        const val TYPE_MAIN = 1L
+        const val TYPE_STANDARD = 2L
+        const val TYPE_DEVICE = 3L
+        const val TYPE_PHOTO = 4L
+    }
+}

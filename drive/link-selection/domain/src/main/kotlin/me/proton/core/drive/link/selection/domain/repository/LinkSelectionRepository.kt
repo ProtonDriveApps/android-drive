@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.link.selection.domain.repository
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 
@@ -40,6 +41,8 @@ interface LinkSelectionRepository {
     suspend fun remove(selectionId: SelectionId)
 
     suspend fun remove(selectionId: SelectionId, linkIds: List<LinkId>)
+
+    suspend fun removeAll(userId: UserId)
 
     suspend fun duplicateSelection(selectionId: SelectionId, retries: Int = DEFAULT_RETRIES): Result<SelectionId>
 

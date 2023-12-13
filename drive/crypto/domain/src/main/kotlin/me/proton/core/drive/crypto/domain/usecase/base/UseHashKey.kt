@@ -19,18 +19,27 @@ package me.proton.core.drive.crypto.domain.usecase.base
 
 import me.proton.core.crypto.common.pgp.HashKey
 import me.proton.core.crypto.common.pgp.VerificationStatus
+import me.proton.core.drive.base.domain.extension.resultValueOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
 import me.proton.core.drive.cryptobase.domain.usecase.UseHashKey
 import me.proton.core.drive.key.domain.entity.NodeHashKey
 import me.proton.core.drive.key.domain.extension.keyHolder
+import me.proton.core.drive.key.domain.usecase.GetNodeHashKey
+import me.proton.core.drive.key.domain.usecase.GetNodeKey
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class UseHashKey @Inject constructor(
     private val useHashKey: UseHashKey,
+    private val getLink: GetLink,
+    private val getNodeKey: GetNodeKey,
+    private val getNodeHashKey: GetNodeHashKey,
 ) {
     suspend operator fun <T> invoke(
         nodeHashKey: NodeHashKey,
@@ -52,4 +61,28 @@ class UseHashKey @Inject constructor(
             }
             block(hashKey)
         }
+
+
+    suspend operator fun <T> invoke(
+        folderId: FolderId,
+        checkSignature: Boolean = false,
+        coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
+        block: suspend (HashKey) -> T,
+    ): Result<T> {
+        val folder = requireNotNull(getLink(folderId).resultValueOrNull()) {
+            "Cannot found folder: $folderId"
+        }
+        return invoke(folder, checkSignature, coroutineContext, block)
+    }
+
+    suspend operator fun <T> invoke(
+        folder: Link.Folder,
+        checkSignature: Boolean = false,
+        coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
+        block: suspend (HashKey) -> T,
+    ) : Result<T> {
+        val folderKey = getNodeKey(folder).getOrThrow()
+        val folderHashKey = getNodeHashKey(folder, folderKey).getOrThrow()
+        return invoke(folderHashKey, checkSignature, coroutineContext, block)
+    }
 }

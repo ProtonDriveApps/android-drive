@@ -18,9 +18,9 @@
 package me.proton.core.drive.notification.data.provider
 
 import androidx.core.app.NotificationCompat
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.domain.entity.NotificationId
 
 interface NotificationBuilderProvider {
-    fun get(notificationId: NotificationId, notificationEvents: List<NotificationEvent>): NotificationCompat.Builder
+    fun get(notificationId: NotificationId, events: List<Event>): NotificationCompat.Builder
 }

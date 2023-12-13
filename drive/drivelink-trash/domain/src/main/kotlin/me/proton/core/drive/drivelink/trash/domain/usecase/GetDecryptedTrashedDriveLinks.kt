@@ -18,9 +18,10 @@
 
 package me.proton.core.drive.drivelink.trash.domain.usecase
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.mapCatching
 import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptDriveLinks
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class GetDecryptedTrashedDriveLinks @Inject constructor(
@@ -28,8 +29,8 @@ class GetDecryptedTrashedDriveLinks @Inject constructor(
     private val decryptDriveLinks: DecryptDriveLinks,
 ) {
 
-    operator fun invoke(shareId: ShareId) =
-        getTrashedDriveLinks(shareId)
+    operator fun invoke(userId: UserId, volumeId: VolumeId, fromIndex: Int, count: Int) =
+        getTrashedDriveLinks(userId, volumeId, fromIndex, count)
             .mapCatching { driveLinks ->
                 decryptDriveLinks(driveLinks)
             }

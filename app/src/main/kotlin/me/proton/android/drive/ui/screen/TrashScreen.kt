@@ -38,7 +38,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.android.drive.ui.common.ProtonSwipeRefresh
 import me.proton.android.drive.ui.effect.TrashEffect
 import me.proton.android.drive.ui.viewmodel.TrashViewModel
 import me.proton.core.compose.component.ProtonSnackbarHost
@@ -46,7 +45,6 @@ import me.proton.core.compose.component.ProtonSnackbarHostState
 import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.compose.component.bottomsheet.BottomSheetContent
 import me.proton.core.compose.component.bottomsheet.BottomSheetEntry
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheet
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.compose.component.bottomsheet.rememberModalBottomSheetContentState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
@@ -54,6 +52,8 @@ import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallStrong
 import me.proton.core.drive.base.presentation.component.ActionButton
+import me.proton.core.drive.base.presentation.component.ModalBottomSheet
+import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.base.presentation.component.TopAppBarHeight
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
 import me.proton.core.drive.files.presentation.component.Files
@@ -115,8 +115,9 @@ fun TrashScreen(
         Box(
             modifier = modifier.systemBarsPadding()
         ) {
-            ProtonSwipeRefresh(
-                listContentState = viewState.listContentState,
+            ProtonPullToRefresh(
+                isPullToRefreshEnabled = true,
+                isRefreshing = viewState.listContentState.isRefreshing,
                 onRefresh = viewModel::refresh,
                 topPadding = TopAppBarHeight,
             ) {

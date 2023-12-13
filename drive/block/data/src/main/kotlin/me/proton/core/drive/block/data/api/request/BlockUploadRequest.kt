@@ -24,10 +24,9 @@ import me.proton.core.drive.base.data.api.Dto.BLOCK_LIST
 import me.proton.core.drive.base.data.api.Dto.LINK_ID
 import me.proton.core.drive.base.data.api.Dto.REVISION_ID
 import me.proton.core.drive.base.data.api.Dto.SHARE_ID
-import me.proton.core.drive.base.data.api.Dto.THUMBNAIL
-import me.proton.core.drive.base.data.api.Dto.THUMBNAIL_HASH
-import me.proton.core.drive.base.data.api.Dto.THUMBNAIL_SIZE
+import me.proton.core.drive.base.data.api.Dto.THUMBNAIL_LIST
 import me.proton.core.drive.block.data.api.entity.UploadBlockDto
+import me.proton.core.drive.block.data.api.entity.UploadThumbnailDto
 
 @Serializable
 data class BlockUploadRequest(
@@ -41,10 +40,6 @@ data class BlockUploadRequest(
     val linkId: String,
     @SerialName(REVISION_ID)
     val revisionId: String,
-    @SerialName(THUMBNAIL)
-    val thumbnail: Long,
-    @SerialName(THUMBNAIL_HASH)
-    val thumbnailHash: String?,
-    @SerialName(THUMBNAIL_SIZE)
-    val thumbnailSize: Long?
+    @SerialName(THUMBNAIL_LIST)
+    val thumbnailList: List<UploadThumbnailDto>
 )

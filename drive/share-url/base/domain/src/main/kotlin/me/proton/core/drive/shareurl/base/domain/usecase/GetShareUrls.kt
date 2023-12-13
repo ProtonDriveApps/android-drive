@@ -24,11 +24,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.repository.fetcher
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrl
 import me.proton.core.drive.shareurl.base.domain.repository.ShareUrlRepository
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class GetShareUrls @Inject constructor(
@@ -37,15 +38,18 @@ class GetShareUrls @Inject constructor(
 ) {
 
     operator fun invoke(
-        shareId: ShareId,
+        userId: UserId,
+        volumeId: VolumeId,
         saveLinks: Boolean = true,
-        refresh: Flow<Boolean> = flowOf { !hasShareUrls(shareId) },
+        refresh: Flow<Boolean> = flowOf { !hasShareUrls(userId, volumeId) },
     ) = refresh.transform<Boolean, DataResult<List<ShareUrl>>> { shouldRefresh ->
         if (shouldRefresh) {
-            fetcher { repository.fetchAllShareUrls(shareId, saveLinks).getOrThrow() }
+            fetcher { repository.fetchAllShareUrls(userId, volumeId, saveLinks).getOrThrow() }
         }
         emitAll(
-            repository.getAllShareUrls(shareId).map { shareUrls -> DataResult.Success(ResponseSource.Local, shareUrls) }
+            repository
+                .getAllShareUrls(userId, volumeId)
+                .map { shareUrls -> DataResult.Success(ResponseSource.Local, shareUrls) }
         )
     }
 }

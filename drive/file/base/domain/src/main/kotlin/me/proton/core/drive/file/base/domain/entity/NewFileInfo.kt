@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.file.base.domain.entity
 
+import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.link.domain.entity.FolderId
 
 data class NewFileInfo(
@@ -31,4 +32,5 @@ data class NewFileInfo(
     val signatureAddress: String,
     val contentKeyPacket: String,
     val contentKeyPacketSignature: String,
+    val clientUid: ClientUid? = null,
 )

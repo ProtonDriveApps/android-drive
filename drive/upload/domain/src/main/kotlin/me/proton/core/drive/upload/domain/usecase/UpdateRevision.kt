@@ -17,12 +17,22 @@
  */
 package me.proton.core.drive.upload.domain.usecase
 
+import kotlinx.coroutines.flow.flowOf
+import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.entity.toTimestampS
+import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.crypto.domain.usecase.file.GetContentHash
 import me.proton.core.drive.crypto.domain.usecase.link.EncryptAndSignXAttr
+import me.proton.core.drive.file.base.domain.entity.PhotoAttributes
+import me.proton.core.drive.file.base.domain.entity.RevisionState
 import me.proton.core.drive.file.base.domain.usecase.CreateXAttr
+import me.proton.core.drive.file.base.domain.usecase.GetRevision
 import me.proton.core.drive.file.base.domain.usecase.UpdateRevision
-import me.proton.core.drive.file.base.domain.usecase.UpdateRevision.Companion.STATE_ACTIVE
+import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.usecase.BuildNodeKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -31,11 +41,15 @@ import me.proton.core.drive.linkupload.domain.extension.isThumbnail
 import me.proton.core.drive.linkupload.domain.extension.requireFileId
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
-import me.proton.core.drive.upload.domain.extension.toBlockTokenInfo
+import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.share.domain.usecase.GetShare
+import me.proton.core.util.kotlin.CoreLogger
 import java.util.Date
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class UpdateRevision @Inject constructor(
+    private val getRevision: GetRevision,
     private val updateRevision: UpdateRevision,
     private val getSignatureAddress: GetSignatureAddress,
     private val linkUploadRepository: LinkUploadRepository,
@@ -44,12 +58,27 @@ class UpdateRevision @Inject constructor(
     private val encryptAndSignXAttr: EncryptAndSignXAttr,
     private val buildNodeKey: BuildNodeKey,
     private val getNodeKey: GetNodeKey,
+    private val getContentHash: GetContentHash,
+    private val getShare: GetShare,
+    private val configurationProvider: ConfigurationProvider,
 ) {
-    suspend operator fun invoke(uploadFileLink: UploadFileLink): Result<UploadFileLink> = coRunCatching {
+    @Suppress("TooGenericExceptionCaught")
+    suspend operator fun invoke(
+        uploadFileLink: UploadFileLink,
+        checkRevisionState: Boolean = false,
+    ): Result<UploadFileLink> = coRunCatching {
         with(uploadFileLink) {
+            if (checkRevisionState) {
+                val revision = getRevision(requireFileId(), draftRevisionId).getOrThrow()
+                if (revision.state != RevisionState.DRAFT) {
+                    CoreLogger.d(LogTag.UPLOAD, "Ignoring already committed revision: $draftRevisionId")
+                    return@with uploadFileLink
+                }
+            }
+
             updateUploadState(id, UploadState.UPDATING_REVISION).getOrThrow()
             try {
-                val fileId = uploadFileLink.requireFileId()
+                val fileId = requireFileId()
                 val folderKey = getNodeKey(parentLinkId).getOrThrow()
                 val signatureAddress = getSignatureAddress(userId)
                 val uploadFileKey = buildNodeKey(userId, folderKey, this, signatureAddress).getOrThrow()
@@ -57,11 +86,9 @@ class UpdateRevision @Inject constructor(
                 updateRevision(
                     fileId = fileId,
                     revisionId = draftRevisionId,
-                    blockTokenInfos = uploadBlocks.map { uploadBlock -> uploadBlock.toBlockTokenInfo() },
                     manifestSignature = manifestSignature,
                     signatureAddress = signatureAddress,
                     blockNumber = uploadBlocks.size.toLong(),
-                    state = STATE_ACTIVE,
                     xAttr = encryptAndSignXAttr(
                         userId = userId,
                         encryptKey = uploadFileKey,
@@ -72,16 +99,49 @@ class UpdateRevision @Inject constructor(
                             blockSizes = uploadBlocks
                                 .filterNot { uploadBlock -> uploadBlock.isThumbnail }
                                 .map { uploadBlock -> uploadBlock.rawSize },
-                            mediaResolution = uploadFileLink.mediaResolution,
-                            digests = uploadFileLink.digests.values,
+                            mediaResolution = mediaResolution,
+                            mediaDuration = mediaDuration,
+                            creationDateTime = fileCreationDateTime,
+                            digests = digests.values,
+                            cameraExifTags = cameraExifTags,
                         ),
-                    ).getOrThrow()
+                    ).getOrThrow(),
+                    photoAttributes = createPhotoAttributes(
+                        uploadFileLink = this,
+                        share = getShare(shareId, flowOf(false)).toResult().getOrThrow(),
+                        folderKey = folderKey,
+                    ),
                 ).getOrThrow()
                 uploadFileLink
             } catch (e: Throwable) {
                 updateUploadState(id, UploadState.IDLE)
                 throw e
             }
+        }
+    }
+
+    private suspend fun createPhotoAttributes(
+        uploadFileLink: UploadFileLink,
+        share: Share,
+        folderKey: Key.Node,
+    ): PhotoAttributes? = takeIf { share.type == Share.Type.PHOTO }?.let {
+        with (uploadFileLink) {
+            PhotoAttributes(
+                captureTime = fileCreationDateTime
+                    ?: lastModified?.toTimestampS()
+                    ?: TimestampS().also { currentTime ->
+                        with(LogTag.UploadTag) {
+                            CoreLogger.d(
+                                id.logTag(),
+                                "No capture time or last modified for $uriString, using current time:$currentTime"
+                            )
+                        }
+                    },
+                contentHash = digests.values.getValue(configurationProvider.contentDigestAlgorithm)
+                    .let { contentDigest ->
+                        getContentHash(parentLinkId, folderKey, contentDigest).getOrThrow()
+                    },
+            )
         }
     }
 }

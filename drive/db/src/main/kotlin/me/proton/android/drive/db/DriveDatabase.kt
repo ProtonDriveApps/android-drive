@@ -22,6 +22,8 @@ import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.TypeConverters
+import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
+import me.proton.android.drive.photos.data.db.entity.MediaStoreVersionEntity
 import me.proton.core.account.data.db.AccountConverters
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.account.data.entity.AccountEntity
@@ -34,14 +36,24 @@ import me.proton.core.challenge.data.entity.ChallengeFrameEntity
 import me.proton.core.crypto.android.keystore.CryptoConverters
 import me.proton.core.data.room.db.BaseDatabase
 import me.proton.core.data.room.db.CommonConverters
+import me.proton.core.drive.announce.event.data.db.EventConverters
+import me.proton.core.drive.backup.data.db.BackupDatabase
+import me.proton.core.drive.backup.data.db.entity.BackupDuplicateEntity
+import me.proton.core.drive.backup.data.db.entity.BackupErrorEntity
+import me.proton.core.drive.backup.data.db.entity.BackupFileEntity
+import me.proton.core.drive.backup.data.db.entity.BackupFolderEntity
 import me.proton.core.drive.drivelink.data.db.DriveLinkDatabase
 import me.proton.core.drive.drivelink.download.data.db.DriveLinkDownloadDatabase
 import me.proton.core.drive.drivelink.offline.data.db.DriveLinkOfflineDatabase
 import me.proton.core.drive.drivelink.paged.data.db.DriveLinkPagedDatabase
 import me.proton.core.drive.drivelink.paged.data.db.entity.DriveLinkRemoteKeyEntity
+import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
+import me.proton.core.drive.drivelink.photo.data.db.entity.PhotoListingRemoteKeyEntity
 import me.proton.core.drive.drivelink.selection.data.db.DriveLinkSelectionDatabase
 import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
 import me.proton.core.drive.drivelink.trash.data.db.DriveLinkTrashDatabase
+import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
+import me.proton.core.drive.feature.flag.data.db.entity.DriveFeatureFlagRefreshEntity
 import me.proton.core.drive.folder.data.db.FolderDatabase
 import me.proton.core.drive.folder.data.db.FolderMetadataEntity
 import me.proton.core.drive.link.data.db.LinkDatabase
@@ -68,16 +80,23 @@ import me.proton.core.drive.linkupload.data.db.entity.UploadBulkEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkUriStringEntity
 import me.proton.core.drive.messagequeue.data.storage.db.MessageQueueDatabase
 import me.proton.core.drive.messagequeue.data.storage.db.entity.MessageEntity
-import me.proton.core.drive.notification.data.db.NotificationConverters
 import me.proton.core.drive.notification.data.db.NotificationDatabase
 import me.proton.core.drive.notification.data.db.entity.NotificationChannelEntity
 import me.proton.core.drive.notification.data.db.entity.NotificationEventEntity
+import me.proton.core.drive.notification.data.db.entity.TaglessNotificationEventEntity
+import me.proton.core.drive.photo.data.db.PhotoDatabase
+import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
 import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.share.data.db.ShareEntity
 import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
 import me.proton.core.drive.shareurl.base.data.db.entity.ShareUrlEntity
 import me.proton.core.drive.sorting.data.db.SortingDatabase
 import me.proton.core.drive.sorting.data.db.entity.SortingEntity
+import me.proton.core.drive.stats.data.db.StatsDatabase
+import me.proton.core.drive.stats.data.db.entity.InitialBackupEntity
+import me.proton.core.drive.stats.data.db.entity.UploadStatsEntity
+import me.proton.core.drive.user.data.db.QuotaDatabase
+import me.proton.core.drive.user.data.db.entity.DismissedQuotaEntity
 import me.proton.core.drive.volume.data.db.VolumeDatabase
 import me.proton.core.drive.volume.data.db.VolumeEntity
 import me.proton.core.drive.worker.data.db.WorkerDatabase
@@ -98,10 +117,16 @@ import me.proton.core.key.data.entity.PublicAddressKeyEntity
 import me.proton.core.keytransparency.data.local.KeyTransparencyDatabase
 import me.proton.core.keytransparency.data.local.entity.AddressChangeEntity
 import me.proton.core.keytransparency.data.local.entity.SelfAuditResultEntity
+import me.proton.core.notification.data.local.db.NotificationEntity
 import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.observability.data.entity.ObservabilityEventEntity
 import me.proton.core.payment.data.local.db.PaymentDatabase
 import me.proton.core.payment.data.local.entity.GooglePurchaseEntity
+import me.proton.core.push.data.local.db.PushConverters
+import me.proton.core.push.data.local.db.PushDatabase
+import me.proton.core.push.data.local.db.PushEntity
+import me.proton.core.telemetry.data.db.TelemetryDatabase
+import me.proton.core.telemetry.data.entity.TelemetryEventEntity
 import me.proton.core.user.data.db.AddressDatabase
 import me.proton.core.user.data.db.UserConverters
 import me.proton.core.user.data.db.UserDatabase
@@ -117,6 +142,8 @@ import me.proton.core.usersettings.data.entity.OrganizationKeysEntity
 import me.proton.core.usersettings.data.entity.UserSettingsEntity
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
+import me.proton.core.notification.data.local.db.NotificationConverters as CoreNotificationConverters
+import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNotificationDatabase
 
 @Database(
     entities = [
@@ -143,6 +170,9 @@ import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
         ObservabilityEventEntity::class,
         AddressChangeEntity::class,
         SelfAuditResultEntity::class,
+        NotificationEntity::class,
+        PushEntity::class,
+        TelemetryEventEntity::class,
         // Drive
         VolumeEntity::class,
         ShareEntity::class,
@@ -171,13 +201,30 @@ import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
         UploadBulkUriStringEntity::class,
         FolderMetadataEntity::class,
         TrashMetadataEntity::class,
+        // Backup
+        BackupDuplicateEntity::class,
+        BackupErrorEntity::class,
+        BackupFileEntity::class,
+        BackupFolderEntity::class,
+        // Stats
+        InitialBackupEntity::class,
+        UploadStatsEntity::class,
+        // Quota
+        DismissedQuotaEntity::class,
         // Notification
         NotificationChannelEntity::class,
         NotificationEventEntity::class,
+        TaglessNotificationEventEntity::class,
         // Selection
         LinkSelectionEntity::class,
         // Worker
         WorkerRunEntity::class,
+        // Photos
+        PhotoListingEntity::class,
+        PhotoListingRemoteKeyEntity::class,
+        // FeatureFlag
+        DriveFeatureFlagRefreshEntity::class,
+        MediaStoreVersionEntity::class,
     ],
     version = DriveDatabase.VERSION,
     autoMigrations = [
@@ -194,7 +241,7 @@ import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
         AutoMigration(from = 23, to = 24),
         AutoMigration(from = 26, to = 27),
     ],
-    exportSchema = true,
+    exportSchema = true
 )
 @TypeConverters(
     // Core
@@ -206,9 +253,11 @@ import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
     UserSettingsConverters::class,
     EventManagerConverters::class,
     ChallengeConverters::class,
+    CoreNotificationConverters::class,
+    PushConverters::class,
     // Drive
-    NotificationConverters::class,
-    LinkSelectionConverters::class,
+    EventConverters::class,
+    LinkSelectionConverters::class
 )
 abstract class DriveDatabase :
     BaseDatabase(),
@@ -237,6 +286,7 @@ abstract class DriveDatabase :
     ChallengeDatabase,
     SortingDatabase,
     LinkUploadDatabase,
+    StatsDatabase,
     DriveLinkDatabase,
     DriveLinkPagedDatabase,
     DriveLinkTrashDatabase,
@@ -246,40 +296,60 @@ abstract class DriveDatabase :
     DriveLinkSelectionDatabase,
     NotificationDatabase,
     PaymentDatabase,
+    BackupDatabase,
+    QuotaDatabase,
     ObservabilityDatabase,
     KeyTransparencyDatabase,
-    WorkerDatabase {
+    WorkerDatabase,
+    CoreNotificationDatabase,
+    PushDatabase,
+    TelemetryDatabase,
+    PhotoDatabase,
+    DriveLinkPhotoDatabase,
+    DriveFeatureFlagDatabase,
+    MediaStoreVersionDatabase {
 
     companion object {
-        const val VERSION = 27
+        const val VERSION = 38
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
             DriveDatabaseMigrations.MIGRATION_2_3,
             DriveDatabaseMigrations.MIGRATION_3_4,
-            //AutoMigration(from = 4, to = 5)
-            //AutoMigration(from = 5, to = 6)
+            // AutoMigration(from = 4, to = 5)
+            // AutoMigration(from = 5, to = 6)
             DriveDatabaseMigrations.MIGRATION_6_7,
-            //AutoMigration(from = 7, to = 8)
+            // AutoMigration(from = 7, to = 8)
             DriveDatabaseMigrations.MIGRATION_8_9,
-            //AutoMigration(from = 9, to = 10)
+            // AutoMigration(from = 9, to = 10)
             DriveDatabaseMigrations.MIGRATION_10_11,
             DriveDatabaseMigrations.MIGRATION_11_12,
             DriveDatabaseMigrations.MIGRATION_12_13,
-            //AutoMigration(from = 13, to = 14)
+            // AutoMigration(from = 13, to = 14)
             DriveDatabaseMigrations.MIGRATION_14_15,
-            //AutoMigration(from = 15, to = 16)
-            //AutoMigration(from = 16, to = 17)
-            //AutoMigration(from = 17, to = 18)
-            //AutoMigration(from = 18, to = 19)
+            // AutoMigration(from = 15, to = 16)
+            // AutoMigration(from = 16, to = 17)
+            // AutoMigration(from = 17, to = 18)
+            // AutoMigration(from = 18, to = 19)
             DriveDatabaseMigrations.MIGRATION_19_20,
             DriveDatabaseMigrations.MIGRATION_20_21,
             DriveDatabaseMigrations.MIGRATION_21_22,
-            //AutoMigration(from = 22, to = 23)
-            //AutoMigration(from = 23, to = 24)
+            // AutoMigration(from = 22, to = 23)
+            // AutoMigration(from = 23, to = 24)
             DriveDatabaseMigrations.MIGRATION_24_25,
             DriveDatabaseMigrations.MIGRATION_25_26,
-            //AutoMigration(from = 26, to = 27)
+            // AutoMigration(from = 26, to = 27)
+            DriveDatabaseMigrations.MIGRATION_27_28,
+            DriveDatabaseMigrations.MIGRATION_28_29,
+            DriveDatabaseMigrations.MIGRATION_29_30,
+            DriveDatabaseMigrations.MIGRATION_30_31,
+            DriveDatabaseMigrations.MIGRATION_31_32,
+            DriveDatabaseMigrations.MIGRATION_32_33,
+            DriveDatabaseMigrations.MIGRATION_33_34,
+            DriveDatabaseMigrations.MIGRATION_34_35,
+            DriveDatabaseMigrations.MIGRATION_35_36,
+            DriveDatabaseMigrations.MIGRATION_36_37,
+            DriveDatabaseMigrations.MIGRATION_37_38,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

@@ -25,6 +25,12 @@ import androidx.room.PrimaryKey
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
+import me.proton.core.drive.base.data.db.Column.CACHE_OPTION
+import me.proton.core.drive.base.data.db.Column.NETWORK_TYPE_PROVIDER_TYPE
+import me.proton.core.drive.base.data.db.Column.PRIORITY
+import me.proton.core.drive.base.data.db.Column.SHOULD_ANNOUNCE_EVENT
+import me.proton.core.drive.linkupload.domain.entity.CacheOption
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 
 @Entity(
     foreignKeys = [
@@ -56,4 +62,14 @@ data class UploadBulkEntity(
     val parentId: String,
     @ColumnInfo(name = Column.SHOULD_DELETE_SOURCE_URI)
     val shouldDeleteSourceUri: Boolean = false,
+    @ColumnInfo(name = NETWORK_TYPE_PROVIDER_TYPE, defaultValue = "DEFAULT")
+    val networkTypeProviderType: NetworkTypeProviderType = NetworkTypeProviderType.DEFAULT,
+    @ColumnInfo(name = SHOULD_ANNOUNCE_EVENT, defaultValue = "true")
+    val shouldAnnounceEvent: Boolean = true,
+    @ColumnInfo(name = CACHE_OPTION, defaultValue = "ALL")
+    val cacheOption: CacheOption = CacheOption.ALL,
+    @ColumnInfo(name = PRIORITY, defaultValue = "${Long.MAX_VALUE}")
+    val priority: Long,
+    @ColumnInfo(name = Column.SHOULD_BROADCAST_ERROR_MESSAGE, defaultValue = "true")
+    val shouldBroadcastErrorMessage: Boolean = true,
 )

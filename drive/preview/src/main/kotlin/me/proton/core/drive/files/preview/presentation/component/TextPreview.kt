@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,9 +33,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmall
 import java.io.BufferedReader
@@ -44,7 +45,7 @@ import java.io.InputStream
 fun TextPreview(
     uri: Uri,
     modifier: Modifier = Modifier,
-    onRenderFailed: (Throwable) -> Unit,
+    onRenderFailed: (Throwable, Any) -> Unit,
 ) {
     var content by remember { mutableStateOf(listOf<String>()) }
     val context = LocalContext.current
@@ -57,7 +58,7 @@ fun TextPreview(
                         fd?.createInputStream()?.readTextLines().orEmpty()
                     }
             } catch (t: Throwable) {
-                onRenderFailed(t)
+                onRenderFailed(t, uri)
             }
         }
     }
@@ -86,17 +87,22 @@ fun TextPreview(
     content: List<String>,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
+    SelectionContainer(
         modifier = modifier
             .fillMaxSize()
-            .padding(8.dp)
-    ) {
-        items(content.size) { i ->
-            Text(
-                text = content[i],
-                style = ProtonTheme.typography.defaultSmall,
-                modifier = Modifier.fillMaxWidth()
+            .padding(
+                horizontal = ProtonDimens.MediumSpacing,
+                vertical = ProtonDimens.SmallSpacing
             )
+    ) {
+        LazyColumn{
+            items(content.size) { i ->
+                Text(
+                    text = content[i],
+                    style = ProtonTheme.typography.defaultSmall,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
         }
     }
 }

@@ -37,19 +37,24 @@ interface ShareRepository {
     fun getSharesFlow(userId: UserId, volumeId: VolumeId): Flow<DataResult<List<Share>>>
 
     /**
-     * Check if we have cached any share for given user
+     * Get reactive list of all drive shares for given user and share type
      */
-    suspend fun hasShares(userId: UserId): Boolean
+    fun getSharesFlow(userId: UserId, shareType: Share.Type): Flow<DataResult<List<Share>>>
 
     /**
-     * Check if we have cached any share for given user and volume
+     * Check if we have cached any share for given user and share type
      */
-    suspend fun hasShares(userId: UserId, volumeId: VolumeId): Boolean
+    suspend fun hasShares(userId: UserId, shareType: Share.Type): Boolean
 
     /**
-     * Fetches shares from the server and stores it into cache
+     * Check if we have cached any share for given user, volume and share type
      */
-    suspend fun fetchShares(userId: UserId): List<Share>
+    suspend fun hasShares(userId: UserId, volumeId: VolumeId, shareType: Share.Type): Boolean
+
+    /**
+     * Fetches shares of a given type from the server and stores it into cache
+     */
+    suspend fun fetchShares(userId: UserId, shareType: Share.Type): List<Share>
 
     /**
      * Get reactive share for given user and share id

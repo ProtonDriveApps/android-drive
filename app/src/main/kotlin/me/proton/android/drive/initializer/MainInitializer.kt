@@ -22,6 +22,7 @@ import android.content.Context
 import androidx.startup.AppInitializer
 import androidx.startup.Initializer
 import me.proton.core.auth.presentation.MissingScopeInitializer
+import me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer
 import me.proton.core.humanverification.presentation.HumanVerificationInitializer
 import me.proton.core.network.presentation.init.UnAuthSessionFetcherInitializer
 import me.proton.core.plan.presentation.UnredeemedPurchaseInitializer
@@ -33,12 +34,24 @@ class MainInitializer : Initializer<Unit> {
     }
 
     override fun dependencies() = listOf(
+        SentryInitializer::class.java,
+        LoggerInitializer::class.java,
+        FeatureFlagInitializer::class.java,
+        AccountStateHandlerInitializer::class.java,
+        AccountRemovedHandlerInitializer::class.java,
+        NotificationChannelInitializer::class.java,
+        DocumentsProviderInitializer::class.java,
+        UncaughtExceptionHandlerInitializer::class.java,
+        CryptoValidatorInitializer::class.java,
         EventManagerInitializer::class.java,
         HumanVerificationInitializer::class.java,
         UnredeemedPurchaseInitializer::class.java,
         MissingScopeInitializer::class.java,
         UnAuthSessionFetcherInitializer::class.java,
         AutoLockInitializer::class.java,
+        BackupInitializer::class.java,
+        TelemetryInitializer::class.java,
+        SelectionInitializer::class.java,
     )
 
     companion object {

@@ -19,10 +19,15 @@ package me.proton.core.drive.link.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.link.domain.entity.CheckAvailableHashes
+import me.proton.core.drive.link.domain.entity.CheckAvailableHashesInfo
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.MoveInfo
 import me.proton.core.drive.link.domain.entity.RenameInfo
+import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface LinkRepository {
     /**
@@ -40,14 +45,42 @@ interface LinkRepository {
      */
     suspend fun fetchLink(linkId: LinkId)
 
+    /**
+     * Fetches all links with given share id and link id from the server
+     */
+    suspend fun fetchLinks(shareId: ShareId, linkIds: Set<String>): Result<Pair<List<Link>, List<Link>>>
+
+    /**
+     * Fetches all links with given share id and link id from the server and stores them into cache.
+     * Make sure that Share with respective id is already in local cache as well as all parents from
+     * given link ids, otherwise this operation will fail.
+     */
+    suspend fun fetchAndStoreLinks(shareId: ShareId, linkIds: Set<String>)
+
+    /**
+     * Fetches all links with given link id from the server and stores them into cache.
+     * Make sure that Share(s) and all parents from given link ids are already in local cache,
+     * otherwise this operation will fail.
+     */
+    suspend fun fetchAndStoreLinks(linkIds: Set<LinkId>)
+
+    suspend fun checkAvailableHashes(
+        linkId: LinkId,
+        checkAvailableHashesInfo: CheckAvailableHashesInfo,
+    ): Result<CheckAvailableHashes>
+
     suspend fun moveLink(linkId: LinkId, moveInfo: MoveInfo): Result<Unit>
 
     suspend fun renameLink(
         linkId: LinkId,
-        renameInfo: RenameInfo
+        renameInfo: RenameInfo,
     ): Result<Unit>
 
     suspend fun delete(linkIds: List<LinkId>)
 
     suspend fun insertOrUpdate(links: List<Link>)
+
+    suspend fun getCachedLinks(userId: UserId, shareId: String, linkIds: Set<String>): Set<Link>
+
+    suspend fun findLinkIds(userId: UserId, volumeId: VolumeId, linkId: String): List<LinkId>
 }

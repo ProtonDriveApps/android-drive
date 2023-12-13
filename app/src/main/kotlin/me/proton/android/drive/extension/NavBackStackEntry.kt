@@ -18,8 +18,10 @@
 
 package me.proton.android.drive.extension
 
+import android.os.Build
 import android.os.Bundle
 import androidx.navigation.NavBackStackEntry
+import java.io.Serializable
 
 fun NavBackStackEntry.requireArguments() = requireNotNull(arguments) { "arguments bundle is null" }
 
@@ -34,3 +36,33 @@ fun <T> NavBackStackEntry.get(key: String, optionalBundle: Bundle? = null): T? {
     val bundleArgs = requireArguments()
     return bundleArgs.getString(key) as T? ?: optionalBundle?.getString(key) as T?
 }
+
+fun <T : Serializable> NavBackStackEntry.requireSerializable(
+    key: String,
+    clazz: Class<T>,
+    optionalBundle: Bundle? = null
+): T {
+    return requireNotNull(getSerializable(key, clazz, optionalBundle)) {
+        "$key is required"
+    }
+}
+
+fun <T : Serializable> NavBackStackEntry.getSerializable(
+    key: String,
+    clazz: Class<T>,
+    optionalBundle: Bundle? = null
+): T? {
+    val bundleArgs = requireArguments()
+
+    return bundleArgs.getSerializableCompat(key, clazz)
+        ?: optionalBundle?.getSerializableCompat(key, clazz)
+}
+
+@Suppress("DEPRECATION", "UNCHECKED_CAST")
+fun <T : Serializable> Bundle.getSerializableCompat(key: String, clazz: Class<T>): T? =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        getSerializable(key, clazz)
+    } else {
+        getSerializable(key) as T?
+    }
+

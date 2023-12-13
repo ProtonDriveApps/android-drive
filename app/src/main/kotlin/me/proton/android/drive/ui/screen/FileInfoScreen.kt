@@ -71,7 +71,7 @@ fun FileInfo(
         viewState?.let {
             FileInfoContent(
                 driveLink = viewState.link,
-                pathToFileNode = viewState.path,
+                items = viewState.items,
                 modifier = Modifier
                     .padding(top = DefaultSpacing)
                     .padding(horizontal = DefaultSpacing)

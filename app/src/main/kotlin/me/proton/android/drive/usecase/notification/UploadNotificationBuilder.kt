@@ -30,8 +30,8 @@ import me.proton.android.drive.receiver.NotificationBroadcastReceiver
 import me.proton.android.drive.receiver.NotificationBroadcastReceiver.Companion.ACTION_CANCEL_ALL
 import me.proton.android.drive.receiver.NotificationBroadcastReceiver.Companion.EXTRA_NOTIFICATION_ID
 import me.proton.android.drive.ui.navigation.Screen
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.presentation.extension.quantityString
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.util.kotlin.serialize
 import javax.inject.Inject
@@ -42,8 +42,8 @@ class UploadNotificationBuilder @Inject constructor(
     private val commonBuilder: CommonNotificationBuilder,
     private val contentIntent: CreateContentPendingIntent,
 ) {
-    operator fun invoke(notificationId: NotificationId.User, notificationEvents: List<NotificationEvent.Upload>) =
-        with (notificationEvents) {
+    operator fun invoke(notificationId: NotificationId.User, events: List<Event.Upload>) =
+        with (events) {
             commonBuilder(notificationId, first())
                 .setContentTitle(title)
                 .setContentIntent(notificationId)
@@ -52,15 +52,15 @@ class UploadNotificationBuilder @Inject constructor(
                 .addAction(notificationId, this)
         }
 
-    private fun List<NotificationEvent.Upload>.count(vararg uploadStates: NotificationEvent.Upload.UploadState): Int =
+    private fun List<Event.Upload>.count(vararg uploadStates: Event.Upload.UploadState): Int =
         count { upload -> upload.state in uploadStates }
 
-    private val List<NotificationEvent.Upload>.uploadingCount get() = count(
-        NotificationEvent.Upload.UploadState.NEW_UPLOAD,
-        NotificationEvent.Upload.UploadState.UPLOADING,
+    private val List<Event.Upload>.uploadingCount get() = count(
+        Event.Upload.UploadState.NEW_UPLOAD,
+        Event.Upload.UploadState.UPLOADING,
     )
 
-    private val List<NotificationEvent.Upload>.title: String get() =
+    private val List<Event.Upload>.title: String get() =
         if (uploadingCount > 0) {
             appContext.getString(
                 I18N.string.notification_content_title_upload_uploading,
@@ -79,7 +79,7 @@ class UploadNotificationBuilder @Inject constructor(
         )
     )
 
-    private val List<NotificationEvent.Upload>.text: String get() {
+    private val List<Event.Upload>.text: String get() {
         val uploading = uploadingCount
         return if (uploading > 0) {
             appContext.resources.getQuantityString(
@@ -89,7 +89,7 @@ class UploadNotificationBuilder @Inject constructor(
             )
         } else {
             val completedString = mutableListOf<String>()
-            val succeeded = count(NotificationEvent.Upload.UploadState.UPLOAD_COMPLETE)
+            val succeeded = count(Event.Upload.UploadState.UPLOAD_COMPLETE)
             if (succeeded > 0) {
                 completedString.add(
                     appContext.quantityString(
@@ -98,7 +98,7 @@ class UploadNotificationBuilder @Inject constructor(
                     )
                 )
             }
-            val cancelled = count(NotificationEvent.Upload.UploadState.UPLOAD_CANCELLED)
+            val cancelled = count(Event.Upload.UploadState.UPLOAD_CANCELLED)
             if (cancelled > 0) {
                 completedString.add(
                     appContext.quantityString(
@@ -107,7 +107,7 @@ class UploadNotificationBuilder @Inject constructor(
                     )
                 )
             }
-            val failed = count(NotificationEvent.Upload.UploadState.UPLOAD_FAILED)
+            val failed = count(Event.Upload.UploadState.UPLOAD_FAILED)
             if (failed > 0) {
                 completedString.add(
                     appContext.quantityString(
@@ -120,26 +120,26 @@ class UploadNotificationBuilder @Inject constructor(
         }
     }
 
-    private val List<NotificationEvent.Upload>.maxProgress: Int get() =
+    private val List<Event.Upload>.maxProgress: Int get() =
         uploadingCount.takeIf { it > 0 }?.let { uploading ->
-            (uploading + count(NotificationEvent.Upload.UploadState.UPLOAD_COMPLETE)) * 100
+            (uploading + count(Event.Upload.UploadState.UPLOAD_COMPLETE)) * 100
         } ?: 0
 
-    private val List<NotificationEvent.Upload>.progress: Int get() =
+    private val List<Event.Upload>.progress: Int get() =
         uploadingCount.takeIf { it > 0 }?.let {
             ((sumOf { upload -> upload.percentage.value.toDouble() } * 100).toInt())
         } ?: 0
 
     private fun NotificationCompat.Builder.addAction(
         notificationId: NotificationId,
-        uploadNotificationEvents: List<NotificationEvent.Upload>
+        uploadEvents: List<Event.Upload>
     ): NotificationCompat.Builder = apply {
-        if (uploadNotificationEvents.uploadingCount > 0) {
+        if (uploadEvents.uploadingCount > 0) {
             addAction(
                 NotificationCompat.Action.Builder(
                     0,
                     appContext.getString(
-                        if (uploadNotificationEvents.uploadingCount > 1) {
+                        if (uploadEvents.uploadingCount > 1) {
                             I18N.string.common_cancel_all_action
                         } else {
                             I18N.string.common_cancel_action

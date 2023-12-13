@@ -21,7 +21,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.data.api.Dto.CODE
 import me.proton.core.drive.base.data.api.Dto.VOLUME
-import me.proton.core.drive.volume.data.api.VolumeDto
+import me.proton.core.drive.volume.data.api.entity.VolumeDto
 
 @Serializable
 data class GetVolumeResponse(

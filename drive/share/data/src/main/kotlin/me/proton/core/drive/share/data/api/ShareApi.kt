@@ -27,11 +27,14 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ShareApi : BaseRetrofitApi {
 
     @GET("drive/shares")
-    suspend fun getShares(): GetSharesResponse
+    suspend fun getShares(
+        @Query("ShareType") shareType: Long,
+    ): GetSharesResponse
 
     @GET("drive/shares/@{enc_shareID}")
     suspend fun getShareBootstrap(@Path("enc_shareID") shareId: String): GetShareBootstrapResponse

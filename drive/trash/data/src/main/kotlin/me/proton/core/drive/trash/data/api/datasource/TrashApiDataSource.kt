@@ -30,9 +30,6 @@ import javax.inject.Inject
 class TrashApiDataSource @Inject constructor(
     private val apiProvider: ApiProvider,
 ) {
-    @Throws(ApiException::class)
-    suspend fun fetchTrashContent(shareId: ShareId, page: Int, pageSize: Int) =
-        apiProvider.get<DriveTrashApi>(shareId.userId).invoke { getTrash(shareId.id, page, pageSize) }.valueOrThrow
 
     @Throws(ApiException::class)
     suspend fun sendToTrash(

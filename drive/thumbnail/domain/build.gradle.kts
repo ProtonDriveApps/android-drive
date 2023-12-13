@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.thumbnail.domain"
+}
+
 driveModule(hilt = true) {
     api(project(":drive:link:domain"))
     implementation(project(":drive:file:base:domain"))

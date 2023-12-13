@@ -20,6 +20,7 @@ package me.proton.core.drive.base.data.db.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -90,16 +91,23 @@ fun <T : Any> Flow<Result<List<T>>>.asPagingSource(
                 val nextKey = (pageKey + 1).takeIf { key -> key <= pages.size - 1 }
                 CoreLogger.d(
                     tag = LogTag.PAGING,
-                    message = "load (key=$pageKey, items=${page.size}) from flow (items=${pageList.size}) nextKey=$nextKey prevKey=$prevKey"
+                    message = """
+                        load (key=$pageKey, items=${page.size}) from flow (items=${pageList.size})
+                        nextKey=$nextKey prevKey=$prevKey
+                    """.trimIndent()
                 )
                 LoadResult.Page(
                     data = processPage?.invoke(page) ?: page,
                     prevKey = prevKey,
                     nextKey = nextKey,
                 )
-            } catch (e: Throwable) {
-                CoreLogger.d(LogTag.PAGING, e, "load (key=$pageKey) from flow failed with ${e.cause ?: e}")
+            } catch (e: CancellationException) {
+                CoreLogger.d(LogTag.PAGING, e, "load (key=$pageKey) from flow failed due to CancellationException")
                 LoadResult.Invalid()
+            } catch (e: Throwable) {
+                val error = e.cause ?: e
+                CoreLogger.d(LogTag.PAGING, e, "load (key=$pageKey) from flow failed with $error")
+                LoadResult.Error(error)
             }
         }
     }
@@ -122,15 +130,22 @@ fun <T : Any> ((fromIndex: Int, count: Int) -> Flow<Result<List<T>>>).asPagingSo
             .takeWhile { invalid.not() }
             .distinctUntilChanged()
             .mapWithPrevious { previous, current ->
-                if (previous != null) invalidate()
+                if (previous != null) {
+                    CoreLogger.d(
+                        LogTag.PAGING,
+                        "Invalidating due to items count change (previous = $previous, current = $current)",
+                    )
+                    invalidate()
+                }
                 current
             }
             .stateIn(PagingSourceScope, SharingStarted.Eagerly, null)
 
         private val fromIndex = MutableStateFlow<Int?>(null)
 
-        private val listFlow: StateFlow<Result<List<T>>?> = fromIndex
+        private val observableList: StateFlow<Result<List<T>>?> = fromIndex
             .takeWhile { invalid.not() }
+            .distinctUntilChanged()
             .filterNotNull()
             .transformLatest { fromIndex ->
                 emitAll(
@@ -139,6 +154,10 @@ fun <T : Any> ((fromIndex: Int, count: Int) -> Flow<Result<List<T>>>).asPagingSo
                         .distinctUntilChanged()
                         .mapWithPrevious { previous, current ->
                             if (previous != null && !(previous.isFailure && stopOnFailure)) {
+                                CoreLogger.d(
+                                    LogTag.PAGING,
+                                    "Invalidating due to observable list change",
+                                )
                                 invalidate()
                             }
                             current
@@ -149,65 +168,68 @@ fun <T : Any> ((fromIndex: Int, count: Int) -> Flow<Result<List<T>>>).asPagingSo
 
         override fun getRefreshKey(state: PagingState<Int, T>): Int? =
             state.anchorPosition?.let { anchorPosition ->
-                state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
-                    ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+                (state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+                    ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1))?.also {
+                        CoreLogger.d(LogTag.PAGING, "getRefreshKey page $it anchorPosition $anchorPosition")
+                }
             }
 
         override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
+            CoreLogger.d(LogTag.PAGING, "load params key = ${params.key} type = ${params.type}")
             require(observablePageSize >= params.loadSize * 4) {
-                "Observable page size ($observablePageSize) must be at least 4 times as big as load page size (${params.loadSize})"
+                """
+                    Observable page size ($observablePageSize) must be at least 4 times as big
+                    as load page size (${params.loadSize})
+                """.trimIndent()
             }
             val pageKey = params.key ?: 0
             val items = itemsCount.filterNotNull().first()
             val pageRange = rangeFromPage(pageKey, params.loadSize, items)
-            val currentIndex = fromIndex.value ?: findIndexForRange(pageRange, observablePageSize, items)
+            val currentIndex = findIndexForRange(pageRange, observablePageSize, items)
             fromIndex.value = currentIndex
-            val list = listFlow.filterNotNull().first()
             return try {
-                val pageList = list
+                val pageList = this@asPagingSource(currentIndex, observablePageSize).first()
                     .onFailure { throwable ->
                         val error = throwable.cause ?: throwable
                         CoreLogger.d(LogTag.PAGING, throwable, "load (key=$pageKey) from flow failed with $error")
                         return LoadResult.Error(error)
                     }
                     .getOrThrow()
-                val page = pageList.subList(pageRange.first - currentIndex, pageRange.last - currentIndex + 1)
+                    .drop((pageRange.first - currentIndex).coerceAtLeast(minimumValue = 0))
+                    .take(params.loadSize)
                 val prevKey = (pageKey - 1).takeIf { key -> key >= 0 }
                 val nextKey = (pageKey + 1).takeIf { key -> key < ceil(items / params.loadSize.toDouble()).toInt() }
+                val itemsBefore = params.loadSize * pageKey
                 CoreLogger.d(
                     tag = LogTag.PAGING,
-                    message = "load (key=$pageKey, items=${page.size}) from flow (items=${pageList.size}) nextKey=$nextKey prevKey=$prevKey"
+                    message = """
+                        load (key=$pageKey, items=${pageList.size})
+                        nextKey=$nextKey prevKey=$prevKey range=$pageRange itemsBefore=$itemsBefore
+                    """.trimIndent()
                 )
                 LoadResult.Page(
-                    data = processPage?.invoke(page) ?: page,
+                    data = processPage?.invoke(pageList) ?: pageList,
                     prevKey = prevKey,
                     nextKey = nextKey,
-                ).also {
-                    val rangeDirection = rangeDirection(items, currentIndex, observablePageSize, pageRange)
-                    if (rangeDirection != RangeDirection.CURRENT) {
-                        invalidate()
-                    }
-                }
-            } catch (e: Throwable) {
-                CoreLogger.d(LogTag.PAGING, e, "load (key=$pageKey) from flow failed with ${e.cause ?: e}")
+                    itemsBefore = itemsBefore,
+                )
+            } catch (e: CancellationException) {
+                CoreLogger.d(LogTag.PAGING, e, "load (key=$pageKey) from flow failed due to CancellationException")
                 LoadResult.Invalid()
+            } catch (e: Throwable) {
+                val error = e.cause ?: e
+                CoreLogger.d(LogTag.PAGING, e, "load (key=$pageKey) from flow failed with $error")
+                LoadResult.Error(error)
             }
         }
 
-        private fun rangeFromPage(pageIndex: Int, pageSize: Int, itemsCount: Int): IntRange =
-            IntRange(pageIndex * pageSize, minOf(((pageIndex + 1) * pageSize) - 1, itemsCount - 1))
-
-        private fun rangeDirection(itemsCount: Int, fromIndex: Int, observablePageSize: Int, pageRange: IntRange): RangeDirection {
-            val hasPrevious = fromIndex > 0
-            val hasNext = fromIndex + observablePageSize < itemsCount
-            val pageSize = pageRange.last - pageRange.first + 1
-            return when {
-                !hasPrevious && !hasNext -> RangeDirection.CURRENT
-                hasPrevious && pageRange.first - pageSize <= fromIndex -> RangeDirection.PREVIOUS
-                hasNext && pageRange.last + pageSize >= fromIndex + observablePageSize -> RangeDirection.NEXT
-                else -> RangeDirection.CURRENT
-            }
-        }
+        private fun rangeFromPage(pageIndex: Int, pageSize: Int, itemsCount: Int): IntRange = takeIf { itemsCount > 0 }
+            ?.let {
+                IntRange(
+                    minOf(pageIndex * pageSize, itemsCount - 1),
+                    minOf(((pageIndex + 1) * pageSize) - 1, itemsCount - 1),
+                )
+            } ?: IntRange(0, 0)
 
         private fun findIndexForRange(pageRange: IntRange, observablePageSize: Int, itemsCount: Int): Int = when {
             itemsCount <= observablePageSize -> 0
@@ -217,8 +239,8 @@ fun <T : Any> ((fromIndex: Int, count: Int) -> Flow<Result<List<T>>>).asPagingSo
         }
     }
 
-private enum class RangeDirection {
-    CURRENT,
-    PREVIOUS,
-    NEXT,
+private val PagingSource.LoadParams<Int>.type: String get() = when(this) {
+    is PagingSource.LoadParams.Refresh -> "REFRESH"
+    is PagingSource.LoadParams.Append -> "APPEND"
+    is PagingSource.LoadParams.Prepend -> "PREPEND"
 }

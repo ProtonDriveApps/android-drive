@@ -176,6 +176,7 @@ val PREVIEW_USER = User(
     displayName = "Adam Smith",
     currency = "€",
     credit = 0,
+    createdAtUtc = 0,
     usedSpace = 242_221_056L,
     maxSpace = 2_147_483_648L,
     maxUpload = 0,
@@ -184,5 +185,6 @@ val PREVIEW_USER = User(
     services = 0,
     subscribed = 0,
     delinquent = null,
+    recovery = null,
     keys = emptyList(),
 )

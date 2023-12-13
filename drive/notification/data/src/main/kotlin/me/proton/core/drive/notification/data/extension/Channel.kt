@@ -26,14 +26,28 @@ import me.proton.core.drive.i18n.R as I18N
 
 fun Channel.buildNotificationChannelCompat(appContext: Context, groupId: String?): NotificationChannelCompat {
     val (name, description) = when (type) {
+        Channel.Type.BACKGROUND -> appContext.getString(I18N.string.notification_channel_background_title) to
+                appContext.getString(I18N.string.notification_channel_background_description)
         Channel.Type.TRANSFER -> appContext.getString(I18N.string.notification_channel_transfer_title) to
                 appContext.getString(I18N.string.notification_channel_transfer_description)
         Channel.Type.WARNING -> appContext.getString(I18N.string.notification_channel_warning_title) to
                 appContext.getString(I18N.string.notification_channel_warning_description)
     }
+    val importance = when(type){
+        Channel.Type.BACKGROUND -> NotificationManagerCompat.IMPORTANCE_MIN
+        Channel.Type.TRANSFER -> NotificationManagerCompat.IMPORTANCE_DEFAULT
+        Channel.Type.WARNING -> NotificationManagerCompat.IMPORTANCE_DEFAULT
+    }
+    val showBadge = when(type){
+        Channel.Type.BACKGROUND -> false
+        Channel.Type.TRANSFER -> true
+        Channel.Type.WARNING -> true
+    }
     return NotificationChannelCompat.Builder(id, NotificationManagerCompat.IMPORTANCE_DEFAULT)
         .setName(name)
         .setDescription(description)
+        .setImportance(importance)
+        .setShowBadge(showBadge)
         .setGroup(groupId)
         .build()
 }

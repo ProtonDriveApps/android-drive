@@ -18,7 +18,8 @@
 package me.proton.core.drive.shareurl.crypto.domain.usecase
 
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface CopyPublicUrl {
-    suspend operator fun invoke(linkId: LinkId): Result<Unit>
+    suspend operator fun invoke(volumeId: VolumeId, linkId: LinkId): Result<Unit>
 }

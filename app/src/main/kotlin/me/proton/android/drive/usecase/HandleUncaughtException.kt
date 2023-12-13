@@ -21,10 +21,10 @@ package me.proton.android.drive.usecase
 import android.database.sqlite.SQLiteDiskIOException
 import android.database.sqlite.SQLiteFullException
 import kotlinx.coroutines.runBlocking
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.usecase.ClearCacheFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
-import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
 import java.io.IOException
 import javax.inject.Inject
 
@@ -37,7 +37,7 @@ class HandleUncaughtException @Inject constructor(
     operator fun invoke(error: Throwable): Result<Boolean> = coRunCatching {
         val isNoSpaceLeftOnDevice = getInternalStorageInfo().getOrThrow().available.value == 0L
         if (isNoSpaceLeftOnDevice) runBlocking {
-            announceEvent(NotificationEvent.NoSpaceLeftOnDevice)
+            announceEvent(Event.NoSpaceLeftOnDevice)
             clearCacheFolder()
         }
         when (error) {

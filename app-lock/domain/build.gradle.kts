@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.android.drive.lock.domain"
+}
+
 driveModule(
     hilt = true,
     serialization = true,

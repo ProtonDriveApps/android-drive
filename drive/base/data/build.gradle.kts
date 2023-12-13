@@ -19,6 +19,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.base.data"
+}
+
 driveModule(
     hilt = true,
     workManager = true,
@@ -26,10 +30,9 @@ driveModule(
     i18n = true,
 ) {
     api(project(":drive:base:domain"))
-    api(libs.core.account) // for database which depends on Core's UserId
+    api(libs.core.account.data)
     api(libs.core.data)
-    api(libs.core.network)
-    implementation(project(":drive:base:presentation"))
+    api(libs.core.network.data)
     implementation(libs.androidx.dataStore.core)
     implementation(libs.androidx.dataStore.preferences)
     implementation(libs.androidx.exif)

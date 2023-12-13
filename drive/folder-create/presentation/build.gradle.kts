@@ -19,11 +19,16 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.folder.create.presentation"
+}
+
 driveModule(
     hilt = true,
     compose = true,
     i18n = true,
 ) {
+    implementation(project(":drive:base:data"))
     api(project(":drive:base:presentation"))
     api(project(":drive:folder-create:domain"))
     api(libs.core.presentation.compose)

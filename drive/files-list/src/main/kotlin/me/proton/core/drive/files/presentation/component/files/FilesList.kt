@@ -45,7 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.paging.compose.items
+import androidx.paging.compose.itemKey
 import me.proton.core.compose.component.DeferredCircularProgressIndicator
 import me.proton.core.compose.component.ErrorPadding
 import me.proton.core.compose.component.ProtonErrorMessage
@@ -225,10 +225,12 @@ fun LazyListScope.FilesListContent(
 ) {
     when (driveLinks) {
         is LazyColumnItems.PagingItems -> items(
-            items = driveLinks.value,
-            key = { driveLink -> driveLink.id.id },
-        ) { driveLink ->
-            driveLink?.let { onItemsIndexed(driveLink) }
+            count = driveLinks.value.itemCount,
+            key = driveLinks.value.itemKey { driveLink -> driveLink.id.id },
+        ) { index ->
+            driveLinks.value[index]?.let { driveLink ->
+                onItemsIndexed(driveLink)
+            }
         }
         is LazyColumnItems.ListItems -> items(
             items = driveLinks.value,

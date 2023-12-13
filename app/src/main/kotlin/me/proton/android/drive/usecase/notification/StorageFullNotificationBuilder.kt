@@ -24,7 +24,7 @@ import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.android.drive.extension.deepLinkBaseUrl
 import me.proton.android.drive.ui.navigation.Screen
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
@@ -34,8 +34,8 @@ class StorageFullNotificationBuilder @Inject constructor(
     private val commonBuilder: CommonNotificationBuilder,
     private val contentIntent: CreateContentPendingIntent,
 ) {
-    operator fun invoke(notificationId: NotificationId.User, notificationEvent: NotificationEvent.StorageFull) =
-        commonBuilder(notificationId, notificationEvent)
+    operator fun invoke(notificationId: NotificationId.User, event: Event.StorageFull) =
+        commonBuilder(notificationId, event)
             .setContentTitle(appContext.getString(I18N.string.notification_content_title_storage_full))
             .setContentIntent(notificationId)
 

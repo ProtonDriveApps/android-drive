@@ -30,4 +30,5 @@ fun UploadBlock.toUploadBlockEntity(uploadFileLinkId: Long) =
         hash = hashSha256,
         uploadToken = token,
         url = url,
+        type = type,
     )

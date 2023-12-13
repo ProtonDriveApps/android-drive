@@ -57,6 +57,20 @@ interface LinkDao {
     )
     fun hasLinkEntity(userId: UserId, shareId: String, linkId: String): Flow<Boolean>
 
+    @Query(
+        """
+            SELECT LinkEntity.*, LinkFilePropertiesEntity.*, LinkFolderPropertiesEntity.* 
+            FROM $LINK_WITH_PROPERTIES_ENTITY 
+                JOIN ShareEntity 
+                ON LinkEntity.user_id = ShareEntity.user_id AND
+                    LinkEntity.share_id = ShareEntity.id
+            WHERE ShareEntity.user_id = :userId AND 
+                ShareEntity.volume_id = :volumeId AND
+                LinkEntity.id = :linkId 
+        """
+    )
+    suspend fun getLinks(userId: UserId, volumeId: String, linkId: String): List<LinkWithPropertiesEntity>
+
     @Update
     suspend fun update(vararg linkEntities: LinkEntity): Int
 

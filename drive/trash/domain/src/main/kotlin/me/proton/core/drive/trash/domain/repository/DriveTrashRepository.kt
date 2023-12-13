@@ -19,17 +19,20 @@
 package me.proton.core.drive.trash.domain.repository
 
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface DriveTrashRepository {
 
     suspend fun fetchTrashContent(
-        shareId: ShareId,
-        page: Int,
+        userId: UserId,
+        volumeId: VolumeId,
+        pageIndex: Int,
         pageSize: Int,
     ): Result<Pair<List<Link>, SaveAction>>
 
@@ -49,6 +52,4 @@ interface DriveTrashRepository {
         shareId: ShareId,
         links: List<LinkId>,
     ): Map<LinkId, DataResult<Unit>>
-
-    suspend fun refreshTrashContent(shareId: ShareId)
 }

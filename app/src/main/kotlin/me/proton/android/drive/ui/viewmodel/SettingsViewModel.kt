@@ -32,7 +32,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.extension.getDefaultMessage
@@ -41,10 +44,13 @@ import me.proton.android.drive.lock.domain.usecase.GetAutoLockDuration
 import me.proton.android.drive.lock.domain.usecase.HasEnableAppLockTimestamp
 import me.proton.android.drive.settings.DebugSettings
 import me.proton.android.drive.usecase.SendDebugLog
+import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.ClearCacheFolder
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.usecase.IsFeatureFlagEnabled
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.settings.presentation.component.DebugSettingsStateAndEvent
 import me.proton.core.drive.settings.presentation.event.DebugSettingsViewEvent
@@ -56,6 +62,7 @@ import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
 import me.proton.drive.android.settings.domain.usecase.UpdateThemeStyle
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.minutes
 import me.proton.core.drive.base.domain.extension.combine as baseCombine
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -75,21 +82,93 @@ class SettingsViewModel @Inject constructor(
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
     private val sendDebugLog: SendDebugLog,
+    backupManager: BackupManager,
+    private val isFeatureFlagEnabled: IsFeatureFlagEnabled,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage: SharedFlow<String> = _errorMessage
 
-    val viewState: Flow<SettingsViewState> = baseCombine(
-        debugSettings.baseUrlFlow,
+    private val debugSettingsViewEvent = object : DebugSettingsViewEvent {
+        override val onUpdateHost = { host: String -> debugSettings.host = host }
+        override val onUpdateBaseUrl = { baseUrl: String -> debugSettings.baseUrl = baseUrl }
+        override val onUpdateAppVersionHeader = { header: String -> debugSettings.appVersionHeader = header }
+        override val onToggleUseExceptionMessage = { useExceptionMessage: Boolean ->
+            debugSettings.useExceptionMessage = useExceptionMessage
+        }
+        override val onToggleLogToFileEnabled = { logToFileEnabled: Boolean ->
+            debugSettings.logToFileInDebugEnabled = logToFileEnabled
+        }
+        override val onToggleAllowBackupDeletedFile = { logToFileEnabled: Boolean ->
+            debugSettings.allowBackupDeletedFilesEnabled = logToFileEnabled
+        }
+        override val sendDebugLog = { context: Context ->
+            viewModelScope.launch {
+                sendDebugLog(context)
+                    .onFailure { error ->
+                        broadcastMessages(
+                            userId = userId,
+                            message = error.getDefaultMessage(
+                                context = context,
+                                useExceptionMessage = true,
+                            ),
+                            type = BroadcastMessage.Type.ERROR,
+                        )
+                    }
+            }
+            Unit
+        }
+        override val onReset = { debugSettings.reset(viewModelScope) }
+        override val onUpdateFeatureFlagFreshDuration = { featureFlagFreshDuration: String ->
+            debugSettings.featureFlagFreshDuration = (featureFlagFreshDuration.toLong()).minutes
+        }
+        override val onToggleUseVerifier = { useVerifier: Boolean ->
+            debugSettings.useVerifier = useVerifier
+        }
+    }
+
+    private val debugSettingsFlow = baseCombine(debugSettings.baseUrlFlow,
         debugSettings.hostFlow,
         debugSettings.appVersionHeaderFlow,
         debugSettings.useExceptionMessageFlow,
         debugSettings.logToFileEnabledFlow,
+        debugSettings.allowBackupDeletedFilesEnabledFlow,
+        debugSettings.featureFlagFreshDurationFlow,
+        debugSettings.useVerifierFlow,
+    ) {
+            baseUrl,
+            host,
+            appVersionHeader,
+            useExceptionMessage,
+            logToFileEnabled,
+            allowBackupDeletedFilesEnabled,
+            featureFlagFreshDuration,
+            useVerifier
+        ->
+        getDebugSettings(
+            host = host,
+            baseUrl = baseUrl,
+            appVersionHeader = appVersionHeader,
+            useExceptionMessage = useExceptionMessage,
+            logToFileEnabled = logToFileEnabled,
+            allowBackupDeletedFilesEnabled = allowBackupDeletedFilesEnabled,
+            featureFlagFreshDuration = featureFlagFreshDuration.toString(),
+            useVerifier = useVerifier,
+        )
+    }
+
+    private val isPhotosFeatureEnabled: StateFlow<Boolean> = flow {
+        emit(configurationProvider.photosFeatureFlag && isFeatureFlagEnabled(FeatureFlagId.drivePhotos(userId)))
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, configurationProvider.photosFeatureFlag)
+
+    val viewState: Flow<SettingsViewState> = baseCombine(
+        debugSettingsFlow,
         getThemeStyle(userId),
         appLockManager.enabled,
         getAutoLockDuration(),
-    ) { baseUrl, host, appVersionHeader, useExceptionMessage, logToFileEnabled, themeStyle, enabled, autoLockDuration ->
+        backupManager.isEnabled(userId),
+        isPhotosFeatureEnabled,
+    ) {  debugSettings, themeStyle, enabled, autoLockDuration, isBackupEnabled, isPhotosFeatureEnabled ->
         SettingsViewState(
             navigationIcon = CorePresentation.drawable.ic_arrow_back,
             appNameResId = I18N.string.app_name,
@@ -106,16 +185,12 @@ class SettingsViewModel @Inject constructor(
             ),
             availableStyles = enumValues<ThemeStyle>().map { style -> style.resId },
             currentStyle = themeStyle.resId,
-            debugSettingsStateAndEvent = getDebugSettings(
-                host = host,
-                baseUrl = baseUrl,
-                appVersionHeader = appVersionHeader,
-                useExceptionMessage = useExceptionMessage,
-                logToFileEnabled = logToFileEnabled,
-            ),
+            debugSettingsStateAndEvent = debugSettings,
             appAccessSubtitleResId = getAppAccessSubtitleResId(enabled),
             isAutoLockDurationsVisible = enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O,
             autoLockDuration = autoLockDuration,
+            isPhotosSettingsVisible = isPhotosFeatureEnabled,
+            photosBackupSubtitleResId = getPhotosBackupSubtitleResId(isBackupEnabled),
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
@@ -123,6 +198,7 @@ class SettingsViewModel @Inject constructor(
         navigateBack: () -> Unit,
         navigateToAppAccess: () -> Unit,
         navigateToAutoLockDurations: () -> Unit,
+        navigateToPhotosBackup: () -> Unit,
     ) = SettingsViewEvent(
         navigateBack = navigateBack,
         onLinkClicked = { link ->
@@ -159,7 +235,10 @@ class SettingsViewModel @Inject constructor(
                         )
                     }
             }
-        }
+        },
+        onPhotosBackup = {
+            navigateToPhotosBackup()
+        },
     )
 
     private suspend fun getAppAccessSubtitleResId(isAppLockEnabled: Boolean): Int = when {
@@ -167,6 +246,13 @@ class SettingsViewModel @Inject constructor(
         hasEnableAppLockTimestamp().not() -> I18N.string.app_lock_option_never_set
         else -> I18N.string.app_lock_option_none
     }
+
+    private fun getPhotosBackupSubtitleResId(isBackupEnabled: Boolean): Int =
+        if (isBackupEnabled) {
+            I18N.string.common_on
+        } else {
+            I18N.string.common_off
+        }
 
     private fun onExternalLinkClicked(link: LegalLink.External) {
         try {
@@ -187,46 +273,27 @@ class SettingsViewModel @Inject constructor(
         appVersionHeader: String,
         useExceptionMessage: Boolean,
         logToFileEnabled: Boolean,
+        allowBackupDeletedFilesEnabled: Boolean,
+        featureFlagFreshDuration: String,
+        useVerifier: Boolean,
     ): DebugSettingsStateAndEvent? =
-        BuildConfig.DEBUG
+        (BuildConfig.DEBUG || BuildConfig.FLAVOR == BuildConfig.FLAVOR_ALPHA)
             .takeIf { isDebug -> isDebug }
             ?.let {
                 DebugSettingsStateAndEvent(
                     viewState = DebugSettingsViewState(
-                        host, baseUrl, appVersionHeader, useExceptionMessage, logToFileEnabled,
+                        host = host,
+                        baseUrl = baseUrl,
+                        appVersionHeader = appVersionHeader,
+                        useExceptionMessage = useExceptionMessage,
+                        logToFileEnabled = logToFileEnabled,
+                        allowBackupDeletedFiles = allowBackupDeletedFilesEnabled,
+                        featureFlagFreshDuration = featureFlagFreshDuration,
+                        useVerifier = useVerifier,
                     ),
                     viewEvent = debugSettingsViewEvent
                 )
             }
-
-    private val debugSettingsViewEvent = object : DebugSettingsViewEvent {
-        override val onUpdateHost = { host: String -> debugSettings.host = host }
-        override val onUpdateBaseUrl = { baseUrl: String -> debugSettings.baseUrl = baseUrl }
-        override val onUpdateAppVersionHeader = { header: String -> debugSettings.appVersionHeader = header }
-        override val onToggleUseExceptionMessage = { useExceptionMessage: Boolean ->
-            debugSettings.useExceptionMessage = useExceptionMessage
-        }
-        override val onToggleLogToFileEnabled = { logToFileEnabled: Boolean ->
-            debugSettings.logToFileInDebugEnabled = logToFileEnabled
-        }
-        override val sendDebugLog = { context: Context ->
-            viewModelScope.launch {
-                sendDebugLog(context)
-                    .onFailure { error ->
-                        broadcastMessages(
-                            userId = userId,
-                            message = error.getDefaultMessage(
-                                context = context,
-                                useExceptionMessage = true,
-                            ),
-                            type = BroadcastMessage.Type.ERROR,
-                        )
-                    }
-            }
-            Unit
-        }
-        override val onReset = { debugSettings.reset(viewModelScope) }
-    }
 
     private val ThemeStyle.resId: Int get() = when (this) {
         ThemeStyle.SYSTEM -> I18N.string.settings_theme_system_default

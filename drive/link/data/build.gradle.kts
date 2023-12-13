@@ -22,6 +22,10 @@ plugins {
     kotlin("kapt")
 }
 
+android {
+    namespace = "me.proton.core.drive.link.data"
+}
+
 driveModule(
     hilt = true,
     serialization = true,
@@ -31,7 +35,7 @@ driveModule(
     api(project(":drive:link:domain"))
     implementation(project(":drive:share:data"))
     implementation(libs.retrofit)
-    androidTestImplementation(libs.bundles.core)
     androidTestImplementation(project(":drive:db"))
     kaptAndroidTest(libs.androidx.room.compiler)
+    testImplementation(project(":drive:db-test"))
 }

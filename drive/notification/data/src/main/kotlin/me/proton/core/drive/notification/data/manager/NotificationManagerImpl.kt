@@ -27,12 +27,12 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.data.extension.buildNotificationChannelCompat
 import me.proton.core.drive.notification.data.extension.id
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
 import me.proton.core.drive.notification.domain.entity.Channel
 import me.proton.core.drive.notification.domain.entity.NotificationId
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.manager.NotificationManager
 import javax.inject.Inject
 
@@ -42,12 +42,12 @@ class NotificationManagerImpl @Inject constructor(
     @ApplicationContext private val appContext: Context,
 ) : NotificationManager {
 
-    override fun notify(notificationId: NotificationId, notificationEvents: List<NotificationEvent>) =
+    override fun notify(notificationId: NotificationId, events: List<Event>) =
         runIfPermissionGranted {
             notificationManagerCompat.notify(
                 notificationId.tag,
                 notificationId.id,
-                notificationBuilderProvider.get(notificationId, notificationEvents).build(),
+                notificationBuilderProvider.get(notificationId, events).build(),
             )
         }
 

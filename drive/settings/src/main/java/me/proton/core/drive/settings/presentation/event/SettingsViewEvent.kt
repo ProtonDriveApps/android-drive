@@ -27,4 +27,5 @@ data class SettingsViewEvent(
     val onAppAccess: () -> Unit,
     val onAutoLockDurations: () -> Unit,
     val onClearLocalCache: () -> Unit,
+    val onPhotosBackup: () -> Unit,
 )

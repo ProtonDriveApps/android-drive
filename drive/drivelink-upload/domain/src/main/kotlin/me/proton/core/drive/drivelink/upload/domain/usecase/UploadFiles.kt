@@ -20,7 +20,10 @@ package me.proton.core.drive.drivelink.upload.domain.usecase
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.upload.domain.entity.Notifications
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.linkupload.domain.entity.CacheOption
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.usecase.CreateUploadBulk
 import me.proton.core.drive.upload.domain.exception.NotEnoughSpaceException
 import me.proton.core.drive.upload.domain.manager.UploadWorkManager
@@ -39,9 +42,17 @@ class UploadFiles @Inject constructor(
     suspend operator fun invoke(
         folder: DriveLink.Folder,
         uriStrings: List<String>,
+        notifications: Notifications = Notifications.TurnedOn,
+        cacheOption: CacheOption = CacheOption.ALL,
         shouldDeleteSource: Boolean = false,
-        silently: Boolean = false,
+        background: Boolean = false,
+        networkTypeProviderType: NetworkTypeProviderType = NetworkTypeProviderType.DEFAULT,
+        shouldBroadcastErrorMessage: Boolean = true,
+        priority: Long,
+        tags : List<String> = emptyList(),
     ): Result<Unit> = coRunCatching {
+        if (uriStrings.isEmpty()) return@coRunCatching
+
         validateUploadLimit(folder.userId, uriStrings.size)
             .onFailure {
                 if (shouldDeleteSource) {
@@ -51,20 +62,42 @@ class UploadFiles @Inject constructor(
                 }
             }
             .getOrThrow()
-        when {
-            uriStrings.isEmpty() -> return@coRunCatching
-            uriStrings.size <= configurationProvider.bulkUploadThreshold -> processInForeground(
-                folder, uriStrings, shouldDeleteSource
+        if (background || uriStrings.size > configurationProvider.bulkUploadThreshold) {
+            processInBackground(
+                folder = folder,
+                uriStrings = uriStrings,
+                notifications = notifications,
+                cacheOption = cacheOption,
+                networkTypeProviderType = networkTypeProviderType,
+                priority = priority,
+                shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
+                shouldDeleteSource = shouldDeleteSource,
+                tags = tags,
             )
-            else -> processInBackground(folder, uriStrings, shouldDeleteSource, silently)
+        } else {
+            processInForeground(
+                folder = folder,
+                uriStrings = uriStrings,
+                notifications = notifications,
+                cacheOption = cacheOption,
+                networkTypeProviderType = networkTypeProviderType,
+                priority = priority,
+                shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
+                shouldDeleteSource = shouldDeleteSource,
+            )
         }
     }
 
     private suspend fun processInForeground(
         folder: DriveLink.Folder,
         uriStrings: List<String>,
+        notifications: Notifications,
+        cacheOption: CacheOption,
+        networkTypeProviderType: NetworkTypeProviderType,
+        priority: Long,
+        shouldBroadcastErrorMessage: Boolean,
         shouldDeleteSource: Boolean = false,
-    )=
+    ) =
         if (!hasEnoughAvailableSpace(folder.userId, uriStrings)) {
             if (shouldDeleteSource) {
                 uriStrings.forEach { uriString ->
@@ -73,26 +106,38 @@ class UploadFiles @Inject constructor(
             }
             throw NotEnoughSpaceException()
         } else {
-            with (uploadWorkManager) {
+            with(uploadWorkManager) {
                 upload(
                     userId = folder.userId,
                     volumeId = folder.volumeId,
                     folderId = folder.id,
                     uriStrings = uriStrings,
                     shouldDeleteSource = shouldDeleteSource,
+                    networkTypeProviderType = networkTypeProviderType,
+                    shouldAnnounceEvent = notifications.system.announceUpload,
+                    cacheOption = cacheOption,
+                    priority = priority,
+                    shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
                 )
-                broadcastFilesBeingUploaded(
-                    folder = folder,
-                    uriStrings = uriStrings,
-                )
+                if (notifications.inApp.showFilesBeingUploaded) {
+                    broadcastFilesBeingUploaded(
+                        folder = folder,
+                        uriStrings = uriStrings,
+                    )
+                }
             }
         }
 
     private suspend fun processInBackground(
         folder: DriveLink.Folder,
         uriStrings: List<String>,
+        notifications: Notifications,
+        cacheOption: CacheOption,
+        networkTypeProviderType: NetworkTypeProviderType,
+        priority: Long,
         shouldDeleteSource: Boolean = false,
-        silently: Boolean = false,
+        shouldBroadcastErrorMessage: Boolean,
+        tags : List<String> = emptyList(),
     ) =
         uploadWorkManager.upload(
             createUploadBulk(
@@ -100,8 +145,15 @@ class UploadFiles @Inject constructor(
                 parent = folder,
                 uriStrings = uriStrings,
                 shouldDeleteSource = shouldDeleteSource,
+                networkTypeProviderType = networkTypeProviderType,
+                shouldAnnounceEvent = notifications.system.announceUpload,
+                cacheOption = cacheOption,
+                priority = priority,
+                shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
             ).getOrThrow(),
             folder,
-            silently = silently,
+            showPreparingUpload = notifications.inApp.showPreparingUpload,
+            showFilesBeingUploaded = notifications.inApp.showFilesBeingUploaded,
+            tags = tags,
         )
 }

@@ -37,11 +37,12 @@ class AggregatedUriResolver @Inject constructor(
     override suspend fun getSize(uriString: String): Bytes? =
         uriResolvers.forScheme(uriString).getSize(uriString)
 
-    override suspend fun getMimeType(uriString: String): String? =
-        uriResolvers.forScheme(uriString).getMimeType(uriString)
+    override suspend fun getMimeType(uriString: String): String =
+        uriResolvers.forScheme(uriString).getMimeType(uriString) ?: UriResolver.DEFAULT_MIME_TYPE
 
     override suspend fun getLastModified(uriString: String): TimestampMs? =
         uriResolvers.forScheme(uriString).getLastModified(uriString)
+            ?.takeIf { date -> date.value >= 0 } // avoiding negative value
 
     private fun Map<String, UriResolver>.forScheme(uriString: String): UriResolver =
         get(Uri.parse(uriString).scheme)

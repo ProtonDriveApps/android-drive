@@ -19,21 +19,28 @@ package me.proton.core.drive.link.data.repository
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.asSuccessOrNullAsError
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.data.api.LinkApiDataSource
 import me.proton.core.drive.link.data.db.LinkDatabase
 import me.proton.core.drive.link.data.db.entity.LinkWithProperties
+import me.proton.core.drive.link.data.extension.toCheckAvailableHashes
 import me.proton.core.drive.link.data.extension.toLink
 import me.proton.core.drive.link.data.extension.toLinkWithProperties
+import me.proton.core.drive.link.domain.entity.CheckAvailableHashes
+import me.proton.core.drive.link.domain.entity.CheckAvailableHashesInfo
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.MoveInfo
 import me.proton.core.drive.link.domain.entity.RenameInfo
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.repository.LinkRepository
+import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -58,6 +65,14 @@ class LinkRepositoryImpl @Inject constructor(
             api.getLink(linkId)
                 .toLinkWithProperties(linkId.shareId)
         )
+    }
+
+    override suspend fun checkAvailableHashes(
+        linkId: LinkId,
+        checkAvailableHashesInfo: CheckAvailableHashesInfo,
+    ): Result<CheckAvailableHashes> = coRunCatching {
+        api.checkAvailableHashes(linkId, checkAvailableHashesInfo)
+            .toCheckAvailableHashes(linkId)
     }
 
     override suspend fun moveLink(
@@ -87,4 +102,45 @@ class LinkRepositoryImpl @Inject constructor(
                 }
         }
     }
+
+    override suspend fun fetchLinks(shareId: ShareId, linkIds: Set<String>) = coRunCatching {
+        api
+            .getLinks(shareId, linkIds)
+            .let { response ->
+                response.parents.map { linkDto -> linkDto.toLinkWithProperties(shareId).toLink() } to
+                        response.links.map { linkDto -> linkDto.toLinkWithProperties(shareId).toLink() }
+            }
+    }
+
+    override suspend fun fetchAndStoreLinks(shareId: ShareId, linkIds: Set<String>) {
+        db.linkDao.insertOrUpdate(
+            *api
+                .getLinks(shareId, linkIds)
+                .links
+                .map { linkDto -> linkDto.toLinkWithProperties(shareId) }
+                .toTypedArray()
+        )
+    }
+
+    override suspend fun fetchAndStoreLinks(linkIds: Set<LinkId>) {
+        linkIds
+            .groupBy { linkId -> linkId.shareId }
+            .forEach { (shareId, links) ->
+                fetchAndStoreLinks(shareId, links.map { link -> link.id }.toSet())
+            }
+    }
+
+    override suspend fun getCachedLinks(userId: UserId, shareId: String, linkIds: Set<String>): Set<Link> =
+        db.linkDao.getFlow(userId, shareId, linkIds.toList()).first().map { linkWithProperties ->
+            linkWithProperties.toLinkWithProperties().toLink()
+        }.toSet()
+
+    override suspend fun findLinkIds(
+        userId: UserId,
+        volumeId: VolumeId,
+        linkId: String,
+    ): List<LinkId> =
+        db.linkDao.getLinks(userId, volumeId.id, linkId).map { linkFilePropertiesEntity ->
+            linkFilePropertiesEntity.toLinkWithProperties().linkId
+        }
 }

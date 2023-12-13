@@ -18,20 +18,20 @@
 package me.proton.core.drive.notification.data.extension
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.domain.entity.Channel
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 
-val NotificationEvent.tag: String get() = "NOTIFICATION_TAG_${this.javaClass.simpleName.uppercase()}"
+val Event.tag: String get() = "NOTIFICATION_TAG_${this.javaClass.simpleName.uppercase()}"
 
-fun NotificationEvent.createNotificationId(userId: UserId, type: Channel.Type = Channel.Type.TRANSFER) =
+fun Event.createNotificationId(userId: UserId, type: Channel.Type = Channel.Type.TRANSFER) =
     NotificationId.User(
         channel = Channel.User(userId, type),
         tag = tag,
         id = 1,
     )
 
-fun NotificationEvent.createNotificationId(type: Channel.Type = Channel.Type.WARNING) =
+fun Event.createNotificationId(type: Channel.Type = Channel.Type.WARNING) =
     NotificationId.App(
         channel = Channel.App(type),
         tag = tag,

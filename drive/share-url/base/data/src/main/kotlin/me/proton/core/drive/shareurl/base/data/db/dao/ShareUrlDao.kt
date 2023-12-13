@@ -35,9 +35,9 @@ abstract class ShareUrlDao : BaseDao<ShareUrlEntity>() {
     abstract suspend fun hasShareUrlEntityForLink(linkId: String): Boolean
 
     @Query(
-        "SELECT EXISTS(SELECT * FROM ShareUrlEntity WHERE user_id = :userId AND share_id = :shareId)"
+        "SELECT EXISTS(SELECT * FROM ShareUrlEntity WHERE user_id = :userId AND volume_id = :volumeId)"
     )
-    abstract suspend fun hasShareUrlEntities(userId: UserId, shareId: String): Boolean
+    abstract suspend fun hasShareUrlEntities(userId: UserId, volumeId: String): Boolean
 
     @Query(QUERY_GET_SHARE_URL)
     abstract fun getFlow(userId: UserId, shareUrlId: String): Flow<ShareUrlEntity?>
@@ -50,15 +50,11 @@ abstract class ShareUrlDao : BaseDao<ShareUrlEntity>() {
 
     @Transaction
     @Query(QUERY_GET_ALL_SHARE_URLS)
-    abstract fun getAllFlow(userId: UserId, shareId: String): Flow<List<ShareUrlEntity>>
+    abstract fun getAllFlow(userId: UserId, volumeId: String): Flow<List<ShareUrlEntity>>
 
     @Transaction
     @Query(QUERY_GET_ALL_SHARE_URLS)
-    abstract suspend fun getAll(userId: UserId, shareId: String): List<ShareUrlEntity>
-
-    @Transaction
-    @Query("""$QUERY_GET_ALL_SHARE_URLS AND LinkEntity.id = :linkId""")
-    abstract suspend fun getAll(userId: UserId, shareId: String, linkId: String): List<ShareUrlEntity>
+    abstract suspend fun getAll(userId: UserId, volumeId: String): List<ShareUrlEntity>
 
     @Transaction
     @Query(
@@ -73,8 +69,8 @@ abstract class ShareUrlDao : BaseDao<ShareUrlEntity>() {
     )
     abstract suspend fun deleteAllForLinksInShare(userId: UserId, shareId: String)
 
-    @Query("""DELETE FROM ShareUrlEntity WHERE user_id = :userId AND share_id = :shareId""")
-    abstract suspend fun deleteAll(userId: UserId, shareId: String)
+    @Query("""DELETE FROM ShareUrlEntity WHERE user_id = :userId AND volume_id = :volumeId""")
+    abstract suspend fun deleteAll(userId: UserId, volumeId: String)
 
 
     @Query("""DELETE FROM ShareUrlEntity WHERE id = :id""")
@@ -99,7 +95,7 @@ abstract class ShareUrlDao : BaseDao<ShareUrlEntity>() {
                 SELECT ShareUrlEntity.* FROM ShareUrlEntity 
                     LEFT JOIN ShareEntity ON ShareEntity.id = ShareUrlEntity.share_id
                     LEFT JOIN LinkEntity ON LinkEntity.id = ShareEntity.link_id
-                WHERE LinkEntity.user_id = :userId AND LinkEntity.share_id = :shareId
+                WHERE LinkEntity.user_id = :userId AND ShareUrlEntity.volume_id = :volumeId
             """
     }
 }

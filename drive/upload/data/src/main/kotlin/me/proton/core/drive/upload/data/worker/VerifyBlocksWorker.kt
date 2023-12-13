@@ -26,6 +26,7 @@ import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -40,6 +41,7 @@ import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.log
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.retryOrAbort
+import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.VerifyBlocks
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -55,6 +57,7 @@ class VerifyBlocksWorker @AssistedInject constructor(
     workManager: WorkManager,
     broadcastMessages: BroadcastMessages,
     getUploadFileLink: GetUploadFileLink,
+    uploadErrorManager: UploadErrorManager,
     private val verifyBlocks: VerifyBlocks,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
@@ -66,6 +69,7 @@ class VerifyBlocksWorker @AssistedInject constructor(
     workManager = workManager,
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
+    uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
     canRun = canRun,
     run = run,
@@ -73,6 +77,7 @@ class VerifyBlocksWorker @AssistedInject constructor(
 ) {
 
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
+        uploadFileLink.logWorkState()
         verifyBlocks(uploadFileLink)
             .onFailure { error ->
                 val retryable = error.isRetryable
@@ -82,7 +87,7 @@ class VerifyBlocksWorker @AssistedInject constructor(
                     message = """
                         Verify blocks failed with "${error.message}" retryable $retryable, 
                         max retries reached ${!canRetry}
-                        """.trimIndent()
+                    """.trimIndent().replace("\n", " ")
                 )
                 return retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
             }
@@ -109,7 +114,7 @@ class VerifyBlocksWorker @AssistedInject constructor(
                 )
                 .setBackoffCriteria(
                     BackoffPolicy.EXPONENTIAL,
-                    OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                    WorkRequest.MIN_BACKOFF_MILLIS,
                     TimeUnit.MILLISECONDS
                 )
                 .addTags(listOf(userId.id) + tags)

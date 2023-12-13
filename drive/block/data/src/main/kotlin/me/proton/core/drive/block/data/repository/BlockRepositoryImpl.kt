@@ -37,19 +37,19 @@ class BlockRepositoryImpl @Inject constructor(
         fileId: FileId,
         revisionId: String,
         uploadBlocks: List<UploadBlock>,
-        uploadThumbnail: UploadBlock?,
+        uploadThumbnails: List<UploadBlock>,
     ): Result<UploadBlocksUrl> = coRunCatching {
-        if (uploadThumbnail != null || uploadBlocks.isNotEmpty()) {
+        if (uploadThumbnails.isNotEmpty() || uploadBlocks.isNotEmpty()) {
             api.uploadBlock(
                 userId = userId,
                 addressId = addressId,
                 fileId = fileId,
                 revisionId = revisionId,
                 uploadBlocks = uploadBlocks,
-                uploadThumbnail = uploadThumbnail,
+                uploadThumbnails = uploadThumbnails,
             ).toUploadBlocksUrl()
         } else {
-            UploadBlocksUrl(emptyList(), null)
+            UploadBlocksUrl(emptyList(), emptyList())
         }
     }
 }

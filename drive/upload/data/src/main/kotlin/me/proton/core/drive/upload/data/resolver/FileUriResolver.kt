@@ -56,7 +56,7 @@ class FileUriResolver(
 
     override suspend fun getMimeType(uriString: String): String? = coRunCatching(coroutineContext) {
         getName(uriString)?.let { name ->
-            mimeTypeProvider.getMimeTypeFromExtension(name.extensionOrEmpty) ?: DEFAULT_MIME_TYPE
+            mimeTypeProvider.getMimeTypeFromExtension(name.extensionOrEmpty) ?: UriResolver.DEFAULT_MIME_TYPE
         }
     }.getOrNull()
 
@@ -67,8 +67,4 @@ class FileUriResolver(
     }.getOrNull()
 
     private fun uri(uriString: String?): Uri? = Uri.parse(uriString).also { uri -> require(uri.scheme == SCHEME_FILE) }
-
-    companion object {
-        private const val DEFAULT_MIME_TYPE = "application/octet-stream"
-    }
 }

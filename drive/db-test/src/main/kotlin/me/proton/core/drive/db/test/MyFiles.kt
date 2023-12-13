@@ -25,11 +25,18 @@ import me.proton.core.drive.share.domain.entity.ShareId
 suspend fun DriveDatabaseRule.myDrive(block: suspend FolderContext.() -> Unit): FolderId {
     return db.myDrive(block)
 }
+
 suspend fun DriveDatabase.myDrive(block: suspend FolderContext.() -> Unit): FolderId {
     user {
-        share {
-            folder(id = "root", block = block)
+        volume {
+            mainShare(block)
         }
     }
-    return FolderId(ShareId(userId, shareId), "root")
+    return FolderId(ShareId(userId, shareId), "root-id")
+}
+
+suspend fun VolumeContext.mainShare(block: suspend FolderContext.() -> Unit) {
+    share {
+        folder(id = share.linkId, block = block)
+    }
 }

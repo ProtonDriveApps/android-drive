@@ -26,7 +26,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.options.Option
+import me.proton.android.drive.ui.options.OptionsFilter
+import me.proton.android.drive.ui.options.filter
 import me.proton.android.drive.ui.options.filterAll
+import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.documentsprovider.domain.usecase.ExportToDownload
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -50,6 +53,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
     val selectedDriveLinks: Flow<List<DriveLink>> = getSelectedDriveLinks(selectionId)
     // Send -> ACTION_SEND_MULTIPLE (mime type aggregation) - we need to update sendfiledialog with multiple file download
     //   Mime type aggregation - all the same use that one, all same prefix use prefix/*  else use */*
+    private val optionsFilter = savedStateHandle.require<OptionsFilter>(OPTIONS_FILTER)
     fun entries(
         driveLinks: List<DriveLink>,
         runAction: (suspend () -> Unit) -> Unit,
@@ -58,6 +62,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
     ): List<OptionEntry<Unit>> =
         options
             .filterAll(driveLinks)
+            .filter(optionsFilter)
             .map { option ->
                 when (option) {
                     is Option.Trash -> option.build(
@@ -66,7 +71,6 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
                             viewModelScope.launch {
                                 sendToTrash(userId, driveLinks)
                                 deselectLinks(selectionId)
-                                dismiss()
                             }
                         },
                     )
@@ -84,7 +88,6 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
                                     driveLinks.filterIsInstance<DriveLink.File>().map { driveLink -> driveLink.id }
                                 )
                                 deselectLinks(selectionId)
-                                dismiss()
                             }
                         }
                     )
@@ -99,6 +102,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
 
     companion object {
         const val KEY_SELECTION_ID = "selectionId"
+        const val OPTIONS_FILTER = "optionsFilter"
 
         private val options = setOfNotNull(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Option.Download else null,

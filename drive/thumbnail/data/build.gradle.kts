@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.thumbnail.data"
+}
+
 driveModule(
     hilt = true,
     serialization = true,
@@ -29,7 +33,6 @@ driveModule(
     api(project(":drive:thumbnail:domain"))
     api(libs.androidx.core.core.ktx)
 
-    implementation(project(":drive:base:presentation"))
     implementation(libs.androidx.exif)
     implementation(libs.coil.svg)
     implementation(libs.retrofit)

@@ -24,6 +24,7 @@ import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
 import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
 import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.SELECTION_PREFIX
+import me.proton.core.drive.link.selection.data.db.dao.LinkSelectionDao
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 
@@ -32,7 +33,10 @@ interface DriveLinkSelectionDao : DriveLinkDao {
 
     @Query(
         """
-        SELECT ${DriveLinkDao.DRIVE_LINK_SELECT} FROM ${DriveLinkDao.DRIVE_LINK_ENTITY} 
+        SELECT ${DriveLinkDao.DRIVE_LINK_SELECT},
+            LinkSelectionEntity.${Column.SELECTION_ID} AS ${SELECTION_PREFIX}_${Column.SELECTION_ID}
+        FROM ${DriveLinkDao.DRIVE_LINK_ENTITY}
+          ${LinkSelectionDao.LINK_JOIN_STATEMENT}
         WHERE ${SELECTION_PREFIX}_${Column.SELECTION_ID} = :selectionId AND ${LinkTrashDao.NOT_TRASHED_CONDITION}
         """
     )

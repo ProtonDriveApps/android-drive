@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.upload.domain.usecase
 
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.file.create.domain.usecase.CreateNewFile
@@ -24,6 +25,7 @@ import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.usecase.UpdateLinkFileInfo
+import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadFileCreationTime
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import javax.inject.Inject
 
@@ -31,11 +33,13 @@ class CreateNewFile @Inject constructor(
     private val createNewFile: CreateNewFile,
     private val getLink: GetLink,
     private val updateUploadState: UpdateUploadState,
+    private val updateUploadFileCreationTime: UpdateUploadFileCreationTime,
     private val updateLinkFileInfo: UpdateLinkFileInfo,
 ) {
     suspend operator fun invoke(uploadFileLink: UploadFileLink): Result<UploadFileLink> = coRunCatching {
         with (uploadFileLink) {
             updateUploadState(id, UploadState.CREATING_NEW_FILE).getOrThrow()
+            updateUploadFileCreationTime(id, TimestampS()).getOrThrow()
             try {
                 val (newFileInfo, fileInfo) = createNewFile(
                     parentFolder = getLink(parentLinkId).toResult().getOrThrow(),

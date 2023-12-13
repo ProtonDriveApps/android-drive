@@ -20,9 +20,14 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.notification.domain"
+}
+
 driveModule(
     hilt = true,
     serialization = true,
 ) {
     api(project(":drive:base"))
+    api(project(":drive:announce-event"))
 }

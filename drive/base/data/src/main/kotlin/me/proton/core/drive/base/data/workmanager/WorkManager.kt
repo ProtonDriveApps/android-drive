@@ -23,7 +23,7 @@ import androidx.work.WorkRequest
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
 
-fun <B : WorkRequest.Builder<*, *>, W : WorkRequest> WorkRequest.Builder<B, W>.addTags(
+fun <B : WorkRequest.Builder<B, *>, W : WorkRequest> WorkRequest.Builder<B, W>.addTags(
     tags: Collection<String>,
 ) = apply {
     tags.forEach { tag ->

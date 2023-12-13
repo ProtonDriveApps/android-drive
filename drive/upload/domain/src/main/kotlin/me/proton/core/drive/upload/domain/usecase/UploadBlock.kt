@@ -41,6 +41,9 @@ class UploadBlock @Inject constructor(
         with(uploadFileLink) {
             updateUploadState(id, UploadState.UPLOADING_BLOCKS).getOrThrow()
             try {
+                require(uploadBlock.file.length() != 0L) {
+                    "Cannot send empty block: ${uploadBlock.file.name} for file link: ${uploadFileLink.id}"
+                }
                 fileRepository.uploadFile(
                     userId = userId,
                     uploadUrl = url,

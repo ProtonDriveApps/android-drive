@@ -31,6 +31,7 @@ import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrl
 import me.proton.core.drive.shareurl.base.domain.usecase.GetShareUrl
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class GetOrCreateShareUrl @Inject constructor(
@@ -39,13 +40,15 @@ class GetOrCreateShareUrl @Inject constructor(
     private val createShareUrl: CreateShareUrl,
     private val getLink: GetLink,
 ) {
-    suspend operator fun invoke(share: Share, linkId: LinkId): Flow<DataResult<ShareUrl>> = flow {
+    suspend operator fun invoke(volumeId: VolumeId, share: Share, linkId: LinkId): Flow<DataResult<ShareUrl>> = flow {
         val shareUrl = getLink(linkId).toResult().getOrNull()?.shareUrlId?.let { shareUrlId ->
             getShareUrl(
+                volumeId = volumeId,
                 shareUrlId = shareUrlId,
                 refresh = flowOf { true },
             ).toResult().getOrNull()
         } ?: createShareUrl(
+            volumeId = volumeId,
             shareId = share.id,
             shareUrlInfo = createShareUrlInfo(share)
                 .toDataResult()
@@ -63,6 +66,7 @@ class GetOrCreateShareUrl @Inject constructor(
             .getOrThrow()
         emitAll(
             getShareUrl(
+                volumeId = volumeId,
                 shareUrlId = shareUrl.id,
                 refresh = flowOf { false },
             )

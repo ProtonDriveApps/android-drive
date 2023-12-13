@@ -18,9 +18,11 @@
 
 package me.proton.android.drive.ui.robot
 
+import me.proton.android.drive.ui.extension.assertDownloadState
 import me.proton.android.drive.ui.extension.assertHasItemType
 import me.proton.android.drive.ui.extension.assertHasLayoutType
 import me.proton.android.drive.ui.extension.assertHasThumbnail
+import me.proton.android.drive.ui.extension.doesNotExist
 import me.proton.android.drive.ui.extension.withItemType
 import me.proton.android.drive.ui.extension.withLayoutType
 import me.proton.android.drive.ui.extension.withLinkName
@@ -28,15 +30,21 @@ import me.proton.core.drive.files.presentation.component.FilesTestTag
 import me.proton.core.drive.files.presentation.component.files.FilesListHeaderTestTag
 import me.proton.core.drive.files.presentation.extension.ItemType
 import me.proton.core.drive.files.presentation.extension.LayoutType
+import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
+import me.proton.core.drive.i18n.R
 import me.proton.test.fusion.Fusion.node
 
+@Suppress("TooManyFunctions")
 interface LinksRobot : Robot {
 
     private val content get() = node.withTag(FilesTestTag.content)
 
     private val layoutSwitcher get() = node.withTag(FilesListHeaderTestTag.layoutSwitcher)
 
-    private fun linkWithName(name: String) = node.withLinkName(name)
+    private val selectedOptionsButton get() = node
+        .withContentDescription(R.string.content_description_selected_options)
+
+    fun linkWithName(name: String) = node.withLinkName(name).isClickable()
 
     private fun moreButton(name: String) =
         node.withTag(FilesTestTag.moreButton).hasAncestor(linkWithName(name))
@@ -46,6 +54,10 @@ interface LinksRobot : Robot {
     fun scrollToItemWithName(itemName: String): LinksRobot = apply {
         content.scrollTo(linkWithName(itemName))
     }
+
+    fun clickOptions() =
+        selectedOptionsButton
+            .clickTo(FileFolderOptionsRobot)
 
     fun <T : Robot> clickOnItem(
         name: String,
@@ -65,7 +77,7 @@ interface LinksRobot : Robot {
         clickOnItem(name, LayoutType.List, ItemType.Folder, MoveToFolderRobot)
 
     fun clickMoreOnItem(name: String) =
-        moreButton(name).hasAncestor(linkWithName(name)).clickTo(FileFolderOptionsRobot)
+        moreButton(name).clickTo(FileFolderOptionsRobot)
 
     fun clickOnFile(name: String, layoutType: LayoutType = LayoutType.List) =
         clickOnItem(name, layoutType, ItemType.File, PreviewRobot)
@@ -73,26 +85,27 @@ interface LinksRobot : Robot {
     fun longClickOnItem(name: String) =
         linkWithName(name).longClickTo(FilesTabRobot)
 
-
     fun itemIsDisplayed(
         name: String,
         layoutType: LayoutType? = null,
         itemType: ItemType? = null,
-        hasThumbnail: Boolean? = null
+        hasThumbnail: Boolean? = null,
+        downloadState: SemanticsDownloadState? = null
     ) {
-        node
-            .withLinkName(name)
+        linkWithName(name)
             .await {
                 layoutType?.let { assertHasLayoutType(it) }
                 itemType?.let { assertHasItemType(it) }
                 hasThumbnail?.let { assertHasThumbnail(it) }
+                downloadState?.let { assertDownloadState(it) }
                 assertIsDisplayed()
             }
     }
 
-    fun itemWithTextDoesNotExist(text: String) {
-        node.withText(text).hasAncestor(linkWithName(text)).await { assertDoesNotExist() }
+    fun itemIsNotDisplayed(name: String) {
+        linkWithName(name)
+            .await {
+                doesNotExist()
+            }
     }
 }
-
-

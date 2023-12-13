@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.options.Option
+import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.options.filter
 import me.proton.android.drive.usecase.NotifyActivityNotFound
 import me.proton.core.domain.arch.mapSuccessValueOrNull
@@ -71,6 +72,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             new
         }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    private val optionsFilter = savedStateHandle.require<OptionsFilter>(OPTIONS_FILTER)
 
     fun <T : DriveLink> entries(
         driveLink: DriveLink,
@@ -87,6 +89,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     ): List<FileOptionEntry<T>> =
         options
             .filter(driveLink)
+            .filter(optionsFilter)
             .map { option ->
                 @Suppress("UNCHECKED_CAST")
                 when (option) {
@@ -96,7 +99,6 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                     is Option.OfflineToggle -> option.build(runAction) { driveLink ->
                         viewModelScope.launch {
                             toggleOffline(driveLink)
-                            dismiss()
                         }
                     }
                     is Option.Rename -> option.build(runAction, navigateToRename)
@@ -105,7 +107,6 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                         toggleTrash = {
                             viewModelScope.launch {
                                 toggleTrashState(driveLink)
-                                dismiss()
                             }
                         }
                     )
@@ -114,8 +115,9 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                         showCreateDocumentPicker(filename) { handleActivityNotFound() }
                     }
                     is Option.CopySharedLink -> option.build(runAction) { linkId ->
-                        copyPublicUrl(linkId)
-                        dismiss()
+                        viewModelScope.launch {
+                            copyPublicUrl(driveLink.volumeId, linkId)
+                        }
                     }
                     is Option.ShareViaLink -> option.build(runAction, navigateToShareViaLink)
                     is Option.StopSharing -> option.build(runAction, navigateToStopSharing)
@@ -140,6 +142,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     companion object {
         const val KEY_SHARE_ID = "shareId"
         const val KEY_LINK_ID = "linkId"
+        const val OPTIONS_FILTER = "optionsFilter"
 
         private val options = setOf(
             Option.OfflineToggle,
@@ -149,9 +152,9 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             Option.Download,
             Option.Move,
             Option.Rename,
-            Option.Trash,
             Option.Info,
             Option.StopSharing,
+            Option.Trash,
             Option.DeletePermanently,
         )
     }

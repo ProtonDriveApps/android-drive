@@ -53,7 +53,8 @@ fun NullableShare(
     key: String = "",
     passphrase: String = "",
     passphraseSignature: String = "",
-    creationTime: TimestampS? = null
+    creationTime: TimestampS? = null,
+    type: Share.Type = Share.Type.STANDARD,
 ) = Share(
     id = id,
     volumeId = volumeId,
@@ -64,5 +65,6 @@ fun NullableShare(
     key = key,
     passphrase = passphrase,
     passphraseSignature = passphraseSignature,
-    creationTime = creationTime
+    creationTime = creationTime,
+    type = type,
 )

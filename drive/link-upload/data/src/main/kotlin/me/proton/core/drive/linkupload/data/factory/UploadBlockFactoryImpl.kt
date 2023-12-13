@@ -20,6 +20,7 @@ package me.proton.core.drive.linkupload.data.factory
 import android.net.Uri
 import android.util.Base64
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.factory.UploadBlockFactory
 import java.io.File
@@ -34,6 +35,7 @@ class UploadBlockFactoryImpl @Inject constructor() : UploadBlockFactory {
         rawSize: Bytes,
         size: Bytes,
         token: String,
+        type: Block.Type,
         verifierToken: String?,
     ): UploadBlock =
         UploadBlock(
@@ -45,6 +47,7 @@ class UploadBlockFactoryImpl @Inject constructor() : UploadBlockFactory {
             size = size,
             token = token,
             file = block,
+            type = type,
             verifierToken = verifierToken,
         )
 
@@ -56,6 +59,7 @@ class UploadBlockFactoryImpl @Inject constructor() : UploadBlockFactory {
         rawSize: Bytes,
         size: Bytes,
         token: String,
+        type: Block.Type,
         verifierToken: String?,
     ): UploadBlock =
         UploadBlock(
@@ -67,6 +71,7 @@ class UploadBlockFactoryImpl @Inject constructor() : UploadBlockFactory {
             size = size,
             token = token,
             file = File(requireNotNull(Uri.parse(url)?.path)),
+            type = type,
             verifierToken = verifierToken,
         )
 }

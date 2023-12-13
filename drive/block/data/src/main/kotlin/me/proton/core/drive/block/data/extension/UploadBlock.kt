@@ -18,6 +18,8 @@
 package me.proton.core.drive.block.data.extension
 
 import me.proton.core.drive.block.data.api.entity.UploadBlockDto
+import me.proton.core.drive.block.data.api.entity.UploadThumbnailDto
+import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.block.data.api.entity.VerifierDto
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 
@@ -28,4 +30,15 @@ fun UploadBlock.toUploadBlockDto() =
         hash = hashSha256,
         encSignature = encSignature,
         verifier = verifierToken?.let { token -> VerifierDto(token) },
+    )
+
+fun UploadBlock.toUploadThumbnailDto() =
+    UploadThumbnailDto(
+        size = size.value,
+        type = when (type) {
+            Block.Type.THUMBNAIL_DEFAULT -> "1"
+            Block.Type.THUMBNAIL_PHOTO -> "2"
+            else -> error("Unexpected block type: $type")
+        },
+        hash = hashSha256,
     )

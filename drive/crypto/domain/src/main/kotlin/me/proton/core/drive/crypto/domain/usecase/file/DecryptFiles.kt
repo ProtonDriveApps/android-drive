@@ -35,6 +35,7 @@ class DecryptFiles @Inject constructor(
         checkSignature: Boolean,
         input: List<File>,
         output: List<File>,
+        processDecryptedFile: ((DecryptedFile) -> Unit)? = null,
     ): Result<List<DecryptedFile>> = coRunCatching {
         useSessionKey(contentKey = contentKey, checkSignature = checkSignature) { sessionKey ->
             input.mapIndexed { index, file ->
@@ -43,7 +44,11 @@ class DecryptFiles @Inject constructor(
                     status = VerificationStatus.Unknown,
                     filename = "",
                     lastModifiedEpochSeconds = -1,
-                )
+                ).also { decryptedFile ->
+                    coRunCatching {
+                        processDecryptedFile?.invoke(decryptedFile)
+                    }
+                }
             }
         }.getOrThrow()
     }
@@ -52,6 +57,7 @@ class DecryptFiles @Inject constructor(
         contentKey: ContentKey,
         input: List<File>,
         output: List<File>,
+        processDecryptedFile: ((DecryptedFile) -> Unit)? = null,
     ): Result<List<DecryptedFile>> = coRunCatching {
         useSessionKey(contentKey = contentKey) { sessionKey ->
             input.mapIndexed { index, file ->
@@ -60,7 +66,11 @@ class DecryptFiles @Inject constructor(
                     status = VerificationStatus.Unknown,
                     filename = "",
                     lastModifiedEpochSeconds = -1,
-                )
+                ).also { decryptedFile ->
+                    coRunCatching {
+                        processDecryptedFile?.invoke(decryptedFile)
+                    }
+                }
             }
         }.getOrThrow()
     }

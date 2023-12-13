@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.eventmanager.base.domain"
+}
+
 driveModule {
     api(project(":drive:base:domain"))
     api(project(":drive:share:domain"))

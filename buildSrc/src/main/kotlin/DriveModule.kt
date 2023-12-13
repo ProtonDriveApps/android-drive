@@ -95,7 +95,7 @@ fun Project.driveModule(
         }
 
         (this as ExtensionAware).extensions.configure<KotlinJvmOptions>("kotlinOptions") {
-            jvmTarget = JavaVersion.VERSION_11.toString()
+            jvmTarget = JavaVersion.VERSION_17.toString()
         }
     }
 
@@ -124,7 +124,7 @@ fun Project.driveModule(
         }
 
         (this as ExtensionAware).extensions.configure<KotlinJvmOptions>("kotlinOptions") {
-            jvmTarget = JavaVersion.VERSION_11.toString()
+            jvmTarget = JavaVersion.VERSION_17.toString()
         }
     }
 
@@ -144,8 +144,8 @@ fun Project.driveModule(
         }
 
         compileOptions {
-            sourceCompatibility = JavaVersion.VERSION_11
-            targetCompatibility = JavaVersion.VERSION_11
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
         }
 
         if (compose) {
@@ -156,8 +156,11 @@ fun Project.driveModule(
 
         packagingOptions {
             resources.excludes.add("META-INF/licenses/**")
+            resources.excludes.add("META-INF/LICENSE*")
             resources.excludes.add("META-INF/AL2.0")
             resources.excludes.add("META-INF/LGPL2.1")
+            resources.excludes.add("licenses/*.txt")
+            resources.excludes.add("licenses/*.xml")
         }
 
         testOptions {

@@ -34,7 +34,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.Navigator
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.DialogNavigator
-import com.google.accompanist.navigation.animation.AnimatedComposeNavigator
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 
 @ExperimentalAnimationApi
@@ -59,7 +58,6 @@ fun createNavController(context: Context) =
         navigatorProvider.addNavigator(ComposeNavigator())
         navigatorProvider.addNavigator(DialogNavigator())
         navigatorProvider.addNavigator(ModalBottomSheetNavigator())
-        navigatorProvider.addNavigator(AnimatedComposeNavigator())
     }
 
 /**

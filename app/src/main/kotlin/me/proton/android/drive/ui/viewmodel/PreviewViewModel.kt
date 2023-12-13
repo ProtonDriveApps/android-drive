@@ -18,7 +18,6 @@
 
 package me.proton.android.drive.ui.viewmodel
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
@@ -46,6 +45,7 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.getDefaultMessage
@@ -55,18 +55,25 @@ import me.proton.android.drive.ui.navigation.Screen
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.transformSuccess
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.entity.Attributes
+import me.proton.core.drive.base.domain.entity.CryptoProperty
+import me.proton.core.drive.base.domain.entity.Permissions
+import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.entity.toFileTypeCategory
+import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.function.pagedList
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.base.presentation.entity.toFileTypeCategory
-import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentUri
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.getThumbnailId
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinksCount
@@ -75,6 +82,7 @@ import me.proton.core.drive.drivelink.list.domain.usecase.GetDecryptedDriveLinks
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetDecryptedOfflineDriveLinks
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetOfflineDriveLinksCount
 import me.proton.core.drive.drivelink.sorting.domain.usecase.SortDriveLinks
+import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.files.preview.presentation.component.PreviewComposable
 import me.proton.core.drive.files.preview.presentation.component.event.PreviewViewEvent
 import me.proton.core.drive.files.preview.presentation.component.state.ContentState
@@ -83,16 +91,23 @@ import me.proton.core.drive.files.preview.presentation.component.state.PreviewVi
 import me.proton.core.drive.files.preview.presentation.component.toComposable
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.rootFolderId
+import me.proton.core.drive.photo.domain.entity.PhotoListing
+import me.proton.core.drive.photo.domain.repository.PhotoRepository
+import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
+import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVO
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
-@SuppressLint("StaticFieldLeak")
+@Suppress("StaticFieldLeak", "LongParameterList")
 @OptIn(ExperimentalCoroutinesApi::class)
 class PreviewViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
@@ -106,6 +121,8 @@ class PreviewViewModel @Inject constructor(
     getOfflineDriveLinksCount: GetOfflineDriveLinksCount,
     getDriveLinksCount: GetDriveLinksCount,
     getSorting: GetSorting,
+    getPhotoShare: GetPhotoShare,
+    photoRepository: PhotoRepository,
     sortDriveLinks: SortDriveLinks,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
@@ -143,6 +160,14 @@ class PreviewViewModel @Inject constructor(
                 getOfflineDriveLinksCount = getOfflineDriveLinksCount,
                 coroutineScope = viewModelScope,
             )
+            PagerType.PHOTO -> PhotoContentProvider(
+                userId = userId,
+                getDecryptedDriveLink = getDecryptedDriveLink,
+                getPhotoShare = getPhotoShare,
+                photoRepository = photoRepository,
+                configurationProvider = configurationProvider,
+                coroutineScope = viewModelScope,
+            )
         }
 
     private val contentStatesCache = mutableMapOf<FileId, Flow<ContentState>>()
@@ -155,7 +180,7 @@ class PreviewViewModel @Inject constructor(
 
     private val _previewEffect = MutableSharedFlow<PreviewEffect>()
     private val isFullscreen = MutableStateFlow(false)
-    private val renderFailed = MutableStateFlow<Throwable?>(null)
+    private val renderFailed = MutableStateFlow<Pair<Throwable, Any>?>(null)
     val initialViewState = PreviewViewState(
         navigationIconResId = CorePresentation.drawable.ic_arrow_back,
         isFullscreen = isFullscreen,
@@ -166,7 +191,9 @@ class PreviewViewModel @Inject constructor(
     val viewState: Flow<PreviewViewState> = driveLinks.filterNotNull().transformLatest { driveLinks ->
         val indexOfFirst = driveLinks.indexOfFirst { link -> link.id == fileId }
         val contentStates =
-            driveLinks.associateBy({ link -> link.id }) { link -> link.getContentStateFlow() }
+            driveLinks
+                .filter { driveLink -> driveLink.activeRevisionId.isNotEmpty() }
+                .associateBy({ link -> link.id }) { link -> link.getContentStateFlow() }
         val (previewContentState, index) = when {
             driveLinks.isEmpty() || indexOfFirst == -1 -> PreviewContentState.Empty to 0
             else -> PreviewContentState.Content to indexOfFirst
@@ -181,7 +208,7 @@ class PreviewViewModel @Inject constructor(
                     title = link.name,
                     isTitleEncrypted = link.isNameEncrypted,
                     category = category,
-                    contentState = requireNotNull(contentStates[link.id])
+                    contentState = contentStates[link.id] ?: flowOf(ContentState.Decrypting),
                 )
             },
             currentIndex = index,
@@ -200,7 +227,7 @@ class PreviewViewModel @Inject constructor(
         override val onTopAppBarNavigation = { navigateBack() }
         override val onMoreOptions = { navigateToFileOrFolderOptions(fileId) }
         override val onSingleTap = { toggleFullscreen() }
-        override val onRenderFailed = { throwable: Throwable -> renderFailed.value = throwable }
+        override val onRenderFailed = { throwable: Throwable, source: Any -> renderFailed.value = throwable to source }
         override val mediaControllerVisibility = { visible: Boolean ->
             if ((visible && isFullscreen.value) || (!visible && !isFullscreen.value)) {
                 toggleFullscreen()
@@ -238,17 +265,23 @@ class PreviewViewModel @Inject constructor(
 
     private fun getContentState(
         getFileState: GetFile.State,
-        renderFailed: Throwable? = null,
+        renderFailed: Pair<Throwable, Any>? = null,
+        fallback: Map<Any, Any?> = emptyMap(),
     ): ContentState {
-        return renderFailed?.let { throwable ->
-            ContentState.Error.NonRetryable(
+        val uri = getUri(fileId)
+        return renderFailed?.takeIf { (_, source) ->
+            fallback[source] == source || source == uri
+        }?.let { (throwable, source) ->
+            fallback[source]?.let { fallbackSource ->
+                getFileState.toContentState(this, fallbackSource)
+            } ?: ContentState.Error.NonRetryable(
                 message = throwable.getDefaultMessage(
                     context = appContext,
                     useExceptionMessage = configurationProvider.useExceptionMessage,
                 ),
                 messageResId = 0,
             )
-        } ?: getFileState.toContentState(this)
+        } ?: getFileState.toContentState(this, uri)
     }
 
     fun getUri(fileId: FileId) = getDocumentUri(userId, fileId)
@@ -262,11 +295,29 @@ class PreviewViewModel @Inject constructor(
                         getFile(this, trigger.verifySignature),
                         renderFailed,
                     ) { fileState, renderFailed ->
-                        getContentState(fileState, renderFailed)
+                        getContentState(fileState, renderFailed, previewFallbackSources)
                     }
                 }
             }
         }
+
+    private val DriveLink.File.previewFallbackSources: Map<Any, Any?> get() {
+        val uri = getUri(id)
+        val photoThumbnailVO = getThumbnailId(ThumbnailType.PHOTO)?.let { thumbnailVO(ThumbnailType.PHOTO) }
+        val defaultThumbnailVO = getThumbnailId(ThumbnailType.DEFAULT)?.let { thumbnailVO(ThumbnailType.DEFAULT) }
+        return when {
+            photoThumbnailVO == null -> mapOf(uri to null)
+            defaultThumbnailVO == null -> mapOf(
+                uri to photoThumbnailVO,
+                photoThumbnailVO to null,
+            )
+            else -> mapOf(
+                uri to photoThumbnailVO,
+                photoThumbnailVO to defaultThumbnailVO,
+                defaultThumbnailVO to null,
+            )
+        }
+    }
 
     private data class Trigger(
         val fileId: FileId,
@@ -279,11 +330,11 @@ class PreviewViewModel @Inject constructor(
 }
 
 
-fun GetFile.State.toContentState(viewModel: PreviewViewModel): ContentState {
+fun GetFile.State.toContentState(viewModel: PreviewViewModel, source: Any): ContentState {
     return when (this) {
         is GetFile.State.Downloading -> ContentState.Downloading(progress)
         GetFile.State.Decrypting -> ContentState.Decrypting
-        is GetFile.State.Ready -> ContentState.Available(viewModel.getUri(fileId))
+        is GetFile.State.Ready -> ContentState.Available(source)
         GetFile.State.Error.NoConnection,
         is GetFile.State.Error.Downloading -> ContentState.Error.Retryable(
             messageResId = I18N.string.description_file_download_failed,
@@ -448,4 +499,101 @@ class OfflineContentProvider(
             }
         )
     }
+}
+
+class PhotoContentProvider(
+    private val getDecryptedDriveLink: GetDecryptedDriveLink,
+    getPhotoShare: GetPhotoShare,
+    photoRepository: PhotoRepository,
+    userId: UserId,
+    configurationProvider: ConfigurationProvider,
+    coroutineScope: CoroutineScope,
+) : PreviewContentProvider {
+
+    private val photoShare: StateFlow<Share?> = getPhotoShare(userId)
+        .filterSuccessOrError()
+        .mapSuccessValueOrNull()
+        .stateIn(coroutineScope, SharingStarted.Eagerly, null)
+
+    private val photoListings: StateFlow<List<PhotoListing>> = photoShare
+        .filterNotNull()
+        .distinctUntilChanged()
+        .transform { photoShare ->
+            emitAll(
+                photoRepository.getPhotoListingCount(userId, photoShare.volumeId)
+                    .distinctUntilChanged()
+                    .transformLatest {
+                        emit(
+                            pagedList(
+                                pageSize = configurationProvider.dbPageSize,
+                            ) { fromIndex, count ->
+                                photoRepository.getPhotoListings(userId, photoShare.volumeId, fromIndex, count)
+                            }
+                        )
+                    }
+            )
+        }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+
+    override fun getDriveLinks(fileId: FileId): Flow<List<DriveLink.File>> = combine(
+        photoShare.filterNotNull(),
+        getDecryptedDriveLink(fileId).filterSuccessOrError().mapSuccessValueOrNull(),
+        photoListings,
+    ) { photoShare, driveLink, photoListings ->
+        photoListings.map { photoListing ->
+            if (photoListing.linkId == driveLink?.id) {
+                driveLink
+            } else {
+                photoListing.placeholderDriveLink(photoShare)
+            }
+        }
+    }
+
+    private fun PhotoListing.placeholderDriveLink(photoShare: Share): DriveLink.File =
+        DriveLink.File(
+            link = Link.File(
+                id = linkId as FileId,
+                parentId = photoShare.rootFolderId,
+                name = "",
+                size = 0.bytes,
+                lastModified = TimestampS(),
+                mimeType = "",
+                isShared = false,
+                key = "",
+                passphrase = "",
+                passphraseSignature = "",
+                numberOfAccesses = 0,
+                shareUrlExpirationTime = null,
+                uploadedBy = "",
+                isFavorite = false,
+                attributes = Attributes(0),
+                permissions = Permissions(),
+                state = Link.State.ACTIVE,
+                nameSignatureEmail = null,
+                hash = nameHash.orEmpty(),
+                expirationTime = null,
+                nodeKey = "",
+                nodePassphrase = "",
+                nodePassphraseSignature = "",
+                signatureAddress = "",
+                creationTime = TimestampS(),
+                trashedTime = null,
+                hasThumbnail = false,
+                activeRevisionId = "",
+                xAttr = null,
+                shareUrlId = null,
+                contentKeyPacket = "",
+                contentKeyPacketSignature = null,
+                photoCaptureTime = captureTime,
+                photoContentHash = contentHash,
+                mainPhotoLinkId = mainPhotoLinkId,
+            ),
+            volumeId = photoShare.volumeId,
+            isMarkedAsOffline = false,
+            isAnyAncestorMarkedAsOffline = false,
+            downloadState = null,
+            trashState = null,
+            cryptoName = CryptoProperty.Encrypted(""),
+            cryptoXAttr = CryptoProperty.Encrypted(""),
+        )
 }

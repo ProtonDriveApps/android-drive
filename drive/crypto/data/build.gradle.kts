@@ -19,6 +19,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.crypto.data"
+}
+
 driveModule(
     hilt = true,
 ) {

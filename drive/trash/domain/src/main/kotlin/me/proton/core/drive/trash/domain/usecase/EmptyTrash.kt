@@ -23,7 +23,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.share.domain.usecase.GetShares
 import me.proton.core.drive.trash.domain.TrashManager
 import javax.inject.Inject
@@ -32,23 +34,41 @@ import javax.inject.Inject
 class EmptyTrash @Inject constructor(
     private val trashManager: TrashManager,
     private val getShares: GetShares,
+    private val getMainShare: GetMainShare,
 ) {
     @Deprecated(
         message = "This method is deprecated because finding proper share is ambiguous with multiple active volumes",
         replaceWith = ReplaceWith("EmptyTrash(userId: UserId, shareId: ShareId)")
     )
     suspend operator fun invoke(userId: UserId) {
-        getShares(userId)
+        val shareIds = setOfNotNull(
+            getMainShareId(userId),
+            getPhotoShareId(userId)
+        )
+        if (shareIds.isNotEmpty()) {
+            invoke(userId, shareIds)
+        }
+    }
+
+    private suspend fun getMainShareId(userId: UserId): ShareId? =
+        getMainShare(userId)
+            .mapSuccessValueOrNull()
+            .first()
+            ?.id
+
+    private suspend fun getPhotoShareId(userId: UserId): ShareId? =
+        getShares(userId, Share.Type.PHOTO)
             .mapSuccessValueOrNull()
             .filterNotNull()
             .first()
-            .firstOrNull { share -> share.isMain }
-            ?.let { share ->
-                invoke(userId, share.id)
+            .filterNot { share -> share.isLocked }
+            .takeIf { shares -> shares.isNotEmpty() }
+            ?.let { shares ->
+                require(shares.size == 1) { "Multiple photo shares found" }
+                shares.first().id
             }
-    }
 
-    operator fun invoke(userId: UserId, shareId: ShareId) {
-        trashManager.emptyTrash(userId, shareId)
+    operator fun invoke(userId: UserId, shareIds: Set<ShareId>) {
+        trashManager.emptyTrash(userId, shareIds)
     }
 }

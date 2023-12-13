@@ -26,8 +26,8 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import me.proton.core.compose.component.bottomsheet.ModalBottomSheetContentState
-import me.proton.core.compose.component.bottomsheet.rememberModalBottomSheetContentState
+import me.proton.core.drive.base.presentation.component.ModalBottomSheetContentState
+import me.proton.core.drive.base.presentation.component.rememberModalBottomSheetContentState
 
 @Stable
 data class HomeScaffoldState(

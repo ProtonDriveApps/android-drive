@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.drivelink.download.data"
+}
+
 driveModule(
     hilt = true,
     room = true,
@@ -28,7 +32,6 @@ driveModule(
     api(project(":drive:drivelink-download:domain"))
 
     implementation(project(":drive:base:data"))
-    implementation(project(":drive:base:presentation"))
     implementation(project(":drive:drivelink:data"))
     implementation(project(":drive:file:base:domain"))
     implementation(project(":drive:link-node:domain"))

@@ -30,6 +30,7 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.trash.domain.TrashManager
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -58,19 +59,19 @@ class StubbedTrashManager @Inject constructor(
         linkIds: List<LinkId>
     ): DataResult<String> = manager.add("delete", userId, shareId, linkIds)
 
-    override fun emptyTrash(userId: UserId, shareId: ShareId) {
-        manager.add("emptyTrash", userId, shareId)
+    override fun emptyTrash(userId: UserId, shareIds: Set<ShareId>) {
+        manager.add("emptyTrash", userId, *shareIds.toTypedArray())
     }
 
     override fun getEmptyTrashState(
         userId: UserId,
-        shareId: ShareId
+        volumeId: VolumeId,
     ): Flow<TrashManager.EmptyTrashState> {
         return manager.works.flatMapLatest { works ->
             if (works.isNotEmpty()) {
                 flowOf(TrashManager.EmptyTrashState.TRASHING)
             } else {
-                repository.hasTrashContent(shareId).map { hasTrashContent ->
+                repository.hasTrashContent(userId, volumeId).map { hasTrashContent ->
                     if (hasTrashContent) {
                         TrashManager.EmptyTrashState.INACTIVE
                     } else {

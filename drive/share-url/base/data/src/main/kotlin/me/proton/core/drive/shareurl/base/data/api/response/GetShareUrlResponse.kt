@@ -21,7 +21,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.data.api.Dto.CODE
 import me.proton.core.drive.base.data.api.Dto.SHARE_URL_DEPRECATED
-import me.proton.core.drive.shareurl.base.data.api.entity.ShareUrlDto
+import me.proton.core.drive.volume.data.api.entity.ShareUrlDto
 
 @Serializable
 data class GetShareUrlResponse(

@@ -20,6 +20,7 @@ package me.proton.core.drive.upload.data.di
 import android.content.ContentResolver.SCHEME_CONTENT
 import android.content.ContentResolver.SCHEME_FILE
 import android.content.Context
+import dagger.MapKey
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,7 +29,10 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoMap
 import dagger.multibindings.StringKey
 import me.proton.core.drive.base.domain.provider.MimeTypeProvider
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
+import me.proton.core.drive.upload.data.provider.BackupNetworkTypeProvider
+import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
 import me.proton.core.drive.upload.data.resolver.ContentUriResolver
 import me.proton.core.drive.upload.data.resolver.FileUriResolver
 import me.proton.core.drive.upload.data.usecase.RemoveUploadFileImpl
@@ -46,11 +50,29 @@ object UploadModule {
 
     @Provides @IntoMap
     @StringKey(SCHEME_CONTENT)
-    fun provideContentUriResolver(@ApplicationContext appContext: Context): UriResolver =
-        ContentUriResolver(appContext)
+    fun provideContentUriResolver(
+        @ApplicationContext appContext: Context,
+        mimeTypeProvider: MimeTypeProvider,
+    ): UriResolver =
+        ContentUriResolver(appContext, mimeTypeProvider)
 
     @Provides
     @Singleton
     fun provideRemoveUploadFile(linkUploadRepository: LinkUploadRepository): RemoveUploadFile =
         RemoveUploadFileImpl(linkUploadRepository)
+
+    @MapKey
+    annotation class NetworkTypeProviderKey(val value: NetworkTypeProviderType)
+
+    @Provides @IntoMap
+    @Singleton
+    @NetworkTypeProviderKey(NetworkTypeProviderType.DEFAULT)
+    fun provideDefaultNetworkTypeProvider(): NetworkTypeProvider =
+        object : NetworkTypeProvider {}
+
+    @Provides @IntoMap
+    @Singleton
+    @NetworkTypeProviderKey(NetworkTypeProviderType.BACKUP)
+    fun provideBackupNetworkTypeProvider(): NetworkTypeProvider =
+        BackupNetworkTypeProvider()
 }

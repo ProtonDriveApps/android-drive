@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.android.drive.settings"
+}
+
 driveModule(
     hilt = true,
     room = true,

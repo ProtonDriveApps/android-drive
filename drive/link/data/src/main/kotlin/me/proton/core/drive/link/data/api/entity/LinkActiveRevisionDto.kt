@@ -22,10 +22,12 @@ import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.data.api.Dto.CREATE_TIME
 import me.proton.core.drive.base.data.api.Dto.ID
 import me.proton.core.drive.base.data.api.Dto.MANIFEST_SIGNATURE
+import me.proton.core.drive.base.data.api.Dto.PHOTO
 import me.proton.core.drive.base.data.api.Dto.SIGNATURE_ADDRESS
 import me.proton.core.drive.base.data.api.Dto.SIZE
 import me.proton.core.drive.base.data.api.Dto.STATE
 import me.proton.core.drive.base.data.api.Dto.THUMBNAIL
+import me.proton.core.drive.base.data.api.Dto.THUMBNAILS
 
 @Serializable
 data class LinkActiveRevisionDto(
@@ -43,4 +45,8 @@ data class LinkActiveRevisionDto(
     val state: Long,
     @SerialName(THUMBNAIL)
     val thumbnail: Long,
+    @SerialName(PHOTO)
+    val photo: LinkPhotoDto? = null,
+    @SerialName(THUMBNAILS)
+    val thumbnails: List<LinkThumbnailDto>,
 )

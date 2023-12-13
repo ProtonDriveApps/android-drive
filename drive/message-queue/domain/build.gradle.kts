@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.messagequeue.domain"
+}
+
 driveModule {
     implementation(libs.androidx.core.annotation)
 }

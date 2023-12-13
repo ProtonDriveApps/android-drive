@@ -25,29 +25,44 @@ import androidx.room.PrimaryKey
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
+import me.proton.core.drive.base.data.db.Column.CACHE_OPTION
 import me.proton.core.drive.base.data.db.Column.CONTENT_KEY_PACKET
 import me.proton.core.drive.base.data.db.Column.CONTENT_KEY_PACKET_SIGNATURE
+import me.proton.core.drive.base.data.db.Column.CREATION_TIME
 import me.proton.core.drive.base.data.db.Column.DIGESTS
+import me.proton.core.drive.base.data.db.Column.DURATION
 import me.proton.core.drive.base.data.db.Column.ID
 import me.proton.core.drive.base.data.db.Column.LAST_MODIFIED
+import me.proton.core.drive.base.data.db.Column.LATITUDE
 import me.proton.core.drive.base.data.db.Column.LINK_ID
+import me.proton.core.drive.base.data.db.Column.LONGITUDE
 import me.proton.core.drive.base.data.db.Column.MANIFEST_SIGNATURE
 import me.proton.core.drive.base.data.db.Column.MEDIA_RESOLUTION_HEIGHT
 import me.proton.core.drive.base.data.db.Column.MEDIA_RESOLUTION_WIDTH
 import me.proton.core.drive.base.data.db.Column.MIME_TYPE
+import me.proton.core.drive.base.data.db.Column.MODEL
 import me.proton.core.drive.base.data.db.Column.NAME
+import me.proton.core.drive.base.data.db.Column.NETWORK_TYPE_PROVIDER_TYPE
 import me.proton.core.drive.base.data.db.Column.NODE_KEY
 import me.proton.core.drive.base.data.db.Column.NODE_PASSPHRASE
 import me.proton.core.drive.base.data.db.Column.NODE_PASSPHRASE_SIGNATURE
+import me.proton.core.drive.base.data.db.Column.ORIENTATION
 import me.proton.core.drive.base.data.db.Column.PARENT_ID
+import me.proton.core.drive.base.data.db.Column.PRIORITY
 import me.proton.core.drive.base.data.db.Column.REVISION_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
+import me.proton.core.drive.base.data.db.Column.SHOULD_ANNOUNCE_EVENT
+import me.proton.core.drive.base.data.db.Column.SHOULD_BROADCAST_ERROR_MESSAGE
 import me.proton.core.drive.base.data.db.Column.SHOULD_DELETE_SOURCE_URI
 import me.proton.core.drive.base.data.db.Column.SIZE
 import me.proton.core.drive.base.data.db.Column.STATE
+import me.proton.core.drive.base.data.db.Column.SUBJECT_AREA
+import me.proton.core.drive.base.data.db.Column.UPLOAD_CREATION_TIME
 import me.proton.core.drive.base.data.db.Column.URI
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.base.data.db.Column.VOLUME_ID
+import me.proton.core.drive.linkupload.domain.entity.CacheOption
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 
 @Entity(
@@ -116,4 +131,30 @@ data class LinkUploadEntity(
     val mediaResolutionHeight: Long? = null,
     @ColumnInfo(name = DIGESTS, defaultValue = "NULL")
     val digests: String? = null,
+    @ColumnInfo(name = NETWORK_TYPE_PROVIDER_TYPE, defaultValue = "DEFAULT")
+    val networkTypeProviderType: NetworkTypeProviderType = NetworkTypeProviderType.DEFAULT,
+    @ColumnInfo(name = DURATION, defaultValue = "NULL")
+    val mediaDuration: Long? = null,
+    @ColumnInfo(name = LATITUDE, defaultValue = "NULL")
+    val latitude: Double? = null,
+    @ColumnInfo(name = LONGITUDE, defaultValue = "NULL")
+    val longitude: Double? = null,
+    @ColumnInfo(name = CREATION_TIME, defaultValue = "NULL")
+    val cameraCreationDateTime: Long? = null,
+    @ColumnInfo(name = MODEL, defaultValue = "NULL")
+    val cameraModel: String? = null,
+    @ColumnInfo(name = ORIENTATION, defaultValue = "NULL")
+    val cameraOrientation: Long? = null,
+    @ColumnInfo(name = SUBJECT_AREA, defaultValue = "NULL")
+    val cameraSubjectArea: String? = null,
+    @ColumnInfo(name = SHOULD_ANNOUNCE_EVENT, defaultValue = "true")
+    val shouldAnnounceEvent: Boolean = true,
+    @ColumnInfo(name = CACHE_OPTION, defaultValue = "ALL")
+    val cacheOption: CacheOption = CacheOption.ALL,
+    @ColumnInfo(name = PRIORITY, defaultValue = "${Long.MAX_VALUE}")
+    val priority: Long = Long.MAX_VALUE,
+    @ColumnInfo(name = UPLOAD_CREATION_TIME)
+    val uploadCreationDateTime: Long? = null,
+    @ColumnInfo(name = SHOULD_BROADCAST_ERROR_MESSAGE, defaultValue = "true")
+    val shouldBroadcastErrorMessage: Boolean = true,
 )

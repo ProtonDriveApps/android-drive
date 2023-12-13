@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<resources>
+    <string name="photos_title">Photos</string>
+    <string name="photos_permissions_title">Encrypt and back up your photos and videos</string>
+    <string name="photos_permissions_section_1_title">Protect your memories</string>
+    <string name="photos_permissions_section_1_description">Your photos are end-to-end encrypted, ensuring total privacy.</string>
+    <string name="photos_permissions_section_2_title">Automatic backups</string>
+    <string name="photos_permissions_section_2_description">Photos are regularly backed up over WiFi in their original quality.</string>
+    <string name="photos_permissions_action">Turn on backup</string>
+    <string name="photos_permission_rational_img_text">Allow access</string>
+    <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+    <string name="photos_permission_rational_title">%1$s needs full access to your photos</string>
+    <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+    <string name="photos_permission_rational_description">This is necessary to ensure that all your photos are backed up and available across all your devices.\n%1$s takes your privacy seriously and will only access your photos for the purpose of syncing and backup.</string>
+    <string name="photos_permission_rational_confirm_action">Settings</string>
+    <string name="photos_permission_rational_dismiss_action">Not now</string>
+    <string name="photos_empty_loading_label_encrypted">End-to-end encrypted</string>
+    <string name="photos_empty_loading_label_progress">Backup is in progress.\nIt can take a while</string>
+    <string name="photos_separator_current_month">This month</string>
+    <string name="photos_encrypted_footer">End-to-end encrypted</string>
+    <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from the Camera folder"
+            "Backing up items from 2 Camera folders"
+    -->
+    <plurals name="photos_message_folders_setup">
+        <item quantity="one">Backing up items from the %1$s folder</item>
+        <item quantity="other">Backing up items from %2$d %1$s folders</item>
+    </plurals>
+    <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+    <string name="photos_error_no_folders">No %1$s folder found for backup</string>
+    <string name="photos_error_backup_disabled">Backup disabled.</string>
+    <string name="photos_error_backup_disabled_action">Turn on</string>
+    <string name="photos_error_backup_failed">Backup failed.</string>
+    <string name="photos_error_backup_temporarily_disabled">Backup is temporarily disabled.</string>
+    <string name="photos_error_backup_failed_action" translatable="false">@string/common_retry</string>
+    <string name="photos_error_missing_permissions">Missing permissions.</string>
+    <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+    <string name="photos_error_missing_permissions_description">For continuous and automatic backups, allow %1$s access to All Photos in settings.</string>
+    <string name="photos_error_waiting_connectivity">Waiting for Wi-Fi</string>
+    <string name="photos_error_local_storage">Device storage full</string>
+    <string name="photos_error_local_storage_description">To continue the backup, you need to free up storage on your device.</string>
+    <string name="photos_error_local_storage_action" translatable="false">@string/common_retry</string>
+    <string name="photos_empty_title">No backups yet</string>
+    <string name="photos_empty_description">As soon as you have photos or videos on your device, they will appear here.</string>
+    <string name="photos_backup_title">Photo backup</string>
+    <string name="photos_backup_in_app_notification_turned_on">Photo backup is turned on</string>
+    <string name="photos_backup_in_app_notification_turned_off">Photo backup is turned off</string>
+    <string name="photos_backup_state_completed">Backup complete</string>
+    <string name="photos_backup_state_uncompleted">Backup completed with issues</string>
+    <string name="photos_backup_state_uncompleted_action">Resolve</string>
+    <string name="photos_backup_state_encrypting">Encrypting…</string>
+    <string name="photos_backup_state_uploading">Backing up…</string>
+    <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+    <plurals name="photos_backup_state_uploading_items_left">
+        <item quantity="one">%1$s item left</item>
+        <item quantity="other">%1$s items left</item>
+    </plurals>
+    <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+    <plurals name="photos_backup_state_completed_items_saved">
+        <item quantity="one">%1$s item saved</item>
+        <item quantity="other">%1$s items saved</item>
+    </plurals>
+    <string name="photos_export_data" translatable="false">Export device and cloud data</string>
+</resources>

@@ -21,12 +21,13 @@ package me.proton.core.drive.files.preview.presentation.component.state
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 
 sealed class ContentState {
     object NotFound : ContentState()
     data class Downloading(val progress: Flow<Percentage>?) : ContentState()
     object Decrypting : ContentState()
-    data class Available(val uri: Uri) : ContentState()
+    data class Available(val source: Any) : ContentState()
     sealed class Error : ContentState() {
         data class Retryable(val messageResId: Int, val actionResId: Int, val action: () -> Unit) : Error()
         data class NonRetryable(val message: String?, val messageResId: Int) : Error()
@@ -35,7 +36,11 @@ sealed class ContentState {
     override fun toString(): String {
         return "${javaClass.simpleName}${when(this) {
             is Downloading -> "(${if (progress == null) "null" else "flow"})"
-            is Available -> "(${uri.path})"
+            is Available -> when(source) {
+                is Uri -> "(${source.path})"
+                is ThumbnailVO -> "(${source.revisionId}_${source.thumbnailId.type})"
+                else -> error("Unhandled source")
+            }
             else -> ""
         }}"
     }

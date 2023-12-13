@@ -66,8 +66,10 @@ internal class VerifierImpl constructor(
             contentKey = contentKey,
             input = blocks,
             output = output,
+            processDecryptedFile = { decryptedFile ->
+                decryptedFile.file.delete()
+            },
         )
-        output.forEach { file -> file.delete() }
         result.getOrThrow()
     }
 

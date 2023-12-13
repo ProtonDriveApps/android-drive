@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.semantics
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 
 fun Modifier.driveLinkSemantics(link: DriveLink, linkLayoutType: LayoutType) =
     semantics(mergeDescendants = true) {
@@ -30,6 +31,12 @@ fun Modifier.driveLinkSemantics(link: DriveLink, linkLayoutType: LayoutType) =
         this[DriveLinkSemanticsProperties.ItemType] = ItemType.fromDriveLink(link)
         this[DriveLinkSemanticsProperties.HasThumbnail] =
             link is DriveLink.File && link.hasThumbnail
+        this[DriveLinkSemanticsProperties.DownloadState] = when (link.downloadState) {
+            is DownloadState.Downloaded -> SemanticsDownloadState.Downloaded
+            DownloadState.Downloading -> SemanticsDownloadState.Downloading
+            DownloadState.Error -> SemanticsDownloadState.Error
+            null -> SemanticsDownloadState.Null
+        }
     }
 
 object DriveLinkSemanticsProperties {
@@ -37,6 +44,7 @@ object DriveLinkSemanticsProperties {
     val LayoutType = SemanticsPropertyKey<LayoutType>(name = "LayoutType")
     val ItemType = SemanticsPropertyKey<ItemType>(name = "ItemType")
     val HasThumbnail = SemanticsPropertyKey<Boolean>(name = "HasThumbnail")
+    val DownloadState = SemanticsPropertyKey<SemanticsDownloadState>(name = "DownloadState")
 }
 
 enum class ItemType {
@@ -54,4 +62,11 @@ enum class ItemType {
 enum class LayoutType {
     List,
     Grid,
+}
+
+enum class SemanticsDownloadState {
+    Downloading,
+    Error,
+    Downloaded,
+    Null,
 }

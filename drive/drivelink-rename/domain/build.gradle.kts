@@ -19,6 +19,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.drivelink.rename.domain"
+}
+
 driveModule(
     hilt = true,
 ) {

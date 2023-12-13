@@ -20,6 +20,7 @@ package me.proton.core.drive.upload.data.worker
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.Data
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -27,33 +28,37 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.file.base.domain.usecase.MoveToCache
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
-import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
+import me.proton.core.drive.upload.data.extension.logTag
+import me.proton.core.drive.upload.data.manager.uniqueUploadThrottleWorkName
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.upload.domain.manager.UploadErrorManager
+import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
 import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
+import me.proton.core.util.kotlin.CoreLogger
 
 @HiltWorker
 @OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("LongParameterList")
 class UploadSuccessCleanupWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     workManager: WorkManager,
     broadcastMessages: BroadcastMessages,
     getUploadFileLink: GetUploadFileLink,
+    uploadErrorManager: UploadErrorManager,
     private val removeUploadFile: RemoveUploadFile,
-    private val moveToCache: MoveToCache,
-    private val announceEvent: AnnounceEvent,
+    private val announceUploadEvent: AnnounceUploadEvent,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
     run: Run,
@@ -64,23 +69,35 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
     workManager = workManager,
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
+    uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
     canRun = canRun,
     run = run,
     done = done,
 ) {
 
-    override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result = with (uploadFileLink) {
-        removeUploadFile(uploadFileLink = this)
-        moveToCache(userId, volumeId, draftRevisionId)
-        announceEvent(
-            userId = userId,
-            notificationEvent = NotificationEvent.Upload(
-                state = NotificationEvent.Upload.UploadState.UPLOAD_COMPLETE,
+    override suspend fun doLimitedRetryUploadWork(
+        uploadFileLink: UploadFileLink,
+    ): Result = with(uploadFileLink) {
+        CoreLogger.d(
+            uploadFileLink.logTag(),
+            "UploadSuccessCleanupWorker clean ${uploadFileLink.uriString}",
+        )
+        workManager.enqueueUniqueWork(
+            userId.uniqueUploadThrottleWorkName,
+            ExistingWorkPolicy.KEEP,
+            UploadThrottleWorker.getWorkRequest(userId)
+        )
+        announceUploadEvent(
+            uploadFileLink = uploadFileLink,
+            uploadEvent = Event.Upload(
+                state = Event.Upload.UploadState.UPLOAD_COMPLETE,
                 uploadFileLinkId = uploadFileLink.id,
-                percentage = Percentage(100)
+                percentage = Percentage(100),
+                shouldShow = uploadFileLink.shouldAnnounceEvent,
             )
         )
+        removeUploadFile(uploadFileLink = this)
         Result.success()
     }
 

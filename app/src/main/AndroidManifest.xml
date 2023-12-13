@@ -18,8 +18,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="me.proton.android.drive">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -104,17 +103,24 @@
                 tools:node="remove"/>
             <meta-data
                 android:name="me.proton.android.drive.initializer.DocumentsProviderInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.android.drive.initializer.AutoLockInitializer"
                 android:value="androidx.startup"
                 tools:node="remove"/><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.android.drive.initializer.NotificationChannelInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
+            <meta-data
+                android:name="me.proton.android.drive.initializer.SelectionInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.android.drive.initializer.SentryInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="androidx.work.WorkManagerInitializer"
                 android:value="androidx.startup"
@@ -133,10 +139,12 @@
                 tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.android.drive.initializer.AccountStateHandlerInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.android.drive.initializer.AccountRemovedHandlerInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.android.drive.initializer.EventManagerInitializer"
                 android:value="androidx.startup"
@@ -151,13 +159,16 @@
                 tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.android.drive.initializer.LoggerInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.android.drive.initializer.UncaughtExceptionHandlerInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
                 android:name="me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer"
-                android:value="androidx.startup" />
+                android:value="androidx.startup"
+                tools:node="remove" /><!-- Initialized by MainInitializer -->
         </provider>
 
         <provider

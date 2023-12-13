@@ -18,8 +18,8 @@
 package me.proton.core.drive.notification.domain.repository
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.domain.entity.Channel
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 
 interface NotificationRepository {
@@ -40,9 +40,9 @@ interface NotificationRepository {
     suspend fun removeChannels(userId: UserId)
 
     /**
-     * Inserts or updates [NotificationEvent] in cache based on [NotificationId]
+     * Inserts or updates [Event] in cache based on [NotificationId]
      */
-    suspend fun insertNotificationEvent(notificationId: NotificationId.User, notificationEvent: NotificationEvent): Result<Unit>
+    suspend fun insertNotificationEvent(notificationId: NotificationId.User, event: Event): Result<Unit>
 
     /**
      * Gets all [NotificationId] for a given user
@@ -50,24 +50,24 @@ interface NotificationRepository {
     suspend fun getAllNotificationIds(userId: UserId): List<NotificationId.User>
 
     /**
-     * Gets all [NotificationEvent] for a given [NotificationId]
+     * Gets all [Event] for a given [NotificationId]
      */
-    suspend fun getAllNotificationEvents(notificationId: NotificationId.User): List<NotificationEvent>
+    suspend fun getAllNotificationEvents(notificationId: NotificationId.User): List<Event>
 
     /**
-     * Get [NotificationEvent] for given [NotificationId] and [NotificationEvent] id
-     * Note that [NotificationId] does not necessarily provides single [NotificationEvent] but when provided with
-     * [NotificationEvent] id then it is unique
+     * Get [Event] for given [NotificationId] and [Event] id
+     * Note that [NotificationId] does not necessarily provides single [Event] but when provided with
+     * [Event] id then it is unique
      */
-    suspend fun getNotificationEvent(notificationId: NotificationId.User, notificationEventId: String): NotificationEvent?
+    suspend fun getNotificationEvent(notificationId: NotificationId.User, notificationEventId: String): Event?
 
     /**
-     * Removes all [NotificationEvent] for a given [NotificationId]
+     * Removes all [Event] for a given [NotificationId]
      */
     suspend fun removeNotificationEvents(notificationId: NotificationId.User)
 
     /**
-     * Removes all [NotificationEvent] for a given user
+     * Removes all [Event] for a given user
      */
     suspend fun removeNotificationEvents(userId: UserId)
 }

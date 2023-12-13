@@ -22,6 +22,8 @@ plugins {
     id("com.android.application")
     id("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
+    kotlin("android")
+    kotlin("kapt")
 }
 
 base {
@@ -52,6 +54,7 @@ driveModule(
     implementation(project(":app-ui-settings"))
     implementation(project(":drive"))
     implementation(project(":verifier"))
+    implementation(project(":photos"))
 
     implementation(libs.androidx.activity.ktx)
     implementation(libs.androidx.compose.foundationLayout)
@@ -66,13 +69,21 @@ driveModule(
     implementation(libs.plumber)
     implementation(libs.sentry)
     implementation(libs.timber)
+    implementation(libs.treessence)
 
-    debugImplementation(libs.treessence)
+    androidTestImplementation(libs.dagger.hilt.android.testing)
+    kapt(libs.dagger.hilt.android.compiler)
+    kaptAndroidTest(libs.dagger.hilt.android.compiler)
 
+    androidTestUtil(libs.androidx.test.orchestrator)
+    androidTestUtil(libs.androidx.test.services)
+
+    testImplementation(project(":drive:db-test"))
     androidTestImplementation(libs.androidx.navigation.compose)
     androidTestImplementation(libs.androidx.test.espresso.contrib)
     androidTestImplementation(libs.bundles.core.test)
     androidTestImplementation(libs.fusion)
+    androidTestUtil(libs.androidx.test.orchestrator)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 }
@@ -91,6 +102,7 @@ val lastAlpha = tags.countSubstrings("${Config.versionName}-alpha")
 val lastBeta = tags.countSubstrings("${Config.versionName}-beta")
 
 android {
+    namespace = "me.proton.android.drive"
     signingConfigs {
         create("release") {
             storeFile = file(privateProperties.getProperty("SIGN_KEY_STORE_FILE_PATH") ?: "protonkey.jks")
@@ -99,9 +111,13 @@ android {
             keyPassword = privateProperties.getProperty("SIGN_KEY_ALIAS_PASSWORD")
         }
     }
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+    }
 
     val gitHash = "git rev-parse --short HEAD".runCommand(workingDir = rootDir)
     defaultConfig {
+
         buildConfigField("String", "HOST", "\"proton.me\"")
         buildConfigField("String", "BASE_URL", "\"https://drive-api.proton.me/\"")
         buildConfigField("String", "APP_VERSION_HEADER", "\"android-drive@$versionName\"")
@@ -111,8 +127,11 @@ android {
         buildConfigField("String", "FLAVOR_BETA", "\"beta\"")
         buildConfigField("String", "FLAVOR_PRODUCTION", "\"prod\"")
         buildConfigField("String", "SENTRY_DSN", "\"https://28f8df131f7a4ca4940e86972ba5038f@drive-api.proton.me/core/v4/reports/sentry/11\"")
+        buildConfigField("String", "ACCOUNT_SENTRY_DSN", "\"${System.getenv("ACCOUNT_SENTRY_DSN").orEmpty()}\"")
         buildConfigField("String", "GIT_HASH", "\"$gitHash\"")
         buildConfigField("String", "PROXY_TOKEN", "\"${privateProperties.getProperty("PROXY_TOKEN")}\"")
+        testInstrumentationRunner = "me.proton.android.drive.ui.HiltTestRunner"
+
     }
     flavorDimensions.add("default")
     productFlavors {
@@ -140,6 +159,8 @@ android {
 
             buildConfigField("String", "HOST", "\"$host\"")
             buildConfigField("String", "BASE_URL", "\"https://drive.$host/api/\"")
+
+            testInstrumentationRunnerArguments["clearPackageData"] = "true"
         }
         create("alpha") {
             versionNameSuffix = "-alpha%02d".format(lastAlpha + 1)
@@ -168,6 +189,10 @@ android {
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
     }
+
+    testOptions {
+        execution = "ANDROIDX_TEST_ORCHESTRATOR"
+    }
 }
 
 tasks.create("publishGeneratedReleaseNotes") {
@@ -189,11 +214,6 @@ tasks.create("printGeneratedChangelog") {
     doLast {
         println(generateChangelog(rootDir, since = System.getProperty("since")))
     }
-}
-
-configurations.all {
-    // androidx.test includes junit 4.12 so this will force that entire project uses same junit version
-    resolutionStrategy.force(libs.junit)
 }
 
 configureJacoco(flavor = "dev")

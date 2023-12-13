@@ -24,7 +24,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
@@ -33,7 +32,6 @@ import me.proton.android.drive.ui.viewevent.ConfirmDeletionViewEvent
 import me.proton.android.drive.ui.viewstate.ConfirmDeletionViewState
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
@@ -50,28 +48,26 @@ class ConfirmDeletionDialogViewModel @Inject constructor(
     private val getDriveLink: GetDecryptedDriveLink,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
-
     val shareId = ShareId(userId, savedStateHandle.require(Screen.Files.Dialogs.ConfirmDeletion.SHARE_ID))
     val linkId: LinkId = FileId(shareId, savedStateHandle.require(Screen.Files.Dialogs.ConfirmDeletion.FILE_ID))
 
     val initialViewState = ConfirmDeletionViewState(null)
-    fun viewState(dismiss: () -> Unit) = getDriveLink(linkId, failOnDecryptionError = false)
+    val viewState = getDriveLink(linkId, failOnDecryptionError = false)
         .filterSuccessOrError()
         .mapSuccessValueOrNull()
         .transform { driveLink ->
             if (driveLink == null) {
-                dismiss()
                 return@transform
             }
             emit(ConfirmDeletionViewState(driveLink.name))
         }
         .shareIn(viewModelScope, SharingStarted.Eagerly)
 
-    fun viewEvent(dismiss: () -> Unit) = object : ConfirmDeletionViewEvent {
+    fun viewEvent(onDismiss: () -> Unit) = object : ConfirmDeletionViewEvent {
         override val onConfirm = {
             viewModelScope.launch {
                 deleteFromTrash(userId, linkId)
-                dismiss()
+                onDismiss()
             }
             Unit
         }

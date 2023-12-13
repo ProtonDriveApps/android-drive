@@ -66,6 +66,11 @@ fun LinkWithProperties.toLink(): Link = when (properties) {
         },
         xAttr = link.xAttr,
         shareUrlId = link.shareUrlId(),
+        photoCaptureTime = properties.photoCaptureTime?.let { captureTime -> TimestampS(captureTime) },
+        photoContentHash = properties.photoContentHash,
+        mainPhotoLinkId = properties.mainPhotoLinkId,
+        defaultThumbnailId = properties.defaultThumbnailId,
+        photoThumbnailId = properties.photoThumbnailId,
     )
     is LinkFolderPropertiesEntity -> Link.Folder(
         id = FolderId(ShareId(link.userId, link.shareId), link.id),

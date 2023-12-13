@@ -26,10 +26,10 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
-import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FILE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SHARE_ID

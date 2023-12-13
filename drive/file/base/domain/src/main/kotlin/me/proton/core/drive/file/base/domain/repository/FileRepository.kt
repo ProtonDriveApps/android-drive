@@ -19,12 +19,15 @@ package me.proton.core.drive.file.base.domain.repository
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.file.base.domain.entity.BlockTokenInfo
 import me.proton.core.drive.file.base.domain.entity.FileInfo
 import me.proton.core.drive.file.base.domain.entity.NewFileInfo
+import me.proton.core.drive.file.base.domain.entity.PhotoAttributes
 import me.proton.core.drive.file.base.domain.entity.Revision
+import me.proton.core.drive.file.base.domain.entity.ThumbnailId
+import me.proton.core.drive.file.base.domain.entity.ThumbnailUrl
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.io.File
 import java.io.InputStream
 
@@ -42,21 +45,23 @@ interface FileRepository {
     suspend fun updateRevision(
         fileId: FileId,
         revisionId: String,
-        blockTokenInfos: List<BlockTokenInfo>,
         manifestSignature: String,
         signatureAddress: String,
         blockNumber: Long,
-        state: Long,
         xAttr: String,
+        photoAttributes: PhotoAttributes?,
     ): Result<Unit>
 
-    /**
-     * Retrieve the thumbnail URL for a given file and revision id
-     */
-    suspend fun fetchThumbnailUrl(
+    suspend fun deleteRevision(
         fileId: FileId,
         revisionId: String,
-    ): Result<String>
+    ): Result<Unit>
+
+    suspend fun fetchThumbnailsUrls(
+        userId: UserId,
+        volumeId: VolumeId,
+        thumbnailIds: Set<ThumbnailId>,
+    ): Map<ThumbnailId, Result<ThumbnailUrl>>
 
     suspend fun getUrlInputStream(
         userId: UserId,

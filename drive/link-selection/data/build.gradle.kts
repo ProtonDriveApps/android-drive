@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.link.selection.data"
+}
+
 driveModule(
     hilt = true,
     room = true,

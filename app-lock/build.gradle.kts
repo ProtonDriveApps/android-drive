@@ -20,4 +20,8 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.android.drive.lock"
+}
+
 driveModule(includeSubmodules = true)

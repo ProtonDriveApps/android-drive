@@ -26,15 +26,19 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.db.DriveDatabase
+import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.challenge.data.db.ChallengeDatabase
+import me.proton.core.drive.backup.data.db.BackupDatabase
 import me.proton.core.drive.drivelink.data.db.DriveLinkDatabase
 import me.proton.core.drive.drivelink.download.data.db.DriveLinkDownloadDatabase
 import me.proton.core.drive.drivelink.offline.data.db.DriveLinkOfflineDatabase
 import me.proton.core.drive.drivelink.paged.data.db.DriveLinkPagedDatabase
+import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
 import me.proton.core.drive.drivelink.selection.data.db.DriveLinkSelectionDatabase
 import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
 import me.proton.core.drive.drivelink.trash.data.db.DriveLinkTrashDatabase
+import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
 import me.proton.core.drive.folder.data.db.FolderDatabase
 import me.proton.core.drive.link.data.db.LinkDatabase
 import me.proton.core.drive.link.selection.data.db.LinkSelectionDatabase
@@ -45,9 +49,12 @@ import me.proton.core.drive.linktrash.data.db.LinkTrashDatabase
 import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
 import me.proton.core.drive.messagequeue.data.storage.db.MessageQueueDatabase
 import me.proton.core.drive.notification.data.db.NotificationDatabase
+import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
 import me.proton.core.drive.sorting.data.db.SortingDatabase
+import me.proton.core.drive.stats.data.db.StatsDatabase
+import me.proton.core.drive.user.data.db.QuotaDatabase
 import me.proton.core.drive.volume.data.db.VolumeDatabase
 import me.proton.core.drive.worker.data.db.WorkerDatabase
 import me.proton.core.eventmanager.data.db.EventMetadataDatabase
@@ -58,12 +65,15 @@ import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.keytransparency.data.local.KeyTransparencyDatabase
 import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.payment.data.local.db.PaymentDatabase
+import me.proton.core.push.data.local.db.PushDatabase
+import me.proton.core.telemetry.data.db.TelemetryDatabase
 import me.proton.core.user.data.db.AddressDatabase
 import me.proton.core.user.data.db.UserDatabase
 import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import javax.inject.Singleton
+import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNotificationDatabase
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -75,6 +85,7 @@ object DriveDatabaseModule {
 }
 
 @Module
+@Suppress("unused")
 @InstallIn(SingletonComponent::class)
 abstract class DriveDatabaseBindsModule {
 
@@ -181,6 +192,12 @@ abstract class DriveDatabaseBindsModule {
     abstract fun providePaymentDatabase(db: DriveDatabase): PaymentDatabase
 
     @Binds
+    abstract fun provideBackupDatabase(db: DriveDatabase): BackupDatabase
+
+    @Binds
+    abstract fun provideQuotaDatabase(db: DriveDatabase): QuotaDatabase
+
+    @Binds
     abstract fun provideObservabilityDatabase(db: DriveDatabase): ObservabilityDatabase
 
     @Binds
@@ -188,4 +205,28 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideWorkerDatabase(db: DriveDatabase): WorkerDatabase
+
+    @Binds
+    abstract fun provideCoreNotificationDatabase(appDatabase: DriveDatabase): CoreNotificationDatabase
+
+    @Binds
+    abstract fun providePushDatabase(appDatabase: DriveDatabase): PushDatabase
+
+    @Binds
+    abstract fun provideTelemetryDatabase(appDatabase: DriveDatabase): TelemetryDatabase
+
+    @Binds
+    abstract fun provideStatsDatabase(appDatabase: DriveDatabase): StatsDatabase
+
+    @Binds
+    abstract fun providePhotoDatabase(appDatabase: DriveDatabase): PhotoDatabase
+
+    @Binds
+    abstract fun provideDriveLinkPhotoDatabase(appDatabase: DriveDatabase): DriveLinkPhotoDatabase
+
+    @Binds
+    abstract fun provideDriveFeatureFlagDatabase(appDatabase: DriveDatabase): DriveFeatureFlagDatabase
+
+    @Binds
+    abstract fun provideMediaStoreVersionDatabase(appDatabase: DriveDatabase): MediaStoreVersionDatabase
 }

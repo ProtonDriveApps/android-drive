@@ -19,8 +19,10 @@
 package me.proton.core.drive.eventmanager.entity
 
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 data class LinkEventVO(
+    val volumeId: VolumeId,
     val link: Link,
     val deletedShareUrlIds: List<String>,
 )

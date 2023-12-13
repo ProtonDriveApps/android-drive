@@ -23,11 +23,16 @@ import androidx.compose.ui.test.assert
 import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties
 import me.proton.core.drive.files.presentation.extension.ItemType
 import me.proton.core.drive.files.presentation.extension.LayoutType
+import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
 import me.proton.test.fusion.ui.compose.wrappers.NodeAssertions
 
 
 fun NodeAssertions.assertHasThumbnail(expectedValue: Boolean) = apply {
     interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.HasThumbnail, expectedValue))
+}
+
+fun NodeAssertions.assertDownloadState(expectedValue: SemanticsDownloadState) = apply {
+    interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.DownloadState, expectedValue))
 }
 
 fun NodeAssertions.assertHasLayoutType(expectedValue: LayoutType) = apply {
@@ -37,3 +42,11 @@ fun NodeAssertions.assertHasLayoutType(expectedValue: LayoutType) = apply {
 fun NodeAssertions.assertHasItemType(expectedValue: ItemType) = apply {
     interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.ItemType, expectedValue))
 }
+
+// Remove after TPE-334 is resolved
+fun NodeAssertions.doesNotExist() =
+    try {
+        assertIsNotDisplayed()
+    } catch (error: AssertionError) {
+        assertDoesNotExist()
+    }

@@ -24,11 +24,12 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.mapSuccess
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptDriveLinks
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.sorting.domain.usecase.SortDriveLinks
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class GetDecryptedSharedDriveLinks @Inject constructor(
@@ -39,12 +40,12 @@ class GetDecryptedSharedDriveLinks @Inject constructor(
 ) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    operator fun invoke(shareId: ShareId, refresh: Boolean): Flow<DataResult<List<DriveLink>>> {
+    operator fun invoke(userId: UserId, volumeId: VolumeId, refresh: Boolean): Flow<DataResult<List<DriveLink>>> {
         var shouldRefresh = refresh
-        return getSorting(shareId.userId).flatMapLatest { sorting ->
+        return getSorting(userId).flatMapLatest { sorting ->
             val willRefresh = shouldRefresh
             shouldRefresh = false
-            getSharedDriveLinks(shareId, flowOf(willRefresh)).mapSuccess { (source, driveLinks) ->
+            getSharedDriveLinks(userId, volumeId, flowOf(willRefresh)).mapSuccess { (source, driveLinks) ->
                 DataResult.Success(source, sortDriveLinks(sorting, decryptDriveLinks(driveLinks)))
             }
         }

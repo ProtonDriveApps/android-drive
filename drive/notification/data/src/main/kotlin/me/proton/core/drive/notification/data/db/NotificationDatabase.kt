@@ -30,10 +30,12 @@ import me.proton.core.drive.base.data.db.Column.TYPE
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.notification.data.db.dao.NotificationChannelDao
 import me.proton.core.drive.notification.data.db.dao.NotificationEventDao
+import me.proton.core.drive.notification.data.db.dao.TaglessNotificationEventDao
 
 interface NotificationDatabase : Database {
     val channelDao: NotificationChannelDao
     val eventDao: NotificationEventDao
+    val taglessEventDao: TaglessNotificationEventDao
 
     companion object {
         val MIGRATION_0 = object : DatabaseMigration {
@@ -78,6 +80,38 @@ interface NotificationDatabase : Database {
                             `${USER_ID}`, `${CHANNEL_TYPE}`, `${NOTIFICATION_TAG}`, `${NOTIFICATION_ID}`
                         )
                 """.trimIndent())
+            }
+        }
+        val MIGRATION_1 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `TaglessNotificationEventEntity` (
+                    `user_id` TEXT NOT NULL,
+                    `channel_type` TEXT NOT NULL,
+                    `notification_id` INTEGER NOT NULL,
+                    `notification_event_id` TEXT NOT NULL,
+                    `notification_event` TEXT NOT NULL,
+                    PRIMARY KEY(`user_id`, `channel_type`, `notification_id`, `notification_event_id`),
+                    FOREIGN KEY(`user_id`, `channel_type`) REFERENCES `NotificationChannelEntity`(`user_id`, `type`)
+                    ON UPDATE NO ACTION ON DELETE CASCADE )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_TaglessNotificationEventEntity_user_id_channel_type_notification_id`
+                    ON `TaglessNotificationEventEntity` (`user_id`, `channel_type`, `notification_id`)
+                    """.trimIndent()
+                )
+            }
+        }
+        val MIGRATION_2 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        DELETE FROM `NotificationEventEntity`
+                    """.trimIndent()
+                )
             }
         }
     }

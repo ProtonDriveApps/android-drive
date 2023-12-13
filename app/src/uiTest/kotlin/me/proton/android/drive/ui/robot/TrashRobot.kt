@@ -21,7 +21,7 @@ package me.proton.android.drive.ui.robot
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
 
-object TrashRobot : Robot, LinksRobot {
+object TrashRobot : Robot, LinksRobot, NavigationBarRobot, GrowlerRobot {
     private val trashScreen get() = node.withText(I18N.string.common_trash)
 
     override fun robotDisplayed() {

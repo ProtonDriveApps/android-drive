@@ -20,49 +20,56 @@ package me.proton.core.drive.upload.data.manager
 import android.content.Context
 import androidx.lifecycle.asFlow
 import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.await
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.getLong
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.LogTag.NOTIFICATION
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.presentation.extension.getName
+import me.proton.core.drive.linkupload.domain.entity.CacheOption
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadBlocks
-import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinks
+import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksPaged
 import me.proton.core.drive.linkupload.domain.usecase.RemoveAllUploadFileLinks
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
-import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
+import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
 import me.proton.core.drive.upload.data.worker.CreateUploadFileLinkWorker
 import me.proton.core.drive.upload.data.worker.UploadCleanupWorker
-import me.proton.core.drive.upload.data.worker.UploadNotificationEventWorker
+import me.proton.core.drive.upload.data.worker.UploadEventWorker
 import me.proton.core.drive.upload.data.worker.UploadThrottleWorker
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_SIZE
 import me.proton.core.drive.upload.domain.manager.UploadWorkManager
+import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
 import me.proton.core.drive.upload.domain.usecase.CreateUploadFile
 import me.proton.core.drive.upload.domain.usecase.RemoveUploadFileAndAnnounceCancelled
 import me.proton.core.drive.upload.domain.usecase.UpdateUploadFileInfo
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 
@@ -70,12 +77,12 @@ class UploadWorkManagerImpl @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val workManager: WorkManager,
     private val getUploadBlocks: GetUploadBlocks,
-    private val getUploadFileLinks: GetUploadFileLinks,
+    private val getUploadFileLinks: GetUploadFileLinksPaged,
     private val broadcastMessages: BroadcastMessages,
     private val createUploadFile: CreateUploadFile,
     private val updateUploadFileInfo: UpdateUploadFileInfo,
     private val updateUploadState: UpdateUploadState,
-    private val announceEvent: AnnounceEvent,
+    private val announceUploadEvent: AnnounceUploadEvent,
     private val configurationProvider: ConfigurationProvider,
     private val removeUploadFileAndAnnounceCancelled: RemoveUploadFileAndAnnounceCancelled,
     private val removeAllUploadFileLinks: RemoveAllUploadFileLinks,
@@ -110,7 +117,12 @@ class UploadWorkManagerImpl @Inject constructor(
         volumeId: VolumeId,
         folderId: FolderId,
         uriStrings: List<String>,
-        shouldDeleteSource: Boolean
+        cacheOption: CacheOption,
+        shouldDeleteSource: Boolean,
+        networkTypeProviderType: NetworkTypeProviderType,
+        shouldAnnounceEvent: Boolean,
+        priority: Long,
+        shouldBroadcastErrorMessage: Boolean,
     ) {
         createUploadFile(
             userId = userId,
@@ -118,6 +130,11 @@ class UploadWorkManagerImpl @Inject constructor(
             parentId = folderId,
             uriStrings = uriStrings,
             shouldDeleteSourceUri = shouldDeleteSource,
+            networkTypeProviderType = networkTypeProviderType,
+            shouldAnnounceEvent = shouldAnnounceEvent,
+            cacheOption = cacheOption,
+            priority = priority,
+            shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
         )
             .onFailure { error ->
                 error.log(
@@ -127,23 +144,30 @@ class UploadWorkManagerImpl @Inject constructor(
             }
             .onSuccess { uploadFileLinks ->
                 uploadFileLinks.forEach { uploadFileLink ->
-                    uploadFileLink.id.announceEvent(userId)
+                    announceUploadEvent(uploadFileLink, newUploadEvent(uploadFileLink.id))
                 }
             }
-        workManager.enqueueUpload(userId)
+        workManager.enqueueUpload(userId, shouldAnnounceEvent)
     }
 
     override suspend fun upload(
         uploadBulk: UploadBulk,
         folder: Folder,
-        silently: Boolean,
+        showPreparingUpload: Boolean,
+        showFilesBeingUploaded: Boolean,
+        tags : List<String>,
     ) {
         workManager.enqueueUniqueWork(
             uploadBulk.userId.uniqueUploadBulkWorkName,
             ExistingWorkPolicy.APPEND_OR_REPLACE,
-            CreateUploadFileLinkWorker.getWorkRequest(uploadBulk, folder.getName(appContext)),
+            CreateUploadFileLinkWorker.getWorkRequest(
+                uploadBulk,
+                folder.getName(appContext),
+                showFilesBeingUploaded,
+                tags,
+            ),
         )
-        if (!silently) {
+        if (showPreparingUpload) {
             broadcastMessages(
                 userId = uploadBulk.userId,
                 message = appContext.getString(I18N.string.files_upload_preparing),
@@ -159,7 +183,7 @@ class UploadWorkManagerImpl @Inject constructor(
         shouldDeleteSource: Boolean,
     ) {
         updateUploadFileInfo(uploadFileLinkId, uriString, shouldDeleteSource)
-        uploadFileLinkId.announceEvent(userId)
+        announceUploadEvent(uploadFileLinkId, newUploadEvent(uploadFileLinkId))
         updateUploadState(uploadFileLinkId, UploadState.UNPROCESSED)
         workManager.enqueueUpload(userId)
     }
@@ -175,18 +199,33 @@ class UploadWorkManagerImpl @Inject constructor(
                 )
             )
         } else {
-            removeUploadFileAndAnnounceCancelled(userId, uploadFileLink)
+            removeUploadFileAndAnnounceCancelled(uploadFileLink)
         }
     }
 
     override suspend fun cancelAll(userId: UserId) = withContext(Job() + Dispatchers.IO) {
+        workManager.cancelUniqueWork(userId.uniqueUploadEventWorkName).await()
         workManager.cancelUniqueWork(userId.uniqueUploadBulkWorkName).await()
         removeAllUploadFileLinks(userId, UploadState.UNPROCESSED)
-        getUploadFileLinks(userId)
-            .first()
-            .forEach { uploadFileLink ->
-                cancel(uploadFileLink)
-            }
+        getUploadFileLinks(userId).forEach { uploadFileLink ->
+            cancel(uploadFileLink)
+        }
+    }
+
+    override suspend fun cancelAllByShare(userId: UserId, shareId: ShareId) {
+        workManager.cancelUniqueWork(userId.uniqueUploadBulkWorkName).await()
+        removeAllUploadFileLinks(userId, shareId, UploadState.UNPROCESSED)
+        getUploadFileLinks(userId, shareId).forEach { uploadFileLink ->
+            cancel(uploadFileLink)
+        }
+    }
+
+    override suspend fun cancelAllByFolder(userId: UserId, folderId: FolderId) {
+        workManager.cancelUniqueWork(userId.uniqueUploadBulkWorkName).await()
+        removeAllUploadFileLinks(userId, folderId, UploadState.UNPROCESSED)
+        getUploadFileLinks(userId, folderId).forEach { uploadFileLink ->
+            cancel(uploadFileLink)
+        }
     }
 
     override fun getProgressFlow(uploadFileLink: UploadFileLink): Flow<Percentage>? {
@@ -241,30 +280,51 @@ class UploadWorkManagerImpl @Inject constructor(
             type = BroadcastMessage.Type.WARNING,
         )
 
-    private suspend fun Long.announceEvent(userId: UserId) =
-        announceEvent(
-            userId = userId,
-            notificationEvent = NotificationEvent.Upload(
-                state = NotificationEvent.Upload.UploadState.NEW_UPLOAD,
-                uploadFileLinkId = this,
-                percentage = Percentage(0),
-            )
-        )
+    override fun isUploading(tag: String): Flow<Boolean> =
+        workManager.getWorkInfosByTagLiveData(TAG_UPLOAD_WORKER)
+            .asFlow().map { workInfos ->
+                workInfos.asSequence()
+                    .filter { workInfo -> workInfo.state == WorkInfo.State.RUNNING }
+                    .filter { workInfo -> workInfo.tags.contains(tag) }
+                    .count()
+            }.map { count -> count > 0 }.distinctUntilChanged()
+
+    private fun newUploadEvent(uploadFileLinkId: Long) = Event.Upload(
+        state = Event.Upload.UploadState.NEW_UPLOAD,
+        uploadFileLinkId = uploadFileLinkId,
+        percentage = Percentage(0),
+        shouldShow = true,
+    )
+
+    internal companion object {
+        const val TAG_UPLOAD_WORKER = "upload_worker"
+    }
 }
 
-internal val UserId.uniqueUploadNotificationEventWorkName: String get() = "upload_notification_event=$id"
+internal val UserId.uniqueUploadEventWorkName: String get() = "upload_notification_event=$id"
 internal val UserId.uniqueUploadThrottleWorkName: String get() = "upload_throttle=$id"
 internal val UserId.uniqueUploadBulkWorkName: String get() = "upload_bulk=$id"
 
-internal fun WorkManager.enqueueUpload(userId: UserId) {
-    enqueueUniqueWork(
-        userId.uniqueUploadNotificationEventWorkName,
-        ExistingWorkPolicy.REPLACE,
-        UploadNotificationEventWorker.getWorkRequest(userId)
-    )
+internal fun WorkManager.enqueueUpload(
+    userId: UserId,
+    shouldAnnounceEvent: Boolean = true,
+    tags: Set<String> = emptySet(),
+) {
+    if (shouldAnnounceEvent) {
+        enqueueUniqueWork(
+            userId.uniqueUploadEventWorkName,
+            ExistingWorkPolicy.REPLACE,
+            UploadEventWorker.getWorkRequest(userId, tags.toList())
+        )
+    } else {
+        CoreLogger.d(
+            NOTIFICATION,
+            "Ignoring enqueue of UploadEventWorker, no announce needed"
+        )
+    }
     enqueueUniqueWork(
         userId.uniqueUploadThrottleWorkName,
         ExistingWorkPolicy.KEEP,
-        UploadThrottleWorker.getWorkRequest(userId)
+        UploadThrottleWorker.getWorkRequest(userId, tags.toList())
     )
 }

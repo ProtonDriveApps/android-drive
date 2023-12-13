@@ -20,8 +20,11 @@ package me.proton.core.drive.linkupload.domain.repository
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.entity.CameraExifTags
+import me.proton.core.drive.base.domain.entity.Location
 import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
@@ -30,6 +33,8 @@ import me.proton.core.drive.linkupload.domain.entity.UploadCount
 import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
+import me.proton.core.drive.share.domain.entity.ShareId
+import kotlin.time.Duration
 
 interface LinkUploadRepository {
 
@@ -47,7 +52,27 @@ interface LinkUploadRepository {
 
     fun getUploadFileLinks(userId: UserId, parentId: FolderId): Flow<List<UploadFileLink>>
 
-    suspend fun getUploadFileLinksWithUri(
+    suspend fun getUploadFileLinks(
+        userId: UserId,
+        fromIndex: Int,
+        count: Int,
+    ): List<UploadFileLink>
+
+    suspend fun getUploadFileLinks(
+        userId: UserId,
+        shareId: ShareId,
+        count: Int,
+        fromIndex: Int,
+    ): List<UploadFileLink>
+
+    suspend fun getUploadFileLinks(
+        userId: UserId,
+        parentId: FolderId,
+        count: Int,
+        fromIndex: Int,
+    ): List<UploadFileLink>
+
+    suspend fun getUploadFileLinksWithUriByPriority(
         userId: UserId,
         states: Set<UploadState>,
         count: Int,
@@ -58,6 +83,8 @@ interface LinkUploadRepository {
     suspend fun updateUploadFileLink(uploadFileLink: UploadFileLink)
 
     suspend fun updateUploadFileLinkUploadState(uploadFileLinkId: Long, uploadState: UploadState)
+
+    suspend fun updateUploadFileLinkCreationTime(uploadFileLinkId: Long, creationTime: TimestampS?)
 
     suspend fun updateUploadFileLinkUploadState(uploadFileLinkIds: Set<Long>, uploadState: UploadState)
 
@@ -89,9 +116,21 @@ interface LinkUploadRepository {
 
     suspend fun updateUploadFileLinkDigests(uploadFileLinkId: Long, digests: UploadDigests)
 
+    suspend fun updateUploadFileLinkDuration(uploadFileLinkId: Long, duration: Duration)
+
+    suspend fun updateUploadFileLinkDateTime(uploadFileLinkId: Long, dateTime: TimestampS)
+
+    suspend fun updateUploadFileLinkLocation(uploadFileLinkId: Long, location: Location)
+
+    suspend fun updateUploadFileLinkCameraExifTags(uploadFileLinkId: Long, cameraExifTags: CameraExifTags)
+
     suspend fun removeUploadFileLink(uploadFileLinkId: Long)
 
     suspend fun removeAllUploadFileLinks(userId: UserId, uploadState: UploadState)
+
+    suspend fun removeAllUploadFileLinks(userId: UserId, shareId: ShareId, uploadState: UploadState)
+
+    suspend fun removeAllUploadFileLinks(userId: UserId, folderId: FolderId, uploadState: UploadState)
 
     suspend fun insertUploadBlocks(uploadFileLink: UploadFileLink, uploadBlocks: List<UploadBlock>)
 

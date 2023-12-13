@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.link.data.test"
+}
+
 driveModule() {
     api(project(":drive:link:domain"))
 }

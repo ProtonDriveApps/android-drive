@@ -21,9 +21,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -33,6 +33,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.layout.getDefaultLazyLayoutKey
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -59,9 +62,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -73,14 +73,16 @@ import me.proton.core.compose.component.ProtonErrorMessageWithAction
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.overline
+import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.Deferred
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
 import me.proton.core.drive.base.presentation.component.TopAppBar
-import me.proton.core.drive.base.presentation.entity.FileTypeCategory
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.debugOnly
+import me.proton.core.drive.base.presentation.extension.iconResId
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.files.preview.presentation.component.event.PreviewViewEvent
 import me.proton.core.drive.files.preview.presentation.component.state.ContentState
@@ -93,7 +95,7 @@ import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod")
 fun Preview(
     viewState: PreviewViewState,
@@ -101,7 +103,9 @@ fun Preview(
     modifier: Modifier = Modifier,
     onPageChanged: FlowCollector<Int>? = null,
 ) {
-    val pagerState = rememberPagerState(initialPage = viewState.currentIndex)
+    val pagerState = rememberPagerState(initialPage = viewState.currentIndex) {
+        viewState.items.size
+    }
     val userScrollEnabled = remember { mutableStateOf(true) }
     val isFullScreen by rememberFlowWithLifecycle(viewState.isFullscreen).collectAsState(false)
 
@@ -124,18 +128,24 @@ fun Preview(
     Box(modifier) {
         HorizontalPager(
             state = pagerState,
-            count = viewState.items.size,
             userScrollEnabled = userScrollEnabled.value,
-            key = { page -> viewState.items[page].key }
+            key = { page ->
+                takeIf { page in viewState.items.indices }
+                    ?.let { viewState.items[page].key }
+                    ?: getDefaultLazyLayoutKey(page)
+            },
+            modifier = Modifier.testTag(PreviewComponentTestTag.pager)
         ) { page ->
-            PreviewContent(
-                viewState.items[page],
-                isFullScreen,
-                viewEvent,
-                with(LocalDensity.current) { topBarHeightAnimated.toDp() },
-                isFocused = pagerState.currentPage == page,
-                userScrollEnabled,
-            )
+            takeIf { page in viewState.items.indices }?.let {
+                PreviewContent(
+                    viewState.items[page],
+                    isFullScreen,
+                    viewEvent,
+                    with(LocalDensity.current) { topBarHeightAnimated.toDp() },
+                    isFocused = pagerState.currentPage == page,
+                    userScrollEnabled,
+                )
+            }
         }
         AnimatedVisibility(
             visible = !isFullScreen,
@@ -295,36 +305,31 @@ fun PreviewContentAvailable(
                 }
             )
         }
-        .pointerInput(Unit, dragEnable) {
-            if (!dragEnable) return@pointerInput
-            detectDragGestures { _, dragAmount ->
-                transformationState.addOffset(dragAmount)
-            }
-        }
 
     when (previewComposable) {
         PreviewComposable.Image -> ImagePreview(
             modifier = pointerInputModifier,
-            uri = contentState.uri,
+            source = contentState.source,
             transformationState = transformationState,
             isFullScreen = isFullScreen,
+            onRenderFailed = viewEvent.onRenderFailed,
         )
         PreviewComposable.Sound,
         PreviewComposable.Video -> MediaPreview(
             modifier = pointerInputModifier,
-            uri = contentState.uri,
+            uri = requireIsInstance(contentState.source),
             isFullScreen = isFullScreen,
             play = isFocused,
             mediaControllerVisibility = viewEvent.mediaControllerVisibility
         )
         PreviewComposable.Pdf -> PdfPreview(
-            uri = contentState.uri,
+            uri = requireIsInstance(contentState.source),
             modifier = pointerInputModifier.padding(top = topBarHeight),
             transformationState = transformationState,
             onRenderFailed = viewEvent.onRenderFailed,
         )
         PreviewComposable.Text -> TextPreview(
-            uri = contentState.uri,
+            uri = requireIsInstance(contentState.source),
             modifier = pointerInputModifier.padding(top = topBarHeight),
             onRenderFailed = viewEvent.onRenderFailed,
         )
@@ -403,7 +408,9 @@ fun PreviewPlaceholder(
             modifier = Modifier.align(Alignment.Center),
         ) {
             Image(
-                modifier = Modifier.size(PlaceholderSize),
+                modifier = Modifier
+                    .size(PlaceholderSize)
+                    .testTag(PreviewComponentTestTag.placeholder),
                 painter = painterResource(id = fileTypeCategory.iconResId),
                 contentDescription = null,
             )
@@ -470,7 +477,7 @@ fun PreviewPreviewLoadingState() {
                 override val onTopAppBarNavigation: () -> Unit = {}
                 override val onMoreOptions: () -> Unit = {}
                 override val onSingleTap: () -> Unit = {}
-                override val onRenderFailed: (Throwable) -> Unit = {}
+                override val onRenderFailed: (Throwable, Any) -> Unit = { _, _ -> }
                 override val mediaControllerVisibility: (Boolean) -> Unit = {}
             },
         )
@@ -543,4 +550,6 @@ enum class PreviewComposable {
 
 object PreviewComponentTestTag {
     const val screen = "preview screen"
+    const val placeholder = "preview placeholder"
+    const val pager = "preview pager"
 }

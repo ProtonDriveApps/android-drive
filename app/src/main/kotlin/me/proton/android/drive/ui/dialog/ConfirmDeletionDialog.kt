@@ -37,7 +37,7 @@ fun ConfirmDeletionDialog(
 ) {
     val viewModel = hiltViewModel<ConfirmDeletionDialogViewModel>()
     val viewEvent = remember(viewModel, onDismiss) { viewModel.viewEvent(onDismiss) }
-    val flow = remember(viewModel, onDismiss) { viewModel.viewState(onDismiss) }
+    val flow = remember(viewModel) { viewModel.viewState }
     val viewState by rememberFlowWithLifecycle(flow).collectAsState(initial = viewModel.initialViewState)
 
     val name = viewState.name ?: return

@@ -20,8 +20,13 @@ package me.proton.core.drive.link.data.db
 import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
 import me.proton.core.data.room.db.migration.DatabaseMigration
+import me.proton.core.drive.base.data.db.Column.CAPTURE_TIME
+import me.proton.core.drive.base.data.db.Column.CONTENT_HASH
+import me.proton.core.drive.base.data.db.Column.MAIN_PHOTO_LINK_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_URL_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_URL_SHARE_ID
+import me.proton.core.drive.base.data.db.Column.THUMBNAIL_ID_DEFAULT
+import me.proton.core.drive.base.data.db.Column.THUMBNAIL_ID_PHOTO
 
 interface LinkDatabase : Database {
     val linkDao: LinkDao
@@ -37,6 +42,36 @@ interface LinkDatabase : Database {
                 database.execSQL(
                     """
                         ALTER TABLE `LinkEntity` ADD COLUMN $SHARE_URL_ID TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_1 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        ALTER TABLE `LinkFilePropertiesEntity` ADD COLUMN $CAPTURE_TIME INTEGER DEFAULT NULL
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        ALTER TABLE `LinkFilePropertiesEntity` ADD COLUMN $CONTENT_HASH TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        ALTER TABLE `LinkFilePropertiesEntity` ADD COLUMN $MAIN_PHOTO_LINK_ID TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        ALTER TABLE `LinkFilePropertiesEntity` ADD COLUMN $THUMBNAIL_ID_DEFAULT TEXT DEFAULT NULL
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        ALTER TABLE `LinkFilePropertiesEntity` ADD COLUMN $THUMBNAIL_ID_PHOTO TEXT DEFAULT NULL
                     """.trimIndent()
                 )
             }

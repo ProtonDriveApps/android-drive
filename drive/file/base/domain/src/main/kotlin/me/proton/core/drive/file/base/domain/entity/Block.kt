@@ -22,6 +22,7 @@ interface Block {
     val url: String
     val hashSha256: String?
     val encSignature: String?
+    val type: Type
 
     fun copy(
         index: Long = this.index,
@@ -35,13 +36,35 @@ interface Block {
         encSignature = encSignature,
     )
 
+    enum class Type {
+        FILE,
+        THUMBNAIL_DEFAULT,
+        THUMBNAIL_PHOTO,
+    }
+
     companion object {
-        operator fun invoke(index: Long, url: String, hashSha256: String?, encSignature: String?) =
-            object : Block {
-                override val index: Long = index
-                override val url: String = url
-                override val hashSha256: String? = hashSha256
-                override val encSignature: String? = encSignature
-            }
+        const val THUMBNAIL_DEFAULT_INDEX = -5L
+        const val THUMBNAIL_PHOTO_INDEX = -4L
+        operator fun invoke(index: Long, url: String, hashSha256: String?, encSignature: String?): Block =
+            BlockImpl(
+                index = index,
+                url = url,
+                hashSha256 = hashSha256,
+                encSignature = encSignature,
+                type = when (index) {
+                    THUMBNAIL_DEFAULT_INDEX -> Type.THUMBNAIL_DEFAULT
+                    THUMBNAIL_PHOTO_INDEX -> Type.THUMBNAIL_PHOTO
+                    in (1..Long.MAX_VALUE) -> Type.FILE
+                    else -> error("Unexpected block index: $index")
+                },
+            )
+
+        private data class BlockImpl(
+            override val index: Long,
+            override val url: String,
+            override val hashSha256: String?,
+            override val encSignature: String?,
+            override val type: Type,
+        ) : Block
     }
 }

@@ -19,12 +19,13 @@
 package me.proton.core.drive.documentsprovider.domain.usecase
 
 import android.provider.DocumentsContract
-import me.proton.core.drive.base.domain.entity.TimestampMs
-import me.proton.core.drive.base.domain.extension.KiB
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
 import me.proton.core.drive.folder.create.domain.usecase.CreateFolder
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.linkupload.domain.entity.CacheOption
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
+import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.upload.domain.usecase.CreateNewFile
 import me.proton.core.drive.upload.domain.usecase.CreateUploadFile
 import me.proton.core.util.kotlin.CoreLogger
@@ -53,6 +54,11 @@ class CreateDocument @Inject constructor(
                     parentId = driveLink.id,
                     name = displayName,
                     mimeType = mimeType,
+                    networkTypeProviderType = NetworkTypeProviderType.DEFAULT,
+                    shouldAnnounceEvent = true,
+                    cacheOption = CacheOption.ALL,
+                    priority = UploadFileLink.USER_PRIORITY,
+                    shouldBroadcastErrorMessage = true,
                 ).getOrThrow()
                 createNewFile(
                     uploadFileLink = link,

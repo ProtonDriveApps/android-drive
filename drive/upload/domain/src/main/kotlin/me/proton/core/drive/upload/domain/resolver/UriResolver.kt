@@ -27,4 +27,9 @@ interface UriResolver {
     suspend fun getSize(uriString: String): Bytes?
     suspend fun getMimeType(uriString: String): String?
     suspend fun getLastModified(uriString: String): TimestampMs?
+
+
+    companion object {
+        const val DEFAULT_MIME_TYPE = "application/octet-stream"
+    }
 }

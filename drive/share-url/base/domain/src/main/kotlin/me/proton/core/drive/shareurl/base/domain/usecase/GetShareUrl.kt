@@ -29,17 +29,19 @@ import me.proton.core.drive.base.domain.repository.fetcher
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrl
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.shareurl.base.domain.repository.ShareUrlRepository
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class GetShareUrl @Inject constructor(
     private val repository: ShareUrlRepository,
 ) {
     operator fun invoke(
+        volumeId: VolumeId,
         shareUrlId: ShareUrlId,
         refresh: Flow<Boolean> = flowOf { !repository.hasShareUrl(shareUrlId) }
     ) = refresh.transform<Boolean, DataResult<ShareUrl>> { shouldRefresh ->
         if (shouldRefresh) {
-            fetcher { repository.fetchShareUrl(shareUrlId) }
+            fetcher { repository.fetchShareUrl(volumeId, shareUrlId) }
         }
         emitAll(repository.getShareUrl(shareUrlId).map { shareUrl -> shareUrl.asSuccessOrNullAsError() })
     }

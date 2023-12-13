@@ -26,6 +26,10 @@ data class XAttr(
     val common: Common,
     @SerialName("Media")
     val media: Media? = null,
+    @SerialName("Location")
+    val location: Location? = null,
+    @SerialName("Camera")
+    val camera: Camera? = null,
 ) {
     @Serializable
     data class Common(
@@ -42,8 +46,42 @@ data class XAttr(
     @Serializable
     data class Media(
         @SerialName("Width")
-        val width: Long,
+        val width: Long? = null,
         @SerialName("Height")
-        val height: Long,
+        val height: Long? = null,
+        @SerialName("Duration")
+        val duration: Long? = null,
+    )
+
+    @Serializable
+    data class Location(
+        @SerialName("Latitude")
+        val latitude: Double,
+        @SerialName("Longitude")
+        val longitude: Double,
+    )
+
+    @Serializable
+    data class Camera(
+        @SerialName("CaptureTime")
+        val captureTime: String,
+        @SerialName("Device")
+        val device: String,
+        @SerialName("Orientation")
+        val orientation: Int,
+        @SerialName("SubjectCoordinates")
+        val subjectCoordinates: SubjectCoordinates? = null,
+    )
+
+    @Serializable
+    data class SubjectCoordinates(
+        @SerialName("Top")
+        val top: Int,
+        @SerialName("Left")
+        val left: Int,
+        @SerialName("Bottom")
+        val bottom: Int,
+        @SerialName("Right")
+        val right: Int,
     )
 }

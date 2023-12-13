@@ -22,8 +22,8 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.android.drive.R
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.data.extension.id
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -36,11 +36,11 @@ class CommonNotificationBuilder @Inject constructor(
 
     operator fun invoke(
         notificationId: NotificationId,
-        notificationEvent: NotificationEvent
+        event: Event
     ): NotificationCompat.Builder =
         NotificationCompat.Builder(appContext, notificationId.channel.id)
             .setSmallIcon(R.drawable.ic_app_notification)
-            .setDeleteIntent(deleteIntent(notificationId, notificationEvent))
+            .setDeleteIntent(deleteIntent(notificationId, event))
             .setOnlyAlertOnce(true)
             .setAutoCancel(true)
 }

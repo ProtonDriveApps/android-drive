@@ -151,12 +151,41 @@
         <item quantity="one">%1$d file failed</item>
         <item quantity="other">%1$d files failed</item>
     </plurals>
+
+    <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+    <string name="notification_content_title_backup">Backing up photos to %1$s</string>
+    <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+    <plurals name="notification_content_text_backup_in_progress">
+        <item quantity="one">%1$s item left</item>
+        <item quantity="other">%1$s items left</item>
+    </plurals>
+    <string name="notification_content_text_backup_complete">Backup complete</string>
+    <string name="notification_content_text_backup_uncompleted">Backup completed with issues</string>
+    <string name="notification_content_text_backup_failed">Backup failed</string>
+    <string name="notification_content_text_backup_failed_drive_storage">Proton storage is full</string>
+    <string name="notification_content_text_backup_failed_local_storage">Local storage is full</string>
+    <string name="notification_content_text_backup_failed_permission">Permissions are missing</string>
+    <string name="notification_content_text_backup_failed_connectivity">Waiting for Wi-Fi</string>
+    <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Backup is not allowed</string>
+    <string name="notification_content_text_backup_paused_disabled">Backup was disabled</string>
+
     <string name="notification_content_title_download_complete">Download complete</string>
     <string name="notification_content_title_forced_sign_out">Please log in</string>
     <string name="notification_content_text_forced_sign_out">Sorry to interrupt! We had an issue with syncing - please log in again and we\'ll have everything running smoothly.</string>
     <string name="notification_content_title_no_space_left_on_device">No space left on a device</string>
     <string name="notification_content_text_no_space_left_on_device">Application may not work properly.</string>
     <string name="notification_channel_group_name_application">Application</string>
+    <string name="notification_channel_background_title">Background</string>
+    <string name="notification_channel_background_description">Channel for background operations like backup</string>
     <string name="notification_channel_transfer_title">Transfer</string>
     <string name="notification_channel_transfer_description">Channel for cloud storage, upload and download notifications</string>
     <string name="notification_channel_warning_title">Warning</string>
@@ -185,7 +214,11 @@
     <string name="error_could_not_send_file">An error occurred while trying to send the file</string>
     <string name="error_could_not_load_folder_content">An error occurred while trying to load folder content</string>
     <string name="error_main_share_locked">Your files are no longer accessible due to a password reset. Re-upload the old encryption key to regain the access.</string>
+    <string name="error_share_locked">Share is locked.</string>
     <string name="error_main_share_not_found">Main share is not found.</string>
+    <string name="error_share_not_found">Share is not found.</string>
+    <string name="error_creating_photo_share_not_allowed">Photos backup is temporarily disabled.</string>
+    <string name="error_creating_share_not_allowed">Creating share is temporarily disabled.</string>
 
     <string name="operation_open_document">open a document</string>
     <string name="operation_create_document">create a document</string>

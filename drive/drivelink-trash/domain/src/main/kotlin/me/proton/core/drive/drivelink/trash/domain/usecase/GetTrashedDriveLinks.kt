@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -31,8 +32,8 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.UpdateIsAnyAncestorMarkedAsOffline
 import me.proton.core.drive.drivelink.trash.domain.repository.DriveLinkTrashRepository
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class GetTrashedDriveLinks @Inject constructor(
@@ -44,15 +45,19 @@ class GetTrashedDriveLinks @Inject constructor(
 ) {
 
     operator fun invoke(
-        shareId: ShareId,
-        refresh: Flow<Boolean> = flowOf { linkTrashRepository.shouldInitiallyFetchTrashContent(shareId) }
+        userId: UserId,
+        volumeId: VolumeId,
+        fromIndex: Int,
+        count: Int,
+        refresh: Flow<Boolean> = flowOf { linkTrashRepository.shouldInitiallyFetchTrashContent(userId, volumeId) }
     ): Flow<DataResult<List<DriveLink>>> =
         refresh.transform { shouldRefresh ->
             if (shouldRefresh) {
                 fetcher<List<DriveLink>> {
                     val (_, saveAction) = driveTrashRepository.fetchTrashContent(
-                        shareId = shareId,
-                        page = 0,
+                        userId = userId,
+                        volumeId = volumeId,
+                        pageIndex = 0,
                         pageSize = configurationProvider.uiPageSize,
                     ).getOrThrow()
                     saveAction()
@@ -60,7 +65,7 @@ class GetTrashedDriveLinks @Inject constructor(
             }
             emitAll(
                 driveLinkTrashRepository
-                    .getTrashDriveLinks(shareId)
+                    .getTrashDriveLinks(userId, volumeId, fromIndex, count)
                     .map { driveLinks -> updateIsAnyAncestorMarkedAsOffline(driveLinks).asSuccess }
             )
         }

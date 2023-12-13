@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.shareurl.base.data"
+}
+
 driveModule(
     hilt = true,
     serialization = true,
@@ -27,6 +31,7 @@ driveModule(
 ) {
     api(project(":drive:share:data"))
     api(project(":drive:share-url:base:domain"))
+    api(project(":drive:volume:data"))
     implementation(project(":drive:link:data"))
     implementation(libs.retrofit)
 }

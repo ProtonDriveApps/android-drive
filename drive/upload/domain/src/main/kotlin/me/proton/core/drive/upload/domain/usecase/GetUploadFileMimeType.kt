@@ -24,5 +24,5 @@ class GetUploadFileMimeType @Inject constructor(
     private val uriResolver: UriResolver,
 ) {
     suspend operator fun invoke(uriString: String): String =
-        uriResolver.getMimeType(uriString).orEmpty()
+        uriResolver.getMimeType(uriString) ?: UriResolver.DEFAULT_MIME_TYPE
 }

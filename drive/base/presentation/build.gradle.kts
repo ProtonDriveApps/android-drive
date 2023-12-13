@@ -19,12 +19,17 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.base.presentation"
+}
+
 driveModule(
     compose = true,
     i18n = true,
 ) {
     api(project(":drive:base:domain"))
     api(libs.androidx.activity.compose)
+    api(libs.androidx.compose.constraintlayout)
     api(libs.androidx.compose.foundation)
     api(libs.androidx.compose.material)
     api(libs.androidx.compose.material3)

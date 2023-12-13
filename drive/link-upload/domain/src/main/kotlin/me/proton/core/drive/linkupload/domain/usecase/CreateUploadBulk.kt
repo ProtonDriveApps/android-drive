@@ -20,6 +20,8 @@ package me.proton.core.drive.linkupload.domain.usecase
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.extension.shareId
+import me.proton.core.drive.linkupload.domain.entity.CacheOption
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -32,7 +34,12 @@ class CreateUploadBulk @Inject constructor(
         volumeId: VolumeId,
         parent: Folder,
         uriStrings: List<String>,
+        cacheOption: CacheOption = CacheOption.ALL,
         shouldDeleteSource: Boolean = false,
+        networkTypeProviderType: NetworkTypeProviderType,
+        shouldAnnounceEvent: Boolean,
+        priority: Long,
+        shouldBroadcastErrorMessage: Boolean,
     ): Result<UploadBulk> = coRunCatching {
         linkUploadRepository.insertUploadBulk(
             UploadBulk(
@@ -42,6 +49,11 @@ class CreateUploadBulk @Inject constructor(
                 parentLinkId = parent.id,
                 uriStrings = uriStrings,
                 shouldDeleteSourceUri = shouldDeleteSource,
+                networkTypeProviderType = networkTypeProviderType,
+                shouldAnnounceEvent = shouldAnnounceEvent,
+                cacheOption = cacheOption,
+                priority = priority,
+                shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
             )
         )
     }

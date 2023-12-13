@@ -25,27 +25,33 @@ import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.api.ProtonApiCode.ALREADY_EXISTS
+import me.proton.core.drive.base.data.api.ProtonApiCode.FEATURE_DISABLED
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
 import me.proton.core.drive.base.domain.extension.avoidDuplicateFileName
 import me.proton.core.drive.base.domain.extension.trimForbiddenChars
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.extension.log
+import me.proton.core.drive.feature.flag.domain.repository.FeatureFlagRepository
+import me.proton.core.drive.feature.flag.domain.usecase.RefreshFeatureFlags
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.UpdateName
 import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.retryOrAbort
+import me.proton.core.drive.upload.data.manager.UploadWorkManagerImpl.Companion.TAG_UPLOAD_WORKER
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.CreateNewFile
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -60,8 +66,10 @@ class CreateNewFileWorker @AssistedInject constructor(
     workManager: WorkManager,
     broadcastMessages: BroadcastMessages,
     getUploadFileLink: GetUploadFileLink,
+    uploadErrorManager: UploadErrorManager,
     private val createNewFile: CreateNewFile,
     private val updateName: UpdateName,
+    private val refreshFeatureFlags: RefreshFeatureFlags,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
     run: Run,
@@ -72,6 +80,7 @@ class CreateNewFileWorker @AssistedInject constructor(
     workManager = workManager,
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
+    uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
     canRun = canRun,
     run = run,
@@ -79,8 +88,10 @@ class CreateNewFileWorker @AssistedInject constructor(
 ) {
 
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
+        uploadFileLink.logWorkState("creating file")
         createNewFile(uploadFileLink)
             .onFailure { error ->
+                error.handleFeatureDisabled() //TODO: this should be handled in Core for any response
                 val retryable = error.isRetryable || error.handle(uploadFileLink)
                 val canRetry = canRetry()
                 error.log(
@@ -88,7 +99,7 @@ class CreateNewFileWorker @AssistedInject constructor(
                     message = """
                         Creating new file failed "${error.message}" retryable $retryable, 
                         max retries reached ${!canRetry}
-                        """.trimIndent()
+                    """.trimIndent().replace("\n", " ")
                 )
                 return retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
             }
@@ -110,17 +121,24 @@ class CreateNewFileWorker @AssistedInject constructor(
             }
         } ?: false
 
+    private suspend fun Throwable.handleFeatureDisabled() =
+        onProtonHttpException { protonCode ->
+            if (protonCode == FEATURE_DISABLED) {
+                refreshFeatureFlags(userId, FeatureFlagRepository.RefreshId.API_ERROR_FEATURE_DISABLED).getOrNull()
+            }
+        }
 
     companion object {
         fun getWorkRequest(
             userId: UserId,
             uploadFileLinkId: Long,
+            networkType: NetworkType,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(CreateNewFileWorker::class.java)
                 .setConstraints(
                     Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiredNetworkType(networkType)
                         .build()
                 )
                 .setInputData(
@@ -131,10 +149,10 @@ class CreateNewFileWorker @AssistedInject constructor(
                 )
                 .setBackoffCriteria(
                     BackoffPolicy.EXPONENTIAL,
-                    OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                    WorkRequest.MIN_BACKOFF_MILLIS,
                     TimeUnit.MILLISECONDS
                 )
-                .addTags(listOf(userId.id) + tags)
+                .addTags(listOf(userId.id) + TAG_UPLOAD_WORKER + tags)
                 .build()
     }
 }

@@ -21,6 +21,8 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.proton.core.drive.file.base.domain.entity.XAttr
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 private val json = Json {
     ignoreUnknownKeys = true
@@ -33,3 +35,6 @@ fun String.toXAttr(): Result<XAttr> = try {
 }
 
 fun XAttr.asJson(): String = json.encodeToString(XAttr.serializer(), this)
+
+val XAttr.mediaDuration: Duration?
+    get() = media?.duration?.seconds

@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.android.drive.lock.data"
+}
+
 driveModule(
     hilt = true,
     room = true,
@@ -29,5 +33,6 @@ driveModule(
 ) {
     api(project(":app-lock:domain"))
     api(project(":drive:base:data"))
+    api(project(":drive:base:presentation")) // failing to merge values without it.
     api(libs.androidx.biometric)
 }

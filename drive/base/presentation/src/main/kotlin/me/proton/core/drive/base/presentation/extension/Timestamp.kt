@@ -29,18 +29,20 @@ import java.util.Date
 
 fun TimestampS.toReadableDate(format: Int = DateFormat.LONG): String = toTimestampMs().toReadableDate(format)
 
-fun TimestampS.lastModified(format: Int = DateFormat.MEDIUM): String = toTimestampMs().lastModified(format)
+fun TimestampS.asHumanReadableString(
+    format: Int = DateFormat.MEDIUM
+): String = toTimestampMs().asHumanReadableString(format)
 
-fun TimestampS.lastModifiedRelative(context: Context, now: Long = System.currentTimeMillis()): CharSequence =
-    toTimestampMs().lastModifiedRelative(context, now)
+fun TimestampS.asHumanReadableStringRelative(context: Context, now: Long = System.currentTimeMillis()): CharSequence =
+    toTimestampMs().asHumanReadableStringRelative(context, now)
 
 fun TimestampMs.toReadableDate(format: Int = DateFormat.LONG): String =
     DateFormat.getDateInstance(format).format(Date(value))
 
-fun TimestampMs.lastModified(format: Int = DateFormat.MEDIUM): String =
+fun TimestampMs.asHumanReadableString(format: Int = DateFormat.MEDIUM): String =
     DateFormat.getDateInstance(format).format(Date(value))
 
-fun TimestampMs.lastModifiedRelative(context: Context, now: Long = System.currentTimeMillis()): CharSequence {
+fun TimestampMs.asHumanReadableStringRelative(context: Context, now: Long = System.currentTimeMillis()): CharSequence {
     val lastModifiedCalendar = asCalendar()
     val nowCalendar = TimestampMs(now).asCalendar()
     return DateUtils.formatDateTime(
@@ -54,6 +56,20 @@ fun TimestampMs.lastModifiedRelative(context: Context, now: Long = System.curren
         }
     )
 }
+
+fun TimestampS.asHumanReadableString(
+    context: Context,
+    flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME,
+) = toTimestampMs().asHumanReadableString(context, flags)
+
+fun TimestampMs.asHumanReadableString(
+    context: Context,
+    flags: Int = DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME,
+): CharSequence = DateUtils.formatDateTime(
+        context,
+        asCalendar().timeInMillis,
+        flags,
+    )
 
 fun TimestampMs.asCalendar(): Calendar =
     Calendar.getInstance().apply { timeInMillis = value }

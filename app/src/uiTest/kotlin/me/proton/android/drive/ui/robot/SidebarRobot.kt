@@ -27,6 +27,7 @@ object SidebarRobot : Robot {
 
     private val sidebar get() = node.withTag(HomeScreenTestTag.sidebar)
     private val trashNavigationItem get() = node.withText(I18N.string.navigation_item_trash)
+    private val offlineNavigationItem get() = node.withText(I18N.string.navigation_item_offline)
 
     private fun clickSidebarMenuItem(@StringRes menuItemName: Int) {
         node.withText(menuItemName).click()
@@ -41,6 +42,8 @@ object SidebarRobot : Robot {
     }
 
     fun clickTrash() = trashNavigationItem.clickTo(TrashRobot)
+
+    fun clickOffline() = offlineNavigationItem.clickTo(OfflineRobot)
 
     fun clickSettings() = SettingsRobot.apply {
         clickSidebarMenuItem(I18N.string.navigation_item_settings)

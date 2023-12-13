@@ -30,34 +30,34 @@ abstract class TrashMetadataDao : BaseDao<TrashMetadataEntity>() {
     @Query(
         QUERY_GET_TRASH_METADATA
     )
-    abstract fun getFlow(userId: UserId, shareId: String): Flow<TrashMetadataEntity?>
+    abstract fun getFlow(userId: UserId, volumeId: String): Flow<TrashMetadataEntity?>
 
     @Query(
         QUERY_GET_TRASH_METADATA
     )
-    abstract suspend fun get(userId: UserId, shareId: String): TrashMetadataEntity?
+    abstract suspend fun get(userId: UserId, volumeId: String): TrashMetadataEntity?
 
     @Query("""
         UPDATE TrashMetadataEntity SET last_fetch_trash_timestamp = :lastFetchTrashTimestamp
-            WHERE user_id = :userId AND share_id = :shareId
+            WHERE user_id = :userId AND volume_id = :volumeId
     """)
     abstract suspend fun updateLastFetchTrashTimestamp(
         userId: UserId,
-        shareId: String,
+        volumeId: String,
         lastFetchTrashTimestamp: Long?,
     ): Int
 
     @Transaction
-    open suspend fun insertOrUpdate(userId: UserId, shareId: String, lastFetchTrashTimestamp: Long?) {
-        if (updateLastFetchTrashTimestamp(userId, shareId, lastFetchTrashTimestamp) == 0) {
-            insertOrIgnore(TrashMetadataEntity(userId, shareId, lastFetchTrashTimestamp))
+    open suspend fun insertOrUpdate(userId: UserId, volumeId: String, lastFetchTrashTimestamp: Long?) {
+        if (updateLastFetchTrashTimestamp(userId, volumeId, lastFetchTrashTimestamp) == 0) {
+            insertOrIgnore(TrashMetadataEntity(userId, volumeId, lastFetchTrashTimestamp))
         }
     }
 
     companion object {
         private const val QUERY_GET_TRASH_METADATA =
             """
-                SELECT * FROM TrashMetadataEntity WHERE user_id = :userId AND share_id = :shareId
+                SELECT * FROM TrashMetadataEntity WHERE user_id = :userId AND volume_id = :volumeId
             """
     }
 }

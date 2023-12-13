@@ -18,55 +18,79 @@
 
 package me.proton.android.drive.ui.test
 
-import android.app.Application
-import androidx.test.core.app.ApplicationProvider
-import androidx.test.platform.app.InstrumentationRegistry
+import android.Manifest
+import android.os.Build
+import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.EntryPointAccessors
-import me.proton.android.drive.test.BuildConfig
+import dagger.hilt.android.testing.HiltAndroidRule
+import kotlinx.coroutines.runBlocking
+import me.proton.android.drive.initializer.MainInitializer
 import me.proton.android.drive.ui.robot.Robot
-import me.proton.android.drive.ui.rules.LogoutAllRule
-import me.proton.android.drive.ui.toolkits.screenshot
+import me.proton.android.drive.ui.rules.QuarkRule
+import me.proton.android.drive.utils.screenshot
 import me.proton.core.auth.presentation.testing.ProtonTestEntryPoint
-import me.proton.core.test.quark.Quark
-import me.proton.core.test.quark.data.User
-import me.proton.core.util.kotlin.deserialize
-import me.proton.core.util.kotlin.deserializeList
+import me.proton.core.test.quark.v2.QuarkCommand
 import me.proton.test.fusion.FusionConfig
+import me.proton.test.fusion.FusionConfig.targetContext
 import org.junit.Rule
+import org.junit.rules.ExternalResource
 import org.junit.rules.RuleChain
 import org.junit.rules.TestName
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.time.Duration.Companion.seconds
 
-open class AbstractBaseTest {
-    @Rule
-    @JvmField
-    val ruleChain: RuleChain = RuleChain.outerRule(testName)
+abstract class AbstractBaseTest(
+    showWelcomeScreen: Boolean,
+) {
+    private val permissions =
+        listOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        ) + when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> listOf(
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+            else -> emptyList()
+        }
 
-    @get:Rule(order = 0)
-    val logoutAllRule = LogoutAllRule()
+    private val hiltRule = HiltAndroidRule(this)
 
-    init {
-        FusionConfig.Compose.useUnmergedTree.set(true)
-        FusionConfig.Compose.onFailure = { screenshot() }
-        screenshotCounter.set(0)
-        quark.jailUnban() // prevent human verification
+    val quarkRule = QuarkRule()
+
+    private val configurationRule = before {
+        hiltRule.inject()
+        MainInitializer.init(targetContext)
+        uiTestHelper.showWelcomeScreenAfterLogin(showWelcomeScreen)
+        configureFusion()
     }
 
-    inline fun <T : Robot> T.verify(crossinline block: T.() -> Any): T = apply { block() }
+    @get:Rule(order = 0)
+    val ruleChain: RuleChain = RuleChain
+        .outerRule(hiltRule)
+        .around(testName)
+        .around(GrantPermissionRule.grant(*permissions.toTypedArray()))
+        .around(configurationRule)
+        .around(quarkRule)
+
+    fun <T : Robot> T.verify(block: T.() -> Any): T =
+        apply { block() }
+
+    private fun configureFusion() {
+        FusionConfig.Compose.useUnmergedTree.set(true)
+        FusionConfig.Compose.onFailure = { screenshot() }
+        FusionConfig.Compose.waitTimeout.set(60.seconds)
+        FusionConfig.Espresso.onFailure = { screenshot() }
+        FusionConfig.Espresso.waitTimeout.set(60.seconds)
+        screenshotCounter.set(0)
+    }
 
     companion object {
         private val protonTestEntryPoint by lazy {
-            EntryPointAccessors.fromApplication(
-                ApplicationProvider.getApplicationContext<Application>(),
-                ProtonTestEntryPoint::class.java,
-            )
+            EntryPointAccessors.fromApplication(targetContext, ProtonTestEntryPoint::class.java)
         }
 
         private val uiTestEntryPoint by lazy {
-            EntryPointAccessors.fromApplication(
-                ApplicationProvider.getApplicationContext<Application>(),
-                UiTestEntryPoint::class.java,
-            )
+            EntryPointAccessors.fromApplication(targetContext, UiTestEntryPoint::class.java)
         }
 
         val loginTestHelper by lazy { protonTestEntryPoint.loginTestHelper }
@@ -74,23 +98,15 @@ open class AbstractBaseTest {
         val testName = TestName()
         val screenshotLocation get() = "/sdcard/Pictures/Screenshots/${testName.methodName}/"
         val screenshotCounter = AtomicInteger(0)
-
-        // TODO: before publishing to github, this information should be moved from assets into gitlab vars
-        val users = User.Users(InstrumentationRegistry.getInstrumentation().context
-            .assets
-            .open("users.json")
-            .bufferedReader()
-            .use { it.readText() }
-            .deserializeList())
-
-        val quark = Quark(
-            host = BuildConfig.HOST,
-            proxyToken = BuildConfig.PROXY_TOKEN,
-            InstrumentationRegistry.getInstrumentation().context
-                .assets
-                .open("internal_api.json")
-                .bufferedReader()
-                .use { it.readText() }
-                .deserialize())
     }
 }
+
+
+private fun <T> T.before(block: suspend T.() -> Any): ExternalResource =
+    object : ExternalResource() {
+        override fun before() {
+            runBlocking {
+                block()
+            }
+        }
+    }

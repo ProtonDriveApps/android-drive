@@ -19,40 +19,55 @@
 package me.proton.android.drive.ui.rules
 
 import kotlinx.coroutines.runBlocking
+import me.proton.android.drive.ui.extension.populate
 import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.loginTestHelper
-import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.quark
-import me.proton.core.test.android.instrumented.ProtonTest.Companion.testTag
 import me.proton.core.test.quark.data.User
-import me.proton.core.util.kotlin.CoreLogger
-import org.junit.rules.TestRule
+import me.proton.core.test.quark.v2.QuarkCommand
+import me.proton.core.test.quark.v2.command.seedNewSubscriber
+import me.proton.core.test.quark.v2.command.userCreate
+import org.junit.rules.TestWatcher
 import org.junit.runner.Description
-import org.junit.runners.model.Statement
 
 class UserLoginRule(
-    private val testUser: User = User(),
-    private val shouldSeedUser: Boolean = true
-) : TestRule {
-    override fun apply(base: Statement, description: Description): Statement {
+    private val testUser: User,
+    private val isDevice: Boolean = false,
+    private val isPhotos: Boolean = false,
+    private val quarkCommands: QuarkCommand,
+) : TestWatcher() {
+    override fun starting(description: Description) {
         runBlocking {
-            if (shouldSeedUser) {
-                if (testUser.isPaid)
-                    quark.seedNewSubscriber(testUser)
-                else {
-                    try {
-                        quark.userCreate(testUser)
-                    } catch (e: java.lang.Exception) {
-                        // FIXME: Bug in Core quark.userCreate
-                        CoreLogger.e(testTag, e)
-                    }
-                }
-            }
+            val annotation = description.getAnnotation(Scenario::class.java)
 
-            if (testUser.dataSetScenario.isNotEmpty()) {
-                quark.populateUserWithData(testUser)
-            }
+            val scenarioUser = annotation
+                ?.let {
+                    testUser.copy(dataSetScenario = it.value.toString())
+                } ?: testUser
 
-            loginTestHelper.login(testUser.name, testUser.password)
+            val device = annotation?.isDevice ?: isDevice
+            val photos = annotation?.isPhotos ?: isPhotos
+
+            if (testUser.isPaid)
+                quarkCommands.seedNewSubscriber(testUser)
+            else
+                quarkCommands.userCreate(testUser)
+
+            if (scenarioUser.dataSetScenario.let { it.isNotEmpty() && it != "0" }) {
+                quarkCommands.populate(scenarioUser, device, photos)
+            }
         }
-        return base
+
+        try {
+            loginTestHelper.login(testUser.name, testUser.password)
+        } catch (ex: IllegalStateException) {
+            val message =
+                "Possibly incorrect rule order, make sure you use @get:Rule(order = 1) for UserLoginRule\n${ex.message}"
+            throw IllegalStateException(message)
+        }
+    }
+
+    override fun finished(description: Description) {
+        runBlocking {
+            loginTestHelper.logoutAll()
+        }
     }
 }

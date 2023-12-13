@@ -19,10 +19,14 @@
 package me.proton.core.drive.drivelink.trash.domain.repository
 
 import kotlinx.coroutines.flow.Flow
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface DriveLinkTrashRepository {
 
-    fun getTrashDriveLinks(shareId: ShareId): Flow<List<DriveLink>>
+    fun getTrashDriveLinks(userId: UserId, volumeId: VolumeId, fromIndex: Int, count: Int): Flow<List<DriveLink>>
+
+    fun getTrashDriveLinksCount(userId: UserId, volumeId: VolumeId): Flow<Int>
 }

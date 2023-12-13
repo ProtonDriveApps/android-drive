@@ -27,13 +27,18 @@ import coil.compose.LocalImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.SvgDecoder
+import coil.decode.VideoFrameDecoder
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
+import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailCacheFile
+import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailInputStream
 import me.proton.core.drive.thumbnail.presentation.coil.decode.ThumbnailDecoder
 import me.proton.core.drive.thumbnail.presentation.coil.fetch.ThumbnailFetcher
+import me.proton.core.drive.thumbnail.presentation.coil.fetch.ThumbnailKeyer
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
@@ -44,16 +49,26 @@ fun ThumbnailEnabled(
     val currentImageLoader = LocalImageLoader.current
     val imageLoader = remember {
         val injections = EntryPointAccessors.fromApplication(context, HiltEntryPoint::class.java)
+        val thumbnailFetcherFactory = ThumbnailFetcher.Factory(
+            context = context,
+            getThumbnailInputStream = injections.getThumbnailInputStream,
+            getThumbnailCacheFile = injections.getThumbnailCacheFile
+        )
+        val thumbnailDecoderFactory = ThumbnailDecoder.Factory(
+            decryptThumbnail = injections.decryptThumbnail
+        )
         currentImageLoader.newBuilder()
-            .componentRegistry {
+            .components {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    add(ImageDecoderDecoder(context))
+                    add(ImageDecoderDecoder.Factory())
                 } else {
-                    add(GifDecoder())
+                    add(GifDecoder.Factory())
                 }
-                add(SvgDecoder(context))
-                add(injections.fetcher)
-                add(injections.decoder)
+                add(SvgDecoder.Factory())
+                add(VideoFrameDecoder.Factory())
+                add(ThumbnailKeyer)
+                add(thumbnailFetcherFactory)
+                add(thumbnailDecoderFactory)
             }
             .build()
     }
@@ -65,6 +80,7 @@ fun ThumbnailEnabled(
 @EntryPoint
 @InstallIn(SingletonComponent::class)
 interface HiltEntryPoint {
-    val fetcher: ThumbnailFetcher
-    val decoder: ThumbnailDecoder
+    val getThumbnailInputStream: GetThumbnailInputStream
+    val getThumbnailCacheFile: GetThumbnailCacheFile
+    val decryptThumbnail: DecryptThumbnail
 }

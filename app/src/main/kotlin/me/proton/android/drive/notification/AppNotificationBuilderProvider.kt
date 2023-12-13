@@ -19,14 +19,15 @@
 package me.proton.android.drive.notification
 
 import androidx.core.app.NotificationCompat
+import me.proton.android.drive.usecase.notification.BackupNotificationBuilder
 import me.proton.android.drive.usecase.notification.DownloadNotificationBuilder
 import me.proton.android.drive.usecase.notification.ForcedSignOutNotificationBuilder
 import me.proton.android.drive.usecase.notification.NoSpaceLeftOnDeviceNotificationBuilder
 import me.proton.android.drive.usecase.notification.StorageFullNotificationBuilder
 import me.proton.android.drive.usecase.notification.UploadNotificationBuilder
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import javax.inject.Inject
 
@@ -36,37 +37,43 @@ class AppNotificationBuilderProvider @Inject constructor(
     private val downloadNotificationBuilder: DownloadNotificationBuilder,
     private val forcedSignOutNotificationBuilder: ForcedSignOutNotificationBuilder,
     private val noSpaceLeftOnDeviceNotificationBuilder: NoSpaceLeftOnDeviceNotificationBuilder,
+    private val backupNotificationBuilder: BackupNotificationBuilder,
 ) : NotificationBuilderProvider {
 
     @Suppress("UNCHECKED_CAST")
     override fun get(
         notificationId: NotificationId,
-        notificationEvents: List<NotificationEvent>,
+        events: List<Event>,
     ): NotificationCompat.Builder = when {
-        notificationEvents.size == 1 && notificationEvents.first() is NotificationEvent.StorageFull ->
+        events.size == 1 && events.first() is Event.StorageFull ->
             storageFullBuilder(
                 notificationId = requireIsInstance(notificationId),
-                notificationEvent = notificationEvents.first() as NotificationEvent.StorageFull,
+                event = events.first() as Event.StorageFull,
             )
-        notificationEvents.isNotEmpty() && notificationEvents.all { event -> event is NotificationEvent.Upload } ->
+        events.isNotEmpty() && events.all { event -> event is Event.Upload } ->
             uploadNotificationBuilder(
                 notificationId = requireIsInstance(notificationId),
-                notificationEvents = notificationEvents as List<NotificationEvent.Upload>,
+                events = events as List<Event.Upload>,
             )
-        notificationEvents.size == 1 && notificationEvents.first() is NotificationEvent.Download ->
+        events.size == 1 && events.first() is Event.Download ->
             downloadNotificationBuilder(
                 notificationId = requireIsInstance(notificationId),
-                notificationEvent = notificationEvents.first() as NotificationEvent.Download,
+                event = events.first() as Event.Download,
             )
-        notificationEvents.size == 1 && notificationEvents.first() is NotificationEvent.ForcedSignOut ->
+        events.size == 1 && events.first() is Event.ForcedSignOut ->
             forcedSignOutNotificationBuilder(
                 notificationId = requireIsInstance(notificationId),
-                notificationEvent = notificationEvents.first() as NotificationEvent.ForcedSignOut,
+                event = events.first() as Event.ForcedSignOut,
             )
-        notificationEvents.size == 1 && notificationEvents.first() is NotificationEvent.NoSpaceLeftOnDevice ->
+        events.size == 1 && events.first() is Event.NoSpaceLeftOnDevice ->
             noSpaceLeftOnDeviceNotificationBuilder(
                 notificationId = requireIsInstance(notificationId),
-                notificationEvent = notificationEvents.first() as NotificationEvent.NoSpaceLeftOnDevice,
+                event = events.first() as Event.NoSpaceLeftOnDevice,
+            )
+        events.size == 1 && events.first() is Event.Backup ->
+            backupNotificationBuilder(
+                notificationId = requireIsInstance(notificationId),
+                event = events.first() as Event.Backup,
             )
         else -> error("Unhandled notification events")
     }

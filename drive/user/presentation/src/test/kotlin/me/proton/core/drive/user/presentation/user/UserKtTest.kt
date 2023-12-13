@@ -32,6 +32,7 @@ class UserKtTest {
         displayName = "Adam Smith",
         currency = "€",
         credit = 0,
+        createdAtUtc = 0,
         usedSpace = 242_221_056L,
         maxSpace = 2_147_483_648L,
         maxUpload = 0,
@@ -41,6 +42,7 @@ class UserKtTest {
         subscribed = 0,
         delinquent = null,
         keys = emptyList(),
+        recovery = null,
     )
 
     @Test

@@ -18,6 +18,7 @@
 package me.proton.core.drive.linktrash.data.repository
 
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.link.data.extension.toLink
 import me.proton.core.drive.link.data.extension.toLinkWithProperties
@@ -31,6 +32,7 @@ import me.proton.core.drive.linktrash.data.extension.toLinkTrashStateEntity
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.util.UUID
 import javax.inject.Inject
 
@@ -53,8 +55,8 @@ class LinkTrashRepositoryImpl @Inject constructor(
         db.linkTrashDao.delete(shareId.userId, shareId.id)
     }
 
-    override fun hasTrashContent(shareId: ShareId) =
-        db.linkTrashDao.hasTrashContent(shareId.userId, shareId.id)
+    override fun hasTrashContent(userId: UserId, volumeId: VolumeId) =
+        db.linkTrashDao.hasTrashContent(userId)
 
     override suspend fun hasWorkWithId(workId: String): Boolean =
         db.trashWorkDao.hasWorkId(workId)
@@ -97,11 +99,11 @@ class LinkTrashRepositoryImpl @Inject constructor(
         links.map { link -> link.toLinkWithProperties().toLink() }
     }
 
-    override suspend fun markTrashContentAsFetched(shareId: ShareId) =
-        db.trashMetadataDao.insertOrUpdate(shareId.userId, shareId.id, System.currentTimeMillis())
+    override suspend fun markTrashContentAsFetched(userId: UserId, volumeId: VolumeId) =
+        db.trashMetadataDao.insertOrUpdate(userId, volumeId.id, System.currentTimeMillis())
 
-    override suspend fun shouldInitiallyFetchTrashContent(shareId: ShareId): Boolean =
-        db.trashMetadataDao.get(shareId.userId, shareId.id).hasNotFetchedTrashContent
+    override suspend fun shouldInitiallyFetchTrashContent(userId: UserId, volumeId: VolumeId): Boolean =
+        db.trashMetadataDao.get(userId, volumeId.id).hasNotFetchedTrashContent
 
     override suspend fun isTrashed(linkId: LinkId): Boolean =
         db.linkTrashDao.isTrashed(linkId.shareId.userId, linkId.shareId.id, linkId.id)

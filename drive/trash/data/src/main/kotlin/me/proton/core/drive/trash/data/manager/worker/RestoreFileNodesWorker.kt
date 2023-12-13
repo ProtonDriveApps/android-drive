@@ -23,6 +23,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.BackoffPolicy
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -38,6 +39,9 @@ import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_SHARE_ID
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_WORK_ID
 import me.proton.core.drive.trash.domain.notification.RestoreFilesExtra
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
 import java.util.concurrent.TimeUnit
@@ -86,9 +90,6 @@ class RestoreFileNodesWorker @AssistedInject constructor(
     }
 
     companion object {
-        private const val KEY_USER_ID = "KEY_USER_ID"
-        private const val KEY_SHARE_ID = "KEY_SHARE_ID"
-        private const val KEY_WORK_ID = "KEY_WORK_ID"
 
         fun getWorkRequest(
             userId: UserId,
@@ -105,7 +106,7 @@ class RestoreFileNodesWorker @AssistedInject constructor(
             )
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
-                OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
             .addTags(listOf(userId.id) + tags)

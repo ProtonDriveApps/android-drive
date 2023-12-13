@@ -19,6 +19,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.base.domain"
+}
+
 driveModule(
     hilt = true,
     serialization = true,

@@ -20,13 +20,16 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.files.preview"
+}
+
 driveModule(
     compose = true,
     i18n = true,
 ) {
     implementation(project(":drive:base:presentation"))
-    implementation(libs.accompanist.insets)
-    implementation(libs.accompanist.pager)
+    implementation(project(":drive:thumbnail:presentation"))
     implementation(libs.coil.compose)
     implementation(libs.androidx.media3.exoplayer)
     implementation(libs.androidx.media3.ui)

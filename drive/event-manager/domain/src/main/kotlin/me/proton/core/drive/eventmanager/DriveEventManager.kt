@@ -35,6 +35,7 @@ import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.usecase.GetShares
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.drive.volume.domain.entity.isActive
@@ -70,7 +71,7 @@ class DriveEventManager @Inject constructor(
     }
     @Suppress("unused")
     private fun getAllShareIds(userId: UserId) =
-        getShares(userId)
+        getShares(userId, Share.Type.MAIN)
             .filterSuccessOrError()
             .mapSuccessValueOrNull()
             .filterNotNull()

@@ -30,4 +30,9 @@ data class UploadBulk(
     val parentLinkId: FolderId,
     val uriStrings: List<String>,
     val shouldDeleteSourceUri: Boolean = false,
+    val networkTypeProviderType: NetworkTypeProviderType,
+    val shouldAnnounceEvent: Boolean = true,
+    val cacheOption: CacheOption = CacheOption.ALL,
+    val priority: Long,
+    val shouldBroadcastErrorMessage: Boolean = true,
 )

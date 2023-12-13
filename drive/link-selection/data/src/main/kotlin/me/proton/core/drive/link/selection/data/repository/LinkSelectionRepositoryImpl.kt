@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.link.selection.data.repository
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.selection.data.db.LinkSelectionDatabase
@@ -81,6 +82,10 @@ class LinkSelectionRepositoryImpl @Inject constructor(
                 )
             }.toTypedArray()
         )
+    }
+
+    override suspend fun removeAll(userId: UserId) {
+        db.linkSelectionDao.deleteAll(userId)
     }
 
     override suspend fun duplicateSelection(selectionId: SelectionId, retries: Int): Result<SelectionId> {

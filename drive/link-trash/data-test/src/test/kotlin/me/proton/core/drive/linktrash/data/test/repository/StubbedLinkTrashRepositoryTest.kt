@@ -25,7 +25,10 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.share.domain.entity.ShareId
-import org.junit.Assert.*
+import me.proton.core.drive.volume.domain.entity.VolumeId
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -35,6 +38,7 @@ class StubbedLinkTrashRepositoryTest {
 
 
     private val userId = UserId("user-id")
+    private val volumeId = VolumeId("volume-id")
     private val shareId = ShareId(userId, "share-id")
     private val folderId = FolderId(shareId, "folder-id")
     private val otherShareId = ShareId(userId, "other-share-id")
@@ -74,7 +78,7 @@ class StubbedLinkTrashRepositoryTest {
 
     @Test
     fun hasTrashContent() = runTest {
-        val hasTrashContent = repository.hasTrashContent(shareId)
+        val hasTrashContent = repository.hasTrashContent(userId, volumeId)
         assertFalse(hasTrashContent.first())
 
         repository.insertOrUpdateTrashState(listOf(folderId), TrashState.TRASHING)
@@ -134,11 +138,11 @@ class StubbedLinkTrashRepositoryTest {
 
     @Test
     fun shouldInitiallyFetchTrashContent() = runTest {
-        assertTrue(repository.shouldInitiallyFetchTrashContent(shareId))
+        assertTrue(repository.shouldInitiallyFetchTrashContent(userId, volumeId))
 
-        repository.markTrashContentAsFetched(shareId)
+        repository.markTrashContentAsFetched(userId, volumeId)
 
-        assertFalse(repository.shouldInitiallyFetchTrashContent(shareId))
+        assertFalse(repository.shouldInitiallyFetchTrashContent(userId, volumeId))
     }
 
     @Test

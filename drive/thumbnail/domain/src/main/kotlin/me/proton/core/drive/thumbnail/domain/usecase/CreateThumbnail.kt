@@ -22,8 +22,9 @@ import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.extension.extensionOrEmpty
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.domain.provider.MimeTypeProvider
+import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -32,18 +33,38 @@ class CreateThumbnail @Inject constructor(
     private val mimeTypeProvider: MimeTypeProvider,
     private val configurationProvider: ConfigurationProvider,
 ) {
-    // The limit is with encryption but since we calculate the size prior to encryption we require 90% in order to
-    // leave 10% of the size for the encryption. The same is done on the web client
-    private val thumbnailMaxSize = configurationProvider.thumbnailMaxSize * 0.9f
 
     suspend operator fun invoke(
         uri: String,
         mimeType: String?,
-        maxWidth: Int = configurationProvider.thumbnailMaxWidth,
-        maxHeight: Int = configurationProvider.thumbnailMaxHeight,
-        maxSize: Bytes = thumbnailMaxSize,
+        type: ThumbnailType,
+        coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
+    ) : Result<ByteArray?> = coRunCatching(coroutineContext) {
+        val thumbnail = when (type) {
+            ThumbnailType.DEFAULT -> configurationProvider.thumbnailDefault
+            ThumbnailType.PHOTO -> configurationProvider.thumbnailPhoto
+        }
+        invoke(
+            uri = uri,
+            mimeType = mimeType,
+            maxWidth = thumbnail.maxWidth,
+            maxHeight = thumbnail.maxHeight,
+            maxSize = thumbnail.maxSize,
+            coroutineContext = coroutineContext,
+        ).getOrThrow()
+    }
+
+    suspend operator fun invoke(
+        uri: String,
+        mimeType: String?,
+        maxWidth: Int,
+        maxHeight: Int,
+        maxSize: Bytes,
         coroutineContext: CoroutineContext = Job() + Dispatchers.IO
     ): Result<ByteArray?> = coRunCatching(coroutineContext) {
+        // The limit is with encryption but since we calculate the size prior to encryption we require 90% in order to
+        // leave 10% of the size for the encryption. The same is done on the web client
+        val thumbnailMaxSize = maxSize * 0.9f
         (mimeType ?: mimeTypeProvider.getMimeTypeFromExtension(uri.extensionOrEmpty))?.let { type ->
             providers.firstNotNullOfOrNull { provider ->
                 provider.getThumbnail(
@@ -51,7 +72,7 @@ class CreateThumbnail @Inject constructor(
                     type,
                     maxWidth,
                     maxHeight,
-                    maxSize
+                    thumbnailMaxSize,
                 )
             }
         }

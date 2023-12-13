@@ -20,7 +20,7 @@ package me.proton.core.drive.block.data.api.response
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.data.api.Dto.CODE
-import me.proton.core.drive.base.data.api.Dto.THUMBNAIL_LINK
+import me.proton.core.drive.base.data.api.Dto.THUMBNAIL_LINKS
 import me.proton.core.drive.base.data.api.Dto.UPLOAD_LINKS
 import me.proton.core.drive.block.data.api.entity.UploadLinkDto
 
@@ -30,6 +30,6 @@ data class BlockUploadResponse(
     val code: Long,
     @SerialName(UPLOAD_LINKS)
     val blockUploadLinks: List<UploadLinkDto>,
-    @SerialName(THUMBNAIL_LINK)
-    val thumbnailUploadLink: UploadLinkDto?
+    @SerialName(THUMBNAIL_LINKS)
+    val thumbnailUploadLinks: List<UploadLinkDto>? = null,
 )

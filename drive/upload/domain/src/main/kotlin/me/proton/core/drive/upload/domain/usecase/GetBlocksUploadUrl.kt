@@ -46,7 +46,7 @@ class GetBlocksUploadUrl @Inject constructor(
                     .getUploadBlocks(this)
                     .chunked(configurationProvider.apiBlockPageSize)
                     .map { uploadBlocks ->
-                        val thumbnailBlock = uploadBlocks.firstOrNull { uploadBlock -> uploadBlock.isThumbnail }
+                        val thumbnailBlocks = uploadBlocks.filter { uploadBlock -> uploadBlock.isThumbnail }
                         val fileBlocks = uploadBlocks.filterNot { uploadBlock -> uploadBlock.isThumbnail }
                         blockRepository.getUploadBlocksUrl(
                             userId = userId,
@@ -54,7 +54,7 @@ class GetBlocksUploadUrl @Inject constructor(
                             fileId = uploadFileLink.requireFileId(),
                             revisionId = draftRevisionId,
                             uploadBlocks = fileBlocks,
-                            uploadThumbnail = thumbnailBlock,
+                            uploadThumbnails = thumbnailBlocks,
                         ).getOrThrow()
                     }.flatten()
             } catch (e: Throwable) {
@@ -69,9 +69,9 @@ class GetBlocksUploadUrl @Inject constructor(
         val fileBlocks = uploadBlocks.filter { uploadBlock -> uploadBlock.index == index }
         require(fileBlocks.size == 1)
         val (uploadBlock, uploadThumbnail) = if (fileBlocks.first().isThumbnail) {
-            emptyList<UploadBlock>() to fileBlocks.first()
+            emptyList<UploadBlock>() to fileBlocks
         } else {
-            fileBlocks to null
+            fileBlocks to emptyList()
         }
         with (uploadFileLink) {
             blockRepository.getUploadBlocksUrl(
@@ -80,7 +80,7 @@ class GetBlocksUploadUrl @Inject constructor(
                 fileId = uploadFileLink.requireFileId(),
                 revisionId = draftRevisionId,
                 uploadBlocks = uploadBlock,
-                uploadThumbnail = uploadThumbnail,
+                uploadThumbnails = uploadThumbnail,
             ).getOrThrow()
         }
     }
@@ -88,6 +88,6 @@ class GetBlocksUploadUrl @Inject constructor(
     private fun List<UploadBlocksUrl>.flatten(): UploadBlocksUrl =
         UploadBlocksUrl(
             blockLinks = map { uploadBlocksUrl -> uploadBlocksUrl.blockLinks }.flatten(),
-            thumbnailLink = firstOrNull { uploadBlocksUrl -> uploadBlocksUrl.thumbnailLink != null }?.thumbnailLink,
+            thumbnailLinks = map { uploadBlocksUrl -> uploadBlocksUrl.thumbnailLinks }.flatten(),
         )
 }

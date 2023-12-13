@@ -18,21 +18,13 @@
 
 package me.proton.android.drive.ui.test.flow.settings
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.rules.WelcomeScreenRule
-import me.proton.android.drive.ui.test.BaseTest
-import org.junit.Rule
+import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
 
-class ClearLocalCacheFlowTest : BaseTest() {
-
-    @get:Rule
-    val welcomeScreenRule = WelcomeScreenRule(false)
-
-    @get:Rule
-    val userLoginRule = UserLoginRule(testUser = users.getUser())
-
+@HiltAndroidTest
+class ClearLocalCacheFlowTest : AuthenticatedBaseTest() {
     @Test
     fun clearLocalCacheSucceeds() {
         FilesTabRobot

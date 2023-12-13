@@ -58,7 +58,7 @@ class GetEmptyTrashTest {
 
     @Test
     fun `with share id`() = runTest {
-        val state = getEmptyTrashState(userId, shareId)
+        val state = getEmptyTrashState(userId)
 
         assertEquals(TrashManager.EmptyTrashState.NO_FILES_TO_TRASH, state.first())
 

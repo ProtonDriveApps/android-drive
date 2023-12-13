@@ -33,11 +33,13 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
+import me.proton.core.drive.trash.data.manager.worker.EmptyTrashSuccessWorker
 import me.proton.core.drive.trash.data.manager.worker.EmptyTrashWorker
 import me.proton.core.drive.trash.data.manager.worker.PermanentlyDeleteFileNodesWorker
 import me.proton.core.drive.trash.data.manager.worker.RestoreFileNodesWorker
 import me.proton.core.drive.trash.data.manager.worker.TrashFileNodesWorker
 import me.proton.core.drive.trash.domain.TrashManager
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -81,20 +83,28 @@ class TrashManagerImpl @Inject constructor(
             )
         }
 
-    override fun emptyTrash(userId: UserId, shareId: ShareId) {
-        workManager.enqueueUniqueWork(userId.uniqueEmptyTrashWorkName, ExistingWorkPolicy.KEEP,
-            EmptyTrashWorker.getWorkRequest(userId, shareId)
-        )
+    @Suppress("EnqueueWork")
+    override fun emptyTrash(userId: UserId, shareIds: Set<ShareId>) {
+        require(shareIds.isNotEmpty()) { "At least one share id is required" }
+        workManager.beginUniqueWork(
+            userId.uniqueEmptyTrashWorkName,
+            ExistingWorkPolicy.KEEP,
+            shareIds.map { shareId ->
+                EmptyTrashWorker.getWorkRequest(userId, shareId)
+            },
+        ).then(
+            EmptyTrashSuccessWorker.getWorkRequest(userId)
+        ).enqueue()
     }
 
-    override fun getEmptyTrashState(userId: UserId, shareId: ShareId): Flow<TrashManager.EmptyTrashState> =
+    override fun getEmptyTrashState(userId: UserId, volumeId: VolumeId): Flow<TrashManager.EmptyTrashState> =
         workManager.getWorkInfosForUniqueWorkLiveData(userId.uniqueEmptyTrashWorkName)
             .asFlow()
             .flatMapLatest { workInfos ->
                 if (workInfos.firstOrNull { workInfo -> workInfo.state == WorkInfo.State.RUNNING } != null) {
                     flowOf(TrashManager.EmptyTrashState.TRASHING)
                 } else {
-                    linkTrashRepository.hasTrashContent(shareId).map { hasTrashContent ->
+                    linkTrashRepository.hasTrashContent(userId, volumeId).map { hasTrashContent ->
                         if (hasTrashContent) {
                             TrashManager.EmptyTrashState.INACTIVE
                         } else {

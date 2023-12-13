@@ -25,13 +25,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import me.proton.android.drive.lock.domain.exception.LockException
 import me.proton.android.drive.lock.domain.usecase.UnlockApp
+import me.proton.android.drive.lock.presentation.extension.getDefaultMessage
 import me.proton.android.drive.lock.presentation.viewevent.UnlockViewEvent
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.usecase.SignOut
-import me.proton.android.drive.lock.presentation.extension.getDefaultMessage
+import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.extension.getDefaultMessage
+import me.proton.core.drive.base.domain.usecase.SignOut
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import javax.inject.Inject
 

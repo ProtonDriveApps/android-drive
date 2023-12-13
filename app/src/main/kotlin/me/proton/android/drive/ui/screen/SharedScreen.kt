@@ -27,11 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import me.proton.android.drive.ui.common.ProtonSwipeRefresh
 import me.proton.android.drive.ui.effect.HandleHomeEffect
 import me.proton.android.drive.ui.viewmodel.SharedViewModel
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
+import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
 import me.proton.core.drive.files.presentation.component.Files
 import me.proton.core.drive.files.presentation.component.TopAppBar
@@ -74,8 +74,9 @@ fun SharedScreen(
         }
     }
 
-    ProtonSwipeRefresh(
-        listContentState = viewState.filesViewState.listContentState,
+    ProtonPullToRefresh(
+        isPullToRefreshEnabled = true,
+        isRefreshing = viewState.filesViewState.listContentState.isRefreshing,
         onRefresh = viewModel::refresh,
     ) {
         Files(

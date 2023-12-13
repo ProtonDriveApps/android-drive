@@ -26,6 +26,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.db.AppDatabase
+import me.proton.android.drive.db.ClientUidDatabase
 import me.proton.android.drive.lock.data.db.AppLockDatabase
 import javax.inject.Singleton
 
@@ -45,4 +46,7 @@ abstract class AppDatabaseBindsModule {
 
     @Binds
     abstract fun provideAppLockDatabase(db: AppDatabase): AppLockDatabase
+
+    @Binds
+    abstract fun provideClientUidDatabase(db: AppDatabase): ClientUidDatabase
 }

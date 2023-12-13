@@ -23,6 +23,8 @@ import android.os.ParcelFileDescriptor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
+import me.proton.core.drive.drivelink.domain.extension.getThumbnailId
+import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailCachedInputStream
 import javax.inject.Inject
 
@@ -36,7 +38,12 @@ class GetDocumentThumbnail @Inject constructor(
     @Suppress("UNUSED_PARAMETER", "BlockingMethodInNonBlockingContext")
     suspend operator fun invoke(documentId: DocumentId, signal: CancellationSignal?): AssetFileDescriptor =
         withDriveLinkFile(documentId) { _, driveLink ->
-            getThumbnailCachedInputStream(driveLink.id, driveLink.volumeId, driveLink.activeRevisionId)
+            getThumbnailCachedInputStream(
+                fileId = driveLink.id,
+                volumeId = driveLink.volumeId,
+                revisionId = driveLink.activeRevisionId,
+                thumbnailId = requireNotNull(driveLink.getThumbnailId(ThumbnailType.DEFAULT))
+            )
                 .map { inputStream ->
                         decryptThumbnail(
                             fileId = driveLink.id,

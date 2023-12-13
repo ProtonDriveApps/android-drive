@@ -29,6 +29,9 @@ val LinkEntity.isShared
 
 fun LinkEntity.shareUrlId(): ShareUrlId? = shareUrlShareId?.let { shareId ->
     this.shareUrlId?.let { shareUrlId ->
-        ShareUrlId(ShareId(userId = this.userId, shareId), shareUrlId)
+        ShareUrlId(
+            shareId = ShareId(userId = this.userId, shareId),
+            id = shareUrlId,
+        )
     }
 }

@@ -28,19 +28,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import me.proton.android.drive.ui.common.ProtonSwipeRefresh
 import me.proton.android.drive.ui.effect.HandleHomeEffect
 import me.proton.android.drive.ui.viewmodel.FilesViewModel
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
-import me.proton.core.drive.base.presentation.component.ActionButton
+import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
+import me.proton.core.drive.base.presentation.component.TopBarActions
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
 import me.proton.core.drive.files.presentation.component.Files
 import me.proton.core.drive.files.presentation.component.TopAppBar
-import me.proton.core.drive.files.presentation.state.FilesViewState
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -98,10 +96,10 @@ fun FilesScreen(
     }
     viewModel.HandleHomeEffect(homeScaffoldState)
 
-    ProtonSwipeRefresh(
-        listContentState = viewState.listContentState,
+    ProtonPullToRefresh(
+        isPullToRefreshEnabled = viewState.isRefreshEnabled,
+        isRefreshing = viewState.listContentState.isRefreshing,
         onRefresh = viewModel::refresh,
-        swipeEnabled = viewState.isRefreshEnabled,
     ) {
         Files(
             driveLinks = DriveLinksFlow.PagingList(viewModel.driveLinks, viewModel.listEffect),
@@ -111,20 +109,6 @@ fun FilesScreen(
             getTransferProgress = viewModel::getDownloadProgressFlow,
             uploadingFileLinks = viewModel.uploadingFileLinks,
             showTopAppBar = false,
-        )
-    }
-}
-
-@Composable
-fun TopBarActions(
-    actionFlow: Flow<Set<FilesViewState.Action>>,
-) {
-    val actions by rememberFlowWithLifecycle(flow = actionFlow).collectAsState(initial = emptySet())
-    actions.forEach { action ->
-        ActionButton(
-            icon = action.iconResId,
-            contentDescription = action.contentDescriptionResId,
-            onClick = action.onAction,
         )
     }
 }

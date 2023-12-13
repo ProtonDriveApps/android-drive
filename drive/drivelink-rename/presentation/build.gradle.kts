@@ -19,11 +19,16 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.drivelink.rename.presentation"
+}
+
 driveModule(
     hilt = true,
     compose = true,
     i18n = true,
 ) {
+    implementation(project(":drive:base:data"))
     api(project(":drive:base:presentation"))
     api(project(":drive:drivelink-rename:domain"))
     api(project(":drive:drivelink-crypto:domain"))

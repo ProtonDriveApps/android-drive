@@ -73,7 +73,7 @@ class TrashExtraActionProvider @Inject constructor(
         null // Can't undo a delete operation
     } else {
         ActionProvider.Action(I18N.string.trash_action_retry) {
-            emptyTrash(userId, shareId)
+            emptyTrash(userId)
         }
     }
 }

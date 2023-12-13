@@ -19,6 +19,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.drivelink.selection.domain"
+}
+
 driveModule(hilt = true) {
     api(project(":drive:drivelink:domain"))
     api(project(":drive:drivelink-crypto:domain"))

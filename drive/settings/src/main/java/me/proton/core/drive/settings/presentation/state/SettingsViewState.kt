@@ -34,6 +34,8 @@ data class SettingsViewState(
     @StringRes val appAccessSubtitleResId: Int,
     val isAutoLockDurationsVisible: Boolean,
     val autoLockDuration: Duration,
+    val isPhotosSettingsVisible : Boolean,
+    @StringRes val photosBackupSubtitleResId: Int,
 )
 
 sealed class LegalLink(

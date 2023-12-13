@@ -19,6 +19,7 @@ package me.proton.core.drive.file.base.data.api.request
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.proton.core.drive.base.data.api.Dto.CLIENT_UID
 import me.proton.core.drive.base.data.api.Dto.CONTENT_KEY_PACKET
 import me.proton.core.drive.base.data.api.Dto.CONTENT_KEY_PACKET_SIGNATURE
 import me.proton.core.drive.base.data.api.Dto.HASH
@@ -52,5 +53,7 @@ data class CreateFileRequest(
     @SerialName(CONTENT_KEY_PACKET_SIGNATURE)
     val contentKeyPacketSignature: String,
     @SerialName(PARENT_LINK_ID)
-    val parentLinkId: String
+    val parentLinkId: String,
+    @SerialName(CLIENT_UID)
+    val clientUid: String?,
 )

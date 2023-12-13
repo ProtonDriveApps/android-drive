@@ -20,6 +20,7 @@ package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.android.drive.verifier.domain.usecase.BuildVerifier
 import me.proton.android.drive.verifier.domain.usecase.CleanupVerifier
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.key.domain.entity.Key
@@ -38,8 +39,10 @@ class VerifyBlocks @Inject constructor(
     private val getNodeKey: GetNodeKey,
     private val buildNodeKey: BuildNodeKey,
     private val updateVerifierToken: UpdateVerifierToken,
+    private val configurationProvider: ConfigurationProvider,
 ) {
     suspend operator fun invoke(uploadFileLink: UploadFileLink): Result<Unit> = coRunCatching {
+        if (!configurationProvider.useVerifier) return@coRunCatching
         val verifier = buildVerifier(
             userId = uploadFileLink.userId,
             shareId = uploadFileLink.shareId.id,

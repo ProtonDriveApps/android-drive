@@ -20,19 +20,28 @@ package me.proton.core.drive.drivelink.trash.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.trash.data.db.DriveLinkTrashDatabase
 import me.proton.core.drive.drivelink.trash.domain.repository.DriveLinkTrashRepository
 import javax.inject.Inject
 import me.proton.core.drive.drivelink.data.extension.toDriveLinks
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 class DriveLinkTrashRepositoryImpl @Inject constructor(
-    private val driveLinkTrashDatabase: DriveLinkTrashDatabase,
+    private val db: DriveLinkTrashDatabase,
 ) : DriveLinkTrashRepository {
 
-    override fun getTrashDriveLinks(shareId: ShareId): Flow<List<DriveLink>> =
-        driveLinkTrashDatabase.driveLinkTrashDao.getTrashLinks(shareId.userId, shareId.id).map { entities ->
+    override fun getTrashDriveLinks(
+        userId: UserId,
+        volumeId: VolumeId,
+        fromIndex: Int,
+        count: Int,
+    ): Flow<List<DriveLink>> =
+        db.driveLinkTrashDao.getTrashLinks(userId, count, fromIndex).map { entities ->
             entities.toDriveLinks()
         }
+
+    override fun getTrashDriveLinksCount(userId: UserId, volumeId: VolumeId): Flow<Int> =
+        db.driveLinkTrashDao.getTrashedLinksCount(userId)
 }

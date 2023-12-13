@@ -22,21 +22,25 @@ import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.size
 import me.proton.core.drive.base.domain.extension.toHex
+import me.proton.core.drive.base.domain.log.LogTag.UploadTag.logTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.upload.EncryptUploadBlocks
 import me.proton.core.drive.crypto.domain.usecase.upload.EncryptUploadThumbnail
 import me.proton.core.drive.crypto.domain.usecase.upload.ManifestSignature
+import me.proton.core.drive.file.base.domain.entity.Block
+import me.proton.core.drive.file.base.domain.entity.ThumbnailType
+import me.proton.core.drive.file.base.domain.extension.fileName
+import me.proton.core.drive.file.base.domain.extension.index
 import me.proton.core.drive.file.base.domain.extension.sha256
+import me.proton.core.drive.file.base.domain.extension.toBlockType
 import me.proton.core.drive.key.domain.entity.ContentKey
 import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.usecase.BuildContentKey
 import me.proton.core.drive.key.domain.usecase.BuildNodeKey
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
-import me.proton.core.drive.link.domain.entity.Link.Companion.THUMBNAIL_INDEX
-import me.proton.core.drive.link.domain.entity.Link.Companion.THUMBNAIL_NAME
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -51,10 +55,12 @@ import me.proton.core.drive.upload.domain.extension.injectMessageDigests
 import me.proton.core.drive.upload.domain.extension.saveToBlocks
 import me.proton.core.drive.upload.domain.provider.FileProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
+import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
+@Suppress("LongParameterList")
 class SplitFileToBlocksAndEncrypt @Inject constructor(
     private val getNodeKey: GetNodeKey,
     private val buildNodeKey: BuildNodeKey,
@@ -79,6 +85,7 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
         uploadFileLink: UploadFileLink,
         uriString: String,
         shouldDeleteSource: Boolean = false,
+        includePhotoThumbnail: Boolean = false,
         coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
     ): Result<UploadFileLink> = coRunCatching(coroutineContext) {
         val (unencryptedBlocks, digests) = uploadFileLink.splitUriToBlocks(
@@ -92,16 +99,19 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
             uploadFileLink = uploadFileLink,
             unencryptedBlocks = unencryptedBlocks,
             uriString = uriString,
+            includePhotoThumbnail = includePhotoThumbnail,
             coroutineContext = coroutineContext,
         ).getOrThrow().also {
             if (shouldDeleteSource) fileProvider.getFile(uriString).delete()
         }
     }
 
+    @Suppress("TooGenericExceptionCaught")
     private suspend fun encryptBlocks(
         uploadFileLink: UploadFileLink,
         unencryptedBlocks: List<File>,
         uriString: String,
+        includePhotoThumbnail: Boolean = false,
         coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
     ): Result<UploadFileLink> = coRunCatching(coroutineContext) {
         with(uploadFileLink) {
@@ -113,6 +123,7 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
                 val addressKey = getAddressKeys(userId, signatureAddress)
                 val uploadBlocks = unencryptedBlocks
                     .encryptBlocksAndDeleteSourceFiles(
+                        uploadFileLink = uploadFileLink,
                         uploadFileContentKey = uploadFileContentKey,
                         encryptKey = uploadFileKey,
                         signKey = addressKey,
@@ -123,9 +134,26 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
                                 uploadFileContentKey = uploadFileContentKey,
                                 signKey = addressKey,
                                 uriString = uriString,
+                                type = ThumbnailType.DEFAULT,
                                 coroutineContext = coroutineContext,
-                            )
+                            ),
+                            takeIf { includePhotoThumbnail }?.let {
+                                getThumbnailUploadBlock(
+                                    uploadFileContentKey = uploadFileContentKey,
+                                    signKey = addressKey,
+                                    uriString = uriString,
+                                    type = ThumbnailType.PHOTO,
+                                    coroutineContext = coroutineContext,
+                                )
+                            }
                         )
+                require(uploadBlocks.isNotEmpty()) { "Upload blocks should not be empty" }
+                val emptyBlocks = uploadBlocks.filter { block -> block.file.length() == 0L }
+                require(emptyBlocks.isEmpty()) {
+                    "Encrypt should not generate empty file:" +
+                            "\n${emptyBlocks.size}/${uploadBlocks.size}" +
+                            "\n${emptyBlocks.map { block -> block.file.name }}"
+                }
                 addUploadBlocks(uploadBlocks)
                 updateManifestSignature(
                     uploadFileLinkId = id,
@@ -168,6 +196,12 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
                 destinationFolder = getBlockFolder(userId, this).getOrThrow(),
                 blockMaxSize = configurationProvider.blockMaxSize,
             )
+            val emptyFiles = files.filter { file -> file.length() == 0L }
+            require(emptyFiles.isEmpty()) {
+                "Split should not generate empty file: " +
+                        "\n${emptyFiles.size}/${files.size}" +
+                        "\n${emptyFiles.map { file -> file.name }}"
+            }
             val uploadDigests = messageDigests
                 .associate { messageDigest ->
                     messageDigest.algorithm to messageDigest.digest().toHex()
@@ -176,6 +210,7 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
         } ?: (emptyList<File>() to UploadDigests())
 
     private suspend fun List<File>.encryptBlocksAndDeleteSourceFiles(
+        uploadFileLink: UploadFileLink,
         uploadFileContentKey: ContentKey,
         encryptKey: Key.Node,
         signKey: Key,
@@ -189,6 +224,12 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
             output = mapIndexed { index, file -> file.blockFile(index + 1L) },
             coroutineContext = coroutineContext,
         ) { index, rawBlock, encryptedBlock, encSignature ->
+            CoreLogger.d(
+                tag = uploadFileLink.id.logTag(),
+                message = """
+                    Block index $index, plain file size ${rawBlock.size}, encrypted file size ${encryptedBlock.size}
+                """.trimIndent(),
+            )
             uploadBlockFactory.create(
                 index = index + 1L,
                 block = encryptedBlock,
@@ -197,25 +238,27 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
                 rawSize = rawBlock.size,
                 size = encryptedBlock.size,
                 token = "",
+                type = Block.Type.FILE,
                 verifierToken = null,
             ).also { rawBlock.delete() }
         }.getOrThrow()
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun UploadFileLink.getThumbnailUploadBlock(
         uploadFileContentKey: ContentKey,
         signKey: Key,
         uriString: String,
+        type: ThumbnailType,
         coroutineContext: CoroutineContext,
     ): UploadBlock? =
         getThumbnail(
             uri = uriString,
             mimeType = mimeType,
+            type = type,
             coroutineContext = coroutineContext,
         ).getOrThrow()?.let { thumbnail ->
             val encryptedUploadThumbnail = File(
                 getBlockFolder(userId, this).getOrThrow(),
-                THUMBNAIL_NAME
+                type.fileName,
             ).apply { createNewFile() }
             encryptUploadThumbnail(
                 contentKey = uploadFileContentKey,
@@ -225,13 +268,14 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
                 coroutineContext = coroutineContext,
             ).getOrThrow()
             uploadBlockFactory.create(
-                index = THUMBNAIL_INDEX,
+                index = type.index,
                 block = encryptedUploadThumbnail,
                 hashSha256 = encryptedUploadThumbnail.sha256,
                 encSignature = "",
                 rawSize = thumbnail.size.bytes,
                 size = encryptedUploadThumbnail.size,
                 token = "",
+                type = type.toBlockType(),
                 verifierToken = null,
             )
         }

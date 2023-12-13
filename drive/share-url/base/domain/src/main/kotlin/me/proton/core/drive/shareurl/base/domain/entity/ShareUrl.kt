@@ -21,11 +21,13 @@ package me.proton.core.drive.shareurl.base.domain.entity
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 data class ShareUrlId(val shareId: ShareId, val id: String)
 
 data class ShareUrl(
     val id: ShareUrlId,
+    val volumeId: VolumeId,
     val name: String?,
     val token: String,
     val creatorEmail: String,

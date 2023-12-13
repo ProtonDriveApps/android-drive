@@ -23,17 +23,17 @@ import androidx.room.ForeignKey
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column.ID
 import me.proton.core.drive.base.data.db.Column.LAST_FETCH_TRASH_TIMESTAMP
-import me.proton.core.drive.base.data.db.Column.SHARE_ID
 import me.proton.core.drive.base.data.db.Column.USER_ID
-import me.proton.core.drive.share.data.db.ShareEntity
+import me.proton.core.drive.base.data.db.Column.VOLUME_ID
+import me.proton.core.drive.volume.data.db.VolumeEntity
 
 @Entity(
-    primaryKeys = [USER_ID, SHARE_ID],
+    primaryKeys = [USER_ID, VOLUME_ID],
     foreignKeys = [
         ForeignKey(
-            entity = ShareEntity::class,
+            entity = VolumeEntity::class,
             parentColumns = [USER_ID, ID],
-            childColumns = [USER_ID, SHARE_ID],
+            childColumns = [USER_ID, VOLUME_ID],
             onDelete = ForeignKey.CASCADE
         )
     ],
@@ -41,8 +41,8 @@ import me.proton.core.drive.share.data.db.ShareEntity
 data class TrashMetadataEntity(
     @ColumnInfo(name = USER_ID)
     val userId: UserId,
-    @ColumnInfo(name = SHARE_ID)
-    val shareId: String,
+    @ColumnInfo(name = VOLUME_ID)
+    val volumeId: String,
     @ColumnInfo(name = LAST_FETCH_TRASH_TIMESTAMP)
     val lastFetchTrashTimestamp: Long? = null,
 )

@@ -31,6 +31,16 @@ interface GrowlerRobot {
         )
     )
 
+    private fun deletePermanentlySuccessGrowler(quantity: Int) = node.withText(
+        StringUtils.pluralStringFromResource(
+            I18N.plurals.trash_delete_operation_successful_format,
+            quantity,
+        )
+    )
+
+    private val retryButton get() = node.withText(I18N.string.common_retry)
+    private val noInternetLabel get() = node.withText(I18N.string.common_error_no_internet)
+
     fun <T : Robot> dismissFolderCreateSuccessGrowler(itemName: String, goesTo: T) =
         node
             .withText(
@@ -43,4 +53,17 @@ interface GrowlerRobot {
 
     fun <T : Robot> dismissMoveToTrashSuccessGrowler(quantity: Int, goesTo: T) =
         moveToTrashSuccessGrowler(quantity).clickTo(goesTo)
+
+
+    fun <T : Robot> dismissDeleteSuccessGrowler(quantity: Int, goesTo: T) =
+        deletePermanentlySuccessGrowler(quantity).clickTo(goesTo)
+
+    fun <T : Robot> T.clickRetry(): T = apply {
+        retryButton.click()
+    }
+
+    fun retryGrowlerIsDisplayed() {
+        retryButton.await { assertIsDisplayed() }
+        noInternetLabel.assertIsDisplayed()
+    }
 }

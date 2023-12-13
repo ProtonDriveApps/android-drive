@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.file.create.domain"
+}
+
 driveModule(hilt = true) {
     api(project(":drive:file:base:domain"))
     implementation(project(":drive:crypto:domain"))

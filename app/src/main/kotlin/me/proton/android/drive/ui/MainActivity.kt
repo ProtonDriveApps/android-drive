@@ -54,7 +54,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -90,6 +89,8 @@ import me.proton.core.drive.base.domain.usecase.ListenToBroadcastMessages
 import me.proton.core.drive.messagequeue.domain.ActionProvider
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.thumbnail.presentation.coil.ThumbnailEnabled
+import me.proton.core.notification.presentation.deeplink.DeeplinkManager
+import me.proton.core.notification.presentation.deeplink.onActivityCreate
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
@@ -106,6 +107,8 @@ class MainActivity : FragmentActivity() {
     @Inject lateinit var processIntent: ProcessIntent
     @Inject lateinit var biometricPromptProvider: BiometricPromptProvider
     @Inject lateinit var appLockManager: AppLockManager
+    @Inject lateinit var deeplinkManager: DeeplinkManager
+
     lateinit var configurationProvider: ConfigurationProvider
     private val accountViewModel: AccountViewModel by viewModels()
     private val bugReportViewModel: BugReportViewModel by viewModels()
@@ -128,6 +131,7 @@ class MainActivity : FragmentActivity() {
         applySecureFlag()
         setTheme(CorePresentation.style.ProtonTheme_Drive)
         super.onCreate(savedInstanceState)
+        deeplinkManager.onActivityCreate(this, savedInstanceState)
         biometricPromptProvider.bindToActivity(this)
         initializeViewModels()
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -236,10 +240,8 @@ class MainActivity : FragmentActivity() {
     private fun Content(isDarkTheme: Boolean, content: @Composable () -> Unit) {
         ThumbnailEnabled {
             ProtonTheme(isDarkTheme) {
-                ProvideWindowInsets {
-                    ProvideLocalSnackbarPadding {
-                        content()
-                    }
+                ProvideLocalSnackbarPadding {
+                    content()
                 }
             }
         }

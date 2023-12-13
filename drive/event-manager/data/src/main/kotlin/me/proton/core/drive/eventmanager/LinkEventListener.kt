@@ -18,13 +18,16 @@
 
 package me.proton.core.drive.eventmanager
 
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import me.proton.core.drive.base.data.api.Dto
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.eventmanager.api.response.CreateLinksEvent
 import me.proton.core.drive.eventmanager.api.response.DeleteLinksEvent
 import me.proton.core.drive.eventmanager.api.response.Events
@@ -43,8 +46,9 @@ import me.proton.core.drive.link.data.extension.toLink
 import me.proton.core.drive.link.data.extension.toLinkWithProperties
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.usecase.FindLinkIds
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.domain.usecase.GetMainShare
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.eventmanager.domain.EventListener
 import me.proton.core.eventmanager.domain.EventManagerConfig
@@ -62,8 +66,12 @@ class LinkEventListener @Inject constructor(
     private val onUpdateMetadataEvent: OnUpdateMetadataEvent,
     private val onDeleteEvent: OnDeleteEvent,
     private val onResetAllEvent: OnResetAllEvent,
-    private val getMainShare: GetMainShare,
+    private val findLinkIds: FindLinkIds,
+    private val getShare: GetShare,
 ) : EventListener<LinkId, LinkEventVO>() {
+    internal var onFailure: (Throwable) -> Unit = { error ->
+        error.log(LogTag.EVENTS, "Cannot parse event")
+    }
     // User -> Share -> Link
     override val order: Int = 3
     override val type: Type = Type.Drive
@@ -73,24 +81,46 @@ class LinkEventListener @Inject constructor(
         response: EventsResponse,
     ): List<Event<LinkId, LinkEventVO>>? {
         return runCatching {
-            json.decodeFromString<Events>(response.body).events.mapNotNull { event ->
+            json.decodeFromString<Events>(response.body).events.flatMap { event ->
                 when (event) {
-                    is DeleteLinksEvent -> Event<LinkId, LinkEventVO>(
-                        action = Action.Delete,
-                        key = FileId(ShareId(config.userId, event.getShareId(config)), event.link.id),
-                        entity = null,
+                    is DeleteLinksEvent -> event.getLinkIds(config).map { linkId ->
+                        Event<LinkId, LinkEventVO>(
+                            action = Action.Delete,
+                            key = linkId,
+                            entity = null,
+                        )
+                    }
+
+                    is CreateLinksEvent ->  listOf(
+                        event.getEvent(
+                            config.getVolumeId(),
+                            ShareId(config.userId, event.contextShareId),
+                        )
                     )
-                    is CreateLinksEvent -> event.getEvent(ShareId(config.userId, event.contextShareId))
-                    is UpdateLinksEvent -> event.getEvent(ShareId(config.userId, event.contextShareId))
-                    is UpdateMetadataLinksEvent -> event.getEvent(ShareId(config.userId, event.contextShareId))
-                    is UnknownLinksEvent -> null
+
+                    is UpdateLinksEvent ->  listOf(
+                        event.getEvent(
+                            config.getVolumeId(),
+                            ShareId(config.userId, event.contextShareId),
+                        )
+                    )
+
+                    is UpdateMetadataLinksEvent ->  listOf(
+                        event.getEvent(
+                            config.getVolumeId(),
+                            ShareId(config.userId, event.contextShareId),
+                        )
+                    )
+
+                    is UnknownLinksEvent ->  listOf()
                 }
             }
-        }.getOrNull()
+        }.onFailure(onFailure).getOrNull()
     }
 
-    private fun WithLinkDto.getEvent(shareId: ShareId): Event<LinkId, LinkEventVO> {
+    private fun WithLinkDto.getEvent(volumeId: VolumeId, shareId: ShareId): Event<LinkId, LinkEventVO> {
         val vo = LinkEventVO(
+            volumeId = volumeId,
             link = link.toLinkWithProperties(shareId).toLink(),
             deletedShareUrlIds = data?.deletedUrlId ?: emptyList(),
         )
@@ -117,23 +147,44 @@ class LinkEventListener @Inject constructor(
     override suspend fun onResetAll(config: EventManagerConfig) {
         if (getEventMetadata(config).refresh == RefreshType.Mail) {
             // Drive BE sent refresh: 1 i.e. clients need to refresh all data
-            onResetAllEvent(ShareId(config.userId, (config as EventManagerConfig.Drive.Share).shareId))
+            when (config) {
+                is EventManagerConfig.Drive.Share -> onResetAllEvent(ShareId(config.userId, config.shareId))
+                is EventManagerConfig.Drive.Volume -> onResetAllEvent(config.userId, VolumeId(config.volumeId))
+                else -> error("Unexpected event manager config")
+            }
         }
     }
 
-    private suspend fun DeleteLinksEvent.getShareId(
+    private suspend fun DeleteLinksEvent.getLinkIds(
         config: EventManagerConfig,
-    ): String = contextShareId ?: when (config) {
-        is EventManagerConfig.Drive.Share -> config.shareId
-        is EventManagerConfig.Drive.Volume -> getMainShare(
+    ): List<LinkId> = when (config) {
+        is EventManagerConfig.Drive.Share -> listOf(
+            FileId(ShareId(config.userId, config.shareId), link.id),
+        )
+
+        is EventManagerConfig.Drive.Volume -> contextShareId?.let { shareId ->
+            listOf(FileId(ShareId(config.userId, shareId), link.id))
+        } ?: findLinkIds(
             userId = config.userId,
             volumeId = VolumeId(config.volumeId),
-        ).toResult().getOrThrow().id.id
+            linkId = link.id
+        ).getOrThrow()
+
+        else -> error("Unexpected event manager config")
+    }
+
+    private suspend fun EventManagerConfig.getVolumeId(): VolumeId = when (this) {
+        is EventManagerConfig.Drive.Volume -> VolumeId(volumeId)
+        is EventManagerConfig.Drive.Share -> getShare(
+            shareId = ShareId(userId, shareId),
+            refresh = flowOf(false),
+        ).toResult().getOrThrow().volumeId
+
         else -> error("Unexpected event manager config")
     }
 
     companion object {
-        private val json = Json {
+        internal val json = Json {
             ignoreUnknownKeys = true
             isLenient = true
             encodeDefaults = false

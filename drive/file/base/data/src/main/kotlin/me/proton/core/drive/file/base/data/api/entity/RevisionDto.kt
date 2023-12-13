@@ -40,7 +40,7 @@ data class RevisionDto(
     @SerialName(SIZE)
     val revisionSize: Long,
     @SerialName(MANIFEST_SIGNATURE)
-    val manifestSignature: String,
+    val manifestSignature: String?,
     @SerialName(SIGNATURE_ADDRESS)
     val signatureAddress: String?,
     @SerialName(STATE)

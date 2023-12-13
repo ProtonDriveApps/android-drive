@@ -18,11 +18,17 @@
 package me.proton.core.drive.file.base.domain.usecase
 
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.entity.CameraExifTags
+import me.proton.core.drive.base.domain.entity.Location
 import me.proton.core.drive.base.domain.entity.MediaResolution
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
 import me.proton.core.drive.file.base.domain.entity.XAttr
+import me.proton.core.drive.file.base.domain.extension.captureTime
+import me.proton.core.drive.file.base.domain.extension.subjectCoordinates
 import java.util.Date
 import javax.inject.Inject
+import kotlin.time.Duration
 
 class CreateXAttr @Inject constructor(
     private val dateTimeFormatter: DateTimeFormatter
@@ -40,6 +46,10 @@ class CreateXAttr @Inject constructor(
         blockSizes: List<Bytes>,
         mediaResolution: MediaResolution? = null,
         digests: Map<String, String>? = null,
+        mediaDuration: Duration? = null,
+        creationDateTime: TimestampS? = null,
+        location: Location? = null,
+        cameraExifTags: CameraExifTags? = null,
     ) =
         XAttr(
             common = XAttr.Common(
@@ -52,7 +62,24 @@ class CreateXAttr @Inject constructor(
                 XAttr.Media(
                     width = mediaResolution.width,
                     height = mediaResolution.height,
+                    duration = mediaDuration?.inWholeSeconds,
                 )
+            },
+            location = location?.let {
+                XAttr.Location(
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                )
+            },
+            camera = cameraExifTags?.let {
+                creationDateTime?.captureTime(dateTimeFormatter)?.let { captureTime ->
+                    XAttr.Camera(
+                        captureTime = captureTime,
+                        device = cameraExifTags.model,
+                        orientation = cameraExifTags.orientation,
+                        subjectCoordinates = cameraExifTags.subjectCoordinates,
+                    )
+                }
             },
         )
 }

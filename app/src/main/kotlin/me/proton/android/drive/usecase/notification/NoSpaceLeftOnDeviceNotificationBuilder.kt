@@ -21,8 +21,8 @@ package me.proton.android.drive.usecase.notification
 import android.content.Context
 import androidx.core.app.NotificationCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.i18n.R
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import javax.inject.Inject
 
@@ -31,8 +31,8 @@ class NoSpaceLeftOnDeviceNotificationBuilder @Inject constructor(
     private val commonBuilder: CommonNotificationBuilder,
     private val contentIntent: CreateContentPendingIntent,
 ) {
-    operator fun invoke(notificationId: NotificationId.App, notificationEvent: NotificationEvent.NoSpaceLeftOnDevice) =
-        commonBuilder(notificationId, notificationEvent)
+    operator fun invoke(notificationId: NotificationId.App, event: Event.NoSpaceLeftOnDevice) =
+        commonBuilder(notificationId, event)
             .setContentTitle(appContext.getString(R.string.notification_content_title_no_space_left_on_device))
             .setContentText(appContext.getString(R.string.notification_content_text_no_space_left_on_device))
             .setContentIntent(notificationId)

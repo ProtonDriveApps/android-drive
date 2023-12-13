@@ -105,6 +105,16 @@ fun Settings(
                 }
             }
 
+            if (viewState.isPhotosSettingsVisible) {
+                ProtonSettingsHeader(title = I18N.string.settings_section_backup)
+                ProtonSettingsItem(
+                    name = stringResource(id = I18N.string.settings_photos_backup),
+                    hint = stringResource(id = viewState.photosBackupSubtitleResId),
+                ) {
+                    viewEvent.onPhotosBackup()
+                }
+            }
+
             ProtonSettingsHeader(title = I18N.string.settings_section_appearance_settings)
 
             ProtonSettingsItem(
@@ -129,15 +139,16 @@ fun Settings(
                 }
             }
 
+            ProtonSettingsHeader(title = I18N.string.settings_section_statistics)
+            TelemetrySettingToggleItem(divider = {})
+            CrashReportSettingToggleItem( divider = {})
+
             if (viewState.debugSettingsStateAndEvent != null) {
                 DebugSettings(
                     viewState = viewState.debugSettingsStateAndEvent.viewState,
                     viewEvent = viewState.debugSettingsStateAndEvent.viewEvent
                 )
             }
-
-            TelemetrySettingToggleItem(divider = {})
-            CrashReportSettingToggleItem(divider = {})
 
             ProtonSettingsHeader(title = I18N.string.settings_section_system)
 
@@ -187,6 +198,8 @@ private fun SettingsPreview() {
                 appAccessSubtitleResId = I18N.string.common_cancel_action,
                 isAutoLockDurationsVisible = true,
                 autoLockDuration = 0.seconds,
+                isPhotosSettingsVisible = true,
+                photosBackupSubtitleResId = I18N.string.common_off,
             ),
             viewEvent = SettingsViewEvent(
                 navigateBack = {},
@@ -195,6 +208,7 @@ private fun SettingsPreview() {
                 onAppAccess = {},
                 onAutoLockDurations = {},
                 onClearLocalCache = {},
+                onPhotosBackup = {},
             )
         )
     }

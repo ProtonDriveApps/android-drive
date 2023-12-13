@@ -21,8 +21,8 @@ package me.proton.core.drive.shareurl.base.data.api.response
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.data.api.Dto
-import me.proton.core.drive.shareurl.base.data.api.entity.ShareUrlDto
 import me.proton.core.drive.link.data.api.entity.LinkDto
+import me.proton.core.drive.volume.data.api.entity.ShareUrlDto
 
 @Serializable
 data class GetShareUrlsResponse(

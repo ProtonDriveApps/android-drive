@@ -20,22 +20,25 @@ package me.proton.core.drive.upload.data.worker
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.BackoffPolicy
-import androidx.work.Constraints
 import androidx.work.Data
-import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.extension.log
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
+import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.retryOrAbort
@@ -43,6 +46,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_SHOULD_DELETE_SOUR
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_URI_STRING
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.SplitFileToBlocksAndEncrypt
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -57,6 +61,8 @@ class EncryptBlocksWorker @AssistedInject constructor(
     workManager: WorkManager,
     broadcastMessages: BroadcastMessages,
     getUploadFileLink: GetUploadFileLink,
+    private val getShare: GetShare,
+    uploadErrorManager: UploadErrorManager,
     private val splitFileToBlocksAndEncrypt: SplitFileToBlocksAndEncrypt,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
@@ -68,6 +74,7 @@ class EncryptBlocksWorker @AssistedInject constructor(
     workManager = workManager,
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
+    uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
     canRun = canRun,
     run = run,
@@ -78,10 +85,12 @@ class EncryptBlocksWorker @AssistedInject constructor(
     private val shouldDeleteSource = inputData.getBoolean(KEY_SHOULD_DELETE_SOURCE, false)
 
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
+        uploadFileLink.logWorkState("split (size = ${uploadFileLink.size}) and encrypt")
         splitFileToBlocksAndEncrypt(
             uploadFileLink = uploadFileLink,
             uriString = uriString,
             shouldDeleteSource = shouldDeleteSource,
+            includePhotoThumbnail = uploadFileLink.isBiggerThenPhotoThumbnail && uploadFileLink.isPhoto(),
         )
             .onFailure { error ->
                 val retryable = error.isRetryable
@@ -91,12 +100,23 @@ class EncryptBlocksWorker @AssistedInject constructor(
                     message = """
                         Encrypting blocks failed "${error.message}" retryable $retryable, 
                         max retries reached ${!canRetry}
-                        """.trimIndent()
+                    """.trimIndent().replace("\n", " ")
                 )
                 return retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
             }
         return Result.success()
     }
+
+    private val UploadFileLink.isBiggerThenPhotoThumbnail: Boolean get() = mediaResolution?.let { resolution ->
+        resolution.width > configurationProvider.thumbnailPhoto.maxWidth ||
+                resolution.height > configurationProvider.thumbnailPhoto.maxHeight
+    } ?: false
+
+    private suspend fun UploadFileLink.isPhoto(): Boolean {
+        val share = getShare(shareId, flowOf(false)).toResult().getOrThrow()
+        return share.type == Share.Type.PHOTO
+    }
+
 
     companion object {
         fun getWorkRequest(
@@ -107,11 +127,6 @@ class EncryptBlocksWorker @AssistedInject constructor(
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(EncryptBlocksWorker::class.java)
-                .setConstraints(
-                    Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
-                        .build()
-                )
                 .setInputData(
                     Data.Builder()
                         .putString(KEY_USER_ID, userId.id)
@@ -122,7 +137,7 @@ class EncryptBlocksWorker @AssistedInject constructor(
                 )
                 .setBackoffCriteria(
                     BackoffPolicy.EXPONENTIAL,
-                    OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                    WorkRequest.MIN_BACKOFF_MILLIS,
                     TimeUnit.MILLISECONDS
                 )
                 .addTags(listOf(userId.id) + tags)

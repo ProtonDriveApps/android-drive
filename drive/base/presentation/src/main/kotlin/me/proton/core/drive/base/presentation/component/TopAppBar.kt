@@ -29,6 +29,8 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -38,11 +40,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.Flow
+import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmall
+import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag.navigationButton
 
 @Composable
@@ -92,8 +97,6 @@ fun TopAppBar(
                     Icon(
                         painter = navigationIcon,
                         contentDescription = null,
-                        modifier = Modifier.testTag(TopAppBarComponentTestTag.navigationButton),
-
                     )
                 }
             }
@@ -147,6 +150,20 @@ fun ActionButton(
     }
 }
 
+@Composable
+fun TopBarActions(
+    actionFlow: Flow<Set<Action>>,
+) {
+    val actions by rememberFlowWithLifecycle(flow = actionFlow).collectAsState(initial = emptySet())
+    actions.forEach { action ->
+        ActionButton(
+            icon = action.iconResId,
+            contentDescription = action.contentDescriptionResId,
+            onClick = action.onAction
+        )
+    }
+}
+
 private val IconTintColor @Composable get() = ProtonTheme.colors.iconNorm
 private val ActionButtonSize = DefaultButtonMinHeight
 private val ActionIconSize = DefaultIconSize
@@ -157,4 +174,5 @@ val TopAppBarHeight = 56.dp
 object TopAppBarComponentTestTag {
     const val appBar = "top app bar"
     const val navigationButton = "top app bar navigation button"
+    const val actionButton = "top app bar action button"
 }

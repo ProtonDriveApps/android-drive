@@ -20,22 +20,38 @@ package me.proton.android.drive.db
 
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.challenge.data.db.ChallengeDatabase
+import me.proton.core.drive.backup.data.db.BackupDatabase
+import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
+import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
 import me.proton.core.drive.link.data.db.LinkDatabase
 import me.proton.core.drive.link.selection.data.db.LinkSelectionDatabase
+import me.proton.core.drive.linktrash.data.db.LinkTrashDatabase
+import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
 import me.proton.core.drive.notification.data.db.NotificationDatabase
+import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.share.data.db.ShareDatabase
+import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
+import me.proton.core.drive.stats.data.db.StatsDatabase
+import me.proton.core.drive.user.data.db.QuotaDatabase
+import me.proton.core.eventmanager.data.db.EventMetadataDatabase
 import me.proton.core.featureflag.data.db.FeatureFlagDatabase
 import me.proton.core.humanverification.data.db.HumanVerificationDatabase
 import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.keytransparency.data.local.KeyTransparencyDatabase
 import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.payment.data.local.db.PaymentDatabase
+import me.proton.core.push.data.local.db.PushDatabase
+import me.proton.core.telemetry.data.db.TelemetryDatabase
 import me.proton.core.user.data.db.AddressDatabase
+import me.proton.core.user.data.db.UserDatabase
 import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
+import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNotificationDatabase
 
+@Suppress("MagicNumber")
 object DriveDatabaseMigrations {
     val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(database: SupportSQLiteDatabase) {
@@ -125,6 +141,95 @@ object DriveDatabaseMigrations {
             AddressDatabase.MIGRATION_4.migrate(database)
             PublicAddressDatabase.MIGRATION_2.migrate(database)
             KeyTransparencyDatabase.MIGRATION_0.migrate(database)
+        }
+    }
+
+    val MIGRATION_27_28 = object : Migration(27, 28) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            UserDatabase.MIGRATION_2.migrate(database)
+            CoreNotificationDatabase.MIGRATION_0.migrate(database)
+            CoreNotificationDatabase.MIGRATION_1.migrate(database)
+            PushDatabase.MIGRATION_0.migrate(database)
+            UserSettingsDatabase.MIGRATION_2.migrate(database)
+            EventMetadataDatabase.MIGRATION_1.migrate(database)
+            UserDatabase.MIGRATION_3.migrate(database)
+            AccountDatabase.MIGRATION_6.migrate(database)
+            ShareDatabase.MIGRATION_1.migrate(database)
+            LinkTrashDatabase.MIGRATION_0.migrate(database)
+            LinkUploadDatabase.MIGRATION_0.migrate(database)
+            TelemetryDatabase.MIGRATION_0.migrate(database)
+            UserSettingsDatabase.MIGRATION_3.migrate(database)
+            LinkDatabase.MIGRATION_1.migrate(database)
+            LinkUploadDatabase.MIGRATION_1.migrate(database)
+            BackupDatabase.MIGRATION_0.migrate(database)
+            QuotaDatabase.MIGRATION_0.migrate(database)
+            NotificationDatabase.MIGRATION_1.migrate(database)
+            PhotoDatabase.MIGRATION_0.migrate(database)
+            DriveLinkPhotoDatabase.MIGRATION_0.migrate(database)
+            DriveFeatureFlagDatabase.MIGRATION_0.migrate(database)
+        }
+    }
+
+    val MIGRATION_28_29 = object : Migration(28, 29) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            BackupDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_29_30 = object : Migration(29, 30) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            MediaStoreVersionDatabase.MIGRATION_0.migrate(database)
+        }
+    }
+
+    val MIGRATION_30_31 = object : Migration(30, 31) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            ShareUrlDatabase.MIGRATION_0.migrate(database)
+        }
+    }
+
+    val MIGRATION_31_32 = object : Migration(31, 32) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            LinkUploadDatabase.MIGRATION_2.migrate(database)
+        }
+    }
+
+    val MIGRATION_32_33 = object : Migration(32, 33) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            EventMetadataDatabase.MIGRATION_2.migrate(database)
+        }
+    }
+
+    val MIGRATION_33_34 = object : Migration(33, 34) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            NotificationDatabase.MIGRATION_2.migrate(database)
+            StatsDatabase.MIGRATION_O.migrate(database)
+        }
+    }
+
+    val MIGRATION_34_35 = object : Migration(34, 35) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            StatsDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_35_36 = object : Migration(35, 36) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            BackupDatabase.MIGRATION_2.migrate(database)
+            LinkUploadDatabase.MIGRATION_3.migrate(database)
+            BackupDatabase.MIGRATION_3.migrate(database)
+        }
+    }
+
+    val MIGRATION_36_37 = object : Migration(36, 37) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            UserSettingsDatabase.MIGRATION_4.migrate(database)
+        }
+    }
+    
+    val MIGRATION_37_38 = object : Migration(37, 38) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            DriveFeatureFlagDatabase.MIGRATION_1.migrate(database)
         }
     }
 }

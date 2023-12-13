@@ -1,27 +1,22 @@
-fullTest:
-  device:
-    - model: walleye
-      version: 28
-    - model: walleye
-      version: 27
-    - model: flame
-      version: 29
-    - model: G8142
-      version: 25
-    - model: Nexus5X
-      version: 23
 quickTest:
   timeout: 30m
   device:
+    - model: MediumPhone.arm
+      version: 33
     - model: Pixel2
-      version: 28
-    - model: Nexus5X
-      version: 26
-quickPhysicalTest:
+      version: 30
+quickTest-2:
   timeout: 30m
   device:
-    - model: walleye # aka Google Pixel 2
-      version: 27
-    - model: sailfish # aka Google Pixel
-      version: 25
+    - model: Pixel2.arm
+      version: 33
+    - model: Pixel3
+      version: 30
+quickTest-3:
+  timeout: 30m
+  device:
+    - model: SmallPhone.arm
+      version: 33
+    - model: NexusLowRes
+      version: 30
 

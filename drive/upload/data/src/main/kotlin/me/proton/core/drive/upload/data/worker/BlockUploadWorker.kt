@@ -33,13 +33,19 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.api.ProtonApiCode.ALREADY_EXISTS
+import me.proton.core.drive.base.data.api.ProtonApiCode.INVALID_VALUE
 import me.proton.core.drive.base.data.api.ProtonApiCode.NOT_EXISTS
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
+import me.proton.core.drive.base.domain.extension.size
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.base.presentation.extension.log
+import me.proton.core.drive.file.base.domain.entity.Block.Companion.THUMBNAIL_DEFAULT_INDEX
+import me.proton.core.drive.file.base.domain.entity.Block.Companion.THUMBNAIL_PHOTO_INDEX
+import me.proton.core.drive.file.base.domain.extension.sha256
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadBlock
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
@@ -48,16 +54,20 @@ import me.proton.core.drive.upload.data.extension.getSizeData
 import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.extension.setSize
+import me.proton.core.drive.upload.data.manager.UploadWorkManagerImpl.Companion.TAG_UPLOAD_WORKER
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_BLOCK_INDEX
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_BLOCK_TOKEN
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_BLOCK_URL
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.GetBlocksUploadUrl
 import me.proton.core.drive.upload.domain.usecase.UploadBlock
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
+import me.proton.core.network.domain.hasProtonErrorCode
+import me.proton.core.util.kotlin.CoreLogger
 
 @HiltWorker
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -67,6 +77,7 @@ class BlockUploadWorker @AssistedInject constructor(
     workManager: WorkManager,
     broadcastMessages: BroadcastMessages,
     getUploadFileLink: GetUploadFileLink,
+    uploadErrorManager: UploadErrorManager,
     private val uploadBlock: UploadBlock,
     private val getUploadBlock: GetUploadBlock,
     private val updateToken: UpdateToken,
@@ -81,6 +92,7 @@ class BlockUploadWorker @AssistedInject constructor(
     workManager = workManager,
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
+    uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
     canRun = canRun,
     run = run,
@@ -88,10 +100,15 @@ class BlockUploadWorker @AssistedInject constructor(
 ) {
 
     private val url = requireNotNull(inputData.getString(KEY_BLOCK_URL)) { "Block URL is required" }
-    private val token = requireNotNull(inputData.getString(KEY_BLOCK_TOKEN)) { "Block token is required" }
+    private val token = requireNotNull(inputData.getString(KEY_BLOCK_TOKEN)) {
+        "Block token is required"
+    }
     private val index = inputData.getLong(KEY_BLOCK_INDEX, -1L)
 
-    override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result = coroutineScope {
+    override suspend fun doLimitedRetryUploadWork(
+        uploadFileLink: UploadFileLink,
+    ): Result = coroutineScope {
+        uploadFileLink.logWorkState("upload block ($index) for file")
         val progress = MutableStateFlow(0L)
         val job = progress
             .onEach { size -> setSize(size) }
@@ -103,11 +120,11 @@ class BlockUploadWorker @AssistedInject constructor(
                     val retryable = error.isRetryable
                     val canRetry = canRetry()
                     error.log(
-                        tag = logTag(),
+                        tag = blockLogTag(),
                         message = """
                             Getting block url and token failed "${error.message}" retryable $retryable,
                             max retries reached ${!canRetry}
-                        """.trimIndent(),
+                        """.trimIndent().replace("\n", " "),
                     )
                     return@coroutineScope if (retryable && canRetry) {
                         Result.retry()
@@ -123,11 +140,18 @@ class BlockUploadWorker @AssistedInject constructor(
                 token = uploadToken,
                 uploadingProgress = progress,
             )
+                .recoverCatching { error ->
+                    if (error.hasProtonErrorCode(ALREADY_EXISTS)) {
+                        CoreLogger.d(blockLogTag(), "Ignoring block has already been successfully uploaded")
+                    } else {
+                        throw error
+                    }
+                }
                 .onFailure { error ->
-                    val retryable = error.isRetryable || error.handledNotExists()
+                    val retryable = error.isRetryable || error.handle(uploadBlock)
                     val canRetry = canRetry()
                     error.log(
-                        tag = logTag(),
+                        tag = blockLogTag(),
                         message = """
                             Uploading block failed "${error.message}" retryable $retryable,
                             max retries reached ${!canRetry}
@@ -142,47 +166,75 @@ class BlockUploadWorker @AssistedInject constructor(
     }
 
     private suspend fun me.proton.core.drive.linkupload.domain.entity.UploadBlock.getUrlAndToken(
-        uploadFileLink: UploadFileLink
+        uploadFileLink: UploadFileLink,
     ): kotlin.Result<Pair<String, String>> = coRunCatching {
         if (token.isBlank()) {
             this@BlockUploadWorker.url to this@BlockUploadWorker.token
         } else {
-            with (getBlocksUploadUrl(uploadFileLink, this@BlockUploadWorker.index).getOrThrow()) {
+            with(getBlocksUploadUrl(uploadFileLink, this@BlockUploadWorker.index).getOrThrow()) {
                 blockLinks.firstOrNull()?.let { uploadBlockLink ->
                     uploadBlockLink.url to uploadBlockLink.token
-                } ?: thumbnailLink?.let { uploadThumbnailLink ->
+                } ?: thumbnailLinks.firstOrNull()?.let { uploadThumbnailLink ->
                     uploadThumbnailLink.url to uploadThumbnailLink.token
                 } ?: error("Upload blocks URL must contain either block link or thumbnail link")
             }
         }
     }
 
-    private suspend fun Throwable.handledNotExists(): Boolean =
+    private suspend fun Throwable.handle(
+        uploadBlock: me.proton.core.drive.linkupload.domain.entity.UploadBlock,
+    ): Boolean =
         onProtonHttpException { protonCode ->
-            if (protonCode == NOT_EXISTS) {
-                updateToken(
+            when (protonCode) {
+                NOT_EXISTS -> updateToken(
                     uploadFileLinkId = uploadFileLinkId,
                     index = index,
                     uploadToken = NOT_EXISTS.toString(),
                 ).isSuccess
-            } else {
-                false
+
+                INVALID_VALUE -> (uploadBlock.hashSha256 == uploadBlock.file.sha256()).also {
+                    with (uploadBlock) {
+                        CoreLogger.d(
+                            tag = blockLogTag(),
+                            message = "Upload block info: index=$index, url=$url, size=$size, sha256=$hashSha256"
+                        )
+                        CoreLogger.d(
+                            tag = blockLogTag(),
+                            message = """
+                                Upload block file info: name=${file.name}, size=${file.size}, sha256=${file.sha256()}
+                            """.trimIndent()
+                        )
+                    }
+                }
+
+                else -> false
             }
         } ?: false
 
+    private fun blockLogTag(): String {
+        val suffix = when (index) {
+            THUMBNAIL_DEFAULT_INDEX -> "thumbnail"
+            THUMBNAIL_PHOTO_INDEX -> "thumbnail.photo"
+            else -> "$index"
+        }
+        return "${logTag()}.$suffix"
+    }
+
     companion object {
+        const val TAG = "BlockUploadWorker"
         fun getWorkRequest(
             userId: UserId,
             uploadFileLinkId: Long,
             url: String,
             token: String,
             blockIndex: Long,
+            networkType: NetworkType,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(BlockUploadWorker::class.java)
                 .setConstraints(
                     Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiredNetworkType(networkType)
                         .build()
                 )
                 .setInputData(
@@ -194,7 +246,7 @@ class BlockUploadWorker @AssistedInject constructor(
                         .putLong(KEY_BLOCK_INDEX, blockIndex)
                         .build()
                 )
-                .addTags(listOf(userId.id) + tags)
+                .addTags(listOf(userId.id) + TAG_UPLOAD_WORKER + TAG + tags)
                 .build()
     }
 }

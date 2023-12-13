@@ -19,11 +19,15 @@ package me.proton.core.drive.linkupload.domain.entity
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.entity.CameraExifTags
+import me.proton.core.drive.base.domain.entity.Location
 import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import kotlin.time.Duration
 
 data class UploadFileLink(
     val id: Long = 0,
@@ -31,7 +35,7 @@ data class UploadFileLink(
     val volumeId: VolumeId,
     val shareId: ShareId,
     val parentLinkId: FolderId,
-    val linkId: String? = null, // TODO: make all optional fields nullable (sealed class?)
+    val linkId: String? = null,
     val draftRevisionId: String = "",
     val name: String,
     val mimeType: String,
@@ -47,5 +51,21 @@ data class UploadFileLink(
     val uriString: String? = null,
     val shouldDeleteSourceUri: Boolean = false,
     val mediaResolution: MediaResolution? = null,
-    val digests : UploadDigests = UploadDigests()
-)
+    val digests : UploadDigests = UploadDigests(),
+    val networkTypeProviderType: NetworkTypeProviderType,
+    val mediaDuration: Duration? = null,
+    val fileCreationDateTime: TimestampS? = null,
+    val location: Location? = null,
+    val cameraExifTags: CameraExifTags? = null,
+    val shouldAnnounceEvent: Boolean = true,
+    val cacheOption: CacheOption = CacheOption.ALL,
+    val priority: Long,
+    val uploadCreationDateTime: TimestampS? = null,
+    val shouldBroadcastErrorMessage: Boolean = true,
+) {
+    companion object {
+        const val USER_PRIORITY = 1_000L
+        const val BACKUP_PRIORITY = 10_000L
+        const val RECENT_BACKUP_PRIORITY = BACKUP_PRIORITY - 1_000L
+    }
+}

@@ -20,9 +20,8 @@ package me.proton.android.drive.usecase.notification
 
 import android.content.Context
 import androidx.core.app.NotificationCompat
-import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
@@ -32,8 +31,8 @@ class ForcedSignOutNotificationBuilder @Inject constructor(
     private val commonBuilder: CommonNotificationBuilder,
     private val contentIntent: CreateContentPendingIntent,
 ) {
-    operator fun invoke(notificationId: NotificationId.App, notificationEvent: NotificationEvent.ForcedSignOut) =
-        commonBuilder(notificationId, notificationEvent)
+    operator fun invoke(notificationId: NotificationId.App, event: Event.ForcedSignOut) =
+        commonBuilder(notificationId, event)
             .setContentTitle(appContext.getString(I18N.string.notification_content_title_forced_sign_out))
             .setContentText(appContext.getString(I18N.string.notification_content_text_forced_sign_out))
             .setContentIntent(notificationId)

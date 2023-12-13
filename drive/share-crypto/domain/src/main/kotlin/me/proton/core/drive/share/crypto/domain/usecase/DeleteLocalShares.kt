@@ -18,9 +18,11 @@
 package me.proton.core.drive.share.crypto.domain.usecase
 
 import kotlinx.coroutines.flow.first
+import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.usecase.DeleteShare
 import me.proton.core.drive.share.domain.usecase.GetShares
 import javax.inject.Inject
@@ -30,7 +32,8 @@ class DeleteLocalShares @Inject constructor(
     private val deleteShare: DeleteShare,
 ) {
     suspend operator fun invoke(linkIds: List<LinkId>) = with (linkIds.map { linkId -> linkId.id }) {
-        getShares(linkIds.first().userId)
+        getShares(linkIds.first().userId, Share.Type.STANDARD)
+            .filterSuccessOrError()
             .first()
             .toResult()
             .getOrNull()

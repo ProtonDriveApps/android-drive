@@ -23,8 +23,8 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Size
 import dagger.hilt.android.qualifiers.ApplicationContext
+import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.log.LogTag
-import me.proton.core.drive.base.presentation.entity.FileTypeCategory
 import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
 import java.io.IOException

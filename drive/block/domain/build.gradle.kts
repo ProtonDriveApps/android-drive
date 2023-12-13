@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.block.domain"
+}
+
 driveModule(hilt = true) {
     api(project(":drive:base:domain"))
     api(project(":drive:link-upload:domain"))

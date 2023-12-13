@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.settings"
+}
+
 driveModule(
     compose = true,
     i18n = true,

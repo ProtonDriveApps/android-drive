@@ -40,4 +40,14 @@ class ManifestSignature @Inject constructor(
             input = getManifest(input).getOrThrow(),
         ).getOrThrow()
     }
+
+    suspend operator fun invoke(
+        signKey: Key,
+        coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
+    ): Result<String> = coRunCatching(coroutineContext) {
+        signData(
+            signKey = signKey,
+            input = ByteArray(0),
+        ).getOrThrow()
+    }
 }

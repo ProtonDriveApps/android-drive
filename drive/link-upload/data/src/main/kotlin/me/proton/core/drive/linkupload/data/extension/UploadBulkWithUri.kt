@@ -30,6 +30,13 @@ fun UploadBulkWithUri.toUploadBulk() =
         volumeId = VolumeId(uploadBulkEntity.volumeId),
         shareId = ShareId(uploadBulkEntity.userId, uploadBulkEntity.shareId),
         parentLinkId = FolderId(ShareId(uploadBulkEntity.userId, uploadBulkEntity.shareId), uploadBulkEntity.parentId),
-        uriStrings = uploadBulkUriStringEntity.map { uploadBulkUriStringEntity -> uploadBulkUriStringEntity.uri },
+        uriStrings = uploadBulkUriStringEntity
+            .sortedBy { entity -> entity.key }
+            .map { entity -> entity.uri },
         shouldDeleteSourceUri = uploadBulkEntity.shouldDeleteSourceUri,
+        networkTypeProviderType = uploadBulkEntity.networkTypeProviderType,
+        shouldAnnounceEvent = uploadBulkEntity.shouldAnnounceEvent,
+        cacheOption = uploadBulkEntity.cacheOption,
+        priority = uploadBulkEntity.priority,
+        shouldBroadcastErrorMessage = uploadBulkEntity.shouldBroadcastErrorMessage,
     )

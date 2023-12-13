@@ -27,4 +27,9 @@ fun UploadBulk.toUploadBulkEntity() =
         shareId = shareId.id,
         parentId = parentLinkId.id,
         shouldDeleteSourceUri = shouldDeleteSourceUri,
+        networkTypeProviderType = networkTypeProviderType,
+        shouldAnnounceEvent = shouldAnnounceEvent,
+        cacheOption = cacheOption,
+        priority = priority,
+        shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
     )

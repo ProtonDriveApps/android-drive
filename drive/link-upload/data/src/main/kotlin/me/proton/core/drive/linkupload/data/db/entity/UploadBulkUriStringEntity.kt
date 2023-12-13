@@ -21,10 +21,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
 import me.proton.core.drive.base.data.db.Column
 
 @Entity(
-    primaryKeys = [Column.UPLOAD_BULK_ID, Column.URI],
     foreignKeys = [
         ForeignKey(
             entity = UploadBulkEntity::class,
@@ -38,8 +38,11 @@ import me.proton.core.drive.base.data.db.Column
     ]
 )
 data class UploadBulkUriStringEntity(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = Column.KEY)
+    val key: Long = 0,
     @ColumnInfo(name = Column.UPLOAD_BULK_ID)
-    val id: Long,
+    val uploadBulkId: Long,
     @ColumnInfo(name = Column.URI)
     val uri: String,
 )

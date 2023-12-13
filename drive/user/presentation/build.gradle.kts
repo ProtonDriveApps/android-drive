@@ -20,12 +20,17 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.user.presentation"
+}
+
 driveModule(
     hilt = true,
     compose = true,
     i18n = true,
 ) {
     api(project(":drive:base:presentation"))
+    api(project(":drive:user:domain"))
     api(libs.core.key) // Needed for the User object from Core
 }
 

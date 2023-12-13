@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.screen
 
 import android.content.res.Configuration
 import androidx.annotation.StringRes
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +35,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -52,9 +55,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.viewevent.WelcomeViewEvent
 import me.proton.android.drive.ui.viewmodel.WelcomeViewModel
@@ -109,7 +109,7 @@ fun Welcome(
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Welcome(
     items: List<WelcomeViewState>,
@@ -117,11 +117,10 @@ fun Welcome(
     navigateToLauncher: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pagerState = rememberPagerState(initialPage = 0)
+    val pagerState = rememberPagerState(initialPage = 0) { items.size }
     val scope = rememberCoroutineScope()
     HorizontalPager(
         state = pagerState,
-        count = items.size,
         modifier = modifier,
     ) { page ->
         Welcome(

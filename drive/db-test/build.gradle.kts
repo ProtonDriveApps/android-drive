@@ -21,14 +21,20 @@ plugins {
 }
 
 android {
+    namespace = "me.proton.android.drive.db.test"
     defaultConfig {
         minSdk = Config.minSdk
         compileSdk = Config.compileSdk
     }
 }
 
-dependencies {
+driveModule(
+    room = true,
+) {
     api(project(":drive:db"))
     api(libs.androidx.test.core.ktx)
-    api(libs.junit)
+    api(libs.junit) {
+        exclude("org.hamcrest", "hamcrest-core")
+        exclude("org.hamcrest", "hamcrest-library")
+    }
 }

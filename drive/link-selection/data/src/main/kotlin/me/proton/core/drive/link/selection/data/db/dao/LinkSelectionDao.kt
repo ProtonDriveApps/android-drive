@@ -20,6 +20,7 @@ package me.proton.core.drive.link.selection.data.db.dao
 import androidx.room.Dao
 import androidx.room.Query
 import me.proton.core.data.room.db.BaseDao
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.selection.data.db.entity.LinkSelectionEntity
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 
@@ -28,6 +29,9 @@ abstract class LinkSelectionDao : BaseDao<LinkSelectionEntity>() {
 
     @Query("SELECT EXISTS(SELECT * FROM LinkSelectionEntity WHERE selection_id = :selectionId)")
     abstract suspend fun hasSelectionId(selectionId: SelectionId): Boolean
+
+    @Query("DELETE FROM LinkSelectionEntity WHERE user_id = :userId")
+    abstract suspend fun deleteAll(userId: UserId)
 
     @Query("DELETE FROM LinkSelectionEntity WHERE selection_id = :selection_id")
     abstract suspend fun deleteAll(selection_id: SelectionId)

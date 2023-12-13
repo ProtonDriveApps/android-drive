@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.thumbnail.presentation"
+}
+
 driveModule(
     hilt = true,
     compose = true,
@@ -33,4 +37,5 @@ driveModule(
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
     implementation(libs.coil.svg)
+    implementation(libs.coil.video)
 }

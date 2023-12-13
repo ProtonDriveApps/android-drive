@@ -62,12 +62,24 @@ fun DebugSettings(
             value = viewState.appVersionHeader,
             onUpdate = viewEvent.onUpdateAppVersionHeader
         )
+        EditableSettingsEntry(
+            label = I18N.string.debug_settings_feature_flag_fresh_duration,
+            value = viewState.featureFlagFreshDuration,
+            onUpdate = viewEvent.onUpdateFeatureFlagFreshDuration
+        )
         ProtonSettingsToggleItem(
             name = stringResource(id = I18N.string.debug_settings_use_exception_message),
             hint = stringResource(id = I18N.string.debug_settings_use_exception_message_description),
             value = viewState.useExceptionMessage,
         ) { useExceptionMessage ->
             viewEvent.onToggleUseExceptionMessage(useExceptionMessage)
+        }
+        ProtonSettingsToggleItem(
+            name = stringResource(id = I18N.string.debug_settings_use_verifier),
+            hint = stringResource(id = I18N.string.debug_settings_use_verifier_description),
+            value = viewState.useVerifier,
+        ) { useVerifier ->
+            viewEvent.onToggleUseVerifier(useVerifier)
         }
 
         ProtonSettingsToggleItem(
@@ -76,6 +88,14 @@ fun DebugSettings(
             value = viewState.logToFileEnabled,
         ) { logToFileEnabled ->
             viewEvent.onToggleLogToFileEnabled(logToFileEnabled)
+        }
+
+        ProtonSettingsToggleItem(
+            name = stringResource(id = I18N.string.debug_settings_allow_backup_deleted_files),
+            hint = stringResource(id = I18N.string.debug_settings_allow_backup_deleted_files_description),
+            value = viewState.allowBackupDeletedFiles,
+        ) { allowBackupDeletedFileEnabled ->
+            viewEvent.onToggleAllowBackupDeletedFile(allowBackupDeletedFileEnabled)
         }
 
         val localContext = LocalContext.current
@@ -89,7 +109,7 @@ fun DebugSettings(
             name = stringResource(id = I18N.string.debug_settings_reset),
             hint = stringResource(id = I18N.string.debug_settings_reset_description),
         ) {
-            viewEvent.onReset
+            viewEvent.onReset()
         }
 
     }

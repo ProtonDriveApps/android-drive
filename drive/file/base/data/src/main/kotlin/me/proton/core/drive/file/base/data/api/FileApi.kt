@@ -19,15 +19,18 @@ package me.proton.core.drive.file.base.data.api
 
 import me.proton.core.drive.base.data.api.response.CodeResponse
 import me.proton.core.drive.file.base.data.api.request.CreateFileRequest
+import me.proton.core.drive.file.base.data.api.request.GetThumbnailsUrlsRequest
 import me.proton.core.drive.file.base.data.api.request.UpdateRevisionRequest
 import me.proton.core.drive.file.base.data.api.response.CreateFileResponse
 import me.proton.core.drive.file.base.data.api.response.GetRevisionResponse
 import me.proton.core.drive.file.base.data.api.response.GetThumbnailResponse
+import me.proton.core.drive.file.base.data.api.response.GetThumbnailsUrlsResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -62,12 +65,25 @@ interface FileApi : BaseRetrofitApi {
         @Body request: UpdateRevisionRequest
     ): CodeResponse
 
+    @DELETE("drive/shares/{enc_shareID}/files/{enc_linkID}/revisions/{enc_revisionID}")
+    suspend fun deleteRevision(
+        @Path("enc_shareID") shareId: String,
+        @Path("enc_linkID") linkId: String,
+        @Path("enc_revisionID") revisionId: String,
+    ): CodeResponse
+
     @GET("drive/shares/{enc_shareID}/files/{enc_linkID}/revisions/{enc_revisionID}/thumbnail")
     suspend fun getThumbnailUrl(
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") linkId: String,
         @Path("enc_revisionID") revisionId: String,
     ): GetThumbnailResponse
+
+    @POST("drive/volumes/{enc_volumeID}/thumbnails")
+    suspend fun getThumbnailsUrls(
+        @Path("enc_volumeID") volumeId: String,
+        @Body request: GetThumbnailsUrlsRequest,
+    ): GetThumbnailsUrlsResponse
 
     @GET
     @Streaming

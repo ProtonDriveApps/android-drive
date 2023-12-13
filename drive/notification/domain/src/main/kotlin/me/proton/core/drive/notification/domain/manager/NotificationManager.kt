@@ -18,12 +18,12 @@
 package me.proton.core.drive.notification.domain.manager
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.domain.entity.Channel
 import me.proton.core.drive.notification.domain.entity.NotificationId
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
 
 interface NotificationManager {
-    fun notify(notificationId: NotificationId, notificationEvents: List<NotificationEvent>)
+    fun notify(notificationId: NotificationId, events: List<Event>)
     fun cancel(notificationId: NotificationId)
 
     fun createUserChannels(userId: UserId, username: String, channels: List<Channel.User>)

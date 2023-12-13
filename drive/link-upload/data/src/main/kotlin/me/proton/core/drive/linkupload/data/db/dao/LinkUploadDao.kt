@@ -50,6 +50,28 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
     abstract suspend fun deleteAll(userId: UserId, uploadState: UploadState)
 
     @Query(
+        """
+        DELETE FROM LinkUploadEntity 
+        WHERE 
+            user_id = :userId AND 
+            share_id = :shareId AND 
+            state = :uploadState
+        """
+    )
+    abstract suspend fun deleteAllByShareId(userId: UserId, shareId: String, uploadState: UploadState)
+
+    @Query(
+        """
+        DELETE FROM LinkUploadEntity 
+        WHERE 
+            user_id = :userId AND 
+            parent_id = :parentId AND 
+            state = :uploadState
+        """
+    )
+    abstract suspend fun deleteAllByFolderId(userId: UserId, parentId: String, uploadState: UploadState)
+
+    @Query(
         "SELECT * FROM LinkUploadEntity WHERE id = :id"
     )
     abstract suspend fun get(id: Long): LinkUploadEntity?
@@ -74,15 +96,62 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
     """)
     abstract fun getAllFlow(userId: UserId, parentLinkId: String): Flow<List<LinkUploadEntity>>
 
+    @Query(
+        """
+        SELECT * FROM LinkUploadEntity 
+        WHERE user_id = :userId 
+        ORDER BY id ASC
+        LIMIT :limit OFFSET :offset
+        """
+    )
+    abstract suspend fun getAll(
+        userId: UserId,
+        limit: Int,
+        offset: Int,
+    ): List<LinkUploadEntity>
+
+    @Query(
+        """
+        SELECT * FROM LinkUploadEntity 
+        WHERE user_id = :userId AND 
+            share_id = :shareId
+        ORDER BY id ASC
+        LIMIT :limit OFFSET :offset
+        """
+    )
+    abstract suspend fun getAllByShareId(
+        userId: UserId,
+        shareId: String,
+        limit: Int,
+        offset: Int,
+    ): List<LinkUploadEntity>
+
+    @Query(
+        """
+        SELECT * FROM LinkUploadEntity 
+        WHERE user_id = :userId AND 
+            parent_id = :parentLinkId
+        ORDER BY id ASC
+        LIMIT :limit OFFSET :offset
+        """
+    )
+    abstract suspend fun getAllByParentId(
+        userId: UserId,
+        parentLinkId: String,
+        limit: Int,
+        offset: Int,
+    ): List<LinkUploadEntity>
+
     @Query("""
         SELECT * FROM LinkUploadEntity
         WHERE
             user_id = :userId AND
             uri IS NOT NULL AND uri != "" AND
             state IN (:states)
+        ORDER BY priority ASC, id ASC
         LIMIT :count
     """)
-    abstract fun getAllWithUri(userId: UserId, states: Set<UploadState>, count: Int): Flow<List<LinkUploadEntity>>
+    abstract fun getAllWithUriByPriority(userId: UserId, states: Set<UploadState>, count: Int): Flow<List<LinkUploadEntity>>
 
     @Query("""
         SELECT COUNT(*) FROM (SELECT * FROM LinkUploadEntity WHERE user_id = :userId)
@@ -116,24 +185,41 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
     abstract fun getUriCountFlow(userId: UserId, states: Set<UploadState>): Flow<Int>
 
     @Transaction
-    @Query("""
+    @Query(
+        """
         SELECT
             COUNT(*) AS ${Column.TOTAL},
             COUNT(CASE WHEN uri IS NOT NULL AND uri != "" THEN 1 ELSE NULL END) AS ${Column.TOTAL_WITH_URI},
+            COUNT(
+                CASE WHEN uri IS NOT NULL AND uri != "" AND priority > :userPriority THEN 1 ELSE NULL END
+            ) AS ${Column.TOTAL_WITH_URI_NON_USER_PRIORITY},
             COUNT(
                 CASE WHEN uri IS NOT NULL AND uri != "" AND state = "UNPROCESSED"
                     THEN 1
                     ELSE NULL
                 END
-            ) AS ${Column.TOTAL_UNPROCESSED_WITH_URI}
+            ) AS ${Column.TOTAL_UNPROCESSED_WITH_URI},
+            COUNT(
+                CASE WHEN uri IS NOT NULL AND uri != "" AND state = "UNPROCESSED" AND priority > :userPriority
+                    THEN 1
+                    ELSE NULL
+                END
+            ) AS ${Column.TOTAL_UNPROCESSED_WITH_URI_NON_USER_PRIORITY},
+            COUNT(CASE WHEN should_announce_event = 1 THEN 1 ELSE NULL END) AS ${Column.TOTAL_WITH_ANNOUNCE}
         FROM LinkUploadEntity WHERE user_id = :userId
-    """)
-    abstract fun getUploadCount(userId: UserId): Flow<LinkUploadCountEntity>
+    """
+    )
+    abstract fun getUploadCount(userId: UserId, userPriority: Long): Flow<LinkUploadCountEntity>
 
     @Query("""
         UPDATE LinkUploadEntity SET state = :uploadState WHERE id = :id
     """)
     abstract fun updateUploadState(id: Long, uploadState: UploadState)
+
+    @Query("""
+        UPDATE LinkUploadEntity SET upload_creation_time = :creationTime WHERE id = :id
+    """)
+    abstract fun updateUploadCreationTime(id: Long, creationTime: Long?)
 
     @Query("""
         UPDATE LinkUploadEntity SET
@@ -195,12 +281,46 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
         WHERE id = :id
     """)
     abstract fun updateMediaResolution(id: Long, mediaResolutionWidth: Long, mediaResolutionHeight: Long)
+
     @Query("""
         UPDATE LinkUploadEntity SET
             digests = :digests
         WHERE id = :id
     """)
     abstract fun updateDigests(id: Long, digests: String)
+
+    @Query("""
+        UPDATE LinkUploadEntity SET
+            duration = :duration
+        WHERE id = :id
+    """)
+    abstract fun updateDuration(id: Long, duration: Long)
+
+    @Query("""
+        UPDATE LinkUploadEntity SET
+            creation_time = :creationTime
+        WHERE id = :id
+    """)
+    abstract fun updateCreationTime(id: Long, creationTime: Long?)
+
+    @Query("""
+        UPDATE LinkUploadEntity SET
+            latitude = :latitude, longitude = :longitude
+        WHERE id = :id
+    """)
+    abstract fun updateLocation(id: Long, latitude: Double, longitude: Double)
+
+    @Query("""
+        UPDATE LinkUploadEntity SET
+            model = :model, orientation = :orientation, subject_area = :subjectArea
+        WHERE id = :id
+    """)
+    abstract fun updateCameraAttributes(
+        id: Long,
+        model: String,
+        orientation: Int,
+        subjectArea: String?,
+    )
 
     open fun getDistinctFlow(id: Long) = getFlow(id).distinctUntilChanged()
 }

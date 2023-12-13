@@ -19,10 +19,15 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.crypto.domain"
+}
+
 driveModule(hilt = true) {
     api(project(":drive:file:base:domain"))
     api(project(":drive:folder:domain"))
     api(project(":drive:key:domain"))
+    api(project(":drive:photo:domain"))
     api(project(":drive:share-url:base:domain"))
     api(project(":drive:volume:domain"))
 

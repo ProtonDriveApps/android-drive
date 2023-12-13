@@ -23,22 +23,32 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.BackoffPolicy
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.data.workmanager.onProtonHttpException
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
+import me.proton.core.drive.eventmanager.usecase.HandleOnDeleteEvent
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.ids
+import me.proton.core.drive.link.domain.repository.LinkRepository
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_FOLDER_ID
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_SHARE_ID
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_WORK_ID
 import me.proton.core.drive.trash.domain.notification.TrashFilesExtra
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
 import java.util.concurrent.TimeUnit
@@ -50,6 +60,8 @@ class TrashFileNodesWorker @AssistedInject constructor(
     private val linkTrashRepository: LinkTrashRepository,
     private val broadcastMessages: BroadcastMessages,
     private val updateEventAction: UpdateEventAction,
+    private val linkRepository: LinkRepository,
+    private val handleOnDeleteEvent: HandleOnDeleteEvent,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : AbstractMultiResponseCoroutineWorker(linkTrashRepository, appContext, params) {
@@ -86,14 +98,24 @@ class TrashFileNodesWorker @AssistedInject constructor(
             type = BroadcastMessage.Type.ERROR,
             extra = TrashFilesExtra(userId, folderId, linkIds, exception ?: RuntimeException(message))
         )
+        handleNotExists(linkIds)
+    }
+
+    private suspend fun handleNotExists(linkIds: List<LinkId>) {
+        linkIds.forEach { linkId ->
+            coRunCatching {
+                linkRepository.fetchLink(linkId)
+            }.onFailure { error ->
+                error.onProtonHttpException { protonCode ->
+                    if (protonCode == NOT_EXISTS) {
+                        handleOnDeleteEvent(linkIds)
+                    }
+                }
+            }
+        }
     }
 
     companion object {
-        private const val KEY_USER_ID = "KEY_USER_ID"
-        private const val KEY_SHARE_ID = "KEY_SHARE_ID"
-        private const val KEY_FOLDER_ID = "KEY_FOLDER_ID"
-        private const val KEY_WORK_ID = "KEY_WORK_ID"
-
 
         fun getWorkRequest(
             userId: UserId,
@@ -111,7 +133,7 @@ class TrashFileNodesWorker @AssistedInject constructor(
             )
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
-                OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
             .addTags(listOf(userId.id) + tags)

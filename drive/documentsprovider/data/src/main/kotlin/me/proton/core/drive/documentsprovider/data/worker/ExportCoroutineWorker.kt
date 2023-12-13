@@ -24,19 +24,18 @@ import androidx.work.WorkerParameters
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.base.data.extension.getDefaultMessage
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.presentation.extension.getDefaultMessage
-import me.proton.core.drive.base.presentation.extension.log
-import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.documentsprovider.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.documentsprovider.domain.usecase.GetFileUri
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
-import me.proton.core.drive.notification.domain.entity.NotificationEvent
-import me.proton.core.drive.notification.domain.usecase.AnnounceEvent
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.drive.i18n.R as I18N
 
@@ -83,7 +82,7 @@ abstract class ExportCoroutineWorker constructor(
             showInfo(succeeded.message)
             announceEvent(
                 userId = userId,
-                notificationEvent = NotificationEvent.Download(downloadId, succeeded.size, driveLinks.size)
+                event = Event.Download(downloadId, succeeded.size, driveLinks.size)
             )
         }
         return Result.success().also { result -> handleResult(result) }
@@ -94,7 +93,7 @@ abstract class ExportCoroutineWorker constructor(
                 I18N.string.common_in_app_notification_download_complete,
                 first().name,
             )
-        else -> applicationContext.quantityString(
+        else -> applicationContext.resources.getQuantityString(
             I18N.plurals.common_in_app_notification_files_download_complete,
             size,
         )

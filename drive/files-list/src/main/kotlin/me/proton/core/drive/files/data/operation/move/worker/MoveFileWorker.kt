@@ -24,6 +24,7 @@ import androidx.work.BackoffPolicy
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -194,7 +195,7 @@ class MoveFileWorker @AssistedInject constructor(
             )
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
-                OneTimeWorkRequest.MIN_BACKOFF_MILLIS,
+                WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
             .addTags(listOf(userId.id) + tags)

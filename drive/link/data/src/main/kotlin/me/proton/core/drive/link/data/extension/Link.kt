@@ -25,8 +25,6 @@ import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkWithProperties
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 
 fun Link.toLinkWithProperties() = LinkWithProperties(
     link = LinkEntity(
@@ -56,6 +54,7 @@ fun Link.toLinkWithProperties() = LinkWithProperties(
         shareUrlExpirationTime = shareUrlExpirationTime?.value,
         shareUrlShareId = shareUrlId?.shareId?.id,
         shareUrlId = shareUrlId?.id,
+        xAttr = xAttr,
     ),
     properties = when (this) {
         is Link.File -> LinkFilePropertiesEntity(
@@ -67,6 +66,11 @@ fun Link.toLinkWithProperties() = LinkWithProperties(
             contentKeyPacket = contentKeyPacket,
             contentKeyPacketSignature = contentKeyPacketSignature,
             activeRevisionSignatureAddress = uploadedBy,
+            photoCaptureTime = photoCaptureTime?.value,
+            photoContentHash = photoContentHash,
+            mainPhotoLinkId = mainPhotoLinkId,
+            defaultThumbnailId = defaultThumbnailId,
+            photoThumbnailId = photoThumbnailId,
         )
         is Link.Folder -> LinkFolderPropertiesEntity(
             userId = id.userId,

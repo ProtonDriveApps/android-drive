@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.extension
 
 import androidx.compose.ui.test.SemanticsMatcher
+import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties.HasThumbnail
 import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties.ItemType
 import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties.LayoutType
 import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties.LinkName
@@ -27,11 +28,14 @@ import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.test.fusion.ui.compose.builders.OnNode
 import me.proton.test.fusion.ui.compose.wrappers.NodeMatchers
 
-fun NodeMatchers<OnNode>.withLinkName(name: String) =
+fun <T : NodeMatchers<T>> NodeMatchers<T>.withLinkName(name: String): T =
     addSemanticMatcher(SemanticsMatcher.expectValue(LinkName, name))
 
-fun NodeMatchers<OnNode>.withLayoutType(layoutType: LayoutType) =
+fun <T : NodeMatchers<T>> NodeMatchers<T>.withLayoutType(layoutType: LayoutType): T =
     addSemanticMatcher(SemanticsMatcher.expectValue(LayoutType, layoutType))
 
-fun NodeMatchers<OnNode>.withItemType(itemType: ItemType): OnNode =
+fun <T : NodeMatchers<T>> NodeMatchers<T>.withItemType(itemType: ItemType): T =
     addSemanticMatcher(SemanticsMatcher.expectValue(ItemType, itemType))
+
+fun <T : NodeMatchers<T>> NodeMatchers<T>.withThumbnail(hasThumbnail: Boolean): T =
+    addSemanticMatcher(SemanticsMatcher.expectValue(HasThumbnail, hasThumbnail))

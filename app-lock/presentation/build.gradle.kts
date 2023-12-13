@@ -20,12 +20,17 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.android.drive.lock.presentation"
+}
+
 driveModule(
     hilt = true,
     compose = true,
     i18n = true,
 ) {
     api(project(":app-lock:domain"))
+    implementation(project(":drive:base:data"))
     implementation(project(":drive:base:presentation"))
     implementation(libs.accompanist.drawablepainter)
 }

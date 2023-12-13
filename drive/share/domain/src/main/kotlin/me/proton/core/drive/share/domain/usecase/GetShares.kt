@@ -34,23 +34,25 @@ class GetShares @Inject constructor(
 
     operator fun invoke(
         userId: UserId,
-        refresh: Flow<Boolean> = flowOf { !shareRepository.hasShares(userId) }
+        shareType: Share.Type,
+        refresh: Flow<Boolean> = flowOf { !shareRepository.hasShares(userId, shareType) }
     ) =
         refresh.transform { shouldRefresh ->
             if (shouldRefresh) {
-                listFetcherEmitOnEmpty<Share> { shareRepository.fetchShares(userId) }
+                listFetcherEmitOnEmpty<Share> { shareRepository.fetchShares(userId, shareType) }
             }
-            emitAll(shareRepository.getSharesFlow(userId))
+            emitAll(shareRepository.getSharesFlow(userId, shareType))
         }
 
     operator fun invoke(
         userId: UserId,
         volumeId: VolumeId,
-        refresh: Flow<Boolean> = flowOf { !shareRepository.hasShares(userId, volumeId) }
+        shareType: Share.Type,
+        refresh: Flow<Boolean> = flowOf { !shareRepository.hasShares(userId, volumeId, shareType) }
     ) =
         refresh.transform { shouldRefresh ->
             if (shouldRefresh) {
-                listFetcherEmitOnEmpty<Share> { shareRepository.fetchShares(userId) }
+                listFetcherEmitOnEmpty<Share> { shareRepository.fetchShares(userId, shareType) }
             }
             emitAll(shareRepository.getSharesFlow(userId, volumeId))
         }

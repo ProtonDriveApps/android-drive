@@ -20,9 +20,11 @@ package me.proton.core.drive.drivelink.shared.domain.entity
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.util.Date
 
 data class SharedDriveLink(
+    val volumeId: VolumeId,
     val shareUrlId: ShareUrlId,
     val publicUrl: CryptoProperty<String>,
     val customPassword: CryptoProperty<String>?,

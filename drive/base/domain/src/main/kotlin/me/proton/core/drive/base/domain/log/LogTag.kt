@@ -32,11 +32,15 @@ object LogTag {
     const val MOVE = "$OPERATION.move"
     const val RENAME = "$OPERATION.rename"
     const val PAGING = "$DEFAULT.paging"
+    const val BACKUP = "$DEFAULT.backup"
+    const val TELEMETRY = "$DEFAULT.telemetry"
     const val UPLOAD = "$DEFAULT.upload"
+    const val ANNOUNCE_EVENT = "$DEFAULT.announce.event"
     const val BROADCAST_RECEIVER = "$DEFAULT.broadcast.receiver"
     const val NOTIFICATION = "$DEFAULT.notification"
     const val TRASH = "$DEFAULT.trash"
     const val THUMBNAIL = "$DEFAULT.thumbnail"
+    const val FEATURE_FLAG = "$DEFAULT.feature.flag"
     val ViewModel.VIEW_MODEL: String get() = "$DEFAULT.view.model[${this.javaClass.simpleName}]"
 
     object UploadTag {

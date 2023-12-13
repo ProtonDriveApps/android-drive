@@ -72,6 +72,7 @@ class PagingSourceTest {
                 data = listOf("first", "second", "third"),
                 prevKey = null,
                 nextKey = 1,
+                itemsBefore = 0,
             ),
             actual = pagingSource.load(
                 PagingSource.LoadParams.Refresh(
@@ -87,6 +88,7 @@ class PagingSourceTest {
                 data = listOf("thirteenth", "fourteenth", "fifteenth"),
                 prevKey = 1,
                 nextKey = null,
+                itemsBefore = 12,
             ),
             actual = pagingSource.load(
                 PagingSource.LoadParams.Refresh(
@@ -107,6 +109,7 @@ class PagingSourceTest {
                 data = listOf("first", "second"),
                 prevKey = null,
                 nextKey = 1,
+                itemsBefore = 0,
             ),
             actual = pagingSource.load(
                 PagingSource.LoadParams.Refresh(
@@ -122,6 +125,7 @@ class PagingSourceTest {
                 data = listOf("first", "second", "third"),
                 prevKey = null,
                 nextKey = 1,
+                itemsBefore = 0,
             ),
             actual = pagingSource.load(
                 PagingSource.LoadParams.Refresh(
@@ -141,6 +145,7 @@ class PagingSourceTest {
                 data = listOf("third", "fourth"),
                 prevKey = 0,
                 nextKey = 2,
+                itemsBefore = 2,
             ),
             actual = pagingSource().load(
                 PagingSource.LoadParams.Append(
@@ -161,6 +166,7 @@ class PagingSourceTest {
                 data = listOf("seventh", "eighth", "ninth"),
                 prevKey = 1,
                 nextKey = 3,
+                itemsBefore = 6,
             ),
             actual = pagingSource.load(
                 PagingSource.LoadParams.Append(
@@ -176,6 +182,7 @@ class PagingSourceTest {
                 data = listOf("tenth", "eleventh", "twelfth"),
                 prevKey = 2,
                 nextKey = 4,
+                itemsBefore = 9,
             ),
             actual = pagingSource.load(
                 PagingSource.LoadParams.Append(
@@ -195,6 +202,7 @@ class PagingSourceTest {
                 data = listOf("fifteenth"),
                 prevKey = 6,
                 nextKey = null,
+                itemsBefore = 14,
             ),
             actual = pagingSource().load(
                 PagingSource.LoadParams.Append(
@@ -214,6 +222,7 @@ class PagingSourceTest {
                 data = listOf("fifth", "sixth"),
                 prevKey = 1,
                 nextKey = 3,
+                itemsBefore = 4,
             ),
             actual = pagingSource().load(
                 PagingSource.LoadParams.Prepend(

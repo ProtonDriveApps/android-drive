@@ -22,6 +22,7 @@ import me.proton.android.drive.db.DriveDatabase
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
+import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
 import me.proton.core.drive.share.data.db.ShareEntity
 import me.proton.core.user.data.entity.UserEntity
 
@@ -48,15 +49,23 @@ suspend fun ShareContext.folder(
 ) {
     folder(
         link = NullableLinkEntity(id = id, type = 1L),
+        properties = LinkFolderPropertiesEntity(
+            userId = user.userId,
+            shareId = share.id,
+            linkId = id,
+            nodeHashKey = ""
+        ),
         block = block,
     )
 }
 
 suspend fun ShareContext.folder(
     link: LinkEntity,
+    properties: LinkFolderPropertiesEntity,
     block: suspend FolderContext.() -> Unit,
 ) {
     db.driveLinkDao.insertOrUpdate(link)
+    db.driveLinkDao.insertOrUpdate(properties)
     FolderContext(db, user, share, link).block()
 }
 
@@ -64,15 +73,23 @@ suspend fun ShareContext.folder(
 suspend fun FolderContext.folder(id: String, block: suspend FolderContext.() -> Unit = {}) {
     folder(
         link = NullableLinkEntity(id = id, parentId = link.id, type = 1L),
+        properties = LinkFolderPropertiesEntity(
+            userId = user.userId,
+            shareId = share.id,
+            linkId = id,
+            nodeHashKey = ""
+        ),
         block = block
     )
 }
 
 suspend fun FolderContext.folder(
     link: LinkEntity,
+    properties: LinkFolderPropertiesEntity,
     block: suspend FolderContext.() -> Unit,
 ) {
     db.driveLinkDao.insertOrUpdate(link)
+    db.driveLinkDao.insertOrUpdate(properties)
     FolderContext(db, user, share, link, this.link).block()
 }
 

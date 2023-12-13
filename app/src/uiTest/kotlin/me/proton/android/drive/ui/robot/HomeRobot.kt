@@ -29,11 +29,14 @@ import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
 interface HomeRobot : Robot {
-    private val homeScreen get() = node.withTag(HomeScreenTestTag.screen)
+    val homeScreen get() = node.withTag(HomeScreenTestTag.screen)
     val filesTab get() = tabWithText(I18N.string.title_files)
+    val photosTab get() = tabWithText(I18N.string.photos_title)
     val sharedTab get() = tabWithText(I18N.string.title_shared)
 
     fun clickFilesTab() = filesTab.clickTo(FilesTabRobot)
+
+    fun clickPhotosTab() = photosTab.clickTo(PhotosTabRobot)
     fun clickSharedTab() = sharedTab.clickTo(SharedTabRobot)
 
     fun openSidebarBySwipe() = SidebarRobot.apply {
@@ -46,6 +49,6 @@ interface HomeRobot : Robot {
             .hasChild(node.withText(textRes))
 
     fun homeScreenDisplayed() {
-        homeScreen.await(30.seconds) { assertIsDisplayed() }
+        homeScreen.await(50.seconds) { assertIsDisplayed() }
     }
 }

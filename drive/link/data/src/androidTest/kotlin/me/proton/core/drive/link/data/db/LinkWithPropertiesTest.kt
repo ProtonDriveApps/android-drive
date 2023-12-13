@@ -32,6 +32,7 @@ import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkWithProperties
+import me.proton.core.drive.share.data.api.ShareDto
 import me.proton.core.drive.share.data.db.ShareEntity
 import org.junit.After
 import org.junit.Assert.assertFalse
@@ -154,6 +155,7 @@ class LinkWithPropertiesTest {
             passphrase = "share_passphrase",
             passphraseSignature = "share_passphrase_signature",
             creationTime = 0,
+            type = ShareDto.TYPE_MAIN,
         )
 
     private val testParentLink =

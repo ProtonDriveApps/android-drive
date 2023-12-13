@@ -27,10 +27,8 @@ import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
 import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.BASE_PREFIX
 import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.DOWNLOAD_PREFIX
 import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.OFFLINE_PREFIX
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.SELECTION_PREFIX
 import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.TRASH_PREFIX
 import me.proton.core.drive.link.data.db.LinkDao
-import me.proton.core.drive.link.selection.data.db.dao.LinkSelectionDao
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDao
 import me.proton.core.drive.linkoffline.data.db.LinkOfflineDao
 import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
@@ -103,8 +101,7 @@ interface DriveLinkDao : LinkDao {
             DownloadBlockEntity.`${Column.INDEX}` AS ${DOWNLOAD_PREFIX}_${Column.INDEX},
             DownloadBlockEntity.${Column.URI} AS ${DOWNLOAD_PREFIX}_${Column.URI},
             DownloadBlockEntity.${Column.ENCRYPTED_SIGNATURE} AS ${DOWNLOAD_PREFIX}_${Column.ENCRYPTED_SIGNATURE},
-            LinkTrashStateEntity.${Column.STATE} AS ${TRASH_PREFIX}_${Column.STATE},
-            LinkSelectionEntity.${Column.SELECTION_ID} AS ${SELECTION_PREFIX}_${Column.SELECTION_ID}
+            LinkTrashStateEntity.${Column.STATE} AS ${TRASH_PREFIX}_${Column.STATE}
         """
 
         const val DRIVE_LINK_LINK_ENTITY_JOIN_STATEMENT = """
@@ -112,7 +109,6 @@ interface DriveLinkDao : LinkDao {
             ${LinkOfflineDao.LINK_JOIN_STATEMENT}
             ${LinkDownloadDao.LINK_JOIN_STATEMENT}
             ${LinkTrashDao.LINK_JOIN_STATEMENT}
-            ${LinkSelectionDao.LINK_JOIN_STATEMENT}
             LEFT JOIN ShareEntity ON
                 LinkEntity.${Column.SHARE_ID} = ShareEntity.${Column.ID} AND
                 LinkEntity.${Column.USER_ID} = ShareEntity.${Column.USER_ID}

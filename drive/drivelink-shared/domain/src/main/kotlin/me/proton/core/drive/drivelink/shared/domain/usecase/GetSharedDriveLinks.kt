@@ -24,14 +24,15 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.transformSuccess
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.UpdateIsAnyAncestorMarkedAsOffline
 import me.proton.core.drive.drivelink.shared.domain.repository.DriveLinkSharedRepository
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.base.domain.usecase.GetShareUrls
 import me.proton.core.drive.shareurl.base.domain.usecase.HasShareUrls
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class GetSharedDriveLinks @Inject constructor(
@@ -43,15 +44,17 @@ class GetSharedDriveLinks @Inject constructor(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
-        shareId: ShareId,
-        refresh: Flow<Boolean> = flowOf { !hasShareUrls(shareId) },
+        userId: UserId,
+        volumeId: VolumeId,
+        refresh: Flow<Boolean> = flowOf { !hasShareUrls(userId, volumeId) },
     ): Flow<DataResult<List<DriveLink>>> =
         getShareUrls(
-            shareId = shareId,
+            userId = userId,
+            volumeId = volumeId,
             refresh = refresh,
         ).transformSuccess {
             emitAll(
-                repository.getSharedDriveLinks(shareId)
+                repository.getSharedDriveLinks(userId, volumeId)
                     .map { driveLinks ->
                         updateIsAnyAncestorMarkedAsOffline(driveLinks).asSuccess
                     }

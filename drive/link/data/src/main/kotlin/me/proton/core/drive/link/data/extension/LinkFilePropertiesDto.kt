@@ -19,6 +19,7 @@ package me.proton.core.drive.link.data.extension
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.data.api.entity.LinkFilePropertiesDto
+import me.proton.core.drive.link.data.api.entity.LinkThumbnailDto
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 
 fun LinkFilePropertiesDto.toLinkFilePropertiesEntity(userId: UserId, shareId: String, id: String) =
@@ -30,5 +31,16 @@ fun LinkFilePropertiesDto.toLinkFilePropertiesEntity(userId: UserId, shareId: St
         hasThumbnail = activeRevision.thumbnail == 1L,
         contentKeyPacket = contentKeyPacket,
         contentKeyPacketSignature = contentKeyPacketSignature,
-        activeRevisionSignatureAddress = activeRevision.signatureAddress
+        activeRevisionSignatureAddress = activeRevision.signatureAddress,
+        photoCaptureTime = activeRevision.photo?.captureTime,
+        photoContentHash = activeRevision.photo?.contentHash,
+        mainPhotoLinkId = activeRevision.photo?.mainPhotoLinkId,
+        defaultThumbnailId = activeRevision
+            .thumbnails
+            .firstOrNull { linkThumbnailDto -> linkThumbnailDto.type == LinkThumbnailDto.TYPE_DEFAULT }
+            ?.thumbnailId,
+        photoThumbnailId = activeRevision
+            .thumbnails
+            .firstOrNull { linkThumbnailDto -> linkThumbnailDto.type == LinkThumbnailDto.TYPE_PHOTO }
+            ?.thumbnailId,
     )

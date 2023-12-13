@@ -28,6 +28,8 @@ import me.proton.core.drive.eventmanager.LinkEventListener
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.eventmanager.usecase.UpdateEventActionImpl
 import me.proton.core.eventmanager.domain.EventListener
+import me.proton.core.notification.data.NotificationEventListener
+import me.proton.core.push.data.PushEventListener
 import me.proton.core.user.data.UserAddressEventListener
 import me.proton.core.user.data.UserEventListener
 import me.proton.core.user.data.UserSpaceEventListener
@@ -47,12 +49,16 @@ object EventManagerModule {
         userAddressEventListener: UserAddressEventListener,
         userSettingsEventListener: UserSettingsEventListener,
         linkEventListener: LinkEventListener,
+        notificationEventListener: NotificationEventListener,
+        pushEventListener: PushEventListener,
     ): Set<EventListener<*, *>> = setOf(
         userEventListener,
         userSpaceEventListener,
         userAddressEventListener,
         userSettingsEventListener,
         linkEventListener,
+        notificationEventListener,
+        pushEventListener,
     )
 }
 

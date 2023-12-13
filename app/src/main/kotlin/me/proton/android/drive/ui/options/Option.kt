@@ -307,6 +307,22 @@ fun Set<Option>.filter(driveLink: DriveLink) =
         option.applicableStates.containsAll(driveLink.toOptionState()) && driveLink.isApplicableTo(option.applicableTo)
     }
 
+private val photosOptions = listOf(
+    Option.OfflineToggle,
+    Option.ShareViaLink,
+    Option.CopySharedLink,
+    Option.SendFile,
+    Option.Download,
+    Option.Info,
+    Option.Trash,
+)
+
+fun Iterable<Option>.filter(optionsFilter: OptionsFilter) =
+    when (optionsFilter) {
+        OptionsFilter.FILES -> this
+        OptionsFilter.PHOTOS -> filter { option -> option in photosOptions }
+    }
+
 fun Set<Option>.filterAll(driveLinks: List<DriveLink>) =
     filter { option ->
         driveLinks.size <= option.applicableQuantity.quantity &&

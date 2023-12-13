@@ -19,6 +19,22 @@
 <resources>
     <string name="storage_total_usage">Total usage</string>
     <string name="storage_details_format"><![CDATA[%1$s of %2$s used]]></string>
+
+    <!--
+        Variable %1$s is percentage of available storage
+        Examples:
+            "Your storage is more than 50% full"
+    -->
+    <string name="storage_quotas_not_full_title">Your storage is more than %1$s full</string>
+    <!--
+        Variable %1$s is an application name
+        Examples:
+            "Free up space on your Proton Drive storage or upgrade your plan for uninterrupted backup."
+    -->
+    <string name="storage_quotas_full_title">Free up space on your %1$s storage or upgrade your plan for uninterrupted backup.</string>
+    <string name="storage_quotas_get_storage_action">Get more storage</string>
+
+
     <string name="user_select_other_account_content_description">Select another account</string>
     <string name="description_remove_account">You will be signed out and all data associated with this account will be removed from this device.</string>
 </resources>

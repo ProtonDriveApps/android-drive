@@ -26,11 +26,13 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import me.proton.core.drive.base.data.provider.ExifImageResolutionProvider
-import me.proton.core.drive.base.data.provider.MetadataRetrieverVideoResolutionProvider
+import me.proton.core.drive.base.data.provider.AggregatedVideoAttributesProvider
+import me.proton.core.drive.base.data.provider.ExifImageAttributesProvider
+import me.proton.core.drive.base.data.provider.ExifVideoAttributesProvider
+import me.proton.core.drive.base.data.provider.MetadataRetrieverVideoAttributesProvider
 import me.proton.core.drive.base.data.provider.MimeTypeProviderImpl
 import me.proton.core.drive.base.data.provider.StorageLocationProviderImpl
-import me.proton.core.drive.base.domain.provider.MediaResolutionProvider
+import me.proton.core.drive.base.domain.provider.FileAttributesProvider
 import me.proton.core.drive.base.domain.provider.MimeTypeProvider
 import me.proton.core.drive.base.domain.provider.StorageLocationProvider
 import javax.inject.Singleton
@@ -47,22 +49,40 @@ object BaseModule {
 
     @Singleton
     @Provides
-    @IntoSet
-    fun provideImageResolutionProvider(
-        @ApplicationContext appContext: Context,
-    ): MediaResolutionProvider =
-        ExifImageResolutionProvider(appContext)
-
-    @Singleton
-    @Provides
-    @IntoSet
-    fun provideVideoResolutionProvider(
-        @ApplicationContext appContext: Context,
-    ): MediaResolutionProvider =
-        MetadataRetrieverVideoResolutionProvider(appContext)
-
-    @Singleton
-    @Provides
     fun provideMimeTypeProvider(): MimeTypeProvider =
         MimeTypeProviderImpl(Job() + Dispatchers.IO)
+
+    @Singleton
+    @Provides
+    @IntoSet
+    fun provideImageAttributesProvider(
+        @ApplicationContext appContext: Context,
+    ): FileAttributesProvider =
+        ExifImageAttributesProvider(appContext)
+
+    @Singleton
+    @Provides
+    fun provideExifVideoAttributesProvider(
+        @ApplicationContext appContext: Context,
+    ): ExifVideoAttributesProvider =
+        ExifVideoAttributesProvider(appContext)
+
+    @Singleton
+    @Provides
+    fun provideMetadataRetrieverVideoAttributesProvider(
+        @ApplicationContext appContext: Context,
+    ): MetadataRetrieverVideoAttributesProvider =
+        MetadataRetrieverVideoAttributesProvider(appContext)
+
+    @Singleton
+    @Provides
+    @IntoSet
+    fun provideVideoAttributesProvider(
+        exifVideoAttributesProvider: ExifVideoAttributesProvider,
+        metadataRetrieverVideoAttributesProvider: MetadataRetrieverVideoAttributesProvider,
+    ): FileAttributesProvider =
+        AggregatedVideoAttributesProvider(
+            exifVideoAttributesProvider,
+            metadataRetrieverVideoAttributesProvider,
+        )
 }

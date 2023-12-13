@@ -20,39 +20,50 @@ package me.proton.core.drive.thumbnail.presentation.coil.decode
 
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
-import coil.bitmap.BitmapPool
+import coil.ImageLoader
+import coil.annotation.ExperimentalCoilApi
 import coil.decode.DecodeResult
 import coil.decode.Decoder
-import coil.decode.Options
-import coil.size.Size
+import coil.decode.ImageSource
+import coil.fetch.SourceResult
+import coil.request.Options
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
 import me.proton.core.drive.thumbnail.presentation.coil.fetch.ThumbnailFetcher
-import okio.BufferedSource
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.proton.core.util.kotlin.CoreLogger
 
-@OptIn(ExperimentalCoroutinesApi::class)
-@Singleton
-class ThumbnailDecoder @Inject constructor(
+@OptIn(ExperimentalCoilApi::class, ExperimentalCoroutinesApi::class)
+class ThumbnailDecoder(
     private val decryptThumbnail: DecryptThumbnail,
+    private val source: ImageSource,
+    private val options: Options
 ) : Decoder {
 
-    override suspend fun decode(pool: BitmapPool, source: BufferedSource, size: Size, options: Options): DecodeResult {
-        require(source is ThumbnailFetcher.Source)
+    override suspend fun decode(): DecodeResult? {
+        val metadata = source.metadata as ThumbnailFetcher.ThumbnailMetadata
         return decryptThumbnail(
-            fileId = source.thumbnailVO.fileId,
-            inputStream = source.inputStream(),
+            fileId = metadata.fileId,
+            inputStream = source.source().inputStream(),
         ).map { decryptedData ->
+            val byteArray = BitmapFactory.decodeByteArray(decryptedData.data, 0, decryptedData.data.size)
             DecodeResult(
-                drawable = BitmapDrawable(
-                    null,
-                    BitmapFactory.decodeByteArray(decryptedData.data, 0, decryptedData.data.size)
-                ),
+                drawable = BitmapDrawable(null, byteArray),
                 isSampled = false
             )
+        }.onFailure { error ->
+            CoreLogger.d(LogTag.THUMBNAIL, error, "Unable to decrypt thumbnail fileId: ${metadata.fileId}")
         }.getOrThrow()
     }
 
-    override fun handles(source: BufferedSource, mimeType: String?) = source is ThumbnailFetcher.Source
+    class Factory(private val decryptThumbnail: DecryptThumbnail) : Decoder.Factory {
+        override fun create(
+            result: SourceResult,
+            options: Options,
+            imageLoader: ImageLoader
+        ): Decoder? = when {
+            result.mimeType != ThumbnailFetcher.MIME_TYPE -> null
+            else -> ThumbnailDecoder(decryptThumbnail, result.source, options)
+        }
+    }
 }

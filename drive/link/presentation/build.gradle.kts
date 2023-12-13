@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.link.presentation"
+}
+
 driveModule(
     hilt = true,
     i18n = true,

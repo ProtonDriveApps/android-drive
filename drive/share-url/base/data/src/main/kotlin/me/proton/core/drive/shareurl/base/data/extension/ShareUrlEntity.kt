@@ -25,9 +25,11 @@ import me.proton.core.drive.shareurl.base.data.db.entity.ShareUrlEntity
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrl
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlPasswordFlags
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 fun ShareUrlEntity.toShareUrl() = ShareUrl(
     id = ShareUrlId(ShareId(userId,  shareId), id),
+    volumeId = VolumeId(volumeId),
     name = name,
     token = token,
     creatorEmail = creatorEmail,

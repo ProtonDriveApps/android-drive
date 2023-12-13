@@ -19,12 +19,12 @@ package me.proton.core.drive.share.data.extension
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.share.data.api.ShareDto
 import me.proton.core.drive.share.data.db.ShareEntity
 import me.proton.core.drive.share.data.db.ShareEntity.Companion.PRIMARY_BIT
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.user.domain.entity.AddressId
 
 fun ShareEntity.toShare(userId: UserId) =
     Share(
@@ -37,5 +37,14 @@ fun ShareEntity.toShare(userId: UserId) =
         key = key,
         passphrase = passphrase,
         passphraseSignature = passphraseSignature,
-        creationTime = creationTime?.let { TimestampS(creationTime) }
+        creationTime = creationTime?.let { TimestampS(creationTime) },
+        type = type.toShareType(),
     )
+
+fun Long?.toShareType() = when (this) {
+    ShareDto.TYPE_MAIN -> Share.Type.MAIN
+    ShareDto.TYPE_STANDARD -> Share.Type.STANDARD
+    ShareDto.TYPE_DEVICE -> Share.Type.DEVICE
+    ShareDto.TYPE_PHOTO -> Share.Type.PHOTO
+    else -> Share.Type.UNKNOWN
+}

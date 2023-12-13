@@ -22,8 +22,11 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.linkupload.domain.entity.CacheOption
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface UploadWorkManager {
@@ -32,29 +35,42 @@ interface UploadWorkManager {
         volumeId: VolumeId,
         folderId: FolderId,
         uriStrings: List<String>,
-        shouldDeleteSource: Boolean
+        cacheOption: CacheOption,
+        shouldDeleteSource: Boolean,
+        networkTypeProviderType: NetworkTypeProviderType,
+        shouldAnnounceEvent: Boolean,
+        priority: Long,
+        shouldBroadcastErrorMessage: Boolean,
     )
 
     suspend fun upload(
         uploadBulk: UploadBulk,
         folder: Folder,
-        silently: Boolean = false,
+        showPreparingUpload: Boolean = true,
+        showFilesBeingUploaded: Boolean = true,
+        tags : List<String> = emptyList(),
     )
 
     suspend fun uploadAlreadyCreated(
         userId: UserId,
         uploadFileLinkId: Long,
         uriString: String,
-        shouldDeleteSource: Boolean
+        shouldDeleteSource: Boolean,
     )
 
     suspend fun cancel(uploadFileLink: UploadFileLink)
 
     suspend fun cancelAll(userId: UserId)
 
+    suspend fun cancelAllByShare(userId: UserId, shareId: ShareId)
+
+    suspend fun cancelAllByFolder(userId: UserId, folderId: FolderId)
+
     fun getProgressFlow(uploadFileLink: UploadFileLink): Flow<Percentage>?
 
     fun broadcastFilesBeingUploaded(folder: Folder, uriStrings: List<String>)
 
     fun broadcastUploadLimitReached(userId: UserId)
+
+    fun isUploading(tag: String): Flow<Boolean>
 }

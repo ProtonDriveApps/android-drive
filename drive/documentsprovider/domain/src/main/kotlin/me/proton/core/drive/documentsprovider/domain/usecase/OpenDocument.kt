@@ -62,7 +62,7 @@ class OpenDocument @Inject constructor(
     ): ParcelFileDescriptor =
         openUploadFileLink(documentId, mode, signal) ?: openDriveLinkFile(documentId, mode, signal)
 
-    @Suppress("UNUSED_PARAMETER", "BlockingMethodInNonBlockingContext")
+    @Suppress("UNUSED_PARAMETER")
     private suspend fun openUploadFileLink(
         documentId: DocumentId,
         mode: String?,
@@ -92,7 +92,6 @@ class OpenDocument @Inject constructor(
             }
         }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun UploadFileLink.cacheFolder() = File(getCacheFolder(userId, volumeId.id, draftRevisionId), "tmp")
         .apply {
             if (!exists()) {
@@ -100,7 +99,6 @@ class OpenDocument @Inject constructor(
             }
         }
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     private suspend fun openDriveLinkFile(
         documentId: DocumentId,
         mode: String?,
@@ -124,7 +122,7 @@ class OpenDocument @Inject constructor(
 
         if (signal?.isCanceled == true) {
             file.delete()
-            throw IllegalStateException("Request was canceled")
+            error("Request was canceled")
         }
 
         ParcelFileDescriptor.open(

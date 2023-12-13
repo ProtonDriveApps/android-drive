@@ -20,24 +20,14 @@ package me.proton.core.drive.trash.data.api
 
 import me.proton.core.drive.link.data.api.response.LinkResponses
 import me.proton.core.drive.trash.data.api.request.LinkIDsRequest
-import me.proton.core.drive.trash.data.api.response.GetTrashChildrenResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
 import retrofit2.http.DELETE
-import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import retrofit2.http.Query
 
 interface DriveTrashApi : BaseRetrofitApi {
-
-    @GET("drive/shares/{enc_shareID}/trash")
-    suspend fun getTrash(
-        @Path("enc_shareID") shareId: String,
-        @Query("Page") page: Int,
-        @Query("PageSize") pageSize: Int,
-    ): GetTrashChildrenResponse
 
     @POST("drive/shares/{enc_shareID}/folders/{enc_linkID}/trash_multiple")
     suspend fun sendToTrash(

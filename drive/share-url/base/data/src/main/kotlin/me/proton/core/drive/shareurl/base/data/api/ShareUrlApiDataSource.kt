@@ -20,7 +20,6 @@ package me.proton.core.drive.shareurl.base.data.api
 
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.shareurl.base.data.api.entity.ShareUrlDto
 import me.proton.core.drive.shareurl.base.data.api.request.DeleteShareUrlsRequest
 import me.proton.core.drive.shareurl.base.data.api.request.UpdateCustomPasswordShareUrlRequest
 import me.proton.core.drive.shareurl.base.data.api.request.UpdateExpirationDurationShareUrlRequest
@@ -31,6 +30,7 @@ import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlExpirationDurati
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlInfo
 import me.proton.core.drive.shareurl.base.domain.extension.userId
+import me.proton.core.drive.volume.data.api.entity.ShareUrlDto
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
@@ -101,7 +101,7 @@ class ShareUrlApiDataSource @Inject constructor(
                     urlId = shareUrlId.id,
                     request = UpdateExpirationDurationShareUrlRequest(shareUrlExpirationDurationInfo),
                 )
-            else -> throw IllegalArgumentException("Either custom password info or expiration duration info must be non-null")
+            else -> error("Either custom password info or expiration duration info must be non-null")
         }
     }.valueOrThrow
 

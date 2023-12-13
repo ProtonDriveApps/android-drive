@@ -19,17 +19,25 @@ package me.proton.core.drive.file.base.data.repository
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.toDataResult
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.file.base.data.api.FileApiDataSource
+import me.proton.core.drive.file.base.data.api.response.GetThumbnailsUrlsResponse
+import me.proton.core.drive.file.base.data.extension.mapResults
 import me.proton.core.drive.file.base.data.extension.toFileInfo
 import me.proton.core.drive.file.base.data.extension.toRevisionInfo
-import me.proton.core.drive.file.base.domain.entity.BlockTokenInfo
 import me.proton.core.drive.file.base.domain.entity.FileInfo
 import me.proton.core.drive.file.base.domain.entity.NewFileInfo
+import me.proton.core.drive.file.base.domain.entity.PhotoAttributes
 import me.proton.core.drive.file.base.domain.entity.Revision
+import me.proton.core.drive.file.base.domain.entity.ThumbnailId
+import me.proton.core.drive.file.base.domain.entity.ThumbnailUrl
 import me.proton.core.drive.file.base.domain.repository.FileRepository
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.network.domain.ApiException
 import java.io.File
 import java.io.InputStream
 import javax.inject.Inject
@@ -56,30 +64,41 @@ class FileRepositoryImpl @Inject constructor(
     override suspend fun updateRevision(
         fileId: FileId,
         revisionId: String,
-        blockTokenInfos: List<BlockTokenInfo>,
         manifestSignature: String,
         signatureAddress: String,
         blockNumber: Long,
-        state: Long,
         xAttr: String,
+        photoAttributes: PhotoAttributes?,
     ): Result<Unit> = coRunCatching {
         api.updateRevision(
             fileId = fileId,
             revisionId = revisionId,
-            blockTokenInfos = blockTokenInfos,
             manifestSignature = manifestSignature,
             signatureAddress = signatureAddress,
             blockNumber = blockNumber,
-            state = state,
             xAttr = xAttr,
+            photoAttributes = photoAttributes,
         )
     }
 
-    override suspend fun fetchThumbnailUrl(
-        fileId: FileId,
-        revisionId: String
-    ): Result<String> = coRunCatching {
-        api.getThumbnailUrl(fileId, revisionId).url
+    override suspend fun deleteRevision(fileId: FileId, revisionId: String): Result<Unit> =
+        coRunCatching {
+            api.deleteRevision(
+                fileId = fileId,
+                revisionId = revisionId,
+            )
+        }
+
+    override suspend fun fetchThumbnailsUrls(
+        userId: UserId,
+        volumeId: VolumeId,
+        thumbnailIds: Set<ThumbnailId>,
+    ): Map<ThumbnailId, Result<ThumbnailUrl>> = associateResult(thumbnailIds) {
+        api.getThumbnailsUrls(
+            userId = userId,
+            volumeId = volumeId,
+            thumbnailIds = thumbnailIds.map { thumbnailId -> thumbnailId.id }
+        )
     }
 
     override suspend fun getUrlInputStream(
@@ -97,4 +116,15 @@ class FileRepositoryImpl @Inject constructor(
     ): Result<Unit> = coRunCatching {
         api.uploadFile(userId, uploadUrl, uploadFile, uploadingProgress)
     }
+
+    private inline fun associateResult(
+        thumbnailIds: Set<ThumbnailId>,
+        block: () -> GetThumbnailsUrlsResponse,
+    ): Map<ThumbnailId, Result<ThumbnailUrl>> =
+        try {
+            block().mapResults(thumbnailIds)
+        } catch (e: ApiException) {
+            val result = e.toDataResult().toResult()
+            thumbnailIds.associateWith { result }
+        }
 }

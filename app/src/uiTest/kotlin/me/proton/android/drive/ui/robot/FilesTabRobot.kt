@@ -25,12 +25,8 @@ import me.proton.core.drive.i18n.R as I18N
 object FilesTabRobot : NavigationBarRobot, HomeRobot, LinksRobot, GrowlerRobot {
     private val addFilesButton get() = node.withText(I18N.string.action_empty_files_add_files)
     private val plusButton get() = node.withContentDescription(I18N.string.content_description_files_upload_upload_file)
-    private val cancelUploadButton get() = node.withContentDescription(I18N.string.files_upload_content_description_cancel_upload)
-    private val selectedOptionsButton get() = node.withContentDescription(I18N.string.content_description_selected_options)
-
-    fun clickOptions() =
-        selectedOptionsButton
-            .clickTo(FileFolderOptionsRobot)
+    private val cancelUploadButton get() = node
+        .withContentDescription(I18N.string.files_upload_content_description_cancel_upload)
 
     fun clickPlusButton() = plusButton.clickTo(ParentFolderOptionsRobot)
     fun clickAddFilesButton() = addFilesButton.clickTo(ParentFolderOptionsRobot)

@@ -20,6 +20,10 @@ plugins {
     id("com.android.library")
 }
 
+android {
+    namespace = "me.proton.core.drive.shareurl.crypto.data"
+}
+
 driveModule(
     hilt = true,
     i18n = true,

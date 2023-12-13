@@ -28,8 +28,10 @@ import me.proton.core.drive.share.data.api.ShareApiDataSource
 import me.proton.core.drive.share.data.db.ShareDao
 import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.share.data.db.ShareEntity
+import me.proton.core.drive.share.data.extension.toLong
 import me.proton.core.drive.share.data.extension.toShare
 import me.proton.core.drive.share.data.extension.toShareEntity
+import me.proton.core.drive.share.data.extension.toShareType
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.entity.ShareInfo
@@ -55,14 +57,26 @@ class ShareRepositoryImpl @Inject constructor(
                 shareEntities.map { shareEntity -> shareEntity.toShare(userId) }.asSuccess
             }
 
-    override suspend fun hasShares(userId: UserId): Boolean =
-        dao.hasShareEntities(userId)
+    override fun getSharesFlow(userId: UserId, shareType: Share.Type): Flow<DataResult<List<Share>>> =
+        dao.getAllFlow(userId)
+            .map { shareEntities ->
+                shareEntities
+                    .filter { shareEntity -> shareEntity.type.toShareType() == shareType }
+                    .map { shareEntity -> shareEntity.toShare(userId) }
+                    .asSuccess
+            }
 
-    override suspend fun hasShares(userId: UserId, volumeId: VolumeId): Boolean =
-        dao.hasShareEntities(userId, volumeId.id)
+    override suspend fun hasShares(userId: UserId, shareType: Share.Type): Boolean =
+        dao.hasShareEntities(userId, shareType.toLong())
 
-    override suspend fun fetchShares(userId: UserId): List<Share> =
-        with(api.getShares(userId).map { share -> share.toShareEntity(userId) }) {
+    override suspend fun hasShares(userId: UserId, volumeId: VolumeId, shareType: Share.Type): Boolean =
+        dao.hasShareEntities(userId, volumeId.id, shareType.toLong())
+
+    override suspend fun fetchShares(userId: UserId, shareType: Share.Type): List<Share> =
+        with(api.getShares(userId, shareType)
+            .filter { share -> share.isActive }
+            .map { share -> share.toShareEntity(userId) }
+        ) {
             dao.insertOrUpdate(*toTypedArray())
             map { shareEntity -> shareEntity.toShare(userId) }
         }

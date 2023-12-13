@@ -22,4 +22,7 @@ data class UploadCount(
     val total: Int,
     val totalWithUri: Int,
     val totalUnprocessedWithUri: Int,
+    val totalWithUriNonUserPriority: Int,
+    val totalUnprocessedWithUriNonUserPriority: Int,
+    val totalWithAnnounce: Int,
 )

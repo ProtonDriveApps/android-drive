@@ -17,29 +17,40 @@
  */
 package me.proton.core.drive.upload.data.extension
 
+import android.system.OsConstants
 import me.proton.android.drive.verifier.data.extension.log
 import me.proton.android.drive.verifier.domain.exception.VerifierException
-import me.proton.core.drive.base.presentation.extension.log
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.data.extension.isErrno
+import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.network.domain.ApiException
-import me.proton.core.network.domain.ApiResult
-import me.proton.core.network.domain.isRetryable
+import me.proton.core.network.domain.hasProtonErrorCode
+import me.proton.core.drive.base.data.extension.log as baseLog
 
 internal val Throwable.isRetryable: Boolean
     get() = when (this) {
-        is ApiException -> {
-            when (this.error) {
-                is ApiResult.Error.Timeout,
-                is ApiResult.Error.NoInternet -> true
-                else -> this.error.isRetryable()
-            }
-        }
         is VerifierException -> this.cause.isRetryable
-        else -> false
+        else -> isRetryable
     }
 
 internal fun Throwable.log(tag: String, message: String? = null): Throwable = this.also {
     when (this) {
         is VerifierException -> this.log(tag, message.orEmpty())
-        else -> this.log(tag, message)
+        else -> this.baseLog(tag, message)
+    }
+}
+
+internal fun Throwable.toEventUploadReason(): Event.Upload.Reason = when (this) {
+    is SecurityException -> Event.Upload.Reason.ERROR_PERMISSIONS
+    is ApiException -> when {
+        hasProtonErrorCode(ProtonApiCode.EXCEEDED_QUOTA) -> Event.Upload.Reason.ERROR_DRIVE_STORAGE
+        else -> Event.Upload.Reason.ERROR_OTHER
+    }
+
+    else -> if (isErrno(OsConstants.ENOSPC)) {
+        Event.Upload.Reason.ERROR_LOCAL_STORAGE
+    } else {
+        Event.Upload.Reason.ERROR_OTHER
     }
 }

@@ -32,4 +32,5 @@ fun NewFileInfo.toCreateFileRequest() =
         contentKeyPacket = contentKeyPacket,
         contentKeyPacketSignature = contentKeyPacketSignature,
         parentLinkId = parentId.id,
+        clientUid = clientUid
     )

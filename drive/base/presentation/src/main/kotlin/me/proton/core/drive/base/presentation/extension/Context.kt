@@ -18,7 +18,10 @@
 package me.proton.core.drive.base.presentation.extension
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import androidx.annotation.PluralsRes
 import java.util.Locale
 
@@ -36,3 +39,18 @@ fun Context.quantityString(@PluralsRes pluralRes: Int, quantity: Int): String =
         quantity,
         quantity,
     )
+
+fun Context.launchApplicationDetailsSettings() {
+    startActivity(
+        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = Uri.fromParts(Scheme.PACKAGE, packageName, null)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+    )
+}
+
+private object Scheme {
+    const val PACKAGE = "package"
+}

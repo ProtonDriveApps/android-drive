@@ -17,8 +17,10 @@
  */
 package me.proton.core.drive.base.data.extension
 
+import android.content.Context
 import kotlinx.coroutines.CancellationException
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.drive.i18n.R
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
 import me.proton.core.network.domain.isRetryable
@@ -45,3 +47,25 @@ val DataResult.Error.isRetryable: Boolean
 
 val Map<*, DataResult.Error>.areRetryable: Boolean
     get() = all { (_, error) -> error.isRetryable }
+
+fun DataResult.Error.getDefaultMessage(
+    context: Context,
+    useExceptionMessage: Boolean,
+    unhandled: String = context.getString(R.string.common_error_internal),
+): String =
+    this.cause?.getDefaultMessage(context, useExceptionMessage) ?: unhandled
+
+fun DataResult.Error.log(tag: String, message: String? = null): DataResult.Error = also {
+    message?.let { this.cause?.log(tag, message) } ?: this.cause?.log(tag)
+}
+
+fun DataResult.Error.logDefaultMessage(
+    context: Context,
+    useExceptionMessage: Boolean,
+    tag: String,
+    unhandled: String = context.getString(R.string.common_error_internal)
+): String = getDefaultMessage(
+    context = context,
+    useExceptionMessage = useExceptionMessage,
+    unhandled = unhandled,
+).also { defaultMessage -> log(tag, defaultMessage) }

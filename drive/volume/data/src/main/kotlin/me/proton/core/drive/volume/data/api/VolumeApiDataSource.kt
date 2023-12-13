@@ -18,7 +18,9 @@
 package me.proton.core.drive.volume.data.api
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.volume.data.api.entity.VolumeDto
 import me.proton.core.drive.volume.data.api.request.CreateVolumeRequest
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiException
 
@@ -34,4 +36,32 @@ class VolumeApiDataSource(private val apiProvider: ApiProvider) {
     @Throws(ApiException::class)
     suspend fun createVolume(userId: UserId, request: CreateVolumeRequest) =
         apiProvider.get<VolumeApi>(userId).invoke { createVolume(request) }.valueOrThrow.volumeDto
+
+    @Throws(ApiException::class)
+    suspend fun getShareTrashes(
+        userId: UserId,
+        volumeId: String,
+        pageIndex: Int,
+        pageSize: Int,
+    ) = apiProvider.get<VolumeApi>(userId).invoke {
+        getShareTrashes(
+            volumeId = volumeId,
+            page = pageIndex,
+            pageSize = pageSize,
+        )
+    }.valueOrThrow.shareTrashes
+
+    @Throws(ApiException::class)
+    suspend fun getShareUrls(
+        userId: UserId,
+        volumeId: VolumeId,
+        pageIndex: Int,
+        pageSize: Int,
+    ) = apiProvider.get<VolumeApi>(userId).invoke {
+        getShareUrls(
+            volumeId = volumeId.id,
+            page = pageIndex,
+            pageSize = pageSize,
+        )
+    }.valueOrThrow
 }

@@ -20,9 +20,10 @@ package me.proton.android.drive.ui.viewstate
 
 import androidx.compose.runtime.Immutable
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.file.info.presentation.entity.Item
 
 @Immutable
 data class FileInfoViewState(
     val link: DriveLink,
-    val path: String,
+    val items: List<Item>,
 )
