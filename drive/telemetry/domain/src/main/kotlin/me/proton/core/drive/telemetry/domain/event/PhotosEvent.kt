@@ -19,13 +19,14 @@
 package me.proton.core.drive.telemetry.domain.event
 
 import me.proton.core.drive.telemetry.domain.entity.DriveTelemetryEvent
+import me.proton.core.drive.telemetry.domain.extension.toYesOrNo
 
 @Suppress("FunctionNaming")
 object PhotosEvent {
 
     enum class Reason(internal val group: String, internal val key: String) {
         COMPLETED("completed", "completed"),
-        FAILED_OTHER("failed", "error"),
+        FAILED_OTHER("failed", "other"),
         FAILED_PERMISSIONS("failed", "permissions"),
         FAILED_DRIVE_STORAGE("failed", "out of drive storage"),
         FAILED_LOCAL_STORAGE("failed", "out of local storage"),
@@ -74,7 +75,7 @@ object PhotosEvent {
                 "bytes_uploaded" to size.toFloat(),
             ),
             dimensions = mapOf(
-                "is_initial_backup" to isInitialBackup.toString(),
+                "is_initial_backup" to isInitialBackup.toYesOrNo(),
                 "reason_group" to reason.group,
                 "reason" to reason.key,
             )

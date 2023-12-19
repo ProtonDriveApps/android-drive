@@ -64,6 +64,7 @@ fun PhotosScreen(
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToBackupSettings: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
     val viewState by rememberFlowWithLifecycle(flow = viewModel.viewState)
@@ -75,6 +76,7 @@ fun PhotosScreen(
             navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
             navigateToSubscription = navigateToSubscription,
             navigateToPhotosIssues = navigateToPhotosIssues,
+            navigateToBackupSettings = navigateToBackupSettings,
         )
     }
     val photos = rememberFlowWithLifecycle(flow = viewModel.driveLinks)

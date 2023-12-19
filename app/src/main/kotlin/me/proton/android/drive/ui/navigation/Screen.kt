@@ -322,6 +322,8 @@ sealed class Screen(val route: String) {
         operator fun invoke(userId: UserId) = "settings/${userId.id}"
 
         const val USER_ID = Screen.USER_ID
+        const val SHARE_ID = "shareId"
+        const val FOLDER_ID = "folderId"
 
         object AppAccess : Screen("settings/{userId}/appAccess") {
 
@@ -341,6 +343,16 @@ sealed class Screen(val route: String) {
 
         object PhotosBackup : Screen("settings/{userId}/photosBackup") {
             operator fun invoke(userId: UserId) = "settings/${userId.id}/photosBackup"
+
+            object Dialogs {
+
+                object ConfirmStopSyncFolder : Screen("settings/{userId}/backup/{shareId}/folder/{folderId}/confirm_skip?id={id}"){
+                    operator fun invoke(
+                        folderId: FolderId,
+                        id: Int,
+                    ) = "settings/${folderId.shareId.userId.id}/backup/${folderId.shareId.id}/folder/${folderId.id}/confirm_skip?id=${id}"
+                }
+            }
         }
     }
 

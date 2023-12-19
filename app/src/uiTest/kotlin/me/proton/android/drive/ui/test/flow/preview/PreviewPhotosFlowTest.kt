@@ -29,6 +29,7 @@ import me.proton.test.fusion.ui.common.enums.SwipeDirection
 import org.junit.Before
 import org.junit.Test
 import kotlin.time.Duration.Companion.seconds
+import me.proton.android.drive.ui.test.SmokeTest
 
 @HiltAndroidTest
 class PreviewPhotosFlowTest: AuthenticatedBaseTest() {
@@ -43,6 +44,7 @@ class PreviewPhotosFlowTest: AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2, isPhotos = true)
+    @SmokeTest
     fun previewPhotoTest() {
 
         val firstImage = ImageName.Main

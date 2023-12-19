@@ -45,9 +45,13 @@ class ScanFolder @Inject constructor(
                 )
             }
         }.getOrThrow()
-        setFiles(userId, files)
+        setFiles(userId, files).getOrThrow()
         if (files.isNotEmpty()) {
-            updateFolder(userId, backupFolder.bucketId, files.maxOf { media -> media.date })
+            updateFolder(
+                userId = userId,
+                bucketId = backupFolder.bucketId,
+                updateTime = files.maxOf { media -> media.date }
+            ).getOrThrow()
         }
         files
     }

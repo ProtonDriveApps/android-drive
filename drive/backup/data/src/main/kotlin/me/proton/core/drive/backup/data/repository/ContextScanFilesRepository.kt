@@ -36,6 +36,7 @@ class ContextScanFilesRepository @Inject constructor(
         data class Data(
             override val uri: Uri,
             val dateAdded: TimestampS?,
+            val bucketId: Int?,
         ) : ScanResult
 
         data class NotFound(override val uri: Uri, val error: Throwable? = null) : ScanResult
@@ -54,7 +55,13 @@ class ContextScanFilesRepository @Inject constructor(
                             }?.let { columnIndex ->
                                 cursor.getInt(columnIndex).toLong()
                             }
-                        ScanResult.Data(uri, dateAdded?.let(::TimestampS))
+                        val bucketId = cursor.getColumnIndex(MediaStore.MediaColumns.BUCKET_ID)
+                            .takeIf { columnIndex ->
+                                columnIndex != -1
+                            }?.let { columnIndex ->
+                                cursor.getInt(columnIndex)
+                            }
+                        ScanResult.Data(uri, dateAdded?.let(::TimestampS), bucketId)
                     } else {
                         ScanResult.NotFound(uri)
                     }

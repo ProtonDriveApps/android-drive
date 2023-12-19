@@ -18,7 +18,9 @@
 
 package me.proton.core.drive.backup.data.repository
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.db.BackupDatabase
 import me.proton.core.drive.backup.data.extension.toBackupFolder
@@ -26,6 +28,8 @@ import me.proton.core.drive.backup.data.extension.toEntity
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import javax.inject.Inject
 
 class BackupFolderRepositoryImpl @Inject constructor(
@@ -34,6 +38,22 @@ class BackupFolderRepositoryImpl @Inject constructor(
     override suspend fun getAll(userId: UserId): List<BackupFolder> =
         db.backupFolderDao.getAll(userId).map { entity -> entity.toBackupFolder() }
 
+    override suspend fun getCount(folderId: FolderId): Int =
+        db.backupFolderDao.getCount(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+        )
+    override fun getAllFlow(folderId: FolderId, count: Int): Flow<List<BackupFolder>> =
+        db.backupFolderDao.getAllFlow(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+            count = count,
+        ).map { entities ->
+            entities.map { entity -> entity.toBackupFolder() }
+        }
+
     override suspend fun insertFolder(backupFolder: BackupFolder) : BackupFolder{
         db.backupFolderDao.insertOrIgnore(backupFolder.toEntity())
         return backupFolder
@@ -41,6 +61,10 @@ class BackupFolderRepositoryImpl @Inject constructor(
 
     override suspend fun deleteFolders(userId: UserId) {
         db.backupFolderDao.deleteAll(userId)
+    }
+
+    override suspend fun deleteFolder(userId: UserId, bucketId: Int) {
+        db.backupFolderDao.delete(userId, bucketId)
     }
 
     override fun hasFolders(userId: UserId) =

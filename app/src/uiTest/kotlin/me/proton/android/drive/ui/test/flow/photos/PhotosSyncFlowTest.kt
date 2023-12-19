@@ -21,16 +21,18 @@ package me.proton.android.drive.ui.test.flow.photos
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
+import me.proton.android.drive.ui.robot.SettingsRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.PhotosBaseTest
 import org.junit.Test
 
 @HiltAndroidTest
 class PhotosSyncFlowTest : PhotosBaseTest() {
+
     @Test
     @Scenario(2)
     fun syncMultipleFolders() {
-        pictureCameraFolder.copyDirFromAssets("images/basic", flatten = true)
+        pictureCameraFolder.copyDirFromAssets("images/basic")
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
 
         FilesTabRobot
@@ -44,9 +46,8 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
-    @Scenario(2)
     fun syncNewPhotos() {
-        dcimCameraFolder.copyDirFromAssets("images/basic", flatten = true)
+        dcimCameraFolder.copyDirFromAssets("images/basic")
 
         FilesTabRobot
             .clickPhotosTab()
@@ -66,9 +67,8 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
-    @Scenario(2)
     fun addPhotoWhileUploading() {
-        dcimCameraFolder.copyDirFromAssets("images/basic", flatten = true)
+        dcimCameraFolder.copyDirFromAssets("images/basic")
         dcimCameraFolder.copyFileFromAssets("boat.mp4")
 
         FilesTabRobot
@@ -87,10 +87,9 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
-    @Scenario(2)
     fun backupVideoAndMakeAvailableOffline() {
         val videoFile = "boat.mp4"
-        dcimCameraFolder.copyFileFromAssets(videoFile)
+        pictureCameraFolder.copyFileFromAssets(videoFile)
 
         FilesTabRobot
             .clickPhotosTab()
@@ -110,14 +109,17 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
 
     @Test
     @Scenario(2)
-    fun turnOnBackupFromSettings() {
+    fun turnOnBackupWithFilesInCameraFolderFromSettings() {
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
 
         FilesTabRobot
             .openSidebarBySwipe()
             .clickSettings()
             .clickPhotosBackup()
-            .clickBackupToggle()
+            .verify {
+                assertFoldersList()
+            }
+            .clickBackupToggle(SettingsRobot)
             .verify {
                 robotDisplayed()
             }
@@ -125,6 +127,136 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
             .clickPhotosTab()
             .verify {
                 assertPhotoDisplayed("boat.jpg")
+            }
+    }
+
+    @Test
+    fun noPhotoInCameraFolder() {
+        FilesTabRobot
+            .openSidebarBySwipe()
+            .clickSettings()
+            .clickPhotosBackup()
+            .verify {
+                assertFolderNotFound("Camera")
+            }
+    }
+
+    @Test
+    fun photosFolderEnableFromSettings() {
+        picturePhotosFolder.copyFileFromAssets("boat.jpg")
+
+        FilesTabRobot
+            .openSidebarBySwipe()
+            .clickSettings()
+            .clickPhotosBackup()
+            .verify {
+                assertFoldersList()
+            }
+            .clickFolder("Photos").verify {
+                assertFolderEnable("Photos")
+            }
+            .clickBack(SettingsRobot)
+            .clickBack(FilesTabRobot)
+            .clickPhotosTab()
+            .verify {
+                assertPhotoDisplayed("boat.jpg")
+            }
+    }
+
+    @Test
+    fun photosFolderEnableFromPhoto() {
+        picturePhotosFolder.copyFileFromAssets("boat.jpg")
+
+        FilesTabRobot
+            .clickPhotosTab()
+            .verify {
+                assertMissingFolderDisplayed()
+            }
+            .clickOnMore()
+            .verify {
+                assertFoldersList()
+            }
+            .clickFolder("Photos").verify {
+                assertFolderEnable("Photos")
+            }
+            .clickBack(PhotosTabRobot)
+            .verify {
+                assertPhotoDisplayed("boat.jpg")
+            }
+    }
+
+    @Test
+    fun photosFolderEnableAndDisableFromSettings() {
+        picturePhotosFolder.copyFileFromAssets("boat.jpg")
+
+        FilesTabRobot
+            .openSidebarBySwipe()
+            .clickSettings()
+            .clickPhotosBackup()
+            .verify {
+                assertFoldersList()
+            }
+            .clickFolder("Photos").verify {
+                assertFolderEnable("Photos")
+            }
+            .clickFolder("Photos")
+            .clickConfirm()
+            .verify {
+                assertFolderDisable("Photos")
+            }
+            .clickBack(SettingsRobot)
+            .clickBack(FilesTabRobot)
+            .clickPhotosTab()
+            .verify {
+                assertMissingFolderDisplayed()
+            }
+    }
+
+    @Test
+    fun backupDifferentVideoFormatFiles() {
+        pictureCameraFolder.copyDirFromAssets("videos/formats")
+        val videoFiles = arrayOf("3gp.3gp", "mov.mov", "mp4.mp4")
+
+        FilesTabRobot
+            .clickPhotosTab()
+            .enableBackup()
+            .verify {
+                assertBackupCompleteDisplayed()
+                assertPhotoCountEquals(3)
+            }
+
+        videoFiles.forEach {
+            PhotosTabRobot
+                .clickOnPhoto(it)
+                .verify {
+                    assertMediaPreviewDisplayed(it)
+                }
+                .clickBack(FilesTabRobot)
+        }
+    }
+
+    @Test
+    fun deleteFileWhileBackupIsInProgress() {
+        pictureCameraFolder.copyDirFromAssets("images/basic/1")
+        pictureCameraFolder.copyDirFromAssets("videos/formats")
+
+        FilesTabRobot
+            .clickPhotosTab()
+            .enableBackup()
+            .verify {
+                assertLeftToBackup(5)
+            }
+
+        dcimCameraFolder.deleteFile("mp4.mp4")
+
+        PhotosTabRobot
+            .verify {
+                assertBackupCompleteDisplayed()
+                assertPhotoCountEquals(4)
+                assertPhotoDisplayed("1_0.jpg")
+                assertPhotoDisplayed("1_0.png")
+                assertPhotoDisplayed("3gp.3gp")
+                assertPhotoDisplayed("mov.mov")
             }
     }
 }

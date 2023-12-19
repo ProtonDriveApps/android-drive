@@ -18,8 +18,8 @@
 
 package me.proton.android.drive.ui.robot
 
-import me.proton.android.drive.ui.screen.SettingsScreenTestTag
 import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
+import me.proton.android.drive.ui.screen.SettingsScreenTestTag
 import me.proton.core.drive.settings.presentation.SettingsTestTag
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N

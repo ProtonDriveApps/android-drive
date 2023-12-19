@@ -59,8 +59,9 @@ class ProcessIntent @Inject constructor(
     private val broadcastMessages: BroadcastMessages,
     private val getUploadFileName: GetUploadFileName,
     private val validateUploadLimit: ValidateUploadLimit,
+    private val validateExternalUri: ValidateExternalUri,
 ) {
-    operator fun invoke(intent: Intent, deepLinkIntent: MutableSharedFlow<Intent>, accountViewModel: AccountViewModel) {
+    operator fun invoke(intent: Intent, deepLinkIntent: MutableSharedFlow<Intent>, accountViewModel: AccountViewModel) =
         CoroutineScope(Job() + Dispatchers.IO).launch {
             with (intent) {
                 getStringExtra(EXTRA_NOTIFICATION_ID)?.let { extraNotificationId ->
@@ -70,7 +71,6 @@ class ProcessIntent @Inject constructor(
                 onActionSendMultiple { processActionSendMultiple(intent, deepLinkIntent, accountViewModel) }
             }
         }
-    }
 
     private suspend fun processExtraNotificationId(extraNotificationId: String) =
         extraNotificationId.deserializeOrNull<NotificationId.User>()?.let { notificationId ->
@@ -85,9 +85,15 @@ class ProcessIntent @Inject constructor(
         deepLinkIntent = deepLinkIntent,
         accountViewModel = accountViewModel,
     ) {
-        getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)?.let { uri ->
-            listOf(UriWithFileName(uri.toString(), getUploadFileName(uri.toString())))
-        } ?: emptyList()
+        with (validateExternalUri) {
+            getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)?.let { uri ->
+                listOf(uri)
+                    .validate()
+                    .map {
+                        UriWithFileName(it.toString(), getUploadFileName(it.toString()))
+                    }
+            } ?: emptyList()
+        }
     }
 
     private suspend fun processActionSendMultiple(
@@ -95,19 +101,22 @@ class ProcessIntent @Inject constructor(
         deepLinkIntent: MutableSharedFlow<Intent>,
         accountViewModel: AccountViewModel,
     ) {
-        getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)?.let { uris ->
-            val userId = accountViewModel.primaryAccount.filterNotNull().first().userId
-            validateUploadLimit(userId, uris.size)
-                .onSuccess {
-                    actionSend(
-                        deepLinkIntent = deepLinkIntent,
-                        accountViewModel = accountViewModel,
-                    ) {
-                        uris.map { uri ->
-                            UriWithFileName(uri.toString(), getUploadFileName(uri.toString()))
+        with (validateExternalUri) {
+            getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)?.let {
+                val uris = it.validate()
+                val userId = accountViewModel.primaryAccount.filterNotNull().first().userId
+                validateUploadLimit(userId, uris.size)
+                    .onSuccess {
+                        actionSend(
+                            deepLinkIntent = deepLinkIntent,
+                            accountViewModel = accountViewModel,
+                        ) {
+                            uris.map { uri ->
+                                UriWithFileName(uri.toString(), getUploadFileName(uri.toString()))
+                            }
                         }
                     }
-                }
+            }
         }
     }
 

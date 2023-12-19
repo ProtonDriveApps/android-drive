@@ -47,12 +47,35 @@ fun QuarkCommand.populate(
             client.executeQuarkRequest(it)
         }
 
-val quarkClient by lazy {
-    val timeout = 60.seconds.toJavaDuration()
-    OkHttpClient
-        .Builder()
-        .connectTimeout(timeout)
-        .readTimeout(timeout)
-        .writeTimeout(timeout)
+fun QuarkCommand.quotaSetUsedSpace(
+    user: User,
+    usedSpace: String,
+): Response =
+    route("quark/drive:quota:set-used-space")
+        .args(
+            listOf(
+                "--username" to user.name,
+                "--used-space" to usedSpace
+            ).toEncodedArgs()
+        )
         .build()
-}
+        .let {
+            client.executeQuarkRequest(it)
+        }
+
+fun QuarkCommand.volumeCreate(
+    user: User,
+    maxSize: String
+): Response =
+    route("quark/drive:volume:create")
+        .args(
+            listOf(
+                "--username" to user.name,
+                "--pass" to user.password,
+                "--max-size" to maxSize
+            ).toEncodedArgs()
+        )
+        .build()
+        .let {
+            client.executeQuarkRequest(it)
+        }

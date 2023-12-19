@@ -86,6 +86,7 @@ fun PreviewScreen(
                             }
                         }
                     }
+                    PreviewEffect.Close -> navigateBack()
                 }
             }
             .launchIn(this)
@@ -120,9 +121,11 @@ fun PreviewScreen(
                 }
             }
             PreviewContentState.Empty -> {
-                PreviewEmpty(
-                    navigateBack = navigateBack,
-                )
+                Deferred(duration = 1.seconds) {
+                    PreviewEmpty(
+                        navigateBack = navigateBack,
+                    )
+                }
             }
         }
     }

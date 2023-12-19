@@ -21,4 +21,12 @@ package me.proton.core.drive.backup.domain.entity
 data class BucketEntry(
     val bucketId: Int,
     val bucketName: String?,
-)
+    val lastItemUriString: String? = null,
+    var imageCount: Int = 0,
+    var videoCount: Int = 0,
+) {
+    override fun equals(other: Any?): Boolean =
+        other is BucketEntry && bucketId == other.bucketId
+
+    override fun hashCode(): Int = bucketId
+}

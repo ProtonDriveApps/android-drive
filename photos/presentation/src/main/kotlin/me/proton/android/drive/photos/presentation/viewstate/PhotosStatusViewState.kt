@@ -22,7 +22,7 @@ import me.proton.core.drive.backup.domain.entity.BackupError
 
 sealed interface PhotosStatusViewState {
 
-    data object Disabled : PhotosStatusViewState
+    data class Disabled(val hasDefaultFolder: Boolean?) : PhotosStatusViewState
     data class Complete(val labelItemSaved: String?) : PhotosStatusViewState
     data object Uncompleted : PhotosStatusViewState
 

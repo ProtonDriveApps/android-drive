@@ -380,12 +380,6 @@ test:firebase:e2e:photos:
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.photos"
 
-test:firebase:e2e:navigate:
-  extends: .app-firebase-tests
-  variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.navigate"
-    DEVICE_CONFIG: "quickTest-3"
-
 coverage report:
   stage: report
   tags:

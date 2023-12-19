@@ -60,7 +60,7 @@ class VerifyBlocks @Inject constructor(
                     uploadFileLinkId = uploadFileLink.id,
                     index = requireNotNull(uploadBlocks[file]).index,
                     verifierToken = verifierToken,
-                )
+                ).getOrThrow()
             }
         cleanupVerifier(
             userId = uploadFileLink.userId,

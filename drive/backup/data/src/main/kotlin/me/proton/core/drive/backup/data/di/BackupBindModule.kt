@@ -29,8 +29,9 @@ import me.proton.core.drive.backup.data.repository.BackupDuplicateRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
+import me.proton.core.drive.backup.data.repository.ContextCountLibraryItemsRepository
+import me.proton.core.drive.backup.data.repository.ContextBucketRepository
 import me.proton.core.drive.backup.data.repository.ContextScanFolderRepository
-import me.proton.core.drive.backup.data.repository.ContextScanLibraryRepository
 import me.proton.core.drive.backup.data.worker.BackupCleanupWorkers
 import me.proton.core.drive.backup.domain.handler.UploadErrorHandler
 import me.proton.core.drive.backup.domain.manager.BackupManager
@@ -39,8 +40,9 @@ import me.proton.core.drive.backup.domain.repository.BackupDuplicateRepository
 import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
+import me.proton.core.drive.backup.domain.repository.BucketRepository
+import me.proton.core.drive.backup.domain.repository.CountLibraryItemsRepository
 import me.proton.core.drive.backup.domain.repository.ScanFolderRepository
-import me.proton.core.drive.backup.domain.repository.ScanLibraryRepository
 import me.proton.core.drive.upload.data.worker.CleanupWorkers
 import javax.inject.Singleton
 
@@ -83,5 +85,10 @@ interface BackupBindModule {
 
     @Binds
     @Singleton
-    fun bindScanLibraryRepository(impl: ContextScanLibraryRepository): ScanLibraryRepository
+    fun bindBucketRepository(impl: ContextBucketRepository): BucketRepository
+
+    @Binds
+    @Singleton
+    fun bindCountLibraryItemsRepository(impl: ContextCountLibraryItemsRepository): CountLibraryItemsRepository
+
 }

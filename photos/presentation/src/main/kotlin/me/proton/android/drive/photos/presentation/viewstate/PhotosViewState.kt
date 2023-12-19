@@ -30,7 +30,7 @@ data class PhotosViewState(
     @DrawableRes val navigationIconResId: Int,
     val topBarActions: Flow<Set<Action>> = emptyFlow(),
     val listContentState: ListContentState,
-    val isBackupEnabled: Boolean?,
+    val showEmptyList: Boolean?,
     val showPhotosStateIndicator: Boolean,
     val showPhotosStateBanner: Boolean,
     val backupStatusViewState: PhotosStatusViewState?,

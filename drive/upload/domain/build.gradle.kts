@@ -29,6 +29,7 @@ driveModule(
 ) {
     api(project(":drive:announce-event:domain"))
     api(project(":drive:block:domain"))
+    api(project(":drive:crypto-base:domain"))
     api(project(":drive:file:create:domain"))
     api(project(":drive:link-upload:domain"))
     api(project(":drive:thumbnail:domain"))

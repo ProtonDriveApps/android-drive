@@ -62,6 +62,7 @@ class SetCustomPasswordFlowTest : AuthenticatedBaseTest() {
         ShareRobot
             .verify { publicAccessibilityDescriptionWasShown() }
             .typePassword(FILE_SHARE_PASSWORD)
+            .clickPasswordToggle()
             .verify { passwordProtectedAccessibilityDescriptionWasShown() }
             .clickSave()
             .clickUpdateSuccessfulGrowler()
@@ -102,6 +103,7 @@ class SetCustomPasswordFlowTest : AuthenticatedBaseTest() {
 
         ShareRobot
             .typePassword(FILE_SHARE_PASSWORD)
+            .clickPasswordToggle()
             .clickBack(ShareRobot.DiscardChanges)
             .verify { robotDisplayed() }
             .clickDiscard()

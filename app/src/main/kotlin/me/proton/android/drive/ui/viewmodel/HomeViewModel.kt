@@ -29,11 +29,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.ui.navigation.HomeTab
 import me.proton.android.drive.ui.navigation.Screen
@@ -43,8 +39,6 @@ import me.proton.core.domain.entity.SessionUserId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.component.NavigationTab
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.usecase.IsFeatureFlagEnabled
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEvent
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewState
 import me.proton.core.user.domain.UserManager
@@ -59,33 +53,26 @@ class HomeViewModel @Inject constructor(
     userManager: UserManager,
     savedStateHandle: SavedStateHandle,
     configurationProvider: ConfigurationProvider,
-    isFeatureFlagEnabled: IsFeatureFlagEnabled,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
-    private val isPhotosFeatureEnabled: StateFlow<Boolean?> = flow {
-        emit(configurationProvider.photosFeatureFlag && isFeatureFlagEnabled(FeatureFlagId.drivePhotos(userId)))
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
-
-    private val tabs: StateFlow<Map<out HomeTab, NavigationTab>> = isPhotosFeatureEnabled
-        .filterNotNull()
-        .map { isPhotosFeatureEnabled ->
-            listOfNotNull(
-                Screen.Files to NavigationTab(
-                    iconResId = CorePresentation.drawable.ic_proton_folder,
-                    titleResId = I18N.string.title_files
-                ),
-                takeIf { isPhotosFeatureEnabled }?.let {
-                    Screen.Photos to NavigationTab(
-                        iconResId = CorePresentation.drawable.ic_proton_image,
-                        titleResId = I18N.string.photos_title
-                    )
-                },
-                Screen.Shared to NavigationTab(
-                    iconResId = CorePresentation.drawable.ic_proton_link,
-                    titleResId = I18N.string.title_shared
-                ),
-            ).associateBy({ tab -> tab.first }, { tab -> tab.second })
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
+    private val tabs: StateFlow<Map<out HomeTab, NavigationTab>> = MutableStateFlow(
+        listOfNotNull(
+            Screen.Files to NavigationTab(
+                iconResId = CorePresentation.drawable.ic_proton_folder,
+                titleResId = I18N.string.title_files
+            ),
+            takeIf { configurationProvider.photosFeatureFlag }?.let {
+                Screen.Photos to NavigationTab(
+                    iconResId = CorePresentation.drawable.ic_proton_image,
+                    titleResId = I18N.string.photos_title
+                )
+            },
+            Screen.Shared to NavigationTab(
+                iconResId = CorePresentation.drawable.ic_proton_link,
+                titleResId = I18N.string.title_shared
+            ),
+        ).associateBy({ tab -> tab.first }, { tab -> tab.second })
+    )
 
     private val currentDestination = MutableStateFlow(Screen.Files.route)
     fun setCurrentDestination(route: String) {

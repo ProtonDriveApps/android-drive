@@ -119,7 +119,7 @@ class UploadEventWorker @AssistedInject constructor(
                 }.launchIn(this)
         } catch (e: CancellationException) {
             CoreLogger.d(LogTag.NOTIFICATION, e, e.message.orEmpty())
-            cancel()
+            cancel(e)
         }
         CoreLogger.d(LogTag.NOTIFICATION, "Upload notification event worker finished")
         Result.success()

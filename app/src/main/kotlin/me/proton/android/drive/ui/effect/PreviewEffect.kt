@@ -20,4 +20,6 @@ package me.proton.android.drive.ui.effect
 
 sealed class PreviewEffect {
     data class Fullscreen(val isFullscreen: Boolean) : PreviewEffect()
+
+    data object Close : PreviewEffect()
 }

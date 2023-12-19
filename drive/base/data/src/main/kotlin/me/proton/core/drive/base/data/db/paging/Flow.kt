@@ -74,8 +74,8 @@ fun <T : Any> Flow<Result<List<T>>>.asPagingSource(
         }
 
         override suspend fun load(params: LoadParams<Int>): LoadResult<Int, T> {
-            val pageKey = params.key ?: 0
             val list = listFlow.filterNotNull().first()
+            val pageKey = params.getPageKey(list.getOrNull()?.size ?: 0)
             return try {
                 val pageList = list
                     .onFailure { throwable ->
@@ -182,8 +182,8 @@ fun <T : Any> ((fromIndex: Int, count: Int) -> Flow<Result<List<T>>>).asPagingSo
                     as load page size (${params.loadSize})
                 """.trimIndent()
             }
-            val pageKey = params.key ?: 0
             val items = itemsCount.filterNotNull().first()
+            val pageKey = params.getPageKey(items)
             val pageRange = rangeFromPage(pageKey, params.loadSize, items)
             val currentIndex = findIndexForRange(pageRange, observablePageSize, items)
             fromIndex.value = currentIndex
@@ -238,6 +238,22 @@ fun <T : Any> ((fromIndex: Int, count: Int) -> Flow<Result<List<T>>>).asPagingSo
             else -> pageRange.first - observablePageSize / 2
         }
     }
+
+private fun PagingSource.LoadParams<Int>.getPageKey(items: Int): Int = when (val key = this.key) {
+    null -> 0
+    else -> {
+        if (key * loadSize <= items) {
+            key
+        } else {
+            (items / loadSize).also { pageKey ->
+                CoreLogger.d(
+                    tag = LogTag.PAGING,
+                    message = "Requested page key $key was changed to $pageKey because of items $items",
+                )
+            }
+        }
+    }
+}
 
 private val PagingSource.LoadParams<Int>.type: String get() = when(this) {
     is PagingSource.LoadParams.Refresh -> "REFRESH"

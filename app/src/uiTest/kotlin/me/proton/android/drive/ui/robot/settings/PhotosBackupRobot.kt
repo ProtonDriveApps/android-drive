@@ -18,16 +18,37 @@
 
 package me.proton.android.drive.ui.robot.settings
 
+import me.proton.android.drive.ui.robot.NavigationBarRobot
 import me.proton.android.drive.ui.robot.Robot
-import me.proton.android.drive.ui.robot.SettingsRobot
 import me.proton.android.drive.ui.screen.PhotosBackupSettingsScreenTestTag
 import me.proton.test.fusion.Fusion.node
+import me.proton.core.drive.i18n.R as I18N
 
-object PhotosBackupRobot: Robot {
+object PhotosBackupRobot : Robot, NavigationBarRobot {
 
-    private val photosBackupToggle = node.withTag(PhotosBackupSettingsScreenTestTag.previewBackupToggle)
+    private val photosBackupToggle =
+        node.withTag(PhotosBackupSettingsScreenTestTag.previewBackupToggle)
+    private val uploadFrom get() = node.withText(I18N.string.settings_photos_backup_folders_title)
 
-    fun clickBackupToggle() = photosBackupToggle.clickTo(SettingsRobot)
+    private val confirmButton =
+        node.withText(I18N.string.settings_photos_backup_folders_confirm_stop_sync_confirm_action)
+
+    fun <T : Robot> clickBackupToggle(goesTo: T) = photosBackupToggle.clickTo(goesTo)
+
+    fun assertFoldersList() = uploadFrom.await { assertIsDisplayed() }
+    fun assertFolderNotFound(name: String) = node.withText(name)
+        .hasSibling(node.withText(I18N.string.settings_photos_backup_folders_not_found))
+        .await { assertIsDisplayed() }
+
+    fun assertFolderEnable(name: String) = node.isCheckable().hasDescendant(node.withText(name)).await {
+        assertIsAsserted()
+    }
+    fun assertFolderDisable(name: String) = node.isCheckable().hasDescendant(node.withText(name)).await {
+        assertIsNotAsserted()
+    }
+
+    fun clickFolder(name: String) = node.withText(name).clickTo(PhotosBackupRobot)
+    fun clickConfirm() = confirmButton.clickTo(PhotosBackupRobot)
 
     override fun robotDisplayed() {
         photosBackupToggle.await { assertIsDisplayed() }

@@ -29,6 +29,31 @@ import me.proton.core.drive.backup.data.db.entity.BackupFolderEntity
 abstract class BackupFolderDao : BaseDao<BackupFolderEntity>() {
     @Query("SELECT * FROM BackupFolderEntity WHERE user_id = :userId")
     abstract suspend fun getAll(userId: UserId): List<BackupFolderEntity>
+    @Query("""
+        SELECT COUNT(*) FROM BackupFolderEntity 
+        WHERE 
+            user_id = :userId AND
+            share_id = :shareId AND
+            parent_id= :folderId
+        """
+    )
+    abstract suspend fun getCount(userId: UserId, shareId: String, folderId: String): Int
+    @Query("""
+        SELECT * FROM BackupFolderEntity 
+        WHERE 
+            user_id = :userId AND
+            share_id = :shareId AND
+            parent_id= :folderId
+        ORDER BY update_time DESC
+        LIMIT :count
+        """
+    )
+    abstract fun getAllFlow(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+        count: Int,
+    ): Flow<List<BackupFolderEntity>>
 
     @Query(
         """
@@ -64,6 +89,8 @@ abstract class BackupFolderDao : BaseDao<BackupFolderEntity>() {
 
     @Query("DELETE FROM BackupFolderEntity WHERE user_id = :userId")
     abstract suspend fun deleteAll(userId: UserId)
+    @Query("DELETE FROM BackupFolderEntity WHERE user_id = :userId AND bucket_id = :bucketId")
+    abstract suspend fun delete(userId: UserId, bucketId: Int)
 
     @Query("SELECT EXISTS(SELECT * FROM BackupFolderEntity WHERE user_id = :userId)")
     abstract fun hasFolders(userId: UserId): Flow<Boolean>

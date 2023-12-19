@@ -21,10 +21,8 @@ package me.proton.android.drive.ui.robot
 import androidx.annotation.StringRes
 import me.proton.android.drive.ui.screen.HomeScreenTestTag
 import me.proton.core.drive.base.presentation.component.BottomNavigationComponentTestTag
-import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.ui.common.enums.SwipeDirection
-import me.proton.test.fusion.ui.compose.builders.OnNode
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 

@@ -41,6 +41,7 @@ class FoldersTest {
 
     private lateinit var addFolder: AddFolder
     private lateinit var updateFolder: UpdateFolder
+    private lateinit var deleteFolder: DeleteFolder
     private lateinit var deleteFolders: DeleteFolders
     private lateinit var getFolders: GetFolders
 
@@ -50,6 +51,7 @@ class FoldersTest {
         val repository = BackupFolderRepositoryImpl(database.db)
         addFolder = AddFolder(repository)
         updateFolder = UpdateFolder(repository)
+        deleteFolder = DeleteFolder(repository)
         deleteFolders = DeleteFolders(repository)
         getFolders = GetFolders(repository)
     }
@@ -72,17 +74,41 @@ class FoldersTest {
     }
 
     @Test
-    fun delete() = runTest {
-        val backupFolder = BackupFolder(
-            bucketId = 0,
+    fun deleteAll() = runTest {
+        val backupFolder1 = BackupFolder(
+            bucketId = 1,
+            folderId = folderId,
+        )
+        val backupFolder2 = BackupFolder(
+            bucketId = 2,
             folderId = folderId,
         )
 
-        addFolder(backupFolder)
+        addFolder(backupFolder1)
+        addFolder(backupFolder2)
 
         deleteFolders(userId)
 
         assertEquals(emptyList<BackupFolder>(), getFolders(userId).getOrThrow())
+    }
+
+    @Test
+    fun delete() = runTest {
+        val backupFolder1 = BackupFolder(
+            bucketId = 1,
+            folderId = folderId,
+        )
+        val backupFolder2 = BackupFolder(
+            bucketId = 2,
+            folderId = folderId,
+        )
+
+        addFolder(backupFolder1)
+        addFolder(backupFolder2)
+
+        deleteFolder(userId, 1)
+
+        assertEquals(listOf(backupFolder2), getFolders(userId).getOrThrow())
     }
 
     @Test

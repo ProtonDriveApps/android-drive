@@ -28,12 +28,14 @@ import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.notification.data.extension.buildNotificationChannelCompat
 import me.proton.core.drive.notification.data.extension.id
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
 import me.proton.core.drive.notification.domain.entity.Channel
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.drive.notification.domain.manager.NotificationManager
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class NotificationManagerImpl @Inject constructor(
@@ -72,7 +74,7 @@ class NotificationManagerImpl @Inject constructor(
 
     override fun removeUserChannels(userId: UserId, channels: List<Channel.User>) {
         channels.forEach { channel ->
-            notificationManagerCompat.deleteNotificationChannel(channel.id)
+            deleteNotificationChannel(channel.id)
         }
         notificationManagerCompat.deleteNotificationChannelGroup(userId.id)
     }
@@ -89,6 +91,22 @@ class NotificationManagerImpl @Inject constructor(
             )
         }
     }
+
+    private fun deleteNotificationChannel(channelId: String) = runCatching {
+        notificationManagerCompat.deleteNotificationChannel(channelId)
+    }
+        .recoverCatching { throwable ->
+            if (throwable !is SecurityException) {
+                throw throwable
+            } else {
+                CoreLogger.w(
+                    tag = LogTag.NOTIFICATION,
+                    e = throwable,
+                    message = "Failed removing notification channel $channelId",
+                )
+            }
+        }
+        .getOrThrow()
 
     private fun runIfPermissionGranted(block: () -> Unit) {
         if (Build.VERSION.SDK_INT < TIRAMISU || (Build.VERSION.SDK_INT >= TIRAMISU && ContextCompat.checkSelfPermission(

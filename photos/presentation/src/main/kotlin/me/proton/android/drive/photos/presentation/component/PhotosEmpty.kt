@@ -48,6 +48,7 @@ fun PhotosEmpty(
     onRetry: () -> Unit,
     onResolve: () -> Unit,
     onGetStorage: () -> Unit,
+    onResolveMissingFolder: () -> Unit,
 ) {
     Column {
         PhotosBanners {
@@ -58,6 +59,7 @@ fun PhotosEmpty(
                 onPermissions = onPermissions,
                 onRetry = onRetry,
                 onResolve = onResolve,
+                onResolveMissingFolder = onResolveMissingFolder,
             )
             StorageBanner(onGetStorage = onGetStorage)
         }
@@ -135,6 +137,7 @@ private fun PhotosEmptyPreview() {
         onRetry = { },
         onResolve = { },
         onGetStorage = {},
+        onResolveMissingFolder = {},
     )
 }
 

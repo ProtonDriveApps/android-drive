@@ -56,11 +56,17 @@ class ContextScanFilesRepositoryTest {
 
         every {
             resolver.query(uri, null, null, null, null)
-        } returns MatrixCursor(arrayOf(MediaColumns._ID, MediaColumns.DATE_ADDED)).apply {
-            addRow(arrayOf(0, 12345))
+        } returns MatrixCursor(
+            arrayOf(
+                MediaColumns._ID,
+                MediaColumns.DATE_ADDED,
+                MediaColumns.BUCKET_ID,
+            )
+        ).apply {
+            addRow(arrayOf(0, 12345, 1))
         }
         val result = contextScanFilesRepository(listOf(uri))
-        assertEquals(Result.success(listOf(Data(uri, TimestampS(12345)))), result)
+        assertEquals(Result.success(listOf(Data(uri, TimestampS(12345), 1))), result)
     }
 
     @Test
@@ -86,6 +92,9 @@ class ContextScanFilesRepositoryTest {
         assertThat(scanResult, IsInstanceOf(NotFound::class.java))
         assertEquals(uri, scanResult.uri)
         assertThat((scanResult as NotFound).error, IsInstanceOf(IllegalStateException::class.java))
-        assertEquals(scanResult.error?.message, "Unknown URL: content://media/external is hidden API")
+        assertEquals(
+            scanResult.error?.message,
+            "Unknown URL: content://media/external is hidden API"
+        )
     }
 }

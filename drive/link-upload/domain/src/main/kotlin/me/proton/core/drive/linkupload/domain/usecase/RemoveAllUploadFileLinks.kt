@@ -48,4 +48,12 @@ class RemoveAllUploadFileLinks @Inject constructor(
     ) = coRunCatching {
         linkUploadRepository.removeAllUploadFileLinks(userId, folderId, uploadState)
     }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        uriStrings: List<String>,
+        uploadState: UploadState,
+    ) = coRunCatching {
+        linkUploadRepository.removeAllUploadFileLinks(userId, uriStrings, uploadState)
+    }
 }

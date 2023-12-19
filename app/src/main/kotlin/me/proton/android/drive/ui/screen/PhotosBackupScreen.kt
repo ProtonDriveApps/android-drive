@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import me.proton.android.drive.photos.presentation.component.BackupPermissions
+import me.proton.android.drive.photos.presentation.component.LibraryFolders
 import me.proton.android.drive.ui.action.PhotoExtractDataAction
 import me.proton.android.drive.ui.viewevent.PhotosBackupViewEvent
 import me.proton.android.drive.ui.viewmodel.PhotosBackupViewModel
@@ -49,12 +50,14 @@ import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 fun PhotosBackupScreen(
     modifier: Modifier = Modifier,
     navigateToPhotosPermissionRationale: () -> Unit,
+    navigateToConfirmStopSyncFolder: (FolderId, Int) -> Unit,
     navigateBack: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosBackupViewModel>()
@@ -70,6 +73,7 @@ fun PhotosBackupScreen(
             .fillMaxSize()
             .systemBarsPadding(),
         navigateBack = navigateBack,
+        navigateToConfirmStopSyncFolder = navigateToConfirmStopSyncFolder,
     )
     BackupPermissions(
         viewState = viewModel.backupPermissionsViewModel.initialViewState,
@@ -85,6 +89,7 @@ fun PhotosBackup(
     viewEvent: PhotosBackupViewEvent,
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
+    navigateToConfirmStopSyncFolder: (FolderId, Int) -> Unit,
 ) {
     Column(modifier = modifier) {
         TopAppBar(
@@ -99,6 +104,10 @@ fun PhotosBackup(
             viewEvent.onToggle()
         }
         PhotoExtractDataAction()
+        LibraryFolders(
+            modifier = Modifier.fillMaxSize(),
+            navigateToConfirmStopSyncFolder = navigateToConfirmStopSyncFolder,
+        )
     }
 }
 
@@ -163,7 +172,8 @@ private fun PhotosBackupPreview() {
                 override val onToggle = {}
             },
             modifier = Modifier.fillMaxSize(),
-            navigateBack = {}
+            navigateBack = {},
+            navigateToConfirmStopSyncFolder = { _, _ -> }
         )
     }
 }

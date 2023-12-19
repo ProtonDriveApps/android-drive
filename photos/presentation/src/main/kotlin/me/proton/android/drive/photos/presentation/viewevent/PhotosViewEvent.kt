@@ -42,5 +42,6 @@ interface PhotosViewEvent {
     val onPermissions: () -> Unit get() = {}
     val onRetry: () -> Unit get() = {}
     val onGetStorage: () -> Unit get() = {}
+    val onResolveMissingFolder: () -> Unit get() = {}
     val onResolve: () -> Unit get() = {}
 }

@@ -31,6 +31,8 @@ interface BackupManager {
 
     fun sync(userId: UserId, backupFolder: BackupFolder, uploadPriority: Long)
 
+    suspend fun cancelSync(userId: UserId, backupFolder: BackupFolder)
+
     fun syncAllFolders(userId: UserId, uploadPriority: Long = UploadFileLink.BACKUP_PRIORITY)
 
     fun watchFolders(userId: UserId)

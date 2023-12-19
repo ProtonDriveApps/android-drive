@@ -34,7 +34,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.repository.ContextScanFilesRepository
-import me.proton.core.drive.backup.domain.manager.BackupManager
+import me.proton.core.drive.backup.data.repository.ContextScanFilesRepository.ScanResult
+import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -45,7 +46,7 @@ import me.proton.core.util.kotlin.CoreLogger
 class BackupFileWatcherWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
-    private val backupManager: BackupManager,
+    private val syncFolders: SyncFolders,
     private val workManager: WorkManager,
     private val contextScanFilesRepository: ContextScanFilesRepository,
 ) : CoroutineWorker(context, workerParams) {
@@ -58,17 +59,38 @@ class BackupFileWatcherWorker @AssistedInject constructor(
             "BackupFileWatcherWorker triggered by ${triggeredContentUris.size} files"
         )
         contextScanFilesRepository(triggeredContentUris).onSuccess { scanResults ->
-            val foundCount =
-                scanResults.count { result -> result is ContextScanFilesRepository.ScanResult.Data }
-            if(foundCount == 0) {
+            val founds = scanResults.filterIsInstance(ScanResult.Data::class.java)
+            val foundCount = founds.size
+            if (foundCount == 0) {
                 CoreLogger.d(BACKUP, "BackupFileWatcherWorker no files were found")
-                CoreLogger.d(BACKUP, "BackupFileWatcherWorker will do nothing to prevent empty sync")
+                CoreLogger.d(
+                    BACKUP,
+                    "BackupFileWatcherWorker will do nothing to prevent empty sync"
+                )
             } else {
                 CoreLogger.d(BACKUP, "BackupFileWatcherWorker found $foundCount files")
-                backupManager.syncAllFolders(userId, UploadFileLink.RECENT_BACKUP_PRIORITY)
+                val bucketIds = founds.map { found -> found.bucketId }.distinct()
+                if (bucketIds.any { bucketId -> bucketId == null }) {
+                    CoreLogger.d(BACKUP, "BackupFileWatcherWorker syncing all buckets")
+                    syncFolders(
+                        userId = userId,
+                        uploadPriority = UploadFileLink.RECENT_BACKUP_PRIORITY
+                    )
+                } else {
+                    CoreLogger.d(BACKUP, "BackupFileWatcherWorker syncing buckets: $bucketIds")
+                    syncFolders(
+                        userId = userId,
+                        bucketIds = bucketIds.filterNotNull(),
+                        uploadPriority = UploadFileLink.RECENT_BACKUP_PRIORITY
+                    )
+                }.onFailure { error ->
+                    CoreLogger.d(BACKUP, error, "Cannot sync buckets")
+                }.onSuccess { backupFolders ->
+                    CoreLogger.d(BACKUP, "Synced ${backupFolders.size} buckets")
+                }
             }
             scanResults.forEach { result ->
-                if (result is ContextScanFilesRepository.ScanResult.NotFound && result.error != null) {
+                if (result is ScanResult.NotFound && result.error != null) {
                     CoreLogger.d(BACKUP, result.error, "Result for file: $result")
                 } else {
                     CoreLogger.d(BACKUP, "Result for file: $result")

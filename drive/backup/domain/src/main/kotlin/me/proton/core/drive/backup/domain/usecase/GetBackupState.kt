@@ -22,6 +22,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupError
@@ -31,6 +32,7 @@ import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -40,15 +42,22 @@ class GetBackupState @Inject constructor(
     private val permissionsManager: BackupPermissionsManager,
     private val connectivityManager: BackupConnectivityManager,
     private val getErrors: GetErrors,
+    private val getAllBuckets: GetAllBuckets,
+    private val configurationProvider: ConfigurationProvider,
 ) {
     operator fun invoke(userId: UserId): Flow<BackupState> =
         backupManager.isEnabled(userId).transformLatest { enable ->
             if (!enable) {
-                emit(
-                    BackupState(
-                        isBackupEnabled = false,
-                        backupStatus = null,
-                    )
+                emitAll(
+                    getAllBuckets().map { bucketEntries ->
+                        BackupState(
+                            isBackupEnabled = false,
+                            hasDefaultFolder = bucketEntries?.any { entry ->
+                                entry.bucketName == configurationProvider.backupDefaultBucketName
+                            },
+                            backupStatus = null,
+                        )
+                    }
                 )
             } else {
                 emitAll(
@@ -58,6 +67,7 @@ class GetBackupState @Inject constructor(
                     ) { backupStatus, errors ->
                         BackupState(
                             isBackupEnabled = true,
+                            hasDefaultFolder = true,
                             backupStatus = when {
                                 errors.isEmpty() -> backupStatus
                                 else -> BackupStatus.Failed(

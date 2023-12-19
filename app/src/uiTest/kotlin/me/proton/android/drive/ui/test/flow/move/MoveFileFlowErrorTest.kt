@@ -22,16 +22,13 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
-import me.proton.android.drive.ui.test.SmokeTest
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
 class MoveFileFlowErrorTest: AuthenticatedBaseTest() {
-
     @Test
     @Scenario(4)
-    @SmokeTest
     fun moveFileWhereSameNameFileAlreadyExists() {
         val file = "sharedChild.html"
         val folderSource = "expiredSharedFolder"
@@ -44,6 +41,9 @@ class MoveFileFlowErrorTest: AuthenticatedBaseTest() {
             }
             .scrollToItemWithName(file)
             .clickMoreOnItem(file)
+            .verify {
+                robotDisplayed()
+            }
             .clickMove()
             .clickBackFromFolder(folderSource)
             .scrollToItemWithName(folderDestination)

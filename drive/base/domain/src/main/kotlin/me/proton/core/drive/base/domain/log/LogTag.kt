@@ -35,6 +35,7 @@ object LogTag {
     const val BACKUP = "$DEFAULT.backup"
     const val TELEMETRY = "$DEFAULT.telemetry"
     const val UPLOAD = "$DEFAULT.upload"
+    const val UPLOAD_BULK = "$UPLOAD.bulk"
     const val ANNOUNCE_EVENT = "$DEFAULT.announce.event"
     const val BROADCAST_RECEIVER = "$DEFAULT.broadcast.receiver"
     const val NOTIFICATION = "$DEFAULT.notification"

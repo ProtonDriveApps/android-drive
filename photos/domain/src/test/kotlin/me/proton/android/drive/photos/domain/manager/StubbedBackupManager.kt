@@ -46,6 +46,10 @@ class StubbedBackupManager(
         sync = sync + (userId to backupFolder)
     }
 
+    override suspend fun cancelSync(userId: UserId, backupFolder: BackupFolder) {
+        throw NotImplementedError()
+    }
+
     override fun syncAllFolders(userId: UserId, uploadPriority: Long) {
         runBlocking {
             repository.getAll(userId).forEach { folder ->

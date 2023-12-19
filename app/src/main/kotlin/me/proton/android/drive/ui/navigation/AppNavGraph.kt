@@ -64,6 +64,7 @@ import me.proton.android.drive.ui.dialog.ConfirmDeletionDialog
 import me.proton.android.drive.ui.dialog.ConfirmEmptyTrashDialog
 import me.proton.android.drive.ui.dialog.ConfirmSkipIssuesDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopSharingDialog
+import me.proton.android.drive.ui.dialog.ConfirmStopSyncFolderDialog
 import me.proton.android.drive.ui.dialog.FileOrFolderOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
@@ -92,6 +93,7 @@ import me.proton.android.drive.ui.screen.SigningOutScreen
 import me.proton.android.drive.ui.screen.TrashScreen
 import me.proton.android.drive.ui.screen.UploadToScreen
 import me.proton.android.drive.ui.screen.WelcomeScreen
+import me.proton.android.drive.ui.viewmodel.ConfirmStopSyncFolderDialogViewModel
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
@@ -231,6 +233,7 @@ fun AppNavGraph(
         )
         addPhotosIssues(navController)
         addConfirmSkipIssues(navController)
+        addConfirmStopSyncFolderDialog(navController)
         addPhotosPermissionRationale(navController)
         addSortingList()
         addFileOrFolderOptions(navController)
@@ -625,6 +628,11 @@ internal fun NavGraphBuilder.addHome(
                 Screen.BackupIssues.invoke(folderId)
             )
         },
+        navigateToBackupSettings = {
+            navController.navigate(
+                Screen.Settings.PhotosBackup(userId)
+            )
+        },
         navigateToPhotosPermissionRationale = {
             navController.navigate(
                 Screen.PhotosPermissionRationale(userId)
@@ -824,6 +832,32 @@ fun NavGraphBuilder.addConfirmSkipIssues(
             .navigationBarsPadding(),
         onDismiss = onDismiss,
         onConfirm = onConfirm,
+    )
+}
+
+fun NavGraphBuilder.addConfirmStopSyncFolderDialog(
+    navController: NavHostController,
+) = dialog(
+    route = Screen.Settings.PhotosBackup.Dialogs.ConfirmStopSyncFolder.route,
+    arguments = listOf(
+        navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.Settings.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.Settings.FOLDER_ID) { type = NavType.StringType },
+        navArgument(ConfirmStopSyncFolderDialogViewModel.ID) {
+            type = NavType.IntType
+        },
+    ),
+) { navBackStackEntry ->
+    val onAction: () -> Unit = {
+        navController.popBackStack(
+            route = Screen.Settings.PhotosBackup.Dialogs.ConfirmStopSyncFolder.route,
+            inclusive = true,
+        )
+    }
+    ConfirmStopSyncFolderDialog(
+        modifier = Modifier.navigationBarsPadding(),
+        onDismiss = onAction,
+        onConfirm = onAction,
     )
 }
 
@@ -1280,6 +1314,11 @@ fun NavGraphBuilder.addPhotosBackup(navController: NavHostController) = composab
         navigateToPhotosPermissionRationale = {
             navController.navigate(
                 Screen.PhotosPermissionRationale(userId)
+            )
+        },
+        navigateToConfirmStopSyncFolder = { folderId, id ->
+            navController.navigate(
+                Screen.Settings.PhotosBackup.Dialogs.ConfirmStopSyncFolder.invoke(folderId, id)
             )
         },
         navigateBack = {

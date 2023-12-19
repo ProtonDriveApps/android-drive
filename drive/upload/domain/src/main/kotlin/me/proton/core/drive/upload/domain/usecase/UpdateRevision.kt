@@ -26,7 +26,9 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.file.GetContentHash
+import me.proton.core.drive.crypto.domain.usecase.file.VerifyManifestSignaturePrimary
 import me.proton.core.drive.crypto.domain.usecase.link.EncryptAndSignXAttr
+import me.proton.core.drive.cryptobase.domain.exception.VerificationException
 import me.proton.core.drive.file.base.domain.entity.PhotoAttributes
 import me.proton.core.drive.file.base.domain.entity.RevisionState
 import me.proton.core.drive.file.base.domain.usecase.CreateXAttr
@@ -60,6 +62,7 @@ class UpdateRevision @Inject constructor(
     private val getNodeKey: GetNodeKey,
     private val getContentHash: GetContentHash,
     private val getShare: GetShare,
+    private val verifyManifestSignaturePrimary: VerifyManifestSignaturePrimary,
     private val configurationProvider: ConfigurationProvider,
 ) {
     @Suppress("TooGenericExceptionCaught")
@@ -75,7 +78,6 @@ class UpdateRevision @Inject constructor(
                     return@with uploadFileLink
                 }
             }
-
             updateUploadState(id, UploadState.UPDATING_REVISION).getOrThrow()
             try {
                 val fileId = requireFileId()
@@ -83,6 +85,15 @@ class UpdateRevision @Inject constructor(
                 val signatureAddress = getSignatureAddress(userId)
                 val uploadFileKey = buildNodeKey(userId, folderKey, this, signatureAddress).getOrThrow()
                 val uploadBlocks = linkUploadRepository.getUploadBlocks(this)
+                val manifestSignatureVerified = verifyManifestSignaturePrimary(
+                    userId = userId,
+                    signatureAddress = signatureAddress,
+                    blocks = uploadBlocks,
+                    manifestSignature = manifestSignature,
+                ).getOrThrow()
+                if (!manifestSignatureVerified) {
+                    throw VerificationException("Cannot verify manifest signature with primary address key")
+                }
                 updateRevision(
                     fileId = fileId,
                     revisionId = draftRevisionId,

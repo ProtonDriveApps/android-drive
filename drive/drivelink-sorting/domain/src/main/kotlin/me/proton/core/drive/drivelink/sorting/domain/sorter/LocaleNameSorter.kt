@@ -26,9 +26,9 @@ import java.text.Collator
 import android.icu.text.Collator as IcuCollator
 import android.icu.text.RuleBasedCollator as IcuRuleBasedCollator
 
-object LocaleNameSorter : Sorter() {
+data object LocaleNameSorter : Sorter() {
 
-    private val comparator: Comparator<Any> =
+    private val comparator: Comparator<Any> get() =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             (IcuCollator.getInstance() as IcuRuleBasedCollator).apply {
                 numericCollation = true

@@ -66,6 +66,7 @@ fun HomeNavGraph(
     navigateToPhotosPermissionRationale: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToBackupSettings: () -> Unit,
 ) = DriveNavHost(
     navController = homeNavController,
     startDestination = startDestination
@@ -98,6 +99,7 @@ fun HomeNavGraph(
         },
         navigateToSubscription = navigateToSubscription,
         navigateToPhotosIssues = navigateToPhotosIssues,
+        navigateToBackupSettings = navigateToBackupSettings,
     )
 }
 
@@ -216,6 +218,7 @@ fun NavGraphBuilder.addPhotos(
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToBackupSettings: () -> Unit,
 ) = composable(
     route = Screen.Photos.route,
     arguments = listOf(
@@ -235,5 +238,6 @@ fun NavGraphBuilder.addPhotos(
         navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
         navigateToSubscription = navigateToSubscription,
         navigateToPhotosIssues = navigateToPhotosIssues,
+        navigateToBackupSettings = navigateToBackupSettings,
     )
 }

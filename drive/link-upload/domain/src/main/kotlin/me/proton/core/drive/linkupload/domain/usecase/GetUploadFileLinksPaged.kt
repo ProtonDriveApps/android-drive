@@ -59,4 +59,14 @@ class GetUploadFileLinksPaged @Inject constructor(
                 count = count,
             )
         }
+
+    suspend operator fun invoke(userId: UserId, uriStrings: List<String>): List<UploadFileLink> =
+        pagedList(configurationProvider.dbPageSize) { fromIndex, count ->
+            linkUploadRepository.getUploadFileLinks(
+                userId = userId,
+                uriStrings = uriStrings,
+                fromIndex = fromIndex,
+                count = count,
+            )
+        }
 }

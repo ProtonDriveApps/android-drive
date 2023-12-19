@@ -29,6 +29,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
@@ -212,6 +213,19 @@ class UploadWorkManagerImpl @Inject constructor(
         }
     }
 
+    override suspend fun waitUploadEventWorkerToFinish(userId: UserId) {
+        workManager.getWorkInfosForUniqueWorkLiveData(userId.uniqueUploadEventWorkName)
+            .asFlow()
+            .transform { workInfoList ->
+                workInfoList?.firstOrNull()?.state?.let { state ->
+                    if (state.isFinished) {
+                        emit(Unit)
+                    }
+                } ?: emit(Unit)
+            }
+            .first()
+    }
+
     override suspend fun cancelAllByShare(userId: UserId, shareId: ShareId) {
         workManager.cancelUniqueWork(userId.uniqueUploadBulkWorkName).await()
         removeAllUploadFileLinks(userId, shareId, UploadState.UNPROCESSED)
@@ -224,6 +238,14 @@ class UploadWorkManagerImpl @Inject constructor(
         workManager.cancelUniqueWork(userId.uniqueUploadBulkWorkName).await()
         removeAllUploadFileLinks(userId, folderId, UploadState.UNPROCESSED)
         getUploadFileLinks(userId, folderId).forEach { uploadFileLink ->
+            cancel(uploadFileLink)
+        }
+    }
+
+    override suspend fun cancelAllByUris(userId: UserId, uriStrings: List<String>) {
+        workManager.cancelUniqueWork(userId.uniqueUploadBulkWorkName).await()
+        removeAllUploadFileLinks(userId, uriStrings, UploadState.UNPROCESSED)
+        getUploadFileLinks(userId, uriStrings).forEach { uploadFileLink ->
             cancel(uploadFileLink)
         }
     }

@@ -20,7 +20,6 @@ package me.proton.android.drive.ui.test.flow.share
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.data.ImageName
-import me.proton.android.drive.ui.robot.FileFolderOptionsRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest

@@ -23,10 +23,7 @@ import me.proton.core.domain.entity.UserId
 data class FeatureFlagId(val userId: UserId, val id: String) {
 
     companion object {
-        private const val DRIVE_PHOTOS = "DrivePhotos"
         const val DRIVE_PHOTOS_UPLOAD_DISABLED = "DrivePhotosUploadDisabled"
-
-        fun drivePhotos(userId: UserId) = FeatureFlagId(userId, DRIVE_PHOTOS)
 
         fun drivePhotosUploadDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_PHOTOS_UPLOAD_DISABLED)
     }

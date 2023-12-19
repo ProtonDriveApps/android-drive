@@ -31,7 +31,7 @@ import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
-import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.LogTag.UPLOAD_BULK
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.usecase.DeleteUploadBulk
@@ -43,6 +43,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_BULK_ID
 import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
 import me.proton.core.drive.upload.domain.usecase.CreateUploadFile
 import me.proton.core.drive.upload.domain.usecase.HasEnoughAvailableSpace
+import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltWorker
@@ -65,13 +66,17 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         deleteUploadBulk(uploadBulkId).getOrNull()?.let { uploadBulk ->
             with(uploadBulk) {
+                logWorkState("Adding ${uriStrings.size} files to upload")
                 val hasEnoughSpace = hasEnoughAvailableSpace(userId, uriStrings) { needed ->
                     announceEvent(
                         userId = userId,
                         event = Event.StorageFull(needed)
                     )
                 }
-                if (!hasEnoughSpace) return@let
+                if (!hasEnoughSpace) {
+                    logWorkState("Cannot upload files, not enough space")
+                    return@let
+                }
                 createUploadFile(
                     userId = userId,
                     volumeId = volumeId,
@@ -86,11 +91,12 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
                 )
                     .onFailure { error ->
                         error.log(
-                            tag = LogTag.UPLOAD,
+                            tag = logTag(),
                             message = "Create upload file failed"
                         )
                     }
                     .onSuccess { uploadFileLinks ->
+                        logWorkState("${uploadFileLinks.size} files were added to upload")
                         uploadFileLinks.forEach { uploadFileLink ->
                             if (isStopped) return Result.failure()
                             announceUploadEvent(
@@ -125,6 +131,17 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
         }
         return Result.failure()
     }
+
+    private fun UploadBulk.logWorkState(message: String = "") {
+        val workerId = this@CreateUploadFileLinkWorker.id
+        val workerName = this@CreateUploadFileLinkWorker.javaClass.simpleName
+        CoreLogger.d(
+            logTag(),
+            "$workerName($runAttemptCount) $message [$workerId]"
+        )
+    }
+
+    private fun UploadBulk.logTag() = "$UPLOAD_BULK.$id"
 
     companion object {
         fun getWorkRequest(

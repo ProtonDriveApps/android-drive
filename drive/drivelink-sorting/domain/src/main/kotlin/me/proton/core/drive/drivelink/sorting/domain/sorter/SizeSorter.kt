@@ -18,13 +18,12 @@
 
 package me.proton.core.drive.drivelink.sorting.domain.sorter
 
-import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.sorting.domain.extension.comparableName
 import me.proton.core.drive.sorting.domain.entity.Direction
 
-object SizeSorter : Sorter() {
+data object SizeSorter : Sorter() {
 
     override fun sort(driveLinks: List<DriveLink>, direction: Direction): List<DriveLink> =
         driveLinks.sortedWith(

@@ -41,6 +41,10 @@ class StubbedBackupManager : BackupManager {
         sync = sync + (userId to backupFolder)
     }
 
+    override suspend fun cancelSync(userId: UserId, backupFolder: BackupFolder) {
+        throw NotImplementedError()
+    }
+
     override fun syncAllFolders(userId: UserId, uploadPriority: Long) {
         throw NotImplementedError()
     }

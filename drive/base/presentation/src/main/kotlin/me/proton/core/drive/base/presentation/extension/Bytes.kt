@@ -23,6 +23,7 @@ import android.content.Context
 import me.proton.core.drive.base.domain.entity.Bytes
 import java.text.CharacterIterator
 import java.text.StringCharacterIterator
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.sign
 
@@ -32,7 +33,7 @@ fun Bytes.asHumanReadableString(context: Context): String =
         .replace("\u200f", "")
 */
 @Suppress("UNUSED_PARAMETER")
-fun Bytes.asHumanReadableString(context: Context, units: SizeUnits = SizeUnits.BASE2_LEGACY): String {
+fun Bytes.asHumanReadableString(context: Context, units: SizeUnits = SizeUnits.BASE2_LEGACY, locale: Locale = Locale.getDefault()): String {
     val absB = if (value == Long.MIN_VALUE) Long.MAX_VALUE else abs(value)
     if (absB < 1024) return "$value B"
     var value = absB
@@ -49,7 +50,7 @@ fun Bytes.asHumanReadableString(context: Context, units: SizeUnits = SizeUnits.B
         SizeUnits.BASE2_IEC -> "iB"
         SizeUnits.BASE10_SI -> throw IllegalArgumentException("Base 10 SI units are not supported")
     }
-    return String.format("%.2f %c$suffix", value / 1024.0, ci.current())
+    return String.format(locale, "%.2f %c$suffix", value / 1024.0, ci.current())
 }
 
 enum class SizeUnits {

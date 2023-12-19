@@ -41,7 +41,7 @@ class BackupStatusFormatter(
 
     fun toViewState(backupState: BackupState, count: Int ?= null): PhotosStatusViewState {
         return if (!backupState.isBackupEnabled) {
-            PhotosStatusViewState.Disabled
+            PhotosStatusViewState.Disabled(backupState.hasDefaultFolder)
         } else {
             when (val backupStatus = backupState.backupStatus) {
                 is BackupStatus.Complete -> PhotosStatusViewState.Complete(

@@ -277,6 +277,21 @@ fun BackupDisableState(
 }
 
 @Composable
+fun BackupMissingFolderState(
+    modifier: Modifier = Modifier,
+    onMore: () -> Unit,
+) {
+    BackupState(
+        modifier = modifier,
+        icon = CorePresentation.drawable.ic_proton_exclamation_circle,
+        tint = ProtonTheme.colors.notificationWarning,
+        text = I18N.string.photos_error_backup_missing_folder,
+        action = I18N.string.photos_error_backup_missing_folder_action,
+        onAction = onMore
+    )
+}
+
+@Composable
 fun BackupFailedState(
     modifier: Modifier = Modifier,
     onRetry: () -> Unit,
@@ -480,6 +495,16 @@ private fun BackupDisableStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackupDisableState(onEnableBackup = { })
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun BackupMissingFolderStatePreview() {
+    ProtonTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            BackupMissingFolderState(onMore = { })
         }
     }
 }

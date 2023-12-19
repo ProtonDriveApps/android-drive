@@ -22,17 +22,20 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import me.proton.android.drive.utils.network.NetworkSimulator
+import me.proton.android.drive.ui.rules.NetworkSimulator
+import me.proton.core.drive.backup.data.di.BackupModule
 import me.proton.core.network.dagger.CoreBaseNetworkModule
+import me.proton.core.network.data.NetworkManager
 import me.proton.core.network.data.di.SharedOkHttpClient
 import me.proton.core.network.domain.NetworkManager
+import me.proton.test.fusion.FusionConfig.targetContext
 import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 @Module
 @TestInstallIn(
     components = [SingletonComponent::class],
-    replaces = [CoreBaseNetworkModule::class]
+    replaces = [CoreBaseNetworkModule::class, BackupModule::class]
 )
 class TestBaseNetworkModule {
     @Provides
@@ -42,5 +45,5 @@ class TestBaseNetworkModule {
 
     @Provides
     @Singleton
-    fun provideNetworkManager(): NetworkManager = NetworkSimulator.testNetworkManager
+    fun provideNetworkManager(): NetworkManager = NetworkManager(targetContext)
 }

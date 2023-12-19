@@ -89,6 +89,11 @@ class BackupManagerImpl @Inject constructor(
         }
     }
 
+    override suspend fun cancelSync(userId: UserId, backupFolder: BackupFolder) {
+        CoreLogger.d(BACKUP, "Canceling sync: ${backupFolder.bucketId}")
+        workManager.cancelUniqueWork(backupFolder.uniqueScanWorkName(userId)).await()
+    }
+
     override fun sync(userId: UserId, backupFolder: BackupFolder, uploadPriority: Long) {
         CoreLogger.d(BACKUP, "Sync bucket: ${backupFolder.bucketId}")
         workManager

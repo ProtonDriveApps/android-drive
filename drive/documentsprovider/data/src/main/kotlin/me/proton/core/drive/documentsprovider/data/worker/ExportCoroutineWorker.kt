@@ -96,7 +96,7 @@ abstract class ExportCoroutineWorker constructor(
         else -> applicationContext.resources.getQuantityString(
             I18N.plurals.common_in_app_notification_files_download_complete,
             size,
-        )
+        ).format(size)
     }
 
     protected fun showInfo(infoMessage: String) =

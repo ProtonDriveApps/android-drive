@@ -30,4 +30,7 @@ class CancelAllUpload @Inject constructor(
 
     suspend operator fun invoke(userId: UserId, shareId: ShareId) =
         uploadWorkManager.cancelAllByShare(userId, shareId)
+
+    suspend operator fun invoke(userId: UserId, uriStrings: List<String>) =
+        uploadWorkManager.cancelAllByUris(userId, uriStrings)
 }

@@ -93,6 +93,7 @@ fun HomeScreen(
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToBackupSettings: () -> Unit,
     navigateToPhotosPermissionRationale: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -124,6 +125,7 @@ fun HomeScreen(
             navigateToPhotosPermissionRationale = navigateToPhotosPermissionRationale,
             navigateToSubscription = navigateToSubscription,
             navigateToPhotosIssues = navigateToPhotosIssues,
+            navigateToBackupSettings = navigateToBackupSettings,
             arguments = arguments,
             viewState = currentViewState,
             viewEvent = homeViewModel.viewEvent(
@@ -168,6 +170,7 @@ internal fun Home(
     navigateToPhotosPermissionRationale: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToBackupSettings: () -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
     val isDrawerOpen = with(homeScaffoldState.scaffoldState.drawerState) {
@@ -259,6 +262,7 @@ internal fun Home(
                     navigateToPhotosPermissionRationale,
                     navigateToSubscription,
                     navigateToPhotosIssues,
+                    navigateToBackupSettings,
                 )
             }
         }

@@ -23,6 +23,7 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import java.util.Locale
 
 @RunWith(Parameterized::class)
 class Base2IECTest(
@@ -34,7 +35,7 @@ class Base2IECTest(
     @Test
     fun asHumanReadableString() {
         // region When
-        val humanReadableString = Bytes(bytes).asHumanReadableString(context, SizeUnits.BASE2_IEC)
+        val humanReadableString = Bytes(bytes).asHumanReadableString(context, SizeUnits.BASE2_IEC, Locale.US)
         // endregion
         // region Then
         assert(humanReadableString == humanReadable) { "Expected $humanReadable but actual $humanReadableString" }
@@ -78,7 +79,7 @@ class Base2LegacyTest(
     @Test
     fun asHumanReadableString() {
         // region When
-        val humanReadableString = Bytes(bytes).asHumanReadableString(context, SizeUnits.BASE2_LEGACY)
+        val humanReadableString = Bytes(bytes).asHumanReadableString(context, SizeUnits.BASE2_LEGACY, Locale.US)
         // endregion
         // region Then
         assert(humanReadableString == humanReadable) { "Expected $humanReadable but actual $humanReadableString" }

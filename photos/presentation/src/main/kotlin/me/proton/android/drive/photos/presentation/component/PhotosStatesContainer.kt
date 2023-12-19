@@ -44,6 +44,7 @@ internal fun PhotosStatesContainer(
     onPermissions: () -> Unit,
     onRetry: () -> Unit,
     onResolve: () -> Unit,
+    onResolveMissingFolder: () -> Unit,
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -55,7 +56,11 @@ internal fun PhotosStatesContainer(
             verticalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing),
         ) {
             when (viewState) {
-                PhotosStatusViewState.Disabled -> BackupDisableState(onEnableBackup = onEnable)
+                is PhotosStatusViewState.Disabled -> if (viewState.hasDefaultFolder == false) {
+                    BackupMissingFolderState(onMore = onResolveMissingFolder)
+                } else {
+                    BackupDisableState(onEnableBackup = onEnable)
+                }
                 is PhotosStatusViewState.Complete -> BackupCompletedState(extraLabel = viewState.labelItemSaved)
                 is PhotosStatusViewState.Uncompleted -> BackupUncompletedState(onResolve = onResolve)
                 is PhotosStatusViewState.InProgress -> BackupInProgressState(inProgress = viewState)
@@ -83,12 +88,30 @@ fun PhotosStatesContainerDisablePreview() {
     ProtonTheme {
         PhotosStatesContainer(
             modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
-            viewState = PhotosStatusViewState.Disabled,
+            viewState = PhotosStatusViewState.Disabled(true),
             showPhotosStateBanner = true,
             onEnable = { },
             onPermissions = { },
             onRetry = { },
             onResolve = { },
+            onResolveMissingFolder = { },
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PhotosStatesContainerMissingFolderPreview() {
+    ProtonTheme {
+        PhotosStatesContainer(
+            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
+            viewState = PhotosStatusViewState.Disabled(false),
+            showPhotosStateBanner = true,
+            onEnable = { },
+            onPermissions = { },
+            onRetry = { },
+            onResolve = { },
+            onResolveMissingFolder = { },
         )
     }
 }
@@ -105,6 +128,7 @@ fun PhotosStatesContainerCompletePreview() {
             onPermissions = { },
             onRetry = { },
             onResolve = { },
+            onResolveMissingFolder = { },
         )
     }
 }
@@ -121,6 +145,7 @@ fun PhotosStatesContainerUncompletedPreview() {
             onPermissions = { },
             onRetry = { },
             onResolve = { },
+            onResolveMissingFolder = { },
         )
     }
 }
@@ -140,6 +165,7 @@ fun PhotosStatesContainerInProgressPreview() {
             onPermissions = { },
             onRetry = { },
             onResolve = { },
+            onResolveMissingFolder = { },
         )
     }
 }
@@ -158,6 +184,7 @@ fun PhotosStatesContainerFailedPreview() {
             onPermissions = { },
             onRetry = { },
             onResolve = { },
+            onResolveMissingFolder = { },
         )
     }
 }

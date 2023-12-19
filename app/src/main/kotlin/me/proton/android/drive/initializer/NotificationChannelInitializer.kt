@@ -27,6 +27,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.launch
+import me.proton.android.drive.usecase.CancelAllForegroundServices
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountReady
@@ -58,6 +59,7 @@ class NotificationChannelInitializer : Initializer<Unit> {
                     createNotificationChannels(account.userId, account.username)
                 }
                 .onAccountRemoved { account ->
+                    cancelAllForegroundServices(account.userId)
                     removeNotificationChannels(account.userId)
                 }
         }
@@ -75,5 +77,6 @@ class NotificationChannelInitializer : Initializer<Unit> {
         val appLifecycleProvider: AppLifecycleProvider
         val createNotificationChannels: CreateNotificationChannels
         val removeNotificationChannels: RemoveNotificationChannels
+        val cancelAllForegroundServices: CancelAllForegroundServices
     }
 }

@@ -48,9 +48,10 @@ import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
-import me.proton.core.drive.backup.domain.repository.ScanLibraryRepository
+import me.proton.core.drive.backup.domain.repository.BucketRepository
 import me.proton.core.drive.backup.domain.usecase.AddFolder
 import me.proton.core.drive.backup.domain.usecase.DeleteFolders
+import me.proton.core.drive.backup.domain.usecase.GetAllBuckets
 import me.proton.core.drive.backup.domain.usecase.GetBackupState
 import me.proton.core.drive.backup.domain.usecase.GetBackupStatus
 import me.proton.core.drive.backup.domain.usecase.GetErrors
@@ -123,8 +124,8 @@ class PhotoBackupStateTest {
             setupPhotosBackup = SetupPhotosBackup(
                 getPhotosDriveLink = getPhotosDriveLink,
                 addFolder = AddFolder(folderRepository),
-                scanLibraryRepository = object : ScanLibraryRepository {
-                    override suspend fun invoke() = listOf(BucketEntry(0, "Camera"))
+                bucketRepository = object : BucketRepository {
+                    override suspend fun getAll() = listOf(BucketEntry(0, "Camera"))
                 }
             ),
             backupManager = backupManager,
@@ -148,7 +149,16 @@ class PhotoBackupStateTest {
             backupManager = backupManager,
             permissionsManager = permissionsManager,
             connectivityManager = connectivityManager,
-            getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance)
+            getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance),
+            getAllBuckets = GetAllBuckets(object : BucketRepository {
+                override suspend fun getAll(): List<BucketEntry> = listOf(BucketEntry(0, "Camera"))
+            }, permissionsManager),
+            configurationProvider = object : ConfigurationProvider {
+                override val host = ""
+                override val baseUrl = ""
+                override val appVersionHeader = ""
+                override val backupDefaultBucketName = "Camera"
+            }
         )
 
         backupState = getBackupState(userId)
@@ -159,6 +169,7 @@ class PhotoBackupStateTest {
         assertEquals(
             BackupState(
                 isBackupEnabled = false,
+                hasDefaultFolder = null,
                 backupStatus = null,
             ),
             backupState.first(),
@@ -173,6 +184,7 @@ class PhotoBackupStateTest {
         assertEquals(
             BackupState(
                 isBackupEnabled = true,
+                hasDefaultFolder = true,
                 backupStatus = BackupStatus.Complete(totalBackupPhotos = 0),
             ),
             backupState.first(),
@@ -192,11 +204,13 @@ class PhotoBackupStateTest {
     @Test
     fun `disabled photos status`() = runTest {
         enablePhotosBackup(userId).getOrThrow()
+        permissionsManager.onPermissionChanged(BackupPermissions.Granted)
         disablePhotosBackup(userId).getOrThrow()
 
         assertEquals(
             BackupState(
                 isBackupEnabled = false,
+                hasDefaultFolder = true,
                 backupStatus = null,
             ),
             backupState.first(),
@@ -223,6 +237,7 @@ class PhotoBackupStateTest {
         assertEquals(
             BackupState(
                 isBackupEnabled = true,
+                hasDefaultFolder = true,
                 backupStatus = BackupStatus.Failed(
                     errors = listOf(BackupError.Permissions()),
                     totalBackupPhotos = 0,
@@ -249,6 +264,10 @@ class PhotoBackupStateTest {
         }
 
         override fun sync(userId: UserId, backupFolder: BackupFolder, uploadPriority: Long) {
+            throw NotImplementedError()
+        }
+
+        override suspend fun cancelSync(userId: UserId, backupFolder: BackupFolder) {
             throw NotImplementedError()
         }
 

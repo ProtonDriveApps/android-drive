@@ -40,10 +40,11 @@ class BackupStatusFormatterTest {
     @Test
     fun disabled() {
         assertEquals(
-            PhotosStatusViewState.Disabled,
+            PhotosStatusViewState.Disabled(hasDefaultFolder = true),
             formatter.toViewState(
                 backupState = BackupState(
                     isBackupEnabled = false,
+                    hasDefaultFolder = true,
                     backupStatus = null
                 ),
             ),
@@ -55,6 +56,7 @@ class BackupStatusFormatterTest {
         formatter.toViewState(
             backupState = BackupState(
                 isBackupEnabled = true,
+                hasDefaultFolder = true,
                 backupStatus = null
             ),
         )
@@ -67,6 +69,7 @@ class BackupStatusFormatterTest {
             formatter.toViewState(
                 backupState = BackupState(
                     isBackupEnabled = true,
+                    hasDefaultFolder = true,
                     backupStatus = BackupStatus.Failed(
                         errors = emptyList(),
                         totalBackupPhotos = 0,
@@ -84,6 +87,7 @@ class BackupStatusFormatterTest {
             formatter.toViewState(
                 backupState = BackupState(
                     isBackupEnabled = true,
+                    hasDefaultFolder = true,
                     backupStatus = BackupStatus.InProgress(
                         totalBackupPhotos = 10000,
                         pendingBackupPhotos = 10000,
@@ -100,6 +104,7 @@ class BackupStatusFormatterTest {
             formatter.toViewState(
                 backupState = BackupState(
                     isBackupEnabled = true,
+                    hasDefaultFolder = true,
                     backupStatus = BackupStatus.InProgress(
                         totalBackupPhotos = 100,
                         pendingBackupPhotos = 1,
@@ -116,6 +121,7 @@ class BackupStatusFormatterTest {
             formatter.toViewState(
                 backupState = BackupState(
                     isBackupEnabled = true,
+                    hasDefaultFolder = true,
                     backupStatus = BackupStatus.Complete(totalBackupPhotos = 0)
                 ),
                 count = 10,
@@ -130,6 +136,7 @@ class BackupStatusFormatterTest {
             formatter.toViewState(
                 backupState = BackupState(
                     isBackupEnabled = true,
+                    hasDefaultFolder = true,
                     backupStatus = BackupStatus.Complete(totalBackupPhotos = 0)
                 ),
                 count = null,
@@ -144,6 +151,7 @@ class BackupStatusFormatterTest {
             formatter.toViewState(
                 backupState = BackupState(
                     isBackupEnabled = true,
+                    hasDefaultFolder = true,
                     backupStatus = BackupStatus.Uncompleted(totalBackupPhotos = 0, failedBackupPhotos = 1)
                 ),
                 count = 10,

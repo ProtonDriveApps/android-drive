@@ -32,10 +32,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.shareIn
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.extension.getDefaultMessage
@@ -49,8 +47,6 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.ClearCacheFolder
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.usecase.IsFeatureFlagEnabled
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.settings.presentation.component.DebugSettingsStateAndEvent
 import me.proton.core.drive.settings.presentation.event.DebugSettingsViewEvent
@@ -83,7 +79,6 @@ class SettingsViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val sendDebugLog: SendDebugLog,
     backupManager: BackupManager,
-    private val isFeatureFlagEnabled: IsFeatureFlagEnabled,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -157,18 +152,13 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
-    private val isPhotosFeatureEnabled: StateFlow<Boolean> = flow {
-        emit(configurationProvider.photosFeatureFlag && isFeatureFlagEnabled(FeatureFlagId.drivePhotos(userId)))
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, configurationProvider.photosFeatureFlag)
-
-    val viewState: Flow<SettingsViewState> = baseCombine(
+    val viewState: Flow<SettingsViewState> = combine(
         debugSettingsFlow,
         getThemeStyle(userId),
         appLockManager.enabled,
         getAutoLockDuration(),
         backupManager.isEnabled(userId),
-        isPhotosFeatureEnabled,
-    ) {  debugSettings, themeStyle, enabled, autoLockDuration, isBackupEnabled, isPhotosFeatureEnabled ->
+    ) {  debugSettings, themeStyle, enabled, autoLockDuration, isBackupEnabled ->
         SettingsViewState(
             navigationIcon = CorePresentation.drawable.ic_arrow_back,
             appNameResId = I18N.string.app_name,
@@ -189,7 +179,7 @@ class SettingsViewModel @Inject constructor(
             appAccessSubtitleResId = getAppAccessSubtitleResId(enabled),
             isAutoLockDurationsVisible = enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O,
             autoLockDuration = autoLockDuration,
-            isPhotosSettingsVisible = isPhotosFeatureEnabled,
+            isPhotosSettingsVisible = configurationProvider.photosFeatureFlag,
             photosBackupSubtitleResId = getPhotosBackupSubtitleResId(isBackupEnabled),
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)

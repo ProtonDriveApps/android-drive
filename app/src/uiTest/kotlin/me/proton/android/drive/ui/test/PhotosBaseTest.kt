@@ -63,4 +63,11 @@ abstract class PhotosBaseTest: AuthenticatedBaseTest() {
             "Camera",
         )
     }
+    @get:Rule
+    val picturePhotosFolder = ExternalFilesRule {
+        File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+            "Photos",
+        )
+    }
 }

@@ -20,5 +20,6 @@ package me.proton.core.drive.backup.domain.entity
 
 data class BackupState(
     val isBackupEnabled: Boolean,
+    val hasDefaultFolder: Boolean?,
     val backupStatus: BackupStatus?,
 )

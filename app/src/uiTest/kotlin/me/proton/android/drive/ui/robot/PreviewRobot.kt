@@ -39,6 +39,7 @@ object PreviewRobot : NavigationBarRobot {
     private val contextualButton get() = node.withContentDescription(I18N.string.content_description_more_options)
     private val preview get() = allNodes.withTag(ImagePreviewComponentTestTag.image).onFirst()
     private val pager get() = node.withTag(PreviewComponentTestTag.pager)
+    private val mediaPreview get() = node.withTag(PreviewComponentTestTag.mediaPreview)
 
     fun clickOnContextualButton() = contextualButton.clickTo(FileFolderOptionsRobot)
 
@@ -52,6 +53,11 @@ object PreviewRobot : NavigationBarRobot {
 
     fun assertPreviewIsDisplayed(itemName: String) {
         preview.await { assertIsDisplayed() }
+        topBarWithTextDisplayed(itemName)
+    }
+
+    fun assertMediaPreviewDisplayed(itemName: String) {
+        mediaPreview.await { assertIsDisplayed() }
         topBarWithTextDisplayed(itemName)
     }
 

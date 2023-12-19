@@ -57,6 +57,8 @@ class ExternalFilesRule(
         }
     }
 
+    fun deleteFile(name: String) = File(dir, name).delete()
+
     fun createEmptyFile(name: String) = createFile(name, size = 0L)
 
     fun create1BFile(name: String) = createFile(name, size = 1L)
@@ -75,7 +77,7 @@ class ExternalFilesRule(
         }
     }
 
-    fun copyDirFromAssets(name: String, flatten: Boolean = false) {
+    fun copyDirFromAssets(name: String, flatten: Boolean = true) {
         val fileList = assetManager.list(name) ?: error("Could not list files in $name")
 
         if (fileList.isEmpty())

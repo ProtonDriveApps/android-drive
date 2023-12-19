@@ -316,7 +316,7 @@ fun PreviewContentAvailable(
         )
         PreviewComposable.Sound,
         PreviewComposable.Video -> MediaPreview(
-            modifier = pointerInputModifier,
+            modifier = pointerInputModifier.testTag(PreviewComponentTestTag.mediaPreview),
             uri = requireIsInstance(contentState.source),
             isFullScreen = isFullScreen,
             play = isFocused,
@@ -552,4 +552,5 @@ object PreviewComponentTestTag {
     const val screen = "preview screen"
     const val placeholder = "preview placeholder"
     const val pager = "preview pager"
+    const val mediaPreview = "preview media"
 }

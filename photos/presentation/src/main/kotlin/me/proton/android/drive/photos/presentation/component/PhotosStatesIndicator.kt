@@ -49,7 +49,11 @@ fun PhotosStatesIndicator(
     modifier: Modifier = Modifier,
 ) {
     when (viewState) {
-        PhotosStatusViewState.Disabled -> PhotosDisableIndicator(modifier)
+        is PhotosStatusViewState.Disabled -> if(viewState.hasDefaultFolder == false){
+            PhotosMissingFolderIndicator(modifier)
+        } else {
+            PhotosDisableIndicator(modifier)
+        }
         is PhotosStatusViewState.Complete -> PhotosCompleteIndicator(modifier)
         is PhotosStatusViewState.Uncompleted -> PhotosUncompletedIndicator(modifier)
         is PhotosStatusViewState.Failed -> PhotosFailedIndicator(modifier)
@@ -64,6 +68,15 @@ private fun PhotosDisableIndicator(modifier: Modifier = Modifier) {
         modifier = modifier,
         color = ProtonTheme.colors.iconWeak,
         icon = R.drawable.ic_proton_cloud_slash,
+    )
+}
+
+@Composable
+private fun PhotosMissingFolderIndicator(modifier: Modifier = Modifier) {
+    PhotosStatesIndicator(
+        modifier = modifier,
+        color = ProtonTheme.colors.notificationWarning,
+        icon = CorePresentation.drawable.ic_proton_exclamation_circle,
     )
 }
 
@@ -161,6 +174,14 @@ private fun PhotosStatesIndicator(color: Color, icon: Int, modifier: Modifier = 
 private fun PhotosDisableIconPreview() {
     ProtonTheme {
         PhotosDisableIndicator()
+    }
+}
+
+@Preview
+@Composable
+private fun PhotosMissingFolderIconPreview() {
+    ProtonTheme {
+        PhotosMissingFolderIndicator()
     }
 }
 

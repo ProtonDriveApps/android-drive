@@ -148,7 +148,7 @@ class PhotosViewModel @Inject constructor(
         navigationIconResId = CorePresentation.drawable.ic_proton_hamburger,
         topBarActions = topBarActions,
         listContentState = ListContentState.Loading,
-        isBackupEnabled = null,
+        showEmptyList = null,
         showPhotosStateIndicator = false,
         showPhotosStateBanner = false,
         backupStatusViewState = null,
@@ -215,9 +215,10 @@ class PhotosViewModel @Inject constructor(
                                     val afterCalendar = Calendar.getInstance().apply {
                                         timeInMillis = after.captureTime.value * 1000L
                                     }
-                                    if (beforeCalendar.get(Calendar.MONTH) != afterCalendar.get(
-                                            Calendar.MONTH
-                                        )
+                                    if (beforeCalendar.get(Calendar.YEAR)
+                                        != afterCalendar.get(Calendar.YEAR) ||
+                                        beforeCalendar.get(Calendar.MONTH)
+                                        != afterCalendar.get(Calendar.MONTH)
                                     ) {
                                         PhotosItem.Separator(
                                             value = separatorFormatter.toSeparator(after.captureTime),
@@ -227,9 +228,9 @@ class PhotosViewModel @Inject constructor(
                                     }
                                 }
                             }
-                        }.cachedIn(viewModelScope)
+                        }
                 )
-            }
+            }.cachedIn(viewModelScope)
 
     private val listContentAppendingState = MutableStateFlow<ListContentAppendingState>(
         ListContentAppendingState.Idle
@@ -284,7 +285,7 @@ class PhotosViewModel @Inject constructor(
                 CorePresentation.drawable.ic_proton_hamburger
             },
             listContentState = listContentState,
-            isBackupEnabled = backupState.isBackupEnabled,
+            showEmptyList = backupState.isBackupEnabled || backupState.hasDefaultFolder == false ,
             showPhotosStateIndicator = showPhotosStateIndicator,
             showPhotosStateBanner = showPhotosStateBanner,
             backupStatusViewState = backupStatusFormatter.toViewState(
@@ -301,6 +302,7 @@ class PhotosViewModel @Inject constructor(
         navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
         navigateToSubscription: () -> Unit,
         navigateToPhotosIssues: (FolderId) -> Unit,
+        navigateToBackupSettings: () -> Unit,
     ): PhotosViewEvent = object : PhotosViewEvent {
 
         private val driveLinkShareFlow =
@@ -349,6 +351,7 @@ class PhotosViewModel @Inject constructor(
         override val onScroll = this@PhotosViewModel::onScroll
         override val onStatusClicked = this@PhotosViewModel::onStatusClicked
         override val onGetStorage: () -> Unit = navigateToSubscription
+        override val onResolveMissingFolder: () -> Unit = navigateToBackupSettings
         override val onResolve: () -> Unit = {
             parentFolderId.value?.let { folderId ->
                 navigateToPhotosIssues(folderId)

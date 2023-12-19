@@ -62,6 +62,8 @@
     <string name="photos_error_no_folders">No %1$s folder found for backup</string>
     <string name="photos_error_backup_disabled">Backup disabled.</string>
     <string name="photos_error_backup_disabled_action">Turn on</string>
+    <string name="photos_error_backup_missing_folder">Backup folder was not found</string>
+    <string name="photos_error_backup_missing_folder_action" translatable="false">@string/common_more</string>
     <string name="photos_error_backup_failed">Backup failed.</string>
     <string name="photos_error_backup_temporarily_disabled">Backup is temporarily disabled.</string>
     <string name="photos_error_backup_failed_action" translatable="false">@string/common_retry</string>

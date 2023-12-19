@@ -147,7 +147,7 @@ class DetailsFlowTest : AuthenticatedBaseTest() {
         isShared = "Yes",
         type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) "JPG image" else "Image",
         mimeType = "image/jpeg",
-        size = "15.81 KB",
+        size = "15.80 KB",
     )
 
     private val sharedFolder get() = LinkDetails(

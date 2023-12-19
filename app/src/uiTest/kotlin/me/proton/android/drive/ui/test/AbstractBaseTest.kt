@@ -27,9 +27,9 @@ import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.initializer.MainInitializer
 import me.proton.android.drive.ui.robot.Robot
 import me.proton.android.drive.ui.rules.QuarkRule
+import me.proton.android.drive.ui.rules.SlowTestRule
 import me.proton.android.drive.utils.screenshot
 import me.proton.core.auth.presentation.testing.ProtonTestEntryPoint
-import me.proton.core.test.quark.v2.QuarkCommand
 import me.proton.test.fusion.FusionConfig
 import me.proton.test.fusion.FusionConfig.targetContext
 import org.junit.Rule
@@ -42,16 +42,11 @@ import kotlin.time.Duration.Companion.seconds
 abstract class AbstractBaseTest(
     showWelcomeScreen: Boolean,
 ) {
-    private val permissions =
-        listOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        ) + when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> listOf(
-                Manifest.permission.POST_NOTIFICATIONS
-            )
-            else -> emptyList()
-        }
+    private val permissions = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+            listOf(Manifest.permission.POST_NOTIFICATIONS)
+        else -> emptyList()
+    }
 
     private val hiltRule = HiltAndroidRule(this)
 
@@ -71,6 +66,7 @@ abstract class AbstractBaseTest(
         .around(GrantPermissionRule.grant(*permissions.toTypedArray()))
         .around(configurationRule)
         .around(quarkRule)
+        .around(SlowTestRule())
 
     fun <T : Robot> T.verify(block: T.() -> Any): T =
         apply { block() }

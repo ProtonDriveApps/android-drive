@@ -64,12 +64,7 @@ fun Photos(
     } else {
         viewState.listContentState
             .onEmpty { state ->
-                if (viewState.isBackupEnabled == false) {
-                    PhotosEmptyWithBackupTurnedOff(
-                        modifier = modifier,
-                        onEnable = viewEvent.onEnable,
-                    )
-                } else {
+                if (viewState.showEmptyList == true) {
                     PhotosEmpty(
                         state = state,
                         viewState = viewState.backupStatusViewState,
@@ -79,6 +74,12 @@ fun Photos(
                         onRetry = viewEvent.onRetry,
                         onResolve = viewEvent.onResolve,
                         onGetStorage = viewEvent.onGetStorage,
+                        onResolveMissingFolder = viewEvent.onResolveMissingFolder,
+                    )
+                } else {
+                    PhotosEmptyWithBackupTurnedOff(
+                        modifier = modifier,
+                        onEnable = viewEvent.onEnable,
                     )
                 }
             }
@@ -105,6 +106,7 @@ fun Photos(
                     onResolve = viewEvent.onResolve,
                     onScroll = viewEvent.onScroll,
                     onGetStorage = viewEvent.onGetStorage,
+                    onResolveMissingFolder = viewEvent.onResolveMissingFolder,
                     isRefreshEnabled = viewState.isRefreshEnabled,
                     isRefreshing = viewState.listContentState.isRefreshing,
                     onRefresh = viewEvent.onRefresh,

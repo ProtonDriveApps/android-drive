@@ -66,6 +66,10 @@ interface UploadWorkManager {
 
     suspend fun cancelAllByFolder(userId: UserId, folderId: FolderId)
 
+    suspend fun cancelAllByUris(userId: UserId, uriStrings: List<String>)
+
+    suspend fun waitUploadEventWorkerToFinish(userId: UserId)
+
     fun getProgressFlow(uploadFileLink: UploadFileLink): Flow<Percentage>?
 
     fun broadcastFilesBeingUploaded(folder: Folder, uriStrings: List<String>)

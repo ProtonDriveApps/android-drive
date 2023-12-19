@@ -29,8 +29,10 @@ import me.proton.core.drive.link.domain.extension.ids
 import me.proton.core.drive.link.domain.usecase.DeleteLinks
 import me.proton.core.drive.photo.domain.usecase.DeletePhotoListings
 import me.proton.core.drive.share.crypto.domain.usecase.DeleteLocalShares
+import me.proton.core.drive.volume.crypto.domain.usecase.DeleteLocalVolumes
 import javax.inject.Inject
 
+@Suppress("LongParameterList")
 class HandleOnDeleteEvent @Inject constructor(
     private val deleteLinks: DeleteLinks,
     private val getDriveLinks: GetDriveLinks,
@@ -39,6 +41,7 @@ class HandleOnDeleteEvent @Inject constructor(
     private val getChildren: GetAllFolderChildren,
     private val deleteLocalShares: DeleteLocalShares,
     private val deletePhotoListings: DeletePhotoListings,
+    private val deleteLocalVolumes: DeleteLocalVolumes,
 ) {
 
     suspend operator fun invoke(linkIds: List<LinkId>) {
@@ -57,6 +60,7 @@ class HandleOnDeleteEvent @Inject constructor(
                 }
 
             }
+        deleteLocalVolumes(linkIds)
         deleteLocalShares(linkIds)
         deleteLinks(linkIds)
         deletePhotoListings(linkIds)

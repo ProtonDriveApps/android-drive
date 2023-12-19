@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.ui.extension
 
+import androidx.annotation.StringRes
 import androidx.compose.ui.test.SemanticsMatcher
 import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties.HasThumbnail
 import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties.ItemType
@@ -25,7 +26,7 @@ import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsPrope
 import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties.LinkName
 import me.proton.core.drive.files.presentation.extension.ItemType
 import me.proton.core.drive.files.presentation.extension.LayoutType
-import me.proton.test.fusion.ui.compose.builders.OnNode
+import me.proton.test.fusion.FusionConfig
 import me.proton.test.fusion.ui.compose.wrappers.NodeMatchers
 
 fun <T : NodeMatchers<T>> NodeMatchers<T>.withLinkName(name: String): T =
@@ -39,3 +40,32 @@ fun <T : NodeMatchers<T>> NodeMatchers<T>.withItemType(itemType: ItemType): T =
 
 fun <T : NodeMatchers<T>> NodeMatchers<T>.withThumbnail(hasThumbnail: Boolean): T =
     addSemanticMatcher(SemanticsMatcher.expectValue(HasThumbnail, hasThumbnail))
+
+fun <T : NodeMatchers<T>> NodeMatchers<T>.withTextResource(
+    @StringRes resId: Int,
+    vararg formatArgs: String
+): T = withText(
+    FusionConfig.targetContext
+        .resources
+        .getString(resId, *formatArgs)
+)
+
+fun <T : NodeMatchers<T>> NodeMatchers<T>.withTextResource(
+    @StringRes resId: Int,
+    @StringRes vararg formatArgsResId: Int,
+): T {
+    val formatArgs = formatArgsResId
+        .map(FusionConfig.targetContext.resources::getString)
+        .toTypedArray()
+    return withTextResource(resId, *formatArgs)
+}
+
+fun <T : NodeMatchers<T>> NodeMatchers<T>.withPluralTextResource(
+    @StringRes resId: Int,
+    quantity: Int,
+): T =
+    withText(
+        FusionConfig.targetContext
+            .resources
+            .getQuantityString(resId, quantity).format(quantity)
+    )

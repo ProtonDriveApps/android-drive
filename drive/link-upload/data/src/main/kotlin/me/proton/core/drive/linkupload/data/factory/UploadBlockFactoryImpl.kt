@@ -40,7 +40,7 @@ class UploadBlockFactoryImpl @Inject constructor() : UploadBlockFactory {
     ): UploadBlock =
         UploadBlock(
             index = index,
-            url = Uri.fromFile(block).toString(),
+            url = requireNotNull(Uri.fromFile(block).path),
             hashSha256 = Base64.encodeToString(hashSha256, Base64.NO_WRAP),
             encSignature = encSignature,
             rawSize = rawSize,

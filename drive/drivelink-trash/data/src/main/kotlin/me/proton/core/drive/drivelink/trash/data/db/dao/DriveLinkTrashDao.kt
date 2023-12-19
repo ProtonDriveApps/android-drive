@@ -20,6 +20,7 @@ package me.proton.core.drive.drivelink.trash.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
@@ -30,6 +31,7 @@ import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 interface DriveLinkTrashDao : DriveLinkDao {
 
     //TODO: Once LinkEntity gets volumeId, WHERE clause should check for volumeId also
+    @Transaction
     @Query("""
         SELECT ${DriveLinkDao.DRIVE_LINK_SELECT} FROM ${DriveLinkDao.DRIVE_LINK_ENTITY}
         WHERE
@@ -44,6 +46,7 @@ interface DriveLinkTrashDao : DriveLinkDao {
     ): Flow<List<DriveLinkEntityWithBlock>>
 
     //TODO: Once LinkEntity gets volumeId, WHERE clause should check for volumeId also
+    @Transaction
     @Query("""
         SELECT COUNT(*) FROM (
             SELECT ${DriveLinkDao.DRIVE_LINK_SELECT} FROM ${DriveLinkDao.DRIVE_LINK_ENTITY}

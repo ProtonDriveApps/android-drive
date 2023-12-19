@@ -134,6 +134,7 @@ class PreviewViewModel @Inject constructor(
     }
     private val fileId: FileId
         get() = trigger.replayCache.first().fileId
+    private val currentIndex = MutableStateFlow(-1)
 
     private val provider: PreviewContentProvider =
         when (savedStateHandle.require<PagerType>(Screen.PagerPreview.PAGER_TYPE)) {
@@ -189,15 +190,21 @@ class PreviewViewModel @Inject constructor(
         currentIndex = 0,
     )
     val viewState: Flow<PreviewViewState> = driveLinks.filterNotNull().transformLatest { driveLinks ->
+        if (driveLinks.isEmpty() && currentIndex.value != -1) {
+            _previewEffect.emit(PreviewEffect.Close)
+            return@transformLatest
+        }
         val indexOfFirst = driveLinks.indexOfFirst { link -> link.id == fileId }
         val contentStates =
             driveLinks
                 .filter { driveLink -> driveLink.activeRevisionId.isNotEmpty() }
                 .associateBy({ link -> link.id }) { link -> link.getContentStateFlow() }
         val (previewContentState, index) = when {
-            driveLinks.isEmpty() || indexOfFirst == -1 -> PreviewContentState.Empty to 0
+            driveLinks.isEmpty() -> PreviewContentState.Empty to 0
+            indexOfFirst == -1 -> PreviewContentState.Content to currentIndex.value.coerceAtLeast(0)
             else -> PreviewContentState.Content to indexOfFirst
         }
+        currentIndex.value = index
         val previewViewState = initialViewState.copy(
             isFullscreen = isFullscreen,
             previewContentState = previewContentState,
@@ -211,7 +218,7 @@ class PreviewViewModel @Inject constructor(
                     contentState = contentStates[link.id] ?: flowOf(ContentState.Decrypting),
                 )
             },
-            currentIndex = index,
+            currentIndex = currentIndex.value,
         )
         CoreLogger.d(VIEW_MODEL, "$previewViewState")
         emit(previewViewState)
@@ -443,8 +450,12 @@ class SingleContentProvider(
         getDecryptedDriveLink(fileId)
             .filterSuccessOrError()
             .mapSuccessValueOrNull()
-            .transformLatest { driveLink ->
-                emit(listOfNotNull(driveLink))
+            .map { driveLink ->
+                takeIf { driveLink != null && driveLink.isTrashed.not() }
+                    ?.let {
+                        listOfNotNull(driveLink)
+                    }
+                    ?: emptyList()
             }
 }
 
@@ -463,7 +474,7 @@ class OfflineContentProvider(
         getOfflineDriveLinksCount(userId)
             .distinctUntilChanged()
             .mapLatest {
-                getDecryptedOfflineDriveLinks(userId,)
+                getDecryptedOfflineDriveLinks(userId)
                     .getOrNull()
                     ?.filterIsInstance<DriveLink.File>()
                     ?: emptyList<DriveLink.File>()

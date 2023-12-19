@@ -69,7 +69,7 @@ class SyncFoldersTest {
 
             val result = syncFolders(userId, UploadFileLink.BACKUP_PRIORITY)
 
-            assertEquals(Result.success(Unit), result)
+            assertEquals(Result.success(listOf(backupFolder)), result)
             assertEquals(mapOf(userId to backupFolder), backupManager.sync)
         }
 }

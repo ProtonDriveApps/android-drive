@@ -23,8 +23,10 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import me.proton.android.drive.telemetry.NumberOfLocalItemsValueInterceptor
 import me.proton.core.drive.telemetry.domain.event.PhotosEvent
 import me.proton.core.drive.telemetry.domain.extension.plus
+import me.proton.core.drive.telemetry.domain.filter.MeasurementGroupAndNamesFilter
 import me.proton.core.drive.telemetry.domain.filter.MeasurementGroupsFilter
 import me.proton.core.drive.telemetry.domain.interceptor.PlanDimensionInterceptor
 import me.proton.core.drive.telemetry.domain.manager.DriveTelemetryManager
@@ -41,6 +43,12 @@ class TelemetryInitializer : Initializer<Unit> {
             driveTelemetryManager.addInterceptor(
                 MeasurementGroupsFilter(PhotosEvent.group) + planDimensionInterceptor
             )
+            driveTelemetryManager.addInterceptor(
+                MeasurementGroupAndNamesFilter(
+                    group = PhotosEvent.group,
+                    "backup.stopped", "setting.enabled"
+                ) + numberOfLocalItemsValueInterceptor
+            )
         }
     }
 
@@ -54,5 +62,6 @@ class TelemetryInitializer : Initializer<Unit> {
     interface TelemetryInitializerEntryPoint {
         val driveTelemetryManager: DriveTelemetryManager
         val planDimensionInterceptor: PlanDimensionInterceptor
+        val numberOfLocalItemsValueInterceptor: NumberOfLocalItemsValueInterceptor
     }
 }

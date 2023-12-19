@@ -40,6 +40,9 @@ class BlockRepositoryImpl @Inject constructor(
         uploadThumbnails: List<UploadBlock>,
     ): Result<UploadBlocksUrl> = coRunCatching {
         if (uploadThumbnails.isNotEmpty() || uploadBlocks.isNotEmpty()) {
+            require(uploadBlocks.all { uploadBlock -> uploadBlock.verifierToken != null }) {
+                "Upload block verifier token is null"
+            }
             api.uploadBlock(
                 userId = userId,
                 addressId = addressId,

@@ -83,6 +83,7 @@ driveModule(
     androidTestImplementation(libs.androidx.test.espresso.contrib)
     androidTestImplementation(libs.bundles.core.test)
     androidTestImplementation(libs.fusion)
+    androidTestImplementation(project(":drive:backup:data"))
     androidTestUtil(libs.androidx.test.orchestrator)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)

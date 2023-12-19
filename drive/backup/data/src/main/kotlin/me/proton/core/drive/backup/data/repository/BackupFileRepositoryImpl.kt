@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.db.BackupDatabase
-import me.proton.core.drive.backup.data.db.BackupDatabase.Companion.MAX_VARIABLE_NUMBER
 import me.proton.core.drive.backup.data.extension.toBackupFile
 import me.proton.core.drive.backup.data.extension.toBackupStateCount
 import me.proton.core.drive.backup.data.extension.toEntity
@@ -32,6 +31,7 @@ import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupStateCount
 import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
+import me.proton.core.drive.base.data.db.DatabaseLimits.MAX_VARIABLE_NUMBER
 import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 

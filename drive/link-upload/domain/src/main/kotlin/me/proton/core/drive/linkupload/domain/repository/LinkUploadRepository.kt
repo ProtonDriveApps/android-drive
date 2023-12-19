@@ -72,6 +72,13 @@ interface LinkUploadRepository {
         fromIndex: Int,
     ): List<UploadFileLink>
 
+    suspend fun getUploadFileLinks(
+        userId: UserId,
+        uriStrings: List<String>,
+        count: Int,
+        fromIndex: Int,
+    ): List<UploadFileLink>
+
     suspend fun getUploadFileLinksWithUriByPriority(
         userId: UserId,
         states: Set<UploadState>,
@@ -131,6 +138,8 @@ interface LinkUploadRepository {
     suspend fun removeAllUploadFileLinks(userId: UserId, shareId: ShareId, uploadState: UploadState)
 
     suspend fun removeAllUploadFileLinks(userId: UserId, folderId: FolderId, uploadState: UploadState)
+
+    suspend fun removeAllUploadFileLinks(userId: UserId, uriStrings: List<String>, uploadState: UploadState)
 
     suspend fun insertUploadBlocks(uploadFileLink: UploadFileLink, uploadBlocks: List<UploadBlock>)
 

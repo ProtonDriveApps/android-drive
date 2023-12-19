@@ -28,8 +28,21 @@ class SyncFolders @Inject constructor(
     private val backupManager: BackupManager,
 ) {
     suspend operator fun invoke(userId: UserId, uploadPriority: Long) = coRunCatching {
-        getFolders(userId).getOrThrow().forEach { backupFolder ->
+        getFolders(userId).getOrThrow().onEach { backupFolder ->
             backupManager.sync(userId, backupFolder, uploadPriority)
         }
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        bucketIds: List<Int>,
+        uploadPriority: Long,
+    ) = coRunCatching {
+        getFolders(userId)
+            .getOrThrow()
+            .filter { backupFolder -> backupFolder.bucketId in bucketIds }
+            .onEach { backupFolder ->
+                backupManager.sync(userId, backupFolder, uploadPriority)
+            }
     }
 }

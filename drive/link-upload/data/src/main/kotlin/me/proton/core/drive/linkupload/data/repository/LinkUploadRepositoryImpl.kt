@@ -21,6 +21,7 @@ import android.util.Base64
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.db.DatabaseLimits.MAX_VARIABLE_NUMBER
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.CameraExifTags
 import me.proton.core.drive.base.domain.entity.Location
@@ -123,6 +124,17 @@ class LinkUploadRepositoryImpl @Inject constructor(
         fromIndex: Int
     ): List<UploadFileLink> =
         db.linkUploadDao.getAllByParentId(userId, parentId.id, count, fromIndex)
+            .map { linkUploadEntity ->
+                linkUploadEntity.toUploadFileLink()
+            }
+
+    override suspend fun getUploadFileLinks(
+        userId: UserId,
+        uriStrings: List<String>,
+        count: Int,
+        fromIndex: Int
+    ): List<UploadFileLink> =
+        db.linkUploadDao.getAllWithUris(userId, uriStrings, count, fromIndex)
             .map { linkUploadEntity ->
                 linkUploadEntity.toUploadFileLink()
             }
@@ -256,6 +268,15 @@ class LinkUploadRepositoryImpl @Inject constructor(
 
     override suspend fun removeAllUploadFileLinks(userId: UserId, folderId: FolderId, uploadState: UploadState) =
         db.linkUploadDao.deleteAllByFolderId(userId, folderId.id, uploadState)
+    override suspend fun removeAllUploadFileLinks(
+        userId: UserId,
+        uriStrings: List<String>,
+        uploadState: UploadState,
+    ): Unit = db.inTransaction {
+        uriStrings.chunked(MAX_VARIABLE_NUMBER).onEach { uris ->
+            db.linkUploadDao.deleteAllWithUris(userId, uris, uploadState)
+        }
+    }
 
     override suspend fun insertUploadBlocks(uploadFileLink: UploadFileLink, uploadBlocks: List<UploadBlock>) =
         db.inTransaction {

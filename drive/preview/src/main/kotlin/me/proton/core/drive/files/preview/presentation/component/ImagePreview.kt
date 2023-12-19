@@ -32,22 +32,28 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.size.Size
+import coil.size.SizeResolver
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.isNightMode
 import me.proton.core.drive.base.presentation.extension.conditional
@@ -76,18 +82,35 @@ fun ImagePreview(
             else -> error("Unhandled cache key for source type $source")
         }
     }
+    var size by remember { mutableStateOf(IntSize.Zero) }
+    val painter: Painter
+    if (size == IntSize.Zero) {
+        painter = EmptyPainter
+    } else {
+        val sizeResolver: SizeResolver = remember(size) {
+            SizeResolver(
+                Size(
+                    width = size.width * LOADING_IMAGE_FACTOR,
+                    height = size.height * LOADING_IMAGE_FACTOR,
+                )
+            )
+        }
+        val context = LocalContext.current
+        val request = remember(source, cacheKey, sizeResolver) {
+            ImageRequest.Builder(context)
+                .scale(Scale.FIT)
+                .data(source)
+                .memoryCacheKey(cacheKey)
+                .size(sizeResolver)
+                .build()
+        }
+        painter = rememberAsyncImagePainter(request)
 
-    val request = ImageRequest.Builder(LocalContext.current)
-        .scale(Scale.FIT)
-        .data(source)
-        .memoryCacheKey(cacheKey)
-        .size(Size.ORIGINAL)
-        .build()
-    val painter = rememberAsyncImagePainter(request)
-    LaunchedEffect(painter.state) {
-        val state = painter.state
-        if (state is AsyncImagePainter.State.Error) {
-            onRenderFailed(state.result.throwable, source)
+        LaunchedEffect(painter.state) {
+            val state = painter.state
+            if (state is AsyncImagePainter.State.Error) {
+                onRenderFailed(state.result.throwable, source)
+            }
         }
     }
     ImagePreview(
@@ -95,10 +118,20 @@ fun ImagePreview(
             .background(backgroundColor)
             .conditional(source !is Uri) {
                 fillMaxSize()
+            }
+            .onSizeChanged {
+                size = it
             },
         painter = painter,
         transformationState = transformationState,
     )
+}
+
+private const val LOADING_IMAGE_FACTOR = 2
+
+internal object EmptyPainter : Painter() {
+    override val intrinsicSize: androidx.compose.ui.geometry.Size get() = androidx.compose.ui.geometry.Size.Unspecified
+    override fun DrawScope.onDraw() {}
 }
 
 @OptIn(ExperimentalFoundationApi::class)

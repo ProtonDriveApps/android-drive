@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.test.flow.move
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Slow
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.MoveToFolderRobot
 import me.proton.android.drive.ui.rules.Scenario
@@ -27,6 +28,7 @@ import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
+@Slow
 class MoveFolderFlowTest : AuthenticatedBaseTest() {
 
     @Test

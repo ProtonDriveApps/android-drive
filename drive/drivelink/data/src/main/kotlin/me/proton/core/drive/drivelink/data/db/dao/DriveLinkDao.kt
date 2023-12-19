@@ -20,6 +20,7 @@ package me.proton.core.drive.drivelink.data.db.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
@@ -45,6 +46,7 @@ interface DriveLinkDao : LinkDao {
     """)
     fun getLink(userId: UserId, shareId: String, linkId: String?): Flow<List<DriveLinkEntityWithBlock>>
 
+    @Transaction
     @Query("""
         SELECT $DRIVE_LINK_SELECT FROM $DRIVE_LINK_ENTITY 
         WHERE 
@@ -62,6 +64,7 @@ interface DriveLinkDao : LinkDao {
         offset: Int,
     ): Flow<List<DriveLinkEntityWithBlock>>
 
+    @Transaction
     @Query("""
         SELECT COUNT(*) FROM (SELECT DISTINCT LinkEntity.id FROM $DRIVE_LINK_ENTITY
         WHERE

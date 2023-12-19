@@ -72,6 +72,17 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
     abstract suspend fun deleteAllByFolderId(userId: UserId, parentId: String, uploadState: UploadState)
 
     @Query(
+        """
+        DELETE FROM LinkUploadEntity 
+        WHERE 
+            user_id = :userId AND 
+            uri IN (:uriStrings) AND 
+            state = :uploadState
+        """
+    )
+    abstract suspend fun deleteAllWithUris(userId: UserId, uriStrings: List<String>, uploadState: UploadState)
+
+    @Query(
         "SELECT * FROM LinkUploadEntity WHERE id = :id"
     )
     abstract suspend fun get(id: Long): LinkUploadEntity?
@@ -138,6 +149,22 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
     abstract suspend fun getAllByParentId(
         userId: UserId,
         parentLinkId: String,
+        limit: Int,
+        offset: Int,
+    ): List<LinkUploadEntity>
+
+    @Query(
+        """
+        SELECT * FROM LinkUploadEntity 
+        WHERE user_id = :userId AND 
+            uri IN (:uriStrings)
+        ORDER BY id ASC
+        LIMIT :limit OFFSET :offset
+        """
+    )
+    abstract suspend fun getAllWithUris(
+        userId: UserId,
+        uriStrings: List<String>,
         limit: Int,
         offset: Int,
     ): List<LinkUploadEntity>

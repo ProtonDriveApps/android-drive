@@ -33,11 +33,14 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.entity.BackupState
 import me.proton.core.drive.backup.domain.entity.BackupStatus
+import me.proton.core.drive.backup.domain.entity.BucketEntry
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.manager.StubbedBackupConnectivityManager
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
+import me.proton.core.drive.backup.domain.repository.BucketRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myDrive
@@ -68,6 +71,7 @@ class GetBackupStateTest {
         BackupPermissionsManagerImpl(appContext)
     private val connectivityManager = StubbedBackupConnectivityManager
 
+    private var bucketEntries = listOf(BucketEntry(0, "Camera"))
 
     @Before
     fun setUp() = runTest {
@@ -91,6 +95,15 @@ class GetBackupStateTest {
             permissionsManager = permissionsManager,
             connectivityManager = connectivityManager,
             getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance),
+            getAllBuckets = GetAllBuckets(object : BucketRepository {
+                override suspend fun getAll(): List<BucketEntry> = bucketEntries
+            }, permissionsManager),
+            configurationProvider = object : ConfigurationProvider {
+                override val host = ""
+                override val baseUrl = ""
+                override val appVersionHeader = ""
+                override val backupDefaultBucketName = "Camera"
+            }
         )
 
         backupState = getBackupState(userId)
@@ -100,9 +113,26 @@ class GetBackupStateTest {
     fun `blank backup state`() = runTest {
         database.myDrive {}
 
+        bucketEntries = emptyList()
+
         assertEquals(
             BackupState(
                 isBackupEnabled = false,
+                hasDefaultFolder = false,
+                backupStatus = null,
+            ),
+            backupState.first(),
+        )
+    }
+
+    @Test
+    fun `blank backup state with folder`() = runTest {
+        database.myDrive {}
+
+        assertEquals(
+            BackupState(
+                isBackupEnabled = false,
+                hasDefaultFolder = true,
                 backupStatus = null,
             ),
             backupState.first(),
@@ -118,6 +148,7 @@ class GetBackupStateTest {
         assertEquals(
             BackupState(
                 isBackupEnabled = true,
+                hasDefaultFolder = true,
                 backupStatus = BackupStatus.Complete(totalBackupPhotos = 0),
             ),
             backupState.first(),
@@ -143,6 +174,7 @@ class GetBackupStateTest {
         assertEquals(
             BackupState(
                 isBackupEnabled = true,
+                hasDefaultFolder = true,
                 backupStatus = BackupStatus.InProgress(
                     totalBackupPhotos = 3,
                     pendingBackupPhotos = 2,
@@ -169,6 +201,7 @@ class GetBackupStateTest {
         assertEquals(
             BackupState(
                 isBackupEnabled = true,
+                hasDefaultFolder = true,
                 backupStatus = BackupStatus.InProgress(
                     totalBackupPhotos = 3,
                     pendingBackupPhotos = 2,
@@ -198,6 +231,7 @@ class GetBackupStateTest {
         assertEquals(
             BackupState(
                 isBackupEnabled = true,
+                hasDefaultFolder = true,
                 backupStatus = BackupStatus.Uncompleted(
                     totalBackupPhotos = 3,
                     failedBackupPhotos = 1,
@@ -217,6 +251,7 @@ class GetBackupStateTest {
         assertEquals(
             BackupState(
                 isBackupEnabled = false,
+                hasDefaultFolder = true,
                 backupStatus = null,
             ),
             backupState.first(),

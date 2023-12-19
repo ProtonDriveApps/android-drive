@@ -20,7 +20,7 @@ package me.proton.android.drive.photos.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFolder
-import me.proton.core.drive.backup.domain.repository.ScanLibraryRepository
+import me.proton.core.drive.backup.domain.repository.BucketRepository
 import me.proton.core.drive.backup.domain.usecase.AddFolder
 import me.proton.core.drive.base.domain.extension.firstSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
@@ -32,14 +32,14 @@ import javax.inject.Inject
 class SetupPhotosBackup @Inject constructor(
     private val getPhotosDriveLink: GetPhotosDriveLink,
     private val addFolder: AddFolder,
-    private val scanLibraryRepository: ScanLibraryRepository,
+    private val bucketRepository: BucketRepository,
 ) {
 
     suspend operator fun invoke(
         userId: UserId,
         folderName: String
     ) = coRunCatching {
-        val bucketEntries = scanLibraryRepository()
+        val bucketEntries = bucketRepository.getAll()
         val photoRootId = getPhotosDriveLink(userId)
             .firstSuccessOrError().toResult().getOrThrow().id
         bucketEntries.filter { entry ->
@@ -55,7 +55,7 @@ class SetupPhotosBackup @Inject constructor(
             if (defaultBucketEntries.isEmpty()) {
                 CoreLogger.w(BACKUP, "No bucket with name: $folderName in $bucketEntries")
             } else {
-                CoreLogger.w(BACKUP, "Setup photos backup for ${defaultBucketEntries.size} buckets")
+                CoreLogger.d(BACKUP, "Setup photos backup for ${defaultBucketEntries.size} buckets")
             }
         }
     }

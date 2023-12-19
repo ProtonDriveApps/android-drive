@@ -20,6 +20,7 @@ package me.proton.core.drive.cryptobase.domain.usecase
 import me.proton.core.crypto.common.context.CryptoContext
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.CryptoScope
+import me.proton.core.key.domain.entity.key.PublicKey
 import me.proton.core.key.domain.entity.key.PublicKeyRing
 import me.proton.core.key.domain.verifyData
 import javax.inject.Inject
@@ -35,5 +36,14 @@ class VerifyData @Inject constructor(
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ) = coRunCatching(coroutineContext) {
         verifyKeyRing.verifyData(cryptoContext, input, signature)
+    }
+
+    suspend operator fun invoke(
+        publicKey: PublicKey,
+        input: ByteArray,
+        signature: String,
+        coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
+    ) = coRunCatching(coroutineContext) {
+        publicKey.verifyData(cryptoContext, input, signature)
     }
 }

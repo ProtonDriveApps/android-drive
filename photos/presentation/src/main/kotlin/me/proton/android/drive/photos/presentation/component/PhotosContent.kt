@@ -113,6 +113,7 @@ fun PhotosContent(
     onResolve: () -> Unit,
     onScroll: (Int, Set<LinkId>) -> Unit,
     onGetStorage: () -> Unit,
+    onResolveMissingFolder: () -> Unit,
     isRefreshEnabled: Boolean,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
@@ -137,6 +138,7 @@ fun PhotosContent(
             onResolve = onResolve,
             onScroll = onScroll,
             onGetStorage = onGetStorage,
+            onResolveMissingFolder = onResolveMissingFolder,
         )
     }
 }
@@ -157,6 +159,7 @@ fun PhotosContent(
     onResolve: () -> Unit,
     onScroll: (Int, Set<LinkId>) -> Unit,
     onGetStorage: () -> Unit,
+    onResolveMissingFolder: () -> Unit,
 ) {
     val gridState = items.rememberLazyGridState()
     val driveLinksMap by rememberFlowWithLifecycle(flow = driveLinksFlow)
@@ -196,6 +199,7 @@ fun PhotosContent(
                     onPermissions = onPermissions,
                     onRetry = onRetry,
                     onResolve = onResolve,
+                    onResolveMissingFolder = onResolveMissingFolder,
                 )
                 StorageBanner(onGetStorage = onGetStorage)
             }
