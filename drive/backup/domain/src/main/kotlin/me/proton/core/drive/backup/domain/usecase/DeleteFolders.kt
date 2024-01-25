@@ -17,15 +17,15 @@
  */
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class DeleteFolders @Inject constructor(
     private val repository: BackupFolderRepository
 ) {
-    suspend operator fun invoke(userId: UserId) = coRunCatching {
-        repository.deleteFolders(userId)
+    suspend operator fun invoke(folderId: FolderId) = coRunCatching {
+        repository.deleteFolders(folderId)
     }
 }

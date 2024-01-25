@@ -20,11 +20,13 @@ package me.proton.core.drive.file.base.domain.usecase
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.changeParent
 import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.file.base.domain.coroutines.FileScope
 import me.proton.core.drive.file.base.domain.extension.moveTo
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
@@ -46,6 +48,19 @@ class MoveToCache @Inject constructor(
         val cacheFolder = getCacheFolder(userId, volumeId.id, revisionId, coroutineContext)
         if (permanentFolder.exists()) {
             permanentFolder.moveTo(cacheFolder)
+        }
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        volumeId: VolumeId,
+        revisionId: String,
+        files: List<File>,
+        coroutineContext: CoroutineContext = FileScope.coroutineContext,
+    ) = mutex.withLock {
+        val cacheFolder = getCacheFolder(userId, volumeId.id, revisionId, coroutineContext)
+        files.forEach { file ->
+            file.changeParent(cacheFolder)
         }
     }
 }

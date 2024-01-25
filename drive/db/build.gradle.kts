@@ -21,6 +21,9 @@ plugins {
 
 android {
     namespace = "me.proton.android.drive.db"
+    sourceSets {
+        getByName("test").assets.srcDir("$projectDir/schemas")
+    }
 }
 
 driveModule(
@@ -30,20 +33,42 @@ driveModule(
     api(libs.core.account.data)
     api(libs.core.challenge.data)
     api(libs.core.crypto.android)
-    api(libs.core.eventManager.data)
+    api(libs.core.eventManager.data) {
+        exclude("me.proton.core", "presentation")
+        exclude("me.proton.core", "account-manager-presentation")
+    }
     api(libs.core.featureFlag.data)
-    api(libs.core.humanVerification.data)
-    api(libs.core.key.data)
+    api(libs.core.humanVerification.data) {
+        exclude("me.proton.core", "human-verification-domain")
+        exclude("me.proton.core", "util-android-dagger")
+    }
+    api(libs.core.key.data) {
+        isTransitive = false
+    }
     api(libs.core.notification.data)
     api(libs.core.observability.data)
-    api(libs.core.payment.data)
+    api(libs.core.payment.data) {
+        exclude("me.proton.core", "payment-domain")
+    }
     api(libs.core.push.data)
     api(libs.core.telemetry.data)
-    api(libs.core.user.data)
-    api(libs.core.userSettings.data)
-    api(libs.core.keyTransparency.data)
+    api(libs.core.user.data) {
+        exclude("me.proton.core", "key-data")
+        exclude("me.proton.core", "payment-domain")
+    }
+    api(libs.core.userSettings.data) {
+        exclude("me.proton.core", "key-data")
+        exclude("me.proton.core", "payment-domain")
+    }
+    api(libs.core.keyTransparency.data){
+        exclude("me.proton.core", "presentation")
+        exclude("me.proton.core", "user-settings-domain")
+        exclude("me.proton.core", "account-manager-presentation")
+        exclude("me.proton.core", "auth-presentation")
+    }
     // TODO: Extract from drive db
     api(project(":app-ui-settings"))
+    api(project(":drive:announce-event:data"))
     api(project(":drive:backup:data"))
     api(project(":drive:drivelink:data"))
     api(project(":drive:drivelink-download:data"))
@@ -73,4 +98,6 @@ driveModule(
     api(project(":drive:volume:data"))
     api(project(":drive:worker:data"))
     api(project(":photos:data"))
+
+    testImplementation(libs.androidx.room.test)
 }

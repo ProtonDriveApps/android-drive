@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.backup.domain.repository
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
@@ -26,20 +25,17 @@ import me.proton.core.drive.link.domain.entity.Link
 interface BackupDuplicateRepository {
     suspend fun insertDuplicates(duplicates: List<BackupDuplicate>)
     suspend fun getAll(
-        userId: UserId,
         parentId: FolderId,
         fromIndex: Int,
         count: Int,
     ): List<BackupDuplicate>
 
     suspend fun getAllByHash(
-        userId: UserId,
         parentId: FolderId,
         hash: String,
     ): List<BackupDuplicate>
 
     suspend fun getAllWithState(
-        userId: UserId,
         parentId: FolderId,
         state: Link.State,
         fromIndex: Int,

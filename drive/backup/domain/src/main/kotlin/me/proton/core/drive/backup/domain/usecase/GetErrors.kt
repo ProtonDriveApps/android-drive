@@ -17,16 +17,16 @@
  */
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class GetErrors @Inject constructor(
     private val repository: BackupErrorRepository,
     private val configurationProvider: ConfigurationProvider,
 ) {
-    operator fun invoke(userId: UserId) =
-        repository.getAll(userId, 0, configurationProvider.dbPageSize)
+    operator fun invoke(folderId: FolderId) =
+        repository.getAll(folderId, 0, configurationProvider.dbPageSize)
 
 }

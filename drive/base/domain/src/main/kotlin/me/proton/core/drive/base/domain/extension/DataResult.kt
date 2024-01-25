@@ -51,6 +51,14 @@ suspend fun <T> Flow<DataResult<T>>.resultValueOrNull() = transform { result ->
     }.exhaustive
 }.first()
 
+suspend fun <T> Flow<DataResult<T>>.resultValueOrThrow() = transform { result ->
+    when (result) {
+        is DataResult.Success -> emit(result.value)
+        is DataResult.Error -> throw result.cause!!
+        is DataResult.Processing -> Unit
+    }.exhaustive
+}.first()
+
 fun <T> Flow<DataResult<T>>.filterSuccessOrError() = filter { result ->
     when (result) {
         is DataResult.Success -> true

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -17,20 +17,9 @@
  */
 package me.proton.core.drive.upload.domain.usecase
 
-import me.proton.core.drive.base.domain.extension.cameraExifTags
-import me.proton.core.drive.base.domain.extension.creationDateTime
-import me.proton.core.drive.base.domain.extension.duration
-import me.proton.core.drive.base.domain.extension.location
-import me.proton.core.drive.base.domain.extension.resolution
-import me.proton.core.drive.base.domain.usecase.GetFileAttributes
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.linkupload.domain.usecase.UpdateCameraExifTags
-import me.proton.core.drive.linkupload.domain.usecase.UpdateDateTime
-import me.proton.core.drive.linkupload.domain.usecase.UpdateDuration
 import me.proton.core.drive.linkupload.domain.usecase.UpdateLastModified
-import me.proton.core.drive.linkupload.domain.usecase.UpdateLocation
-import me.proton.core.drive.linkupload.domain.usecase.UpdateMediaResolution
 import me.proton.core.drive.linkupload.domain.usecase.UpdateSize
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUriString
 import javax.inject.Inject
@@ -39,14 +28,9 @@ class UpdateUploadFileInfo @Inject constructor(
     private val updateUriString: UpdateUriString,
     private val updateSize: UpdateSize,
     private val updateLastModified: UpdateLastModified,
-    private val updateMediaResolution: UpdateMediaResolution,
-    private val updateDuration: UpdateDuration,
-    private val updateDateTime: UpdateDateTime,
-    private val updateLocation: UpdateLocation,
-    private val updateCameraExifTags: UpdateCameraExifTags,
     private val getUploadFileSize: GetUploadFileSize,
     private val getUploadFileLastModified: GetUploadFileLastModified,
-    private val getFileAttributes: GetFileAttributes,
+    private val updateUploadFileAttributes: UpdateUploadFileAttributes,
 ) {
     suspend operator fun invoke(
        uploadFileLinkId: Long,
@@ -54,23 +38,7 @@ class UpdateUploadFileInfo @Inject constructor(
        shouldDeleteSourceUri: Boolean,
     ): Result<UploadFileLink> = coRunCatching {
         updateUriString(uploadFileLinkId, uriString, shouldDeleteSourceUri).getOrThrow().also { uploadFileLink ->
-            getFileAttributes(uriString, uploadFileLink.mimeType)?.let { fileAttributes ->
-                fileAttributes.cameraExifTags?.let { cameraExifTags ->
-                    updateCameraExifTags(uploadFileLinkId, cameraExifTags).getOrThrow()
-                }
-                fileAttributes.duration?.let { duration ->
-                    updateDuration(uploadFileLinkId, duration).getOrThrow()
-                }
-                fileAttributes.creationDateTime?.let { dateTime ->
-                    updateDateTime(uploadFileLinkId, dateTime).getOrThrow()
-                }
-                fileAttributes.location?.let { location ->
-                    updateLocation(uploadFileLinkId, location).getOrThrow()
-                }
-                fileAttributes.resolution?.let { mediaResolution ->
-                    updateMediaResolution(uploadFileLinkId, mediaResolution).getOrThrow()
-                }
-            }
+            updateUploadFileAttributes(uploadFileLink).getOrThrow()
         }
         updateSize(uploadFileLinkId, getUploadFileSize(uriString)).getOrThrow()
         updateLastModified(uploadFileLinkId, getUploadFileLastModified(uriString)).getOrThrow()

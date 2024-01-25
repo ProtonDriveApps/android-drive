@@ -30,12 +30,18 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.extension.toBackupError
 import me.proton.core.drive.backup.data.manager.BackupManagerImpl
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_FILE_URI
+import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_FOLDER_ID
+import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.MarkAsCompleted
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.share.domain.entity.ShareId
 
 @HiltWorker
 class BackupClearFileWorker @AssistedInject constructor(
@@ -46,12 +52,14 @@ class BackupClearFileWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
 
     private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
+    private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)))
+    private val folderId = FolderId(shareId, requireNotNull(inputData.getString(KEY_FOLDER_ID)))
     private val uriString = requireNotNull(inputData.getString(KEY_FILE_URI))
 
     override suspend fun doWork(): Result {
-        markAsCompleted(userId, uriString).onFailure { error ->
+        markAsCompleted(folderId, uriString).onFailure { error ->
             error.log(LogTag.BACKUP, "Cannot mark file as completed with uri: $uriString")
-            addBackupError(userId, error.toBackupError())
+            addBackupError(folderId, error.toBackupError())
             return Result.failure()
         }
         return Result.success()
@@ -59,21 +67,29 @@ class BackupClearFileWorker @AssistedInject constructor(
 
     companion object {
         fun getWorkRequest(
-            userId: UserId,
+            backupFolder: BackupFolder,
             uriString: String,
             tags: Collection<String> = emptyList(),
         ): OneTimeWorkRequest {
             return OneTimeWorkRequest.Builder(BackupClearFileWorker::class.java)
-                .setInputData(workDataOf(userId, uriString))
-                .addTags(listOf(userId.id, BackupManagerImpl.TAG) + tags)
+                .setInputData(workDataOf(backupFolder, uriString))
+                .addTags(
+                    listOf(
+                        backupFolder.folderId.userId.id,
+                        backupFolder.folderId.id,
+                        BackupManagerImpl.TAG
+                    ) + tags
+                )
                 .build()
         }
 
         internal fun workDataOf(
-            userId: UserId,
+            backupFolder: BackupFolder,
             uriString: String,
         ) = Data.Builder()
-            .putString(KEY_USER_ID, userId.id)
+            .putString(KEY_USER_ID, backupFolder.folderId.userId.id)
+            .putString(KEY_SHARE_ID, backupFolder.folderId.shareId.id)
+            .putString(KEY_FOLDER_ID, backupFolder.folderId.id)
             .putString(KEY_FILE_URI, uriString)
             .build()
     }

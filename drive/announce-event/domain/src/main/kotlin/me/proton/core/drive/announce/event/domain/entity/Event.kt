@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.link.domain.entity.FolderId
 
 @Serializable
 sealed class Event {
@@ -65,6 +66,7 @@ sealed class Event {
 
     @Serializable
     data class Backup(
+        val folderId: FolderId,
         val state: BackupState,
         val totalBackupPhotos: Int,
         val pendingBackupPhotos: Int,
@@ -77,6 +79,7 @@ sealed class Event {
             COMPLETE,
             FAILED,
             FAILED_CONNECTIVITY,
+            FAILED_WIFI_CONNECTIVITY,
             FAILED_PERMISSION,
             FAILED_LOCAL_STORAGE,
             FAILED_DRIVE_STORAGE,
@@ -86,27 +89,27 @@ sealed class Event {
         }
     }
 
-    object BackupEnabled : Event() {
+    data class BackupEnabled(val folderId: FolderId) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
     }
 
-    object BackupDisabled : Event() {
+    data class BackupDisabled(val folderId: FolderId) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
     }
 
-    object BackupStarted : Event() {
+    data class BackupStarted(val folderId: FolderId) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
     }
 
-    data class BackupStopped(val state: Backup.BackupState) : Event() {
+    data class BackupStopped(val folderId: FolderId, val state: Backup.BackupState) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
     }
 
-    object BackupCompleted : Event() {
+    data class BackupCompleted(val folderId: FolderId) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
     }

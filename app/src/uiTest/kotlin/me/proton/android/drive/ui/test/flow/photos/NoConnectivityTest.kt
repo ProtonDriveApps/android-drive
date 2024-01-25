@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -21,8 +21,8 @@ package me.proton.android.drive.ui.test.flow.photos
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.test.PhotosBaseTest
 import me.proton.android.drive.ui.rules.NetworkSimulator
+import me.proton.android.drive.ui.test.PhotosBaseTest
 import org.junit.Before
 import org.junit.Test
 
@@ -31,6 +31,7 @@ class NoConnectivityTest: PhotosBaseTest() {
 
     @Before
     fun prepare() {
+        pictureCameraFolder.copyDirFromAssets("images/basic")
         FilesTabRobot
             .clickPhotosTab()
             .verify {
@@ -41,8 +42,6 @@ class NoConnectivityTest: PhotosBaseTest() {
 
     @Test
     fun backUpWithNoConnectivity() {
-        pictureCameraFolder.copyDirFromAssets("images/basic")
-        dcimCameraFolder.copyFileFromAssets("boat.mp4")
 
         NetworkSimulator.disableNetwork()
 
@@ -57,37 +56,14 @@ class NoConnectivityTest: PhotosBaseTest() {
 
         PhotosTabRobot
             .verify {
-                assertPhotoCountEquals(1)
-            }
-
-        NetworkSimulator.disableNetwork()
-
-        PhotosTabRobot
-            .verify {
-                assertNoConnectivityBannerDisplayed()
-            }
-
-        NetworkSimulator.enableNetwork()
-
-        PhotosTabRobot
-            .verify {
-                assertPhotoCountEquals(5)
-            }
-            .clickFilesTab()
-            .verify {
-                robotDisplayed()
-            }
-            .clickPhotosTab()
-            .verify {
                 assertBackupCompleteDisplayed()
                 assertNoConnectivityBannerNotDisplayed()
-                assertPhotoCountEquals(5)
+                assertPhotoCountEquals(4)
             }
     }
 
     @Test
     fun resumeBackupAfterNetworkTimeout() {
-        dcimCameraFolder.copyDirFromAssets("images/basic")
 
         NetworkSimulator.setNetworkTimeout(true)
 

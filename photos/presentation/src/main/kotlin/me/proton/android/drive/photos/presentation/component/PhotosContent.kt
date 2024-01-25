@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -68,8 +68,8 @@ import me.proton.android.drive.photos.presentation.viewstate.PhotosStatusViewSta
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.compose.theme.captionNorm
 import me.proton.core.compose.theme.defaultWeak
-import me.proton.core.compose.theme.overlineStrong
 import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Attributes
@@ -114,6 +114,7 @@ fun PhotosContent(
     onScroll: (Int, Set<LinkId>) -> Unit,
     onGetStorage: () -> Unit,
     onResolveMissingFolder: () -> Unit,
+    onChangeNetwork: () -> Unit,
     isRefreshEnabled: Boolean,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
@@ -139,6 +140,7 @@ fun PhotosContent(
             onScroll = onScroll,
             onGetStorage = onGetStorage,
             onResolveMissingFolder = onResolveMissingFolder,
+            onChangeNetwork = onChangeNetwork,
         )
     }
 }
@@ -160,6 +162,7 @@ fun PhotosContent(
     onScroll: (Int, Set<LinkId>) -> Unit,
     onGetStorage: () -> Unit,
     onResolveMissingFolder: () -> Unit,
+    onChangeNetwork: () -> Unit,
 ) {
     val gridState = items.rememberLazyGridState()
     val driveLinksMap by rememberFlowWithLifecycle(flow = driveLinksFlow)
@@ -169,7 +172,8 @@ fun PhotosContent(
         onScroll(
             firstVisibleItemIndex,
             items.itemSnapshotList.items
-                .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }?.let { list ->
+                .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }
+                ?.let { list ->
                     val sizeRange = IntRange(0, list.size - 1)
                     val fromIndex = (firstVisibleItemIndex - 10).coerceIn(sizeRange)
                     val toIndex = (firstVisibleItemIndex + 20).coerceIn(sizeRange)
@@ -200,6 +204,7 @@ fun PhotosContent(
                     onRetry = onRetry,
                     onResolve = onResolve,
                     onResolveMissingFolder = onResolveMissingFolder,
+                    onChangeNetwork = onChangeNetwork,
                 )
                 StorageBanner(onGetStorage = onGetStorage)
             }
@@ -250,7 +255,11 @@ fun PhotosContent(
             span = { GridItemSpan(maxLineSpan) },
             key = "footer",
         ) {
-            EncryptedFooter(Modifier.fillMaxWidth().padding(ProtonDimens.DefaultSpacing))
+            EncryptedFooter(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(ProtonDimens.DefaultSpacing)
+            )
         }
     }
 }
@@ -278,7 +287,7 @@ private fun MediaItem(
     onClick: (DriveLink) -> Unit,
     onLongClick: (DriveLink) -> Unit,
 ) {
-    if(link != null) {
+    if (link != null) {
         MediaItem(
             link = link,
             modifier = modifier,
@@ -394,7 +403,7 @@ fun FileOverlay(
                 .padding(ProtonDimens.ExtraSmallSpacing),
             horizontalArrangement = Arrangement.spacedBy(ProtonDimens.ExtraSmallSpacing),
         ) {
-            if(file.isMarkedAsOffline) {
+            if (file.isMarkedAsOffline) {
                 PhotoDownloadIcon(file)
             }
             if (file.isShared) {
@@ -402,7 +411,12 @@ fun FileOverlay(
             }
         }
         when (file.mimeType.toFileTypeCategory()) {
-            FileTypeCategory.Video -> VideoFileOverlay(file)
+            FileTypeCategory.Video -> VideoFileOverlay(
+                file = file,
+                modifier = Modifier
+                    .padding(ProtonDimens.ExtraSmallSpacing),
+            )
+
             else -> Unit
         }
     }
@@ -432,28 +446,43 @@ fun VideoFileOverlay(
     file: DriveLink,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier
-            .padding(ProtonDimens.ExtraSmallSpacing),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(ProtonDimens.ExtraSmallSpacing),
-    ) {
 
-        val duration = remember(file.cryptoXAttr) {
-            file.cryptoXAttr
-                .takeIf { it.status == VerificationStatus.Success }
-                ?.let { cryptoXAttr -> cryptoXAttr.value?.toXAttr()?.getOrNull()?.mediaDuration }
-        }
-        if (duration != null) {
+    val duration = remember(file.cryptoXAttr) {
+        file.cryptoXAttr
+            .takeIf { it.status == VerificationStatus.Success }
+            ?.let { cryptoXAttr ->
+                cryptoXAttr.value?.toXAttr()?.getOrNull()?.mediaDuration
+            }
+    }
+    if (duration != null) {
+        Row(
+            modifier = modifier
+                .background(
+                    ProtonTheme.colors.shade80.copy(alpha = 0.7F),
+                    CircleShape
+                )
+                .padding(start = ProtonDimens.ExtraSmallSpacing),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(ProtonDimens.ExtraSmallSpacing),
+        ) {
             Text(
                 text = "%01d:%02d".format(
                     duration.inWholeMinutes,
                     duration.inWholeSeconds % MINUTES.toSeconds(1),
                 ),
-                style = ProtonTheme.typography.overlineStrong.copy(ProtonTheme.colors.shade0)
+                style = ProtonTheme.typography.captionNorm.copy(color = ProtonTheme.colors.shade0)
+            )
+            PhotoIcon(
+                id = R.drawable.ic_proton_play_filled,
+                contentDescription = null,
             )
         }
-        PhotoIcon(R.drawable.ic_proton_play, null)
+    } else {
+        PhotoIcon(
+            modifier = modifier,
+            id = R.drawable.ic_proton_play_filled,
+            contentDescription = null,
+        )
     }
 }
 

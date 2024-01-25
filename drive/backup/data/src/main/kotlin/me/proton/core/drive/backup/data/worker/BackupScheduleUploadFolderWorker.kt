@@ -38,6 +38,7 @@ import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
 import kotlin.time.Duration
 
@@ -62,10 +63,9 @@ class BackupScheduleUploadFolderWorker @AssistedInject constructor(
             ExistingWorkPolicy.KEEP
         }
         workManager.enqueueUniqueWork(
-            backupFolder.uniqueUploadWorkName(userId),
+            backupFolder.uniqueUploadWorkName(),
             existingWorkPolicy,
             BackupUploadFolderWorker.getWorkRequest(
-                userId = userId,
                 backupFolder = backupFolder,
                 delay = delay,
                 tags = tags,
@@ -76,23 +76,25 @@ class BackupScheduleUploadFolderWorker @AssistedInject constructor(
 
     companion object {
         fun getWorkRequest(
-            userId: UserId,
             backupFolder: BackupFolder,
             delay: Duration,
             tags: Collection<String> = emptyList(),
         ): OneTimeWorkRequest {
             return OneTimeWorkRequest.Builder(BackupScheduleUploadFolderWorker::class.java)
-                .setInputData(workDataOf(userId, backupFolder, delay))
-                .addTags(listOf(userId.id, BackupManagerImpl.TAG) + tags)
+                .setInputData(workDataOf(backupFolder, delay))
+                .addTags(listOf(
+                    backupFolder.folderId.userId.id,
+                    backupFolder.folderId.id,
+                    BackupManagerImpl.TAG
+                ) + tags)
                 .build()
         }
 
         internal fun workDataOf(
-            userId: UserId,
             backupFolder: BackupFolder,
             delay: Duration,
         ) = Data.Builder()
-            .putString(KEY_USER_ID, userId.id)
+            .putString(KEY_USER_ID, backupFolder.folderId.userId.id)
             .putString(KEY_SHARE_ID, backupFolder.folderId.shareId.id)
             .putString(KEY_FOLDER_ID, backupFolder.folderId.id)
             .putInt(WorkerKeys.KEY_BUCKET_ID, backupFolder.bucketId)

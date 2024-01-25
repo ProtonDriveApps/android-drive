@@ -23,11 +23,13 @@ import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 
 @Suppress("TestFunctionName")
 internal fun NullableBackupFile(
     bucketId: Int,
+    folderId: FolderId,
     uriString: String = "uri",
     name: String = "photo.jpg",
     hash: String = "hash",
@@ -36,6 +38,7 @@ internal fun NullableBackupFile(
     state: BackupFileState = BackupFileState.IDLE,
 ) = BackupFile(
     bucketId = bucketId,
+    folderId = folderId,
     uriString = uriString,
     mimeType = "image/jpeg",
     name = name,

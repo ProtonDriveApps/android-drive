@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -18,24 +18,22 @@
 
 package me.proton.android.drive.stats
 
-import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.link.domain.extension.rootFolderId
-import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
+import me.proton.android.drive.usecase.GetShareAsPhotoShare
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.stats.domain.usecase.DeleteUploadStats
 import me.proton.core.drive.stats.domain.usecase.SetOrIgnoreInitialBackup
 import javax.inject.Inject
 
 class BackupCompletedSideEffect @Inject constructor(
-    private val getPhotoShare: GetPhotoShare,
+    private val getShareAsPhotoShare: GetShareAsPhotoShare,
     private val deleteUploadStats: DeleteUploadStats,
     private val setOrIgnoreInitialBackup: SetOrIgnoreInitialBackup,
 ) {
 
-    suspend operator fun invoke(userId: UserId) {
-        getPhotoShare(userId).toResult().getOrNull()?.let { share ->
-            setOrIgnoreInitialBackup(share.rootFolderId).getOrThrow()
-            deleteUploadStats(share.rootFolderId).getOrThrow()
+    suspend operator fun invoke(event: Event.BackupCompleted) {
+        getShareAsPhotoShare(event.folderId.shareId)?.let {
+            setOrIgnoreInitialBackup(event.folderId).getOrThrow()
+            deleteUploadStats(event.folderId).getOrThrow()
         }
     }
 }

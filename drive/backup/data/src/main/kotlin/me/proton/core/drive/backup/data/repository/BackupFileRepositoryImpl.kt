@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -21,37 +21,39 @@ package me.proton.core.drive.backup.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.db.BackupDatabase
 import me.proton.core.drive.backup.data.extension.toBackupFile
 import me.proton.core.drive.backup.data.extension.toBackupStateCount
 import me.proton.core.drive.backup.data.extension.toEntity
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BackupStateCount
 import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.data.db.DatabaseLimits.MAX_VARIABLE_NUMBER
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import javax.inject.Inject
 
 class BackupFileRepositoryImpl @Inject constructor(
     private val db: BackupDatabase,
 ) : BackupFileRepository {
     override suspend fun getCountByState(
-        userId: UserId,
         folderId: FolderId,
         state: BackupFileState,
     ): Int = db.backupFileDao.getCountFlowByState(
-        userId = userId,
+        userId = folderId.userId,
         shareId = folderId.shareId.id,
         folderId = folderId.id,
         state = state
     )
 
-    override suspend fun getAllFiles(userId: UserId, fromIndex: Int, count: Int): List<BackupFile> =
+    override suspend fun getAllFiles(folderId: FolderId, fromIndex: Int, count: Int): List<BackupFile> =
         db.backupFileDao.getAll(
-            userId = userId,
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
             limit = count,
             offset = fromIndex
         ).map { entity ->
@@ -59,13 +61,15 @@ class BackupFileRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getAllInFolderWithState(
-        userId: UserId,
+        folderId: FolderId,
         bucketId: Int,
         state: BackupFileState,
         count: Int,
     ): List<BackupFile> =
         db.backupFileDao.getAllInFolderWithState(
-            userId = userId,
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
             bucketId = bucketId,
             state = state,
             limit = count,
@@ -74,14 +78,13 @@ class BackupFileRepositoryImpl @Inject constructor(
         }
 
     override fun getAllInFolderIdWithState(
-        userId: UserId,
         folderId: FolderId,
         state: BackupFileState,
         fromIndex: Int,
         count: Int,
     ): Flow<List<BackupFile>> =
         db.backupFileDao.getAllInFolderIdWithState(
-            userId = userId,
+            userId = folderId.userId,
             shareId = folderId.shareId.id,
             folderId = folderId.id,
             state = state,
@@ -94,13 +97,15 @@ class BackupFileRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getFiles(
-        userId: UserId,
+        folderId: FolderId,
         bucketId: Int,
         fromIndex: Int,
         count: Int,
     ): List<BackupFile> =
         db.backupFileDao.getAllInFolder(
-            userId = userId,
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
             bucketId = bucketId,
             limit = count,
             offset = fromIndex
@@ -109,14 +114,16 @@ class BackupFileRepositoryImpl @Inject constructor(
         }
 
     override suspend fun getFilesToBackup(
-        userId: UserId,
+        folderId: FolderId,
         bucketId: Int,
         maxAttempts: Long,
         fromIndex: Int,
         count: Int,
     ): List<BackupFile> =
         db.backupFileDao.getAllInFolderToBackup(
-            userId = userId,
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
             bucketId = bucketId,
             maxAttempts = maxAttempts,
             limit = count,
@@ -125,18 +132,27 @@ class BackupFileRepositoryImpl @Inject constructor(
             entity.toBackupFile()
         }
 
-    override suspend fun insertFiles(userId: UserId, backupFiles: List<BackupFile>) {
-        backupFiles.map { media -> media.toEntity(userId) }.let { entities ->
+    override suspend fun insertFiles(backupFiles: List<BackupFile>) {
+        backupFiles.map { media -> media.toEntity() }.let { entities ->
             db.backupFileDao.insertOrIgnore(*entities.toTypedArray())
         }
     }
 
-    override suspend fun delete(userId: UserId, uriString: String) {
-        db.backupFileDao.delete(userId, uriString)
+    override suspend fun delete(folderId: FolderId, uriString: String) {
+        db.backupFileDao.delete(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+            uriString = uriString,
+        )
     }
 
-    override fun getBackupStatus(userId: UserId): Flow<BackupStatus> {
-        return db.backupFileDao.getProgression(userId).distinctUntilChanged().map { progress ->
+    override fun getBackupStatus(folderId: FolderId): Flow<BackupStatus> {
+        return db.backupFileDao.getProgression(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+        ).distinctUntilChanged().map { progress ->
             val (pending, failed, total) = progress
             if (pending == 0) {
                 if (failed == 0) {
@@ -150,102 +166,160 @@ class BackupFileRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun markAsEnqueued(userId: UserId, uriStrings: List<String>) {
+    override suspend fun markAsEnqueued(folderId: FolderId, uriStrings: List<String>) {
         db.inTransaction {
             uriStrings.chunked(MAX_VARIABLE_NUMBER).forEach { chunk ->
-                db.backupFileDao.updateState(userId, chunk, BackupFileState.ENQUEUED)
+                db.backupFileDao.updateState(
+                    userId = folderId.userId,
+                    shareId = folderId.shareId.id,
+                    folderId = folderId.id,
+                    uriStrings = chunk,
+                    state = BackupFileState.ENQUEUED,
+                )
             }
         }
     }
 
-    override suspend fun markAsCompleted(userId: UserId, uriString: String) {
-        db.backupFileDao.updateState(userId, uriString, BackupFileState.COMPLETED)
+    override suspend fun markAsCompleted(folderId: FolderId, uriString: String) {
+        db.backupFileDao.updateState(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+            uri = uriString,
+            state = BackupFileState.COMPLETED,
+        )
     }
 
     override suspend fun markAs(
-        userId: UserId,
+        folderId: FolderId,
         uriString: String,
         backupFileState: BackupFileState,
     ) {
-        db.backupFileDao.updateState(userId, uriString, backupFileState)
+        db.backupFileDao.updateState(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+            uri = uriString,
+            state = backupFileState,
+        )
     }
 
-    override suspend fun markAsFailed(userId: UserId, uriString: String) {
+    override suspend fun markAsFailed(folderId: FolderId, uriString: String) {
         db.inTransaction {
-            db.backupFileDao.updateState(userId, uriString, BackupFileState.FAILED)
-            db.backupFileDao.incrementAttempts(userId, uriString)
+            db.backupFileDao.updateState(
+                userId = folderId.userId,
+                shareId = folderId.shareId.id,
+                folderId = folderId.id,
+                uri = uriString,
+                state = BackupFileState.FAILED,
+            )
+            db.backupFileDao.incrementAttempts(
+                userId = folderId.userId,
+                shareId = folderId.shareId.id,
+                folderId = folderId.id,
+                uriString,
+            )
         }
     }
 
     override suspend fun markAs(
-        userId: UserId,
+        folderId: FolderId,
         hashes: List<String>,
         backupFileState: BackupFileState,
     ) {
         db.inTransaction {
             hashes.chunked(MAX_VARIABLE_NUMBER).forEach { chunk ->
-                db.backupFileDao.updateStateByHash(userId, chunk, backupFileState)
+                db.backupFileDao.updateStateByHash(
+                    userId = folderId.userId,
+                    shareId = folderId.shareId.id,
+                    folderId = folderId.id,
+                    hashes = chunk,
+                    state = backupFileState,
+                )
             }
         }
     }
 
+    override suspend fun markAllFilesInFolderIdAsIdle(folderId: FolderId) : Int =
+        db.backupFileDao.updateStateInFolder(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+            target = BackupFileState.IDLE,
+        )
+
     override suspend fun markAllFailedInFolderAsReady(
-        userId: UserId,
+        folderId: FolderId,
         bucketId: Int,
         maxAttempts: Long,
     ): Int =
         db.backupFileDao.updateStateInFolder(
-            userId = userId,
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
             bucketId = bucketId,
             source = BackupFileState.FAILED,
             target = BackupFileState.READY,
             maxAttempts = maxAttempts,
         )
 
-    override suspend fun resetFilesAttempts(userId: UserId): Int =
-        db.backupFileDao.resetFilesAttempts(userId)
+    override suspend fun resetFilesAttempts(folderId: FolderId): Int =
+        db.backupFileDao.resetFilesAttempts(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+        )
 
-    override suspend fun markAllEnqueuedInFolderAsReady(userId: UserId, bucketId: Int) : Int =
+    override suspend fun markAllEnqueuedInFolderAsReady(backupFolder: BackupFolder): Int =
         db.backupFileDao.updateStateInFolder(
-            userId = userId,
-            bucketId = bucketId,
+            userId = backupFolder.folderId.userId,
+            shareId = backupFolder.folderId.shareId.id,
+            folderId = backupFolder.folderId.id,
+            bucketId = backupFolder.bucketId,
             source = BackupFileState.ENQUEUED,
             target = BackupFileState.READY,
         )
 
-    override suspend fun deleteCompletedFromFolder(userId: UserId, bucketId: Int) {
+    override suspend fun deleteCompletedFromFolder(backupFolder: BackupFolder) {
         db.backupFileDao.deleteFromFolderWithState(
-            userId,
-            bucketId,
+            backupFolder.folderId.userId,
+            backupFolder.folderId.shareId.id,
+            backupFolder.folderId.id,
+            backupFolder.bucketId,
             BackupFileState.DUPLICATED,
             BackupFileState.COMPLETED
         )
     }
 
-    override suspend fun deleteFailedForFolderId(userId: UserId, folderId: FolderId) {
+    override suspend fun deleteFailedForFolderId(folderId: FolderId) {
         db.backupFileDao.deleteForFolderIdWithState(
-            userId,
+            folderId.userId,
             folderId.shareId.id,
             folderId.id,
             BackupFileState.FAILED,
         )
     }
 
-    override suspend fun isBackupCompleteForFolder(userId: UserId, bucketId: Int): Boolean {
+    override suspend fun isBackupCompleteForFolder(backupFolder: BackupFolder): Boolean {
         return db.backupFileDao.isAllFilesInState(
-            userId,
-            bucketId,
+            backupFolder.folderId.userId,
+            backupFolder.folderId.shareId.id,
+            backupFolder.folderId.id,
+            backupFolder.bucketId,
             BackupFileState.DUPLICATED,
             BackupFileState.COMPLETED
         )
     }
 
     override suspend fun getStatsForFolder(
-        userId: UserId,
-        bucketId: Int,
+        backupFolder: BackupFolder,
     ): List<BackupStateCount> {
-        return db.backupFileDao.getStatsForFolder(userId, bucketId)
-            .map { entity -> entity.toBackupStateCount() }
+        return db.backupFileDao.getStatsForFolder(
+            backupFolder.folderId.userId,
+            backupFolder.folderId.shareId.id,
+            backupFolder.folderId.id,
+            backupFolder.bucketId,
+        ).map { entity -> entity.toBackupStateCount() }
     }
 
 }

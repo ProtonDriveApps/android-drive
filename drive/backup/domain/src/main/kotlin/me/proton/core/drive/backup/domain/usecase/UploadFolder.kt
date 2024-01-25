@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -21,22 +21,26 @@ package me.proton.core.drive.backup.domain.usecase
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.arch.mapSuccessValueOrNull
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupFile
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.entity.toTimestampMs
 import me.proton.core.drive.base.domain.extension.availableSpace
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.upload.domain.entity.Notifications
 import me.proton.core.drive.drivelink.upload.domain.usecase.UploadFiles
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
+import me.proton.core.drive.linkupload.domain.entity.UploadFileProperties
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksPaged
 import me.proton.core.user.domain.usecase.GetUser
 import me.proton.core.util.kotlin.CoreLogger
@@ -54,13 +58,16 @@ class UploadFolder @Inject constructor(
     private val getUploadFileLinks: GetUploadFileLinksPaged,
     private val getUser: GetUser,
     private val markAsEnqueued: MarkAsEnqueued,
+    private val getInternalStorageInfo: GetInternalStorageInfo,
 ) {
+
     suspend operator fun invoke(
-        userId: UserId,
-        folderId: FolderId,
-        bucketId: Int,
+        backupFolder: BackupFolder,
         tags: List<String> = emptyList(),
     ) = coRunCatching {
+        val bucketId = backupFolder.bucketId
+        val folderId = backupFolder.folderId
+        val userId = folderId.userId
         val uploading = getUploadFileLinks(userId, folderId).size
         val count = configurationProvider.uploadLimitThreshold - uploading
         val user = getUser(userId, false)
@@ -68,7 +75,7 @@ class UploadFolder @Inject constructor(
         CoreLogger.d(BACKUP, "Available space: $availableSpace")
 
         val retryCount = markAllFailedAsReady(
-            userId = userId,
+            folderId = folderId,
             bucketId = bucketId,
             maxAttempts = configurationProvider.backupMaxAttempts,
         ).getOrThrow()
@@ -78,7 +85,7 @@ class UploadFolder @Inject constructor(
 
         val usableSpace = availableSpace - configurationProvider.backupLeftSpace
         val filesToBackup = getFilesToBackup(
-            userId = userId,
+            folderId = folderId,
             bucketId = bucketId,
             maxAttempts = configurationProvider.backupMaxAttempts,
             fromIndex = 0,
@@ -101,33 +108,72 @@ class UploadFolder @Inject constructor(
                 CoreLogger.d(BACKUP, "Exclude size: $excludeSize")
                 CoreLogger.d(BACKUP, "First excluded file size: ${excludeFiles.first().size}")
             }
-            val uris =
-                files.groupBy({ backupFile -> backupFile.uploadPriority }) { backupFile -> backupFile.uriString }
+            val uris = files
+                .toUploadFileDescriptionPriorityCacheOption()
+                .groupBy({ (_, uploadPriority, _) -> uploadPriority }) { (uriString, _, cacheOption) ->
+                    uriString to cacheOption
+                }
             val driveLinkFolder: DriveLink.Folder =
                 getDriveLink(userId, folderId).mapSuccessValueOrNull().filterNotNull().first()
-            uris.forEach { (priority, backupUris) ->
-                uploadFiles(
-                    folder = driveLinkFolder,
-                    uriStrings = backupUris,
-                    shouldDeleteSource = false,
-                    notifications = Notifications.TurnedOff,
-                    cacheOption = CacheOption.NONE,
-                    background = true,
-                    networkTypeProviderType = NetworkTypeProviderType.BACKUP,
-                    shouldBroadcastErrorMessage = false,
-                    priority = priority,
-                    tags = tags,
-                ).getOrThrow()
+            uris.forEach { (priority, uploadFileDescriptionsWithCacheOption) ->
+                uploadFileDescriptionsWithCacheOption
+                    .groupBy({ (_, cacheOption) -> cacheOption }) { (descriptions, _) -> descriptions }
+                    .forEach { (cacheOption, uploadFileDescriptions) ->
+                        uploadFiles(
+                            folder = driveLinkFolder,
+                            uploadFileDescriptions = uploadFileDescriptions,
+                            shouldDeleteSource = false,
+                            notifications = Notifications.TurnedOff,
+                            cacheOption = cacheOption,
+                            background = true,
+                            networkTypeProviderType = NetworkTypeProviderType.BACKUP,
+                            shouldBroadcastErrorMessage = false,
+                            priority = priority,
+                            tags = tags,
+                        ).getOrThrow()
+                    }
             }
-            markAsEnqueued(userId, files.map { backupFile -> backupFile.uriString }).getOrThrow()
+            markAsEnqueued(folderId, files.map { backupFile -> backupFile.uriString }).getOrThrow()
         } else if (filesToBackup.isNotEmpty()) {
             CoreLogger.d(BACKUP, "Cannot continue upload, ${filesToBackup.size} left")
             CoreLogger.d(BACKUP, "First excluded file size: ${filesToBackup.first().size}")
-            stopBackup(userId, BackupError.DriveStorage()).getOrThrow()
+            stopBackup(folderId, BackupError.DriveStorage()).getOrThrow()
         } else {
             CoreLogger.d(BACKUP, "Nothing to upload")
-            cleanUpCompleteBackup(userId, folderId, bucketId).getOrThrow()
+            cleanUpCompleteBackup(backupFolder).getOrThrow()
         }
+    }
+
+    private fun List<BackupFile>.toUploadFileDescriptionPriorityCacheOption(
+    ): List<Triple<UploadFileDescription, Long, CacheOption>> = with(configurationProvider) {
+        val defaultThumbnailsCacheLimit = getInternalStorageInfo()
+            .getOrNull()
+            ?.takeIf { storageInfo ->
+                storageInfo.available.value > backupDefaultThumbnailsCacheLocalStorageThreshold.value
+            }
+            ?.let {
+                backupDefaultThumbnailsCacheLimit
+            }
+            ?: 0
+        this@toUploadFileDescriptionPriorityCacheOption
+            .sortedBy { backupFile -> backupFile.uploadPriority }
+            .mapIndexed { index, backupFile ->
+                Triple(
+                    UploadFileDescription(
+                        uri = backupFile.uriString,
+                        properties = backupFile.lastModified?.let { lastModified ->
+                            UploadFileProperties(
+                                name = backupFile.name,
+                                mimeType = backupFile.mimeType,
+                                size = backupFile.size,
+                                lastModified = lastModified.toTimestampMs()
+                            )
+                        }
+                    ),
+                    backupFile.uploadPriority,
+                    if (index < defaultThumbnailsCacheLimit) CacheOption.THUMBNAIL_DEFAULT else CacheOption.NONE,
+                )
+            }
     }
 }
 

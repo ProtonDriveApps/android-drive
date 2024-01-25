@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -38,6 +38,7 @@ import me.proton.core.data.room.db.BaseDatabase
 import me.proton.core.data.room.db.CommonConverters
 import me.proton.core.drive.announce.event.data.db.EventConverters
 import me.proton.core.drive.backup.data.db.BackupDatabase
+import me.proton.core.drive.backup.data.db.entity.BackupConfigurationEntity
 import me.proton.core.drive.backup.data.db.entity.BackupDuplicateEntity
 import me.proton.core.drive.backup.data.db.entity.BackupErrorEntity
 import me.proton.core.drive.backup.data.db.entity.BackupFileEntity
@@ -202,6 +203,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         FolderMetadataEntity::class,
         TrashMetadataEntity::class,
         // Backup
+        BackupConfigurationEntity::class,
         BackupDuplicateEntity::class,
         BackupErrorEntity::class,
         BackupFileEntity::class,
@@ -310,7 +312,7 @@ abstract class DriveDatabase :
     MediaStoreVersionDatabase {
 
     companion object {
-        const val VERSION = 38
+        const val VERSION = 41
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -350,10 +352,14 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_35_36,
             DriveDatabaseMigrations.MIGRATION_36_37,
             DriveDatabaseMigrations.MIGRATION_37_38,
+            DriveDatabaseMigrations.MIGRATION_38_39,
+            DriveDatabaseMigrations.MIGRATION_39_40,
+            DriveDatabaseMigrations.MIGRATION_40_41,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =
             databaseBuilder<DriveDatabase>(context, "db-drive")
+                .fallbackToDestructiveMigrationOnDowngrade()
                 .apply { migrations.forEach { addMigrations(it) } }
                 .build()
     }

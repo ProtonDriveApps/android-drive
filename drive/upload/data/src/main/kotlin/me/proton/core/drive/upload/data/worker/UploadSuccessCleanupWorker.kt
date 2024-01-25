@@ -24,6 +24,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,8 +34,10 @@ import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
+import me.proton.core.drive.upload.data.extension.log
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.manager.uniqueUploadThrottleWorkName
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
@@ -45,7 +48,6 @@ import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
-import me.proton.core.util.kotlin.CoreLogger
 
 @HiltWorker
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -79,15 +81,16 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
     override suspend fun doLimitedRetryUploadWork(
         uploadFileLink: UploadFileLink,
     ): Result = with(uploadFileLink) {
-        CoreLogger.d(
-            uploadFileLink.logTag(),
-            "UploadSuccessCleanupWorker clean ${uploadFileLink.uriString}",
-        )
-        workManager.enqueueUniqueWork(
-            userId.uniqueUploadThrottleWorkName,
-            ExistingWorkPolicy.KEEP,
-            UploadThrottleWorker.getWorkRequest(userId)
-        )
+        logWorkState("clean ${uploadFileLink.uriString}")
+        coRunCatching {
+            workManager.enqueueUniqueWork(
+                userId.uniqueUploadThrottleWorkName,
+                ExistingWorkPolicy.KEEP,
+                UploadThrottleWorker.getWorkRequest(userId)
+            ).await()
+        }.onFailure { error ->
+            error.log(uploadFileLink.logTag(), "Cannot enqueue UploadSuccessCleanupWorker")
+        }
         announceUploadEvent(
             uploadFileLink = uploadFileLink,
             uploadEvent = Event.Upload(
@@ -97,7 +100,9 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
                 shouldShow = uploadFileLink.shouldAnnounceEvent,
             )
         )
-        removeUploadFile(uploadFileLink = this)
+        removeUploadFile(uploadFileLink = this).onFailure { error ->
+            error.log(uploadFileLink.logTag(), "Cannot remove upload file")
+        }
         Result.success()
     }
 

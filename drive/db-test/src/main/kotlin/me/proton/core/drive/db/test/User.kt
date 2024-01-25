@@ -21,30 +21,33 @@ package me.proton.core.drive.db.test
 import me.proton.android.drive.db.DriveDatabase
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.domain.entity.AccountState
+import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.domain.entity.UserId
 import me.proton.core.user.data.entity.UserEntity
 
 data class UserContext(
     val db: DriveDatabase,
-    val user: UserEntity
+    val user: UserEntity,
+    val account: AccountEntity,
 ) : BaseContext()
 
 suspend fun DriveDatabase.user(
     user: UserEntity = NullableUserEntity(),
     block: suspend UserContext.() -> Unit,
 ) {
+    val account = AccountEntity(
+        userId = user.userId,
+        username = user.userId.id,
+        email = "${user.userId.id}@proton.test",
+        state = AccountState.Ready,
+        sessionId = null,
+        sessionState = null
+    )
     accountDao().insertOrUpdate(
-        AccountEntity(
-            userId = user.userId,
-            username = user.userId.id,
-            email = null,
-            state = AccountState.Ready,
-            sessionId = null,
-            sessionState = null
-        )
+        account
     )
     userDao().insertOrUpdate(user)
-    UserContext(this, user).block()
+    UserContext(this, user, account).block()
 }
 
 val userId = UserId("user-id")
@@ -69,6 +72,6 @@ fun NullableUserEntity(
     subscribed = 0,
     services = 0,
     delinquent = null,
-    passphrase = null,
-    recovery = null
+    passphrase = EncryptedByteArray("user-passphrase".toByteArray()),
+    recovery = null,
 )

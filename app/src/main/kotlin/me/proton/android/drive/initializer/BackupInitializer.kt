@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -26,6 +26,10 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
@@ -36,17 +40,19 @@ import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.handler.UploadErrorHandler
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.usecase.CheckAvailableSpace
 import me.proton.core.drive.backup.domain.usecase.HasFolders
+import me.proton.core.drive.backup.domain.usecase.ObserveConfigurationChanges
 import me.proton.core.drive.backup.domain.usecase.StartBackupAfterErrorResolved
 import me.proton.core.drive.backup.domain.usecase.UnwatchFolders
 import me.proton.core.drive.backup.domain.usecase.WatchFolders
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
-import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.presentation.app.AppLifecycleProvider
@@ -54,6 +60,9 @@ import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.CoreLogger
 
 class BackupInitializer : Initializer<Unit> {
+
+    private val scopes = mutableMapOf<UserId, CoroutineScope>()
+
     override fun create(context: Context) {
 
         EntryPointAccessors.fromApplication(
@@ -61,7 +70,7 @@ class BackupInitializer : Initializer<Unit> {
             BackupInitializerEntryPoint::class.java
         ).run {
             if (!configurationProvider.photosFeatureFlag) {
-                CoreLogger.d(LogTag.BACKUP, "Backup feature disabled")
+                CoreLogger.d(BACKUP, "Backup feature disabled")
                 return
             }
             uploadErrorManager.errors
@@ -70,6 +79,9 @@ class BackupInitializer : Initializer<Unit> {
             accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.STARTED)
                 .onAccountReady { account ->
                     val userId = account.userId
+                    val scope = scopes.getOrPut(userId) {
+                        CoroutineScope(Dispatchers.IO + Job())
+                    }
 
                     backupPermissionsManager.backupPermissions.mapWithPrevious { previous, permissions ->
                         previous is BackupPermissions.Denied && permissions == BackupPermissions.Granted
@@ -80,23 +92,29 @@ class BackupInitializer : Initializer<Unit> {
                             userId = userId,
                             type = BackupErrorType.PERMISSION,
                         ).onFailure { error ->
-                            error.log(LogTag.BACKUP, "Cannot restart the backup")
+                            error.log(BACKUP, "Cannot restart the backup")
                         }
-                    }.launchIn(appLifecycleProvider.lifecycle.coroutineScope)
+                    }.launchIn(scope)
 
                     hasFolders(userId).onEach { hasFolders ->
                         if (hasFolders) {
-                            watchFolders(userId)
+                            watchFolders(userId).onFailure { error ->
+                                error.log(BACKUP, "Cannot watch folders")
+                            }
                         } else {
-                            unwatchFolders(userId)
+                            unwatchFolders(userId).onFailure { error ->
+                                error.log(BACKUP, "Cannot unwatch folders")
+                            }
                         }
-                    }.launchIn(appLifecycleProvider.lifecycle.coroutineScope)
+                    }.launchIn(scope)
+
+                    observeConfigurationChanges(userId).launchIn(scope)
 
                     userManager.observeUser(userId).filterNotNull().onEach { user ->
                         checkAvailableSpace(user).onFailure { error ->
-                            error.log(LogTag.BACKUP, "Cannot check available space")
+                            error.log(BACKUP, "Cannot check available space")
                         }
-                    }.launchIn(appLifecycleProvider.lifecycle.coroutineScope)
+                    }.launchIn(scope)
 
                     rescanOnMediaStoreUpdate(userId).onFailure { error ->
                         error.log("Cannot observe media store updates")
@@ -104,6 +122,7 @@ class BackupInitializer : Initializer<Unit> {
                 }
                 .onAccountRemoved { account ->
                     unwatchFolders(account.userId)
+                    scopes.remove(account.userId)?.cancel()
                 }
         }
     }
@@ -128,5 +147,6 @@ class BackupInitializer : Initializer<Unit> {
         val appLifecycleProvider: AppLifecycleProvider
         val configurationProvider: ConfigurationProvider
         val rescanOnMediaStoreUpdate: RescanOnMediaStoreUpdate
+        val observeConfigurationChanges: ObserveConfigurationChanges
     }
 }

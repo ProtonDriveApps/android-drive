@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
+import me.proton.android.drive.photos.domain.usecase.SetupPhotosConfigurationBackup
 import me.proton.android.drive.photos.presentation.state.LibraryFolder
 import me.proton.android.drive.photos.presentation.state.LibraryFoldersState
 import me.proton.android.drive.photos.presentation.viewevent.LibraryFoldersViewEvent
@@ -73,6 +74,7 @@ class LibraryFoldersViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
     private val enableBackupForFolder: EnableBackupForFolder,
+    private val setupPhotosConfigurationBackup: SetupPhotosConfigurationBackup,
     backupPermissionsManager: BackupPermissionsManager,
 ) : ViewModel() {
 
@@ -174,6 +176,7 @@ class LibraryFoldersViewModel @Inject constructor(
                         folderId = folder.id
                     )
                     if (enable) {
+                        setupPhotosConfigurationBackup(folder.id).getOrThrow()
                         enableBackupForFolder(backupFolder).getOrThrow()
                     } else {
                         navigateToConfirmStopSyncFolder(

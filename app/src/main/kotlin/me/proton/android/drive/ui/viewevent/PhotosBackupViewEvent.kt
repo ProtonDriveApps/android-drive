@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -19,5 +19,6 @@
 package me.proton.android.drive.ui.viewevent
 
 interface PhotosBackupViewEvent {
-    val onToggle: () -> Unit
+    val onToggleBackup: () -> Unit
+    val onToggleMobileData: () -> Unit
 }

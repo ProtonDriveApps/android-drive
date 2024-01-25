@@ -22,7 +22,6 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
@@ -35,7 +34,6 @@ class EnableBackupForFolder @Inject constructor(
         CoreLogger.d(LogTag.BACKUP, "Adding folder: ${backupFolder.bucketId}")
         addFolder(backupFolder).getOrThrow()
         backupManager.sync(
-            userId = backupFolder.folderId.userId,
             backupFolder = backupFolder,
             uploadPriority = UploadFileLink.BACKUP_PRIORITY
         )

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -230,6 +230,26 @@ object DriveDatabaseMigrations {
     val MIGRATION_37_38 = object : Migration(37, 38) {
         override fun migrate(database: SupportSQLiteDatabase) {
             DriveFeatureFlagDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_38_39 = object : Migration(38, 39) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            BackupDatabase.MIGRATION_4.migrate(database)
+        }
+    }
+
+    val MIGRATION_39_40 = object : Migration(39, 40) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            LinkUploadDatabase.MIGRATION_4.migrate(database)
+            BackupDatabase.MIGRATION_5.migrate(database)
+        }
+    }
+
+    val MIGRATION_40_41 = object : Migration(40, 41) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            BackupDatabase.MIGRATION_6.migrate(database)
+            NotificationDatabase.MIGRATION_3.migrate(database)
         }
     }
 }

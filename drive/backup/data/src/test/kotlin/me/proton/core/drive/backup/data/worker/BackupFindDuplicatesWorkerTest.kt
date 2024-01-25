@@ -28,7 +28,6 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.repository.BackupDuplicateRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
@@ -52,11 +51,11 @@ import me.proton.core.drive.base.domain.usecase.GetClientUid
 import me.proton.core.drive.base.domain.usecase.GetOrCreateClientUid
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.data.api.LinkApiDataSource
 import me.proton.core.drive.link.data.api.response.CheckAvailableHashesResponse
 import me.proton.core.drive.link.data.repository.LinkRepositoryImpl
 import me.proton.core.drive.link.domain.entity.CheckAvailableHashesInfo
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
 import org.junit.Assert.assertEquals
@@ -72,6 +71,7 @@ class BackupFindDuplicatesWorkerTest {
 
     @get:Rule
     val database = DriveDatabaseRule()
+    private lateinit var folderId: FolderId
 
     private lateinit var backupFolderRepository: BackupFolderRepositoryImpl
     private lateinit var backupFileRepository: BackupFileRepositoryImpl
@@ -79,12 +79,7 @@ class BackupFindDuplicatesWorkerTest {
     private lateinit var findDuplicatesRepository: FindDuplicatesRepository
     private val linkApiDataSource: LinkApiDataSource = mockk()
     private lateinit var backupFolder: BackupFolder
-
-    private val backupFiles = listOf(
-        backupFile(index = 1, backupFileState = BackupFileState.IDLE),
-        backupFile(index = 2, backupFileState = BackupFileState.IDLE),
-        backupFile(index = 3, backupFileState = BackupFileState.IDLE),
-    )
+    private lateinit var backupFiles: List<BackupFile>
 
     @Before
     fun setUp() = runTest {
@@ -92,15 +87,19 @@ class BackupFindDuplicatesWorkerTest {
         backupFileRepository = BackupFileRepositoryImpl(database.db)
         backupErrorRepository = BackupErrorRepositoryImpl(database.db)
 
-        val folderId = database.myDrive { }
+        folderId = database.myDrive { }
 
         backupFolder = BackupFolder(
             bucketId = 0,
             folderId = folderId,
         )
         backupFolderRepository.insertFolder(backupFolder)
+        backupFiles = listOf(
+            backupFile(index = 3, backupFileState = BackupFileState.IDLE),
+            backupFile(index = 2, backupFileState = BackupFileState.IDLE),
+            backupFile(index = 1, backupFileState = BackupFileState.IDLE),
+        )
         backupFileRepository.insertFiles(
-            userId = userId,
             backupFiles = backupFiles
         )
     }
@@ -115,21 +114,21 @@ class BackupFindDuplicatesWorkerTest {
                 pendingHashDtos = emptyList()
             )
         }
-        val worker = backupFindDuplicatesWorker(userId, backupFolder)
+        val worker = backupFindDuplicatesWorker(backupFolder)
         val result = worker.doWork()
 
         assertEquals(ListenableWorker.Result.success(), result)
         assertEquals(
             listOf(
-                backupFile(index = 1, backupFileState = BackupFileState.POSSIBLE_DUPLICATE),
-                backupFile(index = 2, backupFileState = BackupFileState.READY),
                 backupFile(index = 3, backupFileState = BackupFileState.POSSIBLE_DUPLICATE),
+                backupFile(index = 2, backupFileState = BackupFileState.READY),
+                backupFile(index = 1, backupFileState = BackupFileState.POSSIBLE_DUPLICATE),
             ),
-            backupFileRepository.getAllFiles(userId, 0, 100),
+            backupFileRepository.getAllFiles(folderId, 0, 100),
         )
         assertEquals(
             emptyList<BackupError>(),
-            backupErrorRepository.getAll(userId, 0, 100).first()
+            backupErrorRepository.getAll(folderId, 0, 100).first()
         )
     }
 
@@ -137,18 +136,18 @@ class BackupFindDuplicatesWorkerTest {
     fun retry() = runTest {
         coEvery { linkApiDataSource.checkAvailableHashes(backupFolder.folderId, any()) } throws
                 ApiException(ApiResult.Error.Connection())
-        val worker = backupFindDuplicatesWorker(userId, backupFolder)
+        val worker = backupFindDuplicatesWorker(backupFolder)
 
         val result = worker.doWork()
 
         assertEquals(ListenableWorker.Result.retry(), result)
         assertEquals(
             backupFiles,
-            backupFileRepository.getAllFiles(userId, 0, 100),
+            backupFileRepository.getAllFiles(folderId, 0, 100),
         )
         assertEquals(
             emptyList<BackupError>(),
-            backupErrorRepository.getAll(userId, 0, 100).first()
+            backupErrorRepository.getAll(folderId, 0, 100).first()
         )
     }
 
@@ -156,23 +155,22 @@ class BackupFindDuplicatesWorkerTest {
     fun failure() = runTest {
         coEvery { linkApiDataSource.checkAvailableHashes(backupFolder.folderId, any()) } throws
                 ApiException(ApiResult.Error.Connection())
-        val worker = backupFindDuplicatesWorker(userId, backupFolder, 11)
+        val worker = backupFindDuplicatesWorker(backupFolder, 11)
 
         val result = worker.doWork()
 
         assertEquals(ListenableWorker.Result.failure(), result)
         assertEquals(
             backupFiles,
-            backupFileRepository.getAllFiles(userId, 0, 100),
+            backupFileRepository.getAllFiles(folderId, 0, 100),
         )
         assertEquals(
             listOf(BackupError.Other(true)),
-            backupErrorRepository.getAll(userId, 0, 100).first()
+            backupErrorRepository.getAll(folderId, 0, 100).first()
         )
     }
 
     private fun backupFindDuplicatesWorker(
-        userId: UserId,
         backupFolder: BackupFolder,
         runAttemptCount: Int = 1,
     ): BackupFindDuplicatesWorker {
@@ -226,28 +224,35 @@ class BackupFindDuplicatesWorkerTest {
             })
             .setInputData(
                 BackupFindDuplicatesWorker.workDataOf(
-                    userId, backupFolder
+                    backupFolder
                 )
             )
             .setRunAttemptCount(runAttemptCount)
             .build()
     }
-}
 
-private fun backupFile(index: Int, backupFileState: BackupFileState) = backupFile(
-    uriString = "uri$index",
-    hash = "hash$index",
-    backupFileState = backupFileState,
-)
-
-private fun backupFile(uriString: String, hash: String, backupFileState: BackupFileState) =
-    BackupFile(
-        bucketId = 0,
-        uriString = uriString,
-        mimeType = "",
-        name = "",
-        hash = hash,
-        size = 0.bytes,
-        state = backupFileState,
-        date = TimestampS(0),
+    private fun backupFile(index: Int, backupFileState: BackupFileState) = backupFile(
+        uriString = "uri$index",
+        hash = "hash$index",
+        backupFileState = backupFileState,
+        date = TimestampS(index.toLong()),
     )
+
+    private fun backupFile(
+        uriString: String,
+        hash: String,
+        backupFileState: BackupFileState,
+        date: TimestampS = TimestampS(0),
+    ) =
+        BackupFile(
+            bucketId = 0,
+            folderId = folderId,
+            uriString = uriString,
+            mimeType = "",
+            name = "",
+            hash = hash,
+            size = 0.bytes,
+            state = backupFileState,
+            date = date,
+        )
+}

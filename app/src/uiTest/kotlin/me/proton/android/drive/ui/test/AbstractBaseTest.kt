@@ -53,8 +53,10 @@ abstract class AbstractBaseTest(
     val quarkRule = QuarkRule()
 
     private val configurationRule = before {
-        hiltRule.inject()
+        // Initialize components *before* injecting via Hilt.
         MainInitializer.init(targetContext)
+        // Inject via Hilt/Dagger.
+        hiltRule.inject()
         uiTestHelper.showWelcomeScreenAfterLogin(showWelcomeScreen)
         configureFusion()
     }

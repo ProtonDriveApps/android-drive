@@ -18,19 +18,19 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class DeleteAllBackupError @Inject constructor(
     private val repository: BackupErrorRepository,
 ) {
-    suspend operator fun invoke(userId: UserId) = coRunCatching {
-        repository.deleteAll(userId)
+    suspend operator fun invoke(folderId: FolderId) = coRunCatching {
+        repository.deleteAll(folderId)
     }
-    suspend operator fun invoke(userId: UserId, type : BackupErrorType) = coRunCatching {
-        repository.deleteAllByType(userId, type)
+    suspend operator fun invoke(folderId: FolderId, type: BackupErrorType) = coRunCatching {
+        repository.deleteAllByType(folderId, type)
     }
 }

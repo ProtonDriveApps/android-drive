@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -38,6 +39,7 @@ import me.proton.android.drive.ui.effect.SnackbarEffect
 import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
@@ -100,7 +102,11 @@ abstract class HostFilesViewModel(
         }.cachedIn(viewModelScope)
     private val isRootFolder: Boolean get() = parentId == null
     protected val emptyState = ListContentState.Empty(
-        imageResId = BasePresentation.drawable.empty_folder,
+        imageResId = getThemeDrawableId(
+            light = BasePresentation.drawable.empty_folder_light,
+            dark = BasePresentation.drawable.empty_folder_dark,
+            dayNight = BasePresentation.drawable.empty_folder_daynight,
+        ),
         titleId = if (isRootFolder) I18N.string.title_empty_my_files else I18N.string.title_empty_folder,
         descriptionResId = if (isRootFolder) I18N.string.description_empty_my_files else I18N.string.description_empty_folder,
     )

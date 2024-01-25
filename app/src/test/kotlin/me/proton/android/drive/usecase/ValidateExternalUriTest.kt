@@ -20,7 +20,10 @@ package me.proton.android.drive.usecase
 
 import android.content.Context
 import android.net.Uri
+import io.mockk.coEvery
+import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import me.proton.core.drive.upload.data.resolver.AggregatedUriResolver
 import me.proton.core.test.kotlin.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -30,12 +33,14 @@ import org.robolectric.RuntimeEnvironment
 @RunWith(RobolectricTestRunner::class)
 class ValidateExternalUriTest {
     private val appContext = RuntimeEnvironment.getApplication().applicationContext
-    private val validateExternalUri = ValidateExternalUri(appContext)
+    private val aggregatedUriResolver = mockk<AggregatedUriResolver>()
+    private val validateExternalUri = ValidateExternalUri(appContext, aggregatedUriResolver)
 
     @Test
     fun `valid and invalid Uris`() = runTest {
         // Given
         val uris = validUris + invalidUris(appContext)
+        coEvery { aggregatedUriResolver.schemes } returns setOf("file", "content")
 
         // When
         val result = with(validateExternalUri) {

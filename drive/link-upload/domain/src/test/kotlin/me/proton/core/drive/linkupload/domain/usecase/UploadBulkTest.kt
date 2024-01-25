@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.linkupload.data.factory.UploadBlockFactoryImpl
 import me.proton.core.drive.linkupload.data.repository.LinkUploadRepositoryImpl
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
@@ -60,7 +61,7 @@ class UploadBulkTest {
 
     @Test
     fun `Upload bulk should conserve the order of uris`() = runTest {
-        val uriStrings = listOf(
+        val uploadFileDescriptions = listOf(
             "content://media/external/images/media/001",
             "content://media/external/videos/media/001",
             "content://media/external/images/media/002",
@@ -68,11 +69,11 @@ class UploadBulkTest {
             "content://media/external/images/media/004",
             "content://media/external/videos/media/002",
             "content://com.android.providers.downloads.documents/document/001"
-        )
+        ).map { uri -> UploadFileDescription(uri) }
         val id = createUploadBulk(
             volumeId = VolumeId(volumeId),
             parent = folderId.folder(),
-            uriStrings = uriStrings,
+            uploadFileDescriptions = uploadFileDescriptions,
             networkTypeProviderType = NetworkTypeProviderType.BACKUP,
             shouldAnnounceEvent = false,
             priority = UploadFileLink.BACKUP_PRIORITY,
@@ -82,8 +83,8 @@ class UploadBulkTest {
         val uploadBulk =  deleteUploadBulk(id).getOrThrow()
 
         assertEquals(
-            uriStrings,
-            uploadBulk.uriStrings
+            uploadFileDescriptions,
+            uploadBulk.uploadFileDescriptions,
         )
     }
 

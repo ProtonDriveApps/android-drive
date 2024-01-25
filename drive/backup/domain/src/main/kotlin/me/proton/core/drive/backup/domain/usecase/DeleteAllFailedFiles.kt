@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -27,7 +26,7 @@ import javax.inject.Inject
 class DeleteAllFailedFiles @Inject constructor(
     private val repository: BackupFileRepository,
 ) {
-    suspend operator fun invoke(userId: UserId, folderId: FolderId) = coRunCatching {
-        repository.deleteFailedForFolderId(userId, folderId)
+    suspend operator fun invoke(folderId: FolderId) = coRunCatching {
+        repository.deleteFailedForFolderId(folderId)
     }
 }

@@ -35,7 +35,7 @@ fun <T> Result<T>.toDataResult(): DataResult<T> =
         }
     )
 
-inline fun<T, R> Flow<Result<T>>.transformSuccess(
+inline fun <T, R> Flow<Result<T>>.transformSuccess(
     crossinline onSuccess: suspend FlowCollector<Result<R>>.(value: T) -> Unit,
 ): Flow<Result<R>> =
     transform { result ->
@@ -44,3 +44,14 @@ inline fun<T, R> Flow<Result<T>>.transformSuccess(
             onFailure = { throwable -> emit(Result.failure(throwable)) }
         )
     }
+
+fun <T> List<Result<T>>.throwOnFailure(lazyMessage: (Int) -> String): List<Result<T>> {
+    val failureCount = count { result -> result.isFailure }
+    if (failureCount > 0) {
+        throw IllegalStateException(
+            lazyMessage(failureCount),
+            first { result -> result.isFailure }.exceptionOrNull(),
+        )
+    }
+    return this
+}

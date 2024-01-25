@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -22,10 +22,16 @@ import me.proton.core.drive.backup.data.db.entity.BackupFileEntity
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.share.domain.entity.ShareId
 
 
 fun BackupFileEntity.toBackupFile() = BackupFile(
     bucketId = bucketId,
+    folderId = FolderId(
+        shareId = ShareId(userId, shareId),
+        id = parentId,
+    ),
     uriString = uriString,
     mimeType = mimeType,
     name = name,
@@ -35,4 +41,5 @@ fun BackupFileEntity.toBackupFile() = BackupFile(
     date = TimestampS(createTime),
     uploadPriority = uploadPriority,
     attempts = attempts,
+    lastModified = lastModified?.let(::TimestampS),
 )

@@ -20,38 +20,58 @@ package me.proton.core.drive.backup.data.repository
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.db.BackupDatabase
 import me.proton.core.drive.backup.data.extension.toBackupError
 import me.proton.core.drive.backup.data.extension.toEntity
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import javax.inject.Inject
 
 class BackupErrorRepositoryImpl @Inject constructor(
     private val db: BackupDatabase,
 ) : BackupErrorRepository {
-    override fun getAll(userId: UserId, fromIndex: Int, count: Int): Flow<List<BackupError>> =
-        db.backupErrorDao.getAll(userId, count, fromIndex).map { backupErrorEntities ->
+    override fun getAll(folderId: FolderId, fromIndex: Int, count: Int): Flow<List<BackupError>> =
+        db.backupErrorDao.getAll(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+            limit = count,
+            offset = fromIndex,
+        ).map { backupErrorEntities ->
             backupErrorEntities.map { backupErrorEntity ->
                 backupErrorEntity.toBackupError()
             }
         }
 
-    override suspend fun deleteAll(userId: UserId) {
-        db.backupErrorDao.deleteAll(userId)
+    override suspend fun deleteAll(folderId: FolderId) {
+        db.backupErrorDao.deleteAll(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+        )
     }
 
-    override suspend fun deleteAllByType(userId: UserId, type: BackupErrorType) {
-        db.backupErrorDao.deleteAllByType(userId, type)
+    override suspend fun deleteAllByType(folderId: FolderId, type: BackupErrorType) {
+        db.backupErrorDao.deleteAllByType(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+            type = type,
+        )
     }
 
-    override suspend fun deleteAllRetryable(userId: UserId) {
-        db.backupErrorDao.deleteAllRetryable(userId)
+    override suspend fun deleteAllRetryable(folderId: FolderId) {
+        db.backupErrorDao.deleteAllRetryable(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+        )
     }
 
-    override suspend fun insertError(userId: UserId, error: BackupError) {
-        db.backupErrorDao.insertOrUpdate(error.toEntity(userId))
+    override suspend fun insertError(folderId: FolderId, error: BackupError) {
+        db.backupErrorDao.insertOrUpdate(error.toEntity(folderId))
     }
 }

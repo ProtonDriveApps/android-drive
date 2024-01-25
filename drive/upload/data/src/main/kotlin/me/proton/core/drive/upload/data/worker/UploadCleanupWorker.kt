@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
+import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,6 +38,7 @@ import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
@@ -95,15 +97,18 @@ class UploadCleanupWorker @AssistedInject constructor(
         ?.deserializeOrNull() ?: Event.Upload.Reason.ERROR_OTHER
 
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
-        CoreLogger.d(
-            uploadFileLink.logTag(),
+        uploadFileLink.logWorkState(
             "UploadCleanupWorker clean ${uploadFileLink.uriString}",
         )
-        workManager.enqueueUniqueWork(
-            userId.uniqueUploadThrottleWorkName,
-            ExistingWorkPolicy.KEEP,
-            UploadThrottleWorker.getWorkRequest(userId)
-        )
+        coRunCatching {
+            workManager.enqueueUniqueWork(
+                userId.uniqueUploadThrottleWorkName,
+                ExistingWorkPolicy.KEEP,
+                UploadThrottleWorker.getWorkRequest(userId)
+            ).await()
+        }.onFailure { error ->
+            error.log(uploadFileLink.logTag(), "Cannot enqueue UploadSuccessCleanupWorker")
+        }
         try {
             announceUploadEvent(
                 uploadFileLink = uploadFileLink,
@@ -120,28 +125,41 @@ class UploadCleanupWorker @AssistedInject constructor(
                 )
             )
             getBlockFolder(userId, uploadFileLink)
-                .onFailure { error -> error.log(uploadFileLink.logTag()) }
-                .getOrNull()?.deleteRecursively()
-            removeUploadFile(uploadFileLink)
+                .onFailure { error ->
+                    error.log(uploadFileLink.logTag(), "Cannot get block to delete them")
+                }
+                .onSuccess { file ->
+                    if (!file.deleteRecursively()) {
+                        CoreLogger.w(uploadFileLink.logTag(), "Cannot delete all the files")
+                    }
+                }
+            removeUploadFile(uploadFileLink).onFailure { error ->
+                error.log(uploadFileLink.logTag(), "Cannot remove file")
+            }
             uploadFileLink.linkId?.let { linkId ->
                 cleanupVerifier(
                     userId = userId,
                     shareId = uploadFileLink.shareId.id,
                     linkId = linkId,
                     revisionId = uploadFileLink.draftRevisionId,
-                )
+                ).onFailure { error ->
+                    error.log(uploadFileLink.logTag(), "Cannot cleanup verifier")
+                }
             }
         } finally {
-            uploadFileLink.deleteOnServer()
+            uploadFileLink.deleteOnServer().onFailure { error ->
+                error.log(uploadFileLink.logTag(), "Cannot delete file on server")
+            }
         }
         return Result.success()
     }
 
-    private fun UploadFileLink.deleteOnServer() {
+    private suspend fun UploadFileLink.deleteOnServer() = coRunCatching {
         val linkId = linkId
         if (!linkId.isNullOrEmpty()) {
-            CoreLogger.d(logTag(), "Upload cleanup worker continue with delete on server")
-            val networkType = requireNotNull(networkTypeProviders[networkTypeProviderType]).get()
+            logWorkState("Upload cleanup worker continue with delete on server")
+            val networkType =
+                requireNotNull(networkTypeProviders[networkTypeProviderType]).get(parentLinkId)
             workManager.enqueue(
                 DeleteFileLinkWorker.getWorkRequest(
                     userId = userId,
@@ -150,7 +168,7 @@ class UploadCleanupWorker @AssistedInject constructor(
                     uploadFileId = linkId,
                     networkType = networkType,
                 )
-            )
+            ).await()
         }
     }
 

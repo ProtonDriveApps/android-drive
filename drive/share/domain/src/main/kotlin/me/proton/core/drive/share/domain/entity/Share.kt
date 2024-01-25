@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -17,11 +17,13 @@
  */
 package me.proton.core.drive.share.domain.entity
 
+import kotlinx.serialization.Serializable
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.user.domain.entity.AddressId
 
+@Serializable
 data class ShareId(val userId: UserId, val id: String)
 
 data class Share(

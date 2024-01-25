@@ -34,7 +34,10 @@ class UnlockApp @Inject constructor(
         if (appLockManager.isEnabled() && appLockManager.isLocked()) {
             val appLockKey = appLockRepository.getAppLockKey()
             appLockManager.unlock(
-                buildAppKey(appLockKey.key, requireNotNull(locks[appLockKey.type])).getOrThrow()
+                buildAppKey(
+                    key = appLockKey.key,
+                    lock = requireNotNull(locks[appLockKey.type]) { "Lock with type ${appLockKey.type} is not found" }
+                ).getOrThrow()
             )
         }
     }

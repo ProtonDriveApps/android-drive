@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -323,6 +323,21 @@ fun BackupTemporarilyDisabledState(
 
 @Composable
 fun WaitingConnectivityState(
+    modifier: Modifier = Modifier,
+    onChangeNetwork: () -> Unit,
+) {
+    BackupState(
+        modifier = modifier,
+        icon = R.drawable.ic_no_wifi,
+        tint = ProtonTheme.colors.notificationError,
+        text = I18N.string.photos_error_waiting_wifi_connectivity,
+        action = I18N.string.photos_error_waiting_wifi_connectivity_action,
+        onAction = onChangeNetwork
+    )
+}
+
+@Composable
+fun NoConnectivityState(
     modifier: Modifier = Modifier,
 ) {
     BackupState(

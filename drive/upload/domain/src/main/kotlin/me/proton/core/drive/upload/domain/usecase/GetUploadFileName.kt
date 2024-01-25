@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@ package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.trimForbiddenChars
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import java.util.UUID
 import javax.inject.Inject
@@ -28,7 +29,20 @@ class GetUploadFileName @Inject constructor(
     private val validateLinkName: ValidateLinkName,
 ) {
     suspend operator fun invoke(uriString: String): String =
-        validateLinkName(
-            name = uriResolver.getName(uriString)?.trimForbiddenChars() ?: ""
-        ).getOrNull() ?: UUID.randomUUID().toString()
+        normalized(uriResolver.getName(uriString))
+
+    operator fun invoke(uriInfo: UriResolver.UriInfo?): String =
+        normalized(uriInfo?.name)
+
+    suspend operator fun invoke(
+        uploadFileDescription: UploadFileDescription,
+        uriInfo: UriResolver.UriInfo? = null,
+    ): String =
+        uploadFileDescription.properties?.let { properties -> normalized(properties.name) }
+            ?: uriInfo?.let { invoke(uriInfo) }
+            ?: invoke(uploadFileDescription.uri)
+
+    private fun normalized(name: String?) = validateLinkName(
+        name = name?.trimForbiddenChars() ?: ""
+    ).getOrNull() ?: UUID.randomUUID().toString()
 }

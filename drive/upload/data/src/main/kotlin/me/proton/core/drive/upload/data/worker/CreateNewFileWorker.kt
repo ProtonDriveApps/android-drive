@@ -31,16 +31,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.api.ProtonApiCode.ALREADY_EXISTS
-import me.proton.core.drive.base.data.api.ProtonApiCode.FEATURE_DISABLED
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
-import me.proton.core.drive.base.data.workmanager.onProtonHttpException
-import me.proton.core.drive.base.domain.extension.avoidDuplicateFileName
-import me.proton.core.drive.base.domain.extension.trimForbiddenChars
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.feature.flag.domain.repository.FeatureFlagRepository
 import me.proton.core.drive.feature.flag.domain.usecase.RefreshFeatureFlags
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
@@ -68,19 +62,21 @@ class CreateNewFileWorker @AssistedInject constructor(
     getUploadFileLink: GetUploadFileLink,
     uploadErrorManager: UploadErrorManager,
     private val createNewFile: CreateNewFile,
-    private val updateName: UpdateName,
-    private val refreshFeatureFlags: RefreshFeatureFlags,
+    updateName: UpdateName,
+    refreshFeatureFlags: RefreshFeatureFlags,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
     run: Run,
     done: Done,
-) : UploadCoroutineWorker(
+) : CommonCreateFileWorker(
     appContext = appContext,
     workerParams = workerParams,
     workManager = workManager,
     broadcastMessages = broadcastMessages,
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
+    updateName = updateName,
+    refreshFeatureFlags = refreshFeatureFlags,
     configurationProvider = configurationProvider,
     canRun = canRun,
     run = run,
@@ -91,7 +87,7 @@ class CreateNewFileWorker @AssistedInject constructor(
         uploadFileLink.logWorkState("creating file")
         createNewFile(uploadFileLink)
             .onFailure { error ->
-                error.handleFeatureDisabled() //TODO: this should be handled in Core for any response
+                error.handleFeatureDisabled()
                 val retryable = error.isRetryable || error.handle(uploadFileLink)
                 val canRetry = canRetry()
                 error.log(
@@ -105,28 +101,6 @@ class CreateNewFileWorker @AssistedInject constructor(
             }
         return Result.success()
     }
-
-    private suspend fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean =
-        onProtonHttpException { protonCode ->
-            if (protonCode == ALREADY_EXISTS) {
-                updateName(
-                    uploadFileLinkId = uploadFileLink.id,
-                    name = uploadFileLink.name
-                        .trimForbiddenChars()
-                        .avoidDuplicateFileName()
-                )
-                true
-            } else {
-                false
-            }
-        } ?: false
-
-    private suspend fun Throwable.handleFeatureDisabled() =
-        onProtonHttpException { protonCode ->
-            if (protonCode == FEATURE_DISABLED) {
-                refreshFeatureFlags(userId, FeatureFlagRepository.RefreshId.API_ERROR_FEATURE_DISABLED).getOrNull()
-            }
-        }
 
     companion object {
         fun getWorkRequest(

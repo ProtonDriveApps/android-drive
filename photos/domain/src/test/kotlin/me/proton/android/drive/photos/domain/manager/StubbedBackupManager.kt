@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -25,6 +25,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
+import me.proton.core.drive.link.domain.entity.FolderId
 
 class StubbedBackupManager(
     private val repository: BackupFolderRepository,
@@ -32,42 +33,42 @@ class StubbedBackupManager(
     var started = false
     var stopped = false
 
-    var sync = emptyMap<UserId, BackupFolder>()
+    var sync = listOf<BackupFolder>()
 
-    override suspend fun start(userId: UserId) {
+    override suspend fun start(folderId: FolderId) {
         started = true
     }
 
-    override suspend fun stop(userId: UserId) {
+    override suspend fun stop(folderId: FolderId) {
         stopped = true
     }
 
-    override fun sync(userId: UserId, backupFolder: BackupFolder, uploadPriority: Long) {
-        sync = sync + (userId to backupFolder)
+    override fun sync(backupFolder: BackupFolder, uploadPriority: Long) {
+        sync = sync + backupFolder
     }
 
-    override suspend fun cancelSync(userId: UserId, backupFolder: BackupFolder) {
+    override suspend fun cancelSync(backupFolder: BackupFolder) {
         throw NotImplementedError()
     }
 
-    override fun syncAllFolders(userId: UserId, uploadPriority: Long) {
+    override fun syncAllFolders(folderId: FolderId, uploadPriority: Long) {
         runBlocking {
-            repository.getAll(userId).forEach { folder ->
-                sync(userId, folder, uploadPriority)
+            repository.getAll(folderId).forEach { folder ->
+                sync(folder, uploadPriority)
             }
         }
     }
 
-    override fun watchFolders(userId: UserId) {
+    override suspend fun watchFolders(userId: UserId) {
         throw NotImplementedError()
     }
 
-    override fun unwatchFolders(userId: UserId) {
+    override suspend fun unwatchFolders(userId: UserId) {
         throw NotImplementedError()
     }
 
-    override fun isEnabled(userId: UserId): Flow<Boolean> =
-        repository.hasFolders(userId)
+    override fun isEnabled(folderId: FolderId): Flow<Boolean> =
+        repository.hasFolders(folderId)
 
-    override fun isUploading(): Flow<Boolean> = flowOf(true)
+    override fun isUploading(folderId: FolderId): Flow<Boolean> = flowOf(true)
 }

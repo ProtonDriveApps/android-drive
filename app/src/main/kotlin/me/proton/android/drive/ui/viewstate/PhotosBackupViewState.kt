@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -23,6 +23,13 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class PhotosBackupViewState(
     val title: String,
-    val enableBackupTitle: String,
-    val isBackupEnabled: Boolean,
+    val backup: PhotosBackupOption,
+    val mobileData: PhotosBackupOption,
+)
+
+@Immutable
+data class PhotosBackupOption(
+    val title: String,
+    val checked: Boolean,
+    val enabled: Boolean = true,
 )

@@ -18,16 +18,15 @@
 
 package me.proton.core.drive.backup.data.extension
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.db.entity.BackupFolderEntity
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.link.domain.extension.userId
 
-fun BackupFolder.uniqueScanWorkName(userId: UserId) =
-    "backup_scan_${userId.id}_${bucketId}"
+fun BackupFolder.uniqueScanWorkName() =
+    "backup_scan_${folderId.userId.id}_${folderId.shareId.id}_${folderId.id}_${bucketId}"
 
-fun BackupFolder.uniqueUploadWorkName(userId: UserId) =
-    "backup_upload_${userId.id}_${bucketId}"
+fun BackupFolder.uniqueUploadWorkName() =
+    "backup_upload_${folderId.userId.id}_${folderId.shareId.id}_${folderId.id}_${bucketId}"
 
 fun BackupFolder.toEntity() = BackupFolderEntity(
     userId = folderId.userId,

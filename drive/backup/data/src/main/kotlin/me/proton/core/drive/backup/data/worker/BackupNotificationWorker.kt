@@ -26,10 +26,16 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_FOLDER_ID
+import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_SHARE_ID
+import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.backup.domain.usecase.PostBackupNotification
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.share.domain.entity.ShareId
 
 @HiltWorker
 class BackupNotificationWorker @AssistedInject constructor(
@@ -38,11 +44,12 @@ class BackupNotificationWorker @AssistedInject constructor(
     private val postBackupNotification: PostBackupNotification,
 ) : CoroutineWorker(appContext, workerParams) {
 
-    private val userId =
-        UserId(requireNotNull(inputData.getString(WorkerKeys.KEY_USER_ID)) { "User id is required" })
+    private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
+    private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)))
+    private val folderId = FolderId(shareId, requireNotNull(inputData.getString(KEY_FOLDER_ID)))
 
     override suspend fun doWork(): Result {
-        postBackupNotification(userId).onFailure { error ->
+        postBackupNotification(folderId).onFailure { error ->
             error.log(BACKUP, "Failed to update notification")
         }
         return Result.success()
@@ -50,16 +57,23 @@ class BackupNotificationWorker @AssistedInject constructor(
 
     companion object {
         fun getWorkRequest(
-            userId: UserId,
+            folderId: FolderId,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(BackupNotificationWorker::class.java)
                 .setInputData(
                     Data.Builder()
-                        .putString(WorkerKeys.KEY_USER_ID, userId.id)
+                        .putString(KEY_USER_ID, folderId.userId.id)
+                        .putString(KEY_SHARE_ID, folderId.shareId.id)
+                        .putString(KEY_FOLDER_ID, folderId.id)
                         .build()
                 )
-                .addTags(listOf(userId.id) + tags)
+                .addTags(
+                    listOf(
+                        folderId.userId.id,
+                        folderId.id,
+                    ) + tags
+                )
                 .build()
     }
 }

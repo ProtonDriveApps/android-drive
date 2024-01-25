@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG. 
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -75,6 +75,7 @@ fun Photos(
                         onResolve = viewEvent.onResolve,
                         onGetStorage = viewEvent.onGetStorage,
                         onResolveMissingFolder = viewEvent.onResolveMissingFolder,
+                        onChangeNetwork = viewEvent.onChangeNetwork,
                     )
                 } else {
                     PhotosEmptyWithBackupTurnedOff(
@@ -107,6 +108,7 @@ fun Photos(
                     onScroll = viewEvent.onScroll,
                     onGetStorage = viewEvent.onGetStorage,
                     onResolveMissingFolder = viewEvent.onResolveMissingFolder,
+                    onChangeNetwork = viewEvent.onChangeNetwork,
                     isRefreshEnabled = viewState.isRefreshEnabled,
                     isRefreshing = viewState.listContentState.isRefreshing,
                     onRefresh = viewEvent.onRefresh,

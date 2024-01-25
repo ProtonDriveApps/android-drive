@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -26,12 +26,13 @@ android {
 
 driveModule(
     hilt = true,
+    socialTest = true,
 ) {
+    api(project(":drive:base:data")) // TODO: remove dependencies to log and getHexMessageDigest
     api(project(":drive:drivelink-upload:domain"))
     api(project(":drive:drivelink-crypto:domain"))
     api(project(":drive:feature-flag:domain"))
     implementation(project(":drive:base:domain"))
-    testImplementation(project(":drive:db-test"))
     testImplementation(project(":drive:backup:data"))
     testImplementation(project(":drive:key:data"))
 }

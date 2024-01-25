@@ -26,11 +26,9 @@ import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.userId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -60,14 +58,13 @@ class BackupScheduleUploadFolderWorkerTest {
 
     @Test
     fun create() = runTest {
-        val worker = backupScheduleUploadFolderWorker(userId, backupFolder)
+        val worker = backupScheduleUploadFolderWorker(backupFolder)
         val result = worker.doWork()
 
         assertEquals(ListenableWorker.Result.success(), result)
     }
 
     private fun backupScheduleUploadFolderWorker(
-        userId: UserId,
         backupFolder: BackupFolder,
         delay: Duration = Duration.ZERO,
     ): BackupScheduleUploadFolderWorker {
@@ -87,7 +84,6 @@ class BackupScheduleUploadFolderWorkerTest {
             })
             .setInputData(
                 BackupScheduleUploadFolderWorker.workDataOf(
-                    userId = userId,
                     backupFolder = backupFolder,
                     delay = delay,
                 )

@@ -18,14 +18,13 @@
 
 package me.proton.core.drive.backup.data.repository
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -33,11 +32,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class BackupErrorRepositoryImplTest {
     @get:Rule
     val database = DriveDatabaseRule()
+    private lateinit var folderId: FolderId
 
     private lateinit var repository: BackupErrorRepositoryImpl
 
@@ -54,7 +53,7 @@ class BackupErrorRepositoryImplTest {
 
     @Before
     fun setUp() = runTest {
-        database.myDrive { }
+        folderId = database.myDrive { }
         repository = BackupErrorRepositoryImpl(database.db)
     }
 
@@ -62,57 +61,57 @@ class BackupErrorRepositoryImplTest {
     fun empty() = runTest {
         assertEquals(
             emptyList<BackupError>(),
-            repository.getAll(userId, 0, 100).first(),
+            repository.getAll(folderId, 0, 100).first(),
         )
     }
 
     @Test
     fun getAll() = runTest {
-        repository.insertError(userId, retryable)
-        repository.insertError(userId, nonRetryable)
+        repository.insertError(folderId, retryable)
+        repository.insertError(folderId, nonRetryable)
 
         assertEquals(
             listOf(retryable, nonRetryable),
-            repository.getAll(userId, 0, 100).first(),
+            repository.getAll(folderId, 0, 100).first(),
         )
     }
 
     @Test
     fun deleteAll() = runTest {
-        repository.insertError(userId, retryable)
-        repository.insertError(userId, nonRetryable)
+        repository.insertError(folderId, retryable)
+        repository.insertError(folderId, nonRetryable)
 
-        repository.deleteAll(userId)
+        repository.deleteAll(folderId)
 
         assertEquals(
             emptyList<BackupError>(),
-            repository.getAll(userId, 0, 100).first(),
+            repository.getAll(folderId, 0, 100).first(),
         )
     }
 
     @Test
     fun deleteAllByType() = runTest {
-        repository.insertError(userId, retryable)
-        repository.insertError(userId, nonRetryable)
+        repository.insertError(folderId, retryable)
+        repository.insertError(folderId, nonRetryable)
 
-        repository.deleteAllByType(userId, nonRetryable.type)
+        repository.deleteAllByType(folderId, nonRetryable.type)
 
         assertEquals(
             listOf(retryable),
-            repository.getAll(userId, 0, 100).first(),
+            repository.getAll(folderId, 0, 100).first(),
         )
     }
 
     @Test
     fun deleteAllRetryable() = runTest {
-        repository.insertError(userId, retryable)
-        repository.insertError(userId, nonRetryable)
+        repository.insertError(folderId, retryable)
+        repository.insertError(folderId, nonRetryable)
 
-        repository.deleteAllRetryable(userId)
+        repository.deleteAllRetryable(folderId)
 
         assertEquals(
             listOf(nonRetryable),
-            repository.getAll(userId, 0, 100).first(),
+            repository.getAll(folderId, 0, 100).first(),
         )
     }
 }

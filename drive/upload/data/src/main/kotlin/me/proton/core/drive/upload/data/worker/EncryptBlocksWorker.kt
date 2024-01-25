@@ -32,6 +32,8 @@ import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.domain.entity.FileTypeCategory
+import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -90,7 +92,7 @@ class EncryptBlocksWorker @AssistedInject constructor(
             uploadFileLink = uploadFileLink,
             uriString = uriString,
             shouldDeleteSource = shouldDeleteSource,
-            includePhotoThumbnail = uploadFileLink.isBiggerThenPhotoThumbnail && uploadFileLink.isPhoto(),
+            includePhotoThumbnail = uploadFileLink.isBiggerThenPhotoThumbnail && uploadFileLink.isImagePhoto(),
         )
             .onFailure { error ->
                 val retryable = error.isRetryable
@@ -117,6 +119,9 @@ class EncryptBlocksWorker @AssistedInject constructor(
         return share.type == Share.Type.PHOTO
     }
 
+    private val UploadFileLink.isImage: Boolean get() = mimeType.toFileTypeCategory() == FileTypeCategory.Image
+
+    private suspend fun UploadFileLink.isImagePhoto(): Boolean = isPhoto() && isImage
 
     companion object {
         fun getWorkRequest(

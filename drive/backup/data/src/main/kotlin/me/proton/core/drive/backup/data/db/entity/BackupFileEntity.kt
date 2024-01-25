@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,16 +30,21 @@ import me.proton.core.drive.base.data.db.Column.ATTEMPTS
 import me.proton.core.drive.base.data.db.Column.BUCKET_ID
 import me.proton.core.drive.base.data.db.Column.CREATION_TIME
 import me.proton.core.drive.base.data.db.Column.HASH
+import me.proton.core.drive.base.data.db.Column.LAST_MODIFIED
 import me.proton.core.drive.base.data.db.Column.MIME_TYPE
 import me.proton.core.drive.base.data.db.Column.NAME
+import me.proton.core.drive.base.data.db.Column.PARENT_ID
 import me.proton.core.drive.base.data.db.Column.PRIORITY
+import me.proton.core.drive.base.data.db.Column.SHARE_ID
 import me.proton.core.drive.base.data.db.Column.SIZE
 import me.proton.core.drive.base.data.db.Column.STATE
 import me.proton.core.drive.base.data.db.Column.URI
 import me.proton.core.drive.base.data.db.Column.USER_ID
+import me.proton.core.drive.link.data.db.entity.LinkEntity
+import me.proton.core.drive.share.data.db.ShareEntity
 
 @Entity(
-    primaryKeys = [USER_ID, URI],
+    primaryKeys = [USER_ID, SHARE_ID, PARENT_ID, URI],
     foreignKeys = [
         ForeignKey(
             entity = AccountEntity::class,
@@ -48,19 +53,38 @@ import me.proton.core.drive.base.data.db.Column.USER_ID
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
+            entity = ShareEntity::class,
+            parentColumns = [USER_ID, Column.ID],
+            childColumns = [USER_ID, SHARE_ID],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = LinkEntity::class,
+            parentColumns = [USER_ID, SHARE_ID, Column.ID],
+            childColumns = [USER_ID, SHARE_ID, PARENT_ID],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
             entity = BackupFolderEntity::class,
-            parentColumns = [USER_ID, BUCKET_ID],
-            childColumns = [USER_ID, BUCKET_ID],
+            parentColumns = [USER_ID, SHARE_ID, PARENT_ID, BUCKET_ID],
+            childColumns = [USER_ID, SHARE_ID, PARENT_ID, BUCKET_ID],
             onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [
-        Index(value = [USER_ID, BUCKET_ID]),
+        Index(value = [USER_ID, SHARE_ID, PARENT_ID, BUCKET_ID]),
+        Index(value = [USER_ID, SHARE_ID, PARENT_ID, URI]),
+        Index(value = [USER_ID, SHARE_ID, PARENT_ID, STATE]),
+        Index(value = [USER_ID, SHARE_ID, PARENT_ID, BUCKET_ID, STATE]),
     ]
 )
 data class BackupFileEntity(
     @ColumnInfo(name = USER_ID)
     val userId: UserId,
+    @ColumnInfo(name = SHARE_ID)
+    val shareId: String,
+    @ColumnInfo(name = PARENT_ID)
+    val parentId: String,
     @ColumnInfo(name = BUCKET_ID)
     val bucketId: Int,
     @ColumnInfo(name = URI)
@@ -81,4 +105,6 @@ data class BackupFileEntity(
     val uploadPriority: Long,
     @ColumnInfo(name = ATTEMPTS, defaultValue = "0")
     val attempts: Long = 0,
+    @ColumnInfo(name = LAST_MODIFIED)
+    val lastModified: Long? = null,
 )

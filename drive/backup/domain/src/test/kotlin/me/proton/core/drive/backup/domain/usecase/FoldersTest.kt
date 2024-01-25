@@ -43,7 +43,7 @@ class FoldersTest {
     private lateinit var updateFolder: UpdateFolder
     private lateinit var deleteFolder: DeleteFolder
     private lateinit var deleteFolders: DeleteFolders
-    private lateinit var getFolders: GetFolders
+    private lateinit var getAllFolders: GetAllFolders
 
     @Before
     fun setUp() = runTest {
@@ -53,12 +53,12 @@ class FoldersTest {
         updateFolder = UpdateFolder(repository)
         deleteFolder = DeleteFolder(repository)
         deleteFolders = DeleteFolders(repository)
-        getFolders = GetFolders(repository)
+        getAllFolders = GetAllFolders(repository)
     }
 
     @Test
     fun empty() = runTest {
-        assertEquals(emptyList<BackupFolder>(), getFolders(userId).getOrThrow())
+        assertEquals(emptyList<BackupFolder>(), getAllFolders(folderId).getOrThrow())
     }
 
     @Test
@@ -68,9 +68,9 @@ class FoldersTest {
             folderId = folderId,
         )
 
-        addFolder(backupFolder)
+        addFolder(backupFolder).getOrThrow()
 
-        assertEquals(listOf(backupFolder), getFolders(userId).getOrThrow())
+        assertEquals(listOf(backupFolder), getAllFolders(folderId).getOrThrow())
     }
 
     @Test
@@ -84,12 +84,12 @@ class FoldersTest {
             folderId = folderId,
         )
 
-        addFolder(backupFolder1)
-        addFolder(backupFolder2)
+        addFolder(backupFolder1).getOrThrow()
+        addFolder(backupFolder2).getOrThrow()
 
-        deleteFolders(userId)
+        deleteFolders(folderId).getOrThrow()
 
-        assertEquals(emptyList<BackupFolder>(), getFolders(userId).getOrThrow())
+        assertEquals(emptyList<BackupFolder>(), getAllFolders(folderId).getOrThrow())
     }
 
     @Test
@@ -103,12 +103,12 @@ class FoldersTest {
             folderId = folderId,
         )
 
-        addFolder(backupFolder1)
-        addFolder(backupFolder2)
+        addFolder(backupFolder1).getOrThrow()
+        addFolder(backupFolder2).getOrThrow()
 
-        deleteFolder(userId, 1)
+        deleteFolder(backupFolder1).getOrThrow()
 
-        assertEquals(listOf(backupFolder2), getFolders(userId).getOrThrow())
+        assertEquals(listOf(backupFolder2), getAllFolders(folderId).getOrThrow())
     }
 
     @Test
@@ -120,12 +120,12 @@ class FoldersTest {
             folderId = folderId,
         )
 
-        addFolder(backupFolder)
-        updateFolder(userId, bucketId, updateTime)
+        addFolder(backupFolder).getOrThrow()
+        updateFolder(userId, bucketId, updateTime).getOrThrow()
 
         assertEquals(
             listOf(backupFolder.copy(updateTime = updateTime)),
-            getFolders(userId).getOrThrow(),
+            getAllFolders(folderId).getOrThrow(),
         )
     }
 }

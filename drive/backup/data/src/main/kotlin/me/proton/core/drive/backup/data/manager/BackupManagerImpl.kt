@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ import androidx.work.WorkManager
 import androidx.work.await
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.backup.data.extension.uniqueFolderIdTag
 import me.proton.core.drive.backup.data.extension.uniqueScanWorkName
 import me.proton.core.drive.backup.data.worker.BackupCheckDuplicatesWorker
 import me.proton.core.drive.backup.data.worker.BackupCleanRevisionsWorker
@@ -38,13 +39,15 @@ import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
-import me.proton.core.drive.backup.domain.usecase.GetFolders
+import me.proton.core.drive.backup.domain.usecase.GetAllFolders
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.extension.onDisabledOrNotFound
 import me.proton.core.drive.feature.flag.domain.extension.onEnabled
 import me.proton.core.drive.feature.flag.domain.usecase.WithFeatureFlag
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.upload.domain.manager.UploadWorkManager
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
@@ -53,23 +56,23 @@ import kotlin.time.Duration
 class BackupManagerImpl @Inject constructor(
     private val workManager: WorkManager,
     private val uploadWorkManager: UploadWorkManager,
-    private val getFolders: GetFolders,
+    private val getAllFolders: GetAllFolders,
     private val hasFolders: HasFolders,
     private val withFeatureFlag: WithFeatureFlag,
     private val addBackupError: AddBackupError,
 ) : BackupManager {
 
-    override suspend fun start(userId: UserId) {
-        withFeatureFlag(FeatureFlagId.drivePhotosUploadDisabled(userId)) { featureFlag ->
+    override suspend fun start(folderId: FolderId) {
+        withFeatureFlag(FeatureFlagId.drivePhotosUploadDisabled(folderId.userId)) { featureFlag ->
             featureFlag
                 .onDisabledOrNotFound {
                     CoreLogger.d(BACKUP, "start")
-                    syncAllFolders(userId)
+                    syncAllFolders(folderId)
                 }
                 .onEnabled {
                     CoreLogger.d(BACKUP, "Backup is disabled by DisableDrivePhotosUpload feature flag")
                     addBackupError(
-                        userId = userId,
+                        folderId = folderId,
                         error = BackupError(
                             type = BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED,
                             retryable = true,
@@ -79,56 +82,53 @@ class BackupManagerImpl @Inject constructor(
         }
     }
 
-    override suspend fun stop(userId: UserId) {
+    override suspend fun stop(folderId: FolderId) {
         CoreLogger.d(BACKUP, "stop")
         workManager.getWorkInfosByTag(TAG).await()
-            .filter { workInfo -> workInfo.tags.contains(userId.id) }
+            .filter { workInfo -> workInfo.tags.contains(folderId.id) }
             .forEach { workInfo -> workManager.cancelWorkById(workInfo.id) }
-        getFolders(userId).getOrNull()?.forEach { backupFolder ->
-            uploadWorkManager.cancelAllByFolder(userId, backupFolder.folderId)
+        getAllFolders(folderId).getOrNull()?.forEach { backupFolder ->
+            uploadWorkManager.cancelAllByFolder(backupFolder.folderId.userId, backupFolder.folderId)
         }
     }
 
-    override suspend fun cancelSync(userId: UserId, backupFolder: BackupFolder) {
+    override suspend fun cancelSync(backupFolder: BackupFolder) {
         CoreLogger.d(BACKUP, "Canceling sync: ${backupFolder.bucketId}")
-        workManager.cancelUniqueWork(backupFolder.uniqueScanWorkName(userId)).await()
+        workManager.cancelUniqueWork(
+            backupFolder.uniqueScanWorkName()
+        ).await()
     }
 
-    override fun sync(userId: UserId, backupFolder: BackupFolder, uploadPriority: Long) {
+    override fun sync(backupFolder: BackupFolder, uploadPriority: Long) {
         CoreLogger.d(BACKUP, "Sync bucket: ${backupFolder.bucketId}")
         workManager
             .beginUniqueWork(
-                backupFolder.uniqueScanWorkName(userId),
+                backupFolder.uniqueScanWorkName(),
                 ExistingWorkPolicy.APPEND_OR_REPLACE,
                 BackupScanFolderWorker.getWorkRequest(
-                    userId = userId,
                     backupFolder = backupFolder,
-                    uploadPriority,
+                    uploadPriority = uploadPriority,
                 )
             )
-            .then(BackupNotificationWorker.getWorkRequest(userId))
+            .then(BackupNotificationWorker.getWorkRequest(backupFolder.folderId))
             .then(
                 BackupFindDuplicatesWorker.getWorkRequest(
-                    userId = userId,
                     backupFolder = backupFolder,
                 )
             )
             .then(
                 BackupCheckDuplicatesWorker.getWorkRequest(
-                    userId = userId,
                     backupFolder = backupFolder,
                 )
             )
-            .then(BackupNotificationWorker.getWorkRequest(userId))
+            .then(BackupNotificationWorker.getWorkRequest(backupFolder.folderId))
             .then(
                 BackupCleanRevisionsWorker.getWorkRequest(
-                    userId = userId,
                     folderId = backupFolder.folderId
                 )
             )
             .then(
                 BackupScheduleUploadFolderWorker.getWorkRequest(
-                    userId = userId,
                     backupFolder = backupFolder,
                     delay = Duration.ZERO,
                 )
@@ -136,33 +136,35 @@ class BackupManagerImpl @Inject constructor(
             .enqueue()
     }
 
-    override fun syncAllFolders(userId: UserId, uploadPriority: Long) {
-        workManager.enqueue(BackupSyncFoldersWorker.getWorkRequest(userId, uploadPriority))
+    override fun syncAllFolders(folderId: FolderId, uploadPriority: Long) {
+        workManager.enqueue(BackupSyncFoldersWorker.getWorkRequest(folderId, uploadPriority))
     }
 
-    override fun watchFolders(userId: UserId) {
+    override suspend fun watchFolders(userId: UserId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            CoreLogger.d(BACKUP, "Watch folders for $userId")
             workManager.enqueueUniqueWork(
                 BackupFileWatcherWorker.uniqueWorkName(userId),
-                ExistingWorkPolicy.APPEND_OR_REPLACE,
+                ExistingWorkPolicy.KEEP,
                 BackupFileWatcherWorker.getWorkRequest(userId),
-            )
+            ).await()
         }
     }
 
-    override fun unwatchFolders(userId: UserId) {
+    override suspend fun unwatchFolders(userId: UserId) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            workManager.cancelUniqueWork(BackupFileWatcherWorker.uniqueWorkName(userId))
+            CoreLogger.d(BACKUP, "Unwatch folders for $userId")
+            workManager.cancelUniqueWork(BackupFileWatcherWorker.uniqueWorkName(userId)).await()
         }
     }
 
-    override fun isEnabled(userId: UserId): Flow<Boolean> = hasFolders(userId)
+    override fun isEnabled(folderId: FolderId): Flow<Boolean> = hasFolders(folderId)
 
-    override fun isUploading(): Flow<Boolean> = uploadWorkManager.isUploading(TAG_UPLOAD)
-
+    override fun isUploading(folderId: FolderId): Flow<Boolean> = uploadWorkManager.isUploading(
+        folderId.uniqueFolderIdTag()
+    )
 
     internal companion object {
         const val TAG = "backup"
-        const val TAG_UPLOAD = "backup_upload"
     }
 }

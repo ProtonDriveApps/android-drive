@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@ package me.proton.core.drive.linkupload.data.db
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
+import me.proton.core.data.room.db.extension.addTableColumn
 import me.proton.core.data.room.db.extension.dropTable
 import me.proton.core.data.room.db.migration.DatabaseMigration
 import me.proton.core.drive.base.data.db.Column
@@ -156,6 +157,14 @@ interface LinkUploadDatabase : Database {
                         ALTER TABLE `UploadBulkEntity` ADD COLUMN ${Column.SHOULD_BROADCAST_ERROR_MESSAGE} INTEGER NOT NULL DEFAULT true
                     """.trimIndent()
                 )
+            }
+        }
+        val MIGRATION_4 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.addTableColumn("UploadBulkUriStringEntity", Column.NAME, "TEXT")
+                database.addTableColumn("UploadBulkUriStringEntity", Column.MIME_TYPE, "TEXT")
+                database.addTableColumn("UploadBulkUriStringEntity", Column.SIZE, "INTEGER")
+                database.addTableColumn("UploadBulkUriStringEntity", Column.LAST_MODIFIED, "INTEGER")
             }
         }
     }

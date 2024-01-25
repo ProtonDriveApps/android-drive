@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@ android {
     namespace = "me.proton.core.drive.share.domain"
 }
 
-driveModule(hilt = true) {
+driveModule(
+    hilt = true,
+    serialization = true,
+) {
     api(project(":drive:volume:domain"))
 }

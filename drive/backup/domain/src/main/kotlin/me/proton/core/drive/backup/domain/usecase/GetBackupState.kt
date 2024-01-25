@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -24,8 +24,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
-import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.backup.domain.entity.BackupConfiguration
 import me.proton.core.drive.backup.domain.entity.BackupError
+import me.proton.core.drive.backup.domain.entity.BackupNetworkType
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.entity.BackupState
 import me.proton.core.drive.backup.domain.entity.BackupStatus
@@ -33,6 +34,7 @@ import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -44,9 +46,10 @@ class GetBackupState @Inject constructor(
     private val getErrors: GetErrors,
     private val getAllBuckets: GetAllBuckets,
     private val configurationProvider: ConfigurationProvider,
+    private val getConfiguration: GetConfiguration,
 ) {
-    operator fun invoke(userId: UserId): Flow<BackupState> =
-        backupManager.isEnabled(userId).transformLatest { enable ->
+    operator fun invoke(folderId: FolderId): Flow<BackupState> =
+        backupManager.isEnabled(folderId).transformLatest { enable ->
             if (!enable) {
                 emitAll(
                     getAllBuckets().map { bucketEntries ->
@@ -62,8 +65,8 @@ class GetBackupState @Inject constructor(
             } else {
                 emitAll(
                     combine(
-                        getBackupStatus(userId),
-                        errors(userId),
+                        getBackupStatus(folderId),
+                        errors(folderId),
                     ) { backupStatus, errors ->
                         BackupState(
                             isBackupEnabled = true,
@@ -86,21 +89,35 @@ class GetBackupState @Inject constructor(
             }
         }
 
-    private fun errors(userId: UserId) = combine(
+    private fun errors(folderId: FolderId) = combine(
         permissionsManager.backupPermissions,
-        getErrors(userId),
+        getErrors(folderId),
         connectivityManager.connectivity,
-        backupManager.isUploading(),
-    ) { permissions, errors, connectivity, uploading ->
-        (errors + permissionError(permissions) + connectivityError(connectivity, uploading))
-            .filterNotNull().distinct()
+        getConfiguration(folderId),
+        backupManager.isUploading(folderId),
+    ) { permissions, errors, connectivity, configuration, uploading ->
+        val connectivityError = connectivityError(connectivity, configuration, uploading)
+        (errors + permissionError(permissions) + connectivityError).filterNotNull().distinct()
     }
 
     private fun connectivityError(
         connectivity: BackupConnectivityManager.Connectivity,
+        configuration: BackupConfiguration?,
         uploading: Boolean,
-    ) = if (connectivity != BackupConnectivityManager.Connectivity.UNMETERED && !uploading) {
-        BackupError.Connectivity()
+    ) = if (!uploading) {
+        when (connectivity) {
+            BackupConnectivityManager.Connectivity.NONE -> when (configuration?.networkType) {
+                BackupNetworkType.UNMETERED -> BackupError.WifiConnectivity()
+                else -> BackupError.Connectivity()
+            }
+
+            BackupConnectivityManager.Connectivity.UNMETERED -> null
+
+            BackupConnectivityManager.Connectivity.CONNECTED -> when (configuration?.networkType) {
+                BackupNetworkType.UNMETERED -> BackupError.WifiConnectivity()
+                else -> null
+            }
+        }
     } else {
         null
     }

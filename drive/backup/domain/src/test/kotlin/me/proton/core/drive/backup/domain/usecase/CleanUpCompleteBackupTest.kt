@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -49,6 +49,7 @@ class CleanUpCompleteBackupTest {
     @get:Rule
     val database = DriveDatabaseRule()
     private lateinit var folderId: FolderId
+    private lateinit var backupFolder: BackupFolder
 
     private lateinit var cleanUpCompleteBackup: CleanUpCompleteBackup
     private lateinit var setFiles: SetFiles
@@ -70,7 +71,8 @@ class CleanUpCompleteBackupTest {
             announceEvent = AnnounceEvent(setOf(handler)),
         )
         val addFolder = AddFolder(backupFolderRepository)
-        addFolder(BackupFolder(bucketId, folderId))
+        backupFolder = BackupFolder(bucketId, folderId)
+        addFolder(backupFolder).getOrThrow()
         setFiles = SetFiles(backupFileRepository)
         markAsCompleted = MarkAsCompleted(backupFileRepository)
         getBackupStatus = GetBackupStatus(backupFileRepository)
@@ -78,14 +80,14 @@ class CleanUpCompleteBackupTest {
 
     @Test
     fun empty() = runTest {
-        cleanUpCompleteBackup(userId, folderId, bucketId)
+        cleanUpCompleteBackup(backupFolder).getOrThrow()
 
         assertEquals(
             BackupStatus.Complete(totalBackupPhotos = 0),
-            getBackupStatus(userId).first(),
+            getBackupStatus(folderId).first(),
         )
         assertEquals(
-            mapOf(userId to listOf(Event.BackupCompleted)),
+            mapOf(userId to listOf(Event.BackupCompleted(folderId))),
             handler.events,
         )
     }
@@ -93,25 +95,25 @@ class CleanUpCompleteBackupTest {
     @Test
     fun complete() = runTest {
         setFiles(
-            userId, listOf(
+            listOf(
                 backupFile(bucketId, "uri1"),
                 backupFile(bucketId, "uri2"),
                 backupFile(bucketId, "uri3"),
             )
-        )
+        ).getOrThrow()
 
-        markAsCompleted(userId, "uri1")
-        markAsCompleted(userId, "uri2")
-        markAsCompleted(userId, "uri3")
+        markAsCompleted(folderId, "uri1").getOrThrow()
+        markAsCompleted(folderId, "uri2").getOrThrow()
+        markAsCompleted(folderId, "uri3").getOrThrow()
 
-        cleanUpCompleteBackup(userId, folderId, bucketId)
+        cleanUpCompleteBackup(backupFolder).getOrThrow()
 
         assertEquals(
             BackupStatus.Complete(totalBackupPhotos = 0),
-            getBackupStatus(userId).first(),
+            getBackupStatus(folderId).first(),
         )
         assertEquals(
-            mapOf(userId to listOf(Event.BackupCompleted)),
+            mapOf(userId to listOf(Event.BackupCompleted(folderId))),
             handler.events,
         )
     }
@@ -119,20 +121,20 @@ class CleanUpCompleteBackupTest {
     @Test
     fun incomplete() = runTest {
         setFiles(
-            userId, listOf(
+            listOf(
                 backupFile(bucketId, "uri1"),
                 backupFile(bucketId, "uri2"),
                 backupFile(bucketId, "uri3"),
             )
-        )
+        ).getOrThrow()
 
-        markAsCompleted(userId, "uri1")
+        markAsCompleted(folderId, "uri1").getOrThrow()
 
-        cleanUpCompleteBackup(userId, folderId, bucketId)
+        cleanUpCompleteBackup(backupFolder).getOrThrow()
 
         assertEquals(
             BackupStatus.InProgress(totalBackupPhotos = 3, pendingBackupPhotos = 2),
-            getBackupStatus(userId).first(),
+            getBackupStatus(folderId).first(),
         )
         assertEquals(
             emptyMap<UserId, List<Event>>(),
@@ -146,6 +148,7 @@ class CleanUpCompleteBackupTest {
         uriString: String,
     ) = BackupFile(
         bucketId = bucketId,
+        folderId = folderId,
         uriString = uriString,
         mimeType = "",
         name = "",

@@ -57,6 +57,7 @@ import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.Action
+import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -196,6 +197,12 @@ class FilesViewModel @Inject constructor(
         layoutType,
         selected,
     ) { driveLink, sorting, contentState, appendingState, layoutType, selected ->
+        val listContentState = when (contentState) {
+            is ListContentState.Empty -> contentState.copy(
+                imageResId = emptyStateImageResId,
+            )
+            else -> contentState
+        }
         if (selected.isEmpty()) {
             topBarActions.value = setOf(addFilesAction)
         } else {
@@ -221,7 +228,7 @@ class FilesViewModel @Inject constructor(
                 CorePresentation.drawable.ic_arrow_back
             },
             sorting = sorting,
-            listContentState = contentState,
+            listContentState = listContentState,
             listContentAppendingState = appendingState,
             isGrid = layoutType == LayoutType.GRID,
             isRefreshEnabled = selected.isEmpty(),
@@ -234,10 +241,15 @@ class FilesViewModel @Inject constructor(
         get() = _homeEffect.asSharedFlow()
 
     private val emptyState = ListContentState.Empty(
-        imageResId = BasePresentation.drawable.empty_folder,
+        imageResId = emptyStateImageResId,
         titleId = if (isRootFolder) I18N.string.title_empty_my_files else I18N.string.title_empty_folder,
         descriptionResId = if (isRootFolder) I18N.string.description_empty_my_files else I18N.string.description_empty_folder,
         actionResId = I18N.string.action_empty_files_add_files,
+    )
+    private val emptyStateImageResId: Int get() = getThemeDrawableId(
+        light = BasePresentation.drawable.empty_folder_light,
+        dark = BasePresentation.drawable.empty_folder_dark,
+        dayNight = BasePresentation.drawable.empty_folder_daynight,
     )
     private var viewEvent: FilesViewEvent? = null
     fun viewEvent(

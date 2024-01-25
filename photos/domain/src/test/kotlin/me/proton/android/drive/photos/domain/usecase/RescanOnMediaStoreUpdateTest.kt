@@ -21,12 +21,13 @@ package me.proton.android.drive.photos.domain.usecase
 import kotlinx.coroutines.test.runTest
 import me.proton.android.drive.photos.domain.manager.StubbedBackupManager
 import me.proton.android.drive.photos.domain.repository.StubbedMediaStoreVersionRepository
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.usecase.AddFolder
+import me.proton.core.drive.backup.domain.usecase.GetAllFolders
 import me.proton.core.drive.backup.domain.usecase.RescanAllFolders
 import me.proton.core.drive.backup.domain.usecase.ResetFoldersUpdateTime
+import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
@@ -64,11 +65,18 @@ class RescanOnMediaStoreUpdateTest {
             folderId = folderId,
             updateTime = TimestampS(1),
         )
-        addFolder(backupFolder)
-        rescanAllFolders = RescanAllFolders(ResetFoldersUpdateTime(folderRepository), backupManager)
+        addFolder(backupFolder).getOrThrow()
+        rescanAllFolders = RescanAllFolders(
+            resetFoldersUpdateTime = ResetFoldersUpdateTime(folderRepository),
+            syncFolders = SyncFolders(
+                getAllFolders = GetAllFolders(folderRepository),
+                backupManager = backupManager,
+            )
+        )
         rescanOnMediaStoreUpdate = RescanOnMediaStoreUpdate(
-            mediaStoreVersionRepository,
-            rescanAllFolders
+            mediaStoreVersionRepository = mediaStoreVersionRepository,
+            getAllFolders = GetAllFolders(folderRepository),
+            rescanAllFolders = rescanAllFolders,
         )
     }
 
@@ -79,9 +87,9 @@ class RescanOnMediaStoreUpdateTest {
             currentVersion = null
         }
 
-        rescanOnMediaStoreUpdate(userId)
+        rescanOnMediaStoreUpdate(userId).getOrThrow()
 
-        assertEquals(emptyMap<UserId, BackupFolder>(), backupManager.sync)
+        assertEquals(emptyList<BackupFolder>(), backupManager.sync)
     }
 
     @Test
@@ -91,9 +99,9 @@ class RescanOnMediaStoreUpdateTest {
             currentVersion = "1"
         }
 
-        rescanOnMediaStoreUpdate(userId)
+        rescanOnMediaStoreUpdate(userId).getOrThrow()
 
-        assertEquals(emptyMap<UserId, BackupFolder>(), backupManager.sync)
+        assertEquals(emptyList<BackupFolder>(), backupManager.sync)
     }
 
     @Test
@@ -103,9 +111,9 @@ class RescanOnMediaStoreUpdateTest {
             currentVersion = "1"
         }
 
-        rescanOnMediaStoreUpdate(userId)
+        rescanOnMediaStoreUpdate(userId).getOrThrow()
 
-        assertEquals(emptyMap<UserId, BackupFolder>(), backupManager.sync)
+        assertEquals(emptyList<BackupFolder>(), backupManager.sync)
     }
 
     @Test
@@ -115,8 +123,8 @@ class RescanOnMediaStoreUpdateTest {
             currentVersion = "2"
         }
 
-        rescanOnMediaStoreUpdate(userId)
+        rescanOnMediaStoreUpdate(userId).getOrThrow()
 
-        assertEquals(mapOf(userId to backupFolder.copy(updateTime = null)), backupManager.sync)
+        assertEquals(listOf(backupFolder.copy(updateTime = null)), backupManager.sync)
     }
 }

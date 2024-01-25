@@ -44,6 +44,7 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
 
 @HiltWorker
@@ -68,7 +69,7 @@ class BackupFindDuplicatesWorker @AssistedInject constructor(
     }
 
     override suspend fun doWork(): Result {
-        findDuplicates(userId, BackupFolder(bucketId, folderId, timestamp)).onFailure { error ->
+        findDuplicates(BackupFolder(bucketId, folderId, timestamp)).onFailure { error ->
             val canRetry = runAttemptCount <= configurationProvider.maxApiAutoRetries
             val retryable = error.isRetryable
             error.log(
@@ -81,7 +82,7 @@ class BackupFindDuplicatesWorker @AssistedInject constructor(
             return if (canRetry && retryable) {
                 Result.retry()
             } else {
-                addBackupError(userId, BackupError.Other(retryable))
+                addBackupError(folderId, BackupError.Other(retryable))
                 Result.failure()
             }
         }
@@ -90,7 +91,6 @@ class BackupFindDuplicatesWorker @AssistedInject constructor(
 
     companion object {
         fun getWorkRequest(
-            userId: UserId,
             backupFolder: BackupFolder,
             tags: Collection<String> = emptyList(),
         ) = OneTimeWorkRequest.Builder(BackupFindDuplicatesWorker::class.java)
@@ -99,15 +99,18 @@ class BackupFindDuplicatesWorker @AssistedInject constructor(
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build()
             )
-            .setInputData(workDataOf(userId, backupFolder))
-            .addTags(listOf(userId.id, BackupManagerImpl.TAG) + tags)
+            .setInputData(workDataOf(backupFolder))
+            .addTags(listOf(
+                backupFolder.folderId.userId.id,
+                backupFolder.folderId.id,
+                BackupManagerImpl.TAG
+            ) + tags)
             .build()
 
         internal fun workDataOf(
-            userId: UserId,
             backupFolder: BackupFolder,
         ) = Data.Builder()
-            .putString(KEY_USER_ID, userId.id)
+            .putString(KEY_USER_ID, backupFolder.folderId.userId.id)
             .putString(KEY_SHARE_ID, backupFolder.folderId.shareId.id)
             .putString(KEY_FOLDER_ID, backupFolder.folderId.id)
             .putInt(WorkerKeys.KEY_BUCKET_ID, backupFolder.bucketId)

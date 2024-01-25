@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
@@ -66,6 +67,7 @@ import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.usecase.GetBackupState
 import me.proton.core.drive.backup.domain.usecase.RetryBackup
+import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.combine
@@ -77,6 +79,7 @@ import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.common.Action
+import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.extension.launchApplicationDetailsSettings
 import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -93,6 +96,7 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
+import me.proton.core.drive.linkupload.domain.entity.UploadFileLink.Companion.RECENT_BACKUP_PRIORITY
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.photo.domain.usecase.GetPhotoCount
 import me.proton.core.drive.share.domain.entity.Share
@@ -127,6 +131,7 @@ class PhotosViewModel @Inject constructor(
     val backupPermissionsViewModel: BackupPermissionsViewModel,
     private val photoDriveLinks: PhotoDriveLinks,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
+    private val syncFolders: SyncFolders,
 ) : SelectionViewModel(
     savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks
 ), HomeTabViewModel {
@@ -245,20 +250,35 @@ class PhotosViewModel @Inject constructor(
         get() = _listEffect.asSharedFlow()
 
     private val emptyState = ListContentState.Empty(
-        imageResId = R.drawable.img_photos_no_backup_yet,
+        imageResId = emptyStateImageResId,
         titleId = I18N.string.photos_empty_title,
         descriptionResId = I18N.string.photos_empty_description,
         actionResId = 0,
     )
+    private val emptyStateImageResId: Int get() = getThemeDrawableId(
+        light = R.drawable.empty_photos_light,
+        dark = R.drawable.empty_photos_dark,
+        dayNight = R.drawable.empty_photos_daynight,
+    )
+
+    private val backupState = parentFolderId.filterNotNull().flatMapLatest { folderId ->
+        getBackupState(folderId = folderId)
+    }
 
     val viewState: Flow<PhotosViewState> = combine(
         selected,
         listContentState,
-        getBackupState(userId = userId),
+        backupState,
         getPhotoCount(userId = userId),
         firstVisibleItemIndex,
         forceStatusExpand,
-    ) { selected, listContentState, backupState, count, firstVisibleItemIndex, forceStatusExpand ->
+    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand ->
+        val listContentState = when (contentState) {
+            is ListContentState.Empty -> contentState.copy(
+                imageResId = emptyStateImageResId,
+            )
+            else -> contentState
+        }
         if (selected.isEmpty()) {
             topBarActions.value = emptySet()
         } else {
@@ -352,6 +372,7 @@ class PhotosViewModel @Inject constructor(
         override val onStatusClicked = this@PhotosViewModel::onStatusClicked
         override val onGetStorage: () -> Unit = navigateToSubscription
         override val onResolveMissingFolder: () -> Unit = navigateToBackupSettings
+        override val onChangeNetwork: () -> Unit = navigateToBackupSettings
         override val onResolve: () -> Unit = {
             parentFolderId.value?.let { folderId ->
                 navigateToPhotosIssues(folderId)
@@ -374,8 +395,11 @@ class PhotosViewModel @Inject constructor(
     }
 
     private fun onEnable() {
-        backupPermissionsViewModel.toggleBackup(userId) { state ->
-            onPhotoBackupState(state)
+        parentFolderId.value?.let { folderId ->
+            backupPermissionsViewModel.toggleBackup(folderId) { state ->
+                onPhotoBackupState(state)
+            }
+
         }
     }
 
@@ -395,17 +419,19 @@ class PhotosViewModel @Inject constructor(
     }
 
     private suspend fun enablePhotosBackup() {
-        enablePhotosBackup(userId).onSuccess { state ->
-            onPhotoBackupState(state)
-        }.onFailure { error ->
-            broadcastMessages(
-                userId = userId,
-                message = error.getDefaultMessage(
-                    appContext,
-                    configurationProvider.useExceptionMessage
-                ),
-                type = BroadcastMessage.Type.ERROR,
-            )
+        parentFolderId.value?.let { folderId ->
+            enablePhotosBackup(folderId).onSuccess { state ->
+                onPhotoBackupState(state)
+            }.onFailure { error ->
+                broadcastMessages(
+                    userId = userId,
+                    message = error.getDefaultMessage(
+                        appContext,
+                        configurationProvider.useExceptionMessage
+                    ),
+                    type = BroadcastMessage.Type.ERROR,
+                )
+            }
         }
     }
 
@@ -440,16 +466,18 @@ class PhotosViewModel @Inject constructor(
 
     private fun onRetry() {
         viewModelScope.launch {
-            retryBackup(userId).onFailure { error ->
-                error.log(BACKUP, "Cannot retry on backup")
-                broadcastMessages(
-                    userId = userId,
-                    message = error.getDefaultMessage(
-                        appContext,
-                        configurationProvider.useExceptionMessage
-                    ),
-                    type = BroadcastMessage.Type.ERROR,
-                )
+            parentFolderId.value?.let { folderId ->
+                retryBackup(folderId).onFailure { error ->
+                    error.log(BACKUP, "Cannot retry on backup")
+                    broadcastMessages(
+                        userId = userId,
+                        message = error.getDefaultMessage(
+                            appContext,
+                            configurationProvider.useExceptionMessage
+                        ),
+                        type = BroadcastMessage.Type.ERROR,
+                    )
+                }
             }
         }
     }
@@ -480,6 +508,12 @@ class PhotosViewModel @Inject constructor(
 
     private fun onRefresh() {
         viewModelScope.launch {
+            parentFolderId.value?.let { folderId ->
+                syncFolders(folderId, RECENT_BACKUP_PRIORITY)
+                    .onFailure { error ->
+                        error.log(VIEW_MODEL, "Failed sync folder on manual refresh")
+                    }
+            }
             _listEffect.emit(ListEffect.REFRESH)
         }
     }

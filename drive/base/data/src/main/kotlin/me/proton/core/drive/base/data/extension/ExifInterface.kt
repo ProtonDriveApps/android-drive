@@ -23,11 +23,13 @@ import androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_270
 import androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_90
 import androidx.exifinterface.media.ExifInterface.ORIENTATION_UNDEFINED
 import androidx.exifinterface.media.ExifInterface.TAG_DATETIME
+import androidx.exifinterface.media.ExifInterface.TAG_DATETIME_DIGITIZED
 import androidx.exifinterface.media.ExifInterface.TAG_DATETIME_ORIGINAL
 import androidx.exifinterface.media.ExifInterface.TAG_IMAGE_LENGTH
 import androidx.exifinterface.media.ExifInterface.TAG_IMAGE_WIDTH
 import androidx.exifinterface.media.ExifInterface.TAG_MODEL
 import androidx.exifinterface.media.ExifInterface.TAG_OFFSET_TIME
+import androidx.exifinterface.media.ExifInterface.TAG_OFFSET_TIME_DIGITIZED
 import androidx.exifinterface.media.ExifInterface.TAG_OFFSET_TIME_ORIGINAL
 import androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION
 import androidx.exifinterface.media.ExifInterface.TAG_SUBJECT_AREA
@@ -79,6 +81,8 @@ val ExifInterface.creationDateTime: TimestampS?
     get() = getDate(TAG_DATETIME, TAG_OFFSET_TIME)
 val ExifInterface.creationDateTimeOriginal: TimestampS?
     get() = getDate(TAG_DATETIME_ORIGINAL, TAG_OFFSET_TIME_ORIGINAL)
+val ExifInterface.creationDateTimeDigitized: TimestampS?
+    get() = getDate(TAG_DATETIME_DIGITIZED, TAG_OFFSET_TIME_DIGITIZED)
 
 private val DATETIME_PRIMARY_FORMAT_PATTERN = """^(\d{4}):(\d{2}):(\d{2})\s(\d{2}):(\d{2}):(\d{2})$""".toRegex()
 private fun ExifInterface.getDate(tagDateTime: String, tagOffsetTime: String) =

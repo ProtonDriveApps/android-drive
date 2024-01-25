@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ package me.proton.core.drive.backup.domain.entity
 
 enum class BackupErrorType {
     OTHER,
+    WIFI_CONNECTIVITY,
     CONNECTIVITY,
     PERMISSION,
     LOCAL_STORAGE,

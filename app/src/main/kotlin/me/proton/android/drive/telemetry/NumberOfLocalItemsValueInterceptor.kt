@@ -20,19 +20,27 @@ package me.proton.android.drive.telemetry
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.usecase.CountLibraryItems
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.extension.rootFolderId
+import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.core.drive.telemetry.domain.entity.DriveTelemetryEvent
 import me.proton.core.drive.telemetry.domain.manager.DriveTelemetryInterceptor
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class NumberOfLocalItemsValueInterceptor @Inject constructor(
+    private val getPhotoShare: GetPhotoShare,
     private val countLibraryItems: CountLibraryItems,
 ) : DriveTelemetryInterceptor {
     override suspend fun invoke(
         userId: UserId,
         event: DriveTelemetryEvent,
-    ): DriveTelemetryEvent = countLibraryItems(userId).fold(
+    ): DriveTelemetryEvent = coRunCatching {
+        val share = getPhotoShare(userId).toResult().getOrThrow()
+        countLibraryItems(share.rootFolderId).getOrThrow()
+    }.fold(
         onSuccess = { count ->
             val values = "number_of_local_items" to count.toFloat()
             event.copy(values = event.values + values)

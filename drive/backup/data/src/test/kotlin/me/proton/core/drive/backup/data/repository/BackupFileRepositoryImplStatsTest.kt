@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.backup.data.repository
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
@@ -41,39 +40,38 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class BackupFileRepositoryImplStatsTest {
     @get:Rule
     val database = DriveDatabaseRule()
     private lateinit var folderId: FolderId
+    private lateinit var backupFolder: BackupFolder
 
     private lateinit var repository: BackupFileRepositoryImpl
 
     private val bucketId = 0
-    
+
     @Before
-    fun setUp() {
-        runTest {
-            folderId = database.myDrive { }
-            val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
-            backupFolderRepository.insertFolder(BackupFolder(bucketId, folderId))
-            repository = BackupFileRepositoryImpl(database.db)
-        }
+    fun setUp() = runTest {
+        folderId = database.myDrive { }
+        val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
+
+        backupFolder = BackupFolder(bucketId, folderId)
+        backupFolderRepository.insertFolder(backupFolder)
+        repository = BackupFileRepositoryImpl(database.db)
     }
 
     @Test
     fun empty() = runTest {
         assertEquals(
             emptyList<BackupStateCount>(),
-            repository.getStatsForFolder(userId, bucketId),
+            repository.getStatsForFolder(backupFolder),
         )
     }
 
     @Test
     fun backupFileState() = runTest {
         repository.insertFiles(
-            userId = userId,
             backupFiles = listOf(backupFile(0, BackupFileState.IDLE))
                     + (1..2).map { backupFile(it, BackupFileState.POSSIBLE_DUPLICATE) }
                     + (3..5).map { backupFile(it, BackupFileState.DUPLICATED) }
@@ -88,14 +86,13 @@ class BackupFileRepositoryImplStatsTest {
                 BackupStateCount(BackupFileState.POSSIBLE_DUPLICATE, count = 2),
                 BackupStateCount(BackupFileState.READY, count = 4),
             ),
-            repository.getStatsForFolder(userId, bucketId),
+            repository.getStatsForFolder(backupFolder),
         )
     }
 
     @Test
     fun uploadState() = runTest {
         repository.insertFiles(
-            userId = userId,
             backupFiles = (0..10).map { backupFile(it, BackupFileState.READY) },
         )
         insertLinkUploadEntity(0, UploadState.IDLE)
@@ -107,7 +104,7 @@ class BackupFileRepositoryImplStatsTest {
                 BackupStateCount(BackupFileState.READY, UploadState.IDLE, 1),
                 BackupStateCount(BackupFileState.READY, UploadState.UPLOADING_BLOCKS, 8),
             ),
-            repository.getStatsForFolder(userId, bucketId),
+            repository.getStatsForFolder(backupFolder),
         )
     }
 
@@ -127,6 +124,7 @@ class BackupFileRepositoryImplStatsTest {
         state: BackupFileState = BackupFileState.IDLE,
     ) = BackupFile(
         bucketId = bucketId,
+        folderId = folderId,
         uriString = uriString,
         mimeType = "",
         name = "",

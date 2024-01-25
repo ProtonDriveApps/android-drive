@@ -55,7 +55,7 @@ class CheckDuplicates @Inject constructor(
         val nodeKey = getNodeKey(folderId).getOrThrow()
         do {
             val backupFiles = backupFileRepository.getAllInFolderWithState(
-                userId = userId,
+                folderId = folderId,
                 bucketId = backupFolder.bucketId,
                 state = BackupFileState.POSSIBLE_DUPLICATE,
                 count = pageSize,
@@ -66,14 +66,13 @@ class CheckDuplicates @Inject constructor(
             }.map { backupFile ->
                 val hash = requireNotNull(backupFile.hash)
                 val duplicates = backupDuplicateRepository.getAllByHash(
-                    userId = userId,
                     parentId = backupFolder.folderId,
                     hash = hash
                 )
                 val contentHash = backupFile.getContentHash(folderId, nodeKey)
                     .onFailure { error ->
                         if (error is FileNotFoundException) {
-                            backupFile.onFileNotFound(userId)
+                            backupFile.onFileNotFound()
                         } else {
                             CoreLogger.e(
                                 BACKUP,
@@ -86,9 +85,9 @@ class CheckDuplicates @Inject constructor(
                     duplicate.contentHash == contentHash
                 }
                 if (duplicate == null) {
-                    markAs(userId, backupFile, BackupFileState.READY)
+                    markAs(backupFile, BackupFileState.READY)
                 } else {
-                    markAs(userId, backupFile, BackupFileState.DUPLICATED) {
+                    markAs(backupFile, BackupFileState.DUPLICATED) {
                         backupDuplicateRepository.deleteDuplicates(listOf(duplicate))
                     }
                 }
@@ -99,13 +98,12 @@ class CheckDuplicates @Inject constructor(
     }
 
     private suspend fun markAs(
-        userId: UserId,
         backupFile: BackupFile,
         backupFileState: BackupFileState,
         block: suspend () -> Unit = {},
     ): BackupFileState {
         backupFileRepository.markAs(
-            userId = userId,
+            folderId = backupFile.folderId,
             uriString = backupFile.uriString,
             backupFileState = backupFileState,
         )
@@ -113,10 +111,10 @@ class CheckDuplicates @Inject constructor(
         return backupFileState
     }
 
-    private suspend fun BackupFile.onFileNotFound(userId: UserId) {
+    private suspend fun BackupFile.onFileNotFound() {
         val uriString = uriString
         CoreLogger.d(BACKUP, "Deleting file not found: $uriString")
-        deleteFile(userId, uriString).onFailure { error ->
+        deleteFile(folderId, uriString).onFailure { error ->
             CoreLogger.e(BACKUP, error, "Cannot delete file: $uriString")
         }
     }

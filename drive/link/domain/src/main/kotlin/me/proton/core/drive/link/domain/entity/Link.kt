@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.link.domain.entity
 
+import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.domain.entity.Attributes
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.Permissions
@@ -34,7 +35,9 @@ sealed class LinkId {
     }
 }
 
+@Serializable
 data class FileId(override val shareId: ShareId, override val id: String) : LinkId()
+@Serializable
 data class FolderId(override val shareId: ShareId, override val id: String) : LinkId()
 
 interface BaseLink {

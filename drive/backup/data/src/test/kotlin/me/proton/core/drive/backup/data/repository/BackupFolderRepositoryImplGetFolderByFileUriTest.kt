@@ -86,6 +86,8 @@ class BackupFolderRepositoryImplGetFolderByFileUriTest {
     private fun backupFileEntity(uriString: String) = BackupFileEntity(
         userId = userId,
         bucketId = 0,
+        shareId = folderId.shareId.id,
+        parentId = folderId.id,
         uriString = uriString,
         mimeType = "",
         name = "",

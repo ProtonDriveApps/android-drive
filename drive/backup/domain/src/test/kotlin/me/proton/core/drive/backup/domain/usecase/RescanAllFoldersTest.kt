@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -38,6 +38,7 @@ class RescanAllFoldersTest {
 
     @get:Rule
     val database = DriveDatabaseRule()
+    private lateinit var folderId: FolderId
 
     private lateinit var backupManager: StubbedBackupManager
     private lateinit var addFolder: AddFolder
@@ -47,7 +48,7 @@ class RescanAllFoldersTest {
 
     @Before
     fun setup() = runTest {
-        val folderId = database.myDrive { }
+        folderId = database.myDrive { }
         val folderRepository = BackupFolderRepositoryImpl(database.db)
 
         backupManager = StubbedBackupManager(folderRepository)
@@ -57,16 +58,22 @@ class RescanAllFoldersTest {
             folderId = folderId,
             updateTime = TimestampS(1),
         )
-        addFolder(backupFolder)
-        rescanAllFolders = RescanAllFolders(ResetFoldersUpdateTime(folderRepository), backupManager)
+        addFolder(backupFolder).getOrThrow()
+        rescanAllFolders = RescanAllFolders(
+            resetFoldersUpdateTime = ResetFoldersUpdateTime(folderRepository),
+            syncFolders = SyncFolders(
+                getAllFolders = GetAllFolders(folderRepository),
+                backupManager = backupManager,
+            )
+        )
     }
 
 
     @Test
     fun test() = runTest {
-        rescanAllFolders(userId)
+        rescanAllFolders(folderId).getOrThrow()
 
-        assertEquals(mapOf(userId to backupFolder.copy(updateTime = null)), backupManager.sync)
+        assertEquals(listOf(backupFolder.copy(updateTime = null)), backupManager.sync)
     }
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -20,16 +20,11 @@ package me.proton.core.drive.upload.domain.usecase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.extension.cameraExifTags
-import me.proton.core.drive.base.domain.extension.creationDateTime
-import me.proton.core.drive.base.domain.extension.duration
-import me.proton.core.drive.base.domain.extension.location
-import me.proton.core.drive.base.domain.extension.resolution
-import me.proton.core.drive.base.domain.usecase.GetFileAttributes
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -42,7 +37,7 @@ class CreateUploadFile @Inject constructor(
     private val getUploadFileMimeType: GetUploadFileMimeType,
     private val getUploadFileSize: GetUploadFileSize,
     private val getUploadFileLastModified: GetUploadFileLastModified,
-    private val getFileAttributes: GetFileAttributes,
+    private val getUploadFileUriInfo: GetUploadFileUriInfo,
 ) {
     suspend operator fun invoke(
         userId: UserId,
@@ -86,26 +81,21 @@ class CreateUploadFile @Inject constructor(
         shouldBroadcastErrorMessage: Boolean,
         coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
     ): Result<UploadFileLink> = coRunCatching(coroutineContext) {
-        val mimeType = getUploadFileMimeType(uriString)
-        val fileAttributes = getFileAttributes(uriString, mimeType)
+        val uriInfo = getUploadFileUriInfo(uriString)
+        val mimeType = getUploadFileMimeType(uriInfo)
         linkUploadRepository.insertUploadFileLink(
             UploadFileLink(
                 userId = userId,
                 volumeId = volumeId,
                 shareId = parentId.shareId,
                 parentLinkId = parentId,
-                name = getUploadFileName(uriString),
+                name = getUploadFileName(uriInfo),
                 mimeType = mimeType,
-                size = getUploadFileSize(uriString),
-                lastModified = getUploadFileLastModified(uriString),
+                size = getUploadFileSize(uriInfo),
+                lastModified = getUploadFileLastModified(uriInfo),
                 uriString = uriString,
                 shouldDeleteSourceUri = shouldDeleteSourceUri,
-                mediaResolution = fileAttributes.resolution,
                 networkTypeProviderType = networkTypeProviderType,
-                mediaDuration = fileAttributes.duration,
-                fileCreationDateTime = fileAttributes.creationDateTime,
-                location = fileAttributes.location,
-                cameraExifTags = fileAttributes.cameraExifTags,
                 shouldAnnounceEvent = shouldAnnounceEvent,
                 cacheOption = cacheOption,
                 priority = priority,
@@ -118,7 +108,7 @@ class CreateUploadFile @Inject constructor(
         userId: UserId,
         volumeId: VolumeId,
         parentId: FolderId,
-        uriStrings: List<String>,
+        uploadFileDescriptions: List<UploadFileDescription>,
         shouldDeleteSourceUri: Boolean,
         networkTypeProviderType: NetworkTypeProviderType,
         shouldAnnounceEvent: Boolean,
@@ -127,26 +117,22 @@ class CreateUploadFile @Inject constructor(
         shouldBroadcastErrorMessage: Boolean,
     ): Result<List<UploadFileLink>> = coRunCatching {
         linkUploadRepository.insertUploadFileLinks(
-            uriStrings.map { uriString ->
-                val mimeType = getUploadFileMimeType(uriString)
-                val fileAttributes = getFileAttributes(uriString, mimeType)
+            uploadFileDescriptions.map { description ->
+                val uriString = description.uri
+                val uriInfo = takeIf { description.properties == null }?.let { getUploadFileUriInfo(uriString) }
+                val mimeType = getUploadFileMimeType(description, uriInfo)
                 UploadFileLink(
                     userId = userId,
                     volumeId = volumeId,
                     shareId = parentId.shareId,
                     parentLinkId = parentId,
-                    name = getUploadFileName(uriString),
+                    name = getUploadFileName(description, uriInfo),
                     mimeType = mimeType,
-                    size = getUploadFileSize(uriString),
-                    lastModified = getUploadFileLastModified(uriString),
+                    size = getUploadFileSize(description, uriInfo),
+                    lastModified = getUploadFileLastModified(description, uriInfo),
                     uriString = uriString,
                     shouldDeleteSourceUri = shouldDeleteSourceUri,
-                    mediaResolution = fileAttributes.resolution,
                     networkTypeProviderType = networkTypeProviderType,
-                    mediaDuration = fileAttributes.duration,
-                    fileCreationDateTime = fileAttributes.creationDateTime,
-                    location = fileAttributes.location,
-                    cameraExifTags = fileAttributes.cameraExifTags,
                     shouldAnnounceEvent = shouldAnnounceEvent,
                     cacheOption = cacheOption,
                     priority = priority,

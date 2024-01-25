@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2023 Proton AG.
+  ~ Copyright (c) 2023-2024 Proton AG.
   ~ This file is part of Proton Core.
   ~
   ~ Proton Core is free software: you can redistribute it and/or modify
@@ -174,7 +174,8 @@
     <string name="notification_content_text_backup_failed_drive_storage">Proton storage is full</string>
     <string name="notification_content_text_backup_failed_local_storage">Local storage is full</string>
     <string name="notification_content_text_backup_failed_permission">Permissions are missing</string>
-    <string name="notification_content_text_backup_failed_connectivity">Waiting for Wi-Fi</string>
+    <string name="notification_content_text_backup_failed_connectivity">No internet connection</string>
+    <string name="notification_content_text_backup_failed_wifi_connectivity">Waiting for Wi-Fi</string>
     <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Backup is not allowed</string>
     <string name="notification_content_text_backup_paused_disabled">Backup was disabled</string>
 

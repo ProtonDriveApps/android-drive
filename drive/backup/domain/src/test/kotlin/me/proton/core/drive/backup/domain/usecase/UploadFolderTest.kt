@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -31,11 +31,15 @@ import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupError
+import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
+import me.proton.core.drive.base.domain.entity.StorageInfo
+import me.proton.core.drive.base.domain.extension.GiB
 import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
 import me.proton.core.drive.db.test.userId
@@ -58,6 +62,7 @@ import me.proton.core.drive.linkupload.data.factory.UploadBlockFactoryImpl
 import me.proton.core.drive.linkupload.data.repository.LinkUploadRepositoryImpl
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksPaged
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -77,6 +82,7 @@ class UploadFolderTest {
     val database = DriveDatabaseRule()
 
     private lateinit var folderId: FolderId
+    private lateinit var backupFolder: BackupFolder
 
     private lateinit var uploadFolder: UploadFolder
     private lateinit var getErrors: GetErrors
@@ -87,23 +93,27 @@ class UploadFolderTest {
 
     private val bucketId = 0
 
-    private val backupFile = NullableBackupFile(
-        bucketId = bucketId,
-        uriString = "uri",
-        state = BackupFileState.READY,
-    )
+    private lateinit var backupFile: BackupFile
     private val getUser = mockk<GetUser>()
     private val user = mockk<User>()
     private val uploadFiles = mockk<UploadFiles>(relaxed = true)
+    private val getInternalStorageInfo = mockk<GetInternalStorageInfo>()
 
     @Before
     fun setUp() = runTest {
         folderId = database.myDrive { }
+        backupFile = NullableBackupFile(
+            bucketId = bucketId,
+            folderId = folderId,
+            uriString = "uri",
+            state = BackupFileState.READY,
+        )
         val backupErrorRepository = BackupErrorRepositoryImpl(database.db)
         val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
         backupManager = StubbedBackupManager(backupFolderRepository)
         val addFolder = AddFolder(backupFolderRepository)
-        addFolder(BackupFolder(bucketId, folderId))
+        backupFolder = BackupFolder(bucketId, folderId)
+        addFolder(backupFolder).getOrThrow()
         backupFileRepository = BackupFileRepositoryImpl(database.db)
         val linkRepository = LinkRepositoryImpl(mockk(), database.db)
         val linkNodeRepository = LinkNodeRepositoryImpl(database.db.linkAncestorDao)
@@ -124,7 +134,7 @@ class UploadFolderTest {
                 addBackupError = AddBackupError(backupErrorRepository),
                 logBackupStats = logBackupStats,
                 announceEvent = AnnounceEvent(emptySet()),
-                getFolders = GetFolders(backupFolderRepository),
+                getAllFolders = GetAllFolders(backupFolderRepository),
                 markAllEnqueuedAsReady = MarkAllEnqueuedAsReady(backupFileRepository),
             ),
             configurationProvider = configurationProvider,
@@ -157,36 +167,36 @@ class UploadFolderTest {
             ),
             getUser = getUser,
             markAsEnqueued = MarkAsEnqueued(backupFileRepository),
+            getInternalStorageInfo = getInternalStorageInfo,
         )
 
         coEvery { getUser.invoke(userId, false) } returns user
         every { user.maxSpace } returns Long.MAX_VALUE
         every { user.usedSpace } returns 0L
+        every { getInternalStorageInfo.invoke() } returns Result.success(StorageInfo(100.GiB, 10.GiB))
     }
 
     @Test
     fun `Given no file when upload should do nothing`() = runTest {
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         verify { uploadFiles wasNot called }
     }
 
     @Test
     fun `Given one file when upload should one file`() = runTest {
-        backupFileRepository.insertFiles(userId, listOf(backupFile))
+        backupFileRepository.insertFiles(listOf(backupFile))
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         coVerify {
             uploadFiles.invoke(
                 folder = any(),
-                uriStrings = listOf("uri"),
+                uploadFileDescriptions = listOf(UploadFileDescription("uri")),
                 shouldDeleteSource = false,
                 notifications = Notifications.TurnedOff,
-                cacheOption = CacheOption.NONE,
+                cacheOption = CacheOption.THUMBNAIL_DEFAULT,
                 background = true,
                 networkTypeProviderType = NetworkTypeProviderType.BACKUP,
                 priority = UploadFileLink.BACKUP_PRIORITY,
@@ -197,60 +207,53 @@ class UploadFolderTest {
 
     @Test
     fun `Given one file already uploading when upload should do nothing`() = runTest {
-        backupFileRepository.insertFiles(userId, listOf(backupFile))
+        backupFileRepository.insertFiles(listOf(backupFile))
 
         linkUploadRepository.insertUploadFileLink(
             uploadFileLink("uri")
         )
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         verify { uploadFiles wasNot called }
     }
     @Test
     fun `Given one file already enqueued when upload should do nothing`() = runTest {
         backupFileRepository.insertFiles(
-            userId,
             listOf(backupFile.copy(state = BackupFileState.ENQUEUED))
         )
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         verify { uploadFiles wasNot called }
     }
 
     @Test
     fun `Given one file already uploaded when upload should delete it`() = runTest {
         backupFileRepository.insertFiles(
-            userId,
             listOf(backupFile.copy(state = BackupFileState.COMPLETED))
         )
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         verify { uploadFiles wasNot called }
     }
 
     @Test
     fun `Given one failed file when upload should one file`() = runTest {
         backupFileRepository.insertFiles(
-            userId,
             listOf(backupFile.copy(state = BackupFileState.FAILED)),
         )
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         coVerify {
             uploadFiles.invoke(
                 folder = any(),
-                uriStrings = listOf("uri"),
+                uploadFileDescriptions = listOf(UploadFileDescription("uri")),
                 shouldDeleteSource = false,
                 notifications = Notifications.TurnedOff,
-                cacheOption = CacheOption.NONE,
+                cacheOption = CacheOption.THUMBNAIL_DEFAULT,
                 background = true,
                 networkTypeProviderType = NetworkTypeProviderType.BACKUP,
                 priority = UploadFileLink.BACKUP_PRIORITY,
@@ -262,36 +265,34 @@ class UploadFolderTest {
     @Test
     fun `Given one failed file with max attempts when upload should do nothing`() = runTest {
         backupFileRepository.insertFiles(
-            userId,
             listOf(backupFile.copy(state = BackupFileState.FAILED, attempts = 5)),
         )
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         verify { uploadFiles wasNot called }
     }
 
     @Test
     fun `Given ten files when upload should only upload five of them`() = runTest {
-        backupFileRepository.insertFiles(userId, (0..9).map { index ->
+        backupFileRepository.insertFiles((0..9).map { index ->
             NullableBackupFile(
                 bucketId = bucketId,
+                folderId = folderId,
                 uriString = "uri$index",
                 state = BackupFileState.READY,
             )
         })
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         coVerify {
             uploadFiles.invoke(
                 folder = any(),
-                uriStrings = (0..4).map { index -> "uri$index" },
+                uploadFileDescriptions = (0..4).map { index -> UploadFileDescription("uri$index") },
                 shouldDeleteSource = false,
                 notifications = Notifications.TurnedOff,
-                cacheOption = CacheOption.NONE,
+                cacheOption = CacheOption.THUMBNAIL_DEFAULT,
                 background = true,
                 networkTypeProviderType = NetworkTypeProviderType.BACKUP,
                 priority = UploadFileLink.BACKUP_PRIORITY,
@@ -302,9 +303,10 @@ class UploadFolderTest {
 
     @Test
     fun `Given ten files and two uploading when upload should only upload two of them`() = runTest {
-        backupFileRepository.insertFiles(userId, (0..9).map { index ->
+        backupFileRepository.insertFiles((0..9).map { index ->
             NullableBackupFile(
                 bucketId = bucketId,
+                folderId = folderId,
                 uriString = "uri$index",
                 state = BackupFileState.READY,
             )
@@ -317,16 +319,15 @@ class UploadFolderTest {
             )
         )
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         coVerify {
             uploadFiles.invoke(
                 folder = any(),
-                uriStrings = (2..4).map { index -> "uri$index" },
+                uploadFileDescriptions = (2..4).map { index -> UploadFileDescription("uri$index") },
                 shouldDeleteSource = false,
                 notifications = Notifications.TurnedOff,
-                cacheOption = CacheOption.NONE,
+                cacheOption = CacheOption.THUMBNAIL_DEFAULT,
                 background = true,
                 networkTypeProviderType = NetworkTypeProviderType.BACKUP,
                 priority = UploadFileLink.BACKUP_PRIORITY,
@@ -339,25 +340,25 @@ class UploadFolderTest {
     fun `Given ten files of 5MiB when upload should only upload five of them`() = runTest {
         every { user.maxSpace } returns 50.MiB.value
         every { user.usedSpace } returns 0L
-        backupFileRepository.insertFiles(userId, (0..9).map { index ->
+        backupFileRepository.insertFiles((0..9).map { index ->
             NullableBackupFile(
                 bucketId = bucketId,
+                folderId = folderId,
                 uriString = "uri$index",
                 size = 5.MiB,
                 state = BackupFileState.READY,
             )
         })
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         coVerify {
             uploadFiles.invoke(
                 folder = any(),
-                uriStrings = (0..4).map { index -> "uri$index" },
+                uploadFileDescriptions = (0..4).map { index -> UploadFileDescription("uri$index") },
                 shouldDeleteSource = false,
                 notifications = Notifications.TurnedOff,
-                cacheOption = CacheOption.NONE,
+                cacheOption = CacheOption.THUMBNAIL_DEFAULT,
                 background = true,
                 networkTypeProviderType = NetworkTypeProviderType.BACKUP,
                 priority = UploadFileLink.BACKUP_PRIORITY,
@@ -371,9 +372,10 @@ class UploadFolderTest {
         every { user.maxSpace } returns 50.MiB.value
         every { user.usedSpace } returns 0L
         backupFileRepository.insertFiles(
-            userId, listOf(
+            listOf(
                 NullableBackupFile(
                     bucketId = bucketId,
+                    folderId = folderId,
                     uriString = "uri",
                     size = 100.MiB,
                     state = BackupFileState.READY,
@@ -381,13 +383,12 @@ class UploadFolderTest {
             )
         )
 
-        val result = uploadFolder(userId, folderId, bucketId)
+        uploadFolder(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         assertTrue(backupManager.stopped)
         assertEquals(
             listOf(BackupError.DriveStorage()),
-            getErrors(userId).first(),
+            getErrors(folderId).first(),
         )
     }
 

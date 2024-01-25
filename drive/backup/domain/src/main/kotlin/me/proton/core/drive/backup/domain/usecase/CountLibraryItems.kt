@@ -18,17 +18,17 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.repository.CountLibraryItemsRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class CountLibraryItems @Inject constructor(
     private val repository: CountLibraryItemsRepository,
-    private val getFolders: GetFolders,
+    private val getAllFolders: GetAllFolders,
 ) {
-    suspend operator fun invoke(userId: UserId) = coRunCatching {
-        val bucketIds = getFolders(userId).getOrThrow().map { backupFolder ->
+    suspend operator fun invoke(folderId: FolderId) = coRunCatching {
+        val bucketIds = getAllFolders(folderId).getOrThrow().map { backupFolder ->
             backupFolder.bucketId
         }
         repository.getItemsCount(bucketIds)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -49,6 +49,7 @@ import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.upload.domain.entity.Notifications
 import me.proton.core.drive.drivelink.upload.domain.usecase.UploadFiles
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Sorting
@@ -160,7 +161,7 @@ class UploadToViewModel @Inject constructor(
                     job.cancel()
                     uploadFiles(
                         folder = folder,
-                        uriStrings = localUris,
+                        uploadFileDescriptions = localUris.map { uri -> UploadFileDescription(uri) },
                         shouldDeleteSource = true,
                         notifications = Notifications.TurnedOnExceptPreparingUpload,
                         priority = UploadFileLink.USER_PRIORITY,

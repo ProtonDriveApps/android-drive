@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -39,6 +39,7 @@ import me.proton.core.drive.drivelink.upload.domain.usecase.ValidateUploadLimit
 import me.proton.core.drive.i18n.R
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.notification.domain.usecase.RemoveNotification
+import me.proton.core.drive.upload.data.resolver.AggregatedUriResolver
 import me.proton.core.drive.upload.domain.usecase.GetUploadFileName
 import me.proton.core.test.kotlin.assertEquals
 import org.junit.Before
@@ -57,6 +58,7 @@ class ProcessIntentTest {
     private val getUploadFileName = mockk<GetUploadFileName>()
     private val validateUploadLimit = mockk<ValidateUploadLimit>()
     private val accountViewModel = mockk<AccountViewModel>()
+    private val aggregatedUriResolver = mockk<AggregatedUriResolver>()
     private val appContext = RuntimeEnvironment.getApplication().applicationContext
     private val userId = UserId("user-id")
     private val account = mockk<Account>()
@@ -71,14 +73,15 @@ class ProcessIntentTest {
         coEvery { accountViewModel.primaryAccount } returns MutableStateFlow(account)
         coEvery { account.userId } returns userId
         coEvery { broadcastMessages(userId, any(), any(), any()) } returns Unit
-        coEvery { getUploadFileName(any()) } returns "db-drive"
+        coEvery { getUploadFileName(any<String>()) } returns "db-drive"
+        coEvery { aggregatedUriResolver.schemes } returns setOf("file", "content")
         processIntent = ProcessIntent(
             appContext = appContext,
             removeNotification = removeNotification,
             broadcastMessages = broadcastMessages,
             getUploadFileName = getUploadFileName,
             validateUploadLimit = validateUploadLimit,
-            validateExternalUri = ValidateExternalUri(appContext),
+            validateExternalUri = ValidateExternalUri(appContext, aggregatedUriResolver),
         )
     }
 

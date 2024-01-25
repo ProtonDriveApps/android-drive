@@ -25,17 +25,15 @@ import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
 import kotlinx.coroutines.test.runTest
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.manager.StubbedBackupManager
 import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
-import me.proton.core.drive.backup.domain.usecase.GetFolders
+import me.proton.core.drive.backup.domain.usecase.GetAllFolders
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import org.junit.Assert.assertEquals
@@ -47,6 +45,7 @@ import org.robolectric.RobolectricTestRunner
 
 @RunWith(RobolectricTestRunner::class)
 class BackupSyncFoldersWorkerTest {
+
     @get:Rule
     val database = DriveDatabaseRule()
 
@@ -71,16 +70,14 @@ class BackupSyncFoldersWorkerTest {
             )
             repository.insertFolder(backupFolder)
 
-            val worker = backupScanFoldersWorker(userId)
+            val worker = backupScanFoldersWorker(folderId)
             val result = worker.doWork()
 
             assertEquals(ListenableWorker.Result.success(), result)
-            assertEquals(mapOf(userId to backupFolder), stubbedBackupManager.sync)
+            assertEquals(listOf(backupFolder), stubbedBackupManager.sync)
         }
 
-    private fun backupScanFoldersWorker(
-        userId: UserId,
-    ): BackupSyncFoldersWorker {
+    private fun backupScanFoldersWorker(folderId: FolderId): BackupSyncFoldersWorker {
         val context = ApplicationProvider.getApplicationContext<Context>()
         return TestListenableWorkerBuilder<BackupSyncFoldersWorker>(context)
             .setWorkerFactory(object : WorkerFactory() {
@@ -93,14 +90,14 @@ class BackupSyncFoldersWorkerTest {
                     context = appContext,
                     workerParams = workerParameters,
                     syncFolders = SyncFolders(
-                        GetFolders(repository),
+                        GetAllFolders(repository),
                         stubbedBackupManager,
                     ),
                     addBackupError = AddBackupError(BackupErrorRepositoryImpl(database.db)),
                 )
 
             })
-            .setInputData(BackupSyncFoldersWorker.workDataOf(userId, UploadFileLink.BACKUP_PRIORITY))
+            .setInputData(BackupSyncFoldersWorker.workDataOf(folderId, UploadFileLink.BACKUP_PRIORITY))
             .build()
     }
 }

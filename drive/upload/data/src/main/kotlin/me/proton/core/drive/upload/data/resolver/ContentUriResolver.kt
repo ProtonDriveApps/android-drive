@@ -19,22 +19,20 @@ package me.proton.core.drive.upload.data.resolver
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
+import android.content.ContentResolver.SCHEME_CONTENT
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.provider.DocumentsContract
-import android.provider.MediaStore
-import android.provider.OpenableColumns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampMs
-import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.base.domain.entity.toTimestampMs
-import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.extensionOrEmpty
 import me.proton.core.drive.base.domain.provider.MimeTypeProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.upload.data.extension.lastModified
+import me.proton.core.drive.upload.data.extension.name
+import me.proton.core.drive.upload.data.extension.size
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import java.io.InputStream
 import kotlin.coroutines.CoroutineContext
@@ -45,6 +43,7 @@ class ContentUriResolver(
     private val mimeTypeProvider: MimeTypeProvider,
     private val coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
 ) : UriResolver {
+    override val schemes: Set<String> get() = setOf(SCHEME_CONTENT)
 
     @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun <T> useInputStream(uriString: String, block: suspend (InputStream) -> T): T? =
@@ -54,20 +53,16 @@ class ContentUriResolver(
 
     override suspend fun getName(uriString: String): String? = withContentResolver(uriString) { uri ->
         query(uri, null, null, null, null)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-            } else {
-                null
+            takeIf { cursor.moveToFirst() }?.let {
+                cursor.name
             }
         }
     }
 
     override suspend fun getSize(uriString: String): Bytes? = withContentResolver(uriString) { uri ->
         query(uri, null, null, null, null)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                cursor.getLong(cursor.getColumnIndex(OpenableColumns.SIZE)).bytes
-            } else {
-                null
+            takeIf { cursor.moveToFirst() }?.let {
+                cursor.size
             }
         }
     }
@@ -85,21 +80,23 @@ class ContentUriResolver(
         uriString: String,
     ): TimestampMs? = withContentResolver(uriString) { uri ->
         query(uri, null, null, null, null)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                val documentLastModified =
-                    cursor.getColumnIndex(DocumentsContract.Document.COLUMN_LAST_MODIFIED)
-                val mediaDateModified =
-                    cursor.getColumnIndex(MediaStore.MediaColumns.DATE_MODIFIED)
+            takeIf { cursor.moveToFirst() }?.let {
+                cursor.lastModified
+            }
+        }
+    }
 
-                if (documentLastModified != -1) {
-                    TimestampMs(cursor.getLong(documentLastModified))
-                } else if (mediaDateModified != 1) {
-                    TimestampS(cursor.getLong(mediaDateModified)).toTimestampMs()
-                } else {
-                    null
-                }
-            } else {
-                null
+    override suspend fun getUriInfo(
+        uriString: String
+    ): UriResolver.UriInfo? = withContentResolver(uriString) { uri ->
+        query(uri, null, null, null, null)?.use { cursor ->
+            takeIf { cursor.moveToFirst() }?.let {
+                UriResolver.UriInfo(
+                    name = cursor.name,
+                    size = cursor.size,
+                    mimeType = getMimeType(uriString),
+                    lastModified = cursor.lastModified,
+                )
             }
         }
     }

@@ -21,12 +21,12 @@ package me.proton.android.drive.photos.presentation.viewmodel
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
 import me.proton.android.drive.photos.presentation.viewevent.BackupPermissionsViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsViewState
-import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.link.domain.entity.FolderId
 
 interface BackupPermissionsViewModel {
     val initialViewState: BackupPermissionsViewState
 
     fun viewEvent(navigateToPhotosPermissionRationale: () -> Unit): BackupPermissionsViewEvent
 
-    fun toggleBackup(userId: UserId, onSuccess: suspend (PhotoBackupState) -> Unit = {})
+    fun toggleBackup(folderId: FolderId, onSuccess: suspend (PhotoBackupState) -> Unit = {})
 }

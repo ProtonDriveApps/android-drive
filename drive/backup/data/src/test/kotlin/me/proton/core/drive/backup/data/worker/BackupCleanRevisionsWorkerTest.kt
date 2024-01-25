@@ -26,7 +26,6 @@ import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.data.repository.BackupDuplicateRepositoryImpl
@@ -55,7 +54,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class BackupCleanRevisionsWorkerTest {
     @get:Rule
@@ -99,11 +97,11 @@ class BackupCleanRevisionsWorkerTest {
         assertEquals(ListenableWorker.Result.success(), result)
         assertEquals(
             emptyList<BackupDuplicate>(),
-            backupDuplicateRepository.getAll(userId, folderId, 0, 100)
+            backupDuplicateRepository.getAll(folderId, 0, 100)
         )
         assertEquals(
             emptyList<BackupError>(),
-            backupErrorRepository.getAll(userId, 0, 100).first()
+            backupErrorRepository.getAll(folderId, 0, 100).first()
         )
     }
 
@@ -119,11 +117,11 @@ class BackupCleanRevisionsWorkerTest {
         assertEquals(ListenableWorker.Result.retry(), result)
         assertEquals(
             backupDuplicates,
-            backupDuplicateRepository.getAll(userId, folderId, 0, 100)
+            backupDuplicateRepository.getAll(folderId, 0, 100)
         )
         assertEquals(
             emptyList<BackupError>(),
-            backupErrorRepository.getAll(userId, 0, 100).first()
+            backupErrorRepository.getAll(folderId, 0, 100).first()
         )
     }
 
@@ -139,11 +137,11 @@ class BackupCleanRevisionsWorkerTest {
         assertEquals(ListenableWorker.Result.failure(), result)
         assertEquals(
             backupDuplicates,
-            backupDuplicateRepository.getAll(userId, folderId, 0, 100)
+            backupDuplicateRepository.getAll(folderId, 0, 100)
         )
         assertEquals(
             listOf(BackupError.Other(true)),
-            backupErrorRepository.getAll(userId, 0, 100).first()
+            backupErrorRepository.getAll(folderId, 0, 100).first()
         )
     }
 

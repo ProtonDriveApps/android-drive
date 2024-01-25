@@ -18,15 +18,15 @@
 
 package me.proton.android.drive.photos.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.usecase.DeleteFolders
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class ClearPhotosBackup @Inject constructor(
     private val deleteFolders: DeleteFolders,
 ) {
-    suspend operator fun invoke(userId: UserId) = coRunCatching {
-        deleteFolders(userId).getOrThrow()
+    suspend operator fun invoke(folderId: FolderId) = coRunCatching {
+        deleteFolders(folderId).getOrThrow()
     }
 }

@@ -28,6 +28,7 @@ suspend fun DriveDatabaseRule.myDrive(block: suspend FolderContext.() -> Unit): 
 
 suspend fun DriveDatabase.myDrive(block: suspend FolderContext.() -> Unit): FolderId {
     user {
+        withKey()
         volume {
             mainShare(block)
         }

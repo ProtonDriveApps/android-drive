@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -73,7 +73,7 @@ interface LinkUploadRepository {
     ): List<UploadFileLink>
 
     suspend fun getUploadFileLinks(
-        userId: UserId,
+        parentId: FolderId,
         uriStrings: List<String>,
         count: Int,
         fromIndex: Int,
@@ -86,6 +86,8 @@ interface LinkUploadRepository {
     ): Flow<List<UploadFileLink>>
 
     fun getUploadFileLinksCount(userId: UserId): Flow<UploadCount>
+
+    suspend fun getUploadFileLinksSize(userId: UserId, uploadStates: Set<UploadState>): Bytes
 
     suspend fun updateUploadFileLink(uploadFileLink: UploadFileLink)
 
@@ -139,7 +141,7 @@ interface LinkUploadRepository {
 
     suspend fun removeAllUploadFileLinks(userId: UserId, folderId: FolderId, uploadState: UploadState)
 
-    suspend fun removeAllUploadFileLinks(userId: UserId, uriStrings: List<String>, uploadState: UploadState)
+    suspend fun removeAllUploadFileLinks(folderId: FolderId, uriStrings: List<String>, uploadState: UploadState)
 
     suspend fun insertUploadBlocks(uploadFileLink: UploadFileLink, uploadBlocks: List<UploadBlock>)
 
@@ -168,5 +170,5 @@ interface LinkUploadRepository {
 
     suspend fun insertUploadBulk(uploadBulk: UploadBulk): UploadBulk
 
-    suspend fun removeUploadBulk(uploadBulkId: Long): UploadBulk
+    suspend fun removeUploadBulk(uploadBulkId: Long): UploadBulk?
 }

@@ -22,12 +22,20 @@ import me.proton.core.drive.base.domain.entity.TimestampMs
 import java.io.InputStream
 
 interface UriResolver {
+    val schemes: Set<String> get() = emptySet()
     suspend fun <T> useInputStream(uriString: String, block: suspend (InputStream) -> T): T?
     suspend fun getName(uriString: String): String?
     suspend fun getSize(uriString: String): Bytes?
     suspend fun getMimeType(uriString: String): String?
     suspend fun getLastModified(uriString: String): TimestampMs?
+    suspend fun getUriInfo(uriString: String): UriInfo?
 
+    data class UriInfo(
+        val name: String?,
+        val size: Bytes?,
+        val mimeType: String?,
+        val lastModified: TimestampMs?
+    )
 
     companion object {
         const val DEFAULT_MIME_TYPE = "application/octet-stream"

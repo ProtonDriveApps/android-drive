@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -48,6 +48,7 @@ import me.proton.core.drive.drivelink.upload.domain.usecase.UploadFiles
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.upload.domain.exception.NotEnoughSpaceException
@@ -116,7 +117,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
             driveLink.value?.let { folder ->
                 uploadFiles(
                     folder = folder,
-                    uriStrings = uriStrings,
+                    uploadFileDescriptions = uriStrings.map { uri -> UploadFileDescription(uri) },
                     priority = UploadFileLink.USER_PRIORITY,
                 )
                     .onFailure { error ->
@@ -137,7 +138,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
                 driveLink.value?.let { folder ->
                     uploadFiles(
                         folder = folder,
-                        uriStrings = listOf(uri.toString()),
+                        uploadFileDescriptions = listOf(UploadFileDescription(uri.toString())),
                         shouldDeleteSource = true,
                         priority = UploadFileLink.USER_PRIORITY,
                     )

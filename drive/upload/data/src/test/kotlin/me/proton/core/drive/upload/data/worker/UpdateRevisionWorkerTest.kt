@@ -31,7 +31,6 @@ import androidx.work.testing.TestListenableWorkerBuilder
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
@@ -57,7 +56,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class UpdateRevisionWorkerTest {
     private val userId: UserId = UserId("user-id")
@@ -74,6 +72,7 @@ class UpdateRevisionWorkerTest {
     private val done = mockk<Done>()
     private val uploadFileLink = mockk<UploadFileLink>()
     private val operation = mockk<Operation>()
+    private val cleanupWorkers = mockk<CleanupWorkers>()
 
     @Before
     fun before() {
@@ -142,6 +141,7 @@ class UpdateRevisionWorkerTest {
                         getUploadFileLink = getUploadFileLink,
                         uploadErrorManager = uploadErrorManager,
                         updateRevision = updateRevision,
+                        cleanupWorkers = cleanupWorkers,
                         networkTypeProviders = mapOf(
                             NetworkTypeProviderType.DEFAULT to networkTypeProvider,
                             NetworkTypeProviderType.BACKUP to networkTypeProvider,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.log.LogTag.UPLOAD_BULK
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.usecase.DeleteUploadBulk
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
@@ -63,85 +64,79 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
     private val folderName = requireNotNull(inputData.getString(KEY_FOLDER_NAME)) { "Folder name is required" }
     private val showFilesBeingUploaded = inputData.getBoolean(KEY_SHOW_FILES_BEING_UPLOADED, true)
 
-    override suspend fun doWork(): Result {
-        deleteUploadBulk(uploadBulkId).getOrNull()?.let { uploadBulk ->
-            with(uploadBulk) {
-                logWorkState("Adding ${uriStrings.size} files to upload")
-                val hasEnoughSpace = hasEnoughAvailableSpace(userId, uriStrings) { needed ->
-                    announceEvent(
-                        userId = userId,
-                        event = Event.StorageFull(needed)
-                    )
-                }
-                if (!hasEnoughSpace) {
-                    logWorkState("Cannot upload files, not enough space")
-                    return@let
-                }
-                createUploadFile(
+    override suspend fun doWork(): Result = coRunCatching {
+        with(deleteUploadBulk(uploadBulkId).getOrThrow()) {
+            logWorkState("Adding ${uploadFileDescriptions.size} files to upload")
+            val hasEnoughSpace = hasEnoughAvailableSpace(
+                userId = userId,
+                uriStrings = uploadFileDescriptions.map { description -> description.uri }) { needed ->
+                announceEvent(
                     userId = userId,
-                    volumeId = volumeId,
-                    parentId = parentLinkId,
-                    uriStrings = uriStrings,
-                    shouldDeleteSourceUri = shouldDeleteSourceUri,
-                    networkTypeProviderType = networkTypeProviderType,
-                    shouldAnnounceEvent = shouldAnnounceEvent,
-                    cacheOption = cacheOption,
-                    priority = priority,
-                    shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
+                    event = Event.StorageFull(needed)
                 )
-                    .onFailure { error ->
-                        error.log(
-                            tag = logTag(),
-                            message = "Create upload file failed"
-                        )
-                    }
-                    .onSuccess { uploadFileLinks ->
-                        logWorkState("${uploadFileLinks.size} files were added to upload")
-                        uploadFileLinks.forEach { uploadFileLink ->
-                            if (isStopped) return Result.failure()
-                            announceUploadEvent(
-                                uploadFileLink = uploadFileLink,
-                                uploadEvent = Event.Upload(
-                                    state = Event.Upload.UploadState.NEW_UPLOAD,
-                                    uploadFileLinkId = uploadFileLink.id,
-                                    percentage = Percentage(0),
-                                    shouldShow = uploadFileLink.shouldAnnounceEvent,
-                                )
-                            )
-                        }
-                    }
-                    .getOrNull()
-                    ?.let {
-                        if (showFilesBeingUploaded) {
-                            broadcastMessages(
-                                userId = userId,
-                                message = appContext.resources.getQuantityString(
-                                    I18N.plurals.files_upload_being_uploaded_notification,
-                                    uriStrings.size,
-                                    uriStrings.size,
-                                    folderName,
-                                ),
-                                type = BroadcastMessage.Type.INFO,
-                            )
-                        }
-                        workManager.enqueueUpload(userId, shouldAnnounceEvent, tags)
-                        return Result.success()
-                    }
             }
-        }
-        return Result.failure()
-    }
+            if (!hasEnoughSpace) {
+                logWorkState("Cannot upload files, not enough space")
+                return@with
+            }
+            val uploadFileLinks = createUploadFile(
+                userId = userId,
+                volumeId = volumeId,
+                parentId = parentLinkId,
+                uploadFileDescriptions = uploadFileDescriptions,
+                shouldDeleteSourceUri = shouldDeleteSourceUri,
+                networkTypeProviderType = networkTypeProviderType,
+                shouldAnnounceEvent = shouldAnnounceEvent,
+                cacheOption = cacheOption,
+                priority = priority,
+                shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
+            ).getOrThrow()
 
-    private fun UploadBulk.logWorkState(message: String = "") {
+            logWorkState("${uploadFileLinks.size} files were added to upload")
+
+            uploadFileLinks.forEach { uploadFileLink ->
+                announceUploadEvent(
+                    uploadFileLink = uploadFileLink,
+                    uploadEvent = Event.Upload(
+                        state = Event.Upload.UploadState.NEW_UPLOAD,
+                        uploadFileLinkId = uploadFileLink.id,
+                        percentage = Percentage(0),
+                        shouldShow = uploadFileLink.shouldAnnounceEvent,
+                    )
+                )
+            }
+            if (showFilesBeingUploaded) {
+                broadcastMessages(
+                    userId = userId,
+                    message = appContext.resources.getQuantityString(
+                        I18N.plurals.files_upload_being_uploaded_notification,
+                        uploadFileLinks.size,
+                        uploadFileLinks.size,
+                        folderName,
+                    ),
+                    type = BroadcastMessage.Type.INFO,
+                )
+            }
+
+            workManager.enqueueUpload(userId, shouldAnnounceEvent, tags)
+        }
+    }.fold(
+        onSuccess = {
+            Result.success()
+        },
+        onFailure = { error ->
+            error.log(logTag(), "Cannot upload files from bulk")
+            Result.failure()
+        }
+    )
+
+    private fun logWorkState(message: String = "") {
         val workerId = this@CreateUploadFileLinkWorker.id
         val workerName = this@CreateUploadFileLinkWorker.javaClass.simpleName
-        CoreLogger.d(
-            logTag(),
-            "$workerName($runAttemptCount) $message [$workerId]"
-        )
+        CoreLogger.d(logTag(), "$workerName($runAttemptCount) $message [$workerId]")
     }
 
-    private fun UploadBulk.logTag() = "$UPLOAD_BULK.$id"
+    private fun logTag() = "$UPLOAD_BULK.$uploadBulkId"
 
     companion object {
         fun getWorkRequest(

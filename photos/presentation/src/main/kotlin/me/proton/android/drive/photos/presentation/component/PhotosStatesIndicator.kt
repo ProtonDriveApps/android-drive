@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -41,6 +41,7 @@ import me.proton.android.drive.photos.presentation.R
 import me.proton.android.drive.photos.presentation.viewstate.PhotosStatusViewState
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -49,14 +50,22 @@ fun PhotosStatesIndicator(
     modifier: Modifier = Modifier,
 ) {
     when (viewState) {
-        is PhotosStatusViewState.Disabled -> if(viewState.hasDefaultFolder == false){
+        is PhotosStatusViewState.Disabled -> if (viewState.hasDefaultFolder == false) {
             PhotosMissingFolderIndicator(modifier)
         } else {
             PhotosDisableIndicator(modifier)
         }
+
         is PhotosStatusViewState.Complete -> PhotosCompleteIndicator(modifier)
         is PhotosStatusViewState.Uncompleted -> PhotosUncompletedIndicator(modifier)
-        is PhotosStatusViewState.Failed -> PhotosFailedIndicator(modifier)
+        is PhotosStatusViewState.Failed -> if (viewState.errors
+                .any { it == BackupError.WifiConnectivity() || it == BackupError.Connectivity() }
+        ) {
+            PhotosFailedConnectivityIndicator(modifier)
+        } else {
+            PhotosFailedIndicator(modifier)
+        }
+
         is PhotosStatusViewState.InProgress -> PhotosProgressIndicator(modifier)
     }
 }
@@ -132,6 +141,15 @@ private fun PhotosFailedIndicator(modifier: Modifier = Modifier) {
 }
 
 @Composable
+private fun PhotosFailedConnectivityIndicator(modifier: Modifier = Modifier) {
+    PhotosStatesIndicator(
+        modifier = modifier,
+        color = ProtonTheme.colors.notificationError,
+        icon = R.drawable.ic_no_wifi,
+    )
+}
+
+@Composable
 private fun PhotosStateIndicatorContainer(
     color: Color,
     modifier: Modifier = Modifier,
@@ -193,6 +211,7 @@ private fun PhotosCompleteIconPreview() {
         PhotosCompleteIndicator()
     }
 }
+
 @Preview
 @Composable
 private fun PhotosUncompletedIconPreview() {
@@ -214,5 +233,13 @@ private fun PhotosProgressIconPreview() {
 private fun PhotosFailedIconPreview() {
     ProtonTheme {
         PhotosFailedIndicator()
+    }
+}
+
+@Preview
+@Composable
+private fun PhotosFailedConnectivityIndicatorPreview() {
+    ProtonTheme {
+        PhotosFailedConnectivityIndicator()
     }
 }

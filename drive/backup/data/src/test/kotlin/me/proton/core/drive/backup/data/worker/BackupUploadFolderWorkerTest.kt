@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -29,9 +29,8 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
-import me.proton.core.drive.backup.data.manager.BackupManagerImpl
+import me.proton.core.drive.backup.data.extension.uniqueFolderIdTag
 import me.proton.core.drive.backup.data.manager.StubbedBackupManager
 import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
@@ -41,15 +40,18 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.CleanUpCompleteBackup
+import me.proton.core.drive.backup.domain.usecase.GetAllFolders
 import me.proton.core.drive.backup.domain.usecase.GetFilesToBackup
-import me.proton.core.drive.backup.domain.usecase.GetFolders
 import me.proton.core.drive.backup.domain.usecase.LogBackupStats
 import me.proton.core.drive.backup.domain.usecase.MarkAllEnqueuedAsReady
 import me.proton.core.drive.backup.domain.usecase.MarkAllFailedAsReady
 import me.proton.core.drive.backup.domain.usecase.MarkAsEnqueued
 import me.proton.core.drive.backup.domain.usecase.StopBackup
 import me.proton.core.drive.backup.domain.usecase.UploadFolder
+import me.proton.core.drive.base.domain.entity.StorageInfo
+import me.proton.core.drive.base.domain.extension.GiB
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
 import me.proton.core.drive.db.test.userId
@@ -71,6 +73,7 @@ import me.proton.core.drive.linkupload.data.factory.UploadBlockFactoryImpl
 import me.proton.core.drive.linkupload.data.repository.LinkUploadRepositoryImpl
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksPaged
 import me.proton.core.user.domain.entity.User
@@ -100,6 +103,7 @@ class BackupUploadFolderWorkerTest {
 
     private val getUser = mockk<GetUser>()
     private val uploadFiles = mockk<UploadFiles>(relaxed = true)
+    private val getInternalStorageInfo = mockk<GetInternalStorageInfo>()
     private lateinit var cleanUpCompleteBackup: CleanUpCompleteBackup
     private lateinit var logBackupStats: LogBackupStats
 
@@ -120,20 +124,21 @@ class BackupUploadFolderWorkerTest {
         coEvery { getUser.invoke(userId, false) } returns user
         every { user.maxSpace } returns Long.MAX_VALUE
         every { user.usedSpace } returns 0L
+        every { getInternalStorageInfo.invoke() } returns Result.success(StorageInfo(100.GiB, 10.GiB))
     }
 
     @Test
     fun `Given ten files when upload should only upload five of them`() = runTest {
-        repository.insertFiles(userId, (0..9).map { index ->
+        repository.insertFiles((0..9).map { index ->
             NullableBackupFile(
                 bucketId = bucketId,
+                folderId = folderId,
                 uriString = "uri$index",
                 state = BackupFileState.READY
             )
         })
 
         val worker = backupUploadFolderWorker(
-            userId,
             BackupFolder(
                 bucketId = bucketId,
                 folderId = folderId,
@@ -145,21 +150,20 @@ class BackupUploadFolderWorkerTest {
         coVerify {
             uploadFiles.invoke(
                 folder = any(),
-                uriStrings = (0..4).map { index -> "uri$index" },
+                uploadFileDescriptions = (0..4).map { index -> UploadFileDescription("uri$index") },
                 shouldDeleteSource = false,
                 notifications = Notifications.TurnedOff,
-                cacheOption = CacheOption.NONE,
+                cacheOption = CacheOption.THUMBNAIL_DEFAULT,
                 background = true,
                 networkTypeProviderType = NetworkTypeProviderType.BACKUP,
                 shouldBroadcastErrorMessage = false,
                 priority = UploadFileLink.BACKUP_PRIORITY,
-                tags = listOf(BackupManagerImpl.TAG_UPLOAD),
+                tags = listOf(folderId.uniqueFolderIdTag()),
             )
         }
     }
 
     private fun backupUploadFolderWorker(
-        userId: UserId,
         backupFolder: BackupFolder,
     ): BackupUploadFolderWorker {
         val context = ApplicationProvider.getApplicationContext<Context>()
@@ -193,7 +197,7 @@ class BackupUploadFolderWorkerTest {
                                 addBackupError = AddBackupError(backupErrorRepository),
                                 logBackupStats = logBackupStats,
                                 announceEvent = AnnounceEvent(emptySet()),
-                                getFolders = GetFolders(backupFolderRepository),
+                                getAllFolders = GetAllFolders(backupFolderRepository),
                                 markAllEnqueuedAsReady = MarkAllEnqueuedAsReady(repository),
                             ),
                             configurationProvider = configurationProvider,
@@ -222,13 +226,14 @@ class BackupUploadFolderWorkerTest {
                             ),
                             getUser = getUser,
                             markAsEnqueued = MarkAsEnqueued(repository),
+                            getInternalStorageInfo = getInternalStorageInfo,
                         ),
                         addBackupError = AddBackupError(BackupErrorRepositoryImpl(database.db)),
                     )
                 }
 
             })
-            .setInputData(BackupUploadFolderWorker.workDataOf(userId, backupFolder))
+            .setInputData(BackupUploadFolderWorker.workDataOf(backupFolder))
             .build()
     }
 

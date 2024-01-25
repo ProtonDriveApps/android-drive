@@ -18,10 +18,10 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.upload.domain.usecase.CancelAllUpload
 import javax.inject.Inject
 
@@ -30,15 +30,15 @@ class CancelFiles @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val cancelAllUpload: CancelAllUpload,
 ) {
-    suspend operator fun invoke(userId: UserId, bucketId: Int) = coRunCatching {
+    suspend operator fun invoke(folderId: FolderId, bucketId: Int) = coRunCatching {
         val count = configurationProvider.dbPageSize
         var loaded: Int
         var fromIndex = 0
         do {
-            val files = backupFileRepository.getFiles(userId, bucketId, fromIndex, count)
+            val files = backupFileRepository.getFiles(folderId, bucketId, fromIndex, count)
             fromIndex += files.size
             loaded = files.size
-            cancelAllUpload(userId, files.map { file -> file.uriString })
+            cancelAllUpload(folderId, files.map { file -> file.uriString })
         } while (loaded == count)
         fromIndex
     }

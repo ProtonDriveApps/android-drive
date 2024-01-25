@@ -32,7 +32,7 @@ class ValidateUploadLimit @Inject constructor(
 ) {
     suspend operator fun invoke(userId: UserId, newUploads: Int): Result<Unit> = coRunCatching {
         if (configurationProvider.validateUploadLimit) {
-            val uploading = linkUploadRepository.getUploadFileLinks(userId).first().size
+            val uploading = linkUploadRepository.getUploadFileLinksCount(userId).first().total
             if (uploading + newUploads > configurationProvider.uploadLimitThreshold) {
                 uploadWorkManager.broadcastUploadLimitReached(userId)
                 throw RuntimeException("Upload limit reached")

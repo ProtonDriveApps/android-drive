@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -20,12 +20,13 @@ package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.manager.BackupManager
+import me.proton.core.drive.base.domain.util.coRunCatching
 import javax.inject.Inject
 
 class WatchFolders @Inject constructor(
     private val manager: BackupManager,
 ) {
-    operator fun invoke(userId: UserId) {
+    suspend operator fun invoke(userId: UserId) = coRunCatching {
         manager.watchFolders(userId)
     }
 }

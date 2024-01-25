@@ -17,6 +17,10 @@
   -->
 
 <resources>
-    <item name="logo_drive_with_text_daylight" type="drawable" format="reference">@drawable/logo_drive_with_text_dark</item>
+    <item name="logo_drive_with_text_daynight" type="drawable" format="reference">@drawable/logo_drive_with_text_dark</item>
+    <item name="empty_folder_daynight" type="drawable" format="reference">@drawable/empty_folder_dark</item>
+    <item name="empty_shared_by_me_daynight" type="drawable" format="reference">@drawable/empty_shared_by_me_dark</item>
+    <item name="empty_trash_daynight" type="drawable" format="reference">@drawable/empty_trash_dark</item>
+    <item name="empty_offline_daynight" type="drawable" format="reference">@drawable/empty_offline_dark</item>
 </resources>
 

@@ -31,6 +31,7 @@ import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
+import java.io.File
 
 @Suppress("LongMethod")
 fun Project.driveModule(
@@ -41,7 +42,8 @@ fun Project.driveModule(
     compose: Boolean = false,
     includeSubmodules: Boolean = false,
     i18n: Boolean = false,
-    kapt: Boolean = hilt || room,
+    socialTest: Boolean = false,
+    kapt: Boolean = hilt || room || socialTest,
     dependencies: DependencyHandler.() -> Unit = {},
 ) {
     val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
@@ -139,6 +141,9 @@ fun Project.driveModule(
         sourceSets {
             getByName("main").java.srcDirs("src/main/kotlin")
             getByName("test").java.srcDirs("src/test/kotlin")
+            if (socialTest) {
+                getByName("test").resources.srcDirs(File(rootDir, "drive/test/resources"))
+            }
             getByName("androidTest").java.srcDirs("src/androidTest/kotlin", "src/uiTest/kotlin")
             getByName("androidTest").assets.srcDirs("src/uiTest/assets")
         }
@@ -208,7 +213,7 @@ fun Project.driveModule(
         }
         if (includeSubmodules) {
             val fullName = project.fullName
-            projectDir.findModules().filterNot { it.endsWith("-test") }.forEach { module ->
+            projectDir.findModules().filterNot { it.endsWith("test") }.forEach { module ->
                 add("api", project(":$fullName$module"))
             }
         }
@@ -219,6 +224,11 @@ fun Project.driveModule(
         // region Test
         add("testImplementation", catalog.findBundle("test.jvm").get())
         add("androidTestImplementation", catalog.findBundle("test.android").get())
+        if (socialTest) {
+            add("testImplementation", project(":drive:test"))
+            add("testImplementation", catalog.findLibrary("dagger.hilt.android.testing").get())
+            add("kaptTest", catalog.findLibrary("dagger.hilt.compiler").get())
+        }
         // endregion
     }
 }

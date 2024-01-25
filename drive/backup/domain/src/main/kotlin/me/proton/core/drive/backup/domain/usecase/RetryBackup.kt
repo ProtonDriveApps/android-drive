@@ -19,12 +19,13 @@
 package me.proton.core.drive.backup.domain.usecase
 
 import kotlinx.coroutines.flow.first
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
@@ -35,15 +36,15 @@ class RetryBackup @Inject constructor(
     private val deleteAllRetryableBackupError: DeleteAllRetryableBackupError,
     private val resetFilesAttempts: ResetFilesAttempts,
 ) {
-    suspend operator fun invoke(userId: UserId) = coRunCatching {
+    suspend operator fun invoke(folderId: FolderId) = coRunCatching {
         CoreLogger.d(LogTag.BACKUP, "Retry")
-        getFeatureFlag(FeatureFlagId.drivePhotosUploadDisabled(userId)) {
-            getErrors(userId).first().any { error ->
+        getFeatureFlag(FeatureFlagId.drivePhotosUploadDisabled(folderId.userId)) {
+            getErrors(folderId).first().any { error ->
                 error.type == BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED
             }
         }
-        deleteAllRetryableBackupError(userId).getOrThrow()
-        resetFilesAttempts(userId).getOrThrow()
-        startBackup(userId)
+        deleteAllRetryableBackupError(folderId).getOrThrow()
+        resetFilesAttempts(folderId).getOrThrow()
+        startBackup(folderId)
     }
 }

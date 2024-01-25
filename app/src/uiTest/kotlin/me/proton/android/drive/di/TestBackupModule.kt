@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ import dagger.hilt.testing.TestInstallIn
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import me.proton.android.drive.ui.rules.NetworkSimulator
 import me.proton.core.drive.backup.data.di.BackupModule
 import me.proton.core.drive.backup.data.manager.BackupConnectivityManagerImpl
@@ -44,7 +45,12 @@ class TestBackupModule {
     fun provideBackupConnectivityManager(impl: BackupConnectivityManagerImpl): BackupConnectivityManager =
         object : BackupConnectivityManager {
             override val connectivity: Flow<BackupConnectivityManager.Connectivity>
-                get() = NetworkSimulator.connectivity ?: impl.connectivity
+                get() = combine(
+                    NetworkSimulator.connectivity,
+                    impl.connectivity,
+                ) { simulator, real ->
+                    simulator ?: real
+                }
         }
 
     @Provides

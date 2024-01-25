@@ -31,22 +31,56 @@ abstract class BackupErrorDao : BaseDao<BackupErrorEntity>() {
     @Query(
         """
         SELECT * FROM BackupErrorEntity 
-        WHERE user_id = :userId 
+        WHERE user_id = :userId AND
+            share_id = :shareId AND
+            parent_id = :folderId
         LIMIT :limit OFFSET :offset
         """
     )
     abstract fun getAll(
         userId: UserId,
+        shareId: String,
+        folderId: String,
         limit: Int,
         offset: Int,
     ): Flow<List<BackupErrorEntity>>
 
-    @Query("DELETE FROM BackupErrorEntity WHERE user_id = :userId")
-    abstract suspend fun deleteAll(userId: UserId)
+    @Query("""
+        DELETE FROM BackupErrorEntity 
+        WHERE user_id = :userId AND
+            share_id = :shareId AND
+            parent_id = :folderId
+        """)
+    abstract suspend fun deleteAll(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+    )
 
-    @Query("DELETE FROM BackupErrorEntity WHERE user_id = :userId AND error = :type")
-    abstract suspend fun deleteAllByType(userId: UserId, type: BackupErrorType)
+    @Query("""
+        DELETE FROM BackupErrorEntity 
+        WHERE user_id = :userId AND
+            share_id = :shareId AND
+            parent_id = :folderId AND
+            error = :type
+    """)
+    abstract suspend fun deleteAllByType(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+        type: BackupErrorType,
+    )
 
-    @Query("DELETE FROM BackupErrorEntity WHERE user_id = :userId AND retryable = 1")
-    abstract suspend fun deleteAllRetryable(userId: UserId)
+    @Query("""
+        DELETE FROM BackupErrorEntity
+        WHERE user_id = :userId AND 
+            share_id = :shareId AND
+            parent_id = :folderId AND
+            retryable = 1
+    """)
+    abstract suspend fun deleteAllRetryable(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+    )
 }

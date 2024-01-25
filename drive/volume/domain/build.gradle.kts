@@ -24,6 +24,11 @@ android {
     namespace = "me.proton.core.drive.volume.domain"
 }
 
-driveModule(hilt = true) {
+driveModule(
+    hilt = true,
+    socialTest = true,
+) {
     api(project(":drive:base:domain"))
+
+    testImplementation(project(":drive:volume:data"))
 }

@@ -24,7 +24,7 @@ import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.backup.domain.usecase.GetFolders
+import me.proton.core.drive.backup.domain.usecase.GetAllFolders
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toTimestampMs
 import me.proton.core.drive.base.domain.extension.toResult
@@ -55,7 +55,7 @@ class ExportPhotoData @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val storageLocationProvider: StorageLocationProvider,
     private val dateTimeFormatter: DateTimeFormatter,
-    private val getFolders: GetFolders,
+    private val getAllFolders: GetAllFolders,
     private val getPhotoShare: GetPhotoShare,
     private val getDecryptedDriveLinks: GetDecryptedDriveLinks,
 ) {
@@ -68,19 +68,20 @@ class ExportPhotoData @Inject constructor(
         ).apply {
             parentFile?.mkdirs()
             ZipOutputStream(FileOutputStream(this)).use { zos ->
+                val folderId = getPhotoShare(userId).toResult().getOrThrow().rootFolderId
                 zos.putNextEntry(ZipEntry("local.csv"))
-                zos.exportLocalData(userId)
+                zos.exportLocalData(folderId)
                 zos.closeEntry()
                 zos.putNextEntry(ZipEntry("drive.csv"))
-                zos.exportDriveData(getPhotoShare(userId).toResult().getOrThrow().rootFolderId)
+                zos.exportDriveData(folderId)
                 zos.closeEntry()
             }
         }
     }
 
-    private suspend fun OutputStream.exportLocalData(userId: UserId) {
+    private suspend fun OutputStream.exportLocalData(folderId: FolderId) {
         writeLine("name", "size", "mimetype", "modificationTime", "bucketId", "bucketName", "_id")
-        getFolders(userId).getOrThrow().map { it.bucketId }.onEach { folderBucketId ->
+        getAllFolders(folderId).getOrThrow().map { it.bucketId }.onEach { folderBucketId ->
             context.contentResolver.query(
                 getFilesContentUri(),
                 PROJECTION_BUCKET,

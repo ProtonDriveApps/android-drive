@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -21,25 +21,27 @@ package me.proton.core.drive.backup.domain.manager
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFolder
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 
 interface BackupManager {
 
-    suspend fun start(userId: UserId)
+    suspend fun start(folderId: FolderId)
 
-    suspend fun stop(userId: UserId)
+    suspend fun stop(folderId: FolderId)
 
-    fun sync(userId: UserId, backupFolder: BackupFolder, uploadPriority: Long)
+    fun sync(backupFolder: BackupFolder, uploadPriority: Long)
 
-    suspend fun cancelSync(userId: UserId, backupFolder: BackupFolder)
+    suspend fun cancelSync(backupFolder: BackupFolder)
 
-    fun syncAllFolders(userId: UserId, uploadPriority: Long = UploadFileLink.BACKUP_PRIORITY)
+    fun syncAllFolders(folderId: FolderId, uploadPriority: Long = UploadFileLink.BACKUP_PRIORITY)
 
-    fun watchFolders(userId: UserId)
+    suspend fun watchFolders(userId: UserId)
 
-    fun unwatchFolders(userId: UserId)
+    suspend fun unwatchFolders(userId: UserId)
 
-    fun isEnabled(userId: UserId): Flow<Boolean>
+    fun isEnabled(folderId: FolderId): Flow<Boolean>
 
-    fun isUploading(): Flow<Boolean>
+    fun isUploading(folderId: FolderId): Flow<Boolean>
+
 }

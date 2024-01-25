@@ -22,7 +22,6 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
@@ -33,12 +32,12 @@ class DisableBackupForFolder @Inject constructor(
 ) {
 
     suspend operator fun invoke(backupFolder: BackupFolder) = coRunCatching {
-        val userId = backupFolder.folderId.userId
-        val id = backupFolder.bucketId
-        backupManager.cancelSync(userId, backupFolder)
-        val count = cancelFiles(userId, id).getOrThrow()
+        val folderId = backupFolder.folderId
+        val bucketId = backupFolder.bucketId
+        backupManager.cancelSync(backupFolder)
+        val count = cancelFiles(folderId, bucketId).getOrThrow()
         CoreLogger.d(LogTag.BACKUP, "Cancelled $count items")
-        deleteFolder(userId, id).getOrThrow()
-        CoreLogger.d(LogTag.BACKUP, "Deleted folder $id")
+        deleteFolder(backupFolder).getOrThrow()
+        CoreLogger.d(LogTag.BACKUP, "Deleted folder $bucketId")
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -76,11 +76,19 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
         DELETE FROM LinkUploadEntity 
         WHERE 
             user_id = :userId AND 
+            share_id = :shareId AND 
+            parent_id = :parentId AND 
             uri IN (:uriStrings) AND 
             state = :uploadState
         """
     )
-    abstract suspend fun deleteAllWithUris(userId: UserId, uriStrings: List<String>, uploadState: UploadState)
+    abstract suspend fun deleteAllWithUris(
+        userId: UserId,
+        shareId: String,
+        parentId: String,
+        uriStrings: List<String>,
+        uploadState: UploadState,
+    )
 
     @Query(
         "SELECT * FROM LinkUploadEntity WHERE id = :id"
@@ -156,7 +164,10 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
     @Query(
         """
         SELECT * FROM LinkUploadEntity 
-        WHERE user_id = :userId AND 
+        WHERE 
+            user_id = :userId AND 
+            share_id = :shareId AND 
+            parent_id = :parentId AND 
             uri IN (:uriStrings)
         ORDER BY id ASC
         LIMIT :limit OFFSET :offset
@@ -164,6 +175,8 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
     )
     abstract suspend fun getAllWithUris(
         userId: UserId,
+        shareId: String,
+        parentId: String,
         uriStrings: List<String>,
         limit: Int,
         offset: Int,
@@ -238,10 +251,18 @@ abstract class LinkUploadDao : BaseDao<LinkUploadEntity>() {
     )
     abstract fun getUploadCount(userId: UserId, userPriority: Long): Flow<LinkUploadCountEntity>
 
+    @Query(
+        """
+        SELECT SUM(size)
+        FROM LinkUploadEntity WHERE user_id = :userId AND state IN (:states)
+    """
+    )
+    abstract suspend fun getUploadSumSize(userId: UserId, states: Set<UploadState>): Long?
+
     @Query("""
         UPDATE LinkUploadEntity SET state = :uploadState WHERE id = :id
     """)
-    abstract fun updateUploadState(id: Long, uploadState: UploadState)
+    abstract suspend fun updateUploadState(id: Long, uploadState: UploadState)
 
     @Query("""
         UPDATE LinkUploadEntity SET upload_creation_time = :creationTime WHERE id = :id

@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
@@ -40,12 +39,13 @@ class FindDuplicates @Inject constructor(
     private val backupDuplicateRepository: BackupDuplicateRepository,
     private val getOrCreateClientUid: GetOrCreateClientUid,
 ) {
-    suspend operator fun invoke(userId: UserId, backupFolder: BackupFolder) = coRunCatching {
+    suspend operator fun invoke(backupFolder: BackupFolder) = coRunCatching {
         val count = with(configurationProvider) { minOf(apiPageSize, dbPageSize) }
         var files: List<BackupFile>
         do {
+            val folderId = backupFolder.folderId
             files = backupFileRepository.getAllInFolderWithState(
-                userId = userId,
+                folderId = folderId,
                 bucketId = backupFolder.bucketId,
                 state = BackupFileState.IDLE,
                 count = count,
@@ -56,7 +56,7 @@ class FindDuplicates @Inject constructor(
                 val hashes = files.mapNotNull { file -> file.hash }
                 val clientUid = getOrCreateClientUid().getOrThrow()
                 val backupDuplicates = findDuplicatesRepository.findDuplicates(
-                    folderId = backupFolder.folderId,
+                    folderId = folderId,
                     nameHashes = hashes,
                     clientUids = listOf(clientUid)
                 )
@@ -71,13 +71,13 @@ class FindDuplicates @Inject constructor(
                 CoreLogger.d(BACKUP, "${possibleDuplicatesHashes.size} possible duplicates found")
 
                 backupFileRepository.markAs(
-                    userId = userId,
+                    folderId = folderId,
                     hashes = hashes - possibleDuplicatesHashes.toSet(),
                     backupFileState = BackupFileState.READY,
                 )
 
                 backupFileRepository.markAs(
-                    userId = userId,
+                    folderId = folderId,
                     hashes = possibleDuplicatesHashes,
                     backupFileState = BackupFileState.POSSIBLE_DUPLICATE,
                 )

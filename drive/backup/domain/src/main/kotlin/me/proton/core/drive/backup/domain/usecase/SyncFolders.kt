@@ -19,30 +19,52 @@
 package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.backup.domain.entity.BucketUpdate
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.util.kotlin.filterNullValues
 import javax.inject.Inject
 
 class SyncFolders @Inject constructor(
-    private val getFolders: GetFolders,
+    private val getAllFolders: GetAllFolders,
     private val backupManager: BackupManager,
 ) {
+    suspend operator fun invoke(folderId: FolderId, uploadPriority: Long) = coRunCatching {
+        getAllFolders(folderId).getOrThrow().onEach { backupFolder ->
+            backupManager.sync(backupFolder, uploadPriority)
+        }
+    }
+
     suspend operator fun invoke(userId: UserId, uploadPriority: Long) = coRunCatching {
-        getFolders(userId).getOrThrow().onEach { backupFolder ->
-            backupManager.sync(userId, backupFolder, uploadPriority)
+        getAllFolders(userId).getOrThrow().onEach { backupFolder ->
+            backupManager.sync(backupFolder, uploadPriority)
         }
     }
 
     suspend operator fun invoke(
         userId: UserId,
-        bucketIds: List<Int>,
+        bucketUpdates: List<BucketUpdate>,
         uploadPriority: Long,
     ) = coRunCatching {
-        getFolders(userId)
+        getAllFolders(userId)
             .getOrThrow()
-            .filter { backupFolder -> backupFolder.bucketId in bucketIds }
-            .onEach { backupFolder ->
-                backupManager.sync(userId, backupFolder, uploadPriority)
+            .associateWith { backupFolder ->
+                bucketUpdates.firstOrNull { bucketUpdate -> bucketUpdate.bucketId == backupFolder.bucketId }
+            }.filterNullValues()
+            .map { (backupFolder, bucketUpdate) ->
+                if (backupFolder.updateTime != null) {
+                    backupFolder.copy(
+                        updateTime = minOf(
+                            backupFolder.updateTime,
+                            bucketUpdate.oldestAddedTime
+                        )
+                    )
+                } else {
+                    backupFolder
+                }
+            }.onEach { backupFolder ->
+                backupManager.sync(backupFolder, uploadPriority)
             }
     }
 }

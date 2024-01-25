@@ -52,6 +52,7 @@ class GetBackupStatusTest {
     @get:Rule
     val database = DriveDatabaseRule()
     private lateinit var folderId: FolderId
+    private lateinit var backupFolder: BackupFolder
 
     private lateinit var setFiles: SetFiles
     private lateinit var markAsCompleted: MarkAsCompleted
@@ -65,7 +66,8 @@ class GetBackupStatusTest {
         folderId = database.myDrive { }
         val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
         val addFolder = AddFolder(backupFolderRepository)
-        addFolder(BackupFolder(0, folderId))
+        backupFolder = BackupFolder(0, folderId)
+        addFolder(backupFolder).getOrThrow()
         val backupFileRepository = BackupFileRepositoryImpl(database.db)
         setFiles = SetFiles(backupFileRepository)
         markAsCompleted = MarkAsCompleted(backupFileRepository)
@@ -84,7 +86,7 @@ class GetBackupStatusTest {
         runTest {
             assertEquals(
                 BackupStatus.Complete(totalBackupPhotos = 0),
-                getBackupStatus(userId).first(),
+                getBackupStatus(folderId).first(),
             )
         }
 
@@ -92,12 +94,12 @@ class GetBackupStatusTest {
     fun `Given tree files when two are make as completed then status should be progressing two over three`() =
         runTest {
             setFiles(
-                userId, listOf(
+                listOf(
                     backupFile("uri1"),
                     backupFile("uri2"),
                     backupFile("uri3"),
                 )
-            )
+            ).getOrThrow()
             linkUploadRepository.insertUploadFileLinks(
                 listOf(
                     uploadFileLink("uri1", folderId),
@@ -105,12 +107,12 @@ class GetBackupStatusTest {
                     uploadFileLink("uri3", folderId),
                 )
             )
-            markAsCompleted(userId, "uri1")
-            markAsCompleted(userId, "uri2")
+            markAsCompleted(folderId, "uri1").getOrThrow()
+            markAsCompleted(folderId, "uri2").getOrThrow()
 
             assertEquals(
                 BackupStatus.InProgress(totalBackupPhotos = 3, pendingBackupPhotos = 1),
-                getBackupStatus(userId).first(),
+                getBackupStatus(folderId).first(),
             )
         }
 
@@ -118,12 +120,12 @@ class GetBackupStatusTest {
     fun `Given tree files when all are make as completed then status should be completed`() =
         runTest {
             setFiles(
-                userId, listOf(
+                listOf(
                     backupFile("uri1"),
                     backupFile("uri2"),
                     backupFile("uri3"),
                 )
-            )
+            ).getOrThrow()
             linkUploadRepository.insertUploadFileLinks(
                 listOf(
                     uploadFileLink("uri1", folderId),
@@ -131,13 +133,13 @@ class GetBackupStatusTest {
                     uploadFileLink("uri3", folderId),
                 )
             )
-            markAsCompleted(userId, "uri1")
-            markAsCompleted(userId, "uri2")
-            markAsCompleted(userId, "uri3")
+            markAsCompleted(folderId, "uri1").getOrThrow()
+            markAsCompleted(folderId, "uri2").getOrThrow()
+            markAsCompleted(folderId, "uri3").getOrThrow()
 
             assertEquals(
                 BackupStatus.Complete(totalBackupPhotos = 3),
-                getBackupStatus(userId).first(),
+                getBackupStatus(folderId).first(),
             )
         }
 
@@ -145,12 +147,12 @@ class GetBackupStatusTest {
     fun `Given tree files when all are make as completed and failed then status should be uncompleted`() =
         runTest {
             setFiles(
-                userId, listOf(
+                listOf(
                     backupFile("uri1"),
                     backupFile("uri2"),
                     backupFile("uri3"),
                 )
-            )
+            ).getOrThrow()
             linkUploadRepository.insertUploadFileLinks(
                 listOf(
                     uploadFileLink("uri1", folderId),
@@ -158,16 +160,16 @@ class GetBackupStatusTest {
                     uploadFileLink("uri3", folderId),
                 )
             )
-            markAsCompleted(userId, "uri1")
-            markAsCompleted(userId, "uri2")
-            markAsFailed(userId, "uri3")
+            markAsCompleted(folderId, "uri1").getOrThrow()
+            markAsCompleted(folderId, "uri2").getOrThrow()
+            markAsFailed(folderId, "uri3").getOrThrow()
 
             assertEquals(
                 BackupStatus.Uncompleted(
                     totalBackupPhotos = 3,
                     failedBackupPhotos = 1,
                 ),
-                getBackupStatus(userId).first(),
+                getBackupStatus(folderId).first(),
             )
         }
 
@@ -177,13 +179,13 @@ class GetBackupStatusTest {
             val backupFile1 = backupFile("uri1")
             val backupFile2 = backupFile("uri2")
 
-            setFiles(userId, listOf(backupFile1, backupFile2)).getOrThrow()
-            markAsCompleted(userId, "uri1").getOrThrow()
-            cleanUpCompleteBackup(userId, folderId, 0).getOrThrow()
+            setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
+            markAsCompleted(folderId, "uri1").getOrThrow()
+            cleanUpCompleteBackup(backupFolder).getOrThrow()
 
             assertEquals(
                 BackupStatus.InProgress(totalBackupPhotos = 2, pendingBackupPhotos = 1),
-                getBackupStatus(userId = userId).first(),
+                getBackupStatus(folderId).first(),
             )
         }
 
@@ -193,28 +195,29 @@ class GetBackupStatusTest {
             val backupFile1 = backupFile("uri1")
             val backupFile2 = backupFile("uri2")
 
-            setFiles(userId, listOf(backupFile1, backupFile2)).getOrThrow()
-            markAsCompleted(userId, "uri1").getOrThrow()
-            markAsCompleted(userId, "uri2").getOrThrow()
-            cleanUpCompleteBackup(userId, folderId, 0).getOrThrow()
+            setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
+            markAsCompleted(folderId, "uri1").getOrThrow()
+            markAsCompleted(folderId, "uri2").getOrThrow()
+            cleanUpCompleteBackup(backupFolder).getOrThrow()
 
             assertEquals(
                 BackupStatus.Complete(totalBackupPhotos = 0),
-                getBackupStatus(userId = userId).first(),
+                getBackupStatus(folderId).first(),
             )
         }
-}
 
-private fun backupFile(uriString: String) = BackupFile(
-    bucketId = 0,
-    uriString = uriString,
-    mimeType = "",
-    name = "",
-    hash = "",
-    size = 0.bytes,
-    state = BackupFileState.IDLE,
-    date = TimestampS(0),
-)
+    private fun backupFile(uriString: String) = BackupFile(
+        bucketId = 0,
+        folderId = folderId,
+        uriString = uriString,
+        mimeType = "",
+        name = "",
+        hash = "",
+        size = 0.bytes,
+        state = BackupFileState.IDLE,
+        date = TimestampS(0),
+    )
+}
 
 private fun uploadFileLink(uriString: String, folderId: FolderId) = UploadFileLink(
     userId = userId,

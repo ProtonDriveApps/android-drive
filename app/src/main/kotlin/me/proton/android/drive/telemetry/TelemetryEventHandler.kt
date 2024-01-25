@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -28,13 +28,14 @@ import me.proton.core.drive.announce.event.domain.entity.Event.BackupEnabled
 import me.proton.core.drive.announce.event.domain.entity.Event.BackupStopped
 import me.proton.core.drive.announce.event.domain.entity.Event.Upload
 import me.proton.core.drive.announce.event.domain.handler.EventHandler
-import me.proton.core.drive.telemetry.domain.event.PhotosEvent
 import me.proton.core.drive.telemetry.domain.manager.DriveTelemetryManager
 import javax.inject.Inject
 
 class TelemetryEventHandler @Inject constructor(
     private val manager: DriveTelemetryManager,
     private val backupCompletedEventMapper: BackupCompletedEventMapper,
+    private val backupEnabledEventMapper: BackupEnabledEventMapper,
+    private val backupDisabledEventMapper: BackupDisabledEventMapper,
     private val backupStoppedEventMapper: BackupStoppedEventMapper,
     private val uploadEventMapper: UploadEventMapper,
 ) : EventHandler {
@@ -45,10 +46,10 @@ class TelemetryEventHandler @Inject constructor(
         event: Event,
     ) = mutex.withLock {
         when (event) {
-            BackupCompleted -> backupCompletedEventMapper(userId)
-            BackupDisabled -> PhotosEvent.SettingDisabled()
-            BackupEnabled -> PhotosEvent.SettingEnabled()
-            is BackupStopped -> backupStoppedEventMapper(userId, event)
+            is BackupCompleted -> backupCompletedEventMapper(event)
+            is BackupDisabled -> backupDisabledEventMapper(event)
+            is BackupEnabled -> backupEnabledEventMapper(event)
+            is BackupStopped -> backupStoppedEventMapper(event)
             is Upload -> uploadEventMapper(event)
             else -> null
         }?.let { event ->

@@ -20,6 +20,7 @@ package me.proton.core.drive.backup.domain.usecase
 
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.data.repository.BackupDuplicateRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
@@ -55,6 +56,7 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -88,7 +90,7 @@ class FindDuplicatesTest {
         )
         val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
         val addFolder = AddFolder(backupFolderRepository)
-        addFolder(backupFolder)
+        addFolder(backupFolder).getOrThrow()
 
         backupFileRepository = BackupFileRepositoryImpl(database.db)
         backupDuplicateRepository = BackupDuplicateRepositoryImpl(database.db)
@@ -130,23 +132,21 @@ class FindDuplicatesTest {
     @Test
     fun empty() = runTest {
 
-        val result = findDuplicates(userId, backupFolder)
+        findDuplicates(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         assertEquals(
             emptyList<BackupFile>(),
-            backupFileRepository.getAllFiles(userId, 0, 100),
+            backupFileRepository.getAllFiles(folderId, 0, 100),
         )
     }
 
     @Test
     fun duplicates() = runTest {
         backupFileRepository.insertFiles(
-            userId = userId,
             backupFiles = listOf(
-                backupFile(index = 0, backupFileState = BackupFileState.IDLE),
-                backupFile(index = 1, backupFileState = BackupFileState.IDLE),
                 backupFile(index = 2, backupFileState = BackupFileState.IDLE),
+                backupFile(index = 1, backupFileState = BackupFileState.IDLE),
+                backupFile(index = 0, backupFileState = BackupFileState.IDLE),
             )
         )
 
@@ -166,31 +166,20 @@ class FindDuplicatesTest {
             )
         }
 
-        val result = findDuplicates(userId, backupFolder)
+        findDuplicates(backupFolder).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         assertEquals(
             listOf(
-                backupFile(index = 0, backupFileState = BackupFileState.READY),
-                backupFile(index = 1, backupFileState = BackupFileState.READY),
                 backupFile(index = 2, backupFileState = BackupFileState.POSSIBLE_DUPLICATE),
+                backupFile(index = 1, backupFileState = BackupFileState.READY),
+                backupFile(index = 0, backupFileState = BackupFileState.READY),
             ),
-            backupFileRepository.getAllFiles(userId, 0, 100),
+            backupFileRepository.getAllFiles(folderId, 0, 100),
         )
         assertEquals(
             listOf(
                 BackupDuplicate(
                     id = 1,
-                    parentId = folderId,
-                    hash = "hash1",
-                    contentHash = null,
-                    linkId = FileId(ShareId(userId, shareId), "link-id"),
-                    linkState = Link.State.DRAFT,
-                    revisionId = "revision-id",
-                    clientUid = clientUid
-                ),
-                BackupDuplicate(
-                    id = 2,
                     parentId = folderId,
                     hash = "hash2",
                     contentHash = null,
@@ -199,19 +188,28 @@ class FindDuplicatesTest {
                     revisionId = null,
                     clientUid = clientUid
                 ),
+                BackupDuplicate(
+                    id = 2,
+                    parentId = folderId,
+                    hash = "hash1",
+                    contentHash = null,
+                    linkId = FileId(ShareId(userId, shareId), "link-id"),
+                    linkState = Link.State.DRAFT,
+                    revisionId = "revision-id",
+                    clientUid = clientUid
+                ),
             ),
-            backupDuplicateRepository.getAll(userId, folderId, 0, 100),
+            backupDuplicateRepository.getAll(folderId, 0, 100).sortedBy { it.id },
         )
     }
 
     @Test
     fun error() = runTest {
         backupFileRepository.insertFiles(
-            userId = userId,
             backupFiles = listOf(
-                backupFile(index = 0, backupFileState = BackupFileState.IDLE),
-                backupFile(index = 1, backupFileState = BackupFileState.IDLE),
                 backupFile(index = 2, backupFileState = BackupFileState.IDLE),
+                backupFile(index = 1, backupFileState = BackupFileState.IDLE),
+                backupFile(index = 0, backupFileState = BackupFileState.IDLE),
             )
         )
 
@@ -220,16 +218,17 @@ class FindDuplicatesTest {
         )
         coEvery { linkApiDataSource.checkAvailableHashes(folderId, any()) } throws apiException
 
-        val result = findDuplicates(userId, backupFolder)
+        assertThrows(ApiException::class.java) {
+            runBlocking { findDuplicates(backupFolder).getOrThrow() }
+        }
 
-        assertEquals(Result.failure<Unit>(apiException), result)
         assertEquals(
             listOf(
-                backupFile(index = 0, backupFileState = BackupFileState.IDLE),
-                backupFile(index = 1, backupFileState = BackupFileState.IDLE),
                 backupFile(index = 2, backupFileState = BackupFileState.IDLE),
+                backupFile(index = 1, backupFileState = BackupFileState.IDLE),
+                backupFile(index = 0, backupFileState = BackupFileState.IDLE),
             ),
-            backupFileRepository.getAllFiles(userId, 0, 100),
+            backupFileRepository.getAllFiles(folderId, 0, 100),
         )
     }
 
@@ -237,18 +236,25 @@ class FindDuplicatesTest {
         uriString = "uri$index",
         hash = "hash$index",
         backupFileState = backupFileState,
+        date = TimestampS(index.toLong())
     )
 
-    private fun backupFile(uriString: String, hash: String, backupFileState: BackupFileState) =
+    private fun backupFile(
+        uriString: String,
+        hash: String,
+        backupFileState: BackupFileState,
+        date: TimestampS = TimestampS(0),
+    ) =
         BackupFile(
             bucketId = backupFolder.bucketId,
+            folderId = folderId,
             uriString = uriString,
             mimeType = "",
             name = "",
             hash = hash,
             size = 0.bytes,
             state = backupFileState,
-            date = TimestampS(0),
+            date = date,
         )
 }
 

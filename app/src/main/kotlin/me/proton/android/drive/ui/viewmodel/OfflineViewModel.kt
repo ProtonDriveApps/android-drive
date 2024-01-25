@@ -53,6 +53,7 @@ import me.proton.core.drive.base.domain.entity.onProcessing
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -143,6 +144,12 @@ class OfflineViewModel @Inject constructor(
         listContentAppendingState,
         layoutType,
     ) { driveLink, sorting, contentState, appendingContentState, layoutType ->
+        val listContentState = when (contentState) {
+            is ListContentState.Empty -> contentState.copy(
+                imageResId = emptyStateImageResId,
+            )
+            else -> contentState
+        }
         initialViewState.copy(
             filesViewState = initialViewState.filesViewState.copy(
                 title = if (isRootFolder) null else {
@@ -150,7 +157,7 @@ class OfflineViewModel @Inject constructor(
                 },
                 isTitleEncrypted = isRootFolder.not() && driveLink.isNameEncrypted,
                 sorting = sorting,
-                listContentState = contentState,
+                listContentState = listContentState,
                 listContentAppendingState = appendingContentState,
                 isGrid = layoutType == LayoutType.GRID,
             )
@@ -158,11 +165,7 @@ class OfflineViewModel @Inject constructor(
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     private val emptyState = ListContentState.Empty(
-        imageResId = if (isRootFolder) {
-            BasePresentation.drawable.empty_offline
-        } else {
-            BasePresentation.drawable.empty_folder
-        },
+        imageResId = emptyStateImageResId,
         titleId = if (isRootFolder) {
             I18N.string.title_empty_offline_available
         } else {
@@ -174,6 +177,20 @@ class OfflineViewModel @Inject constructor(
             I18N.string.description_empty_folder
         },
     )
+
+    private val emptyStateImageResId: Int get() = if (isRootFolder) {
+        getThemeDrawableId(
+            light = BasePresentation.drawable.empty_offline_light,
+            dark = BasePresentation.drawable.empty_offline_dark,
+            dayNight = BasePresentation.drawable.empty_offline_daynight,
+        )
+    } else {
+        getThemeDrawableId(
+            light = BasePresentation.drawable.empty_folder_light,
+            dark = BasePresentation.drawable.empty_folder_dark,
+            dayNight = BasePresentation.drawable.empty_folder_daynight,
+        )
+    }
 
     fun viewEvent(
         navigateToFiles: (FolderId, String?) -> Unit,

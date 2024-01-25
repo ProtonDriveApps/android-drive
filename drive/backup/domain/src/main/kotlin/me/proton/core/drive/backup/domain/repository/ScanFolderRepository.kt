@@ -19,6 +19,6 @@
 package me.proton.core.drive.backup.domain.repository
 
 import me.proton.core.drive.backup.domain.entity.BackupFile
-import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 
-fun interface ScanFolderRepository : suspend (Int, TimestampS?) -> List<BackupFile>
+fun interface ScanFolderRepository : suspend (BackupFolder) -> List<BackupFile>

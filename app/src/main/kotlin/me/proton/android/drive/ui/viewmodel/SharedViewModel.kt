@@ -57,6 +57,7 @@ import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -76,6 +77,7 @@ import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.usecase.GetLayoutType
+import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
 import me.proton.drive.android.settings.domain.usecase.ToggleLayoutType
 import javax.inject.Inject
 import me.proton.core.drive.base.presentation.R as BasePresentation
@@ -97,6 +99,7 @@ class SharedViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val configurationProvider: ConfigurationProvider,
     private val getShare: GetShare,
+    private val getThemeStyle: GetThemeStyle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle), HomeTabViewModel {
     private val _effects = MutableSharedFlow<HomeEffect>()
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
@@ -145,11 +148,18 @@ class SharedViewModel @Inject constructor(
         getSorting(userId),
         driveLinks,
         layoutType,
-    ) { sorting, driveLinks, layoutType ->
+        getThemeStyle(userId),
+    ) { sorting, driveLinks, layoutType, _ ->
+        val listContentState = when (val contentState = driveLinks.toListContentState()) {
+            is ListContentState.Empty -> contentState.copy(
+                imageResId = emptyStateImageResId,
+            )
+            else -> contentState
+        }
         initialViewState.copy(
             filesViewState = initialViewState.filesViewState.copy(
                 sorting = sorting,
-                listContentState = driveLinks.toListContentState(),
+                listContentState = listContentState,
                 isGrid = layoutType == LayoutType.GRID,
             )
         )
@@ -165,7 +175,7 @@ class SharedViewModel @Inject constructor(
             ListContentState.Content(false)
         } else {
             ListContentState.Empty(
-                BasePresentation.drawable.empty_links,
+                emptyStateImageResId,
                 I18N.string.title_empty_shared,
                 I18N.string.description_empty_shared,
             )
@@ -175,6 +185,11 @@ class SharedViewModel @Inject constructor(
             actionResId = I18N.string.common_retry,
         )
     }
+    private val emptyStateImageResId: Int get() = getThemeDrawableId(
+        light = BasePresentation.drawable.empty_shared_by_me_light,
+        dark = BasePresentation.drawable.empty_shared_by_me_dark,
+        dayNight = BasePresentation.drawable.empty_shared_by_me_daynight,
+    )
 
     override val homeEffect: Flow<HomeEffect>
         get() = _effects.asSharedFlow()

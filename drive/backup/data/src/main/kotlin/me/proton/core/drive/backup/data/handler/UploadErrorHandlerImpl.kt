@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 package me.proton.core.drive.backup.data.handler
 
 import androidx.work.WorkManager
+import kotlinx.coroutines.flow.first
 import me.proton.android.drive.verifier.domain.exception.VerifierException
 import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.drive.backup.data.extension.toBackupError
@@ -27,7 +28,7 @@ import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.exception.BackupStopException
 import me.proton.core.drive.backup.domain.handler.UploadErrorHandler
 import me.proton.core.drive.backup.domain.usecase.DeleteFile
-import me.proton.core.drive.backup.domain.usecase.GetFolders
+import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.backup.domain.usecase.MarkAsFailed
 import me.proton.core.drive.backup.domain.usecase.StopBackup
 import me.proton.core.drive.base.data.extension.log
@@ -44,18 +45,14 @@ class UploadErrorHandlerImpl @Inject constructor(
     private val workManager: WorkManager,
     private val deleteFile: DeleteFile,
     private val stopBackup: StopBackup,
-    private val getFolders: GetFolders,
+    private val hasFolders: HasFolders,
     private val markAsFailed: MarkAsFailed,
 ) : UploadErrorHandler {
     override suspend fun onError(uploadError: UploadErrorManager.Error) {
         if (uploadError.throwable.hasEffectOnBackup()) {
-            val folders = getFolders(uploadError.uploadFileLink.userId)
-                .getOrNull()
-                .orEmpty()
-                .map { backupFolder -> backupFolder.folderId }
-            if (uploadError.uploadFileLink.parentLinkId in folders) {
+            if (hasFolders(uploadError.uploadFileLink.parentLinkId).first()) {
                 workManager.enqueue(
-                    BackupNotificationWorker.getWorkRequest(uploadError.uploadFileLink.userId)
+                    BackupNotificationWorker.getWorkRequest(uploadError.uploadFileLink.parentLinkId)
                 )
                 handleError(uploadError)
             }
@@ -79,7 +76,7 @@ class UploadErrorHandlerImpl @Inject constructor(
                         BackupStopException("Backup must stop: ${backupError.type}", throwable)
                             .log(BACKUP, "Stopping backup")
                         stopBackup(
-                            userId = uploadError.uploadFileLink.userId,
+                            folderId = uploadError.uploadFileLink.parentLinkId,
                             error = backupError,
                         ).onFailure { error ->
                             error.log(BACKUP, "Cannot stop backup")
@@ -87,7 +84,9 @@ class UploadErrorHandlerImpl @Inject constructor(
                     }
 
                     BackupErrorType.OTHER -> onFileOtherError(uploadError)
-                    BackupErrorType.CONNECTIVITY -> Unit // Will be stop be work manager
+                    BackupErrorType.CONNECTIVITY,
+                    BackupErrorType.WIFI_CONNECTIVITY,
+                    -> Unit // Will be stopped by work manager
                 }
             }
         }
@@ -96,7 +95,7 @@ class UploadErrorHandlerImpl @Inject constructor(
     private suspend fun onFileNotFoundException(uploadFileLink: UploadFileLink) {
         uploadFileLink.uriString?.let { uriString ->
             CoreLogger.d(BACKUP, "Deleting file not found: $uriString")
-            deleteFile(uploadFileLink.userId, uriString).onFailure { error ->
+            deleteFile(uploadFileLink.parentLinkId, uriString).onFailure { error ->
                 error.log(BACKUP, "Cannot delete file: $uriString")
             }
         }
@@ -105,7 +104,7 @@ class UploadErrorHandlerImpl @Inject constructor(
     private suspend fun onFileOtherError(uploadError: UploadErrorManager.Error) {
         uploadError.uploadFileLink.uriString?.let { uriString ->
             markAsFailed(
-                userId = uploadError.uploadFileLink.userId,
+                folderId = uploadError.uploadFileLink.parentLinkId,
                 uriString = uriString,
             ).onFailure { error ->
                 error.log(BACKUP, "Cannot mark as failed: $uriString")

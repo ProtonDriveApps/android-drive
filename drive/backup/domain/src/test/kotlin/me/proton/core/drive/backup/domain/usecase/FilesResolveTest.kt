@@ -30,7 +30,6 @@ import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -64,7 +63,7 @@ class FilesResolveTest {
         deleteAllFailedFiles = DeleteAllFailedFiles(backupFileRepository)
         markAllFailedAsReady = MarkAllFailedAsReady(backupFileRepository)
         val addFolder = AddFolder(backupFolderRepository)
-        addFolder(BackupFolder(0, folderId))
+        addFolder(BackupFolder(0, folderId)).getOrThrow()
         setFiles = SetFiles(backupFileRepository)
     }
 
@@ -72,7 +71,7 @@ class FilesResolveTest {
     fun empty() = runTest {
         assertEquals(
             emptyList<BackupFile>(),
-            getAllFailedFiles(userId, folderId).first(),
+            getAllFailedFiles(folderId).first(),
         )
     }
 
@@ -82,10 +81,10 @@ class FilesResolveTest {
             backupFile(1, BackupFileState.FAILED),
             backupFile(2, BackupFileState.COMPLETED),
         )
-        setFiles(userId, backupFiles)
+        setFiles(backupFiles).getOrThrow()
         assertEquals(
             listOf(backupFile(1, BackupFileState.FAILED)),
-            getAllFailedFiles(userId, folderId).first(),
+            getAllFailedFiles(folderId).first(),
         )
     }
 
@@ -95,11 +94,11 @@ class FilesResolveTest {
             backupFile(1, BackupFileState.FAILED),
             backupFile(2, BackupFileState.COMPLETED),
         )
-        setFiles(userId, backupFiles)
-        deleteAllFailedFiles(userId, folderId)
+        setFiles(backupFiles).getOrThrow()
+        deleteAllFailedFiles(folderId).getOrThrow()
         assertEquals(
             emptyList<BackupFile>(),
-            getAllFailedFiles(userId, folderId).first(),
+            getAllFailedFiles(folderId).first(),
         )
     }
 
@@ -109,11 +108,11 @@ class FilesResolveTest {
             backupFile(1, BackupFileState.FAILED),
             backupFile(2, BackupFileState.COMPLETED),
         )
-        setFiles(userId, backupFiles)
-        markAllFailedAsReady(userId, 0, 5)
+        setFiles(backupFiles).getOrThrow()
+        markAllFailedAsReady(folderId, 0, 5).getOrThrow()
         assertEquals(
             emptyList<BackupFile>(),
-            getAllFailedFiles(userId, folderId).first(),
+            getAllFailedFiles(folderId).first(),
         )
     }
 
@@ -133,6 +132,7 @@ class FilesResolveTest {
         state: BackupFileState = BackupFileState.IDLE,
     ) = BackupFile(
         bucketId = bucketId,
+        folderId = folderId,
         uriString = uriString,
         mimeType = "",
         name = "",

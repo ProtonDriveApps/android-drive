@@ -40,6 +40,7 @@ import me.proton.android.drive.ui.effect.TrashEffect
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.screen.EmptyTrashIconState
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.trash.domain.usecase.GetPagedTrashedDriveLinks
@@ -95,9 +96,15 @@ class TrashViewModel @Inject constructor(
         listContentAppendingState,
         layoutType,
     ) { sorting, contentState, appendingState, layoutType ->
+        val listContentState = when (contentState) {
+            is ListContentState.Empty -> contentState.copy(
+                imageResId = emptyStateImageResId,
+            )
+            else -> contentState
+        }
         initialViewState.copy(
             sorting = sorting,
-            listContentState = contentState,
+            listContentState = listContentState,
             listContentAppendingState = appendingState,
             isGrid = layoutType == LayoutType.GRID,
         )
@@ -116,9 +123,14 @@ class TrashViewModel @Inject constructor(
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     private val emptyState = ListContentState.Empty(
-        imageResId = BasePresentation.drawable.empty_trash,
+        imageResId = emptyStateImageResId,
         titleId = I18N.string.title_empty_trash,
         descriptionResId = I18N.string.description_empty_trash,
+    )
+    private val emptyStateImageResId: Int get() = getThemeDrawableId(
+        light = BasePresentation.drawable.empty_trash_light,
+        dark = BasePresentation.drawable.empty_trash_dark,
+        dayNight = BasePresentation.drawable.empty_trash_daynight,
     )
 
     fun viewEvent(

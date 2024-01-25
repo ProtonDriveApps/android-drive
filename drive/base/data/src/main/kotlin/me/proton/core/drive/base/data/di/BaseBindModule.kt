@@ -23,10 +23,12 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.drive.base.data.formatter.DateTimeFormatterImpl
 import me.proton.core.drive.base.data.usecase.CopyToClipboardImpl
+import me.proton.core.drive.base.data.usecase.GetInternalStorageInfoImpl
 import me.proton.core.drive.base.data.usecase.GetMemoryInfoImpl
 import me.proton.core.drive.base.data.usecase.Sha256Impl
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
 import me.proton.core.drive.base.domain.usecase.CopyToClipboard
+import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.base.domain.usecase.GetMemoryInfo
 import me.proton.core.drive.base.domain.usecase.Sha256
 import javax.inject.Singleton
@@ -50,4 +52,8 @@ interface BaseBindModule {
     @Binds
     @Singleton
     fun bindsGetMemoryInfoImpl(impl: GetMemoryInfoImpl): GetMemoryInfo
+
+    @Binds
+    @Singleton
+    fun bindsGetInternalStorageInfoImpl(impl: GetInternalStorageInfoImpl): GetInternalStorageInfo
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ import me.proton.core.drive.drivelink.upload.domain.entity.Notifications
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.usecase.CreateUploadBulk
 import me.proton.core.drive.upload.domain.exception.NotEnoughSpaceException
 import me.proton.core.drive.upload.domain.manager.UploadWorkManager
@@ -41,7 +42,7 @@ class UploadFiles @Inject constructor(
 ) {
     suspend operator fun invoke(
         folder: DriveLink.Folder,
-        uriStrings: List<String>,
+        uploadFileDescriptions: List<UploadFileDescription>,
         notifications: Notifications = Notifications.TurnedOn,
         cacheOption: CacheOption = CacheOption.ALL,
         shouldDeleteSource: Boolean = false,
@@ -51,21 +52,21 @@ class UploadFiles @Inject constructor(
         priority: Long,
         tags : List<String> = emptyList(),
     ): Result<Unit> = coRunCatching {
-        if (uriStrings.isEmpty()) return@coRunCatching
+        if (uploadFileDescriptions.isEmpty()) return@coRunCatching
 
-        validateUploadLimit(folder.userId, uriStrings.size)
+        validateUploadLimit(folder.userId, uploadFileDescriptions.size)
             .onFailure {
                 if (shouldDeleteSource) {
-                    uriStrings.forEach { uriString ->
-                        fileProvider.getFile(uriString).delete()
+                    uploadFileDescriptions.forEach { uriString ->
+                        fileProvider.getFile(uriString.uri).delete()
                     }
                 }
             }
             .getOrThrow()
-        if (background || uriStrings.size > configurationProvider.bulkUploadThreshold) {
+        if (background || uploadFileDescriptions.size > configurationProvider.bulkUploadThreshold) {
             processInBackground(
                 folder = folder,
-                uriStrings = uriStrings,
+                uploadFileDescriptions = uploadFileDescriptions,
                 notifications = notifications,
                 cacheOption = cacheOption,
                 networkTypeProviderType = networkTypeProviderType,
@@ -77,7 +78,7 @@ class UploadFiles @Inject constructor(
         } else {
             processInForeground(
                 folder = folder,
-                uriStrings = uriStrings,
+                uriStrings = uploadFileDescriptions.map { description -> description.uri },
                 notifications = notifications,
                 cacheOption = cacheOption,
                 networkTypeProviderType = networkTypeProviderType,
@@ -130,7 +131,7 @@ class UploadFiles @Inject constructor(
 
     private suspend fun processInBackground(
         folder: DriveLink.Folder,
-        uriStrings: List<String>,
+        uploadFileDescriptions: List<UploadFileDescription>,
         notifications: Notifications,
         cacheOption: CacheOption,
         networkTypeProviderType: NetworkTypeProviderType,
@@ -143,7 +144,7 @@ class UploadFiles @Inject constructor(
             createUploadBulk(
                 volumeId = folder.volumeId,
                 parent = folder,
-                uriStrings = uriStrings,
+                uploadFileDescriptions = uploadFileDescriptions,
                 shouldDeleteSource = shouldDeleteSource,
                 networkTypeProviderType = networkTypeProviderType,
                 shouldAnnounceEvent = notifications.system.announceUpload,

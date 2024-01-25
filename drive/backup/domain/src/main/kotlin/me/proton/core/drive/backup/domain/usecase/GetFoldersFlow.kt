@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -36,13 +36,15 @@ class GetFoldersFlow @Inject constructor(
         emitAll(repository.getAllFlow(
             folderId = folderId,
             count = count,
-        ).onEach {
-            val folderCount = repository.getCount(folderId)
-            if (it.size < folderCount) {
-                CoreLogger.e(
-                    LogTag.BACKUP,
-                    IllegalStateException("Cannot get all backup folders: $folderCount (limit: $count)"),
-                )
+        ).onEach { backupFolders ->
+            if (backupFolders.size == count) {
+                val folderCount = repository.getCount(folderId)
+                if (folderCount > count) {
+                    CoreLogger.e(
+                        LogTag.BACKUP,
+                        IllegalStateException("Cannot get all backup folders: $folderCount (limit: $count)"),
+                    )
+                }
             }
         })
     }

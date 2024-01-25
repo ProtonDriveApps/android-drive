@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -19,9 +19,11 @@ package me.proton.core.drive.backup.domain.entity
 
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.link.domain.entity.FolderId
 
 data class BackupFile(
     val bucketId: Int,
+    val folderId: FolderId,
     val uriString: String,
     val mimeType: String,
     val name: String,
@@ -31,4 +33,5 @@ data class BackupFile(
     val date: TimestampS,
     val uploadPriority: Long = Long.MAX_VALUE,
     val attempts: Long = 0,
+    val lastModified: TimestampS? = null,
 )

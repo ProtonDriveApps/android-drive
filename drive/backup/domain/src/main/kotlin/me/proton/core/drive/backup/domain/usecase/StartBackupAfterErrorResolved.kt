@@ -28,20 +28,27 @@ import javax.inject.Inject
 
 class StartBackupAfterErrorResolved @Inject constructor(
     private val startBackup: StartBackup,
+    private val getAllFolders: GetAllFolders,
     private val getErrors: GetErrors,
     private val deleteAllBackupError: DeleteAllBackupError,
 ) {
 
     suspend operator fun invoke(userId: UserId, type: BackupErrorType) = coRunCatching {
-        val hasErrorType = getErrors(userId).firstOrNull().orEmpty().any { error ->
-            error.type == type
-        }
-        if (hasErrorType) {
-            CoreLogger.d(BACKUP, "Restarting backup after $type")
-            deleteAllBackupError(userId, type).getOrThrow()
-            startBackup(userId)
-        } else {
-            CoreLogger.d(BACKUP, "Ignore restart, error: $type not found")
-        }
+        getAllFolders(userId)
+            .getOrThrow()
+            .map { backupFolder -> backupFolder.folderId }
+            .distinct()
+            .forEach { folderId ->
+                val hasErrorType = getErrors(folderId).firstOrNull().orEmpty().any { error ->
+                    error.type == type
+                }
+                if (hasErrorType) {
+                    CoreLogger.d(BACKUP, "Restarting backup after $type")
+                    deleteAllBackupError(folderId, type).getOrThrow()
+                    startBackup(folderId)
+                } else {
+                    CoreLogger.d(BACKUP, "Ignore restart, error: $type not found")
+                }
+            }
     }
 }

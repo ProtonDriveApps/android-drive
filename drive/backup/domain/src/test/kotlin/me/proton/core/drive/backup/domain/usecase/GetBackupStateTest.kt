@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.data.manager.BackupPermissionsManagerImpl
+import me.proton.core.drive.backup.data.repository.BackupConfigurationRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
@@ -44,7 +45,7 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -57,6 +58,7 @@ class GetBackupStateTest {
 
     @get:Rule
     val database = DriveDatabaseRule()
+    private lateinit var folderId: FolderId
 
     private val appContext = ApplicationProvider.getApplicationContext<Application>()
     private lateinit var addFolder: AddFolder
@@ -75,6 +77,7 @@ class GetBackupStateTest {
 
     @Before
     fun setUp() = runTest {
+        folderId = database.myDrive {}
         val folderRepository = BackupFolderRepositoryImpl(database.db)
         val fileRepository = BackupFileRepositoryImpl(database.db)
         val errorRepository = BackupErrorRepositoryImpl(database.db)
@@ -103,16 +106,15 @@ class GetBackupStateTest {
                 override val baseUrl = ""
                 override val appVersionHeader = ""
                 override val backupDefaultBucketName = "Camera"
-            }
+            },
+            getConfiguration = GetConfiguration(BackupConfigurationRepositoryImpl(database.db)),
         )
 
-        backupState = getBackupState(userId)
+        backupState = getBackupState(folderId)
     }
 
     @Test
     fun `blank backup state`() = runTest {
-        database.myDrive {}
-
         bucketEntries = emptyList()
 
         assertEquals(
@@ -141,9 +143,7 @@ class GetBackupStateTest {
 
     @Test
     fun `running backup state`() = runTest {
-        val folderId = database.myDrive {}
-
-        addFolder(BackupFolder(0, folderId))
+        addFolder(BackupFolder(0, folderId)).getOrThrow()
 
         assertEquals(
             BackupState(
@@ -157,18 +157,16 @@ class GetBackupStateTest {
 
     @Test
     fun `uploading backup state`() = runTest {
-        val folderId = database.myDrive {}
-
-        addFolder(BackupFolder(0, folderId))
+        addFolder(BackupFolder(0, folderId)).getOrThrow()
 
         setFiles(
-            userId, listOf(
+            listOf(
                 backupFile("uri1"),
                 backupFile("uri2"),
                 backupFile("uri3"),
             )
-        )
-        markAsCompleted(userId, "uri1")
+        ).getOrThrow()
+        markAsCompleted(folderId, "uri1").getOrThrow()
 
 
         assertEquals(
@@ -185,18 +183,16 @@ class GetBackupStateTest {
     }
     @Test
     fun failure() = runTest {
-        val folderId = database.myDrive {}
-
-        addFolder(BackupFolder(0, folderId))
+        addFolder(BackupFolder(0, folderId)).getOrThrow()
 
         setFiles(
-            userId, listOf(
+            listOf(
                 backupFile("uri1"),
                 backupFile("uri2"),
                 backupFile("uri3"),
             )
-        )
-        markAsFailed(userId, "uri1")
+        ).getOrThrow()
+        markAsFailed(folderId, "uri1").getOrThrow()
 
         assertEquals(
             BackupState(
@@ -213,20 +209,18 @@ class GetBackupStateTest {
 
     @Test
     fun uncompleted() = runTest {
-        val folderId = database.myDrive {}
-
-        addFolder(BackupFolder(0, folderId))
+        addFolder(BackupFolder(0, folderId)).getOrThrow()
 
         setFiles(
-            userId, listOf(
+            listOf(
                 backupFile("uri1"),
                 backupFile("uri2"),
                 backupFile("uri3"),
             )
-        )
-        markAsCompleted(userId, "uri1")
-        markAsCompleted(userId, "uri2")
-        markAsFailed(userId, "uri3")
+        ).getOrThrow()
+        markAsCompleted(folderId, "uri1").getOrThrow()
+        markAsCompleted(folderId, "uri2").getOrThrow()
+        markAsFailed(folderId, "uri3").getOrThrow()
 
         assertEquals(
             BackupState(
@@ -243,10 +237,9 @@ class GetBackupStateTest {
 
     @Test
     fun `stopped backup state`() = runTest {
-        val folderId = database.myDrive {}
 
-        addFolder(BackupFolder(0, folderId))
-        deleteFolders(userId)
+        addFolder(BackupFolder(0, folderId)).getOrThrow()
+        deleteFolders(folderId).getOrThrow()
 
         assertEquals(
             BackupState(
@@ -257,16 +250,16 @@ class GetBackupStateTest {
             backupState.first(),
         )
     }
+
+    private fun backupFile(uriString: String) = BackupFile(
+        bucketId = 0,
+        folderId = folderId,
+        uriString = uriString,
+        mimeType = "",
+        name = "",
+        hash = "",
+        size = 0.bytes,
+        state = BackupFileState.IDLE,
+        date = TimestampS(0),
+    )
 }
-
-
-private fun backupFile(uriString: String) = BackupFile(
-    bucketId = 0,
-    uriString = uriString,
-    mimeType = "",
-    name = "",
-    hash = "",
-    size = 0.bytes,
-    state = BackupFileState.IDLE,
-    date = TimestampS(0),
-)

@@ -29,6 +29,8 @@ import me.proton.android.drive.lock.presentation.extension.getDefaultMessage
 import me.proton.android.drive.lock.presentation.viewevent.UnlockViewEvent
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.getDefaultMessage
+import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.SignOut
@@ -53,6 +55,7 @@ class UnlockViewModel @Inject constructor(
     private fun showBiometrics(userId: UserId) = viewModelScope.launch {
         unlockApp()
             .onFailure { error ->
+                error.log(VIEW_MODEL)
                 broadcastMessages(
                     userId = userId,
                     message = when (error) {

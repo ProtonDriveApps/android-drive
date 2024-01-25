@@ -19,14 +19,14 @@
 package me.proton.core.drive.backup.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
+import me.proton.core.drive.link.domain.entity.FolderId
 
 interface BackupErrorRepository {
-    fun getAll(userId: UserId, fromIndex: Int, count: Int): Flow<List<BackupError>>
-    suspend fun deleteAllRetryable(userId: UserId)
-    suspend fun insertError(userId: UserId, error: BackupError)
-    suspend fun deleteAll(userId: UserId)
-    suspend fun deleteAllByType(userId: UserId, type: BackupErrorType)
+    fun getAll(folderId: FolderId, fromIndex: Int, count: Int): Flow<List<BackupError>>
+    suspend fun deleteAllRetryable(folderId: FolderId)
+    suspend fun insertError(folderId: FolderId, error: BackupError)
+    suspend fun deleteAll(folderId: FolderId)
+    suspend fun deleteAllByType(folderId: FolderId, type: BackupErrorType)
 }

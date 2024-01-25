@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -35,9 +35,10 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.extension.isRetryable
+import me.proton.core.drive.base.data.api.ProtonApiCode
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.data.workmanager.onProtonHttpException
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.block.domain.entity.UploadBlocksUrl
@@ -45,6 +46,7 @@ import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
+import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
@@ -101,7 +103,11 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
                         max retries reached ${!canRetry}
                     """.trimIndent().replace("\n", " ")
                 )
-                retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
+                if (error.handle(uploadFileLink)) {
+                    Result.failure()
+                } else {
+                    retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
+                }
             },
             onSuccess = { uploadBlocksUrl ->
                 uploadBlocks(uploadBlocksUrl, uploadFileLink).fold(
@@ -130,7 +136,8 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
         uploadFileLink.logWorkState("enqueueing worker")
         val uploadTag = listOf(uploadFileLinkId.uniqueUploadWorkName) + tags
         val networkType =
-            requireNotNull(networkTypeProviders[uploadFileLink.networkTypeProviderType]).get()
+            requireNotNull(networkTypeProviders[uploadFileLink.networkTypeProviderType])
+                .get(uploadFileLink.parentLinkId)
         require(isNotEnqueued()){ "Workers are already enqueued" }
         (uploadBlocksUrl.blockLinks.mapIndexed { index, uploadLink ->
             BlockUploadWorker.getWorkRequest(
@@ -198,6 +205,16 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
                     .enqueue().await()
             }
     }
+
+    private suspend fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean =
+        onProtonHttpException { protonCode ->
+            when (protonCode) {
+                ProtonApiCode.NOT_EXISTS,
+                -> true.also { recreateFile(uploadFileLink, cleanUpWorkers, networkTypeProviders) }
+
+                else -> false
+            }
+        } ?: false
 
     private suspend fun isNotEnqueued(): Boolean =
         workManager.getWorkInfosByTag(uploadFileLinkId.uniqueUploadWorkName).await()

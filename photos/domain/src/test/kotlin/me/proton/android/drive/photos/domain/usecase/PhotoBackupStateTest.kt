@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -30,11 +30,13 @@ import kotlinx.coroutines.test.runTest
 import me.proton.android.drive.photos.data.usecase.EnablePhotosBackupImpl
 import me.proton.android.drive.photos.domain.manager.StubbedBackupConnectivityManager
 import me.proton.android.drive.photos.domain.manager.StubbedEventHandler
+import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.entity.Event.Backup.BackupState.PAUSED_DISABLED
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.backup.data.manager.BackupPermissionsManagerImpl
+import me.proton.core.drive.backup.data.repository.BackupConfigurationRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
@@ -54,8 +56,10 @@ import me.proton.core.drive.backup.domain.usecase.DeleteFolders
 import me.proton.core.drive.backup.domain.usecase.GetAllBuckets
 import me.proton.core.drive.backup.domain.usecase.GetBackupState
 import me.proton.core.drive.backup.domain.usecase.GetBackupStatus
+import me.proton.core.drive.backup.domain.usecase.GetConfiguration
 import me.proton.core.drive.backup.domain.usecase.GetErrors
 import me.proton.core.drive.backup.domain.usecase.StartBackup
+import me.proton.core.drive.backup.domain.usecase.UpdateConfiguration
 import me.proton.core.drive.base.domain.extension.asSuccessOrNullAsError
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.DriveDatabaseRule
@@ -66,6 +70,7 @@ import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.drivelink.data.extension.toEncryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.data.extension.toLink
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -79,6 +84,7 @@ import org.robolectric.RobolectricTestRunner
 class PhotoBackupStateTest {
     @get:Rule
     val database = DriveDatabaseRule()
+    private lateinit var folderId: FolderId
 
     private val appContext = ApplicationProvider.getApplicationContext<Application>()
     private lateinit var enablePhotosBackup: EnablePhotosBackup
@@ -96,7 +102,7 @@ class PhotoBackupStateTest {
     fun setUp() = runTest {
         repository = BackupFolderRepositoryImpl(database.db)
         backupManager = StubbedBackupManager(repository)
-        val folderId = database.photo {}
+        folderId = database.photo {}
         val errorRepository = BackupErrorRepositoryImpl(database.db)
         val folderRepository = BackupFolderRepositoryImpl(database.db)
         val fileRepository = BackupFileRepositoryImpl(database.db)
@@ -119,10 +125,19 @@ class PhotoBackupStateTest {
         }
         val announceEvent = AnnounceEvent(setOf(handler))
 
+        val backupConfigurationRepository = BackupConfigurationRepositoryImpl(database.db)
+        val getConfiguration = GetConfiguration(backupConfigurationRepository)
         enablePhotosBackup = EnablePhotosBackupImpl(
             appContext = appContext,
             setupPhotosBackup = SetupPhotosBackup(
-                getPhotosDriveLink = getPhotosDriveLink,
+                setupPhotosConfigurationBackup = SetupPhotosConfigurationBackup(
+                    getConfiguration = getConfiguration,
+                    updateConfiguration = UpdateConfiguration(
+                        repository = backupConfigurationRepository
+                    ),
+                    photosDefaultConfigurationProvider = object :
+                        PhotosDefaultConfigurationProvider {}
+                ),
                 addFolder = AddFolder(folderRepository),
                 bucketRepository = object : BucketRepository {
                     override suspend fun getAll() = listOf(BucketEntry(0, "Camera"))
@@ -158,10 +173,11 @@ class PhotoBackupStateTest {
                 override val baseUrl = ""
                 override val appVersionHeader = ""
                 override val backupDefaultBucketName = "Camera"
-            }
+            },
+            getConfiguration = getConfiguration,
         )
 
-        backupState = getBackupState(userId)
+        backupState = getBackupState(folderId)
     }
 
     @Test
@@ -178,7 +194,7 @@ class PhotoBackupStateTest {
 
     @Test
     fun `running photos status`() = runTest {
-        enablePhotosBackup(userId).getOrThrow()
+        enablePhotosBackup(folderId).getOrThrow()
         permissionsManager.onPermissionChanged(BackupPermissions.Granted)
 
         assertEquals(
@@ -193,8 +209,8 @@ class PhotoBackupStateTest {
         assertEquals(
             mapOf(
                 userId to listOf(
-                    Event.BackupEnabled,
-                    Event.BackupStarted,
+                    Event.BackupEnabled(folderId),
+                    Event.BackupStarted(folderId),
                 )
             ),
             handler.events,
@@ -203,9 +219,9 @@ class PhotoBackupStateTest {
 
     @Test
     fun `disabled photos status`() = runTest {
-        enablePhotosBackup(userId).getOrThrow()
+        enablePhotosBackup(folderId).getOrThrow()
         permissionsManager.onPermissionChanged(BackupPermissions.Granted)
-        disablePhotosBackup(userId).getOrThrow()
+        disablePhotosBackup(folderId).getOrThrow()
 
         assertEquals(
             BackupState(
@@ -219,10 +235,10 @@ class PhotoBackupStateTest {
         assertEquals(
             mapOf(
                 userId to listOf(
-                    Event.BackupEnabled,
-                    Event.BackupStarted,
-                    Event.BackupStopped(PAUSED_DISABLED),
-                    Event.BackupDisabled,
+                    Event.BackupEnabled(folderId),
+                    Event.BackupStarted(folderId),
+                    Event.BackupStopped(folderId, PAUSED_DISABLED),
+                    Event.BackupDisabled(folderId),
                 )
             ),
             handler.events,
@@ -231,7 +247,7 @@ class PhotoBackupStateTest {
 
     @Test
     fun `failed photos status`() = runTest {
-        enablePhotosBackup(userId).getOrThrow()
+        enablePhotosBackup(folderId).getOrThrow()
         permissionsManager.onPermissionChanged(BackupPermissions.Denied(false))
 
         assertEquals(
@@ -255,38 +271,39 @@ class PhotoBackupStateTest {
         var started = false
         var stopped = false
 
-        override suspend fun start(userId: UserId) {
+        override suspend fun start(folderId: FolderId) {
             started = true
         }
 
-        override suspend fun stop(userId: UserId) {
+        override suspend fun stop(folderId: FolderId) {
             stopped = true
         }
 
-        override fun sync(userId: UserId, backupFolder: BackupFolder, uploadPriority: Long) {
+        override fun sync(backupFolder: BackupFolder, uploadPriority: Long) {
             throw NotImplementedError()
         }
 
-        override suspend fun cancelSync(userId: UserId, backupFolder: BackupFolder) {
+        override suspend fun cancelSync(backupFolder: BackupFolder) {
             throw NotImplementedError()
         }
 
-        override fun syncAllFolders(userId: UserId, uploadPriority: Long) {
+        override fun syncAllFolders(folderId: FolderId, uploadPriority: Long) {
             throw NotImplementedError()
         }
 
-        override fun watchFolders(userId: UserId) {
+        override suspend fun watchFolders(userId: UserId) {
             throw NotImplementedError()
 
         }
 
-        override fun unwatchFolders(userId: UserId) {
+        override suspend fun unwatchFolders(userId: UserId) {
             throw NotImplementedError()
         }
 
-        override fun isEnabled(userId: UserId): Flow<Boolean> =
-            repository.hasFolders(userId)
+        override fun isEnabled(folderId: FolderId): Flow<Boolean> =
+            repository.hasFolders(folderId)
 
-        override fun isUploading(): Flow<Boolean> = flowOf(true)
+        override fun isUploading(folderId: FolderId): Flow<Boolean> = flowOf(true)
+
     }
 }

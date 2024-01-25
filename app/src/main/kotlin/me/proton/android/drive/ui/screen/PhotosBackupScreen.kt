@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -32,7 +32,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,6 +41,7 @@ import me.proton.android.drive.photos.presentation.component.LibraryFolders
 import me.proton.android.drive.ui.action.PhotoExtractDataAction
 import me.proton.android.drive.ui.viewevent.PhotosBackupViewEvent
 import me.proton.android.drive.ui.viewmodel.PhotosBackupViewModel
+import me.proton.android.drive.ui.viewstate.PhotosBackupOption
 import me.proton.android.drive.ui.viewstate.PhotosBackupViewState
 import me.proton.core.compose.component.ProtonRawListItem
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
@@ -98,11 +98,11 @@ fun PhotosBackup(
             title = viewState.title,
         )
         BackupPhotosOptions(
-            enableBackupTitle = viewState.enableBackupTitle,
-            isBackupEnabled = viewState.isBackupEnabled,
-        ) {
-            viewEvent.onToggle()
-        }
+            onToggleBackup = { viewEvent.onToggleBackup() },
+            onToggleMobileData = { viewEvent.onToggleMobileData() },
+            backup = viewState.backup,
+            mobileData = viewState.mobileData,
+        )
         PhotoExtractDataAction()
         LibraryFolders(
             modifier = Modifier.fillMaxSize(),
@@ -113,23 +113,38 @@ fun PhotosBackup(
 
 @Composable
 fun BackupPhotosOptions(
-    enableBackupTitle: String,
-    isBackupEnabled: Boolean,
+    modifier: Modifier = Modifier,
+    onToggleBackup: () -> Unit,
+    onToggleMobileData: () -> Unit,
+    backup: PhotosBackupOption,
+    mobileData: PhotosBackupOption,
+) {
+    Column(modifier) {
+        BackupPhotosToggle(option = backup, onToggle = onToggleBackup)
+        BackupPhotosToggle(option = mobileData, onToggle = onToggleMobileData)
+    }
+}
+
+@Composable
+fun BackupPhotosToggle(
+    option: PhotosBackupOption,
     modifier: Modifier = Modifier,
     onToggle: () -> Unit,
 ) {
     BackupPhotosToggle(
-        title = enableBackupTitle,
-        isEnabled = isBackupEnabled,
-        onToggle = onToggle,
         modifier = modifier,
+        title = option.title,
+        checked = option.checked,
+        enabled = option.enabled,
+        onToggle = onToggle,
     )
 }
 
 @Composable
 fun BackupPhotosToggle(
     title: String,
-    isEnabled: Boolean,
+    checked: Boolean,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     onToggle: () -> Unit,
 ) {
@@ -138,22 +153,22 @@ fun BackupPhotosToggle(
             .fillMaxWidth()
             .sizeIn(minHeight = ListItemHeight)
             .toggleable(
-                value = isEnabled,
-                enabled = true,
+                value = enabled,
+                enabled = enabled,
                 role = Role.Switch,
                 onValueChange = { onToggle() },
             )
-            .padding(horizontal = DefaultSpacing)
-            .testTag(PhotosBackupSettingsScreenTestTag.previewBackupToggle),
+            .padding(horizontal = DefaultSpacing),
     ) {
         Text(
             text = title,
-            style = ProtonTheme.typography.defaultNorm,
+            style = ProtonTheme.typography.defaultNorm(enabled),
             modifier = Modifier.weight(1f),
         )
         Switch(
-            checked = isEnabled,
+            checked = checked,
             onCheckedChange = null,
+            enabled = enabled,
         )
     }
 }
@@ -165,11 +180,19 @@ private fun PhotosBackupPreview() {
         PhotosBackup(
             viewState = PhotosBackupViewState(
                 title = "Photos Backup",
-                enableBackupTitle = "Photos Backup",
-                isBackupEnabled = true,
+                backup = PhotosBackupOption(
+                    title = "Photos Backup",
+                    checked = true,
+                ),
+                mobileData = PhotosBackupOption(
+                    title = "Use mobile data to backup photos",
+                    checked = false,
+                    enabled = false,
+                ),
             ),
             viewEvent = object : PhotosBackupViewEvent {
-                override val onToggle = {}
+                override val onToggleBackup = {}
+                override val onToggleMobileData = {}
             },
             modifier = Modifier.fillMaxSize(),
             navigateBack = {},
@@ -184,12 +207,9 @@ private fun PreviewBackupPhotosToggle() {
     ProtonTheme {
         BackupPhotosToggle(
             title = "Photos backup",
-            isEnabled = true,
+            checked = true,
+            enabled = true,
             onToggle = {},
         )
     }
-}
-
-object PhotosBackupSettingsScreenTestTag {
-    const val previewBackupToggle = "backup preview toggle"
 }

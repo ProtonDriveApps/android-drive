@@ -31,6 +31,9 @@ import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.extension.toBackupError
 import me.proton.core.drive.backup.data.manager.BackupManagerImpl
+import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_BUCKET_ID
+import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_FOLDER_ID
+import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
@@ -39,6 +42,7 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
 
 @HiltWorker
@@ -51,14 +55,14 @@ class BackupCheckDuplicatesWorker @AssistedInject constructor(
 
 
     private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
-    private val shareId = ShareId(userId, requireNotNull(inputData.getString(WorkerKeys.KEY_SHARE_ID)))
-    private val folderId = FolderId(shareId, requireNotNull(inputData.getString(WorkerKeys.KEY_FOLDER_ID)))
-    private val bucketId = inputData.getInt(WorkerKeys.KEY_BUCKET_ID, -1)
+    private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)))
+    private val folderId = FolderId(shareId, requireNotNull(inputData.getString(KEY_FOLDER_ID)))
+    private val bucketId = inputData.getInt(KEY_BUCKET_ID, -1)
 
     override suspend fun doWork(): Result {
         checkDuplicates(userId, BackupFolder(bucketId, folderId)).onFailure { error ->
             error.log(LogTag.BACKUP, "Cannot check duplicates")
-            addBackupError(userId, error.toBackupError())
+            addBackupError(folderId, error.toBackupError())
             return Result.failure()
         }
         return Result.success()
@@ -66,7 +70,6 @@ class BackupCheckDuplicatesWorker @AssistedInject constructor(
 
     companion object {
         fun getWorkRequest(
-            userId: UserId,
             backupFolder: BackupFolder,
             tags: Collection<String> = emptyList(),
         ): OneTimeWorkRequest {
@@ -76,19 +79,24 @@ class BackupCheckDuplicatesWorker @AssistedInject constructor(
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build()
                 )
-                .setInputData(workDataOf(userId, backupFolder))
-                .addTags(listOf(userId.id, BackupManagerImpl.TAG) + tags)
+                .setInputData(workDataOf(backupFolder))
+                .addTags(
+                    listOf(
+                        backupFolder.folderId.userId.id,
+                        backupFolder.folderId.id,
+                        BackupManagerImpl.TAG,
+                    ) + tags
+                )
                 .build()
         }
 
         internal fun workDataOf(
-            userId: UserId,
             backupFolder: BackupFolder,
         ) = Data.Builder()
-            .putString(KEY_USER_ID, userId.id)
-            .putString(WorkerKeys.KEY_SHARE_ID, backupFolder.folderId.shareId.id)
-            .putString(WorkerKeys.KEY_FOLDER_ID, backupFolder.folderId.id)
-            .putInt(WorkerKeys.KEY_BUCKET_ID, backupFolder.bucketId)
+            .putString(KEY_USER_ID, backupFolder.folderId.userId.id)
+            .putString(KEY_SHARE_ID, backupFolder.folderId.shareId.id)
+            .putString(KEY_FOLDER_ID, backupFolder.folderId.id)
+            .putInt(KEY_BUCKET_ID, backupFolder.bucketId)
             .build()
     }
 }

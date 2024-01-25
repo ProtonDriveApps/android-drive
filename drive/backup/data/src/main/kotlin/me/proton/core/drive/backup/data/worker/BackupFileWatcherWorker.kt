@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -19,6 +19,7 @@
 package me.proton.core.drive.backup.data.worker
 
 import android.content.Context
+import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
@@ -35,9 +36,12 @@ import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.repository.ContextScanFilesRepository
 import me.proton.core.drive.backup.data.repository.ContextScanFilesRepository.ScanResult
+import me.proton.core.drive.backup.domain.entity.BucketUpdate
+import me.proton.core.drive.backup.domain.usecase.RescanAllFolders
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.util.kotlin.CoreLogger
 
@@ -47,6 +51,7 @@ class BackupFileWatcherWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val syncFolders: SyncFolders,
+    private val rescanAllFolders: RescanAllFolders,
     private val workManager: WorkManager,
     private val contextScanFilesRepository: ContextScanFilesRepository,
 ) : CoroutineWorker(context, workerParams) {
@@ -58,7 +63,41 @@ class BackupFileWatcherWorker @AssistedInject constructor(
             BACKUP,
             "BackupFileWatcherWorker triggered by ${triggeredContentUris.size} files"
         )
-        contextScanFilesRepository(triggeredContentUris).onSuccess { scanResults ->
+        val notMediaUris = triggeredContentUris.filterNot { uri ->
+            uri.pathSegments.size == EXTERNAL_PATH_SEGMENTS.size + 1
+        }
+        when {
+            triggeredContentAuthorities.isEmpty() -> rescanAllFolders { "no authorities" }.onFailure { error ->
+                error.log(BACKUP, "Cannot rescan all folders")
+            }
+
+            notMediaUris.isNotEmpty() -> rescanAllFolders { "found not media uris: $notMediaUris" }.onFailure { error ->
+                error.log(BACKUP, "Cannot rescan all folders")
+            }
+
+            else -> syncAllFoldersFromUri(triggeredContentUris).onFailure { error ->
+                error.log(BACKUP, "Cannot sync all folders")
+            }
+        }
+        workManager.enqueueUniqueWork(
+            uniqueWorkName(userId),
+            ExistingWorkPolicy.APPEND_OR_REPLACE,
+            getWorkRequest(userId)
+        )
+        return Result.success()
+    }
+
+    private suspend fun rescanAllFolders(
+        message: () -> String,
+    ) = coRunCatching {
+        CoreLogger.d(
+            BACKUP, "BackupFileWatcherWorker rescan all folders: ${message()}"
+        )
+        rescanAllFolders(userId).getOrThrow()
+    }
+
+    private suspend fun syncAllFoldersFromUri(uris: List<Uri>) = coRunCatching {
+        contextScanFilesRepository(uris).onSuccess { scanResults ->
             val founds = scanResults.filterIsInstance(ScanResult.Data::class.java)
             val foundCount = founds.size
             if (foundCount == 0) {
@@ -69,18 +108,30 @@ class BackupFileWatcherWorker @AssistedInject constructor(
                 )
             } else {
                 CoreLogger.d(BACKUP, "BackupFileWatcherWorker found $foundCount files")
-                val bucketIds = founds.map { found -> found.bucketId }.distinct()
-                if (bucketIds.any { bucketId -> bucketId == null }) {
+                val bucketUpdates = founds.map { found ->
+                    if (found.bucketId != null && found.dateAdded != null) {
+                        BucketUpdate(
+                            bucketId = found.bucketId,
+                            oldestAddedTime = found.dateAdded
+                        )
+                    } else {
+                        null
+                    }
+                }.distinct()
+                if (bucketUpdates.any { bucketUpdate -> bucketUpdate == null }) {
                     CoreLogger.d(BACKUP, "BackupFileWatcherWorker syncing all buckets")
                     syncFolders(
                         userId = userId,
                         uploadPriority = UploadFileLink.RECENT_BACKUP_PRIORITY
                     )
                 } else {
-                    CoreLogger.d(BACKUP, "BackupFileWatcherWorker syncing buckets: $bucketIds")
+                    CoreLogger.d(
+                        BACKUP,
+                        "BackupFileWatcherWorker syncing buckets: $bucketUpdates"
+                    )
                     syncFolders(
                         userId = userId,
-                        bucketIds = bucketIds.filterNotNull(),
+                        bucketUpdates = bucketUpdates.filterNotNull(),
                         uploadPriority = UploadFileLink.RECENT_BACKUP_PRIORITY
                     )
                 }.onFailure { error ->
@@ -99,15 +150,12 @@ class BackupFileWatcherWorker @AssistedInject constructor(
         }.onFailure { error ->
             error.log(BACKUP, "Cannot read details for files")
         }
-        workManager.enqueueUniqueWork(
-            uniqueWorkName(userId),
-            ExistingWorkPolicy.APPEND_OR_REPLACE,
-            getWorkRequest(userId)
-        )
-        return Result.success()
     }
 
     companion object {
+        private val EXTERNAL_PATH_SEGMENTS =
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI.pathSegments
+
         fun uniqueWorkName(userId: UserId) = "backup-file-watcher-${userId.id}"
 
         fun getWorkRequest(userId: UserId) =

@@ -71,12 +71,12 @@ class GetFolderFromFileTest {
             bucketId = 0,
             folderId = folderId,
         )
-        addFolder(backupFolder)
+        addFolder(backupFolder).getOrThrow()
         setFiles(
-            userId = userId,
             backupFiles = listOf(
                 BackupFile(
                     bucketId = 0,
+                    folderId = folderId,
                     uriString = "uri",
                     mimeType = "",
                     name = "",
@@ -86,7 +86,7 @@ class GetFolderFromFileTest {
                     date = TimestampS(0),
                 ),
             ),
-        )
+        ).getOrThrow()
 
         val folderFromFile = getFolderFromFile(userId, "uri").getOrThrow()
 

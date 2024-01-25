@@ -20,6 +20,7 @@ package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.base.domain.extension.availableSpace
+import me.proton.core.drive.base.domain.extension.throwOnFailure
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.user.domain.entity.User
@@ -27,12 +28,21 @@ import javax.inject.Inject
 
 class CheckAvailableSpace @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
+    private val getAllFolders: GetAllFolders,
     private val stopBackup: StopBackup,
 ) {
     suspend operator fun invoke(user: User) = coRunCatching {
         val availableSpace = user.availableSpace
         if (availableSpace <= configurationProvider.backupLeftSpace) {
-            stopBackup(user.userId, BackupError.DriveStorage()).getOrThrow()
+            getAllFolders(user.userId)
+                .getOrThrow()
+                .map { backupFolder -> backupFolder.folderId }
+                .distinct()
+                .map { folderId ->
+                    stopBackup(folderId, BackupError.DriveStorage())
+                }.throwOnFailure { count ->
+                    "Failed to stop backup, for $count folders"
+                }
         }
     }
 }

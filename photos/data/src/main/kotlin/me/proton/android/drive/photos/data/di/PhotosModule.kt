@@ -28,6 +28,7 @@ import me.proton.android.drive.photos.domain.handler.DrivePhotosUploadDisabledFe
 import me.proton.core.drive.backup.domain.usecase.StopBackup
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PHOTOS_UPLOAD_DISABLED
 import me.proton.core.drive.feature.flag.domain.handler.FeatureFlagHandler
+import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -36,6 +37,9 @@ object PhotosModule {
     @Provides
     @IntoMap
     @StringKey(DRIVE_PHOTOS_UPLOAD_DISABLED)
-    fun provideFeatureFlagHandler(stopBackup: StopBackup): FeatureFlagHandler =
-        DrivePhotosUploadDisabledFeatureFlagHandler(stopBackup)
+    fun provideFeatureFlagHandler(
+        getPhotoShare: GetPhotoShare,
+        stopBackup: StopBackup,
+    ): FeatureFlagHandler =
+        DrivePhotosUploadDisabledFeatureFlagHandler(getPhotoShare, stopBackup)
 }

@@ -25,6 +25,7 @@ import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupError
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.extension.MiB
@@ -32,6 +33,7 @@ import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myDrive
 import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.user.domain.entity.User
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -47,6 +49,7 @@ class CheckAvailableSpaceTest {
 
     @get:Rule
     val database = DriveDatabaseRule()
+    private lateinit var folderId: FolderId
 
     private lateinit var checkAvailableSpace: CheckAvailableSpace
     private lateinit var getError: GetErrors
@@ -55,7 +58,7 @@ class CheckAvailableSpaceTest {
 
     @Before
     fun setup() = runTest {
-        database.myDrive { }
+        folderId = database.myDrive { }
         val folderRepository = BackupFolderRepositoryImpl(database.db)
         val fileRepository = BackupFileRepositoryImpl(database.db)
         val errorRepository = BackupErrorRepositoryImpl(database.db)
@@ -65,18 +68,22 @@ class CheckAvailableSpaceTest {
         val configurationProvider = object : NoNetworkConfigurationProvider {
             override val backupLeftSpace: Bytes = 10.MiB
         }
+        val getAllFolders = GetAllFolders(folderRepository)
         checkAvailableSpace = CheckAvailableSpace(
             configurationProvider = configurationProvider,
+            getAllFolders = getAllFolders,
             stopBackup = StopBackup(
                 manager = backupManager,
                 addBackupError = addBackupError,
                 logBackupStats = LogBackupStats(folderRepository, fileRepository),
                 announceEvent = AnnounceEvent(emptySet()),
-                getFolders = GetFolders(folderRepository),
+                getAllFolders = getAllFolders,
                 markAllEnqueuedAsReady = MarkAllEnqueuedAsReady(fileRepository),
             )
         )
         getError = GetErrors(errorRepository, configurationProvider)
+        val addFolder = AddFolder(folderRepository)
+        addFolder(BackupFolder(0, folderId)).getOrThrow()
     }
 
     @Test
@@ -93,7 +100,7 @@ class CheckAvailableSpaceTest {
         assertTrue(backupManager.stopped)
         assertEquals(
             listOf(BackupError.DriveStorage()),
-            getError(userId).first(),
+            getError(folderId).first(),
         )
     }
 

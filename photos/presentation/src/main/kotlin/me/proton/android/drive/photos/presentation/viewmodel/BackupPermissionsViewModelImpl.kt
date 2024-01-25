@@ -31,11 +31,12 @@ import me.proton.android.drive.photos.domain.usecase.TogglePhotosBackup
 import me.proton.android.drive.photos.presentation.viewevent.BackupPermissionsViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsEffect
 import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsViewState
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -50,7 +51,7 @@ class BackupPermissionsViewModelImpl @Inject constructor(
     coroutineContext: CoroutineContext,
 ) : BackupPermissionsViewModel {
     private val coroutineScope = CoroutineScope(coroutineContext)
-    private var userId: UserId? = null
+    private var folderId: FolderId? = null
     private var success: (suspend (PhotoBackupState) -> Unit)? = null
     private var navigateToPhotosPermissionRationale: (() -> Unit)? = null
     private val _backupPermissionsEffect = MutableSharedFlow<BackupPermissionsEffect>()
@@ -77,9 +78,9 @@ class BackupPermissionsViewModelImpl @Inject constructor(
         this.navigateToPhotosPermissionRationale = navigateToPhotosPermissionRationale
     }
 
-    override fun toggleBackup(userId: UserId, onSuccess: suspend (PhotoBackupState) -> Unit) {
+    override fun toggleBackup(folderId: FolderId, onSuccess: suspend (PhotoBackupState) -> Unit) {
         success = onSuccess
-        this.userId = userId
+        this.folderId = folderId
         when (val backupPermissions = backupPermissionsManager.getBackupPermissions()) {
             BackupPermissions.Granted -> toggleBackup()
             is BackupPermissions.Denied -> if (backupPermissions.shouldShowRationale) {
@@ -97,12 +98,12 @@ class BackupPermissionsViewModelImpl @Inject constructor(
     }
 
     private fun toggleBackup() {
-        val userId = requireNotNull(this.userId)
+        val folderId = requireNotNull(this.folderId)
         coroutineScope.launch {
-            togglePhotosBackup(userId)
+            togglePhotosBackup(folderId)
                 .onFailure { error ->
                     broadcastMessages(
-                        userId = userId,
+                        userId = folderId.userId,
                         message = error.getDefaultMessage(appContext, configurationProvider.useExceptionMessage),
                         type = BroadcastMessage.Type.ERROR,
                     )

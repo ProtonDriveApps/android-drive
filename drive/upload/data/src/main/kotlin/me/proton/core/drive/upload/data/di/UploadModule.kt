@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -31,7 +31,6 @@ import dagger.multibindings.StringKey
 import me.proton.core.drive.base.domain.provider.MimeTypeProvider
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
-import me.proton.core.drive.upload.data.provider.BackupNetworkTypeProvider
 import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
 import me.proton.core.drive.upload.data.resolver.ContentUriResolver
 import me.proton.core.drive.upload.data.resolver.FileUriResolver
@@ -70,9 +69,4 @@ object UploadModule {
     fun provideDefaultNetworkTypeProvider(): NetworkTypeProvider =
         object : NetworkTypeProvider {}
 
-    @Provides @IntoMap
-    @Singleton
-    @NetworkTypeProviderKey(NetworkTypeProviderType.BACKUP)
-    fun provideBackupNetworkTypeProvider(): NetworkTypeProvider =
-        BackupNetworkTypeProvider()
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -70,6 +70,7 @@ object Column {
     const val MODEL = "model"
     const val NAME = "name"
     const val NAME_SIGNATURE_EMAIL = "name_signature_email"
+    const val NETWORK_TYPE = "network_type"
     const val NETWORK_TYPE_PROVIDER_TYPE = "network_type_provider_type"
     const val NEXT_KEY = "next_key"
     const val NODE_HASH_KEY = "node_hash_key"

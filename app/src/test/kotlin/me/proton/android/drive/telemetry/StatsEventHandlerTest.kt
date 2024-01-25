@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -21,16 +21,16 @@ package me.proton.android.drive.telemetry
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import me.proton.android.drive.stats.BackupCompletedSideEffect
 import me.proton.android.drive.stats.BackupStartedSideEffect
 import me.proton.android.drive.stats.StatsEventHandler
 import me.proton.android.drive.stats.UploadSideEffect
+import me.proton.android.drive.usecase.GetShareAsPhotoShare
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.entity.Event.Upload.UploadState.UPLOAD_COMPLETE
 import me.proton.core.drive.base.domain.entity.Bytes
@@ -49,9 +49,9 @@ import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
-import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.core.drive.share.data.extension.toShare
-import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.stats.data.repository.BackupStatsRepositoryImpl
 import me.proton.core.drive.stats.data.repository.UploadStatsRepositoryImpl
 import me.proton.core.drive.stats.domain.entity.UploadStats
@@ -102,14 +102,12 @@ class StatsEventHandlerTest {
         getUploadStats = GetUploadStats(uploadStatsRepository)
         isInitialBackup = IsInitialBackup(backupStatsRepository)
 
-        val getPhotoShare = mockk<GetPhotoShare> {
-            every { this@mockk(any()) } answers {
-                val userId: UserId = arg(0)
-                database.db.shareDao.getAllFlow(userId).map { shares ->
-                    shares.map { shareEntity -> shareEntity.toShare(userId) }
-                        .firstOrNull { share -> share.type == Share.Type.PHOTO }?.let { share ->
-                            DataResult.Success(ResponseSource.Local, share)
-                        } ?: DataResult.Error.Local(null, null)
+        val getShare: GetShare = mockk()
+        every { getShare(any(), any()) } answers {
+            val shareId: ShareId = arg(0)
+            database.db.shareDao.getFlow(shareId.userId, shareId.id).mapNotNull { shareEntity ->
+                shareEntity?.toShare(shareId.userId)?.let {
+                    DataResult.Success(ResponseSource.Local, it)
                 }
             }
         }
@@ -119,12 +117,12 @@ class StatsEventHandlerTest {
         val clock = { TimestampS(10) }
         handler = StatsEventHandler(
             backupCompletedSideEffect = BackupCompletedSideEffect(
-                getPhotoShare = getPhotoShare,
+                getShareAsPhotoShare = GetShareAsPhotoShare(getShare),
                 deleteUploadStats = DeleteUploadStats(uploadStatsRepository),
                 setOrIgnoreInitialBackup = SetOrIgnoreInitialBackup(backupStatsRepository),
             ),
             backupStartedSideEffect = BackupStartedSideEffect(
-                getPhotoShare = getPhotoShare,
+                getShareAsPhotoShare = GetShareAsPhotoShare(getShare),
                 updateUploadStats = updateUploadStats,
                 clock = clock,
             ),
@@ -137,7 +135,7 @@ class StatsEventHandlerTest {
 
     @Test
     fun started() = runTest {
-        handler.onEvent(userId, Event.BackupStarted)
+        handler.onEvent(userId, Event.BackupStarted(folderId))
 
         assertEquals(
             UploadStats(
@@ -161,7 +159,7 @@ class StatsEventHandlerTest {
             )
         )
 
-        handler.onEvent(userId, Event.BackupStarted)
+        handler.onEvent(userId, Event.BackupStarted(folderId))
         uploadFileLinks.forEach { uploadFileLink ->
             handler.onEvent(
                 userId,
@@ -189,8 +187,8 @@ class StatsEventHandlerTest {
 
     @Test
     fun completed() = runTest {
-        handler.onEvent(userId, Event.BackupStarted)
-        handler.onEvent(userId, Event.BackupCompleted)
+        handler.onEvent(userId, Event.BackupStarted(folderId))
+        handler.onEvent(userId, Event.BackupCompleted(folderId))
 
         assertThrows(NoSuchElementException::class.java) {
             runBlocking { getUploadStats(folderId).getOrThrow() }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -18,9 +18,12 @@
 
 package me.proton.core.drive.linkupload.domain.extension
 
+import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 
 val UploadFileLink.fileId get() = linkId?.let { FileId(shareId, linkId) }
 
 fun UploadFileLink.requireFileId() = requireNotNull(fileId)
+
+val UploadFileLink.sizeOrZero get() = size ?: 0.bytes

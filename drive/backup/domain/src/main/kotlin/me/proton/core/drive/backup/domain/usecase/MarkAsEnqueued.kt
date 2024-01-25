@@ -18,15 +18,15 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class MarkAsEnqueued @Inject constructor(
     private val repository: BackupFileRepository,
 ) {
-    suspend operator fun invoke(userId: UserId, uriStrings: List<String>) = coRunCatching {
-        repository.markAsEnqueued(userId, uriStrings)
+    suspend operator fun invoke(folderId: FolderId, uriStrings: List<String>) = coRunCatching {
+        repository.markAsEnqueued(folderId, uriStrings)
     }
 }

@@ -19,11 +19,15 @@ package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
+import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class HasFolders @Inject constructor(
-    private val repository: BackupFolderRepository
+    private val repository: BackupFolderRepository,
 ) {
     operator fun invoke(userId: UserId) =
         repository.hasFolders(userId)
+
+    operator fun invoke(folderId: FolderId) =
+        repository.hasFolders(folderId)
 }

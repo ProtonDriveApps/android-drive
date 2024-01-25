@@ -21,28 +21,52 @@ package me.proton.core.drive.backup.data.db.entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.ERROR
+import me.proton.core.drive.base.data.db.Column.PARENT_ID
 import me.proton.core.drive.base.data.db.Column.RETRYABLE
+import me.proton.core.drive.base.data.db.Column.SHARE_ID
 import me.proton.core.drive.base.data.db.Column.USER_ID
+import me.proton.core.drive.link.data.db.entity.LinkEntity
+import me.proton.core.drive.share.data.db.ShareEntity
 
 @Entity(
-    primaryKeys = [USER_ID, ERROR],
+    primaryKeys = [USER_ID, SHARE_ID, PARENT_ID, ERROR],
     foreignKeys = [
         ForeignKey(
             entity = AccountEntity::class,
             parentColumns = [Column.Core.USER_ID],
             childColumns = [USER_ID],
             onDelete = ForeignKey.CASCADE
-        )
+        ),
+        ForeignKey(
+            entity = ShareEntity::class,
+            parentColumns = [USER_ID, Column.ID],
+            childColumns = [USER_ID, SHARE_ID],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = LinkEntity::class,
+            parentColumns = [USER_ID, SHARE_ID, Column.ID],
+            childColumns = [USER_ID, SHARE_ID, PARENT_ID],
+            onDelete = ForeignKey.CASCADE
+        ),
+    ],
+    indices = [
+        Index(value = [USER_ID, SHARE_ID, PARENT_ID]),
     ]
 )
 data class BackupErrorEntity(
     @ColumnInfo(name = USER_ID)
     val userId: UserId,
+    @ColumnInfo(name = SHARE_ID)
+    val shareId: String,
+    @ColumnInfo(name = PARENT_ID)
+    val parentId: String,
     @ColumnInfo(name = ERROR)
     val type: BackupErrorType,
     @ColumnInfo(name = RETRYABLE)

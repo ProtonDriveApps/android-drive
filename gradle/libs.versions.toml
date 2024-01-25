@@ -35,7 +35,7 @@ android-tools = "1.1.5"
 # Coil
 coil = "2.4.0"
 # Core
-core = "18.2.1"
+core = "18.4.2"
 core-test-quark = "14.1.0"
 # Dagger
 dagger = "2.48.1"
@@ -61,6 +61,7 @@ retrofit = "2.9.0"
 # Test
 junit = "4.13.2"
 mockk = "1.13.5"
+mockwebserver = "4.10.0"
 robolectric = "4.10.3"
 fusion = "0.9.62"
 espresso-contrib = "3.5.0"
@@ -128,6 +129,7 @@ androidx-paging-compose = { module = "androidx.paging:paging-compose", version.r
 ## Room
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
+androidx-room-test = { module = "androidx.room:room-testing", version.ref = "androidx-room" }
 ## Work
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 
@@ -139,8 +141,10 @@ coil-video = { module = "io.coil-kt:coil-video", version.ref = "coil" }
 
 # Core
 core-account = { module = "me.proton.core:account", version.ref = "core" }
+core-account-dagger = { module = "me.proton.core:account-dagger", version.ref = "core" }
 core-account-data = { module = "me.proton.core:account-data", version.ref = "core" }
 core-accountManager = { module = "me.proton.core:account-manager", version.ref = "core" }
+core-accountManager-dagger = { module = "me.proton.core:account-manager-dagger", version.ref = "core" }
 core-accountManager-data = { module = "me.proton.core:account-manager-data", version.ref = "core" }
 core-accountManager-domain = { module = "me.proton.core:account-manager-domain", version.ref = "core" }
 core-accountRecovery = { module = "me.proton.core:account-recovery", version.ref = "core" }
@@ -152,6 +156,7 @@ core-challenge = { module = "me.proton.core:challenge", version.ref = "core" }
 core-challenge-data = { module = "me.proton.core:challenge-data", version.ref = "core" }
 core-country = { module = "me.proton.core:country", version.ref = "core" }
 core-crypto = { module = "me.proton.core:crypto", version.ref = "core" }
+core-crypto-dagger = { module = "me.proton.core:crypto-dagger", version.ref = "core" }
 core-crypto-android = { module = "me.proton.core:crypto-android", version.ref = "core" }
 core-cryptoCommon = { module = "me.proton.core:crypto-common", version.ref = "core" }
 core-cryptoValidator = { module = "me.proton.core:crypto-validator", version.ref = "core" }
@@ -164,9 +169,11 @@ core-featureFlag = { module = "me.proton.core:feature-flag", version.ref = "core
 core-featureFlag-data = { module = "me.proton.core:feature-flag-data", version.ref = "core" }
 core-featureFlag-domain = { module = "me.proton.core:feature-flag-domain", version.ref = "core" }
 core-humanVerification = { module = "me.proton.core:human-verification", version.ref = "core" }
+core-humanVerification-domain = { module = "me.proton.core:human-verification-domain", version.ref = "core" }
 core-humanVerification-data = { module = "me.proton.core:human-verification-data", version.ref = "core" }
 core-humanVerification-test = { module = "me.proton.core:human-verification-test", version.ref = "core" }
 core-key = { module = "me.proton.core:key", version.ref = "core" }
+core-key-dagger = { module = "me.proton.core:key-dagger", version.ref = "core" }
 core-key-data = { module = "me.proton.core:key-data", version.ref = "core" }
 core-keyTransparency = { module = "me.proton.core:key-transparency", version.ref = "core" }
 core-keyTransparency-data = { module = "me.proton.core:key-transparency-data", version.ref = "core" }
@@ -200,6 +207,7 @@ core-telemetry = { module = "me.proton.core:telemetry", version.ref = "core" }
 core-telemetry-domain = { module = "me.proton.core:telemetry-domain", version.ref = "core" }
 core-telemetry-data = { module = "me.proton.core:telemetry-data", version.ref = "core" }
 core-user = { module = "me.proton.core:user", version.ref = "core" }
+core-user-dagger = { module = "me.proton.core:user-dagger", version.ref = "core" }
 core-user-data = { module = "me.proton.core:user-data", version.ref = "core" }
 core-user-domain = { module = "me.proton.core:user-domain", version.ref = "core" }
 core-userSettings = { module = "me.proton.core:user-settings", version.ref = "core" }
@@ -254,6 +262,7 @@ coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", ve
 junit = { module = "junit:junit", version.ref = "junit" }
 mockk-jvm = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric"}
 fusion = { module = "me.proton.test:fusion", version.ref = "fusion"}
 
@@ -262,7 +271,7 @@ accompanist = ["accompanist-systemUiController", "accompanist-permissions", "acc
 core = ["core-account", "core-accountManager", "core-accountRecovery", "core-auth", "core-challenge", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-keyTransparency", "core-network", "core-notification", "core-observability", "core-payment", "core-payment-iap", "core-plan", "core-report", "core-presentation", "core-presentation-compose", "core-proguard-rules", "core-push", "core-telemetry", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilAndroidSentry", "core-utilKotlin"]
 core-test = ["core-auth-test", "core-accountRecovery-test", "core-humanVerification-test", "core-report-test", "core-plan-test"]
 test-android = ["junit", "mockk-android", "coroutines-test", "androidx-test-core-ktx", "androidx-test-runner", "androidx-test-rules", "androidx-compose-ui-test", "androidx-compose-ui-test-junit", "androidx-test-uiautomator", "core-test-android-instrumented"]
-test-jvm = ["junit", "mockk-jvm", "coroutines-test", "androidx-test-core-ktx", "androidx-work-testing", "core-test-kotlin", "core-test-quark", "robolectric"]
+test-jvm = ["junit", "mockk-jvm", "coroutines-test", "androidx-test-core-ktx", "androidx-work-testing", "core-test-kotlin", "core-test-quark", "robolectric", "mockwebserver"]
 
 [plugins]
 proton-detekt = { id = "me.proton.core.gradle-plugins.detekt", version.ref = "proton-detekt-plugin" }

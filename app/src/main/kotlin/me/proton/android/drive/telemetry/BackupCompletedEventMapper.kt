@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -18,23 +18,20 @@
 
 package me.proton.android.drive.telemetry
 
-import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.link.domain.extension.rootFolderId
-import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
+import me.proton.android.drive.usecase.GetShareAsPhotoShare
+import me.proton.core.drive.announce.event.domain.entity.Event.BackupCompleted
 import me.proton.core.drive.telemetry.domain.event.PhotosEvent.Reason
 import javax.inject.Inject
 
 class BackupCompletedEventMapper @Inject constructor(
-    private val getPhotoShare: GetPhotoShare,
+    private val getShareAsPhotoShare: GetShareAsPhotoShare,
     private val createPhotosEventBackupStopped: CreatePhotosEventBackupStopped,
 ) {
-    suspend operator fun invoke(
-        userId: UserId,
-    ) = getPhotoShare(userId).toResult().getOrNull()?.let { share ->
-        createPhotosEventBackupStopped(
-            folderId = share.rootFolderId,
-            reason = Reason.COMPLETED,
-        )
-    }
+    suspend operator fun invoke(event: BackupCompleted) =
+        getShareAsPhotoShare(event.folderId.shareId)?.let {
+            createPhotosEventBackupStopped(
+                folderId = event.folderId,
+                reason = Reason.COMPLETED,
+            )
+        }
 }

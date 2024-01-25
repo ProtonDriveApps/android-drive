@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -38,6 +38,13 @@ class BackupFolderRepositoryImpl @Inject constructor(
     override suspend fun getAll(userId: UserId): List<BackupFolder> =
         db.backupFolderDao.getAll(userId).map { entity -> entity.toBackupFolder() }
 
+    override suspend fun getAll(folderId: FolderId): List<BackupFolder> =
+        db.backupFolderDao.getAll(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+        ).map { entity -> entity.toBackupFolder() }
+
     override suspend fun getCount(folderId: FolderId): Int =
         db.backupFolderDao.getCount(
             userId = folderId.userId,
@@ -59,16 +66,27 @@ class BackupFolderRepositoryImpl @Inject constructor(
         return backupFolder
     }
 
-    override suspend fun deleteFolders(userId: UserId) {
-        db.backupFolderDao.deleteAll(userId)
+    override suspend fun deleteFolders(folderId: FolderId) {
+        db.backupFolderDao.deleteAll(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+        )
     }
 
-    override suspend fun deleteFolder(userId: UserId, bucketId: Int) {
-        db.backupFolderDao.delete(userId, bucketId)
+    override suspend fun deleteFolder(backupFolder: BackupFolder) {
+        db.backupFolderDao.delete(backupFolder.toEntity())
     }
 
     override fun hasFolders(userId: UserId) =
         db.backupFolderDao.hasFolders(userId).distinctUntilChanged()
+
+    override fun hasFolders(folderId: FolderId) =
+        db.backupFolderDao.hasFolders(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+        ).distinctUntilChanged()
 
     override suspend fun updateFolderUpdateTime(
         userId: UserId,
@@ -80,6 +98,14 @@ class BackupFolderRepositoryImpl @Inject constructor(
 
     override suspend fun resetAllFoldersUpdateTime(userId: UserId) {
         db.backupFolderDao.resetUpdateTime(userId)
+    }
+
+    override suspend fun resetAllFoldersUpdateTime(folderId: FolderId) {
+        db.backupFolderDao.resetUpdateTime(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+        )
     }
 
     override suspend fun getFolderByFileUri(userId: UserId, uriString: String): BackupFolder? {

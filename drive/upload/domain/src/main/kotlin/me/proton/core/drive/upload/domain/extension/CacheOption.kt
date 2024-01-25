@@ -21,16 +21,28 @@ package me.proton.core.drive.upload.domain.extension
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 
 val CacheOption.cacheDefaultThumbnail: Boolean get() = when (this) {
-    CacheOption.NONE -> false
-    CacheOption.ALL -> true
+    CacheOption.NONE,
+    -> false
+
+    CacheOption.ALL,
+    CacheOption.THUMBNAIL_DEFAULT,
+    -> true
 }
 
 val CacheOption.cachePhotoThumbnail: Boolean get() = when (this) {
-    CacheOption.NONE -> false
-    CacheOption.ALL -> true
+    CacheOption.NONE,
+    CacheOption.THUMBNAIL_DEFAULT,
+    -> false
+
+    CacheOption.ALL,
+    -> true
 }
 
 val CacheOption.cacheContent: Boolean get() = when (this) {
-    CacheOption.NONE -> false
-    CacheOption.ALL -> true
+    CacheOption.NONE,
+    CacheOption.THUMBNAIL_DEFAULT,
+    -> false
+
+    CacheOption.ALL,
+    -> true
 }

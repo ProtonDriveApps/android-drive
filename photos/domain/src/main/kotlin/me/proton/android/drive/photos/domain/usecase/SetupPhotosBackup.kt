@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -18,36 +18,33 @@
 
 package me.proton.android.drive.photos.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BucketRepository
 import me.proton.core.drive.backup.domain.usecase.AddFolder
-import me.proton.core.drive.base.domain.extension.firstSuccessOrError
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class SetupPhotosBackup @Inject constructor(
-    private val getPhotosDriveLink: GetPhotosDriveLink,
+    private val setupPhotosConfigurationBackup: SetupPhotosConfigurationBackup,
     private val addFolder: AddFolder,
     private val bucketRepository: BucketRepository,
 ) {
 
     suspend operator fun invoke(
-        userId: UserId,
-        folderName: String
+        folderId: FolderId,
+        folderName: String,
     ) = coRunCatching {
+        setupPhotosConfigurationBackup(folderId).getOrThrow()
         val bucketEntries = bucketRepository.getAll()
-        val photoRootId = getPhotosDriveLink(userId)
-            .firstSuccessOrError().toResult().getOrThrow().id
         bucketEntries.filter { entry ->
             entry.bucketName == folderName
         }.map { entry ->
             BackupFolder(
                 bucketId = entry.bucketId,
-                folderId = photoRootId,
+                folderId = folderId,
             )
         }.onEach { backupFolder ->
             addFolder(backupFolder).getOrThrow()

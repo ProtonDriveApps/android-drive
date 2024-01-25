@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,17 +28,18 @@ import me.proton.core.drive.base.domain.entity.Location
 import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.iterator
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
-import me.proton.core.drive.linkupload.data.db.entity.UploadBulkUriStringEntity
 import me.proton.core.drive.linkupload.data.extension.toLinkUploadEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadBlock
 import me.proton.core.drive.linkupload.data.extension.toUploadBlockEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadBulk
 import me.proton.core.drive.linkupload.data.extension.toUploadBulkEntity
+import me.proton.core.drive.linkupload.data.extension.toUploadBulkUriStringEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadCount
 import me.proton.core.drive.linkupload.data.extension.toUploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
@@ -129,15 +130,20 @@ class LinkUploadRepositoryImpl @Inject constructor(
             }
 
     override suspend fun getUploadFileLinks(
-        userId: UserId,
+        parentId: FolderId,
         uriStrings: List<String>,
         count: Int,
-        fromIndex: Int
-    ): List<UploadFileLink> =
-        db.linkUploadDao.getAllWithUris(userId, uriStrings, count, fromIndex)
-            .map { linkUploadEntity ->
-                linkUploadEntity.toUploadFileLink()
-            }
+        fromIndex: Int,
+    ): List<UploadFileLink> = db.linkUploadDao.getAllWithUris(
+        parentId.userId,
+        parentId.shareId.id,
+        parentId.id,
+        uriStrings,
+        count,
+        fromIndex
+    ).map { linkUploadEntity ->
+        linkUploadEntity.toUploadFileLink()
+    }
 
     override suspend fun getUploadFileLinksWithUriByPriority(
         userId: UserId,
@@ -156,6 +162,9 @@ class LinkUploadRepositoryImpl @Inject constructor(
         db.linkUploadDao.getUploadCount(userId, UploadFileLink.USER_PRIORITY).map { linkUploadCountEntity ->
             linkUploadCountEntity.toUploadCount()
         }
+    override suspend fun getUploadFileLinksSize(
+        userId: UserId, uploadStates: Set<UploadState>
+    ): Bytes = db.linkUploadDao.getUploadSumSize(userId, uploadStates)?.bytes ?: 0.bytes
 
     override suspend fun updateUploadFileLink(uploadFileLink: UploadFileLink) =
         db.linkUploadDao.insertOrUpdate(uploadFileLink.toLinkUploadEntity())
@@ -269,12 +278,18 @@ class LinkUploadRepositoryImpl @Inject constructor(
     override suspend fun removeAllUploadFileLinks(userId: UserId, folderId: FolderId, uploadState: UploadState) =
         db.linkUploadDao.deleteAllByFolderId(userId, folderId.id, uploadState)
     override suspend fun removeAllUploadFileLinks(
-        userId: UserId,
+        folderId: FolderId,
         uriStrings: List<String>,
         uploadState: UploadState,
     ): Unit = db.inTransaction {
         uriStrings.chunked(MAX_VARIABLE_NUMBER).onEach { uris ->
-            db.linkUploadDao.deleteAllWithUris(userId, uris, uploadState)
+            db.linkUploadDao.deleteAllWithUris(
+                userId = folderId.userId,
+                shareId = folderId.shareId.id,
+                parentId = folderId.id,
+                uriStrings = uris,
+                uploadState = uploadState,
+            )
         }
     }
 
@@ -338,19 +353,17 @@ class LinkUploadRepositoryImpl @Inject constructor(
     override suspend fun insertUploadBulk(uploadBulk: UploadBulk): UploadBulk = db.inTransaction {
         val uploadBulkId = db.uploadBulkDao.insert(uploadBulk.toUploadBulkEntity())
         db.uploadBulkDao.insert(
-            uploadBulk.uriStrings.map { uriString ->
-                UploadBulkUriStringEntity(
-                    uploadBulkId = uploadBulkId,
-                    uri = uriString,
-                )
+            uploadBulk.uploadFileDescriptions.map { description ->
+                description.toUploadBulkUriStringEntity(uploadBulkId)
             }
         )
         uploadBulk.copy(id = uploadBulkId)
     }
 
-    override suspend fun removeUploadBulk(uploadBulkId: Long): UploadBulk = db.inTransaction {
-        val uploadBulkWithUri = db.uploadBulkDao.get(uploadBulkId)
-        db.uploadBulkDao.delete(uploadBulkWithUri.uploadBulkEntity)
-        uploadBulkWithUri.toUploadBulk()
+    override suspend fun removeUploadBulk(uploadBulkId: Long): UploadBulk? = db.inTransaction {
+        db.uploadBulkDao.get(uploadBulkId)?.let { uploadBulkWithUri ->
+            db.uploadBulkDao.delete(uploadBulkWithUri.uploadBulkEntity)
+            uploadBulkWithUri.toUploadBulk()
+        }
     }
 }

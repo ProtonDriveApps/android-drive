@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,9 +30,9 @@ fun UploadBulkWithUri.toUploadBulk() =
         volumeId = VolumeId(uploadBulkEntity.volumeId),
         shareId = ShareId(uploadBulkEntity.userId, uploadBulkEntity.shareId),
         parentLinkId = FolderId(ShareId(uploadBulkEntity.userId, uploadBulkEntity.shareId), uploadBulkEntity.parentId),
-        uriStrings = uploadBulkUriStringEntity
+        uploadFileDescriptions = uploadBulkUriStringEntity
             .sortedBy { entity -> entity.key }
-            .map { entity -> entity.uri },
+            .map { entity -> entity.toUploadFileDescription() },
         shouldDeleteSourceUri = uploadBulkEntity.shouldDeleteSourceUri,
         networkTypeProviderType = uploadBulkEntity.networkTypeProviderType,
         shouldAnnounceEvent = uploadBulkEntity.shouldAnnounceEvent,

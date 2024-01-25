@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -43,5 +43,6 @@ interface PhotosViewEvent {
     val onRetry: () -> Unit get() = {}
     val onGetStorage: () -> Unit get() = {}
     val onResolveMissingFolder: () -> Unit get() = {}
+    val onChangeNetwork: () -> Unit get() = {}
     val onResolve: () -> Unit get() = {}
 }

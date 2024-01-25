@@ -62,7 +62,7 @@ class ConfirmSkipIssuesDialogViewModel @Inject constructor(
 
     private fun onSkipConfirmed(onSuccess: () -> Unit) {
         viewModelScope.launch {
-            deleteAllFailedFiles(userId, folderId).onSuccess {
+            deleteAllFailedFiles(folderId).onSuccess {
                 onSuccess()
             }.onFailure { error ->
                 error.log(BACKUP, "Cannot delete failed files")

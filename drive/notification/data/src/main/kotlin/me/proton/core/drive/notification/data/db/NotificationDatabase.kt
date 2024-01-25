@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -110,6 +110,20 @@ interface NotificationDatabase : Database {
                 database.execSQL(
                     """
                         DELETE FROM `NotificationEventEntity`
+                    """.trimIndent()
+                )
+            }
+        }
+        val MIGRATION_3 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        DELETE FROM `NotificationEventEntity`
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        DELETE FROM `TaglessNotificationEventEntity`
                     """.trimIndent()
                 )
             }

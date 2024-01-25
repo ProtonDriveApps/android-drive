@@ -18,10 +18,11 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
@@ -29,16 +30,14 @@ class LogBackupStats @Inject constructor(
     private val backupFolderRepository: BackupFolderRepository,
     private val backupFileRepository: BackupFileRepository,
 ) {
-    suspend operator fun invoke(userId: UserId) {
-        val folders = backupFolderRepository.getAll(userId)
-        folders.forEach { backupFolder ->
-            invoke(userId, backupFolder.bucketId)
+    suspend operator fun invoke(folderId: FolderId) {
+        backupFolderRepository.getAll(folderId).forEach { backupFolder ->
+            invoke(backupFolder)
         }
     }
 
-    suspend operator fun invoke(userId: UserId, bucketId: Int) {
-        val statsForFolder =
-            backupFileRepository.getStatsForFolder(userId, bucketId)
-        CoreLogger.d(LogTag.BACKUP, "Stats for $bucketId:\n${statsForFolder.joinToString("\n")}")
+    suspend operator fun invoke(backupFolder: BackupFolder) {
+        val statsForFolder = backupFileRepository.getStatsForFolder(backupFolder)
+        CoreLogger.d(LogTag.BACKUP, "Stats for ${backupFolder.bucketId}:\n${statsForFolder.joinToString("\n")}")
     }
 }

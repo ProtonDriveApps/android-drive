@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.api.ProtonApiCode
 import me.proton.core.drive.base.data.api.ProtonApiCode.INVALID_REQUIREMENTS
 import me.proton.core.drive.base.data.api.ProtonApiCode.INVALID_VALUE
+import me.proton.core.drive.base.data.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
@@ -69,6 +70,7 @@ class UpdateRevisionWorker @AssistedInject constructor(
     getUploadFileLink: GetUploadFileLink,
     uploadErrorManager: UploadErrorManager,
     private val updateRevision: UpdateRevision,
+    private val cleanupWorkers: CleanupWorkers,
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     private val applyCacheOption: ApplyCacheOption,
     configurationProvider: ConfigurationProvider,
@@ -118,20 +120,24 @@ class UpdateRevisionWorker @AssistedInject constructor(
         return Result.success()
     }
 
-    private fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean =
+    private suspend fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean =
         onProtonHttpException { protonCode ->
             when (protonCode) {
                 INVALID_REQUIREMENTS,
                 INVALID_VALUE,
                 -> true.also { retryGetBlocksUploadUrl(uploadFileLink) }
 
+                NOT_EXISTS,
+                -> true.also { recreateFile(uploadFileLink, cleanupWorkers, networkTypeProviders) }
+
                 else -> false
             }
         } ?: false
 
-    private fun retryGetBlocksUploadUrl(uploadFileLink: UploadFileLink) {
+    private suspend fun retryGetBlocksUploadUrl(uploadFileLink: UploadFileLink) {
         val networkType =
-            requireNotNull(networkTypeProviders[uploadFileLink.networkTypeProviderType]).get()
+            requireNotNull(networkTypeProviders[uploadFileLink.networkTypeProviderType])
+                .get(uploadFileLink.parentLinkId)
         workManager.enqueue(
             GetBlocksUploadUrlWorker.getWorkRequest(
                 userId = userId,

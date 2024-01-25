@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -21,16 +21,30 @@ package me.proton.android.drive.ui.viewmodel
 import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
+import me.proton.android.drive.photos.domain.usecase.GetPhotosConfiguration
+import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
+import me.proton.android.drive.photos.domain.usecase.IsPhotosEnabled
+import me.proton.android.drive.photos.domain.usecase.TogglePhotosNetworkConfiguration
 import me.proton.android.drive.photos.presentation.viewmodel.BackupPermissionsViewModel
 import me.proton.android.drive.ui.viewevent.PhotosBackupViewEvent
+import me.proton.android.drive.ui.viewstate.PhotosBackupOption
 import me.proton.android.drive.ui.viewstate.PhotosBackupViewState
-import me.proton.core.drive.backup.domain.manager.BackupManager
+import me.proton.core.drive.backup.domain.entity.BackupNetworkType
+import me.proton.core.drive.base.data.extension.getDefaultMessage
+import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.extension.firstSuccessOrError
+import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag.BACKUP
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import javax.inject.Inject
@@ -41,36 +55,87 @@ import me.proton.core.drive.i18n.R as I18N
 class PhotosBackupViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
-    backupManager: BackupManager,
+    isPhotosEnabled: IsPhotosEnabled,
+    getPhotosConfiguration: GetPhotosConfiguration,
+    private val togglePhotosNetworkConfiguration: TogglePhotosNetworkConfiguration,
+    private val getPhotosDriveLink: GetPhotosDriveLink,
     private val broadcastMessages: BroadcastMessages,
+    private val configurationProvider: ConfigurationProvider,
     val backupPermissionsViewModel: BackupPermissionsViewModel,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     val initialViewState: PhotosBackupViewState = PhotosBackupViewState(
         title = appContext.getString(I18N.string.photos_backup_title),
-        enableBackupTitle = appContext.getString(I18N.string.photos_backup_title),
-        isBackupEnabled = false,
+        backup = PhotosBackupOption(
+            title = appContext.getString(I18N.string.photos_backup_title),
+            checked = false,
+        ),
+        mobileData = PhotosBackupOption(
+            title = appContext.getString(I18N.string.photos_backup_option_mobile_data),
+            checked = false,
+            enabled = false,
+        )
     )
-    val viewState: Flow<PhotosBackupViewState> = backupManager.isEnabled(userId).map { enabled ->
+    val viewState: Flow<PhotosBackupViewState> = combine(
+        isPhotosEnabled(userId),
+        getPhotosConfiguration(userId),
+    ) { enabled, configuration ->
         initialViewState.copy(
-            isBackupEnabled = enabled,
+            backup = initialViewState.backup.copy(checked = enabled),
+            mobileData = initialViewState.mobileData.copy(
+                checked = configuration?.networkType == BackupNetworkType.CONNECTED,
+                enabled = enabled,
+            )
         )
     }
 
     fun viewEvent(
         navigateBack: () -> Unit,
     ): PhotosBackupViewEvent = object : PhotosBackupViewEvent {
-        override val onToggle = {
-            backupPermissionsViewModel.toggleBackup(userId) { state ->
-                with(state) {
+        override val onToggleBackup = {
+            viewModelScope.launch {
+                coRunCatching {
+                    val photoRootId = getPhotosDriveLink(userId)
+                        .firstSuccessOrError().toResult().getOrThrow().id
+                    backupPermissionsViewModel.toggleBackup(photoRootId) { state ->
+                        with(state) {
+                            broadcastMessages(
+                                userId = userId,
+                                message = message,
+                                type = type,
+                            )
+                            action()
+                        }
+                    }
+                }.onFailure { error ->
+                    error.log(BACKUP)
                     broadcastMessages(
                         userId = userId,
-                        message = message,
-                        type = type,
+                        message = error.getDefaultMessage(
+                            appContext,
+                            configurationProvider.useExceptionMessage
+                        ),
+                        type = BroadcastMessage.Type.ERROR,
                     )
-                    action()
                 }
             }
+            Unit
+        }
+        override val onToggleMobileData = {
+            viewModelScope.launch {
+                togglePhotosNetworkConfiguration(userId).onFailure { error ->
+                    error.log(BACKUP)
+                    broadcastMessages(
+                        userId = userId,
+                        message = error.getDefaultMessage(
+                            appContext,
+                            configurationProvider.useExceptionMessage
+                        ),
+                        type = BroadcastMessage.Type.ERROR,
+                    )
+                }
+            }
+            Unit
         }
 
         private val PhotoBackupState.message

@@ -21,4 +21,5 @@ package me.proton.core.drive.linkupload.domain.entity
 enum class CacheOption {
     NONE,
     ALL,
+    THUMBNAIL_DEFAULT,
 }

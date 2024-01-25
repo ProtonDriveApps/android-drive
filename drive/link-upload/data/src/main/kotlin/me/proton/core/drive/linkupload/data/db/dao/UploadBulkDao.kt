@@ -43,5 +43,5 @@ interface UploadBulkDao {
         SELECT * FROM UploadBulkEntity WHERE id = :id
     """
     )
-    suspend fun get(id: Long): UploadBulkWithUri
+    suspend fun get(id: Long): UploadBulkWithUri?
 }

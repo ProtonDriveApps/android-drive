@@ -66,7 +66,7 @@ interface UploadWorkManager {
 
     suspend fun cancelAllByFolder(userId: UserId, folderId: FolderId)
 
-    suspend fun cancelAllByUris(userId: UserId, uriStrings: List<String>)
+    suspend fun cancelAllByFolderAndUris(folderId: FolderId, uriStrings: List<String>)
 
     suspend fun waitUploadEventWorkerToFinish(userId: UserId)
 

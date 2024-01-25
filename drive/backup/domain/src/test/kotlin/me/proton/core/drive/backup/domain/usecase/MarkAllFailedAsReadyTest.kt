@@ -28,7 +28,6 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -63,10 +62,10 @@ class MarkAllFailedAsReadyTest {
             bucketId = 0,
             folderId = folderId,
         )
-        addFolder(backupFolder)
+        addFolder(backupFolder).getOrThrow()
 
         val count = markAllFailedAsReady(
-            userId = userId,
+            folderId = folderId,
             bucketId = 0,
             maxAttempts = 5,
         ).getOrThrow()
@@ -80,19 +79,19 @@ class MarkAllFailedAsReadyTest {
             bucketId = 0,
             folderId = folderId,
         )
-        addFolder(backupFolder)
+        addFolder(backupFolder).getOrThrow()
         setFiles(
-            userId, listOf(
+            listOf(
                 backupFile(0, BackupFileState.READY),
                 backupFile(1, BackupFileState.FAILED),
                 backupFile(2, BackupFileState.FAILED),
                 backupFile(3, BackupFileState.FAILED, attempts = 5),
                 backupFile(4, BackupFileState.IDLE),
             )
-        )
+        ).getOrThrow()
 
         val count = markAllFailedAsReady(
-            userId = userId,
+            folderId = folderId,
             bucketId = 0,
             maxAttempts = 5,
         ).getOrThrow()
@@ -119,6 +118,7 @@ class MarkAllFailedAsReadyTest {
         attempts: Long = 0,
     ) = BackupFile(
         bucketId = bucketId,
+        folderId = folderId,
         uriString = uriString,
         mimeType = "",
         name = "",

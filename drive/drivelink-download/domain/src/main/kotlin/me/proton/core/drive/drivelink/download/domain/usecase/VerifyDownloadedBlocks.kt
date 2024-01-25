@@ -17,10 +17,10 @@
  */
 package me.proton.core.drive.drivelink.download.domain.usecase
 
+import me.proton.core.drive.base.domain.extension.changeParent
 import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.drivelink.download.domain.extension.changeParent
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.file.base.domain.usecase.GetBlockFile
 import me.proton.core.drive.file.base.domain.usecase.GetRevision

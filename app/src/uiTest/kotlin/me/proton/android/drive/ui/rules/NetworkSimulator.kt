@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ package me.proton.android.drive.ui.rules
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.log.DriveLogTag
@@ -65,7 +65,6 @@ object NetworkSimulator: ExternalResource() {
     private val interceptors = mutableListOf(testNetworkInterceptor)
     private var isNetworkTimeout: Boolean = false
     private var responseDelay: Duration = 0.milliseconds
-    private var testConnectivity: BackupConnectivityManager.Connectivity? = null
 
     val client: OkHttpClient = OkHttpClient
         .Builder()
@@ -74,8 +73,9 @@ object NetworkSimulator: ExternalResource() {
         }
         .build()
 
-    val connectivity: Flow<BackupConnectivityManager.Connectivity>?
-        get() = testConnectivity?.let { listOf(it).asFlow() }
+    private var _connectivity = MutableStateFlow<BackupConnectivityManager.Connectivity?>(null)
+    val connectivity: Flow<BackupConnectivityManager.Connectivity?>
+        get() = _connectivity
 
     fun disableNetwork() = setConnectivity(NONE)
 
@@ -87,7 +87,7 @@ object NetworkSimulator: ExternalResource() {
     }
 
     private fun setConnectivity(connectivity: BackupConnectivityManager.Connectivity) = apply {
-        testConnectivity = connectivity
+        _connectivity.value = connectivity
     }
 
     private fun throwIf(check: Boolean, throwable: Throwable) =

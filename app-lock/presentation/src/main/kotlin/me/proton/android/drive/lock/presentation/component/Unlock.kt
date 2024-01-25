@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -53,6 +52,7 @@ import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.presentation.component.RepeatOnLifecycleLaunchedEffect
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait
@@ -79,7 +79,7 @@ fun Unlock(
     viewEvent: UnlockViewEvent,
     modifier: Modifier = Modifier,
 ) {
-    LaunchedEffect(Unit) {
+    RepeatOnLifecycleLaunchedEffect {
         viewEvent.onShowBiometric(userId)
     }
     Column(
@@ -140,7 +140,7 @@ private fun Actions(
                 drawable = getDrawable(
                     light = CorePresentation.drawable.logo_drive_with_text_light,
                     dark = CorePresentation.drawable.logo_drive_with_text_dark,
-                    dayNight = BasePresentation.drawable.logo_drive_with_text_daylight,
+                    dayNight = BasePresentation.drawable.logo_drive_with_text_daynight,
                 )
             ),
             contentDescription = null,

@@ -42,6 +42,7 @@ import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.util.kotlin.CoreLogger
@@ -75,7 +76,7 @@ class BackupScanFolderWorker @AssistedInject constructor(
             uploadPriority
         ).onFailure { error ->
             error.log(BACKUP, "Cannot scan bucket: $bucketId")
-            addBackupError(userId, error.toBackupError())
+            addBackupError(folderId, error.toBackupError())
             return Result.failure()
         }.onSuccess { files ->
             val min = files.minByOrNull { file -> file.date }?.date
@@ -94,21 +95,23 @@ class BackupScanFolderWorker @AssistedInject constructor(
 
     companion object {
         fun getWorkRequest(
-            userId: UserId,
             backupFolder: BackupFolder,
             uploadPriority: Long,
             tags: Collection<String> = emptyList(),
         ) = OneTimeWorkRequest.Builder(BackupScanFolderWorker::class.java)
-            .setInputData(workDataOf(userId, backupFolder, uploadPriority))
-            .addTags(listOf(userId.id, BackupManagerImpl.TAG) + tags)
+            .setInputData(workDataOf(backupFolder, uploadPriority))
+            .addTags(listOf(
+                backupFolder.folderId.userId.id,
+                backupFolder.folderId.id,
+                BackupManagerImpl.TAG
+            ) + tags)
             .build()
 
         internal fun workDataOf(
-            userId: UserId,
             backupFolder: BackupFolder,
             uploadPriority: Long,
         ) = Data.Builder()
-            .putString(KEY_USER_ID, userId.id)
+            .putString(KEY_USER_ID, backupFolder.folderId.userId.id)
             .putString(KEY_SHARE_ID, backupFolder.folderId.shareId.id)
             .putString(KEY_FOLDER_ID, backupFolder.folderId.id)
             .putInt(WorkerKeys.KEY_BUCKET_ID, backupFolder.bucketId)

@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.upload.data.resolver
 
+import android.content.ContentResolver
 import android.content.ContentResolver.SCHEME_FILE
 import android.net.Uri
 import kotlinx.coroutines.Dispatchers
@@ -36,35 +37,51 @@ class FileUriResolver(
     private val mimeTypeProvider: MimeTypeProvider,
     private val coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
 ) : UriResolver {
+    override val schemes: Set<String> get() = setOf(SCHEME_FILE)
 
     override suspend fun <T> useInputStream(uriString: String, block: suspend (InputStream) -> T): T? =
-        uri(uriString)?.path?.let { path ->
-            File(path).inputStream().use { fileInputStream ->
-                block(fileInputStream)
-            }
-        }
+        uri(uriString)
+            .file
+            ?.inputStream()
+            ?.use { fileInputStream -> block(fileInputStream) }
 
     override suspend fun getName(uriString: String): String? = coRunCatching(coroutineContext) {
-        uri(uriString)?.lastPathSegment
+        uri(uriString).name
     }.getOrNull()
 
     override suspend fun getSize(uriString: String): Bytes? = coRunCatching(coroutineContext) {
-        uri(uriString)?.path?.let { path ->
-            File(path).size
-        }
+        uri(uriString).size
     }.getOrNull()
 
     override suspend fun getMimeType(uriString: String): String? = coRunCatching(coroutineContext) {
-        getName(uriString)?.let { name ->
-            mimeTypeProvider.getMimeTypeFromExtension(name.extensionOrEmpty) ?: UriResolver.DEFAULT_MIME_TYPE
-        }
+        uri(uriString).mimeType()
     }.getOrNull()
 
     override suspend fun getLastModified(uriString: String): TimestampMs? = coRunCatching(coroutineContext) {
-        uri(uriString)?.path?.let { path ->
-            TimestampMs(File(path).lastModified())
+        uri(uriString).lastModified
+    }.getOrNull()
+
+    override suspend fun getUriInfo(uriString: String): UriResolver.UriInfo? = coRunCatching(coroutineContext) {
+        uri(uriString)?.let { uri ->
+            UriResolver.UriInfo(
+                name = uri.name,
+                size = uri.size,
+                mimeType = uri.mimeType(),
+                lastModified = uri.lastModified,
+            )
         }
     }.getOrNull()
 
     private fun uri(uriString: String?): Uri? = Uri.parse(uriString).also { uri -> require(uri.scheme == SCHEME_FILE) }
+    private val Uri?.name: String? get() = this?.lastPathSegment
+    private val Uri?.file: File? get() = this?.path?.let { path -> File(path) }
+    private val Uri?.size: Bytes? get() = file?.size
+    private suspend fun Uri?.mimeType(): String? = this?.name?.let { name ->
+        mimeTypeProvider.getMimeTypeFromExtension(name.extensionOrEmpty) ?: UriResolver.DEFAULT_MIME_TYPE
+    }
+    private val Uri?.lastModified: TimestampMs? get() = file?.let { file ->
+        file.lastModified()
+            .takeIf { lastModified -> lastModified >= 0 }
+            ?.let { lastModified -> TimestampMs(lastModified) }
+    }
 }

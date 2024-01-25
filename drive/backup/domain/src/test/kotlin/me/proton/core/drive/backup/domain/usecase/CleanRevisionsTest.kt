@@ -20,6 +20,7 @@ package me.proton.core.drive.backup.domain.usecase
 
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.data.repository.BackupDuplicateRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupDuplicate
@@ -35,6 +36,7 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.share.domain.entity.ShareId
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -68,12 +70,11 @@ class CleanRevisionsTest {
 
     @Test
     fun empty() = runTest {
-        val result = cleanRevisions(folderId)
+        cleanRevisions(folderId).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         assertEquals(
             emptyList<BackupDuplicate>(),
-            backupDuplicateRepository.getAll(userId, folderId, 0, 100)
+            backupDuplicateRepository.getAll(folderId, 0, 100)
         )
     }
 
@@ -81,18 +82,16 @@ class CleanRevisionsTest {
     fun activeRevision() = runTest {
         val duplicates = listOf(
             backupDuplicate(state = Link.State.ACTIVE)
-
         )
         backupDuplicateRepository.insertDuplicates(
             duplicates
         )
 
-        val result = cleanRevisions(folderId)
+        cleanRevisions(folderId).getOrThrow()
 
-        assertEquals(Result.success(Unit), result)
         assertEquals(
             duplicates,
-            backupDuplicateRepository.getAll(userId, folderId, 0, 100)
+            backupDuplicateRepository.getAll(folderId, 0, 100)
         )
     }
 
@@ -105,12 +104,11 @@ class CleanRevisionsTest {
             )
         )
 
-        val result = cleanRevisions(folderId)
-        assertEquals(Result.success(Unit), result)
+        cleanRevisions(folderId).getOrThrow()
 
         assertEquals(
             emptyList<BackupDuplicate>(),
-            backupDuplicateRepository.getAll(userId, folderId, 0, 100)
+            backupDuplicateRepository.getAll(folderId, 0, 100)
         )
     }
 
@@ -125,13 +123,13 @@ class CleanRevisionsTest {
             duplicates
         )
 
-        val result = cleanRevisions(folderId)
-
-        assertEquals(failure, result)
+        assertThrows(Throwable::class.java){
+            runBlocking { cleanRevisions(folderId).getOrThrow() }
+        }
 
         assertEquals(
             duplicates,
-            backupDuplicateRepository.getAll(userId, folderId, 0, 100)
+            backupDuplicateRepository.getAll(folderId, 0, 100)
         )
     }
 

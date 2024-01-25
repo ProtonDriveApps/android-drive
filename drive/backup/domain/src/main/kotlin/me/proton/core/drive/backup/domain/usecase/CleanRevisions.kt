@@ -25,7 +25,6 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.folder.domain.usecase.DeleteFolderChildren
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
-import me.proton.core.drive.link.domain.extension.userId
 import javax.inject.Inject
 
 class CleanRevisions @Inject constructor(
@@ -38,7 +37,6 @@ class CleanRevisions @Inject constructor(
         val count = minOf(configurationProvider.dbPageSize, configurationProvider.apiPageSize)
         do {
             backupDuplicates = repository.getAllWithState(
-                userId = folderId.userId,
                 parentId = folderId,
                 state = Link.State.DRAFT,
                 fromIndex = 0,

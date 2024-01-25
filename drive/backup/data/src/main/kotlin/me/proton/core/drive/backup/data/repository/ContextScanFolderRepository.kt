@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.ScanFolderRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
@@ -40,20 +41,19 @@ class ContextScanFolderRepository @Inject constructor(
     @ApplicationContext private val context: Context,
     private val configurationProvider: ConfigurationProvider,
 ) : ScanFolderRepository {
-    override suspend operator fun invoke(bucketId: Int, timestamp: TimestampS?): List<BackupFile> =
+    override suspend operator fun invoke(backupFolder: BackupFolder): List<BackupFile> =
         withContext(Dispatchers.IO) {
             val limit = configurationProvider.scanBackupPageSize
             val sort = MediaStore.MediaColumns.DATE_ADDED
-            collectMedias(imageCollection, bucketId, limit, sort, timestamp) +
-                    collectMedias(videoCollection, bucketId, limit, sort, timestamp)
+            collectMedias(imageCollection, backupFolder, limit, sort) +
+                    collectMedias(videoCollection, backupFolder, limit, sort)
         }
 
     private fun collectMedias(
         uri: Uri,
-        bucketId: Int,
+        backupFolder: BackupFolder,
         limit: Int,
         sort: String,
-        timestamp: TimestampS?,
     ): List<BackupFile> {
         val backupFiles: MutableList<BackupFile> = mutableListOf()
         var page = 0
@@ -62,8 +62,8 @@ class ContextScanFolderRepository @Inject constructor(
             val offset = page * limit
             page++
             val backupFileInPage: List<BackupFile> = context.contentResolver
-                .query(uri, bucketId, sort, limit, offset, timestamp?.value)
-                ?.use { cursor -> cursor.createMedia(bucketId, uri) }
+                .query(uri, backupFolder.bucketId, sort, limit, offset, backupFolder.updateTime?.value)
+                ?.use { cursor -> cursor.createMedia(backupFolder, uri) }
                 ?: emptyList()
             count = backupFileInPage.size
             backupFiles.addAll(backupFileInPage)
@@ -72,18 +72,20 @@ class ContextScanFolderRepository @Inject constructor(
     }
 }
 
-private fun Cursor.createMedia(bucketId: Int, uri: Uri): List<BackupFile> {
+private fun Cursor.createMedia(backupFolder: BackupFolder, uri: Uri): List<BackupFile> {
     val listOfAllImages = mutableListOf<BackupFile>()
     if (count > 0) {
         val id = getColumnIndexOrThrow(MediaStore.MediaColumns._ID)
         val dateAdded = getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_ADDED)
+        val dateModified = getColumnIndexOrThrow(MediaStore.MediaColumns.DATE_MODIFIED)
         val displayName = getColumnIndexOrThrow(MediaStore.MediaColumns.DISPLAY_NAME)
         val size = getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
         val mimeType = getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
         while (moveToNext()) {
             listOfAllImages.add(
                 BackupFile(
-                    bucketId = bucketId,
+                    bucketId = backupFolder.bucketId,
+                    folderId = backupFolder.folderId,
                     uriString = Uri.withAppendedPath(uri, getString(id))?.let { uriMedia ->
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                             MediaStore.setRequireOriginal(uriMedia)
@@ -97,6 +99,7 @@ private fun Cursor.createMedia(bucketId: Int, uri: Uri): List<BackupFile> {
                     size = getInt(size).bytes,
                     state = BackupFileState.IDLE,
                     date = TimestampS(getInt(dateAdded).toLong()),
+                    lastModified = TimestampS(getInt(dateModified).toLong()),
                 )
             )
         }
@@ -123,6 +126,7 @@ private val projections by lazy {
     arrayOf(
         MediaStore.MediaColumns._ID,
         MediaStore.MediaColumns.DATE_ADDED,
+        MediaStore.MediaColumns.DATE_MODIFIED,
         MediaStore.MediaColumns.DISPLAY_NAME,
         MediaStore.MediaColumns.SIZE,
         MediaStore.MediaColumns.MIME_TYPE,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -90,6 +90,9 @@ class BackupNotificationBuilder @Inject constructor(
 
             Event.Backup.BackupState.FAILED_CONNECTIVITY ->
                 appContext.getString(I18N.string.notification_content_text_backup_failed_connectivity)
+
+            Event.Backup.BackupState.FAILED_WIFI_CONNECTIVITY ->
+                appContext.getString(I18N.string.notification_content_text_backup_failed_wifi_connectivity)
 
             Event.Backup.BackupState.FAILED_PERMISSION ->
                 appContext.getString(I18N.string.notification_content_text_backup_failed_permission)

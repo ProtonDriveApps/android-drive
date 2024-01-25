@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ import me.proton.core.drive.backup.domain.entity.BackupErrorType
 fun BackupErrorType.toEventBackupState() = when (this) {
     BackupErrorType.OTHER -> Event.Backup.BackupState.FAILED
     BackupErrorType.CONNECTIVITY -> Event.Backup.BackupState.FAILED_CONNECTIVITY
+    BackupErrorType.WIFI_CONNECTIVITY -> Event.Backup.BackupState.FAILED_WIFI_CONNECTIVITY
     BackupErrorType.PERMISSION -> Event.Backup.BackupState.FAILED_PERMISSION
     BackupErrorType.LOCAL_STORAGE -> Event.Backup.BackupState.FAILED_LOCAL_STORAGE
     BackupErrorType.DRIVE_STORAGE -> Event.Backup.BackupState.FAILED_DRIVE_STORAGE

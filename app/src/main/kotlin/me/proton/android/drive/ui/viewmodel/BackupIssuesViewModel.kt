@@ -65,7 +65,7 @@ class BackupIssuesViewModel @Inject constructor(
     val initialViewState = BackupIssuesViewState(medias = emptyList())
 
     val viewState: Flow<BackupIssuesViewState> =
-        getAllFailedFiles(userId, folderId).map { backupFiles ->
+        getAllFailedFiles(folderId).map { backupFiles ->
             BackupIssuesViewState(medias = backupFiles.map { backupFile ->
                 backupFile.uriString.toUri()
             })
@@ -91,7 +91,7 @@ class BackupIssuesViewModel @Inject constructor(
 
     private fun onRetryAll(onSuccess: () -> Unit) {
         viewModelScope.launch {
-            retryBackup(userId).onSuccess {
+            retryBackup(folderId).onSuccess {
                 onSuccess()
             }.onFailure { error ->
                 error.log(BACKUP, "Cannot retry on backup")

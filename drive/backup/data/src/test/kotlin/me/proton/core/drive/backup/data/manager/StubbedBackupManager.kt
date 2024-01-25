@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -23,45 +23,46 @@ import kotlinx.coroutines.flow.flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.BackupManager
+import me.proton.core.drive.link.domain.entity.FolderId
 
 class StubbedBackupManager : BackupManager {
     var stopped = false
 
-    var sync = emptyMap<UserId, BackupFolder>()
+    var sync = emptyList<BackupFolder>()
 
-    override suspend fun start(userId: UserId) {
+    override suspend fun start(folderId: FolderId) {
         NotImplementedError()
     }
 
-    override suspend fun stop(userId: UserId) {
+    override suspend fun stop(folderId: FolderId) {
         stopped = true
     }
 
-    override fun sync(userId: UserId, backupFolder: BackupFolder, uploadPriority: Long) {
-        sync = sync + (userId to backupFolder)
+    override fun sync(backupFolder: BackupFolder, uploadPriority: Long) {
+        sync = sync + backupFolder
     }
 
-    override suspend fun cancelSync(userId: UserId, backupFolder: BackupFolder) {
+    override suspend fun cancelSync(backupFolder: BackupFolder) {
         throw NotImplementedError()
     }
 
-    override fun syncAllFolders(userId: UserId, uploadPriority: Long) {
+    override fun syncAllFolders(folderId: FolderId, uploadPriority: Long) {
         throw NotImplementedError()
     }
 
-    override fun watchFolders(userId: UserId) {
+    override suspend fun watchFolders(userId: UserId) {
         throw NotImplementedError()
     }
 
-    override fun unwatchFolders(userId: UserId) {
+    override suspend fun unwatchFolders(userId: UserId) {
         throw NotImplementedError()
     }
 
-    override fun isEnabled(userId: UserId): Flow<Boolean> = flow {
+    override fun isEnabled(folderId: FolderId): Flow<Boolean> = flow {
         throw NotImplementedError()
     }
 
-    override fun isUploading(): Flow<Boolean> {
+    override fun isUploading(folderId: FolderId): Flow<Boolean> {
         throw NotImplementedError()
     }
 }

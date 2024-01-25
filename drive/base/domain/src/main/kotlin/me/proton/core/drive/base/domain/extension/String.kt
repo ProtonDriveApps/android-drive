@@ -18,6 +18,7 @@
 package me.proton.core.drive.base.domain.extension
 
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.entity.VolumeWithRevision
 import java.io.ByteArrayOutputStream
 import java.util.zip.GZIPOutputStream
 
@@ -68,3 +69,9 @@ fun String.gzipCompress(): ByteArray = ByteArrayOutputStream().use { outputStrea
 val String.asciiCharacters get() = count { c -> c.code in 34..126 }
 
 val String.percentageOfAsciiChars: Percentage get() = Percentage(asciiCharacters / length.toFloat())
+
+fun String.updateRevisionInPath(volumeId: String, oldRevisionId: String, newRevisionId: String) =
+    replace(
+        VolumeWithRevision(volumeId, oldRevisionId).path,
+        VolumeWithRevision(volumeId, newRevisionId).path,
+    )

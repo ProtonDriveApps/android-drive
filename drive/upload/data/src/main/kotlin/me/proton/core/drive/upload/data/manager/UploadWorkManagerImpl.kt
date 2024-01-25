@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -39,8 +39,8 @@ import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.getLong
 import me.proton.core.drive.base.domain.entity.Percentage
-import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.NOTIFICATION
+import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.link.domain.entity.Folder
@@ -50,6 +50,7 @@ import me.proton.core.drive.link.presentation.extension.getName
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadBlocks
@@ -129,7 +130,9 @@ class UploadWorkManagerImpl @Inject constructor(
             userId = userId,
             volumeId = volumeId,
             parentId = folderId,
-            uriStrings = uriStrings,
+            uploadFileDescriptions = uriStrings.map { uriString ->
+                UploadFileDescription(uri = uriString, properties = null)
+            },
             shouldDeleteSourceUri = shouldDeleteSource,
             networkTypeProviderType = networkTypeProviderType,
             shouldAnnounceEvent = shouldAnnounceEvent,
@@ -139,13 +142,15 @@ class UploadWorkManagerImpl @Inject constructor(
         )
             .onFailure { error ->
                 error.log(
-                    tag = LogTag.UPLOAD,
+                    tag = UPLOAD,
                     message = "Create upload file failed"
                 )
             }
             .onSuccess { uploadFileLinks ->
-                uploadFileLinks.forEach { uploadFileLink ->
-                    announceUploadEvent(uploadFileLink, newUploadEvent(uploadFileLink.id))
+                if (shouldAnnounceEvent) {
+                    uploadFileLinks.forEach { uploadFileLink ->
+                        announceUploadEvent(uploadFileLink, newUploadEvent(uploadFileLink.id))
+                    }
                 }
             }
         workManager.enqueueUpload(userId, shouldAnnounceEvent)
@@ -242,10 +247,10 @@ class UploadWorkManagerImpl @Inject constructor(
         }
     }
 
-    override suspend fun cancelAllByUris(userId: UserId, uriStrings: List<String>) {
-        workManager.cancelUniqueWork(userId.uniqueUploadBulkWorkName).await()
-        removeAllUploadFileLinks(userId, uriStrings, UploadState.UNPROCESSED)
-        getUploadFileLinks(userId, uriStrings).forEach { uploadFileLink ->
+    override suspend fun cancelAllByFolderAndUris(folderId: FolderId, uriStrings: List<String>) {
+        workManager.cancelUniqueWork(folderId.userId.uniqueUploadBulkWorkName).await()
+        removeAllUploadFileLinks(folderId, uriStrings, UploadState.UNPROCESSED)
+        getUploadFileLinks(folderId, uriStrings).forEach { uploadFileLink ->
             cancel(uploadFileLink)
         }
     }
@@ -327,7 +332,7 @@ internal val UserId.uniqueUploadEventWorkName: String get() = "upload_notificati
 internal val UserId.uniqueUploadThrottleWorkName: String get() = "upload_throttle=$id"
 internal val UserId.uniqueUploadBulkWorkName: String get() = "upload_bulk=$id"
 
-internal fun WorkManager.enqueueUpload(
+internal suspend fun WorkManager.enqueueUpload(
     userId: UserId,
     shouldAnnounceEvent: Boolean = true,
     tags: Set<String> = emptySet(),
@@ -348,5 +353,5 @@ internal fun WorkManager.enqueueUpload(
         userId.uniqueUploadThrottleWorkName,
         ExistingWorkPolicy.KEEP,
         UploadThrottleWorker.getWorkRequest(userId, tags.toList())
-    )
+    ).await()
 }

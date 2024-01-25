@@ -31,5 +31,6 @@ driveModule(
     i18n = true,
 ) {
     api(project(":drive:notification:domain"))
+    api(project(":drive:base:data"))
     api(libs.androidx.core.core)
 }

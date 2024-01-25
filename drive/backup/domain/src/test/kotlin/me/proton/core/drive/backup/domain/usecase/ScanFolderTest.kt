@@ -34,6 +34,7 @@ import me.proton.core.drive.crypto.domain.usecase.base.UseHashKey
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
 import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -47,6 +48,7 @@ class ScanFolderTest {
 
     @get:Rule
     val database = DriveDatabaseRule()
+    private lateinit var folderId: FolderId
 
     private lateinit var scanFolder: ScanFolder
     private lateinit var fileRepository: BackupFileRepositoryImpl
@@ -54,9 +56,10 @@ class ScanFolderTest {
 
     private var backupFiles = emptyList<BackupFile>()
 
-    private val scanFolderRepository = ScanFolderRepository { bucketId, timestamp ->
+    private val scanFolderRepository = ScanFolderRepository { backupFolder ->
         backupFiles.filter { backupFile ->
-            val sameFolder = backupFile.bucketId == bucketId
+            val sameFolder = backupFile.bucketId == backupFolder.bucketId
+            val timestamp = backupFolder.updateTime
             val notSynced = if (timestamp == null) {
                 true
             } else {
@@ -68,27 +71,31 @@ class ScanFolderTest {
 
     private val bucketId = 0
 
-    private val backupFile1 = NullableBackupFile(
-        bucketId = bucketId,
-        uriString = "uri1",
-        name = "file1",
-        date = TimestampS(1000),
-    )
-    private val backupFile2 = NullableBackupFile(
-        bucketId = bucketId,
-        uriString = "uri2",
-        name = "file2",
-        date = TimestampS(2000),
-    )
+    private lateinit var backupFile1: BackupFile
+    private lateinit var backupFile2: BackupFile
 
     private lateinit var backupFolder: BackupFolder
 
     @Before
     fun setUp() = runTest {
-        val folderId = database.myDrive { }
+        folderId = database.myDrive { }
         backupFolder = BackupFolder(
             bucketId = bucketId,
             folderId = folderId,
+        )
+        backupFile1 = NullableBackupFile(
+            bucketId = bucketId,
+            folderId = folderId,
+            uriString = "uri1",
+            name = "file1",
+            date = TimestampS(1000),
+        )
+        backupFile2 = NullableBackupFile(
+            bucketId = bucketId,
+            folderId = folderId,
+            uriString = "uri2",
+            name = "file2",
+            date = TimestampS(2000),
         )
         fileRepository = BackupFileRepositoryImpl(database.db)
         folderRepository = BackupFolderRepositoryImpl(database.db)
@@ -120,7 +127,7 @@ class ScanFolderTest {
         assertEquals(Result.success(backupFiles), result)
         assertEquals(
             backupFiles,
-            fileRepository.getAllFiles(userId = userId, fromIndex = 0, count = 1),
+            fileRepository.getAllFiles(folderId = folderId, fromIndex = 0, count = 1),
         )
     }
 
@@ -144,7 +151,7 @@ class ScanFolderTest {
                     backupFile2.copy(hash = "hmacSha256(file2)"),
                     backupFile1.copy(hash = "hmacSha256(file1)"),
                 ),
-                fileRepository.getAllFiles(userId = userId, fromIndex = 0, count = 2)
+                fileRepository.getAllFiles(folderId = folderId, fromIndex = 0, count = 2)
             )
             assertEquals(
                 backupFile2.date,
@@ -174,7 +181,7 @@ class ScanFolderTest {
             assertEquals(Result.success(resultBackupFiles), result)
             assertEquals(
                 resultBackupFiles,
-                fileRepository.getAllFiles(userId = userId, fromIndex = 0, count = 2),
+                fileRepository.getAllFiles(folderId = folderId, fromIndex = 0, count = 2),
             )
             assertEquals(
                 backupFile2.date,

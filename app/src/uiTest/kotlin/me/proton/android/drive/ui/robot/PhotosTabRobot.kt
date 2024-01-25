@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -43,7 +43,7 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
     private val backupFailed get() = node.withText(I18N.string.photos_error_backup_failed)
     private val noBackupsYet get() = node.withText(I18N.string.photos_empty_title)
     private val missingFolder get() = node.withText(I18N.string.photos_error_backup_missing_folder)
-    private val noConnectivityBanner get() = node.withText(I18N.string.photos_error_waiting_connectivity)
+    private val noConnectivityBanner get() = node.withText(I18N.string.photos_error_waiting_wifi_connectivity)
     private val getMoreStorageButton get() = node.withText(I18N.string.storage_quotas_get_storage_action)
     private val storageFullTitle get() =
         node.withTextResource(I18N.string.storage_quotas_full_title, I18N.string.app_name)

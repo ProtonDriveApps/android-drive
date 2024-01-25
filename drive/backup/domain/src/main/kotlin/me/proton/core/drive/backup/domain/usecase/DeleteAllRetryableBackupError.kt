@@ -18,15 +18,15 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class DeleteAllRetryableBackupError @Inject constructor(
     private val repository: BackupErrorRepository,
 ) {
-    suspend operator fun invoke(userId: UserId) = coRunCatching {
-        repository.deleteAllRetryable(userId)
+    suspend operator fun invoke(folderId: FolderId) = coRunCatching {
+        repository.deleteAllRetryable(folderId)
     }
 }

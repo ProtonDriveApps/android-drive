@@ -26,7 +26,7 @@ import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -38,6 +38,7 @@ import org.robolectric.RobolectricTestRunner
 class ErrorTest {
     @get:Rule
     val database = DriveDatabaseRule()
+    private lateinit var folderId: FolderId
 
     private lateinit var getErrors: GetErrors
     private lateinit var addBackupError: AddBackupError
@@ -56,7 +57,7 @@ class ErrorTest {
 
     @Before
     fun setUp() = runTest {
-        database.myDrive { }
+        folderId = database.myDrive { }
         val repository = BackupErrorRepositoryImpl(database.db)
         addBackupError = AddBackupError(repository)
         deleteAllBackupError = DeleteAllBackupError(repository)
@@ -68,57 +69,57 @@ class ErrorTest {
     fun empty() = runTest {
         assertEquals(
             emptyList<BackupError>(),
-            getErrors(userId).first(),
+            getErrors(folderId).first(),
         )
     }
 
     @Test
     fun getErrors() = runTest {
-        addBackupError(userId, retryable)
-        addBackupError(userId, nonRetryable)
+        addBackupError(folderId, retryable)
+        addBackupError(folderId, nonRetryable)
 
         assertEquals(
             listOf(retryable, nonRetryable),
-            getErrors(userId).first(),
+            getErrors(folderId).first(),
         )
     }
 
     @Test
     fun deleteAllBackupError() = runTest {
-        addBackupError(userId, retryable)
-        addBackupError(userId, nonRetryable)
+        addBackupError(folderId, retryable)
+        addBackupError(folderId, nonRetryable)
 
-        deleteAllBackupError(userId)
+        deleteAllBackupError(folderId)
 
         assertEquals(
             emptyList<BackupError>(),
-            getErrors(userId).first(),
+            getErrors(folderId).first(),
         )
     }
 
     @Test
     fun deleteAllByType() = runTest {
-        addBackupError(userId, retryable)
-        addBackupError(userId, nonRetryable)
+        addBackupError(folderId, retryable)
+        addBackupError(folderId, nonRetryable)
 
-        deleteAllBackupError(userId, nonRetryable.type)
+        deleteAllBackupError(folderId, nonRetryable.type)
 
         assertEquals(
             listOf(retryable),
-            getErrors(userId).first(),
+            getErrors(folderId).first(),
         )
     }
 
     @Test
     fun deleteAllRetryableBackupError() = runTest {
-        addBackupError(userId, retryable)
-        addBackupError(userId, nonRetryable)
+        addBackupError(folderId, retryable)
+        addBackupError(folderId, nonRetryable)
 
-        deleteAllRetryableBackupError(userId)
+        deleteAllRetryableBackupError(folderId)
 
         assertEquals(
             listOf(nonRetryable),
-            getErrors(userId).first(),
+            getErrors(folderId).first(),
         )
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -49,6 +49,7 @@ fun PhotosEmpty(
     onResolve: () -> Unit,
     onGetStorage: () -> Unit,
     onResolveMissingFolder: () -> Unit,
+    onChangeNetwork: () -> Unit,
 ) {
     Column {
         PhotosBanners {
@@ -60,6 +61,7 @@ fun PhotosEmpty(
                 onRetry = onRetry,
                 onResolve = onResolve,
                 onResolveMissingFolder = onResolveMissingFolder,
+                onChangeNetwork = onChangeNetwork,
             )
             StorageBanner(onGetStorage = onGetStorage)
         }
@@ -125,7 +127,7 @@ fun BackupProgressPhotosEmpty(
 private fun PhotosEmptyPreview() {
     PhotosEmpty(
         state = ListContentState.Empty(
-            imageResId = R.drawable.img_photos_no_backup_yet,
+            imageResId = R.drawable.empty_photos_daynight,
             titleId = I18N.string.photos_empty_title,
             descriptionResId = I18N.string.photos_empty_description,
             actionResId = 0,
@@ -138,6 +140,7 @@ private fun PhotosEmptyPreview() {
         onResolve = { },
         onGetStorage = {},
         onResolveMissingFolder = {},
+        onChangeNetwork = {},
     )
 }
 

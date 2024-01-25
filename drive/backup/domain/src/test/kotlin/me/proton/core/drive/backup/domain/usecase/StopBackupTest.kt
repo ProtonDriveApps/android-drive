@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -45,7 +45,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.io.File
 
 @RunWith(RobolectricTestRunner::class)
 class StopBackupTest {
@@ -74,7 +73,7 @@ class StopBackupTest {
                 bucketId = 0,
                 folderId = folderId
             )
-        )
+        ).getOrThrow()
 
         backupManager = StubbedBackupManager(folderRepository)
         getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance)
@@ -83,22 +82,22 @@ class StopBackupTest {
             addBackupError = AddBackupError(errorRepository),
             announceEvent = AnnounceEvent(setOf(handler)),
             logBackupStats = LogBackupStats(folderRepository, fileRepository),
-            getFolders = GetFolders(folderRepository),
+            getAllFolders = GetAllFolders(folderRepository),
             markAllEnqueuedAsReady = MarkAllEnqueuedAsReady(fileRepository)
         )
     }
 
     @Test
     fun stopBackup() = runTest {
-        stopBackup(userId, BackupError.Permissions()).getOrThrow()
+        stopBackup(folderId, BackupError.Permissions()).getOrThrow()
 
         assertTrue(backupManager.stopped)
         assertEquals(
             listOf(BackupError.Permissions()),
-            getErrors(userId).first()
+            getErrors(folderId).first()
         )
         assertEquals(
-            mapOf(userId to listOf(Event.BackupStopped(Event.Backup.BackupState.FAILED_PERMISSION))),
+            mapOf(userId to listOf(Event.BackupStopped(folderId, Event.Backup.BackupState.FAILED_PERMISSION))),
             handler.events,
         )
     }
@@ -106,23 +105,23 @@ class StopBackupTest {
     @Test
     fun markAsReady() = runTest {
         fileRepository.insertFiles(
-            userId, listOf(
-                backupFile(1, BackupFileState.ENQUEUED),
-                backupFile(2, BackupFileState.FAILED),
+            listOf(
                 backupFile(3, BackupFileState.COMPLETED),
+                backupFile(2, BackupFileState.FAILED),
+                backupFile(1, BackupFileState.ENQUEUED),
             )
         )
 
-        stopBackup(userId, BackupError.LocalStorage())
+        stopBackup(folderId, BackupError.LocalStorage()).getOrThrow()
 
         assertTrue(backupManager.stopped)
         assertEquals(
             listOf(
-                backupFile(1, BackupFileState.READY),
-                backupFile(2, BackupFileState.FAILED),
                 backupFile(3, BackupFileState.COMPLETED),
+                backupFile(2, BackupFileState.FAILED),
+                backupFile(1, BackupFileState.READY),
             ),
-            fileRepository.getAllFiles(userId, 0, 100)
+            fileRepository.getAllFiles(folderId, 0, 100)
         )
     }
 
@@ -133,6 +132,7 @@ class StopBackupTest {
         uriString = "uri$index",
         hash = "hash$index",
         state = state,
+        date = TimestampS(index.toLong()),
     )
 
     private fun backupFile(
@@ -140,14 +140,16 @@ class StopBackupTest {
         bucketId: Int = 0,
         hash: String = "hash",
         state: BackupFileState = BackupFileState.IDLE,
+        date: TimestampS = TimestampS(0L)
     ) = BackupFile(
         bucketId = bucketId,
+        folderId = folderId,
         uriString = uriString,
         mimeType = "",
         name = "",
         hash = hash,
         size = 0.bytes,
         state = state,
-        date = TimestampS(0L),
+        date = date,
     )
 }

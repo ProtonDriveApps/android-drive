@@ -26,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import me.proton.core.drive.base.data.extension.cameraExifTags
 import me.proton.core.drive.base.data.extension.creationDateTime
+import me.proton.core.drive.base.data.extension.creationDateTimeDigitized
 import me.proton.core.drive.base.data.extension.creationDateTimeOriginal
 import me.proton.core.drive.base.data.extension.location
 import me.proton.core.drive.base.data.extension.mediaResolution
@@ -52,7 +53,7 @@ class ExifImageAttributesProvider @Inject constructor(
                     ExifInterface(inputStream).run {
                         ImageAttributes(
                             cameraExifTags = cameraExifTags,
-                            creationDateTime = creationDateTimeOriginal ?: creationDateTime,
+                            creationDateTime = creationDateTimeOriginal ?: creationDateTimeDigitized ?: creationDateTime,
                             resolution = mediaResolution,
                             location = location,
                         )

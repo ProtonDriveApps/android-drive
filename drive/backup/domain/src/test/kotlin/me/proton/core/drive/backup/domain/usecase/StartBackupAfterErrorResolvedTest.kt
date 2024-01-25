@@ -25,11 +25,13 @@ import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myDrive
 import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -45,6 +47,7 @@ class StartBackupAfterErrorResolvedTest {
 
     @get:Rule
     val database = DriveDatabaseRule()
+    private lateinit var folderId: FolderId
 
     private lateinit var backupManager: StubbedBackupManager
     private lateinit var getErrors: GetErrors
@@ -53,7 +56,7 @@ class StartBackupAfterErrorResolvedTest {
 
     @Before
     fun setup() = runTest {
-        database.myDrive { }
+        folderId = database.myDrive { }
         val folderRepository = BackupFolderRepositoryImpl(database.db)
         val errorRepository = BackupErrorRepositoryImpl(database.db)
 
@@ -62,9 +65,12 @@ class StartBackupAfterErrorResolvedTest {
         getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance)
         startBackupAfterErrorResolved = StartBackupAfterErrorResolved(
             startBackup = StartBackup(backupManager, AnnounceEvent(emptySet())),
+            getAllFolders = GetAllFolders(folderRepository),
             getErrors = getErrors,
             deleteAllBackupError = DeleteAllBackupError(errorRepository),
         )
+        val addFolder = AddFolder(folderRepository)
+        addFolder(BackupFolder(0, folderId)).getOrThrow()
     }
 
     @Test
@@ -74,20 +80,20 @@ class StartBackupAfterErrorResolvedTest {
         assertFalse(backupManager.started)
         assertEquals(
             emptyList<BackupError>(),
-            getErrors(userId).first()
+            getErrors(folderId).first()
         )
     }
 
     @Test
     fun startBackupAfterErrorResolved() = runTest {
-        addBackupError(userId, BackupError.Permissions()).getOrThrow()
+        addBackupError(folderId, BackupError.Permissions()).getOrThrow()
 
         startBackupAfterErrorResolved(userId, BackupErrorType.PERMISSION).getOrThrow()
 
         assertTrue(backupManager.started)
         assertEquals(
             emptyList<BackupError>(),
-            getErrors(userId).first()
+            getErrors(folderId).first()
         )
     }
 }

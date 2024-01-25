@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
@@ -36,24 +35,22 @@ class GetAllFailedFiles @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val repository: BackupFileRepository,
 ) {
-    operator fun invoke(
-        userId: UserId,
-        folderId: FolderId,
-    ): Flow<List<BackupFile>> = flow {
+    operator fun invoke(folderId: FolderId): Flow<List<BackupFile>> = flow {
         val count = configurationProvider.dbPageSize
         emitAll(repository.getAllInFolderIdWithState(
-            userId = userId,
             folderId = folderId,
             state = BackupFileState.FAILED,
             fromIndex = 0,
             count = count,
-        ).onEach {
-            val countByState = repository.getCountByState(userId, folderId, BackupFileState.FAILED)
-            if (it.size < countByState) {
-                CoreLogger.e(
-                    BACKUP,
-                    IllegalStateException("Cannot get all failed backup files: $countByState (limit: $count)"),
-                )
+        ).onEach { backupFiles ->
+            if (backupFiles.size == count) {
+                val countByState = repository.getCountByState(folderId, BackupFileState.FAILED)
+                if (countByState > count) {
+                    CoreLogger.e(
+                        BACKUP,
+                        IllegalStateException("Cannot get all failed backup files: $countByState (limit: $count)"),
+                    )
+                }
             }
         })
     }

@@ -279,7 +279,7 @@ private fun PreviewMyFilesEmpty() {
     ProtonTheme {
         Surface {
             FilesListEmpty(
-                imageResId = BasePresentation.drawable.empty_folder,
+                imageResId = BasePresentation.drawable.empty_folder_daynight,
                 titleResId = I18N.string.title_empty_my_files,
                 descriptionResId = I18N.string.description_empty_my_files,
                 actionResId = I18N.string.action_empty_files_add_files,
@@ -302,7 +302,7 @@ private fun PreviewFolderEmpty() {
     ProtonTheme {
         Surface {
             FilesListEmpty(
-                imageResId = BasePresentation.drawable.empty_folder,
+                imageResId = BasePresentation.drawable.empty_folder_daynight,
                 titleResId = I18N.string.title_empty_folder,
                 descriptionResId = I18N.string.description_empty_folder,
                 actionResId = I18N.string.action_empty_files_add_files,
@@ -325,7 +325,7 @@ private fun PreviewTrashEmpty() {
     ProtonTheme {
         Surface {
             FilesListEmpty(
-                imageResId = BasePresentation.drawable.empty_trash,
+                imageResId = BasePresentation.drawable.empty_trash_daynight,
                 titleResId = I18N.string.title_empty_trash,
                 descriptionResId = I18N.string.description_empty_trash,
                 actionResId = 0,
@@ -348,7 +348,7 @@ private fun PreviewSharedEmpty() {
     ProtonTheme {
         Surface {
             FilesListEmpty(
-                imageResId = BasePresentation.drawable.empty_links,
+                imageResId = BasePresentation.drawable.empty_shared_by_me_daynight,
                 titleResId = I18N.string.title_empty_shared,
                 descriptionResId = I18N.string.description_empty_shared,
                 actionResId = 0,
@@ -371,7 +371,7 @@ private fun PreviewAvailableOfflineEmpty() {
     ProtonTheme {
         Surface {
             FilesListEmpty(
-                imageResId = BasePresentation.drawable.empty_offline,
+                imageResId = BasePresentation.drawable.empty_offline_daynight,
                 titleResId = I18N.string.title_empty_offline_available,
                 descriptionResId = I18N.string.description_empty_offline_available,
                 actionResId = 0,

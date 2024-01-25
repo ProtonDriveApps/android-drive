@@ -42,6 +42,7 @@ import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
 
 @HiltWorker
@@ -71,7 +72,7 @@ class BackupCleanRevisionsWorker @AssistedInject constructor(
             return if (canRetry && retryable) {
                 Result.retry()
             } else {
-                addBackupError(userId, BackupError.Other(retryable))
+                addBackupError(folderId, BackupError.Other(retryable))
                 Result.failure()
             }
         }
@@ -80,7 +81,6 @@ class BackupCleanRevisionsWorker @AssistedInject constructor(
 
     companion object {
         fun getWorkRequest(
-            userId: UserId,
             folderId: FolderId,
             tags: Collection<String> = emptyList(),
         ) = OneTimeWorkRequest.Builder(BackupCleanRevisionsWorker::class.java)
@@ -90,13 +90,17 @@ class BackupCleanRevisionsWorker @AssistedInject constructor(
                     .build()
             )
             .setInputData(workDataOf(folderId))
-            .addTags(listOf(userId.id, BackupManagerImpl.TAG) + tags)
+            .addTags(listOf(
+                folderId.userId.id,
+                folderId.id,
+                BackupManagerImpl.TAG
+            ) + tags)
             .build()
 
         internal fun workDataOf(
             folderId: FolderId,
         ) = Data.Builder()
-            .putString(KEY_USER_ID, folderId.shareId.userId.id)
+            .putString(KEY_USER_ID, folderId.userId.id)
             .putString(KEY_SHARE_ID, folderId.shareId.id)
             .putString(KEY_FOLDER_ID, folderId.id)
             .build()

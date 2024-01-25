@@ -20,11 +20,13 @@ package me.proton.android.drive.verifier.domain.usecase
 
 import me.proton.android.drive.verifier.domain.repository.VerifierRepository
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.util.coRunCatching
 import javax.inject.Inject
 
 class CleanupVerifier @Inject constructor(
     private val repository: VerifierRepository,
 ) {
-    suspend operator fun invoke(userId: UserId, shareId: String, linkId: String, revisionId: String) =
+    suspend operator fun invoke(userId: UserId, shareId: String, linkId: String, revisionId: String) = coRunCatching {
         repository.removeVerificationData(userId, shareId, linkId, revisionId)
+    }
 }

@@ -22,10 +22,13 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.file.base.domain.coroutines.FileScope
+import me.proton.core.drive.file.base.domain.entity.ThumbnailType
+import me.proton.core.drive.file.base.domain.extension.fileName
 import me.proton.core.drive.file.base.domain.usecase.MoveToCache
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import java.io.File
 import javax.inject.Inject
 
 class ApplyCacheOption @Inject constructor(
@@ -37,6 +40,22 @@ class ApplyCacheOption @Inject constructor(
             when (cacheOption) {
                 CacheOption.NONE -> deleteAll(userId, volumeId, draftRevisionId)
                 CacheOption.ALL -> moveToCache(userId, volumeId, draftRevisionId)
+                CacheOption.THUMBNAIL_DEFAULT -> {
+                    moveToCache(
+                        userId = userId,
+                        volumeId = volumeId,
+                        revisionId = draftRevisionId,
+                        files = listOfNotNull(
+                            getThumbnailFile(
+                                userId = userId,
+                                volumeId = volumeId,
+                                revisionId = draftRevisionId,
+                                thumbnailType = ThumbnailType.DEFAULT,
+                            )
+                        ),
+                    )
+                    deleteAll(userId, volumeId, draftRevisionId)
+                }
             }
         }
     }
@@ -49,4 +68,19 @@ class ApplyCacheOption @Inject constructor(
             coroutineContext = FileScope.coroutineContext,
         ).deleteRecursively()
     }
+
+    private suspend fun getThumbnailFile(
+        userId: UserId,
+        volumeId: VolumeId,
+        revisionId: String,
+        thumbnailType: ThumbnailType,
+    ): File? = File(
+        getPermanentFolder(
+            userId = userId,
+            volumeId = volumeId.id,
+            revisionId = revisionId,
+            coroutineContext = FileScope.coroutineContext,
+        ),
+        thumbnailType.fileName,
+    ).takeIf { file -> file.exists() }
 }

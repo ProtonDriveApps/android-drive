@@ -40,9 +40,9 @@ import me.proton.android.drive.extension.getDefaultMessage
 import me.proton.android.drive.lock.domain.manager.AppLockManager
 import me.proton.android.drive.lock.domain.usecase.GetAutoLockDuration
 import me.proton.android.drive.lock.domain.usecase.HasEnableAppLockTimestamp
+import me.proton.android.drive.photos.domain.usecase.IsPhotosEnabled
 import me.proton.android.drive.settings.DebugSettings
 import me.proton.android.drive.usecase.SendDebugLog
-import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.ClearCacheFolder
@@ -78,7 +78,7 @@ class SettingsViewModel @Inject constructor(
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
     private val sendDebugLog: SendDebugLog,
-    backupManager: BackupManager,
+    isPhotosEnabled: IsPhotosEnabled,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val _errorMessage = MutableSharedFlow<String>()
@@ -157,7 +157,7 @@ class SettingsViewModel @Inject constructor(
         getThemeStyle(userId),
         appLockManager.enabled,
         getAutoLockDuration(),
-        backupManager.isEnabled(userId),
+        isPhotosEnabled(userId),
     ) {  debugSettings, themeStyle, enabled, autoLockDuration, isBackupEnabled ->
         SettingsViewState(
             navigationIcon = CorePresentation.drawable.ic_arrow_back,

@@ -27,6 +27,7 @@ import javax.inject.Inject
 class AggregatedUriResolver @Inject constructor(
     private val uriResolvers: @JvmSuppressWildcards Map<String, UriResolver>,
 ) : UriResolver {
+    override val schemes: Set<String> get() = uriResolvers.keys
 
     override suspend fun <T> useInputStream(uriString: String, block: suspend (InputStream) -> T): T? =
         uriResolvers.forScheme(uriString).useInputStream(uriString, block)
@@ -42,7 +43,9 @@ class AggregatedUriResolver @Inject constructor(
 
     override suspend fun getLastModified(uriString: String): TimestampMs? =
         uriResolvers.forScheme(uriString).getLastModified(uriString)
-            ?.takeIf { date -> date.value >= 0 } // avoiding negative value
+
+    override suspend fun getUriInfo(uriString: String): UriResolver.UriInfo? =
+        uriResolvers.forScheme(uriString).getUriInfo(uriString)
 
     private fun Map<String, UriResolver>.forScheme(uriString: String): UriResolver =
         get(Uri.parse(uriString).scheme)

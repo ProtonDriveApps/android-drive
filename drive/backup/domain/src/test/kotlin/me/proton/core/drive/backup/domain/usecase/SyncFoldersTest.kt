@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -21,7 +21,9 @@ package me.proton.core.drive.backup.domain.usecase
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFolder
+import me.proton.core.drive.backup.domain.entity.BucketUpdate
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
 import me.proton.core.drive.db.test.userId
@@ -53,7 +55,7 @@ class SyncFoldersTest {
         repository = BackupFolderRepositoryImpl(database.db)
         backupManager = StubbedBackupManager(repository)
         syncFolders = SyncFolders(
-            getFolders = GetFolders(repository),
+            getAllFolders = GetAllFolders(repository),
             backupManager = backupManager,
         )
     }
@@ -67,9 +69,54 @@ class SyncFoldersTest {
             )
             repository.insertFolder(backupFolder)
 
-            val result = syncFolders(userId, UploadFileLink.BACKUP_PRIORITY)
+            val folders = syncFolders(folderId, UploadFileLink.BACKUP_PRIORITY).getOrThrow()
 
-            assertEquals(Result.success(listOf(backupFolder)), result)
-            assertEquals(mapOf(userId to backupFolder), backupManager.sync)
+            assertEquals(listOf(backupFolder), folders)
+            assertEquals(listOf(backupFolder), backupManager.sync)
+        }
+
+    @Test
+    fun `Given three folders when sync two buckets older and newer then should sync two folders with min time`() =
+        runTest {
+            val backupFolder1 = BackupFolder(
+                bucketId = 1,
+                folderId = folderId,
+                updateTime = TimestampS(10),
+            )
+            val backupFolder2 = BackupFolder(
+                bucketId = 2,
+                folderId = folderId,
+                updateTime = TimestampS(20),
+            )
+            val backupFolder3 = BackupFolder(
+                bucketId = 3,
+                folderId = folderId,
+                updateTime = TimestampS(30),
+            )
+            repository.insertFolder(backupFolder1)
+            repository.insertFolder(backupFolder2)
+            repository.insertFolder(backupFolder3)
+
+            val result = syncFolders(
+                userId, listOf(
+                    BucketUpdate(bucketId = 1, oldestAddedTime = TimestampS(5)),
+                    BucketUpdate(bucketId = 3, oldestAddedTime = TimestampS(35)),
+                ), UploadFileLink.BACKUP_PRIORITY
+            ).getOrThrow()
+
+            assertEquals(
+                listOf(
+                    backupFolder1.copy(updateTime = TimestampS(5)),
+                    backupFolder3
+                ),
+                result,
+            )
+            assertEquals(
+                listOf(
+                    backupFolder1.copy(updateTime = TimestampS(5)),
+                    backupFolder3
+                ),
+                backupManager.sync,
+            )
         }
 }

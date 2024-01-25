@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -26,6 +26,7 @@ android {
 
 driveModule(
     hilt = true,
+    socialTest = true,
 ) {
     api(project(":drive:announce-event:domain"))
     api(project(":drive:block:domain"))
@@ -36,6 +37,5 @@ driveModule(
     api(project(":verifier:domain"))
 
     implementation(project(":drive:crypto:domain"))
-    testImplementation(project(":drive:db-test"))
     testImplementation(project(":drive:upload:data"))
 }

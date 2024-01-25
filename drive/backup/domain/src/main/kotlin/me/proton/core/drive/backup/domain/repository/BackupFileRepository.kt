@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -19,25 +19,24 @@
 package me.proton.core.drive.backup.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BackupStateCount
 import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.link.domain.entity.FolderId
 
 interface BackupFileRepository {
-    suspend fun getCountByState(userId: UserId, folderId: FolderId, state: BackupFileState): Int
-    suspend fun getAllFiles(userId: UserId, fromIndex: Int, count: Int): List<BackupFile>
+    suspend fun getCountByState(folderId: FolderId, state: BackupFileState): Int
+    suspend fun getAllFiles(folderId: FolderId, fromIndex: Int, count: Int): List<BackupFile>
     suspend fun getAllInFolderWithState(
-        userId: UserId,
+        folderId: FolderId,
         bucketId: Int,
         state: BackupFileState,
         count: Int,
     ): List<BackupFile>
 
     fun getAllInFolderIdWithState(
-        userId: UserId,
         folderId: FolderId,
         state: BackupFileState,
         fromIndex: Int,
@@ -45,42 +44,43 @@ interface BackupFileRepository {
     ): Flow<List<BackupFile>>
 
     suspend fun getFiles(
-        userId: UserId,
+        folderId: FolderId,
         bucketId: Int,
         fromIndex: Int,
         count: Int,
     ): List<BackupFile>
 
     suspend fun getFilesToBackup(
-        userId: UserId,
+        folderId: FolderId,
         bucketId: Int,
         maxAttempts: Long,
         fromIndex: Int,
         count: Int,
     ): List<BackupFile>
 
-    suspend fun insertFiles(userId: UserId, backupFiles: List<BackupFile>)
-    suspend fun delete(userId: UserId, uriString: String)
-    fun getBackupStatus(userId: UserId): Flow<BackupStatus>
-    suspend fun markAsEnqueued(userId: UserId, uriStrings: List<String>)
-    suspend fun markAsCompleted(userId: UserId, uriString: String)
-    suspend fun markAsFailed(userId: UserId, uriString: String)
+    suspend fun insertFiles(backupFiles: List<BackupFile>)
+    suspend fun delete(folderId: FolderId, uriString: String)
+    fun getBackupStatus(folderId: FolderId): Flow<BackupStatus>
+    suspend fun markAsEnqueued(folderId: FolderId, uriStrings: List<String>)
+    suspend fun markAsCompleted(folderId: FolderId, uriString: String)
+    suspend fun markAsFailed(folderId: FolderId, uriString: String)
     suspend fun markAs(
-        userId: UserId,
+        folderId: FolderId,
         uriString: String,
         backupFileState: BackupFileState,
     )
     suspend fun markAs(
-        userId: UserId,
+        folderId: FolderId,
         hashes: List<String>,
         backupFileState: BackupFileState,
     )
 
-    suspend fun markAllFailedInFolderAsReady(userId: UserId, bucketId: Int, maxAttempts: Long) : Int
-    suspend fun resetFilesAttempts(userId: UserId) : Int
-    suspend fun markAllEnqueuedInFolderAsReady(userId: UserId, bucketId: Int): Int
-    suspend fun deleteCompletedFromFolder(userId: UserId, bucketId: Int)
-    suspend fun deleteFailedForFolderId(userId: UserId, folderId: FolderId)
-    suspend fun isBackupCompleteForFolder(userId: UserId, bucketId: Int): Boolean
-    suspend fun getStatsForFolder(userId: UserId, bucketId: Int): List<BackupStateCount>
+    suspend fun markAllFilesInFolderIdAsIdle(folderId: FolderId) : Int
+    suspend fun markAllFailedInFolderAsReady(folderId: FolderId, bucketId: Int, maxAttempts: Long) : Int
+    suspend fun resetFilesAttempts(folderId: FolderId) : Int
+    suspend fun markAllEnqueuedInFolderAsReady(backupFolder: BackupFolder): Int
+    suspend fun deleteCompletedFromFolder(backupFolder: BackupFolder)
+    suspend fun deleteFailedForFolderId(folderId: FolderId)
+    suspend fun isBackupCompleteForFolder(backupFolder: BackupFolder): Boolean
+    suspend fun getStatsForFolder(backupFolder: BackupFolder): List<BackupStateCount>
 }

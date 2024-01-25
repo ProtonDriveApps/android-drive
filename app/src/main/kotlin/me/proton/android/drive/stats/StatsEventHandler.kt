@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.entity.Event.BackupCompleted
 import me.proton.core.drive.announce.event.domain.entity.Event.BackupStarted
 import me.proton.core.drive.announce.event.domain.entity.Event.Upload
 import me.proton.core.drive.announce.event.domain.handler.EventHandler
@@ -39,8 +40,8 @@ class StatsEventHandler @Inject constructor(
         event: Event,
     ) = mutex.withLock {
         when (event) {
-            BackupStarted -> backupStartedSideEffect(userId)
-            is Event.BackupCompleted -> backupCompletedSideEffect(userId)
+            is BackupStarted -> backupStartedSideEffect(event)
+            is BackupCompleted -> backupCompletedSideEffect(event)
             is Upload -> uploadSideEffect(event)
             else -> Unit
         }

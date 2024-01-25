@@ -29,16 +29,30 @@ import me.proton.core.drive.base.data.db.Column.PARENT_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
 import me.proton.core.drive.base.data.db.Column.UPDATE_TIME
 import me.proton.core.drive.base.data.db.Column.USER_ID
+import me.proton.core.drive.link.data.db.entity.LinkEntity
+import me.proton.core.drive.share.data.db.ShareEntity
 
 @Entity(
-    primaryKeys = [USER_ID, BUCKET_ID],
+    primaryKeys = [USER_ID, SHARE_ID, PARENT_ID, BUCKET_ID],
     foreignKeys = [
         ForeignKey(
             entity = AccountEntity::class,
             parentColumns = [Column.Core.USER_ID],
             childColumns = [USER_ID],
             onDelete = ForeignKey.CASCADE
-        )
+        ),
+        ForeignKey(
+            entity = ShareEntity::class,
+            parentColumns = [USER_ID, Column.ID],
+            childColumns = [USER_ID, SHARE_ID],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = LinkEntity::class,
+            parentColumns = [USER_ID, SHARE_ID, Column.ID],
+            childColumns = [USER_ID, SHARE_ID, PARENT_ID],
+            onDelete = ForeignKey.CASCADE
+        ),
     ],
 )
 data class BackupFolderEntity(

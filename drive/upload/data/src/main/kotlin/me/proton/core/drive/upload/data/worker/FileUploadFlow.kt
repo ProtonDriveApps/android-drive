@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -37,6 +37,12 @@ internal sealed class FileUploadFlow {
 
         override suspend fun enqueueWork(uploadTags: List<String>, uriString: String) = workManager
             .beginWith(
+                UpdateFileAttributesWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    tags = uploadTags,
+                )
+            ).then(
                 CreateNewFileWorker.getWorkRequest(
                     userId = userId,
                     uploadFileLinkId = uploadFileLinkId,
@@ -77,6 +83,12 @@ internal sealed class FileUploadFlow {
 
         override suspend fun enqueueWork(uploadTags: List<String>, uriString: String) = workManager
             .beginWith(
+                UpdateFileAttributesWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    tags = uploadTags,
+                )
+            ).then(
                 CreateNewFileWorker.getWorkRequest(
                     userId = userId,
                     uploadFileLinkId = uploadFileLinkId,
@@ -158,6 +170,37 @@ internal sealed class FileUploadFlow {
                 )
             ).then(
                 cleanupWorkers(userId, uploadFileLinkId, uploadTags, emptyList())
+            ).enqueue()
+    }
+
+    class RecreateFileFlow(
+        private val workManager: WorkManager,
+        private val userId: UserId,
+        override val uploadFileLinkId: Long,
+        private val networkType: NetworkType,
+    ) : FileUploadFlow() {
+
+        override suspend fun enqueueWork(uploadTags: List<String>, uriString: String): Operation = workManager
+            .beginWith(
+                RecreateFileWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    networkType = networkType,
+                    tags = uploadTags,
+                )
+            ).then(
+                VerifyBlocksWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    tags = uploadTags,
+                )
+            ).then(
+                GetBlocksUploadUrlWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    networkType = networkType,
+                    tags = uploadTags,
+                )
             ).enqueue()
     }
 }

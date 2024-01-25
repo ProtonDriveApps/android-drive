@@ -102,29 +102,29 @@ class RetryBackupTest {
 
     @Test
     fun retryBackup() = runTest {
-        addBackupError(userId, BackupError.Other(retryable = true)).getOrThrow()
-        addBackupError(userId, BackupError.Other(retryable = false)).getOrThrow()
+        addBackupError(folderId, BackupError.Other(retryable = true)).getOrThrow()
+        addBackupError(folderId, BackupError.Other(retryable = false)).getOrThrow()
 
-        retryBackup(userId).getOrThrow()
+        retryBackup(folderId).getOrThrow()
 
         assertTrue(backupManager.started)
         assertEquals(
             listOf(BackupError.Other(retryable = false)),
-            getErrors(userId).first()
+            getErrors(folderId).first()
         )
         coVerify(exactly = 0) { featureFlagRepository.refresh(any()) }
     }
 
     @Test
     fun `Given PhotosUploadNotAllowed error when retry should refresh feature flag `() = runTest {
-        addBackupError(userId, BackupError.PhotosUploadNotAllowed()).getOrThrow()
+        addBackupError(folderId, BackupError.PhotosUploadNotAllowed()).getOrThrow()
 
-        retryBackup(userId).getOrThrow()
+        retryBackup(folderId).getOrThrow()
 
         assertTrue(backupManager.started)
         assertEquals(
             emptyList<BackupError>(),
-            getErrors(userId).first()
+            getErrors(folderId).first()
         )
         coVerify { featureFlagRepository.refresh(userId) }
 
@@ -137,9 +137,10 @@ class RetryBackupTest {
                 bucketId = 0,
                 folderId = folderId,
             )
-        )
+        ).getOrThrow()
         val backupFile = BackupFile(
             bucketId = 0,
+            folderId = folderId,
             uriString = "uri",
             mimeType = "",
             name = "",
@@ -149,15 +150,15 @@ class RetryBackupTest {
             date = TimestampS(0),
             attempts = 5
         )
-        setFiles(userId, listOf(backupFile)).getOrThrow()
+        setFiles(listOf(backupFile)).getOrThrow()
 
-        retryBackup(userId).getOrThrow()
+        retryBackup(folderId).getOrThrow()
 
         assertTrue(backupManager.started)
         assertEquals(
             listOf(backupFile.copy(attempts = 0)),
             fileRepository.getFiles(
-                userId = userId,
+                folderId = folderId,
                 bucketId = 0,
                 fromIndex = 0,
                 count = 100,

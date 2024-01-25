@@ -19,9 +19,9 @@
 package me.proton.android.drive.photos.domain.usecase
 
 import kotlinx.coroutines.flow.first
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
 class TogglePhotosBackup @Inject constructor(
@@ -29,11 +29,11 @@ class TogglePhotosBackup @Inject constructor(
     private val enablePhotosBackup: EnablePhotosBackup,
     private val disablePhotosBackup: DisablePhotosBackup,
 ) {
-    suspend operator fun invoke(userId: UserId) = coRunCatching {
-        if (backupManager.isEnabled(userId).first()) {
-            disablePhotosBackup(userId).getOrThrow()
+    suspend operator fun invoke(folderId: FolderId) = coRunCatching {
+        if (backupManager.isEnabled(folderId).first()) {
+            disablePhotosBackup(folderId).getOrThrow()
         } else {
-            enablePhotosBackup(userId).getOrThrow()
+            enablePhotosBackup(folderId).getOrThrow()
         }
     }
 }

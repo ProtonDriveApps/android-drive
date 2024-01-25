@@ -24,6 +24,8 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.HmacSha256
 import me.proton.core.drive.cryptobase.domain.usecase.EncryptText
 import me.proton.core.drive.file.base.domain.entity.NewFileInfo
+import me.proton.core.drive.key.domain.entity.ContentKey
+import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.extension.nodeKey
 import me.proton.core.drive.key.domain.extension.nodePassphrase
@@ -54,10 +56,13 @@ class CreateNewFileInfo @Inject constructor(
     private val getOrCreateClientUid: GetOrCreateClientUid,
     private val getShare: GetShare,
 ) {
+
     suspend operator fun invoke(
         folder: Link.Folder,
         name: String,
         mimeType: String,
+        fileKey: Key.Node,
+        fileContentKey: ContentKey,
     ): Result<NewFileInfo> = coRunCatching {
         val folderKey = getNodeKey(folder).getOrThrow()
         val folderHashKey = getNodeHashKey(folder, folderKey).getOrThrow()
@@ -72,8 +77,6 @@ class CreateNewFileInfo @Inject constructor(
         }
         val userId = folder.userId
         val signatureAddress = getSignatureAddress(userId)
-        val fileKey = generateNodeKey(userId, folderKey, signatureAddress).getOrThrow()
-        val fileContentKey = generateContentKey(fileKey).getOrThrow()
         NewFileInfo(
             parentId = folder.id,
             name = fileName,
@@ -92,6 +95,23 @@ class CreateNewFileInfo @Inject constructor(
             contentKeyPacketSignature = fileContentKey.contentKeyPacketSignature,
             clientUid = getOrCreateClientUid().getOrThrow()
         )
+    }
+
+    suspend operator fun invoke(
+        folder: Link.Folder,
+        name: String,
+        mimeType: String,
+    ): Result<NewFileInfo> = coRunCatching {
+        val folderKey = getNodeKey(folder).getOrThrow()
+        val userId = folder.userId
+        val fileKey = generateNodeKey(userId, folderKey, getSignatureAddress(userId)).getOrThrow()
+        invoke(
+            folder = folder,
+            name = name,
+            mimeType = mimeType,
+            fileKey = fileKey,
+            fileContentKey = generateContentKey(fileKey).getOrThrow(),
+        ).getOrThrow()
     }
 
     private suspend fun Link.Folder.allowDuplicateFileName() =

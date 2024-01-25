@@ -20,15 +20,21 @@ package me.proton.android.drive.photos.domain.handler
 
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.usecase.StopBackup
+import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PHOTOS_UPLOAD_DISABLED
 import me.proton.core.drive.feature.flag.domain.extension.onEnabled
 import me.proton.core.drive.feature.flag.domain.handler.FeatureFlagHandler
+import me.proton.core.drive.link.domain.extension.rootFolderId
+import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class DrivePhotosUploadDisabledFeatureFlagHandler @Inject constructor(
+    private val getPhotoShare: GetPhotoShare,
     private val stopBackup: StopBackup,
 ) : FeatureFlagHandler {
 
@@ -36,14 +42,20 @@ class DrivePhotosUploadDisabledFeatureFlagHandler @Inject constructor(
         require(featureFlag.id.id == DRIVE_PHOTOS_UPLOAD_DISABLED) { "Wrong feature flag id ${featureFlag.id.id}" }
         featureFlag
             .onEnabled {
-                stopBackup(featureFlag.id.userId, BackupError.PhotosUploadNotAllowed())
-                    .onFailure { error ->
-                        CoreLogger.d(
-                            tag = LogTag.BACKUP,
-                            e = error,
-                            message = "Stop backup due to drive photos upload disabled feature flag failed"
-                        )
-                    }
+                coRunCatching {
+                    getPhotoShare(featureFlag.id.userId)
+                        .filterSuccessOrError()
+                        .toResult()
+                        .getOrNull()?.let { share ->
+                            stopBackup(share.rootFolderId, BackupError.PhotosUploadNotAllowed()).getOrThrow()
+                        }
+                }.onFailure { error ->
+                    CoreLogger.d(
+                        tag = LogTag.BACKUP,
+                        e = error,
+                        message = "Stop backup due to drive photos upload disabled feature flag failed"
+                    )
+                }
             }
     }
 }

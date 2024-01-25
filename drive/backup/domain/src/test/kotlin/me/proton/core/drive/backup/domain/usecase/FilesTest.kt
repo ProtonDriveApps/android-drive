@@ -80,7 +80,7 @@ class FilesTest {
         assertEquals(
             emptyList<BackupFile>(),
             getFilesToBackup(
-                userId = userId,
+                folderId = folderId,
                 bucketId = 0,
                 maxAttempts = 5,
                 fromIndex = 0,
@@ -94,12 +94,12 @@ class FilesTest {
         val backupFile1 = backupFile(1, "uri1")
         val backupFile2 = backupFile(2, "uri2")
 
-        setFiles(userId, listOf(backupFile1, backupFile2))
+        setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
 
         assertEquals(
             listOf(backupFile1),
             getFilesToBackup(
-                userId = userId,
+                folderId = folderId,
                 bucketId = 1,
                 maxAttempts = 5,
                 fromIndex = 0,
@@ -113,7 +113,7 @@ class FilesTest {
         val backupFile1 = backupFile(1, "uri1")
         val backupFile2 = backupFile(1, "uri2")
 
-        setFiles(userId, listOf(backupFile1, backupFile2)).getOrThrow()
+        setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
 
         linkUploadRepository.insertUploadFileLink(
             UploadFileLink(
@@ -132,7 +132,7 @@ class FilesTest {
         assertEquals(
             listOf(backupFile2),
             getFilesToBackup(
-                userId = userId,
+                folderId = folderId,
                 bucketId = 1,
                 maxAttempts = 5,
                 fromIndex = 0,
@@ -146,14 +146,14 @@ class FilesTest {
         val backupFile1 = backupFile(1, "uri1")
         val backupFile2 = backupFile(1, "uri2")
 
-        setFiles(userId, listOf(backupFile1, backupFile2)).getOrThrow()
+        setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
 
-        deleteFile(userId, "uri1")
+        deleteFile(folderId, "uri1").getOrThrow()
 
         assertEquals(
             listOf(backupFile2),
             getFilesToBackup(
-                userId = userId,
+                folderId = folderId,
                 bucketId = 1,
                 maxAttempts = 5,
                 fromIndex = 0,
@@ -167,13 +167,13 @@ class FilesTest {
         val backupFile1 = backupFile(1, "uri1")
         val backupFile2 = backupFile(1, "uri2")
 
-        setFiles(userId, listOf(backupFile1, backupFile2)).getOrThrow()
-        markAsCompleted(userId, "uri1").getOrThrow()
+        setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
+        markAsCompleted(folderId, "uri1").getOrThrow()
 
         assertEquals(
             listOf(backupFile2),
             getFilesToBackup(
-                userId = userId,
+                folderId = folderId,
                 bucketId = 1,
                 maxAttempts = 5,
                 fromIndex = 0,
@@ -187,13 +187,13 @@ class FilesTest {
         val backupFile1 = backupFile(1, "uri1")
         val backupFile2 = backupFile(1, "uri2")
 
-        setFiles(userId, listOf(backupFile1, backupFile2)).getOrThrow()
-        markAsFailed(userId, "uri1").getOrThrow()
+        setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
+        markAsFailed(folderId, "uri1").getOrThrow()
 
         assertEquals(
             listOf(backupFile2),
             getFilesToBackup(
-                userId = userId,
+                folderId = folderId,
                 bucketId = 1,
                 maxAttempts = 5,
                 fromIndex = 0,
@@ -207,14 +207,14 @@ class FilesTest {
         val backupFile1 = backupFile(1, "uri1")
         val backupFile2 = backupFile(1, "uri2")
 
-        setFiles(userId, listOf(backupFile1, backupFile2)).getOrThrow()
-        markAsFailed(userId, "uri1").getOrThrow()
-        markAllFailedAsReady(userId, 1, 5).getOrThrow()
+        setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
+        markAsFailed(folderId, "uri1").getOrThrow()
+        markAllFailedAsReady(folderId, 1, 5).getOrThrow()
 
         assertEquals(
             listOf(backupFile1.copy(attempts = 1), backupFile2),
             getFilesToBackup(
-                userId = userId,
+                folderId = folderId,
                 bucketId = 1,
                 maxAttempts = 5,
                 fromIndex = 0,
@@ -228,18 +228,18 @@ class FilesTest {
         val backupFile1 = backupFile(1, "uri1")
         val backupFile2 = backupFile(1, "uri2")
 
-        setFiles(userId, listOf(backupFile1, backupFile2)).getOrThrow()
-        markAsFailed(userId, "uri1").getOrThrow()
-        markAsFailed(userId, "uri1").getOrThrow()
-        markAsFailed(userId, "uri1").getOrThrow()
-        markAsFailed(userId, "uri1").getOrThrow()
-        markAsFailed(userId, "uri1").getOrThrow()
-        markAllFailedAsReady(userId, 1, 5).getOrThrow()
+        setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
+        markAsFailed(folderId, "uri1").getOrThrow()
+        markAsFailed(folderId, "uri1").getOrThrow()
+        markAsFailed(folderId, "uri1").getOrThrow()
+        markAsFailed(folderId, "uri1").getOrThrow()
+        markAsFailed(folderId, "uri1").getOrThrow()
+        markAllFailedAsReady(folderId, 1, 5).getOrThrow()
 
         assertEquals(
             listOf(backupFile2),
             getFilesToBackup(
-                userId = userId,
+                folderId = folderId,
                 bucketId = 1,
                 maxAttempts = 5,
                 fromIndex = 0,
@@ -253,14 +253,14 @@ class FilesTest {
         val backupFile1 = backupFile(1, "uri1")
         val backupFile2 = backupFile(1, "uri2")
 
-        setFiles(userId, listOf(backupFile1, backupFile2)).getOrThrow()
-        markAsCompleted(userId, "uri1").getOrThrow()
-        setFiles(userId, listOf(backupFile1, backupFile2)).getOrThrow()
+        setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
+        markAsCompleted(folderId, "uri1").getOrThrow()
+        setFiles(listOf(backupFile1, backupFile2)).getOrThrow()
 
         assertEquals(
             listOf(backupFile2),
             getFilesToBackup(
-                userId = userId,
+                folderId = folderId,
                 bucketId = 1,
                 maxAttempts = 5,
                 fromIndex = 0,
@@ -274,6 +274,7 @@ class FilesTest {
         uriString: String,
     ) = BackupFile(
         bucketId = bucketId,
+        folderId = folderId,
         uriString = uriString,
         mimeType = "",
         name = "",

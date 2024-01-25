@@ -18,18 +18,18 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class MarkAsFailed @Inject constructor(
     private val repository: BackupFileRepository
 ) {
-    suspend operator fun invoke(userId: UserId, uriString: String) = coRunCatching {
+    suspend operator fun invoke(folderId: FolderId, uriString: String) = coRunCatching {
         CoreLogger.d(BACKUP, "Mark as failed: $uriString")
-        repository.markAsFailed(userId, uriString)
+        repository.markAsFailed(folderId, uriString)
     }
 }

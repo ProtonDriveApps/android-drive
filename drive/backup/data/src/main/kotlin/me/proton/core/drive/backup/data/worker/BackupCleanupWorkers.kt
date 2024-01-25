@@ -54,13 +54,12 @@ class BackupCleanupWorkers @Inject constructor(
             getFolderFromFile(userId, uriString).getOrNull()?.let { backupFolder ->
                 listOf(
                     BackupScheduleUploadFolderWorker.getWorkRequest(
-                        userId = userId,
                         backupFolder = backupFolder,
                         delay = 60.seconds,
                         tags = tags,
                     ),
-                    BackupNotificationWorker.getWorkRequest(userId, tags),
-                    BackupClearFileWorker.getWorkRequest(userId, uriString, tags),
+                    BackupNotificationWorker.getWorkRequest(backupFolder.folderId, tags),
+                    BackupClearFileWorker.getWorkRequest(backupFolder, uriString, tags),
                 )
             }.orEmpty()
         }

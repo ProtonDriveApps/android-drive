@@ -28,6 +28,6 @@ driveModule(
     hilt = true,
     serialization = true,
 ) {
-    api(project(":drive:base"))
-    api(project(":drive:announce-event"))
+    api(project(":drive:base:domain"))
+    api(project(":drive:announce-event:domain"))
 }

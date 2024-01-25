@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -18,32 +18,30 @@
 
 package me.proton.android.drive.stats
 
-import me.proton.core.domain.entity.UserId
+import me.proton.android.drive.usecase.GetShareAsPhotoShare
+import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.link.domain.extension.rootFolderId
-import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.core.drive.stats.domain.entity.UploadStats
 import me.proton.core.drive.stats.domain.usecase.UpdateUploadStats
 import javax.inject.Inject
 
 class BackupStartedSideEffect(
-    private val getPhotoShare: GetPhotoShare,
+    private val getShareAsPhotoShare: GetShareAsPhotoShare,
     private val updateUploadStats: UpdateUploadStats,
     private val clock: () -> TimestampS,
 ) {
     @Inject
     constructor(
-        getPhotoShare: GetPhotoShare,
+        getShareAsPhotoShare: GetShareAsPhotoShare,
         updateUploadStats: UpdateUploadStats,
-    ) : this(getPhotoShare, updateUploadStats, ::TimestampS)
+    ) : this(getShareAsPhotoShare, updateUploadStats, ::TimestampS)
 
-    suspend operator fun invoke(userId: UserId) {
-        getPhotoShare(userId).toResult().getOrNull()?.let { share ->
+    suspend operator fun invoke(event: Event.BackupStarted) {
+        getShareAsPhotoShare(event.folderId.shareId)?.let {
             updateUploadStats(
                 UploadStats(
-                    folderId = share.rootFolderId,
+                    folderId = event.folderId,
                     count = 0,
                     size = 0.bytes,
                     minimumUploadCreationDateTime = clock(),

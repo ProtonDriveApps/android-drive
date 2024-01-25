@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -45,6 +45,7 @@ internal fun PhotosStatesContainer(
     onRetry: () -> Unit,
     onResolve: () -> Unit,
     onResolveMissingFolder: () -> Unit,
+    onChangeNetwork: () -> Unit,
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -71,9 +72,11 @@ internal fun PhotosStatesContainer(
                             BackupErrorType.LOCAL_STORAGE -> LocalStorageState(onRetry = onRetry)
                             BackupErrorType.DRIVE_STORAGE -> BackupFailedState(onRetry = onRetry)
                             BackupErrorType.OTHER -> BackupFailedState(onRetry = onRetry)
-                            BackupErrorType.CONNECTIVITY -> WaitingConnectivityState()
+                            BackupErrorType.CONNECTIVITY -> NoConnectivityState()
+                            BackupErrorType.WIFI_CONNECTIVITY -> WaitingConnectivityState(onChangeNetwork = onChangeNetwork)
                             BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED ->
                                 BackupTemporarilyDisabledState(onRetry = onRetry)
+
                         }
                     }
                 }
@@ -95,6 +98,7 @@ fun PhotosStatesContainerDisablePreview() {
             onRetry = { },
             onResolve = { },
             onResolveMissingFolder = { },
+            onChangeNetwork = { },
         )
     }
 }
@@ -112,6 +116,7 @@ fun PhotosStatesContainerMissingFolderPreview() {
             onRetry = { },
             onResolve = { },
             onResolveMissingFolder = { },
+            onChangeNetwork = { },
         )
     }
 }
@@ -129,6 +134,7 @@ fun PhotosStatesContainerCompletePreview() {
             onRetry = { },
             onResolve = { },
             onResolveMissingFolder = { },
+            onChangeNetwork = { },
         )
     }
 }
@@ -146,6 +152,7 @@ fun PhotosStatesContainerUncompletedPreview() {
             onRetry = { },
             onResolve = { },
             onResolveMissingFolder = { },
+            onChangeNetwork = { },
         )
     }
 }
@@ -166,6 +173,7 @@ fun PhotosStatesContainerInProgressPreview() {
             onRetry = { },
             onResolve = { },
             onResolveMissingFolder = { },
+            onChangeNetwork = { },
         )
     }
 }
@@ -185,6 +193,49 @@ fun PhotosStatesContainerFailedPreview() {
             onRetry = { },
             onResolve = { },
             onResolveMissingFolder = { },
+            onChangeNetwork = { },
+        )
+    }
+}
+
+
+@Preview
+@Composable
+fun PhotosStatesContainerFailedConnectivityPreview() {
+    ProtonTheme {
+        PhotosStatesContainer(
+            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
+            viewState = PhotosStatusViewState.Failed(
+                errors = listOf(BackupError.Connectivity())
+            ),
+            showPhotosStateBanner = true,
+            onEnable = { },
+            onPermissions = { },
+            onRetry = { },
+            onResolve = { },
+            onResolveMissingFolder = { },
+            onChangeNetwork = { },
+        )
+    }
+}
+
+
+@Preview
+@Composable
+fun PhotosStatesContainerFailedWifiConnectivityPreview() {
+    ProtonTheme {
+        PhotosStatesContainer(
+            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
+            viewState = PhotosStatusViewState.Failed(
+                errors = listOf(BackupError.WifiConnectivity())
+            ),
+            showPhotosStateBanner = true,
+            onEnable = { },
+            onPermissions = { },
+            onRetry = { },
+            onResolve = { },
+            onResolveMissingFolder = { },
+            onChangeNetwork = { },
         )
     }
 }

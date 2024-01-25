@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -26,14 +26,17 @@ import me.proton.core.drive.link.domain.entity.FolderId
 
 interface BackupFolderRepository {
     suspend fun getAll(userId: UserId): List<BackupFolder>
+    suspend fun getAll(folderId: FolderId): List<BackupFolder>
     suspend fun getCount(folderId: FolderId): Int
     fun getAllFlow(folderId: FolderId, count: Int): Flow<List<BackupFolder>>
 
     suspend fun insertFolder(backupFolder: BackupFolder) : BackupFolder
-    suspend fun deleteFolders(userId: UserId)
-    suspend fun deleteFolder(userId: UserId, bucketId: Int)
+    suspend fun deleteFolders(folderId: FolderId)
+    suspend fun deleteFolder(backupFolder: BackupFolder)
     suspend fun updateFolderUpdateTime(userId: UserId, bucketId: Int, updateTime: TimestampS)
     suspend fun resetAllFoldersUpdateTime(userId: UserId)
+    suspend fun resetAllFoldersUpdateTime(folderId: FolderId)
     suspend fun getFolderByFileUri(userId: UserId, uriString: String): BackupFolder?
     fun hasFolders(userId: UserId): Flow<Boolean>
+    fun hasFolders(folderId: FolderId): Flow<Boolean>
 }

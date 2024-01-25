@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -18,13 +18,13 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
@@ -33,14 +33,14 @@ class CleanUpCompleteBackup @Inject constructor(
     private val logBackupStats: LogBackupStats,
     private val announceEvent: AnnounceEvent,
 ) {
-    suspend operator fun invoke(userId: UserId, folderId: FolderId, bucketId: Int) = coRunCatching {
-        if (repository.isBackupCompleteForFolder(userId, bucketId)) {
-            CoreLogger.d(BACKUP, "Cleanup completed files for: $bucketId")
-            announceEvent(userId, Event.BackupCompleted)
-            repository.deleteCompletedFromFolder(userId, bucketId)
+    suspend operator fun invoke(backupFolder: BackupFolder) = coRunCatching {
+        if (repository.isBackupCompleteForFolder(backupFolder)) {
+            CoreLogger.d(BACKUP, "Cleanup completed files for: $backupFolder")
+            announceEvent(backupFolder.folderId.userId, Event.BackupCompleted(backupFolder.folderId))
+            repository.deleteCompletedFromFolder(backupFolder)
         } else {
-            CoreLogger.d(BACKUP, "Ignoring cleanup for: $bucketId")
-            logBackupStats(userId, bucketId)
+            CoreLogger.d(BACKUP, "Ignoring cleanup for: $backupFolder")
+            logBackupStats(backupFolder)
         }
     }
 }

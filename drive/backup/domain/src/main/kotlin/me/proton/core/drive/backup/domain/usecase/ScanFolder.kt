@@ -38,14 +38,14 @@ class ScanFolder @Inject constructor(
         uploadPriority: Long,
     ) = coRunCatching {
         val files = useHashKey(backupFolder.folderId) { hashKey ->
-            scanFolder(backupFolder.bucketId, backupFolder.updateTime).map { backupFile ->
+            scanFolder(backupFolder).map { backupFile ->
                 backupFile.copy(
                     hash = hashKey.hmacSha256(backupFile.name),
                     uploadPriority = uploadPriority,
                 )
             }
         }.getOrThrow()
-        setFiles(userId, files).getOrThrow()
+        setFiles(files).getOrThrow()
         if (files.isNotEmpty()) {
             updateFolder(
                 userId = userId,

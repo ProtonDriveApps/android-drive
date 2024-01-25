@@ -30,6 +30,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.extension.toBackupError
+import me.proton.core.drive.backup.data.extension.uniqueFolderIdTag
 import me.proton.core.drive.backup.data.manager.BackupManagerImpl
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_SHARE_ID
@@ -41,6 +42,7 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
@@ -60,13 +62,11 @@ class BackupUploadFolderWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         uploadFolder(
-            userId = userId,
-            folderId = folderId,
-            bucketId = bucketId,
-            tags = listOf(BackupManagerImpl.TAG_UPLOAD),
+            backupFolder = BackupFolder(bucketId, folderId),
+            tags = listOf(folderId.uniqueFolderIdTag()),
         ).onFailure { error ->
             error.log(LogTag.BACKUP, "Cannot upload bucket: $bucketId")
-            addBackupError(userId, error.toBackupError())
+            addBackupError(folderId, error.toBackupError())
             return Result.failure()
         }
         return Result.success()
@@ -74,7 +74,6 @@ class BackupUploadFolderWorker @AssistedInject constructor(
 
     companion object {
         fun getWorkRequest(
-            userId: UserId,
             backupFolder: BackupFolder,
             delay: Duration = Duration.ZERO,
             tags: Collection<String> = emptyList(),
@@ -85,17 +84,20 @@ class BackupUploadFolderWorker @AssistedInject constructor(
                         .setRequiredNetworkType(NetworkType.CONNECTED)
                         .build()
                 )
-                .setInputData(workDataOf(userId, backupFolder))
-                .addTags(listOf(userId.id, BackupManagerImpl.TAG) + tags)
+                .setInputData(workDataOf(backupFolder))
+                .addTags(listOf(
+                    backupFolder.folderId.userId.id,
+                    backupFolder.folderId.id,
+                    BackupManagerImpl.TAG
+                ) + tags)
                 .setInitialDelay(delay.inWholeSeconds, TimeUnit.SECONDS)
                 .build()
         }
 
         internal fun workDataOf(
-            userId: UserId,
             backupFolder: BackupFolder,
         ) = Data.Builder()
-            .putString(KEY_USER_ID, userId.id)
+            .putString(KEY_USER_ID, backupFolder.folderId.userId.id)
             .putString(KEY_SHARE_ID, backupFolder.folderId.shareId.id)
             .putString(KEY_FOLDER_ID, backupFolder.folderId.id)
             .putInt(WorkerKeys.KEY_BUCKET_ID, backupFolder.bucketId)

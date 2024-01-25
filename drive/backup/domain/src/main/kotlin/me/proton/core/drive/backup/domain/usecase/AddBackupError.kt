@@ -18,19 +18,19 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class AddBackupError @Inject constructor(
     private val repository: BackupErrorRepository,
 ) {
-    suspend operator fun invoke(userId: UserId, error: BackupError) = coRunCatching {
+    suspend operator fun invoke(folderId: FolderId, error: BackupError) = coRunCatching {
         CoreLogger.d(BACKUP, "Adding error: $error")
-        repository.insertError(userId, error)
+        repository.insertError(folderId, error)
     }
 }

@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -27,7 +26,7 @@ import javax.inject.Inject
 class SetFiles @Inject constructor(
     private val repository: BackupFileRepository
 ) {
-    suspend operator fun invoke(userId: UserId, backupFiles: List<BackupFile>) = coRunCatching {
-        repository.insertFiles(userId, backupFiles)
+    suspend operator fun invoke(backupFiles: List<BackupFile>) = coRunCatching {
+        repository.insertFiles(backupFiles)
     }
 }

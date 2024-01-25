@@ -30,11 +30,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.getDefaultMessage
 import me.proton.android.drive.extension.log
+import me.proton.android.drive.photos.domain.usecase.IsPhotosEnabled
 import me.proton.android.drive.ui.viewevent.PhotosExportDataViewEvent
 import me.proton.android.drive.ui.viewstate.PhotosExportDataViewState
 import me.proton.android.drive.usecase.ExportPhotoData
 import me.proton.android.drive.usecase.SendFile
-import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -47,7 +47,7 @@ import javax.inject.Inject
 class PhotosExportDataViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
-    backupManager: BackupManager,
+    isPhotosEnabled: IsPhotosEnabled,
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
     private val exportPhotoData: ExportPhotoData,
@@ -61,7 +61,7 @@ class PhotosExportDataViewModel @Inject constructor(
         isExportDataLoading = false
     )
     val viewState: Flow<PhotosExportDataViewState> =
-        combine(backupManager.isEnabled(userId), exportData) { enabled, exportData ->
+        combine(isPhotosEnabled(userId), exportData) { enabled, exportData ->
             initialViewState.copy(
                 isExportDataEnabled = enabled && configurationProvider.photoExportData,
                 isExportDataLoading = exportData,

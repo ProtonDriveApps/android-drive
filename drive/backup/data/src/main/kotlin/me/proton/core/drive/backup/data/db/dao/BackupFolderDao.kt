@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -29,7 +29,24 @@ import me.proton.core.drive.backup.data.db.entity.BackupFolderEntity
 abstract class BackupFolderDao : BaseDao<BackupFolderEntity>() {
     @Query("SELECT * FROM BackupFolderEntity WHERE user_id = :userId")
     abstract suspend fun getAll(userId: UserId): List<BackupFolderEntity>
-    @Query("""
+
+    @Query(
+        """
+        SELECT * FROM BackupFolderEntity 
+        WHERE 
+            user_id = :userId AND
+            share_id = :shareId AND
+            parent_id= :folderId
+        """
+    )
+    abstract suspend fun getAll(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+    ): List<BackupFolderEntity>
+
+    @Query(
+        """
         SELECT COUNT(*) FROM BackupFolderEntity 
         WHERE 
             user_id = :userId AND
@@ -38,7 +55,9 @@ abstract class BackupFolderDao : BaseDao<BackupFolderEntity>() {
         """
     )
     abstract suspend fun getCount(userId: UserId, shareId: String, folderId: String): Int
-    @Query("""
+
+    @Query(
+        """
         SELECT * FROM BackupFolderEntity 
         WHERE 
             user_id = :userId AND
@@ -79,6 +98,22 @@ abstract class BackupFolderDao : BaseDao<BackupFolderEntity>() {
 
     @Query(
         """
+        UPDATE BackupFolderEntity 
+        SET update_time = NULL
+        WHERE 
+            user_id = :userId AND
+            share_id = :shareId AND
+            parent_id= :folderId
+        """
+    )
+    abstract suspend fun resetUpdateTime(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+    )
+
+    @Query(
+        """
         SELECT BackupFolderEntity.* FROM BackupFolderEntity 
         LEFT JOIN BackupFileEntity ON BackupFolderEntity.bucket_id = BackupFileEntity.bucket_id
         WHERE BackupFolderEntity.user_id = :userId
@@ -87,11 +122,48 @@ abstract class BackupFolderDao : BaseDao<BackupFolderEntity>() {
     )
     abstract suspend fun getFolderByFileUri(userId: UserId, uriString: String): BackupFolderEntity?
 
-    @Query("DELETE FROM BackupFolderEntity WHERE user_id = :userId")
-    abstract suspend fun deleteAll(userId: UserId)
-    @Query("DELETE FROM BackupFolderEntity WHERE user_id = :userId AND bucket_id = :bucketId")
-    abstract suspend fun delete(userId: UserId, bucketId: Int)
+    @Query(
+        """
+        DELETE FROM BackupFolderEntity 
+        WHERE 
+            user_id = :userId AND
+            share_id = :shareId AND
+            parent_id= :folderId
+        """
+    )
+    abstract suspend fun deleteAll(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+    )
+
+    @Query("""
+        DELETE FROM BackupFolderEntity 
+        WHERE 
+            user_id = :userId  AND
+            share_id = :shareId AND
+            parent_id= :folderId AND
+            bucket_id = :bucketId
+        """
+    )
+    abstract suspend fun delete(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+        bucketId: Int,
+    )
 
     @Query("SELECT EXISTS(SELECT * FROM BackupFolderEntity WHERE user_id = :userId)")
     abstract fun hasFolders(userId: UserId): Flow<Boolean>
+
+    @Query(
+        """SELECT EXISTS(
+            SELECT * FROM BackupFolderEntity
+            WHERE user_id = :userId AND
+                share_id = :shareId AND
+                parent_id = :folderId
+        )
+        """
+    )
+    abstract fun hasFolders(userId: UserId, shareId: String, folderId: String): Flow<Boolean>
 }

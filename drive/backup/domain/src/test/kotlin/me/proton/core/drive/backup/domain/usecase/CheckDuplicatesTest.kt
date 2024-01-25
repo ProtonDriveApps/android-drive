@@ -89,7 +89,7 @@ class CheckDuplicatesTest {
         )
         val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
         val addFolder = AddFolder(backupFolderRepository)
-        addFolder(backupFolder)
+        addFolder(backupFolder).getOrThrow()
         backupFileRepository = BackupFileRepositoryImpl(database.db)
         backupDuplicateRepository = BackupDuplicateRepositoryImpl(database.db)
 
@@ -123,6 +123,9 @@ class CheckDuplicatesTest {
                     TODO("Not yet implemented")
                 }
 
+                override suspend fun getUriInfo(uriString: String): UriResolver.UriInfo? {
+                    TODO("Not yet implemented")
+                }
             },
             getNodeKey = getNodeKey,
             getContentHash = getContentHash,
@@ -139,7 +142,6 @@ class CheckDuplicatesTest {
     fun `Given duplicate without contentHash When checkDuplicates Should mark file as READY`() =
         runTest {
             backupFileRepository.insertFiles(
-                userId,
                 listOf(backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE)),
             )
             val duplicates = listOf(backupDuplicate(1, "hash", null))
@@ -149,11 +151,11 @@ class CheckDuplicatesTest {
 
             assertEquals(
                 listOf(backupFile("hash", BackupFileState.READY)),
-                backupFileRepository.getAllFiles(userId, 0, 100),
+                backupFileRepository.getAllFiles(folderId, 0, 100),
             )
             assertEquals(
                 duplicates,
-                backupDuplicateRepository.getAll(userId, folderId, 0, 100),
+                backupDuplicateRepository.getAll(folderId, 0, 100),
             )
         }
 
@@ -161,7 +163,6 @@ class CheckDuplicatesTest {
     fun `Given not matching content hash When checkDuplicates Should mark file as READY`() =
         runTest {
             backupFileRepository.insertFiles(
-                userId,
                 listOf(backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE)),
             )
             val duplicates = listOf(
@@ -179,11 +180,11 @@ class CheckDuplicatesTest {
 
             assertEquals(
                 listOf(backupFile("hash", BackupFileState.READY)),
-                backupFileRepository.getAllFiles(userId, 0, 100),
+                backupFileRepository.getAllFiles(folderId, 0, 100),
             )
             assertEquals(
                 duplicates,
-                backupDuplicateRepository.getAll(userId, folderId, 0, 100),
+                backupDuplicateRepository.getAll(folderId, 0, 100),
             )
         }
 
@@ -191,7 +192,6 @@ class CheckDuplicatesTest {
     fun `Given matching content hash When checkDuplicates Should mark file as DUPLICATED`() =
         runTest {
             backupFileRepository.insertFiles(
-                userId,
                 listOf(backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE)),
             )
             backupDuplicateRepository.insertDuplicates(
@@ -208,11 +208,11 @@ class CheckDuplicatesTest {
 
             assertEquals(
                 listOf(backupFile("hash", BackupFileState.DUPLICATED)),
-                backupFileRepository.getAllFiles(userId, 0, 100),
+                backupFileRepository.getAllFiles(folderId, 0, 100),
             )
             assertEquals(
                 emptyList<BackupDuplicate>(),
-                backupDuplicateRepository.getAll(userId, folderId, 0, 100),
+                backupDuplicateRepository.getAll(folderId, 0, 100),
             )
         }
 
@@ -220,7 +220,6 @@ class CheckDuplicatesTest {
     fun `Given not match and matching content hashes When checkDuplicates Should mark file as DUPLICATED`() =
         runTest {
             backupFileRepository.insertFiles(
-                userId,
                 listOf(backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE)),
             )
             backupDuplicateRepository.insertDuplicates(
@@ -242,7 +241,7 @@ class CheckDuplicatesTest {
 
             assertEquals(
                 listOf(backupFile("hash", BackupFileState.DUPLICATED)),
-                backupFileRepository.getAllFiles(userId, 0, 100),
+                backupFileRepository.getAllFiles(folderId, 0, 100),
             )
             assertEquals(
                 listOf(
@@ -252,7 +251,7 @@ class CheckDuplicatesTest {
                         contentHash = "getContentHash(something-else-than-empty-hash)",
                     )
                 ),
-                backupDuplicateRepository.getAll(userId, folderId, 0, 100),
+                backupDuplicateRepository.getAll(folderId, 0, 100),
             )
         }
 
@@ -260,7 +259,6 @@ class CheckDuplicatesTest {
     fun `Given missing file When checkDuplicates Should delete it`() =
         runTest {
             backupFileRepository.insertFiles(
-                userId,
                 listOf(backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "missing")),
             )
 
@@ -268,7 +266,7 @@ class CheckDuplicatesTest {
 
             assertEquals(
                 emptyList<BackupFile>(),
-                backupFileRepository.getAllFiles(userId, 0, 100),
+                backupFileRepository.getAllFiles(folderId, 0, 100),
             )
         }
 
@@ -276,7 +274,6 @@ class CheckDuplicatesTest {
     fun `Given two different files with same name And both are duplicates When checkDuplicates Should marks file as DUPLICATED`() =
         runTest {
             backupFileRepository.insertFiles(
-                userId,
                 listOf(
                     backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "uri1"),
                     backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "uri2"),
@@ -304,11 +301,11 @@ class CheckDuplicatesTest {
                     backupFile("hash", BackupFileState.DUPLICATED, "uri1"),
                     backupFile("hash", BackupFileState.DUPLICATED, "uri2"),
                 ),
-                backupFileRepository.getAllFiles(userId, 0, 100),
+                backupFileRepository.getAllFiles(folderId, 0, 100),
             )
             assertEquals(
                 emptyList<BackupDuplicate>(),
-                backupDuplicateRepository.getAll(userId, folderId, 0, 100),
+                backupDuplicateRepository.getAll(folderId, 0, 100),
             )
         }
 
@@ -316,7 +313,6 @@ class CheckDuplicatesTest {
     fun `Given two different files with same name And first is a duplicate name When checkDuplicates Should marks file as DUPLICATED`() =
         runTest {
             backupFileRepository.insertFiles(
-                userId,
                 listOf(
                     backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "uri1"),
                     backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "uri2"),
@@ -339,11 +335,11 @@ class CheckDuplicatesTest {
                     backupFile("hash", BackupFileState.DUPLICATED, "uri1"),
                     backupFile("hash", BackupFileState.READY, "uri2"),
                 ),
-                backupFileRepository.getAllFiles(userId, 0, 100),
+                backupFileRepository.getAllFiles(folderId, 0, 100),
             )
             assertEquals(
                 emptyList<BackupDuplicate>(),
-                backupDuplicateRepository.getAll(userId, folderId, 0, 100),
+                backupDuplicateRepository.getAll(folderId, 0, 100),
             )
         }
 
@@ -364,6 +360,7 @@ class CheckDuplicatesTest {
         uriString: String = "uri",
     ) = BackupFile(
         bucketId = 0,
+        folderId = folderId,
         uriString = uriString,
         mimeType = "",
         name = "",

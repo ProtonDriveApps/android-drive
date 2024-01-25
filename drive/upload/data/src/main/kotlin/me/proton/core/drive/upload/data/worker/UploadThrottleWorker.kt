@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,22 +28,19 @@ import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
-import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksCount
-import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksWithUriByPriority
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
 import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
+import me.proton.core.drive.upload.domain.usecase.GetNextUploadFileLinks
 import me.proton.core.util.kotlin.CoreLogger
 
 @HiltWorker
@@ -51,10 +48,8 @@ class UploadThrottleWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val workManager: WorkManager,
-    private val configurationProvider: ConfigurationProvider,
     private val updateUploadState: UpdateUploadState,
-    private val getUploadFileLinksCount: GetUploadFileLinksCount,
-    private val getUploadFileLinksWithUriByPriority: GetUploadFileLinksWithUriByPriority,
+    private val getNextUploadFileLinks: GetNextUploadFileLinks,
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     private val cleanupWorkers: CleanupWorkers,
 ) : CoroutineWorker(appContext, workerParams) {
@@ -62,55 +57,30 @@ class UploadThrottleWorker @AssistedInject constructor(
         UserId(requireNotNull(inputData.getString(WorkerKeys.KEY_USER_ID)) { "User id is required" })
 
     override suspend fun doWork(): Result = runCatching {
-        val uploadCount = getUploadFileLinksCount(userId).first()
-        if (uploadCount.total == 0) {
-            CoreLogger.d(UPLOAD, "UploadThrottleWorker($runAttemptCount) nothing to upload ")
-            return@runCatching
-        }
-        val running = uploadCount.totalWithUri - uploadCount.totalUnprocessedWithUri
-        val runningNonUserUploads =
-            uploadCount.totalWithUriNonUserPriority - uploadCount.totalUnprocessedWithUriNonUserPriority
-        val notRunning = uploadCount.totalUnprocessedWithUri
-        val availableUploadSlots = configurationProvider.uploadsInParallel - running
-        val availableNonUserUploadSlots = configurationProvider.nonUserUploadsInParallel - runningNonUserUploads
-        if (notRunning > 0 && availableUploadSlots > 0) {
-            getUploadFileLinksWithUriByPriority(
-                userId,
-                setOf(UploadState.UNPROCESSED),
-                availableUploadSlots
-            ).first().apply {
-                CoreLogger.d(UPLOAD, "UploadThrottleWorker($runAttemptCount) upload $size files")
-                takeNonUserPriorityLimited(availableNonUserUploadSlots)
-                    .forEach { uploadFileLink ->
-                        if (uploadFileLink.isNotEnqueued()) {
-                            uploadFileLink.enqueue(userId, tags).await()
-                            updateUploadState(uploadFileLink.id, UploadState.IDLE)
-                            CoreLogger.d(
-                                tag = uploadFileLink.logTag(),
-                                message = """
-                                    UploadThrottleWorker($runAttemptCount) enqueue ${uploadFileLink.uriString} 
-                                    size ${uploadFileLink.size}
-                                    priority ${uploadFileLink.priority}
-                                """.trimIndent().replace("\n", " "),
-                            )
-                        } else {
-                            CoreLogger.w(
-                                tag = uploadFileLink.logTag(),
-                                message = """
-                                    UploadThrottleWorker($runAttemptCount) was already enqueued ${uploadFileLink.uriString} 
-                                    size ${uploadFileLink.size}
-                                    priority ${uploadFileLink.priority}
-                                """.trimIndent().replace("\n", " "),
-                            )
-                        }
-                    }
+        getNextUploadFileLinks(userId).getOrThrow().also { uploadFileLinks ->
+            CoreLogger.d(UPLOAD, "UploadThrottleWorker($runAttemptCount) upload ${uploadFileLinks.size} files")
+        }.forEach { uploadFileLink ->
+            if (uploadFileLink.isNotEnqueued()) {
+                uploadFileLink.enqueue(userId, tags).await()
+                updateUploadState(uploadFileLink.id, UploadState.IDLE)
+                CoreLogger.d(
+                    tag = uploadFileLink.logTag(),
+                    message = """
+                        UploadThrottleWorker($runAttemptCount) enqueue ${uploadFileLink.uriString} 
+                        size ${uploadFileLink.size}
+                        priority ${uploadFileLink.priority}
+                    """.trimIndent().replace("\n", " "),
+                )
+            } else {
+                CoreLogger.w(
+                    tag = uploadFileLink.logTag(),
+                    message = """
+                        UploadThrottleWorker($runAttemptCount) was already enqueued ${uploadFileLink.uriString} 
+                        size ${uploadFileLink.size}
+                        priority ${uploadFileLink.priority}
+                    """.trimIndent().replace("\n", " "),
+                )
             }
-        } else {
-            CoreLogger.d(
-                UPLOAD,
-                "UploadThrottleWorker($runAttemptCount) ignoring state, " +
-                        "notRunning: $notRunning, availableUploadSlots: $availableUploadSlots "
-            )
         }
     }.fold(
         onSuccess = { Result.success() },
@@ -133,8 +103,12 @@ class UploadThrottleWorker @AssistedInject constructor(
         return workInfos.none { workInfo -> !workInfo.state.isFinished }
     }
 
-    private suspend fun UploadFileLink.enqueue(userId: UserId, tags: Set<String> = emptySet()) =
-        requireNotNull(networkTypeProviders[networkTypeProviderType]).get().let { networkType ->
+    private suspend fun UploadFileLink.enqueue(
+        userId: UserId,
+        tags: Set<String> = emptySet(),
+    ) = requireNotNull(networkTypeProviders[networkTypeProviderType])
+        .get(parentLinkId)
+        .let { networkType ->
             val isFileAlreadyCreated = draftRevisionId.isNotEmpty()
             val fileSize = size
             val isFileEmpty = fileSize != null && fileSize.value == 0L
@@ -178,14 +152,6 @@ class UploadThrottleWorker @AssistedInject constructor(
                 else -> error("Unhandled file upload flow ")
             }.enqueueWork(listOf(id.uniqueUploadWorkName) + tags, requireNotNull(uriString))
         }
-
-    private fun List<UploadFileLink>.takeNonUserPriorityLimited(count: Int): List<UploadFileLink> {
-        val priorities = groupBy { uploadFileLink ->
-            if (uploadFileLink.priority <= UploadFileLink.USER_PRIORITY) 0 else 1
-        }
-        return listOfNotNull(priorities[0], priorities[1]?.take(count)).flatten()
-    }
-
 
     companion object {
         fun getWorkRequest(

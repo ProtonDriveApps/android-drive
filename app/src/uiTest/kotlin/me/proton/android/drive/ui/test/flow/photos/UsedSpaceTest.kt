@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -18,15 +18,25 @@
 
 package me.proton.android.drive.ui.test.flow.photos
 
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
 import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.UninstallModules
+import dagger.hilt.components.SingletonComponent
+import me.proton.android.drive.photos.data.di.PhotosConfigurationModule
+import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
+import me.proton.android.drive.provider.PhotosConnectedDefaultConfigurationProvider
+import me.proton.android.drive.ui.annotation.Quota
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.annotation.Quota
 import me.proton.android.drive.ui.test.PhotosBaseTest
 import org.junit.Before
 import org.junit.Test
+import javax.inject.Singleton
 
 @HiltAndroidTest
+@UninstallModules(PhotosConfigurationModule::class)
 class UsedSpaceTest : PhotosBaseTest() {
 
     @Before
@@ -72,5 +82,13 @@ class UsedSpaceTest : PhotosBaseTest() {
             .verify {
                 assertPhotoCountEquals(1)
             }
+    }
+
+    @Module
+    @InstallIn(SingletonComponent::class)
+    interface TestPhotosConfigurationModule {
+        @Binds
+        @Singleton
+        fun bindPhotosDefaultConfigurationProvider(impl: PhotosConnectedDefaultConfigurationProvider): PhotosDefaultConfigurationProvider
     }
 }

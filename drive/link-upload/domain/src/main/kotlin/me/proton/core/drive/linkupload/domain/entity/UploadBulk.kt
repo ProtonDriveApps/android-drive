@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ data class UploadBulk(
     val volumeId: VolumeId,
     val shareId: ShareId,
     val parentLinkId: FolderId,
-    val uriStrings: List<String>,
+    val uploadFileDescriptions: List<UploadFileDescription>,
     val shouldDeleteSourceUri: Boolean = false,
     val networkTypeProviderType: NetworkTypeProviderType,
     val shouldAnnounceEvent: Boolean = true,

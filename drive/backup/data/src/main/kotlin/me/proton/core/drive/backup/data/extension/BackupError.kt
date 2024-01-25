@@ -18,12 +18,15 @@
 
 package me.proton.core.drive.backup.data.extension
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.db.entity.BackupErrorEntity
 import me.proton.core.drive.backup.domain.entity.BackupError
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 
-fun BackupError.toEntity(userId: UserId) = BackupErrorEntity(
-    userId = userId,
+fun BackupError.toEntity(folderId: FolderId) = BackupErrorEntity(
+    userId = folderId.userId,
+    shareId = folderId.shareId.id,
+    parentId = folderId.id,
     type = type,
     retryable = retryable,
 )

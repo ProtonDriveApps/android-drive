@@ -28,6 +28,7 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.photo
 import me.proton.core.drive.db.test.shareId
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
@@ -45,7 +46,8 @@ import org.robolectric.RobolectricTestRunner
 class BackupFileRepositoryImplTest {
     @get:Rule
     val database = DriveDatabaseRule()
-    private lateinit var folderId: FolderId
+    private lateinit var rootMainId: FolderId
+    private lateinit var rootPhotoId: FolderId
 
     private lateinit var repository: BackupFileRepositoryImpl
 
@@ -53,9 +55,11 @@ class BackupFileRepositoryImplTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        rootPhotoId = database.photo {}
+        rootMainId = database.myDrive {}
         val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
-        backupFolderRepository.insertFolder(BackupFolder(bucketId, folderId))
+        backupFolderRepository.insertFolder(BackupFolder(bucketId, rootPhotoId))
+        backupFolderRepository.insertFolder(BackupFolder(1, rootMainId))
         repository = BackupFileRepositoryImpl(database.db)
     }
 
@@ -63,42 +67,42 @@ class BackupFileRepositoryImplTest {
     fun `Given empty table when get all files then returns an empty list`() = runTest {
         assertEquals(
             listOf<BackupFile>(),
-            repository.getAllFiles(userId = userId, fromIndex = 0, count = 1),
+            repository.getAllFiles(folderId = rootPhotoId, fromIndex = 0, count = 1),
         )
     }
 
     @Test
     fun `Given one file when get all files then returns this media`() = runTest {
         val backupFiles = listOf(
-            backupFile(bucketId = bucketId)
+            rootPhotoId.backupFile(bucketId = bucketId)
         )
-        repository.insertFiles(userId, backupFiles)
+        repository.insertFiles(backupFiles)
 
         assertEquals(
             backupFiles,
-            repository.getAllFiles(userId = userId, fromIndex = 0, count = 1),
+            repository.getAllFiles(folderId = rootPhotoId, fromIndex = 0, count = 1),
         )
     }
 
     @Test
     fun `Given one file in folder when get files from folder then returns this media`() {
         runTest {
-            val idle = backupFile(
+            val idle = rootPhotoId.backupFile(
                 uriString = "uri1",
                 bucketId = bucketId,
                 state = BackupFileState.IDLE
             )
-            val ready = backupFile(
+            val ready = rootPhotoId.backupFile(
                 uriString = "uri2",
                 bucketId = bucketId,
                 state = BackupFileState.READY
             )
-            repository.insertFiles(userId, listOf(idle, ready))
+            repository.insertFiles(listOf(idle, ready))
 
             assertEquals(
                 listOf(ready),
                 repository.getFilesToBackup(
-                    userId = userId,
+                    folderId = rootPhotoId,
                     bucketId = bucketId,
                     maxAttempts = 5,
                     fromIndex = 0,
@@ -112,15 +116,15 @@ class BackupFileRepositoryImplTest {
     fun `Given one file in folder with upload when get files from folder then returns nothing`() =
         runTest {
             val backupFiles = listOf(
-                backupFile(uriString = "uri", bucketId = bucketId)
+                rootPhotoId.backupFile(uriString = "uri", bucketId = bucketId)
             )
-            repository.insertFiles(userId, backupFiles)
+            repository.insertFiles(backupFiles)
             insertLinkUploadEntity("uri")
 
             assertEquals(
                 emptyList<BackupFile>(),
                 repository.getFilesToBackup(
-                    userId = userId,
+                    folderId = rootPhotoId,
                     bucketId = bucketId,
                     maxAttempts = 5,
                     fromIndex = 0,
@@ -133,15 +137,15 @@ class BackupFileRepositoryImplTest {
     fun `Given one file completed in folder when get files from folder then returns nothing`() =
         runTest {
             val backupFiles = listOf(
-                backupFile(uriString = "uri", bucketId = bucketId)
+                rootPhotoId.backupFile(uriString = "uri", bucketId = bucketId)
             )
-            repository.insertFiles(userId, backupFiles)
-            repository.markAsCompleted(userId, "uri")
+            repository.insertFiles(backupFiles)
+            repository.markAsCompleted(rootPhotoId, "uri")
 
             assertEquals(
                 emptyList<BackupFile>(),
                 repository.getFilesToBackup(
-                    userId = userId,
+                    folderId = rootPhotoId,
                     bucketId = bucketId,
                     maxAttempts = 5,
                     fromIndex = 0,
@@ -153,14 +157,14 @@ class BackupFileRepositoryImplTest {
     @Test
     fun `Given one file in folder when delete it then files should be empty`() =
         runTest {
-            val file = backupFile()
+            val file = rootPhotoId.backupFile()
 
-            repository.insertFiles(userId, listOf(file))
-            repository.delete(userId, file.uriString)
+            repository.insertFiles(listOf(file))
+            repository.delete(rootPhotoId, file.uriString)
 
             assertEquals(
                 emptyList<BackupFile>(),
-                repository.getAllFiles(userId = userId, fromIndex = 0, count = 1),
+                repository.getAllFiles(folderId = rootPhotoId, fromIndex = 0, count = 1),
             )
         }
 
@@ -169,7 +173,7 @@ class BackupFileRepositoryImplTest {
         runTest {
             assertEquals(
                 BackupStatus.Complete(totalBackupPhotos = 0),
-                repository.getBackupStatus(userId).first(),
+                repository.getBackupStatus(rootPhotoId).first(),
             )
         }
 
@@ -177,18 +181,19 @@ class BackupFileRepositoryImplTest {
     fun `Given files with all states then status should be progressing three over four`() =
         runTest {
             repository.insertFiles(
-                userId, listOf(
-                    backupFile("uri1", state = BackupFileState.IDLE),
-                    backupFile("uri2", state = BackupFileState.POSSIBLE_DUPLICATE),
-                    backupFile("uri3", state = BackupFileState.DUPLICATED),
-                    backupFile("uri4", state = BackupFileState.READY),
-                    backupFile("uri5", state = BackupFileState.COMPLETED),
+                listOf(
+                    rootPhotoId.backupFile("uri1", state = BackupFileState.IDLE),
+                    rootPhotoId.backupFile("uri2", state = BackupFileState.POSSIBLE_DUPLICATE),
+                    rootPhotoId.backupFile("uri3", state = BackupFileState.DUPLICATED),
+                    rootPhotoId.backupFile("uri4", state = BackupFileState.READY),
+                    rootPhotoId.backupFile("uri5", state = BackupFileState.COMPLETED),
+                    rootMainId.backupFile("uri6", state = BackupFileState.COMPLETED, bucketId = 1),
                 )
             )
 
             assertEquals(
                 BackupStatus.InProgress(totalBackupPhotos = 4, pendingBackupPhotos = 3),
-                repository.getBackupStatus(userId).first(),
+                repository.getBackupStatus(rootPhotoId).first(),
             )
         }
 
@@ -196,19 +201,19 @@ class BackupFileRepositoryImplTest {
     fun `Given tree files when all are mark as completed then status should be completed`() =
         runTest {
             repository.insertFiles(
-                userId, listOf(
-                    backupFile("uri1"),
-                    backupFile("uri2"),
-                    backupFile("uri3"),
+                listOf(
+                    rootPhotoId.backupFile("uri1"),
+                    rootPhotoId.backupFile("uri2"),
+                    rootPhotoId.backupFile("uri3"),
                 )
             )
-            repository.markAsCompleted(userId, "uri1")
-            repository.markAsCompleted(userId, "uri2")
-            repository.markAsCompleted(userId, "uri3")
+            repository.markAsCompleted(rootPhotoId, "uri1")
+            repository.markAsCompleted(rootPhotoId, "uri2")
+            repository.markAsCompleted(rootPhotoId, "uri3")
 
             assertEquals(
                 BackupStatus.Complete(totalBackupPhotos = 3),
-                repository.getBackupStatus(userId).first(),
+                repository.getBackupStatus(rootPhotoId).first(),
             )
         }
 
@@ -216,41 +221,41 @@ class BackupFileRepositoryImplTest {
     fun `Given tree files when all are mark as completed and failed then status should be failed`() =
         runTest {
             repository.insertFiles(
-                userId, listOf(
-                    backupFile("uri1"),
-                    backupFile("uri2"),
-                    backupFile("uri3"),
+                listOf(
+                    rootPhotoId.backupFile("uri1"),
+                    rootPhotoId.backupFile("uri2"),
+                    rootPhotoId.backupFile("uri3"),
                 )
             )
-            repository.markAsCompleted(userId, "uri1")
-            repository.markAsCompleted(userId, "uri2")
-            repository.markAsFailed(userId, "uri3")
+            repository.markAsCompleted(rootPhotoId, "uri1")
+            repository.markAsCompleted(rootPhotoId, "uri2")
+            repository.markAsFailed(rootPhotoId, "uri3")
 
             assertEquals(
                 BackupStatus.Uncompleted(
                     totalBackupPhotos = 3,
                     failedBackupPhotos = 1,
                 ),
-                repository.getBackupStatus(userId).first(),
+                repository.getBackupStatus(rootPhotoId).first(),
             )
         }
     @Test
     fun `Given tree files when all are mark as completed and failed then count should be 1 for failed`() =
         runTest {
             repository.insertFiles(
-                userId, listOf(
-                    backupFile("uri1"),
-                    backupFile("uri2"),
-                    backupFile("uri3"),
+                listOf(
+                    rootPhotoId.backupFile("uri1"),
+                    rootPhotoId.backupFile("uri2"),
+                    rootPhotoId.backupFile("uri3"),
                 )
             )
-            repository.markAsCompleted(userId, "uri1")
-            repository.markAsFailed(userId, "uri2")
-            repository.markAsFailed(userId, "uri3")
+            repository.markAsCompleted(rootPhotoId, "uri1")
+            repository.markAsFailed(rootPhotoId, "uri2")
+            repository.markAsFailed(rootPhotoId, "uri3")
 
             assertEquals(
                 2,
-                repository.getCountByState(userId, folderId, BackupFileState.FAILED),
+                repository.getCountByState(rootPhotoId, BackupFileState.FAILED),
             )
         }
 
@@ -258,22 +263,22 @@ class BackupFileRepositoryImplTest {
     fun `Given three files when they are marked then should be able to query them`() =
         runTest {
             repository.insertFiles(
-                userId, listOf(
-                    backupFile(index = 1, state = BackupFileState.IDLE),
-                    backupFile(index = 2, state = BackupFileState.IDLE),
-                    backupFile(index = 3, state = BackupFileState.IDLE),
+                listOf(
+                    rootPhotoId.backupFile(index = 1, state = BackupFileState.IDLE),
+                    rootPhotoId.backupFile(index = 2, state = BackupFileState.IDLE),
+                    rootPhotoId.backupFile(index = 3, state = BackupFileState.IDLE),
                 )
             )
-            repository.markAs(userId, listOf("hash1", "hash2"), BackupFileState.READY)
-            repository.markAs(userId, listOf("hash3", "hash4"), BackupFileState.POSSIBLE_DUPLICATE)
+            repository.markAs(rootPhotoId, listOf("hash1", "hash2"), BackupFileState.READY)
+            repository.markAs(rootPhotoId, listOf("hash3", "hash4"), BackupFileState.POSSIBLE_DUPLICATE)
 
             assertEquals(
                 listOf(
-                    backupFile(index = 1, state = BackupFileState.READY),
-                    backupFile(index = 2, state = BackupFileState.READY),
+                    rootPhotoId.backupFile(index = 1, state = BackupFileState.READY),
+                    rootPhotoId.backupFile(index = 2, state = BackupFileState.READY),
                 ),
                 repository.getAllInFolderWithState(
-                    userId = userId,
+                    folderId = rootPhotoId,
                     bucketId = bucketId,
                     state = BackupFileState.READY,
                     count = 100,
@@ -282,10 +287,10 @@ class BackupFileRepositoryImplTest {
 
             assertEquals(
                 listOf(
-                    backupFile(index = 3, state = BackupFileState.POSSIBLE_DUPLICATE),
+                    rootPhotoId.backupFile(index = 3, state = BackupFileState.POSSIBLE_DUPLICATE),
                 ),
                 repository.getAllInFolderWithState(
-                    userId = userId,
+                    folderId = rootPhotoId,
                     bucketId = bucketId,
                     state = BackupFileState.POSSIBLE_DUPLICATE,
                     count = 100,
@@ -297,15 +302,15 @@ class BackupFileRepositoryImplTest {
     fun `Given 100000 files when they are marked as enqueued then should be able to query them`() =
         runTest {
             val backupFiles = (1..100000).map { index ->
-                backupFile(index = index, state = BackupFileState.READY)
+                rootPhotoId.backupFile(index = index, state = BackupFileState.READY)
             }
-            repository.insertFiles(userId, backupFiles)
-            repository.markAsEnqueued(userId, backupFiles.map { it.uriString })
+            repository.insertFiles(backupFiles)
+            repository.markAsEnqueued(rootPhotoId, backupFiles.map { it.uriString })
 
             assertEquals(
                 backupFiles.map { it.copy(state = BackupFileState.ENQUEUED) },
                 repository.getAllInFolderWithState(
-                    userId = userId,
+                    folderId = rootPhotoId,
                     bucketId = 0,
                     state = BackupFileState.ENQUEUED,
                     count = 100000,
@@ -313,7 +318,7 @@ class BackupFileRepositoryImplTest {
             )
         }
 
-    private fun backupFile(
+    private fun FolderId.backupFile(
         index: Int,
         state: BackupFileState,
     ) = backupFile(
@@ -322,13 +327,14 @@ class BackupFileRepositoryImplTest {
         state = state,
     )
 
-    private fun backupFile(
+    private fun FolderId.backupFile(
         uriString: String = "uri",
         bucketId: Int = 0,
         hash: String = "hash",
         state: BackupFileState = BackupFileState.IDLE,
     ) = BackupFile(
         bucketId = bucketId,
+        folderId = this,
         uriString = uriString,
         mimeType = "",
         name = "",
@@ -345,7 +351,7 @@ class BackupFileRepositoryImplTest {
                 userId = userId,
                 volumeId = volumeId,
                 shareId = shareId,
-                parentId = folderId.id,
+                parentId = rootPhotoId.id,
                 uri = uri,
                 name = "",
                 size = 0,

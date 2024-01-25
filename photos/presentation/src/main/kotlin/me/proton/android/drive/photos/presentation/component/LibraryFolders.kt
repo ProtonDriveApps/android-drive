@@ -19,6 +19,7 @@
 package me.proton.android.drive.photos.presentation.component
 
 import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -91,6 +92,7 @@ fun LibraryFolders(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun LibraryFoldersList(
     content: LibraryFoldersState.Content,
@@ -122,7 +124,7 @@ private fun LibraryFoldersList(
             ) { libraryFolder ->
                 when (libraryFolder) {
                     is LibraryFolder.Entry -> LibraryFolderItem(
-                        modifier = itemModifier,
+                        modifier = itemModifier.animateItemPlacement(),
                         name = libraryFolder.name,
                         description = {
                             Text(
@@ -131,7 +133,7 @@ private fun LibraryFoldersList(
                             )
                         },
                         uri = libraryFolder.uri,
-                        enabled = libraryFolder.enabled,
+                        checked = libraryFolder.enabled,
                         onToggle = { enabled -> onToggleBucket(libraryFolder.id, enabled) },
                     )
 
@@ -146,6 +148,7 @@ private fun LibraryFoldersList(
                                 ),
                             )
                         },
+                        checked = false,
                         enabled = false,
                     )
                 }
@@ -158,15 +161,16 @@ private fun LibraryFoldersList(
 private fun LibraryFolderItem(
     name: String,
     description: @Composable (ColumnScope.() -> Unit),
-    enabled: Boolean,
+    checked: Boolean,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     uri: Uri? = null,
     onToggle: ((Boolean) -> Unit)? = null,
 ) {
     ProtonRawListItem(
         modifier = Modifier
             .toggleable(
-                value = enabled,
+                value = checked,
                 enabled = onToggle != null,
                 role = Role.Switch,
                 onValueChange = { enable ->
@@ -198,11 +202,11 @@ private fun LibraryFolderItem(
             TextWithMiddleEllipsis(
                 name,
                 maxLines = 1,
-                style = ProtonTheme.typography.defaultNorm(enabled),
+                style = ProtonTheme.typography.defaultNorm(checked),
             )
             description()
         }
-        Switch(checked = enabled, onCheckedChange = null)
+        Switch(checked = checked, enabled = enabled, onCheckedChange = null)
     }
 }
 
