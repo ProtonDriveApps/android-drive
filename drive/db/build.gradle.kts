@@ -70,6 +70,7 @@ driveModule(
     api(project(":app-ui-settings"))
     api(project(":drive:announce-event:data"))
     api(project(":drive:backup:data"))
+    api(project(":drive:device:data"))
     api(project(":drive:drivelink:data"))
     api(project(":drive:drivelink-download:data"))
     api(project(":drive:drivelink-offline:data"))

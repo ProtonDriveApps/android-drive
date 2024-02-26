@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -19,7 +19,9 @@ package me.proton.core.drive.cryptobase.domain.extension
 
 import me.proton.core.crypto.common.context.CryptoContext
 import me.proton.core.crypto.common.keystore.decrypt
+import me.proton.core.crypto.common.pgp.PGPHeader
 import me.proton.core.key.domain.encryptData
+import me.proton.core.key.domain.encryptSessionKey
 import me.proton.core.key.domain.entity.key.NestedPrivateKey
 import me.proton.core.key.domain.entity.keyholder.KeyHolder
 import me.proton.core.key.domain.extension.publicKeyRing
@@ -37,5 +39,30 @@ internal fun NestedPrivateKey.encryptAndSignPassphrase(
             passphrase = encryptKey.publicKeyRing(cryptoContext).encryptData(cryptoContext, decryptedPassphrase.array),
             passphraseSignature = signKey.useKeys(cryptoContext) { signData(decryptedPassphrase.array) }
         )
+    }
+}
+
+internal fun NestedPrivateKey.encryptAndSignPassphrase(
+    encryptKeys: List<KeyHolder>,
+    signKey: KeyHolder,
+    cryptoContext: CryptoContext,
+): NestedPrivateKey {
+    val passphrase = requireNotNull(privateKey.passphrase) { "Cannot encrypt without passphrase." }
+    return passphrase.decrypt(cryptoContext.keyStoreCrypto).use { decryptedPassphrase ->
+        cryptoContext.pgpCrypto.generateNewSessionKey().use { sessionKey ->
+            val dataPacket = cryptoContext.pgpCrypto.encryptData(decryptedPassphrase.array, sessionKey)
+            val keyPackets = encryptKeys.map { keyHolder ->
+                keyHolder.publicKeyRing(cryptoContext).encryptSessionKey(cryptoContext, sessionKey)
+            }
+            copy(
+                passphrase = cryptoContext.pgpCrypto.getArmored(
+                    data = keyPackets.fold(byteArrayOf()) { sum, keyPacket ->
+                        sum + keyPacket
+                    } + dataPacket,
+                    header = PGPHeader.Message,
+                ),
+                passphraseSignature = signKey.useKeys(cryptoContext) { signData(decryptedPassphrase.array) }
+            )
+        }
     }
 }

@@ -18,7 +18,10 @@
 
 package me.proton.android.drive.ui.viewevent
 
+import android.content.Context
+
 interface PhotosBackupViewEvent {
     val onToggleBackup: () -> Unit
     val onToggleMobileData: () -> Unit
+    val onToggleIgnoringBatteryOptimizations: (Context) -> Unit
 }

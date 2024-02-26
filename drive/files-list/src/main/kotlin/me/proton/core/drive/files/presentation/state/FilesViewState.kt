@@ -48,6 +48,7 @@ data class FilesViewState(
     val isRefreshEnabled: Boolean = true,
     val selected: Flow<Set<LinkId>> = emptyFlow(),
     val topBarActions: Flow<Set<Action>> = emptyFlow(),
+    val isDriveLinkMoreOptionsEnabled: Boolean = true,
 ) {
 
     companion object {

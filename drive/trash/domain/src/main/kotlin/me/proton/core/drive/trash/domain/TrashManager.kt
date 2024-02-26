@@ -34,7 +34,7 @@ interface TrashManager {
 
     suspend fun delete(userId: UserId, shareId: ShareId, linkIds: List<LinkId>): DataResult<String>
 
-    fun emptyTrash(userId: UserId, shareIds: Set<ShareId>)
+    suspend fun emptyTrash(userId: UserId, volumeId: VolumeId)
 
     fun getEmptyTrashState(userId: UserId, volumeId: VolumeId): Flow<EmptyTrashState>
 

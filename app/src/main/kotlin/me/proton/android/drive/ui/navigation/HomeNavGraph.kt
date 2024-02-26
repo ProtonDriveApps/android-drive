@@ -37,9 +37,11 @@ import me.proton.android.drive.ui.navigation.animation.defaultPopEnterSlideTrans
 import me.proton.android.drive.ui.navigation.animation.defaultPopExitSlideTransition
 import me.proton.android.drive.ui.navigation.internal.DriveNavHost
 import me.proton.android.drive.ui.options.OptionsFilter
+import me.proton.android.drive.ui.screen.ComputersScreen
 import me.proton.android.drive.ui.screen.FilesScreen
 import me.proton.android.drive.ui.screen.PhotosScreen
 import me.proton.android.drive.ui.screen.SharedScreen
+import me.proton.android.drive.ui.screen.SyncedFoldersScreen
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.FileId
@@ -100,6 +102,15 @@ fun HomeNavGraph(
         navigateToSubscription = navigateToSubscription,
         navigateToPhotosIssues = navigateToPhotosIssues,
         navigateToBackupSettings = navigateToBackupSettings,
+    )
+    addComputers(
+        homeScaffoldState,
+        homeNavController,
+        { fileId -> navigateToPreview(fileId, PagerType.FOLDER, OptionsFilter.FILES) },
+        navigateToSorting,
+        { linkId -> navigateToFileOrFolderOptions(linkId, OptionsFilter.FILES) },
+        { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.FILES) },
+        navigateToParentFolderOptions,
     )
 }
 
@@ -240,4 +251,97 @@ fun NavGraphBuilder.addPhotos(
         navigateToPhotosIssues = navigateToPhotosIssues,
         navigateToBackupSettings = navigateToBackupSettings,
     )
+}
+
+@ExperimentalCoroutinesApi
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addComputers(
+    homeScaffoldState: HomeScaffoldState,
+    navController: NavHostController,
+    navigateToPreview: (linkId: FileId) -> Unit,
+    navigateToSorting: (sorting: Sorting) -> Unit,
+    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToMultipleFileOrFolderOptions: (SelectionId) -> Unit,
+    navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
+) = composable(
+    route = Screen.Computers.route,
+    enterTransition = defaultEnterSlideTransition {
+        targetState.get<String>(Screen.Files.FOLDER_ID) != null &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+    },
+    exitTransition = defaultExitSlideTransition {
+        initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+    },
+    popEnterTransition = defaultPopEnterSlideTransition {
+        initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+    },
+    popExitTransition = defaultPopExitSlideTransition {
+        initialState.get<String>(Screen.Files.FOLDER_ID) != null &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+    },
+    arguments = listOf(
+        navArgument(Screen.Computers.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.Photos.SHARE_ID) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = null
+        },
+        navArgument(Screen.Files.FOLDER_ID) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = null
+        },
+        navArgument(Screen.Files.FOLDER_NAME) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = null
+        },
+        navArgument(Screen.Computers.SYNCED_FOLDERS) {
+            type = NavType.BoolType
+            nullable = false
+            defaultValue = false
+        }
+    )
+) { navBackStackEntry ->
+    val userId = UserId(navBackStackEntry.require(Screen.Computers.USER_ID))
+    val argShareId = navBackStackEntry.get<String>(Screen.Files.SHARE_ID)
+    val argFolderId = navBackStackEntry.get<String>(Screen.Files.FOLDER_ID)
+    val argSyncedFolders = navBackStackEntry.arguments?.getBoolean(Screen.Computers.SYNCED_FOLDERS, false) ?: false
+    if (argShareId != null && argFolderId != null) {
+        if (argSyncedFolders) {
+            SyncedFoldersScreen(
+                homeScaffoldState = homeScaffoldState,
+                navigateToFiles = { folderId, folderName ->
+                    navController.navigate(Screen.Computers(userId, folderId, folderName, false))
+                },
+                navigateToSortingDialog = navigateToSorting,
+                navigateBack = {
+                    navController.popBackStack(
+                        route = Screen.Computers.route,
+                        inclusive = true,
+                    )
+                },
+            )
+        } else {
+            FilesScreen(
+                homeScaffoldState = homeScaffoldState,
+                navigateToFiles = { folderId, folderName ->
+                    navController.navigate(Screen.Computers(userId, folderId, folderName, false))
+                },
+                navigateToPreview = navigateToPreview,
+                navigateToSortingDialog = navigateToSorting,
+                navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+                navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
+                navigateToParentFolderOptions = navigateToParentFolderOptions,
+                navigateBack = { navController.popBackStack() },
+            )
+        }
+    } else {
+        ComputersScreen(
+            homeScaffoldState = homeScaffoldState,
+            navigateToSyncedFolders = { folderId, folderName ->
+                navController.navigate(Screen.Computers(userId, folderId, folderName, true))
+            },
+        )
+    }
 }

@@ -39,6 +39,7 @@ import me.proton.core.drive.backup.domain.usecase.MarkAsCompleted
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
@@ -52,17 +53,28 @@ class BackupClearFileWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, workerParams) {
 
     private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
-    private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)))
-    private val folderId = FolderId(shareId, requireNotNull(inputData.getString(KEY_FOLDER_ID)))
     private val uriString = requireNotNull(inputData.getString(KEY_FILE_URI))
 
     override suspend fun doWork(): Result {
-        markAsCompleted(folderId, uriString).onFailure { error ->
-            error.log(LogTag.BACKUP, "Cannot mark file as completed with uri: $uriString")
-            addBackupError(folderId, error.toBackupError())
-            return Result.failure()
-        }
+        inputData.folderId
+            .onFailure { error ->
+                error.log(LogTag.BACKUP, "Failed to get FolderId")
+            }
+            .onSuccess { folderId ->
+                markAsCompleted(folderId, uriString).onFailure { error ->
+                    error.log(LogTag.BACKUP, "Cannot mark file as completed with uri: $uriString")
+                    addBackupError(folderId, error.toBackupError())
+                    return Result.failure()
+                }
+            }
         return Result.success()
+    }
+
+    private val Data.folderId: kotlin.Result<FolderId> get() = coRunCatching {
+        FolderId(
+            shareId = ShareId(userId, requireNotNull(getString(KEY_SHARE_ID))),
+            id = requireNotNull(getString(KEY_FOLDER_ID)),
+        )
     }
 
     companion object {

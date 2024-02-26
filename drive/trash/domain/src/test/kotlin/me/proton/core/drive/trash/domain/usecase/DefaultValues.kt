@@ -22,9 +22,11 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 
 internal val userId = UserId("user-id")
+internal val volumeId = VolumeId("volume-id")
 internal val shareId = ShareId(userId, "share-id")
 internal val folderId = FolderId(shareId, "folder-id")
 internal val fileId = FileId(shareId, "file-id")

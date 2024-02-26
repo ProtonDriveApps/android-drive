@@ -95,6 +95,7 @@ fun FilesListItem(
     transferProgressFlow: Flow<Percentage>? = null,
     isSelected: Boolean = false,
     inMultiselect: Boolean = false,
+    isMoreOptionsEnabled: Boolean = true,
 ) {
     val transferProgress = transferProgressFlow?.let {
         rememberFlowWithLifecycle(transferProgressFlow).collectAsState(initial = null)
@@ -143,11 +144,13 @@ fun FilesListItem(
                 if (!inMultiselect) {
                     if (!isSelectingDestination) {
                         if (link.isProcessing.not()) {
-                            MoreOptions(
-                                modifier = Modifier.size(DefaultButtonMinHeight),
-                                link = link,
-                                onClick = onMoreOptionsClick,
-                            )
+                            if (isMoreOptionsEnabled) {
+                                MoreOptions(
+                                    modifier = Modifier.size(DefaultButtonMinHeight),
+                                    link = link,
+                                    onClick = onMoreOptionsClick,
+                                )
+                            }
                         } else {
                             CircularProgressIndicator(
                                 modifier = Modifier

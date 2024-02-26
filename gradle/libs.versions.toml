@@ -20,7 +20,7 @@ androidx-exif = "1.3.6"
 androidx-hilt = "1.1.0"
 androidx-hilt-navigation-compose = "1.1.0"
 androidx-lifecycle = "2.6.2"
-androidx-media3 = "1.0.0-alpha03"
+androidx-media3 = "1.2.1"
 androidx-navigation = "2.7.5"
 androidx-paging = "3.1.1"
 androidx-paging-compose = "3.2.1"
@@ -35,7 +35,7 @@ android-tools = "1.1.5"
 # Coil
 coil = "2.4.0"
 # Core
-core = "18.4.2"
+core = "19.0.0"
 core-test-quark = "14.1.0"
 # Dagger
 dagger = "2.48.1"
@@ -60,7 +60,7 @@ okhttp = "4.10.0"
 retrofit = "2.9.0"
 # Test
 junit = "4.13.2"
-mockk = "1.13.5"
+mockk = "1.13.9"
 mockwebserver = "4.10.0"
 robolectric = "4.10.3"
 fusion = "0.9.62"
@@ -215,6 +215,9 @@ core-userSettings-data = { module = "me.proton.core:user-settings-data", version
 core-utilAndroidDagger = { module = "me.proton.core:util-android-dagger", version.ref = "core" }
 core-utilAndroidSentry = { module = "me.proton.core:util-android-sentry", version.ref = "core" }
 core-utilKotlin = { module = "me.proton.core:util-kotlin", version.ref = "core" }
+core-config-data = { module = "me.proton.core:configuration-data", version.ref = "core" }
+core-config-dagger-staticDefaults = { module = "me.proton.core:configuration-dagger-staticdefaults", version.ref = "core" }
+core-config-dagger-contentResolver = { module = "me.proton.core:configuration-dagger-content-resolver", version.ref = "core" }
 
 # Dagger
 dagger-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "dagger" }
@@ -268,7 +271,7 @@ fusion = { module = "me.proton.test:fusion", version.ref = "fusion"}
 
 [bundles]
 accompanist = ["accompanist-systemUiController", "accompanist-permissions", "accompanist-drawablepainter", "accompanist-placeholderMaterial"]
-core = ["core-account", "core-accountManager", "core-accountRecovery", "core-auth", "core-challenge", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-keyTransparency", "core-network", "core-notification", "core-observability", "core-payment", "core-payment-iap", "core-plan", "core-report", "core-presentation", "core-presentation-compose", "core-proguard-rules", "core-push", "core-telemetry", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilAndroidSentry", "core-utilKotlin"]
+core = ["core-account", "core-accountManager", "core-accountRecovery", "core-auth", "core-challenge", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-keyTransparency", "core-network", "core-notification", "core-observability", "core-payment", "core-payment-iap", "core-plan", "core-report", "core-presentation", "core-presentation-compose", "core-proguard-rules", "core-push", "core-telemetry", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilAndroidSentry", "core-utilKotlin", "core-config-data"]
 core-test = ["core-auth-test", "core-accountRecovery-test", "core-humanVerification-test", "core-report-test", "core-plan-test"]
 test-android = ["junit", "mockk-android", "coroutines-test", "androidx-test-core-ktx", "androidx-test-runner", "androidx-test-rules", "androidx-compose-ui-test", "androidx-compose-ui-test-junit", "androidx-test-uiautomator", "core-test-android-instrumented"]
 test-jvm = ["junit", "mockk-jvm", "coroutines-test", "androidx-test-core-ktx", "androidx-work-testing", "core-test-kotlin", "core-test-quark", "robolectric", "mockwebserver"]

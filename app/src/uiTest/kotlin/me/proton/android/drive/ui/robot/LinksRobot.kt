@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ import me.proton.android.drive.ui.extension.assertDownloadState
 import me.proton.android.drive.ui.extension.assertHasItemType
 import me.proton.android.drive.ui.extension.assertHasLayoutType
 import me.proton.android.drive.ui.extension.assertHasThumbnail
+import me.proton.android.drive.ui.extension.assertIsShared
 import me.proton.android.drive.ui.extension.doesNotExist
 import me.proton.android.drive.ui.extension.withItemType
 import me.proton.android.drive.ui.extension.withLayoutType
@@ -73,6 +74,13 @@ interface LinksRobot : Robot {
     fun clickOnFolder(name: String, layoutType: LayoutType = LayoutType.List): FilesTabRobot =
         clickOnItem(name, layoutType, ItemType.Folder, FilesTabRobot)
 
+    fun <T : Robot> clickOnFolder(
+        name: String,
+        layoutType: LayoutType = LayoutType.List,
+        goesTo: T,
+    ): T =
+        clickOnItem(name, layoutType, ItemType.Folder, goesTo)
+
     fun clickOnFolderToMove(name: String) =
         clickOnItem(name, LayoutType.List, ItemType.Folder, MoveToFolderRobot)
 
@@ -90,6 +98,7 @@ interface LinksRobot : Robot {
         layoutType: LayoutType? = null,
         itemType: ItemType? = null,
         hasThumbnail: Boolean? = null,
+        isShared: Boolean? = null,
         downloadState: SemanticsDownloadState? = null
     ) {
         linkWithName(name)
@@ -97,6 +106,7 @@ interface LinksRobot : Robot {
                 layoutType?.let { assertHasLayoutType(it) }
                 itemType?.let { assertHasItemType(it) }
                 hasThumbnail?.let { assertHasThumbnail(it) }
+                isShared?.let { assertIsShared(it) }
                 downloadState?.let { assertDownloadState(it) }
                 assertIsDisplayed()
             }

@@ -22,12 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import me.proton.android.drive.photos.presentation.state.PhotosItem
-import me.proton.android.drive.photos.presentation.ui.component.PhotosEmptyWithBackupTurnedOff
 import me.proton.android.drive.photos.presentation.viewevent.PhotosViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.PhotosViewState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -62,6 +62,7 @@ fun Photos(
     if (viewState.backupStatusViewState == null) {
         PhotosLoading(modifier)
     } else {
+        val localContext = LocalContext.current
         viewState.listContentState
             .onEmpty { state ->
                 if (viewState.showEmptyList == true) {
@@ -76,6 +77,9 @@ fun Photos(
                         onGetStorage = viewEvent.onGetStorage,
                         onResolveMissingFolder = viewEvent.onResolveMissingFolder,
                         onChangeNetwork = viewEvent.onChangeNetwork,
+                        onIgnoreBackgroundRestrictions = {
+                            viewEvent.onIgnoreBackgroundRestrictions(localContext)
+                        },
                     )
                 } else {
                     PhotosEmptyWithBackupTurnedOff(
@@ -109,6 +113,9 @@ fun Photos(
                     onGetStorage = viewEvent.onGetStorage,
                     onResolveMissingFolder = viewEvent.onResolveMissingFolder,
                     onChangeNetwork = viewEvent.onChangeNetwork,
+                    onIgnoreBackgroundRestrictions = {
+                        viewEvent.onIgnoreBackgroundRestrictions(localContext)
+                    },
                     isRefreshEnabled = viewState.isRefreshEnabled,
                     isRefreshing = viewState.listContentState.isRefreshing,
                     onRefresh = viewEvent.onRefresh,

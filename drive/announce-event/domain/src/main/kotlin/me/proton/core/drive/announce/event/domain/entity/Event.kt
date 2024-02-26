@@ -86,6 +86,7 @@ sealed class Event {
             FAILED_PHOTOS_UPLOAD_NOT_ALLOWED,
             PAUSED_DISABLED,
             UNCOMPLETED,
+            PAUSE_BACKGROUND_RESTRICTIONS,
         }
     }
 

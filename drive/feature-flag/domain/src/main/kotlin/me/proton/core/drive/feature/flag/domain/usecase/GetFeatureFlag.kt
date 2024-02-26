@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -46,7 +46,13 @@ class GetFeatureFlag @Inject constructor(
         refresh: FeatureFlagCachePolicy = refreshAfterDuration,
     ): FeatureFlag {
         if (refresh(featureFlagId)) {
-            featureFlagRepository.refresh(featureFlagId.userId).getOrNull()
+            featureFlagRepository.refresh(featureFlagId.userId).onFailure { error ->
+                CoreLogger.w(
+                    tag = LogTag.FEATURE_FLAG,
+                    e = error,
+                    message = "Cannot refresh feature flag: ${featureFlagId.id}",
+                )
+            }.getOrNull()
         }
         return coRunCatching {
             featureFlagRepository.getFeatureFlag(featureFlagId)

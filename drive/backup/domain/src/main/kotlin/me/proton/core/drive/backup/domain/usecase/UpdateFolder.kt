@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -17,20 +17,15 @@
  */
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
-import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.util.coRunCatching
 import javax.inject.Inject
 
 class UpdateFolder @Inject constructor(
     private val repository: BackupFolderRepository,
 ) {
-    suspend operator fun invoke(
-        userId: UserId,
-        bucketId: Int,
-        updateTime: TimestampS,
-    ) = coRunCatching {
-        repository.updateFolderUpdateTime(userId, bucketId, updateTime)
+    suspend operator fun invoke(backupFolder: BackupFolder) = coRunCatching {
+        repository.updateFolder(backupFolder)
     }
 }

@@ -27,10 +27,11 @@ import javax.inject.Inject
 class ResetFoldersUpdateTime @Inject constructor(
     private val folderRepository: BackupFolderRepository,
 ) {
-    suspend operator fun invoke(userId: UserId) = coRunCatching {
-        folderRepository.resetAllFoldersUpdateTime(userId)
-    }
     suspend operator fun invoke(folderId: FolderId) = coRunCatching {
         folderRepository.resetAllFoldersUpdateTime(folderId)
+    }
+
+    suspend operator fun invoke(userId: UserId) = coRunCatching {
+        folderRepository.resetAllFoldersUpdateTime(userId)
     }
 }

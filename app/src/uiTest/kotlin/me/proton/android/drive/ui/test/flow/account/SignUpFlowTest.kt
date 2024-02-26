@@ -19,7 +19,7 @@
 package me.proton.android.drive.ui.test.flow.account
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.WelcomeRobot
+import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.auth.test.MinimalSignUpExternalTests
 import me.proton.core.test.quark.v2.command.jailUnban
@@ -28,9 +28,7 @@ import org.junit.Before
 import kotlin.time.Duration.Companion.seconds
 
 @HiltAndroidTest
-class SignUpFlowTest : BaseTest(
-    showWelcomeScreen = true,
-), MinimalSignUpExternalTests {
+class SignUpFlowTest : BaseTest(), MinimalSignUpExternalTests {
 
     override val isCongratsDisplayed = true
 
@@ -46,6 +44,6 @@ class SignUpFlowTest : BaseTest(
     }
 
     override fun verifyAfter() {
-        WelcomeRobot.verify { robotDisplayed() }
+        FilesTabRobot.homeScreenDisplayed()
     }
 }

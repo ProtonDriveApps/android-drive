@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -122,7 +122,7 @@ class ScanFolderTest {
     @Test
     fun `Given no medias when sync all folders then should store nothing`() = runTest {
 
-        val result = scanFolder(userId, backupFolder, UploadFileLink.BACKUP_PRIORITY)
+        val result = scanFolder(backupFolder, UploadFileLink.BACKUP_PRIORITY)
 
         assertEquals(Result.success(backupFiles), result)
         assertEquals(
@@ -136,7 +136,7 @@ class ScanFolderTest {
         runTest {
             backupFiles = listOf(backupFile1, backupFile2)
 
-            val result = scanFolder(userId, backupFolder, UploadFileLink.BACKUP_PRIORITY)
+            val result = scanFolder(backupFolder, UploadFileLink.BACKUP_PRIORITY)
 
             assertEquals(
                 Result.success(
@@ -167,10 +167,9 @@ class ScanFolderTest {
                 backupFile1,
                 backupFile2
             )
-            folderRepository.updateFolderUpdateTime(userId, bucketId, updateTime)
+            folderRepository.updateFolder(backupFolder.copy(updateTime = updateTime))
 
             val result = scanFolder(
-                userId,
                 backupFolder.copy(updateTime = updateTime),
                 UploadFileLink.BACKUP_PRIORITY
             )

@@ -46,7 +46,7 @@ interface DriveTrashRepository {
         links: List<LinkId>,
     ): Map<LinkId, DataResult<Unit>>
 
-    suspend fun emptyTrash(shareId: ShareId)
+    suspend fun emptyTrash(userId: UserId, volumeId: VolumeId)
 
     suspend fun deleteItemsFromTrash(
         shareId: ShareId,

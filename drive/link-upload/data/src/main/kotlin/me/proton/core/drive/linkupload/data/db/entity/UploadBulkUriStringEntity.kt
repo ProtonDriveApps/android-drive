@@ -42,6 +42,7 @@ import me.proton.core.drive.base.data.db.Column.URI
     ],
     indices = [
         Index(value = [UPLOAD_BULK_ID]),
+        Index(value = [URI]),
     ]
 )
 data class UploadBulkUriStringEntity(

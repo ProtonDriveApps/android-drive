@@ -23,8 +23,10 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.base.domain.extension.onFailure
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.trash.domain.TrashManager
 import javax.inject.Inject
 
@@ -32,6 +34,7 @@ import javax.inject.Inject
 class DeleteFromTrash @Inject constructor(
     private val linkTrashRepository: LinkTrashRepository,
     private val trashManager: TrashManager,
+    private val getShare: GetShare,
 ) {
 
     suspend operator fun invoke(userId: UserId, linkId: LinkId) =
@@ -48,9 +51,11 @@ class DeleteFromTrash @Inject constructor(
         shareId: ShareId,
         linkIds: List<LinkId>,
     ) {
-        linkTrashRepository.insertOrUpdateTrashState(linkIds, TrashState.DELETING)
-        trashManager.delete(userId, shareId, linkIds).onFailure {
-            linkTrashRepository.insertOrUpdateTrashState(linkIds, TrashState.TRASHED)
+        getShare(shareId).toResult().getOrNull()?.let { share ->
+            linkTrashRepository.insertOrUpdateTrashState(share.volumeId, linkIds, TrashState.DELETING)
+            trashManager.delete(userId, shareId, linkIds).onFailure {
+                linkTrashRepository.insertOrUpdateTrashState(share.volumeId, linkIds, TrashState.TRASHED)
+            }
         }
     }
 }

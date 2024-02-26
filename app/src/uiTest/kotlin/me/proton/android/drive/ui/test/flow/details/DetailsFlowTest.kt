@@ -141,7 +141,7 @@ class DetailsFlowTest : AuthenticatedBaseTest() {
 
     private val sharedImage get() = LinkDetails(
         name = "shared.jpg",
-        uploadedBy = "${testUser.name}@${uiTestHelper.configurationProvider.host}",
+        uploadedBy = "${testUser.name}@${envConfig.host}",
         location = "/My files",
         modified = TimestampS().asHumanReadableString(),
         isShared = "Yes",
@@ -152,7 +152,7 @@ class DetailsFlowTest : AuthenticatedBaseTest() {
 
     private val sharedFolder get() = LinkDetails(
         name = "sharedFolder",
-        uploadedBy = "${testUser.name}@${uiTestHelper.configurationProvider.host}",
+        uploadedBy = "${testUser.name}@${envConfig.host}",
         location = "/My files",
         modified = TimestampS().asHumanReadableString(),
         isShared = "Yes",

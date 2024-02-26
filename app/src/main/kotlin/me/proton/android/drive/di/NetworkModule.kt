@@ -25,6 +25,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.network.DriveApiClient
+import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.network.data.client.ExtraHeaderProviderImpl
 import me.proton.core.network.data.di.AlternativeApiPins
@@ -50,9 +51,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideExtraHeaderProvider(): ExtraHeaderProvider = ExtraHeaderProviderImpl().apply {
-        val proxyToken: String? = BuildConfig.PROXY_TOKEN
-        proxyToken?.takeIfNotBlank()?.let { addHeaders("X-atlas-secret" to it) }
+    fun provideExtraHeaderProvider(
+        environmentConfig: EnvironmentConfiguration
+    ): ExtraHeaderProvider = ExtraHeaderProviderImpl().apply {
+        environmentConfig.proxyToken.takeIfNotBlank()?.let { addHeaders("X-atlas-secret" to it) }
     }
 
     @DohProviderUrls

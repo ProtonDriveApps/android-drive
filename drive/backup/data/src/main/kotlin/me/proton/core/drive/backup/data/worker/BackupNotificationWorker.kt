@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -33,9 +33,12 @@ import me.proton.core.drive.backup.domain.usecase.PostBackupNotification
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
+import me.proton.core.drive.base.domain.log.logId
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.util.kotlin.CoreLogger
 
 @HiltWorker
 class BackupNotificationWorker @AssistedInject constructor(
@@ -45,14 +48,26 @@ class BackupNotificationWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, workerParams) {
 
     private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
-    private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)))
-    private val folderId = FolderId(shareId, requireNotNull(inputData.getString(KEY_FOLDER_ID)))
 
     override suspend fun doWork(): Result {
-        postBackupNotification(folderId).onFailure { error ->
-            error.log(BACKUP, "Failed to update notification")
-        }
+        inputData.folderId
+            .onFailure { error ->
+                error.log(BACKUP, "Failed to get FolderId")
+            }
+            .onSuccess { folderId ->
+                CoreLogger.d(BACKUP, "Preparing notification for ${folderId.id.logId()}")
+                postBackupNotification(folderId).onFailure { error ->
+                    error.log(BACKUP, "Failed to update notification")
+                }
+            }
         return Result.success()
+    }
+
+    private val Data.folderId: kotlin.Result<FolderId> get() = coRunCatching {
+        FolderId(
+            shareId = ShareId(userId, requireNotNull(getString(KEY_SHARE_ID))),
+            id = requireNotNull(getString(KEY_FOLDER_ID)),
+        )
     }
 
     companion object {

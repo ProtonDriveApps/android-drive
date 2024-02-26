@@ -31,11 +31,13 @@ import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.trash.domain.notification.EmptyTrashExtra
@@ -48,6 +50,7 @@ class EmptyTrashWorker @AssistedInject constructor(
     private val driveTrashRepository: DriveTrashRepository,
     private val broadcastMessages: BroadcastMessages,
     private val updateEventAction: UpdateEventAction,
+    private val getShare: GetShare,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
@@ -57,9 +60,11 @@ class EmptyTrashWorker @AssistedInject constructor(
 
     @Suppress("TooGenericExceptionCaught")
     override suspend fun doWork(): Result {
-        try {
-            updateEventAction(shareId) { driveTrashRepository.emptyTrash(shareId) }
-            return Result.success()
+        return try {
+            getShare(shareId).toResult().getOrNull()?.let {  share ->
+                updateEventAction(userId, share.volumeId) { driveTrashRepository.emptyTrash(userId, share.volumeId) }
+            }
+            Result.success()
         } catch (e: Exception) {
             e.log(LogTag.TRASH)
             broadcastMessages(
@@ -68,7 +73,7 @@ class EmptyTrashWorker @AssistedInject constructor(
                 type = BroadcastMessage.Type.ERROR,
                 extra = EmptyTrashExtra(userId, shareId, e)
             )
-            return Result.failure()
+            Result.failure()
         }
     }
 

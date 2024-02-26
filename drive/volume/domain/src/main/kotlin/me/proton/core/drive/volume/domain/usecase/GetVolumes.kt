@@ -22,9 +22,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.flowOf
-import me.proton.core.drive.base.domain.repository.fetcher
 import me.proton.core.drive.base.domain.repository.listFetcherEmitOnEmpty
-import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.repository.VolumeRepository
 import javax.inject.Inject
 
@@ -37,7 +35,7 @@ class GetVolumes @Inject constructor(
     ) =
         refresh.transform { shouldRefresh ->
             if (shouldRefresh) {
-                listFetcherEmitOnEmpty<Volume> { volumeRepository.fetchVolumes(userId) }
+                listFetcherEmitOnEmpty { volumeRepository.fetchVolumes(userId) }
             }
             emitAll(volumeRepository.getVolumesFlow(userId))
         }

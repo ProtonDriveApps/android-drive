@@ -22,6 +22,7 @@ import android.app.Application
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.data.manager.BackupPermissionsManagerImpl
 import me.proton.core.drive.backup.data.repository.BackupConfigurationRepositoryImpl
@@ -42,6 +43,7 @@ import me.proton.core.drive.backup.domain.repository.BucketRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.IsBackgroundRestricted
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myDrive
@@ -106,6 +108,9 @@ class GetBackupStateTest {
                 override val baseUrl = ""
                 override val appVersionHeader = ""
                 override val backupDefaultBucketName = "Camera"
+            },
+            isBackgroundRestricted = object : IsBackgroundRestricted {
+                override fun invoke(): Flow<Boolean> = flowOf(false)
             },
             getConfiguration = GetConfiguration(BackupConfigurationRepositoryImpl(database.db)),
         )

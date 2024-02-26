@@ -52,5 +52,57 @@ interface LinkTrashDatabase : Database {
                     """.trimIndent())
             }
         }
+        val MIGRATION_1 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        DROP TABLE `LinkTrashStateEntity`
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        CREATE TABLE IF NOT EXISTS `LinkTrashStateEntity` (
+                            `${Column.USER_ID}` TEXT NOT NULL,
+                            `${Column.VOLUME_ID}` TEXT NOT NULL,
+                            `${Column.SHARE_ID}` TEXT NOT NULL,
+                            `${Column.LINK_ID}` TEXT NOT NULL,
+                            `${Column.STATE}` TEXT NOT NULL,
+                            PRIMARY KEY(`${Column.USER_ID}`, `${Column.SHARE_ID}`, `${Column.LINK_ID}`),
+                            FOREIGN KEY(`${Column.USER_ID}`, `${Column.SHARE_ID}`, `${Column.LINK_ID}`)
+                                REFERENCES `LinkEntity`(`${Column.USER_ID}`, `${Column.SHARE_ID}`, `${Column.ID}`)
+                                ON UPDATE NO ACTION ON DELETE CASCADE)
+                    """.trimIndent())
+                database.execSQL(
+                    """
+                        CREATE INDEX IF NOT EXISTS `index_LinkTrashStateEntity_user_id` ON `LinkTrashStateEntity` (`user_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        CREATE INDEX IF NOT EXISTS `index_LinkTrashStateEntity_volume_id` ON `LinkTrashStateEntity` (`volume_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        CREATE INDEX IF NOT EXISTS `index_LinkTrashStateEntity_share_id` ON `LinkTrashStateEntity` (`share_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        CREATE INDEX IF NOT EXISTS `index_LinkTrashStateEntity_link_id` ON `LinkTrashStateEntity` (`link_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        CREATE INDEX IF NOT EXISTS `index_LinkTrashStateEntity_state` ON `LinkTrashStateEntity` (`state`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        CREATE INDEX IF NOT EXISTS `index_LinkTrashStateEntity_user_id_share_id_link_id` ON `LinkTrashStateEntity` (`user_id`, `share_id`, `link_id`)
+                    """.trimIndent()
+                )
+            }
+        }
     }
 }

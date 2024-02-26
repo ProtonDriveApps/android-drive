@@ -30,6 +30,7 @@ import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.challenge.data.db.ChallengeDatabase
 import me.proton.core.drive.backup.data.db.BackupDatabase
+import me.proton.core.drive.device.data.db.DeviceDatabase
 import me.proton.core.drive.drivelink.data.db.DriveLinkDatabase
 import me.proton.core.drive.drivelink.download.data.db.DriveLinkDownloadDatabase
 import me.proton.core.drive.drivelink.offline.data.db.DriveLinkOfflineDatabase
@@ -229,4 +230,7 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideMediaStoreVersionDatabase(appDatabase: DriveDatabase): MediaStoreVersionDatabase
+
+    @Binds
+    abstract fun provideDeviceDatabase(appDatabase: DriveDatabase): DeviceDatabase
 }

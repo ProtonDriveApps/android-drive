@@ -32,8 +32,10 @@ import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.ScanFolderRepository
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import javax.inject.Inject
 
@@ -82,26 +84,30 @@ private fun Cursor.createMedia(backupFolder: BackupFolder, uri: Uri): List<Backu
         val size = getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE)
         val mimeType = getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE)
         while (moveToNext()) {
-            listOfAllImages.add(
-                BackupFile(
-                    bucketId = backupFolder.bucketId,
-                    folderId = backupFolder.folderId,
-                    uriString = Uri.withAppendedPath(uri, getString(id))?.let { uriMedia ->
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                            MediaStore.setRequireOriginal(uriMedia)
-                        } else {
-                            uriMedia
-                        }
-                    }.toString(),
-                    mimeType = getString(mimeType),
-                    name = getString(displayName),
-                    hash = null,
-                    size = getInt(size).bytes,
-                    state = BackupFileState.IDLE,
-                    date = TimestampS(getInt(dateAdded).toLong()),
-                    lastModified = TimestampS(getInt(dateModified).toLong()),
+            runCatching {
+                listOfAllImages.add(
+                    BackupFile(
+                        bucketId = backupFolder.bucketId,
+                        folderId = backupFolder.folderId,
+                        uriString = Uri.withAppendedPath(uri, getString(id))?.let { uriMedia ->
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                                MediaStore.setRequireOriginal(uriMedia)
+                            } else {
+                                uriMedia
+                            }
+                        }.toString(),
+                        mimeType = getString(mimeType),
+                        name = getString(displayName),
+                        hash = null,
+                        size = getInt(size).bytes,
+                        state = BackupFileState.IDLE,
+                        date = TimestampS(getInt(dateAdded).toLong()),
+                        lastModified = TimestampS(getInt(dateModified).toLong()),
+                    )
                 )
-            )
+            }.onFailure { error ->
+                error.log(BACKUP, "Cannot read row at position: $position, count: $count")
+            }
         }
     }
     return listOfAllImages

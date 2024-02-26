@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -16,6 +16,9 @@
  * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import com.android.build.api.dsl.ApplicationBuildType
+import com.android.build.api.dsl.ApplicationProductFlavor
+import configuration.extensions.protonEnvironment
 import java.util.Properties
 
 plugins {
@@ -24,6 +27,7 @@ plugins {
     id("kotlin-parcelize")
     kotlin("android")
     kotlin("kapt")
+    id("me.proton.core.gradle-plugins.environment-config") version "1.3.0"
 }
 
 base {
@@ -87,6 +91,10 @@ driveModule(
     androidTestUtil(libs.androidx.test.orchestrator)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
+
+    // Configuration
+    releaseImplementation(libs.core.config.dagger.staticDefaults)
+    debugImplementation(libs.core.config.dagger.contentResolver)
 }
 
 val privateProperties = Properties().apply {
@@ -117,22 +125,27 @@ android {
     }
 
     val gitHash = "git rev-parse --short HEAD".runCommand(workingDir = rootDir)
-    defaultConfig {
+    val proxyToken = privateProperties.getProperty("PROXY_TOKEN", "")
 
-        buildConfigField("String", "HOST", "\"proton.me\"")
-        buildConfigField("String", "BASE_URL", "\"https://drive-api.proton.me/\"")
+    defaultConfig {
+        protonEnvironment {
+            host = "proton.me"
+            apiPrefix = "drive-api"
+
+            // Should be replaced with 'userProxy=true' after TPE-511 is fixed
+            buildConfigField("String", "proxyToken", "\"$proxyToken\"")
+        }
+
         buildConfigField("String", "APP_VERSION_HEADER", "\"android-drive@$versionName\"")
         buildConfigField("String", "FLAVOR_DEVELOPMENT", "\"dev\"")
-        buildConfigField("String", "FLAVOR_DYNAMIC", "\"dynamic\"")
         buildConfigField("String", "FLAVOR_ALPHA", "\"alpha\"")
         buildConfigField("String", "FLAVOR_BETA", "\"beta\"")
         buildConfigField("String", "FLAVOR_PRODUCTION", "\"prod\"")
         buildConfigField("String", "SENTRY_DSN", "\"https://28f8df131f7a4ca4940e86972ba5038f@drive-api.proton.me/core/v4/reports/sentry/11\"")
         buildConfigField("String", "ACCOUNT_SENTRY_DSN", "\"${System.getenv("ACCOUNT_SENTRY_DSN").orEmpty()}\"")
         buildConfigField("String", "GIT_HASH", "\"$gitHash\"")
-        buildConfigField("String", "PROXY_TOKEN", "\"${privateProperties.getProperty("PROXY_TOKEN")}\"")
         testInstrumentationRunner = "me.proton.android.drive.ui.HiltTestRunner"
-
+        testInstrumentationRunnerArguments["proxyToken"] = proxyToken
     }
     flavorDimensions.add("default")
     productFlavors {
@@ -140,28 +153,23 @@ android {
             versionCode = 1
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev ($gitHash)"
+            isDefault = true
 
-            val host = "proton.black"
+            val dynamicEnvironment = privateProperties.getProperty("HOST", "proton.black")
 
-            buildConfigField("String", "HOST", "\"$host\"")
-            buildConfigField("String", "BASE_URL", "\"https://drive.$host/api/\"")
-        }
-        create("dynamic") {
-            applicationIdSuffix = ".dynamic"
-            versionNameSuffix = "-dynamic ($gitHash)"
-
-            val host = privateProperties.getProperty("HOST")
-
-            if (host.isNullOrEmpty()) {
-                logger.error("HOST variable is not set! \n" +
-                        "Make sure private.properties file exists and has HOST variable set " +
-                        "eg. HOST=proton.me")
+            protonEnvironment {
+                host = dynamicEnvironment
+                apiPrefix = "drive"
+                baseUrl = "https://$apiHost/api"
             }
 
-            buildConfigField("String", "HOST", "\"$host\"")
-            buildConfigField("String", "BASE_URL", "\"https://drive.$host/api/\"")
-
             testInstrumentationRunnerArguments["clearPackageData"] = "true"
+            testInstrumentationRunnerArguments["host"] = dynamicEnvironment
+
+            // If running on gitlab CI
+            if (!System.getenv("CI_SERVER_NAME").isNullOrEmpty()) {
+                generateEnvFile(buildTypes.getByName("debug"))
+            }
         }
         create("alpha") {
             versionNameSuffix = "-alpha%02d".format(lastAlpha + 1)
@@ -190,10 +198,6 @@ android {
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
     }
-
-    testOptions {
-        execution = "ANDROIDX_TEST_ORCHESTRATOR"
-    }
 }
 
 tasks.create("publishGeneratedReleaseNotes") {
@@ -218,3 +222,40 @@ tasks.create("printGeneratedChangelog") {
 }
 
 configureJacoco(flavor = "dev")
+
+fun ApplicationProductFlavor.generateEnvFile(buildType: ApplicationBuildType) {
+    val apkNameBase = "${Config.archivesBaseName}-${name}-${buildType.name}"
+    val commitRefName = System.getenv("CI_COMMIT_REF_NAME")
+    val commitShortSha = System.getenv("CI_COMMIT_SHORT_SHA")
+
+    val gcloudBucket = "gs://test-lab-u7cps962nd0a4-kx5m7jhd4pki6"
+    val resultsDir = "$commitRefName/$commitShortSha"
+    val localPath = "app/build/outputs/apk"
+
+    val apkName = "${apkNameBase}.apk"
+    val testApkName = "${apkNameBase}-androidTest.apk"
+
+    val localApkPath = "$localPath/${name}/${buildType.name}/$apkName"
+    val localTestApkPath = "$localPath/androidTest/${name}/${buildType.name}/$testApkName"
+    val remoteApkPath = "$gcloudBucket/$resultsDir/$apkName"
+    val remoteTestApkPath = "$gcloudBucket/$resultsDir/$testApkName"
+
+    val variables = mapOf(
+        "ARCHIVES_VERSION" to Config.versionName,
+        "LOCAL_APK" to localApkPath,
+        "LOCAL_TEST_APK" to localTestApkPath,
+        "GCLOUD_BUCKET_URL" to gcloudBucket,
+        "FIREBASE_RESULT_ROOT" to resultsDir,
+        "REMOTE_APK" to remoteApkPath,
+        "REMOTE_TEST_APK" to remoteTestApkPath,
+    )
+
+    file(layout.buildDirectory.file("variables.env")).apply {
+        mkdirs()
+        delete()
+        createNewFile()
+        variables.forEach {
+            appendText("${it.key}=${it.value}\n")
+        }
+    }
+}

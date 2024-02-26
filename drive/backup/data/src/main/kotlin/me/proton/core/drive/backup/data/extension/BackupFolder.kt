@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -33,5 +33,6 @@ fun BackupFolder.toEntity() = BackupFolderEntity(
     shareId = folderId.shareId.id,
     parentId = folderId.id,
     bucketId = bucketId,
-    updateTime = updateTime?.value
+    updateTime = updateTime?.value,
+    syncTime = syncTime?.value,
 )

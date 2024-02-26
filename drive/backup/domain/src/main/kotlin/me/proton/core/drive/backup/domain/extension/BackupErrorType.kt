@@ -30,4 +30,6 @@ fun BackupErrorType.toEventBackupState() = when (this) {
     BackupErrorType.DRIVE_STORAGE -> Event.Backup.BackupState.FAILED_DRIVE_STORAGE
     BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED,
     -> Event.Backup.BackupState.FAILED_PHOTOS_UPLOAD_NOT_ALLOWED
+
+    BackupErrorType.BACKGROUND_RESTRICTIONS -> Event.Backup.BackupState.PAUSE_BACKGROUND_RESTRICTIONS
 }

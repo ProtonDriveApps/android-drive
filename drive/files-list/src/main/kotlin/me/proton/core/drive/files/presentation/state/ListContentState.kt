@@ -24,7 +24,7 @@ import androidx.annotation.StringRes
 sealed class ListContentState {
     abstract val isRefreshing: Boolean
 
-    object Loading : ListContentState() {
+    data object Loading : ListContentState() {
         override val isRefreshing = false
     }
 

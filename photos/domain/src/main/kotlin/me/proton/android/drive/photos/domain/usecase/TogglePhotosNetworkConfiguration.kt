@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.photos.domain.usecase
 
+import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.usecase.ToggleNetworkConfiguration
 import me.proton.core.drive.base.domain.extension.firstSuccessOrError
@@ -27,12 +28,15 @@ import javax.inject.Inject
 
 class TogglePhotosNetworkConfiguration @Inject constructor(
     private val toggleNetworkConfiguration: ToggleNetworkConfiguration,
+    private val photosDefaultConfigurationProvider: PhotosDefaultConfigurationProvider,
     private val getPhotosDriveLink: GetPhotosDriveLink,
 ) {
 
     suspend operator fun invoke(userId: UserId) = coRunCatching {
         val photoRootId = getPhotosDriveLink(userId)
             .firstSuccessOrError().toResult().getOrThrow().id
-        toggleNetworkConfiguration(photoRootId).getOrThrow()
+        toggleNetworkConfiguration(photoRootId) { folderId ->
+            photosDefaultConfigurationProvider.get(folderId)
+        }.getOrThrow()
     }
 }

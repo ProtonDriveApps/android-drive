@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -37,6 +37,7 @@ object ShareRobot : NavigationBarRobot, Robot {
     private val expirationDateToggle get() = node.withTag(PrivacySettingsTestTag.expirationDateSwitch)
     private val expirationDateTextField get() = node.withTag(PrivacySettingsTestTag.expirationDateTextField)
     private val saveButton get() = node.withText(I18N.string.common_save_action)
+    private val stopSharingButton get() = node.withText(I18N.string.common_stop_sharing_action)
     private val copyPasswordAction get() = node.withText(I18N.string.shared_link_action_copy_password)
     private val accessibilityDescription get() = node.withTag(SharedDriveLinkTestTag.accessibilityDescription)
     private val messageNotificationPasswordCopiedToClipboard
@@ -79,6 +80,10 @@ object ShareRobot : NavigationBarRobot, Robot {
 
     fun clickExpirationDateTextField() = expirationDateTextField
         .clickTo(PickerRobot)
+
+    fun clickStopSharing() = ConfirmStopSharingRobot.apply {
+        stopSharingButton.scrollTo().click()
+    }
 
     fun passwordToggleIsOn() = passwordToggle.interaction.assertIsOn()
     fun passwordToggleIsOff() = passwordToggle.interaction.assertIsOff()

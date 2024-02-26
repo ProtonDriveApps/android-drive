@@ -28,6 +28,7 @@ import me.proton.core.drive.backup.data.db.dao.BackupErrorDao
 import me.proton.core.drive.backup.data.db.dao.BackupFileDao
 import me.proton.core.drive.backup.data.db.dao.BackupFolderDao
 import me.proton.core.drive.base.data.db.Column
+import me.proton.core.drive.base.data.db.Column.SYNC_TIME
 
 interface BackupDatabase : Database {
     val backupFileDao: BackupFileDao
@@ -330,7 +331,7 @@ interface BackupDatabase : Database {
                         BackupFileEntity.creation_time, 
                         BackupFileEntity.priority, 
                         BackupFileEntity.attempts 
-                    FROM `BackupFileEntity` LEFT JOIN BackupFolderEntity 
+                    FROM `BackupFileEntity` INNER JOIN BackupFolderEntity
                     ON BackupFolderEntity.user_id = BackupFileEntity.user_id AND
                         BackupFolderEntity.bucket_id = BackupFileEntity.bucket_id
                     """.trimIndent()
@@ -350,7 +351,7 @@ interface BackupDatabase : Database {
                         BackupFolderEntity.parent_id, 
                         BackupErrorEntity.error, 
                         BackupErrorEntity.retryable 
-                    FROM `BackupErrorEntity` LEFT JOIN BackupFolderEntity 
+                    FROM `BackupErrorEntity` INNER JOIN BackupFolderEntity
                     ON BackupFolderEntity.user_id = BackupErrorEntity.user_id
                     """.trimIndent()
                 )
@@ -414,6 +415,16 @@ interface BackupDatabase : Database {
                     FOREIGN KEY(`user_id`, `share_id`, `parent_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) 
                     ON UPDATE NO ACTION ON DELETE CASCADE 
                     )
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_7 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    ALTER TABLE `BackupFolderEntity` ADD COLUMN $SYNC_TIME INTEGER DEFAULT NULL
                     """.trimIndent()
                 )
             }

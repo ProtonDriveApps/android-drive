@@ -46,10 +46,6 @@ class TrashApiDataSource @Inject constructor(
         }.valueOrThrow
 
     @Throws(ApiException::class)
-    suspend fun emptyTrash(shareId: ShareId) =
-        apiProvider.get<DriveTrashApi>(shareId.userId).invoke { emptyTrash(shareId.id) }.valueOrThrow
-
-    @Throws(ApiException::class)
     suspend fun deleteItemsFromTrash(shareId: ShareId, linkIds: List<String>) =
         apiProvider.get<DriveTrashApi>(shareId.userId).invoke {
             deleteItemsFromTrash(shareId.id, LinkIDsRequest(linkIds))

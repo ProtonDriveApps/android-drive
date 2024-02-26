@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -19,9 +19,9 @@
 package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.crypto.common.pgp.hmacSha256
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.ScanFolderRepository
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.base.UseHashKey
 import javax.inject.Inject
@@ -33,7 +33,6 @@ class ScanFolder @Inject constructor(
     private val useHashKey: UseHashKey,
 ) {
     suspend operator fun invoke(
-        userId: UserId,
         backupFolder: BackupFolder,
         uploadPriority: Long,
     ) = coRunCatching {
@@ -48,9 +47,10 @@ class ScanFolder @Inject constructor(
         setFiles(files).getOrThrow()
         if (files.isNotEmpty()) {
             updateFolder(
-                userId = userId,
-                bucketId = backupFolder.bucketId,
-                updateTime = files.maxOf { media -> media.date }
+                backupFolder.copy(
+                    updateTime = files.maxOf { media -> media.date },
+                    syncTime = TimestampS(),
+                )
             ).getOrThrow()
         }
         files

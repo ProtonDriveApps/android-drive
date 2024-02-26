@@ -37,6 +37,13 @@ interface UploadBulkDao {
     @Insert
     suspend fun insert(uploadBulkUriStringEntities: List<UploadBulkUriStringEntity>)
 
+    @Query(
+        """
+            DELETE FROM UploadBulkUriStringEntity WHERE upload_bulk_id = :uploadBulkId AND uri IN(:uriStrings)
+        """
+    )
+    suspend fun delete(uploadBulkId: Long, uriStrings: List<String>)
+
     @Transaction
     @Query(
         """

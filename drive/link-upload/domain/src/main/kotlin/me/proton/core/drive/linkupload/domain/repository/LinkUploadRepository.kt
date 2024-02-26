@@ -170,5 +170,9 @@ interface LinkUploadRepository {
 
     suspend fun insertUploadBulk(uploadBulk: UploadBulk): UploadBulk
 
+    suspend fun getUploadBulk(uploadBulkId: Long): UploadBulk?
+
     suspend fun removeUploadBulk(uploadBulkId: Long): UploadBulk?
+
+    suspend fun removeUploadBulkUriStrings(uploadBulkId: Long, uriStrings: List<String>)
 }

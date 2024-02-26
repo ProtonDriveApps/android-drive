@@ -170,6 +170,7 @@ class UploadToViewModel @Inject constructor(
                     exitApp()
                 }
             }.onFailure { error ->
+                error.log(LogTag.UPLOAD)
                 cleanupOnFailure(copiedUris)
                 when (error) {
                     is NotEnoughSpaceException -> navigateToStorageFull()
@@ -177,7 +178,6 @@ class UploadToViewModel @Inject constructor(
                         I18N.string.in_app_notification_importing_file_already_exists
                     )
                     else -> with (error) {
-                        log(LogTag.UPLOAD)
                         showError(getDefaultMessage(appContext, configurationProvider.useExceptionMessage))
                     }
                 }

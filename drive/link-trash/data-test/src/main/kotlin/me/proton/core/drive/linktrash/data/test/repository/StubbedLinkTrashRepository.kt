@@ -33,7 +33,6 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
@@ -46,7 +45,7 @@ class StubbedLinkTrashRepository @Inject constructor() : LinkTrashRepository {
     val state: Map<List<LinkId>, TrashState>
         get() = stateFlow.value
 
-    override suspend fun insertOrUpdateTrashState(linkIds: List<LinkId>, trashState: TrashState) {
+    override suspend fun insertOrUpdateTrashState(volumeId: VolumeId, linkIds: List<LinkId>, trashState: TrashState) {
         stateFlow.value = stateFlow.value + (linkIds to trashState)
     }
 
@@ -54,13 +53,9 @@ class StubbedLinkTrashRepository @Inject constructor() : LinkTrashRepository {
         stateFlow.value = stateFlow.value.filterKeys { it != linkIds }
     }
 
-    override suspend fun markTrashedLinkAsDeleted(shareId: ShareId) {
-        stateFlow.value = stateFlow.value.map { (linkIds, trashState) ->
-            if (linkIds.any { linkId -> linkId.shareId == shareId }) {
-                linkIds to TrashState.DELETED
-            } else {
-                linkIds to trashState
-            }
+    override suspend fun markTrashedLinkAsDeleted(userId: UserId, volumeId: VolumeId) {
+        stateFlow.value = stateFlow.value.map { (linkIds, _) ->
+            linkIds to TrashState.DELETED
         }.toMap()
     }
 

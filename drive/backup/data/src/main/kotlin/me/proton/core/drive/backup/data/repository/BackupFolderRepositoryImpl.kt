@@ -27,7 +27,6 @@ import me.proton.core.drive.backup.data.extension.toBackupFolder
 import me.proton.core.drive.backup.data.extension.toEntity
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
-import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import javax.inject.Inject
@@ -88,12 +87,8 @@ class BackupFolderRepositoryImpl @Inject constructor(
             folderId = folderId.id,
         ).distinctUntilChanged()
 
-    override suspend fun updateFolderUpdateTime(
-        userId: UserId,
-        bucketId: Int,
-        updateTime: TimestampS,
-    ) {
-        db.backupFolderDao.updateUpdateTime(userId, bucketId, updateTime.value)
+    override suspend fun updateFolder(backupFolder: BackupFolder) {
+        db.backupFolderDao.update(backupFolder.toEntity())
     }
 
     override suspend fun resetAllFoldersUpdateTime(userId: UserId) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.BUCKET_ID
 import me.proton.core.drive.base.data.db.Column.PARENT_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
+import me.proton.core.drive.base.data.db.Column.SYNC_TIME
 import me.proton.core.drive.base.data.db.Column.UPDATE_TIME
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.link.data.db.entity.LinkEntity
@@ -66,4 +67,6 @@ data class BackupFolderEntity(
     val bucketId: Int,
     @ColumnInfo(name = UPDATE_TIME)
     val updateTime: Long?,
+    @ColumnInfo(name = SYNC_TIME, defaultValue = "NULL")
+    val syncTime: Long?,
 )

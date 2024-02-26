@@ -80,28 +80,6 @@
 
     <!-- endregion -->
 
-    <!-- region Welcome -->
-    <!--
-        Variable %1$s is an application name
-        Example:
-            "Welcome to Proton Drive!"
-    -->
-    <string name="title_welcome_to">Welcome to %1s!</string>
-    <string name="welcome_to_description">The creators of Proton Mail bring you end-to-end encrypted cloud storage from Switzerland.</string>
-    <string name="title_welcome_files">All files at your fingertips</string>
-    <string name="welcome_files_description">Upload and view your files on the go.\nZero-access technology guarantees only you have access.</string>
-    <string name="title_welcome_sharing">Secure sharing</string>
-    <string name="welcome_sharing_description">Add password protection to make your shared files even more secure.</string>
-    <string name="title_welcome_bonus">Get up to 1 GB total storage</string>
-    <string name="welcome_bonus_description">Just do the following within 30 days of creating your account:</string>
-    <string name="title_welcome_private_space">Enjoy your private space</string>
-    <string name="welcome_private_space_description">Make your cloud storage your own. Add personal photos, IDs cards and anything that needs to stay private.</string>
-    <string name="welcome_get_started_action">Get started</string>
-    <string name="welcome_bonus_description_action_upload_file">Upload a file</string>
-    <string name="welcome_bonus_description_action_create_share_url">Create a share link</string>
-    <string name="welcome_bonus_description_action_recovery_method">Set a recovery method</string>
-    <!-- endregion -->
-
     <!-- region Notification -->
     <string name="notification_content_title_storage_full">Storage full</string>
     <!--
@@ -178,6 +156,7 @@
     <string name="notification_content_text_backup_failed_wifi_connectivity">Waiting for Wi-Fi</string>
     <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Backup is not allowed</string>
     <string name="notification_content_text_backup_paused_disabled">Backup was disabled</string>
+    <string name="notification_content_text_backup_paused_background_restrictions">Backup cannot run in background</string>
 
     <string name="notification_content_title_download_complete">Download complete</string>
     <string name="notification_content_title_forced_sign_out">Please log in</string>

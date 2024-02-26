@@ -25,6 +25,7 @@ data class PhotosBackupViewState(
     val title: String,
     val backup: PhotosBackupOption,
     val mobileData: PhotosBackupOption,
+    val ignoringBatteryOptimizations: PhotosBackupOption,
 )
 
 @Immutable
@@ -32,4 +33,5 @@ data class PhotosBackupOption(
     val title: String,
     val checked: Boolean,
     val enabled: Boolean = true,
+    val description: String? = null,
 )

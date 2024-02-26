@@ -50,14 +50,4 @@ interface UiSettingsRepository {
      * Update the [ThemeStyle] for a given [userId]
      */
     suspend fun updateThemeStyle(userId: UserId, themeStyle: ThemeStyle)
-
-    /**
-     * Retrieves setting if welcome flow screen has been shown to the user
-     */
-    suspend fun hasShownWelcome(): Boolean
-
-    /**
-     * Update welcome flow setting
-     */
-    suspend fun updateWelcomeShown(hasShown: Boolean)
 }

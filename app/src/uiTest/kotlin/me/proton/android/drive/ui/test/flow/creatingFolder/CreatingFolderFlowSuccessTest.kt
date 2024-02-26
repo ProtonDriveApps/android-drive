@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -46,9 +46,7 @@ class CreatingFolderFlowSuccessTest : AuthenticatedBaseTest() {
             .clickMove()
             .clickAddFolderToRoot()
             .typeFolderName(newFolderName)
-            .clickCreate()
-
-        MoveToFolderRobot
+            .clickCreate(MoveToFolderRobot)
             .dismissFolderCreateSuccessGrowler(newFolderName, MoveToFolderRobot)
             .scrollToItemWithName(newFolderName) // Can be removed after DRVAND-569 is fixed
             .verify {
@@ -83,9 +81,7 @@ class CreatingFolderFlowSuccessTest : AuthenticatedBaseTest() {
     private fun createFolder(folderName: String) {
         CreateFolderRobot
             .typeFolderName(folderName)
-            .clickCreate()
-
-        FilesTabRobot
+            .clickCreate(FilesTabRobot)
             .dismissFolderCreateSuccessGrowler(folderName, FilesTabRobot)
             .verify {
                 itemIsDisplayed(name = folderName)

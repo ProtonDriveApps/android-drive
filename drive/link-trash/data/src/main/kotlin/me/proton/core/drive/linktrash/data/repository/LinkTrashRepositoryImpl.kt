@@ -40,9 +40,9 @@ class LinkTrashRepositoryImpl @Inject constructor(
     private val db: LinkTrashDatabase,
 ) : LinkTrashRepository {
 
-    override suspend fun insertOrUpdateTrashState(linkIds: List<LinkId>, trashState: TrashState) =
+    override suspend fun insertOrUpdateTrashState(volumeId: VolumeId, linkIds: List<LinkId>, trashState: TrashState) =
         db.linkTrashDao.insertOrUpdate(*linkIds.map { linkId ->
-            trashState.toLinkTrashStateEntity(linkId.shareId, linkId.id)
+            trashState.toLinkTrashStateEntity(volumeId, linkId.shareId, linkId.id)
         }.toTypedArray())
 
     override suspend fun removeTrashState(linkIds: List<LinkId>) = linkIds
@@ -51,8 +51,8 @@ class LinkTrashRepositoryImpl @Inject constructor(
             db.linkTrashDao.delete(shareId.userId, shareId.id, ids)
         }
 
-    override suspend fun markTrashedLinkAsDeleted(shareId: ShareId) {
-        db.linkTrashDao.delete(shareId.userId, shareId.id)
+    override suspend fun markTrashedLinkAsDeleted(userId: UserId, volumeId: VolumeId) {
+        db.linkTrashDao.delete(userId, volumeId.id)
     }
 
     override fun hasTrashContent(userId: UserId, volumeId: VolumeId) =

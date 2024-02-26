@@ -19,6 +19,7 @@
 package me.proton.core.drive.backup.domain.usecase
 
 import kotlinx.coroutines.flow.firstOrNull
+import me.proton.core.drive.backup.domain.entity.BackupConfiguration
 import me.proton.core.drive.backup.domain.entity.BackupNetworkType
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -28,8 +29,12 @@ class ToggleNetworkConfiguration @Inject constructor(
     private val getConfiguration: GetConfiguration,
     private val updateConfiguration: UpdateConfiguration,
 ) {
-    suspend operator fun invoke(folderId: FolderId) = coRunCatching {
-        getConfiguration(folderId).firstOrNull()?.let { configuration ->
+    suspend operator fun invoke(
+        folderId: FolderId,
+        defaultConfiguration: (FolderId) -> BackupConfiguration? = { null },
+    ) = coRunCatching {
+        (getConfiguration(folderId).firstOrNull()
+            ?: defaultConfiguration(folderId))?.let { configuration ->
             updateConfiguration(
                 configuration.copy(
                     networkType = when (configuration.networkType) {

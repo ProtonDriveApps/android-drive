@@ -44,6 +44,7 @@ import me.proton.android.drive.telemetry.TelemetryEventHandler
 import me.proton.android.drive.usecase.GetDocumentsProviderRootsImpl
 import me.proton.android.drive.usecase.notification.UploadNotificationEventWorkerNotifier
 import me.proton.core.account.domain.entity.AccountType
+import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.domain.entity.AppStore
 import me.proton.core.domain.entity.Product
 import me.proton.core.drive.backup.domain.repository.FindDuplicatesRepository
@@ -70,8 +71,8 @@ object ApplicationModule {
 
     @Provides
     @Singleton
-    fun provideBuildConfigurationProvider() =
-        BuildConfigurationProvider()
+    fun provideBuildConfigurationProvider(envConfig: EnvironmentConfiguration) =
+        BuildConfigurationProvider(envConfig)
 
     @Provides
     @Singleton

@@ -92,7 +92,6 @@ import me.proton.android.drive.ui.screen.SettingsScreen
 import me.proton.android.drive.ui.screen.SigningOutScreen
 import me.proton.android.drive.ui.screen.TrashScreen
 import me.proton.android.drive.ui.screen.UploadToScreen
-import me.proton.android.drive.ui.screen.WelcomeScreen
 import me.proton.android.drive.ui.viewmodel.ConfirmStopSyncFolderDialogViewModel
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
@@ -196,7 +195,6 @@ fun AppNavGraph(
         modifier = Modifier.fillMaxSize()
     ) {
         addLauncher(navController)
-        addWelcome(navController)
         addSignOutConfirmationDialog(navController)
         addSigningOut()
         addHome(
@@ -224,6 +222,14 @@ fun AppNavGraph(
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addHomePhotos(
+            navController = navController,
+            homeNavController = homeNavController,
+            deepLinkBaseUrl = deepLinkBaseUrl,
+            navigateToBugReport = navigateToBugReport,
+            navigateToSubscription = navigateToSubscription,
+            onDrawerStateChanged = onDrawerStateChanged,
+        )
+        addHomeComputers(
             navController = navController,
             homeNavController = homeNavController,
             deepLinkBaseUrl = deepLinkBaseUrl,
@@ -275,27 +281,6 @@ fun NavGraphBuilder.addLauncher(navController: NavHostController) = composable(
                 }
             }
         },
-        navigateToWelcome = { userId ->
-            navController.runFromRoute(route = Screen.Launcher.route) {
-                navController.navigate(Screen.Welcome(userId))  {
-                    popUpTo(Screen.Launcher.route) { inclusive = true }
-                }
-            }
-        }
-    )
-}
-
-@ExperimentalAnimationApi
-fun NavGraphBuilder.addWelcome(navController: NavHostController) = composable(
-    route = Screen.Welcome.route,
-    arguments = listOf(navArgument(Screen.Welcome.USER_ID) { type = NavType.StringType }),
-) {
-    WelcomeScreen(
-        navigateToLauncher = {
-            navController.navigate(Screen.Launcher.route) {
-                popUpTo(Screen.Welcome.route) { inclusive = true }
-            }
-        }
     )
 }
 
@@ -730,6 +715,26 @@ fun NavGraphBuilder.addHomePhotos(
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Photos.route,
     startDestination = Screen.Photos.route,
+    navigateToBugReport = navigateToBugReport,
+    navigateToSubscription = navigateToSubscription,
+    onDrawerStateChanged = onDrawerStateChanged
+)
+
+@ExperimentalAnimationApi
+@ExperimentalCoroutinesApi
+fun NavGraphBuilder.addHomeComputers(
+    navController: NavHostController,
+    homeNavController: NavHostController,
+    deepLinkBaseUrl: String,
+    navigateToBugReport: () -> Unit,
+    navigateToSubscription: () -> Unit,
+    onDrawerStateChanged: (Boolean) -> Unit,
+) = addHome(
+    navController = navController,
+    homeNavController = homeNavController,
+    deepLinkBaseUrl = deepLinkBaseUrl,
+    route = Screen.Computers.route,
+    startDestination = Screen.Computers.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     onDrawerStateChanged = onDrawerStateChanged

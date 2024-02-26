@@ -21,7 +21,6 @@ package me.proton.core.drive.backup.domain.repository
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFolder
-import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.link.domain.entity.FolderId
 
 interface BackupFolderRepository {
@@ -33,7 +32,7 @@ interface BackupFolderRepository {
     suspend fun insertFolder(backupFolder: BackupFolder) : BackupFolder
     suspend fun deleteFolders(folderId: FolderId)
     suspend fun deleteFolder(backupFolder: BackupFolder)
-    suspend fun updateFolderUpdateTime(userId: UserId, bucketId: Int, updateTime: TimestampS)
+    suspend fun updateFolder(backupFolder: BackupFolder)
     suspend fun resetAllFoldersUpdateTime(userId: UserId)
     suspend fun resetAllFoldersUpdateTime(folderId: FolderId)
     suspend fun getFolderByFileUri(userId: UserId, uriString: String): BackupFolder?

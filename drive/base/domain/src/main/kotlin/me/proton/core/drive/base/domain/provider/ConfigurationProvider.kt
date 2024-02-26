@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -78,6 +78,7 @@ interface ConfigurationProvider {
     val scanBackupPageSize: Int get() = 100
     val backupDefaultBucketName: String get() = "Camera"
     val backupMaxAttempts: Long get() = 5
+    val backupSyncWindow: Duration get() = 1.days
     val photoExportData: Boolean get() = false
     val checkDuplicatesPageSize: Int get() = 50
     val featureFlagFreshDuration: Duration get() = 10.minutes

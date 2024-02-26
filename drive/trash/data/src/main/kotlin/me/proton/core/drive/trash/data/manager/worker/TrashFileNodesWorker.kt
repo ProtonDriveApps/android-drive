@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,8 +30,12 @@ import dagger.assisted.AssistedInject
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.api.ProtonApiCode.NOT_EXISTS
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
+import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag.TRASH
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
@@ -45,6 +49,7 @@ import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_USER_ID
@@ -62,6 +67,7 @@ class TrashFileNodesWorker @AssistedInject constructor(
     private val updateEventAction: UpdateEventAction,
     private val linkRepository: LinkRepository,
     private val handleOnDeleteEvent: HandleOnDeleteEvent,
+    private val getShare: GetShare,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : AbstractMultiResponseCoroutineWorker(linkTrashRepository, appContext, params) {
@@ -77,7 +83,9 @@ class TrashFileNodesWorker @AssistedInject constructor(
         }
 
     override suspend fun handleSuccesses(linkIds: List<LinkId>) {
-        linkTrashRepository.insertOrUpdateTrashState(linkIds, TrashState.TRASHED)
+        getShare(shareId).toResult().getOrNull()?.let { share ->
+            linkTrashRepository.insertOrUpdateTrashState(share.volumeId, linkIds, TrashState.TRASHED)
+        }
         broadcastMessages(
             userId = userId,
             message = applicationContext.resources.getQuantityString(
@@ -91,6 +99,7 @@ class TrashFileNodesWorker @AssistedInject constructor(
     }
 
     override suspend fun handleErrors(linkIds: List<LinkId>, exception: Exception?, message: String?) {
+        exception?.log(TRASH, "Error while trashing ${linkIds.size} files")
         linkTrashRepository.removeTrashState(linkIds)
         broadcastMessages(
             userId = userId,
@@ -106,6 +115,7 @@ class TrashFileNodesWorker @AssistedInject constructor(
             coRunCatching {
                 linkRepository.fetchLink(linkId)
             }.onFailure { error ->
+                error.log(TRASH, "Cannot get link ${linkId.id.logId()}")
                 error.onProtonHttpException { protonCode ->
                     if (protonCode == NOT_EXISTS) {
                         handleOnDeleteEvent(linkIds)

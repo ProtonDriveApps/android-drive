@@ -90,6 +90,7 @@ fun FilesGridItem(
     transferProgressFlow: Flow<Percentage>? = null,
     isSelected: Boolean = false,
     inMultiselect: Boolean = false,
+    isMoreOptionsEnabled: Boolean = true,
 ) {
     val transferProgress = transferProgressFlow?.run {
         rememberFlowWithLifecycle(this).collectAsState(initial = null)
@@ -131,11 +132,13 @@ fun FilesGridItem(
                             )
                         }
                     } else {
-                        GridItemMoreButton(
-                            link = link,
-                            isSelectingDestination = isSelectingDestination,
-                            onMoreOptionsClick = onMoreOptionsClick,
-                        )
+                        if (isMoreOptionsEnabled) {
+                            GridItemMoreButton(
+                                link = link,
+                                isSelectingDestination = isSelectingDestination,
+                                onMoreOptionsClick = onMoreOptionsClick,
+                            )
+                        }
                     }
                 }
             }

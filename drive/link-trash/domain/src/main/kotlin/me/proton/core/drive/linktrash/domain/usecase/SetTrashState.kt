@@ -21,13 +21,13 @@ package me.proton.core.drive.linktrash.domain.usecase
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class SetTrashState @Inject constructor(
     private val repository: LinkTrashRepository,
 ) {
 
-    suspend operator fun invoke(linkIds: List<LinkId>, state: TrashState) =
-        repository.insertOrUpdateTrashState(linkIds, state)
-
+    suspend operator fun invoke(volumeId: VolumeId, linkIds: List<LinkId>, state: TrashState) =
+        repository.insertOrUpdateTrashState(volumeId, linkIds, state)
 }

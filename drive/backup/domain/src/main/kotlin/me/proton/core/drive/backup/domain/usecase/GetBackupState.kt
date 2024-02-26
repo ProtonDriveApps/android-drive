@@ -33,7 +33,9 @@ import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
+import me.proton.core.drive.base.domain.extension.combine
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.IsBackgroundRestricted
 import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
 
@@ -45,6 +47,7 @@ class GetBackupState @Inject constructor(
     private val connectivityManager: BackupConnectivityManager,
     private val getErrors: GetErrors,
     private val getAllBuckets: GetAllBuckets,
+    private val isBackgroundRestricted: IsBackgroundRestricted,
     private val configurationProvider: ConfigurationProvider,
     private val getConfiguration: GetConfiguration,
 ) {
@@ -95,9 +98,13 @@ class GetBackupState @Inject constructor(
         connectivityManager.connectivity,
         getConfiguration(folderId),
         backupManager.isUploading(folderId),
-    ) { permissions, errors, connectivity, configuration, uploading ->
-        val connectivityError = connectivityError(connectivity, configuration, uploading)
-        (errors + permissionError(permissions) + connectivityError).filterNotNull().distinct()
+        isBackgroundRestricted(),
+    ) { permissions, errors, connectivity, configuration, uploading, isBackgroundRestricted ->
+        (errors + listOf(
+            permissionError(permissions),
+            connectivityError(connectivity, configuration, uploading),
+            backgroundRestrictionsError(isBackgroundRestricted),
+        )).filterNotNull().distinct()
     }
 
     private fun connectivityError(
@@ -126,6 +133,14 @@ class GetBackupState @Inject constructor(
         permissions: BackupPermissions,
     ) = if (permissions is BackupPermissions.Denied) {
         BackupError.Permissions()
+    } else {
+        null
+    }
+
+    private fun backgroundRestrictionsError(
+        isBackgroundRestricted: Boolean,
+    ) = if (isBackgroundRestricted) {
+        BackupError.BackgroundRestrictions()
     } else {
         null
     }

@@ -21,11 +21,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
 import me.proton.core.data.room.db.extension.addTableColumn
 import me.proton.core.data.room.db.extension.dropTable
+import me.proton.core.data.room.db.extension.recreateTable
 import me.proton.core.data.room.db.migration.DatabaseMigration
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.linkupload.data.db.dao.LinkUploadDao
 import me.proton.core.drive.linkupload.data.db.dao.UploadBlockDao
 import me.proton.core.drive.linkupload.data.db.dao.UploadBulkDao
+import me.proton.core.drive.linkupload.data.db.entity.UploadBulkUriStringEntity
 
 
 interface LinkUploadDatabase : Database {
@@ -165,6 +167,41 @@ interface LinkUploadDatabase : Database {
                 database.addTableColumn("UploadBulkUriStringEntity", Column.MIME_TYPE, "TEXT")
                 database.addTableColumn("UploadBulkUriStringEntity", Column.SIZE, "INTEGER")
                 database.addTableColumn("UploadBulkUriStringEntity", Column.LAST_MODIFIED, "INTEGER")
+            }
+        }
+        val MIGRATION_5 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.recreateTable(
+                    table = "UploadBulkUriStringEntity",
+                    createTable = {
+                        database.execSQL(
+                            """
+                                CREATE TABLE IF NOT EXISTS `UploadBulkUriStringEntity` (
+                                `key` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                                `upload_bulk_id` INTEGER NOT NULL,
+                                `uri` TEXT NOT NULL,
+                                `name` TEXT,
+                                `mime_type` TEXT,
+                                `size` INTEGER,
+                                `last_modified` INTEGER,
+                                FOREIGN KEY(`upload_bulk_id`) REFERENCES `UploadBulkEntity`(`id`)
+                                ON UPDATE NO ACTION ON DELETE CASCADE )
+                            """.trimIndent()
+                        )
+                    },
+                    createIndices = {
+                        database.execSQL(
+                            """
+                                CREATE INDEX IF NOT EXISTS `index_UploadBulkUriStringEntity_upload_bulk_id` ON `UploadBulkUriStringEntity` (`upload_bulk_id`)
+                            """.trimIndent()
+                        )
+                        database.execSQL(
+                            """
+                                CREATE INDEX IF NOT EXISTS `index_UploadBulkUriStringEntity_uri` ON `UploadBulkUriStringEntity` (`uri`)
+                            """.trimIndent()
+                        )
+                    },
+                )
             }
         }
     }

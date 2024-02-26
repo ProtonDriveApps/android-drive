@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ object CreateFolderRobot : Robot {
     fun clickCancel() = cancelButton.clickTo(FilesTabRobot)
     fun typeFolderName(text: String) = apply { folderNameField.typeText(text) }
     fun clearName() = apply { folderNameField.clearText() }
-    fun clickCreate() = Unit.also { createButton.clickTo(this) }
+    fun <T : Robot> clickCreate(goesTo: T) : T = createButton.clickTo(goesTo)
 
     override fun robotDisplayed() {
         createFolderScreen.assertIsDisplayed()

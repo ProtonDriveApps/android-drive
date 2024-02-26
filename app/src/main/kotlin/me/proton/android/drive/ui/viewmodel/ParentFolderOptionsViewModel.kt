@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import me.proton.android.drive.extension.log
 import me.proton.android.drive.ui.options.Option
 import me.proton.android.drive.ui.options.filter
 import me.proton.android.drive.usecase.GetUriForFile
@@ -38,6 +39,7 @@ import me.proton.android.drive.usecase.NotifyActivityNotFound
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
+import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.usecase.GetCacheTempFolder
 import me.proton.core.drive.base.presentation.extension.require
@@ -121,6 +123,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
                     priority = UploadFileLink.USER_PRIORITY,
                 )
                     .onFailure { error ->
+                        error.log(UPLOAD)
                         if (error is NotEnoughSpaceException) {
                             navigateToStorageFull()
                             return@launch
@@ -143,6 +146,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
                         priority = UploadFileLink.USER_PRIORITY,
                     )
                         .onFailure { error ->
+                            error.log(UPLOAD)
                             if (error is NotEnoughSpaceException) {
                                 navigateToStorageFull()
                                 updatePhotoUri(null)

@@ -16,7 +16,7 @@
  * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.proton.android.drive.photos.presentation.ui.component
+package me.proton.android.drive.photos.presentation.component
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image

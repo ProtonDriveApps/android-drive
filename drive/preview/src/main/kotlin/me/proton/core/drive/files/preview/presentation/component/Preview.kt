@@ -43,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -103,14 +104,16 @@ fun Preview(
     modifier: Modifier = Modifier,
     onPageChanged: FlowCollector<Int>? = null,
 ) {
-    val pagerState = rememberPagerState(initialPage = viewState.currentIndex) {
-        viewState.items.size
+    val pagerState = key(viewState.items) {
+        rememberPagerState(initialPage = viewState.currentIndex) {
+            viewState.items.size
+        }
     }
     val userScrollEnabled = remember { mutableStateOf(true) }
     val isFullScreen by rememberFlowWithLifecycle(viewState.isFullscreen).collectAsState(false)
 
     onPageChanged?.let {
-        LaunchedEffect(pagerState, onPageChanged) {
+        LaunchedEffect(pagerState) {
             snapshotFlow { pagerState.currentPage }
                 .distinctUntilChanged()
                 .collect(onPageChanged)

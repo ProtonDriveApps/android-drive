@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -33,6 +33,7 @@ object PhotosEvent {
         FAILED_NOT_ALLOWED("failed", "feature flag"),
         PAUSED_CONNECTIVITY("paused", "no connection"),
         PAUSED_DISABLED("paused", "disabled by user"),
+        PAUSED_BACKGROUND_RESTRICTIONS("paused", "background mode expired"),
     }
 
     const val group = "drive.any.photos"

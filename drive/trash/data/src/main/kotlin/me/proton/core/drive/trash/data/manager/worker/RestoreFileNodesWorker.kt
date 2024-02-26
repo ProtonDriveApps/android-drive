@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -29,7 +29,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.link.domain.entity.Link
@@ -39,6 +42,7 @@ import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_WORK_ID
@@ -53,6 +57,7 @@ class RestoreFileNodesWorker @AssistedInject constructor(
     private val linkTrashRepository: LinkTrashRepository,
     private val broadcastMessages: BroadcastMessages,
     private val updateEventAction: UpdateEventAction,
+    private val getShare: GetShare,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : AbstractMultiResponseCoroutineWorker(linkTrashRepository, appContext, params) {
@@ -80,7 +85,10 @@ class RestoreFileNodesWorker @AssistedInject constructor(
     }
 
     override suspend fun handleErrors(linkIds: List<LinkId>, exception: Exception?, message: String?) {
-        linkTrashRepository.insertOrUpdateTrashState(linkIds, TrashState.TRASHED)
+        exception?.log(LogTag.TRASH, "Error while restoring ${linkIds.size} files")
+        getShare(shareId).toResult().getOrNull()?.let { share ->
+            linkTrashRepository.insertOrUpdateTrashState(share.volumeId, linkIds, TrashState.TRASHED)
+        }
         broadcastMessages(
             userId = userId,
             message = message ?: applicationContext.getString(I18N.string.trash_error_occurred_restoring_from_trash),

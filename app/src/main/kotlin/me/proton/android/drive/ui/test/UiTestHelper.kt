@@ -20,13 +20,9 @@ package me.proton.android.drive.ui.test
 
 import androidx.annotation.RestrictTo
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.drive.android.settings.domain.usecase.UpdateWelcomeShown
 import javax.inject.Inject
 
 @RestrictTo(RestrictTo.Scope.TESTS)
 class UiTestHelper @Inject constructor(
-    private val updateWelcomeShown: UpdateWelcomeShown,
     val configurationProvider: ConfigurationProvider,
-) {
-    suspend fun showWelcomeScreenAfterLogin(shouldShow: Boolean) = updateWelcomeShown(!shouldShow)
-}
+)

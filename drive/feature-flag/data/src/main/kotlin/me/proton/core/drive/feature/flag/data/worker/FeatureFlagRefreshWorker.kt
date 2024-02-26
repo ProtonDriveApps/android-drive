@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.isRetryable
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -55,7 +56,10 @@ class FeatureFlagRefreshWorker @AssistedInject constructor(
         refreshFeatureFlags(userId).getOrThrow()
     }.fold(
         onSuccess = { Result.success() },
-        onFailure = { error -> if (error.isRetryable) Result.retry() else Result.failure() }
+        onFailure = { error ->
+            error.log(LogTag.FEATURE_FLAG, "Cannot refresh feature flag")
+            if (error.isRetryable) Result.retry() else Result.failure()
+        }
     ).also { result ->
         when (result) {
             is Result.Retry -> Unit

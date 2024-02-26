@@ -32,13 +32,18 @@ class DeleteLocalShares @Inject constructor(
     private val deleteShare: DeleteShare,
 ) {
     suspend operator fun invoke(linkIds: List<LinkId>) = with (linkIds.map { linkId -> linkId.id }) {
-        getShares(linkIds.first().userId, Share.Type.STANDARD)
-            .filterSuccessOrError()
-            .first()
-            .toResult()
-            .getOrNull()
-            ?.mapNotNull { share -> if (share.rootLinkId in this) share.id else null }
-            ?.forEach { shareId ->
+        listOf(Share.Type.STANDARD, Share.Type.DEVICE)
+            .map { shareType ->
+                getShares(linkIds.first().userId, shareType)
+                    .filterSuccessOrError()
+                    .first()
+                    .toResult()
+                    .getOrNull()
+                    ?.mapNotNull { share -> if (share.rootLinkId in this) share.id else null }
+                    ?: emptyList()
+            }
+            .flatten()
+            .forEach { shareId ->
                 deleteShare(
                     shareId = shareId,
                     locallyOnly = true,

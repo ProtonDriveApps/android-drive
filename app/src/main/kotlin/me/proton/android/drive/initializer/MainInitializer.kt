@@ -36,12 +36,12 @@ class MainInitializer : Initializer<Unit> {
     override fun dependencies() = listOf(
         SentryInitializer::class.java,
         LoggerInitializer::class.java,
+        UncaughtExceptionHandlerInitializer::class.java,
         FeatureFlagInitializer::class.java,
         AccountStateHandlerInitializer::class.java,
         AccountRemovedHandlerInitializer::class.java,
         NotificationChannelInitializer::class.java,
         DocumentsProviderInitializer::class.java,
-        UncaughtExceptionHandlerInitializer::class.java,
         CryptoValidatorInitializer::class.java,
         EventManagerInitializer::class.java,
         HumanVerificationInitializer::class.java,

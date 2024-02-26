@@ -43,6 +43,8 @@ import me.proton.core.drive.backup.data.db.entity.BackupDuplicateEntity
 import me.proton.core.drive.backup.data.db.entity.BackupErrorEntity
 import me.proton.core.drive.backup.data.db.entity.BackupFileEntity
 import me.proton.core.drive.backup.data.db.entity.BackupFolderEntity
+import me.proton.core.drive.device.data.db.DeviceDatabase
+import me.proton.core.drive.device.data.db.entity.DeviceEntity
 import me.proton.core.drive.drivelink.data.db.DriveLinkDatabase
 import me.proton.core.drive.drivelink.download.data.db.DriveLinkDownloadDatabase
 import me.proton.core.drive.drivelink.offline.data.db.DriveLinkOfflineDatabase
@@ -227,6 +229,8 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         // FeatureFlag
         DriveFeatureFlagRefreshEntity::class,
         MediaStoreVersionEntity::class,
+        // Device
+        DeviceEntity::class,
     ],
     version = DriveDatabase.VERSION,
     autoMigrations = [
@@ -309,10 +313,11 @@ abstract class DriveDatabase :
     PhotoDatabase,
     DriveLinkPhotoDatabase,
     DriveFeatureFlagDatabase,
-    MediaStoreVersionDatabase {
+    MediaStoreVersionDatabase,
+    DeviceDatabase {
 
     companion object {
-        const val VERSION = 41
+        const val VERSION = 46
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -355,6 +360,11 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_38_39,
             DriveDatabaseMigrations.MIGRATION_39_40,
             DriveDatabaseMigrations.MIGRATION_40_41,
+            DriveDatabaseMigrations.MIGRATION_41_42,
+            DriveDatabaseMigrations.MIGRATION_42_43,
+            DriveDatabaseMigrations.MIGRATION_43_44,
+            DriveDatabaseMigrations.MIGRATION_44_45,
+            DriveDatabaseMigrations.MIGRATION_45_46,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

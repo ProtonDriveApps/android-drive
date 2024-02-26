@@ -7,4 +7,5 @@
     <bool name="core_feature_notifications_permission_request_enabled">false</bool>
     <!-- Show 2 times the Notification Permission Request rational -->
     <integer name="core_feature_notifications_permission_show_rationale_count">0</integer>
+    <bool name="core_feature_storage_split_enabled">false</bool>
 </resources>

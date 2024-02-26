@@ -22,9 +22,7 @@ import me.proton.android.drive.ui.MainActivity
 import me.proton.android.drive.ui.extension.createFusionAndroidComposeRule
 import org.junit.Rule
 
-abstract class BaseTest(
-    showWelcomeScreen: Boolean = false,
-) : AbstractBaseTest(showWelcomeScreen) {
+abstract class BaseTest : AbstractBaseTest() {
     @get:Rule(order = 2)
     val fusionComposeRule = createFusionAndroidComposeRule<MainActivity>()
 }

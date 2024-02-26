@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ object ParentFolderOptionsRobot : Robot {
     fun clickUploadAFile() = uploadAFileButton.clickTo(FilesTabRobot)
     fun clickCreateFolder() = createFolderButton.clickTo(CreateFolderRobot)
     fun clickMoveToTrash() = moveToTrashButton.clickTo(FilesTabRobot)
+    fun clickTakePhoto() = takePhotoButton.clickTo(FilesTabRobot)
 
     override fun robotDisplayed() {
         contextMenu.assertIsDisplayed()

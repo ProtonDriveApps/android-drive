@@ -27,8 +27,10 @@ import me.proton.core.drive.base.data.db.Column.LINK_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
 import me.proton.core.drive.base.data.db.Column.STATE
 import me.proton.core.drive.base.data.db.Column.USER_ID
+import me.proton.core.drive.base.data.db.Column.VOLUME_ID
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.linktrash.domain.entity.TrashState
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 @Entity(
     primaryKeys = [USER_ID, SHARE_ID, LINK_ID],
@@ -42,6 +44,7 @@ import me.proton.core.drive.linktrash.domain.entity.TrashState
     ],
     indices = [
         Index(value = [USER_ID]),
+        Index(value = [VOLUME_ID]),
         Index(value = [SHARE_ID]),
         Index(value = [LINK_ID]),
         Index(value = [STATE]),
@@ -51,6 +54,8 @@ import me.proton.core.drive.linktrash.domain.entity.TrashState
 data class LinkTrashStateEntity(
     @ColumnInfo(name = USER_ID)
     val userId: UserId,
+    @ColumnInfo(name = VOLUME_ID)
+    val volumeId: String,
     @ColumnInfo(name = SHARE_ID)
     val shareId: String,
     @ColumnInfo(name = LINK_ID)

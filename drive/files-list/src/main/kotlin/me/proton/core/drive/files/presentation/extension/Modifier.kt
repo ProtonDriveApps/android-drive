@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ fun Modifier.driveLinkSemantics(link: DriveLink, linkLayoutType: LayoutType) =
         this[DriveLinkSemanticsProperties.ItemType] = ItemType.fromDriveLink(link)
         this[DriveLinkSemanticsProperties.HasThumbnail] =
             link is DriveLink.File && link.hasThumbnail
+        this[DriveLinkSemanticsProperties.IsShared] = link.isShared
         this[DriveLinkSemanticsProperties.DownloadState] = when (link.downloadState) {
             is DownloadState.Downloaded -> SemanticsDownloadState.Downloaded
             DownloadState.Downloading -> SemanticsDownloadState.Downloading
@@ -44,6 +45,7 @@ object DriveLinkSemanticsProperties {
     val LayoutType = SemanticsPropertyKey<LayoutType>(name = "LayoutType")
     val ItemType = SemanticsPropertyKey<ItemType>(name = "ItemType")
     val HasThumbnail = SemanticsPropertyKey<Boolean>(name = "HasThumbnail")
+    val IsShared = SemanticsPropertyKey<Boolean>(name = "IsShared")
     val DownloadState = SemanticsPropertyKey<SemanticsDownloadState>(name = "DownloadState")
 }
 

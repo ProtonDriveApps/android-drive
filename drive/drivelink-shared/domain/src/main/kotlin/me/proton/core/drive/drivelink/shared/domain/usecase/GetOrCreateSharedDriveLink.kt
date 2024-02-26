@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,6 +28,7 @@ import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.toTimestampMs
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.extension.transformSuccess
+import me.proton.core.drive.base.domain.log.LogTag.SHARE
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.shared.domain.entity.SharedDriveLink
 import me.proton.core.drive.link.domain.extension.userId
@@ -36,6 +37,7 @@ import me.proton.core.drive.shareurl.base.domain.entity.ShareUrl
 import me.proton.core.drive.shareurl.crypto.domain.usecase.GetCustomUrlPassword
 import me.proton.core.drive.shareurl.crypto.domain.usecase.GetOrCreateShareUrl
 import me.proton.core.drive.shareurl.crypto.domain.usecase.GetPublicUrl
+import me.proton.core.util.kotlin.CoreLogger
 import java.util.Date
 import javax.inject.Inject
 
@@ -70,30 +72,37 @@ class GetOrCreateSharedDriveLink @Inject constructor(
         userId: UserId,
         shareUrl: ShareUrl,
     ): CryptoProperty<String> =
-        getPublicUrl(userId, shareUrl)
-            .getOrNull()
-            ?.let { publicUrl ->
+        getPublicUrl(userId, shareUrl).fold(
+            onSuccess = { publicUrl ->
                 CryptoProperty.Decrypted(
                     value = publicUrl,
                     status = VerificationStatus.Unknown,
                 )
+            },
+            onFailure = { error ->
+                CoreLogger.e(SHARE, error, "Cannot get public url")
+                CryptoProperty.Encrypted(shareUrl.publicUrl)
             }
-            ?: CryptoProperty.Encrypted(shareUrl.publicUrl)
+        )
 
     private suspend fun getCustomUrlPasswordProperty(
         userId: UserId,
         shareUrl: ShareUrl,
     ): CryptoProperty<String>? =
-        getCustomUrlPassword(userId, shareUrl)
-            .getOrNull()
-            ?.let { customUrlPassword: String? ->
+        getCustomUrlPassword(userId, shareUrl).fold(
+            onSuccess = { customUrlPassword ->
                 customUrlPassword?.let {
                     CryptoProperty.Decrypted(
                         value = customUrlPassword,
                         status = VerificationStatus.Unknown,
                     )
                 }
+            },
+            onFailure = { error ->
+                CoreLogger.w(SHARE, error, "Cannot get custom url password")
+                null
             }
+        )
 
     private fun getExpirationTime(shareUrl: ShareUrl): Date? =
         shareUrl.expirationTime?.let { time ->

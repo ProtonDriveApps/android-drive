@@ -29,4 +29,8 @@ class DeleteUploadBulk @Inject constructor(
         linkUploadRepository.removeUploadBulk(uploadBulkId)
             ?: throw NoSuchElementException("UploadBulk with id $uploadBulkId was not found in database")
     }
+
+    suspend operator fun invoke(uploadBulkId: Long, uriStrings: List<String>) = coRunCatching {
+        linkUploadRepository.removeUploadBulkUriStrings(uploadBulkId, uriStrings)
+    }
 }

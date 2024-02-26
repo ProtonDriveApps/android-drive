@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -77,10 +78,12 @@ class FolderDownloadWorker @AssistedInject constructor(
 
     override suspend fun doLimitedRetryWork(): Result {
         CoreLogger.d(logTag, "Started downloading folder")
-        val folder = getLink(folderId).toResult().getOrNull() ?: return Result.failure()
-        val descendants = getDescendants(folder, true).getOrNull() ?: return Result.retry().also {
-            CoreLogger.d(logTag, "Failed to get descendants, retrying")
-        }
+        val folder = getLink(folderId).toResult().onFailure { error ->
+            error.log(logTag, "Cannot get link")
+        }.getOrNull() ?: return Result.failure()
+        val descendants = getDescendants(folder, true).onFailure { error ->
+            CoreLogger.d(logTag, error, "Failed to get descendants, retrying")
+        }.getOrNull() ?: return Result.retry()
         downloadFolderAndDescendants(
             folder = folder,
             descendants = descendants.mapNotNull { link -> getLinkNode(link.id).toResult().getOrNull() }

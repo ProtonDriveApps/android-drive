@@ -72,9 +72,9 @@ class DriveTrashRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun emptyTrash(shareId: ShareId) {
-        apiDataSource.emptyTrash(shareId)
-        linkTrashRepository.markTrashedLinkAsDeleted(shareId)
+    override suspend fun emptyTrash(userId: UserId, volumeId: VolumeId) {
+        volumeApi.emptyTrash(userId, volumeId)
+        linkTrashRepository.markTrashedLinkAsDeleted(userId, volumeId)
     }
 
     override suspend fun deleteItemsFromTrash(
@@ -116,6 +116,7 @@ class DriveTrashRepositoryImpl @Inject constructor(
                     insertOrUpdateLinks(sortLinksByParents(allParents.toList()))
                     insertOrUpdateLinks(fetchedLinks.toList())
                     linkTrashRepository.insertOrUpdateTrashState(
+                        volumeId = volumeId,
                         linkIds = allLinks.map { link -> link.id },
                         trashState = TrashState.TRASHED,
                     )

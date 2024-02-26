@@ -21,6 +21,7 @@ package me.proton.core.drive.linktrash.domain.usecase
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.linktrash.domain.entity.TrashState
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class SetOrRemoveTrashState @Inject constructor(
@@ -28,25 +29,25 @@ class SetOrRemoveTrashState @Inject constructor(
     private val removeTrashState: RemoveTrashState,
 ) {
 
-    suspend operator fun invoke(links: List<Link>) {
+    suspend operator fun invoke(volumeId: VolumeId, links: List<Link>) {
         links.groupBy({ link -> link.state }) { link ->
             link.id
         }.forEach { (state, linkIds) ->
             when (state) {
-                Link.State.DRAFT -> invoke(linkIds, null)
-                Link.State.ACTIVE -> invoke(linkIds, null)
-                Link.State.TRASHED -> invoke(linkIds, TrashState.TRASHED)
-                Link.State.DELETED -> invoke(linkIds, TrashState.DELETED)
-                Link.State.RESTORING -> invoke(linkIds, null)
+                Link.State.DRAFT -> invoke(volumeId, linkIds, null)
+                Link.State.ACTIVE -> invoke(volumeId, linkIds, null)
+                Link.State.TRASHED -> invoke(volumeId, linkIds, TrashState.TRASHED)
+                Link.State.DELETED -> invoke(volumeId, linkIds, TrashState.DELETED)
+                Link.State.RESTORING -> invoke(volumeId, linkIds, null)
             }
         }
     }
 
-    suspend operator fun invoke(linkIds: List<LinkId>, state: TrashState?) {
+    suspend operator fun invoke(volumeId: VolumeId, linkIds: List<LinkId>, state: TrashState?) {
         if (state == null) {
             removeTrashState(linkIds)
         } else {
-            setTrashState(linkIds, state)
+            setTrashState(volumeId, linkIds, state)
         }
     }
 }

@@ -46,6 +46,7 @@ internal fun PhotosStatesContainer(
     onResolve: () -> Unit,
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
+    onIgnoreBackgroundRestrictions: () -> Unit,
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -73,10 +74,15 @@ internal fun PhotosStatesContainer(
                             BackupErrorType.DRIVE_STORAGE -> BackupFailedState(onRetry = onRetry)
                             BackupErrorType.OTHER -> BackupFailedState(onRetry = onRetry)
                             BackupErrorType.CONNECTIVITY -> NoConnectivityState()
-                            BackupErrorType.WIFI_CONNECTIVITY -> WaitingConnectivityState(onChangeNetwork = onChangeNetwork)
+                            BackupErrorType.WIFI_CONNECTIVITY -> WaitingConnectivityState(
+                                onChangeNetwork = onChangeNetwork
+                            )
+
                             BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED ->
                                 BackupTemporarilyDisabledState(onRetry = onRetry)
 
+                            BackupErrorType.BACKGROUND_RESTRICTIONS ->
+                                BackgroundRestrictions(onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions)
                         }
                     }
                 }
@@ -99,6 +105,7 @@ fun PhotosStatesContainerDisablePreview() {
             onResolve = { },
             onResolveMissingFolder = { },
             onChangeNetwork = { },
+            onIgnoreBackgroundRestrictions = { },
         )
     }
 }
@@ -117,6 +124,7 @@ fun PhotosStatesContainerMissingFolderPreview() {
             onResolve = { },
             onResolveMissingFolder = { },
             onChangeNetwork = { },
+            onIgnoreBackgroundRestrictions = { },
         )
     }
 }
@@ -135,6 +143,7 @@ fun PhotosStatesContainerCompletePreview() {
             onResolve = { },
             onResolveMissingFolder = { },
             onChangeNetwork = { },
+            onIgnoreBackgroundRestrictions = { },
         )
     }
 }
@@ -153,6 +162,7 @@ fun PhotosStatesContainerUncompletedPreview() {
             onResolve = { },
             onResolveMissingFolder = { },
             onChangeNetwork = { },
+            onIgnoreBackgroundRestrictions = { },
         )
     }
 }
@@ -174,6 +184,7 @@ fun PhotosStatesContainerInProgressPreview() {
             onResolve = { },
             onResolveMissingFolder = { },
             onChangeNetwork = { },
+            onIgnoreBackgroundRestrictions = { },
         )
     }
 }
@@ -194,6 +205,7 @@ fun PhotosStatesContainerFailedPreview() {
             onResolve = { },
             onResolveMissingFolder = { },
             onChangeNetwork = { },
+            onIgnoreBackgroundRestrictions = { },
         )
     }
 }
@@ -215,6 +227,7 @@ fun PhotosStatesContainerFailedConnectivityPreview() {
             onResolve = { },
             onResolveMissingFolder = { },
             onChangeNetwork = { },
+            onIgnoreBackgroundRestrictions = { },
         )
     }
 }
@@ -236,6 +249,7 @@ fun PhotosStatesContainerFailedWifiConnectivityPreview() {
             onResolve = { },
             onResolveMissingFolder = { },
             onChangeNetwork = { },
+            onIgnoreBackgroundRestrictions = { },
         )
     }
 }

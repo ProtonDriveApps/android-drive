@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -33,6 +33,9 @@ import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsEf
 import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsViewState
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
+import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.log.LogTag.BACKUP
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -102,6 +105,7 @@ class BackupPermissionsViewModelImpl @Inject constructor(
         coroutineScope.launch {
             togglePhotosBackup(folderId)
                 .onFailure { error ->
+                    error.log(BACKUP, "Cannot toggle backup for folder: ${folderId.id.logId()}")
                     broadcastMessages(
                         userId = folderId.userId,
                         message = error.getDefaultMessage(appContext, configurationProvider.useExceptionMessage),

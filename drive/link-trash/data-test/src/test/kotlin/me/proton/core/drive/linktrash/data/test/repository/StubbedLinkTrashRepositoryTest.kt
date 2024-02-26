@@ -46,15 +46,15 @@ class StubbedLinkTrashRepositoryTest {
 
     @Test
     fun insertOrUpdateTrashState() = runTest {
-        repository.insertOrUpdateTrashState(listOf(folderId), TrashState.TRASHING)
+        repository.insertOrUpdateTrashState(volumeId, listOf(folderId), TrashState.TRASHING)
 
         assertEquals(TrashState.TRASHING, repository.state[listOf(folderId)])
     }
 
     @Test
     fun removeTrashState() = runTest {
-        repository.insertOrUpdateTrashState(listOf(folderId), TrashState.TRASHING)
-        repository.insertOrUpdateTrashState(listOf(otherFolderId), TrashState.TRASHING)
+        repository.insertOrUpdateTrashState(volumeId, listOf(folderId), TrashState.TRASHING)
+        repository.insertOrUpdateTrashState(volumeId, listOf(otherFolderId), TrashState.TRASHING)
 
         repository.removeTrashState(listOf(folderId))
 
@@ -62,26 +62,11 @@ class StubbedLinkTrashRepositoryTest {
     }
 
     @Test
-    fun markTrashedLinkAsDeleted() = runTest {
-        repository.insertOrUpdateTrashState(listOf(folderId), TrashState.TRASHING)
-        repository.insertOrUpdateTrashState(listOf(otherFolderId), TrashState.TRASHING)
-
-        repository.markTrashedLinkAsDeleted(shareId)
-
-        assertEquals(
-            mapOf(
-                listOf(folderId) to TrashState.DELETED,
-                listOf(otherFolderId) to TrashState.TRASHING,
-            ), repository.state
-        )
-    }
-
-    @Test
     fun hasTrashContent() = runTest {
         val hasTrashContent = repository.hasTrashContent(userId, volumeId)
         assertFalse(hasTrashContent.first())
 
-        repository.insertOrUpdateTrashState(listOf(folderId), TrashState.TRASHING)
+        repository.insertOrUpdateTrashState(volumeId, listOf(folderId), TrashState.TRASHING)
 
         assertTrue(hasTrashContent.first())
     }
@@ -152,14 +137,14 @@ class StubbedLinkTrashRepositoryTest {
 
     @Test
     fun `Given trashed folder When isTrashed Then returns true`() = runTest {
-        repository.insertOrUpdateTrashState(listOf(folderId), TrashState.TRASHED)
+        repository.insertOrUpdateTrashState(volumeId, listOf(folderId), TrashState.TRASHED)
 
         assertTrue(repository.isTrashed(folderId))
     }
 
     @Test
     fun `Given trashing folder When isTrashed Then returns false`() = runTest {
-        repository.insertOrUpdateTrashState(listOf(folderId), TrashState.TRASHING)
+        repository.insertOrUpdateTrashState(volumeId, listOf(folderId), TrashState.TRASHING)
 
         assertFalse(repository.isTrashed(folderId))
     }
@@ -171,14 +156,14 @@ class StubbedLinkTrashRepositoryTest {
 
     @Test
     fun `Given trashed folder When isAnyTrashed Then returns true`() = runTest {
-        repository.insertOrUpdateTrashState(listOf(folderId), TrashState.TRASHED)
+        repository.insertOrUpdateTrashState(volumeId, listOf(folderId), TrashState.TRASHED)
 
         assertTrue(repository.isAnyTrashed(setOf(folderId)))
     }
 
     @Test
     fun `Given trashing folder When isAnyTrashed Then returns false`() = runTest {
-        repository.insertOrUpdateTrashState(listOf(folderId), TrashState.TRASHING)
+        repository.insertOrUpdateTrashState(volumeId, listOf(folderId), TrashState.TRASHING)
 
         assertFalse(repository.isAnyTrashed(setOf(folderId)))
     }

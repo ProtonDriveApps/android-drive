@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -94,14 +94,14 @@ val Throwable.isRetryable: Boolean
             if (this.error.cause is FileNotFoundException) {
                 false
             } else {
-                when (val error = this.error) {
+                this.error.isRetryable() || when (val error = this.error) {
                     is ApiResult.Error.Timeout,
                     is ApiResult.Error.NoInternet,
                     -> true
 
                     is ApiResult.Error.Http -> error.httpCode == 424 && error.proton?.code == FEATURE_DISABLED
 
-                    else -> this.error.isRetryable()
+                    else -> false
                 }
             }
         }

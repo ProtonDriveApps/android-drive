@@ -19,7 +19,6 @@
 package me.proton.drive.android.settings.data.datastore
 
 import android.content.Context
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.core.drive.base.data.datastore.BaseDataStore
 import javax.inject.Inject
@@ -27,11 +26,8 @@ import javax.inject.Inject
 class AppUiSettingsDataStore @Inject constructor(
     @ApplicationContext appContext: Context,
 ) : BaseDataStore(APP_SETTINGS_PREFERENCES) {
-    private val prefsKeyWelcomeFlowShown = booleanPreferencesKey(WELCOME_FLOW_SHOWN)
-    var welcomeFlowShown by Delegate(appContext.dataStore, prefsKeyWelcomeFlowShown, default = false)
 
     companion object {
         const val APP_SETTINGS_PREFERENCES = "app_settings_prefs"
-        const val WELCOME_FLOW_SHOWN = "welcome_flow_shown"
     }
 }

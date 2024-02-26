@@ -21,9 +21,7 @@ package me.proton.android.drive.ui.test
 import me.proton.android.drive.ui.extension.createFusionComposeRule
 import org.junit.Rule
 
-abstract class EmptyBaseTest : AbstractBaseTest(
-    showWelcomeScreen = false
-) {
+abstract class EmptyBaseTest : AbstractBaseTest() {
     @get:Rule(order = 2)
     val composeContentTestRule = createFusionComposeRule()
 }

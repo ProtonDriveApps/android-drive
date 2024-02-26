@@ -20,10 +20,12 @@ package me.proton.core.drive.linktrash.data.extension
 import me.proton.core.drive.linktrash.data.db.entity.LinkTrashStateEntity
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
-fun TrashState.toLinkTrashStateEntity(shareId: ShareId, linkId: String) =
+fun TrashState.toLinkTrashStateEntity(volumeId: VolumeId, shareId: ShareId, linkId: String) =
     LinkTrashStateEntity(
         userId = shareId.userId,
+        volumeId = volumeId.id,
         shareId = shareId.id,
         linkId = linkId,
         state = this

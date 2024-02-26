@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -20,11 +20,15 @@ package me.proton.android.drive.ui.test.flow.upload
 
 import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Quota
 import me.proton.android.drive.ui.robot.LauncherRobot
+import me.proton.android.drive.ui.robot.UploadToRobot
 import me.proton.android.drive.ui.rules.ExternalFilesRule
 import me.proton.android.drive.ui.rules.UserLoginRule
 import me.proton.android.drive.ui.test.EmptyBaseTest
 import me.proton.android.drive.utils.getRandomString
+import me.proton.core.drive.base.domain.extension.KiB
+import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.core.test.quark.data.User
 import org.junit.Rule
@@ -63,6 +67,54 @@ class UploadViaThirdPartyAppFlowTest : EmptyBaseTest() {
                     1,
                     StringUtils.stringFromResource(I18N.string.title_my_files)
                 )
+            }
+    }
+
+    @Test
+    fun uploadMultipleItemsIntoNewlyCreatedFolder() {
+        val files = listOf(
+            externalFilesRule.createFile("1.txt", 1.KiB.value),
+            externalFilesRule.createFile("2.txt", 2.KiB.value),
+            externalFilesRule.createFile("3.txt", 3.KiB.value),
+        )
+
+        val folderName = "test"
+        LauncherRobot.uploadTo(files)
+            .verify {
+                robotDisplayed()
+                assertEmptyFolder() // TODO: Enable upload button when folder is loaded
+            }
+            .clickCreateFolder()
+            .typeFolderName(folderName)
+            .clickCreate(UploadToRobot)
+            .dismissFolderCreateSuccessGrowler(folderName, UploadToRobot)
+            .clickOnFolder(folderName, goesTo = UploadToRobot)
+            .verify {
+                assertEmptyFolder() // TODO: Enable upload button when folder is loaded
+            }
+            .clickUpload()
+            .verify {
+                assertFilesBeingUploaded(3, folderName)
+            }
+    }
+
+    @Test
+    @Quota(percentageFull = 99)
+    fun uploadMultipleItemsWhenStorageIsAlmostFull() {
+        val files = listOf(
+            externalFilesRule.createFile("1.txt", 5.MiB.value),
+            externalFilesRule.createFile("2.txt", 5.MiB.value),
+            externalFilesRule.createFile("3.txt", 5.MiB.value),
+        )
+
+        LauncherRobot.uploadTo(files)
+            .verify {
+                robotDisplayed()
+                assertEmptyFolder() // TODO: Enable upload button when folder is loaded
+            }
+            .clickUpload()
+            .verify {
+                assertStorageFull()
             }
     }
 }

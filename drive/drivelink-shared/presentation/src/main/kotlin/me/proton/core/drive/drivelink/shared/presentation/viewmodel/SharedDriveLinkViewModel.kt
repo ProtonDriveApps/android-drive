@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -43,9 +43,11 @@ import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.isRetryable
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.toTimestampMs
 import me.proton.core.drive.base.domain.exception.requireField
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
+import me.proton.core.drive.base.domain.log.LogTag.SHARE
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.CopyToClipboard
@@ -342,6 +344,7 @@ class SharedDriveLinkViewModel @Inject constructor(
             val password = if (hasUnsavedPasswordChanges) {
                 password(privacySettings)
                     .onFailure { error ->
+                        error.log(SHARE, "Cannot get password")
                         broadcastMessage(
                             userId = userId,
                             message = error.getDefaultMessage(appContext, configurationProvider.useExceptionMessage),
@@ -354,6 +357,7 @@ class SharedDriveLinkViewModel @Inject constructor(
             val expirationDate = if (hasUnsavedExpirationDateChanges) {
                 expirationDateIso8601(privacySettings)
                     .onFailure { error ->
+                        error.log(SHARE, "Cannot get expiration date")
                         broadcastMessage(
                             userId = userId,
                             message = error.getDefaultMessage(appContext, configurationProvider.useExceptionMessage),
@@ -431,7 +435,8 @@ class SharedDriveLinkViewModel @Inject constructor(
             expirationDateIso8601 = expirationDateIso8601,
             updateExpirationDate = hasUnsavedExpirationDateChanges,
         )
-            .onFailure {
+            .onFailure { error ->
+                error.log(SHARE, "Cannot update sharing settings")
                 broadcastMessage(
                     userId = userId,
                     message = appContext.getString(

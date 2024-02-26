@@ -18,9 +18,11 @@
 package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.trimForbiddenChars
+import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.upload.domain.resolver.UriResolver
+import me.proton.core.util.kotlin.CoreLogger
 import java.util.UUID
 import javax.inject.Inject
 
@@ -44,5 +46,10 @@ class GetUploadFileName @Inject constructor(
 
     private fun normalized(name: String?) = validateLinkName(
         name = name?.trimForbiddenChars() ?: ""
-    ).getOrNull() ?: UUID.randomUUID().toString()
+    ).fold(
+        onSuccess = { validatedName -> validatedName },
+        onFailure = { error ->
+            CoreLogger.d(UPLOAD, error, "Invalid name will be replaced by random UUID")
+            UUID.randomUUID().toString()
+        })
 }

@@ -80,10 +80,15 @@
     <string name="photos_error_local_storage">Device storage full</string>
     <string name="photos_error_local_storage_description">To continue the backup, you need to free up storage on your device.</string>
     <string name="photos_error_local_storage_action" translatable="false">@string/common_retry</string>
+    <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
+    <string name="photos_error_background_restrictions_description">For consistent background backups, adjust battery settings or open the app frequently.</string>
+    <string name="photos_error_background_restrictions_action">Settings</string>
     <string name="photos_empty_title">No backups yet</string>
     <string name="photos_empty_description">As soon as you have photos or videos on your device, they will appear here.</string>
     <string name="photos_backup_title">Photo backup</string>
     <string name="photos_backup_option_mobile_data">Use mobile data to backup photos</string>
+    <string name="photos_backup_option_ignoring_battery_optimizations">Disable battery optimization</string>
+    <string name="photos_backup_option_ignoring_battery_optimizations_description">Allows uninterrupted backup when the app is running in the background.</string>
     <string name="photos_backup_in_app_notification_turned_on">Photo backup is turned on</string>
     <string name="photos_backup_in_app_notification_turned_off">Photo backup is turned off</string>
     <string name="photos_backup_state_completed">Backup complete</string>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -31,6 +31,7 @@ object LogTag {
     const val MEDIA = "$DEFAULT.media"
     const val MOVE = "$OPERATION.move"
     const val RENAME = "$OPERATION.rename"
+    const val SHARE = "$OPERATION.share"
     const val PAGING = "$DEFAULT.paging"
     const val BACKUP = "$DEFAULT.backup"
     const val TELEMETRY = "$DEFAULT.telemetry"

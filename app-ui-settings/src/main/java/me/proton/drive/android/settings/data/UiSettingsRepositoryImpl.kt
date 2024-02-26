@@ -34,7 +34,6 @@ import javax.inject.Inject
 
 class UiSettingsRepositoryImpl @Inject constructor(
     private val database: AppUiSettingsDatabase,
-    private val dataStore: AppUiSettingsDataStore,
 ) : UiSettingsRepository {
 
     private val dao = database.uiSettingsDao
@@ -60,13 +59,6 @@ class UiSettingsRepositoryImpl @Inject constructor(
         updateOrInsert(userId, { dao.updateThemeStyle(userId, themeStyle) }) {
             UiSettings(themeStyle = themeStyle)
         }
-    }
-
-    override suspend fun hasShownWelcome(): Boolean =
-        dataStore.welcomeFlowShown
-
-    override suspend fun updateWelcomeShown(hasShown: Boolean) {
-        dataStore.welcomeFlowShown = hasShown
     }
 
     private suspend inline fun updateOrInsert(

@@ -59,8 +59,8 @@ class StubbedTrashManager @Inject constructor(
         linkIds: List<LinkId>
     ): DataResult<String> = manager.add("delete", userId, shareId, linkIds)
 
-    override fun emptyTrash(userId: UserId, shareIds: Set<ShareId>) {
-        manager.add("emptyTrash", userId, *shareIds.toTypedArray())
+    override suspend fun emptyTrash(userId: UserId, volumeId: VolumeId) {
+        manager.add("emptyTrash", userId, volumeId)
     }
 
     override fun getEmptyTrashState(

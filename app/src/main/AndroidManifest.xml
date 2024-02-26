@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  ~ Copyright (c) 2023 Proton AG.
+  ~ Copyright (c) 2023-2024 Proton AG.
   ~ This file is part of Proton Drive.
   ~
   ~ Proton Drive is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
 
     <!-- Empty task affinity is used to prevent task hijacking -->
     <application

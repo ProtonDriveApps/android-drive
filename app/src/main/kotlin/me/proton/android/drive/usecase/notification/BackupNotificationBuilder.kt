@@ -108,5 +108,8 @@ class BackupNotificationBuilder @Inject constructor(
 
             Event.Backup.BackupState.PAUSED_DISABLED ->
                 appContext.getString(I18N.string.notification_content_text_backup_paused_disabled)
+
+            Event.Backup.BackupState.PAUSE_BACKGROUND_RESTRICTIONS ->
+                appContext.getString(I18N.string.notification_content_text_backup_paused_background_restrictions)
         }
 }

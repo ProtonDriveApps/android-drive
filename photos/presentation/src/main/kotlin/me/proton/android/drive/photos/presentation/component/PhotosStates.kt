@@ -307,6 +307,31 @@ fun BackupFailedState(
 }
 
 @Composable
+fun BackgroundRestrictions(
+    modifier: Modifier = Modifier,
+    onIgnoreBackgroundRestrictions: () -> Unit,
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing)
+    ) {
+        BackupState(
+            modifier = modifier,
+            icon = CorePresentation.drawable.ic_proton_exclamation_circle,
+            tint = ProtonTheme.colors.notificationWarning,
+            text = I18N.string.photos_error_background_restrictions,
+            action = I18N.string.photos_error_background_restrictions_action,
+            onAction = onIgnoreBackgroundRestrictions,
+        )
+        ErrorDetails(
+            stringResource(
+                I18N.string.photos_error_background_restrictions_description,
+                stringResource(id = I18N.string.app_name),
+            )
+        )
+    }
+}
+
+@Composable
 fun BackupTemporarilyDisabledState(
     modifier: Modifier = Modifier,
     onRetry: () -> Unit,
@@ -314,7 +339,7 @@ fun BackupTemporarilyDisabledState(
     BackupState(
         modifier = modifier,
         icon = CorePresentation.drawable.ic_proton_exclamation_circle,
-        tint = ProtonTheme.colors.notificationError,
+        tint = ProtonTheme.colors.notificationWarning,
         text = I18N.string.photos_error_backup_temporarily_disabled,
         action = I18N.string.photos_error_backup_failed_action,
         onAction = onRetry
@@ -530,6 +555,16 @@ private fun BackupFailedStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackupFailedState(onRetry = { })
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun BackgroundRestrictionsPreview() {
+    ProtonTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            BackgroundRestrictions(onIgnoreBackgroundRestrictions = { })
         }
     }
 }

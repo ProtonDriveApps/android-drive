@@ -74,4 +74,8 @@ fun NullableUserEntity(
     delinquent = null,
     passphrase = EncryptedByteArray("user-passphrase".toByteArray()),
     recovery = null,
+    maxBaseSpace = null,
+    maxDriveSpace = null,
+    usedBaseSpace = null,
+    usedDriveSpace = null,
 )

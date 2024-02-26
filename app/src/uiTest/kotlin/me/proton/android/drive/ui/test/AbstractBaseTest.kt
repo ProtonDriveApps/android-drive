@@ -24,6 +24,7 @@ import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.testing.HiltAndroidRule
 import kotlinx.coroutines.runBlocking
+import me.proton.android.drive.di.TestEnvironmentConfigModule
 import me.proton.android.drive.initializer.MainInitializer
 import me.proton.android.drive.ui.robot.Robot
 import me.proton.android.drive.ui.rules.QuarkRule
@@ -39,9 +40,7 @@ import org.junit.rules.TestName
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.Duration.Companion.seconds
 
-abstract class AbstractBaseTest(
-    showWelcomeScreen: Boolean,
-) {
+abstract class AbstractBaseTest {
     private val permissions = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
             listOf(Manifest.permission.POST_NOTIFICATIONS)
@@ -50,14 +49,15 @@ abstract class AbstractBaseTest(
 
     private val hiltRule = HiltAndroidRule(this)
 
-    val quarkRule = QuarkRule()
+    val envConfig = TestEnvironmentConfigModule.provideEnvironmentConfiguration()
+
+    val quarkRule = QuarkRule(envConfig)
 
     private val configurationRule = before {
         // Initialize components *before* injecting via Hilt.
         MainInitializer.init(targetContext)
         // Inject via Hilt/Dagger.
         hiltRule.inject()
-        uiTestHelper.showWelcomeScreenAfterLogin(showWelcomeScreen)
         configureFusion()
     }
 

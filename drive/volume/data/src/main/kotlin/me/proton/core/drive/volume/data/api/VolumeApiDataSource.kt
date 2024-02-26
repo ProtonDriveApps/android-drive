@@ -64,4 +64,12 @@ class VolumeApiDataSource(private val apiProvider: ApiProvider) {
             pageSize = pageSize,
         )
     }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun emptyTrash(
+        userId: UserId,
+        volumeId: VolumeId,
+    ) = apiProvider.get<VolumeApi>(userId).invoke {
+        emptyTrash(volumeId.id)
+    }.valueOrThrow
 }

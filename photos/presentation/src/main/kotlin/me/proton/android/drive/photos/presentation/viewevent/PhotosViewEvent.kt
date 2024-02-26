@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.photos.presentation.viewevent
 
+import android.content.Context
 import androidx.paging.CombinedLoadStates
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -44,5 +45,6 @@ interface PhotosViewEvent {
     val onGetStorage: () -> Unit get() = {}
     val onResolveMissingFolder: () -> Unit get() = {}
     val onChangeNetwork: () -> Unit get() = {}
+    val onIgnoreBackgroundRestrictions: (Context) -> Unit get() = {}
     val onResolve: () -> Unit get() = {}
 }

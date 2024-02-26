@@ -24,8 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,14 +38,13 @@ import me.proton.core.domain.entity.UserId
 @ExperimentalCoroutinesApi
 fun LauncherScreen(
     navigateToHomeScreen: (userId: UserId) -> Unit,
-    navigateToWelcome: (userId: UserId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val launcherViewModel = hiltViewModel<LauncherViewModel>()
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        Launcher(launcherViewModel, navigateToHomeScreen, navigateToWelcome)
+        Launcher(launcherViewModel, navigateToHomeScreen)
     }
 }
 
@@ -56,51 +53,11 @@ fun LauncherScreen(
 internal fun Launcher(
     viewModel: LauncherViewModel,
     navigateToHomeScreen: (userId: UserId) -> Unit,
-    navigateToWelcome: (userId: UserId) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val hasShownWelcomeFlow = remember { mutableStateOf<Boolean?>(null) }
-    LaunchedEffect(Unit) {
-        hasShownWelcomeFlow.value = viewModel.hasShownWelcomeFlow()
-    }
-    hasShownWelcomeFlow.value?.let { hasShown ->
-        Launcher(viewModel, hasShown, navigateToHomeScreen, navigateToWelcome, modifier)
-    }
-}
-
-@Composable
-@ExperimentalCoroutinesApi
-internal fun Launcher(
-    viewModel: LauncherViewModel,
-    hasShown: Boolean,
-    navigateToHomeScreen: (userId: UserId) -> Unit,
-    navigateToWelcome: (userId: UserId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.viewState)
         .collectAsState(initial = LauncherViewState.initialValue)
-    Launcher(viewState, hasShown, navigateToHomeScreen, navigateToWelcome, modifier)
-}
-
-@Composable
-@ExperimentalCoroutinesApi
-internal fun Launcher(
-    viewState: LauncherViewState,
-    hasShown: Boolean,
-    navigateToHomeScreen: (userId: UserId) -> Unit,
-    navigateToWelcome: (userId: UserId) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    if (hasShown) {
-        Launcher(viewState, navigateToHomeScreen, modifier)
-    } else {
-        val state = viewState.primaryAccountState
-        LaunchedEffect(state) {
-            if (state is PrimaryAccountState.SignedIn) {
-                navigateToWelcome(state.userId)
-            }
-        }
-    }
+    Launcher(viewState, navigateToHomeScreen, modifier)
 }
 
 @Composable

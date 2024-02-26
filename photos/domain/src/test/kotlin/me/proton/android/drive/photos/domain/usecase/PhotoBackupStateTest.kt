@@ -62,6 +62,7 @@ import me.proton.core.drive.backup.domain.usecase.StartBackup
 import me.proton.core.drive.backup.domain.usecase.UpdateConfiguration
 import me.proton.core.drive.base.domain.extension.asSuccessOrNullAsError
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.IsBackgroundRestricted
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.photo
@@ -173,6 +174,9 @@ class PhotoBackupStateTest {
                 override val baseUrl = ""
                 override val appVersionHeader = ""
                 override val backupDefaultBucketName = "Camera"
+            },
+            isBackgroundRestricted = object : IsBackgroundRestricted {
+                override fun invoke(): Flow<Boolean> = flowOf(false)
             },
             getConfiguration = getConfiguration,
         )

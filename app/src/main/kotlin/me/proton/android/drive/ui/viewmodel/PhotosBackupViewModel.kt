@@ -26,6 +26,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
 import me.proton.android.drive.photos.domain.usecase.GetPhotosConfiguration
@@ -44,7 +45,9 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.usecase.IsIgnoringBatteryOptimizations
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.base.presentation.extension.launchIgnoreBatteryOptimizations
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import javax.inject.Inject
@@ -60,6 +63,7 @@ class PhotosBackupViewModel @Inject constructor(
     private val togglePhotosNetworkConfiguration: TogglePhotosNetworkConfiguration,
     private val getPhotosDriveLink: GetPhotosDriveLink,
     private val broadcastMessages: BroadcastMessages,
+    private val isIgnoringBatteryOptimizations: IsIgnoringBatteryOptimizations,
     private val configurationProvider: ConfigurationProvider,
     val backupPermissionsViewModel: BackupPermissionsViewModel,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
@@ -74,17 +78,28 @@ class PhotosBackupViewModel @Inject constructor(
             title = appContext.getString(I18N.string.photos_backup_option_mobile_data),
             checked = false,
             enabled = false,
+        ),
+        ignoringBatteryOptimizations = PhotosBackupOption(
+            title = appContext.getString(I18N.string.photos_backup_option_ignoring_battery_optimizations),
+            description = appContext.getString(I18N.string.photos_backup_option_ignoring_battery_optimizations_description),
+            checked = false,
+            enabled = false,
         )
     )
     val viewState: Flow<PhotosBackupViewState> = combine(
         isPhotosEnabled(userId),
         getPhotosConfiguration(userId),
-    ) { enabled, configuration ->
+        isIgnoringBatteryOptimizations(),
+    ) { enabled, configuration, isIgnoringBatteryOptimizations ->
         initialViewState.copy(
             backup = initialViewState.backup.copy(checked = enabled),
             mobileData = initialViewState.mobileData.copy(
                 checked = configuration?.networkType == BackupNetworkType.CONNECTED,
                 enabled = enabled,
+            ),
+            ignoringBatteryOptimizations = initialViewState.ignoringBatteryOptimizations.copy(
+                checked = isIgnoringBatteryOptimizations,
+                enabled = enabled
             )
         )
     }
@@ -136,6 +151,12 @@ class PhotosBackupViewModel @Inject constructor(
                 }
             }
             Unit
+        }
+
+        override val onToggleIgnoringBatteryOptimizations: (Context) -> Unit = { context ->
+            viewModelScope.launch {
+                context.launchIgnoreBatteryOptimizations(isIgnoringBatteryOptimizations().firstOrNull() == true)
+            }
         }
 
         private val PhotoBackupState.message

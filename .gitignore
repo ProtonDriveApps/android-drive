@@ -11,4 +11,5 @@ private.properties
 build/
 captures/
 config/
+app/variables.env
 

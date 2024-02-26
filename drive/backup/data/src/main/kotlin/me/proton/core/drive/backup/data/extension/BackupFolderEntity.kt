@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,5 +28,6 @@ import me.proton.core.drive.share.domain.entity.ShareId
 fun BackupFolderEntity.toBackupFolder() = BackupFolder(
     bucketId = bucketId,
     folderId = FolderId(ShareId(userId, shareId), parentId),
-    updateTime = updateTime?.let(::TimestampS)
+    updateTime = updateTime?.let(::TimestampS),
+    syncTime = syncTime?.let(::TimestampS),
 )

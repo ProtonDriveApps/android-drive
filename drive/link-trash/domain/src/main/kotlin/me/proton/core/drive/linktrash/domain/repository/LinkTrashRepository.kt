@@ -31,7 +31,7 @@ interface LinkTrashRepository {
     /**
      * Inserts or updates given trash state for given linkIds
      */
-    suspend fun insertOrUpdateTrashState(linkIds: List<LinkId>, trashState: TrashState)
+    suspend fun insertOrUpdateTrashState(volumeId: VolumeId, linkIds: List<LinkId>, trashState: TrashState)
 
     /**
      * Removes trash state for given linkIds
@@ -39,9 +39,9 @@ interface LinkTrashRepository {
     suspend fun removeTrashState(linkIds: List<LinkId>)
 
     /**
-     * Mark all trashed links in a given Share as DELETED
+     * Mark all trashed links in a given Volume as DELETED
      */
-    suspend fun markTrashedLinkAsDeleted(shareId: ShareId)
+    suspend fun markTrashedLinkAsDeleted(userId: UserId, volumeId: VolumeId)
 
     /**
      * Check if there is trash content for given user id and volume id

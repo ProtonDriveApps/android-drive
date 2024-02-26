@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -61,8 +61,7 @@ class CreatingFolderViaUploadFlowTest : EmptyBaseTest() {
 
         CreateFolderRobot
             .typeFolderName(randomFolderName)
-            .clickCreate()
-        FilesTabRobot
+            .clickCreate(FilesTabRobot)
             .dismissFolderCreateSuccessGrowler(randomFolderName, FilesTabRobot)
             .verify {
                 itemIsDisplayed(randomFolderName)

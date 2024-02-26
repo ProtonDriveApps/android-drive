@@ -32,10 +32,12 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.log.LogTag.UPLOAD_BULK
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.usecase.DeleteUploadBulk
+import me.proton.core.drive.linkupload.domain.usecase.GetUploadBulk
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.upload.data.manager.enqueueUpload
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_FOLDER_NAME
@@ -53,72 +55,85 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
     @Assisted private val appContext: Context,
     @Assisted workerParams: WorkerParameters,
     private val createUploadFile: CreateUploadFile,
+    private val getUploadBulk: GetUploadBulk,
     private val deleteUploadBulk: DeleteUploadBulk,
     private val hasEnoughAvailableSpace: HasEnoughAvailableSpace,
     private val announceEvent: AnnounceEvent,
     private val announceUploadEvent: AnnounceUploadEvent,
     private val broadcastMessages: BroadcastMessages,
     private val workManager: WorkManager,
+    private val configurationProvider: ConfigurationProvider,
 ) : CoroutineWorker(appContext, workerParams) {
     private val uploadBulkId: Long = inputData.getLong(KEY_UPLOAD_BULK_ID, -1L)
     private val folderName = requireNotNull(inputData.getString(KEY_FOLDER_NAME)) { "Folder name is required" }
     private val showFilesBeingUploaded = inputData.getBoolean(KEY_SHOW_FILES_BEING_UPLOADED, true)
 
     override suspend fun doWork(): Result = coRunCatching {
-        with(deleteUploadBulk(uploadBulkId).getOrThrow()) {
-            logWorkState("Adding ${uploadFileDescriptions.size} files to upload")
-            val hasEnoughSpace = hasEnoughAvailableSpace(
-                userId = userId,
-                uriStrings = uploadFileDescriptions.map { description -> description.uri }) { needed ->
-                announceEvent(
+        with(getUploadBulk(uploadBulkId).getOrThrow()) {
+            val uploadFileLinksSize = uploadFileDescriptions.size
+            uploadFileDescriptions.chunked(configurationProvider.dbPageSize).forEach { uploadFileDescriptions ->
+                logWorkState("Adding ${uploadFileDescriptions.size} files to upload")
+                val hasEnoughSpace = hasEnoughAvailableSpace(
                     userId = userId,
-                    event = Event.StorageFull(needed)
-                )
-            }
-            if (!hasEnoughSpace) {
-                logWorkState("Cannot upload files, not enough space")
-                return@with
-            }
-            val uploadFileLinks = createUploadFile(
-                userId = userId,
-                volumeId = volumeId,
-                parentId = parentLinkId,
-                uploadFileDescriptions = uploadFileDescriptions,
-                shouldDeleteSourceUri = shouldDeleteSourceUri,
-                networkTypeProviderType = networkTypeProviderType,
-                shouldAnnounceEvent = shouldAnnounceEvent,
-                cacheOption = cacheOption,
-                priority = priority,
-                shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
-            ).getOrThrow()
-
-            logWorkState("${uploadFileLinks.size} files were added to upload")
-
-            uploadFileLinks.forEach { uploadFileLink ->
-                announceUploadEvent(
-                    uploadFileLink = uploadFileLink,
-                    uploadEvent = Event.Upload(
-                        state = Event.Upload.UploadState.NEW_UPLOAD,
-                        uploadFileLinkId = uploadFileLink.id,
-                        percentage = Percentage(0),
-                        shouldShow = uploadFileLink.shouldAnnounceEvent,
+                    uriStrings = uploadFileDescriptions.map { description -> description.uri }) { needed ->
+                    announceEvent(
+                        userId = userId,
+                        event = Event.StorageFull(needed)
                     )
-                )
+                }
+                if (!hasEnoughSpace) {
+                    logWorkState("Cannot upload files, not enough space")
+                    return@with
+                }
+                val uploadFileLinks = createUploadFile(
+                    userId = userId,
+                    volumeId = volumeId,
+                    parentId = parentLinkId,
+                    uploadFileDescriptions = uploadFileDescriptions,
+                    shouldDeleteSourceUri = shouldDeleteSourceUri,
+                    networkTypeProviderType = networkTypeProviderType,
+                    shouldAnnounceEvent = shouldAnnounceEvent,
+                    cacheOption = cacheOption,
+                    priority = priority,
+                    shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
+                ).onFailure { error ->
+                    error.log(UPLOAD_BULK, "Cannot create upload files for ${uploadFileDescriptions.size} files")
+                }.getOrThrow()
+                deleteUploadBulk(
+                    uploadBulkId = uploadBulkId,
+                    uriStrings = uploadFileDescriptions.map { description -> description.uri },
+                ).onFailure { error ->
+                    error.log(UPLOAD_BULK, "Cannot delete upload bulk for ${uploadFileDescriptions.size} files")
+                }.getOrThrow()
+                logWorkState("${uploadFileLinks.size} files were added to upload")
+                uploadFileLinks.forEach { uploadFileLink ->
+                    announceUploadEvent(
+                        uploadFileLink = uploadFileLink,
+                        uploadEvent = Event.Upload(
+                            state = Event.Upload.UploadState.NEW_UPLOAD,
+                            uploadFileLinkId = uploadFileLink.id,
+                            percentage = Percentage(0),
+                            shouldShow = uploadFileLink.shouldAnnounceEvent,
+                        )
+                    )
+                }
             }
             if (showFilesBeingUploaded) {
                 broadcastMessages(
                     userId = userId,
                     message = appContext.resources.getQuantityString(
                         I18N.plurals.files_upload_being_uploaded_notification,
-                        uploadFileLinks.size,
-                        uploadFileLinks.size,
+                        uploadFileLinksSize,
+                        uploadFileLinksSize,
                         folderName,
                     ),
                     type = BroadcastMessage.Type.INFO,
                 )
             }
-
             workManager.enqueueUpload(userId, shouldAnnounceEvent, tags)
+            deleteUploadBulk(uploadBulkId).onFailure { error ->
+                error.log(UPLOAD_BULK, "Cannot delete upload bulk for: $uploadBulkId")
+            }.getOrThrow()
         }
     }.fold(
         onSuccess = {

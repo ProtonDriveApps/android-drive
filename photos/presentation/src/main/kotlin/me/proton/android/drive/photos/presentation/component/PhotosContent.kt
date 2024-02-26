@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -115,6 +114,7 @@ fun PhotosContent(
     onGetStorage: () -> Unit,
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
+    onIgnoreBackgroundRestrictions: () -> Unit,
     isRefreshEnabled: Boolean,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
@@ -141,6 +141,7 @@ fun PhotosContent(
             onGetStorage = onGetStorage,
             onResolveMissingFolder = onResolveMissingFolder,
             onChangeNetwork = onChangeNetwork,
+            onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
         )
     }
 }
@@ -163,6 +164,7 @@ fun PhotosContent(
     onGetStorage: () -> Unit,
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
+    onIgnoreBackgroundRestrictions: () -> Unit,
 ) {
     val gridState = items.rememberLazyGridState()
     val driveLinksMap by rememberFlowWithLifecycle(flow = driveLinksFlow)
@@ -186,7 +188,7 @@ fun PhotosContent(
     }
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),
-        columns = GridCells.Adaptive(minSize = 128.dp),
+        columns = PhotosGridCells(minSize = 128.dp, minCount = 3),
         verticalArrangement = Arrangement.spacedBy(1.dp),
         horizontalArrangement = Arrangement.spacedBy(1.dp),
         state = gridState,
@@ -205,6 +207,7 @@ fun PhotosContent(
                     onResolve = onResolve,
                     onResolveMissingFolder = onResolveMissingFolder,
                     onChangeNetwork = onChangeNetwork,
+                    onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
                 )
                 StorageBanner(onGetStorage = onGetStorage)
             }

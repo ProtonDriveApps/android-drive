@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -18,6 +18,8 @@
 
 package me.proton.android.drive.ui.robot
 
+import android.content.ClipData
+import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -25,6 +27,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import me.proton.android.drive.ui.MainActivity
 import java.io.File
+import java.nio.file.Files
 
 object LauncherRobot {
     /**
@@ -37,6 +40,34 @@ object LauncherRobot {
         ActivityScenario.launch<MainActivity>(Intent(context, MainActivity::class.java).apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file))
+        })
+        return UploadToRobot
+    }
+    /**
+     * Launch the MainActivity with an intent SEND_MULTIPLE and the files.
+     * Test class should inherit from EmptyBaseTest to use it.
+     * @param files the files to upload
+     */
+    fun uploadTo(files: List<File>): UploadToRobot {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        ActivityScenario.launch<MainActivity>(Intent(context, MainActivity::class.java).apply {
+            val uris = files.map { file -> Uri.fromFile(file) }
+            action = Intent.ACTION_SEND_MULTIPLE
+            putParcelableArrayListExtra(Intent.EXTRA_STREAM, ArrayList(uris))
+            type = Files.probeContentType(files.first().toPath())
+            clipData = ClipData(
+                ClipDescription(
+                    "tests",
+                    files.map { file ->
+                        Files.probeContentType(file.toPath())
+                    }.toTypedArray(),
+                ),
+                ClipData.Item(uris.first()),
+            ).apply {
+                (uris - uris.first()).forEach { uri ->
+                    addItem(ClipData.Item(uri))
+                }
+            }
         })
         return UploadToRobot
     }

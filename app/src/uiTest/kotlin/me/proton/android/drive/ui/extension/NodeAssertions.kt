@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -41,6 +41,10 @@ fun NodeAssertions.assertHasLayoutType(expectedValue: LayoutType) = apply {
 
 fun NodeAssertions.assertHasItemType(expectedValue: ItemType) = apply {
     interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.ItemType, expectedValue))
+}
+
+fun NodeAssertions.assertIsShared(expectedValue: Boolean) = apply {
+    interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.IsShared, expectedValue))
 }
 
 // Remove after TPE-334 is resolved

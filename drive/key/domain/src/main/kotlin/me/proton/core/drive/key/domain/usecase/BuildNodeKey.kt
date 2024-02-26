@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -42,6 +42,7 @@ class BuildNodeKey @Inject constructor(
 ) {
     suspend operator fun invoke(link: Link): Result<Key.Node> = coRunCatching {
         var key: Key.Node? = null
+        var error: Throwable? = null
         getLinkNode(link.id).toResult().getOrThrow().withAncestorsFromRoot { link ->
             keyRepository.getKey(link.id.userId, link.keyId)?.let { nodeKey ->
                 key = nodeKey as? Key.Node
@@ -49,10 +50,11 @@ class BuildNodeKey @Inject constructor(
                 .onSuccess { nodeKey -> key = nodeKey }
                 .onFailure {
                     key = null
+                    error = it
                     return@withAncestorsFromRoot
                 }
         }
-        key ?: throw IllegalStateException("Key is null after building process")
+        key ?: throw IllegalStateException("Key is null after building process", error)
     }
 
     suspend operator fun invoke(

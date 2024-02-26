@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.volume.data.api
 
+import me.proton.core.drive.base.data.api.response.CodeResponse
 import me.proton.core.drive.volume.data.api.request.CreateVolumeRequest
 import me.proton.core.drive.volume.data.api.response.GetShareTrashesResponse
 import me.proton.core.drive.volume.data.api.response.GetShareUrlsResponse
@@ -24,6 +25,7 @@ import me.proton.core.drive.volume.data.api.response.GetVolumeResponse
 import me.proton.core.drive.volume.data.api.response.GetVolumesResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -52,4 +54,9 @@ interface VolumeApi : BaseRetrofitApi {
         @Query("Page") page: Int,
         @Query("PageSize") pageSize: Int,
     ): GetShareUrlsResponse
+
+    @DELETE("drive/volumes/{volumeId}/trash")
+    suspend fun emptyTrash(
+        @Path("volumeId") volumeId: String
+    ): CodeResponse
 }

@@ -19,14 +19,14 @@
 package me.proton.android.drive.provider
 
 import me.proton.android.drive.BuildConfig
+import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 
-class BuildConfigurationProvider : ConfigurationProvider {
-    override val host: String = BuildConfig.HOST
-    override val baseUrl: String = BuildConfig.BASE_URL
+class BuildConfigurationProvider(envConfig: EnvironmentConfiguration) : ConfigurationProvider {
+    override val host: String = envConfig.host
+    override val baseUrl: String = envConfig.baseUrl
     override val appVersionHeader: String = when (BuildConfig.FLAVOR) {
         BuildConfig.FLAVOR_DEVELOPMENT -> "${BuildConfig.APP_VERSION_HEADER}-dev+${BuildConfig.GIT_HASH}"
-        BuildConfig.FLAVOR_DYNAMIC -> "${BuildConfig.APP_VERSION_HEADER}+dynamic-${BuildConfig.GIT_HASH}"
         BuildConfig.FLAVOR_ALPHA -> "${BuildConfig.APP_VERSION_HEADER}-alpha.%02d".format(BuildConfig.VERSION_CODE)
         BuildConfig.FLAVOR_BETA -> "${BuildConfig.APP_VERSION_HEADER}-beta"
         else -> BuildConfig.APP_VERSION_HEADER

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -41,13 +41,16 @@ class CreatePhotosEventBackupStopped(
     suspend operator fun invoke(
         folderId: FolderId,
         reason: PhotosEvent.Reason,
-    ): DriveTelemetryEvent = if (reason == PhotosEvent.Reason.PAUSED_DISABLED) {
-        getUploadStats(folderId).getOrNull()
+    ): DriveTelemetryEvent = when (reason) {
+        PhotosEvent.Reason.COMPLETED,
+        PhotosEvent.Reason.PAUSED_DISABLED,
+        -> getUploadStats(folderId).getOrNull()
             ?.backupStop(reason, folderId)
             ?: backupStopNoBackup(reason, folderId)
-    } else {
-        getUploadStats(folderId).getOrThrow().backupStop(reason, folderId)
+
+        else -> getUploadStats(folderId).getOrThrow().backupStop(reason, folderId)
     }
+
 
     private suspend fun UploadStats.backupStop(
         reason: PhotosEvent.Reason,

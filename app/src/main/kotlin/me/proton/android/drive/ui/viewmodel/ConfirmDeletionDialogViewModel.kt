@@ -45,7 +45,7 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class ConfirmDeletionDialogViewModel @Inject constructor(
     private val deleteFromTrash: DeleteFromTrash,
-    private val getDriveLink: GetDecryptedDriveLink,
+    getDriveLink: GetDecryptedDriveLink,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     val shareId = ShareId(userId, savedStateHandle.require(Screen.Files.Dialogs.ConfirmDeletion.SHARE_ID))

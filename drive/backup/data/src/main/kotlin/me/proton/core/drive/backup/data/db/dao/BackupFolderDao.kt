@@ -77,19 +77,6 @@ abstract class BackupFolderDao : BaseDao<BackupFolderEntity>() {
     @Query(
         """
         UPDATE BackupFolderEntity 
-        SET update_time = :updateTime
-        WHERE user_id = :userId AND bucket_id = :bucketId
-        """
-    )
-    abstract suspend fun updateUpdateTime(
-        userId: UserId,
-        bucketId: Int,
-        updateTime: Long,
-    )
-
-    @Query(
-        """
-        UPDATE BackupFolderEntity 
         SET update_time = NULL
         WHERE user_id = :userId
         """

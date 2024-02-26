@@ -23,9 +23,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.data.test.manager.StubbedWorkManager
 import me.proton.core.drive.base.data.test.manager.assertHasWork
-import me.proton.core.drive.share.data.test.repository.StubbedShareRepository.Companion.mainShareId
-import me.proton.core.drive.share.data.test.repository.StubbedShareRepository.Companion.photoShareId
-import me.proton.core.drive.share.domain.repository.ShareRepository
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,9 +38,6 @@ class EmptyTrashTest {
     var hiltRule = HiltAndroidRule(this)
 
     @Inject
-    lateinit var shareRepository: ShareRepository
-
-    @Inject
     lateinit var manager: StubbedWorkManager
 
     @Inject
@@ -55,17 +49,17 @@ class EmptyTrashTest {
     }
 
     @Test
-    fun `with shareId`() = runTest {
-        emptyTrash(userId, setOf(shareId))
+    fun `with volumeId`() = runTest {
+        emptyTrash(userId, volumeId)
 
-        manager.assertHasWork("emptyTrash", userId, shareId)
+        manager.assertHasWork("emptyTrash", userId, volumeId)
     }
 
     @Test
     @Suppress("DEPRECATION")
-    fun `without shareId`() = runTest {
+    fun `without volumeId`() = runTest {
         emptyTrash(userId)
 
-        manager.assertHasWork("emptyTrash", userId, mainShareId, photoShareId)
+        manager.assertHasWork("emptyTrash", userId, volumeId)
     }
 }

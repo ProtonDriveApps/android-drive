@@ -67,6 +67,10 @@ class HomeViewModel @Inject constructor(
                     titleResId = I18N.string.photos_title
                 )
             },
+            Screen.Computers to NavigationTab(
+                iconResId = CorePresentation.drawable.ic_proton_tv,
+                titleResId = I18N.string.computers_title
+            ),
             Screen.Shared to NavigationTab(
                 iconResId = CorePresentation.drawable.ic_proton_link,
                 titleResId = I18N.string.title_shared

@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.rules
 
 import androidx.test.platform.app.InstrumentationRegistry
 import me.proton.android.drive.test.BuildConfig
+import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.test.quark.Quark
 import me.proton.core.test.quark.v2.QuarkCommand
 import me.proton.core.util.kotlin.deserialize
@@ -30,9 +31,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 class QuarkRule(
-    quarkHost: String = BuildConfig.HOST,
-    quarkBaseUrl: String = "https://$quarkHost/api/internal",
-    proxyToken: String = BuildConfig.PROXY_TOKEN,
+    envConfig: EnvironmentConfiguration,
     clientTimeout: Duration = 60.seconds
 ) : ExternalResource() {
 
@@ -51,8 +50,8 @@ class QuarkRule(
 
     @Deprecated("quark is deprecated", replaceWith = ReplaceWith("quarkCommands"))
     val quark = Quark(
-        host = BuildConfig.HOST,
-        proxyToken = BuildConfig.PROXY_TOKEN,
+        host = envConfig.host,
+        proxyToken = envConfig.proxyToken,
         InstrumentationRegistry.getInstrumentation().context
             .assets
             .open("internal_api.json")
@@ -61,6 +60,6 @@ class QuarkRule(
             .deserialize())
 
     val quarkCommands: QuarkCommand = QuarkCommand(quarkClient)
-        .baseUrl(quarkBaseUrl)
-        .proxyToken(proxyToken)
+        .baseUrl("https://${envConfig.host}/api/internal")
+        .proxyToken(envConfig.proxyToken)
 }

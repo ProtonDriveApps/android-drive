@@ -156,6 +156,10 @@ class FakePGPCrypto : PGPCrypto {
         return message
     }
 
+    override fun decryptTextWithPassword(message: EncryptedMessage, password: ByteArray): String {
+        return message
+    }
+
     override fun encryptAndSignData(
         data: ByteArray,
         publicKey: Armored,
@@ -242,6 +246,10 @@ class FakePGPCrypto : PGPCrypto {
 
     override fun encryptText(plainText: String, publicKey: Armored): EncryptedMessage {
         return plainText
+    }
+
+    override fun encryptTextWithPassword(text: String, password: ByteArray): EncryptedMessage {
+        return text
     }
 
     override fun generateNewHashKey(): HashKey {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ import me.proton.test.fusion.FusionConfig.targetContext
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
-object UploadToRobot : Robot {
+object UploadToRobot : LinksRobot, GrowlerRobot, Robot {
     private val uploadToScreen get() = node.withTag(UploadToScreenTestTag.screen)
     private val uploadButton get() = node.withText(I18N.string.upload_title).isEnabled()
     private val emptyText get() = node.withText(I18N.string.title_empty_my_files).isEnabled()
@@ -40,6 +40,10 @@ object UploadToRobot : Robot {
             I18N.plurals.files_upload_being_uploaded_notification,
             count
         ).format(count, folderName)
+    ).await { assertIsDisplayed() }
+
+    fun assertStorageFull() = node.withText(
+        targetContext.resources.getString(I18N.string.files_upload_failure_storage_full_title)
     ).await { assertIsDisplayed() }
 
     override fun robotDisplayed() {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -37,12 +37,14 @@ import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.extension.getDefaultMessage
+import me.proton.android.drive.extension.log
 import me.proton.android.drive.lock.domain.manager.AppLockManager
 import me.proton.android.drive.lock.domain.usecase.GetAutoLockDuration
 import me.proton.android.drive.lock.domain.usecase.HasEnableAppLockTimestamp
 import me.proton.android.drive.photos.domain.usecase.IsPhotosEnabled
 import me.proton.android.drive.settings.DebugSettings
 import me.proton.android.drive.usecase.SendDebugLog
+import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.ClearCacheFolder
@@ -101,6 +103,7 @@ class SettingsViewModel @Inject constructor(
             viewModelScope.launch {
                 sendDebugLog(context)
                     .onFailure { error ->
+                        error.log(VIEW_MODEL)
                         broadcastMessages(
                             userId = userId,
                             message = error.getDefaultMessage(
@@ -218,6 +221,7 @@ class SettingsViewModel @Inject constructor(
                         )
                     }
                     .onFailure { error ->
+                        error.log(VIEW_MODEL)
                         broadcastMessages(
                             userId = userId,
                             message = error.getDefaultMessage(context, configurationProvider.useExceptionMessage),

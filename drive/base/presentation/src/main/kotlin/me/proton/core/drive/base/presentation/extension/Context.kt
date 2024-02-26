@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -49,6 +49,17 @@ fun Context.launchApplicationDetailsSettings() {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }
     )
+}
+
+fun Context.launchIgnoreBatteryOptimizations(isIgnoringBatteryOptimizations: Boolean = false) {
+    startActivity(Intent().apply {
+        if (isIgnoringBatteryOptimizations) {
+            action = Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS
+        } else {
+            action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            data = Uri.parse("package:$packageName")
+        }
+    })
 }
 
 private object Scheme {

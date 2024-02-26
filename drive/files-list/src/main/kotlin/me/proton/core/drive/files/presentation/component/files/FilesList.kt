@@ -59,6 +59,7 @@ import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultWeak
 import me.proton.core.compose.theme.headline
+import me.proton.core.drive.base.presentation.component.ListEmpty
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait
@@ -92,41 +93,14 @@ fun FilesListEmpty(
     Column(
         modifier = modifier.fillMaxSize(),
     ) {
-        Box(
+        ListEmpty(
+            imageResId = imageResId,
+            titleResId = titleResId,
+            descriptionResId = descriptionResId,
             modifier = Modifier
                 .fillMaxSize()
                 .weight(1f),
-            contentAlignment = Alignment.Center,
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Image(painter = painterResource(id = imageResId), contentDescription = null)
-
-                Text(
-                    text = stringResource(id = titleResId),
-                    style = ProtonTheme.typography.headline.copy(textAlign = TextAlign.Center),
-                    modifier = Modifier.padding(
-                        top = SmallSpacing,
-                        start = DefaultSpacing,
-                        end = DefaultSpacing,
-                    )
-                )
-                if (descriptionResId != 0) {
-                    Text(
-                        text = stringResource(id = descriptionResId),
-                        style = ProtonTheme.typography.defaultWeak.copy(textAlign = TextAlign.Center),
-                        modifier = Modifier.padding(
-                            top = ExtraSmallSpacing,
-                            start = DefaultSpacing,
-                            end = DefaultSpacing,
-                        )
-                    )
-                }
-            }
-        }
+        )
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center,

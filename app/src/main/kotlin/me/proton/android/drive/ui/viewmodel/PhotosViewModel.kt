@@ -76,11 +76,13 @@ import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.extension.launchApplicationDetailsSettings
+import me.proton.core.drive.base.presentation.extension.launchIgnoreBatteryOptimizations
 import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
@@ -373,6 +375,9 @@ class PhotosViewModel @Inject constructor(
         override val onGetStorage: () -> Unit = navigateToSubscription
         override val onResolveMissingFolder: () -> Unit = navigateToBackupSettings
         override val onChangeNetwork: () -> Unit = navigateToBackupSettings
+        override val onIgnoreBackgroundRestrictions: (Context) -> Unit = {context ->
+            context.launchIgnoreBatteryOptimizations()
+        }
         override val onResolve: () -> Unit = {
             parentFolderId.value?.let { folderId ->
                 navigateToPhotosIssues(folderId)
@@ -423,6 +428,7 @@ class PhotosViewModel @Inject constructor(
             enablePhotosBackup(folderId).onSuccess { state ->
                 onPhotoBackupState(state)
             }.onFailure { error ->
+                error.log(BACKUP, "Cannot enable backup for folder: ${folderId.id.logId()}")
                 broadcastMessages(
                     userId = userId,
                     message = error.getDefaultMessage(

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.rules
 
 import android.app.Application
 import android.content.Context
+import android.os.Environment
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.rules.ExternalResource
@@ -29,7 +30,7 @@ import java.io.RandomAccessFile
 
 class ExternalFilesRule(
     private val folderBuilder: (Context) -> File = { context ->
-        File(context.externalCacheDir, "ui-test")
+        File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "ui-test")
     },
 ) : ExternalResource() {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG. 
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -31,7 +31,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -83,7 +82,7 @@ fun BackupIssues(
             )
             LazyVerticalGrid(
                 modifier = Modifier.weight(1F),
-                columns = GridCells.Adaptive(minSize = CellMinSize),
+                columns = PhotosGridCells(minSize = CellMinSize, minCount = 3),
                 verticalArrangement = Arrangement.spacedBy(1.dp),
                 horizontalArrangement = Arrangement.spacedBy(1.dp),
             ) {

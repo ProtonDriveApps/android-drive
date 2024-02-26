@@ -24,6 +24,7 @@ import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.challenge.data.db.ChallengeDatabase
 import me.proton.core.drive.backup.data.db.BackupDatabase
+import me.proton.core.drive.device.data.db.DeviceDatabase
 import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
 import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
 import me.proton.core.drive.link.data.db.LinkDatabase
@@ -47,6 +48,7 @@ import me.proton.core.push.data.local.db.PushDatabase
 import me.proton.core.telemetry.data.db.TelemetryDatabase
 import me.proton.core.user.data.db.AddressDatabase
 import me.proton.core.user.data.db.UserDatabase
+import me.proton.core.user.data.db.UserKeyDatabase
 import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
 import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNotificationDatabase
@@ -249,7 +251,39 @@ object DriveDatabaseMigrations {
     val MIGRATION_40_41 = object : Migration(40, 41) {
         override fun migrate(database: SupportSQLiteDatabase) {
             BackupDatabase.MIGRATION_6.migrate(database)
+        }
+    }
+    
+    val MIGRATION_41_42 = object : Migration(41, 42) {
+        override fun migrate(database: SupportSQLiteDatabase) {
             NotificationDatabase.MIGRATION_3.migrate(database)
+            LinkUploadDatabase.MIGRATION_5.migrate(database)
+        }
+    }
+
+    val MIGRATION_42_43 = object: Migration(42, 43) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            UserSettingsDatabase.MIGRATION_5.migrate(database)
+            UserKeyDatabase.MIGRATION_0.migrate(database)
+            UserDatabase.MIGRATION_4.migrate(database)
+        }
+    }
+
+    val MIGRATION_43_44 = object : Migration(43, 44) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            BackupDatabase.MIGRATION_7.migrate(database)
+        }
+    }
+
+    val MIGRATION_44_45 = object: Migration(44, 45) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            DeviceDatabase.MIGRATION_0.migrate(database)
+        }
+    }
+
+    val MIGRATION_45_46 = object: Migration(45, 46) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            LinkTrashDatabase.MIGRATION_1.migrate(database)
         }
     }
 }

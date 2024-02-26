@@ -58,5 +58,10 @@ data class BackupError(
             type = BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED,
             retryable = true,
         )
+
+        fun BackgroundRestrictions() = BackupError(
+            type = BackupErrorType.BACKGROUND_RESTRICTIONS,
+            retryable = true,
+        )
     }
 }

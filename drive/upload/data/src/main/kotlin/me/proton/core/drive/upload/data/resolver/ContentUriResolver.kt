@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,9 +28,11 @@ import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.extensionOrEmpty
+import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.provider.MimeTypeProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.upload.data.extension.lastModified
+import me.proton.core.drive.upload.data.extension.log
 import me.proton.core.drive.upload.data.extension.name
 import me.proton.core.drive.upload.data.extension.size
 import me.proton.core.drive.upload.domain.resolver.UriResolver
@@ -110,5 +112,7 @@ class ContentUriResolver(
             runCatching { takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION) }
             block(uri)
         }
+    }.onFailure { error ->
+        error.log(UPLOAD, "Error while using content provider for: $uriString")
     }.getOrNull()
 }

@@ -29,10 +29,12 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.trash.data.manager.worker.EmptyTrashSuccessWorker
 import me.proton.core.drive.trash.data.manager.worker.EmptyTrashWorker
 import me.proton.core.drive.trash.data.manager.worker.PermanentlyDeleteFileNodesWorker
@@ -40,6 +42,7 @@ import me.proton.core.drive.trash.data.manager.worker.RestoreFileNodesWorker
 import me.proton.core.drive.trash.data.manager.worker.TrashFileNodesWorker
 import me.proton.core.drive.trash.domain.TrashManager
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.volume.domain.usecase.GetVolume
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -48,6 +51,8 @@ import javax.inject.Singleton
 class TrashManagerImpl @Inject constructor(
     private val workManager: WorkManager,
     private val linkTrashRepository: LinkTrashRepository,
+    private val getVolume: GetVolume,
+    private val getShare: GetShare,
 ) : TrashManager {
 
     override suspend fun trash(userId: UserId, folderId: FolderId, linkIds: List<LinkId>) =
@@ -84,14 +89,13 @@ class TrashManagerImpl @Inject constructor(
         }
 
     @Suppress("EnqueueWork")
-    override fun emptyTrash(userId: UserId, shareIds: Set<ShareId>) {
-        require(shareIds.isNotEmpty()) { "At least one share id is required" }
+    override suspend fun emptyTrash(userId: UserId, volumeId: VolumeId) {
+        val volume = getVolume(userId, volumeId).toResult().getOrThrow()
+        val share = getShare(ShareId(userId, volume.shareId)).toResult().getOrThrow()
         workManager.beginUniqueWork(
             userId.uniqueEmptyTrashWorkName,
             ExistingWorkPolicy.KEEP,
-            shareIds.map { shareId ->
-                EmptyTrashWorker.getWorkRequest(userId, shareId)
-            },
+            EmptyTrashWorker.getWorkRequest(userId, share.id),
         ).then(
             EmptyTrashSuccessWorker.getWorkRequest(userId)
         ).enqueue()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -33,11 +33,14 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.extension.logDefaultMessage
 import me.proton.core.drive.base.domain.extension.ellipsizeMiddle
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag.RENAME
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
@@ -119,6 +122,7 @@ class RenameViewModel @Inject constructor(
                 linkName = name,
             )
                 .onFailure { error ->
+                    error.log(RENAME, "Cannot rename link: ${linkId.id.logId()}")
                     error.handle()
                 }
                 .onSuccess {

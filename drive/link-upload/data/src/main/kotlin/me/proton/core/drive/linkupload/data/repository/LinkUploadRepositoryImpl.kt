@@ -360,10 +360,16 @@ class LinkUploadRepositoryImpl @Inject constructor(
         uploadBulk.copy(id = uploadBulkId)
     }
 
+    override suspend fun getUploadBulk(uploadBulkId: Long): UploadBulk? =
+        db.uploadBulkDao.get(uploadBulkId)?.toUploadBulk()
+
     override suspend fun removeUploadBulk(uploadBulkId: Long): UploadBulk? = db.inTransaction {
         db.uploadBulkDao.get(uploadBulkId)?.let { uploadBulkWithUri ->
             db.uploadBulkDao.delete(uploadBulkWithUri.uploadBulkEntity)
             uploadBulkWithUri.toUploadBulk()
         }
     }
+
+    override suspend fun removeUploadBulkUriStrings(uploadBulkId: Long, uriStrings: List<String>) =
+        db.uploadBulkDao.delete(uploadBulkId, uriStrings)
 }

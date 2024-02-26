@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -25,4 +25,5 @@ data class BackupFolder(
     val bucketId: Int,
     val folderId: FolderId,
     val updateTime: TimestampS? = null,
+    val syncTime: TimestampS? = null,
 )

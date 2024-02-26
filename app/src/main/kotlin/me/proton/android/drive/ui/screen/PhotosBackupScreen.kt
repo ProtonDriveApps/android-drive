@@ -18,7 +18,9 @@
 
 package me.proton.android.drive.ui.screen
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +50,9 @@ import me.proton.core.compose.component.ProtonRawListItem
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
+import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -73,8 +78,13 @@ fun PhotosBackupScreen(
             .fillMaxSize()
             .systemBarsPadding(),
         navigateBack = navigateBack,
-        navigateToConfirmStopSyncFolder = navigateToConfirmStopSyncFolder,
-    )
+    ) {
+        PhotoExtractDataAction()
+        LibraryFolders(
+            modifier = Modifier.fillMaxSize(),
+            navigateToConfirmStopSyncFolder = navigateToConfirmStopSyncFolder,
+        )
+    }
     BackupPermissions(
         viewState = viewModel.backupPermissionsViewModel.initialViewState,
         viewEvent = viewModel.backupPermissionsViewModel.viewEvent(
@@ -89,7 +99,7 @@ fun PhotosBackup(
     viewEvent: PhotosBackupViewEvent,
     modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
-    navigateToConfirmStopSyncFolder: (FolderId, Int) -> Unit,
+    content: @Composable() (ColumnScope.() -> Unit)
 ) {
     Column(modifier = modifier) {
         TopAppBar(
@@ -97,17 +107,20 @@ fun PhotosBackup(
             onNavigationIcon = navigateBack,
             title = viewState.title,
         )
+        val localContext = LocalContext.current
         BackupPhotosOptions(
             onToggleBackup = { viewEvent.onToggleBackup() },
             onToggleMobileData = { viewEvent.onToggleMobileData() },
+            onToggleIgnoringBatteryOptimizations = {
+                viewEvent.onToggleIgnoringBatteryOptimizations(
+                    localContext
+                )
+            },
             backup = viewState.backup,
             mobileData = viewState.mobileData,
+            ignoringBatteryOptimizations = viewState.ignoringBatteryOptimizations,
         )
-        PhotoExtractDataAction()
-        LibraryFolders(
-            modifier = Modifier.fillMaxSize(),
-            navigateToConfirmStopSyncFolder = navigateToConfirmStopSyncFolder,
-        )
+        content()
     }
 }
 
@@ -116,12 +129,18 @@ fun BackupPhotosOptions(
     modifier: Modifier = Modifier,
     onToggleBackup: () -> Unit,
     onToggleMobileData: () -> Unit,
+    onToggleIgnoringBatteryOptimizations: () -> Unit,
     backup: PhotosBackupOption,
     mobileData: PhotosBackupOption,
+    ignoringBatteryOptimizations: PhotosBackupOption,
 ) {
     Column(modifier) {
         BackupPhotosToggle(option = backup, onToggle = onToggleBackup)
         BackupPhotosToggle(option = mobileData, onToggle = onToggleMobileData)
+        BackupPhotosToggle(
+            option = ignoringBatteryOptimizations,
+            onToggle = onToggleIgnoringBatteryOptimizations,
+        )
     }
 }
 
@@ -133,20 +152,31 @@ fun BackupPhotosToggle(
 ) {
     BackupPhotosToggle(
         modifier = modifier,
-        title = option.title,
         checked = option.checked,
         enabled = option.enabled,
         onToggle = onToggle,
-    )
+    ) {
+        Text(
+            text = option.title,
+            style = ProtonTheme.typography.defaultNorm(option.enabled),
+
+            )
+        if (option.description != null) {
+            Text(
+                option.description,
+                style = ProtonTheme.typography.captionWeak(option.enabled),
+            )
+        }
+    }
 }
 
 @Composable
 fun BackupPhotosToggle(
-    title: String,
     checked: Boolean,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     onToggle: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     ProtonRawListItem(
         modifier = modifier
@@ -158,13 +188,11 @@ fun BackupPhotosToggle(
                 role = Role.Switch,
                 onValueChange = { onToggle() },
             )
-            .padding(horizontal = DefaultSpacing),
+            .padding(horizontal = DefaultSpacing, vertical = SmallSpacing),
     ) {
-        Text(
-            text = title,
-            style = ProtonTheme.typography.defaultNorm(enabled),
-            modifier = Modifier.weight(1f),
-        )
+        Column(modifier = Modifier.weight(1f)) {
+            content()
+        }
         Switch(
             checked = checked,
             onCheckedChange = null,
@@ -189,14 +217,21 @@ private fun PhotosBackupPreview() {
                     checked = false,
                     enabled = false,
                 ),
+                ignoringBatteryOptimizations = PhotosBackupOption(
+                    title = "Disable battery optimization",
+                    description = "Allows uninterrupted backup when the app is running in the background.",
+                    checked = false,
+                    enabled = false,
+                ),
             ),
             viewEvent = object : PhotosBackupViewEvent {
                 override val onToggleBackup = {}
                 override val onToggleMobileData = {}
+                override val onToggleIgnoringBatteryOptimizations = { _: Context -> }
             },
             modifier = Modifier.fillMaxSize(),
             navigateBack = {},
-            navigateToConfirmStopSyncFolder = { _, _ -> }
+            content = {}
         )
     }
 }
@@ -206,9 +241,25 @@ private fun PhotosBackupPreview() {
 private fun PreviewBackupPhotosToggle() {
     ProtonTheme {
         BackupPhotosToggle(
-            title = "Photos backup",
-            checked = true,
-            enabled = true,
+            PhotosBackupOption(
+                title = "Photos backup",
+                checked = true,
+            ),
+            onToggle = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewBackupPhotosDescriptionToggle() {
+    ProtonTheme {
+        BackupPhotosToggle(
+            PhotosBackupOption(
+                title = "Disable battery optimization",
+                description = "Allows uninterrupted backup when the app is running in the background.",
+                checked = true,
+            ),
             onToggle = {},
         )
     }

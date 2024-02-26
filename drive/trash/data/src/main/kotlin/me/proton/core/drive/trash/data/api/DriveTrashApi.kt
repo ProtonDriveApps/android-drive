@@ -22,7 +22,6 @@ import me.proton.core.drive.link.data.api.response.LinkResponses
 import me.proton.core.drive.trash.data.api.request.LinkIDsRequest
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -41,9 +40,6 @@ interface DriveTrashApi : BaseRetrofitApi {
         @Path("enc_shareID") shareId: String,
         @Body request: LinkIDsRequest,
     ): LinkResponses
-
-    @DELETE("drive/shares/{enc_shareID}/trash")
-    suspend fun emptyTrash(@Path("enc_shareID") shareId: String)
 
     @POST("drive/shares/{enc_shareID}/trash/delete_multiple")
     suspend fun deleteItemsFromTrash(

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -43,6 +43,25 @@ class DeleteSharedLinkFlowTest : AuthenticatedBaseTest() {
             .confirmStopSharing()
             .verify {
                 nodeWithTextDisplayed(I18N.string.description_files_stop_sharing_action_success)
+                itemIsDisplayed(file, isShared = false)
+            }
+    }
+
+    @Test
+    @Scenario(4)
+    fun stopSharingActiveLinkViaManageLink() {
+        val file = "shared.jpg"
+
+        FilesTabRobot
+            .scrollToItemWithName(file)
+            .clickMoreOnItem(file)
+            .clickManageLink()
+            .clickStopSharing()
+            .confirmStopSharing()
+            .verify {
+                nodeWithTextDisplayed(I18N.string.description_files_stop_sharing_action_success)
+                robotDisplayed()
+                itemIsDisplayed(file, isShared = false)
             }
     }
 
@@ -58,6 +77,7 @@ class DeleteSharedLinkFlowTest : AuthenticatedBaseTest() {
             .confirmStopSharing()
             .verify {
                 nodeWithTextDisplayed(I18N.string.description_files_stop_sharing_action_success)
+                itemIsDisplayed(file, isShared = false)
             }
     }
 }

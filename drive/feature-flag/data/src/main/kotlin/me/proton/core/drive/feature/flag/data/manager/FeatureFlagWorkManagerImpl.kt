@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -27,10 +27,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.feature.flag.data.worker.FeatureFlagRefreshWorker
 import me.proton.core.drive.feature.flag.domain.manager.FeatureFlagWorkManager
 import me.proton.core.presentation.app.AppLifecycleProvider
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 import kotlin.time.Duration
@@ -46,6 +48,7 @@ class FeatureFlagWorkManagerImpl @Inject constructor(
     private var enqueueJobs: MutableMap<UserId, Job> = mutableMapOf()
 
     override suspend fun start(userId: UserId) {
+        CoreLogger.d(LogTag.FEATURE_FLAG, "Start: $userId")
         enqueueJobs.remove(userId)?.cancel()
         enqueueJobs[userId] = appLifecycleProvider
             .state
@@ -59,16 +62,23 @@ class FeatureFlagWorkManagerImpl @Inject constructor(
     }
 
     override suspend fun stop(userId: UserId) {
+        CoreLogger.d(LogTag.FEATURE_FLAG, "Stop: $userId")
         enqueueJobs.remove(userId)?.cancel()
         cancel(userId)
     }
 
     override suspend fun enqueue(userId: UserId) {
-        enqueue(userId, configurationProvider.featureFlagFreshDuration)
+        val state = appLifecycleProvider.state.value
+        if (state == AppLifecycleProvider.State.Foreground) {
+            enqueue(userId, configurationProvider.featureFlagFreshDuration)
+        } else {
+            CoreLogger.d(LogTag.FEATURE_FLAG, "Ignore enqueue when the app is in $state for: $userId")
+        }
     }
 
-    private fun enqueue(userId: UserId, initialDelay: Duration): Operation =
-        workManager
+    private fun enqueue(userId: UserId, initialDelay: Duration): Operation {
+        CoreLogger.d(LogTag.FEATURE_FLAG, "Enqueue: $userId, $initialDelay")
+        return workManager
             .enqueueUniqueWork(
                 uniqueWorkName(userId),
                 ExistingWorkPolicy.REPLACE,
@@ -78,12 +88,15 @@ class FeatureFlagWorkManagerImpl @Inject constructor(
                     tags = listOf(refreshWorkerTag(userId)),
                 ),
             )
+    }
 
     override suspend fun cancel(userId: UserId) {
+        CoreLogger.d(LogTag.FEATURE_FLAG, "Cancel: $userId")
         workManager.cancelUniqueWork(uniqueWorkName(userId)).await()
     }
 
-    private fun uniqueWorkName(userId: UserId): String = "${this::class.java.simpleName}-user-id-${userId.id}"
+    private fun uniqueWorkName(userId: UserId): String =
+        "${this::class.java.simpleName}-user-id-${userId.id}"
 
     private fun refreshWorkerTag(userId: UserId): String =
         "${FeatureFlagRefreshWorker::class.java.simpleName}-user-id-${userId.id}"

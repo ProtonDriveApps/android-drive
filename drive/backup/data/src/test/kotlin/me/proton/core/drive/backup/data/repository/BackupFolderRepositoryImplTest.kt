@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -81,7 +81,7 @@ class BackupFolderRepositoryImplTest {
             repository.insertFolder(folder)
             val updateTime = TimestampS(1)
 
-            repository.updateFolderUpdateTime(userId, 0, updateTime)
+            repository.updateFolder(folder.copy(updateTime = updateTime))
 
             val folders = repository.getAll(userId)
             assertEquals(listOf(folder.copy(updateTime = updateTime)), folders)

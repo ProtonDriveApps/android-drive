@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,4 +28,7 @@ driveModule(hilt = true) {
     api(libs.core.auth.domain)
     api(libs.core.cryptoCommon)
     api(libs.core.key.domain)
+
+    androidTestImplementation(libs.core.crypto.android)
+    androidTestImplementation(files("${rootDir.relativeTo(projectDir)}/../proton-libs/gopenpgp/gopenpgp.aar"))
 }

@@ -100,9 +100,11 @@ fun MediaPreview(
             PlayerView(context).also { playerView ->
                 playerView.player = player
                 playerView.hideController()
-                playerView.setControllerVisibilityListener {
-                    mediaControllerVisibility(playerView.isControllerFullyVisible)
-                }
+                playerView.setControllerVisibilityListener(
+                    PlayerView.ControllerVisibilityListener {
+                        mediaControllerVisibility(playerView.isControllerFullyVisible)
+                    }
+                )
             }
         })
     }

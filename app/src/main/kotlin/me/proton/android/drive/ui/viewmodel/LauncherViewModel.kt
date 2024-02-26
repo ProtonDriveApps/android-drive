@@ -34,7 +34,6 @@ import me.proton.android.drive.ui.viewstate.PrimaryAccountState
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.drive.documentsprovider.data.DriveDocumentsProvider
-import me.proton.drive.android.settings.domain.usecase.HasShownWelcome
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,7 +42,6 @@ import javax.inject.Inject
 class LauncherViewModel @Inject constructor(
     accountManager: AccountManager,
     @ApplicationContext private val context: Context,
-    private val hasShownWelcome: HasShownWelcome,
 ) : ViewModel() {
     private var currentViewState = LauncherViewState.initialValue
 
@@ -58,6 +56,4 @@ class LauncherViewModel @Inject constructor(
             }
             .distinctUntilChanged()
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
-
-    suspend fun hasShownWelcomeFlow() = hasShownWelcome()
 }

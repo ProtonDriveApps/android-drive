@@ -32,8 +32,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import me.proton.android.drive.extension.log
 import me.proton.android.drive.photos.domain.usecase.RescanOnMediaStoreUpdate
 import me.proton.core.accountmanager.domain.AccountManager
@@ -49,11 +51,13 @@ import me.proton.core.drive.backup.domain.usecase.CheckAvailableSpace
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.backup.domain.usecase.ObserveConfigurationChanges
 import me.proton.core.drive.backup.domain.usecase.StartBackupAfterErrorResolved
+import me.proton.core.drive.backup.domain.usecase.SyncStaleFolders
 import me.proton.core.drive.backup.domain.usecase.UnwatchFolders
 import me.proton.core.drive.backup.domain.usecase.WatchFolders
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.presentation.app.AppLifecycleProvider
 import me.proton.core.user.domain.UserManager
@@ -76,6 +80,7 @@ class BackupInitializer : Initializer<Unit> {
             uploadErrorManager.errors
                 .onEach(uploadErrorHandler::onError)
                 .launchIn(appLifecycleProvider.lifecycle.coroutineScope)
+            syncStaleFoldersOnForeground(appLifecycleProvider.lifecycle.coroutineScope)
             accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.STARTED)
                 .onAccountReady { account ->
                     val userId = account.userId
@@ -117,7 +122,7 @@ class BackupInitializer : Initializer<Unit> {
                     }.launchIn(scope)
 
                     rescanOnMediaStoreUpdate(userId).onFailure { error ->
-                        error.log("Cannot observe media store updates")
+                        error.log(BACKUP, "Cannot observe media store updates")
                     }
                 }
                 .onAccountRemoved { account ->
@@ -126,6 +131,23 @@ class BackupInitializer : Initializer<Unit> {
                 }
         }
     }
+
+    private fun BackupInitializerEntryPoint.syncStaleFoldersOnForeground(scope: CoroutineScope) =
+        appLifecycleProvider.state.filter { state ->
+            state == AppLifecycleProvider.State.Foreground
+        }.take(1).onEach {
+            accountManager.getPrimaryUserId().firstOrNull()?.let { userId ->
+                syncStaleFolders(
+                    userId = userId,
+                    uploadPriority = UploadFileLink.RECENT_BACKUP_PRIORITY
+                ).onSuccess { folders ->
+                    CoreLogger.d(BACKUP, "Syncing ${folders.size} stale folders")
+                }.onFailure { error ->
+                    error.log(BACKUP, "Cannot sync stale folders")
+                }
+            }
+        }.launchIn(scope)
+
 
     override fun dependencies(): List<Class<out Initializer<*>>> = listOf(
         WorkManagerInitializer::class.java,
@@ -148,5 +170,6 @@ class BackupInitializer : Initializer<Unit> {
         val configurationProvider: ConfigurationProvider
         val rescanOnMediaStoreUpdate: RescanOnMediaStoreUpdate
         val observeConfigurationChanges: ObserveConfigurationChanges
+        val syncStaleFolders: SyncStaleFolders
     }
 }
