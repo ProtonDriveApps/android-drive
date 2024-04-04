@@ -24,6 +24,7 @@ import me.proton.core.drive.files.presentation.state.ListContentState
 data class ComputersViewState(
     val title: String,
     @DrawableRes val navigationIconResId: Int,
+    val notificationDotVisible: Boolean,
     val listContentState: ListContentState,
     val isRefreshEnabled: Boolean,
 )

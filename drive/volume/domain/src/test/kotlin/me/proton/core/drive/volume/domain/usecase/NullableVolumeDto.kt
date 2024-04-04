@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -18,15 +18,15 @@
 
 package me.proton.core.drive.volume.domain.usecase
 
-import me.proton.core.drive.db.test.shareId
+import me.proton.core.drive.db.test.mainShareId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.volume.data.api.entity.VolumeDto
 import me.proton.core.drive.volume.data.api.entity.VolumeShare
 
 @Suppress("TestFunctionName")
 internal fun NullableVolumeDto(
-    id: String = volumeId,
-    volumeShare: VolumeShare = VolumeShare(shareId, "root-id"),
+    id: String = volumeId.id,
+    volumeShare: VolumeShare = VolumeShare(mainShareId.id, "main-root-id"),
 ) = VolumeDto(
     id = id,
     creationTime = 0,

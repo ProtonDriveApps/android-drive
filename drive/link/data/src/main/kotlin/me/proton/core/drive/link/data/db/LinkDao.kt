@@ -58,6 +58,11 @@ interface LinkDao {
     fun hasLinkEntity(userId: UserId, shareId: String, linkId: String): Flow<Boolean>
 
     @Query(
+        "SELECT EXISTS(SELECT * FROM LinkFilePropertiesEntity WHERE file_user_id = :userId AND file_share_id = :shareId)"
+    )
+    suspend fun hasAnyFileEntity(userId: UserId, shareId: String): Boolean
+
+    @Query(
         """
             SELECT LinkEntity.*, LinkFilePropertiesEntity.*, LinkFolderPropertiesEntity.* 
             FROM $LINK_WITH_PROPERTIES_ENTITY 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,6 +30,6 @@ class CancelQuotaMessage @Inject constructor(
     private val repository: QuotaRepository,
 ) {
     suspend operator fun invoke(userId: UserId, level: QuotaLevel) = coRunCatching {
-        repository.insertAndUpdate(userId, level, getUserMaxSpace(userId).getOrThrow().bytes)
+        repository.insertOrUpdate(userId, level, getUserMaxSpace(userId).getOrThrow().bytes)
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ fun LinkWithProperties.toLink(): Link = when (properties) {
             TimestampS(shareUrlExpirationTime)
         },
         xAttr = link.xAttr,
-        shareUrlId = link.shareUrlId(),
+        sharingDetails = link.sharingDetails(),
         photoCaptureTime = properties.photoCaptureTime?.let { captureTime -> TimestampS(captureTime) },
         photoContentHash = properties.photoContentHash,
         mainPhotoLinkId = properties.mainPhotoLinkId,
@@ -103,7 +103,7 @@ fun LinkWithProperties.toLink(): Link = when (properties) {
             TimestampS(shareUrlExpirationTime)
         },
         xAttr = link.xAttr,
-        shareUrlId = link.shareUrlId(),
+        sharingDetails = link.sharingDetails(),
     )
 }
 

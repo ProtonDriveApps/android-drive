@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.stats.data.repository.UploadStatsRepositoryImpl
 import org.junit.Assert.assertEquals
@@ -48,7 +48,7 @@ class UploadStatsTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive {}
+        folderId = database.myFiles {}
         val repository = UploadStatsRepositoryImpl(database.db)
         getUploadStats = GetUploadStats(repository)
         updateUploadStats = UpdateUploadStats(repository)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -33,7 +33,7 @@ import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.GetAllFolders
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import org.junit.Assert.assertEquals
@@ -56,7 +56,7 @@ class BackupSyncFoldersWorkerTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
 
         repository = BackupFolderRepositoryImpl(database.db)
     }

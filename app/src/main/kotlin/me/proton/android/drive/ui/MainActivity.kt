@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -73,6 +73,7 @@ import me.proton.android.drive.lock.data.provider.BiometricPromptProvider
 import me.proton.android.drive.lock.domain.manager.AppLockManager
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.ui.navigation.AppNavGraph
+import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.provider.LocalSnackbarPadding
 import me.proton.android.drive.ui.provider.ProvideLocalSnackbarPadding
 import me.proton.android.drive.ui.viewmodel.AccountViewModel
@@ -156,6 +157,11 @@ class MainActivity : FragmentActivity() {
                         deepLinkBaseUrl = this@MainActivity.deepLinkBaseUrl,
                         clearBackstackTrigger = clearBackstackTrigger,
                         deepLinkIntent = deepLinkIntent,
+                        defaultStartDestination = if (configurationProvider.photosFeatureFlag) {
+                            Screen.Photos.route
+                        } else {
+                            Screen.Files.route
+                        },
                         locked = appLockManager.locked,
                         primaryAccount = accountViewModel.primaryAccount,
                         exitApp = { finish() },
@@ -304,7 +310,7 @@ class MainActivity : FragmentActivity() {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         intent?.let {
-            processIntent(intent, deepLinkIntent, accountViewModel)
+            processIntent(intent, deepLinkIntent, accountViewModel, true)
         }
     }
 }

@@ -84,12 +84,12 @@ class BackupManagerImpl @Inject constructor(
 
     override suspend fun stop(folderId: FolderId) {
         CoreLogger.d(BACKUP, "stop")
-        workManager.getWorkInfosByTag(TAG).await()
-            .filter { workInfo -> workInfo.tags.contains(folderId.id) }
-            .forEach { workInfo -> workManager.cancelWorkById(workInfo.id) }
         getAllFolders(folderId).getOrNull()?.forEach { backupFolder ->
             uploadWorkManager.cancelAllByFolder(backupFolder.folderId.userId, backupFolder.folderId)
         }
+        workManager.getWorkInfosByTag(TAG).await()
+            .filter { workInfo -> workInfo.tags.contains(folderId.id) }
+            .forEach { workInfo -> workManager.cancelWorkById(workInfo.id) }
     }
 
     override suspend fun cancelSync(backupFolder: BackupFolder) {

@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import me.proton.android.drive.ui.effect.HandleHomeEffect
@@ -62,7 +63,9 @@ fun SyncedFoldersScreen(
         driveLinks = PagingList(viewModel.driveLinks, viewModel.listEffect),
         viewState = viewState,
         viewEvent = viewEvent,
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .testTag(SyncedFoldersTestTag.screen),
         onRefresh = viewModel::refresh,
     )
 }
@@ -113,4 +116,8 @@ private fun TopAppBar(
         title = viewState.title ?: "",
         isTitleEncrypted = viewState.isTitleEncrypted,
     )
+}
+
+object SyncedFoldersTestTag {
+    const val screen = "computer synced folders screen"
 }

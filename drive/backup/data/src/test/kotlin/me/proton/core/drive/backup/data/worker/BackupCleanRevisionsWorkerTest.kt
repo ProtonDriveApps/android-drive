@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -36,15 +36,12 @@ import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.CleanRevisions
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.shareId
-import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.folder.domain.repository.FolderRepository
 import me.proton.core.drive.folder.domain.usecase.DeleteFolderChildren
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
 import org.junit.Assert.assertEquals
@@ -69,7 +66,7 @@ class BackupCleanRevisionsWorkerTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         backupDuplicateRepository = BackupDuplicateRepositoryImpl(database.db)
         backupErrorRepository = BackupErrorRepositoryImpl(database.db)
         backupDuplicates = listOf(
@@ -78,7 +75,7 @@ class BackupCleanRevisionsWorkerTest {
                 parentId = folderId,
                 hash = "hash",
                 contentHash = null,
-                linkId = FileId(ShareId(userId, shareId), "link-id"),
+                linkId = FileId(folderId.shareId, "link-id"),
                 linkState = Link.State.DRAFT,
                 revisionId = "revision-Id",
                 clientUid = null,

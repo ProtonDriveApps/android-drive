@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -40,7 +40,7 @@ class CreateShareInfo @Inject constructor(
         val userId = linkId.shareId.userId
         val link = getLink(linkId).toResult().getOrThrow()
         val addressId = getAddressId(userId)
-        val shareKey = generateShareKey(userId, addressId).getOrThrow()
+        val shareKey = generateShareKey(userId, addressId, linkId).getOrThrow()
         ShareInfo(
             addressId = addressId,
             name = name,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ class DeleteShareUrl @Inject constructor(
     suspend operator fun invoke(linkId: LinkId): Result<Unit> = coRunCatching {
         updateEventAction(linkId.shareId) {
             deleteShareUrl(
-                shareUrlId = requireNotNull(getLink(linkId).toResult().getOrThrow().shareUrlId) {
+                shareUrlId = requireNotNull(getLink(linkId).toResult().getOrThrow().sharingDetails?.shareUrlId) {
                     "ShareUrlId not found"
                 },
             ).getOrThrow()

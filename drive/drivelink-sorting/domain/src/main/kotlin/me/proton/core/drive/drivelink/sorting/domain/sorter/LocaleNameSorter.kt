@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -26,16 +26,9 @@ import java.text.Collator
 import android.icu.text.Collator as IcuCollator
 import android.icu.text.RuleBasedCollator as IcuRuleBasedCollator
 
-data object LocaleNameSorter : Sorter() {
-
-    private val comparator: Comparator<Any> get() =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            (IcuCollator.getInstance() as IcuRuleBasedCollator).apply {
-                numericCollation = true
-            }
-        } else {
-            Collator.getInstance()
-        }
+data class LocaleNameSorter internal constructor(
+    private val comparator: Comparator<Any>
+) : Sorter() {
 
     override fun sort(driveLinks: List<DriveLink>, direction: Direction): List<DriveLink> =
         driveLinks.sortedWith(
@@ -48,4 +41,15 @@ data object LocaleNameSorter : Sorter() {
                     }
                 }
         )
+
+    companion object {
+        operator fun invoke(): LocaleNameSorter =
+            LocaleNameSorter(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                (IcuCollator.getInstance() as IcuRuleBasedCollator).apply {
+                    numericCollation = true
+                }
+            } else {
+                Collator.getInstance()
+            })
+    }
 }

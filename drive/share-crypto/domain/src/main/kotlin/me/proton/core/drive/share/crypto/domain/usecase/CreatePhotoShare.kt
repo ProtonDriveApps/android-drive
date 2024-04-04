@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ package me.proton.core.drive.share.crypto.domain.usecase
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import me.proton.core.domain.arch.DataResult
@@ -40,7 +41,6 @@ import me.proton.core.drive.share.domain.exception.ShareException
 import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
 import me.proton.core.network.domain.ApiException
 import javax.inject.Inject
 
@@ -48,21 +48,23 @@ import javax.inject.Inject
 class CreatePhotoShare @Inject constructor(
     private val createPhotoInfo: CreatePhotoInfo,
     private val photoRepository: PhotoRepository,
-    private val getOldestActiveVolume: GetOldestActiveVolume,
+    private val getOrCreateMainShare: GetOrCreateMainShare,
     private val getShare: GetShare,
     private val withFeatureFlag: WithFeatureFlag,
     private val getMainShare: GetMainShare,
     private val getAddressId: GetAddressId,
 ) {
     operator fun invoke(userId: UserId): Flow<DataResult<Share>> =
-        getOldestActiveVolume(userId).transformSuccess { result ->
-            emitAll(
-                invoke(
-                    userId = userId,
-                    volumeId = result.value.id,
+        getOrCreateMainShare(userId)
+            .distinctUntilChanged()
+            .transformSuccess { result ->
+                emitAll(
+                    invoke(
+                        userId = userId,
+                        volumeId = result.value.volumeId,
+                    )
                 )
-            )
-        }
+            }
 
     operator fun invoke(userId: UserId, volumeId: VolumeId): Flow<DataResult<Share>> = flow {
         try {

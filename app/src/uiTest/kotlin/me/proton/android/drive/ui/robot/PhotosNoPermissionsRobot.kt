@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -21,9 +21,9 @@ package me.proton.android.drive.ui.robot
 import android.os.Build
 import me.proton.android.drive.ui.extension.withTextResource
 import me.proton.test.fusion.Fusion.byObject
-import me.proton.test.fusion.Fusion.device
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
+
 
 object PhotosNoPermissionsRobot: Robot {
     private val photoPermissionsTitle =
@@ -35,11 +35,13 @@ object PhotosNoPermissionsRobot: Robot {
     private val allowAccessImage = node.withText(I18N.string.photos_permission_rational_img_text)
 
     fun denyPermissions() = apply {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            device.pressBack()
-        } else {
-            byObject.withText("DENY").waitForClickable().click()
-        }
+        byObject.withTextMatches(
+            when (Build.VERSION.SDK_INT) {
+                in 24..28 -> "DENY"
+                in 29..30 -> "Deny"
+                else -> "Don.+t allow"
+            }.toPattern()
+        ).waitForClickable().click()
     }
 
     fun <T: Robot> clickNotNow(goesTo: T) = notNowButton.clickTo(goesTo)

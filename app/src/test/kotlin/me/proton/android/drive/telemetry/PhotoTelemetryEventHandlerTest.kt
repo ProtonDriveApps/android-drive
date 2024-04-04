@@ -155,7 +155,7 @@ class PhotoTelemetryEventHandlerTest {
         val id = database.db.linkUploadDao.insert(
             LinkUploadEntity(
                 userId = me.proton.core.drive.db.test.userId,
-                volumeId = volumeId,
+                volumeId = volumeId.id,
                 shareId = folderId.shareId.id,
                 parentId = folderId.id,
                 name = "",
@@ -186,7 +186,7 @@ class PhotoTelemetryEventHandlerTest {
         val id = database.db.linkUploadDao.insert(
             LinkUploadEntity(
                 userId = me.proton.core.drive.db.test.userId,
-                volumeId = volumeId,
+                volumeId = volumeId.id,
                 shareId = folderId.shareId.id,
                 parentId = folderId.id,
                 name = "",

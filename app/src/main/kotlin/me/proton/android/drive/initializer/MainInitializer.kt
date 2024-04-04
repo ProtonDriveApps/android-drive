@@ -52,6 +52,7 @@ class MainInitializer : Initializer<Unit> {
         BackupInitializer::class.java,
         TelemetryInitializer::class.java,
         SelectionInitializer::class.java,
+        PingActiveUserInitializer::class.java,
     )
 
     companion object {

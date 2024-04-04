@@ -29,6 +29,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
@@ -50,7 +52,10 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.extension.isDevice
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
@@ -64,6 +69,7 @@ class MoveToFolderViewModel @Inject constructor(
     getDriveLink: GetDecryptedDriveLink,
     getPagedDriveLinks: GetPagedDriveLinksList,
     getSelectedDriveLinks: GetSelectedDriveLinks,
+    getShare: GetShare,
     private val moveFile: MoveFile,
     private val deselectLinks: DeselectLinks,
     private val decryptDriveLinks: DecryptDriveLinks,
@@ -85,6 +91,12 @@ class MoveToFolderViewModel @Inject constructor(
             }
         }
     }
+    private val shareFlow: StateFlow<Share?> =
+        (shareId?.let {
+            getShare(shareId, flowOf(false))
+                .mapSuccessValueOrNull()
+        } ?: flowOf(null))
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val driveLinksToMove: StateFlow<List<DriveLink>> = if (selectionId != null) {
         getSelectedDriveLinks(selectionId)
@@ -107,16 +119,21 @@ class MoveToFolderViewModel @Inject constructor(
         driveLinksToMove,
         parentLink,
         listContentState,
-        listContentAppendingState
-    ) { driveLinksToMove, parentLink, contentState, appendingState ->
+        listContentAppendingState,
+        shareFlow.filterNotNull(),
+    ) { driveLinksToMove, parentLink, contentState, appendingState, share ->
         val isRoot = parentLink != null && parentLink.parentId == null
         initialViewState.copy(
             filesViewState = initialViewState.filesViewState.copy(
                 listContentState = contentState,
                 listContentAppendingState = appendingState
             ),
-            isMoveButtonEnabled = parentLink?.id != parentId,
-            title = if (isRoot) appContext.getString(I18N.string.title_my_files) else parentLink?.name.orEmpty(),
+            isMoveButtonEnabled = (parentLink?.id != parentId) && !(isRoot && share.isDevice),
+            title = if (isRoot && share.isMain) {
+                appContext.getString(I18N.string.title_my_files)
+            } else {
+                parentLink?.name.orEmpty()
+            },
             isTitleEncrypted = parentLink?.isNameEncrypted ?: false,
             navigationIconResId = if (parentLink == null || isRoot) {
                 CorePresentation.drawable.ic_proton_cross

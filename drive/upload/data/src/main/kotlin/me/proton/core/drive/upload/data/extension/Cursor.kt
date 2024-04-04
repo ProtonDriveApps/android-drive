@@ -46,7 +46,7 @@ val Cursor.lastModified: TimestampMs? get() {
 
     return if (documentLastModified != -1) {
         TimestampMs(getLong(documentLastModified))
-    } else if (mediaDateModified != 1) {
+    } else if (mediaDateModified != -1) {
         TimestampS(getLong(mediaDateModified)).toTimestampMs()
     } else {
         null

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ class GetOrCreateShare @Inject constructor(
 ) {
     operator fun invoke(volumeId: VolumeId, linkId: LinkId): Flow<DataResult<Share>> = flow {
         val link = getLink(linkId).toResult().getOrNull()
-        link?.shareUrlId?.shareId?.let { shareId ->
+        link?.sharingDetails?.shareId?.let { shareId ->
             emitAll(getShare(shareId))
         } ?: emitAll(createShare(volumeId, linkId))
     }

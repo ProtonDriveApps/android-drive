@@ -28,9 +28,10 @@ driveModule(
     compose = true,
     i18n = true,
 ) {
-    implementation(project(":drive:base:data"))
     api(project(":drive:base:presentation"))
     api(project(":drive:drivelink-device:domain"))
+    api(project(":drive:drivelink-rename:presentation"))
     api(project(":drive:files-list"))
     api(libs.core.presentation.compose)
+    implementation(project(":drive:base:data"))
 }

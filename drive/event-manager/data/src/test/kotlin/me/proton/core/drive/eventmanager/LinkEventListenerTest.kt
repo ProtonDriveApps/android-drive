@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -75,7 +75,7 @@ class LinkEventListenerTest {
         findLinkIds = findLinkIds,
         getShare = getShare,
     ).apply {
-        onFailure = { error -> throw error }
+        onFailure = { error, _ -> throw error }
     }
 
     private val userId = UserId("user-id")
@@ -93,7 +93,7 @@ class LinkEventListenerTest {
                 ResponseSource.Local, Share(
                     id = shareId,
                     volumeId = volumeId,
-                    rootLinkId = "root-id",
+                    rootLinkId = "main-root-id",
                     addressId = null,
                     isMain = true,
                     isLocked = false,
@@ -113,7 +113,7 @@ class LinkEventListenerTest {
         listener.notifyEvents(
             config = shareConfig,
             metadata = shareConfig.eventMetadata,
-            response = shareConfig.eventsResponse(
+            response = eventsResponse(
                 CreateLinksEvent(
                     linkDto, shareId.id, null
                 ),
@@ -139,7 +139,7 @@ class LinkEventListenerTest {
         listener.notifyEvents(
             config = shareConfig,
             metadata = shareConfig.eventMetadata,
-            response = shareConfig.eventsResponse(
+            response = eventsResponse(
                 UpdateLinksEvent(
                     linkDto, shareId.id, null
                 ),
@@ -165,7 +165,7 @@ class LinkEventListenerTest {
         listener.notifyEvents(
             config = shareConfig,
             metadata = shareConfig.eventMetadata,
-            response = shareConfig.eventsResponse(
+            response = eventsResponse(
                 UpdateMetadataLinksEvent(
                     linkDto, shareId.id, null
                 ),
@@ -190,7 +190,7 @@ class LinkEventListenerTest {
         listener.notifyEvents(
             config = shareConfig,
             metadata = shareConfig.eventMetadata,
-            response = shareConfig.eventsResponse(
+            response = eventsResponse(
                 DeleteLinksEvent(DeleteLinksEvent.Link("link-id"), null),
             ),
         )
@@ -215,7 +215,7 @@ class LinkEventListenerTest {
         listener.notifyEvents(
             config = volumeConfig,
             metadata = volumeConfig.eventMetadata,
-            response = volumeConfig.eventsResponse(
+            response = eventsResponse(
                 CreateLinksEvent(
                     linkDto, shareId.id, null
                 ),
@@ -241,7 +241,7 @@ class LinkEventListenerTest {
         listener.notifyEvents(
             config = volumeConfig,
             metadata = volumeConfig.eventMetadata,
-            response = volumeConfig.eventsResponse(
+            response = eventsResponse(
                 UpdateLinksEvent(
                     linkDto, shareId.id, null
                 ),
@@ -267,7 +267,7 @@ class LinkEventListenerTest {
         listener.notifyEvents(
             config = volumeConfig,
             metadata = volumeConfig.eventMetadata,
-            response = volumeConfig.eventsResponse(
+            response = eventsResponse(
                 UpdateMetadataLinksEvent(
                     linkDto, shareId.id, null
                 ),
@@ -297,7 +297,7 @@ class LinkEventListenerTest {
         listener.notifyEvents(
             config = volumeConfig,
             metadata = volumeConfig.eventMetadata,
-            response = volumeConfig.eventsResponse(
+            response = eventsResponse(
                 DeleteLinksEvent(DeleteLinksEvent.Link("link-id"), null),
             ),
         )
@@ -315,7 +315,7 @@ class LinkEventListenerTest {
         listener.notifyEvents(
             config = volumeConfig,
             metadata = volumeConfig.eventMetadata,
-            response = volumeConfig.eventsResponse(
+            response = eventsResponse(
                 DeleteLinksEvent(DeleteLinksEvent.Link("link-id"), null),
             ),
         )
@@ -329,7 +329,7 @@ class LinkEventListenerTest {
         listener.notifyEvents(
             config = volumeConfig,
             metadata = volumeConfig.eventMetadata,
-            response = volumeConfig.eventsResponse(
+            response = eventsResponse(
                 DeleteLinksEvent(DeleteLinksEvent.Link("link-id"), shareId.id),
             ),
         )
@@ -348,7 +348,7 @@ class LinkEventListenerTest {
         coVerify { onResetAllEvent(userId, volumeId) }
     }
 
-    private fun EventManagerConfig.Drive.Share.eventsResponse(vararg events: LinksEvent) =
+    private fun eventsResponse(vararg events: LinksEvent) =
         EventsResponse(
             LinkEventListener.json.encodeToString(Events(listOf(*events)))
         )
@@ -360,11 +360,6 @@ class LinkEventListenerTest {
             config = this,
             createdAt = 0,
             refresh = RefreshType.Mail
-        )
-
-    private fun EventManagerConfig.Drive.Volume.eventsResponse(vararg events: LinksEvent) =
-        EventsResponse(
-            LinkEventListener.json.encodeToString(Events(listOf(*events)))
         )
 
     private val EventManagerConfig.Drive.Volume.eventMetadata get() =

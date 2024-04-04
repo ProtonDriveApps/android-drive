@@ -203,4 +203,38 @@
     <string name="operation_open_document">open a document</string>
     <string name="operation_create_document">create a document</string>
     <string name="operation_take_picture">take a picture</string>
+
+    <!-- region Get more free storage -->
+    <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+    <string name="get_more_free_storage_title">Unlock %1$s of free storage</string>
+    <string name="get_more_free_storage_description">Complete these steps in your first 30 days for a free storage upgrade.</string>
+    <string name="get_more_free_storage_action_upload_title">Upload a file OR enable photo backup</string>
+    <string name="get_more_free_storage_action_upload_subtitle">All your files will be encrypted.</string>
+    <string name="get_more_free_storage_action_link_title">Create a sharing link</string>
+    <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+    <string name="get_more_free_storage_action_link_subtitle">Select any file or folder. Open the options menu and press %1$s.</string>
+    <string name="get_more_free_storage_action_recovery_title">Set a recovery method</string>
+    <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+    <string name="get_more_free_storage_action_recovery_subtitle">Sign in at %1$s, then go to Settings -> Recovery.</string>
+    <string name="get_more_free_storage_action_recovery_subtitle_url_string" translatable="false">account.proton.me</string>
+    <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+    <string name="get_more_free_storage_action_recovery_subtitle_url" translatable="false">https://%1$s</string>
+    <!-- endregion -->
+
 </resources>

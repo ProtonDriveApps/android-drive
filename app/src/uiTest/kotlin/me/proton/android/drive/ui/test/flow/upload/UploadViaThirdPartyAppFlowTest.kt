@@ -22,6 +22,7 @@ import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.Quota
 import me.proton.android.drive.ui.robot.LauncherRobot
+import me.proton.android.drive.ui.robot.StorageFullRobot
 import me.proton.android.drive.ui.robot.UploadToRobot
 import me.proton.android.drive.ui.rules.ExternalFilesRule
 import me.proton.android.drive.ui.rules.UserLoginRule
@@ -102,9 +103,9 @@ class UploadViaThirdPartyAppFlowTest : EmptyBaseTest() {
     @Quota(percentageFull = 99)
     fun uploadMultipleItemsWhenStorageIsAlmostFull() {
         val files = listOf(
-            externalFilesRule.createFile("1.txt", 5.MiB.value),
-            externalFilesRule.createFile("2.txt", 5.MiB.value),
-            externalFilesRule.createFile("3.txt", 5.MiB.value),
+            externalFilesRule.createFile("1.txt", 10.MiB.value),
+            externalFilesRule.createFile("2.txt", 10.MiB.value),
+            externalFilesRule.createFile("3.txt", 10.MiB.value),
         )
 
         LauncherRobot.uploadTo(files)
@@ -114,7 +115,7 @@ class UploadViaThirdPartyAppFlowTest : EmptyBaseTest() {
             }
             .clickUpload()
             .verify {
-                assertStorageFull()
+                StorageFullRobot.robotDisplayed()
             }
     }
 }

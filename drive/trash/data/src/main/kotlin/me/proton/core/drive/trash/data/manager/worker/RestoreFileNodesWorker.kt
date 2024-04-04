@@ -106,11 +106,7 @@ class RestoreFileNodesWorker @AssistedInject constructor(
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest = OneTimeWorkRequest.Builder(RestoreFileNodesWorker::class.java)
             .setInputData(
-                Data.Builder()
-                    .putString(KEY_USER_ID, userId.id)
-                    .putString(KEY_SHARE_ID, shareId.id)
-                    .putString(KEY_WORK_ID, workId)
-                    .build()
+                workDataOf(userId, shareId, workId)
             )
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
@@ -118,6 +114,16 @@ class RestoreFileNodesWorker @AssistedInject constructor(
                 TimeUnit.MILLISECONDS
             )
             .addTags(listOf(userId.id) + tags)
+            .build()
+
+        fun workDataOf(
+            userId: UserId,
+            shareId: ShareId,
+            workId: String,
+        ) = Data.Builder()
+            .putString(KEY_USER_ID, userId.id)
+            .putString(KEY_SHARE_ID, shareId.id)
+            .putString(KEY_WORK_ID, workId)
             .build()
     }
 }

@@ -25,6 +25,7 @@ android {
 
 driveModule(
     hilt = true,
+    socialTest = true,
 ) {
     api(project(":drive:link:domain"))
 }

@@ -25,7 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.drive.base.presentation.component.ListEmpty
+import me.proton.core.drive.base.presentation.component.IllustratedMessage
 import me.proton.core.drive.drivelink.device.presentation.R
 import me.proton.core.drive.i18n.R as I18N
 
@@ -36,7 +36,7 @@ fun DevicesEmpty(
     @StringRes descriptionResId: Int,
     modifier: Modifier = Modifier,
 ) {
-    ListEmpty(
+    IllustratedMessage(
         imageResId = imageResId,
         titleResId = titleResId,
         descriptionResId = descriptionResId,

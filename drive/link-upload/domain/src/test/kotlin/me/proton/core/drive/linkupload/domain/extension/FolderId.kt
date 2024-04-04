@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -23,13 +23,12 @@ import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.volume.domain.entity.VolumeId
 
 
 fun FolderId.uploadFileLink(index: Long = 0, uriString : String = "uri$index") = UploadFileLink(
     id = index,
     userId = userId,
-    volumeId = VolumeId(volumeId),
+    volumeId = volumeId,
     mimeType = "",
     name = "upload-$index",
     networkTypeProviderType = NetworkTypeProviderType.DEFAULT,

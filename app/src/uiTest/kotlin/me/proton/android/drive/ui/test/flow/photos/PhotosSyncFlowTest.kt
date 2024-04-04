@@ -24,20 +24,35 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import dagger.hilt.components.SingletonComponent
+import me.proton.android.drive.extension.debug
 import me.proton.android.drive.photos.data.di.PhotosConfigurationModule
 import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
 import me.proton.android.drive.provider.PhotosConnectedDefaultConfigurationProvider
+import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SettingsRobot
+import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.PhotosBaseTest
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PHOTOS_UPLOAD_DISABLED
+import org.junit.Before
 import org.junit.Test
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @HiltAndroidTest
 @UninstallModules(PhotosConfigurationModule::class)
 class PhotosSyncFlowTest : PhotosBaseTest() {
+
+    @Inject lateinit var configurationProvider: ConfigurationProvider
+
+    @Before
+    fun setUp(){
+        configurationProvider.debug.photosUpsellPhotoCount = Int.MAX_VALUE
+    }
 
     @Test
     @Scenario(2)
@@ -45,8 +60,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
         pictureCameraFolder.copyDirFromAssets("images/basic")
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
 
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .enableBackup()
             .verify {
                 assertBackupCompleteDisplayed()
@@ -59,8 +73,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     fun syncNewPhotos() {
         dcimCameraFolder.copyDirFromAssets("images/basic")
 
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .enableBackup()
             .verify {
                 assertBackupCompleteDisplayed()
@@ -81,8 +94,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
         dcimCameraFolder.copyDirFromAssets("images/basic")
         dcimCameraFolder.copyFileFromAssets("boat.mp4")
 
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .enableBackup()
 
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
@@ -101,8 +113,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
         val videoFile = "boat.mp4"
         pictureCameraFolder.copyFileFromAssets(videoFile)
 
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .enableBackup()
             .verify {
                 assertPhotoDisplayed(videoFile)
@@ -122,7 +133,11 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     fun turnOnBackupWithFilesInCameraFolderFromSettings() {
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
 
-        FilesTabRobot
+        PhotosTabRobot
+            .verify {
+                // wait photo share to be created
+                assertEnableBackupDisplayed()
+            }
             .openSidebarBySwipe()
             .clickSettings()
             .clickPhotosBackup()
@@ -142,7 +157,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
 
     @Test
     fun noPhotoInCameraFolder() {
-        FilesTabRobot
+        PhotosTabRobot
             .openSidebarBySwipe()
             .clickSettings()
             .clickPhotosBackup()
@@ -155,7 +170,11 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     fun photosFolderEnableFromSettings() {
         picturePhotosFolder.copyFileFromAssets("boat.jpg")
 
-        FilesTabRobot
+        PhotosTabRobot
+            .verify {
+                // wait photo share to be created
+                assertNoBackupsDisplayed()
+            }
             .openSidebarBySwipe()
             .clickSettings()
             .clickPhotosBackup()
@@ -177,8 +196,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     fun photosFolderEnableFromPhoto() {
         picturePhotosFolder.copyFileFromAssets("boat.jpg")
 
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .verify {
                 assertMissingFolderDisplayed()
             }
@@ -199,7 +217,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     fun photosFolderEnableAndDisableFromSettings() {
         picturePhotosFolder.copyFileFromAssets("boat.jpg")
 
-        FilesTabRobot
+        PhotosTabRobot
             .openSidebarBySwipe()
             .clickSettings()
             .clickPhotosBackup()
@@ -227,8 +245,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
         pictureCameraFolder.copyDirFromAssets("videos/formats")
         val videoFiles = arrayOf("3gp.3gp", "mov.mov", "mp4.mp4")
 
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .enableBackup()
             .verify {
                 assertBackupCompleteDisplayed()
@@ -250,8 +267,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
         pictureCameraFolder.copyDirFromAssets("images/basic/1")
         pictureCameraFolder.copyDirFromAssets("videos/formats")
 
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .enableBackup()
             .verify {
                 assertLeftToBackup(5)
@@ -270,13 +286,36 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
             }
     }
 
+    @Test
+    @FeatureFlag(DRIVE_PHOTOS_UPLOAD_DISABLED, ENABLED)
+    fun featureDisabled() {
+        PhotosTabRobot
+            .verify {
+                assertPhotosBackupDisabled()
+            }
+    }
 
+    @Test
+    @FeatureFlag(DRIVE_PHOTOS_UPLOAD_DISABLED, ENABLED)
+    fun featureDisabledFromSettings() {
+        PhotosTabRobot
+            .openSidebarBySwipe()
+            .clickSettings()
+            .clickPhotosBackup()
+            .clickBackupToggle(PhotosBackupRobot)
+            .verify {
+                assertPhotosBackupDisabled()
+            }
+    }
 
     @Module
     @InstallIn(SingletonComponent::class)
+    @Suppress("Unused")
     interface TestPhotosConfigurationModule {
         @Binds
         @Singleton
-        fun bindPhotosDefaultConfigurationProvider(impl: PhotosConnectedDefaultConfigurationProvider): PhotosDefaultConfigurationProvider
+        fun bindPhotosDefaultConfigurationProvider(
+            impl: PhotosConnectedDefaultConfigurationProvider,
+        ): PhotosDefaultConfigurationProvider
     }
 }

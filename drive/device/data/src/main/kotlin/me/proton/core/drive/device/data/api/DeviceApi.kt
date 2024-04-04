@@ -18,10 +18,14 @@
 
 package me.proton.core.drive.device.data.api
 
+import me.proton.core.drive.base.data.api.response.CodeResponse
+import me.proton.core.drive.device.data.api.request.UpdateDeviceRequest
 import me.proton.core.drive.device.data.api.response.GetDevicesResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface DeviceApi : BaseRetrofitApi {
@@ -29,8 +33,14 @@ interface DeviceApi : BaseRetrofitApi {
     @GET("drive/devices")
     suspend fun getDevices(): GetDevicesResponse
 
+    @PUT("drive/devices/{deviceID}")
+    suspend fun updateDevice(
+        @Path("deviceID") deviceId: String,
+        @Body request: UpdateDeviceRequest,
+    ): CodeResponse
+
     @DELETE("drive/devices/{deviceID}")
     suspend fun deleteDevice(
         @Path("deviceID") deviceId: String,
-    )
+    ): CodeResponse
 }

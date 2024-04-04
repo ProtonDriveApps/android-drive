@@ -69,8 +69,8 @@ class LinkEventListener @Inject constructor(
     private val findLinkIds: FindLinkIds,
     private val getShare: GetShare,
 ) : EventListener<LinkId, LinkEventVO>() {
-    internal var onFailure: (Throwable) -> Unit = { error ->
-        error.log(LogTag.EVENTS, "Cannot parse event")
+    internal var onFailure: (Throwable, String) -> Unit = { error, body ->
+        error.log(LogTag.EVENTS, "Cannot parse event from response: $body")
     }
     // User -> Share -> Link
     override val order: Int = 3
@@ -115,7 +115,7 @@ class LinkEventListener @Inject constructor(
                     is UnknownLinksEvent ->  listOf()
                 }
             }
-        }.onFailure(onFailure).getOrNull()
+        }.onFailure { error -> onFailure(error, response.body) }.getOrNull()
     }
 
     private fun WithLinkDto.getEvent(volumeId: VolumeId, shareId: ShareId): Event<LinkId, LinkEventVO> {
@@ -195,7 +195,7 @@ class LinkEventListener @Inject constructor(
                     subclass(CreateLinksEvent::class)
                     subclass(UpdateLinksEvent::class)
                     subclass(UpdateMetadataLinksEvent::class)
-                    default { UnknownLinksEvent.serializer() }
+                    defaultDeserializer { UnknownLinksEvent.serializer() }
                 }
             }
         }

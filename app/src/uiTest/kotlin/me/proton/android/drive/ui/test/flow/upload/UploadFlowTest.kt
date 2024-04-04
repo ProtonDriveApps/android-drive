@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -18,20 +18,22 @@
 
 package me.proton.android.drive.ui.test.flow.upload
 
-import android.app.Activity
-import android.app.Instrumentation
-import android.content.ClipData
-import android.content.ClipDescription
 import android.content.Intent
-import android.net.Uri
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.rule.IntentsRule
 import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Quota
+import me.proton.android.drive.ui.extension.respondWithFile
+import me.proton.android.drive.ui.extension.respondWithFiles
 import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
+import me.proton.android.drive.ui.robot.StorageFullRobot
 import me.proton.android.drive.ui.rules.ExternalFilesRule
+import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.test.android.instrumented.utils.StringUtils
 import org.junit.Rule
 import org.junit.Test
@@ -56,11 +58,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     fun uploadEmptyFileWithPlusButton() {
         val file = externalFilesRule.createEmptyFile("empty.txt")
 
-        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFunction {
-            Instrumentation.ActivityResult(Activity.RESULT_OK, Intent().setData(Uri.fromFile(file)))
-        }
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
@@ -73,11 +74,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     fun uploadEmptyFileWithAddFilesButton() {
         val file = externalFilesRule.createEmptyFile("empty.txt")
 
-        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFunction {
-            Instrumentation.ActivityResult(Activity.RESULT_OK, Intent().setData(Uri.fromFile(file)))
-        }
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickAddFilesButton()
             .clickUploadAFile()
             .verify {
@@ -90,11 +90,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     fun cancelFileUpload() {
         val file = externalFilesRule.create1BFile("cancel.txt")
 
-        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFunction {
-            Instrumentation.ActivityResult(Activity.RESULT_OK, Intent().setData(Uri.fromFile(file)))
-        }
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickPlusButton()
             .clickUploadAFile()
             .clickCancelUpload()
@@ -107,11 +106,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     fun upload6MBFile() {
         val file = externalFilesRule.createFile("6MB.txt", 6 * 1024 * 1024)
 
-        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFunction {
-            Instrumentation.ActivityResult(Activity.RESULT_OK, Intent().setData(Uri.fromFile(file)))
-        }
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
@@ -132,23 +130,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
         val file3 = externalFilesRule.create1BFile("file3.txt")
         val files = listOf(file1, file2, file3)
 
-        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFunction {
-            Instrumentation.ActivityResult(Activity.RESULT_OK, Intent().apply {
-                val items = files.map { file ->
-                    ClipData.Item(Uri.fromFile(file))
-                }
-                clipData = ClipData(
-                    ClipDescription(
-                        "", files.map { "text/plain" }.toTypedArray()
-                    ),
-                    items.first()
-                ).also { clipData ->
-                    (items - items.first()).forEach(clipData::addItem)
-                }
-            })
-        }
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFiles(files)
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
@@ -160,4 +145,134 @@ class UploadFlowTest : AuthenticatedBaseTest() {
                 itemIsDisplayed("file3.txt")
             }
     }
+
+    @Test
+    @Scenario(2)
+    fun uploadAFileInGridSucceeds() {
+        val file = externalFilesRule.create1BFile("file.txt")
+
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
+
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickLayoutSwitcher()
+            .clickPlusButton()
+            .clickUploadAFile()
+            .verify {
+                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+            }
+            .verify {
+                itemIsDisplayed("file.txt")
+            }
+    }
+
+    @Test
+    fun uploadTheSameFileTwice() {
+        val file = externalFilesRule.create1BFile("file.txt")
+
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
+
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickPlusButton()
+            .clickUploadAFile()
+            .verify {
+                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+            }
+            .verify {
+                itemIsDisplayed("file.txt")
+            }
+            .clickPlusButton()
+            .clickUploadAFile()
+            .verify {
+                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+            }
+            .verify {
+                itemIsDisplayed("file (1).txt")
+            }
+    }
+
+    @Test
+    @Quota(percentageFull = 99)
+    fun notEnoughSpaceWhenUploadOneFileBiggerThanStorage() {
+        val file = externalFilesRule.createFile("50MB.txt", 50.MiB.value)
+
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
+
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickPlusButton()
+            .clickUploadAFile()
+            .verify {
+                StorageFullRobot.robotDisplayed()
+            }
+    }
+
+    @Test
+    fun uploadMultipleBatches() {
+        val batch200 = (1..200).map { index ->
+            externalFilesRule.create1BFile("file$index.txt")
+        }
+        val batch100 = (201..300).map { index ->
+            externalFilesRule.create1BFile("file$index.txt")
+        }
+
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFiles(batch200)
+
+        FilesTabRobot
+            .clickPlusButton()
+            .clickUploadAFile()
+            .verify {
+                assertFilesBeingUploaded(200, StringUtils.stringFromResource(I18N.string.title_my_files))
+            }
+
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFiles(batch100)
+
+        FilesTabRobot
+            .clickPlusButton()
+            .clickUploadAFile()
+            .verify {
+                assertFilesBeingUploaded(100, StringUtils.stringFromResource(I18N.string.title_my_files))
+            }
+    }
+
+    @Test
+    @Scenario(2)
+    fun navigationIsAllowedDuringFileUpload() {
+        val file = externalFilesRule.create1BFile("file.txt")
+
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
+
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickOnFolder("folder1")
+            .clickPlusButton()
+            .clickUploadAFile()
+            .clickBack(FilesTabRobot)
+            .clickOnFolder("folder1")
+            .verify {
+                itemIsDisplayed("file.txt")
+            }
+    }
+
+    @Test
+    @Scenario(2)
+    fun switchLayoutWhileUploading() {
+        val file = externalFilesRule.create1BFile("file.txt")
+
+        Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
+
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickPlusButton()
+            .clickUploadAFile()
+            .verify {
+                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+            }
+            .clickLayoutSwitcher()
+            .verify {
+                itemIsDisplayed("file.txt")
+            }
+    }
+
 }

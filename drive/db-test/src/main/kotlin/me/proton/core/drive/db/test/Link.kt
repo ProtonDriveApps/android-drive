@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -20,15 +20,23 @@ package me.proton.core.drive.db.test
 
 import me.proton.android.drive.db.DriveDatabase
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.link.data.api.entity.LinkDto
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
+import me.proton.core.drive.share.data.api.ShareDto
 import me.proton.core.drive.share.data.db.ShareEntity
+import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.data.db.VolumeEntity
 import me.proton.core.user.data.entity.UserEntity
 
 data class FolderContext(
     val db: DriveDatabase,
     val user: UserEntity,
+    val volume: VolumeEntity,
     val share: ShareEntity,
     val link: LinkEntity,
     val parent: LinkEntity? = null,
@@ -40,13 +48,13 @@ data class FileContext(
     val share: ShareEntity,
     val link: LinkEntity,
     val parent: LinkEntity,
-    val revisionId: String
+    val revisionId: String,
 ) : BaseContext()
 
 suspend fun ShareContext.folder(
     id: String,
-    block: suspend FolderContext.() -> Unit = {},
-) {
+    block: suspend FolderContext.() -> Unit,
+): FolderId {
     folder(
         link = NullableLinkEntity(id = id, type = 1L),
         properties = LinkFolderPropertiesEntity(
@@ -57,6 +65,7 @@ suspend fun ShareContext.folder(
         ),
         block = block,
     )
+    return FolderId(ShareId(user.userId, share.id), id)
 }
 
 suspend fun ShareContext.folder(
@@ -66,11 +75,14 @@ suspend fun ShareContext.folder(
 ) {
     db.driveLinkDao.insertOrUpdate(link)
     db.driveLinkDao.insertOrUpdate(properties)
-    FolderContext(db, user, share, link).block()
+    FolderContext(db, user, volume, share, link).block()
 }
 
 
-suspend fun FolderContext.folder(id: String, block: suspend FolderContext.() -> Unit = {}) {
+suspend fun FolderContext.folder(
+    id: String,
+    block: suspend FolderContext.() -> Unit = {},
+): FolderId {
     folder(
         link = NullableLinkEntity(id = id, parentId = link.id, type = 1L),
         properties = LinkFolderPropertiesEntity(
@@ -81,6 +93,7 @@ suspend fun FolderContext.folder(id: String, block: suspend FolderContext.() -> 
         ),
         block = block
     )
+    return FolderId(ShareId(user.userId, share.id), id)
 }
 
 suspend fun FolderContext.folder(
@@ -90,13 +103,13 @@ suspend fun FolderContext.folder(
 ) {
     db.driveLinkDao.insertOrUpdate(link)
     db.driveLinkDao.insertOrUpdate(properties)
-    FolderContext(db, user, share, link, this.link).block()
+    FolderContext(db, user, volume, share, link, this.link).block()
 }
 
 suspend fun FolderContext.file(
     id: String,
     block: suspend FileContext.() -> Unit = {},
-) {
+): FileId {
     file(
         link = NullableLinkEntity(
             id = id,
@@ -115,12 +128,27 @@ suspend fun FolderContext.file(
         ),
         block = block,
     )
+    if (share.type == ShareDto.TYPE_PHOTO) {
+        db.photoListingDao.insertOrUpdate(
+            PhotoListingEntity(
+                userId = user.userId,
+                volumeId = volume.id,
+                shareId = share.id,
+                linkId = id,
+                captureTime = 0,
+                hash = null,
+                contentHash = null,
+                mainPhotoLinkId = null,
+            )
+        )
+    }
+    return FileId(ShareId(user.userId, share.id), id)
 }
 
 suspend fun FolderContext.file(
     link: LinkEntity,
     properties: LinkFilePropertiesEntity,
-    block: suspend FileContext.() -> Unit = {}
+    block: suspend FileContext.() -> Unit = {},
 ) {
     db.driveLinkDao.insertOrUpdate(link)
     db.driveLinkDao.insertOrUpdate(properties)
@@ -144,7 +172,7 @@ private fun ShareContext.NullableLinkEntity(
 private fun FolderContext.NullableLinkEntity(
     id: String,
     parentId: String?,
-    type: Long
+    type: Long,
 ) = NullableLinkEntity(
     userId = user.userId,
     shareId = share.id,
@@ -159,7 +187,8 @@ private fun NullableLinkEntity(
     shareId: String,
     id: String,
     parentId: String?,
-    type: Long
+    type: Long,
+    state: Long = LinkDto.STATE_ACTIVE,
 ) = LinkEntity(
     id = id,
     shareId = shareId,
@@ -169,7 +198,7 @@ private fun NullableLinkEntity(
     name = id,
     nameSignatureEmail = "",
     hash = "",
-    state = type,
+    state = state,
     expirationTime = null,
     size = type,
     mimeType = "",
@@ -186,6 +215,6 @@ private fun NullableLinkEntity(
     numberOfAccesses = type,
     shareUrlExpirationTime = null,
     xAttr = null,
-    shareUrlShareId = null,
+    sharingDetailsShareId = null,
     shareUrlId = null,
 )

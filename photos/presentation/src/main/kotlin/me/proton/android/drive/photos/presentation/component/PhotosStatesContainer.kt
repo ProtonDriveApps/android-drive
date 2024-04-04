@@ -29,6 +29,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.datasource.CollectionPreviewParameterProvider
 import me.proton.android.drive.photos.presentation.viewstate.PhotosStatusViewState
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
@@ -47,6 +49,7 @@ internal fun PhotosStatesContainer(
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
+    onDismissBackgroundRestrictions: () -> Unit,
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -82,7 +85,10 @@ internal fun PhotosStatesContainer(
                                 BackupTemporarilyDisabledState(onRetry = onRetry)
 
                             BackupErrorType.BACKGROUND_RESTRICTIONS ->
-                                BackgroundRestrictions(onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions)
+                                BackgroundRestrictions(
+                                    onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
+                                    onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
+                                )
                         }
                     }
                 }
@@ -90,14 +96,15 @@ internal fun PhotosStatesContainer(
         }
     }
 }
-
 @Preview
 @Composable
-fun PhotosStatesContainerDisablePreview() {
+private fun PhotosStatesContainerPreview(
+    @PreviewParameter(ViewStatePreviewParameterProvider::class) viewState: PhotosStatusViewState,
+) {
     ProtonTheme {
         PhotosStatesContainer(
             modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
-            viewState = PhotosStatusViewState.Disabled(true),
+            viewState = viewState,
             showPhotosStateBanner = true,
             onEnable = { },
             onPermissions = { },
@@ -106,150 +113,25 @@ fun PhotosStatesContainerDisablePreview() {
             onResolveMissingFolder = { },
             onChangeNetwork = { },
             onIgnoreBackgroundRestrictions = { },
+            onDismissBackgroundRestrictions = { },
         )
     }
 }
 
-@Preview
-@Composable
-fun PhotosStatesContainerMissingFolderPreview() {
-    ProtonTheme {
-        PhotosStatesContainer(
-            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
-            viewState = PhotosStatusViewState.Disabled(false),
-            showPhotosStateBanner = true,
-            onEnable = { },
-            onPermissions = { },
-            onRetry = { },
-            onResolve = { },
-            onResolveMissingFolder = { },
-            onChangeNetwork = { },
-            onIgnoreBackgroundRestrictions = { },
-        )
-    }
-}
-
-@Preview
-@Composable
-fun PhotosStatesContainerCompletePreview() {
-    ProtonTheme {
-        PhotosStatesContainer(
-            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
-            viewState = PhotosStatusViewState.Complete("1 000 items saved"),
-            showPhotosStateBanner = true,
-            onEnable = { },
-            onPermissions = { },
-            onRetry = { },
-            onResolve = { },
-            onResolveMissingFolder = { },
-            onChangeNetwork = { },
-            onIgnoreBackgroundRestrictions = { },
-        )
-    }
-}
-
-@Preview
-@Composable
-fun PhotosStatesContainerUncompletedPreview() {
-    ProtonTheme {
-        PhotosStatesContainer(
-            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
-            viewState = PhotosStatusViewState.Uncompleted,
-            showPhotosStateBanner = true,
-            onEnable = { },
-            onPermissions = { },
-            onRetry = { },
-            onResolve = { },
-            onResolveMissingFolder = { },
-            onChangeNetwork = { },
-            onIgnoreBackgroundRestrictions = { },
-        )
-    }
-}
-
-@Preview
-@Composable
-fun PhotosStatesContainerInProgressPreview() {
-    ProtonTheme {
-        PhotosStatesContainer(
-            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
-            viewState = PhotosStatusViewState.InProgress(
-                0.1F,
-                "X items left"
-            ),
-            showPhotosStateBanner = true,
-            onEnable = { },
-            onPermissions = { },
-            onRetry = { },
-            onResolve = { },
-            onResolveMissingFolder = { },
-            onChangeNetwork = { },
-            onIgnoreBackgroundRestrictions = { },
-        )
-    }
-}
-
-@Preview
-@Composable
-fun PhotosStatesContainerFailedPreview() {
-    ProtonTheme {
-        PhotosStatesContainer(
-            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
-            viewState = PhotosStatusViewState.Failed(
-                errors = listOf(BackupError.Permissions())
-            ),
-            showPhotosStateBanner = true,
-            onEnable = { },
-            onPermissions = { },
-            onRetry = { },
-            onResolve = { },
-            onResolveMissingFolder = { },
-            onChangeNetwork = { },
-            onIgnoreBackgroundRestrictions = { },
-        )
-    }
-}
-
-
-@Preview
-@Composable
-fun PhotosStatesContainerFailedConnectivityPreview() {
-    ProtonTheme {
-        PhotosStatesContainer(
-            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
-            viewState = PhotosStatusViewState.Failed(
-                errors = listOf(BackupError.Connectivity())
-            ),
-            showPhotosStateBanner = true,
-            onEnable = { },
-            onPermissions = { },
-            onRetry = { },
-            onResolve = { },
-            onResolveMissingFolder = { },
-            onChangeNetwork = { },
-            onIgnoreBackgroundRestrictions = { },
-        )
-    }
-}
-
-
-@Preview
-@Composable
-fun PhotosStatesContainerFailedWifiConnectivityPreview() {
-    ProtonTheme {
-        PhotosStatesContainer(
-            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
-            viewState = PhotosStatusViewState.Failed(
-                errors = listOf(BackupError.WifiConnectivity())
-            ),
-            showPhotosStateBanner = true,
-            onEnable = { },
-            onPermissions = { },
-            onRetry = { },
-            onResolve = { },
-            onResolveMissingFolder = { },
-            onChangeNetwork = { },
-            onIgnoreBackgroundRestrictions = { },
-        )
-    }
-}
+private class ViewStatePreviewParameterProvider : CollectionPreviewParameterProvider<PhotosStatusViewState>(
+    listOf(
+        PhotosStatusViewState.Disabled(hasDefaultFolder = true),
+        PhotosStatusViewState.Disabled(hasDefaultFolder = false),
+        PhotosStatusViewState.Complete("1 000 items saved"),
+        PhotosStatusViewState.Uncompleted,
+        PhotosStatusViewState.InProgress(0.1F, "X items left"),
+        PhotosStatusViewState.Failed(listOf(BackupError.Other())),
+        PhotosStatusViewState.Failed(listOf(BackupError.LocalStorage())),
+        PhotosStatusViewState.Failed(listOf(BackupError.DriveStorage())),
+        PhotosStatusViewState.Failed(listOf(BackupError.Permissions())),
+        PhotosStatusViewState.Failed(listOf(BackupError.Connectivity())),
+        PhotosStatusViewState.Failed(listOf(BackupError.WifiConnectivity())),
+        PhotosStatusViewState.Failed(listOf(BackupError.PhotosUploadNotAllowed())),
+        PhotosStatusViewState.Failed(listOf(BackupError.BackgroundRestrictions())),
+    )
+)

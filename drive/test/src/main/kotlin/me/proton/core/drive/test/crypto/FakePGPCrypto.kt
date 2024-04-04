@@ -244,6 +244,14 @@ class FakePGPCrypto : PGPCrypto {
         return sessionKey.key
     }
 
+    override fun encryptMessageToAdditionalKey(
+        message: EncryptedMessage,
+        unlockedKey: Unarmored,
+        publicKey: Armored
+    ): EncryptedMessage {
+        return message
+    }
+
     override fun encryptText(plainText: String, publicKey: Armored): EncryptedMessage {
         return plainText
     }

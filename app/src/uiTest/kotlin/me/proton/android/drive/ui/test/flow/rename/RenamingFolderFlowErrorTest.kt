@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 package me.proton.android.drive.ui.test.flow.rename
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.android.drive.utils.getRandomString
@@ -41,7 +41,8 @@ class RenamingFolderFlowErrorTest(
     @Test
     @Scenario(4)
     fun renameError() {
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .scrollToItemWithName(itemToBeRenamed)
             .clickMoreOnItem(itemToBeRenamed)
             .clickRename()
@@ -60,7 +61,7 @@ class RenamingFolderFlowErrorTest(
             arrayOf(
                 "folder1",
                 "folder2",
-                "An item with that name already exists in current folder",
+                "A file or folder with that name already exists",
                 "Existing folder"
             ),
             arrayOf(
@@ -74,7 +75,13 @@ class RenamingFolderFlowErrorTest(
                 getRandomString(256),
                 StringUtils.stringFromResource(I18N.string.common_error_name_too_long, 255),
                 "Very long name"
-            )
+            ),
+            arrayOf(
+                "folder1",
+                "folder1/",
+                StringUtils.stringFromResource(I18N.string.common_error_name_with_forbidden_characters),
+                "Forbidden characters"
+            ),
         )
     }
 }

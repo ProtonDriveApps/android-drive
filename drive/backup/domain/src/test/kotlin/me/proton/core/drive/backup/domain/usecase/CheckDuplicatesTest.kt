@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -35,15 +35,13 @@ import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.crypto.domain.usecase.file.GetContentHash
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.shareId
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -74,7 +72,7 @@ class CheckDuplicatesTest {
     @Before
     fun setUp() = runTest {
 
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
 
         val nodeKey: Key.Node = mockk()
         coEvery { getNodeKey(folderId) } returns Result.success(nodeKey)
@@ -348,7 +346,7 @@ class CheckDuplicatesTest {
         parentId = folderId,
         hash = hash,
         contentHash = contentHash,
-        linkId = FileId(ShareId(userId, shareId), "link-id"),
+        linkId = FileId(folderId.shareId, "link-id"),
         linkState = Link.State.ACTIVE,
         revisionId = "revision-id",
         clientUid = ""

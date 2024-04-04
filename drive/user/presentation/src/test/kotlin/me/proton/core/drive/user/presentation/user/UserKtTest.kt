@@ -19,6 +19,7 @@
 package me.proton.core.drive.user.presentation.user
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.user.domain.entity.Type
 import me.proton.core.user.domain.entity.User
 
 import org.junit.Test
@@ -43,6 +44,7 @@ class UserKtTest {
         delinquent = null,
         keys = emptyList(),
         recovery = null,
+        type = Type.Proton,
     )
 
     @Test

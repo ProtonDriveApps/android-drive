@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.test.flow.offline
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
@@ -33,7 +34,8 @@ class RemoveAvailableOfflineLargeFileFlowTest : AuthenticatedBaseTest() {
         val folder = "folder1"
         val file = "40mbfile"
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickOnFolder(folder)
             .scrollToItemWithName(file)
             .clickMoreOnItem(file)

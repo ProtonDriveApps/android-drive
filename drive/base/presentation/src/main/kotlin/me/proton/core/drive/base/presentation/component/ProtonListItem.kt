@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
+import me.proton.core.compose.theme.defaultNorm
 
 @Composable
 fun ProtonListItem(
@@ -51,7 +53,8 @@ fun ProtonListItem(
     modifier: Modifier = Modifier,
     iconTitlePadding: Dp = ListItemTextStartPadding,
     iconTintColor: Color = ProtonTheme.colors.iconNorm,
-) = ProtonListItem(painterResource(icon), stringResource(title), modifier, iconTitlePadding, iconTintColor)
+    textStyle: TextStyle = ProtonTheme.typography.defaultNorm,
+) = ProtonListItem(painterResource(icon), stringResource(title), modifier, iconTitlePadding, iconTintColor, textStyle)
 
 @Composable
 fun ProtonListItem(
@@ -60,6 +63,7 @@ fun ProtonListItem(
     modifier: Modifier = Modifier,
     iconTitlePadding: Dp = ListItemTextStartPadding,
     iconTintColor: Color = ProtonTheme.colors.iconNorm,
+    textStyle: TextStyle = ProtonTheme.typography.defaultNorm,
 ) {
     Row(
         modifier = modifier
@@ -79,7 +83,7 @@ fun ProtonListItem(
         )
         Text(
             text = title,
-            style = ProtonTheme.typography.default,
+            style = textStyle,
             modifier = Modifier.padding(start = iconTitlePadding),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

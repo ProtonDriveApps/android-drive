@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -134,7 +134,7 @@ data class LinkEntity(
     @ColumnInfo(name = X_ATTR)
     val xAttr: String? = null,
     @ColumnInfo(name = SHARE_URL_SHARE_ID, defaultValue = "NULL")
-    val shareUrlShareId: String? = null,
+    val sharingDetailsShareId: String? = null,
     @ColumnInfo(name = SHARE_URL_ID, defaultValue = "NULL")
     val shareUrlId: String? = null,
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -32,6 +32,7 @@ driveModule(
 ) {
     api(libs.core.account.data)
     api(libs.core.challenge.data)
+    api(libs.core.contact.data)
     api(libs.core.crypto.android)
     api(libs.core.eventManager.data) {
         exclude("me.proton.core", "presentation")

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -22,8 +22,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -37,38 +39,52 @@ import me.proton.core.domain.entity.UserId
 @Composable
 @ExperimentalCoroutinesApi
 fun LauncherScreen(
+    foregroundState: State<Boolean>,
     navigateToHomeScreen: (userId: UserId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val launcherViewModel = hiltViewModel<LauncherViewModel>()
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
-        Launcher(launcherViewModel, navigateToHomeScreen)
+        Launcher(
+            foregroundState = foregroundState,
+            viewModel = launcherViewModel,
+            navigateToHomeScreen = navigateToHomeScreen,
+        )
     }
 }
 
 @Composable
 @ExperimentalCoroutinesApi
 internal fun Launcher(
+    foregroundState: State<Boolean>,
     viewModel: LauncherViewModel,
     navigateToHomeScreen: (userId: UserId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewState by rememberFlowWithLifecycle(viewModel.viewState)
         .collectAsState(initial = LauncherViewState.initialValue)
-    Launcher(viewState, navigateToHomeScreen, modifier)
+    val foreground by foregroundState
+    Launcher(
+        foreground = foreground,
+        viewState = viewState,
+        navigateToHomeScreen = navigateToHomeScreen,
+        modifier = modifier,
+    )
 }
 
 @Composable
 internal fun Launcher(
+    foreground: Boolean,
     viewState: LauncherViewState,
     navigateToHomeScreen: (userId: UserId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state = viewState.primaryAccountState
-    LaunchedEffect(state) {
-        if (state is PrimaryAccountState.SignedIn) {
+    LaunchedEffect(state, foreground) {
+        if (state is PrimaryAccountState.SignedIn && foreground) {
             navigateToHomeScreen(state.userId)
         }
     }

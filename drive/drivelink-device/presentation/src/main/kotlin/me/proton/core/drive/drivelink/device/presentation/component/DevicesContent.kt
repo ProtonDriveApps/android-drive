@@ -39,6 +39,7 @@ fun DevicesContent(
     devices: List<Device>,
     modifier: Modifier = Modifier,
     onClick: (Device) -> Unit,
+    onMoreOptions: (Device) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier
@@ -52,7 +53,7 @@ fun DevicesContent(
             DeviceListItem(
                 device = device,
                 onClick = onClick,
-                onMoreOptionsClick = {},
+                onMoreOptionsClick = onMoreOptions,
             )
         }
     }
@@ -92,6 +93,8 @@ fun PreviewDevicesContent() {
                     cryptoName = CryptoProperty.Decrypted("QNAP", VerificationStatus.Unknown),
                 )
             ),
-        ) {}
+            onClick = {},
+            onMoreOptions = {},
+        )
     }
 }

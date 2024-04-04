@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -27,9 +27,9 @@ import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.photo
-import me.proton.core.drive.db.test.shareId
+import me.proton.core.drive.db.test.photoShareId
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -56,7 +56,7 @@ class BackupFileRepositoryImplTest {
     @Before
     fun setUp() = runTest {
         rootPhotoId = database.photo {}
-        rootMainId = database.myDrive {}
+        rootMainId = database.myFiles {}
         val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
         backupFolderRepository.insertFolder(BackupFolder(bucketId, rootPhotoId))
         backupFolderRepository.insertFolder(BackupFolder(1, rootMainId))
@@ -349,8 +349,8 @@ class BackupFileRepositoryImplTest {
             LinkUploadEntity(
                 id = 0,
                 userId = userId,
-                volumeId = volumeId,
-                shareId = shareId,
+                volumeId = volumeId.id,
+                shareId = photoShareId.id,
                 parentId = rootPhotoId.id,
                 uri = uri,
                 name = "",

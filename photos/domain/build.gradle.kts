@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ android {
 
 driveModule(
     hilt = true,
+    socialTest = true,
 ) {
     api(project(":drive:announce-event:domain"))
     api(project(":drive:backup:domain"))
@@ -35,6 +36,5 @@ driveModule(
     api(project(":drive:drivelink-selection:domain"))
     api(project(":drive:share-crypto:domain"))
     api(project(":drive:stats:domain"))
-    testImplementation(project(":drive:db-test"))
     testImplementation(project(":photos:data"))
 }

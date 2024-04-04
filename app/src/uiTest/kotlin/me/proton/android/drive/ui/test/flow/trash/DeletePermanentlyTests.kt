@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -35,7 +35,8 @@ class DeletePermanentlyTests: AuthenticatedBaseTest() {
         val folder = "folder1"
         val photo = ImageName.Main.fileName
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickMoveToTrash()
             .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ import me.proton.core.drive.base.domain.usecase.CreateUuid
 import me.proton.core.drive.base.domain.usecase.GetClientUid
 import me.proton.core.drive.base.domain.usecase.GetOrCreateClientUid
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.data.api.LinkApiDataSource
 import me.proton.core.drive.link.data.api.response.CheckAvailableHashesResponse
 import me.proton.core.drive.link.data.repository.LinkRepositoryImpl
@@ -87,7 +87,7 @@ class BackupFindDuplicatesWorkerTest {
         backupFileRepository = BackupFileRepositoryImpl(database.db)
         backupErrorRepository = BackupErrorRepositoryImpl(database.db)
 
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
 
         backupFolder = BackupFolder(
             bucketId = 0,

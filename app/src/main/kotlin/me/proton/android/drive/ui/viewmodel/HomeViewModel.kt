@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -29,12 +29,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.shareIn
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.ui.navigation.HomeTab
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.HomeViewEvent
 import me.proton.android.drive.ui.viewstate.HomeViewState
+import me.proton.android.drive.usecase.CanGetMoreFreeStorage
 import me.proton.core.domain.entity.SessionUserId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.component.NavigationTab
@@ -53,6 +55,7 @@ class HomeViewModel @Inject constructor(
     userManager: UserManager,
     savedStateHandle: SavedStateHandle,
     configurationProvider: ConfigurationProvider,
+    private val canGetMoreFreeStorage: CanGetMoreFreeStorage,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val tabs: StateFlow<Map<out HomeTab, NavigationTab>> = MutableStateFlow(
@@ -78,7 +81,7 @@ class HomeViewModel @Inject constructor(
         ).associateBy({ tab -> tab.first }, { tab -> tab.second })
     )
 
-    private val currentDestination = MutableStateFlow(Screen.Files.route)
+    private val currentDestination = MutableStateFlow<String?>(null)
     fun setCurrentDestination(route: String) {
         currentDestination.value = route
     }
@@ -86,7 +89,7 @@ class HomeViewModel @Inject constructor(
     val viewState: Flow<HomeViewState> =
         combine(
             userManager.observeUser(SessionUserId(userId.id)),
-            currentDestination,
+            currentDestination.filterNotNull(),
             tabs.filter { tabs -> tabs.isNotEmpty() },
         ) { user, selectedScreen, tabs ->
             getViewState(user, selectedScreen, tabs)
@@ -100,6 +103,7 @@ class HomeViewModel @Inject constructor(
         navigateToSettings: () -> Unit,
         navigateToBugReport: () -> Unit,
         navigateToSubscription: () -> Unit,
+        navigateToGetMoreFreeStorage: () -> Unit,
     ): HomeViewEvent = object : HomeViewEvent {
         override val onTab = { tab: NavigationTab -> navigateToTab(tab.screen(userId)) }
         override val navigationDrawerViewEvent: NavigationDrawerViewEvent =
@@ -111,13 +115,14 @@ class HomeViewModel @Inject constructor(
                 override val onSignOut = navigateToSigningOut
                 override val onBugReport = navigateToBugReport
                 override val onSubscription = navigateToSubscription
+                override val onGetFreeStorage = navigateToGetMoreFreeStorage
             }
     }
 
     private val NavigationTab.screen: HomeTab
         get() = tabs.value.firstNotNullOf { (screen, value) -> screen.takeIf { value == this } }
 
-    private fun getViewState(
+    private suspend fun getViewState(
         user: User?,
         startDestination: String,
         tabs: Map<out HomeTab, NavigationTab>,
@@ -130,7 +135,8 @@ class HomeViewModel @Inject constructor(
             navigationDrawerViewState = NavigationDrawerViewState(
                 I18N.string.app_name,
                 BuildConfig.VERSION_NAME,
-                currentUser = user
+                currentUser = user,
+                showGetFreeStorage = user?.let { canGetMoreFreeStorage(user) } ?: false,
             )
         )
 }

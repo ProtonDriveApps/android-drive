@@ -40,6 +40,7 @@ import me.proton.core.drive.backup.domain.entity.BucketUpdate
 import me.proton.core.drive.backup.domain.usecase.RescanAllFolders
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.exception.BackupSyncException
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -66,17 +67,21 @@ class BackupFileWatcherWorker @AssistedInject constructor(
         val notMediaUris = triggeredContentUris.filterNot { uri ->
             uri.pathSegments.size == EXTERNAL_PATH_SEGMENTS.size + 1
         }
-        when {
-            triggeredContentAuthorities.isEmpty() -> rescanAllFolders { "no authorities" }.onFailure { error ->
+        val mediaUris = triggeredContentUris - notMediaUris.toSet()
+        if (triggeredContentAuthorities.isEmpty()) {
+            rescanAllFolders { "no authorities" }.onFailure { error ->
                 error.log(BACKUP, "Cannot rescan all folders")
             }
-
-            notMediaUris.isNotEmpty() -> rescanAllFolders { "found not media uris: $notMediaUris" }.onFailure { error ->
-                error.log(BACKUP, "Cannot rescan all folders")
+        } else {
+            if (notMediaUris.isNotEmpty()) {
+                BackupSyncException("Non media uris: $notMediaUris")
+                    .log(BACKUP, "Cannot sync non media uris ${notMediaUris.size}), media uri: ${mediaUris.size}")
             }
 
-            else -> syncAllFoldersFromUri(triggeredContentUris).onFailure { error ->
-                error.log(BACKUP, "Cannot sync all folders")
+            if (mediaUris.isNotEmpty()) {
+                syncAllFoldersFromUri(mediaUris).onFailure { error ->
+                    error.log(BACKUP, "Cannot sync all folders")
+                }
             }
         }
         workManager.enqueueUniqueWork(

@@ -36,8 +36,6 @@ data class Device(
     val lastModified: TimestampS? = null,
     val lastSynced: TimestampS? = null,
 ) {
-    val name: String get() = cryptoName.value
-
     enum class Type {
         UNKNOWN,
         WINDOWS,

@@ -20,22 +20,21 @@ package me.proton.android.drive.ui.test.flow.upload
 
 import android.app.Activity
 import android.app.Instrumentation
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import android.provider.OpenableColumns
 import androidx.core.content.IntentCompat.getParcelableExtra
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.intent.rule.IntentsRule
 import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.i18n.R
 import me.proton.core.test.android.instrumented.utils.StringUtils
+import me.proton.test.fusion.FusionConfig.targetContext
 import org.junit.Rule
 import org.junit.Test
 
@@ -58,7 +57,8 @@ class TakeAPhotoFlowTest : AuthenticatedBaseTest() {
                 Instrumentation.ActivityResult(Activity.RESULT_OK, Intent())
             }
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickPlusButton()
             .clickTakePhoto()
             .verify {
@@ -75,8 +75,7 @@ class TakeAPhotoFlowTest : AuthenticatedBaseTest() {
             .getInstrumentation()
             .context
             .assets.open(fileName).use { input ->
-                ApplicationProvider.getApplicationContext<Context>()
-                    .contentResolver.openOutputStream(uri, "w")?.use { output ->
+                targetContext.contentResolver.openOutputStream(uri, "w")?.use { output ->
                         input.copyTo(output)
                     }
             }
@@ -84,7 +83,7 @@ class TakeAPhotoFlowTest : AuthenticatedBaseTest() {
 
     private fun Uri.getFileName(): String {
         return requireNotNull(
-            ApplicationProvider.getApplicationContext<Context>().contentResolver.query(
+            targetContext.contentResolver.query(
                 this,
                 null,
                 null,

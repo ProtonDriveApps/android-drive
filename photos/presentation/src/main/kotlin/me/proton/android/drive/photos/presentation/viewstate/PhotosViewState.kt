@@ -36,4 +36,5 @@ data class PhotosViewState(
     val backupStatusViewState: PhotosStatusViewState?,
     val selected: Flow<Set<LinkId>> = emptyFlow(),
     val isRefreshEnabled: Boolean = true,
+    val notificationDotVisible: Boolean = false,
 )

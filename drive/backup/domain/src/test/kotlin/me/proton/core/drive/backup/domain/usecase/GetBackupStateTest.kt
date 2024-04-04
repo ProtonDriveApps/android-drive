@@ -21,14 +21,15 @@ package me.proton.core.drive.backup.domain.usecase
 import android.app.Application
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.data.manager.BackupPermissionsManagerImpl
 import me.proton.core.drive.backup.data.repository.BackupConfigurationRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
+import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
@@ -46,8 +47,13 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.IsBackgroundRestricted
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.user.data.repository.UserMessageRepositoryImpl
+import me.proton.core.drive.user.domain.entity.UserMessage
+import me.proton.core.drive.user.domain.usecase.CancelUserMessage
+import me.proton.core.drive.user.domain.usecase.HasCanceledUserMessages
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -68,6 +74,7 @@ class GetBackupStateTest {
     private lateinit var setFiles: SetFiles
     private lateinit var markAsCompleted: MarkAsCompleted
     private lateinit var markAsFailed: MarkAsFailed
+    private lateinit var cancelUserMessage: CancelUserMessage
     private lateinit var backupState: Flow<BackupState>
 
     private lateinit var backupManager: StubbedBackupManager
@@ -77,9 +84,11 @@ class GetBackupStateTest {
 
     private var bucketEntries = listOf(BucketEntry(0, "Camera"))
 
+    private val isBackgroundRestricted = MutableStateFlow(false)
+
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive {}
+        folderId = database.myFiles {}
         val folderRepository = BackupFolderRepositoryImpl(database.db)
         val fileRepository = BackupFileRepositoryImpl(database.db)
         val errorRepository = BackupErrorRepositoryImpl(database.db)
@@ -92,6 +101,7 @@ class GetBackupStateTest {
         backupManager = StubbedBackupManager(folderRepository)
         addFolder = AddFolder(folderRepository)
         deleteFolders = DeleteFolders(folderRepository)
+        cancelUserMessage = CancelUserMessage(UserMessageRepositoryImpl(database.db))
         permissionsManager.onPermissionChanged(BackupPermissions.Granted)
 
         val getBackupState = GetBackupState(
@@ -100,19 +110,22 @@ class GetBackupStateTest {
             permissionsManager = permissionsManager,
             connectivityManager = connectivityManager,
             getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance),
-            getAllBuckets = GetAllBuckets(object : BucketRepository {
-                override suspend fun getAll(): List<BucketEntry> = bucketEntries
-            }, permissionsManager),
-            configurationProvider = object : ConfigurationProvider {
-                override val host = ""
-                override val baseUrl = ""
-                override val appVersionHeader = ""
-                override val backupDefaultBucketName = "Camera"
-            },
             isBackgroundRestricted = object : IsBackgroundRestricted {
-                override fun invoke(): Flow<Boolean> = flowOf(false)
+                override fun invoke(): Flow<Boolean> = isBackgroundRestricted
             },
+            hasCanceledUserMessages = HasCanceledUserMessages(UserMessageRepositoryImpl(database.db)),
             getConfiguration = GetConfiguration(BackupConfigurationRepositoryImpl(database.db)),
+            getDisabledBackupState = GetDisabledBackupState(
+                getAllBuckets = GetAllBuckets(object : BucketRepository {
+                    override suspend fun getAll(): List<BucketEntry> = bucketEntries
+                }, permissionsManager),
+                configurationProvider = object : ConfigurationProvider {
+                    override val host = ""
+                    override val baseUrl = ""
+                    override val appVersionHeader = ""
+                    override val backupDefaultBucketName = "Camera"
+                },
+            ),
         )
 
         backupState = getBackupState(folderId)
@@ -134,7 +147,7 @@ class GetBackupStateTest {
 
     @Test
     fun `blank backup state with folder`() = runTest {
-        database.myDrive {}
+        database.myFiles {}
 
         assertEquals(
             BackupState(
@@ -251,6 +264,43 @@ class GetBackupStateTest {
                 isBackupEnabled = false,
                 hasDefaultFolder = true,
                 backupStatus = null,
+            ),
+            backupState.first(),
+        )
+    }
+
+    @Test
+    fun `background restricted`() = runTest {
+        addFolder(BackupFolder(0, folderId)).getOrThrow()
+
+        isBackgroundRestricted.value = true
+
+        assertEquals(
+            BackupState(
+                isBackupEnabled = true,
+                hasDefaultFolder = true,
+                backupStatus = BackupStatus.Failed(
+                    totalBackupPhotos = 0,
+                    pendingBackupPhotos = 0,
+                    errors = listOf(BackupError.BackgroundRestrictions())
+                ),
+            ),
+            backupState.first(),
+        )
+    }
+
+    @Test
+    fun `background restricted ignored`() = runTest {
+        addFolder(BackupFolder(0, folderId)).getOrThrow()
+
+        isBackgroundRestricted.value = true
+        cancelUserMessage(folderId.userId, UserMessage.BACKUP_BATTERY_SETTINGS).getOrThrow()
+
+        assertEquals(
+            BackupState(
+                isBackupEnabled = true,
+                hasDefaultFolder = true,
+                backupStatus = BackupStatus.Complete(totalBackupPhotos = 0)
             ),
             backupState.first(),
         )

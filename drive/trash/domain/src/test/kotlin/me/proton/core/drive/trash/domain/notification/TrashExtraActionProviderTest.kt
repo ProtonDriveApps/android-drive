@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -17,21 +17,33 @@
  */
 package me.proton.core.drive.trash.domain.notification
 
-import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import io.mockk.coEvery
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.data.api.response.Response
+import me.proton.core.drive.base.domain.extension.firstSuccessOrError
+import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.db.test.file
+import me.proton.core.drive.db.test.myFiles
+import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
+import me.proton.core.drive.link.data.api.response.LinkResponse
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.linktrash.data.test.repository.state
 import me.proton.core.drive.linktrash.domain.entity.TrashState
-import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
-import me.proton.core.drive.share.domain.entity.ShareId
-import org.junit.Assert.*
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.clear
+import me.proton.core.drive.test.api.deleteMultiple
+import me.proton.core.drive.test.api.restoreMultiple
+import me.proton.core.drive.test.api.trashMultiple
+import me.proton.core.drive.trash.domain.usecase.DeleteFromTrash
+import me.proton.core.drive.trash.domain.usecase.EmptyTrash
+import me.proton.core.drive.trash.domain.usecase.RestoreFromTrash
+import me.proton.core.drive.trash.domain.usecase.SendToTrash
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -42,23 +54,36 @@ import javax.inject.Inject
 @HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class TrashExtraActionProviderTest {
+
     @get:Rule
-    var hiltRule = HiltAndroidRule(this)
+    var driveRule = DriveRule(this)
+    private lateinit var folderId: FolderId
+    private lateinit var fileId: FileId
 
     @Inject
-    lateinit var repository: LinkTrashRepository
+    lateinit var getDriveLink: GetDriveLink
 
     @Inject
     lateinit var actionProvider: TrashExtraActionProvider
 
-    private val userId = UserId("user-id")
-    private val shareId = ShareId(userId, "share-id")
-    private val folderId = FolderId(shareId, "folder-id")
-    private val fileId = FileId(shareId, "file-id")
+    @Inject
+    lateinit var deleteFromTrash: DeleteFromTrash
+
+    @Inject
+    lateinit var emptyTrash: EmptyTrash
+
+    @Inject
+    lateinit var sendToTrash: SendToTrash
+
+    @Inject
+    lateinit var restoreFromTrash: RestoreFromTrash
 
     @Before
-    fun setUp() {
-        hiltRule.inject()
+    fun setUp() = runTest {
+        folderId = driveRule.db.myFiles {
+            file("file-id-1")
+        }
+        fileId = FileId(folderId.shareId, "file-id-1")
     }
 
     @Test
@@ -67,7 +92,7 @@ class TrashExtraActionProviderTest {
             actionProvider.provideAction(
                 DeleteFilesExtra(
                     userId = userId,
-                    shareId = shareId,
+                    shareId = folderId.shareId,
                     links = listOf(fileId),
                 )
             )
@@ -75,18 +100,19 @@ class TrashExtraActionProviderTest {
     }
 
     @Test
-    @Ignore("Breaks with getShare usage in deleteFromTrash use case")
     fun `exception during delete`() = runTest {
+        driveRule.server.deleteMultiple()
+
         actionProvider.provideAction(
             DeleteFilesExtra(
                 userId = userId,
-                shareId = shareId,
+                shareId = folderId.shareId,
                 links = listOf(fileId),
                 exception = RuntimeException(),
             )
-        )?.invoke()
+        )!!.invoke()
 
-        assertEquals(TrashState.DELETING, repository.state[listOf(fileId)])
+        assertNull(getFile(fileId).getOrNull())
     }
 
     @Test
@@ -95,7 +121,7 @@ class TrashExtraActionProviderTest {
             actionProvider.provideAction(
                 EmptyTrashExtra(
                     userId = userId,
-                    shareId = shareId,
+                    shareId = folderId.shareId,
                 )
             )
         )
@@ -107,7 +133,7 @@ class TrashExtraActionProviderTest {
             actionProvider.provideAction(
                 EmptyTrashExtra(
                     userId = userId,
-                    shareId = shareId,
+                    shareId = folderId.shareId,
                     exception = RuntimeException(),
                     
                 )
@@ -121,7 +147,7 @@ class TrashExtraActionProviderTest {
             actionProvider.provideAction(
                 RestoreFilesExtra(
                     userId = userId,
-                    shareId = shareId,
+                    shareId = folderId.shareId,
                     links = listOf(fileId),
                 )
             )
@@ -129,36 +155,58 @@ class TrashExtraActionProviderTest {
     }
 
     @Test
-    @Ignore("Breaks with getShare usage in restoreFromTrash use case")
     fun `exception during restore`() = runTest {
+        driveRule.server.run {
+            restoreMultiple { linkId ->
+                LinkResponse(linkId, response = Response(ProtonApiCode.INVALID_VALUE.toLong()))
+            }
+        }
+
+        restoreFromTrash(userId, fileId)
+
+        assertTrashStateOf(fileId, TrashState.TRASHED)
+
+        driveRule.server.run {
+            clear()
+            restoreMultiple()
+        }
+
         actionProvider.provideAction(
             RestoreFilesExtra(
                 userId = userId,
-                shareId = shareId,
+                shareId = folderId.shareId,
                 links = listOf(fileId),
                 exception = RuntimeException(),
             )
-        )?.invoke()
+        )!!.invoke()
 
-        assertEquals(TrashState.RESTORING, repository.state[listOf(fileId)])
+        assertTrashStateOf(fileId, null)
     }
     @Test
-    @Ignore("Breaks with getShare usage in restoreFromTrash use case")
     fun `no exception during trash`() = runTest {
+        driveRule.server.run {
+            trashMultiple()
+            restoreMultiple()
+        }
+        sendToTrash(userId, getFile(fileId).getOrThrow())
+
+        assertTrashStateOf(fileId, TrashState.TRASHED)
+
         actionProvider.provideAction(
             TrashFilesExtra(
                 userId = userId,
                 folderId = folderId,
                 links = listOf(fileId),
             )
-        )?.invoke()
+        )!!.invoke()
 
-        assertEquals(TrashState.RESTORING, repository.state[listOf(fileId)])
+        assertTrashStateOf(fileId, null)
     }
 
     @Test
-    @Ignore("Breaks with getShare usage in sendToTrash use case")
     fun `exception during trash`() = runTest {
+        driveRule.server.trashMultiple()
+
         actionProvider.provideAction(
             TrashFilesExtra(
                 userId = userId,
@@ -166,8 +214,18 @@ class TrashExtraActionProviderTest {
                 links = listOf(fileId),
                 exception = RuntimeException(),
             )
-        )?.invoke()
+        )!!.invoke()
 
-        assertEquals(TrashState.TRASHING, repository.state[listOf(fileId)])
+        assertTrashStateOf(fileId, TrashState.TRASHED)
     }
+
+    private suspend fun assertTrashStateOf(fileId: FileId, trashState: TrashState?) {
+        assertEquals(
+            trashState,
+            getFile(fileId).getOrThrow().trashState
+        )
+    }
+
+    private suspend fun getFile(fileId: FileId) =
+        getDriveLink(fileId).firstSuccessOrError().toResult()
 }

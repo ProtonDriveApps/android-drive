@@ -19,7 +19,6 @@
 package me.proton.android.drive.ui.test.flow.photos
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.NetworkSimulator
 import me.proton.android.drive.ui.test.PhotosBaseTest
@@ -32,8 +31,7 @@ class NoConnectivityTest: PhotosBaseTest() {
     @Before
     fun prepare() {
         pictureCameraFolder.copyDirFromAssets("images/basic")
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .verify {
                 robotDisplayed()
                 assertEnableBackupDisplayed()

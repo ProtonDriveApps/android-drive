@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -41,7 +41,7 @@ class GetOrCreateShareUrl @Inject constructor(
     private val getLink: GetLink,
 ) {
     suspend operator fun invoke(volumeId: VolumeId, share: Share, linkId: LinkId): Flow<DataResult<ShareUrl>> = flow {
-        val shareUrl = getLink(linkId).toResult().getOrNull()?.shareUrlId?.let { shareUrlId ->
+        val shareUrl = getShareUrlId(linkId)?.let { shareUrlId ->
             getShareUrl(
                 volumeId = volumeId,
                 shareUrlId = shareUrlId,
@@ -72,4 +72,8 @@ class GetOrCreateShareUrl @Inject constructor(
             )
         )
     }
+
+    private suspend fun getShareUrlId(
+        linkId: LinkId,
+    ) = getLink(linkId).toResult().getOrNull()?.sharingDetails?.shareUrlId
 }

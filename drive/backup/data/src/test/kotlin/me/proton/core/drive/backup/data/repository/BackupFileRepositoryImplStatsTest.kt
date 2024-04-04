@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -26,8 +26,7 @@ import me.proton.core.drive.backup.domain.entity.BackupStateCount
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
-import me.proton.core.drive.db.test.shareId
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -53,7 +52,7 @@ class BackupFileRepositoryImplStatsTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
 
         backupFolder = BackupFolder(bucketId, folderId)
@@ -139,8 +138,8 @@ class BackupFileRepositoryImplStatsTest {
             LinkUploadEntity(
                 id = 0,
                 userId = userId,
-                volumeId = volumeId,
-                shareId = shareId,
+                volumeId = volumeId.id,
+                shareId = folderId.shareId.id,
                 parentId = folderId.id,
                 uri = "uri$index",
                 name = "",

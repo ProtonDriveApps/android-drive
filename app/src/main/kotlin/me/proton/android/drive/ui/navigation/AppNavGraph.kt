@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -52,6 +52,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.extension.get
+import me.proton.android.drive.extension.isCurrentDestination
+import me.proton.android.drive.extension.log
 import me.proton.android.drive.extension.require
 import me.proton.android.drive.extension.requireArguments
 import me.proton.android.drive.extension.requireSerializable
@@ -60,6 +62,7 @@ import me.proton.android.drive.lock.presentation.component.AppLock
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.photos.presentation.component.PhotosPermissionRationale
 import me.proton.android.drive.ui.dialog.AutoLockDurations
+import me.proton.android.drive.ui.dialog.ComputerOptions
 import me.proton.android.drive.ui.dialog.ConfirmDeletionDialog
 import me.proton.android.drive.ui.dialog.ConfirmEmptyTrashDialog
 import me.proton.android.drive.ui.dialog.ConfirmSkipIssuesDialog
@@ -82,11 +85,13 @@ import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.screen.AppAccessScreen
 import me.proton.android.drive.ui.screen.BackupIssuesScreen
 import me.proton.android.drive.ui.screen.FileInfoScreen
+import me.proton.android.drive.ui.screen.GetMoreFreeStorageScreen
 import me.proton.android.drive.ui.screen.HomeScreen
 import me.proton.android.drive.ui.screen.LauncherScreen
 import me.proton.android.drive.ui.screen.MoveToFolder
 import me.proton.android.drive.ui.screen.OfflineScreen
 import me.proton.android.drive.ui.screen.PhotosBackupScreen
+import me.proton.android.drive.ui.screen.PhotosUpsellScreen
 import me.proton.android.drive.ui.screen.PreviewScreen
 import me.proton.android.drive.ui.screen.SettingsScreen
 import me.proton.android.drive.ui.screen.SigningOutScreen
@@ -97,6 +102,8 @@ import me.proton.core.account.domain.entity.Account
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.device.domain.entity.DeviceId
+import me.proton.core.drive.drivelink.device.presentation.component.RenameDevice
 import me.proton.core.drive.drivelink.rename.presentation.Rename
 import me.proton.core.drive.drivelink.shared.presentation.component.DiscardChangesDialog
 import me.proton.core.drive.drivelink.shared.presentation.component.ShareViaLink
@@ -117,6 +124,7 @@ fun AppNavGraph(
     deepLinkBaseUrl: String,
     clearBackstackTrigger: SharedFlow<Unit>,
     deepLinkIntent: SharedFlow<Intent>,
+    defaultStartDestination: String,
     locked: Flow<Boolean>,
     primaryAccount: Flow<Account?>,
     exitApp: () -> Unit,
@@ -160,8 +168,12 @@ fun AppNavGraph(
         deepLinkIntent
             .collectLatest { intent ->
                 CoreLogger.d(DriveLogTag.UI, "Deep link intent received")
-                navController.handleDeepLink(intent)
-                homeNavController = createNavController(localContext)
+                if (!navController.handleDeepLink(intent)) {
+                    // clear query params with user information before logging
+                    val uri = intent.data?.buildUpon()?.apply { clearQuery() }?.build()
+                    IllegalStateException("Invalid deep link: $uri").log(DriveLogTag.UI)
+                    homeNavController = createNavController(localContext)
+                }
             }
     }
     AppLock(locked = locked, primaryAccount = primaryAccount) {
@@ -169,6 +181,7 @@ fun AppNavGraph(
             navController = navController,
             homeNavController = homeNavController,
             deepLinkBaseUrl = deepLinkBaseUrl,
+            defaultStartDestination = defaultStartDestination,
             exitApp = exitApp,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
@@ -184,6 +197,7 @@ fun AppNavGraph(
     navController: NavHostController,
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
+    defaultStartDestination: String,
     exitApp: () -> Unit,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
@@ -194,13 +208,17 @@ fun AppNavGraph(
         startDestination = Screen.Launcher.route,
         modifier = Modifier.fillMaxSize()
     ) {
-        addLauncher(navController)
+        addLauncher(
+            navController = navController,
+            deepLinkBaseUrl = deepLinkBaseUrl,
+        )
         addSignOutConfirmationDialog(navController)
         addSigningOut()
         addHome(
             navController = navController,
             homeNavController = homeNavController,
             deepLinkBaseUrl = deepLinkBaseUrl,
+            defaultStartDestination = defaultStartDestination,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
             onDrawerStateChanged = onDrawerStateChanged,
@@ -238,6 +256,7 @@ fun AppNavGraph(
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addPhotosIssues(navController)
+        addPhotosUpsell(navigateToSubscription)
         addConfirmSkipIssues(navController)
         addConfirmStopSyncFolderDialog(navController)
         addPhotosPermissionRationale(navController)
@@ -265,18 +284,35 @@ fun AppNavGraph(
         addSystemAccessDialog(navController)
         addAutoLockDurations(navController)
         addPhotosBackup(navController)
+        addComputerOptions(navController)
+        addRenameComputerDialog(navController)
+        addGetMoreFreeStorage(navController)
     }
 }
 
 @ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
-fun NavGraphBuilder.addLauncher(navController: NavHostController) = composable(
+fun NavGraphBuilder.addLauncher(
+    navController: NavHostController,
+    deepLinkBaseUrl: String,
+) = composable(
     route = Screen.Launcher.route,
-) {
+    arguments = listOf(
+        navArgument(Screen.Launcher.REDIRECTION) {
+            type = NavType.StringType
+            nullable = true
+        },
+    ),
+    deepLinks = listOf(
+        navDeepLink { uriPattern = Screen.Launcher.deepLink(deepLinkBaseUrl) }
+    )
+) { navBackStackEntry ->
+    val redirection = navBackStackEntry.get<String>(Screen.Launcher.REDIRECTION)
     LauncherScreen(
+        foregroundState = navController.isCurrentDestination(route = Screen.Launcher.route),
         navigateToHomeScreen = { userId ->
             navController.runFromRoute(route = Screen.Launcher.route) {
-                navController.navigate(Screen.Home(userId)) {
+                navController.navigate(Screen.Home(userId, redirection)) {
                     popUpTo(Screen.Launcher.route) { inclusive = true }
                 }
             }
@@ -544,7 +580,7 @@ internal fun NavGraphBuilder.addHome(
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
     route: String,
-    startDestination: String,
+    defaultStartDestination: String,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
@@ -558,6 +594,13 @@ internal fun NavGraphBuilder.addHome(
     arguments = arguments,
 ) { navBackStackEntry ->
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
+    val startDestination = when (navBackStackEntry.get<String>(Screen.Home.TAB)) {
+        Screen.Home.TAB_FILES -> Screen.Files.route
+        Screen.Home.TAB_PHOTOS -> Screen.Photos.route
+        Screen.Home.TAB_COMPUTERS -> Screen.Computers.route
+        Screen.Home.TAB_SHARED -> Screen.Shared.route
+        else -> defaultStartDestination
+    }
     val shareId = navBackStackEntry.get<String>(Screen.Files.SHARE_ID)
     val currentFolderId = navBackStackEntry.get<String>(Screen.Files.FOLDER_ID)?.let { folderId ->
         shareId?.let {
@@ -613,6 +656,11 @@ internal fun NavGraphBuilder.addHome(
                 Screen.BackupIssues.invoke(folderId)
             )
         },
+        navigateToPhotosUpsell = {
+            navController.navigate(
+                Screen.Photos.Upsell(userId)
+            )
+        },
         navigateToBackupSettings = {
             navController.navigate(
                 Screen.Settings.PhotosBackup(userId)
@@ -621,6 +669,16 @@ internal fun NavGraphBuilder.addHome(
         navigateToPhotosPermissionRationale = {
             navController.navigate(
                 Screen.PhotosPermissionRationale(userId)
+            )
+        },
+        navigateToComputerOptions = { deviceId ->
+            navController.navigate(
+                Screen.ComputerOptions.invoke(userId, deviceId)
+            )
+        },
+        navigateToGetMoreFreeStorage = {
+            navController.navigate(
+                Screen.GetMoreFreeStorage(userId)
             )
         },
         modifier = Modifier.fillMaxSize(),
@@ -633,6 +691,7 @@ fun NavGraphBuilder.addHome(
     navController: NavHostController,
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
+    defaultStartDestination: String,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
@@ -641,10 +700,19 @@ fun NavGraphBuilder.addHome(
     homeNavController = homeNavController,
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Home.route,
-    startDestination = Screen.Files.route,
+    defaultStartDestination = defaultStartDestination,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
-    onDrawerStateChanged= onDrawerStateChanged
+    onDrawerStateChanged= onDrawerStateChanged,
+    arguments = listOf(
+        navArgument(Screen.Home.USER_ID) {
+            type = NavType.StringType
+        },
+        navArgument(Screen.Home.TAB) {
+            type = NavType.StringType
+            nullable = true
+        },
+    ),
 )
 
 @ExperimentalAnimationApi
@@ -661,7 +729,7 @@ fun NavGraphBuilder.addHomeFiles(
     homeNavController = homeNavController,
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Files.route,
-    startDestination = Screen.Files.route,
+    defaultStartDestination = Screen.Files.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     onDrawerStateChanged= onDrawerStateChanged,
@@ -694,7 +762,7 @@ fun NavGraphBuilder.addHomeShared(
     homeNavController = homeNavController,
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Shared.route,
-    startDestination = Screen.Shared.route,
+    defaultStartDestination = Screen.Shared.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     onDrawerStateChanged = onDrawerStateChanged
@@ -714,7 +782,7 @@ fun NavGraphBuilder.addHomePhotos(
     homeNavController = homeNavController,
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Photos.route,
-    startDestination = Screen.Photos.route,
+    defaultStartDestination = Screen.Photos.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     onDrawerStateChanged = onDrawerStateChanged
@@ -734,7 +802,7 @@ fun NavGraphBuilder.addHomeComputers(
     homeNavController = homeNavController,
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Computers.route,
-    startDestination = Screen.Computers.route,
+    defaultStartDestination = Screen.Computers.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     onDrawerStateChanged = onDrawerStateChanged
@@ -1332,5 +1400,81 @@ fun NavGraphBuilder.addPhotosBackup(navController: NavHostController) = composab
                 inclusive = true,
             )
         },
+    )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addPhotosUpsell(
+    navigateToSubscription: () -> Unit,
+) = modalBottomSheet(
+    route = Screen.Photos.Upsell.route,
+    arguments = listOf(
+        navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
+    ),
+) { _, runAction ->
+    PhotosUpsellScreen(
+        runAction = runAction,
+        navigateToSubscription = navigateToSubscription,
+    )
+}
+
+fun NavGraphBuilder.addComputerOptions(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.ComputerOptions.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+    arguments = listOf(
+        navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.ComputerOptions.DEVICE_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry, runAction ->
+    val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
+    ComputerOptions(
+        runAction = runAction,
+        navigateToRenameComputer = { deviceId: DeviceId, folderId: FolderId ->
+            navController.navigate(Screen.Dialogs.RenameComputer.invoke(userId, deviceId, folderId)) {
+                popUpTo(route = Screen.ComputerOptions.route) { inclusive = true }
+            }
+        },
+    )
+}
+
+@ExperimentalCoroutinesApi
+fun NavGraphBuilder.addRenameComputerDialog(navController: NavHostController) = dialog(
+    route = Screen.Dialogs.RenameComputer.route,
+    arguments = listOf(
+        navArgument(Screen.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.Dialogs.RenameComputer.FOLDER_ID) { type = NavType.StringType },
+        navArgument(Screen.Dialogs.RenameComputer.DEVICE_ID) { type = NavType.StringType },
+    ),
+) {
+    RenameDevice(
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.Dialogs.RenameComputer.route,
+                inclusive = true,
+            )
+        }
+    )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addGetMoreFreeStorage(navController: NavHostController) = composable(
+    route = Screen.GetMoreFreeStorage.route,
+    enterTransition = defaultEnterSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Up) { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Down) { true },
+    arguments = listOf(
+        navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
+    ),
+) {
+    GetMoreFreeStorageScreen(
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.GetMoreFreeStorage.route,
+                inclusive = true,
+            )
+        }
     )
 }

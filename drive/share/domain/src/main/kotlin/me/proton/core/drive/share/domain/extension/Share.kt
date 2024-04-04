@@ -22,3 +22,5 @@ import me.proton.core.drive.share.domain.entity.Share
 
 val Share.creationTimeOrMaxLongIfNull: TimestampS get() =
     creationTime ?: TimestampS(Long.MAX_VALUE)
+
+val Share.isDevice: Boolean get() = type == Share.Type.DEVICE

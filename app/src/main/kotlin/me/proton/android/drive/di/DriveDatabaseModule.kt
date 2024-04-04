@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -29,7 +29,9 @@ import me.proton.android.drive.db.DriveDatabase
 import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.challenge.data.db.ChallengeDatabase
+import me.proton.core.contact.data.local.db.ContactDatabase
 import me.proton.core.drive.backup.data.db.BackupDatabase
+import me.proton.core.drive.base.data.db.BaseDatabase
 import me.proton.core.drive.device.data.db.DeviceDatabase
 import me.proton.core.drive.drivelink.data.db.DriveLinkDatabase
 import me.proton.core.drive.drivelink.download.data.db.DriveLinkDownloadDatabase
@@ -55,7 +57,7 @@ import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
 import me.proton.core.drive.sorting.data.db.SortingDatabase
 import me.proton.core.drive.stats.data.db.StatsDatabase
-import me.proton.core.drive.user.data.db.QuotaDatabase
+import me.proton.core.drive.user.data.db.UserMessageDatabase
 import me.proton.core.drive.volume.data.db.VolumeDatabase
 import me.proton.core.drive.worker.data.db.WorkerDatabase
 import me.proton.core.eventmanager.data.db.EventMetadataDatabase
@@ -139,6 +141,9 @@ abstract class DriveDatabaseBindsModule {
     abstract fun provideAddressDatabase(db: DriveDatabase): AddressDatabase
 
     @Binds
+    abstract fun provideContactDatabase(db: DriveDatabase): ContactDatabase
+
+    @Binds
     abstract fun provideFeatureFlagDatabase(db: DriveDatabase): FeatureFlagDatabase
 
     @Binds
@@ -196,7 +201,7 @@ abstract class DriveDatabaseBindsModule {
     abstract fun provideBackupDatabase(db: DriveDatabase): BackupDatabase
 
     @Binds
-    abstract fun provideQuotaDatabase(db: DriveDatabase): QuotaDatabase
+    abstract fun provideUserMessageDatabase(db: DriveDatabase): UserMessageDatabase
 
     @Binds
     abstract fun provideObservabilityDatabase(db: DriveDatabase): ObservabilityDatabase
@@ -233,4 +238,7 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideDeviceDatabase(appDatabase: DriveDatabase): DeviceDatabase
+
+    @Binds
+    abstract fun provideBaseDatabase(appDatabase: DriveDatabase): BaseDatabase
 }

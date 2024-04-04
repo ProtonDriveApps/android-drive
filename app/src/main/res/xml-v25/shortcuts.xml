@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Drive.
+  ~
+  ~ Proton Drive is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Drive is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="primary-user-files"
+        android:enabled="true"
+        android:icon="@drawable/ic_proton_folder"
+        android:shortcutShortLabel="@string/title_files"
+        android:shortcutLongLabel="@string/title_files">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="drive://proton.me/launcher?redirection=files"/>
+    </shortcut>
+    <shortcut
+        android:shortcutId="primary-user-link"
+        android:enabled="true"
+        android:icon="@drawable/ic_proton_link"
+        android:shortcutShortLabel="@string/title_shared"
+        android:shortcutLongLabel="@string/title_shared">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="drive://proton.me/launcher?redirection=shared"/>
+    </shortcut>
+    <shortcut
+        android:shortcutId="primary-user-computers"
+        android:enabled="true"
+        android:icon="@drawable/ic_proton_tv"
+        android:shortcutShortLabel="@string/computers_title"
+        android:shortcutLongLabel="@string/computers_title">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="drive://proton.me/launcher?redirection=computers"/>
+    </shortcut>
+</shortcuts>

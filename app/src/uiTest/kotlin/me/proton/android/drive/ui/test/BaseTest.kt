@@ -20,9 +20,18 @@ package me.proton.android.drive.ui.test
 
 import me.proton.android.drive.ui.MainActivity
 import me.proton.android.drive.ui.extension.createFusionAndroidComposeRule
+import me.proton.core.auth.test.robot.AddAccountRobot
+import me.proton.core.test.quark.data.User
 import org.junit.Rule
 
 abstract class BaseTest : AbstractBaseTest() {
     @get:Rule(order = 2)
     val fusionComposeRule = createFusionAndroidComposeRule<MainActivity>()
+
+    @Suppress("unused")
+    protected fun signIn(existingUser: User) {
+        AddAccountRobot
+            .clickSignIn()
+            .login(existingUser)
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -34,8 +34,7 @@ driveModule(
     implementation(project(":drive:link:data"))
     implementation(project(":drive:share"))
     implementation(libs.core.dataRoom)
-    implementation(libs.core.presentation) // AppLifecycleProvider
-    implementation(libs.core.userSettings)
+    implementation(libs.core.userSettings.data)
     implementation(libs.core.user.data)
     implementation(libs.core.notification.data)
     implementation(libs.core.push.data)

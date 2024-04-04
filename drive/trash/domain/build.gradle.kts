@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ android {
 driveModule(
     hilt = true,
     room = true,
+    socialTest = true,
     i18n = true,
 ) {
     api(project(":drive:link-trash:domain"))
@@ -35,13 +36,10 @@ driveModule(
     implementation(project(":drive:message-queue:domain"))
     implementation(project(":drive:share:domain"))
 
-    testImplementation(libs.dagger.hilt.android.testing)
-    add("kaptTest", libs.dagger.hilt.compiler)
-
+    testImplementation(project(":drive:drivelink-download:data-test"))
+    testImplementation(project(":drive:file:base:data"))
+    testImplementation(project(":drive:message-queue:data"))
     testImplementation(project(":drive:trash:data-test"))
-    testImplementation(project(":drive:link-trash:data-test"))
-    testImplementation(project(":drive:link:data-test"))
-    testImplementation(project(":drive:share:data-test"))
 }
 
 configureJacoco()

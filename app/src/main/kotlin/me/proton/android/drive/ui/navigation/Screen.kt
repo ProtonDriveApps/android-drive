@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.proton.android.drive.ui.options.OptionsFilter
+import me.proton.android.drive.ui.viewmodel.ComputerOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.MoveToFolderViewModel
 import me.proton.android.drive.ui.viewmodel.MultipleFileOrFolderOptionsViewModel
@@ -34,7 +35,9 @@ import me.proton.android.drive.ui.viewmodel.ParentFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.UploadToViewModel
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.drivelink.rename.presentation.RenameViewModel
+import me.proton.core.drive.device.domain.entity.DeviceId
+import me.proton.core.drive.drivelink.device.presentation.viewmodel.RenameDeviceViewModel
+import me.proton.core.drive.drivelink.rename.presentation.viewmodel.RenameViewModel
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.SharedDriveLinkViewModel
 import me.proton.core.drive.folder.create.presentation.CreateFolderViewModel
 import me.proton.core.drive.link.domain.entity.FileId
@@ -48,7 +51,9 @@ import me.proton.core.drive.sorting.domain.entity.Direction
 sealed class Screen(val route: String) {
     open fun deepLink(baseUrl: String): String? = "$baseUrl/$route"
 
-    data object Launcher : Screen("launcher")
+    data object Launcher : Screen("launcher?redirection={redirection}") {
+        const val REDIRECTION = "redirection"
+    }
 
     data object SigningOut : Screen("signingOut/{userId}") {
         operator fun invoke(userId: UserId) = "signingOut/${userId.id}"
@@ -56,10 +61,20 @@ sealed class Screen(val route: String) {
         const val USER_ID = Screen.USER_ID
     }
 
-    data object Home : Screen("home/{userId}") {
-        operator fun invoke(userId: UserId) = "home/${userId.id}"
+    data object Home : Screen("home/{userId}?tab={tab}") {
+        operator fun invoke(userId: UserId, tab: String? = null) = buildString {
+            append("home/${userId.id}")
+            if (tab != null) {
+                append("?tab=$tab")
+            }
+        }
 
         const val USER_ID = Screen.USER_ID
+        const val TAB = "tab"
+        const val TAB_FILES = "files"
+        const val TAB_PHOTOS = "photos"
+        const val TAB_COMPUTERS = "computers"
+        const val TAB_SHARED = "shared"
     }
 
     data object Sorting :
@@ -121,6 +136,18 @@ sealed class Screen(val route: String) {
 
         const val FOLDER_ID = ParentFolderOptionsViewModel.KEY_FOLDER_ID
         const val SHARE_ID = ParentFolderOptionsViewModel.KEY_SHARE_ID
+    }
+
+    data object ComputerOptions : Screen(
+        "options/computer/{userId}/devices/{deviceId}"
+    ) {
+
+        operator fun invoke(
+            userId: UserId,
+            deviceId: DeviceId,
+        ) = "options/computer/${userId.id}/devices/${deviceId.id}"
+
+        const val DEVICE_ID = ComputerOptionsViewModel.KEY_DEVICE_ID
     }
 
     data object Info : Screen("info/{userId}/shares/{shareId}/files?linkId={linkId}") {
@@ -252,6 +279,10 @@ sealed class Screen(val route: String) {
 
         operator fun invoke(userId: UserId, shareId: ShareId?) = "home/${userId.id}/photos/${shareId?.id}"
 
+        object Upsell : Screen("home/{userId}/photos/upsell"){
+            operator fun invoke(userId: UserId) = "home/${userId.id}/photos/upsell"
+        }
+
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = "shareId"
     }
@@ -291,8 +322,9 @@ sealed class Screen(val route: String) {
         override fun invoke(userId: UserId) =
             filesBrowsableBuildRoute("computers", userId, null, null)
 
-        operator fun invoke(userId: UserId, folderId: FolderId, folderName: String?, syncedFolders: Boolean) =
-            filesBrowsableBuildRoute("computers", userId, folderId, folderName) + "&syncedFolders=${syncedFolders}"
+        operator fun invoke(userId: UserId, folderId: FolderId?, folderName: String?, syncedFolders: Boolean) =
+            filesBrowsableBuildRoute("computers", userId, folderId, folderName) +
+                    folderId?.let{"&syncedFolders=${syncedFolders}"}.orEmpty()
 
         const val USER_ID = Screen.USER_ID
         const val SYNCED_FOLDERS = "syncedFolders"
@@ -421,6 +453,28 @@ sealed class Screen(val route: String) {
 
             const val USER_ID = Screen.USER_ID
         }
+
+        data object RenameComputer : Screen(
+            "rename/{userId}/shares/{shareId}/files?fileId={fileId}&folderId={folderId}&deviceId={deviceId}"
+        ) {
+
+            operator fun invoke(
+                userId: UserId,
+                deviceId: DeviceId,
+                folderId: FolderId,
+            ) = "rename/${userId.id}/shares/${folderId.shareId.id}/files?folderId=${folderId.id}&deviceId=${deviceId.id}"
+
+            const val FOLDER_ID = RenameViewModel.KEY_FOLDER_ID
+            const val SHARE_ID = RenameViewModel.KEY_SHARE_ID
+            const val DEVICE_ID = RenameDeviceViewModel.KEY_DEVICE_ID
+        }
+    }
+
+    data object GetMoreFreeStorage : Screen("storage/{userId}/getMoreFree") {
+
+        operator fun invoke(userId: UserId) = "storage/${userId.id}/getMoreFree"
+
+        const val USER_ID = Screen.USER_ID
     }
 
     companion object {

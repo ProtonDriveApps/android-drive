@@ -19,18 +19,32 @@
 package me.proton.android.drive.ui.robot
 
 import androidx.annotation.StringRes
+import me.proton.android.drive.ui.extension.doesNotExist
+import me.proton.android.drive.ui.robot.settings.GetMoreFreeStorageRobot
 import me.proton.android.drive.ui.screen.HomeScreenTestTag
+import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerTestTag
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
 
 object SidebarRobot : Robot {
 
     private val sidebar get() = node.withTag(HomeScreenTestTag.sidebar)
+    private val content get() = node.withTag(NavigationDrawerTestTag.content)
+    private val storageIndicator get() = node.withTag(NavigationDrawerTestTag.storageIndicator)
     private val trashNavigationItem get() = node.withText(I18N.string.navigation_item_trash)
     private val offlineNavigationItem get() = node.withText(I18N.string.navigation_item_offline)
+    private val getMoreFreeStorageItem get() = node.withText(I18N.string.navigation_item_get_free_storage)
 
     private fun clickSidebarMenuItem(@StringRes menuItemName: Int) {
         node.withText(menuItemName).click()
+    }
+
+    fun scrollToItemWithName(itemName: String): SidebarRobot = apply {
+        content.scrollTo(node.withText(itemName))
+    }
+
+    fun scrollToStorageIndicator(): SidebarRobot = apply {
+        content.scrollTo(storageIndicator)
     }
 
     fun clickReportBug() {
@@ -47,6 +61,12 @@ object SidebarRobot : Robot {
 
     fun clickSettings() = SettingsRobot.apply {
         clickSidebarMenuItem(I18N.string.navigation_item_settings)
+    }
+
+    fun clickGetMoreFreeStorage() = getMoreFreeStorageItem.clickTo(GetMoreFreeStorageRobot)
+
+    fun assertGetMoreFreeStorageIsNotDisplayed() {
+        getMoreFreeStorageItem.await { doesNotExist() }
     }
 
     override fun robotDisplayed() {

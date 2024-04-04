@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.block
 import me.proton.core.drive.db.test.download
 import me.proton.core.drive.db.test.file
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.drivelink.domain.repository.DriveLinkRepository
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -50,14 +50,14 @@ class DriveLinkRepositoryImplTest {
 
     @Test
     fun `Given empty folder when count then should count zero`() = runTest {
-        val folderId = database.myDrive { }
+        val folderId = database.myFiles { }
         val count = repository.getDriveLinksCount(folderId).first()
         assertEquals(0, count)
     }
 
     @Test
     fun `Given folder with one file when count then should count one`() = runTest {
-        val folderId = database.myDrive {
+        val folderId = database.myFiles {
             file("file")
         }
         val count = repository.getDriveLinksCount(folderId).first()
@@ -66,7 +66,7 @@ class DriveLinkRepositoryImplTest {
 
     @Test
     fun `Given folder with a file of two blocks when count then should count one`() = runTest {
-        val folderId = database.myDrive {
+        val folderId = database.myFiles {
             file("file") {
                 download {
                     block(0)

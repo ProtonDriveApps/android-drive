@@ -26,8 +26,9 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.link.domain.entity.FolderId
+import javax.inject.Inject
 
-class StubbedBackupManager(
+class StubbedBackupManager @Inject constructor(
     private val repository: BackupFolderRepository,
 ) : BackupManager {
     var started = false

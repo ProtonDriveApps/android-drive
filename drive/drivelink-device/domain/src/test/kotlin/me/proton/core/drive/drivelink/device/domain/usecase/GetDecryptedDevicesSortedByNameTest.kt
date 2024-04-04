@@ -32,6 +32,7 @@ import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.device.domain.entity.Device
 import me.proton.core.drive.device.domain.entity.DeviceId
+import me.proton.core.drive.device.domain.extension.name
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId

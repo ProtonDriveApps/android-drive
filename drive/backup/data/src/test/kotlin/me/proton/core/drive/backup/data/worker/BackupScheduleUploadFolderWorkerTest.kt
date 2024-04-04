@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -49,7 +49,7 @@ class BackupScheduleUploadFolderWorkerTest {
 
     @Before
     fun setUp() = runTest {
-        val folderId = database.myDrive { }
+        val folderId = database.myFiles { }
         backupFolder = BackupFolder(
             bucketId = bucketId,
             folderId = folderId,

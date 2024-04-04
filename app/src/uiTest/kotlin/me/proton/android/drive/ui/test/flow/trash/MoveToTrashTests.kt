@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -42,7 +42,8 @@ class MoveToTrashTests : AuthenticatedBaseTest() {
         val folder7 = "folder7"
         val emptyFolder = "folder8"
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .verify { robotDisplayed() }
             .clickLayoutSwitcher()
             .clickOnFolder(folder1, Grid)
@@ -69,7 +70,8 @@ class MoveToTrashTests : AuthenticatedBaseTest() {
     @Test
     @Scenario(2, isPhotos = true)
     fun moveAFileAndPhotoToTrash() {
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(fileName)
             .clickMoveToTrash()
             .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
@@ -85,7 +87,8 @@ class MoveToTrashTests : AuthenticatedBaseTest() {
                 itemIsNotDisplayed(ImageName.Main.fileName)
             }
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickSidebarButton()
             .clickTrash()
             .verify {
@@ -97,7 +100,8 @@ class MoveToTrashTests : AuthenticatedBaseTest() {
     @Test
     @Scenario(2)
     fun removeFolderWithFiles() {
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(folderName)
             .clickMoveToTrash()
             .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
@@ -106,6 +110,7 @@ class MoveToTrashTests : AuthenticatedBaseTest() {
             }
 
         FilesTabRobot
+            .clickFilesTab()
             .clickSidebarButton()
             .clickTrash()
             .verify {

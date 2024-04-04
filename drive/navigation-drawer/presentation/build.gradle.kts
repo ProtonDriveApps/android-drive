@@ -32,4 +32,5 @@ driveModule(
     api(project(":drive:base:presentation"))
 
     implementation(project(":drive:user:presentation"))
+    implementation(libs.core.plan.presentation.compose)
 }

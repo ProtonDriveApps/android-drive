@@ -8,23 +8,23 @@ androidx-activity = "1.8.0"
 androidx-annotation = "1.7.0"
 androidx-appCompat = "1.6.1"
 androidx-biometric = "1.2.0-alpha05"
-androidx-compose = "1.5.4"
-androidx-compose-compiler = "1.5.6"
+androidx-compose = "1.6.3"
+androidx-compose-compiler = "1.5.10"
 androidx-compose-constraintlayout = "1.0.1"
-androidx-compose-foundation = "1.5.4"
-androidx-compose-material = "1.5.4"
-androidx-compose-material3 = "1.1.2"
+androidx-compose-foundation = "1.6.3"
+androidx-compose-material = "1.6.3"
+androidx-compose-material3 = "1.2.1"
 androidx-core = "1.12.0"
 androidx-datastore = "1.0.0"
 androidx-exif = "1.3.6"
-androidx-hilt = "1.1.0"
-androidx-hilt-navigation-compose = "1.1.0"
+androidx-hilt = "1.2.0"
+androidx-hilt-navigation-compose = "1.2.0"
 androidx-lifecycle = "2.6.2"
 androidx-media3 = "1.2.1"
-androidx-navigation = "2.7.5"
+androidx-navigation = "2.7.7"
 androidx-paging = "3.1.1"
 androidx-paging-compose = "3.2.1"
-androidx-room = "2.6.0"
+androidx-room = "2.6.1"
 androidx-test = "1.5.0"
 androidx-test-orchestrator = "1.4.2"
 androidx-test-uiautomator = "2.2.0"
@@ -35,23 +35,25 @@ android-tools = "1.1.5"
 # Coil
 coil = "2.4.0"
 # Core
-core = "19.0.0"
+core = "21.0.0"
 core-test-quark = "14.1.0"
 # Dagger
-dagger = "2.48.1"
+dagger = "2.49"
+# Desugar
+desugar = "2.0.4"
 # Github
 treessence = "1.0.5"
 # Gradle
-android-gradle-plugin = "8.1.3"
-proton-detekt-plugin = "1.2.0"
+android-gradle-plugin = "8.2.2"
+proton-detekt-plugin = "1.3.0"
 # JaCoCo
 jaCoCo = "0.8.8"
 # JakeWharton
 timber = "5.0.1"
 # Kotlin
-kotlin = "1.9.21"
-coroutines = "1.6.4"
-serializationJson = "1.6.0"
+kotlin = "1.9.22"
+coroutines = "1.8.0"
+serializationJson = "1.6.3"
 # Sentry
 sentry = "6.25.0"
 # Squareup
@@ -143,10 +145,12 @@ coil-video = { module = "io.coil-kt:coil-video", version.ref = "coil" }
 core-account = { module = "me.proton.core:account", version.ref = "core" }
 core-account-dagger = { module = "me.proton.core:account-dagger", version.ref = "core" }
 core-account-data = { module = "me.proton.core:account-data", version.ref = "core" }
+core-account-domain = { module = "me.proton.core:account-domain", version.ref = "core" }
 core-accountManager = { module = "me.proton.core:account-manager", version.ref = "core" }
 core-accountManager-dagger = { module = "me.proton.core:account-manager-dagger", version.ref = "core" }
 core-accountManager-data = { module = "me.proton.core:account-manager-data", version.ref = "core" }
 core-accountManager-domain = { module = "me.proton.core:account-manager-domain", version.ref = "core" }
+core-accountManager-presentation = { module = "me.proton.core:account-manager-presentation", version.ref = "core" }
 core-accountRecovery = { module = "me.proton.core:account-recovery", version.ref = "core" }
 core-accountRecovery-test = { module = "me.proton.core:account-recovery-test", version.ref = "core" }
 core-auth = { module = "me.proton.core:auth", version.ref = "core" }
@@ -154,6 +158,9 @@ core-auth-domain = { module = "me.proton.core:auth-domain", version.ref = "core"
 core-auth-test = { module = "me.proton.core:auth-test", version.ref = "core" }
 core-challenge = { module = "me.proton.core:challenge", version.ref = "core" }
 core-challenge-data = { module = "me.proton.core:challenge-data", version.ref = "core" }
+core-contact = { module = "me.proton.core:contact", version.ref = "core" }
+core-contact-data = { module = "me.proton.core:contact", version.ref = "core" }
+core-contact-domain = { module = "me.proton.core:contact", version.ref = "core" }
 core-country = { module = "me.proton.core:country", version.ref = "core" }
 core-crypto = { module = "me.proton.core:crypto", version.ref = "core" }
 core-crypto-dagger = { module = "me.proton.core:crypto-dagger", version.ref = "core" }
@@ -164,7 +171,9 @@ core-data = { module = "me.proton.core:data", version.ref = "core" }
 core-dataRoom = { module = "me.proton.core:data-room", version.ref = "core" }
 core-domain = { module = "me.proton.core:domain", version.ref = "core" }
 core-eventManager = { module = "me.proton.core:event-manager", version.ref = "core" }
+core-eventManager-dagger = { module = "me.proton.core:event-manager-dagger", version.ref = "core" }
 core-eventManager-data = { module = "me.proton.core:event-manager-data", version.ref = "core" }
+core-eventManager-domain = { module = "me.proton.core:event-manager-domain", version.ref = "core" }
 core-featureFlag = { module = "me.proton.core:feature-flag", version.ref = "core" }
 core-featureFlag-data = { module = "me.proton.core:feature-flag-data", version.ref = "core" }
 core-featureFlag-domain = { module = "me.proton.core:feature-flag-domain", version.ref = "core" }
@@ -184,6 +193,7 @@ core-network-domain = { module = "me.proton.core:network-domain", version.ref = 
 core-notification = { module = "me.proton.core:notification", version.ref = "core" }
 core-notification-data = { module = "me.proton.core:notification-data", version.ref = "core" }
 core-observability = { module = "me.proton.core:observability", version.ref = "core" }
+core-observability-dagger = { module = "me.proton.core:observability-dagger", version.ref = "core" }
 core-observability-data = { module = "me.proton.core:observability-data", version.ref = "core" }
 core-payment = { module = "me.proton.core:payment", version.ref = "core" }
 core-payment-domain = { module = "me.proton.core:payment-domain", version.ref = "core" }
@@ -191,6 +201,7 @@ core-payment-data = { module = "me.proton.core:payment-data", version.ref = "cor
 core-payment-iap = { module = "me.proton.core:payment-iap", version.ref = "core" }
 # core-payment-iap-test = { module = "me.proton.core:payment-iap-test", version.ref = "core" }
 core-plan = { module = "me.proton.core:plan", version.ref = "core" }
+core-plan-presentation-compose = { module = "me.proton.core:plan-presentation-compose", version.ref = "core" }
 core-plan-test = { module = "me.proton.core:plan-test", version.ref = "core" }
 core-presentation = { module = "me.proton.core:presentation", version.ref = "core" }
 core-presentation-compose = { module = "me.proton.core:presentation-compose", version.ref = "core" }
@@ -230,6 +241,9 @@ treessence = { module = "com.github.bastienpaulfr:treessence", version.ref = "tr
 
 # JakeWharton
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+# Desugar
+tools-desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 
 # Kotlin
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
@@ -271,7 +285,7 @@ fusion = { module = "me.proton.test:fusion", version.ref = "fusion"}
 
 [bundles]
 accompanist = ["accompanist-systemUiController", "accompanist-permissions", "accompanist-drawablepainter", "accompanist-placeholderMaterial"]
-core = ["core-account", "core-accountManager", "core-accountRecovery", "core-auth", "core-challenge", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-keyTransparency", "core-network", "core-notification", "core-observability", "core-payment", "core-payment-iap", "core-plan", "core-report", "core-presentation", "core-presentation-compose", "core-proguard-rules", "core-push", "core-telemetry", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilAndroidSentry", "core-utilKotlin", "core-config-data"]
+core = ["core-account", "core-accountManager", "core-accountRecovery", "core-auth", "core-challenge", "core-contact", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-keyTransparency", "core-network", "core-notification", "core-observability", "core-payment", "core-payment-iap", "core-plan", "core-plan-presentation-compose", "core-report", "core-presentation", "core-presentation-compose", "core-proguard-rules", "core-push", "core-telemetry", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilAndroidSentry", "core-utilKotlin", "core-config-data"]
 core-test = ["core-auth-test", "core-accountRecovery-test", "core-humanVerification-test", "core-report-test", "core-plan-test"]
 test-android = ["junit", "mockk-android", "coroutines-test", "androidx-test-core-ktx", "androidx-test-runner", "androidx-test-rules", "androidx-compose-ui-test", "androidx-compose-ui-test-junit", "androidx-test-uiautomator", "core-test-android-instrumented"]
 test-jvm = ["junit", "mockk-jvm", "coroutines-test", "androidx-test-core-ktx", "androidx-work-testing", "core-test-kotlin", "core-test-quark", "robolectric", "mockwebserver"]

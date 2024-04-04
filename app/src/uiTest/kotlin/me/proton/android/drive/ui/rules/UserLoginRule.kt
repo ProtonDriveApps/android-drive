@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -19,11 +19,14 @@
 package me.proton.android.drive.ui.rules
 
 import kotlinx.coroutines.runBlocking
+import me.proton.android.drive.repository.TestFeatureFlagRepositoryImpl
+import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Quota
 import me.proton.android.drive.ui.extension.populate
 import me.proton.android.drive.ui.extension.quotaSetUsedSpace
 import me.proton.android.drive.ui.extension.volumeCreate
 import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.loginTestHelper
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.quark.data.User
 import me.proton.core.test.quark.v2.QuarkCommand
 import me.proton.core.test.quark.v2.command.seedNewSubscriber
@@ -38,37 +41,48 @@ class UserLoginRule(
     private val isPhotos: Boolean = false,
     private val quarkCommands: QuarkCommand,
 ) : TestWatcher() {
+
+    var userId: UserId? = null
+
     override fun starting(description: Description) {
         runBlocking {
             loginTestHelper.logoutAll()
 
+            val userPlanAnnotation = description.getAnnotation(UserPlan::class.java)
             val scenarioAnnotation = description.getAnnotation(Scenario::class.java)
             val quotaAnnotation = description.getAnnotation(Quota::class.java)
+            val featureFlagAnnotation = description.getAnnotation(FeatureFlag::class.java)
 
-            val scenarioUser = scenarioAnnotation
-                ?.let {
-                    testUser.copy(dataSetScenario = it.value.toString())
-                } ?: testUser
+            val user = testUser
+                .updateWith(userPlanAnnotation)
+                .updateWith(scenarioAnnotation)
 
             val device = scenarioAnnotation?.isDevice ?: isDevice
             val photos = scenarioAnnotation?.isPhotos ?: isPhotos
 
-            if (testUser.isPaid)
-                quarkCommands.seedNewSubscriber(testUser)
+            if (user.isPaid)
+                quarkCommands.seedNewSubscriber(user)
             else
-                quarkCommands.userCreate(testUser)
+                quarkCommands.userCreate(user).also { response ->
+                    userId = response.userId.let(::UserId)
+                }
 
             quotaAnnotation?.let {
-                quarkCommands.volumeCreate(testUser, "${it.value}${it.unit}")
+                quarkCommands.volumeCreate(user)
 
                 if (it.percentageFull in 1..100) {
                     val usedSpace = (it.value.toDouble() * it.percentageFull / 100).roundToInt()
-                    quarkCommands.quotaSetUsedSpace(testUser, "${usedSpace}${it.unit}")
+                    quarkCommands.quotaSetUsedSpace(user, "${usedSpace}${it.unit}")
                 }
             }
 
-            if (scenarioUser.dataSetScenario.let { it.isNotEmpty() && it != "0" }) {
-                quarkCommands.populate(scenarioUser, device, photos)
+            if (user.dataSetScenario.let { it.isNotEmpty() && it != "0" }) {
+                quarkCommands.populate(user, device, photos)
+            }
+
+            if (featureFlagAnnotation != null) {
+                TestFeatureFlagRepositoryImpl.flags[featureFlagAnnotation.id] =
+                    featureFlagAnnotation.state
             }
         }
 
@@ -82,6 +96,23 @@ class UserLoginRule(
     }
 
     override fun finished(description: Description) {
+        TestFeatureFlagRepositoryImpl.flags.clear()
         loginTestHelper.logoutAll()
     }
 }
+
+private fun User.updateWith(
+    userAnnotation: UserPlan?,
+): User = updateWith(userAnnotation) { annotation ->
+    copy(plan = annotation.value)
+}
+
+private fun User.updateWith(
+    scenarioAnnotation: Scenario?,
+): User = updateWith(scenarioAnnotation) { annotation ->
+    copy(dataSetScenario = annotation.value.toString())
+}
+
+private fun <T> User.updateWith(value: T?, block: User.(T) -> User) = value?.let {
+    block(it)
+} ?: this

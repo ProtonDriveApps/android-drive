@@ -27,4 +27,12 @@
     <string name="computers_synced_folders_empty_title">No synced folders</string>
     <string name="computers_synced_folders_empty_description">Folders you sync from computer will\nappear here</string>
     <string name="computers_synced_folders_no_folder">Computer has been removed</string>
+    <string name="computers_rename_title">Rename computer</string>
+    <string name="computers_rename_success">Computer renamed</string>
+    <!--
+        Variable %1$s is a computer name
+        Examples:
+            "More options for My laptop"
+    -->
+    <string name="computers_content_description_list_more_options">More options for %1$s</string>
 </resources>

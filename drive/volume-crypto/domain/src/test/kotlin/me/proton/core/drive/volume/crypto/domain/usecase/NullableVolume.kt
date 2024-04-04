@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ package me.proton.core.drive.volume.crypto.domain.usecase
 
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.db.test.shareId
+import me.proton.core.drive.db.test.mainShareId
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
@@ -32,7 +32,7 @@ internal fun NullableVolume(
     creationTime: TimestampS = TimestampS(0),
 ) = Volume(
     id = id,
-    shareId = shareId,
+    shareId = mainShareId.id,
     maxSpace = 0.bytes,
     usedSpace = 0.bytes,
     state = state,

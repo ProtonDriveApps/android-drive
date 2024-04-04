@@ -93,5 +93,6 @@ class UserAvailableSpaceTest {
         keys = emptyList(),
         recovery = null,
         createdAtUtc = 0,
+        type = null,
     )
 }

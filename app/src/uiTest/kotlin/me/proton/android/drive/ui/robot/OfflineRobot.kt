@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -23,10 +23,12 @@ import me.proton.core.drive.i18n.R as I18N
 
 object OfflineRobot : Robot, LinksRobot, NavigationBarRobot {
     private val offlineScreen get() = node.withText(I18N.string.title_offline_available)
-    private val emptyOfflineScreen get() = node.withText(I18N.string.title_empty_offline_available)
+    private val emptyOfflineTitle get() = node.withText(I18N.string.title_empty_offline_available)
+    private val emptyOfflineDescription get() = node.withText(I18N.string.description_empty_offline_available)
 
-    fun assertIsEmpty() = emptyOfflineScreen.await {
-        assertIsDisplayed()
+    fun assertIsEmpty() {
+        emptyOfflineTitle.await { assertIsDisplayed() }
+        emptyOfflineDescription.await { assertIsDisplayed() }
     }
 
     override fun robotDisplayed() {

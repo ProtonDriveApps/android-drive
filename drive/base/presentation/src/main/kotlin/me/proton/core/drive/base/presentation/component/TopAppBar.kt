@@ -41,6 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
+import me.proton.core.compose.component.BoxWithNotificationDot
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
@@ -58,6 +59,7 @@ fun TopAppBar(
     modifier: Modifier = Modifier,
     isTitleEncrypted: Boolean = false,
     backgroundColor: Color = ProtonTheme.colors.backgroundNorm,
+    notificationDotVisible: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
@@ -72,6 +74,7 @@ fun TopAppBar(
         },
         modifier = modifier,
         backgroundColor = backgroundColor,
+        notificationDotVisible = notificationDotVisible,
         actions = actions,
     )
 }
@@ -83,6 +86,7 @@ fun TopAppBar(
     title: @Composable (Modifier) -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = ProtonTheme.colors.backgroundNorm,
+    notificationDotVisible: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
@@ -90,15 +94,11 @@ fun TopAppBar(
         title = { title(Modifier.testTag(TopAppBarComponentTestTag.appBar)) },
         navigationIcon = {
             if (navigationIcon != null) {
-                IconButton(
-                    onClick = { onNavigationIcon() },
-                    modifier = Modifier.testTag(navigationButton),
-                ) {
-                    Icon(
-                        painter = navigationIcon,
-                        contentDescription = null,
-                    )
-                }
+                NavigationIconButton(
+                    navigationIcon = navigationIcon,
+                    onNavigationIcon = onNavigationIcon,
+                    notificationDotVisible = notificationDotVisible
+                )
             }
         },
         actions = actions,
@@ -123,6 +123,27 @@ private fun Title(
             overflow = TextOverflow.Ellipsis,
             modifier = modifier,
         )
+    }
+}
+
+@Composable
+private fun NavigationIconButton(
+    navigationIcon: Painter,
+    onNavigationIcon: () -> Unit,
+    notificationDotVisible: Boolean
+) {
+    IconButton(
+        onClick = { onNavigationIcon() },
+        modifier = Modifier.testTag(navigationButton),
+    ) {
+        BoxWithNotificationDot(
+            notificationDotVisible = notificationDotVisible,
+        ) {
+            Icon(
+                painter = navigationIcon,
+                contentDescription = null,
+            )
+        }
     }
 }
 

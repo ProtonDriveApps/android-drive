@@ -23,12 +23,14 @@ import me.proton.core.drive.crypto.domain.usecase.HmacSha256
 import me.proton.core.drive.cryptobase.domain.usecase.ChangeMessage
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
+import me.proton.core.drive.key.domain.usecase.GetLinkParentKey
 import me.proton.core.drive.key.domain.usecase.GetNodeHashKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.RenameInfo
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName
+import java.util.UUID
 import javax.inject.Inject
 
 class CreateRenameInfo @Inject constructor(
@@ -39,6 +41,7 @@ class CreateRenameInfo @Inject constructor(
     private val getNodeKey: GetNodeKey,
     private val getNodeHashKey: GetNodeHashKey,
     private val hmacSha256: HmacSha256,
+    private val getLinkParentKey: GetLinkParentKey
 ) {
     suspend operator fun invoke(
         parentFolder: Link.Folder,
@@ -60,6 +63,33 @@ class CreateRenameInfo @Inject constructor(
             hash = hmacSha256(parentFolderHashKey, linkName).getOrThrow(),
             previousHash = link.hash,
             mimeType = mimeType,
+            signatureAddress = signatureAddress,
+        )
+    }
+
+    suspend operator fun invoke(
+        rootFolder: Link.Folder,
+        name: String,
+        shouldValidateName: Boolean = true,
+    ): Result<RenameInfo> = coRunCatching {
+        require(rootFolder.parentId == null) { "Use this method only for renaming a root folder" }
+        val folderName = if (shouldValidateName) {
+            validateLinkName(name).getOrThrow()
+        } else {
+            name
+        }
+        val parentKey = getLinkParentKey(rootFolder).getOrThrow()
+        val signatureAddress = getSignatureAddress(rootFolder.userId)
+        RenameInfo(
+            name = changeMessage(
+                oldMessage = rootFolder.name,
+                oldMessageDecryptionKey = parentKey.keyHolder,
+                newMessage = folderName,
+                signKey = getAddressKeys(rootFolder.userId, signatureAddress).keyHolder,
+            ).getOrThrow(),
+            hash = UUID.randomUUID().toString(), // root folder does not have a hash but it's required by endpoint
+            previousHash = rootFolder.hash,
+            mimeType = rootFolder.mimeType,
             signatureAddress = signatureAddress,
         )
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -20,24 +20,34 @@ package me.proton.core.drive.db.test
 
 import me.proton.android.drive.db.DriveDatabase
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.data.api.ShareDto
 
-suspend fun DriveDatabaseRule.myDrive(block: suspend FolderContext.() -> Unit): FolderId {
-    return db.myDrive(block)
-}
+suspend fun DriveDatabaseRule.myFiles(
+    block: suspend FolderContext.() -> Unit,
+): FolderId = db.myFiles(block)
 
-suspend fun DriveDatabase.myDrive(block: suspend FolderContext.() -> Unit): FolderId {
-    user {
-        withKey()
-        volume {
-            mainShare(block)
-        }
+val mainRootId = FolderId(mainShareId, "root-id")
+
+suspend fun DriveDatabase.myFiles(
+    block: suspend FolderContext.() -> Unit,
+): FolderId = user {
+    withKey()
+    volume {
+        mainShare(block)
     }
-    return FolderId(ShareId(userId, shareId), "root-id")
 }
 
-suspend fun VolumeContext.mainShare(block: suspend FolderContext.() -> Unit) {
-    share {
+suspend fun VolumeContext.mainShare(block: suspend FolderContext.() -> Unit): FolderId {
+    share(
+        shareEntity = NullableShareEntity(
+            id = mainShareId.id,
+            userId = user.userId,
+            volumeId = volumeId.id,
+            linkId = mainRootId.id,
+            type = ShareDto.TYPE_MAIN,
+        )
+    ) {
         folder(id = share.linkId, block = block)
     }
+    return mainRootId
 }

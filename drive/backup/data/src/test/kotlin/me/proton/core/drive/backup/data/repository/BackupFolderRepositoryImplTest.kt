@@ -24,7 +24,7 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.folder
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
@@ -47,7 +47,7 @@ class BackupFolderRepositoryImplTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         repository = BackupFolderRepositoryImpl(database.db)
     }
 
@@ -139,7 +139,7 @@ class BackupFolderRepositoryImplTest {
 
     @Test
     fun `Given a child folder when check has folders for folder should returns false`() = runTest {
-        folderId = database.myDrive {
+        folderId = database.myFiles {
             folder("child")
         }
         val hasFolders = repository.hasFolders(folderId)

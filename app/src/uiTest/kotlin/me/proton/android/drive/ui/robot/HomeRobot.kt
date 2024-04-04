@@ -30,11 +30,12 @@ interface HomeRobot : Robot {
     val homeScreen get() = node.withTag(HomeScreenTestTag.screen)
     val filesTab get() = tabWithText(I18N.string.title_files)
     val photosTab get() = tabWithText(I18N.string.photos_title)
+    val computersTab get() = tabWithText(I18N.string.computers_title)
     val sharedTab get() = tabWithText(I18N.string.title_shared)
 
     fun clickFilesTab() = filesTab.clickTo(FilesTabRobot)
-
     fun clickPhotosTab() = photosTab.clickTo(PhotosTabRobot)
+    fun clickComputersTab() = computersTab.clickTo(ComputersTabRobot)
     fun clickSharedTab() = sharedTab.clickTo(SharedTabRobot)
 
     fun openSidebarBySwipe() = SidebarRobot.apply {

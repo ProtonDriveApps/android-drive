@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -21,11 +21,7 @@ package me.proton.android.drive.ui.extension
 import me.proton.core.test.quark.data.User
 import me.proton.core.test.quark.v2.QuarkCommand
 import me.proton.core.test.quark.v2.toEncodedArgs
-import me.proton.core.util.kotlin.EMPTY_STRING
-import okhttp3.OkHttpClient
 import okhttp3.Response
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.toJavaDuration
 
 fun QuarkCommand.populate(
     user: User,
@@ -34,18 +30,22 @@ fun QuarkCommand.populate(
 ): Response =
     route("quark/drive:populate")
         .args(
-            listOf(
+            listOfNotNull(
                 "-u" to user.name,
                 "-p" to user.password,
                 "-S" to user.dataSetScenario,
-                "--d" to if (isDevice) true.toString() else EMPTY_STRING,
-                "--photo" to if (isPhotos) true.toString() else EMPTY_STRING
+                isDevice.optionalArg("-d"),
+                isPhotos.optionalArg("--photo"),
             ).toEncodedArgs()
         )
         .build()
         .let {
             client.executeQuarkRequest(it)
         }
+
+private fun Boolean.optionalArg(
+    name: String,
+): Pair<String, String>? = takeIf { it }?.let { name to it.toString() }
 
 fun QuarkCommand.quotaSetUsedSpace(
     user: User,
@@ -64,15 +64,13 @@ fun QuarkCommand.quotaSetUsedSpace(
         }
 
 fun QuarkCommand.volumeCreate(
-    user: User,
-    maxSize: String
+    user: User
 ): Response =
     route("quark/drive:volume:create")
         .args(
             listOf(
                 "--username" to user.name,
                 "--pass" to user.password,
-                "--max-size" to maxSize
             ).toEncodedArgs()
         )
         .build()

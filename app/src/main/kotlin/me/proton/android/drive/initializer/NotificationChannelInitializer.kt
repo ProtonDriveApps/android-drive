@@ -28,6 +28,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.launch
 import me.proton.android.drive.usecase.CancelAllForegroundServices
+import me.proton.core.account.domain.entity.Account
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountReady
@@ -56,7 +57,7 @@ class NotificationChannelInitializer : Initializer<Unit> {
             }
             accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.STARTED)
                 .onAccountReady { account ->
-                    createNotificationChannels(account.userId, account.username)
+                    createNotificationChannels(account.userId, account.name)
                 }
                 .onAccountRemoved { account ->
                     cancelAllForegroundServices(account.userId)
@@ -79,4 +80,7 @@ class NotificationChannelInitializer : Initializer<Unit> {
         val removeNotificationChannels: RemoveNotificationChannels
         val cancelAllForegroundServices: CancelAllForegroundServices
     }
+
+    // We should not have an Account without username yet we'll have a fallback
+    private val Account.name get() = username ?: userId.id.take(6)
 }

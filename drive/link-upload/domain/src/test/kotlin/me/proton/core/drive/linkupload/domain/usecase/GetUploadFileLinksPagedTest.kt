@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -23,7 +23,7 @@ import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.folder
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.photo
 import me.proton.core.drive.db.test.photoShareId
 import me.proton.core.drive.db.test.userId
@@ -70,7 +70,7 @@ class GetUploadFileLinksPagedTest {
             }
         )
 
-        mainRoot = database.myDrive {
+        mainRoot = database.myFiles {
             folder("folderA")
             folder("folderB")
         }

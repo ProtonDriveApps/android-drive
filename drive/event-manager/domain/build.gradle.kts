@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -38,9 +38,5 @@ driveModule(
     api(project(":drive:share:domain"))
     api(project(":drive:share-crypto:domain"))
     api(project(":drive:share-url:base:domain"))
-    api(libs.core.eventManager)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.core.account)
-    implementation(libs.core.accountManager)
-    implementation(libs.core.presentation) // AppLifecycleProvider
+    api(libs.core.eventManager.domain)
 }

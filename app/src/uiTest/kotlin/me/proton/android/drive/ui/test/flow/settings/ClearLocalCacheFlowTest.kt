@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 package me.proton.android.drive.ui.test.flow.settings
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
 
@@ -27,7 +27,7 @@ import org.junit.Test
 class ClearLocalCacheFlowTest : AuthenticatedBaseTest() {
     @Test
     fun clearLocalCacheSucceeds() {
-        FilesTabRobot
+        PhotosTabRobot
             .openSidebarBySwipe()
             .clickSettings()
             .clickToClearLocalCache()

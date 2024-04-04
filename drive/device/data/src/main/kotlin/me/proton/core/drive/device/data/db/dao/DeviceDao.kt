@@ -68,4 +68,17 @@ abstract class DeviceDao : BaseDao<DeviceEntity>() {
 
     @Query("DELETE FROM DeviceEntity WHERE user_id = :userId")
     abstract suspend fun deleteAll(userId: UserId)
+
+    @Query(
+        """
+            SELECT DeviceEntity.* FROM DeviceEntity
+            LEFT JOIN LinkEntity ON
+                DeviceEntity.user_id = LinkEntity.user_id AND
+                DeviceEntity.share_id = LinkEntity.share_id AND
+                DeviceEntity.link_id = LinkEntity.id
+            WHERE
+                DeviceEntity.user_id = :userId AND DeviceEntity.id = :deviceId
+        """
+    )
+    abstract fun getFlow(userId: UserId, deviceId: String): Flow<DeviceEntity?>
 }

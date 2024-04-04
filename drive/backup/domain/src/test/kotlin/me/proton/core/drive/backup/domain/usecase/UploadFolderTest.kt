@@ -41,7 +41,7 @@ import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.drivelink.data.repository.DriveLinkRepositoryImpl
@@ -65,7 +65,6 @@ import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksPaged
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.user.domain.entity.User
 import me.proton.core.user.domain.usecase.GetUser
 import org.junit.Assert.assertEquals
@@ -101,7 +100,7 @@ class UploadFolderTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         backupFile = NullableBackupFile(
             bucketId = bucketId,
             folderId = folderId,
@@ -394,7 +393,7 @@ class UploadFolderTest {
 
     private fun uploadFileLink(uriString: String) = UploadFileLink(
         userId = userId,
-        volumeId = VolumeId(volumeId),
+        volumeId = volumeId,
         shareId = folderId.shareId,
         parentLinkId = folderId,
         uriString = uriString,

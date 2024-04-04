@@ -33,7 +33,7 @@ import me.proton.core.drive.backup.domain.handler.StubbedEventHandler
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
@@ -62,7 +62,7 @@ class CleanUpCompleteBackupTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive {}
+        folderId = database.myFiles {}
         val backupFileRepository = BackupFileRepositoryImpl(database.db)
         val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
         cleanUpCompleteBackup = CleanUpCompleteBackup(

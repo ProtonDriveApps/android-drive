@@ -51,6 +51,7 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
         node.withTextResource(I18N.string.storage_quotas_not_full_title, "${percentage}%")
     private val itCanTakeAWhileLabel get() = node.withText(I18N.string.photos_empty_loading_label_progress)
     private val closeQuotaBannerButton get() = node.withContentDescription(I18N.string.common_close_action)
+    private val photosBackupDisabled get() = node.withText(I18N.string.error_creating_photo_share_not_allowed)
     private fun itemsLeft(items: Int) =
         node.withPluralTextResource(I18N.plurals.notification_content_text_backup_in_progress, items)
 
@@ -143,6 +144,10 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
 
     fun assertLeftToBackup(items: Int) {
         itemsLeft(items).await { assertIsDisplayed() }
+    }
+
+    fun assertPhotosBackupDisabled() {
+        photosBackupDisabled.await { assertIsDisplayed() }
     }
 
     override fun robotDisplayed() {

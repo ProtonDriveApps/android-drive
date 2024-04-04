@@ -122,6 +122,15 @@ android {
     }
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        managedDevices {
+            localDevices {
+                create("pixel2api30") {
+                    device = "Pixel 2"
+                    apiLevel = 30
+                    systemImageSource = "aosp"
+                }
+            }
+        }
     }
 
     val gitHash = "git rev-parse --short HEAD".runCommand(workingDir = rootDir)

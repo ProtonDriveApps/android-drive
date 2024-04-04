@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -25,7 +25,7 @@ import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.base.data.api.ProtonApiCode
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -37,7 +37,6 @@ import me.proton.core.drive.photo.data.api.response.FindDuplicatesResponse
 import me.proton.core.drive.photo.data.repository.PhotoRepositoryImpl
 import me.proton.core.drive.volume.data.api.VolumeApiDataSource
 import me.proton.core.drive.volume.data.repository.VolumeRepositoryImpl
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
 import me.proton.core.drive.volume.domain.usecase.GetVolume
 import me.proton.core.drive.volume.domain.usecase.GetVolumes
@@ -64,7 +63,7 @@ class PhotoFindDuplicatesRepositoryTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
 
         val volumeRepository = VolumeRepositoryImpl(
             volumeApiDataSource,
@@ -80,7 +79,7 @@ class PhotoFindDuplicatesRepositoryTest {
     fun test() = runTest {
         coEvery {
             photoApiDataSource.findDuplicate(
-                userId, VolumeId(volumeId), FindDuplicatesRequest(
+                userId, volumeId, FindDuplicatesRequest(
                     nameHashes = listOf("hash"),
                     clientUids = emptyList(),
                 )

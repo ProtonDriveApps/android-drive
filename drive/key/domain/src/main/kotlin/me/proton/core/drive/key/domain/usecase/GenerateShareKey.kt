@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ import me.proton.core.drive.cryptobase.domain.usecase.GenerateNestedPrivateKey
 import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.entity.ShareKey
 import me.proton.core.drive.key.domain.extension.keyHolder
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.user.domain.entity.AddressId
 import javax.inject.Inject
 
@@ -34,6 +35,7 @@ class GenerateShareKey @Inject constructor(
     private val generateNestedPrivateKey: GenerateNestedPrivateKey,
     private val getAddressKeys: GetAddressKeys,
     private val getAddressId: GetAddressId,
+    private val getNodeKey: GetNodeKey,
 ) {
     suspend operator fun invoke(
         userId: UserId,
@@ -44,6 +46,22 @@ class GenerateShareKey @Inject constructor(
             key = generateNestedPrivateKey(
                 userId = userId,
                 encryptKey = addressKey,
+                signKey = addressKey,
+            ).getOrThrow()
+        )
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        addressId: AddressId,
+        linkId: LinkId,
+    ): Result<Key.Node> = coRunCatching {
+        val addressKey = getAddressKeys(userId, addressId).keyHolder
+        val nodeKey = getNodeKey(linkId).getOrThrow().keyHolder
+        ShareKey(
+            key = generateNestedPrivateKey(
+                userId = userId,
+                encryptKeys = listOf(nodeKey, addressKey),
                 signKey = addressKey,
             ).getOrThrow()
         )

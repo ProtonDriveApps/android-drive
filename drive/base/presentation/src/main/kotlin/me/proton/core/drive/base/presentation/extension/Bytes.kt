@@ -33,7 +33,12 @@ fun Bytes.asHumanReadableString(context: Context): String =
         .replace("\u200f", "")
 */
 @Suppress("UNUSED_PARAMETER")
-fun Bytes.asHumanReadableString(context: Context, units: SizeUnits = SizeUnits.BASE2_LEGACY, locale: Locale = Locale.getDefault()): String {
+fun Bytes.asHumanReadableString(
+    context: Context,
+    units: SizeUnits = SizeUnits.BASE2_LEGACY,
+    locale: Locale = Locale.getDefault(),
+    numberOfDecimals: Int = 2,
+): String {
     val absB = if (value == Long.MIN_VALUE) Long.MAX_VALUE else abs(value)
     if (absB < 1024) return "$value B"
     var value = absB
@@ -50,7 +55,7 @@ fun Bytes.asHumanReadableString(context: Context, units: SizeUnits = SizeUnits.B
         SizeUnits.BASE2_IEC -> "iB"
         SizeUnits.BASE10_SI -> throw IllegalArgumentException("Base 10 SI units are not supported")
     }
-    return String.format(locale, "%.2f %c$suffix", value / 1024.0, ci.current())
+    return String.format(locale, "%.${numberOfDecimals}f %c$suffix", value / 1024.0, ci.current())
 }
 
 enum class SizeUnits {

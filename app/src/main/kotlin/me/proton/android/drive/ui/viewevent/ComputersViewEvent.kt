@@ -24,4 +24,5 @@ interface ComputersViewEvent {
     val onTopAppBarNavigation: () -> Unit get() = {}
     val onDevice: (Device) -> Unit get() = { _ -> }
     val onRefresh: () -> Unit get() = {}
+    val onMoreOptions: (Device) -> Unit get() = { _ -> }
 }

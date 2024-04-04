@@ -50,6 +50,7 @@ import me.proton.core.compose.theme.default
 import me.proton.core.compose.theme.defaultSmallWeak
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.extension.currentLocale
+import me.proton.core.user.domain.entity.Type
 import me.proton.core.user.domain.entity.User
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -175,6 +176,7 @@ val PREVIEW_USER = User(
     name = "Adam Smith",
     displayName = "Adam Smith",
     currency = "€",
+    type = Type.Proton,
     credit = 0,
     createdAtUtc = 0,
     usedSpace = 242_221_056L,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -52,8 +52,8 @@ fun Link.toLinkWithProperties() = LinkWithProperties(
         shared = if (isShared) 1L else 0L,
         numberOfAccesses = numberOfAccesses,
         shareUrlExpirationTime = shareUrlExpirationTime?.value,
-        shareUrlShareId = shareUrlId?.shareId?.id,
-        shareUrlId = shareUrlId?.id,
+        sharingDetailsShareId = sharingDetails?.shareId?.id,
+        shareUrlId = sharingDetails?.shareUrlId?.id,
         xAttr = xAttr,
     ),
     properties = when (this) {

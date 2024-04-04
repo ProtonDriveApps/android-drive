@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -29,9 +29,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.ElementsIntoSet
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.domain.entity.AppStore
 import me.proton.core.domain.entity.Product
+import me.proton.core.drive.announce.event.domain.handler.EventHandler
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.test.TestConfigurationProvider
 import javax.inject.Singleton
@@ -73,6 +75,11 @@ object ApplicationModule {
     @Singleton
     fun provideActivityManager(@ApplicationContext context: Context): ActivityManager =
         context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+
+    @Provides
+    @Singleton
+    @ElementsIntoSet
+    fun provideEventHandlers() = setOf<EventHandler>()
 }
 
 @Module

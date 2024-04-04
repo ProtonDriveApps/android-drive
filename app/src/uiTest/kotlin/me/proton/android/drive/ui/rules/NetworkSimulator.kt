@@ -28,6 +28,7 @@ import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager
 import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager.Connectivity.NONE
 import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager.Connectivity.UNMETERED
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.test.fusion.FusionConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import org.junit.rules.ExternalResource
@@ -56,7 +57,7 @@ object NetworkSimulator: ExternalResource() {
             throwIf(isNetworkTimeout, SocketTimeoutException("Simulated network timeout"))
 
             runBlocking {
-                throwIf(connectivity?.first() == NONE, UnknownHostException("Simulated disabled network"))
+                throwIf(connectivity.first() == NONE, UnknownHostException("Simulated disabled network"))
             }
 
             it.proceed(it.request())
@@ -81,6 +82,21 @@ object NetworkSimulator: ExternalResource() {
 
     fun enableNetwork(connectivity: BackupConnectivityManager.Connectivity = UNMETERED) =
         setConnectivity(connectivity)
+
+    fun disableNetworkFor(duration: Duration, block : () -> Unit) {
+        disableNetwork()
+
+        block()
+
+        val durationMillis = duration.inWholeMilliseconds
+        val start = System.currentTimeMillis()
+
+        FusionConfig.Compose.testRule.get().waitUntil((durationMillis * 1.1F).toLong()){
+            System.currentTimeMillis() - start > durationMillis
+        }
+
+        enableNetwork()
+    }
 
     fun setNetworkTimeout(isNetworkTimeout: Boolean) = apply {
         NetworkSimulator.isNetworkTimeout = isNetworkTimeout

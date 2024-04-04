@@ -63,4 +63,5 @@ private fun UserEntity.toUser() = User(
     keys = emptyList(),
     recovery = null,
     createdAtUtc = 0,
+    type = null,
 )

@@ -22,10 +22,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.drive.backup.domain.entity.BackupConfiguration
 import me.proton.core.drive.backup.domain.entity.BackupError
+import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.entity.BackupNetworkType
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.entity.BackupState
@@ -33,10 +33,11 @@ import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
-import me.proton.core.drive.base.domain.extension.combine
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.IsBackgroundRestricted
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.user.domain.entity.UserMessage
+import me.proton.core.drive.user.domain.usecase.HasCanceledUserMessages
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -46,25 +47,15 @@ class GetBackupState @Inject constructor(
     private val permissionsManager: BackupPermissionsManager,
     private val connectivityManager: BackupConnectivityManager,
     private val getErrors: GetErrors,
-    private val getAllBuckets: GetAllBuckets,
     private val isBackgroundRestricted: IsBackgroundRestricted,
-    private val configurationProvider: ConfigurationProvider,
+    private val hasCanceledUserMessages: HasCanceledUserMessages,
     private val getConfiguration: GetConfiguration,
+    private val getDisabledBackupState: GetDisabledBackupState,
 ) {
     operator fun invoke(folderId: FolderId): Flow<BackupState> =
         backupManager.isEnabled(folderId).transformLatest { enable ->
             if (!enable) {
-                emitAll(
-                    getAllBuckets().map { bucketEntries ->
-                        BackupState(
-                            isBackupEnabled = false,
-                            hasDefaultFolder = bucketEntries?.any { entry ->
-                                entry.bucketName == configurationProvider.backupDefaultBucketName
-                            },
-                            backupStatus = null,
-                        )
-                    }
-                )
+                emitAll(getDisabledBackupState())
             } else {
                 emitAll(
                     combine(
@@ -97,36 +88,38 @@ class GetBackupState @Inject constructor(
         getErrors(folderId),
         connectivityManager.connectivity,
         getConfiguration(folderId),
-        backupManager.isUploading(folderId),
         isBackgroundRestricted(),
-    ) { permissions, errors, connectivity, configuration, uploading, isBackgroundRestricted ->
+    ) { permissions, errors, connectivity, configuration, isBackgroundRestricted ->
         (errors + listOf(
             permissionError(permissions),
-            connectivityError(connectivity, configuration, uploading),
+            connectivityError(connectivity, configuration),
             backgroundRestrictionsError(isBackgroundRestricted),
         )).filterNotNull().distinct()
+    }.combine(
+        hasCanceledUserMessages(folderId.userId, UserMessage.BACKUP_BATTERY_SETTINGS)
+    ) { errors, hasCanceledUserMessages ->
+        if (hasCanceledUserMessages) {
+            errors.filterNot { error -> error.type == BackupErrorType.BACKGROUND_RESTRICTIONS }
+        } else {
+            errors
+        }
     }
 
     private fun connectivityError(
         connectivity: BackupConnectivityManager.Connectivity,
         configuration: BackupConfiguration?,
-        uploading: Boolean,
-    ) = if (!uploading) {
-        when (connectivity) {
-            BackupConnectivityManager.Connectivity.NONE -> when (configuration?.networkType) {
-                BackupNetworkType.UNMETERED -> BackupError.WifiConnectivity()
-                else -> BackupError.Connectivity()
-            }
-
-            BackupConnectivityManager.Connectivity.UNMETERED -> null
-
-            BackupConnectivityManager.Connectivity.CONNECTED -> when (configuration?.networkType) {
-                BackupNetworkType.UNMETERED -> BackupError.WifiConnectivity()
-                else -> null
-            }
+    ) = when (connectivity) {
+        BackupConnectivityManager.Connectivity.NONE -> when (configuration?.networkType) {
+            BackupNetworkType.UNMETERED -> BackupError.WifiConnectivity()
+            else -> BackupError.Connectivity()
         }
-    } else {
-        null
+
+        BackupConnectivityManager.Connectivity.UNMETERED -> null
+
+        BackupConnectivityManager.Connectivity.CONNECTED -> when (configuration?.networkType) {
+            BackupNetworkType.UNMETERED -> BackupError.WifiConnectivity()
+            else -> null
+        }
     }
 
     private fun permissionError(

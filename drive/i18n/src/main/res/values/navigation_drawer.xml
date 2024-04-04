@@ -27,4 +27,5 @@
     <string name="navigation_item_sign_out">@string/common_sign_out</string>
     <string name="navigation_more_section_header">More</string>
     <string name="navigation_storage_section_header">Storage</string>
+    <string name="navigation_item_get_free_storage">Get up to 5 GB for free</string>
 </resources>

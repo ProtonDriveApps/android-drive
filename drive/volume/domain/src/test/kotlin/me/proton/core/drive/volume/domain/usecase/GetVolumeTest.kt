@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -32,7 +32,6 @@ import me.proton.core.drive.test.api.get
 import me.proton.core.drive.test.api.jsonResponse
 import me.proton.core.drive.test.api.routing
 import me.proton.core.drive.volume.data.api.response.GetVolumeResponse
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -71,7 +70,7 @@ class GetVolumeTest {
             }
         }
 
-        val id = VolumeId(volumeId)
+        val id = volumeId
 
         val volume = getVolume(userId, id).resultValueOrThrow()
 
@@ -88,7 +87,7 @@ class GetVolumeTest {
             NullableVolumeEntity()
         )
 
-        val id = VolumeId(volumeId)
+        val id = volumeId
 
         val volume = getVolume(userId, id).resultValueOrThrow()
 

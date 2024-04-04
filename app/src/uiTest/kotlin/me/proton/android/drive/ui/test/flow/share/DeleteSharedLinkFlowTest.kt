@@ -20,7 +20,7 @@ package me.proton.android.drive.ui.test.flow.share
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
@@ -36,7 +36,8 @@ class DeleteSharedLinkFlowTest : AuthenticatedBaseTest() {
     fun stopSharingActiveLinkViaBottomSheet() {
         val file = "shared.jpg"
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .scrollToItemWithName(file)
             .clickMoreOnItem(file)
             .clickStopSharing()
@@ -52,7 +53,8 @@ class DeleteSharedLinkFlowTest : AuthenticatedBaseTest() {
     fun stopSharingActiveLinkViaManageLink() {
         val file = "shared.jpg"
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .scrollToItemWithName(file)
             .clickMoreOnItem(file)
             .clickManageLink()
@@ -70,7 +72,8 @@ class DeleteSharedLinkFlowTest : AuthenticatedBaseTest() {
     fun stopSharingExpiredLinkViaBottomSheet() {
         val file = "expiredSharedFile.jpg"
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .scrollToItemWithName(file)
             .clickMoreOnItem(file)
             .clickStopSharing()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -25,5 +25,5 @@ import me.proton.core.drive.user.domain.entity.QuotaLevel
 
 interface QuotaRepository {
     fun exists(userId: UserId, level: QuotaLevel, maxSpace: Bytes): Flow<Boolean>
-    suspend fun insertAndUpdate(userId: UserId, level: QuotaLevel, maxSpace: Bytes)
+    suspend fun insertOrUpdate(userId: UserId, level: QuotaLevel, maxSpace: Bytes)
 }

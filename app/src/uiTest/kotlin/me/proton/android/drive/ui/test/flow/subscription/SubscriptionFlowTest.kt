@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -21,7 +21,6 @@ package me.proton.android.drive.ui.test.flow.subscription
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.test.AbstractBaseTest
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.auth.test.robot.AddAccountRobot
 import me.proton.core.plan.test.MinimalSubscriptionTests
@@ -53,7 +52,7 @@ class SubscriptionFlowTest : BaseTest(), MinimalSubscriptionTests {
             .login(user)
 
         FilesTabRobot
-            .verify { robotDisplayed() }
+            .verify { homeScreenDisplayed() }
             .openSidebarBySwipe()
             .verify { robotDisplayed() }
             .clickSubscription()

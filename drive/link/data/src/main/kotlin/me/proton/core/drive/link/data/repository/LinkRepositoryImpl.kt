@@ -60,6 +60,9 @@ class LinkRepositoryImpl @Inject constructor(
     override fun hasLink(linkId: LinkId): Flow<Boolean> =
         dao.hasLinkEntity(linkId.userId, linkId.shareId.id, linkId.id)
 
+    override suspend fun hasAnyFileLink(shareId: ShareId): Boolean =
+        dao.hasAnyFileEntity(shareId.userId, shareId.id)
+
     override suspend fun fetchLink(linkId: LinkId) {
         dao.insertOrUpdate(
             api.getLink(linkId)

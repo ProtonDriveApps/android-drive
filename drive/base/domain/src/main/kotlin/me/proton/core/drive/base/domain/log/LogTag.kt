@@ -34,6 +34,7 @@ object LogTag {
     const val SHARE = "$OPERATION.share"
     const val PAGING = "$DEFAULT.paging"
     const val BACKUP = "$DEFAULT.backup"
+    const val PHOTO = "$DEFAULT.photo"
     const val TELEMETRY = "$DEFAULT.telemetry"
     const val UPLOAD = "$DEFAULT.upload"
     const val UPLOAD_BULK = "$UPLOAD.bulk"

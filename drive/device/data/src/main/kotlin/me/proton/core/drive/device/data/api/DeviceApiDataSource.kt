@@ -19,6 +19,8 @@
 package me.proton.core.drive.device.data.api
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.device.data.api.request.ShareDataDto
+import me.proton.core.drive.device.data.api.request.UpdateDeviceRequest
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiException
@@ -39,6 +41,24 @@ class DeviceApiDataSource @Inject constructor(
             .invoke {
                 getDevices()
             }.valueOrThrow.devices
+
+    @Throws(ApiException::class)
+    suspend fun updateDeviceName(
+        userId: UserId,
+        deviceId: DeviceId,
+        name: String,
+    ) = apiProvider
+        .get<DeviceApi>(userId)
+        .invoke {
+            updateDevice(
+                deviceId = deviceId.id,
+                request = UpdateDeviceRequest(
+                    shareDto = ShareDataDto(
+                        name = name,
+                    )
+                )
+            )
+        }.valueOrThrow
 
     @Throws(ApiException::class)
     suspend fun deleteDevice(

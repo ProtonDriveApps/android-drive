@@ -33,7 +33,7 @@ import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
@@ -73,7 +73,7 @@ class MainTelemetryEventHandlerTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive {}
+        folderId = database.myFiles {}
         val getShare: GetShare = mockk()
         every { getShare(any(), any()) } answers {
             val shareId: ShareId = arg(0)
@@ -152,7 +152,7 @@ class MainTelemetryEventHandlerTest {
         val id = database.db.linkUploadDao.insert(
             LinkUploadEntity(
                 userId = me.proton.core.drive.db.test.userId,
-                volumeId = volumeId,
+                volumeId = volumeId.id,
                 shareId = folderId.shareId.id,
                 parentId = folderId.id,
                 name = "",

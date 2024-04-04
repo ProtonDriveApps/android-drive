@@ -23,6 +23,8 @@ import android.system.ErrnoException
 import kotlinx.coroutines.CancellationException
 import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.drive.base.data.api.ProtonApiCode.FEATURE_DISABLED
+import me.proton.core.drive.base.domain.exception.BackupStopException
+import me.proton.core.drive.base.domain.exception.BackupSyncException
 import me.proton.core.drive.base.domain.exception.InvalidFieldException
 import me.proton.core.network.data.ProtonErrorException
 import me.proton.core.network.domain.ApiException
@@ -43,6 +45,8 @@ fun Throwable.getDefaultMessage(
 } else {
     when (this) {
         is ApiException -> getDefaultMessage(context)
+        is BackupStopException -> getDefaultMessage(context)
+        is BackupSyncException -> getDefaultMessage(context)
         is CancellationException -> getDefaultMessage(context)
         is CryptoException -> getDefaultMessage(context)
         is HttpException -> getDefaultMessage(context)
@@ -62,6 +66,8 @@ fun Throwable.getDefaultMessage(
 fun Throwable.log(tag: String, message: String? = null): Throwable = this.also {
     when (this) {
         is ApiException -> message?.let { log(tag, message) } ?: log(tag)
+        is BackupStopException -> message?.let { log(tag, message) } ?: log(tag)
+        is BackupSyncException -> message?.let { log(tag, message) } ?: log(tag)
         is CancellationException -> message?.let { log(tag, message) } ?: log(tag)
         is CryptoException -> message?.let { log(tag, message) } ?: log(tag)
         is HttpException -> message?.let { log(tag, message) } ?: log(tag)

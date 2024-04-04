@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ import me.proton.core.drive.backup.domain.usecase.ResetFoldersUpdateTime
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -55,7 +55,7 @@ class RescanOnMediaStoreUpdateTest {
 
     @Before
     fun setup() = runTest {
-        val folderId = database.myDrive { }
+        val folderId = database.myFiles { }
         val folderRepository = BackupFolderRepositoryImpl(database.db)
 
         backupManager = StubbedBackupManager(folderRepository)

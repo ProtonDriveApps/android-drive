@@ -19,11 +19,14 @@ package me.proton.core.drive.base.domain.provider
 
 import android.os.Build
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.extension.GiB
 import me.proton.core.drive.base.domain.extension.KiB
 import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.drive.base.domain.extension.bytes
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -66,6 +69,7 @@ interface ConfigurationProvider {
     val useExceptionMessage: Boolean get() = false
     val photosFeatureFlag: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
     val photosSavedCounter: Boolean get() = false
+    val photosUpsellPhotoCount: Int get() = 5
     val backupLeftSpace: Bytes get() = 25.MiB
     val contentDigestAlgorithm: String get() = "SHA1"
     val digestAlgorithms: List<String> get() = listOf(contentDigestAlgorithm)
@@ -85,6 +89,8 @@ interface ConfigurationProvider {
     val useVerifier: Boolean get() = true
     val backupDefaultThumbnailsCacheLimit: Int get() = 1000
     val backupDefaultThumbnailsCacheLocalStorageThreshold: Bytes get() = 500.MiB
+    val maxFreeSpace: Bytes get() = 5.GiB
+    val activeUserPingDuration: Duration get() = 6.hours
 
     data class Thumbnail(
         val maxWidth: Int,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 package me.proton.android.drive.ui.test.flow.preview
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.android.drive.ui.test.SmokeTest
@@ -36,7 +36,9 @@ class PreviewFlowTest : AuthenticatedBaseTest() {
     @Scenario(1)
     fun previewTextFileInGrid() {
         val file = "example.txt"
-        FilesTabRobot.verify { robotDisplayed() }
+        PhotosTabRobot
+            .clickFilesTab()
+            .verify { robotDisplayed() }
             .clickLayoutSwitcher()
             .clickOnFolder(parent, LayoutType.Grid)
             .scrollToItemWithName(file)
@@ -51,7 +53,9 @@ class PreviewFlowTest : AuthenticatedBaseTest() {
     @SmokeTest
     fun previewImageFile() {
         val file = "image.jpg"
-        FilesTabRobot.verify { robotDisplayed() }
+        PhotosTabRobot
+            .clickFilesTab()
+            .verify { robotDisplayed() }
             .clickOnFolder(parent)
             .scrollToItemWithName(file)
             .clickOnFile(file)
@@ -64,7 +68,9 @@ class PreviewFlowTest : AuthenticatedBaseTest() {
     @Scenario(1)
     fun previewBrokenImageFile() {
         val file = "broken.jpg"
-        FilesTabRobot.verify { robotDisplayed() }
+        PhotosTabRobot
+            .clickFilesTab()
+            .verify { robotDisplayed() }
             .clickOnFolder(parent)
             .scrollToItemWithName(file)
             .clickOnFile(file)
@@ -77,7 +83,9 @@ class PreviewFlowTest : AuthenticatedBaseTest() {
     @Scenario(1)
     fun previewPdfFile() {
         val file = "presentation.pdf"
-        FilesTabRobot.verify { robotDisplayed() }
+        PhotosTabRobot
+            .clickFilesTab()
+            .verify { robotDisplayed() }
             .clickOnFolder(parent)
             .scrollToItemWithName(file)
             .clickOnFile(file)

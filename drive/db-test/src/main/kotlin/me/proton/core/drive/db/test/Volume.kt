@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -16,10 +16,13 @@
  * along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+@file:Suppress("MatchingDeclarationName")
 package me.proton.core.drive.db.test
 
 import me.proton.android.drive.db.DriveDatabase
+import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.data.db.VolumeEntity
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.user.data.entity.UserEntity
 
 data class VolumeContext(
@@ -28,25 +31,33 @@ data class VolumeContext(
     val volume: VolumeEntity,
 ) : BaseContext()
 
-const val volumeId = "volume-id"
+val volumeId = VolumeId("volume-id")
+val mainShareId = ShareId(userId, "share-id")
 
 suspend fun UserContext.volume(
     volume: VolumeEntity = NullableVolumeEntity(
-        id = volumeId,
+        id = volumeId.id,
     ),
-    block: suspend VolumeContext.() -> Unit = {},
-) {
+) = volume(volume) {}
+
+suspend fun <T> UserContext.volume(
+    volume: VolumeEntity = NullableVolumeEntity(
+        id = volumeId.id,
+    ),
+    block: suspend VolumeContext.() -> T,
+): T {
     db.volumeDao.insertOrUpdate(volume)
-    VolumeContext(db, user, volume).block()
+    return VolumeContext(db, user, volume).block()
 }
 
 @Suppress("FunctionName")
-fun NullableVolumeEntity(id: String = volumeId, state: Long = 1, creationTime: Long = 0) = VolumeEntity(
-    id = id,
-    userId = userId,
-    shareId = shareId,
-    creationTime = creationTime,
-    maxSpace = 0,
-    usedSpace = 0,
-    state = state,
-)
+fun NullableVolumeEntity(id: String = volumeId.id, state: Long = 1, creationTime: Long = 0) =
+    VolumeEntity(
+        id = id,
+        userId = userId,
+        shareId = mainShareId.id,
+        creationTime = creationTime,
+        maxSpace = 0,
+        usedSpace = 0,
+        state = state,
+    )

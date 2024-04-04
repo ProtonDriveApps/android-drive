@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
+import me.proton.android.drive.extension.getDefaultMessage
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
 import me.proton.android.drive.photos.domain.usecase.GetPhotosConfiguration
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
@@ -38,8 +39,8 @@ import me.proton.android.drive.ui.viewevent.PhotosBackupViewEvent
 import me.proton.android.drive.ui.viewstate.PhotosBackupOption
 import me.proton.android.drive.ui.viewstate.PhotosBackupViewState
 import me.proton.core.drive.backup.domain.entity.BackupNetworkType
-import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.exception.DriveException
 import me.proton.core.drive.base.domain.extension.firstSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
@@ -124,9 +125,14 @@ class PhotosBackupViewModel @Inject constructor(
                     }
                 }.onFailure { error ->
                     error.log(BACKUP)
+                    val userError = if (error.cause is DriveException) {
+                        error.cause as DriveException
+                    } else {
+                        error
+                    }
                     broadcastMessages(
                         userId = userId,
-                        message = error.getDefaultMessage(
+                        message = userError.getDefaultMessage(
                             appContext,
                             configurationProvider.useExceptionMessage
                         ),

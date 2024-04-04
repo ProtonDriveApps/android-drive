@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.photo
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
@@ -50,7 +50,6 @@ import me.proton.core.drive.stats.data.repository.UploadStatsRepositoryImpl
 import me.proton.core.drive.stats.domain.entity.UploadStats
 import me.proton.core.drive.stats.domain.usecase.GetUploadStats
 import me.proton.core.drive.stats.domain.usecase.UpdateUploadStats
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -104,7 +103,7 @@ class PhotoSyncLinkFolderTest {
 
     @Test
     fun `Given not photo share when sync should no do nothing`() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
 
         photoSyncLinkFolder(userId).getOrThrow()
 
@@ -129,7 +128,7 @@ class PhotoSyncLinkFolderTest {
         coEvery {
             photoApiDataSource.getPhotoListings(
                 userId = userId,
-                volumeId = VolumeId(volumeId),
+                volumeId = volumeId,
                 sortingDirection = Direction.DESCENDING,
                 pageSize = pageSize,
                 previousPageLastLinkId = any(),
@@ -159,7 +158,7 @@ class PhotoSyncLinkFolderTest {
 
         assertEquals(
             88,
-            database.db.photoListingDao.getPhotoListingCount(userId, volumeId).first()
+            database.db.photoListingDao.getPhotoListingCount(userId, volumeId.id).first()
         )
     }
 }

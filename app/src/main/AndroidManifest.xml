@@ -40,6 +40,7 @@
             android:name=".ui.MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
+            android:taskAffinity=""
             android:theme="@style/ProtonTheme.Splash.Drive.StatusBarFix">
 
             <intent-filter>
@@ -66,6 +67,8 @@
                 <category android:name="android.intent.category.OPENABLE" />
                 <data android:mimeType="*/*" />
             </intent-filter>
+            <meta-data android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
         <activity

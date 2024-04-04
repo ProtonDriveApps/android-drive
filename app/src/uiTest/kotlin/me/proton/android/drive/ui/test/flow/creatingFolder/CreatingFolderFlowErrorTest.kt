@@ -19,6 +19,7 @@ package me.proton.android.drive.ui.test.flow.creatingFolder
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.android.drive.utils.getRandomString
@@ -39,7 +40,8 @@ class CreatingFolderFlowErrorTest(
     @Test
     @Scenario(2)
     fun createFolderError() {
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickPlusButton()
             .clickCreateFolder()
             .typeFolderName(folderName)

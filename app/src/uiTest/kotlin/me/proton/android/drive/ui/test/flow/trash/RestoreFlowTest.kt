@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -25,24 +25,17 @@ import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.TrashRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
-import org.junit.Before
 import org.junit.Test
 
 @HiltAndroidTest
 class RestoreFlowTest : AuthenticatedBaseTest() {
 
-    @Before
-    fun setUp() {
-        FilesTabRobot.verify {
-            robotDisplayed()
-        }
-    }
-
     @Test
     @Scenario(4)
     fun restoreAnItemFromTrashViaThreeDotsButtonOfTheItem() {
         val fileName = "trashedFile.json"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickSidebarButton()
             .clickTrash()
             .clickMoreOnItem(fileName)
@@ -63,7 +56,8 @@ class RestoreFlowTest : AuthenticatedBaseTest() {
     fun restoreAFolderWithFilesInside() {
         val folderName = "trashedFolderWithChildren"
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickSidebarButton()
             .clickTrash()
             .clickMoreOnItem(folderName)
@@ -88,7 +82,8 @@ class RestoreFlowTest : AuthenticatedBaseTest() {
         val restoreErrorMessage =
             "This file or folder is no longer available. A parent folder has been deleted."
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickOnFolder(parent)
             .moveToTrash(child)
             .clickBack(FilesTabRobot)
@@ -107,7 +102,8 @@ class RestoreFlowTest : AuthenticatedBaseTest() {
     fun restoreAChildFolder() {
         val folder1 = "folder1"
         val folder3 = "folder3"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickOnFolder(folder1)
             .moveToTrash(folder3)
             .clickSidebarButton()
@@ -130,8 +126,7 @@ class RestoreFlowTest : AuthenticatedBaseTest() {
     @Scenario(2, isPhotos = true)
     fun restoreAPhoto() {
         val item = ImageName.Main.fileName
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .longClickOnPhoto(item)
             .clickOptions()
             .clickMoveToTrash()

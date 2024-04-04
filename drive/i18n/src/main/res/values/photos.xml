@@ -117,4 +117,8 @@
         <item quantity="other">%1$s items saved</item>
     </plurals>
     <string name="photos_export_data" translatable="false">Export device and cloud data</string>
+    <string name="photos_upsell_title">Never run out of storage</string>
+    <string name="photos_upsell_description">Upgrade now and keep all your memories encrypted and safe.</string>
+    <string name="photos_upsell_get_storage_action" translatable="false">@string/storage_quotas_get_storage_action</string>
+    <string name="photos_upsell_dismiss_action">Not now</string>
 </resources>

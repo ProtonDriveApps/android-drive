@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -27,6 +27,14 @@ android {
 driveModule(
     hilt = true,
 ) {
+    api(project(":drive:base:data"))
+    api(project(":drive:event-manager:data"))
+    api(project(":drive:link:data"))
     api(project(":drive:trash:domain"))
-    api(project(":drive:base:data-test"))
+    api(project(":drive:volume:data"))
+
+    implementation(project(":drive:trash:data"))
+    implementation(libs.androidx.work.testing)
+    implementation(libs.androidx.test.core.ktx)
+    implementation(libs.dagger.hilt.android.testing)
 }

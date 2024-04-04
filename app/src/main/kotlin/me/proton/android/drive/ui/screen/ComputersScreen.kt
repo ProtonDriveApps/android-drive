@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import me.proton.android.drive.ui.effect.HandleHomeEffect
@@ -40,6 +41,7 @@ import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.device.domain.entity.Device
+import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.drivelink.device.presentation.component.DevicesContent
 import me.proton.core.drive.drivelink.device.presentation.component.DevicesEmpty
 import me.proton.core.drive.drivelink.device.presentation.component.DevicesError
@@ -56,13 +58,17 @@ import me.proton.core.drive.base.presentation.component.TopAppBar as BaseTopAppB
 fun ComputersScreen(
     homeScaffoldState: HomeScaffoldState,
     navigateToSyncedFolders: (FolderId, String?) -> Unit,
+    navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<ComputersViewModel>()
     val viewState by rememberFlowWithLifecycle(flow = viewModel.viewState)
         .collectAsState(initial = viewModel.initialViewState)
     val viewEvent = remember {
-        viewModel.viewEvent(navigateToSyncedFolders)
+        viewModel.viewEvent(
+            navigateToSyncedFolders,
+            navigateToComputerOptions,
+        )
     }
     val devices by rememberFlowWithLifecycle(viewModel.devices).collectAsState(initial = null)
     viewModel.HandleHomeEffect(homeScaffoldState)
@@ -101,9 +107,13 @@ fun Computers(
             devices = devices,
             modifier = modifier.fillMaxSize(),
             onError = {},
-        ) { device ->
-            viewEvent.onDevice(device)
-        }
+            onDevice = { device ->
+                viewEvent.onDevice(device)
+            },
+            onMoreOptions = { device ->
+                viewEvent.onMoreOptions(device)
+            },
+        )
     }
 }
 
@@ -114,6 +124,7 @@ fun Computers(
     modifier: Modifier = Modifier,
     onError: () -> Unit,
     onDevice: (Device) -> Unit,
+    onMoreOptions: (Device) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     Box(
@@ -146,6 +157,9 @@ fun Computers(
                 DevicesContent(
                     devices = devices,
                     onClick = onDevice,
+                    onMoreOptions = onMoreOptions,
+                    modifier = Modifier
+                        .testTag(ComputersTestTag.content)
                 )
             }
     }
@@ -160,7 +174,12 @@ private fun TopAppBar(
         navigationIcon = if (viewState.navigationIconResId != 0) {
             painterResource(id = viewState.navigationIconResId)
         } else null,
+        notificationDotVisible = viewState.notificationDotVisible,
         onNavigationIcon = viewEvent.onTopAppBarNavigation,
         title = viewState.title,
     )
+}
+
+object ComputersTestTag {
+    const val content = "computers content"
 }

@@ -116,6 +116,7 @@ class SharedDriveLinkViewModel @Inject constructor(
         when (sharedDriveLink) {
             is DataResult.Processing -> LoadingViewState.Loading(driveLink.toLoadingMessage())
             is DataResult.Error -> {
+                sharedDriveLink.cause?.log(SHARE)
                 if (sharedDriveLink.cause is NoSuchElementException) {
                     LoadingViewState.Error.NonRetryable(
                         appContext.getString(I18N.string.shared_link_error_message_not_found),

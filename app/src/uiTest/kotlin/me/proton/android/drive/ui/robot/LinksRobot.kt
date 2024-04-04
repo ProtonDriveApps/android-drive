@@ -18,6 +18,8 @@
 
 package me.proton.android.drive.ui.robot
 
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.ui.extension.assertDownloadState
 import me.proton.android.drive.ui.extension.assertHasItemType
 import me.proton.android.drive.ui.extension.assertHasLayoutType
@@ -32,18 +34,20 @@ import me.proton.core.drive.files.presentation.component.files.FilesListHeaderTe
 import me.proton.core.drive.files.presentation.extension.ItemType
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
-import me.proton.core.drive.i18n.R
 import me.proton.test.fusion.Fusion.node
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import me.proton.core.drive.i18n.R as I18N
 
 @Suppress("TooManyFunctions")
 interface LinksRobot : Robot {
 
-    private val content get() = node.withTag(FilesTestTag.content)
+    val filesContent get() = node.withTag(FilesTestTag.content)
 
     private val layoutSwitcher get() = node.withTag(FilesListHeaderTestTag.layoutSwitcher)
 
     private val selectedOptionsButton get() = node
-        .withContentDescription(R.string.content_description_selected_options)
+        .withContentDescription(I18N.string.content_description_selected_options)
 
     fun linkWithName(name: String) = node.withLinkName(name).isClickable()
 
@@ -53,7 +57,7 @@ interface LinksRobot : Robot {
     fun clickLayoutSwitcher() = layoutSwitcher.clickTo(FilesTabRobot)
 
     fun scrollToItemWithName(itemName: String): LinksRobot = apply {
-        content.scrollTo(linkWithName(itemName))
+        filesContent.scrollTo(linkWithName(itemName))
     }
 
     fun clickOptions() =
@@ -89,6 +93,11 @@ interface LinksRobot : Robot {
 
     fun clickOnFile(name: String, layoutType: LayoutType = LayoutType.List) =
         clickOnItem(name, layoutType, ItemType.File, PreviewRobot)
+
+    fun <T : Robot> clickOnUndo(after: Duration = 0.seconds, goesTo: T): T = runBlocking {
+        delay(after)
+        node.withText(I18N.string.common_undo_action).clickTo(goesTo)
+    }
 
     fun longClickOnItem(name: String) =
         linkWithName(name).longClickTo(FilesTabRobot)

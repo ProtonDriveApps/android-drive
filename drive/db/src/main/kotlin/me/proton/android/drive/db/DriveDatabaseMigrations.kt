@@ -23,7 +23,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.challenge.data.db.ChallengeDatabase
+import me.proton.core.contact.data.local.db.ContactDatabase
 import me.proton.core.drive.backup.data.db.BackupDatabase
+import me.proton.core.drive.base.data.db.BaseDatabase
 import me.proton.core.drive.device.data.db.DeviceDatabase
 import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
 import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
@@ -36,7 +38,7 @@ import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
 import me.proton.core.drive.stats.data.db.StatsDatabase
-import me.proton.core.drive.user.data.db.QuotaDatabase
+import me.proton.core.drive.user.data.db.UserMessageDatabase
 import me.proton.core.eventmanager.data.db.EventMetadataDatabase
 import me.proton.core.featureflag.data.db.FeatureFlagDatabase
 import me.proton.core.humanverification.data.db.HumanVerificationDatabase
@@ -164,7 +166,7 @@ object DriveDatabaseMigrations {
             LinkDatabase.MIGRATION_1.migrate(database)
             LinkUploadDatabase.MIGRATION_1.migrate(database)
             BackupDatabase.MIGRATION_0.migrate(database)
-            QuotaDatabase.MIGRATION_0.migrate(database)
+            UserMessageDatabase.MIGRATION_0.migrate(database)
             NotificationDatabase.MIGRATION_1.migrate(database)
             PhotoDatabase.MIGRATION_0.migrate(database)
             DriveLinkPhotoDatabase.MIGRATION_0.migrate(database)
@@ -261,7 +263,7 @@ object DriveDatabaseMigrations {
         }
     }
 
-    val MIGRATION_42_43 = object: Migration(42, 43) {
+    val MIGRATION_42_43 = object : Migration(42, 43) {
         override fun migrate(database: SupportSQLiteDatabase) {
             UserSettingsDatabase.MIGRATION_5.migrate(database)
             UserKeyDatabase.MIGRATION_0.migrate(database)
@@ -275,15 +277,41 @@ object DriveDatabaseMigrations {
         }
     }
 
-    val MIGRATION_44_45 = object: Migration(44, 45) {
+    val MIGRATION_44_45 = object : Migration(44, 45) {
         override fun migrate(database: SupportSQLiteDatabase) {
             DeviceDatabase.MIGRATION_0.migrate(database)
         }
     }
 
-    val MIGRATION_45_46 = object: Migration(45, 46) {
+    val MIGRATION_45_46 = object : Migration(45, 46) {
         override fun migrate(database: SupportSQLiteDatabase) {
             LinkTrashDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+    
+    val MIGRATION_46_47 = object : Migration(46, 47) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            ContactDatabase.MIGRATION_0.migrate(database)
+            ContactDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+    
+    val MIGRATION_47_48 = object : Migration(47, 48) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            UserDatabase.MIGRATION_5.migrate(database)
+            AccountDatabase.MIGRATION_7.migrate(database)
+        }
+    }
+
+    val MIGRATION_48_49 = object : Migration(48, 49) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            UserMessageDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_49_50 = object : Migration(49, 50) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            BaseDatabase.MIGRATION_0.migrate(database)
         }
     }
 }

@@ -23,7 +23,6 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 
 sealed class LinkId {
     abstract val shareId: ShareId
@@ -84,7 +83,7 @@ sealed class Link : BaseLink {
     abstract val signatureAddress: String
     abstract val creationTime: TimestampS
     abstract val trashedTime: TimestampS?
-    abstract val shareUrlId: ShareUrlId?
+    abstract val sharingDetails: SharingDetails?
 
     data class File(
         override val id: FileId,
@@ -116,7 +115,7 @@ sealed class Link : BaseLink {
         override val hasThumbnail: Boolean,
         override val activeRevisionId: String,
         override val xAttr: String?,
-        override val shareUrlId: ShareUrlId?,
+        override val sharingDetails: SharingDetails?,
         val contentKeyPacket: String,
         val contentKeyPacketSignature: String?,
         override val photoCaptureTime: TimestampS? = null,
@@ -156,7 +155,7 @@ sealed class Link : BaseLink {
         override val creationTime: TimestampS,
         override val trashedTime: TimestampS?,
         override val xAttr: String?,
-        override val shareUrlId: ShareUrlId?,
+        override val sharingDetails: SharingDetails?,
         val nodeHashKey: String,
     ) : Link(), me.proton.core.drive.link.domain.entity.Folder
 

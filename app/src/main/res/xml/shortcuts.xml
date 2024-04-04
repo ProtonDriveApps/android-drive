@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Drive.
+  ~
+  ~ Proton Drive is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Drive is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_proton_folder">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="drive://proton.me/launcher?redirection=files"/>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_proton_link">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="drive://proton.me/launcher?redirection=shared"/>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_proton_tv">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="drive://proton.me/launcher?redirection=computers"/>
+    </shortcut>
+</shortcuts>

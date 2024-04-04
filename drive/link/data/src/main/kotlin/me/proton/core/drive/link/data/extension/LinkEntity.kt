@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 package me.proton.core.drive.link.data.extension
 
 import me.proton.core.drive.link.data.db.entity.LinkEntity
+import me.proton.core.drive.link.domain.entity.SharingDetails
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 
@@ -27,11 +28,15 @@ val LinkEntity.isFolder
 val LinkEntity.isShared
     get() = shared == 1L
 
-fun LinkEntity.shareUrlId(): ShareUrlId? = shareUrlShareId?.let { shareId ->
-    this.shareUrlId?.let { shareUrlId ->
-        ShareUrlId(
-            shareId = ShareId(userId = this.userId, shareId),
-            id = shareUrlId,
-        )
-    }
+fun LinkEntity.sharingDetails(): SharingDetails? = sharingDetailsShareId?.let { shareUrlShareId ->
+    val shareId = ShareId(userId = this.userId, shareUrlShareId)
+    SharingDetails(
+        shareId,
+        shareUrlId?.let {id ->
+            ShareUrlId(
+                shareId = shareId,
+                id = id,
+            )
+        }
+    )
 }

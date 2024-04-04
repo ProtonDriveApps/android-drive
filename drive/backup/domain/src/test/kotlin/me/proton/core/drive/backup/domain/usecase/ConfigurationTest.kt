@@ -28,7 +28,7 @@ import me.proton.core.drive.backup.domain.entity.BackupNetworkType
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.manager.started
 import me.proton.core.drive.backup.domain.manager.stopped
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.test.DriveRule
@@ -67,7 +67,7 @@ class ConfigurationTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = driveRule.db.myDrive { }
+        folderId = driveRule.db.myFiles { }
         connectedConfiguration = BackupConfiguration(folderId, BackupNetworkType.CONNECTED)
         unmeteredConfiguration = BackupConfiguration(folderId, BackupNetworkType.UNMETERED)
     }

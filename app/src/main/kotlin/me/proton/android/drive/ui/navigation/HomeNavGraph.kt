@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -30,7 +30,6 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.extension.get
-import me.proton.android.drive.extension.require
 import me.proton.android.drive.ui.navigation.animation.defaultEnterSlideTransition
 import me.proton.android.drive.ui.navigation.animation.defaultExitSlideTransition
 import me.proton.android.drive.ui.navigation.animation.defaultPopEnterSlideTransition
@@ -44,6 +43,7 @@ import me.proton.android.drive.ui.screen.SharedScreen
 import me.proton.android.drive.ui.screen.SyncedFoldersScreen
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -68,7 +68,9 @@ fun HomeNavGraph(
     navigateToPhotosPermissionRationale: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
+    navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
 ) = DriveNavHost(
     navController = homeNavController,
     startDestination = startDestination
@@ -85,13 +87,18 @@ fun HomeNavGraph(
         navigateToParentFolderOptions,
     )
     addShared(
-        homeScaffoldState,
         homeNavController,
+        deepLinkBaseUrl,
+        arguments,
+        homeScaffoldState,
         { fileId -> navigateToPreview(fileId, PagerType.SINGLE, OptionsFilter.FILES) },
         navigateToSorting,
         { linkId -> navigateToFileOrFolderOptions(linkId, OptionsFilter.FILES) },
     )
     addPhotos(
+        homeNavController,
+        deepLinkBaseUrl,
+        arguments,
         homeScaffoldState,
         navigateToPhotosPermissionRationale,
         navigateToPhotosPreview = { fileId -> navigateToPreview(fileId, PagerType.PHOTO, OptionsFilter.PHOTOS) },
@@ -101,16 +108,20 @@ fun HomeNavGraph(
         },
         navigateToSubscription = navigateToSubscription,
         navigateToPhotosIssues = navigateToPhotosIssues,
+        navigateToPhotosUpsell = navigateToPhotosUpsell,
         navigateToBackupSettings = navigateToBackupSettings,
     )
     addComputers(
-        homeScaffoldState,
         homeNavController,
+        deepLinkBaseUrl,
+        arguments,
+        homeScaffoldState,
         { fileId -> navigateToPreview(fileId, PagerType.FOLDER, OptionsFilter.FILES) },
         navigateToSorting,
         { linkId -> navigateToFileOrFolderOptions(linkId, OptionsFilter.FILES) },
         { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.FILES) },
         navigateToParentFolderOptions,
+        navigateToComputerOptions,
     )
 }
 
@@ -186,13 +197,14 @@ fun NavGraphBuilder.addFiles(
             }
         }
     }
-
 }
 
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addShared(
-    homeScaffoldState: HomeScaffoldState,
     navController: NavHostController,
+    deepLinkBaseUrl: String,
+    arguments: Bundle,
+    homeScaffoldState: HomeScaffoldState,
     navigateToPreview: (linkId: FileId) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
@@ -205,23 +217,40 @@ fun NavGraphBuilder.addShared(
             nullable = true
             defaultValue = null
         },
+    ),
+    deepLinks = listOf(
+        navDeepLink { uriPattern = Screen.Shared.deepLink(deepLinkBaseUrl) }
     )
 ) { navBackStackEntry ->
-    val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
-    SharedScreen(
-        homeScaffoldState = homeScaffoldState,
-        navigateToFiles = { folderId, folderName ->
-            navController.navigate(Screen.Files(userId, folderId, folderName))
-        },
-        navigateToPreview = navigateToPreview,
-        navigateToSortingDialog = navigateToSorting,
-        navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
-    )
+    navBackStackEntry.get<String>(Screen.Shared.USER_ID)?.let { userId ->
+        SharedScreen(
+            homeScaffoldState = homeScaffoldState,
+            navigateToFiles = { folderId, folderName ->
+                navController.navigate(Screen.Files(UserId(userId), folderId, folderName))
+            },
+            navigateToPreview = navigateToPreview,
+            navigateToSortingDialog = navigateToSorting,
+            navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+        )
+    } ?: let {
+        val userId = UserId(requireNotNull(arguments.getString(Screen.Shared.USER_ID)))
+        val shareId = arguments.getString(Screen.Shared.SHARE_ID)?.let { shareId ->
+            ShareId(userId, shareId)
+        }
+        navController.navigate(Screen.Shared(userId, shareId)) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                inclusive = true
+            }
+        }
+    }
 }
 
 
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addPhotos(
+    navController: NavHostController,
+    deepLinkBaseUrl: String,
+    arguments: Bundle,
     homeScaffoldState: HomeScaffoldState,
     navigateToPhotosPermissionRationale: () -> Unit,
     navigateToPhotosPreview: (fileId: FileId) -> Unit,
@@ -229,6 +258,7 @@ fun NavGraphBuilder.addPhotos(
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
 ) = composable(
     route = Screen.Photos.route,
@@ -239,30 +269,49 @@ fun NavGraphBuilder.addPhotos(
             nullable = true
             defaultValue = null
         },
+    ),
+    deepLinks = listOf(
+        navDeepLink { uriPattern = Screen.Photos.deepLink(deepLinkBaseUrl) }
     )
-) {
-    PhotosScreen(
-        homeScaffoldState = homeScaffoldState,
-        navigateToPhotosPermissionRationale = navigateToPhotosPermissionRationale,
-        navigateToPhotosPreview = navigateToPhotosPreview,
-        navigateToPhotosOptions = navigateToPhotosOptions,
-        navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
-        navigateToSubscription = navigateToSubscription,
-        navigateToPhotosIssues = navigateToPhotosIssues,
-        navigateToBackupSettings = navigateToBackupSettings,
-    )
+) { navBackStackEntry ->
+    navBackStackEntry.get<String>(Screen.Photos.USER_ID)?.let { _ ->
+        PhotosScreen(
+            homeScaffoldState = homeScaffoldState,
+            navigateToPhotosPermissionRationale = navigateToPhotosPermissionRationale,
+            navigateToPhotosPreview = navigateToPhotosPreview,
+            navigateToPhotosOptions = navigateToPhotosOptions,
+            navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
+            navigateToSubscription = navigateToSubscription,
+            navigateToPhotosIssues = navigateToPhotosIssues,
+            navigateToPhotosUpsell = navigateToPhotosUpsell,
+            navigateToBackupSettings = navigateToBackupSettings,
+        )
+    } ?: let {
+        val userId = UserId(requireNotNull(arguments.getString(Screen.Photos.USER_ID)))
+        val shareId = arguments.getString(Screen.Photos.SHARE_ID)?.let { shareId ->
+            ShareId(userId, shareId)
+        }
+        navController.navigate(Screen.Photos(userId, shareId)) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                inclusive = true
+            }
+        }
+    }
 }
 
 @ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addComputers(
-    homeScaffoldState: HomeScaffoldState,
     navController: NavHostController,
+    deepLinkBaseUrl: String,
+    arguments: Bundle,
+    homeScaffoldState: HomeScaffoldState,
     navigateToPreview: (linkId: FileId) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
     navigateToMultipleFileOrFolderOptions: (SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
+    navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
 ) = composable(
     route = Screen.Computers.route,
     enterTransition = defaultEnterSlideTransition {
@@ -301,47 +350,87 @@ fun NavGraphBuilder.addComputers(
             nullable = false
             defaultValue = false
         }
-    )
+    ),
+    deepLinks = listOf(
+        navDeepLink { uriPattern = Screen.Computers.deepLink(deepLinkBaseUrl) }
+    ),
 ) { navBackStackEntry ->
-    val userId = UserId(navBackStackEntry.require(Screen.Computers.USER_ID))
-    val argShareId = navBackStackEntry.get<String>(Screen.Files.SHARE_ID)
-    val argFolderId = navBackStackEntry.get<String>(Screen.Files.FOLDER_ID)
-    val argSyncedFolders = navBackStackEntry.arguments?.getBoolean(Screen.Computers.SYNCED_FOLDERS, false) ?: false
-    if (argShareId != null && argFolderId != null) {
-        if (argSyncedFolders) {
-            SyncedFoldersScreen(
+    navBackStackEntry.get<String>(Screen.Computers.USER_ID)?.let { userId ->
+        val argShareId = navBackStackEntry.get<String>(Screen.Files.SHARE_ID)
+        val argFolderId = navBackStackEntry.get<String>(Screen.Files.FOLDER_ID)
+        val argSyncedFolders =
+            navBackStackEntry.arguments?.getBoolean(Screen.Computers.SYNCED_FOLDERS, false) ?: false
+        if (argShareId != null && argFolderId != null) {
+            if (argSyncedFolders) {
+                SyncedFoldersScreen(
+                    homeScaffoldState = homeScaffoldState,
+                    navigateToFiles = { folderId, folderName ->
+                        navController.navigate(
+                            Screen.Computers(
+                                userId = UserId(userId),
+                                folderId = folderId,
+                                folderName = folderName,
+                                syncedFolders = false
+                            )
+                        )
+                    },
+                    navigateToSortingDialog = navigateToSorting,
+                    navigateBack = {
+                        navController.popBackStack(
+                            route = Screen.Computers.route,
+                            inclusive = true,
+                        )
+                    },
+                )
+            } else {
+                FilesScreen(
+                    homeScaffoldState = homeScaffoldState,
+                    navigateToFiles = { folderId, folderName ->
+                        navController.navigate(
+                            Screen.Computers(
+                                UserId(userId),
+                                folderId,
+                                folderName,
+                                false
+                            )
+                        )
+                    },
+                    navigateToPreview = navigateToPreview,
+                    navigateToSortingDialog = navigateToSorting,
+                    navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+                    navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
+                    navigateToParentFolderOptions = navigateToParentFolderOptions,
+                    navigateBack = { navController.popBackStack() },
+                )
+            }
+        } else {
+            ComputersScreen(
                 homeScaffoldState = homeScaffoldState,
-                navigateToFiles = { folderId, folderName ->
-                    navController.navigate(Screen.Computers(userId, folderId, folderName, false))
-                },
-                navigateToSortingDialog = navigateToSorting,
-                navigateBack = {
-                    navController.popBackStack(
-                        route = Screen.Computers.route,
-                        inclusive = true,
+                navigateToSyncedFolders = { folderId, folderName ->
+                    navController.navigate(
+                        Screen.Computers(
+                            UserId(userId),
+                            folderId,
+                            folderName,
+                            true
+                        )
                     )
                 },
-            )
-        } else {
-            FilesScreen(
-                homeScaffoldState = homeScaffoldState,
-                navigateToFiles = { folderId, folderName ->
-                    navController.navigate(Screen.Computers(userId, folderId, folderName, false))
-                },
-                navigateToPreview = navigateToPreview,
-                navigateToSortingDialog = navigateToSorting,
-                navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
-                navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
-                navigateToParentFolderOptions = navigateToParentFolderOptions,
-                navigateBack = { navController.popBackStack() },
+                navigateToComputerOptions = navigateToComputerOptions,
             )
         }
-    } else {
-        ComputersScreen(
-            homeScaffoldState = homeScaffoldState,
-            navigateToSyncedFolders = { folderId, folderName ->
-                navController.navigate(Screen.Computers(userId, folderId, folderName, true))
-            },
-        )
+    } ?: let {
+        val userId = UserId(requireNotNull(arguments.getString(Screen.Files.USER_ID)))
+        val folderId = arguments.getString(Screen.Files.SHARE_ID)?.let { shareId ->
+            arguments.getString(Screen.Files.FOLDER_ID)?.let { folderId ->
+                FolderId(ShareId(userId, shareId), folderId)
+            }
+        }
+        val folderName = arguments.getString(Screen.Files.FOLDER_NAME)
+        navController.navigate(Screen.Computers(userId, folderId, folderName, false)) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                inclusive = true
+            }
+        }
     }
 }

@@ -25,13 +25,13 @@ import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.drive.backup.data.extension.toBackupError
 import me.proton.core.drive.backup.data.worker.BackupNotificationWorker
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
-import me.proton.core.drive.backup.domain.exception.BackupStopException
 import me.proton.core.drive.backup.domain.handler.UploadErrorHandler
 import me.proton.core.drive.backup.domain.usecase.DeleteFile
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.backup.domain.usecase.MarkAsFailed
 import me.proton.core.drive.backup.domain.usecase.StopBackup
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.exception.BackupStopException
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager

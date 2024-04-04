@@ -32,6 +32,7 @@ driveModule(
     api(project(":drive:drivelink-upload:domain"))
     api(project(":drive:drivelink-crypto:domain"))
     api(project(":drive:feature-flag:domain"))
+    api(project(":drive:user:domain"))
     implementation(project(":drive:base:domain"))
     testImplementation(project(":drive:backup:data"))
     testImplementation(project(":drive:key:data"))

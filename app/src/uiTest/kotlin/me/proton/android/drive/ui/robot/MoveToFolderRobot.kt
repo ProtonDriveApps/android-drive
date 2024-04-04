@@ -21,8 +21,6 @@ package me.proton.android.drive.ui.robot
 import me.proton.android.drive.ui.screen.MoveToFolderScreenTestTag
 import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag
 import me.proton.core.drive.files.presentation.component.FilesTestTag.listDetailsTitle
-import me.proton.core.drive.files.presentation.extension.ItemType
-import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.ui.compose.builders.OnNode
 import me.proton.core.drive.i18n.R as I18N
@@ -33,9 +31,11 @@ object MoveToFolderRobot : NavigationBarRobot, Robot, LinksRobot, GrowlerRobot {
     private val rootDirectoryTitle = node.withText(I18N.string.title_my_files)
     private val addFolderButton get() = node.withTag(MoveToFolderScreenTestTag.plusFolderButton)
     private val cancelButton get() = node.withText(I18N.string.move_file_dismiss_action)
-    private val moveButton get() = node.withText(I18N.string.move_file_confirm_action).isEnabled()
+    private val moveButton get() = node.withTag(MoveToFolderScreenTestTag.moveButton)
 
     private fun itemWithName(name: String) = node.withTag(listDetailsTitle).withText(name)
+
+    fun assertMoveButtonIsDisabled() = moveButton.assertDisabled()
 
     /**
      * Wait the folder to be loaded before clicking back,
@@ -74,6 +74,7 @@ object MoveToFolderRobot : NavigationBarRobot, Robot, LinksRobot, GrowlerRobot {
     override fun robotDisplayed() {
         moveToFolderScreen.assertIsDisplayed()
         addFolderButton.assertIsDisplayed()
+        filesContent.assertIsDisplayed()
         cancelButton.assertIsDisplayed()
         moveButton.assertIsDisplayed()
     }

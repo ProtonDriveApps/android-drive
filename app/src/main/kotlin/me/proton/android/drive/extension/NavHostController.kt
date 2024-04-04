@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -18,10 +18,18 @@
 
 package me.proton.android.drive.extension
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavHostController
+import kotlinx.coroutines.flow.map
 
 fun NavHostController.runFromRoute(route: String, block: () -> Unit) = takeIf {
     currentDestination?.route == route
 }?.let {
     block()
 }
+
+@Composable
+fun NavHostController.isCurrentDestination(route: String) = currentBackStack.map { entries ->
+    entries.lastOrNull()?.destination?.route == route
+}.collectAsState(initial = false)

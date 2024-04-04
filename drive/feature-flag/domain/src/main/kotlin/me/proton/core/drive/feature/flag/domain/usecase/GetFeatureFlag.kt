@@ -18,12 +18,12 @@
 
 package me.proton.core.drive.feature.flag.domain.usecase
 
+import me.proton.core.drive.base.domain.extension.isOlderThen
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.extension.isOlderThen
 import me.proton.core.drive.feature.flag.domain.repository.FeatureFlagRepository
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject

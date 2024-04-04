@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -18,6 +18,7 @@
 
 package me.proton.core.drive.test.api
 
+import kotlinx.serialization.json.Json
 import me.proton.core.util.kotlin.serialize
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -61,6 +62,13 @@ fun MockWebServer.routing(
     }
 }
 
+fun MockWebServer.clear() {
+    val internalDispatcher = dispatcher
+    if (internalDispatcher is DriveDispatcher) {
+        internalDispatcher.handlers = emptyList()
+    }
+}
+
 fun RoutingConfiguration.get(path: String, block: RequestContext.() -> MockResponse) =
     route("GET", path, block)
 
@@ -78,6 +86,10 @@ data class RequestContext(
     val recordedRequest: RecordedRequest,
     val parameters: Map<String, String>,
 )
+
+inline fun <reified T> RequestContext.request() : T {
+    return Json.decodeFromString(recordedRequest.body.readUtf8())
+}
 
 private fun RoutingConfiguration.route(
     method: String,

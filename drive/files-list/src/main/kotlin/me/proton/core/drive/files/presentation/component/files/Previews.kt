@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -62,7 +62,7 @@ internal val PREVIEW_LINK = Link.File(
     creationTime = TimestampS(0),
     trashedTime = null,
     shareUrlExpirationTime = null,
-    shareUrlId = null,
+    sharingDetails = null,
 )
 internal val PREVIEW_DRIVELINK = DriveLink.File(
     link = PREVIEW_LINK,

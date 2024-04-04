@@ -24,7 +24,7 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -48,7 +48,7 @@ class RescanAllFoldersTest {
 
     @Before
     fun setup() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         val folderRepository = BackupFolderRepositoryImpl(database.db)
 
         backupManager = StubbedBackupManager(folderRepository)

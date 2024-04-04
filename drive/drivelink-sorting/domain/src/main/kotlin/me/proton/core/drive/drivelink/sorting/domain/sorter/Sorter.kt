@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,7 +28,7 @@ sealed class Sorter {
 
     companion object Factory {
         operator fun get(by: By): Sorter = when (by) {
-            By.NAME -> LocaleNameSorter
+            By.NAME -> LocaleNameSorter()
             By.LAST_MODIFIED -> LastModifiedSorter
             By.SIZE -> SizeSorter
             By.TYPE -> TypeSorter

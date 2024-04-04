@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -62,9 +62,7 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.LARGE_HEIGHT
-import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.labelResId
-import me.proton.core.drive.base.presentation.extension.toReadableDate
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.file.info.presentation.entity.Item
@@ -237,7 +235,7 @@ private fun PreviewFileInfoContent() {
             trashedTime = null,
             shareUrlExpirationTime = null,
             xAttr = null,
-            shareUrlId = null,
+            sharingDetails = null,
         ),
         volumeId = VolumeId("VOLUME_ID"),
         isMarkedAsOffline = false,

@@ -3,7 +3,7 @@ quickTest:
   device:
     - model: MediumPhone.arm
       version: 33
-    - model: Pixel2
+    - model: Pixel2.arm
       version: 30
 quickTest-2:
   timeout: 30m

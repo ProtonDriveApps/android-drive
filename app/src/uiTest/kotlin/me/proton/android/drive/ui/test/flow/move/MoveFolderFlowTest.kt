@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.Slow
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.MoveToFolderRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
@@ -36,7 +37,7 @@ class MoveFolderFlowTest : AuthenticatedBaseTest() {
     fun moveAFolderToRoot() {
         val parent = "folder1"
         val folder = "folder3"
-        FilesTabRobot
+        PhotosTabRobot
             .clickOnFolder(parent)
             .clickMoreOnItem(folder)
             .clickMove()
@@ -57,7 +58,8 @@ class MoveFolderFlowTest : AuthenticatedBaseTest() {
     fun moveRootFolderToFolder() {
         val folder = "folder1"
         val folderDestination = "folder2"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickMove()
             .clickOnFolderToMove(folderDestination)
@@ -78,7 +80,8 @@ class MoveFolderFlowTest : AuthenticatedBaseTest() {
         val parent = "folder1"
         val folder = "folder3"
         val folderDestination = "folder2"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickOnFolder(parent)
             .clickMoreOnItem(folder)
             .clickMove()
@@ -102,7 +105,8 @@ class MoveFolderFlowTest : AuthenticatedBaseTest() {
     @Scenario(2)
     fun cannotMoveAFolderToSubFolderOfItself() {
         val folder = "folder1"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickMove()
             .clickOnFolder(folder)

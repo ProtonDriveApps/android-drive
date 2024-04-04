@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@ package me.proton.android.drive.ui.test.flow.account
 
 import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.report.test.MinimalReportInternalTests
 import me.proton.core.test.quark.Quark
@@ -47,17 +47,18 @@ class ReportFlowTest : BaseTest(), MinimalReportInternalTests {
     }
 
     override fun verifyBefore() {
-        FilesTabRobot.verify { homeScreenDisplayed() }
+        PhotosTabRobot
+            .verify { homeScreenDisplayed() }
     }
 
     override fun startReport() {
-        FilesTabRobot
+        PhotosTabRobot
             .openSidebarBySwipe()
             .verify { robotDisplayed() }
             .clickReportBug()
     }
 
     override fun verifyAfter() {
-        FilesTabRobot.verify { homeScreenDisplayed() }
+        PhotosTabRobot.verify { homeScreenDisplayed() }
     }
 }

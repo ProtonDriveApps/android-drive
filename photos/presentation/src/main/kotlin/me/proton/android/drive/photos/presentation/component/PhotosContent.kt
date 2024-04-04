@@ -115,6 +115,7 @@ fun PhotosContent(
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
+    onDismissBackgroundRestrictions: () -> Unit,
     isRefreshEnabled: Boolean,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
@@ -142,6 +143,7 @@ fun PhotosContent(
             onResolveMissingFolder = onResolveMissingFolder,
             onChangeNetwork = onChangeNetwork,
             onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
+            onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
         )
     }
 }
@@ -165,6 +167,7 @@ fun PhotosContent(
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
+    onDismissBackgroundRestrictions: () -> Unit,
 ) {
     val gridState = items.rememberLazyGridState()
     val driveLinksMap by rememberFlowWithLifecycle(flow = driveLinksFlow)
@@ -208,6 +211,7 @@ fun PhotosContent(
                     onResolveMissingFolder = onResolveMissingFolder,
                     onChangeNetwork = onChangeNetwork,
                     onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
+                    onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
                 )
                 StorageBanner(onGetStorage = onGetStorage)
             }
@@ -561,7 +565,7 @@ fun MediaItemPreview() {
             trashedTime = null,
             shareUrlExpirationTime = null,
             xAttr = null,
-            shareUrlId = null,
+            sharingDetails = null,
             photoCaptureTime = TimestampS(0),
             photoContentHash = "",
             mainPhotoLinkId = "MAIN_ID"

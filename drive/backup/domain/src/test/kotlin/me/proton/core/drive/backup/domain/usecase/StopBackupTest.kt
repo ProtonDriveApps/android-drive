@@ -35,7 +35,7 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
@@ -62,7 +62,7 @@ class StopBackupTest {
 
     @Before
     fun setup() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         val folderRepository = BackupFolderRepositoryImpl(database.db)
         fileRepository = BackupFileRepositoryImpl(database.db)
         val errorRepository = BackupErrorRepositoryImpl(database.db)

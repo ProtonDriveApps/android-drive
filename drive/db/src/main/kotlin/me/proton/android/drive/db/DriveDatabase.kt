@@ -33,6 +33,12 @@ import me.proton.core.account.data.entity.SessionEntity
 import me.proton.core.challenge.data.db.ChallengeConverters
 import me.proton.core.challenge.data.db.ChallengeDatabase
 import me.proton.core.challenge.data.entity.ChallengeFrameEntity
+import me.proton.core.contact.data.local.db.ContactConverters
+import me.proton.core.contact.data.local.db.ContactDatabase
+import me.proton.core.contact.data.local.db.entity.ContactCardEntity
+import me.proton.core.contact.data.local.db.entity.ContactEmailEntity
+import me.proton.core.contact.data.local.db.entity.ContactEmailLabelEntity
+import me.proton.core.contact.data.local.db.entity.ContactEntity
 import me.proton.core.crypto.android.keystore.CryptoConverters
 import me.proton.core.data.room.db.BaseDatabase
 import me.proton.core.data.room.db.CommonConverters
@@ -43,6 +49,7 @@ import me.proton.core.drive.backup.data.db.entity.BackupDuplicateEntity
 import me.proton.core.drive.backup.data.db.entity.BackupErrorEntity
 import me.proton.core.drive.backup.data.db.entity.BackupFileEntity
 import me.proton.core.drive.backup.data.db.entity.BackupFolderEntity
+import me.proton.core.drive.base.data.db.entity.UrlLastFetchEntity
 import me.proton.core.drive.device.data.db.DeviceDatabase
 import me.proton.core.drive.device.data.db.entity.DeviceEntity
 import me.proton.core.drive.drivelink.data.db.DriveLinkDatabase
@@ -98,8 +105,9 @@ import me.proton.core.drive.sorting.data.db.entity.SortingEntity
 import me.proton.core.drive.stats.data.db.StatsDatabase
 import me.proton.core.drive.stats.data.db.entity.InitialBackupEntity
 import me.proton.core.drive.stats.data.db.entity.UploadStatsEntity
-import me.proton.core.drive.user.data.db.QuotaDatabase
+import me.proton.core.drive.user.data.db.UserMessageDatabase
 import me.proton.core.drive.user.data.db.entity.DismissedQuotaEntity
+import me.proton.core.drive.user.data.db.entity.DismissedUserMessageEntity
 import me.proton.core.drive.volume.data.db.VolumeDatabase
 import me.proton.core.drive.volume.data.db.VolumeEntity
 import me.proton.core.drive.worker.data.db.WorkerDatabase
@@ -145,6 +153,7 @@ import me.proton.core.usersettings.data.entity.OrganizationKeysEntity
 import me.proton.core.usersettings.data.entity.UserSettingsEntity
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
+import me.proton.core.drive.base.data.db.BaseDatabase as DriveBaseDatabase
 import me.proton.core.notification.data.local.db.NotificationConverters as CoreNotificationConverters
 import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNotificationDatabase
 
@@ -176,6 +185,10 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         NotificationEntity::class,
         PushEntity::class,
         TelemetryEventEntity::class,
+        ContactCardEntity::class,
+        ContactEmailEntity::class,
+        ContactEmailLabelEntity::class,
+        ContactEntity::class,
         // Drive
         VolumeEntity::class,
         ShareEntity::class,
@@ -213,8 +226,9 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         // Stats
         InitialBackupEntity::class,
         UploadStatsEntity::class,
-        // Quota
+        // UserMessage
         DismissedQuotaEntity::class,
+        DismissedUserMessageEntity::class,
         // Notification
         NotificationChannelEntity::class,
         NotificationEventEntity::class,
@@ -231,6 +245,8 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         MediaStoreVersionEntity::class,
         // Device
         DeviceEntity::class,
+        // Base
+        UrlLastFetchEntity::class,
     ],
     version = DriveDatabase.VERSION,
     autoMigrations = [
@@ -261,6 +277,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
     ChallengeConverters::class,
     CoreNotificationConverters::class,
     PushConverters::class,
+    ContactConverters::class,
     // Drive
     EventConverters::class,
     LinkSelectionConverters::class
@@ -270,6 +287,7 @@ abstract class DriveDatabase :
     AccountDatabase,
     UserDatabase,
     AddressDatabase,
+    ContactDatabase,
     KeySaltDatabase,
     HumanVerificationDatabase,
     PublicAddressDatabase,
@@ -303,7 +321,7 @@ abstract class DriveDatabase :
     NotificationDatabase,
     PaymentDatabase,
     BackupDatabase,
-    QuotaDatabase,
+    UserMessageDatabase,
     ObservabilityDatabase,
     KeyTransparencyDatabase,
     WorkerDatabase,
@@ -314,10 +332,11 @@ abstract class DriveDatabase :
     DriveLinkPhotoDatabase,
     DriveFeatureFlagDatabase,
     MediaStoreVersionDatabase,
-    DeviceDatabase {
+    DeviceDatabase,
+    DriveBaseDatabase {
 
     companion object {
-        const val VERSION = 46
+        const val VERSION = 50
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -365,6 +384,10 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_43_44,
             DriveDatabaseMigrations.MIGRATION_44_45,
             DriveDatabaseMigrations.MIGRATION_45_46,
+            DriveDatabaseMigrations.MIGRATION_46_47,
+            DriveDatabaseMigrations.MIGRATION_47_48,
+            DriveDatabaseMigrations.MIGRATION_48_49,
+            DriveDatabaseMigrations.MIGRATION_49_50,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

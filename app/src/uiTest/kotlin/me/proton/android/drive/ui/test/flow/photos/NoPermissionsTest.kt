@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -19,10 +19,8 @@
 package me.proton.android.drive.ui.test.flow.photos
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosNoPermissionsRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.robot.SettingsRobot
 import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
@@ -31,8 +29,7 @@ import org.junit.Test
 class NoPermissionsTest : AuthenticatedBaseTest() {
     @Test
     fun denyPermissionsFromPhotoTab() {
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .enableBackup()
 
         PhotosNoPermissionsRobot
@@ -48,7 +45,11 @@ class NoPermissionsTest : AuthenticatedBaseTest() {
 
     @Test
     fun denyPermissionsFromSettings() {
-        FilesTabRobot
+        PhotosTabRobot
+            .verify {
+                // Wait for photo share to be created to avoid collision
+                assertEnableBackupDisplayed()
+            }
             .openSidebarBySwipe()
             .clickSettings()
             .clickPhotosBackup()

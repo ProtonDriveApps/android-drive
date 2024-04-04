@@ -60,7 +60,6 @@ import me.proton.core.drive.stats.domain.usecase.GetUploadStats
 import me.proton.core.drive.stats.domain.usecase.IsInitialBackup
 import me.proton.core.drive.stats.domain.usecase.SetOrIgnoreInitialBackup
 import me.proton.core.drive.stats.domain.usecase.UpdateUploadStats
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
@@ -203,7 +202,7 @@ class StatsEventHandlerTest {
         fileCreationDateTime: TimestampS,
     ) = UploadFileLink(
         userId = userId,
-        volumeId = VolumeId(volumeId),
+        volumeId = volumeId,
         shareId = folderId.shareId,
         parentLinkId = folderId,
         uriString = "uri$index",

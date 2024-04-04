@@ -17,6 +17,7 @@
   -->
 
 <resources>
+    <string name="storage_drive_usage">Drive usage</string>
     <string name="storage_total_usage">Total usage</string>
     <string name="storage_details_format"><![CDATA[%1$s of %2$s used]]></string>
 

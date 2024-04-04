@@ -24,10 +24,10 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.util.kotlin.CoreLogger
-import java.io.IOException
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
@@ -39,11 +39,9 @@ class DeleteLocalContent @Inject constructor(
     suspend operator fun invoke(
         file: DriveLink.File,
         coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
-    ) = try {
+    ) = coRunCatching {
         CoreLogger.d(LogTag.EVENTS, "Deleting local folders for: ${file.id.id.logId()}")
         getCacheFolder(file.userId, file.volumeId.id, file.activeRevisionId, coroutineContext).deleteRecursively()
         getPermanentFolder(file.userId, file.volumeId.id, file.activeRevisionId, coroutineContext).deleteRecursively()
-    } catch (ignored: IOException) {
-        //
     }
 }

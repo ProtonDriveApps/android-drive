@@ -37,6 +37,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -262,6 +263,36 @@ private fun ErrorDetails(text: String) {
 }
 
 @Composable
+private fun ErrorDetails(text: String, onDismiss: () -> Unit) {
+    Card(
+        backgroundColor = ProtonTheme.colors.backgroundSecondary,
+        contentColor = ProtonTheme.colors.textNorm,
+        elevation = 0.dp,
+    ) {
+        Row {
+            Text(
+                modifier = Modifier
+                    .defaultMinSize(minHeight = ProtonDimens.ListItemHeight)
+                    .weight(1F)
+                    .padding(
+                        start = ProtonDimens.ListItemTextStartPadding,
+                        top = ProtonDimens.SmallSpacing,
+                        bottom = ProtonDimens.SmallSpacing,
+                    ),
+                text = text,
+                style = ProtonTheme.typography.defaultSmallNorm,
+            )
+            IconButton(onClick = { onDismiss() }) {
+                Icon(
+                    painter = painterResource(id = CorePresentation.drawable.ic_proton_cross),
+                    contentDescription = stringResource(id = I18N.string.common_close_action)
+                )
+            }
+        }
+    }
+}
+
+@Composable
 fun BackupDisableState(
     modifier: Modifier = Modifier,
     onEnableBackup: () -> Unit,
@@ -310,6 +341,7 @@ fun BackupFailedState(
 fun BackgroundRestrictions(
     modifier: Modifier = Modifier,
     onIgnoreBackgroundRestrictions: () -> Unit,
+    onDismissBackgroundRestrictions: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing)
@@ -326,7 +358,8 @@ fun BackgroundRestrictions(
             stringResource(
                 I18N.string.photos_error_background_restrictions_description,
                 stringResource(id = I18N.string.app_name),
-            )
+            ),
+            onDismiss = onDismissBackgroundRestrictions,
         )
     }
 }
@@ -564,7 +597,10 @@ private fun BackupFailedStatePreview() {
 private fun BackgroundRestrictionsPreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
-            BackgroundRestrictions(onIgnoreBackgroundRestrictions = { })
+            BackgroundRestrictions(
+                onIgnoreBackgroundRestrictions = { },
+                onDismissBackgroundRestrictions = { },
+            )
         }
     }
 }

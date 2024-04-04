@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -35,7 +35,8 @@ class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     @Scenario(4)
     fun removeFileFromAvailableOfflineFromMyFile() {
         val file = "shared.jpg"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .scrollToItemWithName(file)
             .clickMoreOnItem(file)
             .clickMakeAvailableOffline()
@@ -53,7 +54,8 @@ class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     @Scenario(4)
     fun removeFileFromAvailableOfflineFromOffline() {
         val file = "shared.jpg"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .scrollToItemWithName(file)
             .clickMoreOnItem(file)
             .clickMakeAvailableOffline()
@@ -74,7 +76,8 @@ class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     @Scenario(4)
     fun removeFolderFromAvailableOffline() {
         val folder = "folder1"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickMakeAvailableOffline()
             .verify {
@@ -99,7 +102,8 @@ class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     fun separatelyAddedFileAreAvailableOfflineAfterParentIsRemoved() {
         val folder = "sharedFolder"
         val file = "sharedChild.html"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickMakeAvailableOffline()
             .clickOnFolder(folder)
@@ -132,8 +136,7 @@ class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     fun removePhotoFromAvailableOffline() {
         val image = ImageName.Now
 
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .longClickOnPhoto(image.fileName)
             .clickOptions()
             .clickMakeAvailableOffline()

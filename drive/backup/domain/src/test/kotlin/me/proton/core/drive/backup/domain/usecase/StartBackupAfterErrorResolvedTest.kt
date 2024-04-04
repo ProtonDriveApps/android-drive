@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
@@ -56,7 +56,7 @@ class StartBackupAfterErrorResolvedTest {
 
     @Before
     fun setup() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         val folderRepository = BackupFolderRepositoryImpl(database.db)
         val errorRepository = BackupErrorRepositoryImpl(database.db)
 

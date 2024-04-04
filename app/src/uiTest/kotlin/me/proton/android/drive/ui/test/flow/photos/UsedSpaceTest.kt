@@ -28,7 +28,6 @@ import me.proton.android.drive.photos.data.di.PhotosConfigurationModule
 import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
 import me.proton.android.drive.provider.PhotosConnectedDefaultConfigurationProvider
 import me.proton.android.drive.ui.annotation.Quota
-import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.PhotosBaseTest
 import org.junit.Before
@@ -43,8 +42,7 @@ class UsedSpaceTest : PhotosBaseTest() {
     fun prepare() {
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
 
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .enableBackup()
     }
 
@@ -86,9 +84,12 @@ class UsedSpaceTest : PhotosBaseTest() {
 
     @Module
     @InstallIn(SingletonComponent::class)
+    @Suppress("Unused")
     interface TestPhotosConfigurationModule {
         @Binds
         @Singleton
-        fun bindPhotosDefaultConfigurationProvider(impl: PhotosConnectedDefaultConfigurationProvider): PhotosDefaultConfigurationProvider
+        fun bindPhotosDefaultConfigurationProvider(
+            impl: PhotosConnectedDefaultConfigurationProvider,
+        ): PhotosDefaultConfigurationProvider
     }
 }

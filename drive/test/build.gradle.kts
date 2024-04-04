@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -52,12 +52,16 @@ dependencies {
     api(libs.core.crypto.dagger)
     api(libs.core.key.dagger)
     api(libs.core.user.dagger)
+    api(libs.core.observability.dagger)
     api(libs.core.test.kotlin)
     api(libs.mockwebserver)
     api(libs.androidx.work.runtime.ktx)
+    api(libs.kotlinx.serialization.json)
     api(project(":drive:base:domain"))
     api(project(":drive:crypto-base:data"))
+    api(project(":drive:trash:data"))
     api(project(":drive:db-test"))
+    api(project(":drive:key:data"))
 
     implementation(libs.dagger.hilt.android)
     implementation(libs.dagger.hilt.android.testing)

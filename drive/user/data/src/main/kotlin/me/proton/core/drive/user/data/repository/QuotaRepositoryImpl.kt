@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -22,21 +22,20 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.user.data.db.QuotaDatabase
+import me.proton.core.drive.user.data.db.UserMessageDatabase
 import me.proton.core.drive.user.data.db.entity.DismissedQuotaEntity
 import me.proton.core.drive.user.domain.entity.QuotaLevel
 import me.proton.core.drive.user.domain.repository.QuotaRepository
 import javax.inject.Inject
 
 class QuotaRepositoryImpl @Inject constructor(
-    private val database: QuotaDatabase,
+    private val database: UserMessageDatabase,
 ) : QuotaRepository {
 
-    override fun exists(userId: UserId, level: QuotaLevel, maxSpace: Bytes): Flow<Boolean> {
-        return database.quotaDao.exists(userId, level, maxSpace.value)
-    }
+    override fun exists(userId: UserId, level: QuotaLevel, maxSpace: Bytes): Flow<Boolean> =
+        database.quotaDao.exists(userId, level, maxSpace.value)
 
-    override suspend fun insertAndUpdate(userId: UserId, level: QuotaLevel, maxSpace: Bytes) {
+    override suspend fun insertOrUpdate(userId: UserId, level: QuotaLevel, maxSpace: Bytes) {
         database.quotaDao.insertOrUpdate(
             DismissedQuotaEntity(
                 userId = userId,

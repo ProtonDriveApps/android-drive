@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -44,6 +44,18 @@ class GenerateNestedPrivateKey @Inject constructor(
         NestedPrivateKey
             .generateNestedPrivateKey(cryptoContext, DEFAULT_USERNAME, DEFAULT_DOMAIN, generatePassphrase::invoke)
             .encryptAndSignPassphrase(encryptKey, signKey, cryptoContext)
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    suspend operator fun invoke(
+        userId: UserId,
+        encryptKeys: List<KeyHolder>,
+        signKey: KeyHolder,
+        coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
+    ): Result<NestedPrivateKey> = coRunCatching(coroutineContext) {
+        NestedPrivateKey
+            .generateNestedPrivateKey(cryptoContext, DEFAULT_USERNAME, DEFAULT_DOMAIN, generatePassphrase::invoke)
+            .encryptAndSignPassphrase(encryptKeys, signKey, cryptoContext)
     }
 
     suspend operator fun invoke(

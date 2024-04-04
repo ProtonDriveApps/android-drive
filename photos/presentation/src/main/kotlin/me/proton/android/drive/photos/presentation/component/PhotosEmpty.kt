@@ -51,6 +51,7 @@ fun PhotosEmpty(
     onResolveMissingFolder: () -> Unit,
     onChangeNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
+    onDismissBackgroundRestrictions: () -> Unit,
 ) {
     Column {
         PhotosBanners {
@@ -64,6 +65,7 @@ fun PhotosEmpty(
                 onResolveMissingFolder = onResolveMissingFolder,
                 onChangeNetwork = onChangeNetwork,
                 onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
+                onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
             )
             StorageBanner(onGetStorage = onGetStorage)
         }
@@ -144,6 +146,7 @@ private fun PhotosEmptyPreview() {
         onResolveMissingFolder = {},
         onChangeNetwork = {},
         onIgnoreBackgroundRestrictions = {},
+        onDismissBackgroundRestrictions = {},
     )
 }
 

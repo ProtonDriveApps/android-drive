@@ -41,6 +41,11 @@ interface LinkRepository {
     fun hasLink(linkId: LinkId): Flow<Boolean>
 
     /**
+     * Check if we have cached any file for a given user and share
+     */
+    suspend fun hasAnyFileLink(shareId: ShareId): Boolean
+
+    /**
      * Fetches link from the server and stores it into cache
      */
     suspend fun fetchLink(linkId: LinkId)

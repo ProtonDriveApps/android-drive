@@ -18,6 +18,7 @@
 
 package me.proton.core.drive.link.domain.usecase
 
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import javax.inject.Inject
@@ -29,6 +30,7 @@ class DeleteLinks @Inject constructor(
     suspend operator fun invoke(linkId: LinkId) =
         invoke(listOf(linkId))
 
-    suspend operator fun invoke(linkIds: List<LinkId>) =
+    suspend operator fun invoke(linkIds: List<LinkId>) = coRunCatching {
         linkRepository.delete(linkIds)
+    }
 }

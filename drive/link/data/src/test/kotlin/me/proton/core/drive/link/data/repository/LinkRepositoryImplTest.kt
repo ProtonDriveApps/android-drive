@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -25,10 +25,10 @@ import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.file
 import me.proton.core.drive.db.test.folder
 import me.proton.core.drive.db.test.mainShare
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.mainShareId
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.photoShare
 import me.proton.core.drive.db.test.photoShareId
-import me.proton.core.drive.db.test.shareId
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volume
@@ -36,8 +36,6 @@ import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -62,9 +60,9 @@ class LinkRepositoryImplTest {
 
     @Test
     fun empty() = runTest {
-        database.myDrive {}
+        database.myFiles {}
 
-        val linkIds = repository.findLinkIds(userId, VolumeId(volumeId), "link-id")
+        val linkIds = repository.findLinkIds(userId, volumeId, "link-id")
 
         assertEquals(emptyList<LinkId>(), linkIds)
     }
@@ -82,9 +80,9 @@ class LinkRepositoryImplTest {
             }
         }
 
-        val linkIds = repository.findLinkIds(userId, VolumeId(volumeId), "link-id-1")
+        val linkIds = repository.findLinkIds(userId, volumeId, "link-id-1")
 
-        assertEquals(listOf(FileId(ShareId(userId, shareId), "link-id-1")), linkIds)
+        assertEquals(listOf(FileId(mainShareId, "link-id-1")), linkIds)
     }
 
     @Test
@@ -100,11 +98,11 @@ class LinkRepositoryImplTest {
             }
         }
 
-        val linkIds = repository.findLinkIds(userId, VolumeId(volumeId), "link-id")
+        val linkIds = repository.findLinkIds(userId, volumeId, "link-id")
 
         assertEquals(
             listOf(
-                FolderId(ShareId(userId, shareId), "link-id"),
+                FolderId(mainShareId, "link-id"),
                 FileId(photoShareId, "link-id"),
             ), linkIds
         )

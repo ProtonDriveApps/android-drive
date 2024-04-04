@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -49,7 +49,7 @@ private fun LinkDto.toLinkEntity(shareId: ShareId) =
         numberOfAccesses = sharingDetails?.shareUrl?.numberOfAccesses ?: 0,
         shareUrlExpirationTime = sharingDetails?.shareUrl?.expirationTime,
         xAttr = xAttr,
-        shareUrlShareId = sharingDetails?.shareId,
+        sharingDetailsShareId = sharingDetails?.shareId,
         shareUrlId = sharingDetails?.shareUrl?.shareUrlId,
     )
 

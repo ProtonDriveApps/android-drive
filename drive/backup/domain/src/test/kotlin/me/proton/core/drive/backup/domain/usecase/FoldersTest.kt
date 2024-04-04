@@ -23,7 +23,7 @@ import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -46,7 +46,7 @@ class FoldersTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         val repository = BackupFolderRepositoryImpl(database.db)
         addFolder = AddFolder(repository)
         updateFolder = UpdateFolder(repository)

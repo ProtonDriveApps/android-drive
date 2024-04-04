@@ -82,4 +82,15 @@ object PhotosEvent {
             )
         )
 
+    fun UpsellPhotosAccepted() = UpsellPhotos("accepted")
+
+    fun UpsellPhotosDeclined() = UpsellPhotos("declined")
+
+    internal fun UpsellPhotos(answer: String) = DriveTelemetryEvent(
+        group = group,
+        name = "upsell_photos",
+        dimensions = mapOf(
+            "answer" to answer
+        )
+    )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -18,10 +18,13 @@
 
 package me.proton.android.drive.ui.robot
 
+import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.semantics.SemanticsActions.PageDown
 import androidx.compose.ui.semantics.SemanticsActions.PageLeft
 import androidx.compose.ui.semantics.SemanticsActions.PageRight
 import androidx.compose.ui.semantics.SemanticsActions.PageUp
+import androidx.compose.ui.semantics.SemanticsActions.ScrollBy
+import androidx.compose.ui.semantics.SemanticsActions.ScrollToIndex
 import androidx.compose.ui.test.performSemanticsAction
 import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag
 import me.proton.core.drive.files.preview.presentation.component.ImagePreviewComponentTestTag
@@ -65,19 +68,54 @@ object PreviewRobot : NavigationBarRobot {
         pager.swipePage(direction)
     }
 
+    fun scrollTo(index: Int) = apply {
+        pager.scrollTo(index)
+    }
+
     override fun robotDisplayed() {
         previewScreen.assertIsDisplayed()
     }
 }
 
 fun NodeActions.swipePage(direction: SwipeDirection) = apply {
-    val action = when(direction) {
+    val action = when (direction) {
         SwipeDirection.Left -> PageRight
         SwipeDirection.Right -> PageLeft
         SwipeDirection.Up -> PageDown
         SwipeDirection.Down -> PageUp
     }
+    val semanticsNode = interaction.fetchSemanticsNode()
+    if (semanticsNode.config.contains(action)) {
+        waitFor {
+            interaction.performSemanticsAction(action)
+        }
+    } else {
+        val viewport = semanticsNode.layoutInfo.coordinates.boundsInParent().size
+        val (x, y) = when (direction) {
+            SwipeDirection.Left -> viewport.width to 0F
+            SwipeDirection.Right -> -viewport.width to 0F
+            SwipeDirection.Up -> 0F to viewport.height
+            SwipeDirection.Down -> 0F to -viewport.height
+        }
+        waitFor {
+            scrollBy(x, y)
+        }
+    }
+}
+
+fun NodeActions.scrollTo(index: Int) = apply {
     waitFor {
-        interaction.performSemanticsAction(action)
+        interaction.performSemanticsAction(ScrollToIndex) {action ->
+            action(index)
+        }
+    }
+}
+
+
+fun NodeActions.scrollBy(x: Float, y: Float) = apply {
+    waitFor {
+        interaction.performSemanticsAction(ScrollBy) {action ->
+            action(x, y)
+        }
     }
 }

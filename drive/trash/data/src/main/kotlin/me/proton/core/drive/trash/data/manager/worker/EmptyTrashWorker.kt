@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -84,10 +84,7 @@ class EmptyTrashWorker @AssistedInject constructor(
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest = OneTimeWorkRequest.Builder(EmptyTrashWorker::class.java)
             .setInputData(
-                Data.Builder()
-                    .putString(KEY_USER_ID, userId.id)
-                    .putString(KEY_SHARE_ID, shareId.id)
-                    .build()
+                workDataOf(userId, shareId)
             )
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
@@ -95,6 +92,14 @@ class EmptyTrashWorker @AssistedInject constructor(
                 TimeUnit.MILLISECONDS
             )
             .addTags(listOf(userId.id) + tags)
+            .build()
+
+        fun workDataOf(
+            userId: UserId,
+            shareId: ShareId,
+        ) = Data.Builder()
+            .putString(KEY_USER_ID, userId.id)
+            .putString(KEY_SHARE_ID, shareId.id)
             .build()
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -20,12 +20,15 @@ package me.proton.android.drive.ui.test.flow.offline
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.data.ImageName
+import me.proton.android.drive.ui.robot.FileFolderOptionsRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
+import me.proton.android.drive.ui.rules.NetworkSimulator
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
 import org.junit.Test
+import kotlin.time.Duration.Companion.seconds
 
 @HiltAndroidTest
 class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
@@ -34,7 +37,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     fun makeFileAvailableOffline() {
         val folder = "folder1"
         val file = "presentation.pdf"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickOnFolder(folder)
             .scrollToItemWithName(file)
             .clickMoreOnItem(file)
@@ -54,7 +58,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     fun makeFolderWithChildFolderAvailableOffline() {
         val folder = "folder2"
         val subfolder = "folder5"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickMakeAvailableOffline()
             .verify {
@@ -76,7 +81,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     @Scenario(4)
     fun makeEmptyFolderAvailableOffline() {
         val folder = "folder1"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickMakeAvailableOffline()
             .verify {
@@ -95,8 +101,7 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
         val firstImage = ImageName.Yesterday
         val secondImage = ImageName.Now
 
-        FilesTabRobot
-            .clickPhotosTab()
+        PhotosTabRobot
             .verify {
                 assertPhotoDisplayed(firstImage)
                 assertPhotoDisplayed(secondImage)
@@ -124,7 +129,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     fun makeFolderWithFileInsideAvailableOffline() {
         val folder = "sharedFolder"
         val file = "sharedChild.html"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickMakeAvailableOffline()
             .verify {
@@ -151,7 +157,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     fun makeFolderAndChildFileAvailableOfflineSeparately() {
         val folder = "sharedFolder"
         val file = "sharedChild.html"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickMakeAvailableOffline()
             .clickOnFolder(folder)
@@ -164,5 +171,25 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
                 itemIsDisplayed(folder, downloadState = SemanticsDownloadState.Downloaded)
                 itemIsDisplayed(file, downloadState = SemanticsDownloadState.Downloaded)
             }
+    }
+
+    @Test
+    @Scenario(2)
+    fun loseConnectionWhenDownloadingIsStarted() {
+
+        val file = "image.jpg"
+
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickMoreOnItem(file)
+
+        NetworkSimulator.disableNetworkFor(5.seconds) {
+            FileFolderOptionsRobot
+                .clickMakeAvailableOffline()
+        }
+
+        FilesTabRobot.verify {
+            itemIsDisplayed(file, downloadState = SemanticsDownloadState.Downloaded)
+        }
     }
 }

@@ -43,6 +43,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.transformLatest
@@ -50,6 +51,7 @@ import kotlinx.coroutines.launch
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
 import me.proton.android.drive.photos.domain.usecase.EnablePhotosBackup
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
+import me.proton.android.drive.photos.domain.usecase.ShowUpsell
 import me.proton.android.drive.photos.presentation.R
 import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.PhotosViewEvent
@@ -60,12 +62,14 @@ import me.proton.android.drive.photos.presentation.viewstate.PhotosViewState
 import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
+import me.proton.android.drive.ui.effect.PhotosEffect
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.usecase.GetBackupState
+import me.proton.core.drive.backup.domain.usecase.GetDisabledBackupState
 import me.proton.core.drive.backup.domain.usecase.RetryBackup
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.getDefaultMessage
@@ -75,6 +79,7 @@ import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
+import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -102,6 +107,9 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink.Companion.RE
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.photo.domain.usecase.GetPhotoCount
 import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.user.domain.entity.UserMessage
+import me.proton.core.drive.user.domain.usecase.CancelUserMessage
+import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
 import me.proton.core.util.kotlin.CoreLogger
 import java.util.Calendar
 import javax.inject.Inject
@@ -125,7 +133,9 @@ class PhotosViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
     getBackupState: GetBackupState,
+    getDisabledBackupState: GetDisabledBackupState,
     getPhotoCount: GetPhotoCount,
+    showUpsell: ShowUpsell,
     getSelectedDriveLinks: GetSelectedDriveLinks,
     selectAll: SelectAll,
     selectLinks: SelectLinks,
@@ -134,9 +144,11 @@ class PhotosViewModel @Inject constructor(
     private val photoDriveLinks: PhotoDriveLinks,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
     private val syncFolders: SyncFolders,
-) : SelectionViewModel(
-    savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks
-), HomeTabViewModel {
+    private val cancelUserMessage: CancelUserMessage,
+    shouldUpgradeStorage: ShouldUpgradeStorage,
+) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
+    HomeTabViewModel,
+    NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
 
     private var viewEvent: PhotosViewEvent? = null
     private var fetchingJob: Job? = null
@@ -149,6 +161,18 @@ class PhotosViewModel @Inject constructor(
     private val listContentState = MutableStateFlow<ListContentState>(ListContentState.Loading)
     private val firstVisibleItemIndex = MutableStateFlow<Int?>(null)
     private val forceStatusExpand = MutableStateFlow(false)
+
+    private val _photosEffect = MutableSharedFlow<PhotosEffect>()
+    private val photosEffectShowUpsell = showUpsell(userId).transformLatest { show ->
+        if (show) {
+            CoreLogger.d(PHOTO, "photosEffectShowUpsell")
+            emit(PhotosEffect.ShowUpsell)
+        }
+    }
+    val photosEffect: Flow<PhotosEffect> = merge(
+        _photosEffect.asSharedFlow(),
+        photosEffectShowUpsell,
+    )
 
     val initialViewState = PhotosViewState(
         title = appContext.getString(I18N.string.photos_title),
@@ -263,8 +287,12 @@ class PhotosViewModel @Inject constructor(
         dayNight = R.drawable.empty_photos_daynight,
     )
 
-    private val backupState = parentFolderId.filterNotNull().flatMapLatest { folderId ->
-        getBackupState(folderId = folderId)
+    private val backupState = parentFolderId.flatMapLatest { folderId ->
+        if (folderId == null) {
+            getDisabledBackupState()
+        } else {
+            getBackupState(folderId = folderId)
+        }
     }
 
     val viewState: Flow<PhotosViewState> = combine(
@@ -274,7 +302,8 @@ class PhotosViewModel @Inject constructor(
         getPhotoCount(userId = userId),
         firstVisibleItemIndex,
         forceStatusExpand,
-    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand ->
+        notificationDotRequested
+    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -292,6 +321,7 @@ class PhotosViewModel @Inject constructor(
         val showPhotosStateIndicator = selected.isEmpty() &&
                 ((firstVisibleItemIndex?.let { index -> index > 0 } ?: false)
                         || !isDisableOrRunning)
+        val showHamburgerMenuIcon = selected.isEmpty()
         initialViewState.copy(
             title = if (selected.isNotEmpty()) {
                 appContext.quantityString(
@@ -301,11 +331,12 @@ class PhotosViewModel @Inject constructor(
             } else {
                 appContext.getString(I18N.string.photos_title)
             },
-            navigationIconResId = if (selected.isNotEmpty()) {
-                CorePresentation.drawable.ic_proton_cross
-            } else {
+            navigationIconResId = if (showHamburgerMenuIcon) {
                 CorePresentation.drawable.ic_proton_hamburger
+            } else {
+                CorePresentation.drawable.ic_proton_cross
             },
+            notificationDotVisible = showHamburgerMenuIcon && notificationDotRequested,
             listContentState = listContentState,
             showEmptyList = backupState.isBackupEnabled || backupState.hasDefaultFolder == false ,
             showPhotosStateIndicator = showPhotosStateIndicator,
@@ -324,6 +355,7 @@ class PhotosViewModel @Inject constructor(
         navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
         navigateToSubscription: () -> Unit,
         navigateToPhotosIssues: (FolderId) -> Unit,
+        navigateToPhotosUpsell: () -> Unit,
         navigateToBackupSettings: () -> Unit,
     ): PhotosViewEvent = object : PhotosViewEvent {
 
@@ -378,11 +410,15 @@ class PhotosViewModel @Inject constructor(
         override val onIgnoreBackgroundRestrictions: (Context) -> Unit = {context ->
             context.launchIgnoreBatteryOptimizations()
         }
+        override val onDismissBackgroundRestrictions: () -> Unit = {
+            dismissBackgroundRestrictions()
+        }
         override val onResolve: () -> Unit = {
             parentFolderId.value?.let { folderId ->
                 navigateToPhotosIssues(folderId)
             }
         }
+        override val onShowUpsell = navigateToPhotosUpsell
     }.also { viewEvent ->
         this.viewEvent = viewEvent
     }
@@ -484,6 +520,14 @@ class PhotosViewModel @Inject constructor(
                         type = BroadcastMessage.Type.ERROR,
                     )
                 }
+            }
+        }
+    }
+
+    private fun dismissBackgroundRestrictions() {
+        viewModelScope.launch {
+            cancelUserMessage(userId, UserMessage.BACKUP_BATTERY_SETTINGS).onFailure { error ->
+                error.log(BACKUP, "Cannot dismiss battery settings warning")
             }
         }
     }

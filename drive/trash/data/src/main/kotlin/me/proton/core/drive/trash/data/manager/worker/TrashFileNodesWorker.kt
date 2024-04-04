@@ -118,7 +118,10 @@ class TrashFileNodesWorker @AssistedInject constructor(
                 error.log(TRASH, "Cannot get link ${linkId.id.logId()}")
                 error.onProtonHttpException { protonCode ->
                     if (protonCode == NOT_EXISTS) {
-                        handleOnDeleteEvent(linkIds)
+                        handleOnDeleteEvent(listOf(linkId), stopOnFailure = true)
+                            .onFailure { error ->
+                                error.log(TRASH)
+                            }
                     }
                 }
             }
@@ -134,12 +137,7 @@ class TrashFileNodesWorker @AssistedInject constructor(
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest = OneTimeWorkRequest.Builder(TrashFileNodesWorker::class.java)
             .setInputData(
-                Data.Builder()
-                    .putString(KEY_USER_ID, userId.id)
-                    .putString(KEY_SHARE_ID, folderId.shareId.id)
-                    .putString(KEY_FOLDER_ID, folderId.id)
-                    .putString(KEY_WORK_ID, workId)
-                    .build()
+                workDataOf(userId, folderId, workId)
             )
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
@@ -147,6 +145,17 @@ class TrashFileNodesWorker @AssistedInject constructor(
                 TimeUnit.MILLISECONDS
             )
             .addTags(listOf(userId.id) + tags)
+            .build()
+
+        fun workDataOf(
+            userId: UserId,
+            folderId: FolderId,
+            workId: String,
+        ) = Data.Builder()
+            .putString(KEY_USER_ID, userId.id)
+            .putString(KEY_SHARE_ID, folderId.shareId.id)
+            .putString(KEY_FOLDER_ID, folderId.id)
+            .putString(KEY_WORK_ID, workId)
             .build()
     }
 }

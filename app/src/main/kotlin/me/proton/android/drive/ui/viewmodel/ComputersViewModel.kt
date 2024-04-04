@@ -45,12 +45,15 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.device.domain.entity.Device
+import me.proton.core.drive.device.domain.entity.DeviceId
+import me.proton.core.drive.device.domain.extension.name
 import me.proton.core.drive.device.domain.usecase.RefreshDevices
 import me.proton.core.drive.drivelink.device.domain.usecase.GetDecryptedDevicesSortedByName
 import me.proton.core.drive.files.presentation.state.ListContentState
 import me.proton.core.drive.i18n.R
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
 import javax.inject.Inject
 import me.proton.core.drive.drivelink.device.presentation.R as DriveLinkDevicePresentation
 import me.proton.core.drive.i18n.R as I18N
@@ -63,7 +66,11 @@ class ComputersViewModel @Inject constructor(
     private val refreshDevices: RefreshDevices,
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
-) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle), HomeTabViewModel {
+    shouldUpgradeStorage: ShouldUpgradeStorage,
+) : ViewModel(),
+    UserViewModel by UserViewModel(savedStateHandle),
+    HomeTabViewModel,
+    NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
 
     private val _homeEffect = MutableSharedFlow<HomeEffect>()
     override val homeEffect: Flow<HomeEffect>
@@ -85,6 +92,7 @@ class ComputersViewModel @Inject constructor(
     val initialViewState = ComputersViewState(
         title = appContext.getString(R.string.computers_title),
         navigationIconResId = me.proton.core.presentation.R.drawable.ic_proton_hamburger,
+        notificationDotVisible = false,
         listContentState = listContentState.value,
         isRefreshEnabled = listContentState.value != ListContentState.Loading
     )
@@ -92,8 +100,10 @@ class ComputersViewModel @Inject constructor(
     val viewState: Flow<ComputersViewState> = combine(
         listContentState,
         isRefreshing,
-    ) { state, refreshing ->
+        notificationDotRequested
+    ) { state, refreshing, notificationDotRequested ->
         initialViewState.copy(
+            notificationDotVisible = notificationDotRequested,
             listContentState = when (state) {
                 is ListContentState.Content -> state.copy(isRefreshing = refreshing)
                 is ListContentState.Empty -> state.copy(isRefreshing = refreshing)
@@ -134,6 +144,7 @@ class ComputersViewModel @Inject constructor(
 
     fun viewEvent(
         navigateToSyncedFolders: (FolderId, String?) -> Unit,
+        navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     ): ComputersViewEvent = object : ComputersViewEvent {
 
         override val onTopAppBarNavigation = {
@@ -144,6 +155,10 @@ class ComputersViewModel @Inject constructor(
         override val onDevice = { device: Device ->
             val name = takeIf { device.cryptoName is CryptoProperty.Decrypted }?.let { device.name }
             navigateToSyncedFolders(device.rootLinkId, name)
+        }
+
+        override val onMoreOptions = { device: Device ->
+            navigateToComputerOptions(device.id)
         }
 
         override val onRefresh = {

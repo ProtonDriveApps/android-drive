@@ -49,6 +49,7 @@ import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 fun StorageIndicator(
+    label: String,
     usedBytes: Bytes,
     availableBytes: Bytes,
     modifier: Modifier = Modifier,
@@ -65,7 +66,7 @@ fun StorageIndicator(
                 contentDescription = null,
             )
             Text(
-                text = stringResource(I18N.string.storage_total_usage),
+                text = label,
                 style = ProtonTheme.typography.defaultSmallStrong,
                 modifier = Modifier
                     .padding(start = SmallSpacing)
@@ -103,6 +104,7 @@ fun StorageIndicator(
 fun PreviewStorage() {
     ProtonTheme {
         StorageIndicator(
+            label = stringResource(I18N.string.storage_total_usage),
             usedBytes = Bytes(242_221_056L), // 231MiB
             availableBytes = Bytes(2_147_483_648L) // 2GiB
         )

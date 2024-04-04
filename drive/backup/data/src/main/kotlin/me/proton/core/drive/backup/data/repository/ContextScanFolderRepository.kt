@@ -89,15 +89,15 @@ private fun Cursor.createMedia(backupFolder: BackupFolder, uri: Uri): List<Backu
                     BackupFile(
                         bucketId = backupFolder.bucketId,
                         folderId = backupFolder.folderId,
-                        uriString = Uri.withAppendedPath(uri, getString(id))?.let { uriMedia ->
+                        uriString = Uri.withAppendedPath(uri, getInt(id).toString())?.let { uriMedia ->
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                                 MediaStore.setRequireOriginal(uriMedia)
                             } else {
                                 uriMedia
                             }
                         }.toString(),
-                        mimeType = getString(mimeType),
-                        name = getString(displayName),
+                        mimeType = getStringOrThrow(mimeType),
+                        name = getStringOrThrow(displayName),
                         hash = null,
                         size = getInt(size).bytes,
                         state = BackupFileState.IDLE,
@@ -111,6 +111,12 @@ private fun Cursor.createMedia(backupFolder: BackupFolder, uri: Uri): List<Backu
         }
     }
     return listOfAllImages
+}
+
+private fun Cursor.getStringOrThrow(columnIndex: Int): String = when(val type = getType(columnIndex)){
+    Cursor.FIELD_TYPE_NULL -> error("Column $columnIndex is null")
+    Cursor.FIELD_TYPE_STRING -> getString(columnIndex)
+    else -> error("Column $columnIndex is not a string but $type")
 }
 
 private val imageCollection: Uri by lazy {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -64,6 +64,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.BottomNavigation
 import me.proton.core.drive.base.presentation.component.ModalBottomSheet
+import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -93,8 +94,11 @@ fun HomeScreen(
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToPhotosPermissionRationale: () -> Unit,
+    navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
+    navigateToGetMoreFreeStorage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     setLocalSnackbarPadding(BottomNavigationHeight)
@@ -125,7 +129,9 @@ fun HomeScreen(
             navigateToPhotosPermissionRationale = navigateToPhotosPermissionRationale,
             navigateToSubscription = navigateToSubscription,
             navigateToPhotosIssues = navigateToPhotosIssues,
+            navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
+            navigateToComputerOptions = navigateToComputerOptions,
             arguments = arguments,
             viewState = currentViewState,
             viewEvent = homeViewModel.viewEvent(
@@ -133,7 +139,7 @@ fun HomeScreen(
                 navigateToTrash = navigateToTrash,
                 navigateToTab = { route ->
                     homeNavController.navigate(route) {
-                        popUpTo(Screen.Files.route) { inclusive = route == Screen.Files(userId) }
+                        popUpTo(Screen.Photos.route) { inclusive = route == Screen.Photos(userId) }
                         launchSingleTop = true
                     }
                 },
@@ -141,6 +147,7 @@ fun HomeScreen(
                 navigateToSettings = navigateToSettings,
                 navigateToBugReport = navigateToBugReport,
                 navigateToSubscription = navigateToSubscription,
+                navigateToGetMoreFreeStorage = navigateToGetMoreFreeStorage,
             ),
             modifier = modifier
                 .navigationBarsPadding()
@@ -170,7 +177,9 @@ internal fun Home(
     navigateToPhotosPermissionRationale: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
+    navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
     val isDrawerOpen = with(homeScaffoldState.scaffoldState.drawerState) {
@@ -262,7 +271,9 @@ internal fun Home(
                     navigateToPhotosPermissionRationale,
                     navigateToSubscription,
                     navigateToPhotosIssues,
+                    navigateToPhotosUpsell,
                     navigateToBackupSettings,
+                    navigateToComputerOptions,
                 )
             }
         }

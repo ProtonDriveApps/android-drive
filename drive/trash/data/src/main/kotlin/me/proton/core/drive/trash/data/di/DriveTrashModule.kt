@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -25,9 +25,7 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoSet
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.drive.messagequeue.domain.ActionProvider
-import me.proton.core.drive.trash.data.manager.TrashManagerImpl
 import me.proton.core.drive.trash.data.repository.DriveTrashRepositoryImpl
-import me.proton.core.drive.trash.domain.TrashManager
 import me.proton.core.drive.trash.domain.notification.TrashExtraActionProvider
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
 
@@ -35,9 +33,6 @@ import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
 @Module
 @InstallIn(SingletonComponent::class)
 interface DriveTrashModule {
-
-    @Binds
-    fun bindTrashManager(manager: TrashManagerImpl): TrashManager
 
     @Binds
     fun bindDriveTrashRepository(repository: DriveTrashRepositoryImpl): DriveTrashRepository

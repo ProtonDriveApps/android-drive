@@ -84,6 +84,7 @@ import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.core.drive.upload.domain.usecase.CancelUploadFile
 import me.proton.core.drive.upload.domain.usecase.GetUploadProgress
+import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.usecase.GetLayoutType
@@ -115,7 +116,10 @@ class FilesViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getSorting: GetSorting,
     private val configurationProvider: ConfigurationProvider,
-) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks), HomeTabViewModel {
+    shouldUpgradeStorage: ShouldUpgradeStorage,
+) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
+    HomeTabViewModel,
+    NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
 
     private val shareId = savedStateHandle.get<String>(Screen.Files.SHARE_ID)
     private val folderId = savedStateHandle.get<String>(Screen.Files.FOLDER_ID)?.let { folderId ->
@@ -196,7 +200,8 @@ class FilesViewModel @Inject constructor(
         listContentAppendingState,
         layoutType,
         selected,
-    ) { driveLink, sorting, contentState, appendingState, layoutType, selected ->
+        notificationDotRequested
+    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -208,6 +213,7 @@ class FilesViewModel @Inject constructor(
         } else {
             topBarActions.value = setOf(selectAllAction, selectedOptionsAction)
         }
+        val showHamburgerMenuIcon = isRootFolder && selected.isEmpty()
         initialViewState.copy(
             title = if (selected.isNotEmpty()) {
                 appContext.quantityString(
@@ -220,7 +226,7 @@ class FilesViewModel @Inject constructor(
                 }
             },
             isTitleEncrypted = selected.isEmpty() && isRootFolder.not() && driveLink.isNameEncrypted,
-            navigationIconResId = if (isRootFolder && selected.isEmpty()) {
+            navigationIconResId = if (showHamburgerMenuIcon) {
                 CorePresentation.drawable.ic_proton_hamburger
             } else if (selected.isNotEmpty()) {
                 CorePresentation.drawable.ic_proton_cross
@@ -233,6 +239,7 @@ class FilesViewModel @Inject constructor(
             isGrid = layoutType == LayoutType.GRID,
             isRefreshEnabled = selected.isEmpty(),
             drawerGesturesEnabled = isRootFolder && selected.isEmpty(),
+            notificationDotVisible = showHamburgerMenuIcon && notificationDotRequested
         )
     }
     val listEffect: Flow<ListEffect>

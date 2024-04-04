@@ -179,7 +179,7 @@ fun PdfPreview(
                             )
                             .transformable(
                                 state = transformableState,
-                                canPan = transformationState::hasScale
+                                canPan = { transformationState.hasScale() }
                             ),
                         )
                 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -27,6 +27,7 @@ class PhotosEventTest {
         PhotosEvent.SettingEnabled(),
         PhotosEvent.UploadDone(0, 0, PhotosEvent.Reason.COMPLETED),
         PhotosEvent.BackupStopped(0, 0, 0, PhotosEvent.Reason.COMPLETED, true),
+        PhotosEvent.UpsellPhotos(""),
     )
 
     @Test

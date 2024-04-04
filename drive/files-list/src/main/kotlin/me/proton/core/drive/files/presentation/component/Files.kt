@@ -62,9 +62,9 @@ import me.proton.core.drive.files.presentation.component.files.FilesListHeader
 import me.proton.core.drive.files.presentation.component.files.FilesListItem
 import me.proton.core.drive.files.presentation.component.files.FilesListLoading
 import me.proton.core.drive.files.presentation.component.files.FilesSectionHeader
+import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
-import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
 import me.proton.core.drive.files.presentation.state.ListContentState
 import me.proton.core.drive.files.presentation.state.ListEffect
@@ -115,6 +115,7 @@ fun TopAppBar(
         navigationIcon = if (viewState.navigationIconResId != 0) {
             painterResource(id = viewState.navigationIconResId)
         } else null,
+        notificationDotVisible = viewState.notificationDotVisible,
         onNavigationIcon = viewEvent.onTopAppBarNavigation,
         title = viewState.title ?: stringResource(id = viewState.titleResId),
         isTitleEncrypted = viewState.isTitleEncrypted,

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -31,10 +31,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.PagingData
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.proton.android.drive.photos.presentation.component.BackupPermissions
 import me.proton.android.drive.photos.presentation.component.Photos
 import me.proton.android.drive.photos.presentation.component.PhotosStatesIndicator
@@ -42,6 +47,7 @@ import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.PhotosViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.PhotosViewState
 import me.proton.android.drive.ui.effect.HandleHomeEffect
+import me.proton.android.drive.ui.effect.PhotosEffect
 import me.proton.android.drive.ui.viewmodel.PhotosViewModel
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
@@ -64,6 +70,7 @@ fun PhotosScreen(
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
@@ -76,11 +83,22 @@ fun PhotosScreen(
             navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
             navigateToSubscription = navigateToSubscription,
             navigateToPhotosIssues = navigateToPhotosIssues,
+            navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
         )
     }
     val photos = rememberFlowWithLifecycle(flow = viewModel.driveLinks)
     val listEffect = rememberFlowWithLifecycle(flow = viewModel.listEffect)
+
+    LaunchedEffect(viewModel, LocalContext.current) {
+        viewModel.photosEffect.onEach { effect ->
+            when (effect) {
+                PhotosEffect.ShowUpsell -> launch(Dispatchers.Main) {
+                    viewEvent.onShowUpsell()
+                }
+            }
+        }.launchIn(this)
+    }
 
     viewModel.HandleHomeEffect(homeScaffoldState)
 
@@ -161,6 +179,7 @@ fun TopAppBar(
         navigationIcon = if (viewState.navigationIconResId != 0) {
             painterResource(id = viewState.navigationIconResId)
         } else null,
+        notificationDotVisible = viewState.notificationDotVisible,
         onNavigationIcon = viewEvent.onTopAppBarNavigation,
         title = viewState.title,
         actions = actions

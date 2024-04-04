@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright (c) 2022 Proton AG
-  ~ This file is part of Proton AG and ProtonCore.
+  ~ Copyright (c) 2022-2024 Proton AG.
+  ~ This file is part of Proton Core.
   ~
-  ~ ProtonCore is free software: you can redistribute it and/or modify
+  ~ Proton Core is free software: you can redistribute it and/or modify
   ~ it under the terms of the GNU General Public License as published by
   ~ the Free Software Foundation, either version 3 of the License, or
   ~ (at your option) any later version.
   ~
-  ~ ProtonCore is distributed in the hope that it will be useful,
+  ~ Proton Core is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
   ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   ~ GNU General Public License for more details.
   ~
   ~ You should have received a copy of the GNU General Public License
-  ~ along with ProtonCore.  If not, see <https://www.gnu.org/licenses/>.
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
 <resources>
@@ -22,5 +22,6 @@
     <item name="empty_shared_by_me_daynight" type="drawable" format="reference">@drawable/empty_shared_by_me_dark</item>
     <item name="empty_trash_daynight" type="drawable" format="reference">@drawable/empty_trash_dark</item>
     <item name="empty_offline_daynight" type="drawable" format="reference">@drawable/empty_offline_dark</item>
+    <item name="img_upsell_drive_daynight" type="drawable" format="reference">@drawable/img_upsell_drive_dark</item>
 </resources>
 

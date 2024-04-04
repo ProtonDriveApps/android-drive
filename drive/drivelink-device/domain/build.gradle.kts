@@ -24,7 +24,8 @@ android {
 }
 
 driveModule(hilt = true) {
+    api(project(":drive:device:domain"))
     api(project(":drive:drivelink:domain"))
     api(project(":drive:drivelink-crypto:domain"))
-    api(project(":drive:device:domain"))
+    api(project(":drive:drivelink-rename:domain"))
 }

@@ -22,6 +22,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.CreateFolderRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.MoveToFolderRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.android.drive.ui.test.SmokeTest
@@ -40,7 +41,8 @@ class CreatingFolderFlowSuccessTest : AuthenticatedBaseTest() {
         val subFolderName = "folder1"
         val newFolderName = getRandomString()
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .scrollToItemWithName(subFolderName)
             .clickMoreOnItem(subFolderName)
             .clickMove()
@@ -57,7 +59,8 @@ class CreatingFolderFlowSuccessTest : AuthenticatedBaseTest() {
     @Test
     @Scenario(2)
     fun createFolderInGridLayout() {
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickLayoutSwitcher()
             .clickPlusButton()
             .clickCreateFolder()
@@ -70,7 +73,8 @@ class CreatingFolderFlowSuccessTest : AuthenticatedBaseTest() {
     fun createAFolderViaSubFolderPlusButton() {
         val subFolderName = "folder1"
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickOnFolder(subFolderName)
             .clickPlusButton()
             .clickCreateFolder()

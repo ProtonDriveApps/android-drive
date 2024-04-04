@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -61,7 +61,12 @@ class ProcessIntent @Inject constructor(
     private val validateUploadLimit: ValidateUploadLimit,
     private val validateExternalUri: ValidateExternalUri,
 ) {
-    operator fun invoke(intent: Intent, deepLinkIntent: MutableSharedFlow<Intent>, accountViewModel: AccountViewModel) =
+    operator fun invoke(
+        intent: Intent,
+        deepLinkIntent: MutableSharedFlow<Intent>,
+        accountViewModel: AccountViewModel,
+        isNewIntent: Boolean = false,
+    ) =
         CoroutineScope(Job() + Dispatchers.IO).launch {
             with (intent) {
                 getStringExtra(EXTRA_NOTIFICATION_ID)?.let { extraNotificationId ->
@@ -69,6 +74,9 @@ class ProcessIntent @Inject constructor(
                 }
                 onActionSend { processActionSend(intent, deepLinkIntent, accountViewModel) }
                 onActionSendMultiple { processActionSendMultiple(intent, deepLinkIntent, accountViewModel) }
+                onActionViewWithData(isNewIntent) {
+                    processActionViewWithData(intent, deepLinkIntent)
+                }
             }
         }
 
@@ -118,6 +126,13 @@ class ProcessIntent @Inject constructor(
                     }
             }
         }
+    }
+
+    private suspend fun processActionViewWithData(
+        intent: Intent,
+        deepLinkIntent: MutableSharedFlow<Intent>,
+    ) {
+        deepLinkIntent.emit(intent)
     }
 
     private suspend fun actionSend(
@@ -172,6 +187,12 @@ inline fun <T> Intent.onActionSend(block: (intent: Intent) -> T): T? = takeIf {
 
 inline fun <T> Intent.onActionSendMultiple(block: (intent: Intent) -> T): T? = takeIf {
     action == Intent.ACTION_SEND_MULTIPLE
+}?.let {
+    block(this)
+}
+
+inline fun <T> Intent.onActionViewWithData(accept: Boolean, block: (intent: Intent) -> T): T? = takeIf {
+    accept && action == Intent.ACTION_VIEW && data != null
 }?.let {
     block(this)
 }

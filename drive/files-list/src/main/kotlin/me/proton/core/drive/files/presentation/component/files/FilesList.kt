@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@ package me.proton.core.drive.files.presentation.component.files
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,9 +39,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.itemKey
@@ -57,9 +54,7 @@ import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.compose.theme.defaultWeak
-import me.proton.core.compose.theme.headline
-import me.proton.core.drive.base.presentation.component.ListEmpty
+import me.proton.core.drive.base.presentation.component.IllustratedMessage
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.base.presentation.extension.isLandscape
 import me.proton.core.drive.base.presentation.extension.isPortrait
@@ -93,7 +88,7 @@ fun FilesListEmpty(
     Column(
         modifier = modifier.fillMaxSize(),
     ) {
-        ListEmpty(
+        IllustratedMessage(
             imageResId = imageResId,
             titleResId = titleResId,
             descriptionResId = descriptionResId,

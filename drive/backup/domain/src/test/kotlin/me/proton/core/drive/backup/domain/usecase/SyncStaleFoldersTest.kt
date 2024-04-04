@@ -25,7 +25,7 @@ import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import org.junit.Assert.assertEquals
@@ -52,7 +52,7 @@ class SyncStaleFoldersTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
 
         repository = BackupFolderRepositoryImpl(database.db)
         backupManager = StubbedBackupManager(repository)

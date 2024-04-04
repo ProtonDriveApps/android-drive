@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.test.flow.move
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
@@ -34,7 +35,8 @@ class MoveFileDeepFlowSuccessTest : AuthenticatedBaseTest() {
         val file = "file4"
         val folder2 = "folder2"
         val folder5 = "folder5"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickOnFolder(folder2)
             .clickOnFolder(folder5)
             .clickMoreOnItem(file)
@@ -57,7 +59,8 @@ class MoveFileDeepFlowSuccessTest : AuthenticatedBaseTest() {
         val folder1 = "folder1"
         val folder2 = "folder2"
         val folder5 = "folder5"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickOnFolder(folder2)
             .clickOnFolder(folder5)
             .clickMoreOnItem(file)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 package me.proton.android.drive.ui.test.flow.move
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import org.junit.Test
@@ -33,7 +33,8 @@ class MoveFileFlowErrorTest: AuthenticatedBaseTest() {
         val file = "sharedChild.html"
         val folderSource = "expiredSharedFolder"
         val folderDestination = "sharedFolder"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .scrollToItemWithName(folderSource)
             .clickOnFolder(folderSource)
             .verify {

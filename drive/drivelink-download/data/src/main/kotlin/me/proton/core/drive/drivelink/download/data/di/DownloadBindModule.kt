@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -21,19 +21,13 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.proton.core.drive.drivelink.download.data.manager.DownloadWorkManagerImpl
 import me.proton.core.drive.drivelink.download.data.repository.DriveLinkDownloadRepositoryImpl
-import me.proton.core.drive.drivelink.download.domain.manager.DownloadWorkManager
 import me.proton.core.drive.drivelink.download.domain.repository.DriveLinkDownloadRepository
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
 interface DownloadBindModule {
-
-    @Binds
-    @Singleton
-    fun bindsDownloadWorkManagerImpl(impl: DownloadWorkManagerImpl): DownloadWorkManager
 
     @Binds
     @Singleton

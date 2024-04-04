@@ -21,6 +21,7 @@ package me.proton.core.drive.device.domain.repository
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.device.domain.entity.Device
+import me.proton.core.drive.device.domain.entity.DeviceId
 
 interface DeviceRepository {
 
@@ -31,4 +32,8 @@ interface DeviceRepository {
     ): Flow<List<Device>>
 
     suspend fun fetchAndStoreDevices(userId: UserId): List<Device>
+
+    fun getDeviceFlow(userId: UserId, deviceId: DeviceId): Flow<Device?>
+
+    suspend fun renameDevice(userId: UserId, deviceId: DeviceId, name: String)
 }

@@ -166,7 +166,7 @@ fun ImagePreview(
                 )
                 .transformable(
                     state = state,
-                    canPan = transformationState::hasScale,
+                    canPan = { transformationState.hasScale() },
                 )
                 .testTag(ImagePreviewComponentTestTag.image)
         )

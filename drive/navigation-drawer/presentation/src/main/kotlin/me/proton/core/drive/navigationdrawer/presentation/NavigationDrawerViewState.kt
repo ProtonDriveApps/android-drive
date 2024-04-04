@@ -28,4 +28,5 @@ data class NavigationDrawerViewState(
     val closeOnBackEnabled: Boolean = true,
     val closeOnActionEnabled: Boolean = true,
     val currentUser: User? = null,
+    val showGetFreeStorage: Boolean = false,
 )

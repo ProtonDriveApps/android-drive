@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ package me.proton.android.drive.ui.test.flow.share
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FileFolderOptionsRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.ShareRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
@@ -118,7 +119,8 @@ class SetCustomPasswordFlowTest : AuthenticatedBaseTest() {
     }
 
     private fun showShareViaLinkScreen(file: String, clickToShareRobot: FileFolderOptionsRobot.() -> ShareRobot) {
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .verify { robotDisplayed() }
             .scrollToItemWithName(file)
             .clickMoreOnItem(file)

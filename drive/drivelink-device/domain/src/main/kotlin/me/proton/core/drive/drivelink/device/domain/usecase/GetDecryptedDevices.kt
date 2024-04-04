@@ -24,18 +24,13 @@ import me.proton.core.domain.arch.mapSuccess
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.extension.asSuccess
-import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.crypto.domain.usecase.DecryptLinkName
 import me.proton.core.drive.device.domain.entity.Device
 import me.proton.core.drive.device.domain.usecase.GetDevices
-import me.proton.core.drive.link.domain.usecase.GetLink
 import javax.inject.Inject
 
 class GetDecryptedDevices @Inject constructor(
     private val getDevices: GetDevices,
-    private val decryptLinkName: DecryptLinkName,
-    private val getLink: GetLink,
+    private val decryptNameOrKeepEncrypted: DecryptNameOrKeepEncrypted,
 ) {
 
     operator fun invoke(userId: UserId): Flow<DataResult<List<Device>>> =
@@ -45,31 +40,8 @@ class GetDecryptedDevices @Inject constructor(
                     if (device.cryptoName is CryptoProperty.Decrypted) {
                         device
                     } else {
-                        device.decryptNameOrKeepEncrypted()
+                        decryptNameOrKeepEncrypted(device)
                     }
                 }.asSuccess
             }
-
-    private suspend fun Device.decryptNameOrKeepEncrypted(): Device =
-        decryptName()
-            .fold(
-                onSuccess = { cryptoName ->
-                    copy(cryptoName = cryptoName)
-                },
-                onFailure = {
-                    this
-                }
-            )
-    private suspend fun Device.decryptName(): Result<CryptoProperty<String>> = coRunCatching {
-        with (
-            decryptLinkName(
-                getLink(rootLinkId).toResult().getOrThrow()
-            ).getOrThrow()
-        ) {
-            CryptoProperty.Decrypted(
-                value = text,
-                status = status,
-            )
-        }
-    }
 }

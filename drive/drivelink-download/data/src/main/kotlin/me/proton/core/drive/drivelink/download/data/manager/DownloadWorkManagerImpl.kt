@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ import me.proton.core.drive.base.data.workmanager.getLong
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.data.extension.isNotDownloading
+import me.proton.core.drive.drivelink.download.data.extension.logTag
 import me.proton.core.drive.drivelink.download.data.extension.uniqueWorkName
 import me.proton.core.drive.drivelink.download.data.worker.DownloadCleanupWorker
 import me.proton.core.drive.drivelink.download.data.worker.FileDownloadWorker
@@ -39,6 +40,7 @@ import me.proton.core.drive.drivelink.download.domain.manager.DownloadWorkManage
 import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadingDriveLinks
 import me.proton.core.drive.file.base.domain.usecase.GetRevision
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class DownloadWorkManagerImpl @Inject constructor(
@@ -56,6 +58,8 @@ class DownloadWorkManagerImpl @Inject constructor(
                     is DriveLink.File -> FileDownloadWorker.getWorkRequest(driveLink, retryable)
                 }
             )
+        } else {
+            CoreLogger.d(driveLink.id.logTag, "Ignore download: link already downloading")
         }
     }
 

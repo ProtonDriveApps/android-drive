@@ -48,13 +48,26 @@ import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.drive.base.presentation.component.OutlinedTextFieldWithError
 import me.proton.core.drive.drivelink.rename.presentation.selection.Selection
+import me.proton.core.drive.drivelink.rename.presentation.viewmodel.RenameLinkViewModel
+import me.proton.core.drive.drivelink.rename.presentation.viewmodel.RenameViewModel
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun Rename(
     onDismiss: () -> Unit,
 ) {
-    val viewModel = hiltViewModel<RenameViewModel>()
+    val viewModel = hiltViewModel<RenameLinkViewModel>()
+    Rename(
+        viewModel = viewModel,
+        onDismiss = onDismiss,
+    )
+}
+
+@Composable
+fun Rename(
+    viewModel: RenameViewModel,
+    onDismiss: () -> Unit,
+) {
     val renameViewState by rememberFlowWithLifecycle(flow = viewModel.viewState)
         .collectAsState(initial = null)
     val viewState = renameViewState

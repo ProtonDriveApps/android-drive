@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -24,7 +24,7 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import me.proton.core.drive.eventmanager.DriveEventManager
+import me.proton.core.drive.eventmanager.presentation.DriveEventManager
 
 @Suppress("unused")
 class EventManagerInitializer : Initializer<Unit> {

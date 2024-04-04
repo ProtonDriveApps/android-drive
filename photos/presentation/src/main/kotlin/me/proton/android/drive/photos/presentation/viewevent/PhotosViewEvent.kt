@@ -46,5 +46,7 @@ interface PhotosViewEvent {
     val onResolveMissingFolder: () -> Unit get() = {}
     val onChangeNetwork: () -> Unit get() = {}
     val onIgnoreBackgroundRestrictions: (Context) -> Unit get() = {}
+    val onDismissBackgroundRestrictions: () -> Unit get() = {}
     val onResolve: () -> Unit get() = {}
+    val onShowUpsell: () -> Unit
 }

@@ -25,13 +25,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
 import me.proton.android.drive.photos.domain.usecase.SetupPhotosConfigurationBackup
@@ -51,15 +49,17 @@ import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.onFailure
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.base.presentation.extension.require
-import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.share.domain.usecase.GetShares
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 
@@ -70,6 +70,7 @@ class LibraryFoldersViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getAllBuckets: GetAllBuckets,
     getFoldersFlow: GetFoldersFlow,
+    getShares: GetShares,
     getPhotosDriveLink: GetPhotosDriveLink,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
@@ -80,12 +81,14 @@ class LibraryFoldersViewModel @Inject constructor(
 
     private val userId = UserId(savedStateHandle.require("userId"))
 
-    val driveLink: StateFlow<DriveLink.Folder?> = getPhotosDriveLink(userId)
+    private val folderId: Flow<FolderId?> = getShares(userId, Share.Type.PHOTO)
         .filterSuccessOrError()
         .map { result ->
             result
-                .onSuccess { driveLink ->
-                    return@map driveLink
+                .onSuccess { shares ->
+                    return@map shares.firstOrNull()?.let { share ->
+                        FolderId(share.id, share.rootLinkId)
+                    }
                 }
                 .onFailure { error ->
                     error.log(BACKUP)
@@ -99,10 +102,12 @@ class LibraryFoldersViewModel @Inject constructor(
                     )
                 }
             return@map null
-        }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        }
 
-    private val folders = driveLink.filterNotNull().flatMapLatest { folder ->
-        getFoldersFlow(folder.id)
+    private val photosDriveLink = getPhotosDriveLink(userId).filterSuccessOrError()
+
+    private val folders = folderId.filterNotNull().flatMapLatest { folderId ->
+        getFoldersFlow(folderId)
     }
 
     val state = combine(
@@ -170,13 +175,13 @@ class LibraryFoldersViewModel @Inject constructor(
         override val onToggleBucket: (Int, Boolean) -> Unit = { id, enable ->
             viewModelScope.launch {
                 coRunCatching {
-                    val folder = requireNotNull(driveLink.value)
+                    val folderId = photosDriveLink.toResult().getOrThrow().id
                     val backupFolder = BackupFolder(
                         bucketId = id,
-                        folderId = folder.id
+                        folderId = folderId
                     )
                     if (enable) {
-                        setupPhotosConfigurationBackup(folder.id).getOrThrow()
+                        setupPhotosConfigurationBackup(folderId).getOrThrow()
                         enableBackupForFolder(backupFolder).getOrThrow()
                     } else {
                         navigateToConfirmStopSyncFolder(

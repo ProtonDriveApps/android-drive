@@ -57,6 +57,7 @@ import me.proton.core.drive.backup.domain.usecase.GetAllBuckets
 import me.proton.core.drive.backup.domain.usecase.GetBackupState
 import me.proton.core.drive.backup.domain.usecase.GetBackupStatus
 import me.proton.core.drive.backup.domain.usecase.GetConfiguration
+import me.proton.core.drive.backup.domain.usecase.GetDisabledBackupState
 import me.proton.core.drive.backup.domain.usecase.GetErrors
 import me.proton.core.drive.backup.domain.usecase.StartBackup
 import me.proton.core.drive.backup.domain.usecase.UpdateConfiguration
@@ -72,7 +73,8 @@ import me.proton.core.drive.drivelink.data.extension.toEncryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.data.extension.toLink
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.user.data.repository.UserMessageRepositoryImpl
+import me.proton.core.drive.user.domain.usecase.HasCanceledUserMessages
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -118,7 +120,7 @@ class PhotoBackupStateTest {
             linkId = folderId.id
         ).map { linkWithProperties ->
             (linkWithProperties?.toLink()?.toEncryptedDriveLink(
-                volumeId = VolumeId(volumeId),
+                volumeId = volumeId,
                 isMarkedAsOffline = false,
                 downloadState = null,
                 trashState = null
@@ -166,19 +168,22 @@ class PhotoBackupStateTest {
             permissionsManager = permissionsManager,
             connectivityManager = connectivityManager,
             getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance),
-            getAllBuckets = GetAllBuckets(object : BucketRepository {
-                override suspend fun getAll(): List<BucketEntry> = listOf(BucketEntry(0, "Camera"))
-            }, permissionsManager),
-            configurationProvider = object : ConfigurationProvider {
-                override val host = ""
-                override val baseUrl = ""
-                override val appVersionHeader = ""
-                override val backupDefaultBucketName = "Camera"
-            },
             isBackgroundRestricted = object : IsBackgroundRestricted {
                 override fun invoke(): Flow<Boolean> = flowOf(false)
             },
+            hasCanceledUserMessages = HasCanceledUserMessages(UserMessageRepositoryImpl(database.db)),
             getConfiguration = getConfiguration,
+            getDisabledBackupState = GetDisabledBackupState(
+                getAllBuckets = GetAllBuckets(object : BucketRepository {
+                    override suspend fun getAll(): List<BucketEntry> = listOf(BucketEntry(0, "Camera"))
+                }, permissionsManager),
+                configurationProvider = object : ConfigurationProvider {
+                    override val host = ""
+                    override val baseUrl = ""
+                    override val appVersionHeader = ""
+                    override val backupDefaultBucketName = "Camera"
+                },
+            ),
         )
 
         backupState = getBackupState(folderId)

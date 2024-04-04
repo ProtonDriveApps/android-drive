@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -56,11 +56,13 @@ class EmptyTrashSuccessWorker @AssistedInject constructor(
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest = OneTimeWorkRequest.Builder(EmptyTrashSuccessWorker::class.java)
             .setInputData(
-                Data.Builder()
-                    .putString(KEY_USER_ID, userId.id)
-                    .build()
+                workDataOf(userId)
             )
             .addTags(listOf(userId.id) + tags)
+            .build()
+
+        fun workDataOf(userId: UserId) = Data.Builder()
+            .putString(KEY_USER_ID, userId.id)
             .build()
     }
 }

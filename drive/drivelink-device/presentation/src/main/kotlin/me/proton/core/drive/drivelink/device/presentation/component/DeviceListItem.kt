@@ -30,8 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
@@ -46,12 +46,14 @@ import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
 import me.proton.core.drive.device.domain.entity.Device
 import me.proton.core.drive.device.domain.entity.DeviceId
+import me.proton.core.drive.device.domain.extension.name
 import me.proton.core.drive.drivelink.device.presentation.extension.getTypeName
 import me.proton.core.drive.drivelink.device.presentation.extension.icon
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.presentation.R
+import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 fun DeviceListItem(
@@ -81,10 +83,10 @@ fun DeviceListItem(
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = DefaultSpacing),
-        )/*
+        )
         MoreOptions(device) {
             onMoreOptionsClick(device)
-        }*/
+        }
     }
 }
 
@@ -136,13 +138,17 @@ fun MoreOptions(
     modifier: Modifier = Modifier,
     onClick: (Device) -> Unit,
 ) {
+    val moreOptionsContentDescription = stringResource(
+        id = I18N.string.computers_content_description_list_more_options,
+        device.name,
+    )
     IconButton(
-        modifier = modifier.testTag(DeviceTestTag.moreButton),
+        modifier = modifier,
         onClick = { onClick(device) }
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_proton_three_dots_vertical),
-            contentDescription = null,
+            painter = painterResource(id = CorePresentation.drawable.ic_proton_three_dots_vertical),
+            contentDescription = moreOptionsContentDescription,
             tint = ProtonTheme.colors.interactionStrongNorm
         )
     }
@@ -194,10 +200,6 @@ private val device = Device(
     creationTime = TimestampS(),
     cryptoName = CryptoProperty.Encrypted("e_n_c_r_y_p_t_e_d"),
 )
-
-object DeviceTestTag {
-    const val moreButton = "three dots button"
-}
 
 private val VerticalSpacing = 10.dp
 private val LargeIconSize = 32.dp

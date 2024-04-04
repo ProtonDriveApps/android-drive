@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -42,7 +42,7 @@ class CopyPublicUrlImpl @Inject constructor(
     override suspend operator fun invoke(volumeId: VolumeId, linkId: LinkId) = coRunCatching {
         val userId = linkId.shareId.userId
         val link = getLink(linkId).toResult().getOrThrow()
-        val shareUrlId = requireNotNull(link.shareUrlId) { "ShareUrlId must not be null" }
+        val shareUrlId = requireNotNull(link.sharingDetails?.shareUrlId) { "ShareUrlId must not be null" }
         val shareUrl = getShareUrl(volumeId, shareUrlId, flowOf { false }).toResult().getOrThrow()
         val publicUrl = getPublicUrl(userId, shareUrl).getOrThrow()
         copyToClipboard(

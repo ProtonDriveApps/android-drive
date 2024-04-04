@@ -42,10 +42,6 @@ object UploadToRobot : LinksRobot, GrowlerRobot, Robot {
         ).format(count, folderName)
     ).await { assertIsDisplayed() }
 
-    fun assertStorageFull() = node.withText(
-        targetContext.resources.getString(I18N.string.files_upload_failure_storage_full_title)
-    ).await { assertIsDisplayed() }
-
     override fun robotDisplayed() {
         uploadToScreen.await { assertIsDisplayed() }
     }

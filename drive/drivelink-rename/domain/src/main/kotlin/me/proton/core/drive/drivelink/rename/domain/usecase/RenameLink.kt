@@ -21,6 +21,7 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.link.CreateRenameInfo
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.repository.LinkRepository
@@ -49,6 +50,22 @@ class RenameLink @Inject constructor(
     }
 
     suspend operator fun invoke(
+        rootFolder: Link.Folder,
+        folderName: String,
+        shouldValidateName: Boolean = true,
+    ): Result<Unit> = coRunCatching {
+        require(rootFolder.parentId == null) { "Use this method only for renaming a root folder" }
+        updateEventAction(
+            shareId = rootFolder.id.shareId,
+        ) {
+            linkRepository.renameLink(
+                linkId = rootFolder.id,
+                renameInfo = createRenameInfo(rootFolder, folderName, shouldValidateName).getOrThrow()
+            ).getOrThrow()
+        }
+    }
+
+    suspend operator fun invoke(
         linkId: LinkId,
         linkName: String,
     ): Result<Unit> = coRunCatching {
@@ -56,5 +73,17 @@ class RenameLink @Inject constructor(
         val parentFolderId = requireNotNull(link.parentId) { "Parent folder must not be null" }
         val parentFolder = getLink(parentFolderId).toResult().getOrThrow()
         invoke(parentFolder, link, linkName).getOrThrow()
+    }
+
+    suspend operator fun invoke(
+        rootFolderId: FolderId,
+        folderName: String,
+        shouldValidateName: Boolean = true,
+    ): Result<Unit> = coRunCatching {
+        invoke(
+            rootFolder = getLink(rootFolderId).toResult().getOrThrow(),
+            folderName = folderName,
+            shouldValidateName = shouldValidateName,
+        ).getOrThrow()
     }
 }

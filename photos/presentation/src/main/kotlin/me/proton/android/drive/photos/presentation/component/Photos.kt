@@ -80,6 +80,7 @@ fun Photos(
                         onIgnoreBackgroundRestrictions = {
                             viewEvent.onIgnoreBackgroundRestrictions(localContext)
                         },
+                        onDismissBackgroundRestrictions = viewEvent.onDismissBackgroundRestrictions,
                     )
                 } else {
                     PhotosEmptyWithBackupTurnedOff(
@@ -116,6 +117,7 @@ fun Photos(
                     onIgnoreBackgroundRestrictions = {
                         viewEvent.onIgnoreBackgroundRestrictions(localContext)
                     },
+                    onDismissBackgroundRestrictions = viewEvent.onDismissBackgroundRestrictions,
                     isRefreshEnabled = viewState.isRefreshEnabled,
                     isRefreshing = viewState.listContentState.isRefreshing,
                     onRefresh = viewEvent.onRefresh,

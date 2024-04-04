@@ -19,6 +19,7 @@
 package me.proton.core.drive.eventmanager.usecase
 
 import kotlinx.coroutines.flow.first
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinks
 import me.proton.core.drive.drivelink.download.domain.usecase.CancelDownload
@@ -44,25 +45,31 @@ class HandleOnDeleteEvent @Inject constructor(
     private val deleteLocalVolumes: DeleteLocalVolumes,
 ) {
 
-    suspend operator fun invoke(linkIds: List<LinkId>) {
+    suspend operator fun invoke(linkIds: List<LinkId>, stopOnFailure: Boolean = false): Result<Unit> = coRunCatching {
         if (linkIds.isEmpty()) {
-            return
+            return@coRunCatching
         }
         getDriveLinks(linkIds).first()
             .forEach { driveLink ->
                 cancelDownload(driveLink)
                 when (driveLink) {
-                    is DriveLink.File -> deleteLocalContent(driveLink)
+                    is DriveLink.File -> deleteLocalContent(driveLink).getOrNullOrThrowIf(stopOnFailure)
                     is DriveLink.Folder -> getChildren(driveLink.id, false)
                         .onSuccess { children ->
-                            invoke(children.ids)
+                            invoke(children.ids, stopOnFailure).getOrNullOrThrowIf(stopOnFailure)
                         }
+                        .getOrNullOrThrowIf(stopOnFailure)
                 }
-
             }
-        deleteLocalVolumes(linkIds)
-        deleteLocalShares(linkIds)
-        deleteLinks(linkIds)
-        deletePhotoListings(linkIds)
+        deleteLocalVolumes(linkIds).getOrNullOrThrowIf(stopOnFailure)
+        deleteLocalShares(linkIds).getOrNullOrThrowIf(stopOnFailure)
+        deleteLinks(linkIds).getOrNullOrThrowIf(stopOnFailure)
+        deletePhotoListings(linkIds).getOrNullOrThrowIf(stopOnFailure)
+    }
+
+    private fun<T> Result<T>.getOrNullOrThrowIf(shouldThrow: Boolean): T? = if (shouldThrow) {
+        getOrThrow()
+    } else {
+        getOrNull()
     }
 }

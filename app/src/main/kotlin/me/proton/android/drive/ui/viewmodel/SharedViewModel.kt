@@ -75,6 +75,7 @@ import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
+import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.usecase.GetLayoutType
 import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
@@ -100,7 +101,12 @@ class SharedViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val getShare: GetShare,
     private val getThemeStyle: GetThemeStyle,
-) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle), HomeTabViewModel {
+    shouldUpgradeStorage: ShouldUpgradeStorage,
+) : ViewModel(),
+    UserViewModel by UserViewModel(savedStateHandle),
+    HomeTabViewModel,
+    NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
+
     private val _effects = MutableSharedFlow<HomeEffect>()
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
     private val volumeId = refreshTrigger.transformLatest {
@@ -149,7 +155,8 @@ class SharedViewModel @Inject constructor(
         driveLinks,
         layoutType,
         getThemeStyle(userId),
-    ) { sorting, driveLinks, layoutType, _ ->
+        notificationDotRequested,
+    ) { sorting, driveLinks, layoutType, _, notificationDotRequested ->
         val listContentState = when (val contentState = driveLinks.toListContentState()) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -161,6 +168,7 @@ class SharedViewModel @Inject constructor(
                 sorting = sorting,
                 listContentState = listContentState,
                 isGrid = layoutType == LayoutType.GRID,
+                notificationDotVisible = notificationDotRequested
             )
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)

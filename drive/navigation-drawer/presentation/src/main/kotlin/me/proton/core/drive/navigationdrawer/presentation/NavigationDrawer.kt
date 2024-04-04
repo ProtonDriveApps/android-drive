@@ -20,6 +20,7 @@ package me.proton.core.drive.navigationdrawer.presentation
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,21 +36,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.launch
 import me.proton.core.compose.component.ProtonListSectionTitle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.compose.theme.defaultNorm
+import me.proton.core.compose.theme.defaultStrongNorm
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.presentation.component.NavigationDrawerAppVersion
 import me.proton.core.drive.base.presentation.component.ProtonListItem
 import me.proton.core.drive.user.presentation.storage.StorageIndicator
 import me.proton.core.drive.user.presentation.user.PREVIEW_USER
 import me.proton.core.drive.user.presentation.user.UserSelector
-import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.drive.user.presentation.user.extension.getStorageIndicatorData
+import me.proton.core.plan.presentation.compose.component.UpgradeStorageInfo
 import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -100,9 +108,15 @@ fun NavigationDrawer(
                     modifier = Modifier
                         .padding(top = DefaultSpacing)
                         .verticalScroll(rememberScrollState())
-                        .weight(1f),
+                        .weight(1f)
+                        .testTag(NavigationDrawerTestTag.content),
                     verticalArrangement = Arrangement.Top
                 ) {
+                    UpgradeStorageInfo(
+                        onUpgradeClicked = { viewEvent.onSubscription() },
+                        withTopDivider = true,
+                        withBottomDivider = true
+                    )
 
                     MyFilesListItem(closeDrawerAction, viewEvent)
 
@@ -126,10 +140,24 @@ fun NavigationDrawer(
                             modifier = Modifier.padding(bottom = SmallSpacing)
                         )
 
+                        Crossfade(
+                            targetState = viewState.showGetFreeStorage,
+                            label = "GetMoreFreeStorage",
+                        ) { showGetFreeStorage ->
+                            if (showGetFreeStorage) {
+                                GetFreeStorageListItem(closeDrawerAction, viewEvent)
+                            }
+                        }
+
+                        val (usedSpace, availableSpace, label) = viewState.currentUser.getStorageIndicatorData()
+
                         StorageIndicator(
-                            usedBytes = Bytes(viewState.currentUser.usedSpace),
-                            availableBytes = Bytes(viewState.currentUser.maxSpace),
-                            modifier = Modifier.padding(horizontal = DefaultSpacing)
+                            label = stringResource(id = label),
+                            usedBytes = Bytes(usedSpace),
+                            availableBytes = Bytes(availableSpace),
+                            modifier = Modifier
+                                .padding(horizontal = DefaultSpacing)
+                                .testTag(NavigationDrawerTestTag.storageIndicator)
                         )
                     }
 
@@ -256,23 +284,49 @@ private fun SignOutListItem(
 }
 
 @Composable
+private fun GetFreeStorageListItem(
+    closeDrawerAction: (() -> Unit) -> Unit,
+    viewEvent: NavigationDrawerViewEvent,
+    modifier: Modifier = Modifier,
+) {
+    NavigationDrawerListItem(
+        icon = CorePresentation.drawable.ic_proton_gift,
+        iconTintColor = ProtonTheme.colors.iconNorm,
+        title = I18N.string.navigation_item_get_free_storage,
+        textStyle = ProtonTheme.typography.defaultStrongNorm,
+        closeDrawerAction = closeDrawerAction,
+        modifier = modifier.padding(bottom = DefaultSpacing),
+    ) {
+        viewEvent.onGetFreeStorage()
+    }
+}
+
+@Composable
 fun NavigationDrawerListItem(
     @DrawableRes icon: Int,
     @StringRes title: Int,
     closeDrawerAction: (() -> Unit) -> Unit,
     modifier: Modifier = Modifier,
+    iconTintColor: Color = ProtonTheme.colors.iconWeak,
+    textStyle: TextStyle = ProtonTheme.typography.defaultNorm,
     onClick: () -> Unit,
 ) {
     ProtonListItem(
         icon = icon,
-        iconTintColor = ProtonTheme.colors.iconWeak,
+        iconTintColor = iconTintColor,
         title = title,
+        textStyle = textStyle,
         modifier = modifier
             .clickable {
                 closeDrawerAction(onClick)
             }
             .padding(horizontal = DefaultSpacing),
     )
+}
+
+object NavigationDrawerTestTag {
+    const val content = "navigation drawer content"
+    const val storageIndicator = "navigation drawer storage indicator"
 }
 
 @Preview(name = "Drawer opened")
@@ -294,6 +348,7 @@ fun PreviewDrawerWithUser() {
                 override val onSignOut = {}
                 override val onBugReport = {}
                 override val onSubscription = {}
+                override val onGetFreeStorage = {}
             }
         )
     }
@@ -314,6 +369,7 @@ fun PreviewDrawerWithoutUser() {
                 override val onSignOut = {}
                 override val onBugReport = {}
                 override val onSubscription = {}
+                override val onGetFreeStorage = {}
             }
         )
     }

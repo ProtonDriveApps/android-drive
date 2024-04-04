@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.availableSpace
+import me.proton.core.drive.base.domain.extension.rounded
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.user.domain.entity.QuotaLevel
 import me.proton.core.user.domain.UserManager
@@ -36,8 +37,7 @@ class GetQuotaLevel @Inject constructor(
     operator fun invoke(userId: UserId) =
         userManager.observeUser(userId).filterNotNull().map { user ->
             val available = user.availableSpace
-            val percentage =
-                Percentage(user.usedSpace.toFloat() / user.maxSpace)
+            val percentage = Percentage(user.usedSpace.toFloat() / user.maxSpace).rounded()
             when {
                 available < configurationProvider.backupLeftSpace -> QuotaLevel.ERROR
                 percentage >= QuotaLevel.WARNING.percentage -> QuotaLevel.WARNING

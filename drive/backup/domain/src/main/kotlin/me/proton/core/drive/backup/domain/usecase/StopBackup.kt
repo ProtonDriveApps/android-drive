@@ -43,12 +43,12 @@ class StopBackup @Inject constructor(
         CoreLogger.d(BACKUP, "Stopping after: $error")
         announceEvent(folderId.userId, Event.BackupStopped(folderId, error.type.toEventBackupState()))
         logBackupStats(folderId)
-        manager.stop(folderId)
         addBackupError(folderId, error).getOrThrow()
         getAllFolders(folderId).getOrThrow().forEach { backupFolder ->
             markAllEnqueuedAsReady(backupFolder).onSuccess { count ->
                 CoreLogger.d(BACKUP, "Mark $count files as ready")
             }.getOrThrow()
         }
+        manager.stop(folderId)
     }
 }

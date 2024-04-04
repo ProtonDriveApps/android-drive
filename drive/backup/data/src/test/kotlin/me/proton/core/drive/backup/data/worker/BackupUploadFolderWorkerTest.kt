@@ -53,7 +53,7 @@ import me.proton.core.drive.base.domain.extension.GiB
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.drivelink.data.repository.DriveLinkRepositoryImpl
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
@@ -109,7 +109,7 @@ class BackupUploadFolderWorkerTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         backupFolderRepository = BackupFolderRepositoryImpl(database.db)
         backupFolderRepository.insertFolder(BackupFolder(bucketId, folderId))
         repository = BackupFileRepositoryImpl(database.db)

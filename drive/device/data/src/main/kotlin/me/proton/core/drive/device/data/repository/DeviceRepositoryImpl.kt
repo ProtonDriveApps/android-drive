@@ -27,6 +27,7 @@ import me.proton.core.drive.device.data.db.DeviceDatabase
 import me.proton.core.drive.device.data.extension.toDevice
 import me.proton.core.drive.device.data.extension.toDeviceEntity
 import me.proton.core.drive.device.domain.entity.Device
+import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.device.domain.repository.DeviceRepository
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.usecase.GetLink
@@ -66,6 +67,15 @@ class DeviceRepositoryImpl @Inject constructor(
             db.deviceDao.insertOrIgnore(*deviceEntities.toTypedArray())
         }
         return deviceEntities.map { deviceEntity -> deviceEntity.toDevice() }
+    }
+
+    override fun getDeviceFlow(userId: UserId, deviceId: DeviceId): Flow<Device?> =
+        db.deviceDao.getFlow(userId, deviceId.id).map { deviceEntity ->
+            deviceEntity?.toDevice()
+        }
+
+    override suspend fun renameDevice(userId: UserId, deviceId: DeviceId, name: String) {
+        api.updateDeviceName(userId, deviceId, name)
     }
 
     private suspend fun fetchDevicesDtos(userId: UserId) = api.getDevices(userId)

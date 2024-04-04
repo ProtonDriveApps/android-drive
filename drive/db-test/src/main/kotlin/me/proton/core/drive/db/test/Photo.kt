@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,27 +28,25 @@ suspend fun DriveDatabaseRule.photo(block: suspend FolderContext.() -> Unit): Fo
 }
 
 val photoShareId = ShareId(userId, "photo-share-id")
-val photoRootId = FolderId(photoShareId, "photo-root-id")
 
-suspend fun DriveDatabase.photo(block: suspend FolderContext.() -> Unit): FolderId {
-    user {
-        volume {
-            photoShare(block)
-        }
+suspend fun DriveDatabase.photo(
+    block: suspend FolderContext.() -> Unit,
+): FolderId = user {
+    volume {
+        photoShare(block)
     }
-    return photoRootId
 }
 
-suspend fun VolumeContext.photoShare(block: suspend FolderContext.() -> Unit) {
-    share(
-        shareEntity = NullableShareEntity(
-            id = photoShareId.id,
-            userId = user.userId,
-            volumeId = volumeId,
-            linkId = photoRootId.id,
-            type = ShareDto.TYPE_PHOTO,
-        )
-    ) {
-        folder(id = share.linkId, block = block)
-    }
+suspend fun VolumeContext.photoShare(
+    block: suspend FolderContext.() -> Unit,
+) : FolderId = share(
+    shareEntity = NullableShareEntity(
+        id = photoShareId.id,
+        userId = user.userId,
+        volumeId = volumeId.id,
+        linkId = "photo-root-id",
+        type = ShareDto.TYPE_PHOTO,
+    )
+) {
+    folder(id = share.linkId, block = block)
 }

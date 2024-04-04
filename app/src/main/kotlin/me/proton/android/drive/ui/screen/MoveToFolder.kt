@@ -146,7 +146,9 @@ fun MoveToFolder(
                 }
 
                 Button(
-                    modifier = Modifier.padding(start = SmallSpacing),
+                    modifier = Modifier
+                        .padding(start = SmallSpacing)
+                        .testTag(MoveToFolderScreenTestTag.moveButton),
                     enabled = viewState.isMoveButtonEnabled,
                     onClick = viewEvent.move,
                 ) {
@@ -193,4 +195,5 @@ fun Title(
 object MoveToFolderScreenTestTag {
     const val screen = "move to folder screen"
     const val plusFolderButton = "move to folder plus folder button"
+    const val moveButton = "move button"
 }

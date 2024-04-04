@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,7 +30,7 @@ import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -38,7 +38,6 @@ import me.proton.core.drive.linkupload.data.factory.UploadBlockFactoryImpl
 import me.proton.core.drive.linkupload.data.repository.LinkUploadRepositoryImpl
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -63,7 +62,7 @@ class GetBackupStatusTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
         val addFolder = AddFolder(backupFolderRepository)
         backupFolder = BackupFolder(0, folderId)
@@ -221,7 +220,7 @@ class GetBackupStatusTest {
 
 private fun uploadFileLink(uriString: String, folderId: FolderId) = UploadFileLink(
     userId = userId,
-    volumeId = VolumeId(volumeId),
+    volumeId = volumeId,
     shareId = folderId.shareId,
     parentLinkId = folderId,
     uriString = uriString,

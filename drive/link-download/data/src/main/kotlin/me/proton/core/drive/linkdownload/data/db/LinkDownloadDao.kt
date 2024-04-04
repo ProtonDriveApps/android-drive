@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -28,9 +28,9 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.data.db.LinkDao
 import me.proton.core.drive.linkdownload.data.db.entity.DownloadBlockEntity
-import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadStateWithBlockEntity
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadState
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadStateEntity
+import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadStateWithBlockEntity
 import me.proton.core.drive.linkdownload.data.extension.toDownloadBlockEntity
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 
@@ -134,7 +134,7 @@ interface LinkDownloadDao : LinkDao {
         userId: UserId,
         shareId: String,
         folderId: String,
-    ): List<LinkDownloadState>
+    ): List<LinkDownloadState?>
 
     @Transaction
     suspend fun insertOrUpdate(

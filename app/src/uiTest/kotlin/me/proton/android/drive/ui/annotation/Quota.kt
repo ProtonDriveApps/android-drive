@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@ package me.proton.android.drive.ui.annotation
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Quota(
-    val value: Int = 500,
+    val value: Int = 2_048,
     val unit: QuotaUnit = QuotaUnit.MB,
     val percentageFull: Int = 0
 )

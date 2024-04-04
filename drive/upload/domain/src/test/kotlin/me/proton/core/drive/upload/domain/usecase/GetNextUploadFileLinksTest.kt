@@ -38,7 +38,6 @@ import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.test.DriveRule
 import me.proton.core.drive.test.usecase.storageInfo
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -308,7 +307,7 @@ class GetNextUploadFileLinksTest {
         uriStrings: List<String>,
     ): List<UploadFileLink> = createUploadFile(
         userId = userId,
-        volumeId = VolumeId(volumeId),
+        volumeId = volumeId,
         parentId = folderId,
         uploadFileDescriptions = uriStrings.map { UploadFileDescription(it) },
         shouldDeleteSourceUri = false,

@@ -18,8 +18,10 @@
 package me.proton.core.drive.share.crypto.domain.usecase
 
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.Share
@@ -31,23 +33,25 @@ class DeleteLocalShares @Inject constructor(
     private val getShares: GetShares,
     private val deleteShare: DeleteShare,
 ) {
-    suspend operator fun invoke(linkIds: List<LinkId>) = with (linkIds.map { linkId -> linkId.id }) {
-        listOf(Share.Type.STANDARD, Share.Type.DEVICE)
-            .map { shareType ->
-                getShares(linkIds.first().userId, shareType)
-                    .filterSuccessOrError()
-                    .first()
-                    .toResult()
-                    .getOrNull()
-                    ?.mapNotNull { share -> if (share.rootLinkId in this) share.id else null }
-                    ?: emptyList()
-            }
-            .flatten()
-            .forEach { shareId ->
-                deleteShare(
-                    shareId = shareId,
-                    locallyOnly = true,
-                )
-            }
+    suspend operator fun invoke(linkIds: List<LinkId>) = coRunCatching {
+        with (linkIds.map { linkId -> linkId.id }) {
+            listOf(Share.Type.STANDARD, Share.Type.DEVICE)
+                .map { shareType ->
+                    getShares(linkIds.first().userId, shareType, flowOf(false))
+                        .filterSuccessOrError()
+                        .first()
+                        .toResult()
+                        .getOrNull()
+                        ?.mapNotNull { share -> if (share.rootLinkId in this) share.id else null }
+                        ?: emptyList()
+                }
+                .flatten()
+                .forEach { shareId ->
+                    deleteShare(
+                        shareId = shareId,
+                        locallyOnly = true,
+                    )
+                }
+        }
     }
 }

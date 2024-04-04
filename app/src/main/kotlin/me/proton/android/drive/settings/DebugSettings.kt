@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ package me.proton.android.drive.settings
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -48,6 +49,7 @@ class DebugSettings(
     private val prefsAllowBackupDeletedFilesEnabled = booleanPreferencesKey(ALLOW_BACKUP_DELETED_FILES_ENABLED)
     private val prefsFeatureFlagFreshDuration = longPreferencesKey(FEATURE_FLAG_FRESH_DURATION)
     private val prefsUseVerifier = booleanPreferencesKey(USE_VERIFIER)
+    private val prefsPhotosUpsellPhotoCount = intPreferencesKey(PHOTOS_UPSELL_PHOTO_COUNT)
     val baseUrlFlow: Flow<String> = prefsKeyBaseUrl.asFlow(
         dataStore = context.dataStore,
         default = buildConfig.baseUrl
@@ -130,6 +132,11 @@ class DebugSettings(
         key = prefsUseVerifier,
         default = buildConfig.useVerifier,
     )
+    override var photosUpsellPhotoCount by Delegate(
+        dataStore = context.dataStore,
+        key = prefsPhotosUpsellPhotoCount,
+        default = buildConfig.photosUpsellPhotoCount,
+    )
 
     fun reset(coroutineScope: CoroutineScope) {
         coroutineScope.launch {
@@ -149,5 +156,6 @@ class DebugSettings(
         const val ALLOW_BACKUP_DELETED_FILES_ENABLED = "allow_backup_deleted_files_enabled"
         const val FEATURE_FLAG_FRESH_DURATION = "feature_flag_fresh_duration"
         const val USE_VERIFIER = "use_verifier"
+        const val PHOTOS_UPSELL_PHOTO_COUNT = "photos_upsell_photo_count"
     }
 }

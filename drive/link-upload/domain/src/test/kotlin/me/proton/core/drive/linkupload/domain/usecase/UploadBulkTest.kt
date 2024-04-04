@@ -22,7 +22,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.myDrive
+import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.data.extension.toLink
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -32,7 +32,6 @@ import me.proton.core.drive.linkupload.data.repository.LinkUploadRepositoryImpl
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -53,7 +52,7 @@ class UploadBulkTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myDrive { }
+        folderId = database.myFiles { }
         val linkUploadRepository = LinkUploadRepositoryImpl(database.db, UploadBlockFactoryImpl())
         createUploadBulk = CreateUploadBulk(linkUploadRepository)
         deleteUploadBulk = DeleteUploadBulk(linkUploadRepository)
@@ -71,7 +70,7 @@ class UploadBulkTest {
             "content://com.android.providers.downloads.documents/document/001"
         ).map { uri -> UploadFileDescription(uri) }
         val id = createUploadBulk(
-            volumeId = VolumeId(volumeId),
+            volumeId = volumeId,
             parent = folderId.folder(),
             uploadFileDescriptions = uploadFileDescriptions,
             networkTypeProviderType = NetworkTypeProviderType.BACKUP,
