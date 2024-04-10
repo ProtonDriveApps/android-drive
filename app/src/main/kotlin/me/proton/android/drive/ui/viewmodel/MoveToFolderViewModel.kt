@@ -55,6 +55,7 @@ import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.extension.isDevice
+import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.util.kotlin.CoreLogger
@@ -70,6 +71,7 @@ class MoveToFolderViewModel @Inject constructor(
     getPagedDriveLinks: GetPagedDriveLinksList,
     getSelectedDriveLinks: GetSelectedDriveLinks,
     getShare: GetShare,
+    getMainShare: GetMainShare,
     private val moveFile: MoveFile,
     private val deselectLinks: DeselectLinks,
     private val decryptDriveLinks: DecryptDriveLinks,
@@ -95,7 +97,7 @@ class MoveToFolderViewModel @Inject constructor(
         (shareId?.let {
             getShare(shareId, flowOf(false))
                 .mapSuccessValueOrNull()
-        } ?: flowOf(null))
+        } ?: getMainShare(userId).mapSuccessValueOrNull())
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val driveLinksToMove: StateFlow<List<DriveLink>> = if (selectionId != null) {

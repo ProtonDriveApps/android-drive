@@ -21,6 +21,7 @@ package me.proton.android.drive.ui.robot
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.longClick
 import me.proton.test.fusion.Fusion.node
+import me.proton.test.fusion.FusionConfig
 import me.proton.test.fusion.ui.compose.builders.OnNode
 import me.proton.test.fusion.ui.compose.wrappers.NodeActions
 
@@ -42,6 +43,13 @@ interface Robot {
 
     fun nodeWithTextDisplayed(@StringRes stringRes: Int) =
         node.withText(stringRes).await { assertIsDisplayed() }
+
+    fun nodeWithTextDisplayed(@StringRes stringRes: Int, vararg formatArgs: Any) =
+        node
+            .withText(
+                FusionConfig.targetContext.getString(stringRes, *formatArgs)
+            )
+            .await { assertIsDisplayed() }
 
     fun nodeWithContentDescriptionDisplayed(contentDescription: String) =
         node.withContentDescription(contentDescription).await { assertIsDisplayed() }

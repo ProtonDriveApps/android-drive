@@ -23,6 +23,8 @@ import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.core.drive.files.presentation.extension.ItemType
+import me.proton.core.drive.files.presentation.extension.LayoutType
 import org.junit.Test
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
@@ -80,7 +82,7 @@ class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    fun moveFilesFromRootFolderToAnotherFolder() {
+    fun moveFileFromRootFolderToAnotherFolder() {
         val file = "shared.jpg"
         val folder = "folder3"
         PhotosTabRobot
@@ -95,6 +97,37 @@ class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
                 nodeWithTextDisplayed(I18N.string.file_operation_moving_file_successful)
             }
         // TODO: Verify that the file is really moved when DRVAND-449 is fixed
+    }
+
+    @Test
+    @Scenario(4)
+    fun moveFilesFromRootFolderToAnotherFolderViaMultiSelection() {
+        val file1 = "shared.jpg"
+        val file2 = "shared.html"
+        val folder = "folder3"
+        PhotosTabRobot
+            .clickFilesTab()
+            .scrollToItemWithName(file1)
+            .longClickOnItem(file1)
+            .scrollToItemWithName(file2)
+            .clickOnItem(file2, LayoutType.List, ItemType.File, FilesTabRobot)
+            .clickOptions()
+            .clickMove()
+            .clickOnFolderToMove(folder)
+            .clickMoveToFolder(folder)
+            .verify {
+                nodeWithTextDisplayed(I18N.string.file_operation_moving_multiple_successful, 2)
+            }
+            .scrollToItemWithName(folder)
+            .clickOnFolder(folder)
+            .scrollToItemWithName(file1)
+            .verify {
+                itemIsDisplayed(file1)
+            }
+            .scrollToItemWithName(file2)
+            .verify {
+                itemIsDisplayed(file2)
+            }
     }
 
     @Test
