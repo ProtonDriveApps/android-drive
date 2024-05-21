@@ -50,5 +50,6 @@ class StopBackup @Inject constructor(
             }.getOrThrow()
         }
         manager.stop(folderId)
+        manager.updateNotification(folderId)
     }
 }

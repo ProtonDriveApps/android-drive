@@ -55,6 +55,7 @@ import me.proton.core.drive.messagequeue.data.storage.db.MessageQueueDatabase
 import me.proton.core.drive.notification.data.db.NotificationDatabase
 import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.share.data.db.ShareDatabase
+import me.proton.core.drive.share.user.data.db.ShareUserDatabase
 import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
 import me.proton.core.drive.sorting.data.db.SortingDatabase
 import me.proton.core.drive.stats.data.db.StatsDatabase
@@ -99,6 +100,9 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideShareUrlDatabase(db: DriveDatabase): ShareUrlDatabase
+
+    @Binds
+    abstract fun provideShareUserDatabase(db: DriveDatabase): ShareUserDatabase
 
     @Binds
     abstract fun provideLinkDatabase(db: DriveDatabase): LinkDatabase

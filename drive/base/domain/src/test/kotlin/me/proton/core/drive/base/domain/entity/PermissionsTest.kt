@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -34,11 +34,13 @@ class PermissionsTest {
         val canRead = permissions.canRead
         val canWrite = permissions.canWrite
         val canExecute = permissions.canExecute
+        val isAdmin = permissions.isAdmin
         // endregion
         // region Then
         assertFalse(canRead)
         assertFalse(canWrite)
         assertFalse(canExecute)
+        assertFalse(isAdmin)
         // endregion
     }
 
@@ -52,11 +54,13 @@ class PermissionsTest {
         val canRead = permissions.canRead
         val canWrite = permissions.canWrite
         val canExecute = permissions.canExecute
+        val isAdmin = permissions.isAdmin
         // endregion
         // region Then
         assertFalse(canRead)
         assertFalse(canWrite)
         assertTrue(canExecute)
+        assertFalse(isAdmin)
         // endregion
     }
 
@@ -70,11 +74,13 @@ class PermissionsTest {
         val canRead = permissions.canRead
         val canWrite = permissions.canWrite
         val canExecute = permissions.canExecute
+        val isAdmin = permissions.isAdmin
         // endregion
         // region Then
         assertFalse(canRead)
         assertTrue(canWrite)
         assertFalse(canExecute)
+        assertFalse(isAdmin)
         // endregion
     }
 
@@ -88,11 +94,13 @@ class PermissionsTest {
         val canRead = permissions.canRead
         val canWrite = permissions.canWrite
         val canExecute = permissions.canExecute
+        val isAdmin = permissions.isAdmin
         // endregion
         // region Then
         assertFalse(canRead)
         assertTrue(canWrite)
         assertTrue(canExecute)
+        assertFalse(isAdmin)
         // endregion
     }
 
@@ -106,11 +114,13 @@ class PermissionsTest {
         val canRead = permissions.canRead
         val canWrite = permissions.canWrite
         val canExecute = permissions.canExecute
+        val isAdmin = permissions.isAdmin
         // endregion
         // region Then
         assertTrue(canRead)
         assertFalse(canWrite)
         assertFalse(canExecute)
+        assertFalse(isAdmin)
         // endregion
     }
 
@@ -124,11 +134,13 @@ class PermissionsTest {
         val canRead = permissions.canRead
         val canWrite = permissions.canWrite
         val canExecute = permissions.canExecute
+        val isAdmin = permissions.isAdmin
         // endregion
         // region Then
         assertTrue(canRead)
         assertFalse(canWrite)
         assertTrue(canExecute)
+        assertFalse(isAdmin)
         // endregion
     }
 
@@ -142,11 +154,13 @@ class PermissionsTest {
         val canRead = permissions.canRead
         val canWrite = permissions.canWrite
         val canExecute = permissions.canExecute
+        val isAdmin = permissions.isAdmin
         // endregion
         // region Then
         assertTrue(canRead)
         assertTrue(canWrite)
         assertFalse(canExecute)
+        assertFalse(isAdmin)
         // endregion
     }
 
@@ -160,11 +174,33 @@ class PermissionsTest {
         val canRead = permissions.canRead
         val canWrite = permissions.canWrite
         val canExecute = permissions.canExecute
+        val isAdmin = permissions.isAdmin
         // endregion
         // region Then
         assertTrue(canRead)
         assertTrue(canWrite)
         assertTrue(canExecute)
+        assertFalse(isAdmin)
+        // endregion
+    }
+
+    @Test
+    fun `permission value 23`() {
+        // region Given
+        val value = 23L
+        val permissions = Permissions(value)
+        // endregion
+        // region When
+        val canRead = permissions.canRead
+        val canWrite = permissions.canWrite
+        val canExecute = permissions.canExecute
+        val isAdmin = permissions.isAdmin
+        // endregion
+        // region Then
+        assertTrue(canRead)
+        assertTrue(canWrite)
+        assertTrue(canExecute)
+        assertTrue(isAdmin)
         // endregion
     }
 }

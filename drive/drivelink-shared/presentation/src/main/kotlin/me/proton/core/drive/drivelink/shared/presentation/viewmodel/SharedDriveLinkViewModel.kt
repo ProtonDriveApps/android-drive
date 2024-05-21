@@ -180,6 +180,7 @@ class SharedDriveLinkViewModel @Inject constructor(
         }
     }
     val initialSaveButtonViewState = SaveButtonViewState(
+        label = "",
         isVisible = false,
         isEnabled = true,
         inProgress = false,

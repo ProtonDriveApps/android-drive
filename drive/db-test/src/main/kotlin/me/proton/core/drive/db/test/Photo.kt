@@ -28,10 +28,12 @@ suspend fun DriveDatabaseRule.photo(block: suspend FolderContext.() -> Unit): Fo
 }
 
 val photoShareId = ShareId(userId, "photo-share-id")
+val photoRootId = FolderId(photoShareId, "photo-root-id")
 
 suspend fun DriveDatabase.photo(
     block: suspend FolderContext.() -> Unit,
 ): FolderId = user {
+    withKey()
     volume {
         photoShare(block)
     }
@@ -44,9 +46,10 @@ suspend fun VolumeContext.photoShare(
         id = photoShareId.id,
         userId = user.userId,
         volumeId = volumeId.id,
-        linkId = "photo-root-id",
+        linkId = photoRootId.id,
         type = ShareDto.TYPE_PHOTO,
     )
 ) {
+    withKey()
     folder(id = share.linkId, block = block)
 }

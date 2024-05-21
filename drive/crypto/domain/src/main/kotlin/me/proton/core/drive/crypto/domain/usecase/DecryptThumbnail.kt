@@ -27,8 +27,8 @@ import me.proton.core.drive.cryptobase.domain.exception.VerificationException
 import me.proton.core.drive.cryptobase.domain.usecase.DecryptAndVerifyData
 import me.proton.core.drive.cryptobase.domain.usecase.GetPublicKeyRing
 import me.proton.core.drive.key.domain.extension.keyHolder
-import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetContentKey
+import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
@@ -39,7 +39,7 @@ import javax.inject.Inject
 class DecryptThumbnail @Inject constructor(
     private val getLink: GetLink,
     private val getContentKey: GetContentKey,
-    private val getAddressKeys: GetAddressKeys,
+    private val getPublicAddressKeys: GetPublicAddressKeys,
     private val decryptAndVerifyData: DecryptAndVerifyData,
     private val getPublicKeyRing: GetPublicKeyRing,
 ) {
@@ -55,7 +55,9 @@ class DecryptThumbnail @Inject constructor(
             decryptAndVerifyData(
                 decryptKey = nodeKey.decryptKey.keyHolder,
                 keyPacket = nodeKey.encryptedKeyPacket,
-                verifyKeyRing = getPublicKeyRing(getAddressKeys(fileId.userId, file.uploadedBy).keyHolder).getOrThrow(),
+                verifyKeyRing = getPublicKeyRing(
+                    getPublicAddressKeys(fileId.userId, file.uploadedBy).getOrThrow().keyHolder
+                ).getOrThrow(),
                 data = inputStream.readBytes(),
                 verificationFailedContext = javaClass.simpleName,
             ).getOrThrow().also { decryptedThumbnail ->

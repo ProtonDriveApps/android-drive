@@ -18,41 +18,46 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class FoldersTest {
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var addFolder: AddFolder
-    private lateinit var updateFolder: UpdateFolder
-    private lateinit var deleteFolder: DeleteFolder
-    private lateinit var deleteFolders: DeleteFolders
-    private lateinit var getAllFolders: GetAllFolders
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var updateFolder: UpdateFolder
+
+    @Inject
+    lateinit var deleteFolder: DeleteFolder
+
+    @Inject
+    lateinit var deleteFolders: DeleteFolders
+
+    @Inject
+    lateinit var getAllFolders: GetAllFolders
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
-        val repository = BackupFolderRepositoryImpl(database.db)
-        addFolder = AddFolder(repository)
-        updateFolder = UpdateFolder(repository)
-        deleteFolder = DeleteFolder(repository)
-        deleteFolders = DeleteFolders(repository)
-        getAllFolders = GetAllFolders(repository)
+        folderId = driveRule.db.myFiles { }
     }
 
     @Test

@@ -30,8 +30,8 @@ import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.plan.test.robot.SubscriptionRobot
 import me.proton.test.fusion.Fusion.allNodes
 import me.proton.test.fusion.Fusion.node
-import me.proton.test.fusion.FusionConfig
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
 object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
@@ -97,7 +97,7 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
     }
 
     fun assertPhotoDisplayed(fileName: String) {
-        photoWithName(fileName).await { assertIsDisplayed() }
+        photoWithName(fileName).await(90.seconds) { assertIsDisplayed() }
     }
 
     fun assertEnableBackupDisplayed() {
@@ -122,7 +122,7 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
     }
 
     fun assertBackupCompleteDisplayed(
-        waitFor: Duration = FusionConfig.Compose.waitTimeout.get()
+        waitFor: Duration = 90.seconds,
     ) {
         backupCompleted.await(timeout = waitFor) { assertIsDisplayed() }
     }

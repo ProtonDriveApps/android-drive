@@ -38,15 +38,18 @@ class BuildShareKey @Inject constructor(
     private val getAddressKeys: GetAddressKeys,
     private val getShare: GetShare,
     private val getSignatureAddress: GetSignatureAddress,
+    private val getPublicAddressKeys: GetPublicAddressKeys,
 ) {
     suspend operator fun invoke(share: Share): Result<Key.Node> = coRunCatching {
         val userId = share.id.userId
         ShareKey(
             key = decryptNestedPrivateKey(
-                userId = userId,
                 decryptKey = getAddressKeys(userId, requireNotNull(share.addressId)).keyHolder,
                 key = share.nestedPrivateKey,
-                signatureAddress = getSignatureAddress(userId, requireNotNull(share.addressId)),
+                verifySignatureKey = getPublicAddressKeys(
+                    userId = userId,
+                    email = getSignatureAddress(userId, requireNotNull(share.addressId)),
+                ).getOrThrow().keyHolder,
                 allowCompromisedVerificationKeys = true,
             ).getOrThrow()
         )

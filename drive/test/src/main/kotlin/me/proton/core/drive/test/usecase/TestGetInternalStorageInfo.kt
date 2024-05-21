@@ -23,7 +23,9 @@ import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.base.domain.util.coRunCatching
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TestGetInternalStorageInfo @Inject constructor() : GetInternalStorageInfo {
 
     var storageInfo: StorageInfo = StorageInfo(0.bytes, 0.bytes)
@@ -31,9 +33,3 @@ class TestGetInternalStorageInfo @Inject constructor() : GetInternalStorageInfo 
         storageInfo
     }
 }
-
-var GetInternalStorageInfo.storageInfo: StorageInfo
-    get() = (this as TestGetInternalStorageInfo).storageInfo
-    set(value) {
-        (this as TestGetInternalStorageInfo).storageInfo = value
-    }

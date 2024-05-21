@@ -24,12 +24,12 @@ import me.proton.core.drive.cryptobase.domain.usecase.GetPublicKeyRing
 import me.proton.core.drive.cryptobase.domain.usecase.VerifyData
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.key.domain.extension.keyHolder
-import me.proton.core.drive.key.domain.usecase.GetAddressKeys
+import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class VerifyManifestSignature @Inject constructor(
-    private val getAddressKeys: GetAddressKeys,
+    private val getPublicAddressKeys: GetPublicAddressKeys,
     private val verifyData: VerifyData,
     private val getManifest: GetManifest,
     private val getPublicKeyRing: GetPublicKeyRing,
@@ -42,7 +42,9 @@ class VerifyManifestSignature @Inject constructor(
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ): Result<Boolean> = coRunCatching(coroutineContext) {
         verifyData(
-            verifyKeyRing = getPublicKeyRing(getAddressKeys(userId, signatureAddress).keyHolder).getOrThrow(),
+            verifyKeyRing = getPublicKeyRing(
+                getPublicAddressKeys(userId, signatureAddress).getOrThrow().keyHolder
+            ).getOrThrow(),
             input = getManifest(blocks).getOrThrow(),
             signature = manifestSignature,
         ).getOrThrow()

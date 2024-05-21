@@ -35,6 +35,7 @@ class PreviewPhotosFlowTest: AuthenticatedBaseTest() {
 
     @Before
     fun setUp() {
+        PhotosTabRobot.waitUntilLoaded()
         FusionConfig.Compose.waitTimeout.set(30.seconds)
     }
 

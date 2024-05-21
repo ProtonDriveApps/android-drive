@@ -16,10 +16,13 @@
  * along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
  */
 @file:Suppress("MatchingDeclarationName")
+
 package me.proton.core.drive.db.test
 
 import me.proton.android.drive.db.DriveDatabase
+import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.data.api.ShareDto
 import me.proton.core.drive.share.data.db.ShareEntity
 import me.proton.core.drive.volume.data.db.VolumeEntity
@@ -30,6 +33,7 @@ import me.proton.core.user.domain.entity.AddressId
 data class ShareContext(
     val db: DriveDatabase,
     val user: UserEntity,
+    val account: AccountEntity,
     val volume: VolumeEntity,
     val share: ShareEntity,
 ) : BaseContext()
@@ -45,7 +49,7 @@ suspend fun <T> VolumeContext.share(
     block: suspend ShareContext.() -> T,
 ): T {
     db.shareDao.insertOrUpdate(shareEntity)
-    return ShareContext(db, user, volume, shareEntity).block()
+    return ShareContext(db, user, account, volume, shareEntity).block()
 }
 
 @Suppress("FunctionName")
@@ -56,9 +60,9 @@ fun NullableShareEntity(
     linkId: String,
     type: Long = ShareDto.TYPE_STANDARD,
     addressId: AddressId? = AddressId("address-id-$id"),
-    key : String = "key-$id",
-    passphrase : String = "passphrase-$id",
-    passphraseSignature : String = "passphrase-signature-$id",
+    key: String = "key-$id",
+    passphrase: String = "s".repeat(32),
+    passphraseSignature: String = "passphrase-signature-$id",
 ): ShareEntity {
     return ShareEntity(
         id = id,
@@ -74,4 +78,36 @@ fun NullableShareEntity(
         creationTime = null,
         type = type,
     )
+}
+
+fun findRootId(shareId: String): FolderId {
+    val deviceRegex = """device-share-id-(\d+)""".toRegex()
+    val standardRegex = """standard-share-id-(\d+)""".toRegex()
+    return when (shareId) {
+        mainShareId.id -> mainRootId
+        photoShareId.id -> photoRootId
+        else -> {
+            val deviceResult = deviceRegex.matchEntire(shareId)
+            val standardResult = standardRegex.matchEntire(shareId)
+            if (deviceResult != null) {
+                deviceRootId(deviceResult.groupValues[1].toInt())
+            } else if (standardResult != null) {
+                standardRootId(standardResult.groupValues[1].toInt())
+            } else {
+                error("Unkown share id: $shareId")
+            }
+        }
+    }
+}
+
+fun findShareType(shareId: String): Long {
+    val deviceRegex = """device-share-id-(\d+)""".toRegex()
+    val standardRegex = """standard-share-id-(\d+)""".toRegex()
+    return when {
+        shareId == mainShareId.id -> ShareDto.TYPE_MAIN
+        shareId == photoShareId.id -> ShareDto.TYPE_PHOTO
+        deviceRegex.matches(shareId) -> ShareDto.TYPE_DEVICE
+        standardRegex.matches(shareId) -> ShareDto.TYPE_STANDARD
+        else -> error("Unkown share id: $shareId")
+    }
 }

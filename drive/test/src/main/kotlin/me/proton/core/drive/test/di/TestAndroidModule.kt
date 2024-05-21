@@ -18,17 +18,21 @@
 
 package me.proton.core.drive.test.di
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.test.kotlin.TestCoroutineScopeProvider
 import me.proton.core.test.kotlin.TestDispatcherProvider
-import me.proton.core.util.android.dagger.Monotonic
-import me.proton.core.util.android.dagger.UtcClock
+import me.proton.core.util.android.datetime.Clock
+import me.proton.core.util.android.datetime.DateTimeFormat
+import me.proton.core.util.android.datetime.DurationFormat
+import me.proton.core.util.android.datetime.Monotonic
+import me.proton.core.util.android.datetime.UtcClock
 import me.proton.core.util.kotlin.CoroutineScopeProvider
 import me.proton.core.util.kotlin.DispatcherProvider
-import java.time.Clock
 import javax.inject.Singleton
 import kotlin.time.TimeSource
 
@@ -49,10 +53,22 @@ class TestAndroidModule {
     companion object {
         @Provides
         @UtcClock
-        internal fun provideClock(): Clock = Clock.systemUTC()
+        internal fun provideClock(): Clock = Clock.systemUtc()
 
         @Provides
         @Monotonic
         internal fun provideMonotonicTimeSource(): TimeSource = TimeSource.Monotonic
+
+        @Provides
+        @Singleton
+        internal fun provideDataTimeFormat(
+            @ApplicationContext context: Context
+        ): DateTimeFormat = DateTimeFormat(context)
+
+        @Provides
+        @Singleton
+        internal fun provideDurationFormat(
+            @ApplicationContext context: Context
+        ): DurationFormat = DurationFormat(context)
     }
 }

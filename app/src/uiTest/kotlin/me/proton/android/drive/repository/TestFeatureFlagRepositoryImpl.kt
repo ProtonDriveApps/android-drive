@@ -18,6 +18,9 @@
 
 package me.proton.android.drive.repository
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.onEach
 import me.proton.core.drive.base.domain.log.LogTag.FEATURE_FLAG
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
@@ -30,10 +33,19 @@ class TestFeatureFlagRepositoryImpl @Inject constructor(
 ) : FeatureFlagRepository by repository {
 
     override suspend fun getFeatureFlag(featureFlagId: FeatureFlagId): FeatureFlag? =
+        (flags[featureFlagId.id]?.let { state: FeatureFlag.State ->
+            FeatureFlag(featureFlagId, state).also { it.log("local") }
+        } ?: repository.getFeatureFlag(featureFlagId)).also { it?.log("remote") }
+
+    override suspend fun getFeatureFlagFlow(featureFlagId: FeatureFlagId): Flow<FeatureFlag?> =
         (flags[featureFlagId.id]?.let { state ->
-            CoreLogger.d(FEATURE_FLAG, "Overriding feature flag $featureFlagId to $state")
-            FeatureFlag(featureFlagId, state)
-        } ?: repository.getFeatureFlag(featureFlagId))
+            flowOf(FeatureFlag(featureFlagId, state)).onEach { it.log("local") }
+        } ?: repository.getFeatureFlagFlow(featureFlagId)).onEach { it?.log("remote") }
+
+
+    private fun FeatureFlag.log(source: String) {
+        CoreLogger.d(FEATURE_FLAG, "Use $source feature flag $id to $state")
+    }
 
     companion object {
         val flags = mutableMapOf<String, FeatureFlag.State>()

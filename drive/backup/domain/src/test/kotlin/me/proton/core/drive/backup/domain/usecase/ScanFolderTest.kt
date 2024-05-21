@@ -18,67 +18,59 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import io.mockk.coEvery
-import io.mockk.mockk
-import io.mockk.mockkStatic
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.crypto.common.pgp.HashKey
-import me.proton.core.crypto.common.pgp.hmacSha256
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFolder
-import me.proton.core.drive.backup.domain.repository.ScanFolderRepository
+import me.proton.core.drive.backup.domain.repository.TestScanFolderRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.crypto.domain.usecase.base.UseHashKey
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.getPublicAddressKeys
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class ScanFolderTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
-
-    private lateinit var scanFolder: ScanFolder
-    private lateinit var fileRepository: BackupFileRepositoryImpl
-    private lateinit var folderRepository: BackupFolderRepositoryImpl
-
-    private var backupFiles = emptyList<BackupFile>()
-
-    private val scanFolderRepository = ScanFolderRepository { backupFolder ->
-        backupFiles.filter { backupFile ->
-            val sameFolder = backupFile.bucketId == backupFolder.bucketId
-            val timestamp = backupFolder.updateTime
-            val notSynced = if (timestamp == null) {
-                true
-            } else {
-                backupFile.date > timestamp
-            }
-            sameFolder && notSynced
-        }
-    }
-
+    private lateinit var backupFolder: BackupFolder
     private val bucketId = 0
-
     private lateinit var backupFile1: BackupFile
     private lateinit var backupFile2: BackupFile
 
-    private lateinit var backupFolder: BackupFolder
+    @Inject
+    lateinit var scanFolder: ScanFolder
+
+    @Inject
+    lateinit var fileRepository: BackupFileRepositoryImpl
+
+    @Inject
+    lateinit var folderRepository: BackupFolderRepositoryImpl
+
+    @Inject
+    lateinit var scanFolderRepository: TestScanFolderRepository
+
+    @Inject
+    lateinit var addFolder: AddFolder
+
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
+        folderId = driveRule.db.myFiles { }
         backupFolder = BackupFolder(
             bucketId = bucketId,
             folderId = folderId,
@@ -97,36 +89,18 @@ class ScanFolderTest {
             name = "file2",
             date = TimestampS(2000),
         )
-        fileRepository = BackupFileRepositoryImpl(database.db)
-        folderRepository = BackupFolderRepositoryImpl(database.db)
-        folderRepository.insertFolder(backupFolder)
-        val useHashKey = mockk<UseHashKey>()
-        val hashKey = mockk<HashKey>()
-        mockkStatic(HashKey::hmacSha256)
-        coEvery { useHashKey<BackupFile>(folderId, any(), any(), any()) } coAnswers {
-            val block = arg<suspend (HashKey) -> BackupFile>(3)
-            Result.success(block(hashKey))
-        }
-        coEvery { hashKey.hmacSha256(any()) } answers {
-            val input = secondArg<String>()
-            "hmacSha256($input)"
-        }
-        scanFolder = ScanFolder(
-            scanFolder = scanFolderRepository,
-            setFiles = SetFiles(fileRepository),
-            updateFolder = UpdateFolder(folderRepository),
-            useHashKey = useHashKey,
-        )
+        addFolder(backupFolder).getOrThrow()
+        driveRule.server.getPublicAddressKeys()
     }
 
     @Test
     fun `Given no medias when sync all folders then should store nothing`() = runTest {
 
-        val result = scanFolder(backupFolder, UploadFileLink.BACKUP_PRIORITY)
+        val listResult = scanFolder(backupFolder, UploadFileLink.BACKUP_PRIORITY).getOrThrow()
 
-        assertEquals(Result.success(backupFiles), result)
+        assertEquals(scanFolderRepository.backupFiles, listResult)
         assertEquals(
-            backupFiles,
+            scanFolderRepository.backupFiles,
             fileRepository.getAllFiles(folderId = folderId, fromIndex = 0, count = 1),
         )
     }
@@ -134,22 +108,20 @@ class ScanFolderTest {
     @Test
     fun `Given medias when sync a folder then should store those medias`() =
         runTest {
-            backupFiles = listOf(backupFile1, backupFile2)
+            scanFolderRepository.backupFiles = listOf(backupFile1, backupFile2)
 
-            val result = scanFolder(backupFolder, UploadFileLink.BACKUP_PRIORITY)
+            val backupFiles = scanFolder(backupFolder, UploadFileLink.BACKUP_PRIORITY).getOrThrow()
 
             assertEquals(
-                Result.success(
-                    listOf(
-                        backupFile1.copy(hash = "hmacSha256(file1)"),
-                        backupFile2.copy(hash = "hmacSha256(file2)"),
-                    )
-                ), result
+                listOf(
+                    backupFile1.copy(hash = "9bf837b813a24c0e9f06a840eee4ea2c5e60e81147d44188cb3544ecce394270"),
+                    backupFile2.copy(hash = "02e38b29626f14b2ad31e4295a5b7e4be8adff44626cb2c2bdb49a026b7a85c5"),
+                ), backupFiles
             )
             assertEquals(
                 listOf(
-                    backupFile2.copy(hash = "hmacSha256(file2)"),
-                    backupFile1.copy(hash = "hmacSha256(file1)"),
+                    backupFile2.copy(hash = "02e38b29626f14b2ad31e4295a5b7e4be8adff44626cb2c2bdb49a026b7a85c5"),
+                    backupFile1.copy(hash = "9bf837b813a24c0e9f06a840eee4ea2c5e60e81147d44188cb3544ecce394270"),
                 ),
                 fileRepository.getAllFiles(folderId = folderId, fromIndex = 0, count = 2)
             )
@@ -163,21 +135,21 @@ class ScanFolderTest {
     fun `Given medias already synced when sync a folder then should only store new medias`() =
         runTest {
             val updateTime = backupFile1.date
-            backupFiles = listOf(
+            scanFolderRepository.backupFiles = listOf(
                 backupFile1,
                 backupFile2
             )
             folderRepository.updateFolder(backupFolder.copy(updateTime = updateTime))
 
-            val result = scanFolder(
+            val backupFiles = scanFolder(
                 backupFolder.copy(updateTime = updateTime),
                 UploadFileLink.BACKUP_PRIORITY
-            )
+            ).getOrThrow()
 
             val resultBackupFiles = listOf(
-                backupFile2.copy(hash = "hmacSha256(file2)"),
+                backupFile2.copy(hash = "02e38b29626f14b2ad31e4295a5b7e4be8adff44626cb2c2bdb49a026b7a85c5"),
             )
-            assertEquals(Result.success(resultBackupFiles), result)
+            assertEquals(resultBackupFiles, backupFiles)
             assertEquals(
                 resultBackupFiles,
                 fileRepository.getAllFiles(folderId = folderId, fromIndex = 0, count = 2),

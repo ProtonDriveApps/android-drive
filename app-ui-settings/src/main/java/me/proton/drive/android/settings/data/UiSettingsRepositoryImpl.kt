@@ -27,6 +27,7 @@ import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import me.proton.drive.android.settings.data.extension.toDomain
 import me.proton.drive.android.settings.data.extension.toEntity
 import me.proton.drive.android.settings.domain.UiSettingsRepository
+import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.entity.UiSettings
@@ -58,6 +59,12 @@ class UiSettingsRepositoryImpl @Inject constructor(
     override suspend fun updateThemeStyle(userId: UserId, themeStyle: ThemeStyle) {
         updateOrInsert(userId, { dao.updateThemeStyle(userId, themeStyle) }) {
             UiSettings(themeStyle = themeStyle)
+        }
+    }
+
+    override suspend fun updateHomeTab(userId: UserId, homeTab: HomeTab) {
+        updateOrInsert(userId, { dao.updateHomeTab(userId, homeTab) }) {
+            UiSettings(homeTab = homeTab)
         }
     }
 

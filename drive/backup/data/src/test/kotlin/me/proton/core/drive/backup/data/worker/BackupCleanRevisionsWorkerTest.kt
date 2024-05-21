@@ -24,51 +24,63 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
-import io.mockk.coEvery
-import io.mockk.mockk
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupDuplicateRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.backup.domain.entity.BackupError
+import me.proton.core.drive.backup.domain.repository.BackupDuplicateRepository
+import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.CleanRevisions
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.folder.domain.repository.FolderRepository
-import me.proton.core.drive.folder.domain.usecase.DeleteFolderChildren
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
-import me.proton.core.network.domain.ApiException
-import me.proton.core.network.domain.ApiResult
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.foldersDeleteMultiple
+import me.proton.core.drive.test.api.retryableErrorResponse
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class BackupCleanRevisionsWorkerTest {
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
 
     private lateinit var folderId: FolderId
 
-    private lateinit var backupDuplicateRepository: BackupDuplicateRepositoryImpl
-    private lateinit var backupErrorRepository: BackupErrorRepositoryImpl
-    val folderRepository: FolderRepository = mockk()
+    @Inject
+    lateinit var cleanRevisions: CleanRevisions
+
+    @Inject
+    lateinit var configurationProvider: ConfigurationProvider
+
+    @Inject
+    lateinit var addBackupError: AddBackupError
+
+    @Inject
+    lateinit var backupDuplicateRepository: BackupDuplicateRepository
+
+    @Inject
+    lateinit var backupErrorRepository: BackupErrorRepository
+
+    @Inject
+    lateinit var folderRepository: FolderRepository
 
     private lateinit var backupDuplicates: List<BackupDuplicate>
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
-        backupDuplicateRepository = BackupDuplicateRepositoryImpl(database.db)
-        backupErrorRepository = BackupErrorRepositoryImpl(database.db)
+        folderId = driveRule.db.myFiles { }
         backupDuplicates = listOf(
             BackupDuplicate(
                 id = 1,
@@ -86,7 +98,7 @@ class BackupCleanRevisionsWorkerTest {
 
     @Test
     fun success() = runTest {
-        coEvery { folderRepository.deleteFolderChildren(any(), any()) } returns Result.success(Unit)
+        driveRule.server.foldersDeleteMultiple()
 
         val worker = backupCleanRevisionsWorker(folderId, 0)
         val result = worker.doWork()
@@ -104,9 +116,7 @@ class BackupCleanRevisionsWorkerTest {
 
     @Test
     fun retry() = runTest {
-        coEvery { folderRepository.deleteFolderChildren(any(), any()) } returns
-                Result.failure(ApiException(ApiResult.Error.Connection()))
-
+        driveRule.server.foldersDeleteMultiple { retryableErrorResponse() }
         val worker = backupCleanRevisionsWorker(folderId, 0)
 
         val result = worker.doWork()
@@ -124,8 +134,7 @@ class BackupCleanRevisionsWorkerTest {
 
     @Test
     fun failure() = runTest {
-        coEvery { folderRepository.deleteFolderChildren(any(), any()) } returns
-                Result.failure(ApiException(ApiResult.Error.Connection()))
+        driveRule.server.foldersDeleteMultiple { retryableErrorResponse() }
 
         val worker = backupCleanRevisionsWorker(folderId, 11)
 
@@ -147,11 +156,6 @@ class BackupCleanRevisionsWorkerTest {
         runAttemptCount: Int = 1,
     ): BackupCleanRevisionsWorker {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        val configurationProvider = object : ConfigurationProvider {
-            override val host: String = ""
-            override val baseUrl: String = ""
-            override val appVersionHeader: String = ""
-        }
         return TestListenableWorkerBuilder<BackupCleanRevisionsWorker>(context)
             .setWorkerFactory(object : WorkerFactory() {
                 override fun createWorker(
@@ -161,13 +165,9 @@ class BackupCleanRevisionsWorkerTest {
                 ) = BackupCleanRevisionsWorker(
                     context = appContext,
                     workerParams = workerParameters,
-                    cleanRevisions = CleanRevisions(
-                        repository = backupDuplicateRepository,
-                        configurationProvider = configurationProvider,
-                        deleteFolderChildren = DeleteFolderChildren(folderRepository),
-                    ),
+                    cleanRevisions = cleanRevisions,
                     configurationProvider = configurationProvider,
-                    addBackupError = AddBackupError(backupErrorRepository)
+                    addBackupError = addBackupError,
                 )
             })
             .setInputData(

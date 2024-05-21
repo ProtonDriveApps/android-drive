@@ -64,7 +64,7 @@ fun Project.driveModule(
 
         defaultConfig {
             applicationId = Config.applicationId
-            versionCode = versionCodeFromTags
+            versionCode = versionCodeFromGitCommitCount
             versionName = Config.versionName
             resourceConfigurations.addAll(Config.resourceConfigurations)
 
@@ -237,6 +237,10 @@ fun Project.driveModule(
 val Project.tags get() = "1.0.0-alpha01\n1.0.0_cancelled(16)\n1.0.0_cancelled(18)\n1.0.0_cancelled(20)\n1.0.0-beta04\n1.0.3_iap(26)\n1.2.0-alpha01\n" + "git tag".runCommand(workingDir = rootDir)
 
 val Project.versionCodeFromTags: Int get() = tags.countSubstrings("\n") + 2 // last new line + next tag
+
+val Project.gitCommitCount: String get() = "git rev-list --count HEAD".runCommand(rootDir)
+
+val Project.versionCodeFromGitCommitCount: Int get() = gitCommitCount.toInt()
 
 fun String.countSubstrings(substring: String): Int =
     split(substring).dropLastWhile { it.isEmpty() }.size - 1

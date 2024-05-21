@@ -23,8 +23,8 @@ import me.proton.core.drive.cryptobase.domain.usecase.DecryptAndVerifyText
 import me.proton.core.drive.cryptobase.domain.usecase.GetPublicKeyRing
 import me.proton.core.drive.cryptobase.domain.usecase.UnlockKey
 import me.proton.core.drive.key.domain.extension.keyHolder
-import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
+import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
 import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.core.drive.link.domain.entity.File
 import me.proton.core.drive.link.domain.entity.Folder
@@ -37,7 +37,7 @@ class DecryptLinkXAttr @Inject constructor(
     private val getLink: GetLink,
     private val getLinkKey: GetNodeKey,
     private val decryptAndVerifyText: DecryptAndVerifyText,
-    private val getAddressKeys: GetAddressKeys,
+    private val getPublicAddressKeys: GetPublicAddressKeys,
     private val getPublicKeyRing: GetPublicKeyRing,
     private val unlockKey: UnlockKey,
 ) {
@@ -51,7 +51,9 @@ class DecryptLinkXAttr @Inject constructor(
             decryptAndVerifyText(
                 unlockedKey = unlockedKey,
                 text = requireNotNull(link.xAttr),
-                verifyKeyRing = getPublicKeyRing(getAddressKeys(link.shareId.userId, signatureAddress).keyHolder).getOrThrow(),
+                verifyKeyRing = getPublicKeyRing(
+                    getPublicAddressKeys(link.shareId.userId, signatureAddress).getOrThrow().keyHolder
+                ).getOrThrow(),
                 verificationFailedContext = javaClass.simpleName,
             ).getOrThrow()
         }.getOrThrow()

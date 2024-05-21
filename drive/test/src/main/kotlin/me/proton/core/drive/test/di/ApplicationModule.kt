@@ -35,7 +35,10 @@ import me.proton.core.domain.entity.AppStore
 import me.proton.core.domain.entity.Product
 import me.proton.core.drive.announce.event.domain.handler.EventHandler
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.repository.ClientUidRepository
 import me.proton.core.drive.test.TestConfigurationProvider
+import me.proton.core.drive.test.handler.MemoryEventHandler
+import me.proton.core.drive.test.repository.TestClientUidRepository
 import javax.inject.Singleton
 
 @Module
@@ -44,7 +47,9 @@ object ApplicationModule {
 
     @Provides
     @Singleton
-    fun provideWorkManager(@ApplicationContext context: Context) = WorkManager.getInstance(context)
+    fun provideWorkManager(): WorkManager {
+        error("WorkManager should not be injected for test, create a Test*WorkManager implementation that only uses use cases")
+    }
 
     @Provides
     @Singleton
@@ -79,7 +84,7 @@ object ApplicationModule {
     @Provides
     @Singleton
     @ElementsIntoSet
-    fun provideEventHandlers() = setOf<EventHandler>()
+    fun provideEventHandlers(memory: MemoryEventHandler) = setOf<EventHandler>(memory)
 }
 
 @Module
@@ -88,5 +93,10 @@ abstract class ApplicationBindsModule {
     @Binds
     @Singleton
     abstract fun bindsConfigurationProvider(impl: TestConfigurationProvider): ConfigurationProvider
+
+
+    @Binds
+    @Singleton
+    abstract fun bindsClientUidRepositoryImpl(impl: TestClientUidRepository): ClientUidRepository
 
 }

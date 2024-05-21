@@ -30,6 +30,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.ui.dialog.ConfirmStopSharingDialogTestTag.confirmStopSharing
 import me.proton.android.drive.ui.viewmodel.ConfirmStopSharingDialogViewModel
@@ -51,7 +52,7 @@ fun ConfirmStopSharingDialog(
     onConfirm: () -> Unit,
 ) {
     val viewModel = hiltViewModel<ConfirmStopSharingDialogViewModel>()
-    val viewState by rememberFlowWithLifecycle(viewModel.viewState).collectAsState(initial = viewModel.initialViewState)
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle(initialValue = viewModel.initialViewState)
     val viewEvent = remember(onConfirm, viewModel) { viewModel.viewEvent(onConfirm) }
 
     ProtonAlertDialog(

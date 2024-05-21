@@ -148,8 +148,8 @@ class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
                 nodeWithTextDisplayed(I18N.string.file_operation_moving_file_successful)
             }
             // Server sometimes responds with 422 "This file or folder was out of date, move failed."
-            // if undo is called too quickly, thus a 2 seconds delay before clicking on Undo
-            .clickOnUndo(after = 2.seconds, FilesTabRobot)
+            // if undo is called too quickly, thus a 3 seconds delay before clicking on Undo
+            .clickOnUndo(after = 3.seconds, FilesTabRobot)
             .verify {
                 nodeWithTextDisplayed(I18N.string.file_operation_moving_file_successful)
             }

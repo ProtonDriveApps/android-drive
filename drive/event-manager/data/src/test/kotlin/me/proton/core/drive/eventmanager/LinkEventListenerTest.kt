@@ -108,6 +108,26 @@ class LinkEventListenerTest {
     }
 
     @Test
+    fun onUnknownEvent() = runTest {
+        listener.notifyEvents(
+            config = shareConfig,
+            metadata = shareConfig.eventMetadata,
+            response = EventsResponse(
+                // language=json
+                """
+                  {
+                    "Events": [
+                      {
+                        "EventType": -1
+                      }
+                    ]
+                  }
+                """.trimIndent()
+            ),
+        )
+    }
+
+    @Test
     fun onCreateFromShare() = runTest {
         val linkDto = linkDto()
         listener.notifyEvents(
@@ -353,23 +373,25 @@ class LinkEventListenerTest {
             LinkEventListener.json.encodeToString(Events(listOf(*events)))
         )
 
-    private val EventManagerConfig.Drive.Share.eventMetadata get() =
-        EventMetadata(
-            userId = userId,
-            eventId = null,
-            config = this,
-            createdAt = 0,
-            refresh = RefreshType.Mail
-        )
+    private val EventManagerConfig.Drive.Share.eventMetadata
+        get() =
+            EventMetadata(
+                userId = userId,
+                eventId = null,
+                config = this,
+                createdAt = 0,
+                refresh = RefreshType.Mail
+            )
 
-    private val EventManagerConfig.Drive.Volume.eventMetadata get() =
-        EventMetadata(
-            userId = userId,
-            eventId = null,
-            config = this,
-            createdAt = 0,
-            refresh = RefreshType.Mail
-        )
+    private val EventManagerConfig.Drive.Volume.eventMetadata
+        get() =
+            EventMetadata(
+                userId = userId,
+                eventId = null,
+                config = this,
+                createdAt = 0,
+                refresh = RefreshType.Mail
+            )
 
     private fun linkDto() = LinkDto(
         id = "link-id",

@@ -136,6 +136,7 @@ class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     fun removePhotoFromAvailableOffline() {
         val image = ImageName.Now
 
+        PhotosTabRobot.waitUntilLoaded()
         PhotosTabRobot
             .longClickOnPhoto(image.fileName)
             .clickOptions()

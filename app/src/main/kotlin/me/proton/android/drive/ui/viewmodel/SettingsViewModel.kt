@@ -32,7 +32,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.BuildConfig
@@ -56,7 +55,9 @@ import me.proton.core.drive.settings.presentation.event.SettingsViewEvent
 import me.proton.core.drive.settings.presentation.state.DebugSettingsViewState
 import me.proton.core.drive.settings.presentation.state.LegalLink
 import me.proton.core.drive.settings.presentation.state.SettingsViewState
+import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
+import me.proton.drive.android.settings.domain.usecase.GetHomeTab
 import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
 import me.proton.drive.android.settings.domain.usecase.UpdateThemeStyle
 import javax.inject.Inject
@@ -71,6 +72,7 @@ class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val debugSettings: DebugSettings,
     getThemeStyle: GetThemeStyle,
+    getHomeTab: GetHomeTab,
     private val updateThemeStyle: UpdateThemeStyle,
     savedStateHandle: SavedStateHandle,
     appLockManager: AppLockManager,
@@ -155,13 +157,14 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
-    val viewState: Flow<SettingsViewState> = combine(
+    val viewState: Flow<SettingsViewState> = baseCombine(
         debugSettingsFlow,
         getThemeStyle(userId),
         appLockManager.enabled,
         getAutoLockDuration(),
         isPhotosEnabled(userId),
-    ) {  debugSettings, themeStyle, enabled, autoLockDuration, isBackupEnabled ->
+        getHomeTab(userId),
+    ) {  debugSettings, themeStyle, enabled, autoLockDuration, isBackupEnabled, homeTab ->
         SettingsViewState(
             navigationIcon = CorePresentation.drawable.ic_arrow_back,
             appNameResId = I18N.string.app_name,
@@ -184,14 +187,22 @@ class SettingsViewModel @Inject constructor(
             autoLockDuration = autoLockDuration,
             isPhotosSettingsVisible = configurationProvider.photosFeatureFlag,
             photosBackupSubtitleResId = getPhotosBackupSubtitleResId(isBackupEnabled),
+            defaultHomeTabResId = when (homeTab) {
+                HomeTab.FILES -> I18N.string.title_files
+                HomeTab.PHOTOS -> I18N.string.photos_title
+                HomeTab.COMPUTERS -> I18N.string.computers_title
+                HomeTab.SHARED -> I18N.string.title_shared
+            }
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     fun viewEvent(
         navigateBack: () -> Unit,
+        navigateToAccountSettings: () -> Unit,
         navigateToAppAccess: () -> Unit,
         navigateToAutoLockDurations: () -> Unit,
         navigateToPhotosBackup: () -> Unit,
+        navigateToDefaultHomeTab: () -> Unit,
     ) = SettingsViewEvent(
         navigateBack = navigateBack,
         onLinkClicked = { link ->
@@ -203,6 +214,9 @@ class SettingsViewModel @Inject constructor(
             viewModelScope.launch {
                 updateThemeStyle(userId, enumValues<ThemeStyle>().first { style -> style.resId == newStyle })
             }
+        },
+        onAccountSettings = {
+            navigateToAccountSettings()
         },
         onAppAccess = {
             navigateToAppAccess()
@@ -232,6 +246,9 @@ class SettingsViewModel @Inject constructor(
         },
         onPhotosBackup = {
             navigateToPhotosBackup()
+        },
+        onDefaultHomeTab = {
+            navigateToDefaultHomeTab()
         },
     )
 

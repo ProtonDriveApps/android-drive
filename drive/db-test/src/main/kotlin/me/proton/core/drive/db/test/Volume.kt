@@ -20,6 +20,7 @@
 package me.proton.core.drive.db.test
 
 import me.proton.android.drive.db.DriveDatabase
+import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.data.db.VolumeEntity
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -28,11 +29,12 @@ import me.proton.core.user.data.entity.UserEntity
 data class VolumeContext(
     val db: DriveDatabase,
     val user: UserEntity,
+    val account: AccountEntity,
     val volume: VolumeEntity,
 ) : BaseContext()
 
 val volumeId = VolumeId("volume-id")
-val mainShareId = ShareId(userId, "share-id")
+val mainShareId = ShareId(userId, "main-share-id")
 
 suspend fun UserContext.volume(
     volume: VolumeEntity = NullableVolumeEntity(
@@ -47,7 +49,7 @@ suspend fun <T> UserContext.volume(
     block: suspend VolumeContext.() -> T,
 ): T {
     db.volumeDao.insertOrUpdate(volume)
-    return VolumeContext(db, user, volume).block()
+    return VolumeContext(db, user, account, volume).block()
 }
 
 @Suppress("FunctionName")

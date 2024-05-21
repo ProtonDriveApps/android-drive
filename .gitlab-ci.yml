@@ -13,9 +13,7 @@ variables:
 workflow:
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "candidate"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 before_script:
   # We must keep these variables here. We can't do it inside the entrypoint, as idk how but
@@ -26,6 +24,7 @@ before_script:
   - md5sum app/protonkey.jks
   - md5sum app/service_account.json
   - git fetch --tags
+  - if [[ $CI_COMMIT_REF_NAME == "candidate" ]]; then git fetch --unshallow origin HEAD; fi
 
 stages:
   - i18n
@@ -262,17 +261,49 @@ drive-sorting-presentation-firebase-tests:
   allow_failure: true
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:all/'
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
-      when: manual
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:all/'
+
+test:firebase:e2e:shard-account:
+  extends: .app-firebase-tests
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.account, package me.proton.android.drive.ui.test.flow.subscription"
+
+test:firebase:e2e:shard-shares:
+  extends: .app-firebase-tests
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.computers,package me.proton.android.drive.ui.test.flow.photos"
+
+test:firebase:e2e:shard-files-1:
+  extends: .app-firebase-tests
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.details, package me.proton.android.drive.ui.test.flow.rename, package me.proton.android.drive.ui.test.flow.share, package me.proton.android.drive.ui.test.flow.trash"
+
+test:firebase:e2e:shard-files-2:
+  extends: .app-firebase-tests
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.preview, package me.proton.android.drive.ui.test.flow.move, package me.proton.android.drive.ui.test.flow.offline"
+
+test:firebase:e2e:shard-creation:
+  extends: .app-firebase-tests
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.creatingFolder, package me.proton.android.drive.ui.test.flow.upload"
+
+test:firebase:e2e:shard-misc:
+  extends: .app-firebase-tests
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.deeplink, package me.proton.android.drive.ui.test.flow.settings"
 
 
 test:firebase:e2e:smoke:
   extends: .app-firebase-tests
   when: manual
   rules:
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+      when: never
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:all/'
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: on_success
   variables:
     TEST_TARGETS: "annotation me.proton.android.drive.ui.test.SmokeTest"
@@ -281,7 +312,6 @@ test:firebase:e2e:account:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:account/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.account"
 
@@ -290,7 +320,6 @@ test:firebase:e2e:computers:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:computers/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.computers"
 
@@ -298,7 +327,6 @@ test:firebase:e2e:creatingFolder:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:creatingFolder/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.creatingFolder"
 
@@ -306,7 +334,6 @@ test:firebase:e2e:deeplink:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:deeplink/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.deeplink"
 
@@ -314,7 +341,6 @@ test:firebase:e2e:details:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:details/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.details"
 
@@ -322,7 +348,6 @@ test:firebase:e2e:move:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:move/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.move"
     DEVICE_CONFIG: "quickTest-2"
@@ -331,7 +356,6 @@ test:firebase:e2e:offline:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:offline/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.offline"
 
@@ -339,7 +363,6 @@ test:firebase:e2e:photos:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:photos/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.photos"
 
@@ -347,7 +370,6 @@ test:firebase:e2e:preview:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:preview/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.preview"
 
@@ -355,7 +377,6 @@ test:firebase:e2e:rename:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:rename/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.rename"
 
@@ -363,7 +384,6 @@ test:firebase:e2e:settings:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:settings/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.settings"
     DEVICE_CONFIG: "quickTest-3"
@@ -372,7 +392,6 @@ test:firebase:e2e:share:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:share/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.share"
     DEVICE_CONFIG: "quickTest-2"
@@ -381,7 +400,6 @@ test:firebase:e2e:subscription:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:subscription/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.subscription"
 
@@ -389,7 +407,6 @@ test:firebase:e2e:trash:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:trash/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.trash"
 
@@ -397,7 +414,6 @@ test:firebase:e2e:upload:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:upload/'
-    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.upload"
 
@@ -418,14 +434,14 @@ coverage report:
         coverage_format: cobertura
         path: ./**/build/reports/cobertura-coverage.xml
   rules:
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual
 
 testmo-upload:
   stage: report
   allow_failure: true
   rules:
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual
   before_script:
     - if [[ -f /load-env.sh ]]; then source /load-env.sh; fi
@@ -470,7 +486,23 @@ publish to firebase app distribution:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
       allow_failure: true
 
-distribute:debug:
+distribute:debug:mr:
+  stage: publish
+  image: $CI_REGISTRY/tpe/test-scripts
+  needs:
+    - job: "build:dev:debug"
+      artifacts: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+      allow_failure: true
+  script:
+    - /usr/local/bin/nexus/mr_created_commit_pushed.py
+      --token "$PRIVATE_TOKEN_GITLAB_API_PROTON_CI"
+      --component "/Drive/Android"
+      --file_paths "$LOCAL_APK" "$LOCAL_TEST_APK"
+      --file_names "drive-dev-debug.apk" "drive-dev-debug-test.apk"
+
+distribute:debug:post-merge:
   stage: publish
   image: $CI_REGISTRY/tpe/test-scripts
   needs:
@@ -480,18 +512,11 @@ distribute:debug:
     - if: '$CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH'
       allow_failure: true
   script:
-    - upload_to_nexus.py
-      --path app/build/outputs/apk/dev/debug/ProtonDrive-*-dev-debug.apk
-      --repository "TestData/builds/Drive/Android/LatestDevDebug/"
-      --filename "latest-drive-dev-debug.apk"
-    - upload_to_nexus.py
-      --path app/build/outputs/apk/androidTest/dev/debug/ProtonDrive-*-dev-debug-androidTest.apk
-      --repository "TestData/builds/Drive/Android/LatestTestDevDebug"
-      --filename "latest-drive-test-dev-debug.apk"
-    # Get latest commit information, save it to commit_info.json file and upload to Nexus.
-    - upload_mr_description_to_nexus.py
-      --token $PRIVATE_TOKEN_GITLAB_API_PROTON_CI
-      --repository TestData/builds/Drive/Android/LatestDevDebug
+    - /usr/local/bin/nexus/mr_merged_with_post_merge_pipeline.py
+      --token "$PRIVATE_TOKEN_GITLAB_API_PROTON_CI"
+      --component "/Drive/Android"
+      --file_paths "$LOCAL_APK" "$LOCAL_TEST_APK"
+      --file_names "drive-dev-debug.apk" "drive-dev-debug-test.apk"
 
 startReview:
   needs:
@@ -513,7 +538,7 @@ stopReview:
   before_script: []
   extends: .stopReview
   rules:
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: manual
       allow_failure: true
 

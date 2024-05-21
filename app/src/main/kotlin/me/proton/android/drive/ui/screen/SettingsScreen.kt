@@ -42,9 +42,11 @@ import me.proton.core.drive.settings.presentation.Settings
 @Composable
 fun SettingsScreen(
     navigateBack: () -> Unit,
+    navigateToAccountSettings: () -> Unit,
     navigateToAppAccess: () -> Unit,
     navigateToAutoLockDurations: () -> Unit,
     navigateToPhotosBackup: () -> Unit,
+    navigateToDefaultHomeTab: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<SettingsViewModel>()
@@ -69,9 +71,11 @@ fun SettingsScreen(
                 viewState = viewState,
                 viewEvent = viewModel.viewEvent(
                     navigateBack = navigateBack,
+                    navigateToAccountSettings = navigateToAccountSettings,
                     navigateToAppAccess = navigateToAppAccess,
                     navigateToAutoLockDurations = navigateToAutoLockDurations,
                     navigateToPhotosBackup = navigateToPhotosBackup,
+                    navigateToDefaultHomeTab = navigateToDefaultHomeTab,
                 ),
             )
 

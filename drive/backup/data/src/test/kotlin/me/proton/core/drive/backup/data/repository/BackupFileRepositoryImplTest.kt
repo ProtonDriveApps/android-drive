@@ -18,15 +18,16 @@
 
 package me.proton.core.drive.backup.data.repository
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BackupStatus
+import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.photo
 import me.proton.core.drive.db.test.photoShareId
@@ -35,32 +36,36 @@ import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
 import me.proton.core.drive.linkupload.domain.entity.UploadState
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class BackupFileRepositoryImplTest {
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var rootMainId: FolderId
     private lateinit var rootPhotoId: FolderId
-
-    private lateinit var repository: BackupFileRepositoryImpl
-
     private val bucketId = 0
+
+    @Inject
+    lateinit var backupFolderRepository: BackupFolderRepository
+
+    @Inject
+    lateinit var repository: BackupFileRepositoryImpl
 
     @Before
     fun setUp() = runTest {
-        rootPhotoId = database.photo {}
-        rootMainId = database.myFiles {}
-        val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
+        rootPhotoId = driveRule.db.photo {}
+        rootMainId = driveRule.db.myFiles {}
         backupFolderRepository.insertFolder(BackupFolder(bucketId, rootPhotoId))
         backupFolderRepository.insertFolder(BackupFolder(1, rootMainId))
-        repository = BackupFileRepositoryImpl(database.db)
     }
 
     @Test
@@ -239,6 +244,7 @@ class BackupFileRepositoryImplTest {
                 repository.getBackupStatus(rootPhotoId).first(),
             )
         }
+
     @Test
     fun `Given tree files when all are mark as completed and failed then count should be 1 for failed`() =
         runTest {
@@ -269,8 +275,16 @@ class BackupFileRepositoryImplTest {
                     rootPhotoId.backupFile(index = 3, state = BackupFileState.IDLE),
                 )
             )
-            repository.markAs(rootPhotoId, listOf("hash1", "hash2"), BackupFileState.READY)
-            repository.markAs(rootPhotoId, listOf("hash3", "hash4"), BackupFileState.POSSIBLE_DUPLICATE)
+            repository.markAs(
+                folderId = rootPhotoId,
+                hashes = listOf("hash1", "hash2"),
+                backupFileState = BackupFileState.READY,
+            )
+            repository.markAs(
+                folderId = rootPhotoId,
+                hashes = listOf("hash3", "hash4"),
+                backupFileState = BackupFileState.POSSIBLE_DUPLICATE,
+            )
 
             assertEquals(
                 listOf(
@@ -345,7 +359,7 @@ class BackupFileRepositoryImplTest {
     )
 
     private suspend fun insertLinkUploadEntity(uri: String) {
-        database.db.linkUploadDao.insert(
+        driveRule.db.linkUploadDao.insert(
             LinkUploadEntity(
                 id = 0,
                 userId = userId,

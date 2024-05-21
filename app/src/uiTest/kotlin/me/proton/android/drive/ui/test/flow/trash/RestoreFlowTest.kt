@@ -126,6 +126,7 @@ class RestoreFlowTest : AuthenticatedBaseTest() {
     @Scenario(2, isPhotos = true)
     fun restoreAPhoto() {
         val item = ImageName.Main.fileName
+        PhotosTabRobot.waitUntilLoaded()
         PhotosTabRobot
             .longClickOnPhoto(item)
             .clickOptions()

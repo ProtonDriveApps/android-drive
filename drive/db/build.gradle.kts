@@ -93,6 +93,7 @@ driveModule(
     api(project(":drive:notification:data"))
     api(project(":drive:photo:data"))
     api(project(":drive:share:data"))
+    api(project(":drive:share-user:data"))
     api(project(":drive:share-url:base:data"))
     api(project(":drive:sorting:data"))
     api(project(":drive:stats:data"))

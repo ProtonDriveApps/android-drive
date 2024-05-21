@@ -18,25 +18,27 @@
 
 package me.proton.core.drive.backup.domain.manager
 
-import android.app.Application
-import androidx.test.core.app.ApplicationProvider
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.manager.BackupPermissionsManagerImpl
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class BackupPermissionsManagerTest {
 
-    private val permissionsManager: BackupPermissionsManager = BackupPermissionsManagerImpl(
-        ApplicationProvider.getApplicationContext<Application>()
-    )
+    @get:Rule
+    val driveRule = DriveRule(this)
+
+    @Inject
+    lateinit var permissionsManager: BackupPermissionsManager
 
     @Test
     fun `given permission granted when get permissions status then should be granted`() = runTest {

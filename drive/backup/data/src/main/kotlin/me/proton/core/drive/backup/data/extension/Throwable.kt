@@ -25,7 +25,7 @@ import me.proton.core.drive.base.data.extension.isErrno
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.hasProtonErrorCode
 
-internal fun Throwable.toBackupError(): BackupError = when (this) {
+fun Throwable.toBackupError(): BackupError = when (this) {
     is SecurityException -> BackupError.Permissions()
     is ApiException -> when {
         hasProtonErrorCode(EXCEEDED_QUOTA) -> BackupError.DriveStorage()

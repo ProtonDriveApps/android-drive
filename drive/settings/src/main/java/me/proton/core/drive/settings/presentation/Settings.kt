@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import me.proton.core.accountmanager.presentation.compose.AccountSettingsItem
 import me.proton.core.compose.component.ProtonSettingsHeader
 import me.proton.core.compose.component.ProtonSettingsItem
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
@@ -55,6 +56,7 @@ import me.proton.core.usersettings.presentation.compose.view.TelemetrySettingTog
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
+import me.proton.core.accountmanager.presentation.R as AccountPresentation
 
 @Composable
 fun Settings(
@@ -86,6 +88,13 @@ fun Settings(
                 .verticalScroll(rememberScrollState())
                 .testTag(SettingsTestTag.list)
         ) {
+
+            ProtonSettingsHeader(title = AccountPresentation.string.account_settings_header)
+            AccountSettingsItem(
+                modifier = Modifier.testTag(SettingsTestTag.account)
+            ) {
+                viewEvent.onAccountSettings()
+            }
 
             ProtonSettingsHeader(title = I18N.string.settings_section_security)
 
@@ -124,7 +133,12 @@ fun Settings(
                 showThemeDialog = true
             }
 
-
+            ProtonSettingsItem(
+                name = stringResource(id = I18N.string.settings_home_tab),
+                hint = stringResource(id = viewState.defaultHomeTabResId),
+            ) {
+                viewEvent.onDefaultHomeTab()
+            }
 
             if (viewState.legalLinks.isNotEmpty()) {
                 ProtonSettingsHeader(title = I18N.string.settings_section_about)
@@ -200,15 +214,18 @@ private fun SettingsPreview() {
                 autoLockDuration = 0.seconds,
                 isPhotosSettingsVisible = true,
                 photosBackupSubtitleResId = I18N.string.common_off,
+                defaultHomeTabResId = I18N.string.photos_title,
             ),
             viewEvent = SettingsViewEvent(
                 navigateBack = {},
                 onLinkClicked = {},
                 onThemeStyleChanged = {},
+                onAccountSettings = {},
                 onAppAccess = {},
                 onAutoLockDurations = {},
                 onClearLocalCache = {},
                 onPhotosBackup = {},
+                onDefaultHomeTab = {},
             )
         )
     }
@@ -216,4 +233,5 @@ private fun SettingsPreview() {
 
 object SettingsTestTag {
     const val list = "settings list"
+    const val account = "account"
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -22,16 +22,20 @@ import me.proton.android.drive.ui.common.FolderEntry
 import me.proton.android.drive.ui.common.folderEntry
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.isPhoto
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.files.presentation.entry.CopySharedLinkEntity
 import me.proton.core.drive.files.presentation.entry.DeletePermanentlyEntry
 import me.proton.core.drive.files.presentation.entry.DownloadEntry
 import me.proton.core.drive.files.presentation.entry.DownloadFileEntity
 import me.proton.core.drive.files.presentation.entry.FileInfoEntry
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
+import me.proton.core.drive.files.presentation.entry.ManageAccessEntity
 import me.proton.core.drive.files.presentation.entry.MoveEntry
 import me.proton.core.drive.files.presentation.entry.MoveFileEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
+import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntity
 import me.proton.core.drive.files.presentation.entry.ShareViaLinkEntry
 import me.proton.core.drive.files.presentation.entry.StopSharingEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
@@ -49,7 +53,7 @@ sealed class Option(
     val applicableTo: Set<ApplicableTo>,
     val applicableStates: Set<State>,
 ) {
-    object CreateFolder : Option(
+    data object CreateFolder : Option(
         ApplicableQuantity.Single,
         setOf(ApplicableTo.FOLDER),
         setOf(State.NOT_TRASHED, State.SHARED, State.NOT_SHARED),
@@ -66,9 +70,9 @@ sealed class Option(
         }
     }
 
-    object DeletePermanently : Option(
+    data object DeletePermanently : Option(
         ApplicableQuantity.All,
-        setOf(ApplicableTo.FILE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
         setOf(State.TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -79,9 +83,9 @@ sealed class Option(
         }
     }
 
-    object Download : Option(
+    data object Download : Option(
         ApplicableQuantity.All,
-        setOf(ApplicableTo.FILE),
+        ApplicableTo.ANY_FILE,
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -98,9 +102,9 @@ sealed class Option(
         }
     }
 
-    object Info : Option(
+    data object Info : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FILE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
         State.ANY_TRASHED + State.ANY_SHARED,
     ) {
         fun build(
@@ -111,9 +115,9 @@ sealed class Option(
         }
     }
 
-    object Move : Option(
+    data object Move : Option(
         ApplicableQuantity.All,
-        setOf(ApplicableTo.FILE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE, ApplicableTo.FOLDER),
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -131,9 +135,9 @@ sealed class Option(
         }
     }
 
-    object OfflineToggle : Option(
+    data object OfflineToggle : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FILE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -146,9 +150,9 @@ sealed class Option(
         }
     }
 
-    object Rename : Option(
+    data object Rename : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FILE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE, ApplicableTo.FOLDER),
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -159,9 +163,9 @@ sealed class Option(
         }
     }
 
-    object SendFile : Option(
+    data object SendFile : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FILE),
+        ApplicableTo.ANY_FILE,
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -173,7 +177,7 @@ sealed class Option(
         } as FileOptionEntry<DriveLink>
     }
 
-    object TakeAPhoto : Option(
+    data object TakeAPhoto : Option(
         ApplicableQuantity.Single,
         setOf(ApplicableTo.FOLDER),
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
@@ -187,9 +191,9 @@ sealed class Option(
         )
     }
 
-    object Trash : Option(
+    data object Trash : Option(
         ApplicableQuantity.All,
-        setOf(ApplicableTo.FILE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
         State.ANY_TRASHED + State.ANY_SHARED,
     ) {
         fun build(
@@ -211,7 +215,7 @@ sealed class Option(
         }
     }
 
-    object UploadFile : Option(
+    data object UploadFile : Option(
         ApplicableQuantity.Single,
         setOf(ApplicableTo.FOLDER),
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
@@ -225,9 +229,35 @@ sealed class Option(
         )
     }
 
-    object ShareViaLink : Option(
+    data object ManageAccess : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FILE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED
+    ) {
+        fun build(
+            runAction: RunAction,
+            navigateToManageAccess: (LinkId) -> Unit,
+        ) = ManageAccessEntity { driveLink ->
+            runAction { navigateToManageAccess(driveLink.id) }
+        }
+    }
+
+    data object ShareViaInvitations : Option(
+        ApplicableQuantity.Single,
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED
+    ) {
+        fun build(
+            runAction: RunAction,
+            navigateToShareViaInvitations: (LinkId) -> Unit,
+        ) = ShareViaInvitationsEntity { driveLink ->
+            runAction { navigateToShareViaInvitations(driveLink.id) }
+        }
+    }
+
+    data object ShareViaLink : Option(
+        ApplicableQuantity.Single,
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
         setOf(State.NOT_TRASHED) + State.ANY_SHARED
     ) {
         fun build(
@@ -238,9 +268,9 @@ sealed class Option(
         }
     }
 
-    object StopSharing : Option(
+    data object StopSharing : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FILE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
         setOf(State.NOT_TRASHED, State.SHARED, State.SHARED_EXPIRED),
     ) {
         fun build(
@@ -251,9 +281,9 @@ sealed class Option(
         }
     }
 
-    object CopySharedLink : Option(
+    data object CopySharedLink : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FILE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
         setOf(State.NOT_TRASHED, State.SHARED),
     ) {
         fun build(
@@ -271,8 +301,14 @@ sealed class ApplicableQuantity(open val quantity: Long) {
 }
 
 enum class ApplicableTo {
-    FILE,
-    FOLDER,
+    FILE_MAIN,
+    FILE_PHOTO,
+    FILE_DEVICE,
+    FOLDER;
+
+    companion object {
+        val ANY_FILE: Set<ApplicableTo> get() = setOf(FILE_MAIN, FILE_PHOTO, FILE_DEVICE)
+    }
 }
 
 enum class State {
@@ -298,7 +334,11 @@ fun DriveLink.toOptionState(): Set<State> = setOf(
 )
 
 fun DriveLink.isApplicableTo(applicableTo: Set<ApplicableTo>): Boolean = when (this) {
-    is DriveLink.File -> applicableTo.contains(ApplicableTo.FILE)
+    is DriveLink.File -> if (isPhoto) {
+        applicableTo.contains(ApplicableTo.FILE_PHOTO)
+    } else {
+        applicableTo.any { it in setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE) }
+    }
     is DriveLink.Folder -> applicableTo.contains(ApplicableTo.FOLDER)
 }
 
@@ -309,6 +349,8 @@ fun Set<Option>.filter(driveLink: DriveLink) =
 
 private val photosOptions = listOf(
     Option.OfflineToggle,
+    Option.ShareViaInvitations,
+    Option.ManageAccess,
     Option.ShareViaLink,
     Option.CopySharedLink,
     Option.SendFile,
@@ -322,6 +364,27 @@ fun Iterable<Option>.filter(optionsFilter: OptionsFilter) =
         OptionsFilter.FILES -> this
         OptionsFilter.PHOTOS -> filter { option -> option in photosOptions }
     }
+
+fun Iterable<Option>.filterSharing(featureFlag: FeatureFlag) = filter { option ->
+    if (featureFlag.state == FeatureFlag.State.ENABLED) {
+        when (option) {
+            Option.CopySharedLink,
+            Option.ShareViaLink,
+            Option.StopSharing,
+            -> false
+
+            else -> true
+        }
+    } else {
+        when (option) {
+            Option.ShareViaInvitations,
+            Option.ManageAccess,
+            -> false
+
+            else -> true
+        }
+    }
+}
 
 fun Set<Option>.filterAll(driveLinks: List<DriveLink>) =
     filter { option ->

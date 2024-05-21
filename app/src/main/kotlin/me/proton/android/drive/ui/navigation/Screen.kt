@@ -29,9 +29,11 @@ import kotlinx.serialization.json.Json
 import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.viewmodel.ComputerOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
+import me.proton.android.drive.ui.viewmodel.ShareInvitationOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.MoveToFolderViewModel
 import me.proton.android.drive.ui.viewmodel.MultipleFileOrFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ParentFolderOptionsViewModel
+import me.proton.android.drive.ui.viewmodel.ShareMemberOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.UploadToViewModel
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
@@ -43,6 +45,7 @@ import me.proton.core.drive.folder.create.presentation.CreateFolderViewModel
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.By
@@ -161,7 +164,7 @@ sealed class Screen(val route: String) {
         const val SHARE_ID = "shareId"
     }
 
-    object Files : Screen(filesBrowsableRoute("home")), HomeTab {
+    data object Files : Screen(filesBrowsableRoute("home")), HomeTab {
 
         override fun invoke(userId: UserId) = invoke(userId, null)
 
@@ -264,7 +267,7 @@ sealed class Screen(val route: String) {
         const val PARENT_SHARE_ID = "parentShareId"
     }
 
-    object Shared : Screen("home/{userId}/shared/{shareId}"), HomeTab {
+    data object Shared : Screen("home/{userId}/shared/{shareId}"), HomeTab {
 
         override fun invoke(userId: UserId) = invoke(userId, null)
 
@@ -273,7 +276,7 @@ sealed class Screen(val route: String) {
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = "shareId"
     }
-    object Photos : Screen("home/{userId}/photos/{shareId}"), HomeTab {
+    data object Photos : Screen("home/{userId}/photos/{shareId}"), HomeTab {
 
         override fun invoke(userId: UserId) = invoke(userId, null)
 
@@ -318,7 +321,7 @@ sealed class Screen(val route: String) {
         const val USER_ID = Screen.USER_ID
     }
 
-    object Computers : Screen(filesBrowsableRoute("computers") + "&syncedFolders={syncedFolders}"), HomeTab {
+    data object Computers : Screen(filesBrowsableRoute("computers") + "&syncedFolders={syncedFolders}"), HomeTab {
         override fun invoke(userId: UserId) =
             filesBrowsableBuildRoute("computers", userId, null, null)
 
@@ -336,12 +339,12 @@ sealed class Screen(val route: String) {
         const val USER_ID = Screen.USER_ID
     }
 
-    object OfflineFiles : Screen(filesBrowsableRoute("offline")) {
+    data object OfflineFiles : Screen(filesBrowsableRoute("offline")) {
         operator fun invoke(userId: UserId, folderId: FolderId? = null, folderName: String? = null) =
             filesBrowsableBuildRoute("offline", userId, folderId, folderName)
     }
 
-    object PagerPreview : Screen("pager/{pagerType}/preview/{userId}/shares/{shareId}/files/{fileId}?optionsFilter={optionsFilter}") {
+    data object PagerPreview : Screen("pager/{pagerType}/preview/{userId}/shares/{shareId}/files/{fileId}?optionsFilter={optionsFilter}") {
         operator fun invoke(
             pagerType: PagerType,
             userId: UserId,
@@ -357,30 +360,34 @@ sealed class Screen(val route: String) {
         const val OPTIONS_FILTER = FileOrFolderOptions.OPTIONS_FILTER
     }
 
-    object Settings : Screen("settings/{userId}") {
+    data object Settings : Screen("settings/{userId}") {
         operator fun invoke(userId: UserId) = "settings/${userId.id}"
 
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = "shareId"
         const val FOLDER_ID = "folderId"
 
-        object AppAccess : Screen("settings/{userId}/appAccess") {
+        data object AccountSettings : Screen("settings/{userId}/account") {
+            operator fun invoke(userId: UserId) = "settings/${userId.id}/account"
+        }
+
+        data object AppAccess : Screen("settings/{userId}/appAccess") {
 
             operator fun invoke(userId: UserId) = "settings/${userId.id}/appAccess"
 
             object Dialogs {
 
-                object SystemAccess : Screen("settings/{userId}/appAccess/systemAccess") {
+                data object SystemAccess : Screen("settings/{userId}/appAccess/systemAccess") {
                     operator fun invoke(userId: UserId) = "settings/${userId.id}/appAccess/systemAccess"
                 }
             }
         }
 
-        object AutoLockDurations : Screen("settings/{userId}/autoLockDurations") {
+        data object AutoLockDurations : Screen("settings/{userId}/autoLockDurations") {
             operator fun invoke(userId: UserId) = "settings/${userId.id}/autoLockDurations"
         }
 
-        object PhotosBackup : Screen("settings/{userId}/photosBackup") {
+        data object PhotosBackup : Screen("settings/{userId}/photosBackup") {
             operator fun invoke(userId: UserId) = "settings/${userId.id}/photosBackup"
 
             object Dialogs {
@@ -393,9 +400,13 @@ sealed class Screen(val route: String) {
                 }
             }
         }
+
+        data object DefaultHomeTab : Screen("settings/{userId}/defaultHomeTab") {
+            operator fun invoke(userId: UserId) = "settings/${userId.id}/defaultHomeTab"
+        }
     }
 
-    object SendFile : Screen("send/{userId}/shares/{shareId}/files/{fileId}") {
+    data object SendFile : Screen("send/{userId}/shares/{shareId}/files/{fileId}") {
         operator fun invoke(userId: UserId, fileId: FileId) =
             "send/${userId.id}/shares/${fileId.shareId.id}/files/${fileId.id}"
 
@@ -403,7 +414,7 @@ sealed class Screen(val route: String) {
         const val FILE_ID = "fileId"
     }
 
-    object ShareViaLink : Screen("shareViaLink/{userId}/shares/{shareId}/linkId/{linkId}") {
+    data object ShareViaLink : Screen("shareViaLink/{userId}/shares/{shareId}/linkId/{linkId}") {
         operator fun invoke(
             userId: UserId,
             linkId: LinkId,
@@ -421,6 +432,60 @@ sealed class Screen(val route: String) {
         const val USER_ID = Screen.USER_ID
         const val LINK_ID = SharedDriveLinkViewModel.LINK_ID
         const val SHARE_ID = SharedDriveLinkViewModel.SHARE_ID
+    }
+
+    data object ManageAccess : Screen("manageAccess/{userId}/shares/{shareId}/linkId/{linkId}") {
+        operator fun invoke(
+            userId: UserId,
+            linkId: LinkId,
+        ) = "manageAccess/${userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}"
+
+        const val USER_ID = Screen.USER_ID
+        const val LINK_ID = SharedDriveLinkViewModel.LINK_ID
+        const val SHARE_ID = SharedDriveLinkViewModel.SHARE_ID
+    }
+
+    data object ShareViaInvitations : Screen("shareViaInvitations/{userId}/shares/{shareId}/linkId/{linkId}") {
+        operator fun invoke(
+            userId: UserId,
+            linkId: LinkId,
+        ) = "shareViaInvitations/${userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}"
+
+        object Dialogs {
+            data object DiscardChanges : Screen("shareViaInvitations/{userId}/shares/{shareId}/linkId/{linkId}/discard_changes"){
+                operator fun invoke(
+                    linkId: LinkId,
+                ) = "shareViaInvitations/${linkId.userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/discard_changes"
+            }
+        }
+
+        const val USER_ID = Screen.USER_ID
+        const val LINK_ID = SharedDriveLinkViewModel.LINK_ID
+        const val SHARE_ID = SharedDriveLinkViewModel.SHARE_ID
+    }
+
+    data object ShareInvitationOptions : Screen("shareViaInvitations/{userId}/shares/{shareId}/linkId/{linkId}/invitation/{invitationId}/options") {
+        operator fun invoke(
+            linkId: LinkId,
+            invitationId: String,
+        ) = "shareViaInvitations/${linkId.userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/invitation/${invitationId}/options"
+
+        const val USER_ID = Screen.USER_ID
+        const val SHARE_ID = ShareInvitationOptionsViewModel.KEY_SHARE_ID
+        const val LINK_ID = ShareInvitationOptionsViewModel.KEY_LINK_ID
+        const val INVITATION_ID = ShareInvitationOptionsViewModel.KEY_INVITATION_ID
+    }
+
+    data object ShareMemberOptions : Screen("shareViaInvitations/{userId}/shares/{shareId}/linkId/{linkId}/member/{memberId}/options") {
+        operator fun invoke(
+            linkId: LinkId,
+            memberId: String,
+        ) = "shareViaInvitations/${linkId.userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/member/${memberId}/options"
+
+        const val USER_ID = Screen.USER_ID
+        const val SHARE_ID = ShareMemberOptionsViewModel.KEY_SHARE_ID
+        const val LINK_ID = ShareMemberOptionsViewModel.KEY_LINK_ID
+        const val MEMBER_ID = ShareMemberOptionsViewModel.KEY_MEMBER_ID
     }
 
     object Upload : Screen("upload/{userId}/files?uris={uris}&parentShareId={parentShareId}&parentId={parentId}") {
@@ -442,13 +507,13 @@ sealed class Screen(val route: String) {
     }
 
     object Dialogs {
-        object SignOut : Screen("home/{userId}/signout") {
+        data object SignOut : Screen("home/{userId}/signout") {
             operator fun invoke(userId: UserId) = "home/${userId.id}/signout"
 
             const val USER_ID = Files.USER_ID
         }
 
-        object StorageFull : Screen("storage/{userId}/full") {
+        data object StorageFull : Screen("storage/{userId}/full") {
             operator fun invoke(userId: UserId) = "storage/${userId.id}/full"
 
             const val USER_ID = Screen.USER_ID

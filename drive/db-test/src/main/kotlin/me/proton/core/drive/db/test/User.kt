@@ -23,6 +23,7 @@ import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.domain.entity.AccountState
 import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.GiB
 import me.proton.core.user.data.entity.UserEntity
 
 
@@ -56,7 +57,8 @@ val userId = UserId("user-id")
 @Suppress("FunctionName")
 fun NullableUserEntity(
     userId: UserId = me.proton.core.drive.db.test.userId,
-    maxSpace: Long = 0,
+    maxSpace: Long = 5.GiB.value,
+    usedSpace: Long = 0,
     subscribed: Int = 0,
 ) = UserEntity(
     userId = userId,
@@ -67,7 +69,7 @@ fun NullableUserEntity(
     type = 0,
     credit = 0,
     createdAtUtc = 0,
-    usedSpace = 0,
+    usedSpace = usedSpace,
     maxSpace = maxSpace,
     maxUpload = 0,
     role = null,

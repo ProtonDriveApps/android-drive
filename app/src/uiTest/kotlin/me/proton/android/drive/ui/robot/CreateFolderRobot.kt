@@ -36,6 +36,6 @@ object CreateFolderRobot : Robot {
     fun <T : Robot> clickCreate(goesTo: T) : T = createButton.clickTo(goesTo)
 
     override fun robotDisplayed() {
-        createFolderScreen.assertIsDisplayed()
+        createFolderScreen.await { assertIsDisplayed() }
     }
 }

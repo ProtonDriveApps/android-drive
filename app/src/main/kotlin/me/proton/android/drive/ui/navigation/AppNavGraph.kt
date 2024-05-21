@@ -69,9 +69,11 @@ import me.proton.android.drive.ui.dialog.ConfirmSkipIssuesDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopSharingDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopSyncFolderDialog
 import me.proton.android.drive.ui.dialog.FileOrFolderOptions
+import me.proton.android.drive.ui.dialog.ShareInvitationOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
+import me.proton.android.drive.ui.dialog.ShareMemberOptions
 import me.proton.android.drive.ui.dialog.SortingList
 import me.proton.android.drive.ui.dialog.SystemAccessDialog
 import me.proton.android.drive.ui.navigation.animation.defaultEnterSlideTransition
@@ -82,8 +84,10 @@ import me.proton.android.drive.ui.navigation.internal.createNavController
 import me.proton.android.drive.ui.navigation.internal.modalBottomSheet
 import me.proton.android.drive.ui.navigation.internal.rememberAnimatedNavController
 import me.proton.android.drive.ui.options.OptionsFilter
+import me.proton.android.drive.ui.screen.AccountSettingsScreen
 import me.proton.android.drive.ui.screen.AppAccessScreen
 import me.proton.android.drive.ui.screen.BackupIssuesScreen
+import me.proton.android.drive.ui.screen.DefaultHomeTabScreen
 import me.proton.android.drive.ui.screen.FileInfoScreen
 import me.proton.android.drive.ui.screen.GetMoreFreeStorageScreen
 import me.proton.android.drive.ui.screen.HomeScreen
@@ -106,6 +110,8 @@ import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.drivelink.device.presentation.component.RenameDevice
 import me.proton.core.drive.drivelink.rename.presentation.Rename
 import me.proton.core.drive.drivelink.shared.presentation.component.DiscardChangesDialog
+import me.proton.core.drive.drivelink.shared.presentation.component.ManageAccess
+import me.proton.core.drive.drivelink.shared.presentation.component.ShareViaInvitations
 import me.proton.core.drive.drivelink.shared.presentation.component.ShareViaLink
 import me.proton.core.drive.folder.create.presentation.CreateFolder
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -128,6 +134,8 @@ fun AppNavGraph(
     locked: Flow<Boolean>,
     primaryAccount: Flow<Account?>,
     exitApp: () -> Unit,
+    navigateToPasswordManagement: (UserId) -> Unit,
+    navigateToRecoveryEmail: (UserId) -> Unit,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
@@ -183,6 +191,8 @@ fun AppNavGraph(
             deepLinkBaseUrl = deepLinkBaseUrl,
             defaultStartDestination = defaultStartDestination,
             exitApp = exitApp,
+            navigateToPasswordManagement = navigateToPasswordManagement,
+            navigateToRecoveryEmail= navigateToRecoveryEmail,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
             onDrawerStateChanged = onDrawerStateChanged,
@@ -199,6 +209,8 @@ fun AppNavGraph(
     deepLinkBaseUrl: String,
     defaultStartDestination: String,
     exitApp: () -> Unit,
+    navigateToPasswordManagement: (UserId) -> Unit,
+    navigateToRecoveryEmail: (UserId) -> Unit,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
@@ -271,12 +283,22 @@ fun AppNavGraph(
         addOffline(navController)
         addPagerPreview(navController)
         addSettings(navController)
+        addAccountSettings(
+            navController = navController,
+            navigateToPasswordManagement = navigateToPasswordManagement,
+            navigateToRecoveryEmail = navigateToRecoveryEmail
+        )
         addFileInfo(navController)
         addMoveToFolder(navController)
         addRenameDialog(navController)
         addCreateFolderDialog(navController)
         addStorageFull(navController, deepLinkBaseUrl)
         addSendFile(navController)
+        addManageAccess(navController)
+        addShareViaInvitations(navController)
+        addInvitationOptions(navController)
+        addMemberOptions(navController)
+        addDiscardShareViaInvitationsChanges(navController)
         addShareViaLink(navController)
         addDiscardShareViaLinkChanges(navController)
         addUploadTo(navController, deepLinkBaseUrl, exitApp)
@@ -287,6 +309,7 @@ fun AppNavGraph(
         addComputerOptions(navController)
         addRenameComputerDialog(navController)
         addGetMoreFreeStorage(navController)
+        addDefaultHomeTab(navController)
     }
 }
 
@@ -425,6 +448,16 @@ fun NavGraphBuilder.addFileOrFolderOptions(
                 popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
             }
         },
+        navigateToManageAccess = { linkId ->
+            navController.navigate(Screen.ManageAccess(userId, linkId)) {
+                popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
+            }
+        },
+        navigateToShareViaInvitations = { linkId ->
+            navController.navigate(Screen.ShareViaInvitations(userId, linkId)) {
+                popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
+            }
+        },
         navigateToShareViaLink = { linkId ->
             navController.navigate(Screen.ShareViaLink(userId, linkId)) {
                 popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
@@ -500,6 +533,40 @@ fun NavGraphBuilder.addParentFolderOptions(
                 inclusive = true,
             )
         }
+    )
+}
+
+fun NavGraphBuilder.addInvitationOptions(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.ShareInvitationOptions.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+    arguments = listOf(
+        navArgument(Screen.ShareInvitationOptions.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareInvitationOptions.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareInvitationOptions.LINK_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareInvitationOptions.INVITATION_ID) { type = NavType.StringType },
+    ),
+) { _, runAction ->
+    ShareInvitationOptions(
+        runAction = runAction
+    )
+}
+
+fun NavGraphBuilder.addMemberOptions(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.ShareMemberOptions.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+    arguments = listOf(
+        navArgument(Screen.ShareMemberOptions.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareMemberOptions.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareMemberOptions.LINK_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareMemberOptions.MEMBER_ID) { type = NavType.StringType },
+    ),
+) { _, runAction ->
+    ShareMemberOptions(
+        runAction = runAction
     )
 }
 
@@ -1061,6 +1128,9 @@ fun NavGraphBuilder.addSettings(navController: NavHostController) = composable(
                 inclusive = true,
             )
         },
+        navigateToAccountSettings = {
+            navController.navigate(Screen.Settings.AccountSettings(userId))
+        },
         navigateToAppAccess = {
             navController.navigate(Screen.Settings.AppAccess(userId))
         },
@@ -1069,6 +1139,37 @@ fun NavGraphBuilder.addSettings(navController: NavHostController) = composable(
         },
         navigateToPhotosBackup = {
             navController.navigate(Screen.Settings.PhotosBackup(userId))
+        },
+        navigateToDefaultHomeTab = {
+            navController.navigate(Screen.Settings.DefaultHomeTab(userId))
+        },
+    )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addAccountSettings(
+    navController: NavHostController,
+    navigateToPasswordManagement: (UserId) -> Unit,
+    navigateToRecoveryEmail: (UserId) -> Unit
+) = composable(
+    route = Screen.Settings.AccountSettings.route,
+    enterTransition = defaultEnterSlideTransition { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition { true },
+    arguments = listOf(
+        navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry ->
+    val userId = UserId(navBackStackEntry.require(Screen.Settings.USER_ID))
+    AccountSettingsScreen(
+        navigateToPasswordManagement = { navigateToPasswordManagement(userId) },
+        navigateToRecoveryEmail = { navigateToRecoveryEmail(userId) },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Settings.AccountSettings.route,
+                inclusive = true,
+            )
         },
     )
 }
@@ -1248,6 +1349,71 @@ fun NavGraphBuilder.addShareViaLink(navController: NavHostController) = composab
     )
 }
 
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addManageAccess(navController: NavHostController) = composable(
+    route = Screen.ManageAccess.route,
+    enterTransition = defaultEnterSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Up) { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Down) { true },
+    arguments = listOf(
+        navArgument(Screen.ManageAccess.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.ManageAccess.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.ManageAccess.LINK_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry ->
+    val userId = UserId(navBackStackEntry.require(Screen.ManageAccess.USER_ID))
+    ManageAccess(
+        navigateToShareViaInvitations = { linkId ->
+            navController.navigate(Screen.ShareViaInvitations(userId, linkId))
+        },
+        navigateToShareViaLink = { linkId ->
+            navController.navigate(Screen.ShareViaLink(userId, linkId))
+        },
+        navigateToStopSharing = { linkId ->
+            navController.navigate(Screen.Files.Dialogs.ConfirmStopSharing(userId, linkId))
+        },
+        navigateToInvitationOptions = { linkId, invitationId ->
+            navController.navigate(Screen.ShareInvitationOptions(linkId, invitationId))
+        },
+        navigateToMemberOptions = { linkId, memberId ->
+            navController.navigate(Screen.ShareMemberOptions(linkId, memberId))
+        },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.ManageAccess.route,
+                inclusive = true,
+            )
+        },
+    )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addShareViaInvitations(navController: NavHostController) = composable(
+    route = Screen.ShareViaInvitations.route,
+    enterTransition = defaultEnterSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Up) { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Down) { true },
+    arguments = listOf(
+        navArgument(Screen.ShareViaInvitations.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareViaInvitations.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareViaInvitations.LINK_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry ->
+    ShareViaInvitations(
+        navigateToDiscardChanges = { linkId ->
+            navController.navigate(Screen.ShareViaInvitations.Dialogs.DiscardChanges(linkId))
+        },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.ShareViaInvitations.route,
+                inclusive = true,
+            )
+        },
+    )
+}
+
 @ExperimentalCoroutinesApi
 fun NavGraphBuilder.addDiscardShareViaLinkChanges(navController: NavHostController) = dialog(
     route = Screen.ShareViaLink.Dialogs.DiscardChanges.route,
@@ -1266,6 +1432,30 @@ fun NavGraphBuilder.addDiscardShareViaLinkChanges(navController: NavHostControll
         onConfirm = {
             navController.popBackStack(
                 route = Screen.ShareViaLink.route,
+                inclusive = true,
+            )
+        }
+    )
+}
+
+@ExperimentalCoroutinesApi
+fun NavGraphBuilder.addDiscardShareViaInvitationsChanges(navController: NavHostController) = dialog(
+    route = Screen.ShareViaInvitations.Dialogs.DiscardChanges.route,
+    arguments = listOf(
+        navArgument(Screen.ShareViaInvitations.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareViaInvitations.LINK_ID) { type = NavType.StringType },
+    ),
+) {
+    DiscardChangesDialog(
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.ShareViaInvitations.Dialogs.DiscardChanges.route,
+                inclusive = true,
+            )
+        },
+        onConfirm = {
+            navController.popBackStack(
+                route = Screen.ShareViaInvitations.route,
                 inclusive = true,
             )
         }
@@ -1473,6 +1663,27 @@ fun NavGraphBuilder.addGetMoreFreeStorage(navController: NavHostController) = co
         navigateBack = {
             navController.popBackStack(
                 route = Screen.GetMoreFreeStorage.route,
+                inclusive = true,
+            )
+        }
+    )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addDefaultHomeTab(navController: NavHostController) = composable(
+    route = Screen.Settings.DefaultHomeTab.route,
+    enterTransition = defaultEnterSlideTransition { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition { true },
+    arguments = listOf(
+        navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
+    ),
+) {
+    DefaultHomeTabScreen(
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Settings.DefaultHomeTab.route,
                 inclusive = true,
             )
         }

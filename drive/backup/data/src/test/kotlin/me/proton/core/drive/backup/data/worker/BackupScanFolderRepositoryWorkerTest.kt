@@ -24,61 +24,56 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
-import io.mockk.coEvery
-import io.mockk.mockk
-import io.mockk.mockkStatic
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.crypto.common.pgp.HashKey
-import me.proton.core.crypto.common.pgp.hmacSha256
-import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
+import me.proton.core.drive.backup.data.repository.TestScanFolderRepository
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFolder
-import me.proton.core.drive.backup.domain.repository.ScanFolderRepository
+import me.proton.core.drive.backup.domain.repository.BackupFileRepository
+import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
+import me.proton.core.drive.backup.domain.usecase.AddFolder
 import me.proton.core.drive.backup.domain.usecase.ScanFolder
-import me.proton.core.drive.backup.domain.usecase.SetFiles
-import me.proton.core.drive.backup.domain.usecase.UpdateFolder
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.crypto.domain.usecase.base.UseHashKey
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.getPublicAddressKeys
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class BackupScanFolderRepositoryWorkerTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var scanFolder: ScanFolder
-    private lateinit var fileRepository: BackupFileRepositoryImpl
-    private lateinit var folderRepository: BackupFolderRepositoryImpl
+    @Inject
+    lateinit var scanFolder: ScanFolder
 
-    private var backupFiles = emptyList<BackupFile>()
+    @Inject
+    lateinit var scanFolderRepository: TestScanFolderRepository
 
-    private val scanFolderRepository = ScanFolderRepository { backupFolder ->
-        backupFiles.filter { backupFile ->
-            val sameFolder = backupFile.bucketId == backupFolder.bucketId
-            val timestamp = backupFolder.updateTime
-            val notSynced = if (timestamp == null) {
-                true
-            } else {
-                backupFile.date > timestamp
-            }
-            sameFolder && notSynced
-        }
-    }
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var addBackupError: AddBackupError
+
+    @Inject
+    lateinit var fileRepository: BackupFileRepository
+
+    @Inject
+    lateinit var folderRepository: BackupFolderRepository
 
     private val bucketId = 0
 
@@ -89,16 +84,12 @@ class BackupScanFolderRepositoryWorkerTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
+        folderId = driveRule.db.myFiles { }
         backupFolder = BackupFolder(
             bucketId = 0,
             folderId = folderId,
         )
-        fileRepository = BackupFileRepositoryImpl(database.db)
-        folderRepository = BackupFolderRepositoryImpl(database.db)
-        folderRepository.insertFolder(backupFolder)
-
-
+        addFolder(backupFolder).getOrThrow()
 
         backupFile1 = NullableBackupFile(
             bucketId = bucketId,
@@ -114,59 +105,38 @@ class BackupScanFolderRepositoryWorkerTest {
             name = "file2",
             date = TimestampS(2000),
         )
-
-        val useHashKey = mockk<UseHashKey>()
-        val hashKey = mockk<HashKey>()
-        mockkStatic(HashKey::hmacSha256)
-        coEvery { useHashKey<BackupFile>(folderId, any(), any(), any()) } coAnswers {
-            val block = arg<suspend (HashKey) -> BackupFile>(3)
-            Result.success(block(hashKey))
-        }
-        coEvery { hashKey.hmacSha256(any()) } answers {
-            val input = secondArg<String>()
-            "hmacSha256($input)"
-        }
-        scanFolder = ScanFolder(
-            scanFolder = scanFolderRepository,
-            setFiles = SetFiles(fileRepository),
-            updateFolder = UpdateFolder(folderRepository),
-            useHashKey = useHashKey,
-        )
+        driveRule.server.getPublicAddressKeys()
     }
 
     @Test
-    fun `Given medias when sync a folder then should store those medias`() =
-        runTest {
-            backupFiles = listOf(backupFile1, backupFile2)
+    fun `Given medias when sync a folder then should store those medias`() = runTest {
+        scanFolderRepository.backupFiles = listOf(backupFile1, backupFile2)
 
-            val worker = backupScanFolderWorker(backupFolder)
-            val result = worker.doWork()
+        val worker = backupScanFolderWorker(backupFolder)
+        val result = worker.doWork()
 
-            assertEquals(ListenableWorker.Result.success(), result)
-            assertEquals(
-                listOf(
-                    backupFile2.copy(hash = "hmacSha256(file2)"),
-                    backupFile1.copy(hash = "hmacSha256(file1)"),
-                ),
-                fileRepository.getAllFiles(
-                    folderId = folderId,
-                    fromIndex = 0,
-                    count = 2
-                )
+        assertEquals(ListenableWorker.Result.success(), result)
+        assertEquals(
+            listOf(
+                backupFile2.copy(hash = "02e38b29626f14b2ad31e4295a5b7e4be8adff44626cb2c2bdb49a026b7a85c5"),
+                backupFile1.copy(hash = "9bf837b813a24c0e9f06a840eee4ea2c5e60e81147d44188cb3544ecce394270"),
+            ), fileRepository.getAllFiles(
+                folderId = folderId, fromIndex = 0, count = 2
             )
-            assertEquals(
-                backupFile2.date,
-                folderRepository.getAll(userId).first().updateTime!!,
-            )
-        }
+        )
+        assertEquals(
+            backupFile2.date,
+            folderRepository.getAll(userId).first().updateTime!!,
+        )
+    }
 
 
     private fun backupScanFolderWorker(
         backupFolder: BackupFolder,
     ): BackupScanFolderWorker {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        return TestListenableWorkerBuilder<BackupScanFolderWorker>(context)
-            .setWorkerFactory(object : WorkerFactory() {
+        return TestListenableWorkerBuilder<BackupScanFolderWorker>(context).setWorkerFactory(object :
+                WorkerFactory() {
                 override fun createWorker(
                     appContext: Context,
                     workerClassName: String,
@@ -175,15 +145,13 @@ class BackupScanFolderRepositoryWorkerTest {
                     context = appContext,
                     workerParams = workerParameters,
                     scanFolder = scanFolder,
-                    addBackupError = AddBackupError(BackupErrorRepositoryImpl(database.db)),
+                    addBackupError = addBackupError,
                 )
 
-            })
-            .setInputData(
+            }).setInputData(
                 BackupScanFolderWorker.workDataOf(
                     backupFolder, UploadFileLink.BACKUP_PRIORITY
                 )
-            )
-            .build()
+            ).build()
     }
 }

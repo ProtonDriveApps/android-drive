@@ -18,9 +18,25 @@
 
 package me.proton.drive.android.settings.data.db
 
+import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
+import me.proton.core.data.room.db.migration.DatabaseMigration
+import me.proton.core.drive.base.data.db.Column.HOME_TAB
 import me.proton.drive.android.settings.data.db.dao.UiSettingsDao
+import me.proton.drive.android.settings.domain.entity.HomeTab
 
 interface AppUiSettingsDatabase : Database {
     val uiSettingsDao: UiSettingsDao
+
+    companion object {
+        val MIGRATION_0 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    ALTER TABLE `UiSettingsEntity` ADD COLUMN $HOME_TAB TEXT NOT NULL DEFAULT ${HomeTab.DEFAULT}
+                    """.trimIndent()
+                )
+            }
+        }
+    }
 }

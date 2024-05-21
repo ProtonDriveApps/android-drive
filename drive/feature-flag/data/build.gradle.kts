@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -30,6 +30,6 @@ driveModule(
 ) {
     api(project(":drive:base:data"))
     api(project(":drive:feature-flag:domain"))
-    implementation(libs.core.featureFlag)
+    implementation(libs.core.featureFlag.data)
     implementation(libs.core.presentation)
 }

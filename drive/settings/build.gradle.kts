@@ -29,5 +29,6 @@ driveModule(
     i18n = true,
 ) {
     implementation(project(":drive:base:presentation"))
+    implementation(libs.core.accountManager)
     implementation(libs.core.userSettings)
 }

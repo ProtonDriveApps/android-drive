@@ -36,6 +36,7 @@ import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
 import me.proton.core.drive.notification.data.db.NotificationDatabase
 import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.share.data.db.ShareDatabase
+import me.proton.core.drive.share.user.data.db.ShareUserDatabase
 import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
 import me.proton.core.drive.stats.data.db.StatsDatabase
 import me.proton.core.drive.user.data.db.UserMessageDatabase
@@ -53,6 +54,7 @@ import me.proton.core.user.data.db.UserDatabase
 import me.proton.core.user.data.db.UserKeyDatabase
 import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
+import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNotificationDatabase
 
 @Suppress("MagicNumber")
@@ -312,6 +314,30 @@ object DriveDatabaseMigrations {
     val MIGRATION_49_50 = object : Migration(49, 50) {
         override fun migrate(database: SupportSQLiteDatabase) {
             BaseDatabase.MIGRATION_0.migrate(database)
+        }
+    }
+
+    val MIGRATION_50_51 = object : Migration(50, 51) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            PaymentDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_51_52 = object : Migration(51, 52) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            ShareUserDatabase.MIGRATION_0.migrate(database)
+        }
+    }
+
+    val MIGRATION_52_53 = object : Migration(52, 53) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            ShareUserDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_53_54 = object : Migration(53, 54) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            AppUiSettingsDatabase.MIGRATION_0.migrate(database)
         }
     }
 }

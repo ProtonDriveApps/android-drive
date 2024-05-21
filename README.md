@@ -29,10 +29,6 @@ Then, go to the app’s root directory in the command line tool and run:
 - `./gradlew assembleProdDebug`
 - `adb install ./app/build/outputs/apk/prod/debug/ProtonDrive-1.X.X-prod-debug.apk`
 
-## Installation
-
-You can install latest version from [Google Play](https://play.google.com/store/apps/details?id=me.proton.android.drive) or download apk from Proton Drive download [page](https://proton.me/drive/download) and install it manually.
-
 ## Contributions
 
 No contributions are accepted for now.

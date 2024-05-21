@@ -252,11 +252,13 @@ class PdfReader(private val context: Context) {
                     ?: throw IllegalStateException("Open page with index $pageIndex failed.")
                 page.use {
                     val width = min(page.width.fromPtToPx(density), maxWidth)
-                    Bitmap.createBitmap(
-                        width,
-                        page.height * width / page.width,
-                        Bitmap.Config.ARGB_8888
-                    ).also { bitmap ->
+                    val height = min(page.height.fromPtToPx(density), maxWidth * RATIO)
+                    val (w, h) = if (width * RATIO < height) {
+                        width to page.height * width / page.width
+                    } else {
+                        page.width * height / page.height to height
+                    }
+                    Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888).also { bitmap ->
                         page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
                     }.asImageBitmap()
                 }
@@ -265,6 +267,8 @@ class PdfReader(private val context: Context) {
     }
 
 }
+
+private const val RATIO = 2
 
 private fun Int.fromPtToPx(density: Float): Int =
     (this.toFloat() / 72F * 160F * density).roundToInt()

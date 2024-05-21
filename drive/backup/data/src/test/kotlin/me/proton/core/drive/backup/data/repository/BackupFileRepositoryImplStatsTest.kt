@@ -18,46 +18,50 @@
 
 package me.proton.core.drive.backup.data.repository
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BackupStateCount
+import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
 import me.proton.core.drive.linkupload.domain.entity.UploadState
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class BackupFileRepositoryImplStatsTest {
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
     private lateinit var backupFolder: BackupFolder
-
-    private lateinit var repository: BackupFileRepositoryImpl
-
     private val bucketId = 0
+
+    @Inject
+    lateinit var backupFolderRepository: BackupFolderRepository
+
+    @Inject
+    lateinit var repository: BackupFileRepositoryImpl
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
-        val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
-
+        folderId = driveRule.db.myFiles { }
         backupFolder = BackupFolder(bucketId, folderId)
         backupFolderRepository.insertFolder(backupFolder)
-        repository = BackupFileRepositoryImpl(database.db)
     }
 
     @Test
@@ -134,7 +138,7 @@ class BackupFileRepositoryImplStatsTest {
     )
 
     private suspend fun insertLinkUploadEntity(index: Int, uploadState: UploadState) {
-        database.db.linkUploadDao.insert(
+        driveRule.db.linkUploadDao.insert(
             LinkUploadEntity(
                 id = 0,
                 userId = userId,

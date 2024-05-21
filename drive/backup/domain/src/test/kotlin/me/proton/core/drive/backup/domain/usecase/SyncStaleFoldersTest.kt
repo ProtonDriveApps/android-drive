@@ -18,54 +18,44 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import kotlin.time.Duration
+import javax.inject.Inject
 import kotlin.time.Duration.Companion.days
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class SyncStaleFoldersTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
-
-    private lateinit var syncStaleFolders: SyncStaleFolders
-    private lateinit var repository: BackupFolderRepositoryImpl
-
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var backupManager: StubbedBackupManager
+    @Inject
+    lateinit var syncStaleFolders: SyncStaleFolders
+
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var backupManager: StubbedBackupManager
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
-
-        repository = BackupFolderRepositoryImpl(database.db)
-        backupManager = StubbedBackupManager(repository)
-        syncStaleFolders = SyncStaleFolders(
-            getAllFolders = GetAllFolders(repository),
-            backupManager = backupManager,
-            configurationProvider = object : ConfigurationProvider {
-                override val host: String = ""
-                override val baseUrl: String = ""
-                override val appVersionHeader: String = ""
-                override val backupSyncWindow: Duration = 1.days
-            },
-        )
+        folderId = driveRule.db.myFiles { }
     }
 
     @Test
@@ -76,7 +66,7 @@ class SyncStaleFoldersTest {
                 folderId = folderId,
                 syncTime = null
             )
-            repository.insertFolder(backupFolder)
+            addFolder(backupFolder).getOrThrow()
 
             val folders = syncStaleFolders(folderId, UploadFileLink.BACKUP_PRIORITY).getOrThrow()
 
@@ -92,7 +82,7 @@ class SyncStaleFoldersTest {
                 folderId = folderId,
                 syncTime = TimestampS()
             )
-            repository.insertFolder(backupFolder)
+            addFolder(backupFolder).getOrThrow()
 
             val folders = syncStaleFolders(folderId, UploadFileLink.BACKUP_PRIORITY).getOrThrow()
 
@@ -109,7 +99,7 @@ class SyncStaleFoldersTest {
                 folderId = folderId,
                 syncTime = TimestampS(now.value - 1.1.days.inWholeSeconds)
             )
-            repository.insertFolder(backupFolder)
+            addFolder(backupFolder).getOrThrow()
 
             val folders = syncStaleFolders(folderId, UploadFileLink.BACKUP_PRIORITY).getOrThrow()
 

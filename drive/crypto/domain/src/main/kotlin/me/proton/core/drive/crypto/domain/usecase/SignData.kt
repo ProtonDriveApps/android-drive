@@ -18,6 +18,7 @@
 
 package me.proton.core.drive.crypto.domain.usecase
 
+import me.proton.core.crypto.common.pgp.SignatureContext
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.drive.cryptobase.domain.usecase.SignData
 import me.proton.core.drive.key.domain.entity.Key
@@ -31,10 +32,12 @@ class SignData @Inject constructor(
     suspend operator fun invoke(
         signKey: Key,
         input: ByteArray,
+        signatureContext: SignatureContext? = null,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ) = signData(
         signKey = signKey.keyHolder,
         input = input,
+        signatureContext = signatureContext,
         coroutineContext = coroutineContext,
     )
 }

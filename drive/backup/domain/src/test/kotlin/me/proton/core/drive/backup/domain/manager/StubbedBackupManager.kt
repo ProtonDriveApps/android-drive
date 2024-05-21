@@ -26,7 +26,9 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class StubbedBackupManager @Inject constructor(
     private val repository: BackupFolderRepository,
 ) : BackupManager {
@@ -72,13 +74,7 @@ class StubbedBackupManager @Inject constructor(
 
     override fun isUploading(folderId: FolderId): Flow<Boolean> = flowOf(true)
 
+    override suspend fun updateNotification(folderId: FolderId) {
+        // do nothing
+    }
 }
-
-val BackupManager.started: Boolean
-    get() = (this as StubbedBackupManager).started
-
-val BackupManager.stopped: Boolean
-    get() = (this as StubbedBackupManager).stopped
-
-val BackupManager.sync: List<BackupFolder>
-    get() = (this as StubbedBackupManager).sync

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -18,12 +18,14 @@
 package me.proton.core.drive.share.data.api
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.share.data.api.request.ShareAccessWithNodeRequest
+import me.proton.core.drive.share.data.api.response.UpdateUnmigratedSharesResponse
 import me.proton.core.drive.share.data.api.response.shareDto
-import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.domain.entity.ShareInfo
 import me.proton.core.drive.share.data.extension.toCreateShareRequest
 import me.proton.core.drive.share.data.extension.toLong
 import me.proton.core.drive.share.domain.entity.Share.Type
+import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.entity.ShareInfo
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiException
@@ -31,7 +33,9 @@ import me.proton.core.network.domain.ApiException
 class ShareApiDataSource(private val apiProvider: ApiProvider) {
     @Throws(ApiException::class)
     suspend fun getShares(userId: UserId, shareType: Type): List<ShareDto> =
-        apiProvider.get<ShareApi>(userId).invoke { getShares(shareType.toLong()) }.valueOrThrow.shareDtos
+        apiProvider.get<ShareApi>(userId).invoke {
+            getShares(shareType.toLong())
+        }.valueOrThrow.shareDtos
 
     @Throws(ApiException::class)
     suspend fun getShareBootstrap(shareId: ShareId): ShareDto =
@@ -48,4 +52,16 @@ class ShareApiDataSource(private val apiProvider: ApiProvider) {
         apiProvider.get<ShareApi>(userId).invoke {
             createShare(volumeId.id, shareInfo.toCreateShareRequest())
         }.valueOrThrow.shareId.id
+
+    @Throws(ApiException::class)
+    suspend fun getUnmigratedShares(userId: UserId): List<String> =
+        apiProvider.get<ShareApi>(userId).invoke{
+            getUnmigratedShares()
+        }.valueOrThrow.shareIds
+
+    @Throws(ApiException::class)
+    suspend fun updateUnmigratedShares(userId: UserId, request: ShareAccessWithNodeRequest): UpdateUnmigratedSharesResponse =
+        apiProvider.get<ShareApi>(userId).invoke {
+            updateUnmigratedShares(request)
+        }.valueOrThrow
 }

@@ -18,14 +18,9 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import io.mockk.coVerify
-import io.mockk.mockk
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
-import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
@@ -34,14 +29,17 @@ import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
-import me.proton.core.drive.feature.flag.domain.repository.FeatureFlagRepository
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.drivePhotosUploadDisabled
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.coreFeatures
+import me.proton.core.drive.test.api.featureFrontend
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -49,55 +47,45 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class RetryBackupTest {
 
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var backupManager: StubbedBackupManager
-    private lateinit var getErrors: GetErrors
-    private lateinit var getFeatureFlag: GetFeatureFlag
-    private lateinit var addBackupError: AddBackupError
-    private lateinit var addFolder: AddFolder
-    private lateinit var setFiles: SetFiles
-    private lateinit var fileRepository: BackupFileRepository
-    private lateinit var resetFilesAttempts: ResetFilesAttempts
-    private lateinit var retryBackup: RetryBackup
+    @Inject
+    lateinit var backupManager: StubbedBackupManager
 
-    private val featureFlagRepository: FeatureFlagRepository = mockk(relaxed = true)
+    @Inject
+    lateinit var getErrors: GetErrors
+
+    @Inject
+    lateinit var getFeatureFlag: GetFeatureFlag
+
+    @Inject
+    lateinit var addBackupError: AddBackupError
+
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var setFiles: SetFiles
+
+    @Inject
+    lateinit var fileRepository: BackupFileRepository
+
+    @Inject
+    lateinit var retryBackup: RetryBackup
 
     @Before
     fun setup() = runTest {
-        folderId = database.myFiles { }
-        val folderRepository = BackupFolderRepositoryImpl(database.db)
-        fileRepository = BackupFileRepositoryImpl(database.db)
-        val errorRepository = BackupErrorRepositoryImpl(database.db)
-
-        backupManager = StubbedBackupManager(folderRepository)
-        addFolder = AddFolder(folderRepository)
-        setFiles = SetFiles(fileRepository)
-        addBackupError = AddBackupError(errorRepository)
-        getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance)
-        getFeatureFlag = GetFeatureFlag(
-            featureFlagRepository = featureFlagRepository,
-            configurationProvider = object : ConfigurationProvider {
-                override val host = ""
-                override val baseUrl = ""
-                override val appVersionHeader = ""
-            },
-        )
-        resetFilesAttempts = ResetFilesAttempts(fileRepository)
-        retryBackup = RetryBackup(
-            startBackup = StartBackup(backupManager, AnnounceEvent(emptySet())),
-            getErrors = getErrors,
-            getFeatureFlag = getFeatureFlag,
-            deleteAllRetryableBackupError = DeleteAllRetryableBackupError(errorRepository),
-            resetFilesAttempts = resetFilesAttempts,
-        )
+        folderId = driveRule.db.myFiles { }
+        driveRule.server.coreFeatures()
     }
 
     @Test
@@ -112,11 +100,11 @@ class RetryBackupTest {
             listOf(BackupError.Other(retryable = false)),
             getErrors(folderId).first()
         )
-        coVerify(exactly = 0) { featureFlagRepository.refresh(any()) }
     }
 
     @Test
     fun `Given PhotosUploadNotAllowed error when retry should refresh feature flag `() = runTest {
+        driveRule.server.featureFrontend(FeatureFlagId.DRIVE_PHOTOS_UPLOAD_DISABLED)
         addBackupError(folderId, BackupError.PhotosUploadNotAllowed()).getOrThrow()
 
         retryBackup(folderId).getOrThrow()
@@ -126,8 +114,10 @@ class RetryBackupTest {
             emptyList<BackupError>(),
             getErrors(folderId).first()
         )
-        coVerify { featureFlagRepository.refresh(userId) }
-
+        assertEquals(
+            FeatureFlag(drivePhotosUploadDisabled(userId), ENABLED),
+            getFeatureFlag(drivePhotosUploadDisabled(userId)) { false }
+        )
     }
 
     @Test

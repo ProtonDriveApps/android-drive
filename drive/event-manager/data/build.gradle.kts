@@ -33,6 +33,7 @@ driveModule(
     api(project(":drive:event-manager:domain"))
     implementation(project(":drive:link:data"))
     implementation(project(":drive:share"))
+    implementation(libs.core.contact.data)
     implementation(libs.core.dataRoom)
     implementation(libs.core.userSettings.data)
     implementation(libs.core.user.data)

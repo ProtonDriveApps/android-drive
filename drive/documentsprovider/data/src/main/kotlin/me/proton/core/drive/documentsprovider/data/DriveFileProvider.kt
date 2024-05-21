@@ -61,7 +61,7 @@ class DriveFileProvider : ContentProvider() {
             cols[0] = OpenableColumns.DISPLAY_NAME
             values[0] = driveLink.name
             cols[1] = OpenableColumns.SIZE
-            values[1] = driveLink.size
+            values[1] = driveLink.size.value
             MatrixCursor(cols, 1).apply { addRow(values) }
         }
     }

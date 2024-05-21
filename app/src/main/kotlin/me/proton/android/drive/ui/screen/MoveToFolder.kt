@@ -54,15 +54,14 @@ import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultHighlight
 import me.proton.core.compose.theme.headlineSmall
-import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.component.TopBarActions
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
 import me.proton.core.drive.files.presentation.component.Files
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.i18n.R as I18N
-import me.proton.core.presentation.R as CorePresentation
 
 @ExperimentalCoroutinesApi
 @Composable
@@ -113,12 +112,7 @@ fun MoveToFolder(
                     )
                 }
             ) {
-                ActionButton(
-                    modifier = Modifier.testTag(MoveToFolderScreenTestTag.plusFolderButton),
-                    icon = CorePresentation.drawable.ic_proton_folder_plus,
-                    contentDescription = I18N.string.folder_option_create_folder,
-                    onClick = viewEvent.onCreateFolder,
-                )
+                TopBarActions(actionFlow = viewState.topBarActions)
             }
             SingleRowLinkNames(
                 linkNames = viewState.driveLinks,
@@ -194,6 +188,5 @@ fun Title(
 
 object MoveToFolderScreenTestTag {
     const val screen = "move to folder screen"
-    const val plusFolderButton = "move to folder plus folder button"
     const val moveButton = "move button"
 }

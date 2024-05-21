@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -109,6 +109,10 @@ class FakePGPCrypto : PGPCrypto {
     }
 
     override fun decryptData(message: EncryptedMessage, unlockedKey: Unarmored): ByteArray {
+        return message.toByteArray()
+    }
+
+    override fun decryptDataWithPassword(message: EncryptedMessage, password: ByteArray): ByteArray {
         return message.toByteArray()
     }
 
@@ -224,6 +228,10 @@ class FakePGPCrypto : PGPCrypto {
         return data
     }
 
+    override fun encryptDataWithPassword(data: ByteArray, password: ByteArray): EncryptedMessage {
+        return String(data)
+    }
+
     override fun encryptFile(
         source: File,
         destination: File,
@@ -305,7 +313,10 @@ class FakePGPCrypto : PGPCrypto {
     }
 
     override fun getEncryptedPackets(message: EncryptedMessage): List<EncryptedPacket> {
-        return listOf(EncryptedPacket(message.toByteArray(), PacketType.Data))
+        return listOf(
+            EncryptedPacket(message.toByteArray(), PacketType.Data),
+            EncryptedPacket(message.toByteArray(), PacketType.Key),
+        )
     }
 
     override fun getFingerprint(key: Armored): String {

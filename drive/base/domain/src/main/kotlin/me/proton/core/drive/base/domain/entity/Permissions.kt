@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ package me.proton.core.drive.base.domain.entity
 
 @JvmInline
 value class Permissions(val value: Long = 0L) {
+    val isAdmin get() = has(Permission.ADMIN)
     val canRead get() = has(Permission.READ)
     val canWrite get() = has(Permission.WRITE)
     val canExecute get() = has(Permission.EXECUTE)
@@ -32,5 +33,6 @@ value class Permissions(val value: Long = 0L) {
         EXECUTE(bitPosition = 0),
         WRITE(bitPosition = 1),
         READ(bitPosition = 2),
+        ADMIN(bitPosition = 4),
     }
 }

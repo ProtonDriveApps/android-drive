@@ -18,17 +18,10 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import android.app.Application
-import androidx.test.core.app.ApplicationProvider
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.manager.BackupPermissionsManagerImpl
-import me.proton.core.drive.backup.data.repository.BackupConfigurationRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
@@ -38,102 +31,76 @@ import me.proton.core.drive.backup.domain.entity.BackupState
 import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.backup.domain.entity.BucketEntry
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
-import me.proton.core.drive.backup.domain.manager.StubbedBackupConnectivityManager
-import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
-import me.proton.core.drive.backup.domain.repository.BucketRepository
+import me.proton.core.drive.backup.domain.repository.TestBucketRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.usecase.IsBackgroundRestricted
-import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.user.data.repository.UserMessageRepositoryImpl
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.usecase.TestIsBackgroundRestricted
 import me.proton.core.drive.user.domain.entity.UserMessage
 import me.proton.core.drive.user.domain.usecase.CancelUserMessage
-import me.proton.core.drive.user.domain.usecase.HasCanceledUserMessages
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class GetBackupStateTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private val appContext = ApplicationProvider.getApplicationContext<Application>()
-    private lateinit var addFolder: AddFolder
-    private lateinit var deleteFolders: DeleteFolders
-    private lateinit var setFiles: SetFiles
-    private lateinit var markAsCompleted: MarkAsCompleted
-    private lateinit var markAsFailed: MarkAsFailed
-    private lateinit var cancelUserMessage: CancelUserMessage
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var deleteFolders: DeleteFolders
+
+    @Inject
+    lateinit var setFiles: SetFiles
+
+    @Inject
+    lateinit var markAsCompleted: MarkAsCompleted
+
+    @Inject
+    lateinit var markAsFailed: MarkAsFailed
+
+    @Inject
+    lateinit var cancelUserMessage: CancelUserMessage
+
+    @Inject
+    lateinit var permissionsManager: BackupPermissionsManager
+
+    @Inject
+    lateinit var getBackupState: GetBackupState
+
+    @Inject
+    lateinit var isBackgroundRestricted: TestIsBackgroundRestricted
+
+    @Inject
+    lateinit var bucketRepository: TestBucketRepository
+
     private lateinit var backupState: Flow<BackupState>
-
-    private lateinit var backupManager: StubbedBackupManager
-    private val permissionsManager: BackupPermissionsManager =
-        BackupPermissionsManagerImpl(appContext)
-    private val connectivityManager = StubbedBackupConnectivityManager
-
-    private var bucketEntries = listOf(BucketEntry(0, "Camera"))
-
-    private val isBackgroundRestricted = MutableStateFlow(false)
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles {}
-        val folderRepository = BackupFolderRepositoryImpl(database.db)
-        val fileRepository = BackupFileRepositoryImpl(database.db)
-        val errorRepository = BackupErrorRepositoryImpl(database.db)
-
-        addFolder = AddFolder(folderRepository)
-        deleteFolders = DeleteFolders(folderRepository)
-        setFiles = SetFiles(fileRepository)
-        markAsCompleted = MarkAsCompleted(fileRepository)
-        markAsFailed = MarkAsFailed(fileRepository)
-        backupManager = StubbedBackupManager(folderRepository)
-        addFolder = AddFolder(folderRepository)
-        deleteFolders = DeleteFolders(folderRepository)
-        cancelUserMessage = CancelUserMessage(UserMessageRepositoryImpl(database.db))
+        folderId = driveRule.db.myFiles {}
         permissionsManager.onPermissionChanged(BackupPermissions.Granted)
 
-        val getBackupState = GetBackupState(
-            getBackupStatus = GetBackupStatus(fileRepository),
-            backupManager = backupManager,
-            permissionsManager = permissionsManager,
-            connectivityManager = connectivityManager,
-            getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance),
-            isBackgroundRestricted = object : IsBackgroundRestricted {
-                override fun invoke(): Flow<Boolean> = isBackgroundRestricted
-            },
-            hasCanceledUserMessages = HasCanceledUserMessages(UserMessageRepositoryImpl(database.db)),
-            getConfiguration = GetConfiguration(BackupConfigurationRepositoryImpl(database.db)),
-            getDisabledBackupState = GetDisabledBackupState(
-                getAllBuckets = GetAllBuckets(object : BucketRepository {
-                    override suspend fun getAll(): List<BucketEntry> = bucketEntries
-                }, permissionsManager),
-                configurationProvider = object : ConfigurationProvider {
-                    override val host = ""
-                    override val baseUrl = ""
-                    override val appVersionHeader = ""
-                    override val backupDefaultBucketName = "Camera"
-                },
-            ),
-        )
-
         backupState = getBackupState(folderId)
+        bucketRepository.bucketEntries = listOf(BucketEntry(0, "Camera"))
     }
 
     @Test
     fun `blank backup state`() = runTest {
-        bucketEntries = emptyList()
+        bucketRepository.bucketEntries = emptyList()
 
         assertEquals(
             BackupState(
@@ -147,7 +114,7 @@ class GetBackupStateTest {
 
     @Test
     fun `blank backup state with folder`() = runTest {
-        database.myFiles {}
+        driveRule.db.myFiles {}
 
         assertEquals(
             BackupState(
@@ -199,6 +166,7 @@ class GetBackupStateTest {
             backupState.first(),
         )
     }
+
     @Test
     fun failure() = runTest {
         addFolder(BackupFolder(0, folderId)).getOrThrow()
@@ -273,7 +241,7 @@ class GetBackupStateTest {
     fun `background restricted`() = runTest {
         addFolder(BackupFolder(0, folderId)).getOrThrow()
 
-        isBackgroundRestricted.value = true
+        isBackgroundRestricted.mutableStateFlow.value = true
 
         assertEquals(
             BackupState(
@@ -293,7 +261,7 @@ class GetBackupStateTest {
     fun `background restricted ignored`() = runTest {
         addFolder(BackupFolder(0, folderId)).getOrThrow()
 
-        isBackgroundRestricted.value = true
+        isBackgroundRestricted.mutableStateFlow.value = true
         cancelUserMessage(folderId.userId, UserMessage.BACKUP_BATTERY_SETTINGS).getOrThrow()
 
         assertEquals(

@@ -22,6 +22,8 @@ package me.proton.core.drive.db.test
 
 import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.domain.entity.UserId
+import me.proton.core.key.data.entity.PublicAddressEntity
+import me.proton.core.key.data.entity.PublicAddressKeyEntity
 import me.proton.core.key.domain.entity.key.KeyId
 import me.proton.core.user.data.entity.AddressEntity
 import me.proton.core.user.data.entity.AddressKeyEntity
@@ -32,8 +34,20 @@ suspend fun UserContext.withKey(
     userKey: UserKeyEntity = NullableUserKeyEntity(),
     address: AddressEntity = NullableAddressEntity(),
     addressKey: AddressKeyEntity = NullableAddressKeyEntity(),
+    publicAddressEntity: PublicAddressEntity = NullablePublicAddressEntity(),
+    publicAddressKeyEntity: PublicAddressKeyEntity = NullablePublicAddressKeyEntity(),
 ) {
     db.userKeyDao().insertOrUpdate(userKey)
+    db.addressWithKeysDao().insertOrUpdate(address)
+    db.addressKeyDao().insertOrUpdate(addressKey)
+    db.publicAddressDao().insertOrUpdate(publicAddressEntity)
+    db.publicAddressKeyDao().insertOrUpdate(publicAddressKeyEntity)
+}
+
+suspend fun ShareContext.withKey(
+    address: AddressEntity = NullableAddressEntity(),
+    addressKey: AddressKeyEntity = NullableAddressKeyEntity(),
+) {
     db.addressWithKeysDao().insertOrUpdate(address)
     db.addressKeyDao().insertOrUpdate(addressKey)
 }
@@ -66,6 +80,15 @@ fun UserContext.NullableAddressEntity(
     displayName = account.username,
 )
 
+fun ShareContext.NullableAddressEntity(
+    addressId: AddressId = requireNotNull(share.addressId),
+): AddressEntity = NullableAddressEntity(
+    userId = user.userId,
+    addressId = addressId,
+    email = requireNotNull(account.email),
+    displayName = account.username,
+)
+
 fun NullableAddressEntity(
     userId: UserId,
     addressId: AddressId = AddressId("address-id"),
@@ -84,6 +107,14 @@ fun NullableAddressEntity(
     type = 0,
     order = 0,
     signedKeyList = null
+)
+
+fun ShareContext.NullableAddressKeyEntity(
+    active: Boolean = true,
+): AddressKeyEntity = NullableAddressKeyEntity(
+    addressId = requireNotNull(share.addressId),
+    keyId = KeyId("key-id-${share.id}"),
+    active = active
 )
 
 fun NullableAddressKeyEntity(
@@ -107,5 +138,31 @@ fun NullableAddressKeyEntity(
         fingerprint = null,
         fingerprints = null,
         activation = null
+    )
+}
+
+
+fun UserContext.NullablePublicAddressEntity(
+    email: String = account.email ?: "null-email",
+): PublicAddressEntity {
+    return PublicAddressEntity(
+        email = email,
+        recipientType = 1,
+        mimeType = null,
+        signedKeyListEntity = null,
+        ignoreKT = null,
+    )
+}
+
+
+fun UserContext.NullablePublicAddressKeyEntity(
+    email: String = account.email ?: "null-email",
+    isPrimary: Boolean = true,
+): PublicAddressKeyEntity {
+    return PublicAddressKeyEntity(
+        email = email,
+        isPrimary = isPrimary,
+        flags = 3,
+        publicKey = "public-key-$email"
     )
 }

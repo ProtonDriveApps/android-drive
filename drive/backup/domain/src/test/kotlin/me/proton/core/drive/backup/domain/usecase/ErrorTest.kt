@@ -18,32 +18,37 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
-import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class ErrorTest {
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var getErrors: GetErrors
-    private lateinit var addBackupError: AddBackupError
-    private lateinit var deleteAllBackupError: DeleteAllBackupError
-    private lateinit var deleteAllRetryableBackupError: DeleteAllRetryableBackupError
+    @Inject
+    lateinit var getErrors: GetErrors
+    @Inject
+    lateinit var addBackupError: AddBackupError
+    @Inject
+    lateinit var deleteAllBackupError: DeleteAllBackupError
+    @Inject
+    lateinit var deleteAllRetryableBackupError: DeleteAllRetryableBackupError
 
     private val retryable = BackupError(
         type = BackupErrorType.LOCAL_STORAGE,
@@ -57,12 +62,7 @@ class ErrorTest {
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
-        val repository = BackupErrorRepositoryImpl(database.db)
-        addBackupError = AddBackupError(repository)
-        deleteAllBackupError = DeleteAllBackupError(repository)
-        deleteAllRetryableBackupError = DeleteAllRetryableBackupError(repository)
-        getErrors = GetErrors(repository, NoNetworkConfigurationProvider.instance)
+        folderId = driveRule.db.myFiles { }
     }
 
     @Test

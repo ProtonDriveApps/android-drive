@@ -44,21 +44,28 @@ dependencies {
         exclude("me.proton.core", "notification-presentation")
         exclude("me.proton.core", "account-recovery-presentation-compose")
     }
-    api(libs.core.accountManager.data) {
-        exclude("me.proton.core", "notification-presentation")
-        exclude("me.proton.core", "account-recovery-presentation-compose")
-    }
-    api(libs.core.accountManager.domain)
+    api(libs.core.accountRecovery.dagger)
     api(libs.core.crypto.dagger)
+    api(libs.core.featureFlag.dagger)
     api(libs.core.key.dagger)
     api(libs.core.user.dagger)
+    api(libs.core.userSettings.dagger) {
+        exclude("me.proton.core", "account-manager-presentation")
+        exclude("me.proton.core", "user-settings-presentation")
+    }
+    api(libs.core.utilAndroidDatetime) {
+        exclude("me.proton.core", "presentation")
+    }
     api(libs.core.observability.dagger)
     api(libs.core.test.kotlin)
     api(libs.mockwebserver)
     api(libs.androidx.work.runtime.ktx)
     api(libs.kotlinx.serialization.json)
     api(project(":drive:base:domain"))
+    api(project(":drive:crypto:data"))
     api(project(":drive:crypto-base:data"))
+    api(project(":drive:event-manager:data"))
+    api(project(":drive:user:data"))
     api(project(":drive:trash:data"))
     api(project(":drive:db-test"))
     api(project(":drive:key:data"))

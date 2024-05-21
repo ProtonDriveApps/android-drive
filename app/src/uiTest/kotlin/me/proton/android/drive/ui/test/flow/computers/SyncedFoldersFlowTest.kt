@@ -26,15 +26,20 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.intent.rule.IntentsRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.ComputersTabRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.robot.MoveToFolderRobot
 import me.proton.android.drive.ui.robot.ShareRobot
 import me.proton.android.drive.ui.rules.ExternalFilesRule
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
+import me.proton.core.test.quark.data.User
+import me.proton.core.test.quark.v2.command.userCreate
 import org.junit.Rule
 import org.junit.Test
 
@@ -131,9 +136,10 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
             .verify {
                 itemIsDisplayed(file)
             }
-            .clickBack(MoveToFolderRobot)
+            .clickBackFromFolder(MY_DEVICE_1_SYNC_FOLDER)
             .verify {
                 assertMoveButtonIsDisabled()
+                assertCreateFolderButtonDoesNotExist()
             }
             .scrollToItemWithName(folder)
             .clickOnFolderToMove(folder)
@@ -172,6 +178,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(value = 2, isDevice = true)
+    @FeatureFlag(DRIVE_SHARING, NOT_FOUND)
     fun shareFile() {
         val file = "picWithThumbnail.jpg"
         FilesTabRobot
@@ -188,6 +195,27 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
             .scrollToItemWithName(file)
             .verify {
                 itemIsDisplayed(file)
+            }
+    }
+
+    @Test
+    @Scenario(value = 2, isDevice = true)
+    @FeatureFlag(DRIVE_SHARING, ENABLED)
+    fun shareFileWithInternalUser() {
+        val email = requireNotNull(quarkRule.quarkCommands.userCreate(User()).email)
+        val file = "picWithThumbnail.jpg"
+        FilesTabRobot
+            .navigateToComputerSyncedFolder(MY_DEVICE_1, MY_DEVICE_1_SYNC_FOLDER)
+            .clickMoreOnItem(file)
+            .clickShare()
+            .verify {
+                robotDisplayed()
+                assertShareFile(file)
+            }
+            .typeEmail(email)
+            .clickSend()
+            .verify {
+                assertInvitationSent(1)
             }
     }
 

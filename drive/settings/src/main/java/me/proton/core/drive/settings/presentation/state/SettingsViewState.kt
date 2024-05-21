@@ -36,6 +36,7 @@ data class SettingsViewState(
     val autoLockDuration: Duration,
     val isPhotosSettingsVisible : Boolean,
     @StringRes val photosBackupSubtitleResId: Int,
+    @StringRes val defaultHomeTabResId: Int
 )
 
 sealed class LegalLink(

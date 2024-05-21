@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -29,7 +29,10 @@ driveModule(
     i18n = true,
 ) {
     api(project(":drive:base:presentation"))
+    api(project(":drive:contact:domain"))
+    api(project(":drive:contact:presentation"))
     api(project(":drive:drivelink-shared:domain"))
+    api(project(":drive:share-user:domain"))
     api(libs.core.presentation.compose)
     implementation(project(":drive:base:data"))
 }

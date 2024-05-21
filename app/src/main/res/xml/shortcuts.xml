@@ -26,16 +26,16 @@
     </shortcut>
     <shortcut
         android:enabled="true"
-        android:icon="@drawable/ic_proton_link">
-        <intent
-            android:action="android.intent.action.VIEW"
-            android:data="drive://proton.me/launcher?redirection=shared"/>
-    </shortcut>
-    <shortcut
-        android:enabled="true"
         android:icon="@drawable/ic_proton_tv">
         <intent
             android:action="android.intent.action.VIEW"
             android:data="drive://proton.me/launcher?redirection=computers"/>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_proton_link">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="drive://proton.me/launcher?redirection=shared"/>
     </shortcut>
 </shortcuts>

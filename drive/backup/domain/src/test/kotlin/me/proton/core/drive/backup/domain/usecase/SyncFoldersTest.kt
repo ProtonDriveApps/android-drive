@@ -18,62 +18,60 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BucketUpdate
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class SyncFoldersTest {
+
     @get:Rule
-    val database = DriveDatabaseRule()
-
-    private lateinit var syncFolders: SyncFolders
-    private lateinit var repository: BackupFolderRepositoryImpl
-
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var backupManager: StubbedBackupManager
+    @Inject
+    lateinit var syncFolders: SyncFolders
+
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var backupManager: StubbedBackupManager
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
-
-        repository = BackupFolderRepositoryImpl(database.db)
-        backupManager = StubbedBackupManager(repository)
-        syncFolders = SyncFolders(
-            getAllFolders = GetAllFolders(repository),
-            backupManager = backupManager,
-        )
+        folderId = driveRule.db.myFiles { }
     }
 
     @Test
-    fun `Given folders when sync then should sync each folder`() =
-        runTest {
-            val backupFolder = BackupFolder(
-                bucketId = 0,
-                folderId = folderId,
-            )
-            repository.insertFolder(backupFolder)
+    fun `Given folders when sync then should sync each folder`() = runTest {
+        val backupFolder = BackupFolder(
+            bucketId = 0,
+            folderId = folderId,
+        )
+        addFolder(backupFolder).getOrThrow()
 
-            val folders = syncFolders(folderId, UploadFileLink.BACKUP_PRIORITY).getOrThrow()
+        val folders = syncFolders(folderId, UploadFileLink.BACKUP_PRIORITY).getOrThrow()
 
-            assertEquals(listOf(backupFolder), folders)
-            assertEquals(listOf(backupFolder), backupManager.sync)
-        }
+        assertEquals(listOf(backupFolder), folders)
+        assertEquals(listOf(backupFolder), backupManager.sync)
+    }
 
     @Test
     fun `Given three folders when sync two buckets older and newer then should sync two folders with min time`() =
@@ -93,9 +91,9 @@ class SyncFoldersTest {
                 folderId = folderId,
                 updateTime = TimestampS(30),
             )
-            repository.insertFolder(backupFolder1)
-            repository.insertFolder(backupFolder2)
-            repository.insertFolder(backupFolder3)
+            addFolder(backupFolder1).getOrThrow()
+            addFolder(backupFolder2).getOrThrow()
+            addFolder(backupFolder3).getOrThrow()
 
             val result = syncFolders(
                 userId, listOf(
@@ -106,15 +104,13 @@ class SyncFoldersTest {
 
             assertEquals(
                 listOf(
-                    backupFolder1.copy(updateTime = TimestampS(5)),
-                    backupFolder3
+                    backupFolder1.copy(updateTime = TimestampS(5)), backupFolder3
                 ),
                 result,
             )
             assertEquals(
                 listOf(
-                    backupFolder1.copy(updateTime = TimestampS(5)),
-                    backupFolder3
+                    backupFolder1.copy(updateTime = TimestampS(5)), backupFolder3
                 ),
                 backupManager.sync,
             )

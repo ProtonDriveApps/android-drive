@@ -20,14 +20,14 @@ package me.proton.core.drive.contact.presentation.component
 
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
-import me.proton.core.drive.contact.presentation.component.ChipsSemanticsPropertyKeys.isValidField
+import me.proton.core.drive.contact.presentation.component.ChipsSemanticsPropertyKeys.IsValidField
 
 /**
  * Extension used to specify whether the field is valid or not as a custom [SemanticsPropertyKey].
  */
-var SemanticsPropertyReceiver.isValidField by isValidField
+var SemanticsPropertyReceiver.isValidField by IsValidField
 
-internal object ChipsSemanticsPropertyKeys {
+object ChipsSemanticsPropertyKeys {
 
-    val isValidField = SemanticsPropertyKey<Boolean?>("IsValidFieldKey")
+    val IsValidField = SemanticsPropertyKey<Boolean?>("IsValidFieldKey")
 }

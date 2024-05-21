@@ -18,122 +18,61 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import io.mockk.coEvery
-import io.mockk.mockk
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupDuplicateRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
-import me.proton.core.drive.base.domain.entity.Bytes
-import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.backup.domain.repository.BackupDuplicateRepository
+import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.crypto.domain.usecase.file.GetContentHash
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
-import me.proton.core.drive.db.test.userId
-import me.proton.core.drive.key.domain.entity.Key
-import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
-import me.proton.core.drive.upload.domain.resolver.UriResolver
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.getPublicAddressKeys
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.io.ByteArrayInputStream
-import java.io.FileNotFoundException
-import java.io.InputStream
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class CheckDuplicatesTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
     private lateinit var backupFolder: BackupFolder
 
-    private val getNodeKey = mockk<GetNodeKey>()
-    private val getContentHash = mockk<GetContentHash>()
+    @Inject
+    lateinit var checkDuplicates: CheckDuplicates
 
-    private lateinit var checkDuplicates: CheckDuplicates
+    @Inject
+    lateinit var backupFileRepository: BackupFileRepository
 
-    private lateinit var backupFileRepository: BackupFileRepositoryImpl
-    private lateinit var backupDuplicateRepository: BackupDuplicateRepositoryImpl
+    @Inject
+    lateinit var backupDuplicateRepository: BackupDuplicateRepository
+
+    @Inject
+    lateinit var addFolder: AddFolder
 
     @Before
     fun setUp() = runTest {
-
-        folderId = database.myFiles { }
-
-        val nodeKey: Key.Node = mockk()
-        coEvery { getNodeKey(folderId) } returns Result.success(nodeKey)
-        coEvery { getContentHash(folderId, nodeKey, any()) } answers {
-            val input: String = arg(2)
-            Result.success("getContentHash($input)")
-        }
+        folderId = driveRule.db.myFiles { }
 
         backupFolder = BackupFolder(
             bucketId = 0,
             folderId = folderId
         )
-        val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
-        val addFolder = AddFolder(backupFolderRepository)
         addFolder(backupFolder).getOrThrow()
-        backupFileRepository = BackupFileRepositoryImpl(database.db)
-        backupDuplicateRepository = BackupDuplicateRepositoryImpl(database.db)
-
-        checkDuplicates = CheckDuplicates(
-            backupFileRepository = backupFileRepository,
-            deleteFile = DeleteFile(backupFileRepository),
-            backupDuplicateRepository = BackupDuplicateRepositoryImpl(database.db),
-            uriResolver = object : UriResolver {
-                override suspend fun <T> useInputStream(
-                    uriString: String,
-                    block: suspend (InputStream) -> T,
-                ): T? = if (uriString == "missing") {
-                    throw FileNotFoundException("Cannot found file with uri: $uriString")
-                } else {
-                    block(ByteArrayInputStream(uriString.toByteArray()))
-                }
-
-                override suspend fun getName(uriString: String): String? {
-                    TODO("Not yet implemented")
-                }
-
-                override suspend fun getSize(uriString: String): Bytes? {
-                    TODO("Not yet implemented")
-                }
-
-                override suspend fun getMimeType(uriString: String): String? {
-                    TODO("Not yet implemented")
-                }
-
-                override suspend fun getLastModified(uriString: String): TimestampMs? {
-                    TODO("Not yet implemented")
-                }
-
-                override suspend fun getUriInfo(uriString: String): UriResolver.UriInfo? {
-                    TODO("Not yet implemented")
-                }
-            },
-            getNodeKey = getNodeKey,
-            getContentHash = getContentHash,
-            configurationProvider = object : ConfigurationProvider {
-                override val host: String = ""
-                override val baseUrl: String = ""
-                override val appVersionHeader: String = ""
-                override val dbPageSize: Int = 1
-            },
-        )
+        driveRule.server.getPublicAddressKeys()
     }
 
     @Test
@@ -145,7 +84,7 @@ class CheckDuplicatesTest {
             val duplicates = listOf(backupDuplicate(1, "hash", null))
             backupDuplicateRepository.insertDuplicates(duplicates)
 
-            checkDuplicates(userId, backupFolder).getOrThrow()
+            checkDuplicates(backupFolder).getOrThrow()
 
             assertEquals(
                 listOf(backupFile("hash", BackupFileState.READY)),
@@ -174,7 +113,7 @@ class CheckDuplicatesTest {
                 duplicates
             )
 
-            checkDuplicates(userId, backupFolder).getOrThrow()
+            checkDuplicates(backupFolder).getOrThrow()
 
             assertEquals(
                 listOf(backupFile("hash", BackupFileState.READY)),
@@ -197,12 +136,12 @@ class CheckDuplicatesTest {
                     backupDuplicate(
                         id = 1,
                         hash = "hash",
-                        contentHash = "getContentHash(2c6d680f5c570ba21d22697cd028f230e9f4cd56)",
+                        contentHash = "d736aa57fdbc8e1fd4c256e7737e2bcf55b8f6b0855ae0bfe84d4c1d148f6a53",
                     )
                 )
             )
 
-            checkDuplicates(userId, backupFolder).getOrThrow()
+            checkDuplicates(backupFolder).getOrThrow()
 
             assertEquals(
                 listOf(backupFile("hash", BackupFileState.DUPLICATED)),
@@ -225,17 +164,17 @@ class CheckDuplicatesTest {
                     backupDuplicate(
                         id = 1,
                         hash = "hash",
-                        contentHash = "getContentHash(2c6d680f5c570ba21d22697cd028f230e9f4cd56)",
+                        contentHash = "d736aa57fdbc8e1fd4c256e7737e2bcf55b8f6b0855ae0bfe84d4c1d148f6a53",
                     ),
                     backupDuplicate(
                         id = 2,
                         hash = "hash",
-                        contentHash = "getContentHash(something-else-than-empty-hash)",
+                        contentHash = "something-else-than-empty-hash",
                     ),
                 )
             )
 
-            checkDuplicates(userId, backupFolder).getOrThrow()
+            checkDuplicates(backupFolder).getOrThrow()
 
             assertEquals(
                 listOf(backupFile("hash", BackupFileState.DUPLICATED)),
@@ -246,7 +185,7 @@ class CheckDuplicatesTest {
                     backupDuplicate(
                         id = 2,
                         hash = "hash",
-                        contentHash = "getContentHash(something-else-than-empty-hash)",
+                        contentHash = "something-else-than-empty-hash",
                     )
                 ),
                 backupDuplicateRepository.getAll(folderId, 0, 100),
@@ -257,10 +196,10 @@ class CheckDuplicatesTest {
     fun `Given missing file When checkDuplicates Should delete it`() =
         runTest {
             backupFileRepository.insertFiles(
-                listOf(backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "missing")),
+                listOf(backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "test://missing")),
             )
 
-            checkDuplicates(userId, backupFolder).getOrThrow()
+            checkDuplicates(backupFolder).getOrThrow()
 
             assertEquals(
                 emptyList<BackupFile>(),
@@ -273,8 +212,8 @@ class CheckDuplicatesTest {
         runTest {
             backupFileRepository.insertFiles(
                 listOf(
-                    backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "uri1"),
-                    backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "uri2"),
+                    backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "test://uri1"),
+                    backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "test://uri2"),
                 ),
             )
             backupDuplicateRepository.insertDuplicates(
@@ -282,22 +221,22 @@ class CheckDuplicatesTest {
                     backupDuplicate(
                         id = 1,
                         hash = "hash",
-                        contentHash = "getContentHash(eb73eba4eb87e7189c0246ff137854aa54c14dd2)",
+                        contentHash = "cee843ef8c285d5c074dce68bc2e2ab19a5ecae881566610d78b948217236274",
                     ),
                     backupDuplicate(
                         id = 2,
                         hash = "hash",
-                        contentHash = "getContentHash(a0d4696880dca9b25a7048aa4cf79e098aea6de7)",
+                        contentHash = "db6105a58c8d20dc8461d1a158c42fc0454159e565989b58f89c85027371a23d",
                     ),
                 )
             )
 
-            checkDuplicates(userId, backupFolder).getOrThrow()
+            checkDuplicates(backupFolder).getOrThrow()
 
             assertEquals(
                 listOf(
-                    backupFile("hash", BackupFileState.DUPLICATED, "uri1"),
-                    backupFile("hash", BackupFileState.DUPLICATED, "uri2"),
+                    backupFile("hash", BackupFileState.DUPLICATED, "test://uri1"),
+                    backupFile("hash", BackupFileState.DUPLICATED, "test://uri2"),
                 ),
                 backupFileRepository.getAllFiles(folderId, 0, 100),
             )
@@ -312,8 +251,8 @@ class CheckDuplicatesTest {
         runTest {
             backupFileRepository.insertFiles(
                 listOf(
-                    backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "uri1"),
-                    backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "uri2"),
+                    backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "test://uri1"),
+                    backupFile("hash", BackupFileState.POSSIBLE_DUPLICATE, "test://uri2"),
                 ),
             )
             backupDuplicateRepository.insertDuplicates(
@@ -321,17 +260,17 @@ class CheckDuplicatesTest {
                     backupDuplicate(
                         id = 1,
                         hash = "hash",
-                        contentHash = "getContentHash(eb73eba4eb87e7189c0246ff137854aa54c14dd2)",
+                        contentHash = "cee843ef8c285d5c074dce68bc2e2ab19a5ecae881566610d78b948217236274",
                     )
                 )
             )
 
-            checkDuplicates(userId, backupFolder).getOrThrow()
+            checkDuplicates(backupFolder).getOrThrow()
 
             assertEquals(
                 listOf(
-                    backupFile("hash", BackupFileState.DUPLICATED, "uri1"),
-                    backupFile("hash", BackupFileState.READY, "uri2"),
+                    backupFile("hash", BackupFileState.DUPLICATED, "test://uri1"),
+                    backupFile("hash", BackupFileState.READY, "test://uri2"),
                 ),
                 backupFileRepository.getAllFiles(folderId, 0, 100),
             )
@@ -341,7 +280,7 @@ class CheckDuplicatesTest {
             )
         }
 
-    private fun backupDuplicate(id : Long, hash: String, contentHash: String?) = BackupDuplicate(
+    private fun backupDuplicate(id: Long, hash: String, contentHash: String?) = BackupDuplicate(
         id = id,
         parentId = folderId,
         hash = hash,
@@ -355,7 +294,7 @@ class CheckDuplicatesTest {
     private fun backupFile(
         hash: String,
         backupFileState: BackupFileState,
-        uriString: String = "uri",
+        uriString: String = "test://uri",
     ) = BackupFile(
         bucketId = 0,
         folderId = folderId,

@@ -35,6 +35,6 @@ object ParentFolderOptionsRobot : Robot {
     fun clickTakePhoto() = takePhotoButton.clickTo(FilesTabRobot)
 
     override fun robotDisplayed() {
-        contextMenu.assertIsDisplayed()
+        contextMenu.await { assertIsDisplayed() }
     }
 }

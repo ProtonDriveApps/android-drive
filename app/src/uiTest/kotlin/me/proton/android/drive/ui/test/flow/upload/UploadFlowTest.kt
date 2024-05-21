@@ -24,6 +24,8 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.rule.IntentsRule
 import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.ui.annotation.Quota
 import me.proton.android.drive.ui.extension.respondWithFile
 import me.proton.android.drive.ui.extension.respondWithFiles
@@ -219,7 +221,8 @@ class UploadFlowTest : AuthenticatedBaseTest() {
 
         Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFiles(batch200)
 
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
@@ -248,6 +251,11 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickOnFolder("folder1")
             .clickPlusButton()
             .clickUploadAFile()
+
+        // clicking on back to fast is doing nothing
+        runBlocking { delay(500) }
+
+        FilesTabRobot
             .clickBack(FilesTabRobot)
             .clickOnFolder("folder1")
             .verify {

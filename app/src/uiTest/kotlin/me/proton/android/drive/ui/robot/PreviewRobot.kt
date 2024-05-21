@@ -73,7 +73,7 @@ object PreviewRobot : NavigationBarRobot {
     }
 
     override fun robotDisplayed() {
-        previewScreen.assertIsDisplayed()
+        previewScreen.await { assertIsDisplayed() }
     }
 }
 

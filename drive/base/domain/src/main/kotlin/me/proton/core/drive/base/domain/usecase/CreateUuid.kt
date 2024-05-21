@@ -18,18 +18,8 @@
 
 package me.proton.core.drive.base.domain.usecase
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.withContext
 import java.util.UUID
-import javax.inject.Inject
 
-class CreateUuid constructor(private val randomUUID: () -> UUID) {
-
-    @Inject
-    constructor() : this(UUID::randomUUID)
-
-    suspend operator fun invoke(): UUID = withContext(Job() + Dispatchers.Default) {
-        randomUUID()
-    }
+interface CreateUuid {
+    suspend operator fun invoke(): UUID
 }

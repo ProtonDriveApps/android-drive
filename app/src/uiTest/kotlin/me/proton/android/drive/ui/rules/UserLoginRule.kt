@@ -36,13 +36,14 @@ import org.junit.runner.Description
 import kotlin.math.roundToInt
 
 class UserLoginRule(
-    private val testUser: User,
+    var testUser: User,
     private val isDevice: Boolean = false,
     private val isPhotos: Boolean = false,
     private val quarkCommands: QuarkCommand,
 ) : TestWatcher() {
 
     var userId: UserId? = null
+    var sharingUser = User()
 
     override fun starting(description: Description) {
         runBlocking {
@@ -59,13 +60,23 @@ class UserLoginRule(
 
             val device = scenarioAnnotation?.isDevice ?: isDevice
             val photos = scenarioAnnotation?.isPhotos ?: isPhotos
+            val withSharingUser = scenarioAnnotation?.withSharingUser ?: false
 
             if (user.isPaid)
                 quarkCommands.seedNewSubscriber(user)
             else
                 quarkCommands.userCreate(user).also { response ->
+                    testUser = testUser.copy(email = response.email.orEmpty())
                     userId = response.userId.let(::UserId)
                 }
+
+            if (withSharingUser) {
+                quarkCommands.userCreate(sharingUser).also { response ->
+                    sharingUser = sharingUser.copy(
+                        email = response.email.orEmpty()
+                    )
+                }
+            }
 
             quotaAnnotation?.let {
                 quarkCommands.volumeCreate(user)
@@ -77,7 +88,7 @@ class UserLoginRule(
             }
 
             if (user.dataSetScenario.let { it.isNotEmpty() && it != "0" }) {
-                quarkCommands.populate(user, device, photos)
+                quarkCommands.populate(user, device, photos, sharingUser.takeIf { withSharingUser })
             }
 
             if (featureFlagAnnotation != null) {

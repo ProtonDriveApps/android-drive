@@ -33,7 +33,7 @@ object UploadToRobot : LinksRobot, GrowlerRobot, Robot {
     fun clickUpload() = uploadButton.clickTo(this)
     fun clickCreateFolder() = createFolderButton.clickTo(CreateFolderRobot)
 
-    fun assertEmptyFolder() = emptyText.await(30.seconds) { assertIsDisplayed() }
+    fun assertEmptyFolder() = emptyText.await(60.seconds) { assertIsDisplayed() }
 
     fun assertFilesBeingUploaded(count: Int, folderName: String) = node.withText(
         targetContext.resources.getQuantityString(

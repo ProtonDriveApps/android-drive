@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -22,9 +22,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
@@ -47,6 +51,8 @@ fun FileOrFolderOptions(
     navigateToDelete: (linkId: LinkId) -> Unit,
     navigateToSendFile: (fileId: FileId) -> Unit,
     navigateToStopSharing: (linkId: LinkId) -> Unit,
+    navigateToManageAccess: (linkId: LinkId) -> Unit,
+    navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
     navigateToShareViaLink: (linkId: LinkId) -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -64,6 +70,8 @@ fun FileOrFolderOptions(
         navigateToDelete = navigateToDelete,
         navigateToSendFile = navigateToSendFile,
         navigateToStopSharing = navigateToStopSharing,
+        navigateToManageAccess = navigateToManageAccess,
+        navigateToShareViaInvitations = navigateToShareViaInvitations,
         navigateToShareViaLink = navigateToShareViaLink,
         dismiss = dismiss,
         modifier = modifier
@@ -84,10 +92,13 @@ fun FileOrFolderOptions(
     navigateToDelete: (linkId: LinkId) -> Unit,
     navigateToSendFile: (fileId: FileId) -> Unit,
     navigateToStopSharing: (linkId: LinkId) -> Unit,
+    navigateToManageAccess: (linkId: LinkId) -> Unit,
+    navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
     navigateToShareViaLink: (linkId: LinkId) -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
     when (driveLink) {
         is DriveLink.File -> {
             val createDocumentLauncher = rememberCreateDocumentLauncher(
@@ -98,10 +109,8 @@ fun FileOrFolderOptions(
                 },
                 mimeType = driveLink.mimeType,
             )
-            FilesOptions(
-                file = driveLink,
-                entries = viewModel.entries(
-                    driveLink = driveLink,
+            val entries by remember(viewModel, lifecycle) {
+                viewModel.entries<DriveLink.File>(
                     runAction = runAction,
                     navigateToInfo = navigateToInfo,
                     navigateToMove = navigateToMove,
@@ -109,21 +118,29 @@ fun FileOrFolderOptions(
                     navigateToDelete = navigateToDelete,
                     navigateToSendFile = navigateToSendFile,
                     navigateToStopSharing = navigateToStopSharing,
+                    navigateToManageAccess = navigateToManageAccess,
+                    navigateToShareViaInvitations = navigateToShareViaInvitations,
                     navigateToShareViaLink = navigateToShareViaLink,
                     dismiss = dismiss,
                     showCreateDocumentPicker = { filename, onNotFound ->
                         createDocumentLauncher.launchWithNotFound(filename, onNotFound)
                     },
-                ),
+                ).flowWithLifecycle(
+                    lifecycle = lifecycle,
+                    minActiveState = Lifecycle.State.STARTED
+                )
+            }.collectAsState(initial = null)
+            val fileEntries = entries ?: return
+            FilesOptions(
+                file = driveLink,
+                entries = fileEntries,
                 modifier = modifier
                     .testTag(FileFolderOptionsDialogTestTag.fileOptions),
             )
         }
-        is DriveLink.Folder ->
-            FolderOptions(
-                folder = driveLink,
-                entries = viewModel.entries(
-                    driveLink = driveLink,
+        is DriveLink.Folder -> {
+            val entries by remember(viewModel, lifecycle) {
+                viewModel.entries<DriveLink.Folder>(
                     runAction = runAction,
                     navigateToInfo = navigateToInfo,
                     navigateToMove = navigateToMove,
@@ -131,12 +148,23 @@ fun FileOrFolderOptions(
                     navigateToDelete = navigateToDelete,
                     navigateToSendFile = navigateToSendFile,
                     navigateToStopSharing = navigateToStopSharing,
+                    navigateToManageAccess = navigateToManageAccess,
+                    navigateToShareViaInvitations = navigateToShareViaInvitations,
                     navigateToShareViaLink = navigateToShareViaLink,
                     dismiss = dismiss,
-                ),
+                ).flowWithLifecycle(
+                    lifecycle = lifecycle,
+                    minActiveState = Lifecycle.State.STARTED
+                )
+            }.collectAsState(initial = null)
+            val folderEntries = entries ?: return
+            FolderOptions(
+                folder = driveLink,
+                entries = folderEntries,
                 modifier = modifier
                     .testTag(FileFolderOptionsDialogTestTag.folderOptions),
             )
+        }
     }
 }
 

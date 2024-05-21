@@ -35,6 +35,6 @@ object RenameRobot : Robot {
     fun clearName() = apply { renameTextField.clearText() }
 
     override fun robotDisplayed() {
-        renameScreen.assertIsDisplayed()
+        renameScreen.await { assertIsDisplayed() }
     }
 }

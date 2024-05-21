@@ -42,11 +42,6 @@ interface UploadBindModule {
     @Binds
     @Singleton
     fun bindsUriResolver(impl: AggregatedUriResolver): UriResolver
-
-    @Binds
-    @Singleton
-    fun bindsUploadWorkManagerImpl(impl: UploadWorkManagerImpl): UploadWorkManager
-
     @Binds
     @Singleton
     fun bindsUploadErrorManagerImpl(impl: UploadErrorManagerImpl): UploadErrorManager

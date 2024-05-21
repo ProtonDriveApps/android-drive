@@ -27,7 +27,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.account.domain.entity.AccountType
@@ -48,6 +47,8 @@ import me.proton.core.accountmanager.presentation.onUserKeyCheckFailed
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onAddAccountResult
 import me.proton.core.domain.entity.Product
+import me.proton.core.domain.entity.UserId
+import me.proton.core.usersettings.presentation.UserSettingsOrchestrator
 import javax.inject.Inject
 
 @HiltViewModel
@@ -55,6 +56,7 @@ class AccountViewModel @Inject constructor(
     private val requiredAccountType: AccountType,
     private val accountManager: AccountManager,
     private val authOrchestrator: AuthOrchestrator,
+    private val userSettingsOrchestrator: UserSettingsOrchestrator,
 ) : ViewModel() {
 
     private val exitApp = MutableStateFlow(false)
@@ -92,18 +94,28 @@ class AccountViewModel @Inject constructor(
                 .onUserKeyCheckFailed { /* errorToast("UserKeyCheckFailed")*/ }
                 .onUserAddressKeyCheckFailed { /*errorToast("UserAddressKeyCheckFailed")*/ }
         }
+        userSettingsOrchestrator.register(context)
     }
 
     fun deInitialize() {
         authOrchestrator.unregister()
+        userSettingsOrchestrator.unregister()
     }
 
-    fun addAccount() {
+    fun startAddAccount() {
         authOrchestrator.startAddAccountWorkflow(
             requiredAccountType = requiredAccountType,
             creatableAccountType = requiredAccountType,
             product = Product.Drive
         )
+    }
+
+    fun startPasswordManagement(userId: UserId) {
+        userSettingsOrchestrator.startPasswordManagementWorkflow(userId)
+    }
+
+    fun startUpdateRecoveryEmail(userId: UserId) {
+        userSettingsOrchestrator.startUpdateRecoveryEmailWorkflow(userId)
     }
 
     sealed class State {

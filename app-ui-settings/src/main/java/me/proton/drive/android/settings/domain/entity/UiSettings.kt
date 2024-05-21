@@ -21,4 +21,5 @@ package me.proton.drive.android.settings.domain.entity
 data class UiSettings(
     val layoutType: LayoutType = LayoutType.DEFAULT,
     val themeStyle: ThemeStyle = ThemeStyle.DEFAULT,
+    val homeTab: HomeTab = HomeTab.DEFAULT,
 )

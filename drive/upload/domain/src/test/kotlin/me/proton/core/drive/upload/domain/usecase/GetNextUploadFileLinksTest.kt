@@ -25,7 +25,6 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.StorageInfo
 import me.proton.core.drive.base.domain.extension.GiB
 import me.proton.core.drive.base.domain.extension.MiB
-import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.db.test.photo
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
@@ -37,7 +36,7 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.test.DriveRule
-import me.proton.core.drive.test.usecase.storageInfo
+import me.proton.core.drive.test.usecase.TestGetInternalStorageInfo
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -73,7 +72,7 @@ class GetNextUploadFileLinksTest {
     lateinit var removeUploadFile: RemoveUploadFile
 
     @Inject
-    lateinit var getInternalStorageInfo: GetInternalStorageInfo
+    lateinit var getInternalStorageInfo: TestGetInternalStorageInfo
 
     @Before
     fun setUp() = runTest {

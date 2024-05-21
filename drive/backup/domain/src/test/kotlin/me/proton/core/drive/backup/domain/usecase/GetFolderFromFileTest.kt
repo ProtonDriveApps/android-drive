@@ -18,18 +18,17 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -37,25 +36,27 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class GetFolderFromFileTest {
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var addFolder: AddFolder
-    private lateinit var getFolderFromFile: GetFolderFromFile
-    private lateinit var setFiles: SetFiles
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var getFolderFromFile: GetFolderFromFile
+
+    @Inject
+    lateinit var setFiles: SetFiles
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
-        val folderRepository = BackupFolderRepositoryImpl(database.db)
-        val fileRepository = BackupFileRepositoryImpl(database.db)
-        addFolder = AddFolder(folderRepository)
-        getFolderFromFile = GetFolderFromFile(folderRepository)
-        setFiles = SetFiles(fileRepository)
+        folderId = driveRule.db.myFiles { }
     }
 
     @Test

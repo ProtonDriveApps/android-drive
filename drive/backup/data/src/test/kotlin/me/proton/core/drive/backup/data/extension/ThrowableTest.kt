@@ -21,7 +21,7 @@ package me.proton.core.drive.backup.data.extension
 import android.system.ErrnoException
 import android.system.OsConstants
 import me.proton.core.drive.backup.domain.entity.BackupError
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner

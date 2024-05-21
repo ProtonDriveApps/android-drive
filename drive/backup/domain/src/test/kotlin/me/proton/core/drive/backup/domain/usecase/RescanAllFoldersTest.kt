@@ -18,54 +18,49 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class RescanAllFoldersTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
-
-    private lateinit var backupManager: StubbedBackupManager
-    private lateinit var addFolder: AddFolder
-    private lateinit var rescanAllFolders: RescanAllFolders
-
     private lateinit var backupFolder: BackupFolder
+
+    @Inject
+    lateinit var backupManager: StubbedBackupManager
+
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var rescanAllFolders: RescanAllFolders
 
     @Before
     fun setup() = runTest {
-        folderId = database.myFiles { }
-        val folderRepository = BackupFolderRepositoryImpl(database.db)
-
-        backupManager = StubbedBackupManager(folderRepository)
-        addFolder = AddFolder(folderRepository)
+        folderId = driveRule.db.myFiles { }
         backupFolder = BackupFolder(
             bucketId = 0,
             folderId = folderId,
             updateTime = TimestampS(1),
         )
         addFolder(backupFolder).getOrThrow()
-        rescanAllFolders = RescanAllFolders(
-            resetFoldersUpdateTime = ResetFoldersUpdateTime(folderRepository),
-            syncFolders = SyncFolders(
-                getAllFolders = GetAllFolders(folderRepository),
-                backupManager = backupManager,
-            )
-        )
     }
 
 

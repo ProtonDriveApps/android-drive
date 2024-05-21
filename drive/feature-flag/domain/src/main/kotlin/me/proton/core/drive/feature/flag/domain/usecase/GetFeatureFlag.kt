@@ -55,7 +55,9 @@ class GetFeatureFlag @Inject constructor(
             }.getOrNull()
         }
         return coRunCatching {
-            featureFlagRepository.getFeatureFlag(featureFlagId)
+            featureFlagRepository.getFeatureFlag(featureFlagId)?.takeUnless { featureFlag ->
+                featureFlag.id.id in FeatureFlagId.developments && configurationProvider.disableFeatureFlagInDevelopment
+            }
         }.fold(
             onSuccess = { featureFlag -> featureFlag ?: FeatureFlag(featureFlagId, FeatureFlag.State.NOT_FOUND) },
             onFailure = { error ->

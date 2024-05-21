@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -152,6 +152,7 @@ fun ActionButton(
     @DrawableRes icon: Int,
     @StringRes contentDescription: Int,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     iconTintColor: Color = IconTintColor,
     onClick: () -> Unit,
 ) {
@@ -160,7 +161,8 @@ fun ActionButton(
             .size(ActionButtonSize)
             .padding(ActionIconPadding)
             .clip(shape = CircleShape),
-        onClick = { onClick() }
+        onClick = { onClick() },
+        enabled = enabled,
     ) {
         Icon(
             modifier = Modifier.size(ActionIconSize),

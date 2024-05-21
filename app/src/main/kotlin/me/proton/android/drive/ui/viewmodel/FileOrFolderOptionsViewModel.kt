@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -25,11 +25,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.options.Option
 import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.options.filter
+import me.proton.android.drive.ui.options.filterSharing
 import me.proton.android.drive.usecase.NotifyActivityNotFound
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
@@ -40,6 +43,8 @@ import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLin
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.offline.domain.usecase.ToggleOffline
 import me.proton.core.drive.drivelink.trash.domain.usecase.ToggleTrashState
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -58,6 +63,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     private val copyPublicUrl: CopyPublicUrl,
     private val exportTo: ExportTo,
     private val notifyActivityNotFound: NotifyActivityNotFound,
+    private val getFeatureFlagFlow: GetFeatureFlagFlow,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private var dismiss: (() -> Unit)? = null
     val driveLink: Flow<DriveLink?> = getDriveLink(
@@ -75,7 +81,6 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     private val optionsFilter = savedStateHandle.require<OptionsFilter>(OPTIONS_FILTER)
 
     fun <T : DriveLink> entries(
-        driveLink: DriveLink,
         runAction: (suspend () -> Unit) -> Unit,
         navigateToInfo: (linkId: LinkId) -> Unit,
         navigateToMove: (linkId: LinkId, parentId: FolderId?) -> Unit,
@@ -83,13 +88,19 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         navigateToDelete: (linkId: LinkId) -> Unit,
         navigateToSendFile: (fileId: FileId) -> Unit,
         navigateToStopSharing: (linkId: LinkId) -> Unit,
+        navigateToManageAccess: (linkId: LinkId) -> Unit,
+        navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
         navigateToShareViaLink: (linkId: LinkId) -> Unit,
         dismiss: () -> Unit,
         showCreateDocumentPicker: (String, () -> Unit) -> Unit = { _, _ -> },
-    ): List<FileOptionEntry<T>> =
+    ): Flow<List<FileOptionEntry<T>>> = combine(
+        this.driveLink.filterNotNull(),
+        getFeatureFlagFlow(FeatureFlagId.driveSharing(userId)),
+    ) { driveLink, sharingFeatureFlag ->
         options
             .filter(driveLink)
             .filter(optionsFilter)
+            .filterSharing(sharingFeatureFlag)
             .map { option ->
                 @Suppress("UNCHECKED_CAST")
                 when (option) {
@@ -119,6 +130,8 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                             copyPublicUrl(driveLink.volumeId, linkId)
                         }
                     }
+                    is Option.ManageAccess -> option.build(runAction, navigateToManageAccess)
+                    is Option.ShareViaInvitations -> option.build(runAction, navigateToShareViaInvitations)
                     is Option.ShareViaLink -> option.build(runAction, navigateToShareViaLink)
                     is Option.StopSharing -> option.build(runAction, navigateToStopSharing)
                     else -> throw IllegalStateException(
@@ -128,6 +141,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             }.also {
                 this.dismiss = dismiss
             }
+    }
 
     fun onCreateDocumentResult(fileId: FileId, documentUri: Uri) {
         exportTo(fileId = fileId, destinationUri = documentUri)
@@ -147,6 +161,8 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         private val options = setOf(
             Option.OfflineToggle,
             Option.CopySharedLink,
+            Option.ShareViaInvitations,
+            Option.ManageAccess,
             Option.ShareViaLink,
             Option.SendFile,
             Option.Download,

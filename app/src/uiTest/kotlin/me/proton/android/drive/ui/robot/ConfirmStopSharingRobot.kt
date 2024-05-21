@@ -24,14 +24,17 @@ import me.proton.core.drive.i18n.R as I18N
 
 object ConfirmStopSharingRobot : Robot {
     private val stopSharingMessage
-        get() = node.withText(I18N.string.description_files_stop_sharing).hasAncestor(node.isDialog())
+        get() = node.withText(I18N.string.description_files_stop_sharing)
+            .hasAncestor(node.isDialog())
     private val stopSharingButton
         get() = node.withTag(ConfirmStopSharingDialogTestTag.confirmStopSharing)
 
     fun confirmStopSharing() = stopSharingButton.clickTo(FilesTabRobot)
 
+    fun <T : Robot> confirmStopSharing(goesTo: T) = stopSharingButton.clickTo(goesTo)
+
     override fun robotDisplayed() {
-        stopSharingMessage.assertIsDisplayed()
+        stopSharingMessage.await { assertIsDisplayed() }
     }
 
 }

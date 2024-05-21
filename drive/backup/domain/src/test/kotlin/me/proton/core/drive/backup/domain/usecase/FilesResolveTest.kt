@@ -18,53 +18,51 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
-
 class FilesResolveTest {
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var getAllFailedFiles: GetAllFailedFiles
-    private lateinit var setFiles: SetFiles
-    private lateinit var deleteAllFailedFiles: DeleteAllFailedFiles
-    private lateinit var markAllFailedAsReady: MarkAllFailedAsReady
+    @Inject
+    lateinit var getAllFailedFiles: GetAllFailedFiles
+
+    @Inject
+    lateinit var setFiles: SetFiles
+
+    @Inject
+    lateinit var deleteAllFailedFiles: DeleteAllFailedFiles
+
+    @Inject
+    lateinit var markAllFailedAsReady: MarkAllFailedAsReady
+
+    @Inject
+    lateinit var addFolder: AddFolder
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles {}
-        val backupFileRepository = BackupFileRepositoryImpl(database.db)
-        val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
-        getAllFailedFiles = GetAllFailedFiles(object : ConfigurationProvider {
-            override val host: String = ""
-            override val baseUrl: String = ""
-            override val appVersionHeader: String = ""
-        }, backupFileRepository)
-        deleteAllFailedFiles = DeleteAllFailedFiles(backupFileRepository)
-        markAllFailedAsReady = MarkAllFailedAsReady(backupFileRepository)
-        val addFolder = AddFolder(backupFolderRepository)
+        folderId = driveRule.db.myFiles {}
         addFolder(BackupFolder(0, folderId)).getOrThrow()
-        setFiles = SetFiles(backupFileRepository)
     }
 
     @Test

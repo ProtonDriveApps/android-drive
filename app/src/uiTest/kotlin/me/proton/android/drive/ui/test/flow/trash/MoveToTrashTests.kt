@@ -70,6 +70,7 @@ class MoveToTrashTests : AuthenticatedBaseTest() {
     @Test
     @Scenario(2, isPhotos = true)
     fun moveAFileAndPhotoToTrash() {
+        PhotosTabRobot.waitUntilLoaded()
         PhotosTabRobot
             .clickFilesTab()
             .clickMoreOnItem(fileName)

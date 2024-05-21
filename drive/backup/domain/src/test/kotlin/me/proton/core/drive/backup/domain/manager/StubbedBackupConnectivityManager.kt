@@ -19,8 +19,11 @@
 package me.proton.core.drive.backup.domain.manager
 
 import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
-object StubbedBackupConnectivityManager : BackupConnectivityManager {
+@Singleton
+class StubbedBackupConnectivityManager @Inject constructor() : BackupConnectivityManager {
     override val connectivity: MutableStateFlow<BackupConnectivityManager.Connectivity> =
         MutableStateFlow(BackupConnectivityManager.Connectivity.UNMETERED)
 }

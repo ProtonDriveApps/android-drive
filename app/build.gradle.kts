@@ -181,12 +181,15 @@ android {
             }
         }
         create("alpha") {
-            versionNameSuffix = "-alpha%02d".format(lastAlpha + 1)
+            versionCode = (versionCodeFromGitCommitCount * 10) + 1
+            versionNameSuffix = "-alpha ($gitCommitCount)"
         }
         create("beta") {
-            versionNameSuffix = "-beta%02d".format(lastBeta + 1)
+            versionCode = (versionCodeFromGitCommitCount * 10) + 2
+            versionNameSuffix = "-beta ($gitCommitCount)"
         }
         create("prod") {
+            versionCode = (versionCodeFromGitCommitCount * 10) + 3
         }
     }
 

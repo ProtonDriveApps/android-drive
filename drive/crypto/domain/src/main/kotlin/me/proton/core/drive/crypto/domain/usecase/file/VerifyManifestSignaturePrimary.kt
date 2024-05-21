@@ -24,12 +24,12 @@ import me.proton.core.drive.cryptobase.domain.usecase.GetPublicKeyRing
 import me.proton.core.drive.cryptobase.domain.usecase.VerifyData
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.key.domain.extension.keyHolder
-import me.proton.core.drive.key.domain.usecase.GetAddressKeys
+import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class VerifyManifestSignaturePrimary @Inject constructor(
-    private val getAddressKeys: GetAddressKeys,
+    private val getPublicAddressKeys: GetPublicAddressKeys,
     private val verifyData: VerifyData,
     private val getManifest: GetManifest,
     private val getPublicKeyRing: GetPublicKeyRing,
@@ -43,10 +43,10 @@ class VerifyManifestSignaturePrimary @Inject constructor(
     ): Result<Boolean> = coRunCatching(coroutineContext) {
         verifyData(
             publicKey = getPublicKeyRing(
-                getAddressKeys(
+                getPublicAddressKeys(
                     userId = userId,
-                    email = signatureAddress
-                ).keyHolder
+                    email = signatureAddress,
+                ).getOrThrow().keyHolder
             ).getOrThrow().primaryKey,
             input = getManifest(blocks).getOrThrow(),
             signature = manifestSignature,

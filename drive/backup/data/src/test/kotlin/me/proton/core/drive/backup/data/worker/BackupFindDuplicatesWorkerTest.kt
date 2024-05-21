@@ -24,70 +24,73 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
-import io.mockk.coEvery
-import io.mockk.mockk
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupDuplicateRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
-import me.proton.core.drive.backup.data.repository.FolderFindDuplicatesRepository
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
-import me.proton.core.drive.backup.domain.repository.FindDuplicatesRepository
+import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
+import me.proton.core.drive.backup.domain.repository.BackupFileRepository
+import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.FindDuplicates
-import me.proton.core.drive.base.domain.entity.ClientUid
+import me.proton.core.drive.base.data.api.ProtonApiCode
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.repository.ClientUidRepository
-import me.proton.core.drive.base.domain.usecase.CreateClientUid
-import me.proton.core.drive.base.domain.usecase.CreateUuid
-import me.proton.core.drive.base.domain.usecase.GetClientUid
-import me.proton.core.drive.base.domain.usecase.GetOrCreateClientUid
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
-import me.proton.core.drive.link.data.api.LinkApiDataSource
+import me.proton.core.drive.link.data.api.request.CheckAvailableHashesRequest
 import me.proton.core.drive.link.data.api.response.CheckAvailableHashesResponse
-import me.proton.core.drive.link.data.repository.LinkRepositoryImpl
-import me.proton.core.drive.link.domain.entity.CheckAvailableHashesInfo
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.network.domain.ApiException
-import me.proton.core.network.domain.ApiResult
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.checkAvailableHashes
+import me.proton.core.drive.test.api.jsonResponse
+import me.proton.core.drive.test.api.request
+import me.proton.core.drive.test.api.retryableErrorResponse
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.util.UUID
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class BackupFindDuplicatesWorkerTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var backupFolderRepository: BackupFolderRepositoryImpl
-    private lateinit var backupFileRepository: BackupFileRepositoryImpl
-    private lateinit var backupErrorRepository: BackupErrorRepositoryImpl
-    private lateinit var findDuplicatesRepository: FindDuplicatesRepository
-    private val linkApiDataSource: LinkApiDataSource = mockk()
+    @Inject
+    lateinit var backupFolderRepository: BackupFolderRepository
+
+    @Inject
+    lateinit var backupFileRepository: BackupFileRepository
+
+    @Inject
+    lateinit var backupErrorRepository: BackupErrorRepository
+
+    @Inject
+    lateinit var findDuplicates: FindDuplicates
+
+    @Inject
+    lateinit var configurationProvider: ConfigurationProvider
+
+    @Inject
+    lateinit var addBackupError: AddBackupError
     private lateinit var backupFolder: BackupFolder
     private lateinit var backupFiles: List<BackupFile>
 
     @Before
     fun setUp() = runTest {
-        backupFolderRepository = BackupFolderRepositoryImpl(database.db)
-        backupFileRepository = BackupFileRepositoryImpl(database.db)
-        backupErrorRepository = BackupErrorRepositoryImpl(database.db)
-
-        folderId = database.myFiles { }
+        folderId = driveRule.db.myFiles { }
 
         backupFolder = BackupFolder(
             bucketId = 0,
@@ -106,13 +109,16 @@ class BackupFindDuplicatesWorkerTest {
 
     @Test
     fun success() = runTest {
-        coEvery { linkApiDataSource.checkAvailableHashes(backupFolder.folderId, any()) } answers {
-            val info: CheckAvailableHashesInfo = secondArg()
-            CheckAvailableHashesResponse(
-                code = 1000,
-                availableHashes = info.hashes.filterIndexed { index, _ -> index > 0 },
-                pendingHashDtos = emptyList()
-            )
+        driveRule.server.checkAvailableHashes {
+            jsonResponse {
+                CheckAvailableHashesResponse(
+                    code = ProtonApiCode.SUCCESS,
+                    availableHashes = request<CheckAvailableHashesRequest>().hashes.filterIndexed { index, _ ->
+                        index > 0
+                    },
+                    pendingHashDtos = emptyList()
+                )
+            }
         }
         val worker = backupFindDuplicatesWorker(backupFolder)
         val result = worker.doWork()
@@ -122,7 +128,7 @@ class BackupFindDuplicatesWorkerTest {
             listOf(
                 backupFile(index = 3, backupFileState = BackupFileState.POSSIBLE_DUPLICATE),
                 backupFile(index = 2, backupFileState = BackupFileState.READY),
-                backupFile(index = 1, backupFileState = BackupFileState.POSSIBLE_DUPLICATE),
+                backupFile(index = 1, backupFileState = BackupFileState.READY),
             ),
             backupFileRepository.getAllFiles(folderId, 0, 100),
         )
@@ -134,8 +140,7 @@ class BackupFindDuplicatesWorkerTest {
 
     @Test
     fun retry() = runTest {
-        coEvery { linkApiDataSource.checkAvailableHashes(backupFolder.folderId, any()) } throws
-                ApiException(ApiResult.Error.Connection())
+        driveRule.server.checkAvailableHashes { retryableErrorResponse() }
         val worker = backupFindDuplicatesWorker(backupFolder)
 
         val result = worker.doWork()
@@ -153,8 +158,7 @@ class BackupFindDuplicatesWorkerTest {
 
     @Test
     fun failure() = runTest {
-        coEvery { linkApiDataSource.checkAvailableHashes(backupFolder.folderId, any()) } throws
-                ApiException(ApiResult.Error.Connection())
+        driveRule.server.checkAvailableHashes { retryableErrorResponse() }
         val worker = backupFindDuplicatesWorker(backupFolder, 11)
 
         val result = worker.doWork()
@@ -175,26 +179,6 @@ class BackupFindDuplicatesWorkerTest {
         runAttemptCount: Int = 1,
     ): BackupFindDuplicatesWorker {
         val context = ApplicationProvider.getApplicationContext<Context>()
-        val configurationProvider = object : ConfigurationProvider {
-            override val host: String = ""
-            override val baseUrl: String = ""
-            override val appVersionHeader: String = ""
-            override val apiPageSize: Int = 2
-        }
-        val linkRepository = LinkRepositoryImpl(linkApiDataSource, database.db)
-        findDuplicatesRepository = FolderFindDuplicatesRepository(linkRepository)
-        val backupDuplicateRepository = BackupDuplicateRepositoryImpl(database.db)
-        val clientUidRepository = object : ClientUidRepository {
-            private var clientUid: ClientUid? = null
-
-            override suspend fun get(): ClientUid? = clientUid
-
-            override suspend fun insert(clientUid: ClientUid) {
-                this.clientUid = clientUid
-            }
-
-        }
-        val uuid = UUID(0, 0)
         return TestListenableWorkerBuilder<BackupFindDuplicatesWorker>(context)
             .setWorkerFactory(object : WorkerFactory() {
                 override fun createWorker(
@@ -204,21 +188,9 @@ class BackupFindDuplicatesWorkerTest {
                 ) = BackupFindDuplicatesWorker(
                     context = appContext,
                     workerParams = workerParameters,
-                    findDuplicates = FindDuplicates(
-                        configurationProvider = configurationProvider,
-                        findDuplicatesRepository = findDuplicatesRepository,
-                        backupFileRepository = backupFileRepository,
-                        backupDuplicateRepository = backupDuplicateRepository,
-                        getOrCreateClientUid = GetOrCreateClientUid(
-                            getClientUid = GetClientUid(clientUidRepository),
-                            createClientUid = CreateClientUid(
-                                repository = clientUidRepository,
-                                createUuid = CreateUuid { uuid }
-                            )
-                        )
-                    ),
+                    findDuplicates = findDuplicates,
                     configurationProvider = configurationProvider,
-                    addBackupError = AddBackupError(backupErrorRepository),
+                    addBackupError = addBackupError,
                 )
 
             })

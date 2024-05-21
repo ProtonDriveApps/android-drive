@@ -19,26 +19,22 @@ package me.proton.core.drive.cryptobase.domain.usecase
 
 import kotlinx.coroutines.withContext
 import me.proton.core.crypto.common.context.CryptoContext
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.CryptoScope
-import me.proton.core.drive.cryptobase.domain.extension.getAddressKeys
 import me.proton.core.drive.domain.extension.isUnlockable
 import me.proton.core.key.domain.decryptNestedKeyOrThrow
 import me.proton.core.key.domain.entity.key.NestedPrivateKey
 import me.proton.core.key.domain.entity.key.PublicKeyRing
 import me.proton.core.key.domain.entity.keyholder.KeyHolder
 import me.proton.core.key.domain.extension.allowCompromisedKeys
-import me.proton.core.key.domain.extension.publicKeyRing
 import me.proton.core.key.domain.useKeysAs
-import me.proton.core.user.domain.repository.UserAddressRepository
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class DecryptNestedPrivateKey @Inject constructor(
     private val cryptoContext: CryptoContext,
-    private val userAddressRepository: UserAddressRepository,
     private val validatePassphraseFormat: ValidatePassphraseFormat,
+    private val getPublicKeyRing: GetPublicKeyRing,
 ) {
     suspend operator fun invoke(
         decryptKey: KeyHolder,
@@ -65,18 +61,16 @@ class DecryptNestedPrivateKey @Inject constructor(
     }
 
     suspend operator fun invoke(
-        userId: UserId,
         decryptKey: KeyHolder,
         key: NestedPrivateKey,
-        signatureAddress: String,
+        verifySignatureKey: KeyHolder,
         allowCompromisedVerificationKeys: Boolean = false,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ): Result<NestedPrivateKey> = withContext(coroutineContext) {
         invoke(
             decryptKey = decryptKey,
             key = key,
-            verifyKeyRing = userAddressRepository.getAddressKeys(userId, signatureAddress)
-                .publicKeyRing(cryptoContext),
+            verifyKeyRing = getPublicKeyRing(verifySignatureKey).getOrThrow(),
             allowCompromisedVerificationKeys = allowCompromisedVerificationKeys,
             coroutineContext = coroutineContext,
         )

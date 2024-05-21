@@ -18,64 +18,64 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
-import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BackupStatus
-import me.proton.core.drive.backup.domain.handler.StubbedEventHandler
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.handler.MemoryEventHandler
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class CleanUpCompleteBackupTest {
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
     private lateinit var backupFolder: BackupFolder
 
-    private lateinit var cleanUpCompleteBackup: CleanUpCompleteBackup
-    private lateinit var setFiles: SetFiles
-    private lateinit var markAsCompleted: MarkAsCompleted
-    private lateinit var getBackupStatus: GetBackupStatus
+    @Inject
+    lateinit var cleanUpCompleteBackup: CleanUpCompleteBackup
 
-    private val handler = StubbedEventHandler()
+    @Inject
+    lateinit var setFiles: SetFiles
+
+    @Inject
+    lateinit var markAsCompleted: MarkAsCompleted
+
+    @Inject
+    lateinit var getBackupStatus: GetBackupStatus
+
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var handler: MemoryEventHandler
 
     private val bucketId = 0
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles {}
-        val backupFileRepository = BackupFileRepositoryImpl(database.db)
-        val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
-        cleanUpCompleteBackup = CleanUpCompleteBackup(
-            repository = backupFileRepository,
-            logBackupStats = LogBackupStats(backupFolderRepository, backupFileRepository),
-            announceEvent = AnnounceEvent(setOf(handler)),
-        )
-        val addFolder = AddFolder(backupFolderRepository)
+        folderId = driveRule.db.myFiles {}
         backupFolder = BackupFolder(bucketId, folderId)
         addFolder(backupFolder).getOrThrow()
-        setFiles = SetFiles(backupFileRepository)
-        markAsCompleted = MarkAsCompleted(backupFileRepository)
-        getBackupStatus = GetBackupStatus(backupFileRepository)
     }
 
     @Test

@@ -72,4 +72,8 @@ class StubbedBackupManager @Inject constructor(
         repository.hasFolders(folderId)
 
     override fun isUploading(folderId: FolderId): Flow<Boolean> = flowOf(true)
+
+    override suspend fun updateNotification(folderId: FolderId) {
+        // do nothing
+    }
 }

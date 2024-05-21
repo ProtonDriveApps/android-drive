@@ -101,6 +101,7 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
         val firstImage = ImageName.Yesterday
         val secondImage = ImageName.Now
 
+        PhotosTabRobot.waitUntilLoaded()
         PhotosTabRobot
             .verify {
                 assertPhotoDisplayed(firstImage)

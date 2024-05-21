@@ -19,19 +19,27 @@
 package me.proton.core.drive.backup.data.manager
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.BackupManager
+import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.link.domain.entity.FolderId
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class StubbedBackupManager : BackupManager {
+@Singleton
+class StubbedBackupManager @Inject constructor(
+    private val repository: BackupFolderRepository,
+) : BackupManager {
+    var started = false
     var stopped = false
 
     var sync = emptyList<BackupFolder>()
 
     override suspend fun start(folderId: FolderId) {
-        NotImplementedError()
+        started = true
     }
 
     override suspend fun stop(folderId: FolderId) {
@@ -47,7 +55,11 @@ class StubbedBackupManager : BackupManager {
     }
 
     override fun syncAllFolders(folderId: FolderId, uploadPriority: Long) {
-        throw NotImplementedError()
+        runBlocking {
+            repository.getAll(folderId).forEach { folder ->
+                sync(folder, uploadPriority)
+            }
+        }
     }
 
     override suspend fun watchFolders(userId: UserId) {
@@ -58,11 +70,12 @@ class StubbedBackupManager : BackupManager {
         throw NotImplementedError()
     }
 
-    override fun isEnabled(folderId: FolderId): Flow<Boolean> = flow {
-        throw NotImplementedError()
-    }
+    override fun isEnabled(folderId: FolderId): Flow<Boolean> =
+        repository.hasFolders(folderId)
 
-    override fun isUploading(folderId: FolderId): Flow<Boolean> {
-        throw NotImplementedError()
+    override fun isUploading(folderId: FolderId): Flow<Boolean> = flowOf(true)
+
+    override suspend fun updateNotification(folderId: FolderId) {
+        // do nothing
     }
 }

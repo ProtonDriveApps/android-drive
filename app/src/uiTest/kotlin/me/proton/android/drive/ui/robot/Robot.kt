@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -19,11 +19,16 @@
 package me.proton.android.drive.ui.robot
 
 import androidx.annotation.StringRes
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.longClick
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.FusionConfig
 import me.proton.test.fusion.ui.compose.builders.OnNode
 import me.proton.test.fusion.ui.compose.wrappers.NodeActions
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 interface Robot {
 
@@ -56,4 +61,12 @@ interface Robot {
 
     fun nodeWithContentDescriptionDisplayed(@StringRes stringRes: Int) =
         node.withContentDescription(stringRes).await { assertIsDisplayed() }
+
+    @OptIn(ExperimentalTestApi::class)
+    fun waitUntilLoaded(timeout: Duration = 90.seconds) =
+        FusionConfig.Compose.testRule.get()
+            .waitUntilDoesNotExist(
+                matcher = hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate),
+                timeoutMillis = timeout.inWholeMilliseconds,
+            )
 }

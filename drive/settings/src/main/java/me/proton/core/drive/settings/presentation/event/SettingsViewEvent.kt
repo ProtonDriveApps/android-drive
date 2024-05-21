@@ -24,8 +24,10 @@ data class SettingsViewEvent(
     val navigateBack: () -> Unit,
     val onLinkClicked: (LegalLink) -> Unit,
     val onThemeStyleChanged: (Int) -> Unit,
+    val onAccountSettings: () -> Unit,
     val onAppAccess: () -> Unit,
     val onAutoLockDurations: () -> Unit,
     val onClearLocalCache: () -> Unit,
     val onPhotosBackup: () -> Unit,
+    val onDefaultHomeTab: () -> Unit,
 )

@@ -18,20 +18,17 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
-import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
-import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -40,36 +37,31 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class StartBackupAfterErrorResolvedTest {
 
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var backupManager: StubbedBackupManager
-    private lateinit var getErrors: GetErrors
-    private lateinit var addBackupError: AddBackupError
-    private lateinit var startBackupAfterErrorResolved: StartBackupAfterErrorResolved
+    @Inject
+    lateinit var backupManager: StubbedBackupManager
+    @Inject
+    lateinit var getErrors: GetErrors
+    @Inject
+    lateinit var addFolder: AddFolder
+    @Inject
+    lateinit var addBackupError: AddBackupError
+    @Inject
+    lateinit var startBackupAfterErrorResolved: StartBackupAfterErrorResolved
 
     @Before
     fun setup() = runTest {
-        folderId = database.myFiles { }
-        val folderRepository = BackupFolderRepositoryImpl(database.db)
-        val errorRepository = BackupErrorRepositoryImpl(database.db)
-
-        backupManager = StubbedBackupManager(folderRepository)
-        addBackupError = AddBackupError(errorRepository)
-        getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance)
-        startBackupAfterErrorResolved = StartBackupAfterErrorResolved(
-            startBackup = StartBackup(backupManager, AnnounceEvent(emptySet())),
-            getAllFolders = GetAllFolders(folderRepository),
-            getErrors = getErrors,
-            deleteAllBackupError = DeleteAllBackupError(errorRepository),
-        )
-        val addFolder = AddFolder(folderRepository)
+        folderId = driveRule.db.myFiles { }
         addFolder(BackupFolder(0, folderId)).getOrThrow()
     }
 

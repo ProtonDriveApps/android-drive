@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -31,6 +31,8 @@ import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import me.proton.android.drive.db.DriveDatabase
 import me.proton.core.drive.test.api.DriveDispatcher
+import me.proton.core.drive.test.log.PrintStreamLogger
+import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.DispatcherProvider
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.rules.ExternalResource
@@ -51,6 +53,7 @@ class DriveRule(testInstance: Any) : ExternalResource() {
 
     override fun before() {
         val context = ApplicationProvider.getApplicationContext<Context>()
+        CoreLogger.set(PrintStreamLogger())
 
         server.start()
         server.dispatcher = DriveDispatcher()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -168,6 +168,24 @@ class ShareViaLinkEntry(
     } else {
         CorePresentation.drawable.ic_proton_link
     }
+}
+
+class ManageAccessEntity(
+    override val onClick: (DriveLink) -> Unit,
+): FileOptionEntry.SimpleEntry<DriveLink> {
+    override val icon: Int = CorePresentation.drawable.ic_proton_users
+
+    @Composable
+    override fun getLabel(): String = stringResource(id = I18N.string.common_manage_access_action)
+}
+
+class ShareViaInvitationsEntity(
+    override val onClick: (DriveLink) -> Unit,
+): FileOptionEntry.SimpleEntry<DriveLink> {
+    override val icon: Int = CorePresentation.drawable.ic_proton_user_plus
+
+    @Composable
+    override fun getLabel(): String = stringResource(id = I18N.string.common_share)
 }
 
 class CopySharedLinkEntity(

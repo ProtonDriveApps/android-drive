@@ -18,7 +18,6 @@
 
 package me.proton.android.drive.ui.test.flow.account
 
-import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import io.mockk.every

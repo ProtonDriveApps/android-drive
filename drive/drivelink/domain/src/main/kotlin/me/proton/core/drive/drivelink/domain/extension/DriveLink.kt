@@ -19,6 +19,7 @@
 package me.proton.core.drive.drivelink.domain.extension
 
 import me.proton.core.drive.base.domain.entity.CryptoProperty
+import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.file.base.domain.entity.ThumbnailId
@@ -26,6 +27,7 @@ import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.file.base.domain.extension.getThumbnailId
 import me.proton.core.drive.file.base.domain.extension.getThumbnailIds
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.SharingDetails
 
 fun DriveLink.updateLastModified(lastModified: TimestampS) = link.let { link ->
     when (link) {
@@ -39,3 +41,7 @@ val DriveLink?.isNameEncrypted: Boolean get() = this?.let { cryptoName is Crypto
 val DriveLink.File.thumbnailIds: Set<ThumbnailId> get() = link.getThumbnailIds(volumeId)
 
 fun DriveLink.File.getThumbnailId(type: ThumbnailType): ThumbnailId? = link.getThumbnailId(volumeId, type)
+
+val DriveLink.File.isPhoto: Boolean get() = link.photoCaptureTime != null
+
+val DriveLink.isEditor: Boolean get() = link.permissions.has(Permissions.Permission.WRITE)

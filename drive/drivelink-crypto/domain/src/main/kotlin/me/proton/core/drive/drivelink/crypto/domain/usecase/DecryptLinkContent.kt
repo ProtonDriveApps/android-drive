@@ -29,9 +29,9 @@ import me.proton.core.drive.cryptobase.domain.exception.VerificationException
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.file.base.domain.extension.getThumbnailIds
 import me.proton.core.drive.file.base.domain.extension.requireSortedAscending
-import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetContentKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
+import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
 import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
@@ -50,7 +50,7 @@ class DecryptLinkContent @Inject constructor(
     private val verifyManifestSignature: VerifyManifestSignature,
     private val getThumbnailBlock: GetThumbnailBlock,
     private val getNodeKey: GetNodeKey,
-    private val getAddressKeys: GetAddressKeys,
+    private val getPublicAddressKeys: GetPublicAddressKeys,
 ) {
     suspend operator fun invoke(
         driveLink: DriveLink.File,
@@ -88,7 +88,7 @@ class DecryptLinkContent @Inject constructor(
         decryptAndVerifyFiles(
             contentKey = contentKey,
             decryptSignatureKey = fileKey,
-            verifySignatureKey = getAddressKeys(link.shareId.userId, signatureAddress),
+            verifySignatureKey = getPublicAddressKeys(link.shareId.userId, signatureAddress).getOrThrow(),
             input = encryptedFileBlocks.map { block -> block.encSignature to File(block.url) },
             output = encryptedFileBlocks.map { block -> File("${block.url}.${UUID.randomUUID()}") },
         ).map { decryptedBlocks ->

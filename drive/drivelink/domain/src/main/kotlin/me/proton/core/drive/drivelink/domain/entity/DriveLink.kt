@@ -27,7 +27,7 @@ import me.proton.core.drive.linktrash.domain.extension.isProcessing
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 sealed class DriveLink : BaseLink {
-    internal abstract val link: Link
+    abstract val link: Link
     abstract val volumeId: VolumeId
     abstract val cryptoName: CryptoProperty<String>
     abstract val cryptoXAttr: CryptoProperty<String?>
@@ -52,7 +52,7 @@ sealed class DriveLink : BaseLink {
         override val downloadState: DownloadState?,
         override val trashState: TrashState?,
         override val cryptoName: CryptoProperty<String> = CryptoProperty.Encrypted(link.name),
-        override val cryptoXAttr: CryptoProperty<String?> = CryptoProperty.Encrypted(link.xAttr)
+        override val cryptoXAttr: CryptoProperty<String?> = CryptoProperty.Encrypted(link.xAttr),
     ) : DriveLink(), me.proton.core.drive.link.domain.entity.File by link {
         override val name: String
             get() = cryptoName.value

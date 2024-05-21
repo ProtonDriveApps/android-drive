@@ -18,66 +18,66 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.linkupload.data.factory.UploadBlockFactoryImpl
-import me.proton.core.drive.linkupload.data.repository.LinkUploadRepositoryImpl
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class GetBackupStatusTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
     private lateinit var backupFolder: BackupFolder
 
-    private lateinit var setFiles: SetFiles
-    private lateinit var markAsCompleted: MarkAsCompleted
-    private lateinit var markAsFailed: MarkAsFailed
-    private lateinit var getBackupStatus: GetBackupStatus
-    private lateinit var cleanUpCompleteBackup: CleanUpCompleteBackup
-    private lateinit var linkUploadRepository: LinkUploadRepositoryImpl
+    @Inject
+    lateinit var setFiles: SetFiles
+
+    @Inject
+    lateinit var markAsCompleted: MarkAsCompleted
+
+    @Inject
+    lateinit var markAsFailed: MarkAsFailed
+
+    @Inject
+    lateinit var getBackupStatus: GetBackupStatus
+
+    @Inject
+    lateinit var cleanUpCompleteBackup: CleanUpCompleteBackup
+
+    @Inject
+    lateinit var linkUploadRepository: LinkUploadRepository
+
+    @Inject
+    lateinit var addFolder: AddFolder
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
-        val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
-        val addFolder = AddFolder(backupFolderRepository)
+        folderId = driveRule.db.myFiles { }
         backupFolder = BackupFolder(0, folderId)
         addFolder(backupFolder).getOrThrow()
-        val backupFileRepository = BackupFileRepositoryImpl(database.db)
-        setFiles = SetFiles(backupFileRepository)
-        markAsCompleted = MarkAsCompleted(backupFileRepository)
-        markAsFailed = MarkAsFailed(backupFileRepository)
-        cleanUpCompleteBackup = CleanUpCompleteBackup(
-            repository = backupFileRepository,
-            logBackupStats = LogBackupStats(backupFolderRepository, backupFileRepository),
-            announceEvent = AnnounceEvent(emptySet()),
-        )
-        getBackupStatus = GetBackupStatus(backupFileRepository)
-        linkUploadRepository = LinkUploadRepositoryImpl(database.db, UploadBlockFactoryImpl())
     }
 
     @Test

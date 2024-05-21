@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -18,15 +18,23 @@
 
 package me.proton.core.drive.test
 
+import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TestConfigurationProvider @Inject constructor() : ConfigurationProvider {
     override val host: String
         get() = throw IllegalStateException("not configured")
     override val baseUrl: String
         get() = testBaseUrl
     override val appVersionHeader: String = "android-drive-test@1.0.0"
+
+    override var apiPageSize: Int = 150
+    override var backupLeftSpace: Bytes = 25.MiB
+    override var uploadLimitThreshold: Int = Int.MAX_VALUE
 
     companion object {
         lateinit var testBaseUrl: String

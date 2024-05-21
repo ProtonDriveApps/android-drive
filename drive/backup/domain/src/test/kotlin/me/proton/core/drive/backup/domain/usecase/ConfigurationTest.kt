@@ -25,9 +25,7 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.domain.entity.BackupConfiguration
 import me.proton.core.drive.backup.domain.entity.BackupNetworkType
-import me.proton.core.drive.backup.domain.manager.BackupManager
-import me.proton.core.drive.backup.domain.manager.started
-import me.proton.core.drive.backup.domain.manager.stopped
+import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -60,7 +58,7 @@ class ConfigurationTest {
     lateinit var observeConfigurationChanges: ObserveConfigurationChanges
 
     @Inject
-    lateinit var backupManager: BackupManager
+    lateinit var backupManager: StubbedBackupManager
 
     private lateinit var connectedConfiguration: BackupConfiguration
     private lateinit var unmeteredConfiguration: BackupConfiguration

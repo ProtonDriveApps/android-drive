@@ -31,6 +31,6 @@ object ComputerOptionsRobot : Robot {
     }
 
     override fun robotDisplayed() {
-        computerOptionsScreen.assertIsDisplayed()
+        computerOptionsScreen.await { assertIsDisplayed() }
     }
 }

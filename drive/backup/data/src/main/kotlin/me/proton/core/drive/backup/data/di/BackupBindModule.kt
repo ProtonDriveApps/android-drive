@@ -76,9 +76,6 @@ interface BackupBindModule {
     fun bindsBackupConfigurationRepository(impl: BackupConfigurationRepositoryImpl): BackupConfigurationRepository
 
     @Binds
-    fun bindsScanFolder(impl: ContextScanFolderRepository): ScanFolderRepository
-
-    @Binds
     fun bindsCleanUpWorkers(impl: BackupCleanupWorkers): CleanupWorkers
 
     @Binds
@@ -88,14 +85,6 @@ interface BackupBindModule {
     @Binds
     @Singleton
     fun bindUploadErrorHandler(impl: UploadErrorHandlerImpl): UploadErrorHandler
-
-    @Binds
-    @Singleton
-    fun bindBucketRepository(impl: ContextBucketRepository): BucketRepository
-
-    @Binds
-    @Singleton
-    fun bindCountLibraryItemsRepository(impl: ContextCountLibraryItemsRepository): CountLibraryItemsRepository
 
     @Binds
     @IntoMap

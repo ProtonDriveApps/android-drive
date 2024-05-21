@@ -20,20 +20,27 @@ package me.proton.core.drive.share.crypto.domain.usecase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.crypto.domain.usecase.share.CreateShareInfo
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.repository.ShareRepository
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class CreateShare @Inject constructor(
     private val shareRepository: ShareRepository,
     private val createShareInfo: CreateShareInfo,
     private val getShare: GetShare,
+    private val getLink: GetLink,
 ) {
     operator fun invoke(
         volumeId: VolumeId,
@@ -51,6 +58,12 @@ class CreateShare @Inject constructor(
             volumeId = volumeId,
             shareInfo = shareInfo,
         )
+            .onSuccess { shareId ->
+                // Should be removed when an event will be sent after share creation
+                getLink(linkId, refresh = flowOf(true)).filterSuccessOrError().toResult().onFailure {
+                    CoreLogger.w(LogTag.SHARE, "Cannot update link")
+                }
+            }
             .onFailure { cause ->
                 return@flow emit(DataResult.Error.Remote("Failed creating share", cause))
             }

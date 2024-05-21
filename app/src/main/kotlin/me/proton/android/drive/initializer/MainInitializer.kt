@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -25,6 +25,8 @@ import me.proton.core.auth.presentation.MissingScopeInitializer
 import me.proton.core.crypto.validator.presentation.init.CryptoValidatorInitializer
 import me.proton.core.humanverification.presentation.HumanVerificationInitializer
 import me.proton.core.network.presentation.init.UnAuthSessionFetcherInitializer
+import me.proton.core.paymentiap.presentation.GooglePurchaseHandlerInitializer
+import me.proton.core.plan.presentation.PurchaseHandlerInitializer
 import me.proton.core.plan.presentation.UnredeemedPurchaseInitializer
 
 class MainInitializer : Initializer<Unit> {
@@ -46,10 +48,13 @@ class MainInitializer : Initializer<Unit> {
         EventManagerInitializer::class.java,
         HumanVerificationInitializer::class.java,
         UnredeemedPurchaseInitializer::class.java,
+        PurchaseHandlerInitializer::class.java,
+        GooglePurchaseHandlerInitializer::class.java,
         MissingScopeInitializer::class.java,
         UnAuthSessionFetcherInitializer::class.java,
         AutoLockInitializer::class.java,
         BackupInitializer::class.java,
+        ShareInitializer::class.java,
         TelemetryInitializer::class.java,
         SelectionInitializer::class.java,
         PingActiveUserInitializer::class.java,

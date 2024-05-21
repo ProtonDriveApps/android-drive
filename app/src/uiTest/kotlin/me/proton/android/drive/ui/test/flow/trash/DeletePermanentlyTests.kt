@@ -35,6 +35,7 @@ class DeletePermanentlyTests: AuthenticatedBaseTest() {
         val folder = "folder1"
         val photo = ImageName.Main.fileName
 
+        PhotosTabRobot.waitUntilLoaded()
         PhotosTabRobot
             .clickFilesTab()
             .clickMoreOnItem(folder)

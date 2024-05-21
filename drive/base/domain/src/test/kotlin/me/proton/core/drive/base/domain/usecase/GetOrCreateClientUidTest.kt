@@ -47,7 +47,9 @@ class GetOrCreateClientUidTest {
         }
         getOrCreateClientUid = GetOrCreateClientUid(
             GetClientUid(repository),
-            CreateClientUid(repository, CreateUuid { uuid })
+            CreateClientUid(repository, object : CreateUuid {
+                override suspend fun invoke(): UUID = uuid
+            })
         )
     }
 

@@ -75,3 +75,8 @@ fun String.updateRevisionInPath(volumeId: String, oldRevisionId: String, newRevi
         VolumeWithRevision(volumeId, oldRevisionId).path,
         VolumeWithRevision(volumeId, newRevisionId).path,
     )
+
+val String.firstCodePointAsStringOrNull: String?
+    get() = takeIf { value -> value.isNotEmpty() }
+        ?.codePointAt(0)
+        ?.let { codePoint -> StringBuilder().appendCodePoint(codePoint).toString() }

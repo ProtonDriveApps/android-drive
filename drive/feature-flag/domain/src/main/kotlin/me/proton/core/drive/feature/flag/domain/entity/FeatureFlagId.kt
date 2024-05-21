@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -24,7 +24,12 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
 
     companion object {
         const val DRIVE_PHOTOS_UPLOAD_DISABLED = "DrivePhotosUploadDisabled"
+        const val DRIVE_SHARING = "DriveSharingDevelopment"
+
+        internal var developments: List<String> = listOf(
+        )
 
         fun drivePhotosUploadDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_PHOTOS_UPLOAD_DISABLED)
+        fun driveSharing(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING)
     }
 }

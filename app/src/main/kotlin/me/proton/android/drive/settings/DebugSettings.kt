@@ -127,6 +127,7 @@ class DebugSettings(
         }
     override var photosSavedCounter : Boolean = true
     override var photoExportData : Boolean = true
+    override val disableFeatureFlagInDevelopment: Boolean = false
     override var useVerifier by Delegate(
         dataStore = context.dataStore,
         key = prefsUseVerifier,

@@ -98,6 +98,9 @@ import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
 import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.share.data.db.ShareEntity
+import me.proton.core.drive.share.user.data.db.ShareUserDatabase
+import me.proton.core.drive.share.user.data.db.ShareInvitationEntity
+import me.proton.core.drive.share.user.data.db.ShareMemberEntity
 import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
 import me.proton.core.drive.shareurl.base.data.db.entity.ShareUrlEntity
 import me.proton.core.drive.sorting.data.db.SortingDatabase
@@ -133,6 +136,7 @@ import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.observability.data.entity.ObservabilityEventEntity
 import me.proton.core.payment.data.local.db.PaymentDatabase
 import me.proton.core.payment.data.local.entity.GooglePurchaseEntity
+import me.proton.core.payment.data.local.entity.PurchaseEntity
 import me.proton.core.push.data.local.db.PushConverters
 import me.proton.core.push.data.local.db.PushDatabase
 import me.proton.core.push.data.local.db.PushEntity
@@ -178,6 +182,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         EventMetadataEntity::class,
         FeatureFlagEntity::class,
         ChallengeFrameEntity::class,
+        PurchaseEntity::class,
         GooglePurchaseEntity::class,
         ObservabilityEventEntity::class,
         AddressChangeEntity::class,
@@ -193,6 +198,8 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         VolumeEntity::class,
         ShareEntity::class,
         ShareUrlEntity::class,
+        ShareInvitationEntity::class,
+        ShareMemberEntity::class,
         LinkEntity::class,
         LinkFilePropertiesEntity::class,
         LinkFolderPropertiesEntity::class,
@@ -297,6 +304,7 @@ abstract class DriveDatabase :
     VolumeDatabase,
     ShareDatabase,
     ShareUrlDatabase,
+    ShareUserDatabase,
     LinkDatabase,
     FolderDatabase,
     LinkAncestorDatabase,
@@ -336,7 +344,7 @@ abstract class DriveDatabase :
     DriveBaseDatabase {
 
     companion object {
-        const val VERSION = 50
+        const val VERSION = 54
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -388,6 +396,10 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_47_48,
             DriveDatabaseMigrations.MIGRATION_48_49,
             DriveDatabaseMigrations.MIGRATION_49_50,
+            DriveDatabaseMigrations.MIGRATION_50_51,
+            DriveDatabaseMigrations.MIGRATION_51_52,
+            DriveDatabaseMigrations.MIGRATION_52_53,
+            DriveDatabaseMigrations.MIGRATION_53_54,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

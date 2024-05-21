@@ -18,26 +18,23 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.announce.event.domain.entity.Event
-import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
-import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
-import me.proton.core.drive.backup.domain.handler.StubbedEventHandler
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
+import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.handler.MemoryEventHandler
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -45,46 +42,38 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class StopBackupTest {
 
-
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var backupManager: StubbedBackupManager
-    private lateinit var getErrors: GetErrors
-    private lateinit var stopBackup: StopBackup
-    private val handler = StubbedEventHandler()
-    private lateinit var fileRepository: BackupFileRepositoryImpl
+    @Inject
+    lateinit var backupManager: StubbedBackupManager
+
+    @Inject
+    lateinit var getErrors: GetErrors
+
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var stopBackup: StopBackup
+
+    @Inject
+    lateinit var handler: MemoryEventHandler
+
+    @Inject
+    lateinit var fileRepository: BackupFileRepository
 
     @Before
     fun setup() = runTest {
-        folderId = database.myFiles { }
-        val folderRepository = BackupFolderRepositoryImpl(database.db)
-        fileRepository = BackupFileRepositoryImpl(database.db)
-        val errorRepository = BackupErrorRepositoryImpl(database.db)
-
-        val addFolder = AddFolder(folderRepository)
-        addFolder(
-            BackupFolder(
-                bucketId = 0,
-                folderId = folderId
-            )
-        ).getOrThrow()
-
-        backupManager = StubbedBackupManager(folderRepository)
-        getErrors = GetErrors(errorRepository, NoNetworkConfigurationProvider.instance)
-        stopBackup = StopBackup(
-            manager = backupManager,
-            addBackupError = AddBackupError(errorRepository),
-            announceEvent = AnnounceEvent(setOf(handler)),
-            logBackupStats = LogBackupStats(folderRepository, fileRepository),
-            getAllFolders = GetAllFolders(folderRepository),
-            markAllEnqueuedAsReady = MarkAllEnqueuedAsReady(fileRepository)
-        )
+        folderId = driveRule.db.myFiles { }
+        addFolder(BackupFolder(bucketId = 0, folderId = folderId)).getOrThrow()
     }
 
     @Test
@@ -93,11 +82,16 @@ class StopBackupTest {
 
         assertTrue(backupManager.stopped)
         assertEquals(
-            listOf(BackupError.Permissions()),
-            getErrors(folderId).first()
+            listOf(BackupError.Permissions()), getErrors(folderId).first()
         )
         assertEquals(
-            mapOf(userId to listOf(Event.BackupStopped(folderId, Event.Backup.BackupState.FAILED_PERMISSION))),
+            mapOf(
+                userId to listOf(
+                    Event.BackupStopped(
+                        folderId, Event.Backup.BackupState.FAILED_PERMISSION
+                    )
+                )
+            ),
             handler.events,
         )
     }
@@ -121,7 +115,7 @@ class StopBackupTest {
                 backupFile(2, BackupFileState.FAILED),
                 backupFile(1, BackupFileState.READY),
             ),
-            fileRepository.getAllFiles(folderId, 0, 100)
+            fileRepository.getAllFiles(folderId, 0, 100),
         )
     }
 

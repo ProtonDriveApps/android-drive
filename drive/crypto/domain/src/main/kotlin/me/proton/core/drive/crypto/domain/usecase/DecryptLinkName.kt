@@ -26,8 +26,8 @@ import me.proton.core.drive.cryptobase.domain.usecase.DecryptAndVerifyText
 import me.proton.core.drive.cryptobase.domain.usecase.GetPublicKeyRing
 import me.proton.core.drive.cryptobase.domain.usecase.UnlockKey
 import me.proton.core.drive.key.domain.extension.keyHolder
-import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetLinkParentKey
+import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.usecase.GetLink
@@ -42,7 +42,7 @@ class DecryptLinkName @Inject constructor(
     private val getLinkParentKey: GetLinkParentKey,
     private val unlockKey: UnlockKey,
     private val decryptAndVerifyText: DecryptAndVerifyText,
-    private val getAddressKeys: GetAddressKeys,
+    private val getPublicAddressKeys: GetPublicAddressKeys,
     private val getLink: GetLink,
     private val getPublicKeyRing: GetPublicKeyRing,
 ) {
@@ -63,7 +63,7 @@ class DecryptLinkName @Inject constructor(
     ): Result<DecryptedText> = coRunCatching(coroutineContext) {
         val link = getLink(linkId).toResult().getOrThrow()
         val userId = link.id.shareId.userId
-        val addressKey = getAddressKeys(userId, link.nameSignatureEmail ?: link.signatureAddress)
+        val addressKey = getPublicAddressKeys(userId, link.nameSignatureEmail ?: link.signatureAddress).getOrThrow()
         decryptAndVerifyText(
             unlockedKey = unlockedKey,
             text = link.name,

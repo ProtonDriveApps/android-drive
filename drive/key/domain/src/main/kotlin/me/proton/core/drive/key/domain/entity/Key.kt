@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.key.domain.entity
 
+import me.proton.core.drive.cryptobase.domain.entity.PublicAddressKeyHolder
 import me.proton.core.key.domain.entity.key.NestedPrivateKey
 import me.proton.core.key.domain.entity.keyholder.KeyHolder
 
@@ -26,4 +27,5 @@ sealed interface Key {
 
 internal data class ShareKey(val key: NestedPrivateKey) : Key.Node
 internal data class NodeKey(val key: NestedPrivateKey, val parent: Key) : Key.Node
-internal data class AddressKeys(val keyHolder: KeyHolder): Key
+internal data class AddressKeys(val keyHolder: KeyHolder) : Key
+internal data class PublicAddressKeys(val publicAddressKeyHolder: PublicAddressKeyHolder) : Key

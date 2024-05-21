@@ -32,6 +32,7 @@
     <string name="title_empty_trash_action">Empty trash</string>
     <string name="title_files_stop_sharing">@string/common_stop_sharing_action</string>
     <string name="title_files_confirm_deletion">Delete permanently?</string>
+    <string name="title_default_home_screen_tab">Choose default home screen tab</string>
     <!-- endregion -->
 
     <string name="app_name" translatable="false">Proton Drive</string>

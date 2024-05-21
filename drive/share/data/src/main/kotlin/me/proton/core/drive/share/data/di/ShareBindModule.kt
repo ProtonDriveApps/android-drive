@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -21,7 +21,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.drive.share.data.repository.MigrationKeyPacketRepositoryImpl
 import me.proton.core.drive.share.data.repository.ShareRepositoryImpl
+import me.proton.core.drive.share.domain.repository.MigrationKeyPacketRepository
 import me.proton.core.drive.share.domain.repository.ShareRepository
 import javax.inject.Singleton
 
@@ -32,4 +34,8 @@ interface ShareBindModule {
     @Binds
     @Singleton
     fun bindsRepositoryImpl(impl: ShareRepositoryImpl): ShareRepository
+
+    @Binds
+    @Singleton
+    fun bindsMigrationKeyPacketRepositoryImpl(impl: MigrationKeyPacketRepositoryImpl): MigrationKeyPacketRepository
 }

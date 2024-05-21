@@ -145,6 +145,8 @@ object ShareRobot : NavigationBarRobot, Robot {
 
         fun clickDiscard() = discardButton.clickTo(FilesTabRobot)
 
+        fun <T : Robot> clickDiscard(goesTo: T): T = discardButton.clickTo(goesTo)
+
         override fun robotDisplayed() {
             dialogTitle.await { assertIsDisplayed() }
         }

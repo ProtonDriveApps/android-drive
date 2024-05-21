@@ -26,7 +26,8 @@ import okhttp3.Response
 fun QuarkCommand.populate(
     user: User,
     isDevice: Boolean = false,
-    isPhotos: Boolean = false
+    isPhotos: Boolean = false,
+    sharingUser: User? = null
 ): Response =
     route("quark/drive:populate")
         .args(
@@ -36,6 +37,8 @@ fun QuarkCommand.populate(
                 "-S" to user.dataSetScenario,
                 isDevice.optionalArg("-d"),
                 isPhotos.optionalArg("--photo"),
+                sharingUser?.name?.optionalArg("--sharing-username"),
+                sharingUser?.password?.optionalArg("--sharing-user-pass"),
             ).toEncodedArgs()
         )
         .build()
@@ -46,6 +49,10 @@ fun QuarkCommand.populate(
 private fun Boolean.optionalArg(
     name: String,
 ): Pair<String, String>? = takeIf { it }?.let { name to it.toString() }
+
+private fun String.optionalArg(
+    name: String,
+): Pair<String, String>? = takeIf { it.isNotEmpty() }?.let { name to it }
 
 fun QuarkCommand.quotaSetUsedSpace(
     user: User,

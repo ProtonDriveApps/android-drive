@@ -19,6 +19,7 @@
 package me.proton.core.drive.db.test
 
 import me.proton.android.drive.db.DriveDatabase
+import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.data.api.entity.LinkDto
 import me.proton.core.drive.link.data.db.entity.LinkEntity
@@ -36,6 +37,7 @@ import me.proton.core.user.data.entity.UserEntity
 data class FolderContext(
     val db: DriveDatabase,
     val user: UserEntity,
+    val account: AccountEntity,
     val volume: VolumeEntity,
     val share: ShareEntity,
     val link: LinkEntity,
@@ -45,6 +47,7 @@ data class FolderContext(
 data class FileContext(
     val db: DriveDatabase,
     val user: UserEntity,
+    val account: AccountEntity,
     val share: ShareEntity,
     val link: LinkEntity,
     val parent: LinkEntity,
@@ -61,7 +64,7 @@ suspend fun ShareContext.folder(
             userId = user.userId,
             shareId = share.id,
             linkId = id,
-            nodeHashKey = ""
+            nodeHashKey = "node-hash-key-$id"
         ),
         block = block,
     )
@@ -75,21 +78,21 @@ suspend fun ShareContext.folder(
 ) {
     db.driveLinkDao.insertOrUpdate(link)
     db.driveLinkDao.insertOrUpdate(properties)
-    FolderContext(db, user, volume, share, link).block()
+    FolderContext(db, user, account, volume, share, link).block()
 }
 
 
 suspend fun FolderContext.folder(
     id: String,
+    sharingDetailsShareId: String? = null,
     block: suspend FolderContext.() -> Unit = {},
 ): FolderId {
     folder(
-        link = NullableLinkEntity(id = id, parentId = link.id, type = 1L),
-        properties = LinkFolderPropertiesEntity(
-            userId = user.userId,
-            shareId = share.id,
-            linkId = id,
-            nodeHashKey = ""
+        link = NullableLinkEntity(
+            id = id,
+            parentId = link.id,
+            type = 1L,
+            sharingDetailsShareId = sharingDetailsShareId,
         ),
         block = block
     )
@@ -98,43 +101,59 @@ suspend fun FolderContext.folder(
 
 suspend fun FolderContext.folder(
     link: LinkEntity,
-    properties: LinkFolderPropertiesEntity,
+    properties: LinkFolderPropertiesEntity = LinkFolderPropertiesEntity(
+        userId = user.userId,
+        shareId = share.id,
+        linkId = link.id,
+        nodeHashKey = "node-hash-key-${link.id}"
+    ),
     block: suspend FolderContext.() -> Unit,
 ) {
     db.driveLinkDao.insertOrUpdate(link)
     db.driveLinkDao.insertOrUpdate(properties)
-    FolderContext(db, user, volume, share, link, this.link).block()
+    FolderContext(db, user, account, volume, share, link, this.link).block()
 }
 
 suspend fun FolderContext.file(
     id: String,
+    sharingDetailsShareId: String? = null,
     block: suspend FileContext.() -> Unit = {},
 ): FileId {
     file(
         link = NullableLinkEntity(
             id = id,
             parentId = this.link.id,
-            type = 2L
-        ),
-        properties = LinkFilePropertiesEntity(
-            userId = user.userId,
-            shareId = share.id,
-            linkId = id,
-            activeRevisionId = "revision-$id",
-            hasThumbnail = false,
-            contentKeyPacket = "",
-            contentKeyPacketSignature = null,
-            activeRevisionSignatureAddress = null,
+            type = 2L,
+            sharingDetailsShareId = sharingDetailsShareId,
         ),
         block = block,
     )
+    return FileId(ShareId(user.userId, share.id), id)
+}
+
+suspend fun FolderContext.file(
+    link: LinkEntity,
+    properties: LinkFilePropertiesEntity = LinkFilePropertiesEntity(
+        userId = user.userId,
+        shareId = share.id,
+        linkId = link.id,
+        activeRevisionId = "revision-${link.id}",
+        hasThumbnail = false,
+        contentKeyPacket = "",
+        contentKeyPacketSignature = null,
+        activeRevisionSignatureAddress = null,
+    ),
+    block: suspend FileContext.() -> Unit = {},
+) {
+    db.driveLinkDao.insertOrUpdate(link)
+    db.driveLinkDao.insertOrUpdate(properties)
     if (share.type == ShareDto.TYPE_PHOTO) {
         db.photoListingDao.insertOrUpdate(
             PhotoListingEntity(
                 userId = user.userId,
                 volumeId = volume.id,
                 shareId = share.id,
-                linkId = id,
+                linkId = link.id,
                 captureTime = 0,
                 hash = null,
                 contentHash = null,
@@ -142,17 +161,7 @@ suspend fun FolderContext.file(
             )
         )
     }
-    return FileId(ShareId(user.userId, share.id), id)
-}
-
-suspend fun FolderContext.file(
-    link: LinkEntity,
-    properties: LinkFilePropertiesEntity,
-    block: suspend FileContext.() -> Unit = {},
-) {
-    db.driveLinkDao.insertOrUpdate(link)
-    db.driveLinkDao.insertOrUpdate(properties)
-    FileContext(db, user, share, link, this.link, properties.activeRevisionId).block()
+    FileContext(db, user, account, share, link, this.link, properties.activeRevisionId).block()
 }
 
 @Suppress("FunctionName")
@@ -166,6 +175,7 @@ private fun ShareContext.NullableLinkEntity(
     id = id,
     parentId = parentId,
     type = type,
+    signatureAddress = account.email ?: "",
 )
 
 @Suppress("FunctionName")
@@ -173,12 +183,15 @@ private fun FolderContext.NullableLinkEntity(
     id: String,
     parentId: String?,
     type: Long,
+    sharingDetailsShareId: String? = null
 ) = NullableLinkEntity(
     userId = user.userId,
     shareId = share.id,
     id = id,
     parentId = parentId,
     type = type,
+    sharingDetailsShareId = sharingDetailsShareId,
+    signatureAddress = account.email ?: "",
 )
 
 @Suppress("FunctionName")
@@ -188,7 +201,9 @@ private fun NullableLinkEntity(
     id: String,
     parentId: String?,
     type: Long,
+    signatureAddress: String,
     state: Long = LinkDto.STATE_ACTIVE,
+    sharingDetailsShareId: String? = null,
 ) = LinkEntity(
     id = id,
     shareId = shareId,
@@ -204,10 +219,10 @@ private fun NullableLinkEntity(
     mimeType = "",
     attributes = type,
     permissions = type,
-    nodeKey = "",
-    nodePassphrase = "",
+    nodeKey = "node-key-$id",
+    nodePassphrase = "l".repeat(32),
     nodePassphraseSignature = "",
-    signatureAddress = "",
+    signatureAddress = signatureAddress,
     creationTime = type,
     lastModified = type,
     trashedTime = null,
@@ -215,6 +230,6 @@ private fun NullableLinkEntity(
     numberOfAccesses = type,
     shareUrlExpirationTime = null,
     xAttr = null,
-    sharingDetailsShareId = null,
+    sharingDetailsShareId = sharingDetailsShareId,
     shareUrlId = null,
 )

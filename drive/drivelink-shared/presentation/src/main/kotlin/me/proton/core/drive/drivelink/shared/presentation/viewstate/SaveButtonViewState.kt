@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 Proton AG.
+ * Copyright (c) 2022-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class SaveButtonViewState(
+    val label: String,
     val isVisible: Boolean,
     val isEnabled: Boolean,
     val inProgress: Boolean,

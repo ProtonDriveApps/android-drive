@@ -31,6 +31,6 @@ object ComputerSyncedFoldersRobot : LinksRobot {
     }
 
     override fun robotDisplayed() {
-        syncedFoldersScreen.assertIsDisplayed()
+        syncedFoldersScreen.await { assertIsDisplayed() }
     }
 }

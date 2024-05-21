@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2021-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -24,10 +24,14 @@ android {
     namespace = "me.proton.core.drive.drivelink.shared.domain"
 }
 
-driveModule(hilt = true) {
+driveModule(
+    hilt = true,
+    socialTest = true,
+) {
     api(project(":drive:drivelink:domain"))
     api(project(":drive:drivelink-crypto:domain"))
     api(project(":drive:event-manager:base:domain"))
+    api(project(":drive:key:domain"))
     api(project(":drive:share-crypto:domain"))
     api(project(":drive:share-url:base:domain"))
     api(project(":drive:share-url:crypto:domain"))

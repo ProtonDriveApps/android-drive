@@ -18,22 +18,18 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
-import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.StubbedBackupManager
-import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.extension.MiB
-import me.proton.core.drive.db.test.DriveDatabaseRule
-import me.proton.core.drive.db.test.NoNetworkConfigurationProvider
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.TestConfigurationProvider
 import me.proton.core.user.domain.entity.User
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -43,46 +39,32 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class CheckAvailableSpaceTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private lateinit var checkAvailableSpace: CheckAvailableSpace
-    private lateinit var getError: GetErrors
+    @Inject
+    lateinit var checkAvailableSpace: CheckAvailableSpace
+    @Inject
+    lateinit var getError: GetErrors
+    @Inject
+    lateinit var addFolder: AddFolder
+    @Inject
+    lateinit var configurationProvider: TestConfigurationProvider
 
-    private lateinit var backupManager: StubbedBackupManager
+    @Inject
+    lateinit var backupManager: StubbedBackupManager
 
     @Before
     fun setup() = runTest {
-        folderId = database.myFiles { }
-        val folderRepository = BackupFolderRepositoryImpl(database.db)
-        val fileRepository = BackupFileRepositoryImpl(database.db)
-        val errorRepository = BackupErrorRepositoryImpl(database.db)
-        val addBackupError = AddBackupError(errorRepository)
-
-        backupManager = StubbedBackupManager(folderRepository)
-        val configurationProvider = object : NoNetworkConfigurationProvider {
-            override val backupLeftSpace: Bytes = 10.MiB
-        }
-        val getAllFolders = GetAllFolders(folderRepository)
-        checkAvailableSpace = CheckAvailableSpace(
-            configurationProvider = configurationProvider,
-            getAllFolders = getAllFolders,
-            stopBackup = StopBackup(
-                manager = backupManager,
-                addBackupError = addBackupError,
-                logBackupStats = LogBackupStats(folderRepository, fileRepository),
-                announceEvent = AnnounceEvent(emptySet()),
-                getAllFolders = getAllFolders,
-                markAllEnqueuedAsReady = MarkAllEnqueuedAsReady(fileRepository),
-            )
-        )
-        getError = GetErrors(errorRepository, configurationProvider)
-        val addFolder = AddFolder(folderRepository)
+        folderId = driveRule.db.myFiles { }
+        configurationProvider.backupLeftSpace = 10.MiB
         addFolder(BackupFolder(0, folderId)).getOrThrow()
     }
 

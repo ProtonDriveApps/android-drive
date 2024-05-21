@@ -47,6 +47,7 @@ suspend fun VolumeContext.mainShare(block: suspend FolderContext.() -> Unit): Fo
             type = ShareDto.TYPE_MAIN,
         )
     ) {
+        withKey()
         folder(id = share.linkId, block = block)
     }
     return mainRootId

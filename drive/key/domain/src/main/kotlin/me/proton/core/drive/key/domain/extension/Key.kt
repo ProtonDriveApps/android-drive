@@ -23,6 +23,7 @@ import me.proton.core.crypto.common.pgp.Signature
 import me.proton.core.drive.key.domain.entity.AddressKeys
 import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.entity.NodeKey
+import me.proton.core.drive.key.domain.entity.PublicAddressKeys
 import me.proton.core.drive.key.domain.entity.ShareKey
 import me.proton.core.key.domain.entity.key.NestedPrivateKey
 import me.proton.core.key.domain.entity.keyholder.KeyHolder
@@ -58,8 +59,12 @@ val Key.keyHolder: KeyHolder
         is ShareKey -> key.keyHolder()
         is NodeKey-> key.keyHolder()
         is AddressKeys -> keyHolder
+        is PublicAddressKeys -> publicAddressKeyHolder
     }
 
 val List<Key>.keyHolder: KeyHolder get() = object : KeyHolder {
-    override val keys: List<KeyHolderPrivateKey> get() = map { key: Key -> key.keyHolder.keys }.flatten()
+    override val keys: List<KeyHolderPrivateKey> get() =
+        filterNot { key -> key is PublicAddressKeys }
+            .map { key: Key -> key.keyHolder.keys }
+            .flatten()
 }

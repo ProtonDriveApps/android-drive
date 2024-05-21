@@ -32,6 +32,7 @@ object LogTag {
     const val MOVE = "$OPERATION.move"
     const val RENAME = "$OPERATION.rename"
     const val SHARE = "$OPERATION.share"
+    const val SHARING = "$DEFAULT.sharing"
     const val PAGING = "$DEFAULT.paging"
     const val BACKUP = "$DEFAULT.backup"
     const val PHOTO = "$DEFAULT.photo"

@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
+import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
 
@@ -38,4 +39,7 @@ abstract class UiSettingsDao : BaseDao<UiSettingsEntity>() {
 
     @Query("UPDATE UiSettingsEntity SET theme_style = :themeStyle WHERE user_id = :userId")
     abstract suspend fun updateThemeStyle(userId: UserId, themeStyle: ThemeStyle): Int
+
+    @Query("UPDATE UiSettingsEntity SET home_tab = :homeTab WHERE user_id = :userId")
+    abstract suspend fun updateHomeTab(userId: UserId, homeTab: HomeTab): Int
 }

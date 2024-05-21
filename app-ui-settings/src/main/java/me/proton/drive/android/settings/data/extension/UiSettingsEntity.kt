@@ -24,4 +24,5 @@ import me.proton.drive.android.settings.domain.entity.UiSettings
 fun UiSettingsEntity.toDomain() = UiSettings(
     layoutType = layoutType,
     themeStyle = themeStyle,
+    homeTab = homeTab,
 )

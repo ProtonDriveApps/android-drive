@@ -49,6 +49,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
 import me.proton.core.compose.theme.defaultSmallWeak
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
 import me.proton.core.drive.base.presentation.extension.currentLocale
 import me.proton.core.user.domain.entity.Type
 import me.proton.core.user.domain.entity.User
@@ -167,8 +168,8 @@ fun PreviewUserSelector() {
     }
 }
 
-internal val User.firstLetter: Char
-    get() = displayName?.firstOrNull() ?: name?.firstOrNull() ?: email?.firstOrNull() ?: '?'
+internal val User.firstLetter: String
+    get() = (displayName ?: name ?: email)?.firstCodePointAsStringOrNull ?: "?"
 
 val PREVIEW_USER = User(
     userId = UserId("id"),

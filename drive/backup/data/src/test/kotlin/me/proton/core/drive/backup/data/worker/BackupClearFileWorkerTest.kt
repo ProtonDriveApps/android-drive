@@ -24,49 +24,57 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
+import me.proton.core.drive.backup.domain.repository.BackupFileRepository
+import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.MarkAsCompleted
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class BackupClearFileWorkerTest {
 
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
 
     private lateinit var folderId: FolderId
     private lateinit var backupFolder: BackupFolder
     private lateinit var backupFile: BackupFile
-
-    private lateinit var repository: BackupFileRepositoryImpl
-
     private val bucketId = 0
 
+    @Inject
+    lateinit var backupFolderRepository: BackupFolderRepository
+
+    @Inject
+    lateinit var repository: BackupFileRepository
+
+    @Inject
+    lateinit var markAsCompleted: MarkAsCompleted
+
+    @Inject
+    lateinit var addBackupError: AddBackupError
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
+        folderId = driveRule.db.myFiles { }
         backupFile = NullableBackupFile(bucketId, folderId, "uri")
-        val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
         backupFolder = BackupFolder(bucketId, folderId)
         backupFolderRepository.insertFolder(backupFolder)
-        repository = BackupFileRepositoryImpl(database.db)
     }
 
     @Test
@@ -110,8 +118,8 @@ class BackupClearFileWorkerTest {
                     return BackupClearFileWorker(
                         context = appContext,
                         workerParams = workerParameters,
-                        markAsCompleted = MarkAsCompleted(repository),
-                        addBackupError = AddBackupError(BackupErrorRepositoryImpl(database.db)),
+                        markAsCompleted = markAsCompleted,
+                        addBackupError = addBackupError,
                     )
                 }
             })

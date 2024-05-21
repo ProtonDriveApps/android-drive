@@ -26,6 +26,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -41,6 +42,7 @@ import me.proton.android.drive.ui.viewstate.MoveFileViewState
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptDriveLinks
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -111,11 +113,19 @@ class MoveToFolderViewModel @Inject constructor(
     } else {
         error("Move without any drive link")
     }
+    private var viewEvent: MoveToFolderViewEvent? = null
+    private val createFolderAction = Action(
+        iconResId = CorePresentation.drawable.ic_proton_folder_plus,
+        contentDescriptionResId = I18N.string.folder_option_create_folder,
+        onAction = { viewEvent?.onCreateFolder?.invoke() },
+    )
+    private val topBarActions: MutableStateFlow<Set<Action>> = MutableStateFlow(emptySet())
     val initialViewState = MoveFileViewState(
         filesViewState = initialFilesViewState,
         isMoveButtonEnabled = false,
         title = "",
         navigationIconResId = CorePresentation.drawable.ic_proton_cross,
+        topBarActions = topBarActions,
     )
     val viewState: Flow<MoveFileViewState> = combine(
         driveLinksToMove,
@@ -125,6 +135,13 @@ class MoveToFolderViewModel @Inject constructor(
         shareFlow.filterNotNull(),
     ) { driveLinksToMove, parentLink, contentState, appendingState, share ->
         val isRoot = parentLink != null && parentLink.parentId == null
+        topBarActions.emit(
+            if (isRoot && share.isDevice) {
+                emptySet()
+            } else {
+                setOf(createFolderAction)
+            }
+        )
         initialViewState.copy(
             filesViewState = initialViewState.filesViewState.copy(
                 listContentState = contentState,
@@ -170,6 +187,8 @@ class MoveToFolderViewModel @Inject constructor(
         override val onAppendErrorAction: () -> Unit = this@MoveToFolderViewModel.onRetry
         override val move: () -> Unit = { confirmMove(navigateBack) }
         override val onCreateFolder: () -> Unit = { this@MoveToFolderViewModel.onCreateFolder(navigateToCreateFolder) }
+    }.also { viewEvent ->
+        this.viewEvent = viewEvent
     }
 
     private fun confirmMove(navigateBack: () -> Unit) = viewModelScope.launch {

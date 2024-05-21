@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.cryptobase.domain.usecase
 
+import me.proton.core.crypto.common.pgp.SignatureContext
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.drive.cryptobase.domain.entity.UnlockedKey
@@ -32,18 +33,20 @@ class SignData @Inject constructor(
     suspend operator fun invoke(
         signKey: KeyHolder,
         input: ByteArray,
+        signatureContext: SignatureContext? = null,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ) = unlockedKey(signKey, coroutineContext) { unlockedSignKey ->
-        invoke(unlockedSignKey, input, coroutineContext).getOrThrow()
+        invoke(unlockedSignKey, input, signatureContext, coroutineContext).getOrThrow()
     }
 
     suspend operator fun invoke(
         unlockedSignKey: UnlockedKey,
         input: ByteArray,
+        signatureContext: SignatureContext? = null,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ) = coRunCatching(coroutineContext) {
         withUnlockedKey(unlockedSignKey) { signKey ->
-            signKey.signData(input)
+            signKey.signData(input, signatureContext)
         }
     }
 }

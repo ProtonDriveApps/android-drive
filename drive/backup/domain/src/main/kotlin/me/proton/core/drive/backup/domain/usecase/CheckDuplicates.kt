@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
@@ -47,7 +46,6 @@ class CheckDuplicates @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
 ) {
     suspend operator fun invoke(
-        userId: UserId,
         backupFolder: BackupFolder,
         pageSize: Int = configurationProvider.dbPageSize,
     ) = coRunCatching {

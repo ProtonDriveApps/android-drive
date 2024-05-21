@@ -33,6 +33,8 @@ object FileFolderOptionsRobot : Robot {
         .withText(I18N.string.common_remove_from_offline_available_action)
     private val getLinkButton get() = node.withText(I18N.string.common_get_link_action)
     private val manageLinkButton get() = node.withText(I18N.string.common_manage_link_action)
+    private val shareButton get() = node.withText(I18N.string.common_share)
+    private val manageAccessButton get() = node.withText(I18N.string.common_manage_access_action)
     private val renameButton get() = node.withText(I18N.string.files_rename_file_action)
     private val fileDetailsButton get() = node.withText(I18N.string.files_display_file_info_action)
     private val folderDetailsButton get() = node.withText(I18N.string.files_display_folder_info_action)
@@ -51,6 +53,12 @@ object FileFolderOptionsRobot : Robot {
     }
     fun clickManageLink() = ShareRobot.apply {
         manageLinkButton.scrollTo().click()
+    }
+    fun clickShare() = ShareUserRobot.apply {
+        shareButton.scrollTo().click()
+    }
+    fun clickManageAccess() = ManageAccessRobot.apply {
+        manageAccessButton.scrollTo().click()
     }
     fun clickStopSharing() = ConfirmStopSharingRobot.apply {
         stopSharingButton.scrollTo().click()
@@ -86,6 +94,6 @@ object FileFolderOptionsRobot : Robot {
     }
 
     override fun robotDisplayed() {
-        fileFolderOptionsScreen.assertIsDisplayed()
+        fileFolderOptionsScreen.await { assertIsDisplayed() }
     }
 }

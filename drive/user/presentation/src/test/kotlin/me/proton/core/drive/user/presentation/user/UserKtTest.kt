@@ -55,7 +55,33 @@ class UserKtTest {
         val firstLetter = user.firstLetter
         // endregion
         //region Assert
-        assert(firstLetter == 'A')
+        assert(firstLetter == "A")
+        // endregion
+    }
+
+    @Test
+    fun `first letter from display name with multiple chars as the first code point`() {
+        // region Arrange
+        val user = user.copy(displayName = "\uD840\uDF41")
+        // endregion
+        // region Act
+        val firstLetter = user.firstLetter
+        // endregion
+        //region Assert
+        assert(firstLetter == "\uD840\uDF41")
+        // endregion
+    }
+
+    @Test
+    fun `first letter from display name with emoji as the first code point`() {
+        // region Arrange
+        val user = user.copy(displayName = "🏴󠁧󠁢󠁳󠁣󠁴󠁿")
+        // endregion
+        // region Act
+        val firstLetter = user.firstLetter
+        // endregion
+        //region Assert
+        assert(firstLetter == "🏴")
         // endregion
     }
 
@@ -68,7 +94,7 @@ class UserKtTest {
         val firstLetter = user.firstLetter
         // endregion
         //region Assert
-        assert(firstLetter == 'S')
+        assert(firstLetter == "S")
         // endregion
     }
 
@@ -81,7 +107,7 @@ class UserKtTest {
         val firstLetter = user.firstLetter
         // endregion
         //region Assert
-        assert(firstLetter == 'p')
+        assert(firstLetter == "p")
         // endregion
     }
 
@@ -94,7 +120,7 @@ class UserKtTest {
         val firstLetter = user.firstLetter
         // endregion
         //region Assert
-        assert(firstLetter == '?')
+        assert(firstLetter == "?")
         // endregion
     }
 }

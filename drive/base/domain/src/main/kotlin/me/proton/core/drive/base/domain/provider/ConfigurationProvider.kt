@@ -19,7 +19,6 @@ package me.proton.core.drive.base.domain.provider
 
 import android.os.Build
 import me.proton.core.drive.base.domain.entity.Bytes
-import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.GiB
 import me.proton.core.drive.base.domain.extension.KiB
 import me.proton.core.drive.base.domain.extension.MiB
@@ -91,6 +90,7 @@ interface ConfigurationProvider {
     val backupDefaultThumbnailsCacheLocalStorageThreshold: Bytes get() = 500.MiB
     val maxFreeSpace: Bytes get() = 5.GiB
     val activeUserPingDuration: Duration get() = 6.hours
+    val disableFeatureFlagInDevelopment: Boolean get() = true
 
     data class Thumbnail(
         val maxWidth: Int,

@@ -29,13 +29,15 @@ object MoveToFolderRobot : NavigationBarRobot, Robot, LinksRobot, GrowlerRobot {
     private val moveToFolderScreen get() = node.withTag(MoveToFolderScreenTestTag.screen)
     private val appBar get() = node.withTag(TopAppBarComponentTestTag.appBar)
     private val rootDirectoryTitle = node.withText(I18N.string.title_my_files)
-    private val addFolderButton get() = node.withTag(MoveToFolderScreenTestTag.plusFolderButton)
+    private val addFolderButton get() = node.withContentDescription(I18N.string.folder_option_create_folder)
     private val cancelButton get() = node.withText(I18N.string.move_file_dismiss_action)
     private val moveButton get() = node.withTag(MoveToFolderScreenTestTag.moveButton)
 
     private fun itemWithName(name: String) = node.withTag(listDetailsTitle).withText(name)
 
     fun assertMoveButtonIsDisabled() = moveButton.assertDisabled()
+
+    fun assertCreateFolderButtonDoesNotExist() = addFolderButton.assertDoesNotExist()
 
     /**
      * Wait the folder to be loaded before clicking back,
@@ -51,7 +53,7 @@ object MoveToFolderRobot : NavigationBarRobot, Robot, LinksRobot, GrowlerRobot {
     fun clickAddFolderToRoot() = clickAddFolder(rootDirectoryTitle)
 
     private fun clickAddFolder(onNode: OnNode) = addFolderButton
-        .hasSibling(node.hasDescendant(onNode))
+        .hasAncestor(node.hasDescendant(node.withTextSubstring(I18N.string.move_to).hasSibling(onNode)))
         .clickTo(CreateFolderRobot)
 
     fun clickCancel() = cancelButton.clickTo(FilesTabRobot)
@@ -72,10 +74,10 @@ object MoveToFolderRobot : NavigationBarRobot, Robot, LinksRobot, GrowlerRobot {
         .clickTo(FilesTabRobot)
 
     override fun robotDisplayed() {
-        moveToFolderScreen.assertIsDisplayed()
-        addFolderButton.assertIsDisplayed()
-        filesContent.assertIsDisplayed()
-        cancelButton.assertIsDisplayed()
-        moveButton.assertIsDisplayed()
+        moveToFolderScreen.await { assertIsDisplayed() }
+        addFolderButton.await { assertIsDisplayed() }
+        filesContent.await { assertIsDisplayed() }
+        cancelButton.await { assertIsDisplayed() }
+        moveButton.await { assertIsDisplayed() }
     }
 }

@@ -18,40 +18,32 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
-import io.mockk.coEvery
-import io.mockk.mockk
-import kotlinx.coroutines.runBlocking
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.backup.data.repository.BackupDuplicateRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
-import me.proton.core.drive.backup.data.repository.FolderFindDuplicatesRepository
 import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
-import me.proton.core.drive.backup.domain.repository.FindDuplicatesRepository
+import me.proton.core.drive.backup.domain.repository.BackupDuplicateRepository
+import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.repository.ClientUidRepository
-import me.proton.core.drive.base.domain.usecase.CreateClientUid
-import me.proton.core.drive.base.domain.usecase.CreateUuid
-import me.proton.core.drive.base.domain.usecase.GetClientUid
-import me.proton.core.drive.base.domain.usecase.GetOrCreateClientUid
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
-import me.proton.core.drive.link.data.api.LinkApiDataSource
+import me.proton.core.drive.link.data.api.request.CheckAvailableHashesRequest
 import me.proton.core.drive.link.data.api.response.CheckAvailableHashesResponse
 import me.proton.core.drive.link.data.api.response.PendingHashDto
-import me.proton.core.drive.link.data.repository.LinkRepositoryImpl
-import me.proton.core.drive.link.domain.entity.CheckAvailableHashesInfo
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.TestConfigurationProvider
+import me.proton.core.drive.test.api.checkAvailableHashes
+import me.proton.core.drive.test.api.jsonResponse
+import me.proton.core.drive.test.api.request
+import me.proton.core.drive.test.api.retryableErrorResponse
+import me.proton.core.drive.test.usecase.StaticCreateUuid
 import me.proton.core.network.domain.ApiException
-import me.proton.core.network.domain.ApiResult
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Before
@@ -59,71 +51,40 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import java.util.UUID
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class FindDuplicatesTest {
     @get:Rule
-    val database = DriveDatabaseRule()
-
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
-    private lateinit var clientUid: ClientUid
-
-    private lateinit var findDuplicates: FindDuplicates
-
-    private lateinit var findDuplicatesRepository: FindDuplicatesRepository
-    private lateinit var backupFileRepository: BackupFileRepositoryImpl
-    private lateinit var backupDuplicateRepository: BackupDuplicateRepositoryImpl
-    private lateinit var linkApiDataSource: LinkApiDataSource
-
     private lateinit var backupFolder: BackupFolder
+
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var findDuplicates: FindDuplicates
+
+    @Inject
+    lateinit var backupFileRepository: BackupFileRepository
+
+    @Inject
+    lateinit var backupDuplicateRepository: BackupDuplicateRepository
+
+    @Inject
+    lateinit var configurationProvider: TestConfigurationProvider
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
+        folderId = driveRule.db.myFiles { }
         backupFolder = BackupFolder(
             bucketId = 0,
             folderId = folderId
         )
-        val backupFolderRepository = BackupFolderRepositoryImpl(database.db)
-        val addFolder = AddFolder(backupFolderRepository)
         addFolder(backupFolder).getOrThrow()
-
-        backupFileRepository = BackupFileRepositoryImpl(database.db)
-        backupDuplicateRepository = BackupDuplicateRepositoryImpl(database.db)
-        linkApiDataSource = mockk()
-        val linkRepository = LinkRepositoryImpl(linkApiDataSource, database.db)
-        findDuplicatesRepository = FolderFindDuplicatesRepository(linkRepository)
-        val clientUidRepository = object : ClientUidRepository {
-            private var clientUid: ClientUid? = null
-
-            override suspend fun get(): ClientUid? = clientUid
-
-            override suspend fun insert(clientUid: ClientUid) {
-                this.clientUid = clientUid
-            }
-
-        }
-        val uuid = UUID(0, 0)
-        clientUid = uuid.toString()
-        findDuplicates = FindDuplicates(
-            configurationProvider = object : ConfigurationProvider {
-                override val host: String = ""
-                override val baseUrl: String = ""
-                override val appVersionHeader: String = ""
-                override val apiPageSize: Int = 2
-            },
-            findDuplicatesRepository = findDuplicatesRepository,
-            backupFileRepository = backupFileRepository,
-            backupDuplicateRepository = backupDuplicateRepository,
-            getOrCreateClientUid = GetOrCreateClientUid(
-                getClientUid = GetClientUid(clientUidRepository),
-                createClientUid = CreateClientUid(
-                    repository = clientUidRepository,
-                    createUuid = CreateUuid { uuid }
-                )
-            )
-        )
+        configurationProvider.apiPageSize = 2
     }
 
     @Test
@@ -147,20 +108,25 @@ class FindDuplicatesTest {
             )
         )
 
-        coEvery { linkApiDataSource.checkAvailableHashes(folderId, any()) } answers {
-            val info: CheckAvailableHashesInfo = secondArg()
-            CheckAvailableHashesResponse(
-                code = 1000,
-                availableHashes = info.hashes.filter { hash -> hash == "hash0" },
-                pendingHashDtos = info.hashes.filter { hash -> hash == "hash1" }.map { hash ->
-                    PendingHashDto(
-                        clientUid = info.clientUid,
-                        hash = hash,
-                        revisionId = "revision-id",
-                        linkId = "link-id"
+        driveRule.server.run {
+            checkAvailableHashes {
+                jsonResponse {
+                    val request = request<CheckAvailableHashesRequest>()
+                    CheckAvailableHashesResponse(
+                        code = 1000,
+                        availableHashes = request.hashes.filter { hash -> hash == "hash0" },
+                        pendingHashDtos = request.hashes.filter { hash -> hash == "hash1" }
+                            .map { hash ->
+                                PendingHashDto(
+                                    clientUid = request.clientUid.orEmpty().firstOrNull(),
+                                    hash = hash,
+                                    revisionId = "revision-id",
+                                    linkId = "link-id"
+                                )
+                            }
                     )
                 }
-            )
+            }
         }
 
         findDuplicates(backupFolder).getOrThrow()
@@ -183,7 +149,7 @@ class FindDuplicatesTest {
                     linkId = null,
                     linkState = Link.State.ACTIVE,
                     revisionId = null,
-                    clientUid = clientUid
+                    clientUid = StaticCreateUuid.uuid.toString()
                 ),
                 BackupDuplicate(
                     id = 2,
@@ -193,7 +159,7 @@ class FindDuplicatesTest {
                     linkId = FileId(folderId.shareId, "link-id"),
                     linkState = Link.State.DRAFT,
                     revisionId = "revision-id",
-                    clientUid = clientUid
+                    clientUid = StaticCreateUuid.uuid.toString()
                 ),
             ),
             backupDuplicateRepository.getAll(folderId, 0, 100).sortedBy { it.id },
@@ -210,14 +176,10 @@ class FindDuplicatesTest {
             )
         )
 
-        val apiException = ApiException(
-            error = ApiResult.Error.NoInternet()
-        )
-        coEvery { linkApiDataSource.checkAvailableHashes(folderId, any()) } throws apiException
+        driveRule.server.checkAvailableHashes { retryableErrorResponse() }
 
-        assertThrows(ApiException::class.java) {
-            runBlocking { findDuplicates(backupFolder).getOrThrow() }
-        }
+        val result = findDuplicates(backupFolder)
+        assertThrows(ApiException::class.java) { result.getOrThrow() }
 
         assertEquals(
             listOf(

@@ -72,6 +72,7 @@ import me.proton.android.drive.extension.deepLinkBaseUrl
 import me.proton.android.drive.lock.data.provider.BiometricPromptProvider
 import me.proton.android.drive.lock.domain.manager.AppLockManager
 import me.proton.android.drive.log.DriveLogTag
+import me.proton.android.drive.provider.ActivityLauncher
 import me.proton.android.drive.ui.navigation.AppNavGraph
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.provider.LocalSnackbarPadding
@@ -93,7 +94,9 @@ import me.proton.core.drive.thumbnail.presentation.coil.ThumbnailEnabled
 import me.proton.core.notification.presentation.deeplink.DeeplinkManager
 import me.proton.core.notification.presentation.deeplink.onActivityCreate
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
+import me.proton.drive.android.settings.domain.usecase.GetHomeTab
 import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
 import javax.inject.Inject
 import me.proton.core.presentation.R as CorePresentation
@@ -105,10 +108,12 @@ class MainActivity : FragmentActivity() {
     @Inject lateinit var listenToBroadcastMessages: ListenToBroadcastMessages
     @Inject lateinit var actionProvider: ActionProvider
     @Inject lateinit var getThemeStyle: GetThemeStyle
+    @Inject lateinit var getHomeTab: GetHomeTab
     @Inject lateinit var processIntent: ProcessIntent
     @Inject lateinit var biometricPromptProvider: BiometricPromptProvider
     @Inject lateinit var appLockManager: AppLockManager
     @Inject lateinit var deeplinkManager: DeeplinkManager
+    @Inject lateinit var activityLauncher: ActivityLauncher
 
     lateinit var configurationProvider: ConfigurationProvider
     private val accountViewModel: AccountViewModel by viewModels()
@@ -144,6 +149,7 @@ class MainActivity : FragmentActivity() {
             var isDrawerOpen by remember { mutableStateOf(false) }
             val snackbarHostState = remember { ProtonSnackbarHostState() }
             val isDarkTheme by isDarkTheme()
+            val startDestination by defaultStartDestination()
             SystemBarColorLaunchedEffect(isDrawerOpen, isDarkTheme)
             NotificationsLaunchedEffect(snackbarHostState)
             Content(isDarkTheme) {
@@ -157,14 +163,12 @@ class MainActivity : FragmentActivity() {
                         deepLinkBaseUrl = this@MainActivity.deepLinkBaseUrl,
                         clearBackstackTrigger = clearBackstackTrigger,
                         deepLinkIntent = deepLinkIntent,
-                        defaultStartDestination = if (configurationProvider.photosFeatureFlag) {
-                            Screen.Photos.route
-                        } else {
-                            Screen.Files.route
-                        },
+                        defaultStartDestination = startDestination,
                         locked = appLockManager.locked,
                         primaryAccount = accountViewModel.primaryAccount,
                         exitApp = { finish() },
+                        navigateToPasswordManagement = accountViewModel::startPasswordManagement,
+                        navigateToRecoveryEmail = accountViewModel::startUpdateRecoveryEmail,
                         navigateToBugReport = bugReportViewModel::sendBugReport,
                         navigateToSubscription = plansViewModel::showCurrentPlans,
                     ) { isOpen ->
@@ -207,6 +211,27 @@ class MainActivity : FragmentActivity() {
                 } ?: flowOf(isSystemDark)
             }
         }.collectAsState(initial = isSystemDark)
+    }
+
+    @Composable
+    private fun defaultStartDestination(): State<String> {
+        val default = HomeTab.DEFAULT.destination
+        return remember {
+            accountViewModel.primaryAccount.flatMapLatest { account ->
+                account?.let {
+                    getHomeTab(account.userId).map { homeTab ->
+                        homeTab.destination
+                    }
+                } ?: flowOf(default)
+            }
+        }.collectAsState(initial = default)
+    }
+
+    private val HomeTab.destination: String get() = when (this) {
+        HomeTab.FILES -> Screen.Files.route
+        HomeTab.PHOTOS -> Screen.Photos.route
+        HomeTab.COMPUTERS -> Screen.Computers.route
+        HomeTab.SHARED -> Screen.Shared.route
     }
 
     @Composable
@@ -283,7 +308,10 @@ class MainActivity : FragmentActivity() {
                     is AccountViewModel.State.AccountReady -> Unit
                     is AccountViewModel.State.PrimaryNeeded -> {
                         clearBackstackTrigger.emit(Unit)
-                        accountViewModel.addAccount()
+                        activityLauncher {
+                            CoreLogger.d(DriveLogTag.UI, "AccountViewModel startAddAccount")
+                            accountViewModel.startAddAccount()
+                        }
                     }
                     is AccountViewModel.State.ExitApp -> finish()
                 }

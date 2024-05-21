@@ -21,6 +21,7 @@ package me.proton.drive.android.settings.domain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
+import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.entity.UiSettings
@@ -50,4 +51,9 @@ interface UiSettingsRepository {
      * Update the [ThemeStyle] for a given [userId]
      */
     suspend fun updateThemeStyle(userId: UserId, themeStyle: ThemeStyle)
+
+    /**
+     * Update the [HomeTab] for a given [userId]
+     */
+    suspend fun updateHomeTab(userId: UserId, homeTab: HomeTab)
 }

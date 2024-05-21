@@ -24,6 +24,7 @@ import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
+import java.net.HttpURLConnection
 
 class DriveDispatcher : Dispatcher() {
     var handlers: List<RecordedRequest.() -> MockResponse?> = emptyList()
@@ -41,7 +42,7 @@ annotation class ApiDriveDsl
 
 @ApiDriveDsl
 class RoutingConfiguration {
-    var handlers: List<RecordedRequest.() -> MockResponse?> = emptyList()
+    var handlers: List<(RecordedRequest) -> MockResponse?> = emptyList()
 }
 
 fun routing(block: RoutingConfiguration.() -> Unit): RoutingConfiguration =
@@ -85,42 +86,63 @@ fun RoutingConfiguration.delete(path: String, block: RequestContext.() -> MockRe
 data class RequestContext(
     val recordedRequest: RecordedRequest,
     val parameters: Map<String, String>,
+    val times: Int,
 )
 
-inline fun <reified T> RequestContext.request() : T {
+inline fun <reified T> RequestContext.request(): T {
     return Json.decodeFromString(recordedRequest.body.readUtf8())
 }
+
+private val parameterRegex = """@?\{(.*)\}""".toRegex()
 
 private fun RoutingConfiguration.route(
     method: String,
     path: String,
     block: RequestContext.() -> MockResponse,
 ) {
-    handlers = handlers + {
-        if (this.method == method) {
-            val segmentsSelector = path.split("/")
-            val segmentsQuery = this.path?.split("/").orEmpty()
-            val matches = segmentsSelector.mapIndexed { index, segment ->
-                if (segment.startsWith("{") && segment.endsWith("}")) {
-                    segmentsQuery.getOrNull(index) != null
-                } else {
-                    segmentsQuery.getOrNull(index) == segment
-                }
-            }.fold(true) { acc, value -> acc && value }
-            if (matches) {
-                val parameters = segmentsSelector.mapIndexedNotNull { index, segment ->
-                    if (segment.startsWith("{") && segment.endsWith("}")) {
-                        segment.substring(1, segment.lastIndex) to segmentsQuery[index]
-                    } else {
-                        null
-                    }
-                }.associate { it }
-                RequestContext(this, parameters).block()
+    handlers = handlers + Handler(method, path, block)
+}
+
+data class Handler(
+    private val method: String,
+    private val path: String,
+    private val block: RequestContext.() -> MockResponse,
+) : (RecordedRequest) -> MockResponse? {
+
+    private var times = 0
+    override operator fun invoke(
+        request: RecordedRequest,
+    ): MockResponse? {
+        if (request.method != method) {
+            return null
+        }
+
+        val segmentsSelector = path.split("/")
+        val segmentsQuery = request.path?.substringBefore("?")?.split("/").orEmpty()
+
+        if (segmentsSelector.count() != segmentsQuery.count()) {
+            return null
+        }
+
+        val segmentsMatches = segmentsSelector.mapIndexed { index, segment ->
+            if (segment.matches(parameterRegex)) {
+                segmentsQuery.getOrNull(index) != null
             } else {
-                null
+                segmentsQuery.getOrNull(index) == segment
             }
-        } else {
-            null
+        }.fold(true) { acc, value -> acc && value }
+
+        if (!segmentsMatches) {
+            return null
+        }
+
+        val parameters = segmentsSelector.mapIndexedNotNull { index, segment ->
+            parameterRegex.matchEntire(segment)?.let { matchResult ->
+                matchResult.groupValues[1] to segmentsQuery[index].removePrefix("@")
+            }
+        }.associate { it }
+        return RequestContext(request, parameters, ++times).block().apply {
+            addHeader("date", System.currentTimeMillis())
         }
     }
 }
@@ -142,3 +164,7 @@ inline fun <reified T : Any> RequestContext.jsonResponse(
     headers: Map<String, Any> = emptyMap(),
     crossinline body: RequestContext.() -> T,
 ) = response(status, headers) { body().serialize() }
+
+fun RequestContext.retryableErrorResponse() = response(HttpURLConnection.HTTP_CLIENT_TIMEOUT)
+
+fun RequestContext.errorResponse() = response(HttpURLConnection.HTTP_BAD_REQUEST)

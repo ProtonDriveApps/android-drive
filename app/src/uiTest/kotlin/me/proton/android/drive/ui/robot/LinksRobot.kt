@@ -40,14 +40,15 @@ import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
 @Suppress("TooManyFunctions")
-interface LinksRobot : Robot {
+interface LinksRobot : PullToRefreshRobot, Robot {
 
     val filesContent get() = node.withTag(FilesTestTag.content)
 
     private val layoutSwitcher get() = node.withTag(FilesListHeaderTestTag.layoutSwitcher)
 
-    private val selectedOptionsButton get() = node
-        .withContentDescription(I18N.string.content_description_selected_options)
+    private val selectedOptionsButton
+        get() = node
+            .withContentDescription(I18N.string.content_description_selected_options)
 
     fun linkWithName(name: String) = node.withLinkName(name).isClickable()
 

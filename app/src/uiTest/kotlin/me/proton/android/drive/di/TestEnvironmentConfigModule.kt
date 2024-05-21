@@ -25,6 +25,7 @@ import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
 import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.configuration.dagger.ContentResolverEnvironmentConfigModule
+import me.proton.core.configuration.entity.EnvironmentConfigFieldProvider
 import javax.inject.Singleton
 
 @Module
@@ -36,8 +37,16 @@ object TestEnvironmentConfigModule {
     @Provides
     @Singleton
     fun provideEnvironmentConfiguration(): EnvironmentConfiguration =
-        EnvironmentConfiguration(::instrumentationArgumentStringProvider)
+        EnvironmentConfiguration(
+            object : EnvironmentConfigFieldProvider {
+                override fun getString(key: String): String? =
+                    InstrumentationRegistry.getArguments().getString(key)
 
-    private fun instrumentationArgumentStringProvider(key: String): String? =
-        InstrumentationRegistry.getArguments().getString(key)
+                override fun getBoolean(key: String): Boolean? =
+                    InstrumentationRegistry.getArguments().getBoolean(key)
+
+                override fun getInt(key: String): Int? =
+                    InstrumentationRegistry.getArguments().getInt(key)
+            }
+        )
 }

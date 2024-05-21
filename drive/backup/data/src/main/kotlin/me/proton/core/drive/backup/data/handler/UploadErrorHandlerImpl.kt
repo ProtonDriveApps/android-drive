@@ -18,14 +18,13 @@
 
 package me.proton.core.drive.backup.data.handler
 
-import androidx.work.WorkManager
 import kotlinx.coroutines.flow.first
 import me.proton.android.drive.verifier.domain.exception.VerifierException
 import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.drive.backup.data.extension.toBackupError
-import me.proton.core.drive.backup.data.worker.BackupNotificationWorker
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.handler.UploadErrorHandler
+import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.usecase.DeleteFile
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.backup.domain.usecase.MarkAsFailed
@@ -33,6 +32,7 @@ import me.proton.core.drive.backup.domain.usecase.StopBackup
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.exception.BackupStopException
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.network.domain.ApiException
@@ -42,20 +42,21 @@ import java.io.IOException
 import javax.inject.Inject
 
 class UploadErrorHandlerImpl @Inject constructor(
-    private val workManager: WorkManager,
+    private val backupManager: BackupManager,
     private val deleteFile: DeleteFile,
     private val stopBackup: StopBackup,
     private val hasFolders: HasFolders,
     private val markAsFailed: MarkAsFailed,
 ) : UploadErrorHandler {
     override suspend fun onError(uploadError: UploadErrorManager.Error) {
-        if (uploadError.throwable.hasEffectOnBackup()) {
-            if (hasFolders(uploadError.uploadFileLink.parentLinkId).first()) {
-                workManager.enqueue(
-                    BackupNotificationWorker.getWorkRequest(uploadError.uploadFileLink.parentLinkId)
-                )
-                handleError(uploadError)
+        coRunCatching {
+            if (uploadError.throwable.hasEffectOnBackup()) {
+                if (hasFolders(uploadError.uploadFileLink.parentLinkId).first()) {
+                    handleError(uploadError)
+                }
             }
+        }.onFailure { error ->
+            error.log(BACKUP, "Cannot handler error for: ${uploadError.uploadFileLink.id}")
         }
     }
 
@@ -96,7 +97,10 @@ class UploadErrorHandlerImpl @Inject constructor(
     private suspend fun onFileNotFoundException(uploadFileLink: UploadFileLink) {
         uploadFileLink.uriString?.let { uriString ->
             CoreLogger.d(BACKUP, "Deleting file not found: $uriString")
-            deleteFile(uploadFileLink.parentLinkId, uriString).onFailure { error ->
+            val folderId = uploadFileLink.parentLinkId
+            deleteFile(folderId, uriString).onSuccess {
+                backupManager.updateNotification(folderId)
+            }.onFailure { error ->
                 error.log(BACKUP, "Cannot delete file: $uriString")
             }
         }
@@ -104,10 +108,13 @@ class UploadErrorHandlerImpl @Inject constructor(
 
     private suspend fun onFileOtherError(uploadError: UploadErrorManager.Error) {
         uploadError.uploadFileLink.uriString?.let { uriString ->
+            val folderId = uploadError.uploadFileLink.parentLinkId
             markAsFailed(
-                folderId = uploadError.uploadFileLink.parentLinkId,
+                folderId = folderId,
                 uriString = uriString,
-            ).onFailure { error ->
+            ).onSuccess {
+                backupManager.updateNotification(folderId)
+            }.onFailure { error ->
                 error.log(BACKUP, "Cannot mark as failed: $uriString")
             }
         }

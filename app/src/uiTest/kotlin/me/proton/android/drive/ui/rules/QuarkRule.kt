@@ -23,6 +23,7 @@ import me.proton.android.drive.test.BuildConfig
 import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.test.quark.Quark
 import me.proton.core.test.quark.v2.QuarkCommand
+import me.proton.core.test.quark.v2.command.systemEnv
 import me.proton.core.util.kotlin.deserialize
 import okhttp3.OkHttpClient
 import org.junit.rules.ExternalResource
@@ -62,4 +63,9 @@ class QuarkRule(
     val quarkCommands: QuarkCommand = QuarkCommand(quarkClient)
         .baseUrl("https://${envConfig.host}/api/internal")
         .proxyToken(envConfig.proxyToken)
+
+    override fun before() {
+        // For /core/v4/keys that is deprecated
+        quarkCommands.systemEnv("PROHIBIT_DEPRECATED_DEV_CLIENT_ENV", "0")
+    }
 }

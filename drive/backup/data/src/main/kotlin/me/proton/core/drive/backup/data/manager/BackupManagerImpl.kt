@@ -164,6 +164,12 @@ class BackupManagerImpl @Inject constructor(
         folderId.uniqueFolderIdTag()
     )
 
+    override suspend fun updateNotification(folderId: FolderId) {
+        workManager.enqueue(
+            BackupNotificationWorker.getWorkRequest(folderId)
+        ).await()
+    }
+
     internal companion object {
         const val TAG = "backup"
     }

@@ -23,5 +23,6 @@ package me.proton.android.drive.ui.rules
 annotation class Scenario(
     val value: Int,
     val isPhotos: Boolean = false,
-    val isDevice: Boolean = false
+    val isDevice: Boolean = false,
+    val withSharingUser: Boolean = false,
 )

@@ -28,7 +28,7 @@ suspend fun DriveDatabaseRule.device(index: Int = defaultIndex, block: suspend F
 }
 
 fun deviceShareId(index: Int = defaultIndex) = ShareId(userId, "device-share-id-$index")
-fun deviceRootId(index: Int = defaultIndex) = FolderId(photoShareId, "device-${index}-root-id")
+fun deviceRootId(index: Int = defaultIndex) = FolderId(deviceShareId(index), "device-${index}-root-id")
 
 suspend fun DriveDatabase.device(index: Int = defaultIndex, block: suspend FolderContext.() -> Unit): FolderId {
     user {
@@ -49,6 +49,7 @@ suspend fun VolumeContext.deviceShare(index: Int = defaultIndex, block: suspend 
             type = ShareDto.TYPE_DEVICE,
         )
     ) {
+        withKey()
         folder(id = share.linkId, block = block)
     }
 }

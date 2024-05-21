@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.extension
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.SemanticsMatcher
+import me.proton.core.drive.contact.presentation.component.ChipsSemanticsPropertyKeys.IsValidField
 import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties.HasThumbnail
 import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties.ItemType
 import me.proton.core.drive.files.presentation.extension.DriveLinkSemanticsProperties.LayoutType
@@ -40,6 +41,9 @@ fun <T : NodeMatchers<T>> NodeMatchers<T>.withItemType(itemType: ItemType): T =
 
 fun <T : NodeMatchers<T>> NodeMatchers<T>.withThumbnail(hasThumbnail: Boolean): T =
     addSemanticMatcher(SemanticsMatcher.expectValue(HasThumbnail, hasThumbnail))
+
+fun <T : NodeMatchers<T>> NodeMatchers<T>.isValidField(isValidField: Boolean): T =
+    addSemanticMatcher(SemanticsMatcher.expectValue(IsValidField, isValidField))
 
 fun <T : NodeMatchers<T>> NodeMatchers<T>.withTextResource(
     @StringRes resId: Int,

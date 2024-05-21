@@ -29,6 +29,7 @@ import me.proton.core.drive.base.domain.exception.InvalidFieldException
 import me.proton.core.network.data.ProtonErrorException
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
+import me.proton.core.network.domain.hasProtonErrorCode
 import me.proton.core.network.domain.isRetryable
 import me.proton.core.util.kotlin.CoreLogger
 import retrofit2.HttpException
@@ -96,22 +97,32 @@ fun <T : Throwable>T.logDefaultMessage(
 
 val Throwable.isRetryable: Boolean
     get() = when (this) {
-        is ApiException -> {
-            if (this.error.cause is FileNotFoundException) {
-                false
+        is RuntimeException -> {
+            val runtimeCause = cause
+            if (runtimeCause is ApiException) {
+                runtimeCause.isDriveRetryable()
             } else {
-                this.error.isRetryable() || when (val error = this.error) {
-                    is ApiResult.Error.Timeout,
-                    is ApiResult.Error.NoInternet,
-                    -> true
-
-                    is ApiResult.Error.Http -> error.httpCode == 424 && error.proton?.code == FEATURE_DISABLED
-
-                    else -> false
-                }
+                false
             }
         }
+
+        is ApiException -> isDriveRetryable()
         else -> false
+    }
+
+private fun ApiException.isDriveRetryable() =
+    if (this.error.cause is FileNotFoundException) {
+        false
+    } else {
+        this.error.isRetryable() || when (val error = this.error) {
+            is ApiResult.Error.Timeout,
+            is ApiResult.Error.NoInternet,
+            -> true
+
+            is ApiResult.Error.Http -> error.httpCode == 424 && error.proton?.code == FEATURE_DISABLED
+
+            else -> false
+        }
     }
 
 fun Throwable.isErrno(errno: Int): Boolean = if (cause is ErrnoException) {

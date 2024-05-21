@@ -27,6 +27,7 @@ android {
 driveModule(
     hilt = true,
     workManager = true,
+    socialTest = true,
 ) {
     api(project(":drive:backup:domain"))
     api(project(":drive:base:data"))

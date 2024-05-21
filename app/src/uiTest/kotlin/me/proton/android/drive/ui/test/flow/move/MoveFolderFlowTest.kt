@@ -38,6 +38,7 @@ class MoveFolderFlowTest : AuthenticatedBaseTest() {
         val parent = "folder1"
         val folder = "folder3"
         PhotosTabRobot
+            .clickFilesTab()
             .clickOnFolder(parent)
             .clickMoreOnItem(folder)
             .clickMove()

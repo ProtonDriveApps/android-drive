@@ -20,16 +20,27 @@ package me.proton.core.drive.test.di
 
 import dagger.Binds
 import dagger.Module
-import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
+import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
+import me.proton.core.drive.eventmanager.di.EventManagerBindsModule
 import me.proton.core.drive.test.eventmanager.TestEventManagerProvider
+import me.proton.core.drive.test.usecase.TestUpdateEventAction
 import me.proton.core.eventmanager.domain.EventManagerProvider
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [EventManagerBindsModule::class],
+)
 interface TestEventManagerModule {
     @Binds
     @Singleton
     fun bindsEventManagerProvider(impl: TestEventManagerProvider): EventManagerProvider
+
+
+    @Binds
+    @Singleton
+    fun bindsUpdateEventAction(impl: TestUpdateEventAction): UpdateEventAction
 }

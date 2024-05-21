@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Proton AG.
+ * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -18,6 +18,8 @@
 
 package me.proton.core.drive.feature.flag.data.repository
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -41,6 +43,14 @@ class FeatureFlagRepositoryImpl @Inject constructor(
             featureFlagId.userId,
             FeatureId(featureFlagId.id),
         )?.toFeatureFlag(featureFlagId.userId)
+
+    override suspend fun getFeatureFlagFlow(featureFlagId: FeatureFlagId): Flow<FeatureFlag?> =
+        coreFeatureFlagRepository.observe(
+            featureFlagId.userId,
+            FeatureId(featureFlagId.id),
+        ).map {
+            it?.toFeatureFlag(featureFlagId.userId)
+        }
 
     override suspend fun refresh(userId: UserId, refreshId: FeatureFlagRepository.RefreshId) = coRunCatching {
         coreFeatureFlagRepository.getAll(userId)

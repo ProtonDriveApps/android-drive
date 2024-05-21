@@ -27,6 +27,7 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -44,6 +45,7 @@ fun ProtonPullToRefresh(
     Box(
         modifier = modifier
             .pullRefresh(pullRefreshState, isPullToRefreshEnabled)
+            .testTag(ProtonPullToRefreshTestTags.content)
     ) {
         content()
 
@@ -55,4 +57,8 @@ fun ProtonPullToRefresh(
                 .align(Alignment.TopCenter),
         )
     }
+}
+
+object ProtonPullToRefreshTestTags {
+    const val content = "pull-to-refresh-content"
 }

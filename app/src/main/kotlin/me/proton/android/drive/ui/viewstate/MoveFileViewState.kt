@@ -18,6 +18,9 @@
 
 package me.proton.android.drive.ui.viewstate
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.files.presentation.state.FilesViewState
 
 data class MoveFileViewState(
@@ -27,4 +30,5 @@ data class MoveFileViewState(
     val isTitleEncrypted: Boolean = false,
     val navigationIconResId: Int = 0,
     val driveLinks: List<String> = emptyList(),
+    val topBarActions: Flow<Set<Action>> = emptyFlow(),
 )

@@ -23,7 +23,11 @@ android {
     namespace = "me.proton.core.drive.share.crypto.domain"
 }
 
-driveModule(hilt = true) {
+driveModule(
+    hilt = true,
+    socialTest = true,
+) {
+    api(project(":drive:crypto-base:domain"))
     api(project(":drive:feature-flag:domain"))
     api(project(":drive:share:domain"))
     api(project(":drive:volume-crypto:domain"))

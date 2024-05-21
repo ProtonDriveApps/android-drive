@@ -39,10 +39,11 @@ class BuildNodeKey @Inject constructor(
     private val getShareKey: GetShareKey,
     private val keyRepository: KeyRepository,
     private val decryptNestedPrivateKey: DecryptNestedPrivateKey,
+    private val getPublicAddressKeys: GetPublicAddressKeys,
 ) {
     suspend operator fun invoke(link: Link): Result<Key.Node> = coRunCatching {
         var key: Key.Node? = null
-        var error: Throwable? = null
+        val error = IllegalStateException("Key is null after building process")
         getLinkNode(link.id).toResult().getOrThrow().withAncestorsFromRoot { link ->
             keyRepository.getKey(link.id.userId, link.keyId)?.let { nodeKey ->
                 key = nodeKey as? Key.Node
@@ -50,11 +51,11 @@ class BuildNodeKey @Inject constructor(
                 .onSuccess { nodeKey -> key = nodeKey }
                 .onFailure {
                     key = null
-                    error = it
+                    error.addSuppressed(it)
                     return@withAncestorsFromRoot
                 }
         }
-        key ?: throw IllegalStateException("Key is null after building process", error)
+        key ?: throw error
     }
 
     suspend operator fun invoke(
@@ -66,10 +67,9 @@ class BuildNodeKey @Inject constructor(
         coRunCatching {
             NodeKey(
                 key = decryptNestedPrivateKey(
-                    userId = userId,
                     decryptKey = parentKey.keyHolder,
                     key = uploadFileLink.nestedPrivateKey,
-                    signatureAddress = signatureAddress,
+                    verifySignatureKey = getPublicAddressKeys(userId, signatureAddress).getOrThrow().keyHolder,
                     allowCompromisedVerificationKeys = true,
                 ).getOrThrow(),
                 parent = parentKey,
@@ -83,10 +83,9 @@ class BuildNodeKey @Inject constructor(
     private suspend fun buildNodeKey(parentKey: Key, link: Link): Result<Key.Node> = coRunCatching {
         NodeKey(
             key = decryptNestedPrivateKey(
-                userId = link.id.userId,
                 decryptKey = parentKey.keyHolder,
                 key = link.nestedPrivateKey,
-                signatureAddress = link.signatureAddress,
+                verifySignatureKey = getPublicAddressKeys(link.id.userId, link.signatureAddress).getOrThrow().keyHolder,
                 allowCompromisedVerificationKeys = true,
             ).getOrThrow(),
             parent = parentKey,

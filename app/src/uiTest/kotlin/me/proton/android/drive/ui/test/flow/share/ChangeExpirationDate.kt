@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.test.flow.share
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.extension.tomorrow
 import me.proton.android.drive.ui.robot.FileFolderOptionsRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
@@ -26,6 +27,8 @@ import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.ShareRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -42,6 +45,7 @@ class ChangeExpirationDate(
 
     @Test
     @Scenario(4)
+    @FeatureFlag(DRIVE_SHARING, NOT_FOUND)
     fun expirationDate() {
         PhotosTabRobot
             .clickFilesTab()

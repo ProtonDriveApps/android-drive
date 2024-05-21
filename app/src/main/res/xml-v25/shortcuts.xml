@@ -28,14 +28,14 @@
             android:data="drive://proton.me/launcher?redirection=files"/>
     </shortcut>
     <shortcut
-        android:shortcutId="primary-user-link"
+        android:shortcutId="primary-user-photos"
         android:enabled="true"
-        android:icon="@drawable/ic_proton_link"
-        android:shortcutShortLabel="@string/title_shared"
-        android:shortcutLongLabel="@string/title_shared">
+        android:icon="@drawable/ic_proton_image"
+        android:shortcutShortLabel="@string/photos_title"
+        android:shortcutLongLabel="@string/photos_title">
         <intent
             android:action="android.intent.action.VIEW"
-            android:data="drive://proton.me/launcher?redirection=shared"/>
+            android:data="drive://proton.me/launcher?redirection=photos"/>
     </shortcut>
     <shortcut
         android:shortcutId="primary-user-computers"
@@ -46,5 +46,15 @@
         <intent
             android:action="android.intent.action.VIEW"
             android:data="drive://proton.me/launcher?redirection=computers"/>
+    </shortcut>
+    <shortcut
+        android:shortcutId="primary-user-link"
+        android:enabled="true"
+        android:icon="@drawable/ic_proton_link"
+        android:shortcutShortLabel="@string/title_shared"
+        android:shortcutLongLabel="@string/title_shared">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="drive://proton.me/launcher?redirection=shared"/>
     </shortcut>
 </shortcuts>

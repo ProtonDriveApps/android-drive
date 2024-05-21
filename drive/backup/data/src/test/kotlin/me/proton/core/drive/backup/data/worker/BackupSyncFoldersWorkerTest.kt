@@ -24,58 +24,64 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import androidx.work.testing.TestListenableWorkerBuilder
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.data.manager.StubbedBackupManager
-import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
-import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
-import me.proton.core.drive.backup.domain.usecase.GetAllFolders
+import me.proton.core.drive.backup.domain.usecase.AddFolder
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
-import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class BackupSyncFoldersWorkerTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
-
-    private lateinit var repository: BackupFolderRepositoryImpl
+    val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
 
-    private val stubbedBackupManager = StubbedBackupManager()
+    @Inject
+    lateinit var syncFolders: SyncFolders
+
+    @Inject
+    lateinit var addBackupError: AddBackupError
+
+    @Inject
+    lateinit var addFolder: AddFolder
+
+    @Inject
+    lateinit var backupManager: StubbedBackupManager
 
     @Before
     fun setUp() = runTest {
-        folderId = database.myFiles { }
-
-        repository = BackupFolderRepositoryImpl(database.db)
+        folderId = driveRule.db.myFiles { }
     }
 
     @Test
-    fun `Given folders when sync then should sync each folder`() =
-        runTest {
-            val backupFolder = BackupFolder(
-                bucketId = 0,
-                folderId = folderId,
-            )
-            repository.insertFolder(backupFolder)
+    fun `Given folders when sync then should sync each folder`() = runTest {
+        val backupFolder = BackupFolder(
+            bucketId = 0,
+            folderId = folderId,
+        )
+        addFolder(backupFolder).getOrThrow()
 
-            val worker = backupScanFoldersWorker(folderId)
-            val result = worker.doWork()
+        val worker = backupScanFoldersWorker(folderId)
+        val result = worker.doWork()
 
-            assertEquals(ListenableWorker.Result.success(), result)
-            assertEquals(listOf(backupFolder), stubbedBackupManager.sync)
-        }
+        assertEquals(ListenableWorker.Result.success(), result)
+        assertEquals(listOf(backupFolder), backupManager.sync)
+    }
 
     private fun backupScanFoldersWorker(folderId: FolderId): BackupSyncFoldersWorker {
         val context = ApplicationProvider.getApplicationContext<Context>()
@@ -89,15 +95,17 @@ class BackupSyncFoldersWorkerTest {
                 ) = BackupSyncFoldersWorker(
                     context = appContext,
                     workerParams = workerParameters,
-                    syncFolders = SyncFolders(
-                        GetAllFolders(repository),
-                        stubbedBackupManager,
-                    ),
-                    addBackupError = AddBackupError(BackupErrorRepositoryImpl(database.db)),
+                    syncFolders = syncFolders,
+                    addBackupError = addBackupError,
                 )
 
             })
-            .setInputData(BackupSyncFoldersWorker.workDataOf(folderId, UploadFileLink.BACKUP_PRIORITY))
+            .setInputData(
+                BackupSyncFoldersWorker.workDataOf(
+                    folderId,
+                    UploadFileLink.BACKUP_PRIORITY
+                )
+            )
             .build()
     }
 }

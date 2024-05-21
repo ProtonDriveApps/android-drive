@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.robot
 
 import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
 import me.proton.android.drive.ui.screen.SettingsScreenTestTag
+import me.proton.core.accountmanager.test.robot.AccountSettingsRobot
 import me.proton.core.drive.settings.presentation.SettingsTestTag
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
@@ -28,6 +29,7 @@ object SettingsRobot : NavigationBarRobot {
     private val settingsScreen get() = node.withTag(SettingsScreenTestTag.screen)
     private val settingsList get() = node.withTag(SettingsTestTag.list)
     private val photosBackup get() = node.withText(I18N.string.settings_photos_backup)
+    private val account get() = node.withTag(SettingsTestTag.account)
     private val clearLocalCache get() = node.withText(I18N.string.settings_clear_local_cache_entry)
     private val messageNotificationLocalCacheClearedSuccessfully get() = node
         .withText(I18N.string.in_app_notification_clear_local_cache_success)
@@ -38,6 +40,8 @@ object SettingsRobot : NavigationBarRobot {
     }
 
     fun clickPhotosBackup() = photosBackup.clickTo(PhotosBackupRobot)
+
+    fun clickAccount() = account.click().let { AccountSettingsRobot }
 
     fun localCacheClearedSuccessfullyWasShown() = messageNotificationLocalCacheClearedSuccessfully
         .await { assertIsDisplayed() }

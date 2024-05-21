@@ -76,6 +76,7 @@
     <string name="settings_theme_entry">Theme</string>
     <string name="settings_theme_dialog_title">@string/settings_theme_entry</string>
     <string name="settings_theme_dialog_cancel_action">@string/common_cancel_action</string>
+    <string name="settings_home_tab">Default home tab</string>
     <string name="settings_section_system">System</string>
     <string name="settings_clear_local_cache_entry">Clear local cache</string>
 

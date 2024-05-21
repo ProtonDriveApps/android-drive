@@ -27,6 +27,8 @@ android {
 driveModule(
     hilt = true,
     room = true,
+    socialTest = true,
+    workManager = true,
 ) {
     api(project(":drive:drivelink-shared:domain"))
     api(project(":drive:drivelink:data"))
