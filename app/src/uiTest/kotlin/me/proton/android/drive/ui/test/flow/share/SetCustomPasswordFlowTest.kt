@@ -27,14 +27,14 @@ import me.proton.android.drive.ui.robot.ShareRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import org.junit.Test
 
 @HiltAndroidTest
 class SetCustomPasswordFlowTest : AuthenticatedBaseTest() {
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING, NOT_FOUND)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun deleteCustomPassword() {
         val file = FOLDER_SHARED_WITH_PASSWORD
         showShareViaLinkScreen(file) {
@@ -58,7 +58,7 @@ class SetCustomPasswordFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING, NOT_FOUND)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun setCustomPassword() {
         val file = FILE_SHARED
         showShareViaLinkScreen(file) {
@@ -85,7 +85,7 @@ class SetCustomPasswordFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING, NOT_FOUND)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun copyPasswordAndVerifyAllowedLength() {
         val file = FILE_SHARED_WITH_PASSWORD
         showShareViaLinkScreen(file) {
@@ -102,7 +102,7 @@ class SetCustomPasswordFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING, NOT_FOUND)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun discardPasswordChanges() {
         val file = FILE
         showShareViaLinkScreen(file) {

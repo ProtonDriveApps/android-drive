@@ -79,5 +79,4 @@ class GetShareUsers @Inject constructor(
             emit(emptyList<ShareUser>().asSuccess)
         }
     }
-
 }

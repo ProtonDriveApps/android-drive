@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">Aplicació</string>
+  <string name="common_more">Més</string>
+  <string name="common_mime_type">Tipus MIME</string>
+  <string name="common_name">Nom</string>
+  <string name="common_no">No</string>
+  <string name="common_share">Comparteix</string>
+  <string name="common_shared">Compartit</string>
+  <string name="common_size">Mida</string>
+  <string name="common_type">Tipus</string>
+  <string name="common_yes">Sí</string>
+  <string name="common_download">Descarrega</string>
+  <string name="common_downloading">S\'està descarregant</string>
+  <string name="common_link">Enllaç</string>
+  <string name="common_password">Contrasenya</string>
+  <string name="common_retry">Reintenta</string>
+  <string name="common_settings">Preferències</string>
+  <string name="common_trash">Paperera</string>
+  <string name="common_uploading">Carregant</string>
+  <string name="common_on">Activat</string>
+  <string name="common_off">Desactivat</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">D\'acord</string>
+  <string name="common_close_action">Tanca</string>
+  <string name="common_retry_action">Reintenta</string>
+  <string name="common_undo_action">Desfés</string>
+  <string name="common_rename_action">Canvia el nom</string>
+  <string name="common_send_action">Envia</string>
+  <string name="common_create_action">Crea</string>
+  <string name="common_cancel_action">Cancel·la</string>
+  <string name="common_cancel_all_action">Cancel·la-ho tot</string>
+  <string name="common_got_it_action">Ho heu aconseguit</string>
+  <string name="common_next_action">Següent</string>
+  <string name="common_save_action">Desa</string>
+  <string name="common_discard_action">Descarta</string>
+  <string name="common_skip_action">Omet</string>
+  <string name="common_delete_permanently_action">Elimina de manera permanent</string>
+  <string name="common_make_available_offline_action">Posa a disposició fora de línia</string>
+  <string name="common_remove_from_offline_available_action">Esborra del mode disposició fora de línia</string>
+  <string name="common_get_link_action">Obtén l\'enllaç</string>
+  <string name="common_manage_link_action">Gestiona l\'enllaç</string>
+  <string name="common_manage_access_action">Gestionar l\'accés</string>
+  <string name="common_copy_link_action">Copia l\'enllaç</string>
+  <string name="common_stop_sharing_action">Deixa de compartir</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">Àudio</string>
+  <string name="common_type_calendar">Format iCalendar</string>
+  <string name="common_type_doc">Document</string>
+  <string name="common_type_image">Imatge</string>
+  <string name="common_type_keynote">Fitxer Keynote</string>
+  <string name="common_type_numbers">Fitxer Numbers</string>
+  <string name="common_type_pages">Fitxer Pages</string>
+  <string name="common_type_pdf">Document PDF</string>
+  <string name="common_type_ppt">Presentació</string>
+  <string name="common_type_text">Text</string>
+  <string name="common_type_trustedkey">Clau de confiança</string>
+  <string name="common_type_unknown">Binari</string>
+  <string name="common_type_video">Vídeo</string>
+  <string name="common_type_xls">Full de càlcul</string>
+  <string name="common_type_xml">Fitxer XML</string>
+  <string name="common_type_zip">Arxiu</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">El nom no pot estar buit.</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">El nom no pot excedir els %1$d caràcters.</string>
+  <string name="common_error_name_with_forbidden_characters">El nom no pot incloure caràcters invisibles, \"/\" o \"\\"</string>
+  <string name="common_error_name_periods">El nom no pot ser \".\" o \"..\"</string>
+  <string name="common_error_no_internet">Sense connexió a internet</string>
+  <string name="common_error_http_5xx">S\'ha produït un error en el servidor.</string>
+  <string name="common_error_internal">S\'ha produït un error intern</string>
+  <string name="common_error_crypto">Error en el xifratge o desxifratge</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">Error en el xifratge o desxifratge: %1$s</string>
+  <string name="common_error_io">Error d\'operació d\'entrada o sortida</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">Error d\'operació d\'entrada o sortida: %1$s</string>
+  <string name="common_error_security">S\'ha produït un error de seguretat.</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">S\'ha produït un error de seguretat: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">Progrés de la càrrega: %1$s</string>
+  <string name="common_sign_out">Tanca la sessió</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="one">%1$d seleccionat</item>
+    <item quantity="other">%1$d seleccionats</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s s\'ha copiat al porta-retalls.</string>
+  <string name="common_in_app_notification_download_started">S\'ha iniciat la descàrrega.</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s descarregat</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="one">%1$d fitxer descarregat</item>
+    <item quantity="other">%1$d fitxers descarregats</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">Error descarregant %1$s</string>
+  <string name="common_in_app_notification_download_failed">Error de descàrrega</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">El sistema no ha trobat cap aplicació que pugui %1$s.</string>
+  <!-- endregion -->
+</resources>

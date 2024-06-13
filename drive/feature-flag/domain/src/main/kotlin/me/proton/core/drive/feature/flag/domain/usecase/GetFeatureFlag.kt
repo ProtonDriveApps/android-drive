@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.feature.flag.domain.usecase
 
-import me.proton.core.drive.base.domain.extension.isOlderThen
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -33,26 +32,14 @@ typealias FeatureFlagCachePolicy = suspend (FeatureFlagId) -> Boolean
 class GetFeatureFlag @Inject constructor(
     private val featureFlagRepository: FeatureFlagRepository,
     private val configurationProvider: ConfigurationProvider,
-) {
-
-    private val refreshAfterDuration: FeatureFlagCachePolicy = { featureFlagId ->
-        featureFlagRepository
-            .getLastRefreshTimestamp(featureFlagId.userId)
-            .isOlderThen(configurationProvider.featureFlagFreshDuration)
-    }
+) : BaseGetFeatureFlag(featureFlagRepository, configurationProvider) {
 
     suspend operator fun invoke(
         featureFlagId: FeatureFlagId,
         refresh: FeatureFlagCachePolicy = refreshAfterDuration,
     ): FeatureFlag {
         if (refresh(featureFlagId)) {
-            featureFlagRepository.refresh(featureFlagId.userId).onFailure { error ->
-                CoreLogger.w(
-                    tag = LogTag.FEATURE_FLAG,
-                    e = error,
-                    message = "Cannot refresh feature flag: ${featureFlagId.id}",
-                )
-            }.getOrNull()
+            refreshFeatureFlag(featureFlagId)
         }
         return coRunCatching {
             featureFlagRepository.getFeatureFlag(featureFlagId)?.takeUnless { featureFlag ->

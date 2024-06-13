@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="backup_issues_title">백업 문제</string>
+  <string name="backup_issues_retry_all_action">전체 다시 시도</string>
+  <string name="backup_issues_skip_action">건너뛰기</string>
+  <string name="backup_issues_skip_confirmation_title">이 사진들의 백업을 건너뛸까요?</string>
+  <string name="backup_issues_skip_confirmation_description">정말 백업하지 않은 사진들을 건너뛸까요? 해당 사진들은 백업되지 않습니다.</string>
+  <string name="backup_issues_skip_confirmation_action">건너뛰기</string>
+</resources>

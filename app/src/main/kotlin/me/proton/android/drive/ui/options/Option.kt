@@ -21,7 +21,9 @@ package me.proton.android.drive.ui.options
 import me.proton.android.drive.ui.common.FolderEntry
 import me.proton.android.drive.ui.common.folderEntry
 import me.proton.core.compose.component.bottomsheet.RunAction
+import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.drivelink.domain.extension.isPhoto
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.files.presentation.entry.CopySharedLinkEntity
@@ -33,6 +35,7 @@ import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.files.presentation.entry.ManageAccessEntity
 import me.proton.core.drive.files.presentation.entry.MoveEntry
 import me.proton.core.drive.files.presentation.entry.MoveFileEntry
+import me.proton.core.drive.files.presentation.entry.RemoveMeEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
 import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntity
@@ -146,6 +149,21 @@ sealed class Option(
         ) = ToggleOfflineEntry { driveLink ->
             runAction {
                 toggleOffline(driveLink)
+            }
+        }
+    }
+
+    data object RemoveMe : Option(
+        ApplicableQuantity.Single,
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            removeMe: suspend (DriveLink) -> Unit,
+        ) = RemoveMeEntry { driveLink ->
+            runAction {
+                removeMe(driveLink)
             }
         }
     }
@@ -327,8 +345,8 @@ enum class State {
 fun DriveLink.toOptionState(): Set<State> = setOf(
     if (isTrashed) State.TRASHED else State.NOT_TRASHED,
     when {
-        isShared && isSharedUrlExpired -> State.SHARED_EXPIRED
-        isShared -> State.SHARED
+        hasShareLink && isSharedUrlExpired -> State.SHARED_EXPIRED
+        hasShareLink -> State.SHARED
         else -> State.NOT_SHARED
     },
 )
@@ -379,10 +397,60 @@ fun Iterable<Option>.filterSharing(featureFlag: FeatureFlag) = filter { option -
         when (option) {
             Option.ShareViaInvitations,
             Option.ManageAccess,
+            Option.RemoveMe,
             -> false
 
             else -> true
         }
+    }
+}
+
+fun Iterable<Option>.filterRoot(driveLink: DriveLink, featureFlag: FeatureFlag) = filter { option ->
+    if (driveLink.parentId == null) {
+        when (option) {
+            Option.Rename -> false //featureFlag.state == FeatureFlag.State.ENABLED
+            Option.Trash -> featureFlag.state == FeatureFlag.State.ENABLED
+            Option.Move -> false
+            else -> true
+        }
+    } else {
+        true
+    }
+}
+
+
+fun Iterable<Option>.filterShareMember(isMember: Boolean) = filter { option ->
+    if (!isMember) {
+        when (option) {
+            Option.RemoveMe -> false
+            else -> true
+        }
+    } else {
+        true
+    }
+}
+
+fun Iterable<Option>.filterPermissions(
+    permissions: Permissions
+) = filter { option ->
+    when (option) {
+        Option.CopySharedLink -> permissions.isAdmin
+        Option.CreateFolder -> permissions.canWrite
+        Option.DeletePermanently -> permissions.canWrite
+        Option.Download -> permissions.canRead
+        Option.Info -> permissions.canRead
+        Option.ManageAccess -> permissions.isAdmin
+        Option.Move -> permissions.canWrite
+        Option.OfflineToggle -> permissions.canRead
+        Option.Rename -> permissions.canWrite
+        Option.SendFile -> permissions.canRead
+        Option.ShareViaInvitations -> permissions.isAdmin
+        Option.ShareViaLink -> permissions.isAdmin
+        Option.StopSharing -> permissions.isAdmin
+        Option.TakeAPhoto -> permissions.canWrite
+        Option.Trash -> permissions.isAdmin
+        Option.UploadFile -> permissions.canWrite
+        Option.RemoveMe -> permissions.canRead
     }
 }
 

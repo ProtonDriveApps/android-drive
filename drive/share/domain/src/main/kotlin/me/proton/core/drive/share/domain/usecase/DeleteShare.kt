@@ -17,7 +17,9 @@
  */
 package me.proton.core.drive.share.domain.usecase
 
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.repository.ShareRepository
 import javax.inject.Inject
@@ -29,7 +31,19 @@ class DeleteShare @Inject constructor(
     suspend operator fun invoke(
         shareId: ShareId,
         locallyOnly: Boolean = false,
+        force: Boolean = false,
     ): Result<Unit> = coRunCatching {
-        shareRepository.deleteShare(shareId, locallyOnly)
+        if (locallyOnly) {
+            check(!force) { "force only apply when locallyOnly is false" }
+        }
+        if (force) {
+            val share = shareRepository.getShareFlow(shareId).toResult().getOrThrow()
+            check(share.type == Share.Type.STANDARD) { "force must only be used with standard share" }
+        }
+        shareRepository.deleteShare(
+            shareId = shareId,
+            locallyOnly = locallyOnly,
+            force = force,
+        )
     }
 }

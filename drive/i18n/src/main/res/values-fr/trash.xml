@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items sent to trash"
+    -->
+  <plurals name="trash_operation_successful_format">
+    <item quantity="one">1 élément envoyé dans le dossier Corbeille</item>
+    <item quantity="other">%1$d éléments envoyés dans le dossier Corbeille</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items restored"
+    -->
+  <plurals name="trash_restore_operation_successful_format">
+    <item quantity="one">1 élément restauré</item>
+    <item quantity="other">%d éléments restaurés</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items deleted permanently"
+    -->
+  <plurals name="trash_delete_operation_successful_format">
+    <item quantity="one">1 élément définitivement supprimé</item>
+    <item quantity="other">%d éléments définitivement supprimés</item>
+  </plurals>
+  <string name="trash_empty_operation_successful">Corbeille vidée</string>
+  <string name="trash_error_occurred_sending_to_trash">Une erreur s\'est produite pendant l\'envoi d\'un ou de plusieurs fichiers dans le dossier Corbeille.</string>
+  <string name="trash_error_occurred_restoring_from_trash">Une erreur s\'est produite pendant la restauration d\'un ou de plusieurs fichiers.</string>
+  <string name="trash_error_occurred_deleting_from_trash">Une erreur s\'est produite pendant la suppression d\'un ou de plusieurs fichiers.</string>
+  <string name="trash_error_occurred_emptying_trash">Une erreur s\'est produite pendant l\'action de vider le dossier Corbeille.</string>
+</resources>

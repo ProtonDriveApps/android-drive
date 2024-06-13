@@ -36,13 +36,13 @@ interface ShareInvitationApi : BaseRetrofitApi {
     @GET("drive/v2/shares/{shareId}/invitations")
     suspend fun getInvitations(
         @Path("shareId") shareId: String,
-    ) : GetSharesInvitationsResponse
+    ): GetSharesInvitationsResponse
 
     @POST("drive/v2/shares/{shareId}/invitations")
     suspend fun postInvitation(
         @Path("shareId") shareId: String,
         @Body request: CreateShareInvitationRequest,
-    ) : PostShareInvitationResponse
+    ): PostShareInvitationResponse
 
     @PUT("drive/v2/shares/{shareId}/invitations/{invitationId}")
     suspend fun updateInvitation(
@@ -53,6 +53,12 @@ interface ShareInvitationApi : BaseRetrofitApi {
 
     @DELETE("drive/v2/shares/{shareId}/invitations/{invitationId}")
     suspend fun deleteInvitation(
+        @Path("shareId") shareId: String,
+        @Path("invitationId") invitationId: String,
+    ) : Response
+
+    @POST("drive/v2/shares/{shareId}/invitations/{invitationId}/sendemail")
+    suspend fun sendEmail(
         @Path("shareId") shareId: String,
         @Path("invitationId") invitationId: String,
     ) : Response

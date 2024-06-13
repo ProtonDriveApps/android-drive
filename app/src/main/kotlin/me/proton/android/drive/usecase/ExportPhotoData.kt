@@ -135,7 +135,7 @@ class ExportPhotoData @Inject constructor(
                     xAttrCommon?.modificationTime,
                     userId.id,
                     shareId.id,
-                    parentId.id,
+                    parentId?.id,
                     id.id,
                 )
             }

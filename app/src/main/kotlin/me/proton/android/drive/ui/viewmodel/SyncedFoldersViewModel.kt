@@ -58,9 +58,10 @@ import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
-import me.proton.core.drive.files.presentation.state.ListContentAppendingState
-import me.proton.core.drive.files.presentation.state.ListContentState
-import me.proton.core.drive.files.presentation.state.ListEffect
+import me.proton.core.drive.base.presentation.state.ListContentAppendingState
+import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.i18n.R
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.domain.entity.ShareId

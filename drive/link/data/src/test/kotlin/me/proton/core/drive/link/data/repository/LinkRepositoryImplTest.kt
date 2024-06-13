@@ -19,7 +19,6 @@
 package me.proton.core.drive.link.data.repository
 
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.file
@@ -36,6 +35,7 @@ import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.usecase.SortLinksByParents
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -44,7 +44,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class LinkRepositoryImplTest {
 
@@ -52,10 +51,11 @@ class LinkRepositoryImplTest {
     val database = DriveDatabaseRule()
 
     private lateinit var repository: LinkRepositoryImpl
+    private val sortLinksByParents = SortLinksByParents()
 
     @Before
     fun setUp() {
-        repository = LinkRepositoryImpl(mockk(), database.db)
+        repository = LinkRepositoryImpl(mockk(), database.db, sortLinksByParents)
     }
 
     @Test

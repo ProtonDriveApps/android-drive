@@ -56,7 +56,7 @@ interface BaseLink {
 
 interface File : BaseLink {
     override val id: FileId
-    override val parentId: FolderId
+    override val parentId: FolderId?
     val hasThumbnail: Boolean
     val activeRevisionId: String
     val photoCaptureTime: TimestampS?
@@ -87,7 +87,7 @@ sealed class Link : BaseLink {
 
     data class File(
         override val id: FileId,
-        override val parentId: FolderId,
+        override val parentId: FolderId?,
         override val name: String,
         override val size: Bytes,
         override val lastModified: TimestampS,

@@ -51,6 +51,7 @@
         <item quantity="other">Sharing with %1$d persons</item>
     </plurals>
 
+    <string name="share_via_invitations_permission_owner">Owner</string>
     <string name="share_via_invitations_permission_admin">Admin</string>
     <string name="share_via_invitations_permission_editor">Editor</string>
     <string name="share_via_invitations_permission_viewer">Viewer</string>
@@ -63,4 +64,9 @@
     <string name="share_via_invitations_invitation_sent">%1$s (Invitation sent)</string>
     <string name="share_via_invitations_add_people_hint">Add people</string>
     <string name="share_via_invitations_copy_invite_link_action">Copy invite link</string>
+    <string name="share_via_invitations_remove_access_action">Remove access</string>
+    <string name="share_via_invitations_stop_sharing_title">@string/common_stop_sharing_action</string>
+    <string name="share_via_invitations_stop_sharing_description">Delete link and remove access for everyone</string>
+    <string name="share_via_invitations_resend_invite_action">Resend invite</string>
+    <string name="share_via_invitations_resend_invite_success">Invitation was resent</string>
 </resources>

@@ -21,43 +21,24 @@ import android.content.res.Configuration
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.paging.compose.itemKey
-import me.proton.core.compose.component.DeferredCircularProgressIndicator
-import me.proton.core.compose.component.ErrorPadding
-import me.proton.core.compose.component.ProtonErrorMessage
-import me.proton.core.compose.component.ProtonErrorMessageWithAction
-import me.proton.core.compose.component.ProtonSolidButton
-import me.proton.core.compose.theme.ProtonDimens
-import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
-import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
-import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.drive.base.presentation.component.IllustratedMessage
-import me.proton.core.drive.base.presentation.extension.conditional
-import me.proton.core.drive.base.presentation.extension.isLandscape
-import me.proton.core.drive.base.presentation.extension.isPortrait
+import me.proton.core.drive.base.presentation.component.list.ListEmpty
+import me.proton.core.drive.base.presentation.component.list.ListError
+import me.proton.core.drive.base.presentation.component.list.ListLoading
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.files.presentation.component.LazyColumnItems
 import me.proton.core.util.kotlin.exhaustive
@@ -65,78 +46,22 @@ import kotlin.math.ceil
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 
-@Composable
-fun FilesListLoading(modifier: Modifier = Modifier) {
-    DeferredCircularProgressIndicator(modifier)
-}
-
 fun LazyListScope.FilesListLoading(modifier: Modifier = Modifier) {
     item {
-        me.proton.core.drive.files.presentation.component.files.FilesListLoading(modifier.fillParentMaxSize())
+        ListLoading(modifier.fillParentMaxSize())
     }
 }
-
-@Composable
-fun FilesListEmpty(
-    @DrawableRes imageResId: Int,
-    @StringRes titleResId: Int,
-    @StringRes descriptionResId: Int,
-    @StringRes actionResId: Int,
-    modifier: Modifier = Modifier,
-    onAction: () -> Unit,
-) {
-    Column(
-        modifier = modifier.fillMaxSize(),
-    ) {
-        IllustratedMessage(
-            imageResId = imageResId,
-            titleResId = titleResId,
-            descriptionResId = descriptionResId,
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f),
-        )
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center,
-        ) {
-            if (actionResId != 0) {
-                ProtonSolidButton(
-                    onClick = onAction,
-                    modifier = Modifier
-                        .conditional(isPortrait) {
-                            this
-                                .padding(all = MediumSpacing)
-                                .fillMaxWidth()
-                        }
-                        .conditional(isLandscape) {
-                            this
-                                .padding(all = SmallSpacing)
-                                .widthIn(min = ButtonMinWidth)
-                        }
-                        .heightIn(min = ProtonDimens.ListItemHeight),
-                ) {
-                    Text(
-                        text = stringResource(id = actionResId),
-                        modifier = Modifier.padding(horizontal = DefaultSpacing)
-                    )
-                }
-            }
-        }
-    }
-}
-
 
 fun LazyListScope.FilesListEmpty(
     @DrawableRes imageResId: Int,
     @StringRes titleResId: Int,
-    @StringRes descriptionResId: Int,
-    @StringRes actionResId: Int,
+    @StringRes descriptionResId: Int?,
+    @StringRes actionResId: Int?,
     modifier: Modifier = Modifier,
     onAction: () -> Unit,
 ) {
     item {
-        me.proton.core.drive.files.presentation.component.files.FilesListEmpty(
+        ListEmpty(
             imageResId = imageResId,
             titleResId = titleResId,
             descriptionResId = descriptionResId,
@@ -147,31 +72,6 @@ fun LazyListScope.FilesListEmpty(
     }
 }
 
-@Composable
-fun FilesListError(
-    message: String,
-    @StringRes actionResId: Int?,
-    modifier: Modifier = Modifier,
-    onAction: () -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(ErrorPadding),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        if (actionResId != null) {
-            ProtonErrorMessageWithAction(
-                errorMessage = message,
-                action = stringResource(id = actionResId),
-                onAction = onAction
-            )
-        } else {
-            ProtonErrorMessage(errorMessage = message)
-        }
-    }
-}
-
 fun LazyListScope.FilesListError(
     message: String,
     @StringRes actionResId: Int?,
@@ -179,7 +79,7 @@ fun LazyListScope.FilesListError(
     onAction: () -> Unit,
 ) {
     item {
-        me.proton.core.drive.files.presentation.component.files.FilesListError(
+        ListError(
             message = message,
             actionResId = actionResId,
             modifier = modifier.fillParentMaxSize(),
@@ -247,7 +147,7 @@ fun LazyListScope.FilesGridContent(
 private fun PreviewMyFilesEmpty() {
     ProtonTheme {
         Surface {
-            FilesListEmpty(
+            ListEmpty(
                 imageResId = BasePresentation.drawable.empty_folder_daynight,
                 titleResId = I18N.string.title_empty_my_files,
                 descriptionResId = I18N.string.description_empty_my_files,
@@ -270,7 +170,7 @@ private fun PreviewMyFilesEmpty() {
 private fun PreviewFolderEmpty() {
     ProtonTheme {
         Surface {
-            FilesListEmpty(
+            ListEmpty(
                 imageResId = BasePresentation.drawable.empty_folder_daynight,
                 titleResId = I18N.string.title_empty_folder,
                 descriptionResId = I18N.string.description_empty_folder,
@@ -293,11 +193,11 @@ private fun PreviewFolderEmpty() {
 private fun PreviewTrashEmpty() {
     ProtonTheme {
         Surface {
-            FilesListEmpty(
+            ListEmpty(
                 imageResId = BasePresentation.drawable.empty_trash_daynight,
                 titleResId = I18N.string.title_empty_trash,
                 descriptionResId = I18N.string.description_empty_trash,
-                actionResId = 0,
+                actionResId = null,
                 onAction = {}
             )
         }
@@ -316,11 +216,11 @@ private fun PreviewTrashEmpty() {
 private fun PreviewSharedEmpty() {
     ProtonTheme {
         Surface {
-            FilesListEmpty(
+            ListEmpty(
                 imageResId = BasePresentation.drawable.empty_shared_by_me_daynight,
                 titleResId = I18N.string.title_empty_shared,
                 descriptionResId = I18N.string.description_empty_shared,
-                actionResId = 0,
+                actionResId = null,
                 onAction = {}
             )
         }
@@ -339,15 +239,13 @@ private fun PreviewSharedEmpty() {
 private fun PreviewAvailableOfflineEmpty() {
     ProtonTheme {
         Surface {
-            FilesListEmpty(
+            ListEmpty(
                 imageResId = BasePresentation.drawable.empty_offline_daynight,
                 titleResId = I18N.string.title_empty_offline_available,
                 descriptionResId = I18N.string.description_empty_offline_available,
-                actionResId = 0,
+                actionResId = null,
                 onAction = {}
             )
         }
     }
 }
-
-private val ButtonMinWidth = 300.dp

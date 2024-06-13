@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Стварэнне спасылкі на %1$s</string>
+  <string name="shared_link_getting_link">Атрыманне спасылкі</string>
+  <string name="shared_link_file">файла</string>
+  <string name="shared_link_folder">папкі</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Любы чалавек, які мае гэту спасылку, зможа атрымаць доступ да %1$s</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Толькі карыстальнікі са спасылкай і паролем могуць атрымаць доступ да %1$s</string>
+  <string name="shared_link_privacy_settings">Налады прыватнасці</string>
+  <string name="shared_link_password_protection">Абарона паролем</string>
+  <string name="shared_link_expiration_date">Тэрмін дзеяння</string>
+  <string name="shared_link_action_copy_link">Капіяваць спасылку</string>
+  <string name="shared_link_action_copy_password">Капіяваць пароль</string>
+  <string name="shared_link_action_share_link">Абагуліць спасылку</string>
+  <string name="shared_link_dialog_title_discard_changes">Адхіліць змены?</string>
+  <string name="shared_link_dialog_description">Вы страціце ўсе незахаваныя змены.</string>
+  <string name="shared_link_hint_expiration_date_field">Тэрмін дзеяння адсутнічае</string>
+  <string name="shared_link_message_update_share_url">Налады абагулення абноўлены</string>
+  <string name="shared_link_error_message_update_share_url">Не ўдалося абнавіць налады абагулення</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">Даўжыня пароля павінна быць ад 1 да %1$d сімвалаў</string>
+  <string name="shared_link_error_message_not_found">Абагуленая спасылка або не існуе, або была пратэрмінавана</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">Тэрмін дзеяння павінен быць як мінімум заўтра</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">Тэрмін дзеяння не можа перавышаць %1$d дзён</string>
+  <string name="shared_link_error_legacy_link">Гэта старая спасылка, кіраванне якой не падтрымліваецца. Рэкамендуецца спыніць абагульванне гэтай спасылкі і атрымаць новую.</string>
+  <string name="title_share_via_link">Абагуліць праз спасылку</string>
+  <string name="shared_with_me_title">Абагулена са мной</string>
+  <string name="shared_by_me_title">Абагулена мной</string>
+  <string name="shared_with_me_empty_description">Тут з\'явяцца файлы і папкі, якія вы абагулілі з іншымі</string>
+  <string name="shared_by_me_empty_description">Бяспечна абагульвайце свае файлы і папкі з дапамогай скразнога шыфравання</string>
+</resources>

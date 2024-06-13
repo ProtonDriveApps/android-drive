@@ -24,12 +24,14 @@ import dagger.hilt.components.SingletonComponent
 import me.proton.core.drive.base.data.formatter.DateTimeFormatterImpl
 import me.proton.core.drive.base.data.repository.BaseRepositoryImpl
 import me.proton.core.drive.base.data.usecase.CopyToClipboardImpl
+import me.proton.core.drive.base.data.usecase.DeviceInfoImpl
 import me.proton.core.drive.base.data.usecase.GetInternalStorageInfoImpl
 import me.proton.core.drive.base.data.usecase.GetMemoryInfoImpl
 import me.proton.core.drive.base.data.usecase.Sha256Impl
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
 import me.proton.core.drive.base.domain.repository.BaseRepository
 import me.proton.core.drive.base.domain.usecase.CopyToClipboard
+import me.proton.core.drive.base.domain.usecase.DeviceInfo
 import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.base.domain.usecase.GetMemoryInfo
 import me.proton.core.drive.base.domain.usecase.Sha256
@@ -62,4 +64,8 @@ interface BaseBindModule {
     @Binds
     @Singleton
     fun bindsRepositoryImpl(impl: BaseRepositoryImpl): BaseRepository
+
+    @Binds
+    @Singleton
+    fun bindsDeviceInfoImpl(impl: DeviceInfoImpl): DeviceInfo
 }

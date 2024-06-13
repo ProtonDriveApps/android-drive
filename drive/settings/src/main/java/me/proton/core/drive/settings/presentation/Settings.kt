@@ -172,6 +172,14 @@ fun Settings(
                 viewEvent.onClearLocalCache()
             }
 
+            if (viewState.isLogSettingVisible) {
+                ProtonSettingsItem(
+                    name = stringResource(id = I18N.string.settings_show_log),
+                ) {
+                    viewEvent.onShowLog()
+                }
+            }
+
             NavigationDrawerAppVersion(
                 modifier = Modifier.padding(top = DefaultSpacing),
                 name = stringResource(id = viewState.appNameResId),
@@ -226,6 +234,7 @@ private fun SettingsPreview() {
                 onClearLocalCache = {},
                 onPhotosBackup = {},
                 onDefaultHomeTab = {},
+                onShowLog = {},
             )
         )
     }

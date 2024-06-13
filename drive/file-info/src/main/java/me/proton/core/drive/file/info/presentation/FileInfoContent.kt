@@ -243,6 +243,9 @@ private fun PreviewFileInfoContent() {
         downloadState = null,
         trashState = null,
         cryptoName = CryptoProperty.Decrypted("Link name", VerificationStatus.Success),
+        shareInvitationCount = null,
+        shareMemberCount = null,
+        shareUser = null,
     )
     FileInfoContent(
         driveLink = driveLink,

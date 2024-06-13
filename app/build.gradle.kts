@@ -179,10 +179,12 @@ android {
             if (!System.getenv("CI_SERVER_NAME").isNullOrEmpty()) {
                 generateEnvFile(buildTypes.getByName("debug"))
             }
+            resourceConfigurations.addAll(Config.supportedResourceConfigurations)
         }
         create("alpha") {
             versionCode = (versionCodeFromGitCommitCount * 10) + 1
             versionNameSuffix = "-alpha ($gitCommitCount)"
+            resourceConfigurations.addAll(Config.incubatingResourceConfigurations)
         }
         create("beta") {
             versionCode = (versionCodeFromGitCommitCount * 10) + 2

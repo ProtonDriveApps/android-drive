@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Розшифрування</string>
+  <string name="title_files">Файли</string>
+  <string name="title_shared">Спільний доступ</string>
+  <string name="title_my_files">Мої файли</string>
+  <string name="title_offline_available">Доступні офлайн</string>
+  <string name="title_empty_my_files">Не зволікайте, додайте свій перший файл</string>
+  <string name="title_empty_folder">Заповнимо цю теку</string>
+  <string name="title_empty_folder_read_only">Порожня тека</string>
+  <string name="title_empty_shared">Слідкуйте за тим, що відбувається</string>
+  <string name="title_empty_offline_available">Нічого не доступно офлайн</string>
+  <string name="title_empty_trash">Смітник порожній</string>
+  <string name="title_empty_trash_action">Спорожнити смітник</string>
+  <string name="title_files_confirm_deletion">Видалити остаточно?</string>
+  <string name="title_default_home_screen_tab">Виберіть типову вкладку головного екрана</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Програма</string>
+  <string name="description_signing_out">Вихід з облікового запису…</string>
+  <string name="settings_about_links_acknowledgments_title">Подяки</string>
+  <string name="settings_about_links_privacy_policy_title">Політика приватності</string>
+  <string name="settings_about_links_terms_of_service_title">Умови користування</string>
+  <string name="common_error_no_browser_available">Ми не змогли відкрити посилання, адже у вас не встановлено браузер</string>
+  <string name="move_to">Перемістити до</string>
+  <string name="move_file_confirm_action">Перемістити</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">Неможливо перемістити теку саму в себе</string>
+  <string name="folder_option_import_file">Вивантажити файл</string>
+  <string name="folder_option_create_folder">Створити теку</string>
+  <string name="folder_option_take_a_photo">Зробити нове фото</string>
+  <string name="settings_theme_system_default">Системна</string>
+  <string name="settings_theme_dark">Темна</string>
+  <string name="settings_theme_light">Світла</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Вивантажити до %1$s</string>
+  <string name="upload_title">Вивантажити</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">До %1$s можна вивантажувати лише файли</string>
+  <string name="in_app_notification_importing_file_already_exists">Файл з такою назвою вже існує, спробуйте очистити кеш програми</string>
+  <string name="in_app_notification_clear_local_cache_success">Локальний кеш успішно очищено</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Сховище заповнене</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Вивантаження файлів до %1$s</string>
+  <string name="notification_content_title_upload_complete">Вивантаження завершено</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Вивантаження %1$d файлу</item>
+    <item quantity="few">Вивантаження %1$d файлів</item>
+    <item quantity="many">Вивантаження %1$d файлів</item>
+    <item quantity="other">Вивантаження %1$d файлів</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">Вивантажено %1$d файл</item>
+    <item quantity="few">Вивантажено %1$d файли</item>
+    <item quantity="many">Вивантажено %1$d файлів</item>
+    <item quantity="other">Вивантажено %1$d файлів</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d файл скасовано</item>
+    <item quantity="few">%1$d файли скасовано</item>
+    <item quantity="many">%1$d файлів скасовано</item>
+    <item quantity="other">%1$d файлів скасовано</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">Не вдалося вивантажити %1$d файл</item>
+    <item quantity="few">Не вдалося вивантажити %1$d файли</item>
+    <item quantity="many">Не вдалося вивантажити %1$d файлів</item>
+    <item quantity="other">Не вдалося вивантажити %1$d файлів</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Резервне копіювання фотографій до %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">Залишився %1$s елемент</item>
+    <item quantity="few">Залишилось %1$s елементи</item>
+    <item quantity="many">Залишилось %1$s елементів</item>
+    <item quantity="other">Залишилось %1$s елементів</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Резервне копіювання завершено</string>
+  <string name="notification_content_text_backup_uncompleted">Резервне копіювання завершено з проблемами</string>
+  <string name="notification_content_text_backup_failed">Збій резервного копіювання</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Сховище Proton заповнене</string>
+  <string name="notification_content_text_backup_failed_local_storage">Локальне сховище заповнене</string>
+  <string name="notification_content_text_backup_failed_permission">Відсутні дозволи</string>
+  <string name="notification_content_text_backup_failed_connectivity">Немає з\'єднання з інтернетом</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Очікування на Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Резервне копіювання не дозволено</string>
+  <string name="notification_content_text_backup_paused_disabled">Резервне копіювання було вимкнено</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Резервне копіювання не може працювати на задньому плані</string>
+  <string name="notification_content_title_download_complete">Звантаження завершено</string>
+  <string name="notification_content_title_forced_sign_out">Увійдіть</string>
+  <string name="notification_content_text_forced_sign_out">Перепрошуємо, що перериваємо! У нас виникла проблема з синхронізацією. Увійдіть ще раз, і все працюватиме без збоїв.</string>
+  <string name="notification_content_title_no_space_left_on_device">Недостатньо місця на пристрої</string>
+  <string name="notification_content_text_no_space_left_on_device">Програма може працювати неправильно.</string>
+  <string name="notification_channel_group_name_application">Програма</string>
+  <string name="notification_channel_background_title">У фоновому режимі</string>
+  <string name="notification_channel_background_description">Канал для фонових операцій на кшталт резервного копіювання</string>
+  <string name="notification_channel_transfer_title">Передавання</string>
+  <string name="notification_channel_transfer_description">Канал для хмарного сховища, сповіщень про завантаження та вивантаження</string>
+  <string name="notification_channel_warning_title">Попередження</string>
+  <string name="notification_channel_warning_description">Канал для попереджень, які вимагають дій від користувача</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Вибрати усі елементи у цьому списку</string>
+  <string name="content_description_selected_options">Показати більше опцій для вибраних файлів і/або тек</string>
+  <string name="content_description_files_upload_upload_file">Вивантажити файл</string>
+  <string name="description_empty_my_files">Торкніться кнопки, щоб розпочати додавання файлів.</string>
+  <string name="description_empty_folder_read_only">Тут нічого немає</string>
+  <string name="description_empty_shared">Тут з\'являються пов\'язані файли, щоб ви могли легко відстежувати та керувати спільним доступом.</string>
+  <string name="description_empty_trash">Це місце, де видалені елементи залишаються, доки ви їх остаточно не видалите або не відновите.</string>
+  <string name="description_empty_offline_available">Зробіть необхідні файли завжди доступними, навіть коли ваша мережа не працює.</string>
+  <string name="description_no_drive_scope">Користувач не має доступу до диска.</string>
+  <string name="description_file_download_failed">Помилка завантаження. Перевірте з\'єднання з інтернетом і спробуйте знову.</string>
+  <string name="description_file_decryption_failed">Не вдалося розшифрувати файл</string>
+  <string name="description_file_verify_signature_failed">Не вдалося перевірити підпис файлу</string>
+  <string name="description_files_stop_sharing">Це видалить посилання та закриє доступ до вашої теки для всіх, хто має посилання.</string>
+  <string name="description_files_stop_sharing_action_success">Посилання на ваш файл було видалено.</string>
+  <string name="description_files_stop_sharing_action_error">Сталася помилка під час видалення посилання на ваш файл.</string>
+  <string name="description_files_stop_all_sharing">Ця дія видалить посилання і скасує доступ для всіх.</string>
+  <string name="description_files_stop_all_sharing_action_success">Спільний доступ для вашого файлу скасовано.</string>
+  <string name="description_files_stop_all_sharing_action_error">Під час скасування спільного доступу до вашого файлу виникла помилка.</string>
+  <string name="ignore_file_signature_action">Усе одно переглянути</string>
+  <string name="action_empty_files_add_files">Вивантажити</string>
+  <string name="error_could_not_send_file">Сталася помилка під час спроби надіслати файл</string>
+  <string name="error_could_not_load_folder_content">Сталася помилка під час спроби завантажити вміст теки</string>
+  <string name="error_main_share_locked">У зв\'язку зі скиданням пароля, ваші файли більше недоступні. Для відновлення доступу повторно вивантажте старий ключ шифрування.</string>
+  <string name="error_share_locked">Спільний доступ обмежено.</string>
+  <string name="error_main_share_not_found">Основний спільний елемент не знайдено</string>
+  <string name="error_share_not_found">Спільний доступ не знайдено.</string>
+  <string name="error_creating_photo_share_not_allowed">Резервне копіювання фотографій тимчасово вимкнено.</string>
+  <string name="error_creating_share_not_allowed">Створення спільного доступу тимчасово вимкнено.</string>
+  <string name="operation_open_document">відкрити документ</string>
+  <string name="operation_create_document">створити документ</string>
+  <string name="operation_take_picture">сфотографувати</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Розблокуйте %1$s безплатного сховища</string>
+  <string name="get_more_free_storage_description">Виконайте ці кроки протягом перших 30 днів, щоб отримати безплатне збільшення сховища.</string>
+  <string name="get_more_free_storage_action_upload_title">Вивантажте файл АБО ввімкніть резервне копіювання фото</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Усі ваші файли будуть зашифровані.</string>
+  <string name="get_more_free_storage_action_link_title">Створіть посилання для спільного доступу</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Виберіть будь-який файл або теку. Відкрийте меню налаштувань і натисніть %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_recovery_title">Налаштуйте спосіб відновлення</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Увійдіть в %1$s, потім відкрийте Налаштування -&gt; Відновлення.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

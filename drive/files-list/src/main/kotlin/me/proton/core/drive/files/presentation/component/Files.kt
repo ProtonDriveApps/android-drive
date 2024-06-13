@@ -66,8 +66,12 @@ import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.files.presentation.state.FilesViewState
-import me.proton.core.drive.files.presentation.state.ListContentState
-import me.proton.core.drive.files.presentation.state.ListEffect
+import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.extension.onContent
+import me.proton.core.drive.base.presentation.extension.onEmpty
+import me.proton.core.drive.base.presentation.extension.onError
+import me.proton.core.drive.base.presentation.extension.onLoading
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.presentation.compose.FilesUploadingListItem
 import me.proton.core.drive.sorting.presentation.state.toSortingViewState
@@ -290,30 +294,6 @@ private fun UploadItem(
         onCancelClick = { viewEvent.onCancelUpload(uploadFileLink) },
         uploadProgress = uploadProgress?.value
     )
-}
-
-inline fun ListContentState.onLoading(action: () -> Unit) = apply {
-    if (this == ListContentState.Loading) {
-        action()
-    }
-}
-
-inline fun ListContentState.onEmpty(action: (ListContentState.Empty) -> Unit) = apply {
-    if (this is ListContentState.Empty) {
-        action(this)
-    }
-}
-
-inline fun ListContentState.onError(action: (ListContentState.Error) -> Unit) = apply {
-    if (this is ListContentState.Error) {
-        action(this)
-    }
-}
-
-inline fun ListContentState.onContent(action: (ListContentState.Content) -> Unit) = apply {
-    if (this is ListContentState.Content) {
-        action(this)
-    }
 }
 
 @Composable

@@ -28,12 +28,14 @@ import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.repository.fetcher
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetAllMembershipId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.repository.ShareMemberRepository
 import javax.inject.Inject
 
 class GetMembersFlow @Inject constructor(
     private val repository: ShareMemberRepository,
+    private val getAllMembershipId: GetAllMembershipId,
     private val configurationProvider: ConfigurationProvider,
 ) {
     operator fun invoke(
@@ -42,7 +44,10 @@ class GetMembersFlow @Inject constructor(
     ): Flow<DataResult<List<ShareUser.Member>>> = refresh.transform { shouldRefresh ->
         if (shouldRefresh) {
             fetcher {
-                repository.fetchMembers(shareId)
+                repository.fetchAndStoreMembers(
+                    shareId = shareId,
+                    ignoredIds = getAllMembershipId(shareId.userId).getOrThrow()
+                )
             }
         }
         emitAll(repository.getMembersFlow(

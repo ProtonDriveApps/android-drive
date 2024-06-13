@@ -17,14 +17,17 @@
  */
 package me.proton.core.drive.eventmanager.usecase
 
+import me.proton.core.drive.base.domain.log.LogTag.SHARING
 import me.proton.core.drive.eventmanager.entity.LinkEventVO
 import me.proton.core.drive.share.domain.usecase.DeleteShare
+import me.proton.core.drive.shareurl.base.domain.usecase.DeleteShareUrl
 import me.proton.core.drive.shareurl.base.domain.usecase.GetShareUrl
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class HandleDeletedShareUrlIds @Inject constructor(
     private val getShareUrl: GetShareUrl,
-    private val deleteShare: DeleteShare,
+    private val deleteShareUrl: DeleteShareUrl,
 ) {
     suspend operator fun invoke(vos: List<LinkEventVO>) {
         vos.forEach { vo ->
@@ -33,10 +36,9 @@ class HandleDeletedShareUrlIds @Inject constructor(
                     userId = vo.link.id.shareId.userId,
                     shareUrlId = deletedShareUrlId,
                 )?.let { shareUrl ->
-                    deleteShare(
-                        shareId = shareUrl.id.shareId,
-                        locallyOnly = true
-                    )
+                    deleteShareUrl(shareUrl.id).onFailure {error ->
+                        CoreLogger.w(SHARING, error, "Cannot delete share url")
+                    }
                 }
             }
         }

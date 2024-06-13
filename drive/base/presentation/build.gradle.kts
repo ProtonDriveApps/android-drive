@@ -38,10 +38,12 @@ driveModule(
     api(libs.androidx.compose.ui)
     api(libs.androidx.compose.uiTooling)
     api(libs.androidx.lifecycle.runtime.ktx)
+    api(libs.androidx.paging.compose)
     api(libs.core.network)
     api(libs.core.presentation)
     api(libs.core.presentation.compose)
 
+    implementation(project(":drive:base:data"))
     implementation(libs.retrofit)
 }
 

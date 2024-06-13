@@ -30,11 +30,15 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.ElementsIntoSet
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.log.DriveLogger
+import me.proton.android.drive.log.UserLogger
 import me.proton.android.drive.notification.AppNotificationBuilderProvider
 import me.proton.android.drive.notification.NotificationEventHandler
 import me.proton.android.drive.photos.domain.handler.PhotosEventHandler
+import me.proton.android.drive.provider.AppBuildConfigFieldsProvider
 import me.proton.android.drive.provider.BuildConfigurationProvider
 import me.proton.android.drive.repository.BridgeFindDuplicatesRepository
 import me.proton.android.drive.repository.ClientUidRepositoryImpl
@@ -45,14 +49,19 @@ import me.proton.android.drive.usecase.GetDocumentsProviderRootsImpl
 import me.proton.android.drive.usecase.DriveUrlBuilderImpl
 import me.proton.android.drive.usecase.notification.UploadNotificationEventWorkerNotifier
 import me.proton.core.account.domain.entity.AccountType
+import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.domain.entity.AppStore
 import me.proton.core.domain.entity.Product
+import me.proton.core.drive.announce.event.domain.usecase.AsyncAnnounceEvent
 import me.proton.core.drive.backup.domain.repository.FindDuplicatesRepository
+import me.proton.core.drive.base.domain.provider.BuildConfigFieldsProvider
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.repository.ClientUidRepository
 import me.proton.core.drive.base.domain.usecase.DriveUrlBuilder
+import me.proton.core.drive.base.domain.usecase.DeviceInfo
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentsProviderRoots
+import me.proton.core.drive.log.domain.handler.LogEventHandler
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
 import me.proton.core.drive.upload.data.worker.UploadEventWorker
 import me.proton.drive.android.settings.data.datastore.AppUiSettingsDataStore
@@ -98,7 +107,31 @@ object ApplicationModule {
 
     @Provides
     @Singleton
-    fun provideDriveLogger(@ApplicationContext context: Context): DriveLogger = DriveLogger(context)
+    fun provideDriveLogger(
+        @ApplicationContext context: Context,
+        asyncAnnounceEvent: AsyncAnnounceEvent,
+        accountManager: AccountManager,
+        deviceInfo: DeviceInfo,
+    ): DriveLogger =
+        DriveLogger(
+            appContext = context,
+            asyncAnnounceEvent = asyncAnnounceEvent,
+            deviceInfo = deviceInfo,
+            accountManager = accountManager,
+            coroutineContext = Job() + Dispatchers.Main,
+        )
+
+    @Provides
+    @Singleton
+    fun provideUserLogger(
+        asyncAnnounceEvent: AsyncAnnounceEvent,
+        accountManager: AccountManager,
+    ): UserLogger =
+        UserLogger(
+            asyncAnnounceEvent = asyncAnnounceEvent,
+            accountManager = accountManager,
+            coroutineContext = Job() + Dispatchers.Main,
+        )
 
     @Provides
     @Singleton
@@ -138,7 +171,8 @@ object ApplicationModule {
         stats: StatsEventHandler,
         photos: PhotosEventHandler,
         telemetry: TelemetryEventHandler,
-    ) = setOf(notification, telemetry, photos, stats)
+        log: LogEventHandler,
+    ) = setOf(notification, telemetry, photos, stats, log)
 }
 
 @Module
@@ -168,4 +202,8 @@ abstract class ApplicationBindsModule {
 
     @Binds
     abstract fun bindsDriveUrlBuilder(impl: DriveUrlBuilderImpl): DriveUrlBuilder
+
+    @Binds
+    @Singleton
+    abstract fun bindsBuildConfigFieldsProvider(impl: AppBuildConfigFieldsProvider): BuildConfigFieldsProvider
 }

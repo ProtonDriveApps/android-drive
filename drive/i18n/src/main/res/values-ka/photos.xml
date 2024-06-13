@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">ფოტოები</string>
+  <string name="photos_permissions_title">დაშიფრეთ და დაამარქაფეთ თქვენი სურათები და ვიდეოები</string>
+  <string name="photos_permissions_section_1_title">დაიცავით თქვენი მოგონებები</string>
+  <string name="photos_permissions_section_1_description">თქვენი სურათები გამჭოლადაა დაშიფრული, რითიც სრულ უსაფრთხოებას უზრუნველჰყოფს</string>
+  <string name="photos_permissions_section_2_title">ავტომატური მარქაფი</string>
+  <string name="photos_permissions_section_2_description">სურათები მუდმივად მარქაფდება Wi-Fi-ით მათი ორგინალი ხარისხით.</string>
+  <string name="photos_permissions_action">მარქაფის ჩართვა</string>
+  <string name="photos_permission_rational_img_text">წვდომის დაშვება</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s-ს თქვენს სურათებთან სრული წვდომა სჭირდება</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">ეს საჭიროა, რომ დავრწმუნდეთ, რომ ყველა თქვენი სურათის მარქაფი მოხდება და ის წვდომა ყველა თქვენი მოწყობლობებიდან გაქვთ.\n%1$s თქვენს კონფიდენციალობას პასუხისგებით ეკიდება და თქვენს ფოტოებთან წვდომა, მხოლოდ, მარქაფისა და სინქრონიზაციისთვის სჭირდება.</string>
+  <string name="photos_permission_rational_confirm_action">მორგება</string>
+  <string name="photos_permission_rational_dismiss_action">არა ახლა</string>
+  <string name="photos_empty_loading_label_encrypted">გამჭოლად დაშიფრული</string>
+  <string name="photos_empty_loading_label_progress">მიმდინარეობს მარქაფის აღება.\nამას კარგა ხანი შეიძლება დასჭირდეს</string>
+  <string name="photos_separator_current_month">ამ თვეში</string>
+  <string name="photos_encrypted_footer">გამჭოლად დაშიფრული</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from the Camera folder"
+            "Backing up items from 2 Camera folders"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="one">ელემენტების მარქაფი %1$s საქაღალდიდან</item>
+    <item quantity="other">ელემენტების მარქაფი %2$d %1$s საქაღალდიდან</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">მარქაფისთვის საქაღალდე %1$s ვერ ვიპოვე</string>
+  <string name="photos_error_backup_disabled">მარქაფი გათიშულია.</string>
+  <string name="photos_error_backup_disabled_action">ჩართვა</string>
+  <string name="photos_error_backup_missing_folder">მარქაფის საქაღალდე ვერ ვიპოვე</string>
+  <string name="photos_error_backup_failed">მარქაფი ჩავარდა</string>
+  <string name="photos_error_backup_temporarily_disabled">მარქაფი დროებით გამორთულია.</string>
+  <string name="photos_error_missing_permissions">არასამარისი წვდომები.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">უწყვეტი და ავტომატური მარქაფისთვის %1$s-ს წვდომა პარამეტრებში Proton-ის ყველა სერვისთან მიეცით.</string>
+  <string name="photos_error_waiting_connectivity">ინტერნეტი არ გაქვთ</string>
+  <string name="photos_error_waiting_wifi_connectivity">Wi-Fi-ის მოლოდინი</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">ფიჭური ქსელის გამოყენება</string>
+  <string name="photos_error_local_storage">მოწყობილობის საცავი სავსეა</string>
+  <string name="photos_error_local_storage_description">მარქაფის გასაგრძელებლად თქვენს მოწყობილობაზე ადგილი უნდა გაათავისუფლოთ.</string>
+  <string name="photos_error_background_restrictions">დააყენეთ ელემენტის გამოყენება \'შეუზღუდავზე\' ფონური აპის აქტივობისთვის</string>
+  <string name="photos_error_background_restrictions_description">მდგრადი ფონური მარქაფებისთვის გაასწორეთ ელემენტის პარამეტრები, ან აპი ხშირად გახსენით.</string>
+  <string name="photos_error_background_restrictions_action">მორგება</string>
+  <string name="photos_empty_title">მარქაფების გარეშე</string>
+  <string name="photos_empty_description">როგორც კი თქვენს მოწყობილობაზე სურათები ან ვიდეოები გაგიჩნდებათ, ისინი აქაც გამოჩნდება.</string>
+  <string name="photos_backup_title">სურათების მარქაფი</string>
+  <string name="photos_backup_option_mobile_data">მობილური ინტერნეტის გამოყენება ფოტოების მარქაფისთვის</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">ელემენტის ოპტიმიზაციის გამორთვა</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">საშუალებას გაძლევთ, მარქაფი წყვეტის გარეშე გააკეთოთ, როცა აპი ფონურადაა გაშვებული.</string>
+  <string name="photos_backup_in_app_notification_turned_on">სურათების მარქაფი ჩართულია</string>
+  <string name="photos_backup_in_app_notification_turned_off">სურათების მარქაფი გამორთულია</string>
+  <string name="photos_backup_state_completed">მარქაფი დასრულდა</string>
+  <string name="photos_backup_state_uncompleted">მარქაფი პრობლემებით დასრულდა</string>
+  <string name="photos_backup_state_uncompleted_action">ამოხსნა</string>
+  <string name="photos_backup_state_encrypting">დაშიფვრა…</string>
+  <string name="photos_backup_state_uploading">მიმდინარეობს სარეზერვო ასლის შექმნა…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="one">დარჩენილია %1$s ელემენტი</item>
+    <item quantity="other">დარჩენილია %1$s ელემენტი</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="one">%1$s ელემენტი შენახულია</item>
+    <item quantity="other">%1$s ელემენტი შენახულია</item>
+  </plurals>
+  <string name="photos_upsell_title">საცავში ადგილი არასდროს დაგიმთავრდებათ</string>
+  <string name="photos_upsell_description">აწიეთ ტარიფი ახლა და დაიტოვეთ თქვენი მოგონებები დაშიფრულად და უსაფრთხოდ.</string>
+  <string name="photos_upsell_dismiss_action">არა ახლა</string>
+</resources>

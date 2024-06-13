@@ -25,7 +25,7 @@ import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import org.junit.Test
 import org.junit.runner.RunWith
 import me.proton.core.drive.i18n.R as I18N
@@ -36,7 +36,7 @@ class DeleteSharedLinkFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING, NOT_FOUND)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun stopSharingActiveLinkViaBottomSheet() {
         val file = "shared.jpg"
 
@@ -48,13 +48,13 @@ class DeleteSharedLinkFlowTest : AuthenticatedBaseTest() {
             .confirmStopSharing()
             .verify {
                 nodeWithTextDisplayed(I18N.string.description_files_stop_sharing_action_success)
-                itemIsDisplayed(file, isShared = false)
+                itemIsDisplayed(file, isSharedByLink = false)
             }
     }
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING, NOT_FOUND)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun stopSharingActiveLinkViaManageLink() {
         val file = "shared.jpg"
 
@@ -68,13 +68,13 @@ class DeleteSharedLinkFlowTest : AuthenticatedBaseTest() {
             .verify {
                 nodeWithTextDisplayed(I18N.string.description_files_stop_sharing_action_success)
                 robotDisplayed()
-                itemIsDisplayed(file, isShared = false)
+                itemIsDisplayed(file, isSharedByLink = false)
             }
     }
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING, NOT_FOUND)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun stopSharingExpiredLinkViaBottomSheet() {
         val file = "expiredSharedFile.jpg"
 
@@ -86,7 +86,7 @@ class DeleteSharedLinkFlowTest : AuthenticatedBaseTest() {
             .confirmStopSharing()
             .verify {
                 nodeWithTextDisplayed(I18N.string.description_files_stop_sharing_action_success)
-                itemIsDisplayed(file, isShared = false)
+                itemIsDisplayed(file, isSharedByLink = false)
             }
     }
 }

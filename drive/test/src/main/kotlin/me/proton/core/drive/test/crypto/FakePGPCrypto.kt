@@ -19,6 +19,7 @@
 package me.proton.core.drive.test.crypto
 
 import android.util.Base64
+import kotlinx.serialization.Serializable
 import me.proton.core.crypto.common.pgp.Armored
 import me.proton.core.crypto.common.pgp.DataPacket
 import me.proton.core.crypto.common.pgp.DecryptedData
@@ -43,9 +44,15 @@ import me.proton.core.crypto.common.pgp.UnlockedKey
 import me.proton.core.crypto.common.pgp.VerificationContext
 import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.crypto.common.pgp.VerificationTime
+import me.proton.core.util.kotlin.deserialize
+import me.proton.core.util.kotlin.serialize
 import java.io.File
 
 class FakePGPCrypto : PGPCrypto {
+
+    @Serializable
+    data class ByteArrayList(val keys: List<ByteArray>)
+
     override fun decryptAndVerifyData(
         data: DataPacket,
         sessionKey: SessionKey,
@@ -163,6 +170,9 @@ class FakePGPCrypto : PGPCrypto {
     override fun decryptTextWithPassword(message: EncryptedMessage, password: ByteArray): String {
         return message
     }
+
+    override fun deserializeKeys(keys: ByteArray): List<Unarmored> =
+        keys.decodeToString().deserialize<ByteArrayList>().keys
 
     override fun encryptAndSignData(
         data: ByteArray,
@@ -391,6 +401,9 @@ class FakePGPCrypto : PGPCrypto {
     override fun lock(unlockedKey: Unarmored, passphrase: ByteArray): Armored {
         return unlockedKey.toString()
     }
+
+    override fun serializeKeys(keys: List<Unarmored>): ByteArray =
+        ByteArrayList(keys).serialize().encodeToByteArray()
 
     override fun signData(
         data: ByteArray,

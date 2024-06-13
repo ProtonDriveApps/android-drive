@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">Фатаграфіі</string>
+  <string name="photos_permissions_title">Шыфраванне і рэзервовая копія вашых фатаграфій і відэа</string>
+  <string name="photos_permissions_section_1_title">Абараніце свае ўспаміны</string>
+  <string name="photos_permissions_section_1_description">Вашы фатаграфіі зашыфраваны скразным метадам, што забяспечвае поўную прыватнасць.</string>
+  <string name="photos_permissions_section_2_title">Аўтаматычныя рэзервовыя копіі</string>
+  <string name="photos_permissions_section_2_description">Фатаграфіі пастаянна рэзервуюцца праз Wi-Fi без страты якасці.</string>
+  <string name="photos_permissions_action">Уключыць рэзервовае капіяванне</string>
+  <string name="photos_permission_rational_img_text">Дазволіць доступ</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s неабходны поўны доступ да вашых фатаграфій</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">Гэта неабходна, каб пераканацца ў тым, што была зроблена рэзервовая копія ўсіх вашых фатаграфій і цяпер яны даступны паміж усімі вашымі прыладамі.\n%1$s сур\'ёзна ставіцца да вашай прыватнасці і запытвае доступ да фатаграфій толькі з мэтай іх сінхранізацыі і рэзервовага капіявання.</string>
+  <string name="photos_permission_rational_confirm_action">Налады</string>
+  <string name="photos_permission_rational_dismiss_action">Не зараз</string>
+  <string name="photos_empty_loading_label_encrypted">Зашыфравана скразным метадам</string>
+  <string name="photos_empty_loading_label_progress">Адбываецца стварэнне рэзервовай копіі.\nГэта можа заняць некаторы час</string>
+  <string name="photos_separator_current_month">У гэтым месяцы</string>
+  <string name="photos_encrypted_footer">Зашыфравана скразным метадам</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from the Camera folder"
+            "Backing up items from 2 Camera folders"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="one">Рэзерваванне элементаў з папкі %1$s</item>
+    <item quantity="few">Рэзерваванне элементаў папкі %1$s з %2$d папак</item>
+    <item quantity="many">Рэзерваванне элементаў папкі %1$s з %2$d папак</item>
+    <item quantity="other">Рэзерваванне элементаў папкі %1$s з %2$d папак</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">Не знойдзена папка %1$s для рэзервовай копіі</string>
+  <string name="photos_error_backup_disabled">Рэзервовае капіяванне адключана.</string>
+  <string name="photos_error_backup_disabled_action">Уключыць</string>
+  <string name="photos_error_backup_missing_folder">Папка рэзервовага капіявання не знойдзена</string>
+  <string name="photos_error_backup_failed">Збой рэзервовага капіявання.</string>
+  <string name="photos_error_backup_temporarily_disabled">Стварэнне рэзервовай копіі часова адключана.</string>
+  <string name="photos_error_missing_permissions">Дазволы адсутнічаюць.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">Для бесперапыннага і аўтаматычнага рэзервовага капіявання неабходна дазволіць %1$s доступ да ўсіх фатаграфій у наладах прылады.</string>
+  <string name="photos_error_waiting_connectivity">Няма падключэння да інтэрнэту</string>
+  <string name="photos_error_waiting_wifi_connectivity">Чаканне Wi-Fi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Выкарыстоўваюць мабільную сетку</string>
+  <string name="photos_error_local_storage">Сховішча прылады запоўнена</string>
+  <string name="photos_error_local_storage_description">Для працягу рэзервовага капіявання неабходна вызваліць месца ў сховішчы вашай прылады.</string>
+  <string name="photos_error_background_restrictions">Задайце статус для акумулятара \"Неабмежавана\" для тых праграм, якія працуюць у фоне</string>
+  <string name="photos_error_background_restrictions_description">Для пастаяннага рэзервовага капіявання, вам неабходна змяніць налады акумулятара або перыядычна адкрываць праграму.</string>
+  <string name="photos_error_background_restrictions_action">Налады</string>
+  <string name="photos_empty_title">Пакуль рэзервовыя копіі адсутнічаюць</string>
+  <string name="photos_empty_description">Як толькі на вашай прыладзе будуць з\'яўляцца відэа і фатаграфіі, яны адразу ж будуць трапляць і сюды.</string>
+  <string name="photos_backup_title">Рэзервовая капіяванне фатаграфій</string>
+  <string name="photos_backup_option_mobile_data">Выкарыстоўваць мабільныя даныя для рэзервовага капіявання фатаграфій</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Адключыць аптымізацыю акумулятара</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Дазваляць бесперапыннае рэзервовае капіяванне, калі праграма працуе ў фоне.</string>
+  <string name="photos_backup_in_app_notification_turned_on">Рэзервовае капіяванне фатаграфій уключана</string>
+  <string name="photos_backup_in_app_notification_turned_off">Рэзервовае капіяванне фатаграфій выключана</string>
+  <string name="photos_backup_state_completed">Рэзервовае капіяванне завершана</string>
+  <string name="photos_backup_state_uncompleted">Рэзервовае капіяванне завершана з праблемамі</string>
+  <string name="photos_backup_state_uncompleted_action">Вырашыць</string>
+  <string name="photos_backup_state_encrypting">Шыфраванне…</string>
+  <string name="photos_backup_state_uploading">Стварэнне рэзервовай копіі…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="one">Застаўся %1$s элемент</item>
+    <item quantity="few">Засталося %1$s элементы</item>
+    <item quantity="many">Засталося %1$s элементаў</item>
+    <item quantity="other">Засталося %1$s элементаў</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="one">Захаваны %1$s элемент</item>
+    <item quantity="few">Захавана %1$s элементы</item>
+    <item quantity="many">Захавана %1$s элементаў</item>
+    <item quantity="other">Захавана %1$s элементаў</item>
+  </plurals>
+  <string name="photos_upsell_title">У вас ніколі не скончыцца месца ў сховішчы</string>
+  <string name="photos_upsell_description">Палепшыце цяпер, каб захоўваць усе свае ўспаміны ў зашыфраваным і бяспечным выглядзе.</string>
+  <string name="photos_upsell_dismiss_action">Не зараз</string>
+</resources>

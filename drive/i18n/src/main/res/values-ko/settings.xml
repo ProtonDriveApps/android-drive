@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="settings_app_lock">앱 잠금</string>
+  <string name="settings_section_security">보안</string>
+  <string name="settings_section_about">정보</string>
+  <string name="settings_section_statistics">사용 통계</string>
+  <string name="settings_auto_lock">자동으로 앱을 잠구기</string>
+  <string name="settings_auto_lock_durations_immediately">즉시</string>
+  <plurals name="settings_auto_lock_durations_seconds">
+    <item quantity="other">%1$d초 뒤</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_minutes">
+    <item quantity="other">%1$d분 뒤</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_hours">
+    <item quantity="other">%1$d시간 뒤</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_days">
+    <item quantity="other">%1$d일 뒤</item>
+  </plurals>
+  <string name="settings_section_backup">백업</string>
+  <string name="settings_photos_backup_folders_title">업로드 출처</string>
+  <!--
+        Variable %1$s is the default folder name (Camera)
+        Examples:
+            "Your Camera folder is backed up automatically."
+    -->
+  <string name="settings_photos_backup_folders_description">당신의 %1$s 폴더는 자동으로 백업되었습니다. 백업할 다른 폴더를 추가로 선택하면 사진 탭에 그 사진들이 나타날 것입니다.</string>
+  <string name="settings_photos_backup_folders_not_found">폴더를 찾을 수 없었습니다</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_title">폴더의 백업을 중지합니까?</string>
+  <!--
+        Variable %1$s is the folder name
+        Examples:
+            "Camera will no longer be backing up to the cloud."
+    -->
+  <string name="settings_photos_backup_folders_confirm_stop_sync_description">더 이상 %1$s 의 클라우드 백업이 진행되지 않습니다. 이미 백업된 사진이 삭제되지는 않습니다.</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">백업 중지</string>
+  <plurals name="settings_photos_backup_folders_description_photos">
+    <item quantity="other">%1$d 사진</item>
+  </plurals>
+  <plurals name="settings_photos_backup_folders_description_videos">
+    <item quantity="other">%1$d 영상</item>
+  </plurals>
+  <!--
+        Variable %1$s is an entry in a list
+        Examples:
+            "Privacy Policy (opens in a browser)"
+    -->
+  <string name="settings_external_link_format">%1$s (브라우저에서 열림)</string>
+  <string name="settings_section_appearance_settings">외관</string>
+  <string name="settings_theme_entry">테마</string>
+  <string name="settings_home_tab">기본 홈 탭</string>
+  <string name="settings_section_system">시스템</string>
+  <string name="settings_clear_local_cache_entry">로컬 캐시 삭제</string>
+  <string name="settings_show_log">로그 보기</string>
+</resources>

@@ -26,7 +26,9 @@ import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.labelResId
 import me.proton.core.drive.base.presentation.extension.toReadableDate
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.drivelink.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.file.info.presentation.entity.Item
 import me.proton.core.drive.i18n.R
 import me.proton.core.drive.link.domain.entity.BaseLink
@@ -80,20 +82,20 @@ fun DriveLink.toItems(
     Item(
         name = context.getString(R.string.file_info_shared_entry),
         value = context.getString(
-            if (isShared) {
+            if (isSharedByLinkOrWithUsers) {
                 R.string.common_yes
             } else {
                 R.string.common_no
             }
         ),
     ),
-    takeIf { isShared }?.let {
+    takeIf { hasShareLink }?.let {
         Item(
             name = context.getString(R.string.file_info_number_of_accesses_entry),
             value = numberOfAccesses.toString(),
         )
     },
-    takeIf { isShared }?.let {
+    takeIf { hasShareLink }?.let {
         Item(
             name = context.getString(R.string.file_info_share_url_expiration_time),
             value = shareUrlExpirationTime?.toReadableDate()

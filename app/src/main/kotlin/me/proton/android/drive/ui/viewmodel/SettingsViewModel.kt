@@ -192,7 +192,8 @@ class SettingsViewModel @Inject constructor(
                 HomeTab.PHOTOS -> I18N.string.photos_title
                 HomeTab.COMPUTERS -> I18N.string.computers_title
                 HomeTab.SHARED -> I18N.string.title_shared
-            }
+            },
+            isLogSettingVisible = configurationProvider.logFeatureFlag,
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
@@ -203,6 +204,7 @@ class SettingsViewModel @Inject constructor(
         navigateToAutoLockDurations: () -> Unit,
         navigateToPhotosBackup: () -> Unit,
         navigateToDefaultHomeTab: () -> Unit,
+        navigateToLog: () -> Unit,
     ) = SettingsViewEvent(
         navigateBack = navigateBack,
         onLinkClicked = { link ->
@@ -249,6 +251,9 @@ class SettingsViewModel @Inject constructor(
         },
         onDefaultHomeTab = {
             navigateToDefaultHomeTab()
+        },
+        onShowLog = {
+            navigateToLog()
         },
     )
 

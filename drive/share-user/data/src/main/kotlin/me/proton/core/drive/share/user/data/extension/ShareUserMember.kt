@@ -19,7 +19,7 @@
 package me.proton.core.drive.share.user.data.extension
 
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.user.data.db.ShareMemberEntity
+import me.proton.core.drive.share.user.data.db.entity.ShareMemberEntity
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 
 fun ShareUser.Member.toEntity(shareId: ShareId) = ShareMemberEntity(

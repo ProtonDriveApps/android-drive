@@ -49,7 +49,7 @@ import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.device.domain.extension.name
 import me.proton.core.drive.device.domain.usecase.RefreshDevices
 import me.proton.core.drive.drivelink.device.domain.usecase.GetDecryptedDevicesSortedByName
-import me.proton.core.drive.files.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.i18n.R
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage

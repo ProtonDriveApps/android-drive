@@ -19,6 +19,7 @@
 package me.proton.core.drive.share.user.data.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.share.crypto.domain.entity.ShareInvitationRequest
@@ -76,7 +77,11 @@ class ShareInvitationRepositoryImpl @Inject constructor(
         shareId: ShareId,
         invitationId: String,
     ): Flow<ShareUser.Invitee> =
-        db.shareInvitationDao.getInvitationFlow(shareId.userId, shareId.id, invitationId).map { invitation ->
+        db.shareInvitationDao.getInvitationFlow(
+            userId = shareId.userId,
+            shareId = shareId.id,
+            invitationId = invitationId,
+        ).filterNotNull().map { invitation ->
             invitation.toShareUserInvitee()
         }
 
@@ -125,6 +130,19 @@ class ShareInvitationRepositoryImpl @Inject constructor(
 
     override suspend fun deleteInvitation(shareId: ShareId, invitationId: String) {
         api.deleteInvitation(
+            userId = shareId.userId,
+            shareId = shareId.id,
+            invitationId = invitationId
+        )
+        db.shareInvitationDao.deleteInvitation(
+            userId = shareId.userId,
+            shareId = shareId.id,
+            invitationId = invitationId,
+        )
+    }
+
+    override suspend fun resendInvitation(shareId: ShareId, invitationId: String) {
+        api.sendEmail(
             userId = shareId.userId,
             shareId = shareId.id,
             invitationId = invitationId

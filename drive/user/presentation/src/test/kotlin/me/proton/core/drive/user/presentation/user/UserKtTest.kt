@@ -86,7 +86,7 @@ class UserKtTest {
     }
 
     @Test
-    fun `first letter fallback to name if display name is empty`() {
+    fun `first letter fallback to name if display name is null`() {
         // region Arrange
         val user = user.copy(displayName = null)
         // endregion
@@ -99,7 +99,20 @@ class UserKtTest {
     }
 
     @Test
-    fun `first letter fallback to email if display name and name are empty`() {
+    fun `first letter fallback to name if display name is empty`() {
+        // region Arrange
+        val user = user.copy(displayName = "")
+        // endregion
+        // region Act
+        val firstLetter = user.firstLetter
+        // endregion
+        //region Assert
+        assert(firstLetter == "S")
+        // endregion
+    }
+
+    @Test
+    fun `first letter fallback to email if display name and name are null`() {
         // region Arrange
         val user = user.copy(displayName = null, name = null)
         // endregion
@@ -112,7 +125,20 @@ class UserKtTest {
     }
 
     @Test
-    fun `first letter fallback to question mark if display name, name and email are empty`() {
+    fun `first letter fallback to email if display name and name are empty`() {
+        // region Arrange
+        val user = user.copy(displayName = "", name = "")
+        // endregion
+        // region Act
+        val firstLetter = user.firstLetter
+        // endregion
+        //region Assert
+        assert(firstLetter == "p")
+        // endregion
+    }
+
+    @Test
+    fun `first letter fallback to question mark if display name, name and email are null`() {
         // region Arrange
         val user = user.copy(displayName = null, email = null, name = null)
         // endregion
@@ -123,4 +149,18 @@ class UserKtTest {
         assert(firstLetter == "?")
         // endregion
     }
+
+    @Test
+    fun `first letter fallback to question mark if display name, name and email are empty`() {
+        // region Arrange
+        val user = user.copy(displayName = "", email = "", name = "")
+        // endregion
+        // region Act
+        val firstLetter = user.firstLetter
+        // endregion
+        //region Assert
+        assert(firstLetter == "?")
+        // endregion
+    }
 }
+

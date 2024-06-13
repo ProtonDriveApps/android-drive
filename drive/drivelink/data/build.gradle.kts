@@ -25,6 +25,7 @@ android {
 
 driveModule(
     hilt = true,
+    i18n = true,
     room = true,
 ) {
     api(project(":drive:link:data"))
@@ -33,6 +34,7 @@ driveModule(
     api(project(":drive:link-trash:data"))
     api(project(":drive:link-selection:data"))
     api(project(":drive:drivelink:domain"))
+    api(project(":drive:share-user:data"))
 
     testImplementation(project(":drive:db-test"))
 }

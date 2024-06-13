@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">앱</string>
+  <string name="common_more">더 보기</string>
+  <string name="common_mime_type">MIME 유형</string>
+  <string name="common_name">이름</string>
+  <string name="common_no">아니오</string>
+  <string name="common_share">공유</string>
+  <string name="common_shared">공유</string>
+  <string name="common_size">크기</string>
+  <string name="common_type">유형</string>
+  <string name="common_yes">예</string>
+  <string name="common_download">다운로드</string>
+  <string name="common_downloading">다운로드 중</string>
+  <string name="common_link">링크</string>
+  <string name="common_password">비밀번호</string>
+  <string name="common_retry">다시 시도</string>
+  <string name="common_settings">설정</string>
+  <string name="common_trash">휴지통</string>
+  <string name="common_uploading">업로드 중</string>
+  <string name="common_on">켬</string>
+  <string name="common_off">끔</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">확인</string>
+  <string name="common_close_action">닫기</string>
+  <string name="common_retry_action">다시 시도</string>
+  <string name="common_undo_action">실행 취소</string>
+  <string name="common_rename_action">이름 변경</string>
+  <string name="common_send_action">보내기</string>
+  <string name="common_create_action">새로 만들기</string>
+  <string name="common_cancel_action">취소</string>
+  <string name="common_cancel_all_action">모두 취소</string>
+  <string name="common_got_it_action">확인하였습니다.</string>
+  <string name="common_next_action">다음</string>
+  <string name="common_save_action">저장</string>
+  <string name="common_discard_action">저장 안 함</string>
+  <string name="common_skip_action">건너뛰기</string>
+  <string name="common_delete_permanently_action">영구적으로 삭제</string>
+  <string name="common_make_available_offline_action">오프라인 사용 설정</string>
+  <string name="common_remove_from_offline_available_action">오프라인 사용 지우기</string>
+  <string name="common_get_link_action">링크 생성</string>
+  <string name="common_manage_link_action">링크 관리</string>
+  <string name="common_manage_access_action">접근 관리</string>
+  <string name="common_copy_link_action">링크 복사</string>
+  <string name="common_stop_sharing_action">공유 중지</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">오디오</string>
+  <string name="common_type_calendar">iCalendar 형식</string>
+  <string name="common_type_doc">문서</string>
+  <string name="common_type_image">이미지</string>
+  <string name="common_type_keynote">Keynote 파일</string>
+  <string name="common_type_numbers">Numbers 파일</string>
+  <string name="common_type_pages">Pages 파일</string>
+  <string name="common_type_pdf">PDF 문서</string>
+  <string name="common_type_ppt">프레젠테이션</string>
+  <string name="common_type_text">텍스트</string>
+  <string name="common_type_trustedkey">신뢰하는 키</string>
+  <string name="common_type_unknown">2진수</string>
+  <string name="common_type_video">동영상</string>
+  <string name="common_type_xls">스프레드시트</string>
+  <string name="common_type_xml">XML 파일</string>
+  <string name="common_type_zip">보관함</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">이름은 비워둘 수 없습니다</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">이름이 %1$d자를 초과할 수 없습니다</string>
+  <string name="common_error_name_with_forbidden_characters">\"/\" 또는 \"\\" 등의 보이지 않는 기호를 이름에 사용할 수 없습니다.</string>
+  <string name="common_error_name_periods">파일명이 \".\"이나 \"..\"일 수는 없습니다</string>
+  <string name="common_error_no_internet">인터넷 연결 없음</string>
+  <string name="common_error_http_5xx">서버 오류 발생</string>
+  <string name="common_error_internal">내부 오류가 발생했습니다</string>
+  <string name="common_error_crypto">암호화 및 복호화 실패</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">암호화 및 복호화 실패: %1$s</string>
+  <string name="common_error_io">입력 및 출력 작업 실패</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">입력 및 출력 작업 실패: %1$s</string>
+  <string name="common_error_security">보안 오류 발생</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">보안 오류 발생: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s 다운로드됨</string>
+  <string name="common_sign_out">로그아웃</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="other">%1$d개 선택됨</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s 이(가) 클립보드에 복사되었습니다.</string>
+  <string name="common_in_app_notification_download_started">다운로드 시작됨</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s 이(가) 성공적으로 다운로드 되었습니다</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="other">%1$d개 파일이 성공적으로 다운로드 되었습니다</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">%1$s 다운로드 실패</string>
+  <string name="common_in_app_notification_download_failed">다운로드 실패</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">시스템이 %1$s 작업을 할 수 있는 어떠한 앱을 설치하고 있지 않습니다</string>
+  <!-- endregion -->
+</resources>

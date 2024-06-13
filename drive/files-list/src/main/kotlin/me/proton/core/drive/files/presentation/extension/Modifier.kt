@@ -22,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.semantics
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.hasShareLink
+import me.proton.core.drive.drivelink.domain.extension.isSharedWithUsers
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 
 fun Modifier.driveLinkSemantics(link: DriveLink, linkLayoutType: LayoutType) =
@@ -31,7 +33,8 @@ fun Modifier.driveLinkSemantics(link: DriveLink, linkLayoutType: LayoutType) =
         this[DriveLinkSemanticsProperties.ItemType] = ItemType.fromDriveLink(link)
         this[DriveLinkSemanticsProperties.HasThumbnail] =
             link is DriveLink.File && link.hasThumbnail
-        this[DriveLinkSemanticsProperties.IsShared] = link.isShared
+        this[DriveLinkSemanticsProperties.IsSharedByLink] = link.hasShareLink
+        this[DriveLinkSemanticsProperties.IsSharedWithUsers] = link.isSharedWithUsers
         this[DriveLinkSemanticsProperties.DownloadState] = when (link.downloadState) {
             is DownloadState.Downloaded -> SemanticsDownloadState.Downloaded
             DownloadState.Downloading -> SemanticsDownloadState.Downloading
@@ -45,7 +48,8 @@ object DriveLinkSemanticsProperties {
     val LayoutType = SemanticsPropertyKey<LayoutType>(name = "LayoutType")
     val ItemType = SemanticsPropertyKey<ItemType>(name = "ItemType")
     val HasThumbnail = SemanticsPropertyKey<Boolean>(name = "HasThumbnail")
-    val IsShared = SemanticsPropertyKey<Boolean>(name = "IsShared")
+    val IsSharedByLink = SemanticsPropertyKey<Boolean>(name = "IsSharedByLink")
+    val IsSharedWithUsers = SemanticsPropertyKey<Boolean>(name = "IsSharedWithUsers")
     val DownloadState = SemanticsPropertyKey<SemanticsDownloadState>(name = "DownloadState")
 }
 

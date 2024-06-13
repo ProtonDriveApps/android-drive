@@ -21,9 +21,9 @@ package me.proton.core.drive.feature.flag.domain.usecase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
@@ -31,20 +31,29 @@ import me.proton.core.drive.feature.flag.domain.repository.FeatureFlagRepository
 import javax.inject.Inject
 
 class GetFeatureFlagFlow @Inject constructor(
-    private val getFeatureFlag: GetFeatureFlag,
     private val featureFlagRepository: FeatureFlagRepository,
     private val configurationProvider: ConfigurationProvider,
-) {
+) : BaseGetFeatureFlag(featureFlagRepository, configurationProvider) {
 
-    operator fun invoke(featureFlagId: FeatureFlagId): Flow<FeatureFlag> = flow {
+    operator fun invoke(
+        featureFlagId: FeatureFlagId,
+        refresh: FeatureFlagCachePolicy = refreshAfterDuration,
+    ): Flow<FeatureFlag> = flow {
         emit(FeatureFlag(featureFlagId, FeatureFlag.State.NOT_FOUND))
-        emit(getFeatureFlag(featureFlagId))
-        emitAll(featureFlagRepository
-            .getFeatureFlagFlow(featureFlagId)
-            .filterNotNull()
-            .filterNot { featureFlag ->
-                featureFlag.id.id in FeatureFlagId.developments && configurationProvider.disableFeatureFlagInDevelopment
+        if (refresh(featureFlagId)) {
+            refreshFeatureFlag(featureFlagId)
+        }
+        emitAll(
+            getFeatureFlagFlow(featureFlagId).map { featureFlag ->
+                featureFlag ?: FeatureFlag(featureFlagId, FeatureFlag.State.NOT_FOUND)
             }
         )
     }.distinctUntilChanged()
+
+    private suspend fun getFeatureFlagFlow(featureFlagId: FeatureFlagId?): Flow<FeatureFlag?> =
+        featureFlagId?.takeUnless { id ->
+            id.id in FeatureFlagId.developments && configurationProvider.disableFeatureFlagInDevelopment
+        }?.let { id ->
+            featureFlagRepository.getFeatureFlagFlow(id)
+        } ?: flowOf<FeatureFlag?>(null)
 }

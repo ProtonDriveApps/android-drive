@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Ustvarjanje povezave do %1$s</string>
+  <string name="shared_link_getting_link">Pridobivanje povezave</string>
+  <string name="shared_link_file">datoteka</string>
+  <string name="shared_link_folder">mapa</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Kdor koli s to povezavo lahko dostopa do %1$s</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Samo ljudje s povezavo in geslom lahko dostopajo do %1$s</string>
+  <string name="shared_link_privacy_settings">Nastavitve zasebnosti</string>
+  <string name="shared_link_password_protection">Zaščita z geslom</string>
+  <string name="shared_link_expiration_date">Datum poteka</string>
+  <string name="shared_link_action_copy_link">Kopiraj povezavo</string>
+  <string name="shared_link_action_copy_password">Kopiraj geslo</string>
+  <string name="shared_link_action_share_link">Deli povezavo</string>
+  <string name="shared_link_dialog_title_discard_changes">Zavrzi spremembe?</string>
+  <string name="shared_link_dialog_description">Izgubili boste vse neshranjene spremembe.</string>
+  <string name="shared_link_hint_expiration_date_field">Brez datuma poteka veljavnosti</string>
+  <string name="shared_link_message_update_share_url">Nastavitve skupne rabe posodobljene</string>
+  <string name="shared_link_error_message_update_share_url">Posodabljanje nastavitev skupne rabe ni uspelo</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">Dolžina gesla mora biti med 1 in %1$d znaki</string>
+  <string name="shared_link_error_message_not_found">Povezava v skupni rabi ne obstaja ali pa je potekla</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">Datum poteka mora biti najmanj jutri</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">Datum poteka ne sme presegati %1$d dni</string>
+  <string name="shared_link_error_legacy_link">To je stara povezava, katere upravljanje ni podprto. Priporočamo, da prenehate deliti to povezavo in pridobite novo povezavo.</string>
+  <string name="title_share_via_link">Deli prek povezave</string>
+  <string name="shared_with_me_title">Deljeno z menoj</string>
+  <string name="shared_by_me_title">Kaj delim z drugimi</string>
+  <string name="shared_with_me_empty_description">Datoteke in mape, ki jih delite z drugimi, bodo prikazane tukaj</string>
+  <string name="shared_by_me_empty_description">Varno delite svoje datoteke in mape s šifriranjem od konca do konca</string>
+</resources>

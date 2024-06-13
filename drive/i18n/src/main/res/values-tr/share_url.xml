@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">%1$s dosya bağlantısı oluşturuluyor</string>
+  <string name="shared_link_getting_link">Bağlantı alınıyor</string>
+  <string name="shared_link_file">dosya</string>
+  <string name="shared_link_folder">klasör</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Bu bağlantıya sahip olan herkes %1$s ögesine erişebilir</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">%1$s ögesine yalnızca bağlantıya ve parolaya sahip olan kişiler erişebilir</string>
+  <string name="shared_link_privacy_settings">Gizlilik ayarları</string>
+  <string name="shared_link_password_protection">Parola koruması</string>
+  <string name="shared_link_expiration_date">Geçerlilik tarihi</string>
+  <string name="shared_link_action_copy_link">Bağlantıyı kopyala</string>
+  <string name="shared_link_action_copy_password">Parolayı kopyala</string>
+  <string name="shared_link_action_share_link">Bağlantıyı paylaş</string>
+  <string name="shared_link_dialog_title_discard_changes">Değişiklikler yok sayılsın mı?</string>
+  <string name="shared_link_dialog_description">Kaydedilmemiş tüm değişiklikleri kaybedeceksiniz.</string>
+  <string name="shared_link_hint_expiration_date_field">Geçerlilik tarihi yok</string>
+  <string name="shared_link_message_update_share_url">Paylaşım ayarları güncellendi</string>
+  <string name="shared_link_error_message_update_share_url">Paylaşım ayarları güncellenemedi</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">Parola uzunluğu 1 ile %1$d karakter arasında olmalıdır</string>
+  <string name="shared_link_error_message_not_found">Paylaşım bağlantısı bulunamadı ya da geçerlilik süresi dolmuş</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">Geçerlilik süresi en az yarın olmalıdır</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">Geçerlilik süresi en fazla %1$d gün sonrası olabilir</string>
+  <string name="shared_link_error_legacy_link">Bu, yönetimi desteklenmeyen eski bir bağlantı. Bu bağlantı paylaşımını kaldırmanız ve yeni bir bağlantı almanız önerilir.</string>
+  <string name="title_share_via_link">Bağlantı ile paylaş</string>
+  <string name="shared_with_me_title">Benimle paylaşılan</string>
+  <string name="shared_by_me_title">Benim paylaştıklarım</string>
+  <string name="shared_with_me_empty_description">Başkalarıyla paylaştığınız dosyalar ve klasörler burada görüntülenir</string>
+  <string name="shared_by_me_empty_description">Uçtan uca şifreleme ile dosya ve klasörlerinizi güvenle paylaşın</string>
+</resources>

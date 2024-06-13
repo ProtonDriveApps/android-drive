@@ -21,8 +21,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.extension.asSuccessOrNullAsError
+import me.proton.core.drive.base.domain.usecase.GetUserEmail
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.share.data.api.ShareApiDataSource
 import me.proton.core.drive.share.data.db.ShareDao
@@ -32,16 +34,19 @@ import me.proton.core.drive.share.data.extension.toLong
 import me.proton.core.drive.share.data.extension.toShare
 import me.proton.core.drive.share.data.extension.toShareEntity
 import me.proton.core.drive.share.data.extension.toShareType
+import me.proton.core.drive.share.data.extension.toShareUserMember
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.entity.ShareInfo
 import me.proton.core.drive.share.domain.repository.ShareRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.user.domain.entity.AddressId
 import javax.inject.Inject
 
 class ShareRepositoryImpl @Inject constructor(
     private val api: ShareApiDataSource,
     private val db: ShareDatabase,
+    private val getUserEmail: GetUserEmail,
 ) : ShareRepository {
     private val dao: ShareDao = db.shareDao
 
@@ -91,14 +96,23 @@ class ShareRepositoryImpl @Inject constructor(
     override suspend fun hasShareWithKey(shareId: ShareId): Boolean =
         dao.hasShareEntityWithKey(shareId.userId, shareId.id)
 
-    override suspend fun fetchShare(shareId: ShareId) =
-        dao.insertOrUpdate(
-            api.getShareBootstrap(shareId).toShareEntity(shareId.userId)
-        )
+    override suspend fun fetchShare(shareId: ShareId) {
+        val response = api.getShareBootstrap(shareId)
+        db.inTransaction {
+            dao.insertOrUpdate(response.toShareEntity(shareId.userId))
+            response.memberships.firstOrNull()?.let { membershipDto ->
+                val email = getUserEmail(
+                    userId = shareId.userId,
+                    addressId = AddressId(membershipDto.addressId),
+                )
+                db.shareMembershipDao.insertOrUpdate(membershipDto.toShareUserMember(shareId, email))
+            }
+        }
+    }
 
-    override suspend fun deleteShare(shareId: ShareId, locallyOnly: Boolean) {
+    override suspend fun deleteShare(shareId: ShareId, locallyOnly: Boolean, force: Boolean) {
         if (!locallyOnly) {
-            api.deleteShare(shareId)
+            api.deleteShare(shareId, force)
         }
         dao.delete(shareId.userId, shareId.id)
     }
@@ -122,4 +136,19 @@ class ShareRepositoryImpl @Inject constructor(
             id = api.createShare(userId, volumeId, shareInfo)
         )
     }
+
+    override suspend fun getAllMembershipIds(userId: UserId): List<String> =
+        db.shareMembershipDao.getAllIds(userId)
+
+    override suspend fun getPermissions(
+        shareIds: List<ShareId>,
+    ): List<Permissions> = shareIds.takeUnless { ids -> ids.isEmpty() }?.let { ids ->
+        db.shareMembershipDao.getPermissions(
+            userId = ids.first().userId,
+            shareIds = ids.map { it.id }
+        ).map { value ->
+            Permissions(value)
+        }
+    }.orEmpty()
 }
+

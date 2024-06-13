@@ -84,13 +84,10 @@ class UploadToViewModel @Inject constructor(
         }
     }
     private val uploadParameters = savedStateHandle.get<UploadParameters>(URIS)
-    val rootTitle = appContext.getString(
-        I18N.string.upload_to_title_format,
-        appContext.getString(I18N.string.title_my_files)
-    )
+
     val initialViewState = UploadToViewState(
         filesViewState = initialFilesViewState,
-        title = rootTitle,
+        title = "",
         navigationIconResId = CorePresentation.drawable.ic_proton_cross,
         fileNames = uploadParameters?.uris?.map { uri -> uri.fileName } ?: emptyList(),
     )
@@ -110,7 +107,7 @@ class UploadToViewModel @Inject constructor(
                 listContentAppendingState = appendingState
             ),
             isBackHandlerEnabled = !(parentLink == null || isRoot),
-            title = if (isRoot) rootTitle else parentLink?.name.orEmpty(),
+            title = parentLink?.name.orEmpty(),
             isTitleEncrypted = isRoot.not() && parentLink.isNameEncrypted,
             navigationIconResId = if (parentLink == null || isRoot) {
                 CorePresentation.drawable.ic_proton_cross

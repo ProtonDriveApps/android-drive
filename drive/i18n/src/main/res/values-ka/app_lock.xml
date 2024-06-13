@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">აპი დაბლოკილია</string>
+  <string name="app_lock_biometric_subtitle_app_locked">განბლოკვა თქვენი მოწყობილობის ბლოკით</string>
+  <string name="app_lock_biometric_title_confirmation">დასტური</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">განბლოკვის ჩართვა თქვენი მოწყობილობის ბლოკით დაადასტურეთ</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">განბლოკვის გამოსართავად დაადასტურეთ თქვენი მოწყობილობის ბლოკით</string>
+  <string name="app_lock_option_never_set">ბიომეტრიის ან მოწყობილობის დაბლოკვის ჩართვა</string>
+  <string name="app_lock_option_none">განბლოკილად დატოვება</string>
+  <string name="app_lock_option_system">ბიომეტრია ან მოწყობილობის დაბლოკვა</string>
+  <string name="app_lock_system_dialog_title">ბიომეტრიული წვდომის ჩართვა</string>
+  <string name="app_lock_system_dialog_description">მოირგეთ ბიომეტრია ან მოწყობილობის დაბლოკვის წვდომა ამ მოწყობილობაზე.</string>
+  <string name="app_lock_system_dialog_settings_button">მორგება</string>
+  <string name="app_lock_system_not_available">ბიომეტრიკა ან მოწყობილობის ბლოკი მიუწვდომელია თქვენს მოწყობილობაზე</string>
+  <string name="app_lock_enabled">ბიომეტრია ან მოწყობილობის დაბლოკვის წვდომა ჩართულია</string>
+  <string name="app_lock_disabled">აპის ბლოკი გაითიშა</string>
+  <string name="app_lock_access_title">აირჩიეთ, როგორ დავბლოკოთ აპი</string>
+  <string name="app_lock_unlock_the_app">აპის განბლოკვა</string>
+</resources>

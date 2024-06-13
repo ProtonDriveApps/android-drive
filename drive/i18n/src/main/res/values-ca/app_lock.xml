@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">Aplicació bloquejada</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Desbloqueja utilitzant el bloqueig del teu dispositiu</string>
+  <string name="app_lock_biometric_title_confirmation">Confirmació</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Per activar el desbloqueig, confirma amb el bloqueig del teu dispositiu</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Per desactivar el desbloqueig, confirma amb el bloqueig del teu dispositiu</string>
+  <string name="app_lock_option_never_set">Activar biomètrica o bloqueig del dispositiu</string>
+  <string name="app_lock_option_none">Manté desblocat</string>
+  <string name="app_lock_option_system">Biomètrica o bloqueig del dispositiu</string>
+  <string name="app_lock_system_dialog_title">Activa l\'accés biomètric</string>
+  <string name="app_lock_system_dialog_description">Configurar biomètrica o accés al bloqueig del dispositiu en aquest dispositiu.</string>
+  <string name="app_lock_system_dialog_settings_button">Preferències</string>
+  <string name="app_lock_system_not_available">Biomètrica o bloqueig del dispositiu no està disponible al teu dispositiu</string>
+  <string name="app_lock_enabled">Biomètrica o accés al bloqueig del dispositiu activat</string>
+  <string name="app_lock_disabled">S\'ha desactivat el bloqueig de l\'aplicació.</string>
+  <string name="app_lock_access_title">Escull com bloquejar l\'app</string>
+  <string name="app_lock_unlock_the_app">Desbloqueja l\'aplicació</string>
+</resources>

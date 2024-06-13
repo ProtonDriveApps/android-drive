@@ -25,24 +25,31 @@ import java.io.Serializable
 
 fun NavBackStackEntry.requireArguments() = requireNotNull(arguments) { "arguments bundle is null" }
 
-fun <T> NavBackStackEntry.require(key: String, optionalBundle: Bundle? = null): T {
-    return requireNotNull(get(key, optionalBundle)) {
+inline fun <reified T> NavBackStackEntry.require(key: String): T {
+    return requireNotNull(get(key)) {
         "$key is required"
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <T> NavBackStackEntry.get(key: String, optionalBundle: Bundle? = null): T? {
+inline fun <reified T> NavBackStackEntry.get(key: String): T? {
     val bundleArgs = requireArguments()
-    return bundleArgs.getString(key) as T? ?: optionalBundle?.getString(key) as T?
+    return when (T::class) {
+        Boolean::class -> bundleArgs.getBoolean(key)
+        Int::class -> bundleArgs.getInt(key)
+        Long::class -> bundleArgs.getLong(key)
+        Float::class -> bundleArgs.getFloat(key)
+        Double::class -> bundleArgs.getDouble(key)
+        String::class -> bundleArgs.getString(key)
+        else -> bundleArgs.getString(key)
+    } as T?
 }
 
 fun <T : Serializable> NavBackStackEntry.requireSerializable(
     key: String,
     clazz: Class<T>,
-    optionalBundle: Bundle? = null
 ): T {
-    return requireNotNull(getSerializable(key, clazz, optionalBundle)) {
+    return requireNotNull(getSerializable(key, clazz)) {
         "$key is required"
     }
 }
@@ -50,12 +57,10 @@ fun <T : Serializable> NavBackStackEntry.requireSerializable(
 fun <T : Serializable> NavBackStackEntry.getSerializable(
     key: String,
     clazz: Class<T>,
-    optionalBundle: Bundle? = null
 ): T? {
     val bundleArgs = requireArguments()
 
     return bundleArgs.getSerializableCompat(key, clazz)
-        ?: optionalBundle?.getSerializableCompat(key, clazz)
 }
 
 @Suppress("DEPRECATION", "UNCHECKED_CAST")

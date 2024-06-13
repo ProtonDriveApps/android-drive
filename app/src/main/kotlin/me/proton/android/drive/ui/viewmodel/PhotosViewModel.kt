@@ -94,9 +94,10 @@ import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPagedPhotoListingsList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
-import me.proton.core.drive.files.presentation.state.ListContentAppendingState
-import me.proton.core.drive.files.presentation.state.ListContentState
-import me.proton.core.drive.files.presentation.state.ListEffect
+import me.proton.core.drive.base.presentation.state.ListContentAppendingState
+import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -279,7 +280,7 @@ class PhotosViewModel @Inject constructor(
         imageResId = emptyStateImageResId,
         titleId = I18N.string.photos_empty_title,
         descriptionResId = I18N.string.photos_empty_description,
-        actionResId = 0,
+        actionResId = null,
     )
     private val emptyStateImageResId: Int get() = getThemeDrawableId(
         light = R.drawable.empty_photos_light,

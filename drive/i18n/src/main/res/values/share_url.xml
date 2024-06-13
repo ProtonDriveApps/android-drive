@@ -69,4 +69,11 @@
     <string name="shared_link_error_legacy_link">This is an old link whose management is not supported. It is recommended that you stop sharing this link and get a new link.</string>
 
     <string name="title_share_via_link">Share via link</string>
+
+    <string name="shared_with_me_title">Shared with me</string>
+    <string name="shared_by_me_title">Shared by me</string>
+    <string name="shared_with_me_empty_title">@string/shared_with_me_title</string>
+    <string name="shared_by_me_empty_title">@string/shared_by_me_title</string>
+    <string name="shared_with_me_empty_description">Files and folder that you share with others will appear here</string>
+    <string name="shared_by_me_empty_description">Safely share your files and folders with end-to-end encryption</string>
 </resources>

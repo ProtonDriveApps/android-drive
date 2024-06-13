@@ -46,9 +46,10 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.trash.domain.usecase.GetPagedTrashedDriveLinks
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
-import me.proton.core.drive.files.presentation.state.ListContentAppendingState
-import me.proton.core.drive.files.presentation.state.ListContentState
-import me.proton.core.drive.files.presentation.state.ListEffect
+import me.proton.core.drive.base.presentation.state.ListContentAppendingState
+import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting

@@ -19,9 +19,11 @@
 package me.proton.core.drive.share.user.data.repository
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetAllMembershipId
 import me.proton.core.drive.share.user.data.api.ShareMemberApiDataSource
 import me.proton.core.drive.share.user.data.api.request.UpdateShareMemberRequest
 import me.proton.core.drive.share.user.data.db.ShareUserDatabase
@@ -38,10 +40,10 @@ class ShareMemberRepositoryImpl @Inject constructor(
     override suspend fun hasMembers(shareId: ShareId): Boolean =
         db.shareMemberDao.hasMembers(shareId.userId, shareId.id)
 
-    override suspend fun fetchMembers(shareId: ShareId): List<ShareUser.Member> {
+    override suspend fun fetchAndStoreMembers(shareId: ShareId, ignoredIds: List<String>): List<ShareUser.Member> {
         val members = api.getMembers(shareId.userId, shareId.id).members.map { dto ->
             dto.toShareUserMember()
-        }
+        }.filter { member -> member.id !in ignoredIds }
         db.inTransaction {
             db.shareMemberDao.deleteAll(shareId.userId, shareId.id)
             db.shareMemberDao.insertOrUpdate(*members.map { member ->
@@ -67,10 +69,13 @@ class ShareMemberRepositoryImpl @Inject constructor(
         shareId: ShareId,
         memberId: String,
     ): Flow<ShareUser.Member> =
-        db.shareMemberDao.getMemberFlow(shareId.userId, shareId.id, memberId).map { member ->
+        db.shareMemberDao.getMemberFlow(
+            userId = shareId.userId,
+            shareId = shareId.id,
+            memberId = memberId,
+        ).filterNotNull().map { member ->
             member.toShareUserMember()
         }
-
 
     override suspend fun updateMember(
         shareId: ShareId,
@@ -90,6 +95,19 @@ class ShareMemberRepositoryImpl @Inject constructor(
             shareId = shareId.id,
             memberId = memberId,
             permissions = permissions.value,
+        )
+    }
+
+    override suspend fun deleteMember(shareId: ShareId, memberId: String) {
+        api.deleteMember(
+            userId = shareId.userId,
+            shareId = shareId.id,
+            memberId = memberId,
+        )
+        db.shareMemberDao.deleteMember(
+            userId = shareId.userId,
+            shareId = shareId.id,
+            memberId = memberId,
         )
     }
 }

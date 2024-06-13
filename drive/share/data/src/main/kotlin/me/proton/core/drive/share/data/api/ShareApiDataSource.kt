@@ -19,8 +19,8 @@ package me.proton.core.drive.share.data.api
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.share.data.api.request.ShareAccessWithNodeRequest
+import me.proton.core.drive.share.data.api.response.GetShareBootstrapResponse
 import me.proton.core.drive.share.data.api.response.UpdateUnmigratedSharesResponse
-import me.proton.core.drive.share.data.api.response.shareDto
 import me.proton.core.drive.share.data.extension.toCreateShareRequest
 import me.proton.core.drive.share.data.extension.toLong
 import me.proton.core.drive.share.domain.entity.Share.Type
@@ -38,14 +38,16 @@ class ShareApiDataSource(private val apiProvider: ApiProvider) {
         }.valueOrThrow.shareDtos
 
     @Throws(ApiException::class)
-    suspend fun getShareBootstrap(shareId: ShareId): ShareDto =
+    suspend fun getShareBootstrap(shareId: ShareId): GetShareBootstrapResponse =
         apiProvider.get<ShareApi>(shareId.userId).invoke {
             getShareBootstrap(shareId.id)
-        }.valueOrThrow.shareDto
+        }.valueOrThrow
 
     @Throws(ApiException::class)
-    suspend fun deleteShare(shareId: ShareId) =
-        apiProvider.get<ShareApi>(shareId.userId).invoke { deleteShare(shareId.id) }.valueOrThrow
+    suspend fun deleteShare(shareId: ShareId, force: Boolean = false) =
+        apiProvider.get<ShareApi>(shareId.userId).invoke {
+            deleteShare(shareId.id, if(force) 1 else 0)
+        }.valueOrThrow
 
     @Throws(ApiException::class)
     suspend fun createShare(userId: UserId, volumeId: VolumeId, shareInfo: ShareInfo) =

@@ -22,7 +22,7 @@ import androidx.annotation.DrawableRes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import me.proton.core.drive.base.presentation.common.Action
-import me.proton.core.drive.files.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.link.domain.entity.LinkId
 
 data class PhotosViewState(

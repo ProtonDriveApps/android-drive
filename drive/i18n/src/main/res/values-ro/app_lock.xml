@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">Aplicație blocată</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Deblocați folosind deblocarea dispozitivului</string>
+  <string name="app_lock_biometric_title_confirmation">Confirmare</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Pentru activarea deblocării, confirmați cu blocarea dispozitivului.</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Pentru dezactivarea deblocării, confirmați cu blocarea dispozitivului.</string>
+  <string name="app_lock_option_never_set">Activare blocarea biometrică sau cu dispozitivul</string>
+  <string name="app_lock_option_none">Păstrare deblocat</string>
+  <string name="app_lock_option_system">Biometric sau blocare dispozitiv</string>
+  <string name="app_lock_system_dialog_title">Activare acces biometric</string>
+  <string name="app_lock_system_dialog_description">Setați accesul biometric sau blocarea dispozitivului. </string>
+  <string name="app_lock_system_dialog_settings_button">Setări</string>
+  <string name="app_lock_system_not_available">Blocarea biometrică sau a dispozitivului nu este disponibilă.</string>
+  <string name="app_lock_enabled">Accesul biometric sau prin blocare este activat</string>
+  <string name="app_lock_disabled">Blocarea aplicației a fost dezactivată.</string>
+  <string name="app_lock_access_title">Alegeți modul de blocare a aplicației</string>
+  <string name="app_lock_unlock_the_app">Deblocare aplicație</string>
+</resources>

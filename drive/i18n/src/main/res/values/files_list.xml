@@ -41,6 +41,7 @@
     <string name="files_restore_from_trash_action">Restore</string>
     <string name="files_send_to_trash_action">Move to trash</string>
     <string name="files_delete_from_trash_action">@string/common_delete_permanently_action</string>
+    <string name="files_remove_me_action">Remove me</string>
     <string name="files_move_file_action">Move</string>
     <string name="files_rename_file_action">@string/common_rename_action</string>
     <string name="files_send_file_action">@string/common_send_action</string>

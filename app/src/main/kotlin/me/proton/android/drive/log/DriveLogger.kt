@@ -21,39 +21,97 @@
 package me.proton.android.drive.log
 
 import android.content.Context
-import android.os.Build
-import android.os.LocaleList
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.sentry.Sentry
-import me.proton.android.drive.BuildConfig
+import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.drive.announce.event.domain.usecase.AsyncAnnounceEvent
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.percentageOfAsciiChars
+import me.proton.core.drive.base.domain.usecase.DeviceInfo
 import me.proton.core.util.android.sentry.TimberLogger
 import me.proton.core.util.kotlin.Logger
-import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
 import me.proton.core.drive.i18n.R as I18N
 
 @Singleton
 class DriveLogger @Inject constructor(
     @ApplicationContext private val appContext: Context,
-) : Logger by TimberLogger {
+    private val deviceInfo: DeviceInfo,
+    asyncAnnounceEvent: AsyncAnnounceEvent,
+    accountManager: AccountManager,
+    coroutineContext: CoroutineContext,
+) : UserLogger(asyncAnnounceEvent, accountManager, coroutineContext) {
 
-    override fun e(tag: String, e: Throwable) {
-        DriveSentry.setInternalErrorTag(appContext, e)
-        TimberLogger.e(tag, e)
+    override fun d(tag: String, message: String) {
+        super.d(tag, message)
+        TimberLogger.d(tag, message)
+    }
+
+    override fun d(tag: String, e: Throwable, message: String) {
+        super.d(tag, e, message)
+        TimberLogger.d(tag, e, message)
     }
 
     override fun e(tag: String, message: String) {
-        DriveSentry.setInternalErrorTag(appContext, message)
+        super.e(tag, message)
         TimberLogger.e(tag, message)
+        DriveSentry.setInternalErrorTag(appContext, message)
+    }
+
+    override fun e(tag: String, e: Throwable) {
+        super.e(tag, e)
+        TimberLogger.e(tag, e)
+        DriveSentry.setInternalErrorTag(appContext, e)
     }
 
     override fun e(tag: String, e: Throwable, message: String) {
-        DriveSentry.setInternalErrorTag(appContext, e)
+        super.e(tag, e, message)
         TimberLogger.e(tag, e, message)
+        DriveSentry.setInternalErrorTag(appContext, e)
+    }
+
+    override fun i(tag: String, message: String) {
+        super.i(tag, message)
+        TimberLogger.i(tag, message)
+    }
+
+    override fun i(tag: String, e: Throwable, message: String) {
+        super.i(tag, e, message)
+        TimberLogger.i(tag, e, message)
+    }
+
+    override fun v(tag: String, message: String) {
+        super.v(tag, message)
+        TimberLogger.v(tag, message)
+    }
+
+    override fun v(tag: String, e: Throwable, message: String) {
+        super.v(tag, e, message)
+        TimberLogger.v(tag, e, message)
+    }
+
+    override fun w(tag: String, message: String) {
+        super.w(tag, message)
+        TimberLogger.w(tag, message)
+    }
+
+    override fun w(tag: String, e: Throwable) {
+        super.w(tag, e)
+        TimberLogger.w(tag, e)
+    }
+
+    override fun w(tag: String, e: Throwable, message: String) {
+        super.w(tag, e, message)
+        TimberLogger.w(tag, e, message)
+    }
+
+    fun deviceInfo() {
+        deviceInfo { info ->
+            i(info)
+        }
     }
 
     private fun withoutUploadFileContent(tag: String, message: String, block: (tag: String, message: String) -> Unit) {
@@ -83,38 +141,8 @@ class DriveLogger @Inject constructor(
     }
 }
 
-class NoOpLogger : Logger {
-    override fun d(tag: String, message: String) = Unit
-    override fun d(tag: String, e: Throwable, message: String) = Unit
-    override fun e(tag: String, message: String) = Unit
-    override fun e(tag: String, e: Throwable) = Unit
-    override fun e(tag: String, e: Throwable, message: String) = Unit
-    override fun w(tag: String, message: String) = Unit
-    override fun w(tag: String, e: Throwable) = Unit
-    override fun w(tag: String, e: Throwable, message: String) = Unit
-    override fun i(tag: String, message: String) = Unit
-    override fun i(tag: String, e: Throwable, message: String) = Unit
-    override fun v(tag: String, message: String) = Unit
-    override fun v(tag: String, e: Throwable, message: String) = Unit
-}
-
 fun Logger.v(message: String) = v(DriveLogTag.DEFAULT, message)
 fun Logger.d(message: String) = d(DriveLogTag.DEFAULT, message)
 fun Logger.i(message: String) = i(DriveLogTag.DEFAULT, message)
 fun Logger.w(message: String) = w(DriveLogTag.DEFAULT, message)
 fun Logger.e(throwable: Throwable) = e(DriveLogTag.DEFAULT, throwable)
-
-fun Logger.deviceInfo() {
-    i("-----------------------------------------")
-    i("OS:          Android ${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})")
-    i("DEVICE:      ${Build.MANUFACTURER} ${Build.MODEL}")
-    i("FINGERPRINT: ${Build.FINGERPRINT}")
-    i("ABI:         ${Build.SUPPORTED_ABIS.joinToString(",")}")
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-        i("LOCALE:      ${Locale.getDefault().toLanguageTag()}")
-    } else {
-        i("LOCALE:      ${LocaleList.getDefault().toLanguageTags()}")
-    }
-    i("APP VERSION: ${BuildConfig.VERSION_NAME}")
-    i("-----------------------------------------")
-}

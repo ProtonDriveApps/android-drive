@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">Application verrouillée</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Déverrouiller en utilisant le système de verrouillage de votre appareil</string>
+  <string name="app_lock_biometric_title_confirmation">Confirmation</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Pour activer le déverrouillage, confirmez avec le système de verrouillage de votre appareil.</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Pour désactiver le déverrouillage, confirmez avec le système de verrouillage de votre appareil.</string>
+  <string name="app_lock_option_never_set">Activer le verrouillage biométrique ou sur l\'appareil</string>
+  <string name="app_lock_option_none">Maintenir déverrouillé</string>
+  <string name="app_lock_option_system">Verrouillage biométrique ou sur l\'appareil</string>
+  <string name="app_lock_system_dialog_title">Activez l\'accès biométrique</string>
+  <string name="app_lock_system_dialog_description">Configurez l\'accès au verrouillage biométrique ou sur l\'appareil pour cet appareil.</string>
+  <string name="app_lock_system_dialog_settings_button">Paramètres</string>
+  <string name="app_lock_system_not_available">Le verrouillage biométrique ou sur l\'appareil ne sont pas disponibles sur votre appareil.</string>
+  <string name="app_lock_enabled">L\'accès au verrouillage biométrique ou sur l\'appareil est activé.</string>
+  <string name="app_lock_disabled">Le verrouillage de l\'application a été désactivé.</string>
+  <string name="app_lock_access_title">Choisissez comment verrouiller l\'application</string>
+  <string name="app_lock_unlock_the_app">Déverrouiller l\'application</string>
+</resources>

@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 
 sealed class HomeEffect {
-    object OpenDrawer : HomeEffect()
+    data object OpenDrawer : HomeEffect()
     data class ShowSnackbar(val message: String) : HomeEffect()
     data class BottomNavigation(val enabled: Boolean) : HomeEffect()
 }

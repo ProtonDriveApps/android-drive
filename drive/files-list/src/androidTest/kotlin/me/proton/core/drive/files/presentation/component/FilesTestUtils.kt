@@ -100,6 +100,28 @@ val BASE_FOLDER_LINK = Link.Folder(
 )
 
 fun Link.toDriveLink() = when (this) {
-    is Link.File -> DriveLink.File(this, VolumeId("VOLUME_ID"), false, false, null, null, cryptoName = CryptoProperty.Decrypted(name, VerificationStatus.Success))
-    is Link.Folder -> DriveLink.Folder(this, VolumeId("VOLUME_ID"), false, false, null, null, cryptoName = CryptoProperty.Decrypted(name, VerificationStatus.Success))
+    is Link.File -> DriveLink.File(
+        link = this,
+        volumeId = VolumeId("VOLUME_ID"),
+        isMarkedAsOffline = false,
+        isAnyAncestorMarkedAsOffline = false,
+        downloadState = null,
+        trashState = null,
+        cryptoName = CryptoProperty.Decrypted(name, VerificationStatus.Success),
+        shareMemberCount = null,
+        shareInvitationCount = null,
+        shareUser = null,
+    )
+    is Link.Folder -> DriveLink.Folder(
+        link = this,
+        volumeId = VolumeId("VOLUME_ID"),
+        isMarkedAsOffline = false,
+        isAnyAncestorMarkedAsOffline = false,
+        downloadState = null,
+        trashState = null,
+        cryptoName = CryptoProperty.Decrypted(name, VerificationStatus.Success),
+        shareInvitationCount = null,
+        shareMemberCount = null,
+        shareUser = null,
+    )
 }

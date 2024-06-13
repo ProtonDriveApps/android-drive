@@ -23,6 +23,7 @@ import me.proton.core.contact.domain.entity.ContactEmail
 import me.proton.core.contact.domain.repository.ContactRepository
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.util.coRunCatching
 import javax.inject.Inject
 
 class GetContactEmails @Inject constructor(
@@ -30,4 +31,11 @@ class GetContactEmails @Inject constructor(
 ) {
     operator fun invoke(userId: UserId): Flow<DataResult<List<ContactEmail>>> =
         contactRepository.observeAllContactEmails(userId)
+
+    suspend operator fun invoke(userId: UserId, email: String): Result<ContactEmail> = coRunCatching {
+        contactRepository.getAllContactEmails(
+            userId = userId,
+            refresh = false,
+        ).first { contactEmail -> contactEmail.email == email }
+    }
 }

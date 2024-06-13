@@ -13,6 +13,7 @@ variables:
 workflow:
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_REF_NAME == "candidate"
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 before_script:
@@ -179,9 +180,11 @@ upload to firebase:
     DEVICE_CONFIG: "quickTest"
   script:
     - echo ${ENV_VARIABLES}
+    - echo ${DEVICE_CONFIG}
     - gcloud config set project $CLOUD_PROJECT_ID --quiet
     - gcloud auth activate-service-account --key-file app/service_account.json --quiet
     - gcloud firebase test android run firebase-device-config.yml:${DEVICE_CONFIG}
+      --timeout 30m
       --app $REMOTE_APK
       --test $TEST_APP
       --num-flaky-test-attempts=1
@@ -263,6 +266,9 @@ drive-sorting-presentation-firebase-tests:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:all/'
+    - if: $CI_DEVICE_CONFIG != null
+      variables:
+        DEVICE_CONFIG: $CI_DEVICE_CONFIG
 
 test:firebase:e2e:shard-account:
   extends: .app-firebase-tests
@@ -571,7 +577,5 @@ i18n-sync-crowdin:
 i18n-commit-locales:
   stage: i18n
   variables:
-    I18N_COMMIT_BRANCH_PUSH: develop
-    I18N_COMMIT_BRANCH_ALLOWED: develop
     I18N_COMMIT_CROWDIN_PROJECT: 'android-drive'
   extends: .i18n-commit-locales-shared

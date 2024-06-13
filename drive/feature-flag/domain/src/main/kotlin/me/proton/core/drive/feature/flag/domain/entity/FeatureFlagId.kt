@@ -24,12 +24,18 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
 
     companion object {
         const val DRIVE_PHOTOS_UPLOAD_DISABLED = "DrivePhotosUploadDisabled"
-        const val DRIVE_SHARING = "DriveSharingDevelopment"
+        const val DRIVE_SHARING_DEVELOPMENT = "DriveSharingDevelopment"
+        const val DRIVE_SHARING_INVITATIONS = "DriveSharingInvitations"
+        const val DRIVE_SHARING_DISABLED = "DriveSharingDisabled"
+        const val DRIVE_SHARING_EDITING_DISABLED = "DriveSharingEditingDisabled"
 
-        internal var developments: List<String> = listOf(
+        internal var developments : List<String> = listOf(
         )
 
         fun drivePhotosUploadDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_PHOTOS_UPLOAD_DISABLED)
-        fun driveSharing(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING)
+        fun driveSharingDevelopment(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_DEVELOPMENT)
+        fun driveSharingInvitations(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_INVITATIONS)
+        fun driveSharingDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_DISABLED)
+        fun driveSharingEditingDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_EDITING_DISABLED)
     }
 }

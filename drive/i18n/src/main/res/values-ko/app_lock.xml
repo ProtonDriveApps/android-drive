@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">앱 잠김</string>
+  <string name="app_lock_biometric_subtitle_app_locked">기기의 잠금으로 해제하세요</string>
+  <string name="app_lock_biometric_title_confirmation">확인</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">잠금 해제 활성화를 위해 기기 잠금으로 확인해주세요</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">잠금 해제를 비활성화하려면, 기기 잠금으로 수락하세요</string>
+  <string name="app_lock_option_never_set">기기 잠금 또는 생체 인증 활성화</string>
+  <string name="app_lock_option_none">잠금 해제 유지</string>
+  <string name="app_lock_option_system">생체 인증 및 기기 잠금</string>
+  <string name="app_lock_system_dialog_title">생체 인증 켜기</string>
+  <string name="app_lock_system_dialog_description">이 기기에서 생체 인증 및 기기 잠금을 설정하십시오.</string>
+  <string name="app_lock_system_dialog_settings_button">설정</string>
+  <string name="app_lock_system_not_available">기기 잠금 또는 생체 인증을 지원하지 않는 기기입니다</string>
+  <string name="app_lock_enabled">생체 인증 및 기기 잠금 접근이 활성화됨</string>
+  <string name="app_lock_disabled">앱 잠금이 비활성화되었습니다</string>
+  <string name="app_lock_access_title">앱을 잠금 상태로 전환하는 방법을 선택하세요</string>
+  <string name="app_lock_unlock_the_app">앱 잠금 해제</string>
+</resources>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Se decriptează</string>
+  <string name="title_files">Fișiere</string>
+  <string name="title_shared">Partajat</string>
+  <string name="title_my_files">Fișierele mele</string>
+  <string name="title_offline_available">Disponibil deconectat</string>
+  <string name="title_empty_my_files">Haideți, adăugați primul fișier</string>
+  <string name="title_empty_folder">Să folosim acest folder</string>
+  <string name="title_empty_folder_read_only">Folder gol</string>
+  <string name="title_empty_shared">Urmăriți ce se întâmplă</string>
+  <string name="title_empty_offline_available">Nimic disponibil fără conexiune</string>
+  <string name="title_empty_trash">Coșul de gunoi este gol</string>
+  <string name="title_empty_trash_action">Golire «Gunoi»</string>
+  <string name="title_files_confirm_deletion">Ștergere permanentă?</string>
+  <string name="title_default_home_screen_tab">Alegeți fila ecranului principal implicit</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Aplicație</string>
+  <string name="description_signing_out">Se deconectează…</string>
+  <string name="settings_about_links_acknowledgments_title">Mulțumiri</string>
+  <string name="settings_about_links_privacy_policy_title">Politica de confidențialitate</string>
+  <string name="settings_about_links_terms_of_service_title">Termenii serviciului</string>
+  <string name="common_error_no_browser_available">Nu s-a putut deschide legătura deoarece se pare că nu aveți un navigator web instalat.</string>
+  <string name="move_to">Mutare în</string>
+  <string name="move_file_confirm_action">Mutare</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">Nu se poate muta un folder în el însuși.</string>
+  <string name="folder_option_import_file">Încărcați un fișier</string>
+  <string name="folder_option_create_folder">Creare folder</string>
+  <string name="folder_option_take_a_photo">Fotografie nouă</string>
+  <string name="settings_theme_system_default">Implicit din sistem</string>
+  <string name="settings_theme_dark">Neagră</string>
+  <string name="settings_theme_light">Albă</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Încărcare în %1$s</string>
+  <string name="upload_title">Încărcare</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">Se pot încărca doar fișiere în %1$s.</string>
+  <string name="in_app_notification_importing_file_already_exists">Există fișiere cu același nume. Încercați să goliți memoria aplicației.</string>
+  <string name="in_app_notification_clear_local_cache_success">Bufferul local a fost golit cu succes.</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Spațiu de stocare plin</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Se încarcă fișiere în %1$s</string>
+  <string name="notification_content_title_upload_complete">Încărcare completă</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Se încarcă %1$d fișier.</item>
+    <item quantity="few">Se încarcă %1$d fișiere.</item>
+    <item quantity="other">Se încarcă %1$d de fișiere.</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">S-a încărcat %1$d fișier.</item>
+    <item quantity="few">S-au încărcat %1$d fișiere.</item>
+    <item quantity="other">S-au încărcat %1$d de fișiere.</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">S-a anulat %1$d fișier.</item>
+    <item quantity="few">S-au anulat %1$d fișiere.</item>
+    <item quantity="other">S-au anulat %1$d de fișiere.</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">%1$d fișier a eșuat.</item>
+    <item quantity="few">%1$d fișiere au eșuat.</item>
+    <item quantity="other">%1$d de fișiere au eșuat.</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Conservare fotografii în %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">A rămas %1$s element</item>
+    <item quantity="few">Au rămas %1$s articole</item>
+    <item quantity="other">Au rămas %1$s de articole</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Conservare finalizată.</string>
+  <string name="notification_content_text_backup_uncompleted">Conservare finalizată cu probleme.</string>
+  <string name="notification_content_text_backup_failed">Conservarea a eșuat.</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Spațiul de stocare Proton este plin.</string>
+  <string name="notification_content_text_backup_failed_local_storage">Spațiu de stocare local este plin.</string>
+  <string name="notification_content_text_backup_failed_permission">Lipsesc permisiunile.</string>
+  <string name="notification_content_text_backup_failed_connectivity">Nu există conexiune la internet.</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Se așteaptă Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Conservarea nu este permisă.</string>
+  <string name="notification_content_text_backup_paused_disabled">Conservarea este dezactivată</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Conservarea nu poate funcționa în fundal.</string>
+  <string name="notification_content_title_download_complete">Descărcare finalizată</string>
+  <string name="notification_content_title_forced_sign_out">Autentificați-vă</string>
+  <string name="notification_content_text_forced_sign_out">Ne pare rău! Am avut o problemă cu sincronizarea - reconectați-vă și totul va funcționa fără probleme.</string>
+  <string name="notification_content_title_no_space_left_on_device">Nu mai este spațiu liber pe dispozitiv.</string>
+  <string name="notification_content_text_no_space_left_on_device">Aplicația s-ar putea să nu funcționeze corespunzător.</string>
+  <string name="notification_channel_group_name_application">Aplicație</string>
+  <string name="notification_channel_background_title">Fundal</string>
+  <string name="notification_channel_background_description">Canal pentru operații in fundal cum ar fi conservarea.</string>
+  <string name="notification_channel_transfer_title">Transferuri</string>
+  <string name="notification_channel_transfer_description">Canal pentru stocare în cloud, notificări de încărcare și descărcare.</string>
+  <string name="notification_channel_warning_title">Avertizare</string>
+  <string name="notification_channel_warning_description">Canal pentru avertismente care necesită acțiunea utilizatorului.</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Selectare toate din listă</string>
+  <string name="content_description_selected_options">Afișare mai multe opțiuni pentru fișierele și/sau folderele selectate.</string>
+  <string name="content_description_files_upload_upload_file">Încărcați un fișier</string>
+  <string name="description_empty_my_files">Apăsați butonul pe a începe adăugarea fișierelor.</string>
+  <string name="description_empty_folder_read_only">Nu e nimic de văzut aici</string>
+  <string name="description_empty_shared">Fișierele partajate apar aici ca să puteți să urmăriți și gestiona ce este partajat.</string>
+  <string name="description_empty_trash">Aici rămân articolele aruncate până când le ștergeți sau le restaurați.</string>
+  <string name="description_empty_offline_available">Faceți ca fișierele esențiale să fie disponibile chiar dacă nu aveți conexiune.</string>
+  <string name="description_no_drive_scope">Utilizatorului îi lipsește domeniul de aplicare al unității.</string>
+  <string name="description_file_download_failed">Descărcarea a eșuat. Verificați conexiunea la rețea și reîncercați.</string>
+  <string name="description_file_decryption_failed">Nu s-a putut decripta fișierul.</string>
+  <string name="description_file_verify_signature_failed">Semnătura fișierului nu a putut fi verificată.</string>
+  <string name="description_files_stop_sharing">Această operație va șterge și elimina accesul la fișier sau folder pentru oricine are legătura.</string>
+  <string name="description_files_stop_sharing_action_success">Legătura către fișier a fost ștearsă.</string>
+  <string name="description_files_stop_sharing_action_error">A apărut o eroare în timpul ștergerii legăturii către fișier.</string>
+  <string name="description_files_stop_all_sharing">Aceasta va șterge legătura web și va anula accesul tuturor.</string>
+  <string name="description_files_stop_all_sharing_action_success">Partajarea către fișier a fost ștearsă.</string>
+  <string name="description_files_stop_all_sharing_action_error">A apărut o eroare în timpul ștergerii partajării către fișier.</string>
+  <string name="ignore_file_signature_action">Afișare așa</string>
+  <string name="action_empty_files_add_files">Încărcare</string>
+  <string name="error_could_not_send_file">A apărut o eroare în timpul trimiterii fișierului.</string>
+  <string name="error_could_not_load_folder_content">A apărut o eroare în timpul încărcării conținutului folderului.</string>
+  <string name="error_main_share_locked">Fișierele nu mai sunt accesibile datorită resetării parolei. Reîncărcați vechea cheie de criptare pentru a redobândi accesul.</string>
+  <string name="error_share_locked">Partajarea este blocată.</string>
+  <string name="error_main_share_not_found">Partajarea principală nu se poate găsi.</string>
+  <string name="error_share_not_found">Partajarea nu a fost găsită.</string>
+  <string name="error_creating_photo_share_not_allowed">Conservarea fotografiilor este momentan dezactivată.</string>
+  <string name="error_creating_share_not_allowed">Crearea partajărilor este momentan dezactivată.</string>
+  <string name="operation_open_document">deschidă un document</string>
+  <string name="operation_create_document">creeze un document</string>
+  <string name="operation_take_picture">fotografieze</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Deblocați %1$s de spațiu liber</string>
+  <string name="get_more_free_storage_description">Completați acești pași în primele 30 de zile pentru a vă mări spațiul de stocare.</string>
+  <string name="get_more_free_storage_action_upload_title">Încărcați un fișier sau activați conservarea fotografiilor</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Toate fișierele vor fi criptate.</string>
+  <string name="get_more_free_storage_action_link_title">Creați o legătură de partajare</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Selectați orice fișier sau folder. Deschideți meniul de opțiuni și apăsați pe %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_recovery_title">Setați o metodă de recuperare</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Autentificați-vă la %1$s, apoi accesați Setări -&gt; Recuperare.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

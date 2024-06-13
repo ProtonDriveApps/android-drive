@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">Fotografii</string>
+  <string name="photos_permissions_title">Criptați-vă și conservați-vă fotografiile și filmele</string>
+  <string name="photos_permissions_section_1_title">Protejați-vă amintirile</string>
+  <string name="photos_permissions_section_1_description">Fotografiile sunt criptate în ambele sensuri, asigurându-vă intimitatea.</string>
+  <string name="photos_permissions_section_2_title">Conservări automate</string>
+  <string name="photos_permissions_section_2_description">Fotografiile sunt conservate regulat prin W-iFi cu calitate originală.</string>
+  <string name="photos_permissions_action">Activare conservare</string>
+  <string name="photos_permission_rational_img_text">Permitere acces</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s are nevoie de acces complet la fotografii</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">Acest lucru este necesar pentru a vă asigura că toate fotografiile vă sunt copiate și sunt disponibile pe toate dispozitivele personale.\n%1$s vă ia în serios confidențialitatea și vă va accesa fotografiile numai în scopul sincronizării și al conservării.</string>
+  <string name="photos_permission_rational_confirm_action">Setări</string>
+  <string name="photos_permission_rational_dismiss_action">Nu acum</string>
+  <string name="photos_empty_loading_label_encrypted">Criptat bilateral</string>
+  <string name="photos_empty_loading_label_progress">Conservarea este în desfășurare.\nAr putea dura un timp.</string>
+  <string name="photos_separator_current_month">Luna asta</string>
+  <string name="photos_encrypted_footer">Criptat bilateral</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from the Camera folder"
+            "Backing up items from 2 Camera folders"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="one">Conservare articole din folderul %1$s.</item>
+    <item quantity="few">Conservare articole din %2$d foldere din %1$s.</item>
+    <item quantity="other">Conservare articole din %2$d de foldere din %1$s.</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">Folderul %1$s nu a fost găsit pentru a fi conservat.</string>
+  <string name="photos_error_backup_disabled">Conservare dezactivată.</string>
+  <string name="photos_error_backup_disabled_action">Pornire</string>
+  <string name="photos_error_backup_missing_folder">Folderul de conservare nu a fost găsit.</string>
+  <string name="photos_error_backup_failed">Conservarea a eșuat.</string>
+  <string name="photos_error_backup_temporarily_disabled">Conservarea este momentan dezactivată.</string>
+  <string name="photos_error_missing_permissions">Lipsesc permisiunile.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">Pentru o conservare automată și continuă, permiteți din setări ca %1$s să poată accesa fotografiile.</string>
+  <string name="photos_error_waiting_connectivity">Nu există conexiune la internet.</string>
+  <string name="photos_error_waiting_wifi_connectivity">Se așteaptă Wi-Fi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Folosire date mobile</string>
+  <string name="photos_error_local_storage">Spațiu de stocare dispozitiv plin.</string>
+  <string name="photos_error_local_storage_description">Pentru a continua conservarea trebuie să eliberați spațiu pe dispozitiv.</string>
+  <string name="photos_error_background_restrictions">Setați utilizarea bateriei la „Fără restricții” pentru activitatea din fundal a aplicației.</string>
+  <string name="photos_error_background_restrictions_description">Pentru conservări consistente în fundal, ajustați setarea bateriei sau deschideți frecvent aplicația.</string>
+  <string name="photos_error_background_restrictions_action">Setări</string>
+  <string name="photos_empty_title">Nu există conservări</string>
+  <string name="photos_empty_description">De îndată ce stocați fotografii sau filme pe dispozitiv, acestea vor apărea aici.</string>
+  <string name="photos_backup_title">Conservare fotografii</string>
+  <string name="photos_backup_option_mobile_data">Folosire date mobile pentru a conserva fotografiile</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Dezactivare optimizare baterie</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Permitere conservări neîntrerupte când aplicația rulează în fundal.</string>
+  <string name="photos_backup_in_app_notification_turned_on">Conservarea fotografiilor este activată.</string>
+  <string name="photos_backup_in_app_notification_turned_off">Conservarea fotografiilor nu este activată.</string>
+  <string name="photos_backup_state_completed">Conservare finalizată.</string>
+  <string name="photos_backup_state_uncompleted">Conservare finalizată cu probleme.</string>
+  <string name="photos_backup_state_uncompleted_action">Rezolvare</string>
+  <string name="photos_backup_state_encrypting">Se criptează…</string>
+  <string name="photos_backup_state_uploading">Se conservă…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="one">A rămas %1$s element</item>
+    <item quantity="few">Au rămas %1$s articole</item>
+    <item quantity="other">Au rămas %1$s de articole</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="one">S-a salvat %1$s articol.</item>
+    <item quantity="few">S-au salvat %1$s articole.</item>
+    <item quantity="other">S-au salvat %1$s de articole.</item>
+  </plurals>
+  <string name="photos_upsell_title">Nu rămâneți niciodată fără spațiu de stocare</string>
+  <string name="photos_upsell_description">Modificați planul acum și păstrați-vă toate amintirile criptate și în siguranță.</string>
+  <string name="photos_upsell_dismiss_action">Nu acum</string>
+</resources>

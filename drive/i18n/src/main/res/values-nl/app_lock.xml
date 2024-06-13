@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">App vergrendeld</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Ontgrendel met uw apparaatvergrendeling</string>
+  <string name="app_lock_biometric_title_confirmation">Bevestiging</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Bevestig met uw apparaatvergrendeling om ontgrendelen in te schakelen</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Bevestig met uw apparaatvergrendeling om ontgrendelen uit te schakelen</string>
+  <string name="app_lock_option_never_set">Schakel biometrie of apparaatvergrendeling in</string>
+  <string name="app_lock_option_none">Ontgrendeld blijven</string>
+  <string name="app_lock_option_system">Biometrie of apparaatvergrendeling</string>
+  <string name="app_lock_system_dialog_title">Schakel biometrische toegang in</string>
+  <string name="app_lock_system_dialog_description">Stel biometrie of toegang tot apparaatvergrendeling in op dit apparaat.</string>
+  <string name="app_lock_system_dialog_settings_button">Instellingen</string>
+  <string name="app_lock_system_not_available">Biometrie of apparaatvergrendeling is niet beschikbaar op uw apparaat</string>
+  <string name="app_lock_enabled">Biometrie of apparaatvergrendeling geactiveerd</string>
+  <string name="app_lock_disabled">App-vergrendeling is gedeactiveerd</string>
+  <string name="app_lock_access_title">Kies hoe u de app wilt vergrendelen</string>
+  <string name="app_lock_unlock_the_app">Ontgrendel de app</string>
+</resources>

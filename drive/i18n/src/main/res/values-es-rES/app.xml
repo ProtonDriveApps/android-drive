@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Descifrando</string>
+  <string name="title_files">Archivos</string>
+  <string name="title_shared">Compartido</string>
+  <string name="title_my_files">Mis archivos</string>
+  <string name="title_offline_available">Disponible sin conexión</string>
+  <string name="title_empty_my_files">Adelante, añade tu primer archivo.</string>
+  <string name="title_empty_folder">Llenemos esta carpeta</string>
+  <string name="title_empty_folder_read_only">La carpeta está vacía.</string>
+  <string name="title_empty_shared">Mantente al tanto de lo que ocurre.</string>
+  <string name="title_empty_offline_available">Nada disponible sin conexión</string>
+  <string name="title_empty_trash">La papelera está vacía.</string>
+  <string name="title_empty_trash_action">Vaciar la papelera</string>
+  <string name="title_files_confirm_deletion">¿Eliminar permanentemente?</string>
+  <string name="title_default_home_screen_tab">Elegir la pestaña de la pantalla de inicio por defecto</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Aplicación</string>
+  <string name="description_signing_out">Cerrando sesión…</string>
+  <string name="settings_about_links_acknowledgments_title">Agradecimientos</string>
+  <string name="settings_about_links_privacy_policy_title">Política de privacidad</string>
+  <string name="settings_about_links_terms_of_service_title">Términos de servicio</string>
+  <string name="common_error_no_browser_available">No hemos podido abrir el enlace porque no pareces tener un navegador instalado.</string>
+  <string name="move_to">Mover a</string>
+  <string name="move_file_confirm_action">Mover</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">No puedes mover una carpeta dentro de sí misma.</string>
+  <string name="folder_option_import_file">Cargar un archivo</string>
+  <string name="folder_option_create_folder">Crear una carpeta</string>
+  <string name="folder_option_take_a_photo">Tomar una nueva foto</string>
+  <string name="settings_theme_system_default">Del sistema</string>
+  <string name="settings_theme_dark">Oscuro</string>
+  <string name="settings_theme_light">Claro</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Cargar en %1$s</string>
+  <string name="upload_title">Cargar</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">Solo se pueden cargar archivos en %1$s.</string>
+  <string name="in_app_notification_importing_file_already_exists">Ya existe un archivo con ese nombre. Intenta borrar la caché de la aplicación.</string>
+  <string name="in_app_notification_clear_local_cache_success">Caché local borrada</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Almacenamiento lleno</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Cargando archivos en %1$s</string>
+  <string name="notification_content_title_upload_complete">Carga completada</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Cargando %1$d archivo</item>
+    <item quantity="other">Cargando %1$d archivos</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d archivo cargado</item>
+    <item quantity="other">%1$d archivos cargados</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d archivo cancelado</item>
+    <item quantity="other">%1$d archivos cancelados</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">Error con %1$d archivo</item>
+    <item quantity="other">Error con %1$d archivos</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Copia de seguridad de las fotos en %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">Queda %1$s elemento.</item>
+    <item quantity="other">Quedan %1$s elementos.</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">La copia de seguridad ha finalizado.</string>
+  <string name="notification_content_text_backup_uncompleted">La copia de seguridad se ha completado con problemas.</string>
+  <string name="notification_content_text_backup_failed">Error de copia de seguridad</string>
+  <string name="notification_content_text_backup_failed_drive_storage">El almacenamiento de Proton está lleno.</string>
+  <string name="notification_content_text_backup_failed_local_storage">El almacenamiento local está lleno.</string>
+  <string name="notification_content_text_backup_failed_permission">Faltan los permisos.</string>
+  <string name="notification_content_text_backup_failed_connectivity">No hay conexión a Internet.</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Esperando una conexión Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">La copia de seguridad no está permitida.</string>
+  <string name="notification_content_text_backup_paused_disabled">La copia de seguridad está desactivada.</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">La copia de seguridad no puede ejecutarse en segundo plano.</string>
+  <string name="notification_content_title_download_complete">Descarga completada</string>
+  <string name="notification_content_title_forced_sign_out">Inicia sesión</string>
+  <string name="notification_content_text_forced_sign_out">Lamentamos la interrupción. Hemos tenido un problema con la sincronización. Inicia sesión de nuevo y todo funcionará sin problemas.</string>
+  <string name="notification_content_title_no_space_left_on_device">No queda espacio en un dispositivo.</string>
+  <string name="notification_content_text_no_space_left_on_device">La aplicación puede no funcionar correctamente.</string>
+  <string name="notification_channel_group_name_application">Aplicación</string>
+  <string name="notification_channel_background_title">Segundo plano</string>
+  <string name="notification_channel_background_description">Canal para operaciones en segundo plano como copia de seguridad</string>
+  <string name="notification_channel_transfer_title">Transferencia</string>
+  <string name="notification_channel_transfer_description">Canal de notificaciones para almacenamiento en la nube, de carga y descarga</string>
+  <string name="notification_channel_warning_title">Advertencia</string>
+  <string name="notification_channel_warning_description">Canal para advertencias que requieren una acción del usuario</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Seleccionar todos los elementos en la lista</string>
+  <string name="content_description_selected_options">Mostrar más opciones para los archivos o carpetas seleccionados</string>
+  <string name="content_description_files_upload_upload_file">Cargar un archivo</string>
+  <string name="description_empty_my_files">Pulsa el botón para comenzar a añadir archivos.</string>
+  <string name="description_empty_folder_read_only">No hay datos que ver aquí.</string>
+  <string name="description_empty_shared">Los archivos enlazados aparecen aquí para que puedas rastrearlos y gestionar los elementos compartidos.</string>
+  <string name="description_empty_trash">Aquí es donde permanecen los elementos borrados hasta que los elimines o restaures.</string>
+  <string name="description_empty_offline_available">Haz que los archivos esenciales estén siempre disponibles, incluso cuando tu red no lo esté.</string>
+  <string name="description_no_drive_scope">El usuario no tiene permiso de acceso.</string>
+  <string name="description_file_download_failed">Error de descarga. Verifica la conexión de red e intenta de nuevo.</string>
+  <string name="description_file_decryption_failed">No se ha podio descifrar el archivo.</string>
+  <string name="description_file_verify_signature_failed">No se ha podido verificar la firma del archivo.</string>
+  <string name="description_files_stop_sharing">Esto eliminará el enlace y borrará el acceso a tu archivo o carpeta para cualquier persona que tenga el enlace.</string>
+  <string name="description_files_stop_sharing_action_success">El enlace a tu archivo ha sido eliminado.</string>
+  <string name="description_files_stop_sharing_action_error">Se ha producido un error al eliminar el enlace a tu archivo.</string>
+  <string name="description_files_stop_all_sharing">Esto eliminará el enlace y borrará el acceso para todos.</string>
+  <string name="description_files_stop_all_sharing_action_success">El acceso compartido al archivo fue eliminado.</string>
+  <string name="description_files_stop_all_sharing_action_error">Se ha producido un error al eliminar el acceso compartido al archivo.</string>
+  <string name="ignore_file_signature_action">Ver de todos modos</string>
+  <string name="action_empty_files_add_files">Cargar</string>
+  <string name="error_could_not_send_file">Se ha producido un error al intentar enviar un archivo.</string>
+  <string name="error_could_not_load_folder_content">Se ha producido un error al intentar cargar el contenido de la carpeta.</string>
+  <string name="error_main_share_locked">Tus archivos ya no son accesibles debido a un restablecimiento de la contraseña. Vuelve a cargar la antigua clave de cifrado para recuperar el acceso.</string>
+  <string name="error_share_locked">La compartición está bloqueada.</string>
+  <string name="error_main_share_not_found">No se ha encontrado la carpeta principal.</string>
+  <string name="error_share_not_found">No se encuentra la compartición.</string>
+  <string name="error_creating_photo_share_not_allowed">La copia de seguridad de fotos está temporalmente desactivada.</string>
+  <string name="error_creating_share_not_allowed">La creación de recursos compartidos está temporalmente desactivada.</string>
+  <string name="operation_open_document">abrir un documento</string>
+  <string name="operation_create_document">crear un documento</string>
+  <string name="operation_take_picture">tomar una foto</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Desbloquea %1$s de almacenamiento gratuito</string>
+  <string name="get_more_free_storage_description">Termina estos pasos en tus primeros 30 días para mejorar tu almacenamiento gratuito.</string>
+  <string name="get_more_free_storage_action_upload_title">Carga un archivo o activa la copia de seguridad para tus fotos</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Todos tus archivos serán cifrados</string>
+  <string name="get_more_free_storage_action_link_title">Crea un enlace compartido</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Selecciona cualquier archivo o carpeta. Abre las opciones del menú y presiona %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Compartir un archivo</string>
+  <string name="get_more_free_storage_action_share_subtitle">Es fácil y seguro.</string>
+  <string name="get_more_free_storage_action_recovery_title">Establece un método de recuperación</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Inicia sesión en %1$s, luego ve a Ajustes -&gt; Recuperación.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

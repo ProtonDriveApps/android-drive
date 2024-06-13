@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="storage_drive_usage">Uso de Drive</string>
+  <string name="storage_total_usage">Uso total</string>
+  <string name="storage_details_format"><![CDATA[%1$s de %2$s usado]]></string>
+  <!--
+        Variable %1$s is percentage of available storage
+        Examples:
+            "Your storage is more than 50% full"
+    -->
+  <string name="storage_quotas_not_full_title">El almacenamiento está lleno a más del %1$s</string>
+  <!--
+        Variable %1$s is an application name
+        Examples:
+            "Free up space on your Proton Drive storage or upgrade your plan for uninterrupted backup."
+    -->
+  <string name="storage_quotas_full_title">Libere espacio en el almacenamiento de %1$s o mejore el plan para realizar copias de seguridad sin interrupciones.</string>
+  <string name="storage_quotas_get_storage_action">Obtener más almacenamiento</string>
+  <string name="user_select_other_account_content_description">Seleccione otra cuenta</string>
+  <string name="description_remove_account">Se cerrará la sesión y todos los datos asociados a esta cuenta se borrarán de este dispositivo.</string>
+</resources>

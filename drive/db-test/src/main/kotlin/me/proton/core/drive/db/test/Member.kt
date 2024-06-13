@@ -18,10 +18,14 @@
 
 package me.proton.core.drive.db.test
 
-import me.proton.core.drive.share.user.data.db.ShareMemberEntity
+import me.proton.core.drive.base.domain.entity.Permissions
+import me.proton.core.drive.share.user.data.db.entity.ShareMemberEntity
 
-suspend fun ShareContext.member(email: String) {
-    member(NullableShareMemberEntity(email))
+suspend fun ShareContext.member(
+    email: String,
+    permissions: Permissions = Permissions()
+) {
+    member(NullableShareMemberEntity(email, permissions))
 }
 
 suspend fun ShareContext.member(shareMemberEntity: ShareMemberEntity) {
@@ -31,6 +35,7 @@ suspend fun ShareContext.member(shareMemberEntity: ShareMemberEntity) {
 @Suppress("FunctionName")
 fun ShareContext.NullableShareMemberEntity(
     email: String,
+    permissions: Permissions,
     id: String = "member-id-$email"
 ) = ShareMemberEntity(
     id = id,
@@ -38,7 +43,7 @@ fun ShareContext.NullableShareMemberEntity(
     shareId = share.id,
     inviterEmail = "inviter@proton.me",
     inviteeEmail = email,
-    permissions = 0,
+    permissions = permissions.value,
     keyPacket = "member-key-packet",
     keyPacketSignature = "member-key-packet-signature",
     sessionKeySignature = "member-session-key-signature",

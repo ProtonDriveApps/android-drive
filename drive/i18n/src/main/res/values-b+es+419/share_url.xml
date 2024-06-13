@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Creando enlace de %1$s</string>
+  <string name="shared_link_getting_link">Obteniendo enlace</string>
+  <string name="shared_link_file">archivo</string>
+  <string name="shared_link_folder">carpeta</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Cualquiera que tenga este enlace puede acceder a %1$s</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Solo las personas con el enlace y la contraseña pueden acceder a %1$s</string>
+  <string name="shared_link_privacy_settings">Ajustes de privacidad</string>
+  <string name="shared_link_password_protection">Protección por contraseña</string>
+  <string name="shared_link_expiration_date">Fecha de expiración</string>
+  <string name="shared_link_action_copy_link">Copiar enlace</string>
+  <string name="shared_link_action_copy_password">Copiar contraseña</string>
+  <string name="shared_link_action_share_link">Compartir enlace</string>
+  <string name="shared_link_dialog_title_discard_changes">¿Descartar cambios?</string>
+  <string name="shared_link_dialog_description">Perderá todos los cambios sin guardar.</string>
+  <string name="shared_link_hint_expiration_date_field">Sin fecha de expiración</string>
+  <string name="shared_link_message_update_share_url">Ajustes de uso compartido actualizados</string>
+  <string name="shared_link_error_message_update_share_url">Error al actualizar los ajustes de uso compartido</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">La contraseña debe tener entre 1 y %1$d caracteres</string>
+  <string name="shared_link_error_message_not_found">El enlace compartido no existe o ha expirado</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">La fecha de expiración debe ser al menos mañana</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">La fecha de expiración no debe superar los %1$d días</string>
+  <string name="shared_link_error_legacy_link">Este es un enlace antiguo cuyo mantenimiento no es compatible. Se recomienda no compartirlo y obtener un enlace nuevo.</string>
+  <string name="title_share_via_link">Compartir con un enlace</string>
+  <string name="shared_with_me_title">Compartido conmigo</string>
+  <string name="shared_by_me_title">Compartido por mí</string>
+  <string name="shared_with_me_empty_description">Los archivos y las carpetas que usted comparte con otras personas aparecerán aquí.</string>
+  <string name="shared_by_me_empty_description">Comparta archivos y carpetas de forma segura con cifrado de extremo a extremo.</string>
+</resources>

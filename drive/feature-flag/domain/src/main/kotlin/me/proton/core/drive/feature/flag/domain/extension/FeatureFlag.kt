@@ -43,3 +43,7 @@ suspend fun FeatureFlag.onDisabledOrNotFound(block: suspend (FeatureFlag) -> Uni
         block(this)
     }
 }
+
+val FeatureFlag.on get() = state == FeatureFlag.State.ENABLED
+
+val FeatureFlag.off get() = !on

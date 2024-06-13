@@ -37,6 +37,7 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.feature.flag.domain.manager.FeatureFlagWorkManager
 import me.proton.core.drive.feature.flag.domain.usecase.RefreshFeatureFlags
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.util.kotlin.orEmpty
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
 
@@ -54,18 +55,26 @@ class FeatureFlagRefreshWorker @AssistedInject constructor(
     override suspend fun doWork(): Result = coRunCatching {
         CoreLogger.d(LogTag.FEATURE_FLAG, "Feature flag refresh worker")
         refreshFeatureFlags(userId).getOrThrow()
-    }.fold(
-        onSuccess = { Result.success() },
-        onFailure = { error ->
-            error.log(LogTag.FEATURE_FLAG, "Cannot refresh feature flag")
-            if (error.isRetryable) Result.retry() else Result.failure()
-        }
-    ).also { result ->
-        when (result) {
-            is Result.Retry -> Unit
-            else -> featureFlagWorkManager.enqueue(userId)
-        }
     }
+        .recoverCatching { error ->
+            if (error is IllegalStateException) {
+                CoreLogger.d(LogTag.FEATURE_FLAG, "Ignoring ${error.message}")
+            } else {
+                throw error
+            }
+        }
+        .fold(
+            onSuccess = { Result.success() },
+            onFailure = { error ->
+                error.log(LogTag.FEATURE_FLAG, "Cannot refresh feature flag")
+                if (error.isRetryable) Result.retry() else Result.failure()
+            }
+        ).also { result ->
+            when (result) {
+                is Result.Retry -> Unit
+                else -> featureFlagWorkManager.enqueue(userId)
+            }
+        }
 
     companion object {
         private const val KEY_USER_ID = "key.userId"

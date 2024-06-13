@@ -35,6 +35,7 @@ class TestConfigurationProvider @Inject constructor() : ConfigurationProvider {
     override var apiPageSize: Int = 150
     override var backupLeftSpace: Bytes = 25.MiB
     override var uploadLimitThreshold: Int = Int.MAX_VALUE
+    override var disableFeatureFlagInDevelopment: Boolean = false
 
     companion object {
         lateinit var testBaseUrl: String

@@ -18,15 +18,25 @@
 
 package me.proton.core.drive.base.domain.entity
 
+import me.proton.core.drive.base.domain.entity.Permissions.Permission.ADMIN
+import me.proton.core.drive.base.domain.entity.Permissions.Permission.EXECUTE
+import me.proton.core.drive.base.domain.entity.Permissions.Permission.READ
+import me.proton.core.drive.base.domain.entity.Permissions.Permission.SUPER_ADMIN
+import me.proton.core.drive.base.domain.entity.Permissions.Permission.WRITE
+
 @JvmInline
 value class Permissions(val value: Long = 0L) {
-    val isAdmin get() = has(Permission.ADMIN)
-    val canRead get() = has(Permission.READ)
-    val canWrite get() = has(Permission.WRITE)
-    val canExecute get() = has(Permission.EXECUTE)
+    val isOwner get() = has(SUPER_ADMIN)
+    val isAdmin get() = has(ADMIN)
+    val canRead get() = has(READ)
+    val canWrite get() = has(WRITE)
+    val canExecute get() = has(EXECUTE)
 
     fun add(permission: Permission) = Permissions(value.or(1L shl permission.bitPosition))
-    fun remove(permission: Permission) = Permissions(value.and((1L shl permission.bitPosition).inv()))
+
+    fun remove(permission: Permission) =
+        Permissions(value.and((1L shl permission.bitPosition).inv()))
+
     fun has(permission: Permission) = value shr permission.bitPosition and 1 == 1L
 
     enum class Permission(val bitPosition: Int) {
@@ -34,5 +44,13 @@ value class Permissions(val value: Long = 0L) {
         WRITE(bitPosition = 1),
         READ(bitPosition = 2),
         ADMIN(bitPosition = 4),
+        SUPER_ADMIN(bitPosition = 5),
+    }
+
+    companion object {
+        val viewer = Permissions().add(READ)
+        val editor = Permissions().add(WRITE).add(READ)
+        val admin = Permissions().add(WRITE).add(READ).add(ADMIN)
+        val owner = Permissions().add(EXECUTE).add(WRITE).add(READ).add(ADMIN).add(SUPER_ADMIN)
     }
 }

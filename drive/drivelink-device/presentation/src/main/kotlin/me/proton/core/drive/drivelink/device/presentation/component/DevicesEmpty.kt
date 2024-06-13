@@ -33,7 +33,7 @@ import me.proton.core.drive.i18n.R as I18N
 fun DevicesEmpty(
     @DrawableRes imageResId: Int,
     @StringRes titleResId: Int,
-    @StringRes descriptionResId: Int,
+    @StringRes descriptionResId: Int?,
     modifier: Modifier = Modifier,
 ) {
     IllustratedMessage(

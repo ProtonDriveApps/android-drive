@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">Програму заблоковано</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Розблокуйте за допомогою способу розблокування пристрою</string>
+  <string name="app_lock_biometric_title_confirmation">Підтвердження</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Щоб увімкнути розблокування, підтвердьте дію способом розблокування свого пристрою</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Щоб вимкнути розблокування, підтвердьте дію способом розблокування свого пристрою</string>
+  <string name="app_lock_option_never_set">Увімкнути біометрію або блокування пристрою</string>
+  <string name="app_lock_option_none">Лишати розблокованим</string>
+  <string name="app_lock_option_system">Біометрія або блокування пристрою</string>
+  <string name="app_lock_system_dialog_title">Увімкнути біометричний доступ</string>
+  <string name="app_lock_system_dialog_description">Налаштуйте біометрію або блокування доступу до пристрою на цьому пристрої.</string>
+  <string name="app_lock_system_dialog_settings_button">Налаштування</string>
+  <string name="app_lock_system_not_available">Біометрія або блокування пристрою недоступні на вашому пристрої</string>
+  <string name="app_lock_enabled">Доступ за допомогою біометрії або блокування пристрою активовано</string>
+  <string name="app_lock_disabled">Блокування програми деактивовано</string>
+  <string name="app_lock_access_title">Оберіть спосіб блокування програми</string>
+  <string name="app_lock_unlock_the_app">Розблокувати програму</string>
+</resources>

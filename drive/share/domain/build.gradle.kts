@@ -27,6 +27,7 @@ android {
 driveModule(
     hilt = true,
     serialization = true,
+    socialTest = true,
 ) {
     api(project(":drive:volume:domain"))
 }

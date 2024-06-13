@@ -606,5 +606,8 @@ class PhotoContentProvider(
             trashState = null,
             cryptoName = CryptoProperty.Encrypted(""),
             cryptoXAttr = CryptoProperty.Encrypted(""),
+            shareInvitationCount = null,
+            shareMemberCount = null,
+            shareUser = null,
         )
 }

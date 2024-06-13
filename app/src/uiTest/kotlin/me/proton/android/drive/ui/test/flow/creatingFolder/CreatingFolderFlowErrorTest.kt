@@ -18,6 +18,7 @@
 package me.proton.android.drive.ui.test.flow.creatingFolder
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.robot.BackendRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
@@ -55,7 +56,11 @@ class CreatingFolderFlowErrorTest(
         @get:Parameterized.Parameters(name = "{2}")
         @get:JvmStatic
         val data = listOf(
-            arrayOf("folder1", "A file or folder with that name already exists", "alreadyExists"),
+            arrayOf(
+                "folder1",
+                BackendRobot.nameAlreadyExist,
+                "alreadyExists"
+            ),
             arrayOf(
                 ".",
                 StringUtils.stringFromResource(I18N.string.common_error_name_periods),

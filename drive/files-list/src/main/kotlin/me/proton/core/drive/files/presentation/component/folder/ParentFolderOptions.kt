@@ -48,7 +48,7 @@ fun ParentFolderOptions(
             val title = if (folder.isNameEncrypted) {
                 stringResource(id = I18N.string.folder_options_header_title_encrypted)
             } else {
-                stringResource(id = I18N.string.folder_options_header_title, folder.title)
+                stringResource(id = I18N.string.folder_options_header_title, folder.name)
             }
             ParentFolderOptionsHeader(
                 title = title,
@@ -70,10 +70,6 @@ fun ParentFolderOptions(
         },
     )
 }
-
-internal val DriveLink.Folder.title
-    @Composable
-    get() = if (parentId == null) stringResource(id = I18N.string.title_my_files) else name
 
 @Composable
 internal fun ParentFolderOptionsHeader(

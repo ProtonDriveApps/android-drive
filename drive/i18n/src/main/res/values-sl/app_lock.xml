@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">Aplikacija zaklenjena</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Odkleni z uporabo ključa naprave</string>
+  <string name="app_lock_biometric_title_confirmation">Potrditev</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Če želite omogočiti odklepanje, potrdite z zaklepanjem naprave</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Če želite onemogočiti odklepanje, potrdite z zaklepanjem naprave</string>
+  <string name="app_lock_option_never_set">Omogočite biometrijo ali zaklepanje naprave</string>
+  <string name="app_lock_option_none">Pusti odklenjeno</string>
+  <string name="app_lock_option_system">Biometrija ali zaklepanje naprave</string>
+  <string name="app_lock_system_dialog_title">Vklopite dostop do biometrije</string>
+  <string name="app_lock_system_dialog_description">V tej napravi nastavite dostop do biometrije ali zaklepanja naprave.</string>
+  <string name="app_lock_system_dialog_settings_button">Nastavitve</string>
+  <string name="app_lock_system_not_available">Biometrija ali zaklepanje naprave nista na voljo v vaši napravi</string>
+  <string name="app_lock_enabled">Aktiviran dostop do biometrije ali zaklepanja naprave</string>
+  <string name="app_lock_disabled">Zaklepanje aplikacij je deaktivirano</string>
+  <string name="app_lock_access_title">Izberite način zaklepanja aplikacije</string>
+  <string name="app_lock_unlock_the_app">Odkleni aplikacijo</string>
+</resources>

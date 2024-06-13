@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the file name if available
+        Variable %2$s is message field from exception
+        Example:
+            "Uploading file My file.jpg failed with reason: Something went wrong"
+    -->
+  <string name="files_upload_failure_with_description">Het uploaden van bestand %1$s is mislukt met reden: %2$s</string>
+  <!--
+        Variable %1$d is a quantity of files that are being uploaded
+        Variable %2$s is a folder name where files are being uploaded to
+        Example:
+            "1 file is being uploaded to: Files"
+            "3 files are being uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_being_uploaded_notification">
+    <item quantity="one">%1$d bestand wordt geüpload naar: %2$s</item>
+    <item quantity="other">%1$d bestanden worden geüpload naar: %2$s</item>
+  </plurals>
+  <string name="files_upload_preparing">Uploaden voorbereiden. Dit kan een tijdje duren.</string>
+  <!--
+        Variable %1$s is the maximum number of uploading files
+        Example:
+            "Uploads are currently limited to 250 files at a time. Try again with fewer files."
+    -->
+  <string name="files_upload_limit_reached">Uploads zijn momenteel beperkt tot %1$d bestanden per keer. Probeer het opnieuw met minder bestanden.</string>
+  <!--
+        Variable %1$d is a quantity of items that are being used
+        Example:
+            "1 item"
+            "33 items"
+    -->
+  <plurals name="number_of_items">
+    <item quantity="one">%1$d item</item>
+    <item quantity="other">%1$d items</item>
+  </plurals>
+  <string name="files_upload_verification_failed">Upload mislukt: Verificatie van gegevens is mislukt.</string>
+</resources>

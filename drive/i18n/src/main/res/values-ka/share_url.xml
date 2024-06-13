@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">%1$s-მდე ბმულის შექმნა</string>
+  <string name="shared_link_getting_link">ბმულის მიღება</string>
+  <string name="shared_link_file">ფაილი</string>
+  <string name="shared_link_folder">საქაღალდე</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">ამ ბმულის ქონის შემთხვევაში %1$s-სთან წვდომა ყველას ექნება</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">%1$s-სთან წვდომა აქვთ, მხოლოდ მათ, ვისაც ბმულსა და პაროლს გადასცემთ</string>
+  <string name="shared_link_privacy_settings">კონფიდენციალობის პარამეტრები</string>
+  <string name="shared_link_password_protection">პაროლით დაცვა</string>
+  <string name="shared_link_expiration_date">ვადის ამოწურვის თარიღი</string>
+  <string name="shared_link_action_copy_link">ბმულის კოპირება</string>
+  <string name="shared_link_action_copy_password">პაროლის კოპირება</string>
+  <string name="shared_link_action_share_link">ბმულის გაზიარება</string>
+  <string name="shared_link_dialog_title_discard_changes">გავაუქმო ცვლილებები?</string>
+  <string name="shared_link_dialog_description">დაკარგავთ ყველა შეუნახავ ცვლილებას.</string>
+  <string name="shared_link_hint_expiration_date_field">ვადის ამოწურვის თარიღის გარეშე</string>
+  <string name="shared_link_message_update_share_url">გაზიარების პარამეტრები განახლდა</string>
+  <string name="shared_link_error_message_update_share_url">გაზიარებულის პარამეტრების განახლების შეცდომა</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">პაროლის სიგრძე 1-%1$d სიმბოლო უნდა იყოს</string>
+  <string name="shared_link_error_message_not_found">გაზიარებული ბმული არ არსებობს ან ვადაგასულია</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">ვადის ამოწურვის თარიღი სულ ცოტა, ხვალ უნდა იყოს</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">ვადა %1$d დღეზე მეტი არ უნდა იყოს</string>
+  <string name="shared_link_error_legacy_link">ეს ძველი ბმულია, რომლის მართვაც მხარდაჭერილი არაა. რეკომენდებულია, შეწყვიტოთ ამ ბმულის გაზიარება და ახალი ბმული გამოითხოვოთ.</string>
+  <string name="title_share_via_link">ბმულით გაზიარება</string>
+  <string name="shared_with_me_title">ჩემთან გაზიარებული</string>
+  <string name="shared_by_me_title">ჩემი გაზიარებული</string>
+  <string name="shared_with_me_empty_description">Files and folder that you share with others will appear here</string>
+  <string name="shared_by_me_empty_description">Safely share your files and folders with end-to-end encryption</string>
+</resources>

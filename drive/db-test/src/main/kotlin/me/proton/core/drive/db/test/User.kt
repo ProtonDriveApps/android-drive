@@ -40,7 +40,7 @@ suspend fun <T> DriveDatabase.user(
     val account = AccountEntity(
         userId = user.userId,
         username = user.userId.id,
-        email = "${user.userId.id}@proton.test",
+        email = user.email,
         state = AccountState.Ready,
         sessionId = null,
         sessionState = null
@@ -62,7 +62,7 @@ fun NullableUserEntity(
     subscribed: Int = 0,
 ) = UserEntity(
     userId = userId,
-    email = null,
+    email = "${userId.id}@proton.test",
     name = null,
     displayName = null,
     currency = "EUR",

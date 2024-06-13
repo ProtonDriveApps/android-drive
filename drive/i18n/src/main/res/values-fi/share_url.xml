@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Luodaan linkkiä %1$son</string>
+  <string name="shared_link_getting_link">Noudetaan linkkiä</string>
+  <string name="shared_link_file">tiedosto</string>
+  <string name="shared_link_folder">kansio</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Linkin välityksellä kuka tahansa voi avata %1$sn</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Vain henkilöt, joilla on linkki ja salasana, voivat avata %1$sn</string>
+  <string name="shared_link_privacy_settings">Yksityisyysasetukset</string>
+  <string name="shared_link_password_protection">Salasanasuojaus</string>
+  <string name="shared_link_expiration_date">Voimassaolo päättyy</string>
+  <string name="shared_link_action_copy_link">Kopioi linkki</string>
+  <string name="shared_link_action_copy_password">Kopioi salasana</string>
+  <string name="shared_link_action_share_link">Jaa linkki</string>
+  <string name="shared_link_dialog_title_discard_changes">Hylätäänkö muutokset?</string>
+  <string name="shared_link_dialog_description">Menetät kaikki tallentamattomat muutokset.</string>
+  <string name="shared_link_hint_expiration_date_field">Erääntymispäivää ei ole</string>
+  <string name="shared_link_message_update_share_url">Jakoasetukset päivitettiin</string>
+  <string name="shared_link_error_message_update_share_url">Jakoasetusten tallennus epäonnistui</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">Salasanan täytyy sisältää 1–%1$d merkkiä</string>
+  <string name="shared_link_error_message_not_found">Jakolinkkiä ei ole olemassa tai se on vanhentunut</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">Erääntymispäivä voi olla aikaisintaan huominen</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">Erääntymispäivä ei voi olla %1$d päivää kauempana</string>
+  <string name="shared_link_error_legacy_link">Tämä on vanha linkki, jonka hallintaa ei tueta. Suosittelemme, että lopetat tämän linkin jakamisen ja hankit uuden.</string>
+  <string name="title_share_via_link">Jaa linkkinä</string>
+  <string name="shared_with_me_title">Jaettu minulle</string>
+  <string name="shared_by_me_title">Minun jakamani</string>
+  <string name="shared_with_me_empty_description">Muiden kanssa jakamasi tiedostot ja kansiot näkyvät tässä</string>
+  <string name="shared_by_me_empty_description">Jaa tiedostot ja kansiot turvallisesti päästä päähän -salauksella</string>
+</resources>

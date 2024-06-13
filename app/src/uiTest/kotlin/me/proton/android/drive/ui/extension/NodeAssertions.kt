@@ -43,8 +43,12 @@ fun NodeAssertions.assertHasItemType(expectedValue: ItemType) = apply {
     interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.ItemType, expectedValue))
 }
 
-fun NodeAssertions.assertIsShared(expectedValue: Boolean) = apply {
-    interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.IsShared, expectedValue))
+fun NodeAssertions.assertIsSharedByLink(expectedValue: Boolean) = apply {
+    interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.IsSharedByLink, expectedValue))
+}
+
+fun NodeAssertions.assertIsSharedWithUsers(expectedValue: Boolean) = apply {
+    interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.IsSharedWithUsers, expectedValue))
 }
 
 // Remove after TPE-334 is resolved

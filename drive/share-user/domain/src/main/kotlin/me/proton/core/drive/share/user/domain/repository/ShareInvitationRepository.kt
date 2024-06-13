@@ -42,6 +42,7 @@ interface ShareInvitationRepository {
     )
 
     suspend fun deleteInvitation(shareId: ShareId, invitationId: String)
+    suspend fun resendInvitation(shareId: ShareId, invitationId: String)
     suspend fun fetchInvitations(shareId: ShareId): List<ShareUser.Invitee>
     suspend fun hasInvitations(shareId: ShareId): Boolean
 }

@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultWeak
+import me.proton.core.compose.theme.textWeak
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SaveButtonViewState
 import me.proton.core.presentation.R as CorePresentation
 import me.proton.core.drive.i18n.R as I18N
@@ -72,10 +73,11 @@ internal fun SendContainer(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
+                val enabled = saveButtonViewState.isEnabled
                 Text(
                     modifier = Modifier.weight(1F),
                     text = saveButtonViewState.label,
-                    style = ProtonTheme.typography.defaultWeak(saveButtonViewState.isEnabled)
+                    style = ProtonTheme.typography.defaultWeak(enabled)
                 )
                 if (saveButtonViewState.inProgress) {
                     Box(
@@ -90,10 +92,11 @@ internal fun SendContainer(
                 } else {
                     IconButton(
                         onClick = onSave,
-                        enabled = saveButtonViewState.isEnabled
+                        enabled = enabled
                     ) {
                         Icon(
                             painter = painterResource(id = CorePresentation.drawable.ic_proton_paper_plane_horizontal),
+                            tint = ProtonTheme.colors.textWeak(enabled),
                             contentDescription = stringResource(
                                 id = I18N.string.common_send_action
                             )

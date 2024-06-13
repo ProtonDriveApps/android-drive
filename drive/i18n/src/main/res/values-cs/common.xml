@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">Aplikace</string>
+  <string name="common_more">Více</string>
+  <string name="common_mime_type">MIME typ</string>
+  <string name="common_name">Název</string>
+  <string name="common_no">Ne</string>
+  <string name="common_share">Sdílení</string>
+  <string name="common_shared">Sdílené</string>
+  <string name="common_size">Velikost</string>
+  <string name="common_type">Typ</string>
+  <string name="common_yes">Ano</string>
+  <string name="common_download">Stáhnout</string>
+  <string name="common_downloading">Stahování</string>
+  <string name="common_link">Odkaz</string>
+  <string name="common_password">Heslo</string>
+  <string name="common_retry">Opakovat</string>
+  <string name="common_settings">Nastavení</string>
+  <string name="common_trash">Koš</string>
+  <string name="common_uploading">Nahrávání</string>
+  <string name="common_on">Zapnuto</string>
+  <string name="common_off">Vypnuto</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">OK</string>
+  <string name="common_close_action">Zavřít</string>
+  <string name="common_retry_action">Opakovat</string>
+  <string name="common_undo_action">Vrátit</string>
+  <string name="common_rename_action">Přejmenovat</string>
+  <string name="common_send_action">Odeslat</string>
+  <string name="common_create_action">Vytvořit</string>
+  <string name="common_cancel_action">Zrušit</string>
+  <string name="common_cancel_all_action">Zrušit vše</string>
+  <string name="common_got_it_action">Rozumím</string>
+  <string name="common_next_action">Další</string>
+  <string name="common_save_action">Uložit</string>
+  <string name="common_discard_action">Zahodit</string>
+  <string name="common_skip_action">Přeskočit</string>
+  <string name="common_delete_permanently_action">Trvale smazat</string>
+  <string name="common_make_available_offline_action">Zpřístupnit offline</string>
+  <string name="common_remove_from_offline_available_action">Odebrat z dostupných offline</string>
+  <string name="common_get_link_action">Získat odkaz</string>
+  <string name="common_manage_link_action">Spravovat odkaz</string>
+  <string name="common_manage_access_action">Spravovat přístup</string>
+  <string name="common_copy_link_action">Kopírovat odkaz</string>
+  <string name="common_stop_sharing_action">Zrušit sdílení</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">Audio</string>
+  <string name="common_type_calendar">Formát iCalendar</string>
+  <string name="common_type_doc">Dokument</string>
+  <string name="common_type_image">Obrázek</string>
+  <string name="common_type_keynote">Keynote soubor</string>
+  <string name="common_type_numbers">Numbers soubor</string>
+  <string name="common_type_pages">Pages soubor</string>
+  <string name="common_type_pdf">PDF dokument</string>
+  <string name="common_type_ppt">Prezentace</string>
+  <string name="common_type_text">Text</string>
+  <string name="common_type_trustedkey">Důvěryhodný klíč</string>
+  <string name="common_type_unknown">Binární</string>
+  <string name="common_type_video">Video</string>
+  <string name="common_type_xls">Tabulka</string>
+  <string name="common_type_xml">Soubor XML</string>
+  <string name="common_type_zip">Archiv</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">Název nesmí být prázdný</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">Název nesmí přesáhnout %1$d znaků</string>
+  <string name="common_error_name_with_forbidden_characters">Název nesmí obsahovat neviditelné znaky, \"/\" nebo \"\\"</string>
+  <string name="common_error_name_periods">Název nemůže být \".\" nebo \"..\"</string>
+  <string name="common_error_no_internet">Bez připojení k Internetu</string>
+  <string name="common_error_http_5xx">Nastala chyba serveru</string>
+  <string name="common_error_internal">Došlo k interní chybě</string>
+  <string name="common_error_crypto">Šifrování nebo dešifrování selhalo</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">Šifrování nebo dešifrování selhalo: %1$s</string>
+  <string name="common_error_io">Vstupní nebo výstupní operace selhala</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">Vstupní nebo výstupní operace selhala: %1$s</string>
+  <string name="common_error_security">Došlo k bezpečnostní chybě</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">Došlo k bezpečnostní chybě: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">Staženo %1$s</string>
+  <string name="common_sign_out">Odhlásit se</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="one">%1$d vybrán</item>
+    <item quantity="few">%1$d vybrány</item>
+    <item quantity="many">%1$d vybráno</item>
+    <item quantity="other">%1$d vybráno</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s zkopírován do schránky</string>
+  <string name="common_in_app_notification_download_started">Stahování začalo</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s úspěšně staženo</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="one">%1$d soubor úspěšně stažen</item>
+    <item quantity="few">%1$d soubory úspěšně staženy</item>
+    <item quantity="many">%1$d souborů úspěšně staženo</item>
+    <item quantity="other">%1$d souborů úspěšně staženo</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">Stahování %1$s selhalo</string>
+  <string name="common_in_app_notification_download_failed">Stahování selhalo</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">Systém nenašel žádnou aplikaci, která by mohla %1$s</string>
+  <!-- endregion -->
+</resources>

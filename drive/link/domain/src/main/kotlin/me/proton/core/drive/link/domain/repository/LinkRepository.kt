@@ -69,6 +69,15 @@ interface LinkRepository {
      */
     suspend fun fetchAndStoreLinks(linkIds: Set<LinkId>)
 
+    /**
+     * Fetches all links with given share id and link id from the server and stores them in local cache.
+     * Make sure that Share with respective id is already in local cache, otherwise this operation will fail.
+     */
+    suspend fun fetchAndStoreLinksWithParents(
+        shareId: ShareId,
+        linkIds: Set<String>,
+    ): Result<Pair<List<Link>, List<Link>>>
+
     suspend fun checkAvailableHashes(
         linkId: LinkId,
         checkAvailableHashesInfo: CheckAvailableHashesInfo,

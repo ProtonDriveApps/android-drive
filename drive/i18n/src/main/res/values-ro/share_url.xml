@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Se creează legătura către %1$s.</string>
+  <string name="shared_link_getting_link">Obținere legătură</string>
+  <string name="shared_link_file">fișier</string>
+  <string name="shared_link_folder">folder</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Oricine are această legătură poate avea acces la %1$s.</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Numai persoanele care au legătura și parola pot accesa acest %1$s.</string>
+  <string name="shared_link_privacy_settings">Setări de confidențialitate</string>
+  <string name="shared_link_password_protection">Protejare cu parolă</string>
+  <string name="shared_link_expiration_date">Dată expirare</string>
+  <string name="shared_link_action_copy_link">Copiere legătură</string>
+  <string name="shared_link_action_copy_password">Copiere parolă</string>
+  <string name="shared_link_action_share_link">Partajare legătură</string>
+  <string name="shared_link_dialog_title_discard_changes">Renunți la modificări?</string>
+  <string name="shared_link_dialog_description">Veți pierde toate modificările nesalvate.</string>
+  <string name="shared_link_hint_expiration_date_field">Fără dată de expirare</string>
+  <string name="shared_link_message_update_share_url">Setările de partajare au fost actualizate.</string>
+  <string name="shared_link_error_message_update_share_url">Actualizarea setărilor de partajare a eșuat.</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">Lungimea parolei trebuie sa fie intre 1 și %1$d de caractere.</string>
+  <string name="shared_link_error_message_not_found">Legătura partajată fie nu există, fie a expirat.</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">Data de expirare trebuie să fie cel puțin mâine.</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">Data de expirare trebuie să fie după maxim %1$d de zile.</string>
+  <string name="shared_link_error_legacy_link">Aceasta este o legătură veche a cărui gestionare nu este suportată. Nu o mai partajați și creați alta.</string>
+  <string name="title_share_via_link">Partajare prin legătură</string>
+  <string name="shared_with_me_title">Partajate cu mine</string>
+  <string name="shared_by_me_title">Partajate de mine</string>
+  <string name="shared_with_me_empty_description">Fișierele și folderele pe care le partajați celorlalți vor apărea aici.</string>
+  <string name="shared_by_me_empty_description">Partajați în siguranță fișiere și foldere cu criptare bilaterală.</string>
+</resources>

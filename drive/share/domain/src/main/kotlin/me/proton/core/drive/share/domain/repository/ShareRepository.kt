@@ -20,6 +20,7 @@ package me.proton.core.drive.share.domain.repository
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.entity.ShareInfo
@@ -77,9 +78,14 @@ interface ShareRepository {
     suspend fun fetchShare(shareId: ShareId)
 
     /**
-     * Ask the backend to delete a share (if [locallyOnly] is false) and remove it from the cache
+     * Ask the backend to delete a share
+     * @param shareId id of the share
+     * @param locallyOnly true delete share only locally,
+     *                    false delete share locally and remotely
+     * @param force true will delete share with link and members,
+     *              false will delete only share without link or members
      */
-    suspend fun deleteShare(shareId: ShareId, locallyOnly: Boolean)
+    suspend fun deleteShare(shareId: ShareId, locallyOnly: Boolean, force: Boolean = false)
 
     /**
      * Remove shares from cache
@@ -90,4 +96,7 @@ interface ShareRepository {
      * Create new share for a given volume id and share info
      */
     suspend fun createShare(userId: UserId, volumeId: VolumeId, shareInfo: ShareInfo): Result<ShareId>
+
+    suspend fun getAllMembershipIds(userId: UserId): List<String>
+    suspend fun getPermissions(shareIds: List<ShareId>): List<Permissions>
 }

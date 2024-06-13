@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">Приложение заблокировано</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Разблокировать используя защиту устройства</string>
+  <string name="app_lock_biometric_title_confirmation">Подтверждение</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Чтобы включить разблокировку, подтвердите действие с помощью защиты устройства</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Чтобы отключить разблокировку, подтвердите действие с помощью защиты устройства</string>
+  <string name="app_lock_option_never_set">Включить биометрическую защиту или защиту устройства</string>
+  <string name="app_lock_option_none">Оставить разблокированным</string>
+  <string name="app_lock_option_system">Биометрическая защита или защита устройства</string>
+  <string name="app_lock_system_dialog_title">Включить биометрический доступ</string>
+  <string name="app_lock_system_dialog_description">Настроить биометрическую защиту или защиту доступа к устройству на этом устройстве.</string>
+  <string name="app_lock_system_dialog_settings_button">Настройки</string>
+  <string name="app_lock_system_not_available">Биометрическая защита или защита устройства недоступны на вашем устройстве</string>
+  <string name="app_lock_enabled">Биометрическая защита или защита доступа к устройству включена</string>
+  <string name="app_lock_disabled">Блокировка приложения деактивирована</string>
+  <string name="app_lock_access_title">Выберите способ блокировки приложения</string>
+  <string name="app_lock_unlock_the_app">Разблокировать приложение</string>
+</resources>

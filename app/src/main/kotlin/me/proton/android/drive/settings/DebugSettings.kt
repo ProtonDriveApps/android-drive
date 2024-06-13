@@ -125,8 +125,8 @@ class DebugSettings(
                 preferences[prefsFeatureFlagFreshDuration] = value.inWholeMinutes
             }
         }
-    override var photosSavedCounter : Boolean = true
-    override var photoExportData : Boolean = true
+    override var photosSavedCounter: Boolean = true
+    override var photoExportData: Boolean = true
     override val disableFeatureFlagInDevelopment: Boolean = false
     override var useVerifier by Delegate(
         dataStore = context.dataStore,
@@ -138,6 +138,7 @@ class DebugSettings(
         key = prefsPhotosUpsellPhotoCount,
         default = buildConfig.photosUpsellPhotoCount,
     )
+    override var logFeatureFlag: Boolean = true
 
     fun reset(coroutineScope: CoroutineScope) {
         coroutineScope.launch {

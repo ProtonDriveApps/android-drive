@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="computers_title">Ordinadors</string>
+  <string name="computers_type_windows">Windows</string>
+  <string name="computers_type_mac_os">MacOS</string>
+  <string name="computers_type_linux">Linux</string>
+  <string name="computers_type_unknown">Desconegut</string>
+  <string name="computers_empty_title">Sense sincronització d\'ordinadors</string>
+  <string name="computers_empty_description">Obteniu l\'aplicació d\'escriptori\nper a gaudir de la sincronització de carpetes</string>
+  <string name="computers_synced_folders_empty_title">No hi ha cap carpeta sincronitzada</string>
+  <string name="computers_synced_folders_empty_description">Les carpetes que sincronitzeu des de l\'ordinador\napareixeran aquí</string>
+  <string name="computers_synced_folders_no_folder">S\'ha eliminat l\'ordinador</string>
+  <string name="computers_rename_title">Canvia el nom de l\'ordinador</string>
+  <string name="computers_rename_success">S\'ha canviat el nom de l\'ordinador.</string>
+  <!--
+        Variable %1$s is a computer name
+        Examples:
+            "More options for My laptop"
+    -->
+  <string name="computers_content_description_list_more_options">Més opcions per a %1$s</string>
+</resources>

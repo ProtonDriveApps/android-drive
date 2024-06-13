@@ -23,7 +23,11 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.drive.drivelink.shared.data.repository.DriveLinkSharedRepositoryImpl
+import me.proton.core.drive.drivelink.shared.data.usecase.GetPagedSharedByMeLinkIdsImpl
+import me.proton.core.drive.drivelink.shared.data.usecase.GetPagedSharedWithMeLinkIdsImpl
 import me.proton.core.drive.drivelink.shared.domain.repository.DriveLinkSharedRepository
+import me.proton.core.drive.drivelink.shared.domain.usecase.GetPagedSharedByMeLinkIds
+import me.proton.core.drive.drivelink.shared.domain.usecase.GetPagedSharedWithMeLinkIds
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -31,4 +35,14 @@ interface DriveLinkSharedModule {
 
     @Binds
     fun bindsRepository(repository: DriveLinkSharedRepositoryImpl): DriveLinkSharedRepository
+
+    @Binds
+    fun bindGetPagedSharedWithMeLinkIds(
+        getPagedSharedWithMeLinkIdsImpl: GetPagedSharedWithMeLinkIdsImpl
+    ): GetPagedSharedWithMeLinkIds
+
+    @Binds
+    fun bindGetPagedSharedByMeLinkIds(
+        getPagedSharedByMeLinkIdsImpl: GetPagedSharedByMeLinkIdsImpl
+    ): GetPagedSharedByMeLinkIds
 }

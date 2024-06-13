@@ -321,6 +321,16 @@ fun PreviewGetMoreFreeStorage() {
                         isDone = true,
                     ),
                     GetMoreFreeStorageViewState.Action(
+                        iconResId = CorePresentation.drawable.ic_proton_user_plus,
+                        titleResId = I18N.string.get_more_free_storage_action_share_title,
+                        getDescription = {
+                            AnnotatedString(
+                                "It's easy and secure"
+                            )
+                        },
+                        isDone = false,
+                    ),
+                    GetMoreFreeStorageViewState.Action(
                         iconResId = CorePresentation.drawable.ic_proton_key,
                         titleResId = I18N.string.get_more_free_storage_action_recovery_title,
                         getDescription = {

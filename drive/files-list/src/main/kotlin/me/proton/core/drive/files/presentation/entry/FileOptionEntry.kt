@@ -22,6 +22,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -97,6 +98,16 @@ class DeletePermanentlyEntry(
     override fun getLabel(): String = stringResource(I18N.string.files_delete_from_trash_action)
 }
 
+class RemoveMeEntry(
+    override val onClick: (DriveLink) -> Unit,
+) : FileOptionEntry.SimpleEntry<DriveLink> {
+
+    override val icon: Int = CorePresentation.drawable.ic_proton_trash_cross
+
+    @Composable
+    override fun getLabel(): String = stringResource(I18N.string.files_remove_me_action)
+}
+
 class FileInfoEntry(
     override val onClick: (DriveLink) -> Unit,
 ) : FileOptionEntry.StateBasedEntry<DriveLink> {
@@ -156,14 +167,14 @@ class ShareViaLinkEntry(
 ) : FileOptionEntry.StateBasedEntry<DriveLink> {
     @Composable
     override fun getLabel(driveLink: DriveLink): String = stringResource(
-        if (driveLink.isShared) {
+        if (driveLink.hasShareLink) {
             I18N.string.common_manage_link_action
         } else {
             I18N.string.common_get_link_action
         }
     )
 
-    override fun getIcon(driveLink: DriveLink): Int = if (driveLink.isShared) {
+    override fun getIcon(driveLink: DriveLink): Int = if (driveLink.hasShareLink) {
         CorePresentation.drawable.ic_proton_link_pen
     } else {
         CorePresentation.drawable.ic_proton_link

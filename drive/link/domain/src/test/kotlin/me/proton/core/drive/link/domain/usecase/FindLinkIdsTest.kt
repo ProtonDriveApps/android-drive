@@ -19,7 +19,6 @@
 package me.proton.core.drive.link.domain.usecase
 
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.file
@@ -42,7 +41,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class FindLinkIdsTest {
 
@@ -50,10 +48,11 @@ class FindLinkIdsTest {
     val database = DriveDatabaseRule()
 
     private lateinit var findLinkIds: FindLinkIds
+    private val sortLinksByParents = SortLinksByParents()
 
     @Before
     fun setUp() {
-        findLinkIds = FindLinkIds(LinkRepositoryImpl(mockk(), database.db))
+        findLinkIds = FindLinkIds(LinkRepositoryImpl(mockk(), database.db, sortLinksByParents))
     }
 
     @Test

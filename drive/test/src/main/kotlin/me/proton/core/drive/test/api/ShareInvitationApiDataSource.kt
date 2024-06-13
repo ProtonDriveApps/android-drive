@@ -98,3 +98,13 @@ fun MockWebServer.deleteInvitation() = deleteInvitation {
         Response(ProtonApiCode.SUCCESS)
     }
 }
+
+fun MockWebServer.sendEmail(block: RequestContext.() -> MockResponse) = routing {
+    post("/drive/v2/shares/{shareId}/invitations/{invitationId}/sendemail", block)
+}
+
+fun MockWebServer.sendEmail() = sendEmail {
+    jsonResponse {
+        Response(ProtonApiCode.SUCCESS)
+    }
+}

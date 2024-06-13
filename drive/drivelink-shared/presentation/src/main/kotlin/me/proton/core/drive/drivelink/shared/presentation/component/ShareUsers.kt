@@ -36,7 +36,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import me.proton.core.compose.theme.ProtonDimens
+import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
+import me.proton.core.compose.theme.ProtonDimens.ListItemTextStartPadding
+import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.compose.theme.defaultSmallNorm
@@ -84,10 +86,10 @@ private fun ShareUser(
                 onMore?.invoke()
             }
             .padding(
-                horizontal = ProtonDimens.DefaultSpacing,
-                vertical = ProtonDimens.SmallSpacing
+                horizontal = DefaultSpacing,
+                vertical = if (displayName== null) DefaultSpacing else SmallSpacing
             ),
-        horizontalArrangement = Arrangement.spacedBy(ProtonDimens.ListItemTextStartPadding),
+        horizontalArrangement = Arrangement.spacedBy(ListItemTextStartPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         UserThumbnail(firstLetter)
@@ -117,6 +119,8 @@ private fun ShareUser(
         }
     }
 }
+
+
 @Preview(name = "dark", uiMode = UI_MODE_NIGHT_YES)
 @Preview(name = "light", uiMode = UI_MODE_NIGHT_NO)
 @Composable

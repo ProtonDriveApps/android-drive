@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonTheme
 
@@ -38,7 +39,7 @@ data class NavigationTab(
 
 @Composable
 fun BottomNavigation(
-    selectedTab: NavigationTab,
+    selectedTab: NavigationTab?,
     tabs: List<NavigationTab>,
     onSelectedTab: (NavigationTab) -> Unit,
     modifier: Modifier = Modifier,
@@ -60,6 +61,8 @@ fun BottomNavigation(
                     label = {
                         Text(
                             text = stringResource(id = tab.titleResId),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     },
                     selected = isSelected,

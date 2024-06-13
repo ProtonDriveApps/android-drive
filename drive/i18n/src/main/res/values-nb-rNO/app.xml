@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Dekrypterer</string>
+  <string name="title_files">Filer</string>
+  <string name="title_shared">Delt</string>
+  <string name="title_my_files">Mine filer</string>
+  <string name="title_offline_available">Tilgjengelig frakoblet</string>
+  <string name="title_empty_my_files">Kjør på, legg til din første fil</string>
+  <string name="title_empty_folder">La oss fylle denne mappen</string>
+  <string name="title_empty_folder_read_only">Tøm mappe</string>
+  <string name="title_empty_shared">Hold oversikt over hva som skjer</string>
+  <string name="title_empty_offline_available">Ingenting er tilgjengelig i frakoblet modus</string>
+  <string name="title_empty_trash">Papirkurven er tom</string>
+  <string name="title_empty_trash_action">Tøm papirkurven</string>
+  <string name="title_files_confirm_deletion">Slett permanent?</string>
+  <string name="title_default_home_screen_tab">Velg standard startskjermfane</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">App</string>
+  <string name="description_signing_out">Logger av…</string>
+  <string name="settings_about_links_acknowledgments_title">Anerkjennelser</string>
+  <string name="settings_about_links_privacy_policy_title">Personvernerklæring</string>
+  <string name="settings_about_links_terms_of_service_title">Brukervilkår</string>
+  <string name="common_error_no_browser_available">Vi kunne ikke åpne koblingen ettersom det ser ut til at du ikke har en nettleser installert.</string>
+  <string name="move_to">Flytt til</string>
+  <string name="move_file_confirm_action">Flytt</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">Du kan ikke flytte en mappe inn i seg selv</string>
+  <string name="folder_option_import_file">Last opp en fil</string>
+  <string name="folder_option_create_folder">Opprett mappe</string>
+  <string name="folder_option_take_a_photo">Ta et nytt bilde</string>
+  <string name="settings_theme_system_default">Systemstandard</string>
+  <string name="settings_theme_dark">Mørk</string>
+  <string name="settings_theme_light">Lys</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Last opp til %1$s</string>
+  <string name="upload_title">Last opp</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">Kun filer kan lastes opp til %1$s</string>
+  <string name="in_app_notification_importing_file_already_exists">En fil med samme navn eksisterer allerede, prøv å tømme applikasjonens hurtigbuffer.</string>
+  <string name="in_app_notification_clear_local_cache_success">Lokal hurtigbuffer tømt</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Lagringsplassen er full</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Laster opp filer til %1$s</string>
+  <string name="notification_content_title_upload_complete">Opplasting fullført</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Laster opp %1$d fil</item>
+    <item quantity="other">Laster opp %1$d filer</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d fil lastet opp</item>
+    <item quantity="other">%1$d filer lastet opp</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d fil avbrutt</item>
+    <item quantity="other">%1$d filer avbrutt</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">%1$d fil mislyktes</item>
+    <item quantity="other">%1$d filer mislyktes</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Sikkerhetskopierer bilder til %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">%1$s element gjenstår</item>
+    <item quantity="other">%1$s elementer gjenstår</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Sikkerhetskopiering fullført</string>
+  <string name="notification_content_text_backup_uncompleted">Sikkerhetskopiering fullført med problemer</string>
+  <string name="notification_content_text_backup_failed">Sikkerhetskopiering mislyktes</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Protonlagringsplass er full</string>
+  <string name="notification_content_text_backup_failed_local_storage">Lokallagringsplass er full</string>
+  <string name="notification_content_text_backup_failed_permission">Tillatelser mangler</string>
+  <string name="notification_content_text_backup_failed_connectivity">Ingen internettforbindelse</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Venter på Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Sikkerhetskopiering er ikke tillat</string>
+  <string name="notification_content_text_backup_paused_disabled">Sikkerhetskopiering ble deaktivert</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Sikkerhetskopiering kan ikke kjøres i bakgrunnen</string>
+  <string name="notification_content_title_download_complete">Nedlasting fullført</string>
+  <string name="notification_content_title_forced_sign_out">Vennligst logg på</string>
+  <string name="notification_content_text_forced_sign_out">Beklager å avbryte! Vi hadde et problem med synkronisering - vennligst logg på igjen og vi får alt til å gå på skinner.</string>
+  <string name="notification_content_title_no_space_left_on_device">Ingen plass igjen på enheten</string>
+  <string name="notification_content_text_no_space_left_on_device">Programmet fungerer kanskje ikke som det skal.</string>
+  <string name="notification_channel_group_name_application">Applikasjon</string>
+  <string name="notification_channel_background_title">Bakgrunn</string>
+  <string name="notification_channel_background_description">Kanal for bakgrunnsoperasjoner som sikkerhetskopiering.</string>
+  <string name="notification_channel_transfer_title">Overfør</string>
+  <string name="notification_channel_transfer_description">Kanal for skylagring, opplasting- og nedlastingsvarslinger.</string>
+  <string name="notification_channel_warning_title">Advarsel</string>
+  <string name="notification_channel_warning_description">Kanal for advarsler som krever brukerhandling.</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Velg alle elementer i listen</string>
+  <string name="content_description_selected_options">Vis flere alternativer for valgte filer og/eller mapper</string>
+  <string name="content_description_files_upload_upload_file">Last opp en fil</string>
+  <string name="description_empty_my_files">Trykk på knappen for å legge til filer.</string>
+  <string name="description_empty_folder_read_only">Det er ingenting å se her</string>
+  <string name="description_empty_shared">Koblede filer vises her, slik at du enkelt kan spore og administrere hva som er delt.</string>
+  <string name="description_empty_trash">Dette er hvor slettede filer forblir til du sletter dem for godt eller gjenoppretter dem.</string>
+  <string name="description_empty_offline_available">Gjør viktige filer alltid tilgjengelige, selv når nettverket ikke er det.</string>
+  <string name="description_no_drive_scope">Brukeren har ikke rettigheter til Drive.</string>
+  <string name="description_file_download_failed">Nedlastning mislyktes. Sjekk nettverkstilkoblingen og prøv igjen.</string>
+  <string name="description_file_decryption_failed">Kunne ikke dekryptere filen</string>
+  <string name="description_file_verify_signature_failed">Filens signatur kunne ikke verifiseres</string>
+  <string name="description_files_stop_sharing">Dette vil slette koblingen og fjerne tilgangen til filen eller mappen for de som har koblingen.</string>
+  <string name="description_files_stop_sharing_action_success">Koblingen til filen din er slettet.</string>
+  <string name="description_files_stop_sharing_action_error">Det oppstod en feil ved sletting av koblingen til filen din.</string>
+  <string name="description_files_stop_all_sharing">Dette vil slette koblingen og fjerne tilgangen for alle.</string>
+  <string name="description_files_stop_all_sharing_action_success">Deling til filen din er slettet.</string>
+  <string name="description_files_stop_all_sharing_action_error">Det oppstod en feil ved sletting av delingen til filen din.</string>
+  <string name="ignore_file_signature_action">Vis uansett</string>
+  <string name="action_empty_files_add_files">Last opp</string>
+  <string name="error_could_not_send_file">En feil oppstod ved sending av filen</string>
+  <string name="error_could_not_load_folder_content">En feil oppstod ved innlasting av innholdet i mappen</string>
+  <string name="error_main_share_locked">Filene dine er ikke lenger tilgjengelig på grunn av en tilbakestilling av passord. Last opp den gamle krypteringsnøkkelen på nytt for å få tilgang igjen.</string>
+  <string name="error_share_locked">Delt ressurs er låst.</string>
+  <string name="error_main_share_not_found">Hoveddelingsressursen ble ikke funnet.</string>
+  <string name="error_share_not_found">Deleressursen ble ikke funnet.</string>
+  <string name="error_creating_photo_share_not_allowed">Sikkerhetskopi av bilder midlertidig deaktivert.</string>
+  <string name="error_creating_share_not_allowed">Oppretting av delt ressurs er midlertidig deaktivert.</string>
+  <string name="operation_open_document">åpne et dokument</string>
+  <string name="operation_create_document">opprett et dokument</string>
+  <string name="operation_take_picture">ta et bilde</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Lås opp %1$s med gratis lagring</string>
+  <string name="get_more_free_storage_description">Fullfør disse trinnene i løpet av de første 30 dagene for en gratis lagringsoppgradering.</string>
+  <string name="get_more_free_storage_action_upload_title">Last opp en fil ELLER aktiver sikkerhetskopiering av bilder</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Alle filene dine blir kryptert.</string>
+  <string name="get_more_free_storage_action_link_title">Opprett en delingskobling</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Velg hvilken som helst fil eller mappe. Åpne alternativmenyen og trykk på %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Del en fil</string>
+  <string name="get_more_free_storage_action_share_subtitle">Det er enkelt og sikkert.</string>
+  <string name="get_more_free_storage_action_recovery_title">Angi en gjenopprettingsmetode</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Logg inn på %1$s, deretter gå til Innstillinger -&gt; Gjenoppretting.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

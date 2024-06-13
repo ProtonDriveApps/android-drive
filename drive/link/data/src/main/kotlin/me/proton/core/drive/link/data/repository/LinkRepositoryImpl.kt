@@ -39,6 +39,7 @@ import me.proton.core.drive.link.domain.entity.MoveInfo
 import me.proton.core.drive.link.domain.entity.RenameInfo
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.repository.LinkRepository
+import me.proton.core.drive.link.domain.usecase.SortLinksByParents
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
@@ -47,6 +48,7 @@ import javax.inject.Inject
 class LinkRepositoryImpl @Inject constructor(
     private val api: LinkApiDataSource,
     private val db: LinkDatabase,
+    private val sortLinksByParents: SortLinksByParents,
 ) : LinkRepository {
 
     private val dao = db.linkDao
@@ -114,6 +116,17 @@ class LinkRepositoryImpl @Inject constructor(
                         response.links.map { linkDto -> linkDto.toLinkWithProperties(shareId).toLink() }
             }
     }
+
+    override suspend fun fetchAndStoreLinksWithParents(shareId: ShareId, linkIds: Set<String>) =
+        fetchLinks(shareId, linkIds).also { result ->
+            val (parents, links) = result.getOrThrow()
+            val sortedParents = sortLinksByParents(parents.toSet().toList())
+            db.linkDao.insertOrUpdate(
+                *(sortedParents + links.toSet())
+                    .map { link -> link.toLinkWithProperties() }
+                    .toTypedArray()
+            )
+        }
 
     override suspend fun fetchAndStoreLinks(shareId: ShareId, linkIds: Set<String>) {
         db.linkDao.insertOrUpdate(

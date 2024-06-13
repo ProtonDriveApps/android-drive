@@ -12,6 +12,7 @@ import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.repository.ShareMemberRepository
 import me.proton.core.drive.test.DriveRule
 import me.proton.core.drive.test.api.clear
+import me.proton.core.drive.test.api.deleteMember
 import me.proton.core.drive.test.api.errorResponse
 import me.proton.core.drive.test.api.getMembers
 import me.proton.core.drive.test.api.updateMember
@@ -57,7 +58,10 @@ class ShareMemberRepositoryImplTest {
     @Test
     fun getMembersFlow_empty() = runTest {
         driveRule.db.standardShare(standardShareId.id)
-        assertEquals(emptyList<ShareUser>(), repository.getMembersFlow(standardShareId, 500).first())
+        assertEquals(
+            emptyList<ShareUser>(),
+            repository.getMembersFlow(standardShareId, 500).first()
+        )
     }
 
     @Test
@@ -83,10 +87,30 @@ class ShareMemberRepositoryImplTest {
     }
 
     @Test
+    fun getMemberFlow() = runTest {
+        driveRule.db.standardShare(standardShareId.id) {
+            member("member@proton.me")
+        }
+
+        assertEquals(
+            ShareUser.Member(
+                id = "member-id-member@proton.me",
+                inviter = "inviter@proton.me",
+                email = "member@proton.me",
+                createTime = TimestampS(0),
+                permissions = Permissions(0),
+                keyPacket = "member-key-packet",
+                keyPacketSignature = "member-key-packet-signature",
+                sessionKeySignature = "member-session-key-signature",
+            ), repository.getMemberFlow(standardShareId, "member-id-member@proton.me").first()
+        )
+    }
+
+    @Test
     fun fetchMembers() = runTest {
         driveRule.db.standardShare(standardShareId.id)
         driveRule.server.getMembers("member@proton.me")
-        val fetchMembers = repository.fetchMembers(standardShareId)
+        val fetchMembers = repository.fetchAndStoreMembers(standardShareId, emptyList<String>())
         assertEquals(
             listOf(
                 ShareUser.Member(
@@ -108,11 +132,11 @@ class ShareMemberRepositoryImplTest {
         driveRule.db.standardShare(standardShareId.id)
 
         driveRule.server.getMembers("member1@proton.me")
-        repository.fetchMembers(standardShareId)
+        repository.fetchAndStoreMembers(standardShareId, emptyList<String>())
         driveRule.server.clear()
 
         driveRule.server.getMembers("member2@proton.me")
-        repository.fetchMembers(standardShareId)
+        repository.fetchAndStoreMembers(standardShareId, emptyList<String>())
 
         assertEquals(
             listOf(
@@ -154,5 +178,29 @@ class ShareMemberRepositoryImplTest {
             memberId = "member-id-member@proton.me",
             permissions = Permissions().add(Permissions.Permission.READ),
         )
+    }
+
+    @Test
+    fun deleteMember() = runTest {
+        driveRule.db.standardShare(standardShareId.id) {
+            member("member@proton.me")
+        }
+        driveRule.server.deleteMember()
+
+        repository.deleteMember(standardShareId, "member-id-member@proton.me")
+
+        assertFalse(repository.hasMembers(standardShareId))
+    }
+
+    @Test(expected = ApiException::class)
+    fun deleteMember_error() = runTest {
+        driveRule.db.standardShare(standardShareId.id) {
+            member("member@proton.me")
+        }
+        driveRule.server.deleteMember { errorResponse() }
+
+        repository.deleteMember(standardShareId, "member-id-member@proton.me")
+
+        assertTrue(repository.hasMembers(standardShareId))
     }
 }

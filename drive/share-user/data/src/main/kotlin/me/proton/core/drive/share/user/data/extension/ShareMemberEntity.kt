@@ -20,7 +20,7 @@ package me.proton.core.drive.share.user.data.extension
 
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.share.user.data.db.ShareMemberEntity
+import me.proton.core.drive.share.user.data.db.entity.ShareMemberEntity
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 
 fun ShareMemberEntity.toShareUserMember() = ShareUser.Member(

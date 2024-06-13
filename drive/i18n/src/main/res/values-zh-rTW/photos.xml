@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">照片</string>
+  <string name="photos_permissions_title">加密並備份您的照片與影片</string>
+  <string name="photos_permissions_section_1_title">保護您的回憶</string>
+  <string name="photos_permissions_section_1_description">您的照片已使用端到端加密，確保完全隱私。</string>
+  <string name="photos_permissions_section_2_title">自動備份</string>
+  <string name="photos_permissions_section_2_description">照片會定期透過 WiFi 以其原始品質進行備份。</string>
+  <string name="photos_permissions_action">開啟備份</string>
+  <string name="photos_permission_rational_img_text">允許存取</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s 需要您的照片的完整存取權</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">這是確保備份您的所有照片並在您的所有裝置上可用所必需的。\n%1$s 非常重視您的隱私，並且只會出於同步與備份的目的存取您的照片。</string>
+  <string name="photos_permission_rational_confirm_action">設定</string>
+  <string name="photos_permission_rational_dismiss_action">現在不要</string>
+  <string name="photos_empty_loading_label_encrypted">點對點加密</string>
+  <string name="photos_empty_loading_label_progress">備份進行中。\n過程可能需時</string>
+  <string name="photos_separator_current_month">本月</string>
+  <string name="photos_encrypted_footer">點對點加密</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from the Camera folder"
+            "Backing up items from 2 Camera folders"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="other">正在備份來自 %2$d 個%1$s資料夾的項目</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">找不到%1$s資料夾以供備份</string>
+  <string name="photos_error_backup_disabled">備份已停用。</string>
+  <string name="photos_error_backup_disabled_action">開啟</string>
+  <string name="photos_error_backup_missing_folder">找不到備份資料夾</string>
+  <string name="photos_error_backup_failed">備份失敗</string>
+  <string name="photos_error_backup_temporarily_disabled">備份已暫時停用。</string>
+  <string name="photos_error_missing_permissions">缺少權限。</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">對於持續與自動備份，請在設定中允許 %1$s 存取所有照片。</string>
+  <string name="photos_error_waiting_connectivity">沒有網際網路連線</string>
+  <string name="photos_error_waiting_wifi_connectivity">正在等待 Wi-Fi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">使用行動數據</string>
+  <string name="photos_error_local_storage">裝置儲存空間已滿</string>
+  <string name="photos_error_local_storage_description">要繼續備份，您必須釋放裝置上的儲存空間。</string>
+  <string name="photos_error_background_restrictions">設定背景應用程式活動的電量為「無限制」</string>
+  <string name="photos_error_background_restrictions_description">為使背景備份連貫，請調整電量設定或經常開啟應用程式。</string>
+  <string name="photos_error_background_restrictions_action">設定</string>
+  <string name="photos_empty_title">尚無備份</string>
+  <string name="photos_empty_description">一旦您的裝置上有照片或影片，它們就會在此處出現。</string>
+  <string name="photos_backup_title">備份照片</string>
+  <string name="photos_backup_option_mobile_data">使用行動數據備份照片</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">停用電量優化</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">當應用程式於背景執行時讓備份不受間斷。</string>
+  <string name="photos_backup_in_app_notification_turned_on">照片備份已開啟</string>
+  <string name="photos_backup_in_app_notification_turned_off">照片備份已關閉</string>
+  <string name="photos_backup_state_completed">備份完成</string>
+  <string name="photos_backup_state_uncompleted">備份完成，發現問題</string>
+  <string name="photos_backup_state_uncompleted_action">解決</string>
+  <string name="photos_backup_state_encrypting">正在加密……</string>
+  <string name="photos_backup_state_uploading">正在備份……</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="other">剩下 %1$s 個項目</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="other">%1$s 個項目已儲存</item>
+  </plurals>
+  <string name="photos_upsell_title">告別儲存空間不夠</string>
+  <string name="photos_upsell_description">立即升級，所有回憶保持加密且安全</string>
+  <string name="photos_upsell_dismiss_action">稍後再說</string>
+</resources>

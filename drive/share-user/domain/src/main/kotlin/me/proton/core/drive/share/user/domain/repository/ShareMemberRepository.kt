@@ -25,8 +25,13 @@ import me.proton.core.drive.share.user.domain.entity.ShareUser
 
 interface ShareMemberRepository {
     suspend fun hasMembers(shareId: ShareId): Boolean
-    suspend fun fetchMembers(shareId: ShareId): List<ShareUser.Member>
+    suspend fun fetchAndStoreMembers(
+        shareId: ShareId,
+        ignoredIds: List<String> = emptyList()
+    ): List<ShareUser.Member>
+
     fun getMembersFlow(shareId: ShareId, limit: Int): Flow<List<ShareUser.Member>>
     fun getMemberFlow(shareId: ShareId, memberId: String): Flow<ShareUser.Member>
     suspend fun updateMember(shareId: ShareId, memberId: String, permissions: Permissions)
+    suspend fun deleteMember(shareId: ShareId, memberId: String)
 }

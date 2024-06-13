@@ -33,4 +33,6 @@ driveModule(
     api(project(":drive:drivelink-shared:domain"))
     api(project(":drive:drivelink:data"))
     api(project(":drive:share-url:base:data"))
+    api(project(":drive:share-user:data"))
+    api(libs.androidx.room.paging)
 }

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">복호화 중</string>
+  <string name="title_files">파일</string>
+  <string name="title_shared">공유</string>
+  <string name="title_my_files">내 파일</string>
+  <string name="title_offline_available">오프라인 사용 가능</string>
+  <string name="title_empty_my_files">어서 첫 번째 파일을 추가하세요.</string>
+  <string name="title_empty_folder">이 폴더를 채워봅시다</string>
+  <string name="title_empty_folder_read_only">빈 폴더</string>
+  <string name="title_empty_shared">새로운 소식 알아보기</string>
+  <string name="title_empty_offline_available">오프라인 사용 불가능</string>
+  <string name="title_empty_trash">휴지통이 비어있음</string>
+  <string name="title_empty_trash_action">휴지통 비우기</string>
+  <string name="title_files_confirm_deletion">영구적으로 삭제하시겠습니까?</string>
+  <string name="title_default_home_screen_tab">기본 홈 화면 탭을 선택하세요</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">앱</string>
+  <string name="description_signing_out">로그아웃 중...</string>
+  <string name="settings_about_links_acknowledgments_title">승인서</string>
+  <string name="settings_about_links_privacy_policy_title">개인정보처리방침</string>
+  <string name="settings_about_links_terms_of_service_title">서비스 이용약관</string>
+  <string name="common_error_no_browser_available">브라우저가 설치되지 않은 것으로 보여 링크를 열 수 없습니다</string>
+  <string name="move_to">이동하기</string>
+  <string name="move_file_confirm_action">이동</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">같은 폴더로 옮길 수 없습니다.</string>
+  <string name="folder_option_import_file">파일 업로드</string>
+  <string name="folder_option_create_folder">폴더 생성</string>
+  <string name="folder_option_take_a_photo">새 사진 촬영</string>
+  <string name="settings_theme_system_default">시스템 기본값</string>
+  <string name="settings_theme_dark">다크</string>
+  <string name="settings_theme_light">라이트</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">%1$s 으로 업로드</string>
+  <string name="upload_title">업로드</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">오직 %1$s 으로 파일을 업로드할 수 있습니다.</string>
+  <string name="in_app_notification_importing_file_already_exists">같은 이름의 파일이 이미 존재합니다, 앱 캐시 제거를 시도하십시오.</string>
+  <string name="in_app_notification_clear_local_cache_success">로컬 캐시 성공적으로 지워짐</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">저장 공간이 가득 찼습니다.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">%1$s 으로 파일 업로드 중</string>
+  <string name="notification_content_title_upload_complete">업로드 완료</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="other">%1$d개 파일 업로드 중</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="other">%1$d개 파일 업로드됨</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="other">%1$d개 파일 취소됨</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="other">%1$d개 파일 실패</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">사진을 %1$s로 백업 중</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="other">%1$s개 항목 남음</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">백업 완료</string>
+  <string name="notification_content_text_backup_uncompleted">백업이 완료되었으나 문제가 발생했습니다.</string>
+  <string name="notification_content_text_backup_failed">백업에 실패했습니다</string>
+  <string name="notification_content_text_backup_failed_drive_storage">저장공간이 꽉 찼습니다</string>
+  <string name="notification_content_text_backup_failed_local_storage">로컬 스토리지가 가득 찼습니다</string>
+  <string name="notification_content_text_backup_failed_permission">권한이 부여되지 않았습니다</string>
+  <string name="notification_content_text_backup_failed_connectivity">인터넷 연결 없음</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Wi-Fi를 기다리는 중</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">백업이 허용되지 않음</string>
+  <string name="notification_content_text_backup_paused_disabled">백업이 비활성화 되었습니다</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">백업이 백그라운드에서 작동할 수 없습니다</string>
+  <string name="notification_content_title_download_complete">다운로드 완료</string>
+  <string name="notification_content_title_forced_sign_out">로그인해 주세요</string>
+  <string name="notification_content_text_forced_sign_out">잠깐 실례합니다! 동기화 중 문제가 있었습니다. 다시 로그인하시면 잘 돌아갈 것입니다.</string>
+  <string name="notification_content_title_no_space_left_on_device">장치에 공간이 부족함</string>
+  <string name="notification_content_text_no_space_left_on_device">어플리케이션이 제대로 작동하지 않을 수 있습니다.</string>
+  <string name="notification_channel_group_name_application">어플리케이션</string>
+  <string name="notification_channel_background_title">백그라운드</string>
+  <string name="notification_channel_background_description">백업과 같은 백그라운드 작업을 위한 채널</string>
+  <string name="notification_channel_transfer_title">이동</string>
+  <string name="notification_channel_transfer_description">클라우드 저장 공간, 업로드 및 다운로드 알림 채널</string>
+  <string name="notification_channel_warning_title">경고</string>
+  <string name="notification_channel_warning_description">사용자 조치가 필요한 경고 알림 유형</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">목록의 모든 항목 선택</string>
+  <string name="content_description_selected_options">선택한 파일 또는 폴더에 대한 추가 옵션 표시</string>
+  <string name="content_description_files_upload_upload_file">파일 업로드</string>
+  <string name="description_empty_my_files">파일을 추가하려면 버튼을 탭하세요.</string>
+  <string name="description_empty_folder_read_only">이곳엔 아무것도 없습니다.</string>
+  <string name="description_empty_shared">링크로 공유한 파일이 여기에 표시되므로 공유된 항목을 쉽게 확인 및 관리할 수 있습니다.</string>
+  <string name="description_empty_trash">삭제 항목이 영구적으로 삭제되거나 복구되기 전까지 남아있는 곳입니다.</string>
+  <string name="description_empty_offline_available">네트워크가 연결되지 않은 경우에도 필수 파일을 항상 사용할 수 있도록 합니다.</string>
+  <string name="description_no_drive_scope">사용자에게 드라이브 권한이 없습니다.</string>
+  <string name="description_file_download_failed">다운로드에 실패했습니다. 네트워크 연결을 확인하고 다시 시도해주세요.</string>
+  <string name="description_file_decryption_failed">파일 복호화 실패</string>
+  <string name="description_file_verify_signature_failed">파일의 서명을 확인할 수 없었습니다</string>
+  <string name="description_files_stop_sharing">이것으로 링크를 삭제하고 링크가 있는 모두의 접근 권한을 없애게 됩니다.</string>
+  <string name="description_files_stop_sharing_action_success">파일의 링크가 삭제되었습니다.</string>
+  <string name="description_files_stop_sharing_action_error">파일의 링크를 삭제하는데 오류가 발생했습니다.</string>
+  <string name="description_files_stop_all_sharing">이것으로 링크를 삭제하고 모두의 접근 권한을 없애게 됩니다.</string>
+  <string name="description_files_stop_all_sharing_action_success">파일의 공유가 삭제되었습니다.</string>
+  <string name="description_files_stop_all_sharing_action_error">파일의 공유를 삭제하던 중 오류가 발생했습니다.</string>
+  <string name="ignore_file_signature_action">보기</string>
+  <string name="action_empty_files_add_files">업로드</string>
+  <string name="error_could_not_send_file">파일을 보내는 중 오류가 발생했습니다</string>
+  <string name="error_could_not_load_folder_content">폴더 내용을 불러오는 중 오류가 발생했습니다</string>
+  <string name="error_main_share_locked">비밀번호 재설정으로 인해 파일에 더 이상 접근할 수 없습니다. 다시 접근하기 위해 이전 암호화 키를 다시 업로드하세요.</string>
+  <string name="error_share_locked">공유가 잠겼습니다.</string>
+  <string name="error_main_share_not_found">주 공유를 찾을 수 없습니다.</string>
+  <string name="error_share_not_found">공유를 찾을 수 없습니다.</string>
+  <string name="error_creating_photo_share_not_allowed">사진 백업을 일시적으로 사용할 수 없습니다.</string>
+  <string name="error_creating_share_not_allowed">공유를 일시적으로 생성할 수 없습니다.</string>
+  <string name="operation_open_document">문서 열기</string>
+  <string name="operation_create_document">문서 생성</string>
+  <string name="operation_take_picture">사진 촬영</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">자유 저장공간 %1$s 를 해제하세요</string>
+  <string name="get_more_free_storage_description">무료 저장공간 업그레이드를 위해 이 단계들을 완료하세요.</string>
+  <string name="get_more_free_storage_action_upload_title">파일을 업로드하거나 사진 백업을 활성화하기</string>
+  <string name="get_more_free_storage_action_upload_subtitle">모든 파일은 암호화됩니다.</string>
+  <string name="get_more_free_storage_action_link_title">공유 링크 만들기</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">아무 파일이나 폴더의 옵션 메뉴를 열고 %1$s를 누르세요.</string>
+  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_recovery_title">복구 방법 설정하기</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">%1$s에서 로그인하신 다음 설정에서 복구로 향해주세요.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

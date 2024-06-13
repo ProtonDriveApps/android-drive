@@ -27,6 +27,7 @@ import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.TestConfigurationProvider
 import me.proton.core.drive.test.api.coreFeatures
 import me.proton.core.drive.test.api.featureFrontend
 import me.proton.core.featureflag.domain.entity.FeatureId
@@ -52,8 +53,10 @@ class GetFeatureFlagTest {
     @Inject
     lateinit var featureFlagRepository: FeatureFlagRepository
 
-    private val id = FeatureFlagId(userId = userId, id = "feature-a")
-    private val idInDevelopment = FeatureFlagId(userId = userId, id = "feature-b",)
+    @Inject
+    lateinit var configurationProvider: TestConfigurationProvider
+
+    private val featureId = FeatureFlagId(userId = userId, id = "feature-id")
 
     @Before
     fun setUp() = runTest {
@@ -64,22 +67,20 @@ class GetFeatureFlagTest {
         // Fragile: a method from core repository needs to be called
         // for /core/v4/features to be called and for missing ids to be inserted in database
         featureFlagRepository
-            .observe(userId, FeatureId(id.id))
+            .observe(userId, FeatureId(featureId.id))
             .take(2)
             .launchIn(this)
-
-        FeatureFlagId.developments = listOf(idInDevelopment.id)
     }
 
     @Test
     fun enabled() = runTest {
         driveRule.server.run {
-            featureFrontend(id.id)
+            featureFrontend(featureId.id)
         }
 
-        val featureFlag = getFeatureFlag(id)
+        val featureFlag = getFeatureFlag(featureId)
 
-        assertEquals(FeatureFlag(this@GetFeatureFlagTest.id, FeatureFlag.State.ENABLED), featureFlag)
+        assertEquals(FeatureFlag(this@GetFeatureFlagTest.featureId, FeatureFlag.State.ENABLED), featureFlag)
     }
 
     @Test
@@ -88,21 +89,35 @@ class GetFeatureFlagTest {
             featureFrontend()
         }
 
-        val featureFlag = getFeatureFlag(id)
+        val featureFlag = getFeatureFlag(featureId)
 
-        assertEquals(FeatureFlag(this@GetFeatureFlagTest.id, FeatureFlag.State.NOT_FOUND), featureFlag)
+        assertEquals(FeatureFlag(this@GetFeatureFlagTest.featureId, FeatureFlag.State.NOT_FOUND), featureFlag)
     }
 
     @Test
-    fun not_found_development() = runTest {
-
+    fun enabled_in_development() = runTest {
+        configurationProvider.disableFeatureFlagInDevelopment = false
+        FeatureFlagId.developments = listOf(featureId.id)
         driveRule.server.run {
-            featureFrontend(idInDevelopment.id)
+            featureFrontend(featureId.id)
         }
 
-        val featureFlag = getFeatureFlag(idInDevelopment)
+        val featureFlag = getFeatureFlag(featureId)
 
-        assertEquals(FeatureFlag(idInDevelopment, FeatureFlag.State.NOT_FOUND), featureFlag)
+        assertEquals(FeatureFlag(featureId, FeatureFlag.State.ENABLED), featureFlag)
+    }
+
+    @Test
+    fun not_found_in_development() = runTest {
+        configurationProvider.disableFeatureFlagInDevelopment = true
+        FeatureFlagId.developments = listOf(featureId.id)
+        driveRule.server.run {
+            featureFrontend(featureId.id)
+        }
+
+        val featureFlag = getFeatureFlag(featureId)
+
+        assertEquals(FeatureFlag(featureId, FeatureFlag.State.NOT_FOUND), featureFlag)
     }
 
 }

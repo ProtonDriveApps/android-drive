@@ -33,7 +33,7 @@ import me.proton.core.drive.share.domain.entity.ShareId
 fun LinkWithProperties.toLink(): Link = when (properties) {
     is LinkFilePropertiesEntity -> Link.File(
         id = FileId(ShareId(link.userId, link.shareId), link.id),
-        parentId = FolderId(ShareId(link.userId, link.shareId), requireNotNull(link.parentId)),
+        parentId = link.parentId?.let { FolderId(ShareId(link.userId, link.shareId), it) },
         name = link.name,
         size = Bytes(link.size),
         lastModified = TimestampS(link.lastModified),

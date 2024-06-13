@@ -15,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
  */
-@file:OptIn(ExperimentalMaterialApi::class)
-
 package me.proton.core.drive.drivelink.shared.presentation.component
 
 import androidx.activity.compose.BackHandler
@@ -36,7 +34,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -90,40 +87,42 @@ fun SharedDriveInvitations(
             .navigationBarsPadding()
     ) {
         val keyboardController = LocalSoftwareKeyboardController.current
-        TopAppBar(
-            navigationIcon = painterResource(id = CorePresentation.drawable.ic_arrow_back),
-            onNavigationIcon = viewEvent.onBackPressed,
-            title = stringResource(
-                id = I18N.string.title_share_via_invitations,
-                viewState.linkName
-            ),
-            modifier = Modifier.statusBarsPadding(),
-        )
-        EmailForm(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState()),
-            invitations = viewState.invitations,
-            contactSuggestions = viewState.contactSuggestions,
-            onInviteesChanged = viewEvent.onInviteesChanged,
-            onSuggestionTermTyped = viewEvent.onSearchTermChanged,
-            emailValidator = viewEvent.isValidEmailAddress,
-        )
-        Divider(
-            color = ProtonTheme.colors.separatorNorm,
-        )
-        if (viewState.showPermissions) {
-            PermissionSelect(
-                permissionViewState = viewState.permissionsViewState.selected,
-                onClick = {
-                    viewEvent.onPermissions()
-                    keyboardController?.hide()
-                },
+        Column(modifier = Modifier.weight(1F)) {
+            TopAppBar(
+                navigationIcon = painterResource(id = CorePresentation.drawable.ic_arrow_back),
+                onNavigationIcon = viewEvent.onBackPressed,
+                title = stringResource(
+                    id = I18N.string.title_share_via_invitations,
+                    viewState.linkName
+                ),
+                modifier = Modifier.statusBarsPadding(),
+            )
+            EmailForm(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState()),
+                invitations = viewState.invitations,
+                contactSuggestions = viewState.contactSuggestions,
+                onInviteesChanged = viewEvent.onInviteesChanged,
+                onSuggestionTermTyped = viewEvent.onSearchTermChanged,
+                emailValidator = viewEvent.isValidEmailAddress,
             )
             Divider(
                 color = ProtonTheme.colors.separatorNorm,
             )
+            if (viewState.showPermissions) {
+                PermissionSelect(
+                    permissionViewState = viewState.permissionsViewState.selected,
+                    onClick = {
+                        viewEvent.onPermissions()
+                        keyboardController?.hide()
+                    },
+                )
+                Divider(
+                    color = ProtonTheme.colors.separatorNorm,
+                )
+            }
+            Spacer(modifier = Modifier.weight(1F))
         }
-        Spacer(modifier = Modifier.weight(1F))
         SendContainer(saveButtonViewState, onSave = {
             keyboardController?.hide()
             viewEvent.onSave()
@@ -335,7 +334,9 @@ class ViewStateParameterProvider : PreviewParameterProvider<SharedDriveInvitatio
     override val values = sequenceOf(
         emptyViewState,
         emptyViewState.copy(invitations = invitations.subList(0, 1)),
-        emptyViewState.copy(invitations = invitations),
+        emptyViewState.copy(
+            invitations = (1..9).map { invitations }.flatten()
+        ),
         emptyViewState.copy(
             showPermissions = false,
             invitations = listOf(

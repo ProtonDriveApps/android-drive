@@ -40,6 +40,8 @@ import me.proton.android.drive.ui.screen.ComputersScreen
 import me.proton.android.drive.ui.screen.FilesScreen
 import me.proton.android.drive.ui.screen.PhotosScreen
 import me.proton.android.drive.ui.screen.SharedScreen
+import me.proton.android.drive.ui.screen.SharedTabsScreen
+import me.proton.android.drive.ui.screen.SharedWithMeScreen
 import me.proton.android.drive.ui.screen.SyncedFoldersScreen
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.domain.entity.UserId
@@ -122,6 +124,20 @@ fun HomeNavGraph(
         { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.FILES) },
         navigateToParentFolderOptions,
         navigateToComputerOptions,
+    )
+    addSharedTabs(
+        navController = homeNavController,
+        deepLinkBaseUrl = deepLinkBaseUrl,
+        arguments = arguments,
+        homeScaffoldState = homeScaffoldState,
+        navigateToFolderPreview = { fileId -> navigateToPreview(fileId, PagerType.FOLDER, OptionsFilter.FILES) },
+        navigateToSinglePreview = { fileId -> navigateToPreview(fileId, PagerType.SINGLE, OptionsFilter.FILES) },
+        navigateToSorting = navigateToSorting,
+        navigateToFileOrFolderOptions = { linkId -> navigateToFileOrFolderOptions(linkId, OptionsFilter.FILES) },
+        navigateToMultipleFileOrFolderOptions = { selectionId ->
+            navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.FILES)
+        },
+        navigateToParentFolderOptions = navigateToParentFolderOptions,
     )
 }
 
@@ -330,7 +346,7 @@ fun NavGraphBuilder.addComputers(
     },
     arguments = listOf(
         navArgument(Screen.Computers.USER_ID) { type = NavType.StringType },
-        navArgument(Screen.Photos.SHARE_ID) {
+        navArgument(Screen.Files.SHARE_ID) {
             type = NavType.StringType
             nullable = true
             defaultValue = null
@@ -428,6 +444,111 @@ fun NavGraphBuilder.addComputers(
         }
         val folderName = arguments.getString(Screen.Files.FOLDER_NAME)
         navController.navigate(Screen.Computers(userId, folderId, folderName, false)) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                inclusive = true
+            }
+        }
+    }
+}
+
+@ExperimentalCoroutinesApi
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addSharedTabs(
+    navController: NavHostController,
+    deepLinkBaseUrl: String,
+    arguments: Bundle,
+    homeScaffoldState: HomeScaffoldState,
+    navigateToFolderPreview: (fileId: FileId) -> Unit,
+    navigateToSinglePreview: (fileId: FileId) -> Unit,
+    navigateToSorting: (sorting: Sorting) -> Unit,
+    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToMultipleFileOrFolderOptions: (SelectionId) -> Unit,
+    navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
+) = composable(
+    route = Screen.SharedTabs.route,
+    enterTransition = defaultEnterSlideTransition {
+        targetState.get<String>(Screen.Files.FOLDER_ID) != null &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+    },
+    exitTransition = defaultExitSlideTransition {
+        initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+    },
+    popEnterTransition = defaultPopEnterSlideTransition {
+        initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+    },
+    popExitTransition = defaultPopExitSlideTransition {
+        initialState.get<String>(Screen.Files.FOLDER_ID) != null &&
+                initialState.get<String>(Screen.Files.FOLDER_ID) != targetState.get<String>(Screen.Files.FOLDER_ID)
+    },
+    arguments = listOf(
+        navArgument(Screen.SharedTabs.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.Files.SHARE_ID) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = null
+        },
+        navArgument(Screen.Files.FOLDER_ID) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = null
+        },
+        navArgument(Screen.Files.FOLDER_NAME) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = null
+        },
+    ),
+    deepLinks = listOf(
+        navDeepLink { uriPattern = Screen.SharedTabs.deepLink(deepLinkBaseUrl) }
+    ),
+) { navBackStackEntry ->
+    navBackStackEntry.get<String>(Screen.SharedTabs.USER_ID)?.let { userId ->
+        val argShareId = navBackStackEntry.get<String>(Screen.Files.SHARE_ID)
+        val argFolderId = navBackStackEntry.get<String>(Screen.Files.FOLDER_ID)
+        if (argShareId != null && argFolderId != null) {
+            FilesScreen(
+                homeScaffoldState = homeScaffoldState,
+                navigateToFiles = { folderId, folderName ->
+                    navController.navigate(
+                        Screen.SharedTabs(
+                            UserId(userId),
+                            folderId,
+                            folderName,
+                        )
+                    )
+                },
+                navigateToPreview = navigateToFolderPreview,
+                navigateToSortingDialog = navigateToSorting,
+                navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+                navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
+                navigateToParentFolderOptions = navigateToParentFolderOptions,
+                navigateBack = { navController.popBackStack() },
+            )
+        } else {
+            SharedTabsScreen(
+                homeScaffoldState = homeScaffoldState,
+                navigateToFiles = { folderId, folderName ->
+                    navController.navigate(
+                        Screen.SharedTabs(
+                            UserId(userId),
+                            folderId,
+                            folderName,
+                        )
+                    )
+                },
+                navigateToPreview = navigateToSinglePreview,
+                navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+            )
+        }
+    } ?: let {
+        val userId = UserId(requireNotNull(arguments.getString(Screen.SharedTabs.USER_ID)))
+        val folderId = arguments.getString(Screen.Files.SHARE_ID)?.let { shareId ->
+            arguments.getString(Screen.Files.FOLDER_ID)?.let { folderId ->
+                FolderId(ShareId(userId, shareId), folderId)
+            }
+        }
+        val folderName = arguments.getString(Screen.Files.FOLDER_NAME)
+        navController.navigate(Screen.SharedTabs(userId, folderId, folderName)) {
             popUpTo(navController.graph.findStartDestination().id) {
                 inclusive = true
             }

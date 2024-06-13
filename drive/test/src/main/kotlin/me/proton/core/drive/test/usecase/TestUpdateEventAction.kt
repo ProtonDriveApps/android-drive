@@ -18,21 +18,27 @@
 
 package me.proton.core.drive.test.usecase
 
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class TestUpdateEventAction @Inject constructor() : UpdateEventAction {
+
+    private val lock = Mutex()
     override suspend fun <T> invoke(
         shareId: ShareId,
         block: suspend () -> T,
-    ): T = block()
+    ): T = lock.withLock { block() }
 
     override suspend fun <T> invoke(
         userId: UserId,
         volumeId: VolumeId,
         block: suspend () -> T,
-    ): T = block()
+    ): T = lock.withLock { block() }
 }

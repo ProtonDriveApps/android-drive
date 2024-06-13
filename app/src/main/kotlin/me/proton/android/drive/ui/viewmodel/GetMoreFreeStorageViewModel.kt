@@ -31,20 +31,17 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.map
 import me.proton.android.drive.ui.viewstate.GetMoreFreeStorageViewState
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.domain.arch.DataResult
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.folder.domain.usecase.HasAnyCachedFolderChildren
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
-import me.proton.core.drive.share.domain.entity.Share
-import me.proton.core.drive.share.domain.usecase.GetShares
 import javax.inject.Inject
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
@@ -54,9 +51,8 @@ import me.proton.core.presentation.R as CorePresentation
 class GetMoreFreeStorageViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
     configurationProvider: ConfigurationProvider,
-    getShares: GetShares,
-    private val hasAnyCachedFolderChildren: HasAnyCachedFolderChildren,
     private val broadcastMessages: BroadcastMessages,
+    getFeatureFlag: GetFeatureFlagFlow,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val uploadAFile = GetMoreFreeStorageViewState.Action(
@@ -70,6 +66,13 @@ class GetMoreFreeStorageViewModel @Inject constructor(
         iconResId = createAShareLinkIconResId(false),
         titleResId = I18N.string.get_more_free_storage_action_link_title,
         getDescription = { createAShareLinkDescription },
+        isDone = false,
+    )
+
+    private val shareAFile = GetMoreFreeStorageViewState.Action(
+        iconResId = createShareAFileIconResId(false),
+        titleResId = I18N.string.get_more_free_storage_action_share_title,
+        getDescription = { AnnotatedString(appContext.getString(I18N.string.get_more_free_storage_action_share_subtitle)) },
         isDone = false,
     )
 
@@ -91,33 +94,21 @@ class GetMoreFreeStorageViewModel @Inject constructor(
         actions = listOf(uploadAFile, createAShareLink, setARecoveryMethod),
     )
 
-    val viewState: Flow<GetMoreFreeStorageViewState> = getShares(userId, Share.Type.STANDARD, flowOf(false))
-        .distinctUntilChanged()
-        .transform { result ->
-            when (result) {
-                is DataResult.Success -> emit(
-                    initialViewState.copy(
-                        actions = listOf(
-                            hasAnyCachedFolderChildren(userId, filesOnly = true).let {
-                                uploadAFile.copy(
-                                    iconResId = uploadAFileIconResId(false),
-                                    isDone = false,
-                                )
-                            },
-                            result.value.isNotEmpty().let {
-                                createAShareLink.copy(
-                                    iconResId = createAShareLinkIconResId(false),
-                                    isDone = false,
-                                )
-                            },
-                            setARecoveryMethod,
-                        )
+    val viewState: Flow<GetMoreFreeStorageViewState> =
+        getFeatureFlag(FeatureFlagId.driveSharingInvitations(userId))
+            .map { sharingInvitations ->
+                initialViewState.copy(
+                    actions = listOf(
+                        uploadAFile,
+                        if (sharingInvitations.on) {
+                            shareAFile
+                        } else {
+                            createAShareLink
+                        },
+                        setARecoveryMethod,
                     )
                 )
-                else -> Unit
             }
-
-        }
 
     private val isDoneIconResId = CorePresentation.drawable.ic_proton_checkmark
 
@@ -128,6 +119,9 @@ class GetMoreFreeStorageViewModel @Inject constructor(
     @Suppress("SameParameterValue")
     private fun createAShareLinkIconResId(isDone: Boolean): Int =
         if (isDone) isDoneIconResId else CorePresentation.drawable.ic_proton_link
+
+    private fun createShareAFileIconResId(isDone: Boolean): Int =
+        if (isDone) isDoneIconResId else CorePresentation.drawable.ic_proton_user_plus
 
     @Suppress("SameParameterValue")
     private fun setARecoveryMethodIconResId(isDone: Boolean): Int =

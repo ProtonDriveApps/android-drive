@@ -54,7 +54,7 @@ import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.component.TopBarActions
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.files.presentation.state.ListEffect
+import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the link name
+        Example:
+            "Share Document"
+    -->
+  <string name="title_share_via_invitations">Compartilhar %1$s</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons added"
+    -->
+  <plurals name="share_via_invitations_person_added">
+    <item quantity="one">Uma pessoa adicionada</item>
+    <item quantity="other">%1$d pessoas adicionadas</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons cannot be invited"
+    -->
+  <plurals name="share_via_invitations_person_added_error">
+    <item quantity="one">1 pessoa não pode ser convidada</item>
+    <item quantity="other">%1$d pessoas não pode ser convidada</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "Sharing with 2 persons"
+    -->
+  <plurals name="share_via_invitations_sharing_with">
+    <item quantity="one">Compartilhando com 1 pessoa</item>
+    <item quantity="other">Compartilhando com %1$d pessoas</item>
+  </plurals>
+  <string name="share_via_invitations_permission_owner">Proprietário</string>
+  <string name="share_via_invitations_permission_admin">Administrador</string>
+  <string name="share_via_invitations_permission_editor">Editor</string>
+  <string name="share_via_invitations_permission_viewer">Visualizador</string>
+  <string name="share_via_invitations_permission_unknown">Desconhecido</string>
+  <!--
+        Variable %1$s is the permission
+        Examples:
+            "Editor (Invitation sent)"
+    -->
+  <string name="share_via_invitations_invitation_sent">%1$s (Convite enviado)</string>
+  <string name="share_via_invitations_add_people_hint">Adicionar pessoas</string>
+  <string name="share_via_invitations_copy_invite_link_action">Copiar link de convite</string>
+  <string name="share_via_invitations_remove_access_action">Remover o acesso</string>
+  <string name="share_via_invitations_stop_sharing_description">Excluir o link e remover o acesso para todos</string>
+  <string name="share_via_invitations_resend_invite_action">Reenviar o convite</string>
+  <string name="share_via_invitations_resend_invite_success">O convite foi reenviado.</string>
+</resources>

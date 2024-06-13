@@ -45,6 +45,7 @@ object LogTag {
     const val TRASH = "$DEFAULT.trash"
     const val THUMBNAIL = "$DEFAULT.thumbnail"
     const val FEATURE_FLAG = "$DEFAULT.feature.flag"
+    const val LOG = "$DEFAULT.log"
     val ViewModel.VIEW_MODEL: String get() = "$DEFAULT.view.model[${this.javaClass.simpleName}]"
 
     object UploadTag {

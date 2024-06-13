@@ -23,6 +23,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,6 +45,7 @@ import me.proton.core.compose.theme.defaultStrongNorm
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.drivelink.shared.presentation.extension.isShared
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.ManageAccessViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.ManageAccessViewModel
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.LoadingViewState
@@ -57,11 +61,12 @@ import me.proton.core.presentation.R as CorePresentation
 fun ManageAccess(
     navigateToShareViaInvitations: (LinkId) -> Unit,
     navigateToShareViaLink: (LinkId) -> Unit,
-    navigateToStopSharing: (LinkId) -> Unit,
+    navigateToStopLinkSharing: (LinkId) -> Unit,
+    navigateToStopAllSharing: (ShareId) -> Unit,
     navigateToInvitationOptions: (LinkId, String) -> Unit,
     navigateToMemberOptions: (LinkId, String) -> Unit,
-    modifier: Modifier = Modifier,
     navigateBack: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<ManageAccessViewModel>()
 
@@ -72,17 +77,20 @@ fun ManageAccess(
         viewEvent = viewModel.viewEvent(
             navigateToShareViaInvitations = navigateToShareViaInvitations,
             navigateToShareViaLink = navigateToShareViaLink,
-            navigateToStopSharing = navigateToStopSharing,
+            navigateToStopLinkSharing = navigateToStopLinkSharing,
+            navigateToStopAllSharing = navigateToStopAllSharing,
             navigateToInvitationOptions = navigateToInvitationOptions,
             navigateToMemberOptions = navigateToMemberOptions,
             navigateBack = navigateBack,
         ),
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .navigationBarsPadding(),
     )
 }
 
 @Composable
-fun ManageAccess(
+private fun ManageAccess(
     viewState: ManageAccessViewState?,
     viewEvent: ManageAccessViewEvent,
     modifier: Modifier = Modifier,
@@ -123,15 +131,15 @@ fun ManageAccessContent(
     viewEvent: ManageAccessViewEvent,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
+    Column(modifier.verticalScroll(rememberScrollState())) {
         SectionTitle(stringResource(I18N.string.manage_access_share_with_anyone))
         ShareWithAnyone(
             viewState = viewState.loadingViewState,
             publicUrl = viewState.publicUrl,
             accessibilityDescription = viewState.accessibilityDescription,
             onRetry = viewEvent.onRetry,
-            onStartSharing = viewEvent.onStartSharing,
-            onStopSharing = viewEvent.onStopSharing,
+            onStartSharing = viewEvent.onStartLinkSharing,
+            onStopSharing = viewEvent.onStopLinkSharing,
             onCopyLink = viewEvent.onCopyLink,
             onConfigureSharing = viewEvent.onConfigureSharing,
         )
@@ -149,6 +157,10 @@ fun ManageAccessContent(
                     }
                 },
             )
+        }
+        if (viewState.isShared) {
+            Divider(color = ProtonTheme.colors.separatorNorm)
+            StopSharingButton(onClick = { viewEvent.onStopAllSharing() })
         }
     }
 }
@@ -188,7 +200,7 @@ private fun ManageAccessSharedPreview() {
                     ShareUserViewState(
                         id = "",
                         email = "pm@proton.me",
-                        permissionLabel = "Editor (Invite sent)",
+                        permissionLabel = "Editor",
                         firstLetter = "P",
                         displayName = "Proton user",
                         isInvitation = true,
@@ -202,8 +214,9 @@ private fun ManageAccessSharedPreview() {
                 override val onInvitationOptions: (String) -> Unit = {}
                 override val onMemberOptions: (String) -> Unit = {}
                 override val onCopyLink: (String) -> Unit = {}
-                override val onStartSharing: () -> Unit = {}
-                override val onStopSharing: () -> Unit = {}
+                override val onStartLinkSharing: () -> Unit = {}
+                override val onStopLinkSharing: () -> Unit = {}
+                override val onStopAllSharing: () -> Unit = {}
                 override val onConfigureSharing: () -> Unit = {}
             }
         )
@@ -233,8 +246,9 @@ private fun ManageAccessNotSharedPreview() {
                 override val onInvitationOptions: (String) -> Unit = {}
                 override val onMemberOptions: (String) -> Unit = {}
                 override val onCopyLink: (String) -> Unit = {}
-                override val onStartSharing: () -> Unit = {}
-                override val onStopSharing: () -> Unit = {}
+                override val onStartLinkSharing: () -> Unit = {}
+                override val onStopLinkSharing: () -> Unit = {}
+                override val onStopAllSharing: () -> Unit = {}
                 override val onConfigureSharing: () -> Unit = {}
             }
         )

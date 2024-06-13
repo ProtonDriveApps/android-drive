@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">Fotografie</string>
+  <string name="photos_permissions_title">Šifrujte a zálohujte vaše fotografie a videá</string>
+  <string name="photos_permissions_section_1_title">Chráňte vaše spomienky</string>
+  <string name="photos_permissions_section_1_description">Vaše fotografie sú end-to-end šifrované, čo zaručuje úplné súkromie.</string>
+  <string name="photos_permissions_section_2_title">Automatické zálohovanie</string>
+  <string name="photos_permissions_section_2_description">Fotografie sa pravidelne zálohujú cez WiFi v pôvodnej kvalite.</string>
+  <string name="photos_permissions_action">Zapnúť zálohovanie</string>
+  <string name="photos_permission_rational_img_text">Povoliť prístup</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s potrebuje úplný prístup k vašim fotografiám</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">Je to potrebné na zabezpečenie toho, aby boli všetky vaše fotografie zálohované a dostupné vo všetkých vašich zariadeniach.\n%1$s berie vaše súkromie vážne a bude mať prístup k vašim fotografiám len na účely synchronizácie a zálohovania.</string>
+  <string name="photos_permission_rational_confirm_action">Nastavenia</string>
+  <string name="photos_permission_rational_dismiss_action">Teraz nie</string>
+  <string name="photos_empty_loading_label_encrypted">End-to-end šifrované</string>
+  <string name="photos_empty_loading_label_progress">Prebieha zálohovanie.\nMôže to chvíľu trvať</string>
+  <string name="photos_separator_current_month">Tento mesiac</string>
+  <string name="photos_encrypted_footer">End-to-end šifrované</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from the Camera folder"
+            "Backing up items from 2 Camera folders"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="one">Zálohovanie položiek z %1$s priečinka</item>
+    <item quantity="few">Zálohovanie položiek z %2$d%1$s priečinkov</item>
+    <item quantity="many">Zálohovanie položiek z %2$d%1$s priečinkov</item>
+    <item quantity="other">Zálohovanie položiek z %2$d%1$s priečinkov</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">Nenašiel sa žiadny priečinok %1$s na zálohovanie</string>
+  <string name="photos_error_backup_disabled">Zálohovanie je vypnuté.</string>
+  <string name="photos_error_backup_disabled_action">Zapnúť</string>
+  <string name="photos_error_backup_missing_folder">Zálohovací priečinok nebol nájdený</string>
+  <string name="photos_error_backup_failed">Zálohovanie zlyhalo.</string>
+  <string name="photos_error_backup_temporarily_disabled">Zálohovanie je dočasne zakázané.</string>
+  <string name="photos_error_missing_permissions">Chýbajúce povolenia.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">Pre nepretržité a automatické zálohovanie povoľte v nastaveniach prístup %1$s ku všetkým fotografiám.</string>
+  <string name="photos_error_waiting_connectivity">Žiadne internetové pripojenie</string>
+  <string name="photos_error_waiting_wifi_connectivity">Čakám na Wi-Fi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Použiť mobilné dáta</string>
+  <string name="photos_error_local_storage">Úložisko zariadenia je plné</string>
+  <string name="photos_error_local_storage_description">Ak chcete pokračovať v zálohovaní, musíte uvoľniť úložisko v zariadení.</string>
+  <string name="photos_error_background_restrictions">Nastavte batériu na \"neobmedzené\" pre aktivitu aplikácie na pozadí</string>
+  <string name="photos_error_background_restrictions_description">Pre trvalé zálohovanie na pozadí upravte nastavenia batérie alebo často otvárajte aplikáciu.</string>
+  <string name="photos_error_background_restrictions_action">Nastavenia</string>
+  <string name="photos_empty_title">Zatiaľ bez zálohovania</string>
+  <string name="photos_empty_description">Hneď, ako budete mať v zariadení fotografie alebo videá, zobrazia sa tu.</string>
+  <string name="photos_backup_title">Zálohovanie fotiek</string>
+  <string name="photos_backup_option_mobile_data">Použiť mobilné dáta na zálohovanie fotografií</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Vypnúť optimalizáciu batérie</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Povolí neprerušované zálohovanie, keď je aplikácia spustená na pozadí.</string>
+  <string name="photos_backup_in_app_notification_turned_on">Zálohovanie fotiek je zapnuté</string>
+  <string name="photos_backup_in_app_notification_turned_off">Zálohovanie fotiek je vypnuté</string>
+  <string name="photos_backup_state_completed">Zálohovanie bolo dokončené</string>
+  <string name="photos_backup_state_uncompleted">Zálohovanie dokončené s problémami</string>
+  <string name="photos_backup_state_uncompleted_action">Vyriešiť</string>
+  <string name="photos_backup_state_encrypting">Šifrovanie…</string>
+  <string name="photos_backup_state_uploading">Zálohovanie…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="one">Zostáva %1$s položka</item>
+    <item quantity="few">Zostávajú %1$s položky</item>
+    <item quantity="many">Zostáva %1$s položiek</item>
+    <item quantity="other">Zostáva %1$s položiek</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="one">%1$s položka bola uložená</item>
+    <item quantity="few">%1$s položky boli uložené</item>
+    <item quantity="many">%1$s položiek bolo uložených</item>
+    <item quantity="other">%1$s položiek bolo uložených</item>
+  </plurals>
+  <string name="photos_upsell_title">Nikdy nevyčerpajte úložisko</string>
+  <string name="photos_upsell_description">Upgradujte teraz a uchovávajte všetky svoje spomienky zašifrované a v bezpečí.</string>
+  <string name="photos_upsell_dismiss_action">Teraz nie</string>
+</resources>

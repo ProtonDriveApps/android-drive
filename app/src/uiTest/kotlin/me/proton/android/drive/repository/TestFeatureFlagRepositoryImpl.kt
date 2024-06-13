@@ -33,14 +33,14 @@ class TestFeatureFlagRepositoryImpl @Inject constructor(
 ) : FeatureFlagRepository by repository {
 
     override suspend fun getFeatureFlag(featureFlagId: FeatureFlagId): FeatureFlag? =
-        (flags[featureFlagId.id]?.let { state: FeatureFlag.State ->
+        flags[featureFlagId.id]?.let { state: FeatureFlag.State ->
             FeatureFlag(featureFlagId, state).also { it.log("local") }
-        } ?: repository.getFeatureFlag(featureFlagId)).also { it?.log("remote") }
+        } ?: repository.getFeatureFlag(featureFlagId).also { it?.log("remote") }
 
     override suspend fun getFeatureFlagFlow(featureFlagId: FeatureFlagId): Flow<FeatureFlag?> =
-        (flags[featureFlagId.id]?.let { state ->
+        flags[featureFlagId.id]?.let { state ->
             flowOf(FeatureFlag(featureFlagId, state)).onEach { it.log("local") }
-        } ?: repository.getFeatureFlagFlow(featureFlagId)).onEach { it?.log("remote") }
+        } ?: repository.getFeatureFlagFlow(featureFlagId).onEach { it?.log("remote") }
 
 
     private fun FeatureFlag.log(source: String) {

@@ -19,6 +19,7 @@
 package me.proton.core.drive.drivelink.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.repository.DriveLinkRepository
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -26,9 +27,19 @@ import javax.inject.Inject
 
 class GetDriveLinks @Inject constructor(
     private val driveLinkRepository: DriveLinkRepository,
+    private val updateSharePermissions: UpdateSharePermissions,
+    private val updateShareUserDisplayName: UpdateShareUserDisplayName,
 ) {
     operator fun invoke(
         linkIds: List<LinkId>,
     ): Flow<List<DriveLink>> =
-        driveLinkRepository.getDriveLinks(linkIds)
+        driveLinkRepository
+            .getDriveLinks(linkIds)
+            .map { driveLinks ->
+                driveLinks.map { driveLink ->
+                    driveLink
+                        .let { link -> updateSharePermissions(link) }
+                        .let { link -> updateShareUserDisplayName(link) }
+                }
+            }
 }

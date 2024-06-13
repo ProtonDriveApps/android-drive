@@ -64,3 +64,14 @@ fun MockWebServer.updateMember() = updateMember {
         Response(ProtonApiCode.SUCCESS)
     }
 }
+
+fun MockWebServer.deleteMember(block: RequestContext.() -> MockResponse) = routing {
+    delete("/drive/v2/shares/{shareId}/members/{memberId}", block)
+}
+
+fun MockWebServer.deleteMember() = deleteMember {
+    jsonResponse {
+        Response(ProtonApiCode.SUCCESS)
+    }
+}
+

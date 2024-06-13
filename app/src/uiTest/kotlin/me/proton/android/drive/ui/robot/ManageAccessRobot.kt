@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.ui.robot
 
+import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.FusionConfig.targetContext
 import me.proton.core.drive.i18n.R as I18N
@@ -44,6 +45,17 @@ object ManageAccessRobot : NavigationBarRobot, Robot {
 
     fun clickInvitation(text: String) =
         node.withText(text).clickTo(ShareInvitationOptionRobot)
+
+    fun clickMember(text: String) =
+        node.withText(text).clickTo(ShareMemberOptionRobot)
+
+    fun assertUserIsNotEditable(text: String) {
+        node.hasDescendant(node.withText(text))
+            .isClickable().await { assertDisabled() }
+    }
+
+    fun <T : Robot> clickStopSharing(goesTo: T) =
+        node.withText(I18N.string.share_via_invitations_stop_sharing_title).clickTo(goesTo)
 
     fun assertLinkIsShareWithAnyonePublic() {
         allowToAnyonePublicSwitch.await { assertIsAsserted() }
@@ -82,10 +94,44 @@ object ManageAccessRobot : NavigationBarRobot, Robot {
     }
 
     private fun assertSharedWithEditor(email: String, role: String) {
-        val pendingInvitation =
-            targetContext.getString(I18N.string.share_via_invitations_invitation_sent)
         node.withText(email)
-            .hasSibling(node.withText(pendingInvitation.format(role)))
+            .hasSibling(node.withText(role))
+            .await { assertIsDisplayed() }
+    }
+
+    fun assertNotSharedWith(email: String) {
+        node.withText(email).await { assertDoesNotExist() }
+    }
+
+    fun assertInvitedWithViewer(email: String) {
+        assertInvitedWithRole(
+            email = email,
+            role = targetContext.getString(I18N.string.share_via_invitations_permission_viewer)
+        )
+    }
+
+    fun assertInvitedWithEditor(email: String) {
+        assertInvitedWithRole(
+            email = email,
+            role = targetContext.getString(I18N.string.share_via_invitations_permission_editor)
+        )
+    }
+
+    private fun assertInvitedWithRole(email: String, role: String) {
+        node.withText(email)
+            .hasSibling(node.withText(role))
+            .await { assertIsDisplayed() }
+    }
+
+    fun assertMemberWithViewer(email: String) {
+        node.withText(email)
+            .hasSibling(node.withText(I18N.string.share_via_invitations_permission_viewer))
+            .await { assertIsDisplayed() }
+    }
+
+    fun assertMemberWithEditor(email: String) {
+        node.withText(email)
+            .hasSibling(node.withText(I18N.string.share_via_invitations_permission_editor))
             .await { assertIsDisplayed() }
     }
 

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Ontsleutelen</string>
+  <string name="title_files">Bestanden</string>
+  <string name="title_shared">Gedeeld</string>
+  <string name="title_my_files">Mijn bestanden</string>
+  <string name="title_offline_available">Offline beschikbaar</string>
+  <string name="title_empty_my_files">Ga uw gang, voeg uw eerste bestand toe</string>
+  <string name="title_empty_folder">Laten we deze map vullen</string>
+  <string name="title_empty_folder_read_only">Empty folder</string>
+  <string name="title_empty_shared">Blijf op de hoogte van wat er is</string>
+  <string name="title_empty_offline_available">Niets offline beschikbaar</string>
+  <string name="title_empty_trash">Uw prullenbak is leeg</string>
+  <string name="title_empty_trash_action">Prullenbak leegmaken</string>
+  <string name="title_files_confirm_deletion">Permanent verwijderen?</string>
+  <string name="title_default_home_screen_tab">Kies het standaard startscherm tabblad</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">App</string>
+  <string name="description_signing_out">Uitloggen…</string>
+  <string name="settings_about_links_acknowledgments_title">Met dank aan</string>
+  <string name="settings_about_links_privacy_policy_title">Privacybeleid</string>
+  <string name="settings_about_links_terms_of_service_title">Servicevoorwaarden</string>
+  <string name="common_error_no_browser_available">We konden de link niet openen omdat u geen browser lijkt te hebben geïnstalleerd</string>
+  <string name="move_to">Verplaatsen naar</string>
+  <string name="move_file_confirm_action">Verplaatsen</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">U kunt een map niet naar zichzelf verplaatsen</string>
+  <string name="folder_option_import_file">Upload een bestand</string>
+  <string name="folder_option_create_folder">Map aanmaken</string>
+  <string name="folder_option_take_a_photo">Neem een nieuwe foto</string>
+  <string name="settings_theme_system_default">Systeemstandaard</string>
+  <string name="settings_theme_dark">Donker</string>
+  <string name="settings_theme_light">Licht</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Uploaden naar %1$s</string>
+  <string name="upload_title">Uploaden</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">Alleen bestanden kunnen worden geüpload naar %1$s</string>
+  <string name="in_app_notification_importing_file_already_exists">Er bestaat al een bestand met dezelfde naam. Probeer de app-cache te wissen</string>
+  <string name="in_app_notification_clear_local_cache_success">Lokale cache is succesvol gewist</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Opslag vol</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Bestanden uploaden naar %1$s</string>
+  <string name="notification_content_title_upload_complete">Uploaden voltooid</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Upload %1$d bestand</item>
+    <item quantity="other">Upload %1$d bestanden</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d bestand geüpload</item>
+    <item quantity="other">%1$d bestanden geüpload</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d bestand geannuleerd</item>
+    <item quantity="other">%1$d bestanden geannuleerd</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">%1$d bestand is mislukt</item>
+    <item quantity="other">%1$d bestanden zijn mislukt</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Foto\'s back-uppen naar %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">%1$s item over</item>
+    <item quantity="other">%1$s items over</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Back-up voltooid</string>
+  <string name="notification_content_text_backup_uncompleted">Back-up is met fouten afgerond</string>
+  <string name="notification_content_text_backup_failed">Back-up mislukt</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Proton-opslagruimte is vol</string>
+  <string name="notification_content_text_backup_failed_local_storage">Lokale opslag is vol</string>
+  <string name="notification_content_text_backup_failed_permission">Machtigingen ontbreken</string>
+  <string name="notification_content_text_backup_failed_connectivity">Geen internetverbinding</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Wachten op Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Back-up is niet toegestaan</string>
+  <string name="notification_content_text_backup_paused_disabled">Back-up uitgeschakeld</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Back-up kan niet op de achtergrond worden uitgevoerd</string>
+  <string name="notification_content_title_download_complete">Download voltooid</string>
+  <string name="notification_content_title_forced_sign_out">Inloggen</string>
+  <string name="notification_content_text_forced_sign_out">Sorry dat ik stoor! We hadden een probleem met synchroniseren - log opnieuw in en we zullen alles soepel laten verlopen.</string>
+  <string name="notification_content_title_no_space_left_on_device">Geen ruimte meer op een apparaat</string>
+  <string name="notification_content_text_no_space_left_on_device">Applicatie werkt mogelijk niet goed.</string>
+  <string name="notification_channel_group_name_application">Applicatie</string>
+  <string name="notification_channel_background_title">Achtergrond</string>
+  <string name="notification_channel_background_description">Kanaal voor achtergrondtaken zoals back-up</string>
+  <string name="notification_channel_transfer_title">Transfer</string>
+  <string name="notification_channel_transfer_description">Kanaal voor cloudopslag, upload- en downloadmeldingen</string>
+  <string name="notification_channel_warning_title">Waarschuwing</string>
+  <string name="notification_channel_warning_description">Kanaal voor waarschuwingen die actie van de gebruiker vereisen</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Selecteer alle items in de lijst</string>
+  <string name="content_description_selected_options">Toon meer opties voor geselecteerde bestanden en/of mappen</string>
+  <string name="content_description_files_upload_upload_file">Upload een bestand</string>
+  <string name="description_empty_my_files">Tik op de knop om bestanden toe te voegen.</string>
+  <string name="description_empty_folder_read_only">Er is hier niets te zien</string>
+  <string name="description_empty_shared">Gekoppelde bestanden worden hier weergegeven, zodat u eenvoudig kunt volgen en beheren wat er wordt gedeeld.</string>
+  <string name="description_empty_trash">Hier blijven weggegooide items staan totdat u ze verwijdert of herstelt.</string>
+  <string name="description_empty_offline_available">Maak essentiële bestanden altijd beschikbaar, zelfs als uw netwerk dat niet is.</string>
+  <string name="description_no_drive_scope">Gebruiker mist schijftoegang.</string>
+  <string name="description_file_download_failed">Downloaden is mislukt. Controleer de netwerkverbinding en probeer het opnieuw.</string>
+  <string name="description_file_decryption_failed">Kan bestand niet decoderen</string>
+  <string name="description_file_verify_signature_failed">De handtekening van het bestand kan niet worden geverifieerd</string>
+  <string name="description_files_stop_sharing">Dit zal de link verwijderen en de toegang tot uw bestand of map voor iedereen met de link verwijderen.</string>
+  <string name="description_files_stop_sharing_action_success">De link naar uw bestand is verwijderd.</string>
+  <string name="description_files_stop_sharing_action_error">Er is een fout opgetreden bij het verwijderen van de link naar uw bestand.</string>
+  <string name="description_files_stop_all_sharing">This will delete link and remove access for everyone.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_error">There was an error while deleting sharing to your file.</string>
+  <string name="ignore_file_signature_action">Toch bekijken</string>
+  <string name="action_empty_files_add_files">Uploaden</string>
+  <string name="error_could_not_send_file">Er is een fout opgetreden tijdens het verzenden van het bestand.</string>
+  <string name="error_could_not_load_folder_content">Er is een fout opgetreden bij het laden van mapinhoud</string>
+  <string name="error_main_share_locked">Uw bestanden zijn niet meer toegankelijk vanwege een wachtwoordreset. Upload de oude versleutelingssleutel om weer toegang te krijgen.</string>
+  <string name="error_share_locked">Delen is vergrendeld.</string>
+  <string name="error_main_share_not_found">Hoofdmap is niet gevonden.</string>
+  <string name="error_share_not_found">Delen niet gevonden.</string>
+  <string name="error_creating_photo_share_not_allowed">Foto back-up is tijdelijk onbeschikbaar.</string>
+  <string name="error_creating_share_not_allowed">Delen aanmaken is tijdelijk onbeschikbaar.</string>
+  <string name="operation_open_document">een document openen</string>
+  <string name="operation_create_document">een document maken</string>
+  <string name="operation_take_picture">een foto nemen</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Ontgrendel %1$s gratis opslag</string>
+  <string name="get_more_free_storage_description">Voltooi deze stappen in uw eerste 30 dagen voor een gratis upgrade van uw opslagruimte.</string>
+  <string name="get_more_free_storage_action_upload_title">Upload een bestand of schakel fotobackup in</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Al uw bestanden zullen worden versleuteld.</string>
+  <string name="get_more_free_storage_action_link_title">Maak een link om te delen</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Selecteer een bestand of map. Open het optiemenu en druk op %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_recovery_title">Stel een herstelmethode in</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Log in op %1$sven ga naar Instellingen -&gt; Herstel.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

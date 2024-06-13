@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Tworzenie linku do %1$s</string>
+  <string name="shared_link_getting_link">Uzyskiwanie linku</string>
+  <string name="shared_link_file">pliku</string>
+  <string name="shared_link_folder">folderu</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Każdy, kto posiada link, ma dostęp do %1$s</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Tylko posiadacz linku i hasła ma dostęp do %1$s</string>
+  <string name="shared_link_privacy_settings">Ustawienia prywatności</string>
+  <string name="shared_link_password_protection">Ochrona hasłem</string>
+  <string name="shared_link_expiration_date">Data wygaśnięcia</string>
+  <string name="shared_link_action_copy_link">Kopiuj link</string>
+  <string name="shared_link_action_copy_password">Kopiuj hasło</string>
+  <string name="shared_link_action_share_link">Udostępnij link</string>
+  <string name="shared_link_dialog_title_discard_changes">Czy chcesz odrzucić zmiany?</string>
+  <string name="shared_link_dialog_description">Stracisz wszystkie niezapisane zmiany.</string>
+  <string name="shared_link_hint_expiration_date_field">Brak daty wygaśnięcia</string>
+  <string name="shared_link_message_update_share_url">Ustawienia udostępniania zostały zaktualizowane</string>
+  <string name="shared_link_error_message_update_share_url">Aktualizacja ustawień udostępniania nie powiodła się</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">Hasło musi zawierać od 1 do %1$d znaków</string>
+  <string name="shared_link_error_message_not_found">Link wygasł lub nie istnieje</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">Data wygaśnięcia musi być co najmniej jutrzejsza</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">Data wygaśnięcia nie może być dłuższa niż %1$d dni</string>
+  <string name="shared_link_error_legacy_link">To jest stary link, którego zarządzanie nie jest obsługiwane. Zalecamy zatrzymanie udostępniania tego linku i uzyskanie nowego linku.</string>
+  <string name="title_share_via_link">Udostępnij przez link</string>
+  <string name="shared_with_me_title">Udostępnione Tobie</string>
+  <string name="shared_by_me_title">Udostępniam</string>
+  <string name="shared_with_me_empty_description">Udostępnione pliki i foldery pojawią się tutaj</string>
+  <string name="shared_by_me_empty_description">Bezpieczne udostępnianie plików i folderów z szyfrowaniem end-to-end</string>
+</resources>

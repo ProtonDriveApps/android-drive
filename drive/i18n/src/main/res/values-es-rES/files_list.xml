@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="file_operation_error_occurred_moving_file">Se ha producido un error al mover el archivo.</string>
+  <string name="file_operation_moving_file_successful">Archivo movido</string>
+  <string name="file_operation_moving_folder_successful">Carpeta movida</string>
+  <string name="file_operation_moving_multiple_successful">%1$d elementos movidos.</string>
+  <string name="file_operation_error_file_already_exists_at_destination">Ya existe un elemento con ese nombre en la carpeta de destino.</string>
+  <string name="folder_options_header_title">En \"%1$s\"</string>
+  <string name="folder_options_header_title_encrypted">En</string>
+  <string name="files_toggle_layout_to_list_content_description">Disposición en lista</string>
+  <string name="files_toggle_layout_to_grid_content_description">Disposición en cuadrícula</string>
+  <!--
+        Variable %1$s is a time indicator which is formatted based on the user's locale
+        Examples:
+            "Modified 10:46"
+            "Modified Feb 28"
+            "Modified Dec 22, 2021"
+    -->
+  <string name="title_modified_with_date">Modificación: %1$s</string>
+  <string name="files_restore_from_trash_action">Restaurar</string>
+  <string name="files_send_to_trash_action">Mover a la papelera</string>
+  <string name="files_remove_me_action">Borrarme</string>
+  <string name="files_move_file_action">Mover</string>
+  <!--
+        Variable %1$s is a file/folder's name
+        Examples:
+            "'My folder' will be deleted permanently. You cannot undo this action."
+            "'My file.jpg' will be deleted permanently. You cannot undo this action."
+    -->
+  <string name="files_confirm_deletion_message_format">\'%1$s\' será eliminado permanentemente. No puedes deshacer esta acción.</string>
+  <string name="files_confirm_empty_trash_title">¿Vaciar la papelera?</string>
+  <string name="files_confirm_empty_trash_message">Los elementos en la papelera serán eliminados permanentemente. No puedes deshacer esta acción.</string>
+  <string name="files_confirm_empty_trash_confirm_action">Vaciar la papelera</string>
+  <string name="files_display_file_info_action">Detalles del archivo</string>
+  <string name="files_display_folder_info_action">Detalles de la carpeta</string>
+</resources>

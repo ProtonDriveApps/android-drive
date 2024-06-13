@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="settings_app_lock">Blocco dell\'app</string>
+  <string name="settings_section_security">Sicurezza</string>
+  <string name="settings_section_about">Informazioni</string>
+  <string name="settings_section_statistics">Statistiche di utilizzo</string>
+  <string name="settings_auto_lock">Blocco automatico dell\'app</string>
+  <string name="settings_auto_lock_durations_immediately">Immediato</string>
+  <plurals name="settings_auto_lock_durations_seconds">
+    <item quantity="one">%1$d secondo</item>
+    <item quantity="other">%1$d secondi</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_minutes">
+    <item quantity="one">%1$d minuto</item>
+    <item quantity="other">%1$d minuti</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_hours">
+    <item quantity="one">%1$d ora</item>
+    <item quantity="other">%1$d ore</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_days">
+    <item quantity="one">%1$d giorno</item>
+    <item quantity="other">%1$d giorni</item>
+  </plurals>
+  <string name="settings_section_backup">Backup</string>
+  <string name="settings_photos_backup_folders_title">Carica da</string>
+  <!--
+        Variable %1$s is the default folder name (Camera)
+        Examples:
+            "Your Camera folder is backed up automatically."
+    -->
+  <string name="settings_photos_backup_folders_description">La cartella \"%1$s\" viene sottoposta automaticamente a backup. Seleziona altre cartelle da sottoporre a backup e le loro foto appariranno nella scheda Foto.</string>
+  <string name="settings_photos_backup_folders_not_found">Cartella non trovata</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_title">Vuoi interrompere il backup della cartella?</string>
+  <!--
+        Variable %1$s is the folder name
+        Examples:
+            "Camera will no longer be backing up to the cloud."
+    -->
+  <string name="settings_photos_backup_folders_confirm_stop_sync_description">Non verrà più effettuato il backup della cartella \"%1$s\" sul cloud. Le foto già sottoposte a backup non verranno eliminate.</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">Interrompi il backup</string>
+  <plurals name="settings_photos_backup_folders_description_photos">
+    <item quantity="one">%1$d foto</item>
+    <item quantity="other">%1$d foto</item>
+  </plurals>
+  <plurals name="settings_photos_backup_folders_description_videos">
+    <item quantity="one">%1$d video</item>
+    <item quantity="other">%1$d video</item>
+  </plurals>
+  <!--
+        Variable %1$s is an entry in a list
+        Examples:
+            "Privacy Policy (opens in a browser)"
+    -->
+  <string name="settings_external_link_format">%1$s (viene aperto in un browser)</string>
+  <string name="settings_section_appearance_settings">Aspetto</string>
+  <string name="settings_theme_entry">Tema</string>
+  <string name="settings_home_tab">Scheda iniziale predefinita</string>
+  <string name="settings_section_system">Sistema</string>
+  <string name="settings_clear_local_cache_entry">Cancella la cache locale</string>
+  <string name="settings_show_log">Visualizza i log</string>
+</resources>

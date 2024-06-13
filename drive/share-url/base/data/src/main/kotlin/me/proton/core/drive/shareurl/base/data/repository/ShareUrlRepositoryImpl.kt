@@ -34,7 +34,6 @@ import me.proton.core.drive.link.domain.usecase.InsertOrUpdateLinks
 import me.proton.core.drive.link.domain.usecase.SortLinksByParents
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.domain.usecase.DeleteShare
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.share.domain.usecase.GetShares
 import me.proton.core.drive.shareurl.base.data.api.ShareUrlApiDataSource
@@ -61,7 +60,6 @@ class ShareUrlRepositoryImpl @Inject constructor(
     private val insertOrUpdateLinks: InsertOrUpdateLinks,
     private val getShare: GetShare,
     private val getShares: GetShares,
-    private val deleteShare: DeleteShare,
     private val sortLinksByParents: SortLinksByParents,
     private val volumeApi: VolumeApiDataSource,
     private val hasLinks: HasLinks,
@@ -193,8 +191,6 @@ class ShareUrlRepositoryImpl @Inject constructor(
     override suspend fun deleteShareUrl(shareUrlId: ShareUrlId): Result<Unit> = coRunCatching {
         api.deleteShareUrl(shareUrlId)
         dao.delete(shareUrlId.id)
-        // We ignore the result of the share deletion as it is possible there are still some urls attached to it
-        deleteShare(shareUrlId.shareId).getOrDefault(Unit)
     }
 
     override suspend fun updateShareUrl(

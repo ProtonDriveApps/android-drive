@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="settings_app_lock">Kunci Aplikasi</string>
+  <string name="settings_section_security">Keamanan</string>
+  <string name="settings_section_about">Tentang</string>
+  <string name="settings_section_statistics">Statistik penggunaan</string>
+  <string name="settings_auto_lock">Kunci aplikasi secara otomatis</string>
+  <string name="settings_auto_lock_durations_immediately">Segera</string>
+  <plurals name="settings_auto_lock_durations_seconds">
+    <item quantity="other">Setelah %1$d detik</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_minutes">
+    <item quantity="other">Setelah %1$d menit</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_hours">
+    <item quantity="other">Setelah %1$d jam</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_days">
+    <item quantity="other">Setelah %1$d hari</item>
+  </plurals>
+  <string name="settings_section_backup">Cadangan</string>
+  <string name="settings_photos_backup_folders_title">Unggah dari</string>
+  <!--
+        Variable %1$s is the default folder name (Camera)
+        Examples:
+            "Your Camera folder is backed up automatically."
+    -->
+  <string name="settings_photos_backup_folders_description">Folder %1$s Anda dicadangkan secara otomatis. Pilih folder lainnya untuk ikut dicadangkan dan foto yang terkandung di dalamnya akan tampil pada tab Foto.</string>
+  <string name="settings_photos_backup_folders_not_found">Folder tidak ditemukan.</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_title">Hentikan pencadangan folder?</string>
+  <!--
+        Variable %1$s is the folder name
+        Examples:
+            "Camera will no longer be backing up to the cloud."
+    -->
+  <string name="settings_photos_backup_folders_confirm_stop_sync_description">%1$s tidak akan lagi dicadangkan pada layanan cloud. Foto yang telah dicadangkan tidak akan dihapus.</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">Hentikan pencadangan</string>
+  <plurals name="settings_photos_backup_folders_description_photos">
+    <item quantity="other">%1$d foto</item>
+  </plurals>
+  <plurals name="settings_photos_backup_folders_description_videos">
+    <item quantity="other">%1$d video</item>
+  </plurals>
+  <!--
+        Variable %1$s is an entry in a list
+        Examples:
+            "Privacy Policy (opens in a browser)"
+    -->
+  <string name="settings_external_link_format">%1$s (akan terbuka pada browser)</string>
+  <string name="settings_section_appearance_settings">Tampilan</string>
+  <string name="settings_theme_entry">Tema</string>
+  <string name="settings_home_tab">Tab beranda bawaan</string>
+  <string name="settings_section_system">Sistem</string>
+  <string name="settings_clear_local_cache_entry">Hapus cache lokal</string>
+  <string name="settings_show_log">Tampilkan log</string>
+</resources>

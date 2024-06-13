@@ -148,11 +148,7 @@ class MoveToFolderViewModel @Inject constructor(
                 listContentAppendingState = appendingState
             ),
             isMoveButtonEnabled = (parentLink?.id != parentId) && !(isRoot && share.isDevice),
-            title = if (isRoot && share.isMain) {
-                appContext.getString(I18N.string.title_my_files)
-            } else {
-                parentLink?.name.orEmpty()
-            },
+            title = parentLink?.name.orEmpty(),
             isTitleEncrypted = parentLink?.isNameEncrypted ?: false,
             navigationIconResId = if (parentLink == null || isRoot) {
                 CorePresentation.drawable.ic_proton_cross

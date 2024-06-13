@@ -28,6 +28,7 @@ driveModule(
 ) {
     api(project(":drive:link-offline:domain"))
     api(project(":drive:link-download:domain"))
+    api(project(":drive:share-user:domain"))
     api(project(":drive:link-trash:domain"))
 
     implementation(project(":drive:share-crypto:domain"))

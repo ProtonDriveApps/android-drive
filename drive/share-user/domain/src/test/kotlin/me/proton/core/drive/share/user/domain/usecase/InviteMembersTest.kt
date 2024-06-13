@@ -62,7 +62,6 @@ class InviteMembersTest {
         val result = inviteMembers(
             ShareUsersInvitation(
                 linkId = folderId,
-                email = "inviter@proton.me",
                 members = listOf(
                     shareUserInvitation
                 )

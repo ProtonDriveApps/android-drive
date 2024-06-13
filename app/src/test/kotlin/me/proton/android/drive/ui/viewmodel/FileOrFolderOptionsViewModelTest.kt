@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.test.core.app.ApplicationProvider
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.flow.filterNotNull
@@ -35,6 +36,8 @@ import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.asSuccess
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.documentsprovider.domain.usecase.ExportTo
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -44,25 +47,33 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
+import me.proton.core.drive.files.presentation.entry.CopySharedLinkEntity
 import me.proton.core.drive.files.presentation.entry.DownloadFileEntity
 import me.proton.core.drive.files.presentation.entry.FileInfoEntry
 import me.proton.core.drive.files.presentation.entry.ManageAccessEntity
 import me.proton.core.drive.files.presentation.entry.MoveFileEntry
+import me.proton.core.drive.files.presentation.entry.RemoveMeEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
 import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntity
 import me.proton.core.drive.files.presentation.entry.ShareViaLinkEntry
+import me.proton.core.drive.files.presentation.entry.StopSharingEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
 import me.proton.core.drive.files.presentation.entry.ToggleTrashEntry
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.SharingDetails
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.user.domain.entity.ShareUser
+import me.proton.core.drive.share.user.domain.usecase.LeaveShare
+import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.shareurl.crypto.domain.usecase.CopyPublicUrl
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -75,10 +86,12 @@ class FileOrFolderOptionsViewModelTest {
     private val toggleOffline = mockk<ToggleOffline>()
     private val toggleTrashState = mockk<ToggleTrashState>()
     private val copyPublicUrl = mockk<CopyPublicUrl>()
+    private val leaveShare = mockk<LeaveShare>()
+    private val configurationProvider = mockk<ConfigurationProvider>()
+    private val broadcastMessages = mockk<BroadcastMessages>()
     private val exportTo = mockk<ExportTo>()
     private val notifyActivityNotFound = mockk<NotifyActivityNotFound>()
     private val getFeatureFlagFlow = mockk<GetFeatureFlagFlow>()
-    private lateinit var fileOrFolderOptionsViewModel: FileOrFolderOptionsViewModel
 
     @Before
     fun before() {
@@ -91,125 +104,184 @@ class FileOrFolderOptionsViewModelTest {
     }
 
     @Test
-    fun `file options on main share url sharing only`() = runTest {
+    fun `file options on main share no sharing`() = runTest {
         // Given
-        coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(fileDriveLink.asSuccess)
-        fileOrFolderOptionsViewModel = FileOrFolderOptionsViewModel(
-            savedStateHandle = savedStateHandle,
-            getDriveLink = getDriveLink,
-            toggleOffline = toggleOffline,
-            toggleTrashState = toggleTrashState,
-            copyPublicUrl = copyPublicUrl,
-            exportTo = exportTo,
-            notifyActivityNotFound = notifyActivityNotFound,
-            getFeatureFlagFlow = getFeatureFlagFlow,
-        )
+        coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(fileDriveLink.copy(
+            link = fileLink.copy(
+                isShared = false,
+                sharingDetails = null,
+            )
+        ).asSuccess)
 
         // When
-        val entries = fileOrFolderOptionsViewModel.entries<DriveLink.File>(
-            runAction = {},
-            navigateToInfo = { _: LinkId -> },
-            navigateToMove = { _: LinkId, _: FolderId? -> },
-            navigateToRename = { _: LinkId -> },
-            navigateToDelete = { _: LinkId -> },
-            navigateToSendFile = { _: FileId -> },
-            navigateToStopSharing = { _: LinkId -> },
-            navigateToShareViaLink = { _: LinkId -> },
-            navigateToManageAccess = { _: LinkId -> },
-            navigateToShareViaInvitations = { _: LinkId -> },
-            dismiss = {},
-        ).filterNotNull().first()
+        val entries = fileOptionEntries()
 
         // Then
-        Assert.assertTrue(entries.any { it is ToggleOfflineEntry })
-        Assert.assertTrue(entries.any { it is ShareViaLinkEntry })
-        Assert.assertFalse(entries.any { it is ManageAccessEntity })
-        Assert.assertFalse(entries.any { it is ShareViaInvitationsEntity })
-        Assert.assertTrue(entries.any { it is SendFileEntry })
-        Assert.assertTrue(entries.any { it is DownloadFileEntity })
-        Assert.assertTrue(entries.any { it is MoveFileEntry })
-        Assert.assertTrue(entries.any { it is RenameFileEntry })
-        Assert.assertTrue(entries.any { it is FileInfoEntry })
-        Assert.assertTrue(entries.any { it is ToggleTrashEntry })
+        assertEquals(
+            listOf(
+                ToggleOfflineEntry::class,
+                ShareViaLinkEntry::class,
+                SendFileEntry::class,
+                DownloadFileEntity::class,
+                MoveFileEntry::class,
+                RenameFileEntry::class,
+                FileInfoEntry::class,
+                ToggleTrashEntry::class,
+            ),
+            entries.map { it.javaClass.kotlin }
+        )
     }
 
     @Test
-    fun `file options on main share url and member sharing only`() = runTest {
+    fun `file options on main share no sharing no parent`() = runTest {
+        // Given
+        coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(fileDriveLink.copy(
+            link = fileLink.copy(
+                parentId = null,
+                isShared = false,
+                sharingDetails = null,
+            )
+        ).asSuccess)
+
+        // When
+        val entries = fileOptionEntries()
+
+        // Then
+        assertEquals(
+            listOf(
+                ToggleOfflineEntry::class,
+                ShareViaLinkEntry::class,
+                SendFileEntry::class,
+                DownloadFileEntity::class,
+                FileInfoEntry::class,
+            ),
+            entries.map { it.javaClass.kotlin }
+        )
+    }
+
+    @Test
+    fun `file options on main share url sharing only`() = runTest {
         // Given
         coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(fileDriveLink.asSuccess)
 
+        // When
+        val entries = fileOptionEntries()
+
+        // Then
+        assertEquals(
+            listOf(
+                ToggleOfflineEntry::class,
+                CopySharedLinkEntity::class,
+                ShareViaLinkEntry::class,
+                SendFileEntry::class,
+                DownloadFileEntity::class,
+                MoveFileEntry::class,
+                RenameFileEntry::class,
+                FileInfoEntry::class,
+                StopSharingEntry::class,
+                ToggleTrashEntry::class,
+            ),
+            entries.map { it.javaClass.kotlin }
+        )
+    }
+
+    @Test
+    fun `file options on main share url and member sharing only and owner permissions`() = runTest {
+        // Given
+        coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(fileDriveLink.asSuccess)
         coEvery { getFeatureFlagFlow.invoke(any())} answers {
             val id: FeatureFlagId = arg(0)
             flowOf(FeatureFlag(id, State.ENABLED))
         }
-        fileOrFolderOptionsViewModel = FileOrFolderOptionsViewModel(
-            savedStateHandle = savedStateHandle,
-            getDriveLink = getDriveLink,
-            toggleOffline = toggleOffline,
-            toggleTrashState = toggleTrashState,
-            copyPublicUrl = copyPublicUrl,
-            exportTo = exportTo,
-            notifyActivityNotFound = notifyActivityNotFound,
-            getFeatureFlagFlow = getFeatureFlagFlow,
-        )
-
         // When
-        val entries = fileOrFolderOptionsViewModel.entries<DriveLink.File>(
-            runAction = {},
-            navigateToInfo = { _: LinkId -> },
-            navigateToMove = { _: LinkId, _: FolderId? -> },
-            navigateToRename = { _: LinkId -> },
-            navigateToDelete = { _: LinkId -> },
-            navigateToSendFile = { _: FileId -> },
-            navigateToStopSharing = { _: LinkId -> },
-            navigateToShareViaLink = { _: LinkId -> },
-            navigateToManageAccess = { _: LinkId -> },
-            navigateToShareViaInvitations = { _: LinkId -> },
-            dismiss = {},
-        ).filterNotNull().first()
+        val entries = fileOptionEntries()
 
         // Then
-        Assert.assertTrue(entries.any { it is ToggleOfflineEntry })
-        Assert.assertFalse(entries.any { it is ShareViaLinkEntry })
-        Assert.assertTrue(entries.any { it is ManageAccessEntity })
-        Assert.assertTrue(entries.any { it is ShareViaInvitationsEntity })
-        Assert.assertTrue(entries.any { it is SendFileEntry })
-        Assert.assertTrue(entries.any { it is DownloadFileEntity })
-        Assert.assertTrue(entries.any { it is MoveFileEntry })
-        Assert.assertTrue(entries.any { it is RenameFileEntry })
-        Assert.assertTrue(entries.any { it is FileInfoEntry })
-        Assert.assertTrue(entries.any { it is ToggleTrashEntry })
+        assertEquals(
+            listOf(
+                ToggleOfflineEntry::class,
+                ShareViaInvitationsEntity::class,
+                ManageAccessEntity::class,
+                SendFileEntry::class,
+                DownloadFileEntity::class,
+                MoveFileEntry::class,
+                RenameFileEntry::class,
+                FileInfoEntry::class,
+                ToggleTrashEntry::class,
+            ),
+            entries.map { it.javaClass.kotlin }
+        )
+    }
+
+    @Test
+    fun `file options on main share url and member sharing only and editor permissions`() = runTest {
+        // Given
+        coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(
+            fileDriveLink.copy(
+                sharePermissions = Permissions.editor,
+                shareUser = shareUser.copy(permissions = Permissions.editor)
+            ).asSuccess
+        )
+        coEvery { getFeatureFlagFlow.invoke(any())} answers {
+            val id: FeatureFlagId = arg(0)
+            flowOf(FeatureFlag(id, State.ENABLED))
+        }
+
+        // When
+        val entries = fileOptionEntries()
+
+        // Then
+        assertEquals(
+            listOf(
+                ToggleOfflineEntry::class,
+                SendFileEntry::class,
+                DownloadFileEntity::class,
+                MoveFileEntry::class,
+                RenameFileEntry::class,
+                FileInfoEntry::class,
+                RemoveMeEntry::class,
+            ),
+            entries.map { it.javaClass.kotlin }
+        )
+    }
+
+    @Test
+    fun `file options on main share url and member sharing only and viewer permissions`() = runTest {
+        // Given
+        coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(
+            fileDriveLink.copy(
+                sharePermissions = Permissions.viewer,
+                shareUser = shareUser.copy(permissions = Permissions.viewer)
+            ).asSuccess
+        )
+        coEvery { getFeatureFlagFlow.invoke(any())} answers {
+            val id: FeatureFlagId = arg(0)
+            flowOf(FeatureFlag(id, State.ENABLED))
+        }
+
+        // When
+        val entries = fileOptionEntries()
+
+        // Then
+        assertEquals(
+            listOf(
+                ToggleOfflineEntry::class,
+                SendFileEntry::class,
+                DownloadFileEntity::class,
+                FileInfoEntry::class,
+                RemoveMeEntry::class,
+            ),
+            entries.map { it.javaClass.kotlin }
+        )
     }
 
     @Test
     fun `file options on photo share`() = runTest {
         // Given
         coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(photoDriveLink.asSuccess)
-        fileOrFolderOptionsViewModel = FileOrFolderOptionsViewModel(
-            savedStateHandle = savedStateHandle,
-            getDriveLink = getDriveLink,
-            toggleOffline = toggleOffline,
-            toggleTrashState = toggleTrashState,
-            copyPublicUrl = copyPublicUrl,
-            exportTo = exportTo,
-            notifyActivityNotFound = notifyActivityNotFound,
-            getFeatureFlagFlow = getFeatureFlagFlow,
-        )
 
         // When
-        val entries = fileOrFolderOptionsViewModel.entries<DriveLink.File>(
-            runAction = {},
-            navigateToInfo = { _: LinkId -> },
-            navigateToMove = { _: LinkId, _: FolderId? -> },
-            navigateToRename = { _: LinkId -> },
-            navigateToDelete = { _: LinkId -> },
-            navigateToSendFile = { _: FileId -> },
-            navigateToStopSharing = { _: LinkId -> },
-            navigateToShareViaLink = { _: LinkId -> },
-            navigateToManageAccess = { _: LinkId -> },
-            navigateToShareViaInvitations = { _: LinkId -> },
-            dismiss = {},
-        ).filterNotNull().first()
+        val entries = fileOptionEntries()
 
         // Then
         Assert.assertTrue(entries.any { it is ToggleOfflineEntry })
@@ -221,6 +293,36 @@ class FileOrFolderOptionsViewModelTest {
         Assert.assertTrue(entries.any { it is FileInfoEntry })
         Assert.assertTrue(entries.any { it is ToggleTrashEntry })
     }
+
+    private suspend fun fileOptionEntries() =
+        fileOrFolderOptionsViewModel().entries<DriveLink.File>(
+            runAction = {},
+            navigateToInfo = { _: LinkId -> },
+            navigateToMove = { _: LinkId, _: FolderId? -> },
+            navigateToRename = { _: LinkId -> },
+            navigateToDelete = { _: LinkId -> },
+            navigateToSendFile = { _: FileId -> },
+            navigateToStopSharing = { _: LinkId -> },
+            navigateToShareViaLink = { _: LinkId -> },
+            navigateToManageAccess = { _: LinkId -> },
+            navigateToShareViaInvitations = { _: LinkId -> },
+            dismiss = {},
+        ).filterNotNull().first()
+
+    private fun fileOrFolderOptionsViewModel() = FileOrFolderOptionsViewModel(
+        appContext = ApplicationProvider.getApplicationContext(),
+        savedStateHandle = savedStateHandle,
+        getDriveLink = getDriveLink,
+        toggleOffline = toggleOffline,
+        toggleTrashState = toggleTrashState,
+        copyPublicUrl = copyPublicUrl,
+        exportTo = exportTo,
+        notifyActivityNotFound = notifyActivityNotFound,
+        getFeatureFlagFlow = getFeatureFlagFlow,
+        leaveShare = leaveShare,
+        configurationProvider = configurationProvider,
+        broadcastMessages = broadcastMessages,
+    )
 
     private val fileLink = Link.File(
         id = FileId(ShareId(UserId("USER_ID"), "SHARE_ID"), "ID"),
@@ -254,7 +356,10 @@ class FileOrFolderOptionsViewModelTest {
         trashedTime = null,
         shareUrlExpirationTime = null,
         xAttr = null,
-        sharingDetails = null,
+        sharingDetails = SharingDetails(
+            shareId = ShareId(UserId("USER_ID"), "SHARING_ID"),
+            shareUrlId = ShareUrlId(ShareId(UserId("USER_ID"), "SHARING_ID"), "")
+        ),
         photoCaptureTime = null,
         photoContentHash = null,
         mainPhotoLinkId = null,
@@ -272,6 +377,21 @@ class FileOrFolderOptionsViewModelTest {
             """{"Common":{"ModificationTime":"2023-07-27T13:52:23.636Z"},"Media":{"Duration":46}}""",
             VerificationStatus.Success,
         ),
+        shareInvitationCount = null,
+        shareMemberCount = null,
+        shareUser = null,
+        sharePermissions = Permissions.admin
+    )
+
+    private val shareUser = ShareUser.Member(
+        id ="id",
+        inviter = "",
+        email = "",
+        createTime = TimestampS(),
+        permissions = Permissions.owner,
+        keyPacket = "",
+        keyPacketSignature = null,
+        sessionKeySignature = null,
     )
 
     private val photoDriveLink = fileDriveLink.copy(

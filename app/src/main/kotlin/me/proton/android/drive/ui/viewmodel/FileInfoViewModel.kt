@@ -41,10 +41,10 @@ import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.crypto.domain.usecase.DecryptAncestorsName
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.usecase.UpdateDriveLinkDisplayName
 import me.proton.core.drive.file.info.presentation.extension.toItems
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.link.presentation.extension.getName
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetShare
 import javax.inject.Inject
@@ -57,6 +57,7 @@ class FileInfoViewModel @Inject constructor(
     getDriveLink: GetDecryptedDriveLink,
     getShare: GetShare,
     private val decryptAncestorsName: DecryptAncestorsName,
+    private val updateDriveLinkDisplayName: UpdateDriveLinkDisplayName,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val shareId: ShareId = ShareId(userId, savedStateHandle.require(Screen.Info.SHARE_ID))
@@ -87,7 +88,7 @@ class FileInfoViewModel @Inject constructor(
     private suspend fun DriveLink.getParentPath(): String =
         decryptAncestorsName(id).toResult().map { ancestors ->
             ancestors.dropLast(1).fold("") { path, parent ->
-                "$path/${parent.getName(context)}"
+                "$path/${updateDriveLinkDisplayName(parent).name}"
             }
         }.getOrElse { "" }
 }

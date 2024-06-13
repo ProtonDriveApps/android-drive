@@ -31,6 +31,7 @@ import me.proton.core.drive.share.data.db.ShareEntity.Companion.PRIMARY_BIT
 
 interface ShareDatabase : Database {
     val shareDao: ShareDao
+    val shareMembershipDao: ShareMembershipDao
 
     @DeleteColumn(tableName = "ShareEntity", columnName = BLOCK_SIZE)
     class DeleteBlockSizeFromShareEntity : AutoMigrationSpec
@@ -52,6 +53,46 @@ interface ShareDatabase : Database {
                 """.trimIndent()
                 )
                 database.updateShareEntityType()
+            }
+        }
+        val MIGRATION_2 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `ShareMembershipEntity` (
+                        `id` TEXT NOT NULL,
+                        `user_id` TEXT NOT NULL,
+                        `share_id` TEXT NOT NULL,
+                        `inviter_email` TEXT NOT NULL,
+                        `invitee_email` TEXT NOT NULL,
+                        `permissions` INTEGER NOT NULL,
+                        `key_packet` TEXT NOT NULL,
+                        `key_packet_signature` TEXT NULL,
+                        `session_key_signature` TEXT NULL,
+                        `create_time` INTEGER NOT NULL,
+                        PRIMARY KEY(`user_id`, `share_id`, `id`),
+                        FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE,
+                        FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                   CREATE INDEX IF NOT EXISTS `index_ShareMembershipEntity_user_id` ON `ShareMembershipEntity` (`user_id`)
+                """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                   CREATE INDEX IF NOT EXISTS `index_ShareMembershipEntity_user_id_share_id` ON `ShareMembershipEntity` (`user_id`, `share_id`)
+                """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                   CREATE INDEX IF NOT EXISTS `index_ShareMembershipEntity_id` ON `ShareMembershipEntity` (`id`)
+                """.trimIndent()
+                )
             }
         }
 

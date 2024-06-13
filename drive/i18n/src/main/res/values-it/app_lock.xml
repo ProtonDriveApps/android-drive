@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">App bloccata</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Sblocca con il blocco del tuo dispositivo</string>
+  <string name="app_lock_biometric_title_confirmation">Conferma</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Per abilitare lo sblocco, conferma con il blocco del tuo dispositivo</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Per disabilitare lo sblocco, conferma con il blocco del tuo dispositivo</string>
+  <string name="app_lock_option_never_set">Abilita la biometria o il blocco del dispositivo</string>
+  <string name="app_lock_option_none">Mantieni sbloccato</string>
+  <string name="app_lock_option_system">Biometria o blocco del dispositivo</string>
+  <string name="app_lock_system_dialog_title">Attiva l\'accesso con la biometria</string>
+  <string name="app_lock_system_dialog_description">Configura l\'accesso con la biometria o con il blocco del dispositivo su questo dispositivo.</string>
+  <string name="app_lock_system_dialog_settings_button">Impostazioni</string>
+  <string name="app_lock_system_not_available">Biometria o blocco del dispositivo non sono disponibili su questo dispositivo</string>
+  <string name="app_lock_enabled">Accesso con la biometria o con il blocco del dispositivo attivati</string>
+  <string name="app_lock_disabled">Blocco dell\'applicazione disattivato</string>
+  <string name="app_lock_access_title">Scegli come bloccare l\'applicazione</string>
+  <string name="app_lock_unlock_the_app">Sblocca l\'app</string>
+</resources>

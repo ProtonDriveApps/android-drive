@@ -65,7 +65,7 @@ internal fun FolderOptionsHeader(
 ) {
     OptionsHeader(
         painter = folder.thumbnailPainter().painter,
-        title = folder.title,
+        title = folder.name,
         isTitleEncrypted = folder.isNameEncrypted,
         subtitle = folder.lastModifiedRelative(LocalContext.current).toString(),
         modifier = modifier

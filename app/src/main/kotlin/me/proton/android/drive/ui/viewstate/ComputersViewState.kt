@@ -19,7 +19,7 @@
 package me.proton.android.drive.ui.viewstate
 
 import androidx.annotation.DrawableRes
-import me.proton.core.drive.files.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.state.ListContentState
 
 data class ComputersViewState(
     val title: String,

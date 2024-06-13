@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">Праграма заблакіравана</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Разблакіраваць з дапамогай разблакіроўкі прылады</string>
+  <string name="app_lock_biometric_title_confirmation">Пацвярджэнне</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Каб уключыць разблакіроўку, пацвердзіце яе з дапамогай блакіроўкі прылады</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Каб адключыць разблакіроўку, пацвердзіце дзеянне з дапамогай блакіроўкі прылады</string>
+  <string name="app_lock_option_never_set">Уключыць біяметрыю або блакіроўку прылады</string>
+  <string name="app_lock_option_none">Пакінуць разблакіраваным</string>
+  <string name="app_lock_option_system">Біяметрыя або блакіроўка прылады</string>
+  <string name="app_lock_system_dialog_title">Уключыць доступ па біяметрыі</string>
+  <string name="app_lock_system_dialog_description">Наладзіць біяметрыю або блакіроўку прылады.</string>
+  <string name="app_lock_system_dialog_settings_button">Налады</string>
+  <string name="app_lock_system_not_available">Біяметрыя або блакіроўка не падтрымліваюцца гэтай прыладай</string>
+  <string name="app_lock_enabled">Біяметрыя або блакіроўка актываваны на гэтай прыладзе</string>
+  <string name="app_lock_disabled">Праграмная блакіроўка была дэактывавана</string>
+  <string name="app_lock_access_title">Выберыце спосаб блакіроўкі праграмы</string>
+  <string name="app_lock_unlock_the_app">Разблакіраваць праграму</string>
+</resources>

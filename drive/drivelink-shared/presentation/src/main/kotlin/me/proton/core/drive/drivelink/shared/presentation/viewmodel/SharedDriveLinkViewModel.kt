@@ -56,6 +56,7 @@ import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.shared.domain.usecase.GetOrCreateSharedDriveLink
 import me.proton.core.drive.drivelink.shared.presentation.component.asDayOfMonth
@@ -323,7 +324,7 @@ class SharedDriveLinkViewModel @Inject constructor(
     }
 
     private fun DriveLink.toLoadingMessage(): String {
-        return if (isShared) {
+        return if (hasShareLink) {
             appContext.getString(I18N.string.shared_link_getting_link)
         } else {
             val suffix = appContext.getString(

@@ -82,15 +82,19 @@ import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.file.base.domain.extension.mediaDuration
 import me.proton.core.drive.file.base.domain.extension.toXAttr
-import me.proton.core.drive.files.presentation.component.files.CircleSelection
+import me.proton.core.drive.base.presentation.component.CircleSelection
+import me.proton.core.drive.drivelink.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.SharingDetails
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.user.presentation.quota.component.StorageBanner
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.presentation.R
@@ -413,8 +417,8 @@ fun FileOverlay(
             if (file.isMarkedAsOffline) {
                 PhotoDownloadIcon(file)
             }
-            if (file.isShared) {
-                PhotoIcon(R.drawable.ic_proton_link, null)
+            if (file.isSharedByLinkOrWithUsers) {
+                PhotoIcon(R.drawable.ic_proton_users, null)
             }
         }
         when (file.mimeType.toFileTypeCategory()) {
@@ -532,9 +536,10 @@ private val iconSize = 12.dp
 @Preview
 @Composable
 fun MediaItemPreview() {
+    val userId = UserId("USER_ID")
     val driveLink = DriveLink.File(
         link = Link.File(
-            id = FileId(ShareId(UserId("USER_ID"), "SHARE_ID"), "ID"),
+            id = FileId(ShareId(userId, "SHARE_ID"), "ID"),
             parentId = FolderId(ShareId(UserId("USER_ID"), "SHARE_ID"), "PARENT_ID"),
             activeRevisionId = "revision",
             size = Bytes(123),
@@ -565,7 +570,10 @@ fun MediaItemPreview() {
             trashedTime = null,
             shareUrlExpirationTime = null,
             xAttr = null,
-            sharingDetails = null,
+            sharingDetails = SharingDetails(
+                ShareId(userId, ""),
+                shareUrlId = ShareUrlId(ShareId(userId, ""), "")
+            ),
             photoCaptureTime = TimestampS(0),
             photoContentHash = "",
             mainPhotoLinkId = "MAIN_ID"
@@ -580,6 +588,9 @@ fun MediaItemPreview() {
             """{"Common":{"ModificationTime":"2023-07-27T13:52:23.636Z"},"Media":{"Duration":46}}""",
             VerificationStatus.Success,
         ),
+        shareInvitationCount = null,
+        shareMemberCount = null,
+        shareUser = null,
     )
 
     ProtonTheme {

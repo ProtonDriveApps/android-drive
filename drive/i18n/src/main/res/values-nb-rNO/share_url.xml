@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Oppretter kobling til %1$s</string>
+  <string name="shared_link_getting_link">Får kobling</string>
+  <string name="shared_link_file">fil</string>
+  <string name="shared_link_folder">mappe</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Alle med denne koblingen har tilgang til %1$s.</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Kun personer med koblingen og passordet har tilgang til %1$s.</string>
+  <string name="shared_link_privacy_settings">Personverninnstillinger</string>
+  <string name="shared_link_password_protection">Passordbeskyttelse</string>
+  <string name="shared_link_expiration_date">Utløpsdato</string>
+  <string name="shared_link_action_copy_link">Kopier kobling</string>
+  <string name="shared_link_action_copy_password">Kopier passord</string>
+  <string name="shared_link_action_share_link">Del kobling</string>
+  <string name="shared_link_dialog_title_discard_changes">Forkaste endringer?</string>
+  <string name="shared_link_dialog_description">Du vil miste alle endringer som ikke er lagret.</string>
+  <string name="shared_link_hint_expiration_date_field">Ingen utløpsdato</string>
+  <string name="shared_link_message_update_share_url">Delingsinnstillinger oppdatert</string>
+  <string name="shared_link_error_message_update_share_url">Oppdatering av delingsinnstillinger mislyktes</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">Passordlengden må være mellom 1 og %1$d tegn</string>
+  <string name="shared_link_error_message_not_found">Delt kobling finnes enten ikke eller er utløpt</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">Utløpsdato må minst være i morgen</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">Utløpsdato må ikke være etter mer enn %1$d dager</string>
+  <string name="shared_link_error_legacy_link">Dette er en gammel kobling hvis ledelse ikke støttes. Det anbefales at du slutter å dele denne koblingen og får en ny kobling.</string>
+  <string name="title_share_via_link">Del via kobling</string>
+  <string name="shared_with_me_title">Delt med meg</string>
+  <string name="shared_by_me_title">Delt av meg</string>
+  <string name="shared_with_me_empty_description">Filer og mapper som du deler med andre, vises her</string>
+  <string name="shared_by_me_empty_description">Del dine filer og mapper trygt med ende-til-ende-kryptering</string>
+</resources>

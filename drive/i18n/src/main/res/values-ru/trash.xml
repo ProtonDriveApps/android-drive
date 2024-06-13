@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items sent to trash"
+    -->
+  <plurals name="trash_operation_successful_format">
+    <item quantity="one">1 элемент перемещён в Корзину</item>
+    <item quantity="few">%1$d элемента перемещены в Корзину</item>
+    <item quantity="many">%1$d элементов перемещено в Корзину</item>
+    <item quantity="other">%1$d элементов перемещено в Корзину</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items restored"
+    -->
+  <plurals name="trash_restore_operation_successful_format">
+    <item quantity="one">1 элемент восстановлен</item>
+    <item quantity="few">%d элемента восстановлены</item>
+    <item quantity="many">%d элементов восстановлено</item>
+    <item quantity="other">%d элементов восстановлено</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items deleted permanently"
+    -->
+  <plurals name="trash_delete_operation_successful_format">
+    <item quantity="one">1 элемент удалён безвозвратно</item>
+    <item quantity="few">%d элемента удалены безвозвратно</item>
+    <item quantity="many">%d элементов удалено безвозвратно</item>
+    <item quantity="other">%d элементов удалено безвозвратно</item>
+  </plurals>
+  <string name="trash_empty_operation_successful">Корзина очищена</string>
+  <string name="trash_error_occurred_sending_to_trash">Произошла ошибка при попытке переместить файл(ы) в корзину</string>
+  <string name="trash_error_occurred_restoring_from_trash">Произошла ошибка при попытке восстановить файл(ы)</string>
+  <string name="trash_error_occurred_deleting_from_trash">Произошла ошибка при попытке удалить файл(ы)</string>
+  <string name="trash_error_occurred_emptying_trash">Произошла ошибка при попытке очистить корзину</string>
+</resources>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">Fotografije</string>
+  <string name="photos_permissions_title">Šifrirajte in varnostno kopirajte svoje fotografije in videoposnetke</string>
+  <string name="photos_permissions_section_1_title">Zaščitite svoje spomine</string>
+  <string name="photos_permissions_section_1_description">Vaše fotografije so šifrirane od konca do konca, kar zagotavlja popolno zasebnost.</string>
+  <string name="photos_permissions_section_2_title">Samodejno varnostno kopiranje</string>
+  <string name="photos_permissions_section_2_description">Fotografije se redno varnostno kopirajo prek WiFi v izvirni kakovosti.</string>
+  <string name="photos_permissions_action">Vklopi varnostno kopiranje</string>
+  <string name="photos_permission_rational_img_text">Dovoli dostop</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s potrebuje popoln dostop do vaših fotografij</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">To je potrebno, da bodo vse vaše fotografije varnostno kopirane in na voljo v vseh vaših napravah.\n%1$s vašo zasebnost jemlje resno in bo do vaših fotografij dostopal samo za namene sinhronizacije in varnostnega kopiranja.</string>
+  <string name="photos_permission_rational_confirm_action">Nastavitve</string>
+  <string name="photos_permission_rational_dismiss_action">Ne zdaj</string>
+  <string name="photos_empty_loading_label_encrypted">Popolnoma šifrirano</string>
+  <string name="photos_empty_loading_label_progress">Varnostno kopiranje poteka.\nLahko traja nekaj časa</string>
+  <string name="photos_separator_current_month">Ta mesec</string>
+  <string name="photos_encrypted_footer">Popolnoma šifrirano</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from the Camera folder"
+            "Backing up items from 2 Camera folders"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="one">Varnostno kopiranje predmetov iz mape %1$s.</item>
+    <item quantity="two">Varnostno kopiranje predmetov iz map %2$d %1$s.</item>
+    <item quantity="few">Varnostno kopiranje predmetov iz map %2$d %1$s.</item>
+    <item quantity="other">Varnostno kopiranje predmetov iz map %2$d %1$s.</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">Ni mape %1$s za varnostno kopiranje</string>
+  <string name="photos_error_backup_disabled">Varnostno kopiranje je onemogočeno.</string>
+  <string name="photos_error_backup_disabled_action">Vklopi</string>
+  <string name="photos_error_backup_missing_folder">Varnostna mapa ni bila najdena</string>
+  <string name="photos_error_backup_failed">Varnostna kopija ni uspela.</string>
+  <string name="photos_error_backup_temporarily_disabled">Varnostno kopiranje je onemogočeno.</string>
+  <string name="photos_error_missing_permissions">Manjkajoča dovoljenja</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">Za neprekinjeno in samodejno varnostno kopiranje omogočite %1$s dostop do vseh fotografij v nastavitvah.</string>
+  <string name="photos_error_waiting_connectivity">Ni spletne povezave</string>
+  <string name="photos_error_waiting_wifi_connectivity">Čakanje na Wifi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Uporabi mobilne podatke</string>
+  <string name="photos_error_local_storage">Pomnilnik naprave je poln</string>
+  <string name="photos_error_local_storage_description">Če želite nadaljevati varnostno kopiranje, morate sprostiti prostor za shranjevanje v napravi.</string>
+  <string name="photos_error_background_restrictions">Nastavite baterijo na »Neomejeno« za dejavnost aplikacij v ozadju</string>
+  <string name="photos_error_background_restrictions_description">Za dosledno varnostno kopiranje v ozadju prilagodite nastavitve baterije ali pogosto odprite aplikacijo.</string>
+  <string name="photos_error_background_restrictions_action">Nastavitve</string>
+  <string name="photos_empty_title">Ni še varnostnih kopij</string>
+  <string name="photos_empty_description">Takoj ko imate v napravi fotografije ali videoposnetke, se bodo pojavili tukaj.</string>
+  <string name="photos_backup_title">Varnostna kopija fotografij</string>
+  <string name="photos_backup_option_mobile_data">Uporabi mobilne podatke za varnostno kopiranje slik</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Onemogoči optimizacijo baterije</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Omogoča neprekinjeno varnostno kopiranje, ko aplikacija deluje v ozadju.</string>
+  <string name="photos_backup_in_app_notification_turned_on">Varnostno kopiranje fotografij je vklopljeno</string>
+  <string name="photos_backup_in_app_notification_turned_off">Varnostno kopiranje fotografij je izklopljeno</string>
+  <string name="photos_backup_state_completed">Varnostno kopiranje končano</string>
+  <string name="photos_backup_state_uncompleted">Varnostno kopiranje je dokončano s težavami</string>
+  <string name="photos_backup_state_uncompleted_action">Razrešeno</string>
+  <string name="photos_backup_state_encrypting">Šifriranje …</string>
+  <string name="photos_backup_state_uploading">Varnostno kopiranje …</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="one">%1$s preostali predmet</item>
+    <item quantity="two">%1$s preostala predmeta</item>
+    <item quantity="few">%1$s preostali predmeti</item>
+    <item quantity="other">%1$s preostalih predmetov</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="one">%1$s shranjen predmet</item>
+    <item quantity="two">%1$s shranjena predmeta</item>
+    <item quantity="few">%1$s shranjeni predmeti</item>
+    <item quantity="other">%1$s shranjeni predmeti</item>
+  </plurals>
+  <string name="photos_upsell_title">Naj vam nikoli ne zmanjka prostora</string>
+  <string name="photos_upsell_description">Nadgradite in ohranite vse vaše spomine varno šifrirane</string>
+  <string name="photos_upsell_dismiss_action">Ne zdaj</string>
+</resources>

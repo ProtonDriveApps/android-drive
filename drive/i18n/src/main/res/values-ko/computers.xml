@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="computers_title">컴퓨터</string>
+  <string name="computers_type_windows">Windows</string>
+  <string name="computers_type_mac_os">MacOS</string>
+  <string name="computers_type_linux">Linux</string>
+  <string name="computers_type_unknown">알 수 없음</string>
+  <string name="computers_empty_title">동기화된 컴퓨터 없음</string>
+  <string name="computers_empty_description">폴더를 동기화 하려면\n데스크톱 앱을 설치하세요.</string>
+  <string name="computers_synced_folders_empty_title">연동된 폴더 없음</string>
+  <string name="computers_synced_folders_empty_description">컴퓨터와 동기화한 폴더가\n여기 나타납니다.</string>
+  <string name="computers_synced_folders_no_folder">컴퓨터가 삭제되었습니다.</string>
+  <string name="computers_rename_title">컴퓨터 이름 변경</string>
+  <string name="computers_rename_success">컴퓨터 이름 변경됨</string>
+  <!--
+        Variable %1$s is a computer name
+        Examples:
+            "More options for My laptop"
+    -->
+  <string name="computers_content_description_list_more_options">%1$s에 대한 더 많은 옵션</string>
+</resources>

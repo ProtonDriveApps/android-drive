@@ -50,4 +50,13 @@ class ShareMemberApiDataSource @Inject constructor(
             updateMember(shareId, memberId, request)
         }.valueOrThrow
 
+    @Throws(ApiException::class)
+    suspend fun deleteMember(
+        userId: UserId,
+        shareId: String,
+        memberId: String,
+    ) =
+        apiProvider.get<ShareMemberApi>(userId).invoke {
+            deleteMember(shareId, memberId)
+        }.valueOrThrow
 }

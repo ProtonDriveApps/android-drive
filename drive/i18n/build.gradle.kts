@@ -21,6 +21,9 @@ plugins {
 
 android {
     namespace = "me.proton.core.drive.i18n"
+    lint {
+        informational += "MissingTranslation"
+    }
 }
 
 driveModule()

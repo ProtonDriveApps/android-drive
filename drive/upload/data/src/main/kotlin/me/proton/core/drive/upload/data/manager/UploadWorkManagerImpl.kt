@@ -46,7 +46,6 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.link.presentation.extension.getName
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
@@ -168,7 +167,7 @@ class UploadWorkManagerImpl @Inject constructor(
             ExistingWorkPolicy.APPEND_OR_REPLACE,
             CreateUploadFileLinkWorker.getWorkRequest(
                 uploadBulk,
-                folder.getName(appContext),
+                folder.name,
                 showFilesBeingUploaded,
                 tags,
             ),
@@ -292,7 +291,7 @@ class UploadWorkManagerImpl @Inject constructor(
                 I18N.plurals.files_upload_being_uploaded_notification,
                 uriStrings.size,
                 uriStrings.size,
-                folder.getName(appContext),
+                folder.name,
             ),
             type = BroadcastMessage.Type.INFO,
         )

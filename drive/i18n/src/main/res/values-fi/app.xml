@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Puretaan salausta</string>
+  <string name="title_files">Tiedostot</string>
+  <string name="title_shared">Jaetut</string>
+  <string name="title_my_files">Omat tiedostot</string>
+  <string name="title_offline_available">Käytettävissä ilman yhteyttä</string>
+  <string name="title_empty_my_files">Aloita lisäämällä ensimmäinen tiedostosi</string>
+  <string name="title_empty_folder">Täytetään tämä kansio</string>
+  <string name="title_empty_folder_read_only">Tyhjä kansio</string>
+  <string name="title_empty_shared">Pysy selvillä sen sisällöstä</string>
+  <string name="title_empty_offline_available">Mitään ei ole käytettävissä ilman yhteyttä</string>
+  <string name="title_empty_trash">Roskakori on tyhjä</string>
+  <string name="title_empty_trash_action">Tyhjennä roskakori</string>
+  <string name="title_files_confirm_deletion">Poistetaanko pysyvästi?</string>
+  <string name="title_default_home_screen_tab">Valitse aloitusruudun oletusvälilehti</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Sovellus</string>
+  <string name="description_signing_out">Kirjaudutaan ulos…</string>
+  <string name="settings_about_links_acknowledgments_title">Maininnat</string>
+  <string name="settings_about_links_privacy_policy_title">Tietosuojakäytäntö</string>
+  <string name="settings_about_links_terms_of_service_title">Käyttöehdot</string>
+  <string name="common_error_no_browser_available">Linkkiä ei voitu avata, koska laitteeltasi ei löytynyt verkkoselainta</string>
+  <string name="move_to">Siirrä kohteeseen</string>
+  <string name="move_file_confirm_action">Siirrä</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">Et voi siirtää kansiota itseensä</string>
+  <string name="folder_option_import_file">Tallenna tiedosto</string>
+  <string name="folder_option_create_folder">Luo kansio</string>
+  <string name="folder_option_take_a_photo">Ota uusi kuva</string>
+  <string name="settings_theme_system_default">Seuraa järjestelmää</string>
+  <string name="settings_theme_dark">Tumma</string>
+  <string name="settings_theme_light">Vaalea</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Tallenna kohteeseen %1$s</string>
+  <string name="upload_title">Tallenna</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">%1$sen voidaan tallentaa vain tiedostoja</string>
+  <string name="in_app_notification_importing_file_already_exists">Samanniminen tiedosto on jo olemassa. Kokeile tyhjentää sovelluksen välimuisti</string>
+  <string name="in_app_notification_clear_local_cache_success">Paikallinen välimuisti tyhjennettiin</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Tallennustila on täynnä</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Tallennetaan tiedostoja %1$sen</string>
+  <string name="notification_content_title_upload_complete">Tallennus on valmis</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Tallennetaan %1$d tiedosto</item>
+    <item quantity="other">Tallennetaan %1$d tiedostoa</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d tiedosto tallennettiin</item>
+    <item quantity="other">%1$d tiedostoa tallennettiin</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d tiedosto peruttiin</item>
+    <item quantity="other">%1$d tiedostoa peruttiin</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">%1$d tiedosto epäonnistui</item>
+    <item quantity="other">%1$d tiedostoa epäonnistui</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Varmuuskopioidaan kuvia kohteeseen %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">%1$s kohde jäljellä</item>
+    <item quantity="other">%1$s kohdetta jäljellä</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Varmuuskopiointi on valmis</string>
+  <string name="notification_content_text_backup_uncompleted">Varmuuskopiointi suoritettu ongelmien kanssa</string>
+  <string name="notification_content_text_backup_failed">Varmuuskopiointi epäonnistui</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Proton-tallennustila on täynnä</string>
+  <string name="notification_content_text_backup_failed_local_storage">Paikallinen tallennustila on täynnä</string>
+  <string name="notification_content_text_backup_failed_permission">Käyttöoikeudet puuttuvat</string>
+  <string name="notification_content_text_backup_failed_connectivity">Internet-yhteyttä ei ole</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Odotetaan Wi-Fi-yhteyttä</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Varmuuskopiointi ei ole sallittu</string>
+  <string name="notification_content_text_backup_paused_disabled">Varmuuskopiointi poistettiin käytöstä</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Varmuuskopiointia ei voida suorittaa taustalla</string>
+  <string name="notification_content_title_download_complete">Lataus on valmis</string>
+  <string name="notification_content_title_forced_sign_out">Kirjaudu sisään</string>
+  <string name="notification_content_text_forced_sign_out">Pahoittelut keskeytyksestä! Synkronoitaessa kohdattiin ongelma - kirjaudu sisään uudelleen, niin kaikki sujuu taas hyvin.</string>
+  <string name="notification_content_title_no_space_left_on_device">Laitteessa ei ole riittävästi tilaa</string>
+  <string name="notification_content_text_no_space_left_on_device">Sovellus ei välttämättä toimi oikein.</string>
+  <string name="notification_channel_group_name_application">Sovellus</string>
+  <string name="notification_channel_background_title">Tausta</string>
+  <string name="notification_channel_background_description">Kanava taustatoimintoja, kuten varmuuskopiointia varten</string>
+  <string name="notification_channel_transfer_title">Siirrot</string>
+  <string name="notification_channel_transfer_description">Kanava pilvitilan, tallennusten ja latausten ilmoituksille</string>
+  <string name="notification_channel_warning_title">Varoitus</string>
+  <string name="notification_channel_warning_description">Kanava käyttäjän toimia edellyttäville varoituksille</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Valitse listan kaikki kohteet</string>
+  <string name="content_description_selected_options">Näytä lisää valintoja valituille tiedostoille ja/tai kansioille</string>
+  <string name="content_description_files_upload_upload_file">Tallenna tiedosto</string>
+  <string name="description_empty_my_files">Aloita tiedostojen lisääminen napauttamalla painiketta.</string>
+  <string name="description_empty_folder_read_only">Täällä ei ole mitään nähtävää</string>
+  <string name="description_empty_shared">Linkitetyt tiedostot näkyvät täällä, jotta voit helposti seurata ja hallita jaettua sisältöä.</string>
+  <string name="description_empty_trash">Roskakoriin siirretyt kohteet säilyvät täällä, kunnes poistat tai palautat ne.</string>
+  <string name="description_empty_offline_available">Pidä tärkeät tiedostot aina mukanasi, myös ilman Internet-yhteyttä.</string>
+  <string name="description_no_drive_scope">Käyttäjälle ei ole määritelty levyn pääsyoikeuksia.</string>
+  <string name="description_file_download_failed">Lataus epäonnistui. Tarkista verkkoyhteys ja yritä uudelleen.</string>
+  <string name="description_file_decryption_failed">Tiedoston salausta ei voitu purkaa</string>
+  <string name="description_file_verify_signature_failed">Tiedoston allekirjoitusta ei voitu vahvistaa</string>
+  <string name="description_files_stop_sharing">Tämä poistaa linkin ja tiedoston tai kansion käyttöoikeuden kaikilta, joilla on tämä linkki.</string>
+  <string name="description_files_stop_sharing_action_success">Linkki tiedostoosi on poistettiin.</string>
+  <string name="description_files_stop_sharing_action_error">Virhe poistrettaessa tiedostosi linkkiä.</string>
+  <string name="description_files_stop_all_sharing">Tämä poistaa linkin ja käyttöoikeuden kaikilta.</string>
+  <string name="description_files_stop_all_sharing_action_success">Tiedotosi jakaminen on poistettu</string>
+  <string name="description_files_stop_all_sharing_action_error">Tiedoston jakamista poistettaessa tapahtui virhe.</string>
+  <string name="ignore_file_signature_action">Näytä silti</string>
+  <string name="action_empty_files_add_files">Tallenna</string>
+  <string name="error_could_not_send_file">Virhe yritettäessä lähettää tiedostoa</string>
+  <string name="error_could_not_load_folder_content">Virhe yritettäessä ladata kansion sisältöä</string>
+  <string name="error_main_share_locked">Tiedostot eivät ole enää käytettävissä salasanan uudelleenasetuksen vuoksi. Palauta käyttöoikeus lataamalla vanha salausavain uudelleen.</string>
+  <string name="error_share_locked">Jakaminen on lukittu.</string>
+  <string name="error_main_share_not_found">Ensisijaista jakoa ei löytynyt.</string>
+  <string name="error_share_not_found">Jakoa ei löytynyt.</string>
+  <string name="error_creating_photo_share_not_allowed">Kuvien varmuuskopiointi on poistettu tilapäisesti käytöstä.</string>
+  <string name="error_creating_share_not_allowed">Jakojen luonti on poistettu tilapäisesti käytöstä.</string>
+  <string name="operation_open_document">avaa dokumentti</string>
+  <string name="operation_create_document">luoda dokumentin</string>
+  <string name="operation_take_picture">ottaa kuvan</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Hanki %1$s ilmaista tallennustilaa</string>
+  <string name="get_more_free_storage_description">Suorita nämä toimet ensimmäisten 30 päivän aikana, niin saat veloituksetta lisää tallennustilaa.</string>
+  <string name="get_more_free_storage_action_upload_title">Lähetä tiedosto tai ota kuvien varmuuskopiointi käyttöön</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Kaikki tiedostosi salataan.</string>
+  <string name="get_more_free_storage_action_link_title">Luo jakolinkki</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Valitse mikä tahansa tiedosto tai kansio. Avaa asetusvalikko ja paina %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_recovery_title">Määritä palautustapa</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Kirjaudu osoitteessa %1$s, sitten avaa Asetukset -&gt; Palautus.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

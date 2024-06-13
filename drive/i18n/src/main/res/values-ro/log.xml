@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="log_title">Jurnal</string>
+  <string name="log_export_successfully_completed">Jurnalul a fost salvat.</string>
+  <string name="log_level">Nivel</string>
+  <string name="log_category">Categoria</string>
+  <string name="content_description_save_log_file">Salvare fișier jurnal</string>
+  <string name="content_description_more_log_options">Mai multe opțiuni pentru jurnal</string>
+  <string name="log_level_normal">Normal</string>
+  <string name="log_level_warning">Avertizare</string>
+  <string name="log_level_error">Eroare</string>
+  <string name="log_origin_upload">Încărcare</string>
+  <string name="log_origin_download">Descărcare</string>
+  <string name="log_origin_network">API</string>
+  <string name="log_origin_throwable">Excepție</string>
+  <string name="log_origin_logger">Înregistrator</string>
+</resources>

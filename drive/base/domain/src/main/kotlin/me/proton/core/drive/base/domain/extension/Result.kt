@@ -22,7 +22,9 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.network.domain.ApiException
+import me.proton.core.util.kotlin.CoreLogger
 
 fun <T> Result<T>.toDataResult(): DataResult<T> =
     fold(
@@ -55,3 +57,9 @@ fun <T> List<Result<T>>.throwOnFailure(lazyMessage: (Int) -> String): List<Resul
     }
     return this
 }
+
+fun <T> Result<T>.getOrNull(tag: String, message: String? = null): T? = this
+    .onFailure { error ->
+        CoreLogger.d(tag, error, message.orEmpty())
+    }
+    .getOrNull()

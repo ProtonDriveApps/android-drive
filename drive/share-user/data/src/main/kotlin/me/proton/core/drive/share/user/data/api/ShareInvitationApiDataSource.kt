@@ -71,4 +71,14 @@ class ShareInvitationApiDataSource @Inject constructor(
             deleteInvitation(shareId, invitationId)
         }.valueOrThrow
 
+    @Throws(ApiException::class)
+    suspend fun sendEmail(
+        userId: UserId,
+        shareId: String,
+        invitationId: String,
+    ) =
+        apiProvider.get<ShareInvitationApi>(userId).invoke {
+            sendEmail(shareId, invitationId)
+        }.valueOrThrow
+
 }

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Dešifriranje</string>
+  <string name="title_files">Datoteke</string>
+  <string name="title_shared">V skupni rabi</string>
+  <string name="title_my_files">Moje datoteke</string>
+  <string name="title_offline_available">Na voljo brez povezave</string>
+  <string name="title_empty_my_files">Kar naprej, dodajte svojo prvo datoteko</string>
+  <string name="title_empty_folder">Napolnimo to mapo</string>
+  <string name="title_empty_folder_read_only">Prazna mapa</string>
+  <string name="title_empty_shared">Spremljajte, kaj je tam zunaj</string>
+  <string name="title_empty_offline_available">Brez povezave ni na voljo nič</string>
+  <string name="title_empty_trash">Smetnjak je prazen</string>
+  <string name="title_empty_trash_action">Izprazni smetnjak</string>
+  <string name="title_files_confirm_deletion">Trajno izbriši?</string>
+  <string name="title_default_home_screen_tab">Izberite privzeti zavihek domačega zaslona</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Aplikacija</string>
+  <string name="description_signing_out">Odjavljanje …</string>
+  <string name="settings_about_links_acknowledgments_title">Zasluge</string>
+  <string name="settings_about_links_privacy_policy_title">Pravilnik o zasebnosti</string>
+  <string name="settings_about_links_terms_of_service_title">Pogoji storitve</string>
+  <string name="common_error_no_browser_available">Povezave nismo mogli odpreti, ker se zdi, da nimate nameščenega brskalnika</string>
+  <string name="move_to">Premakni v</string>
+  <string name="move_file_confirm_action">Premakni</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">Mape ne morete premakniti vase</string>
+  <string name="folder_option_import_file">Naloži datoteko</string>
+  <string name="folder_option_create_folder">Ustvari mapo</string>
+  <string name="folder_option_take_a_photo">Posnemi novo fotografijo</string>
+  <string name="settings_theme_system_default">Sistemsko privzeto</string>
+  <string name="settings_theme_dark">Temna</string>
+  <string name="settings_theme_light">Svetla</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Naloži v %1$s</string>
+  <string name="upload_title">Naloži</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">V %1$s je mogoče naložiti samo datoteke</string>
+  <string name="in_app_notification_importing_file_already_exists">Datoteka z istim imenom že obstaja, poskusite počistiti predpomnilnik aplikacije</string>
+  <string name="in_app_notification_clear_local_cache_success">Lokalni predpomnilnik je bil uspešno počiščen</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Shramba polna</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Nalaganje datotek v %1$s</string>
+  <string name="notification_content_title_upload_complete">Nalaganje končano</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Nalaganje %1$d datoteke</item>
+    <item quantity="two">Nalagam %1$d datoteki</item>
+    <item quantity="few">Nalaganje %1$d datotek</item>
+    <item quantity="other">Nalaganje %1$d datoteke</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">Naložena je %1$d datoteka</item>
+    <item quantity="two">Naloženi sta %1$d datoteki</item>
+    <item quantity="few">Naložene so %1$d datoteke</item>
+    <item quantity="other">Naložene so %1$d datoteke</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d datoteka preklicana</item>
+    <item quantity="two">%1$d datoteki sta preklicani</item>
+    <item quantity="few">%1$d datoteke so preklicane</item>
+    <item quantity="other">%1$d datoteke so preklicane</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">%1$d datoteka ni uspela</item>
+    <item quantity="two">%1$d datoteki nista uspeli</item>
+    <item quantity="few">%1$d datoteke niso uspele</item>
+    <item quantity="other">%1$d datoteke niso uspele</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Varnostno kopiranje fotografij v %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">%1$s preostali predmet</item>
+    <item quantity="two">%1$s preostala predmeta</item>
+    <item quantity="few">%1$s preostali predmeti</item>
+    <item quantity="other">%1$s preostalih predmetov</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Varnostno kopiranje končano</string>
+  <string name="notification_content_text_backup_uncompleted">Varnostno kopiranje je dokončano s težavami</string>
+  <string name="notification_content_text_backup_failed">Varnostna kopija ni uspela</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Vaša shramba je polna</string>
+  <string name="notification_content_text_backup_failed_local_storage">Lokalna shramba je polna</string>
+  <string name="notification_content_text_backup_failed_permission">Manjkajo dovoljenja.</string>
+  <string name="notification_content_text_backup_failed_connectivity">Ni spletne povezave</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Čakanje na Wifi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Varnostno kopiranje ni dovoljeno</string>
+  <string name="notification_content_text_backup_paused_disabled">Varnostno kopiranje je bilo onemogočeno</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Varnostno kopiranje ne more delovati v ozadju</string>
+  <string name="notification_content_title_download_complete">Prenos končan</string>
+  <string name="notification_content_title_forced_sign_out">Prosimo prijavite se</string>
+  <string name="notification_content_text_forced_sign_out">Oprostite, ker motim! Imeli smo težave s sinhronizacijo - prosimo, prijavite se znova in vse bo potekalo gladko.</string>
+  <string name="notification_content_title_no_space_left_on_device">V napravi ni več prostora</string>
+  <string name="notification_content_text_no_space_left_on_device">Aplikacija morda ne bo delovala pravilno.</string>
+  <string name="notification_channel_group_name_application">Aplikacija</string>
+  <string name="notification_channel_background_title">V ozadju</string>
+  <string name="notification_channel_background_description">Kanal za operacije v ozadju, kot je varnostno kopiranje</string>
+  <string name="notification_channel_transfer_title">Prenos</string>
+  <string name="notification_channel_transfer_description">Kanal za shranjevanje v oblaku, obvestila o nalaganju in prenosu</string>
+  <string name="notification_channel_warning_title">Opozorilo</string>
+  <string name="notification_channel_warning_description">Kanal za opozorila, ki zahtevajo ukrepanje uporabnika</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Izberite vse predmete na seznamu</string>
+  <string name="content_description_selected_options">Pokaži več možnosti za izbrane datoteke in/ali mape</string>
+  <string name="content_description_files_upload_upload_file">Naloži datoteko</string>
+  <string name="description_empty_my_files">Tapnite gumb, da začnete dodajati datoteke.</string>
+  <string name="description_empty_folder_read_only">Tukaj ni ničesar za videti</string>
+  <string name="description_empty_shared">Povezane datoteke so prikazane tukaj, tako da lahko preprosto sledite in upravljate, kar je v skupni rabi.</string>
+  <string name="description_empty_trash">Tukaj ostanejo predmeti v smetnjaku, dokler jih ne izbrišete ali obnovite.</string>
+  <string name="description_empty_offline_available">Naj bodo bistvene datoteke vedno na voljo, tudi ko vaše omrežje ni.</string>
+  <string name="description_no_drive_scope">Uporabniku manjka obseg pogona.</string>
+  <string name="description_file_download_failed">Prenos ni uspel. Preverite omrežno povezavo in poskusite znova.</string>
+  <string name="description_file_decryption_failed">Ni bilo mogoče dešifrirati datoteke</string>
+  <string name="description_file_verify_signature_failed">Podpisa datoteke ni bilo mogoče preveriti</string>
+  <string name="description_files_stop_sharing">S tem boste izbrisali povezavo in onemogočili dostop do vaše datoteke ali mape vsem, ki imajo povezavo.</string>
+  <string name="description_files_stop_sharing_action_success">Povezava do vaše datoteke je bila izbrisana.</string>
+  <string name="description_files_stop_sharing_action_error">Pri brisanju povezave do vaše datoteke je prišlo do napake.</string>
+  <string name="description_files_stop_all_sharing">S tem boste izbrisali povezavo in onemogočili dostop za vse.</string>
+  <string name="description_files_stop_all_sharing_action_success">Skupna raba vaše datoteke je bila izbrisana.</string>
+  <string name="description_files_stop_all_sharing_action_error">Med brisanjem skupne rabe vaše datoteke je prišlo do napake.</string>
+  <string name="ignore_file_signature_action">Vseeno si oglejte</string>
+  <string name="action_empty_files_add_files">Naloži</string>
+  <string name="error_could_not_send_file">Pri poskusu pošiljanja datoteke je prišlo do napake</string>
+  <string name="error_could_not_load_folder_content">Med poskusom nalaganja vsebine mape je prišlo do napake</string>
+  <string name="error_main_share_locked">Vaše datoteke niso več dostopne zaradi ponastavitve gesla. Znova naložite stari šifrirni ključ, da znova pridobite dostop.</string>
+  <string name="error_share_locked">Skupna raba je zaklenjena.</string>
+  <string name="error_main_share_not_found">Glavne skupne rabe ne najde.</string>
+  <string name="error_share_not_found">Skupna raba ni najdena.</string>
+  <string name="error_creating_photo_share_not_allowed">Varnostno kopiranje fotografij je začasno onemogočeno.</string>
+  <string name="error_creating_share_not_allowed">Ustvarjanje skupne rabe je začasno onemogočeno.</string>
+  <string name="operation_open_document">odpri dokument</string>
+  <string name="operation_create_document">ustvarite dokument.</string>
+  <string name="operation_take_picture">posnemite fotografijo</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Odklenite %1$s brezplačnega prostora za shranjevanje</string>
+  <string name="get_more_free_storage_description">Te korake opravite v prvih 30. dneh in prejmite brezplačno nadgradnjo shrambe.</string>
+  <string name="get_more_free_storage_action_upload_title">Prenesite datoteke ali omogočite varnostno kopiranje fotografij</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Vse datoteke bodo šifrirane.</string>
+  <string name="get_more_free_storage_action_link_title">Ustvarite povezavo za skupno rabo</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Izberite katero koli datoteko ali mapo. Odprite meni z možnostmi in pritisnite %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_recovery_title">Nastavite način obnovitve</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Prijavite se v %1$s, nato pa pojdite v Nastavitve -&gt; Obnovitev.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

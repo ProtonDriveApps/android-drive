@@ -28,6 +28,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.viewmodel.ComputerOptionsViewModel
+import me.proton.android.drive.ui.viewmodel.ConfirmStopAllSharingDialogViewModel
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareInvitationOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.MoveToFolderViewModel
@@ -78,6 +79,7 @@ sealed class Screen(val route: String) {
         const val TAB_PHOTOS = "photos"
         const val TAB_COMPUTERS = "computers"
         const val TAB_SHARED = "shared"
+        const val TAB_SHARED_TABS = "shared_tabs"
     }
 
     data object Sorting :
@@ -210,7 +212,7 @@ sealed class Screen(val route: String) {
                 const val PARENT_ID = CreateFolderViewModel.KEY_PARENT_ID
             }
 
-            data object ConfirmStopSharing : Screen("share_url/{userId}/shares/{shareId}/links/{linkId}/confirm_delete?confirmPopUpRoute={confirmPopUpRoute}&confirmPopUpRouteInclusive={confirmPopUpRouteInclusive}") {
+            data object ConfirmStopLinkSharing : Screen("share_url/{userId}/shares/{shareId}/links/{linkId}/confirm_delete?confirmPopUpRoute={confirmPopUpRoute}&confirmPopUpRouteInclusive={confirmPopUpRouteInclusive}") {
                 operator fun invoke(userId: UserId, linkId: LinkId) =
                     "share_url/${userId.id}/shares/${linkId.shareId.id}/links/${linkId.id}/confirm_delete?confirmPopUpRouteInclusive=true"
 
@@ -223,6 +225,23 @@ sealed class Screen(val route: String) {
                     "share_url/${userId.id}/shares/${linkId.shareId.id}/links/${linkId.id}/confirm_delete?confirmPopUpRoute=${confirmPopUpRoute}&confirmPopUpRouteInclusive=${confirmPopUpRouteInclusive}"
 
                 const val LINK_ID = "linkId"
+                const val SHARE_ID = ConfirmStopAllSharingDialogViewModel.SHARE_ID
+                const val CONFIRM_POP_UP_ROUTE = "confirmPopUpRoute"
+                const val CONFIRM_POP_UP_ROUTE_INCLUSIVE = "confirmPopUpRouteInclusive"
+            }
+
+            data object ConfirmStopAllSharing : Screen("sharing/{userId}/shares/{shareId}/confirm_delete_all?confirmPopUpRoute={confirmPopUpRoute}&confirmPopUpRouteInclusive={confirmPopUpRouteInclusive}") {
+                operator fun invoke(shareId: ShareId) =
+                    "sharing/${shareId.userId.id}/shares/${shareId.id}/confirm_delete_all?confirmPopUpRouteInclusive=true"
+
+                operator fun invoke(
+                    shareId: ShareId,
+                    confirmPopUpRoute: String,
+                    confirmPopUpRouteInclusive: Boolean = true,
+                ) =
+                    "sharing/${shareId.userId.id}/shares/${shareId.id}/confirm_delete_all?confirmPopUpRoute=${confirmPopUpRoute}&confirmPopUpRouteInclusive=$confirmPopUpRouteInclusive"
+
+
                 const val SHARE_ID = "shareId"
                 const val CONFIRM_POP_UP_ROUTE = "confirmPopUpRoute"
                 const val CONFIRM_POP_UP_ROUTE_INCLUSIVE = "confirmPopUpRouteInclusive"
@@ -275,6 +294,15 @@ sealed class Screen(val route: String) {
 
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = "shareId"
+    }
+    data object SharedTabs : Screen(filesBrowsableRoute("shared")), HomeTab {
+        override fun invoke(userId: UserId) =
+            filesBrowsableBuildRoute("shared", userId, null, null)
+
+        operator fun invoke(userId: UserId, folderId: FolderId?, folderName: String?) =
+            filesBrowsableBuildRoute("shared", userId, folderId, folderName)
+
+        const val USER_ID = Screen.USER_ID
     }
     data object Photos : Screen("home/{userId}/photos/{shareId}"), HomeTab {
 
@@ -538,6 +566,22 @@ sealed class Screen(val route: String) {
     data object GetMoreFreeStorage : Screen("storage/{userId}/getMoreFree") {
 
         operator fun invoke(userId: UserId) = "storage/${userId.id}/getMoreFree"
+
+        const val USER_ID = Screen.USER_ID
+    }
+
+    data object Log : Screen("log/{userId}/show") {
+
+        operator fun invoke(userId: UserId) = "log/${userId.id}/show"
+
+        data object Options : Screen(
+            "log/{userId}/options"
+        ) {
+
+            operator fun invoke(
+                userId: UserId,
+            ) = "log/${userId.id}/options"
+        }
 
         const val USER_ID = Screen.USER_ID
     }

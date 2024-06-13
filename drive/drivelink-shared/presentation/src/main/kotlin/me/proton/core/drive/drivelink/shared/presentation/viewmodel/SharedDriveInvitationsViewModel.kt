@@ -47,14 +47,11 @@ import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.coroutines.timeLimitedScope
 import me.proton.core.drive.base.domain.entity.Permissions
-import me.proton.core.drive.base.domain.entity.Permissions.Permission.READ
-import me.proton.core.drive.base.domain.entity.Permissions.Permission.WRITE
 import me.proton.core.drive.base.domain.entity.onProcessing
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
-import me.proton.core.drive.base.domain.usecase.GetUserEmail
 import me.proton.core.drive.base.domain.usecase.GetUserEmailsFlow
 import me.proton.core.drive.base.domain.usecase.IsValidEmailAddress
 import me.proton.core.drive.base.presentation.extension.quantityString
@@ -70,6 +67,10 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.PermissionVi
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.PermissionsViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SaveButtonViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SharedDriveInvitationsViewState
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.key.domain.extension.isInternal
 import me.proton.core.drive.key.domain.usecase.GetPublicAddress
 import me.proton.core.drive.link.domain.entity.FileId
@@ -93,11 +94,11 @@ class SharedDriveInvitationsViewModel @Inject constructor(
     getDriveLink: GetDecryptedDriveLink,
     getUserEmailsFlow: GetUserEmailsFlow,
     private val inviteMembers: InviteMembers,
-    private val getUserEmail: GetUserEmail,
     private val getPublicAddress: GetPublicAddress,
     private val isValidEmailAddress: IsValidEmailAddress,
     private val searchContacts: SearchContacts,
     private val broadcastMessage: BroadcastMessages,
+    private val getFeatureFlagFlow: GetFeatureFlagFlow,
     private val configurationProvider: ConfigurationProvider,
     private val savedStateHandle: SavedStateHandle,
     @ApplicationContext private val appContext: Context,
@@ -113,9 +114,14 @@ class SharedDriveInvitationsViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<SharedDriveInvitationsEffect>()
     val effect: Flow<SharedDriveInvitationsEffect> = _effect.asSharedFlow()
 
-    private val viewerPermissions = Permissions().add(READ)
-    private val editorPermissions = Permissions().add(READ).add(WRITE)
-    private val permissions = MutableStateFlow(viewerPermissions)
+    private val killSwitch = getFeatureFlagFlow(FeatureFlagId.driveSharingDisabled(userId))
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = FeatureFlag(FeatureFlagId.driveSharingDisabled(userId), FeatureFlag.State.NOT_FOUND)
+        )
+
+    private val permissions = MutableStateFlow(Permissions.editor)
 
     private val suggestedContacts = MutableStateFlow(emptyList<ContactSuggestion>())
     private val invitationEmails = MutableStateFlow(emptyList<String>())
@@ -162,14 +168,14 @@ class SharedDriveInvitationsViewModel @Inject constructor(
                     PermissionViewState(
                         icon = CorePresentation.drawable.ic_proton_eye,
                         label = appContext.getString(I18N.string.share_via_invitations_permission_viewer),
-                        selected = permissions == viewerPermissions,
-                        permissions = viewerPermissions,
+                        selected = permissions == Permissions.viewer,
+                        permissions = Permissions.viewer,
                     ),
                     PermissionViewState(
                         icon = CorePresentation.drawable.ic_proton_pen,
                         label = appContext.getString(I18N.string.share_via_invitations_permission_editor),
-                        selected = permissions == editorPermissions,
-                        permissions = editorPermissions,
+                        selected = permissions == Permissions.editor,
+                        permissions = Permissions.editor,
                     ),
                 )
             )
@@ -188,14 +194,18 @@ class SharedDriveInvitationsViewModel @Inject constructor(
     )
 
     val saveButtonViewState =
-        combine(validInvitations, saveInProgress) { invitations, saveInProgress ->
+        combine(
+            validInvitations,
+            saveInProgress,
+            killSwitch
+        ) { invitations, saveInProgress, killSwitch ->
             initialSaveButtonViewState.copy(
                 label = appContext.quantityString(
                     pluralRes = I18N.plurals.share_via_invitations_sharing_with,
                     quantity = invitations.size
                 ),
                 isVisible = invitations.isNotEmpty(),
-                isEnabled = !saveInProgress,
+                isEnabled = !saveInProgress && killSwitch.off,
                 inProgress = saveInProgress,
             )
         }
@@ -308,11 +318,9 @@ class SharedDriveInvitationsViewModel @Inject constructor(
     private fun save(onComplete: () -> Unit) {
         timeLimitedScope(SHARING) {
             val invitations = validInvitations.first()
-            CoreLogger.d(SHARING, "Start sending invitations (${invitations.size})")
+            CoreLogger.i(SHARING, "Start sending invitations (${invitations.size})")
             val dataResult = inviteMembers(
-                ShareUsersInvitation(
-                    linkId, getUserEmail(userId), invitations
-                )
+                ShareUsersInvitation(linkId, invitations)
             ).onEach { dataResult ->
                 dataResult.onProcessing { saveInProgress.emit(true) }
             }.last()

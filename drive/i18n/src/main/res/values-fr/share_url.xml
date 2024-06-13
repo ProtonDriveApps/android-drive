@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Création du lien vers %1$s</string>
+  <string name="shared_link_getting_link">Obtention du lien</string>
+  <string name="shared_link_file">fichier</string>
+  <string name="shared_link_folder">dossier</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Toute personne ayant ce lien peut accéder à %1$s.</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Seules les personnes ayant le lien et le mot de passe peuvent accéder à %1$s.</string>
+  <string name="shared_link_privacy_settings">Paramètres de confidentialité</string>
+  <string name="shared_link_password_protection">Protection par mot de passe</string>
+  <string name="shared_link_expiration_date">Date d\'expiration</string>
+  <string name="shared_link_action_copy_link">Copier le lien</string>
+  <string name="shared_link_action_copy_password">Copier le mot de passe</string>
+  <string name="shared_link_action_share_link">Partager le lien</string>
+  <string name="shared_link_dialog_title_discard_changes">Abandonner les modifications ?</string>
+  <string name="shared_link_dialog_description">Vous perdrez toutes les modifications non enregistrées.</string>
+  <string name="shared_link_hint_expiration_date_field">Aucune date d\'expiration</string>
+  <string name="shared_link_message_update_share_url">Les paramètres de partage ont été mis à jour.</string>
+  <string name="shared_link_error_message_update_share_url">La mise à jour des paramètres de partage n\'a pas abouti.</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">Le mot de passe doit comporter entre 1 et %1$d caractères.</string>
+  <string name="shared_link_error_message_not_found">Le lien partagé n\'existe pas ou a expiré.</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">La date d\'expiration doit être fixée à demain au plus tôt.</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">La date d\'expiration ne doit pas dépasser %1$d jours.</string>
+  <string name="shared_link_error_legacy_link">Il s\'agit d\'un lien ancien que nous ne pouvons plus gérer. Nous vous recommandons de ne plus partager ce lien et d\'en créer un nouveau.</string>
+  <string name="title_share_via_link">Partager avec un lien</string>
+  <string name="shared_with_me_title">Partagé avec moi</string>
+  <string name="shared_by_me_title">Partagé par moi</string>
+  <string name="shared_with_me_empty_description">Les fichiers et dossiers que vous partagez avec d\'autres personnes apparaissent ici.</string>
+  <string name="shared_by_me_empty_description">Partagez vos fichiers et dossiers en toute sécurité avec le chiffrement de bout en bout.</string>
+</resources>

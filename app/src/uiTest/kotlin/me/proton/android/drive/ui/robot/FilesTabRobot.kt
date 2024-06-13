@@ -39,6 +39,13 @@ object FilesTabRobot : NavigationBarRobot, HomeRobot, LinksRobot, GrowlerRobot {
         ).format(count, folderName)
     ).await { assertIsDisplayed() }
 
+    fun assertFilesSelected(count: Int) = node.withText(
+        targetContext.resources.getQuantityString(
+            I18N.plurals.common_selected,
+            count
+        ).format(count)
+    ).await { assertIsDisplayed() }
+
     fun assertStageWaiting() =
         node.withText(I18N.string.files_upload_stage_waiting).await { assertIsDisplayed() }
 

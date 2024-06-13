@@ -83,7 +83,6 @@ class CreateShareInvitationsTest {
             shareId = standardShareId,
             invitation = ShareUsersInvitation(
                 linkId = folderId,
-                email = "inviter@proton.me",
                 members = listOf(
                     inviteeInvitation,
                     errorInvitation,

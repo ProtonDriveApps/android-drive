@@ -35,6 +35,7 @@ driveModule(
     api(project(":drive:share-user:domain"))
     api(project(":drive:user:domain"))
     api(project(":drive:volume:data"))
+    api(libs.androidx.room.paging)
     implementation(project(":drive:link:data"))
     implementation(libs.retrofit)
 }

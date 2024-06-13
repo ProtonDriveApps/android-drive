@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Desxifrant</string>
+  <string name="title_files">Fitxers</string>
+  <string name="title_shared">Compartit</string>
+  <string name="title_my_files">Els meus fitxers</string>
+  <string name="title_offline_available">Disponible fora de línia</string>
+  <string name="title_empty_my_files">Endavant, afegiu el primer fitxer</string>
+  <string name="title_empty_folder">Ja podeu omplir aquesta carpeta</string>
+  <string name="title_empty_folder_read_only">Carpeta buida</string>
+  <string name="title_empty_shared">Estigueu assabentats del que està passant</string>
+  <string name="title_empty_offline_available">No teniu res disponible fora de línia</string>
+  <string name="title_empty_trash">La paperera és buida.</string>
+  <string name="title_empty_trash_action">Buida la paperera</string>
+  <string name="title_files_confirm_deletion">Voleu suprimir permanentment?</string>
+  <string name="title_default_home_screen_tab">Choose default home screen tab</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Aplicació</string>
+  <string name="description_signing_out">S\'està tancant la sessió…</string>
+  <string name="settings_about_links_acknowledgments_title">Crèdits</string>
+  <string name="settings_about_links_privacy_policy_title">Política de privacitat</string>
+  <string name="settings_about_links_terms_of_service_title">Condicions del servei</string>
+  <string name="common_error_no_browser_available">No s\'ha pogut obrir l\'enllaç perquè sembla que no teniu un navegador instal·lat</string>
+  <string name="move_to">Mou a</string>
+  <string name="move_file_confirm_action">Mou</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">No podeu moure una carpeta a si mateixa</string>
+  <string name="folder_option_import_file">Carrega un fitxer</string>
+  <string name="folder_option_create_folder">Crear una carpeta</string>
+  <string name="folder_option_take_a_photo">Fer una foto nova</string>
+  <string name="settings_theme_system_default">Valors per defecte del sistema</string>
+  <string name="settings_theme_dark">Fosc</string>
+  <string name="settings_theme_light">Clar</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Carregar a %1$s</string>
+  <string name="upload_title">Carrega</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">A %1$s només podeu pujar-hi fitxers</string>
+  <string name="in_app_notification_importing_file_already_exists">Ja existeix un fitxer amb aquest nom, proveu de netejar la memòria cau de l\'aplicació</string>
+  <string name="in_app_notification_clear_local_cache_success">Memòria cau netejada exitosament</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Emmagatzematge ple</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Carregant fitxers a %1$s</string>
+  <string name="notification_content_title_upload_complete">Càrrega completada</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Carregant %1$d fitxer</item>
+    <item quantity="other">Carregant %1$d fitxers</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d fitxer carregat</item>
+    <item quantity="other">%1$d fitxers carregats</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d fitxer cancel·lat</item>
+    <item quantity="other">%1$d fitxers cancel·lats</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">Error amb %1$d fitxer</item>
+    <item quantity="other">Error amb %1$d fitxers</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Realitzant còpia de seguretat de les fotos a %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">Queda %1$s element.</item>
+    <item quantity="other">Queden %1$s elements.</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">S\'ha finalitzat la còpia de seguretat.</string>
+  <string name="notification_content_text_backup_uncompleted">S\'ha completat la còpia de seguretat amb problemes.</string>
+  <string name="notification_content_text_backup_failed">Error en la còpia de seguretat</string>
+  <string name="notification_content_text_backup_failed_drive_storage">L\'emmagatzematge de Proton és ple.</string>
+  <string name="notification_content_text_backup_failed_local_storage">L\'emmagatzematge local és ple.</string>
+  <string name="notification_content_text_backup_failed_permission">Falten permisos.</string>
+  <string name="notification_content_text_backup_failed_connectivity">Sense connexió a internet</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">S\'està esperant una connexió Wi-Fi.</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Les còpies de seguretat no estan permeses.</string>
+  <string name="notification_content_text_backup_paused_disabled">S\'ha desactivat la còpia de seguretat.</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">La còpia de seguretat no es pot executar en segon pla</string>
+  <string name="notification_content_title_download_complete">Descàrrega completa</string>
+  <string name="notification_content_title_forced_sign_out">Inicia la sessió</string>
+  <string name="notification_content_text_forced_sign_out">Lamentem la interrupció. Hem tingut un problema amb la sincronització. Inicieu sessió de nou i tot funcionarà sense problemes.</string>
+  <string name="notification_content_title_no_space_left_on_device">No queda espai al dispositiu</string>
+  <string name="notification_content_text_no_space_left_on_device">L\'aplicació pot no funcionar correctament.</string>
+  <string name="notification_channel_group_name_application">Aplicació</string>
+  <string name="notification_channel_background_title">Segon pla</string>
+  <string name="notification_channel_background_description">Canal per a operacions en segon pla com a còpia de seguretat</string>
+  <string name="notification_channel_transfer_title">Transferència</string>
+  <string name="notification_channel_transfer_description">Canal de notificacions per a emmagatzematge al núvol, de càrrega i descàrrega</string>
+  <string name="notification_channel_warning_title">Advertència</string>
+  <string name="notification_channel_warning_description">Canal per a advertiments que requereixen una acció de l\'usuari</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Selecciona tots els elements a la llista</string>
+  <string name="content_description_selected_options">Mostrar més opcions per als fitxers o carpetes seleccionats</string>
+  <string name="content_description_files_upload_upload_file">Carrega un fitxer</string>
+  <string name="description_empty_my_files">Toqueu el botó per començar a afegir fitxers.</string>
+  <string name="description_empty_folder_read_only">Aquí no hi ha res a veure</string>
+  <string name="description_empty_shared">Els fitxers enllaçats apareixen aquí perquè es puguin rastrejar-los i gestionar els elements compartits.</string>
+  <string name="description_empty_trash">Aquí és on romanen els elements esborrats fins que els elimineu o restaureu.</string>
+  <string name="description_empty_offline_available">Feu que els fitxers essencials estiguin sempre disponibles, fins i tot quan la vostra xarxa no ho estigui.</string>
+  <string name="description_no_drive_scope">L\'usuari no té permís per accedir-hi.</string>
+  <string name="description_file_download_failed">Error de descàrrega. Verifica la connexió de xarxa i torna a provar.</string>
+  <string name="description_file_decryption_failed">No s\'ha pogut desxifrar el fitxer.</string>
+  <string name="description_file_verify_signature_failed">No s\'ha pogut verificar la signatura del fitxer.</string>
+  <string name="description_files_stop_sharing">Això esborrarà l\'enllaç i eliminarà l\'accés al vostre fitxer o carpeta per a qualsevol persona que el tingui.</string>
+  <string name="description_files_stop_sharing_action_success">L\'enllaç al vostre fitxer ha estat esborrat.</string>
+  <string name="description_files_stop_sharing_action_error">Error en esborrar l\'enllaç al vostre fitxer.</string>
+  <string name="description_files_stop_all_sharing">Això suprimirà l\'enllaç i l\'accés a tothom.</string>
+  <string name="description_files_stop_all_sharing_action_success">S\'ha suprimit l\'ús compartit al vostre fitxer.</string>
+  <string name="description_files_stop_all_sharing_action_error">S\'ha produït un error en suprimir l\'ús compartit al seu fitxer.</string>
+  <string name="ignore_file_signature_action">Veure de totes maneres</string>
+  <string name="action_empty_files_add_files">Carrega</string>
+  <string name="error_could_not_send_file">S\'ha produït un error mentre s\'intentava enviar el fitxer.</string>
+  <string name="error_could_not_load_folder_content">S\'ha produït un error en provar de carregar el contingut de la carpeta.</string>
+  <string name="error_main_share_locked">Els vostres arxius ja no són accessibles a causa d\'un restabliment de contrasenya. Torneu a carregar la clau de xifratge antiga per recuperar-ne l\'accés.</string>
+  <string name="error_share_locked">La compartició està bloquejada.</string>
+  <string name="error_main_share_not_found">No s\'ha trobat la carpeta principal.</string>
+  <string name="error_share_not_found">No s\'ha trobat la compartició.</string>
+  <string name="error_creating_photo_share_not_allowed">Les còpies de seguretat de les fotos estan temporalment desactivades.</string>
+  <string name="error_creating_share_not_allowed">La creació d\'elements compartits està desactivada temporalment.</string>
+  <string name="operation_open_document">obrir un document</string>
+  <string name="operation_create_document">crear un document</string>
+  <string name="operation_take_picture">fer una foto</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Desbloquegi %1$s d\'emmagatzematge gratuït</string>
+  <string name="get_more_free_storage_description">Completi aquests passos durant els primers 30 dies per obtenir una millora gratuïta d\'emmagatzematge.</string>
+  <string name="get_more_free_storage_action_upload_title">Carregui un fitxer O habiliti la còpia de seguretat de les fotos</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Es xifraran tots els seus fitxers.</string>
+  <string name="get_more_free_storage_action_link_title">Crea un enllaç per a compartir</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Seleccioni qualsevol fitxer o carpeta. Obri el menú d\'opcions i premi %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Compartiu un fitxer</string>
+  <string name="get_more_free_storage_action_share_subtitle">És fàcil i segur.</string>
+  <string name="get_more_free_storage_action_recovery_title">Configura un mètode de recuperació</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Iniciï la sessió a %1$s i, tot seguit, vagi a Preferències -&gt; Recuperació.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

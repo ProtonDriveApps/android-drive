@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Расшифровка</string>
+  <string name="title_files">Файлы</string>
+  <string name="title_shared">Общие</string>
+  <string name="title_my_files">Мои файлы</string>
+  <string name="title_offline_available">Доступно офлайн</string>
+  <string name="title_empty_my_files">Вперёд, добавьте первый файл</string>
+  <string name="title_empty_folder">Давайте заполним эту папку</string>
+  <string name="title_empty_folder_read_only">Пустая папка</string>
+  <string name="title_empty_shared">Следить за актуальной информацией</string>
+  <string name="title_empty_offline_available">Недоступно офлайн</string>
+  <string name="title_empty_trash">Корзина пуста</string>
+  <string name="title_empty_trash_action">Очистить корзину</string>
+  <string name="title_files_confirm_deletion">Удалить безвозвратно?</string>
+  <string name="title_default_home_screen_tab">Выберите вкладку домашнего экрана по умолчанию</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Приложение</string>
+  <string name="description_signing_out">Выход...</string>
+  <string name="settings_about_links_acknowledgments_title">Благодарности</string>
+  <string name="settings_about_links_privacy_policy_title">Политика конфиденциальности</string>
+  <string name="settings_about_links_terms_of_service_title">Условия использования</string>
+  <string name="common_error_no_browser_available">Нам не удалось открыть ссылку, так как у вас, похоже, не установлен браузер</string>
+  <string name="move_to">Переместить в</string>
+  <string name="move_file_confirm_action">Переместить</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">Нельзя переместить папку саму в себя</string>
+  <string name="folder_option_import_file">Загрузить файл</string>
+  <string name="folder_option_create_folder">Создать папку</string>
+  <string name="folder_option_take_a_photo">Сделать новое фото</string>
+  <string name="settings_theme_system_default">Настройки по умолчанию</string>
+  <string name="settings_theme_dark">Тёмная</string>
+  <string name="settings_theme_light">Светлая</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Загрузить в %1$s</string>
+  <string name="upload_title">Загрузить</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">Только файлы могут быть загружены в %1$s</string>
+  <string name="in_app_notification_importing_file_already_exists">Файл с таким именем уже существует, попробуйте очистить кэш приложения</string>
+  <string name="in_app_notification_clear_local_cache_success">Локальный кеш очищен успешно</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Хранилище заполнено</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Загрузка файлов в %1$s</string>
+  <string name="notification_content_title_upload_complete">Загрузка завершена</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Загрузка %1$d файла</item>
+    <item quantity="few">Загрузка %1$d файлов</item>
+    <item quantity="many">Загрузка %1$d файлов</item>
+    <item quantity="other">Загрузка %1$d файлов</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d файл загружен</item>
+    <item quantity="few">%1$d файла загружены</item>
+    <item quantity="many">%1$d файлов загружено</item>
+    <item quantity="other">%1$d файлов загружено</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d файл отменён</item>
+    <item quantity="few">%1$d файла отменены</item>
+    <item quantity="many">%1$d файлов отменено</item>
+    <item quantity="other">%1$d файлов отменено</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">Сбой с %1$d файлом</item>
+    <item quantity="few">Сбой с %1$d файлами</item>
+    <item quantity="many">Сбой с %1$d файлами</item>
+    <item quantity="other">Сбой с %1$d файлами</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Резервное копирование фотографий на %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">Остался %1$s элемент</item>
+    <item quantity="few">Осталось %1$s элемента</item>
+    <item quantity="many">Осталось %1$s элементов</item>
+    <item quantity="other">Осталось %1$s элементов</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Резервное копирование завершено</string>
+  <string name="notification_content_text_backup_uncompleted">Резервное копирование завершено с проблемами.</string>
+  <string name="notification_content_text_backup_failed">Резервное копирование завершено</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Хранилище Proton заполнено</string>
+  <string name="notification_content_text_backup_failed_local_storage">Местное хранилище заполнено.</string>
+  <string name="notification_content_text_backup_failed_permission">Отсутствуют разрешения</string>
+  <string name="notification_content_text_backup_failed_connectivity">Нет подключения к Интернету</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Ожидание Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Резервное копирование завершено.</string>
+  <string name="notification_content_text_backup_paused_disabled">Резервное копирование было завершено</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Резервное копирование не может выполняться в фоновом режиме</string>
+  <string name="notification_content_title_download_complete">Скачивание завершено</string>
+  <string name="notification_content_title_forced_sign_out">Пожалуйста, войдите</string>
+  <string name="notification_content_text_forced_sign_out">Извините, что прервали! У нас возникла проблема с синхронизацией - пожалуйста, войдите снова, и мы обеспечим стабильную работу.</string>
+  <string name="notification_content_title_no_space_left_on_device">Недостаточно места на устройстве</string>
+  <string name="notification_content_text_no_space_left_on_device">Приложение может работать некорректно.</string>
+  <string name="notification_channel_group_name_application">Приложение</string>
+  <string name="notification_channel_background_title">Фон</string>
+  <string name="notification_channel_background_description">Канал для фоновых операций, таких как резервное копирование</string>
+  <string name="notification_channel_transfer_title">Передача</string>
+  <string name="notification_channel_transfer_description">Канал для уведомлений о загрузке и скачивании файлов в облачном хранилище</string>
+  <string name="notification_channel_warning_title">Предупреждение</string>
+  <string name="notification_channel_warning_description">Канал для предупреждений, требующих действий пользователя</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Выбрать все объекты в списке</string>
+  <string name="content_description_selected_options">Показать дополнительные опции для выбранных файлов и/или папок</string>
+  <string name="content_description_files_upload_upload_file">Загрузить файл</string>
+  <string name="description_empty_my_files">Нажмите кнопку, чтобы начать добавление файлов.</string>
+  <string name="description_empty_folder_read_only">Здесь не на что смотреть</string>
+  <string name="description_empty_shared">Здесь отображаются связанные файлы, что позволяет вам удобно их отслеживать и управлять общим доступом к ним.</string>
+  <string name="description_empty_trash">Здесь хранятся удаленные объекты, пока вы не удалите или не восстановите их.</string>
+  <string name="description_empty_offline_available">Обеспечьте доступность важных файлов даже при отсутствии сети.</string>
+  <string name="description_no_drive_scope">Не предоставлен доступ к диску.</string>
+  <string name="description_file_download_failed">Загрузка не удалась. Проверьте подключение к сети и повторите попытку.</string>
+  <string name="description_file_decryption_failed">Не удалось расшифровать файл</string>
+  <string name="description_file_verify_signature_failed">Невозможно проверить подпись файла</string>
+  <string name="description_files_stop_sharing">Это удалит ссылку и лишит доступа к вашему файлу или папке всех, у кого есть эта ссылка.</string>
+  <string name="description_files_stop_sharing_action_success">Ссылка на ваш файл удалена.</string>
+  <string name="description_files_stop_sharing_action_error">Произошла ошибка при удалении ссылки на ваш файл.</string>
+  <string name="description_files_stop_all_sharing">Это удалит ссылку и удалит доступ для всех.</string>
+  <string name="description_files_stop_all_sharing_action_success">Поделиться вашего файла было удалено.</string>
+  <string name="description_files_stop_all_sharing_action_error">Произошла ошибка при удалении ссылки на ваш файл.</string>
+  <string name="ignore_file_signature_action">Посмотреть в любом случае</string>
+  <string name="action_empty_files_add_files">Загрузить</string>
+  <string name="error_could_not_send_file">Произошла ошибка при отправке файла</string>
+  <string name="error_could_not_load_folder_content">Произошла ошибка при загрузке содержимого папки</string>
+  <string name="error_main_share_locked">Ваши файлы больше недоступны из-за сброса пароля. Повторно загрузите старый ключ шифрования для восстановления доступа.</string>
+  <string name="error_share_locked">Общий доступ заблокирован.</string>
+  <string name="error_main_share_not_found">Основной ресурс не найден.</string>
+  <string name="error_share_not_found">Ссылка общего доступа не найдена.</string>
+  <string name="error_creating_photo_share_not_allowed">Резервное копирование фотографий временно отключено.</string>
+  <string name="error_creating_share_not_allowed">Создание общего доступа временно отключено.</string>
+  <string name="operation_open_document">открыть документ</string>
+  <string name="operation_create_document">создать документ</string>
+  <string name="operation_take_picture">сделать снимок</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Разблокировать %1$s бесплатного хранилища</string>
+  <string name="get_more_free_storage_description">Завершите эти шаги за первые 30 дней для бесплатного улучшения хранилища.</string>
+  <string name="get_more_free_storage_action_upload_title">Загрузить файл ИЛИ включить резервную копию фото</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Все ваши файлы будут зашифрованы.</string>
+  <string name="get_more_free_storage_action_link_title">Создать ссылку общего доступа</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Выберите любой файл или папку. Откройте меню параметров и нажмите %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Поделиться файлом</string>
+  <string name="get_more_free_storage_action_share_subtitle">Он прост и безопасен.</string>
+  <string name="get_more_free_storage_action_recovery_title">Установить метод восстановления</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Войдите в %1$s, затем перейдите в Настройки -&gt; Восстановление.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

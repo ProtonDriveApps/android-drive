@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">App</string>
+  <string name="common_more">Meer</string>
+  <string name="common_mime_type">MIME-type</string>
+  <string name="common_name">Naam</string>
+  <string name="common_no">Nee</string>
+  <string name="common_share">Delen</string>
+  <string name="common_shared">Gedeeld</string>
+  <string name="common_size">Grootte</string>
+  <string name="common_type">Soort</string>
+  <string name="common_yes">Ja</string>
+  <string name="common_download">Downloaden</string>
+  <string name="common_downloading">Downloaden</string>
+  <string name="common_link">Koppeling</string>
+  <string name="common_password">Wachtwoord</string>
+  <string name="common_retry">Opnieuw proberen</string>
+  <string name="common_settings">Instellingen</string>
+  <string name="common_trash">Prullenbak</string>
+  <string name="common_uploading">Uploaden</string>
+  <string name="common_on">Aan</string>
+  <string name="common_off">Uit</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">Oké</string>
+  <string name="common_close_action">Sluiten</string>
+  <string name="common_retry_action">Opnieuw proberen</string>
+  <string name="common_undo_action">Ongedaan maken</string>
+  <string name="common_rename_action">Hernoem</string>
+  <string name="common_send_action">Verzenden</string>
+  <string name="common_create_action">Aanmaken</string>
+  <string name="common_cancel_action">Annuleren</string>
+  <string name="common_cancel_all_action">Annuleer alle</string>
+  <string name="common_got_it_action">Begrepen</string>
+  <string name="common_next_action">Volgende</string>
+  <string name="common_save_action">Opslaan</string>
+  <string name="common_discard_action">Weggooien</string>
+  <string name="common_skip_action">Overslaan</string>
+  <string name="common_delete_permanently_action">Permanent verwijderen</string>
+  <string name="common_make_available_offline_action">Offline beschikbaar maken</string>
+  <string name="common_remove_from_offline_available_action">Verwijderen uit offline beschikbaar</string>
+  <string name="common_get_link_action">Link krijgen</string>
+  <string name="common_manage_link_action">Beheer link</string>
+  <string name="common_manage_access_action">Toegang beheren</string>
+  <string name="common_copy_link_action">Link kopiëren</string>
+  <string name="common_stop_sharing_action">Delen stoppen</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">Audio</string>
+  <string name="common_type_calendar">iCalendar-formaat</string>
+  <string name="common_type_doc">Document</string>
+  <string name="common_type_image">Afbeelding</string>
+  <string name="common_type_keynote">Keynote-bestand</string>
+  <string name="common_type_numbers">Numbers-bestand</string>
+  <string name="common_type_pages">Pages-bestand</string>
+  <string name="common_type_pdf">PDF-document</string>
+  <string name="common_type_ppt">Presentatie</string>
+  <string name="common_type_text">Tekst</string>
+  <string name="common_type_trustedkey">Vertrouwde sleutel</string>
+  <string name="common_type_unknown">Binair</string>
+  <string name="common_type_video">Video</string>
+  <string name="common_type_xls">Werkblad</string>
+  <string name="common_type_xml">XML-bestand</string>
+  <string name="common_type_zip">Archief</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">De naam mag niet leeg zijn.</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">De naam mag niet langer zijn dan %1$d tekens.</string>
+  <string name="common_error_name_with_forbidden_characters">Naam mag geen onzichtbare tekens bevatten, \"/\" of \"\\"</string>
+  <string name="common_error_name_periods">Naam mag niet \".\" of \"..\"</string>
+  <string name="common_error_no_internet">Geen internetverbinding</string>
+  <string name="common_error_http_5xx">Er is een serverfout opgetreden.</string>
+  <string name="common_error_internal">Er is een interne fout opgetreden.</string>
+  <string name="common_error_crypto">Versleuteling of ontsleuteling is mislukt</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">Versleuteling of ontsleuteling mislukt: %1$s</string>
+  <string name="common_error_io">Invoer- of uitvoerbewerking is mislukt</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">Invoer- of uitvoerbewerking is mislukt: %1$s</string>
+  <string name="common_error_security">Er is een beveiligingsfout opgetreden.</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">Er is een beveiligingsfout opgetreden: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s gedownload</string>
+  <string name="common_sign_out">Uitloggen</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="one">%1$d geselecteerd</item>
+    <item quantity="other">%1$d geselecteerd</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s gekopieerd naar klembord</string>
+  <string name="common_in_app_notification_download_started">Download gestart</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s gedownload</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="one">%1$d gedownload bestand</item>
+    <item quantity="other">%1$d gedownloade bestanden</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">Downloaden van %1$s is mislukt</string>
+  <string name="common_in_app_notification_download_failed">Download mislukt</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">Het systeem kan geen enkele toepassing vinden die %1$s kan gebruiken</string>
+  <!-- endregion -->
+</resources>

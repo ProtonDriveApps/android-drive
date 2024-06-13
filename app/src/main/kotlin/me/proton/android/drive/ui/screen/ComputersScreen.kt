@@ -40,17 +40,17 @@ import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.base.presentation.extension.conditional
+import me.proton.core.drive.base.presentation.extension.onContent
+import me.proton.core.drive.base.presentation.extension.onEmpty
+import me.proton.core.drive.base.presentation.extension.onError
+import me.proton.core.drive.base.presentation.extension.onLoading
 import me.proton.core.drive.device.domain.entity.Device
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.drivelink.device.presentation.component.DevicesContent
 import me.proton.core.drive.drivelink.device.presentation.component.DevicesEmpty
 import me.proton.core.drive.drivelink.device.presentation.component.DevicesError
 import me.proton.core.drive.drivelink.device.presentation.component.DevicesLoading
-import me.proton.core.drive.files.presentation.component.onContent
-import me.proton.core.drive.files.presentation.component.onEmpty
-import me.proton.core.drive.files.presentation.component.onError
-import me.proton.core.drive.files.presentation.component.onLoading
-import me.proton.core.drive.files.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.base.presentation.component.TopAppBar as BaseTopAppBar
 

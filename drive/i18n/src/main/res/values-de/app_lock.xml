@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">App gesperrt</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Mit Gerätesperre entsperren</string>
+  <string name="app_lock_biometric_title_confirmation">Bestätigung</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Um das Entsperren zu aktivieren, bestätige bitte deine Gerätesperre.</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Um das Entsperren zu deaktivieren, bestätige bitte deine Gerätesperre.</string>
+  <string name="app_lock_option_never_set">Biometrie oder Gerätesperre aktivieren</string>
+  <string name="app_lock_option_none">Entsperrt lassen</string>
+  <string name="app_lock_option_system">Biometrie oder Gerätesperre</string>
+  <string name="app_lock_system_dialog_title">Biometrie-Zugriff aktivieren</string>
+  <string name="app_lock_system_dialog_description">Biometrie- oder Gerätesperre-Zugriff auf diesem Gerät einrichten.</string>
+  <string name="app_lock_system_dialog_settings_button">Einstellungen</string>
+  <string name="app_lock_system_not_available">Biometrie oder Gerätesperre ist auf deinem Gerät nicht verfügbar.</string>
+  <string name="app_lock_enabled">Biometrie- oder Gerätesperre-Zugriff aktiviert</string>
+  <string name="app_lock_disabled">App-Sperre wurde deaktiviert</string>
+  <string name="app_lock_access_title">Wähle aus, wie die App gesperrt werden soll</string>
+  <string name="app_lock_unlock_the_app">App entsperren</string>
+</resources>

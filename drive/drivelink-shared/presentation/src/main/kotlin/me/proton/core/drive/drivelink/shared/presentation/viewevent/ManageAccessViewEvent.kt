@@ -17,7 +17,6 @@
  */
 package me.proton.core.drive.drivelink.shared.presentation.viewevent
 
-import me.proton.core.drive.link.domain.entity.LinkId
 
 interface ManageAccessViewEvent {
     val onBackPressed: () -> Unit
@@ -26,7 +25,8 @@ interface ManageAccessViewEvent {
     val onInvitationOptions: (String) -> Unit
     val onMemberOptions: (String) -> Unit
     val onCopyLink: (String) -> Unit
-    val onStartSharing: () -> Unit
-    val onStopSharing: () -> Unit
+    val onStartLinkSharing: () -> Unit
+    val onStopLinkSharing: () -> Unit
+    val onStopAllSharing: () -> Unit
     val onConfigureSharing: () -> Unit
 }

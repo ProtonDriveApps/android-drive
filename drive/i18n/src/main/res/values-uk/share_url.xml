@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Створення посилання на %1$s</string>
+  <string name="shared_link_getting_link">Отримання посилання</string>
+  <string name="shared_link_file">файлу</string>
+  <string name="shared_link_folder">теки</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Будь-хто за цим посиланням може отримати доступ до %1$s</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Лише люди з посиланням та паролем можуть отримати доступ до %1$s</string>
+  <string name="shared_link_privacy_settings">Налаштування приватності</string>
+  <string name="shared_link_password_protection">Захист паролем</string>
+  <string name="shared_link_expiration_date">Термін дії</string>
+  <string name="shared_link_action_copy_link">Копіювати посилання</string>
+  <string name="shared_link_action_copy_password">Скопіювати пароль</string>
+  <string name="shared_link_action_share_link">Поділитись посиланням</string>
+  <string name="shared_link_dialog_title_discard_changes">Відхилити зміни?</string>
+  <string name="shared_link_dialog_description">Ви втратите всі незбережені зміни.</string>
+  <string name="shared_link_hint_expiration_date_field">Немає терміну дії</string>
+  <string name="shared_link_message_update_share_url">Налаштування спільного доступу оновлено</string>
+  <string name="shared_link_error_message_update_share_url">Не вдалося оновити налаштування спільного доступу</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">Довжина пароля має бути від 1 до %1$d символів</string>
+  <string name="shared_link_error_message_not_found">Спільне посилання або не існує або не чинне</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">Термін дії повинен завершуватися принаймні завтра</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">Термін дії не повинен перевищувати %1$d днів</string>
+  <string name="shared_link_error_legacy_link">Це застаріле посилання, керування яким не підтримується. Радимо припинити поширювати це посилання та отримати нове.</string>
+  <string name="title_share_via_link">Спільний доступ за посиланням</string>
+  <string name="shared_with_me_title">Поширено для мене</string>
+  <string name="shared_by_me_title">Поширено мною</string>
+  <string name="shared_with_me_empty_description">Тут з\'являтимуться файли й теки, до яких ви надаєте спільний доступ</string>
+  <string name="shared_by_me_empty_description">Безпечно надавайте спільний доступ до файлів і тек завдяки наскрізному шифруванню</string>
+</resources>

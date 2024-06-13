@@ -25,6 +25,7 @@ import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.data.api.entity.LinkDto
 import me.proton.core.drive.link.data.api.request.GetLinksRequest
 import me.proton.core.drive.link.data.api.response.GetLinksResponse
+import me.proton.core.drive.share.data.api.MembershipDto
 import me.proton.core.drive.share.data.api.ShareDto
 import me.proton.core.drive.share.data.api.request.ShareAccessWithNodeRequest
 import me.proton.core.drive.share.data.api.response.GetShareBootstrapResponse
@@ -55,10 +56,11 @@ fun MockWebServer.getShareBootstrap() = routing {
     get("/drive/shares/@{enc_shareID}") {
         jsonResponse {
             val shareId = requireNotNull(parameters["enc_shareID"])
+            val shareType = findShareType(shareId)
             GetShareBootstrapResponse(
                 code = ProtonApiCode.SUCCESS,
                 shareId = shareId,
-                type = findShareType(shareId),
+                type = shareType,
                 state = 1,
                 linkId = findRootId(shareId).id,
                 volumeId = volumeId.id,
@@ -69,7 +71,8 @@ fun MockWebServer.getShareBootstrap() = routing {
                 passphrase = "s".repeat(32),
                 passphraseSignature = "",
                 addressId = "address-id",
-                creationTime = null
+                creationTime = null,
+                memberships = emptyList(),
             )
         }
     }
@@ -126,3 +129,13 @@ fun MockWebServer.updateUnmigratedShares() = routing {
         }
     }
 }
+
+fun MockWebServer.deleteShare(block: RequestContext.() -> MockResponse) = routing {
+    routing {
+        delete("/drive/shares/@{enc_shareID}") {
+            block()
+        }
+    }
+}
+
+fun MockWebServer.deleteShare() = deleteShare { jsonResponse {} }

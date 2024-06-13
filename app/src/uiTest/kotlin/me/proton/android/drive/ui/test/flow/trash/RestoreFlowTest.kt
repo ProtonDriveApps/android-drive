@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.test.flow.trash
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.data.ImageName
+import me.proton.android.drive.ui.robot.BackendRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.TrashRobot
@@ -79,8 +80,7 @@ class RestoreFlowTest : AuthenticatedBaseTest() {
     fun restoreAnItemWhenParentFolderIsInTrash() {
         val parent = "folder1"
         val child = "file2"
-        val restoreErrorMessage =
-            "This file or folder is no longer available. A parent folder has been deleted."
+        val restoreErrorMessage = BackendRobot.linkNoLongerAvailableParentDeleted
 
         PhotosTabRobot
             .clickFilesTab()

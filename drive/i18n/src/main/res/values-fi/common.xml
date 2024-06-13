@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">Sovellus</string>
+  <string name="common_more">Lisää</string>
+  <string name="common_mime_type">MIME-tyyppi</string>
+  <string name="common_name">Nimi</string>
+  <string name="common_no">Ei</string>
+  <string name="common_share">Jaa</string>
+  <string name="common_shared">Jaetut</string>
+  <string name="common_size">Koko</string>
+  <string name="common_type">Tyyppi</string>
+  <string name="common_yes">Kyllä</string>
+  <string name="common_download">Lataa</string>
+  <string name="common_downloading">Ladataan</string>
+  <string name="common_link">Linkki</string>
+  <string name="common_password">Salasana</string>
+  <string name="common_retry">Yritä uudelleen</string>
+  <string name="common_settings">Asetukset</string>
+  <string name="common_trash">Roskakori</string>
+  <string name="common_uploading">Tallennetaan</string>
+  <string name="common_on">Käytössä</string>
+  <string name="common_off">Ei käytössä</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">OK</string>
+  <string name="common_close_action">Sulje</string>
+  <string name="common_retry_action">Yritä uudelleen</string>
+  <string name="common_undo_action">Kumoa</string>
+  <string name="common_rename_action">Nimeä uudelleen</string>
+  <string name="common_send_action">Lähetä</string>
+  <string name="common_create_action">Luo</string>
+  <string name="common_cancel_action">Peruuta</string>
+  <string name="common_cancel_all_action">Peru kaikki</string>
+  <string name="common_got_it_action">Selvä</string>
+  <string name="common_next_action">Seuraava</string>
+  <string name="common_save_action">Tallenna</string>
+  <string name="common_discard_action">Hylkää</string>
+  <string name="common_skip_action">Ohita</string>
+  <string name="common_delete_permanently_action">Poista pysyvästi</string>
+  <string name="common_make_available_offline_action">Lataa käytettäväksi ilman yhteyttä</string>
+  <string name="common_remove_from_offline_available_action">Poista ilman yhteyttä käytettävistä</string>
+  <string name="common_get_link_action">Hanki linkki</string>
+  <string name="common_manage_link_action">Hallitse linkkiä</string>
+  <string name="common_manage_access_action">Hallitse käyttöoikeuksia</string>
+  <string name="common_copy_link_action">Kopioi linkki</string>
+  <string name="common_stop_sharing_action">Lopeta jakaminen</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">Ääni</string>
+  <string name="common_type_calendar">iCalendar-muoto</string>
+  <string name="common_type_doc">Dokumentti</string>
+  <string name="common_type_image">Kuva</string>
+  <string name="common_type_keynote">Keynote-tiedosto</string>
+  <string name="common_type_numbers">Numbers-tiedosto</string>
+  <string name="common_type_pages">Pages-tiedosto</string>
+  <string name="common_type_pdf">PDF-dokumentti</string>
+  <string name="common_type_ppt">Esitys</string>
+  <string name="common_type_text">Teksti</string>
+  <string name="common_type_trustedkey">Luotettu avain</string>
+  <string name="common_type_unknown">Binaari</string>
+  <string name="common_type_video">Video</string>
+  <string name="common_type_xls">Laskentataulukko</string>
+  <string name="common_type_xml">XML-tiedosto</string>
+  <string name="common_type_zip">Pakattu</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">Nimi ei voi olla tyhjä</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">Nimi ei voi sisältää yli %1$d merkkiä</string>
+  <string name="common_error_name_with_forbidden_characters">Nimi ei voi sisältää merkkejä \"/\" ja \"\\" eikä näkymättömiä merkkejä.</string>
+  <string name="common_error_name_periods">Nimi ei voi olla \".\" tai \"..\"</string>
+  <string name="common_error_no_internet">Ei internet-yhteyttä</string>
+  <string name="common_error_http_5xx">Tapahtui palvelinvirhe</string>
+  <string name="common_error_internal">Tapahtui sisäinen virhe</string>
+  <string name="common_error_crypto">Salaus tai salauksen purku epäonnistui</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">Salaus tai salauksen purku epäonnistui: %1$s</string>
+  <string name="common_error_io">Luku-/lähetystapahtuma epäonnistui</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">Luku-/lähetystapahtuma epäonnistui: %1$s</string>
+  <string name="common_error_security">Tapahtui suojausvirhe</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">Tapahtui suojausvirhe: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s ladattu</string>
+  <string name="common_sign_out">Kirjaudu ulos</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="one">%1$d valittu</item>
+    <item quantity="other">%1$d valittu</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s kopioitiin leikepöydälle</string>
+  <string name="common_in_app_notification_download_started">Lataus käynnistyi</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s ladattu</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="one">%1$d tiedosto ladattu</item>
+    <item quantity="other">%1$d tiedostoa ladattu</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">Tiedoston %1$s lataus epäonnistui</string>
+  <string name="common_in_app_notification_download_failed">Lataus epäonnistui</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">Järjestelmä ei löytänyt sovellusta, joka voisi %1$s</string>
+  <!-- endregion -->
+</resources>

@@ -29,6 +29,7 @@ import me.proton.core.drive.link.data.db.LinkDao
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDao
 import me.proton.core.drive.linkoffline.data.db.LinkOfflineDao
 import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
+import me.proton.core.drive.share.data.db.ShareMembershipDao
 
 @Dao
 interface DriveLinkSharedDao : DriveLinkDao {
@@ -44,6 +45,7 @@ interface DriveLinkSharedDao : DriveLinkDao {
             ${LinkOfflineDao.LINK_JOIN_STATEMENT}
             ${LinkDownloadDao.LINK_JOIN_STATEMENT}
             ${LinkTrashDao.LINK_JOIN_STATEMENT}
+            ${ShareMembershipDao.LINK_JOIN_STATEMENT}
         WHERE 
             LinkEntity.user_id = :userId AND 
             ShareUrlEntity.volume_id = :volumeId AND

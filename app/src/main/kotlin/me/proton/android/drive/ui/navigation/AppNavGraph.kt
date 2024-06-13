@@ -66,10 +66,12 @@ import me.proton.android.drive.ui.dialog.ComputerOptions
 import me.proton.android.drive.ui.dialog.ConfirmDeletionDialog
 import me.proton.android.drive.ui.dialog.ConfirmEmptyTrashDialog
 import me.proton.android.drive.ui.dialog.ConfirmSkipIssuesDialog
-import me.proton.android.drive.ui.dialog.ConfirmStopSharingDialog
+import me.proton.android.drive.ui.dialog.ConfirmStopAllSharingDialog
+import me.proton.android.drive.ui.dialog.ConfirmStopLinkSharingDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopSyncFolderDialog
 import me.proton.android.drive.ui.dialog.FileOrFolderOptions
 import me.proton.android.drive.ui.dialog.ShareInvitationOptions
+import me.proton.android.drive.ui.dialog.LogOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
@@ -92,6 +94,7 @@ import me.proton.android.drive.ui.screen.FileInfoScreen
 import me.proton.android.drive.ui.screen.GetMoreFreeStorageScreen
 import me.proton.android.drive.ui.screen.HomeScreen
 import me.proton.android.drive.ui.screen.LauncherScreen
+import me.proton.android.drive.ui.screen.LogScreen
 import me.proton.android.drive.ui.screen.MoveToFolder
 import me.proton.android.drive.ui.screen.OfflineScreen
 import me.proton.android.drive.ui.screen.PhotosBackupScreen
@@ -267,6 +270,14 @@ fun AppNavGraph(
             navigateToSubscription = navigateToSubscription,
             onDrawerStateChanged = onDrawerStateChanged,
         )
+        addHomeSharedTabs(
+            navController = navController,
+            homeNavController = homeNavController,
+            deepLinkBaseUrl = deepLinkBaseUrl,
+            navigateToBugReport = navigateToBugReport,
+            navigateToSubscription = navigateToSubscription,
+            onDrawerStateChanged = onDrawerStateChanged,
+        )
         addPhotosIssues(navController)
         addPhotosUpsell(navigateToSubscription)
         addConfirmSkipIssues(navController)
@@ -277,7 +288,8 @@ fun AppNavGraph(
         addMultipleFileOrFolderOptions(navController)
         addParentFolderOptions(navController)
         addConfirmDeletionDialog(navController)
-        addConfirmStopSharingDialog(navController)
+        addConfirmStopLinkSharingDialog(navController)
+        addConfirmStopAllSharingDialog(navController)
         addConfirmEmptyTrashDialog(navController)
         addTrash(navController)
         addOffline(navController)
@@ -310,6 +322,8 @@ fun AppNavGraph(
         addRenameComputerDialog(navController)
         addGetMoreFreeStorage(navController)
         addDefaultHomeTab(navController)
+        addLog(navController)
+        addLogOptions()
     }
 }
 
@@ -444,7 +458,7 @@ fun NavGraphBuilder.addFileOrFolderOptions(
             }
         },
         navigateToStopSharing = { linkId ->
-              navController.navigate(Screen.Files.Dialogs.ConfirmStopSharing(userId, linkId)) {
+              navController.navigate(Screen.Files.Dialogs.ConfirmStopLinkSharing(userId, linkId)) {
                 popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
             }
         },
@@ -590,34 +604,67 @@ fun NavGraphBuilder.addConfirmDeletionDialog(navController: NavHostController) =
 }
 
 @ExperimentalCoroutinesApi
-fun NavGraphBuilder.addConfirmStopSharingDialog(navController: NavHostController) = dialog(
-    route = Screen.Files.Dialogs.ConfirmStopSharing.route,
+fun NavGraphBuilder.addConfirmStopLinkSharingDialog(navController: NavHostController) = dialog(
+    route = Screen.Files.Dialogs.ConfirmStopLinkSharing.route,
     arguments = listOf(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
-        navArgument(Screen.Files.Dialogs.ConfirmStopSharing.LINK_ID) { type = NavType.StringType },
-        navArgument(Screen.Files.Dialogs.ConfirmStopSharing.SHARE_ID) { type = NavType.StringType },
-        navArgument(Screen.Files.Dialogs.ConfirmStopSharing.CONFIRM_POP_UP_ROUTE) {
+        navArgument(Screen.Files.Dialogs.ConfirmStopLinkSharing.LINK_ID) { type = NavType.StringType },
+        navArgument(Screen.Files.Dialogs.ConfirmStopLinkSharing.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.Files.Dialogs.ConfirmStopLinkSharing.CONFIRM_POP_UP_ROUTE) {
             type = NavType.StringType
             nullable = true
             defaultValue = null
         },
-        navArgument(Screen.Files.Dialogs.ConfirmStopSharing.CONFIRM_POP_UP_ROUTE_INCLUSIVE) { type = NavType.BoolType },
+        navArgument(Screen.Files.Dialogs.ConfirmStopLinkSharing.CONFIRM_POP_UP_ROUTE_INCLUSIVE) { type = NavType.BoolType },
     ),
 ) { navBackStackEntry ->
-    val confirmPopUpRoute = navBackStackEntry.get<String>(Screen.Files.Dialogs.ConfirmStopSharing.CONFIRM_POP_UP_ROUTE)
+    val confirmPopUpRoute = navBackStackEntry.get<String>(Screen.Files.Dialogs.ConfirmStopLinkSharing.CONFIRM_POP_UP_ROUTE)
     val onDismiss: () -> Unit = {
         navController.popBackStack(
-            route = Screen.Files.Dialogs.ConfirmStopSharing.route,
+            route = Screen.Files.Dialogs.ConfirmStopLinkSharing.route,
             inclusive = true,
         )
     }
     val onConfirm: () -> Unit = confirmPopUpRoute?.let {
         val confirmPopUpRouteInclusive = navBackStackEntry.get<Boolean>(
-            Screen.Files.Dialogs.ConfirmStopSharing.CONFIRM_POP_UP_ROUTE_INCLUSIVE
+            Screen.Files.Dialogs.ConfirmStopLinkSharing.CONFIRM_POP_UP_ROUTE_INCLUSIVE
         ) ?: true
         { navController.popBackStack(route = confirmPopUpRoute, inclusive = confirmPopUpRouteInclusive) }
     } ?: onDismiss
-    ConfirmStopSharingDialog(
+    ConfirmStopLinkSharingDialog(
+        onDismiss = onDismiss,
+        onConfirm = onConfirm,
+    )
+}
+
+@ExperimentalCoroutinesApi
+fun NavGraphBuilder.addConfirmStopAllSharingDialog(navController: NavHostController) = dialog(
+    route = Screen.Files.Dialogs.ConfirmStopAllSharing.route,
+    arguments = listOf(
+        navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.Files.Dialogs.ConfirmStopAllSharing.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.Files.Dialogs.ConfirmStopAllSharing.CONFIRM_POP_UP_ROUTE) {
+            type = NavType.StringType
+            nullable = true
+            defaultValue = null
+        },
+        navArgument(Screen.Files.Dialogs.ConfirmStopAllSharing.CONFIRM_POP_UP_ROUTE_INCLUSIVE) { type = NavType.BoolType },
+    ),
+) { navBackStackEntry ->
+    val confirmPopUpRoute = navBackStackEntry.get<String>(Screen.Files.Dialogs.ConfirmStopAllSharing.CONFIRM_POP_UP_ROUTE)
+    val onDismiss: () -> Unit = {
+        navController.popBackStack(
+            route = Screen.Files.Dialogs.ConfirmStopAllSharing.route,
+            inclusive = true,
+        )
+    }
+    val onConfirm: () -> Unit = confirmPopUpRoute?.let {
+        val confirmPopUpRouteInclusive = navBackStackEntry.get<Boolean>(
+            Screen.Files.Dialogs.ConfirmStopAllSharing.CONFIRM_POP_UP_ROUTE_INCLUSIVE
+        ) ?: true
+        { navController.popBackStack(route = confirmPopUpRoute, inclusive = confirmPopUpRouteInclusive) }
+    } ?: onDismiss
+    ConfirmStopAllSharingDialog(
         onDismiss = onDismiss,
         onConfirm = onConfirm,
     )
@@ -666,6 +713,7 @@ internal fun NavGraphBuilder.addHome(
         Screen.Home.TAB_PHOTOS -> Screen.Photos.route
         Screen.Home.TAB_COMPUTERS -> Screen.Computers.route
         Screen.Home.TAB_SHARED -> Screen.Shared.route
+        Screen.Home.TAB_SHARED_TABS -> Screen.SharedTabs.route
         else -> defaultStartDestination
     }
     val shareId = navBackStackEntry.get<String>(Screen.Files.SHARE_ID)
@@ -870,6 +918,26 @@ fun NavGraphBuilder.addHomeComputers(
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Computers.route,
     defaultStartDestination = Screen.Computers.route,
+    navigateToBugReport = navigateToBugReport,
+    navigateToSubscription = navigateToSubscription,
+    onDrawerStateChanged = onDrawerStateChanged
+)
+
+@ExperimentalAnimationApi
+@ExperimentalCoroutinesApi
+fun NavGraphBuilder.addHomeSharedTabs(
+    navController: NavHostController,
+    homeNavController: NavHostController,
+    deepLinkBaseUrl: String,
+    navigateToBugReport: () -> Unit,
+    navigateToSubscription: () -> Unit,
+    onDrawerStateChanged: (Boolean) -> Unit,
+) = addHome(
+    navController = navController,
+    homeNavController = homeNavController,
+    deepLinkBaseUrl = deepLinkBaseUrl,
+    route = Screen.SharedTabs.route,
+    defaultStartDestination = Screen.SharedTabs.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     onDrawerStateChanged = onDrawerStateChanged
@@ -1097,7 +1165,10 @@ fun NavGraphBuilder.addPagerPreview(navController: NavHostController) = composab
     ),
 ) { navBackStackEntry ->
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
-    val optionsFilter = navBackStackEntry.requireSerializable(Screen.PagerPreview.OPTIONS_FILTER, OptionsFilter::class.java)
+    val optionsFilter = navBackStackEntry.requireSerializable(
+        Screen.PagerPreview.OPTIONS_FILTER,
+        OptionsFilter::class.java
+    )
     PreviewScreen(
         navigateBack = {
             navController.popBackStack(
@@ -1142,6 +1213,9 @@ fun NavGraphBuilder.addSettings(navController: NavHostController) = composable(
         },
         navigateToDefaultHomeTab = {
             navController.navigate(Screen.Settings.DefaultHomeTab(userId))
+        },
+        navigateToLog = {
+            navController.navigate(Screen.Log(userId))
         },
     )
 }
@@ -1335,7 +1409,7 @@ fun NavGraphBuilder.addShareViaLink(navController: NavHostController) = composab
     val userId = UserId(navBackStackEntry.require(Screen.ShareViaLink.USER_ID))
     ShareViaLink(
         navigateToStopSharing = { linkId ->
-            navController.navigate(Screen.Files.Dialogs.ConfirmStopSharing(userId, linkId, Screen.ShareViaLink.route))
+            navController.navigate(Screen.Files.Dialogs.ConfirmStopLinkSharing(userId, linkId, Screen.ShareViaLink.route))
         },
         navigateToDiscardChanges = { linkId ->
             navController.navigate(Screen.ShareViaLink.Dialogs.DiscardChanges(userId, linkId))
@@ -1370,14 +1444,17 @@ fun NavGraphBuilder.addManageAccess(navController: NavHostController) = composab
         navigateToShareViaLink = { linkId ->
             navController.navigate(Screen.ShareViaLink(userId, linkId))
         },
-        navigateToStopSharing = { linkId ->
-            navController.navigate(Screen.Files.Dialogs.ConfirmStopSharing(userId, linkId))
+        navigateToStopLinkSharing = { linkId ->
+            navController.navigate(Screen.Files.Dialogs.ConfirmStopLinkSharing(userId, linkId))
         },
         navigateToInvitationOptions = { linkId, invitationId ->
             navController.navigate(Screen.ShareInvitationOptions(linkId, invitationId))
         },
         navigateToMemberOptions = { linkId, memberId ->
             navController.navigate(Screen.ShareMemberOptions(linkId, memberId))
+        },
+        navigateToStopAllSharing = { shareId ->
+            navController.navigate(Screen.Files.Dialogs.ConfirmStopAllSharing(shareId, confirmPopUpRoute = Screen.ManageAccess.route))
         },
         navigateBack = {
             navController.popBackStack(
@@ -1391,10 +1468,6 @@ fun NavGraphBuilder.addManageAccess(navController: NavHostController) = composab
 @ExperimentalAnimationApi
 fun NavGraphBuilder.addShareViaInvitations(navController: NavHostController) = composable(
     route = Screen.ShareViaInvitations.route,
-    enterTransition = defaultEnterSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Up) { true },
-    exitTransition = { ExitTransition.None },
-    popEnterTransition = { EnterTransition.None },
-    popExitTransition = defaultPopExitSlideTransition(towards = AnimatedContentTransitionScope.SlideDirection.Down) { true },
     arguments = listOf(
         navArgument(Screen.ShareViaInvitations.USER_ID) { type = NavType.StringType },
         navArgument(Screen.ShareViaInvitations.SHARE_ID) { type = NavType.StringType },
@@ -1688,4 +1761,39 @@ fun NavGraphBuilder.addDefaultHomeTab(navController: NavHostController) = compos
             )
         }
     )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addLog(navController: NavHostController) = composable(
+    route = Screen.Log.route,
+    enterTransition = defaultEnterSlideTransition { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition { true },
+    arguments = listOf(
+        navArgument(Screen.Log.USER_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry ->
+    val userId = UserId(navBackStackEntry.require(Screen.Log.USER_ID))
+    LogScreen(
+        navigateToLogOptions = {
+            navController.navigate(Screen.Log.Options(userId))
+        },
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Log.route,
+                inclusive = true,
+            )
+        }
+    )
+}
+
+fun NavGraphBuilder.addLogOptions() = modalBottomSheet(
+    route = Screen.Log.Options.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+    arguments = listOf(
+        navArgument(Screen.Log.USER_ID) { type = NavType.StringType },
+    ),
+) { _, _ ->
+    LogOptions()
 }

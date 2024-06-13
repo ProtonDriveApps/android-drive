@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">사진</string>
+  <string name="photos_permissions_title">사진과 비디오를 백업 및 암호화하세요</string>
+  <string name="photos_permissions_section_1_title">추억을 보호하세요</string>
+  <string name="photos_permissions_section_1_description">사진이 종단 간 암호화로 보호되어, 완전한 개인정보 보호를 보장합니다.</string>
+  <string name="photos_permissions_section_2_title">자동 백업</string>
+  <string name="photos_permissions_section_2_description">사진이 WiFi를 통해 원본 그대로 백업됩니다.</string>
+  <string name="photos_permissions_action">백업 켜기</string>
+  <string name="photos_permission_rational_img_text">접근 허용</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s가 사진 전체 접근을 필요로 합니다.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">이는 사진이 백업되고 모든 기기 간에서 사용할 수 있도록 하기 위해 필요로 합니다. \n%1$s는 프라이버시를 중요시하게 생각하며, 이는 오직 사진을 백업 및 동기화하기 위해 사용됩니다.</string>
+  <string name="photos_permission_rational_confirm_action">설정</string>
+  <string name="photos_permission_rational_dismiss_action">다음에</string>
+  <string name="photos_empty_loading_label_encrypted">종단간 암호화됨</string>
+  <string name="photos_empty_loading_label_progress">백업 진행 중.\n몇 분 소요될 수 있습니다.</string>
+  <string name="photos_separator_current_month">이번 달</string>
+  <string name="photos_encrypted_footer">종단간 암호화됨</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from the Camera folder"
+            "Backing up items from 2 Camera folders"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="other">%2$d %1$s 폴더에서 항목 백업 중</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">백업할 %1$s 폴더가 없습니다.</string>
+  <string name="photos_error_backup_disabled">백업이 비활성화 되었습니다.</string>
+  <string name="photos_error_backup_disabled_action">켜기</string>
+  <string name="photos_error_backup_missing_folder">백업 폴더를 찾을 수 없었습니다</string>
+  <string name="photos_error_backup_failed">백업에 실패했습니다.</string>
+  <string name="photos_error_backup_temporarily_disabled">백업을 일시적으로 사용할 수 없습니다.</string>
+  <string name="photos_error_missing_permissions">권한 없음.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">백업을 연속적이고 자동으로 진행하기 위해, 모든 사진에 접근하기 위해 설정에서 %1$s 접근을 허용하십시오.</string>
+  <string name="photos_error_waiting_connectivity">인터넷 연결 없음</string>
+  <string name="photos_error_waiting_wifi_connectivity">Wi-Fi를 기다리는 중</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">셀룰러 사용</string>
+  <string name="photos_error_local_storage">기기 저장 공간 가득 참</string>
+  <string name="photos_error_local_storage_description">백업을 계속하기 위해, 기기에 여유 공간을 만들어야 합니다.</string>
+  <string name="photos_error_background_restrictions">백그라운드 앱 활동을 위해 배터리 절약을 \'비활성화\' 하십시오.</string>
+  <string name="photos_error_background_restrictions_description">절전 설정을 조절하거나 앱을 자주 실행하셔야 지속적인 백그라운드 백업이 가능합니다.</string>
+  <string name="photos_error_background_restrictions_action">설정</string>
+  <string name="photos_empty_title">백업 목록이 아직 없습니다.</string>
+  <string name="photos_empty_description">곧 이 기기에서 찍은 사진과 비디오가 여기서 나타납니다.</string>
+  <string name="photos_backup_title">사진 백업</string>
+  <string name="photos_backup_option_mobile_data">사진 백업을 위해 모바일 데이터 사용</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">배터리 절약 비활성화</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">앱이 백그라운드에서 실행될 때 끊김없는 백업이 이루어집니다.</string>
+  <string name="photos_backup_in_app_notification_turned_on">사진 백업이 켜저 있습니다</string>
+  <string name="photos_backup_in_app_notification_turned_off">사진 백업이 꺼져 있습니다</string>
+  <string name="photos_backup_state_completed">백업 완료</string>
+  <string name="photos_backup_state_uncompleted">백업이 완료되었으나 문제가 발생했습니다.</string>
+  <string name="photos_backup_state_uncompleted_action">해결하기</string>
+  <string name="photos_backup_state_encrypting">암호화 중...</string>
+  <string name="photos_backup_state_uploading">백업 중…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="other">%1$s개 항목 남음</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="other">%1$s개 항목 저장됨</item>
+  </plurals>
+  <string name="photos_upsell_title">공간이 부족할 일 없도록</string>
+  <string name="photos_upsell_description">지금 업그레이드하여 나의 모든 추억을 암호화하고 안전하게 보관하세요.</string>
+  <string name="photos_upsell_dismiss_action">다음에</string>
+</resources>

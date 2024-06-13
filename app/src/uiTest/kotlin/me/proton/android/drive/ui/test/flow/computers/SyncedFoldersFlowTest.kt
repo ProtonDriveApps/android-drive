@@ -36,7 +36,7 @@ import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
 import me.proton.core.test.quark.data.User
 import me.proton.core.test.quark.v2.command.userCreate
@@ -178,7 +178,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(value = 2, isDevice = true)
-    @FeatureFlag(DRIVE_SHARING, NOT_FOUND)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun shareFile() {
         val file = "picWithThumbnail.jpg"
         FilesTabRobot
@@ -200,7 +200,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(value = 2, isDevice = true)
-    @FeatureFlag(DRIVE_SHARING, ENABLED)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun shareFileWithInternalUser() {
         val email = requireNotNull(quarkRule.quarkCommands.userCreate(User()).email)
         val file = "picWithThumbnail.jpg"

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items sent to trash"
+    -->
+  <plurals name="trash_operation_successful_format">
+    <item quantity="one">1 kohde siirrettiin roskakoriin</item>
+    <item quantity="other">%1$d kohdetta siirrettiin roskakoriin</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items restored"
+    -->
+  <plurals name="trash_restore_operation_successful_format">
+    <item quantity="one">1 kohde palautettiin</item>
+    <item quantity="other">%d kohdetta palautettiin</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items deleted permanently"
+    -->
+  <plurals name="trash_delete_operation_successful_format">
+    <item quantity="one">1 kohde poistettiin pysyvästi</item>
+    <item quantity="other">%d kohdetta poistettiin pysyvästi</item>
+  </plurals>
+  <string name="trash_empty_operation_successful">Roskakori tyhjennettiin</string>
+  <string name="trash_error_occurred_sending_to_trash">Virhe siirrettäessä tiedostoja roskakoriin</string>
+  <string name="trash_error_occurred_restoring_from_trash">Virhe yritettäessä palauttaa tiedosto(j)asi</string>
+  <string name="trash_error_occurred_deleting_from_trash">Virhe yritettäessä poistaa tiedosto(j)a</string>
+  <string name="trash_error_occurred_emptying_trash">Virhe yritettäessä tyhjentää roskakoria</string>
+</resources>

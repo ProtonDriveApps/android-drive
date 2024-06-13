@@ -18,10 +18,12 @@
 
 package me.proton.core.drive.share.user.data.api
 
+import me.proton.core.drive.base.data.api.response.Response
 import me.proton.core.drive.share.member.data.api.response.GetShareMemberResponse
 import me.proton.core.drive.share.user.data.api.request.UpdateShareMemberRequest
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -33,11 +35,16 @@ interface ShareMemberApi : BaseRetrofitApi {
         @Path("shareId") shareId: String,
     ): GetShareMemberResponse
 
-
     @PUT("drive/v2/shares/{shareId}/members/{shareMemberId}")
     suspend fun updateMember(
         @Path("shareId") shareId: String,
         @Path("shareMemberId") memberId: String,
         @Body request: UpdateShareMemberRequest,
     )
+
+    @DELETE("drive/v2/shares/{shareId}/members/{shareMemberId}")
+    suspend fun deleteMember(
+        @Path("shareId") shareId: String,
+        @Path("shareMemberId") invitationId: String,
+    ) : Response
 }

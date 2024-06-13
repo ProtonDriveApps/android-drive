@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">App</string>
+  <string name="common_more">Mer</string>
+  <string name="common_mime_type">MIME-type</string>
+  <string name="common_name">Navn</string>
+  <string name="common_no">Nei</string>
+  <string name="common_share">Del</string>
+  <string name="common_shared">Delt</string>
+  <string name="common_size">Størrelse</string>
+  <string name="common_type">Type</string>
+  <string name="common_yes">Ja</string>
+  <string name="common_download">Last ned</string>
+  <string name="common_downloading">Laster ned</string>
+  <string name="common_link">Kobling</string>
+  <string name="common_password">Passord</string>
+  <string name="common_retry">Prøv på nytt</string>
+  <string name="common_settings">Innstillinger</string>
+  <string name="common_trash">Papirkurv</string>
+  <string name="common_uploading">Laster opp</string>
+  <string name="common_on">På</string>
+  <string name="common_off">Av</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">OK</string>
+  <string name="common_close_action">Lukk</string>
+  <string name="common_retry_action">Prøv på nytt</string>
+  <string name="common_undo_action">Angre</string>
+  <string name="common_rename_action">Gi nytt navn</string>
+  <string name="common_send_action">Send</string>
+  <string name="common_create_action">Opprett</string>
+  <string name="common_cancel_action">Avbryt</string>
+  <string name="common_cancel_all_action">Avbryt alle</string>
+  <string name="common_got_it_action">Forstått</string>
+  <string name="common_next_action">Neste</string>
+  <string name="common_save_action">Lagre</string>
+  <string name="common_discard_action">Forkast</string>
+  <string name="common_skip_action">Hopp over</string>
+  <string name="common_delete_permanently_action">Slett permanent</string>
+  <string name="common_make_available_offline_action">Gjør tilgjengelig i frakoblet modus</string>
+  <string name="common_remove_from_offline_available_action">Fjern fra frakoblet modus tilgjengelig</string>
+  <string name="common_get_link_action">Få kobling</string>
+  <string name="common_manage_link_action">Administrer kobling</string>
+  <string name="common_manage_access_action">Administrer tilgang</string>
+  <string name="common_copy_link_action">Kopier kobling</string>
+  <string name="common_stop_sharing_action">Avslutt deling</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">Lyd</string>
+  <string name="common_type_calendar">iCalendar-format</string>
+  <string name="common_type_doc">Dokument</string>
+  <string name="common_type_image">Bilde</string>
+  <string name="common_type_keynote">Keynote-fil</string>
+  <string name="common_type_numbers">Numbers-fil</string>
+  <string name="common_type_pages">Pages-fil</string>
+  <string name="common_type_pdf">PDF-dokument</string>
+  <string name="common_type_ppt">Presentasjon</string>
+  <string name="common_type_text">Tekst</string>
+  <string name="common_type_trustedkey">Klarert nøkkel</string>
+  <string name="common_type_unknown">Binært</string>
+  <string name="common_type_video">Video</string>
+  <string name="common_type_xls">Regneark</string>
+  <string name="common_type_xml">XML-fil</string>
+  <string name="common_type_zip">Arkiv</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">Navnet kan ikke være tomt.</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">Navnet kan ikke overskride %1$d tegn</string>
+  <string name="common_error_name_with_forbidden_characters">Navnet kan ikke inkludere usynlige tegn, \"/\" eller \"\\"</string>
+  <string name="common_error_name_periods">Navn kan ikke være \".\" eller \"..\"</string>
+  <string name="common_error_no_internet">Ingen internettforbindelse</string>
+  <string name="common_error_http_5xx">Tjenerfeil oppstod</string>
+  <string name="common_error_internal">Intern feil oppstod</string>
+  <string name="common_error_crypto">Kryptering eller dekryptering mislyktes</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">Kryptering eller dekryptering mislyktes: %1$s.</string>
+  <string name="common_error_io">Inndata- eller utdataoperasjon mislyktes</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">Inndata- eller utdataoperasjon mislyktes: %1$s.</string>
+  <string name="common_error_security">Sikkerhetsfeil oppstod</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">Sikkerhetsfeil oppstod: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s lastet ned</string>
+  <string name="common_sign_out">Logg av</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="one">%1$d valgt</item>
+    <item quantity="other">%1$d valgt</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s kopiert til utklippstavlen</string>
+  <string name="common_in_app_notification_download_started">Nedlastning startet</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s lastet ned</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="one">%1$d fil lastet ned</item>
+    <item quantity="other">%1$d filer lastet ned</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">Nedlasting av %1$s mislyktes</string>
+  <string name="common_in_app_notification_download_failed">Nedlasting mislyktes</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">Systemet kunne ikke finne en applikasjon som kan %1$s.</string>
+  <!-- endregion -->
+</resources>

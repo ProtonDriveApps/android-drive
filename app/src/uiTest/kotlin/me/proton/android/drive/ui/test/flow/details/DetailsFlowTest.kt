@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.ui.test.flow.details
 
+import android.content.Context
 import android.os.Build
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
@@ -25,8 +26,12 @@ import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.entity.toFileTypeCategory
+import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
+import me.proton.core.drive.base.presentation.extension.labelResId
 import me.proton.core.drive.file.info.presentation.FileInfoTestTag
+import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.test.fusion.FusionConfig.targetContext
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
@@ -145,19 +150,26 @@ class DetailsFlowTest : AuthenticatedBaseTest() {
     private val sharedImage get() = LinkDetails(
         name = "shared.jpg",
         uploadedBy = "${testUser.name}@${envConfig.host}",
-        location = "/My files",
+        location = "/" + targetContext.getString(I18N.string.title_my_files),
         modified = TimestampS().asHumanReadableString(),
-        isShared = "Yes",
-        type = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) "JPG image" else "Image",
+        isShared = targetContext.getString(I18N.string.common_yes),
+        type = targetContext.getType("image/jpeg"),
         mimeType = "image/jpeg",
-        size = "15.80 KB",
+        size = 16177.bytes.asHumanReadableString(targetContext),
     )
+
+    private fun Context.getType(mimeType: String): String =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            contentResolver.getTypeInfo(mimeType).label.toString()
+        } else {
+            getString(mimeType.toFileTypeCategory().labelResId)
+        }
 
     private val sharedFolder get() = LinkDetails(
         name = "sharedFolder",
         uploadedBy = "${testUser.name}@${envConfig.host}",
-        location = "/My files",
+        location = "/" + targetContext.getString(I18N.string.title_my_files),
         modified = TimestampS().asHumanReadableString(),
-        isShared = "Yes",
+        isShared = targetContext.getString(I18N.string.common_yes),
     )
 }

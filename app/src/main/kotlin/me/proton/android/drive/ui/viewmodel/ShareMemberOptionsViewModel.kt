@@ -26,22 +26,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.options.MemberOption
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.domain.arch.mapSuccessValueOrNull
-import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Permissions
-import me.proton.core.drive.base.domain.entity.Permissions.Permission.READ
-import me.proton.core.drive.base.domain.entity.Permissions.Permission.WRITE
+import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -50,7 +48,6 @@ import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
-import me.proton.core.drive.drivelink.shared.domain.extension.permissions
 import me.proton.core.drive.drivelink.shared.domain.extension.sharingDetails
 import me.proton.core.drive.drivelink.shared.presentation.entry.ShareUserOptionEntry
 import me.proton.core.drive.drivelink.shared.presentation.extension.toViewState
@@ -58,9 +55,8 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserVie
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.user.domain.usecase.CopyInvitationUrl
+import me.proton.core.drive.share.user.domain.usecase.DeleteMember
 import me.proton.core.drive.share.user.domain.usecase.GetMemberFlow
-import me.proton.core.drive.share.user.domain.usecase.UpdateInvitationPermissions
 import me.proton.core.drive.share.user.domain.usecase.UpdateMemberPermissions
 import javax.inject.Inject
 
@@ -72,6 +68,7 @@ class ShareMemberOptionsViewModel @Inject constructor(
     getDriveLink: GetDriveLink,
     getMemberFlow: GetMemberFlow,
     private val updateMemberPermissions: UpdateMemberPermissions,
+    private val deleteMember: DeleteMember,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
@@ -82,9 +79,6 @@ class ShareMemberOptionsViewModel @Inject constructor(
         ShareId(userId, savedStateHandle.require(KEY_SHARE_ID)),
         savedStateHandle.require(KEY_LINK_ID)
     )
-
-    private val viewerPermissions = Permissions().add(READ)
-    private val editorPermissions = Permissions().add(READ).add(WRITE)
 
     private val driveLink: Flow<DriveLink?> = getDriveLink(linkId = linkId).mapSuccessValueOrNull()
 
@@ -110,22 +104,29 @@ class ShareMemberOptionsViewModel @Inject constructor(
         options.map { option ->
             when (option) {
                 is MemberOption.PermissionsViewer -> option.build(
-                    isSelected = member.permissions == viewerPermissions,
+                    isSelected = member.permissions == Permissions.viewer,
                     runAction = runAction,
                 ) {
                     viewModelScope.launch {
-                        updatePermissions(driveLink, viewerPermissions) { runAction {} }
+                        updatePermissions(driveLink, Permissions.viewer)
                     }
                 }
 
                 is MemberOption.PermissionsEditor -> option.build(
-                    isSelected = member.permissions == editorPermissions,
+                    isSelected = member.permissions == Permissions.editor,
                     runAction = runAction,
                 ) {
                     viewModelScope.launch {
-                        updatePermissions(driveLink, editorPermissions) { runAction {} }
+                        updatePermissions(driveLink, Permissions.editor)
                     }
                 }
+
+                is MemberOption.RemoveAccess -> option.build(runAction) {
+                    viewModelScope.launch {
+                        deleteMember(driveLink)
+                    }
+                }
+
                 else -> throw IllegalStateException(
                     "Option ${option.javaClass.simpleName} is not found. Did you forget to add it?"
                 )
@@ -136,23 +137,41 @@ class ShareMemberOptionsViewModel @Inject constructor(
     private suspend fun updatePermissions(
         driveLink: DriveLink,
         permissions: Permissions,
-        onComplete: () -> Unit,
     ) {
-        updateMemberPermissions(
+        val dataResult = updateMemberPermissions(
             shareId = requireNotNull(driveLink.sharingDetails?.shareId),
             memberId = memberId,
             permissions = permissions,
-        ).collectLatest { dataResult ->
-            dataResult.onFailure { error ->
-                error.log(SHARING)
-                broadcastMessages(
-                    userId = userId,
-                    message = error.getDefaultMessage(appContext, configurationProvider.useExceptionMessage),
-                    type = BroadcastMessage.Type.WARNING,
-                )
-            }.onSuccess {
-                onComplete()
-            }
+        ).filterSuccessOrError()
+            .last()
+        dataResult.onFailure { error ->
+            error.log(SHARING)
+            broadcastMessages(
+                userId = userId,
+                message = error.getDefaultMessage(
+                    context = appContext,
+                    useExceptionMessage = configurationProvider.useExceptionMessage
+                ),
+                type = BroadcastMessage.Type.WARNING,
+            )
+        }
+    }
+
+    private suspend fun deleteMember(driveLink: DriveLink) {
+        val dataResult = deleteMember(
+            shareId = requireNotNull(driveLink.sharingDetails?.shareId),
+            memberId = memberId,
+        ).filterSuccessOrError().last()
+        dataResult.onFailure { error ->
+            error.log(SHARING)
+            broadcastMessages(
+                userId = userId,
+                message = error.getDefaultMessage(
+                    context = appContext,
+                    useExceptionMessage = configurationProvider.useExceptionMessage
+                ),
+                type = BroadcastMessage.Type.WARNING,
+            )
         }
     }
 
@@ -164,6 +183,7 @@ class ShareMemberOptionsViewModel @Inject constructor(
         private val options = setOf(
             MemberOption.PermissionsViewer,
             MemberOption.PermissionsEditor,
+            MemberOption.RemoveAccess,
         )
     }
 }

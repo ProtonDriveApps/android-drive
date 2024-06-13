@@ -24,7 +24,8 @@ import me.proton.android.drive.ui.extension.assertDownloadState
 import me.proton.android.drive.ui.extension.assertHasItemType
 import me.proton.android.drive.ui.extension.assertHasLayoutType
 import me.proton.android.drive.ui.extension.assertHasThumbnail
-import me.proton.android.drive.ui.extension.assertIsShared
+import me.proton.android.drive.ui.extension.assertIsSharedByLink
+import me.proton.android.drive.ui.extension.assertIsSharedWithUsers
 import me.proton.android.drive.ui.extension.doesNotExist
 import me.proton.android.drive.ui.extension.withItemType
 import me.proton.android.drive.ui.extension.withLayoutType
@@ -108,7 +109,8 @@ interface LinksRobot : PullToRefreshRobot, Robot {
         layoutType: LayoutType? = null,
         itemType: ItemType? = null,
         hasThumbnail: Boolean? = null,
-        isShared: Boolean? = null,
+        isSharedByLink: Boolean? = null,
+        isSharedWithUsers: Boolean? = null,
         downloadState: SemanticsDownloadState? = null
     ) {
         linkWithName(name)
@@ -116,7 +118,8 @@ interface LinksRobot : PullToRefreshRobot, Robot {
                 layoutType?.let { assertHasLayoutType(it) }
                 itemType?.let { assertHasItemType(it) }
                 hasThumbnail?.let { assertHasThumbnail(it) }
-                isShared?.let { assertIsShared(it) }
+                isSharedByLink?.let { assertIsSharedByLink(it) }
+                isSharedWithUsers?.let { assertIsSharedWithUsers(it) }
                 downloadState?.let { assertDownloadState(it) }
                 assertIsDisplayed()
             }

@@ -18,44 +18,69 @@
 
 package me.proton.android.drive.ui.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.options.Option
 import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.options.filter
+import me.proton.android.drive.ui.options.filterPermissions
+import me.proton.android.drive.ui.options.filterRoot
+import me.proton.android.drive.ui.options.filterShareMember
 import me.proton.android.drive.ui.options.filterSharing
 import me.proton.android.drive.usecase.NotifyActivityNotFound
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.base.data.extension.getDefaultMessage
+import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
+import me.proton.core.drive.base.domain.extension.onFailure
+import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.domain.log.logId
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.documentsprovider.domain.usecase.ExportTo
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.isShareMember
 import me.proton.core.drive.drivelink.offline.domain.usecase.ToggleOffline
+import me.proton.core.drive.drivelink.shared.domain.extension.sharingDetails
 import me.proton.core.drive.drivelink.trash.domain.usecase.ToggleTrashState
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDevelopment
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingInvitations
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.shareId
+import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.user.domain.usecase.LeaveShare
 import me.proton.core.drive.shareurl.crypto.domain.usecase.CopyPublicUrl
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class FileOrFolderOptionsViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     savedStateHandle: SavedStateHandle,
     getDriveLink: GetDecryptedDriveLink,
     private val toggleOffline: ToggleOffline,
@@ -64,10 +89,17 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     private val exportTo: ExportTo,
     private val notifyActivityNotFound: NotifyActivityNotFound,
     private val getFeatureFlagFlow: GetFeatureFlagFlow,
+    private val leaveShare: LeaveShare,
+    private val configurationProvider: ConfigurationProvider,
+    private val broadcastMessages: BroadcastMessages,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private var dismiss: (() -> Unit)? = null
+    private val linkId: LinkId = FileId(
+        ShareId(userId, savedStateHandle.require(KEY_SHARE_ID)),
+        savedStateHandle.require(KEY_LINK_ID)
+    )
     val driveLink: Flow<DriveLink?> = getDriveLink(
-        linkId = FileId(ShareId(userId, savedStateHandle.require(KEY_SHARE_ID)), savedStateHandle.require(KEY_LINK_ID)),
+        linkId = linkId,
         failOnDecryptionError = false,
     )
         .mapSuccessValueOrNull()
@@ -77,8 +109,14 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             }
             new
         }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        .stateIn(viewModelScope, Eagerly, null)
     private val optionsFilter = savedStateHandle.require<OptionsFilter>(OPTIONS_FILTER)
+
+    private val sharingInvitations = getFeatureFlagFlow(driveSharingInvitations(userId))
+        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveSharingInvitations(userId), NOT_FOUND))
+
+    private val sharingDevelopment = getFeatureFlagFlow(driveSharingDevelopment(userId))
+        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveSharingDevelopment(userId), NOT_FOUND))
 
     fun <T : DriveLink> entries(
         runAction: (suspend () -> Unit) -> Unit,
@@ -95,14 +133,17 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         showCreateDocumentPicker: (String, () -> Unit) -> Unit = { _, _ -> },
     ): Flow<List<FileOptionEntry<T>>> = combine(
         this.driveLink.filterNotNull(),
-        getFeatureFlagFlow(FeatureFlagId.driveSharing(userId)),
-    ) { driveLink, sharingFeatureFlag ->
+        sharingInvitations,
+        sharingDevelopment,
+    ) { driveLink, sharingInvitations, sharingDevelopment, ->
         options
             .filter(driveLink)
             .filter(optionsFilter)
-            .filterSharing(sharingFeatureFlag)
+            .filterSharing(sharingInvitations)
+            .filterRoot(driveLink, sharingDevelopment)
+            .filterShareMember(driveLink.isShareMember)
+            .filterPermissions(driveLink.sharePermissions ?: Permissions.owner)
             .map { option ->
-                @Suppress("UNCHECKED_CAST")
                 when (option) {
                     is Option.DeletePermanently -> option.build(runAction, navigateToDelete)
                     is Option.Info -> option.build(runAction, navigateToInfo)
@@ -134,6 +175,11 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                     is Option.ShareViaInvitations -> option.build(runAction, navigateToShareViaInvitations)
                     is Option.ShareViaLink -> option.build(runAction, navigateToShareViaLink)
                     is Option.StopSharing -> option.build(runAction, navigateToStopSharing)
+                    is Option.RemoveMe -> option.build(runAction) {driveLink ->
+                        viewModelScope.launch {
+                            leaveShare(driveLink)
+                        }
+                    }
                     else -> throw IllegalStateException(
                         "Option ${option.javaClass.simpleName} is not found. Did you forget to add it?"
                     )
@@ -141,6 +187,32 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             }.also {
                 this.dismiss = dismiss
             }
+    }
+
+    private suspend fun leaveShare(driveLink: DriveLink) {
+        val shareId = driveLink.sharingDetails?.shareId
+        val memberId = driveLink.shareUser?.id
+        if (shareId != null && memberId != null && shareId == driveLink.shareId) {
+            leaveShare(driveLink.volumeId, driveLink.id, memberId).last().onFailure { error ->
+                error.log(LogTag.SHARING, "Cannot leave share")
+                broadcastMessages(
+                    userId = userId,
+                    message = error.getDefaultMessage(
+                        appContext,
+                        configurationProvider.useExceptionMessage
+                    ),
+                    type = BroadcastMessage.Type.ERROR
+                )
+            }
+        } else {
+            CoreLogger.i(
+                tag = VIEW_MODEL,
+                message = """
+                    Skipping leave share (DriveLink.shareId=${driveLink.shareId.id.logId()},
+                    SharingDetails.shareId=${shareId?.id?.logId()}, memberId=${memberId?.logId()})
+                """.trimIndent(),
+            )
+        }
     }
 
     fun onCreateDocumentResult(fileId: FileId, documentUri: Uri) {
@@ -172,6 +244,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             Option.StopSharing,
             Option.Trash,
             Option.DeletePermanently,
+            Option.RemoveMe,
         )
     }
 }

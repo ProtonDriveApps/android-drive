@@ -24,6 +24,7 @@ android {
 }
 
 driveModule(
+    hilt = true,
     room = true,
 ){
     api(project(":drive:announce-event:domain"))

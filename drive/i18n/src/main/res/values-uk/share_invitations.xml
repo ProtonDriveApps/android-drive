@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the link name
+        Example:
+            "Share Document"
+    -->
+  <string name="title_share_via_invitations">Поділитися %1$s</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons added"
+    -->
+  <plurals name="share_via_invitations_person_added">
+    <item quantity="one">Додано 1 людину</item>
+    <item quantity="few">Додано %1$d людини</item>
+    <item quantity="many">Додано %1$d людей</item>
+    <item quantity="other">%1$d persons added</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons cannot be invited"
+    -->
+  <plurals name="share_via_invitations_person_added_error">
+    <item quantity="one">1 person cannot be invited</item>
+    <item quantity="few">%1$d persons cannot be invited</item>
+    <item quantity="many">%1$d persons cannot be invited</item>
+    <item quantity="other">%1$d persons cannot be invited</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "Sharing with 2 persons"
+    -->
+  <plurals name="share_via_invitations_sharing_with">
+    <item quantity="one">Поширено для 1 людини</item>
+    <item quantity="few">Поширено для %1$d людей</item>
+    <item quantity="many">Поширено для %1$d людей</item>
+    <item quantity="other">Sharing with %1$d persons</item>
+  </plurals>
+  <string name="share_via_invitations_permission_owner">Власник</string>
+  <string name="share_via_invitations_permission_admin">Адміністратор</string>
+  <string name="share_via_invitations_permission_editor">Редактор</string>
+  <string name="share_via_invitations_permission_viewer">Користувач</string>
+  <string name="share_via_invitations_permission_unknown">Невідомо</string>
+  <!--
+        Variable %1$s is the permission
+        Examples:
+            "Editor (Invitation sent)"
+    -->
+  <string name="share_via_invitations_invitation_sent">%1$s (запрошення надіслано)</string>
+  <string name="share_via_invitations_add_people_hint">Додати людей</string>
+  <string name="share_via_invitations_copy_invite_link_action">Копіювати посилання запрошення</string>
+  <string name="share_via_invitations_remove_access_action">Remove access</string>
+  <string name="share_via_invitations_stop_sharing_description">Delete link and remove access for everyone</string>
+  <string name="share_via_invitations_resend_invite_action">Resend invite</string>
+  <string name="share_via_invitations_resend_invite_success">Invitation was resent</string>
+</resources>

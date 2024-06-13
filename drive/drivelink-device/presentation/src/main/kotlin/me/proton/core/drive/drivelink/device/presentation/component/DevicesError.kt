@@ -23,7 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.drive.files.presentation.component.files.FilesListError
+import me.proton.core.drive.base.presentation.component.list.ListError
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -33,7 +33,7 @@ fun DevicesError(
     modifier: Modifier = Modifier,
     onAction: () -> Unit,
 ) {
-    FilesListError(
+    ListError(
         message = errorMessage,
         actionResId = actionResId,
         modifier = modifier,

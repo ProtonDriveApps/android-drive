@@ -27,7 +27,6 @@ import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.file.base.domain.extension.getThumbnailId
 import me.proton.core.drive.file.base.domain.extension.getThumbnailIds
 import me.proton.core.drive.link.domain.entity.Link
-import me.proton.core.drive.link.domain.entity.SharingDetails
 
 fun DriveLink.updateLastModified(lastModified: TimestampS) = link.let { link ->
     when (link) {
@@ -45,3 +44,15 @@ fun DriveLink.File.getThumbnailId(type: ThumbnailType): ThumbnailId? = link.getT
 val DriveLink.File.isPhoto: Boolean get() = link.photoCaptureTime != null
 
 val DriveLink.isEditor: Boolean get() = link.permissions.has(Permissions.Permission.WRITE)
+
+val DriveLink.hasShareLink: Boolean
+    get() = link.sharingDetails?.shareUrlId != null
+
+val DriveLink.isSharedByLinkOrWithUsers: Boolean
+    get() = link.sharingDetails?.shareId != null
+
+val DriveLink.isSharedWithUsers: Boolean
+    get() = (shareInvitationCount ?: 0) > 0 || (shareMemberCount ?: 0) > 0
+
+val DriveLink.isShareMember: Boolean
+    get() = shareUser?.permissions?.isAdmin == false

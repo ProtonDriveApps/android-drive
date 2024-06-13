@@ -133,6 +133,55 @@ sealed class Event {
         override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
     }
 
+    data class Throwable(
+        val message: String,
+        val throwable: kotlin.Throwable,
+        val level: Logger.Level,
+    ) : Event() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+
+
+    }
+
+    data class Network(
+        val request: Request,
+        val response: Response,
+    ) : Event() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+
+        data class Request(
+            val occurredAt: TimestampMs,
+            val method: String,
+            val urlPath: String,
+        )
+
+        data class Response(
+            val occurredAt: TimestampMs,
+            val code: Int,
+            val message: String,
+            val jsonBody: String? = null,
+        )
+    }
+
+    data class Logger(
+        val tag: String,
+        val message: String,
+        val level: Level,
+    ) : Event() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+
+        enum class Level {
+            ERROR,
+            WARNING,
+            DEBUG,
+            INFO,
+            VERBOSE,
+        }
+    }
+
     companion object {
         private const val EVENT_ID_PREFIX = "NOTIFICATION_EVENT_ID_"
     }

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">Fotos</string>
+  <string name="photos_permissions_title">Criptografe e faça backup das suas fotos e vídeos</string>
+  <string name="photos_permissions_section_1_title">Proteja suas memória</string>
+  <string name="photos_permissions_section_1_description">Suas fotas são criptografadas de ponta a ponta, garantindo privacidade total.</string>
+  <string name="photos_permissions_section_2_title">Backups automáticos</string>
+  <string name="photos_permissions_section_2_description">O backup das fotos é feito regularmente por Wi-Fi em sua qualidade original.</string>
+  <string name="photos_permissions_action">Ativar backup</string>
+  <string name="photos_permission_rational_img_text">Permitir acesso</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s precisa de acesso completo às suas fotos</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">Isso é necessário para garantir que todas as suas fotos tenham backup e estejam disponíveis em todos os seus dispositivos.\n%1$s leva sua privacidade a sério e só acessará suas fotos para fins de sincronização e backup.</string>
+  <string name="photos_permission_rational_confirm_action">Configurações</string>
+  <string name="photos_permission_rational_dismiss_action">Agora não</string>
+  <string name="photos_empty_loading_label_encrypted">Criptografado de ponta a ponta</string>
+  <string name="photos_empty_loading_label_progress">O backup está em progresso.\nPode levar um tempo</string>
+  <string name="photos_separator_current_month">Este mês</string>
+  <string name="photos_encrypted_footer">Criptografado de ponta a ponta</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from the Camera folder"
+            "Backing up items from 2 Camera folders"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="one">Fazendo backup de itens de %1$s pasta</item>
+    <item quantity="other">Fazendo backup de itens de %2$d %1$s pastas</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">Nenhuma pasta %1$s encontrada para backup</string>
+  <string name="photos_error_backup_disabled">Backup desativado.</string>
+  <string name="photos_error_backup_disabled_action">Ativar</string>
+  <string name="photos_error_backup_missing_folder">A pasta de backup não foi encontrada</string>
+  <string name="photos_error_backup_failed">Falha no Backup.</string>
+  <string name="photos_error_backup_temporarily_disabled">O backup está temporariamente desativado.</string>
+  <string name="photos_error_missing_permissions">Faltam permissões.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">Para backups contínuos e automáticos, permita o acesso de %1$s a Fotos e Vídeos nas configurações.</string>
+  <string name="photos_error_waiting_connectivity">Sem conexão com a internet</string>
+  <string name="photos_error_waiting_wifi_connectivity">Aguardando por Wi-Fi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Usar dados móveis</string>
+  <string name="photos_error_local_storage">Armazenamento do dispositivo está cheio</string>
+  <string name="photos_error_local_storage_description">Para continuar o backup, você precisa liberar espaço no seu dispositivo.</string>
+  <string name="photos_error_background_restrictions">Defina o uso de bateria como \"Sem restrições\" para a atividade em segundo plano do aplicativo</string>
+  <string name="photos_error_background_restrictions_description">Para backups consistentes em segundo plano, ajuste as configurações de bateria ou abra o aplicativo com frequência.</string>
+  <string name="photos_error_background_restrictions_action">Configurações</string>
+  <string name="photos_empty_title">Ainda não há backups</string>
+  <string name="photos_empty_description">Assim que você tiver fotos ou vídeos no seu dispositivo, eles aparecerão aqui.</string>
+  <string name="photos_backup_title">Backup de fotos</string>
+  <string name="photos_backup_option_mobile_data">Usar dados móveis para backup de fotos</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Desativar otimização de bateria</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Permite backup ininterrupto quando o aplicativo está operando em segundo plano.</string>
+  <string name="photos_backup_in_app_notification_turned_on">O backup de fotos está ativado</string>
+  <string name="photos_backup_in_app_notification_turned_off">O backup de fotos está desativado</string>
+  <string name="photos_backup_state_completed">Backup completo</string>
+  <string name="photos_backup_state_uncompleted">Backup concluído com problemas</string>
+  <string name="photos_backup_state_uncompleted_action">Resolver</string>
+  <string name="photos_backup_state_encrypting">Criptografando…</string>
+  <string name="photos_backup_state_uploading">Fazendo backup…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="one">%1$s item restante</item>
+    <item quantity="other">%1$s itens restantes</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="one">%1$s item salvado</item>
+    <item quantity="other">%1$s itens salvados</item>
+  </plurals>
+  <string name="photos_upsell_title">Nunca fique sem espaço de armazenamento</string>
+  <string name="photos_upsell_description">Faça o upgrade agora e mantenha todas as suas memórias criptografadas e seguras.</string>
+  <string name="photos_upsell_dismiss_action">Agora não</string>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="storage_drive_usage">Drive 사용량</string>
+  <string name="storage_total_usage">총 사용량</string>
+  <string name="storage_details_format"><![CDATA[%1$s 중 %2$s 사용됨]]></string>
+  <!--
+        Variable %1$s is percentage of available storage
+        Examples:
+            "Your storage is more than 50% full"
+    -->
+  <string name="storage_quotas_not_full_title">사용자의 저장공간이 %1$s 이상 채워져 있습니다</string>
+  <!--
+        Variable %1$s is an application name
+        Examples:
+            "Free up space on your Proton Drive storage or upgrade your plan for uninterrupted backup."
+    -->
+  <string name="storage_quotas_full_title">중단 없는 백업을 위해 %1$s 저장공간을 정리하거나 요금제를 업그레이드하세요.</string>
+  <string name="storage_quotas_get_storage_action">더 많은 스토리지 얻기</string>
+  <string name="user_select_other_account_content_description">다른 계정 선택</string>
+  <string name="description_remove_account">로그아웃하면 이 계정과 관련된 모든 데이터가 이 장치에서 제거됩니다.</string>
+</resources>

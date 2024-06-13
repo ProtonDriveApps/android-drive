@@ -18,6 +18,7 @@ import me.proton.core.drive.test.api.createInvitation
 import me.proton.core.drive.test.api.deleteInvitation
 import me.proton.core.drive.test.api.errorResponse
 import me.proton.core.drive.test.api.getInvitations
+import me.proton.core.drive.test.api.sendEmail
 import me.proton.core.drive.test.api.updateInvitation
 import me.proton.core.network.domain.ApiException
 import org.junit.Assert.assertEquals
@@ -85,6 +86,29 @@ class ShareInvitationRepositoryImplTest {
                     keyPacketSignature = "invitation-key-packet-signature",
                 )
             ), repository.getInvitationsFlow(standardShareId, 500).first()
+        )
+    }
+
+    @Test
+    fun getInvitationFlow() = runTest {
+        driveRule.db.standardShare(standardShareId.id) {
+            invitation("invitee@proton.me")
+        }
+
+        assertEquals(
+            ShareUser.Invitee(
+                id = "invitation-id-invitee@proton.me",
+                inviter = "inviter@proton.me",
+                email = "invitee@proton.me",
+                createTime = TimestampS(0),
+                permissions = Permissions(0),
+                keyPacket = "invitation-key-packet",
+                keyPacketSignature = "invitation-key-packet-signature",
+            ),
+            repository.getInvitationFlow(
+                shareId = standardShareId,
+                invitationId = "invitation-id-invitee@proton.me",
+            ).first(),
         )
     }
 
@@ -180,14 +204,16 @@ class ShareInvitationRepositoryImplTest {
 
     @Test
     fun updateInvitation() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShare(standardShareId.id) {
+            invitation("invitee@proton.me")
+        }
 
         driveRule.server.updateInvitation()
 
         repository.updateInvitation(
             shareId = standardShareId,
             invitationId = "invitation-id-invitee@proton.me",
-            permissions = Permissions().add(READ),
+            permissions = Permissions.viewer,
         )
     }
 
@@ -200,7 +226,7 @@ class ShareInvitationRepositoryImplTest {
         repository.updateInvitation(
             shareId = standardShareId,
             invitationId = "invitation-id-invitee@proton.me",
-            permissions = Permissions().add(READ),
+            permissions = Permissions.viewer,
         )
     }
 
@@ -223,6 +249,30 @@ class ShareInvitationRepositoryImplTest {
         driveRule.server.deleteInvitation { errorResponse() }
 
         repository.deleteInvitation(
+            shareId = standardShareId,
+            invitationId = "invitation-id-invitee@proton.me",
+        )
+    }
+
+    @Test
+    fun resendInvitation() = runTest {
+        driveRule.db.standardShare(standardShareId.id)
+
+        driveRule.server.sendEmail()
+
+        repository.resendInvitation(
+            shareId = standardShareId,
+            invitationId = "invitation-id-invitee@proton.me",
+        )
+    }
+
+    @Test(expected = ApiException::class)
+    fun resendInvitation_error() = runTest {
+        driveRule.db.standardShare(standardShareId.id)
+
+        driveRule.server.sendEmail { errorResponse() }
+
+        repository.resendInvitation(
             shareId = standardShareId,
             invitationId = "invitation-id-invitee@proton.me",
         )

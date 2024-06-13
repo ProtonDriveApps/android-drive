@@ -37,8 +37,8 @@ sealed interface ShareUser {
         override val permissions: Permissions,
         override val displayName: String? = null,
         val keyPacket: String,
-        val keyPacketSignature: String,
-        val sessionKeySignature: String,
+        val keyPacketSignature: String?,
+        val sessionKeySignature: String?,
     ) : ShareUser
 
     data class Invitee(

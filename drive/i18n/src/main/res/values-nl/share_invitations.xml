@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the link name
+        Example:
+            "Share Document"
+    -->
+  <string name="title_share_via_invitations">Deel %1$s</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons added"
+    -->
+  <plurals name="share_via_invitations_person_added">
+    <item quantity="one">1 persoon toegevoegd</item>
+    <item quantity="other">%1$d personen toegevoegd</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons cannot be invited"
+    -->
+  <plurals name="share_via_invitations_person_added_error">
+    <item quantity="one">1 persoon kan niet worden uitgenodigd</item>
+    <item quantity="other">%1$d personen kunnen niet worden uitgenodigd</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "Sharing with 2 persons"
+    -->
+  <plurals name="share_via_invitations_sharing_with">
+    <item quantity="one">Delen met 1 persoon</item>
+    <item quantity="other">Delen met %1$d personen</item>
+  </plurals>
+  <string name="share_via_invitations_permission_owner">Eigenaar</string>
+  <string name="share_via_invitations_permission_admin">Beheerder</string>
+  <string name="share_via_invitations_permission_editor">Bewerker</string>
+  <string name="share_via_invitations_permission_viewer">Kijker</string>
+  <string name="share_via_invitations_permission_unknown">Onbekend</string>
+  <!--
+        Variable %1$s is the permission
+        Examples:
+            "Editor (Invitation sent)"
+    -->
+  <string name="share_via_invitations_invitation_sent">%1$s (Uitnodiging verzonden)</string>
+  <string name="share_via_invitations_add_people_hint">Personen toevoegen</string>
+  <string name="share_via_invitations_copy_invite_link_action">Uitnodigingslink kopiëren</string>
+  <string name="share_via_invitations_remove_access_action">Toegang verwijderen</string>
+  <string name="share_via_invitations_stop_sharing_description">Delete link and remove access for everyone</string>
+  <string name="share_via_invitations_resend_invite_action">Uitnodiging opnieuw verzenden</string>
+  <string name="share_via_invitations_resend_invite_success">Uitnodiging werd opnieuw verzonden</string>
+</resources>

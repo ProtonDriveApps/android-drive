@@ -91,10 +91,29 @@ interface ConfigurationProvider {
     val maxFreeSpace: Bytes get() = 5.GiB
     val activeUserPingDuration: Duration get() = 6.hours
     val disableFeatureFlagInDevelopment: Boolean get() = true
+    val logFeatureFlag: Boolean get() = false
+    val logDbLimit: Int get() = 10_000
+    val logDeviceInfoFile: LogFile get() = LogFile(
+        name = "device_info.txt",
+        mimeType = "text/plain",
+    )
+    val logCsvFile: LogFile get() = LogFile(
+        name = "log.csv",
+        mimeType = "text/csv",
+    )
+    val logZipFile: LogFile get() = LogFile(
+        name = "log.zip",
+        mimeType = "application/zip",
+    )
 
     data class Thumbnail(
         val maxWidth: Int,
         val maxHeight: Int,
         val maxSize: Bytes,
+    )
+
+    data class LogFile(
+        val name: String,
+        val mimeType: String,
     )
 }

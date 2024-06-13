@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Dešifrování</string>
+  <string name="title_files">Soubory</string>
+  <string name="title_shared">Sdílené</string>
+  <string name="title_my_files">Moje soubory</string>
+  <string name="title_offline_available">K dispozici offline</string>
+  <string name="title_empty_my_files">Přidejte svůj první soubor</string>
+  <string name="title_empty_folder">Pojďme tuto složku naplnit</string>
+  <string name="title_empty_folder_read_only">Prázdná složka</string>
+  <string name="title_empty_shared">Mějte přehled o tom, co zde je</string>
+  <string name="title_empty_offline_available">V režimu offline není nic k dispozici</string>
+  <string name="title_empty_trash">Koš je prázdný</string>
+  <string name="title_empty_trash_action">Vysypat koš</string>
+  <string name="title_files_confirm_deletion">Trvale smazat?</string>
+  <string name="title_default_home_screen_tab">Vyberte výchozí kartu pro domovskou obrazovku</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Aplikace</string>
+  <string name="description_signing_out">Odhlašování…</string>
+  <string name="settings_about_links_acknowledgments_title">Na vědomí vzaté</string>
+  <string name="settings_about_links_privacy_policy_title">Zásady ochrany osobních údajů</string>
+  <string name="settings_about_links_terms_of_service_title">Podmínky služby</string>
+  <string name="common_error_no_browser_available">Odkaz se nám nepodařilo otevřít, protože zřejmě nemáte nainstalovaný prohlížeč</string>
+  <string name="move_to">Přesunout do</string>
+  <string name="move_file_confirm_action">Přesunout</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">Složku nelze přesunout do sebe</string>
+  <string name="folder_option_import_file">Nahrát soubor</string>
+  <string name="folder_option_create_folder">Vytvořit složku</string>
+  <string name="folder_option_take_a_photo">Pořídit novou fotografii</string>
+  <string name="settings_theme_system_default">Výchozí</string>
+  <string name="settings_theme_dark">Tmavý</string>
+  <string name="settings_theme_light">Světlý</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Nahrát do %1$s</string>
+  <string name="upload_title">Nahrát</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">Pouze soubory mohou být nahrány na %1$s</string>
+  <string name="in_app_notification_importing_file_already_exists">Soubor se stejným názvem již existuje, zkuste vymazat mezipaměť aplikace</string>
+  <string name="in_app_notification_clear_local_cache_success">Lokální mezipaměť úspěšně vyčištěna</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Plné úložiště</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Nahrávání souborů do %1$s</string>
+  <string name="notification_content_title_upload_complete">Nahrávání dokončeno</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Nahrávání %1$d souboru</item>
+    <item quantity="few">Nahrávání %1$d souborů</item>
+    <item quantity="many">Nahrávání %1$d souborů</item>
+    <item quantity="other">Nahrávání %1$d souborů</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d soubor nahrán</item>
+    <item quantity="few">%1$d soubory nahrány</item>
+    <item quantity="many">%1$d souborů nahráno</item>
+    <item quantity="other">%1$d souborů nahráno</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d soubor zrušen</item>
+    <item quantity="few">%1$d soubory zrušeny</item>
+    <item quantity="many">%1$d souborů zrušeno</item>
+    <item quantity="other">%1$d souborů zrušeno</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">%1$d soubor selhal</item>
+    <item quantity="few">%1$d soubory selhaly</item>
+    <item quantity="many">%1$d souborů selhalo</item>
+    <item quantity="other">%1$d souborů selhalo</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Zálohování fotek do %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">Zbývá %1$s položka</item>
+    <item quantity="few">Zbývají %1$s položky</item>
+    <item quantity="many">Zbývá %1$s položek</item>
+    <item quantity="other">Zbývá %1$s položek</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Zálohování bylo dokončeno</string>
+  <string name="notification_content_text_backup_uncompleted">Zálohování dokončeno s problémy</string>
+  <string name="notification_content_text_backup_failed">Zálohování selhalo</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Úložiště Proton je plné</string>
+  <string name="notification_content_text_backup_failed_local_storage">Místní úložiště je plné</string>
+  <string name="notification_content_text_backup_failed_permission">Chybí oprávnění</string>
+  <string name="notification_content_text_backup_failed_connectivity">Bez připojení k Internetu</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Čekání na síť Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Zálohování není povoleno</string>
+  <string name="notification_content_text_backup_paused_disabled">Zálohování bylo vypnuto</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Zálohování nemůže probíhat na pozadí</string>
+  <string name="notification_content_title_download_complete">Stahování dokončeno</string>
+  <string name="notification_content_title_forced_sign_out">Přihlaste se, prosím</string>
+  <string name="notification_content_text_forced_sign_out">Omlouváme se za vyrušení! Nastal problém se synchronizací - prosím přihlaste se znovu a vše bude fungovat bez problémů.</string>
+  <string name="notification_content_title_no_space_left_on_device">V zařízení není žádné místo</string>
+  <string name="notification_content_text_no_space_left_on_device">Aplikace nemusí fungovat správně.</string>
+  <string name="notification_channel_group_name_application">Aplikace</string>
+  <string name="notification_channel_background_title">Na pozadí</string>
+  <string name="notification_channel_background_description">Kanál pro operace na pozadí, např. zálohování</string>
+  <string name="notification_channel_transfer_title">Přenos</string>
+  <string name="notification_channel_transfer_description">Kanál pro cloudové úložiště, oznámení o nahrávání a stahování</string>
+  <string name="notification_channel_warning_title">Varování</string>
+  <string name="notification_channel_warning_description">Kanál pro varování vyžadující akci uživatele</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Vybrat všechny položky v seznamu</string>
+  <string name="content_description_selected_options">Zobrazit více možností pro vybrané soubory a/nebo složky</string>
+  <string name="content_description_files_upload_upload_file">Nahrát soubor</string>
+  <string name="description_empty_my_files">Klepnutím na tlačítko začnete přidávat soubory.</string>
+  <string name="description_empty_folder_read_only">Zde není nic k zobrazení</string>
+  <string name="description_empty_shared">Zde se zobrazují odkazované soubory, takže můžete snadno sledovat a spravovat sdílené soubory.</string>
+  <string name="description_empty_trash">Toto je místo, kde zůstávají vyhozené soubory dokud je nevymažete nebo neobnovíte.</string>
+  <string name="description_empty_offline_available">Zajistěte, aby důležité soubory byly vždy k dispozici, i když vaše síť není.</string>
+  <string name="description_no_drive_scope">Uživateli chybí rozsah disku.</string>
+  <string name="description_file_download_failed">Stahování selhalo. Zkontrolujte internetové přípojení a zkuste to znovu.</string>
+  <string name="description_file_decryption_failed">Nepodařilo se dešifrovat soubor</string>
+  <string name="description_file_verify_signature_failed">Podpis souboru nemohl být ověřen</string>
+  <string name="description_files_stop_sharing">Toto smaže odkaz a odebere přístup k vašemu souboru nebo složce pro každého, kdo má odkaz.</string>
+  <string name="description_files_stop_sharing_action_success">Odkaz na váš soubor byl odstraněn.</string>
+  <string name="description_files_stop_sharing_action_error">Při odstraňování odkazu na váš soubor došlo k chybě.</string>
+  <string name="description_files_stop_all_sharing">Toto smaže odkaz a odebere všem přístup.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sdílení vašeho souboru bylo zrušeno.</string>
+  <string name="description_files_stop_all_sharing_action_error">Došlo k chybě při rušení sdílení vašeho souboru.</string>
+  <string name="ignore_file_signature_action">Přesto zobrazit</string>
+  <string name="action_empty_files_add_files">Nahrát</string>
+  <string name="error_could_not_send_file">Při pokusu o poslání souboru došlo k chybě</string>
+  <string name="error_could_not_load_folder_content">Při načítání obsahu složky došlo k chybě</string>
+  <string name="error_main_share_locked">Vaše soubory již nejsou přístupné z důvodu resetování hesla. Pro obnovení přístupu znovu nahrajte starý šifrovací klíč.</string>
+  <string name="error_share_locked">Sdílení je uzamčeno.</string>
+  <string name="error_main_share_not_found">Hlavní sdílení nebylo nalezeno.</string>
+  <string name="error_share_not_found">Sdílení nebylo nalezeno.</string>
+  <string name="error_creating_photo_share_not_allowed">Zálohování fotografií je dočasně vypnuto.</string>
+  <string name="error_creating_share_not_allowed">Vytváření sdílení je dočasně vypnuto.</string>
+  <string name="operation_open_document">otevřít dokument</string>
+  <string name="operation_create_document">vytvořit dokument</string>
+  <string name="operation_take_picture">vyfotit</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Odemkněte %1$s úložiště zdarma</string>
+  <string name="get_more_free_storage_description">Dokončete tyto kroky během prvních 30 dnů a získejte bezplatné navýšení úložiště.</string>
+  <string name="get_more_free_storage_action_upload_title">Nahrejte soubor NEBO povolte zálohování fotografií</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Všechny vaše soubory budou šifrovány.</string>
+  <string name="get_more_free_storage_action_link_title">Vytvořte odkaz pro sdílení</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Vyberte libovolný soubor nebo složku. Otevřete nabídku možností a stiskněte %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_recovery_title">Nastavit metodu obnovení</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Přihlaste se na %1$s, poté přejděte do Nastavení -&gt; Obnovení.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

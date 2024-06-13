@@ -40,6 +40,14 @@ class CopyInviteLinkEntry(
     override val label: Int = I18N.string.share_via_invitations_copy_invite_link_action
 }
 
+class ResendInviteLinkEntry(
+    override val onClick: () -> Unit,
+) : ShareUserOptionEntry {
+    override val leadingIcon: Int = CorePresentation.drawable.ic_proton_paper_plane
+    override val trailingIcon: Int? = null
+    override val label: Int = I18N.string.share_via_invitations_resend_invite_action
+}
+
 
 data class PermissionsEntry(
     override val label: Int,
@@ -62,4 +70,12 @@ data class PermissionsEntry(
             onClick = onClick
         )
     }
+}
+
+class RemoveAccessEntry(
+    override val onClick: () -> Unit,
+) : ShareUserOptionEntry {
+    override val leadingIcon: Int = CorePresentation.drawable.ic_proton_cross
+    override val trailingIcon: Int? = null
+    override val label: Int = I18N.string.share_via_invitations_remove_access_action
 }

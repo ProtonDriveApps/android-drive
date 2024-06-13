@@ -34,14 +34,20 @@ object PhotosNoPermissionsRobot: Robot {
     private val notNowButton = node.withText(I18N.string.photos_permission_rational_dismiss_action)
     private val allowAccessImage = node.withText(I18N.string.photos_permission_rational_img_text)
 
-    fun denyPermissions() = apply {
-        byObject.withTextMatches(
+    fun allowPermissions() = apply {
+        byObject.withResName(
             when (Build.VERSION.SDK_INT) {
-                in 24..28 -> "DENY"
-                in 29..30 -> "Deny"
-                else -> "Don.+t allow"
-            }.toPattern()
+                in 24..28 -> "com.android.packageinstaller:id/permission_allow_button"
+                else -> "com.android.permissioncontroller:id/permission_allow_button"
+            }
         ).waitForClickable().click()
+    }
+
+    fun denyPermissions() = apply {
+        byObject.withResName(when (Build.VERSION.SDK_INT) {
+            in 24..28 -> "com.android.packageinstaller:id/permission_deny_button"
+            else -> "com.android.permissioncontroller:id/permission_deny_button"
+        }).waitForClickable().click()
     }
 
     fun <T: Robot> clickNotNow(goesTo: T) = notNowButton.clickTo(goesTo)

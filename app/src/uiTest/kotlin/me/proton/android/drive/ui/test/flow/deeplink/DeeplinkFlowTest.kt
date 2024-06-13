@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.test.flow.deeplink
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.robot.ComputersTabRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
@@ -29,6 +30,8 @@ import me.proton.android.drive.ui.robot.StorageFullRobot
 import me.proton.android.drive.ui.rules.UserLoginRule
 import me.proton.android.drive.ui.test.EmptyBaseTest
 import me.proton.android.drive.utils.getRandomString
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import me.proton.core.test.quark.data.User
 import org.junit.Rule
 import org.junit.Test
@@ -80,11 +83,13 @@ class DeeplinkFlowTest : EmptyBaseTest() {
 
 
     @Test
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun launchShared() {
         LauncherRobot.launch("shared", SharedTabRobot)
             .verify { robotDisplayed() }
     }
     @Test
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun homeShared() {
         LauncherRobot.deeplinkTo(Screen.Shared(userLoginRule.userId!!), SharedTabRobot)
             .verify { robotDisplayed() }

@@ -30,6 +30,3 @@ fun BaseLink.getSize(context: Context): String = size.asHumanReadableString(cont
 
 fun BaseLink.lastModifiedRelative(context: Context, now: Long = System.currentTimeMillis()): CharSequence =
     lastModified.asHumanReadableStringRelative(context, now)
-
-fun BaseLink.getName(context: Context) = name
-    .takeIf { parentId != null } ?: context.getString(I18N.string.title_my_files)

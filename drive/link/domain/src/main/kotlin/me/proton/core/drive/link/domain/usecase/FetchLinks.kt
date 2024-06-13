@@ -33,14 +33,25 @@ class FetchLinks @Inject constructor(
     suspend operator fun invoke(
         shareId: ShareId,
         linkIds: Set<String>,
+        storeInCache: Boolean = false,
     ): Result<Pair<List<Link>, List<Link>>> = coRunCatching {
         val parents = mutableListOf<Link>()
         val links = mutableListOf<Link>()
         linkIds.chunked(configurationProvider.apiPageSize).forEach { chunkedLinkIds ->
-            val result = repository.fetchLinks(shareId, chunkedLinkIds.toSet()).getOrThrow()
+            val result = if (storeInCache) {
+                fetchAndStoreLinks(shareId, chunkedLinkIds.toSet())
+            } else {
+                fetchLinks(shareId, chunkedLinkIds.toSet())
+            }
             parents.addAll(result.first)
             links.addAll(result.second)
         }
         parents to links
     }
+
+    private suspend fun fetchLinks(shareId: ShareId, linkIds: Set<String>) =
+        repository.fetchLinks(shareId, linkIds).getOrThrow()
+
+    private suspend fun fetchAndStoreLinks(shareId: ShareId, linkIds: Set<String>) =
+        repository.fetchAndStoreLinksWithParents(shareId, linkIds).getOrThrow()
 }

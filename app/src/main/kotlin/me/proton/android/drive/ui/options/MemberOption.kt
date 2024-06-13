@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.options
 
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.drive.drivelink.shared.presentation.entry.PermissionsEntry
+import me.proton.core.drive.drivelink.shared.presentation.entry.RemoveAccessEntry
 
 sealed interface MemberOption {
     data object PermissionsViewer : MemberOption {
@@ -39,6 +40,15 @@ sealed interface MemberOption {
             onSelect: () -> Unit,
         ) = PermissionsEntry.Editor(isSelected) {
             runAction { onSelect() }
+        }
+    }
+
+    data object RemoveAccess : MemberOption {
+        fun build(
+            runAction: RunAction,
+            onClick: () -> Unit,
+        ) = RemoveAccessEntry {
+            runAction { onClick() }
         }
     }
 }

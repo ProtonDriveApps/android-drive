@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the link name
+        Example:
+            "Share Document"
+    -->
+  <string name="title_share_via_invitations">Skupna raba %1$s</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons added"
+    -->
+  <plurals name="share_via_invitations_person_added">
+    <item quantity="one">Dodan 1 uporabnik</item>
+    <item quantity="two">Dodana %1$d uporabnika</item>
+    <item quantity="few">Dodani %1$d uporabniki</item>
+    <item quantity="other">Dodanih %1$d uporabnikov</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons cannot be invited"
+    -->
+  <plurals name="share_via_invitations_person_added_error">
+    <item quantity="one">1 oseba ne more biti povabljena</item>
+    <item quantity="two">%1$d osebi ne moreta biti povabljeni</item>
+    <item quantity="few">%1$d osebe ne morejo biti povabljene</item>
+    <item quantity="other">%1$d oseb ne morejo biti povabljenih</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "Sharing with 2 persons"
+    -->
+  <plurals name="share_via_invitations_sharing_with">
+    <item quantity="one">V skupni rabi z 1 uporabnikom</item>
+    <item quantity="two">V skupni rabi z %1$d uporabnikoma</item>
+    <item quantity="few">V skupni rabi s %1$d uporabniki</item>
+    <item quantity="other">V skupni rabi s %1$d uporabniki</item>
+  </plurals>
+  <string name="share_via_invitations_permission_owner">Lastnik</string>
+  <string name="share_via_invitations_permission_admin">Skrbnik</string>
+  <string name="share_via_invitations_permission_editor">Urejevalnik</string>
+  <string name="share_via_invitations_permission_viewer">Pregledovalnik</string>
+  <string name="share_via_invitations_permission_unknown">Neznan</string>
+  <!--
+        Variable %1$s is the permission
+        Examples:
+            "Editor (Invitation sent)"
+    -->
+  <string name="share_via_invitations_invitation_sent">%1$s (vabilo je bilo poslano)</string>
+  <string name="share_via_invitations_add_people_hint">Dodaj osebe</string>
+  <string name="share_via_invitations_copy_invite_link_action">Kopiraj povezavo do povabila</string>
+  <string name="share_via_invitations_remove_access_action">Odstrani dostop</string>
+  <string name="share_via_invitations_stop_sharing_description">Izbriši povezavo in odstrani dostop za vse</string>
+  <string name="share_via_invitations_resend_invite_action">Ponovno pošlji povabilo</string>
+  <string name="share_via_invitations_resend_invite_success">Povabilo je bilo ponovno poslano</string>
+</resources>

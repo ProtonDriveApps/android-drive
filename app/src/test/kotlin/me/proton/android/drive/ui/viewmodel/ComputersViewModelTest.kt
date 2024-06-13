@@ -34,7 +34,7 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.device.domain.entity.Device
 import me.proton.core.drive.device.domain.usecase.RefreshDevices
 import me.proton.core.drive.drivelink.device.domain.usecase.GetDecryptedDevicesSortedByName
-import me.proton.core.drive.files.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
 import me.proton.core.test.kotlin.assertEquals
 import org.junit.Before

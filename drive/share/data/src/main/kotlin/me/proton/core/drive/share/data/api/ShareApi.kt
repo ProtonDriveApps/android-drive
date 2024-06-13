@@ -49,7 +49,10 @@ interface ShareApi : BaseRetrofitApi {
     ): CreateShareResponse
 
     @DELETE("drive/shares/@{enc_shareID}")
-    suspend fun deleteShare(@Path("enc_shareID") shareId: String)
+    suspend fun deleteShare(
+        @Path("enc_shareID") shareId: String,
+        @Query("Force") force: Long,
+    )
 
     @GET("drive/migrations/shareaccesswithnode/unmigrated")
     suspend fun getUnmigratedShares() : GetUnmigratedSharesResponse

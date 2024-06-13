@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Vytváranie odkazu na %1$s</string>
+  <string name="shared_link_getting_link">Vytvára sa odkaz</string>
+  <string name="shared_link_file">súbor</string>
+  <string name="shared_link_folder">priečinok</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Ktokoľvek s týmto odkazom má prístup k %1$s</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Iba ľudia s odkazom a heslom majú prístup k %1$s</string>
+  <string name="shared_link_privacy_settings">Nastavenia súkromia</string>
+  <string name="shared_link_password_protection">Ochrana heslom</string>
+  <string name="shared_link_expiration_date">Koniec platnosti</string>
+  <string name="shared_link_action_copy_link">Kopírovať odkaz</string>
+  <string name="shared_link_action_copy_password">Kopírovať heslo</string>
+  <string name="shared_link_action_share_link">Zdieľať odkaz</string>
+  <string name="shared_link_dialog_title_discard_changes">Zrušiť zmeny?</string>
+  <string name="shared_link_dialog_description">Stratíte všetky neuložené zmeny.</string>
+  <string name="shared_link_hint_expiration_date_field">Žiaden koniec platnosti</string>
+  <string name="shared_link_message_update_share_url">Nastavenia zdieľania aktualizované</string>
+  <string name="shared_link_error_message_update_share_url">Aktualizovanie nastavení zdieľania zlyhalo</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">Heslo musí mať 1 až %1$d znakov</string>
+  <string name="shared_link_error_message_not_found">Zdieľaný odkaz neexistuje alebo vypršala jeho platnosť</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">Dátum konca platnosti môže byť najskôr zajtra</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">Koniec platnosti nemôže byť neskôr ako po %1$d dňoch</string>
+  <string name="shared_link_error_legacy_link">Toto je starý odkaz, ktorého spravovanie nie je podporované. Odporúčame vám prestať zdieľať tento odkaz a vytvoriť nový.</string>
+  <string name="title_share_via_link">Zdieľať cez odkaz</string>
+  <string name="shared_with_me_title">Zdieľané so mnou</string>
+  <string name="shared_by_me_title">Mnou zdieľané</string>
+  <string name="shared_with_me_empty_description">Súbory a priečinky, ktoré zdieľate s ostatnými sa zobrazia tu</string>
+  <string name="shared_by_me_empty_description">Bezpečne zdieľajte svoje súbory a priečinky pomocou end-to-end šifrovania</string>
+</resources>

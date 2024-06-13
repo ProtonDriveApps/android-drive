@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="storage_drive_usage">Выкарыстанне Drive</string>
+  <string name="storage_total_usage">Усяго выкарыстана</string>
+  <string name="storage_details_format"><![CDATA[Выкарыстана: %1$s з %2$s]]></string>
+  <!--
+        Variable %1$s is percentage of available storage
+        Examples:
+            "Your storage is more than 50% full"
+    -->
+  <string name="storage_quotas_not_full_title">Ваша сховішча запоўнена больш чым на %1$s</string>
+  <!--
+        Variable %1$s is an application name
+        Examples:
+            "Free up space on your Proton Drive storage or upgrade your plan for uninterrupted backup."
+    -->
+  <string name="storage_quotas_full_title">Вызваліце прастору ў сваім сховішчы %1$s або палепшыце свой тарыфны план, каб бесперапынна рабіць рэзервовае капіяванне</string>
+  <string name="storage_quotas_get_storage_action">Атрымаць больш месца ў сховішчы</string>
+  <string name="user_select_other_account_content_description">Выбраць іншы ўліковы запіс</string>
+  <string name="description_remove_account">Вы выйдзеце з сістэмы, а ўсе звязаныя з гэтым уліковым запісам даныя будуць выдалены з гэтай прылады.</string>
+</resources>

@@ -18,7 +18,7 @@
 
 package me.proton.core.drive.db.test
 
-import me.proton.core.drive.share.user.data.db.ShareInvitationEntity
+import me.proton.core.drive.share.user.data.db.entity.ShareInvitationEntity
 
 suspend fun ShareContext.invitation(email: String) {
     invitation(NullableShareInvitationEntity(email))

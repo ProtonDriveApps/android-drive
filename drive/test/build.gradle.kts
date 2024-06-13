@@ -20,6 +20,7 @@ plugins {
 }
 apply(plugin = "kotlin-android")
 apply(plugin = "kotlin-kapt")
+apply(plugin = "kotlinx-serialization")
 
 android {
     namespace = "me.proton.core.drive.test"

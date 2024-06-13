@@ -26,6 +26,8 @@ import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.linkdownload.data.extension.toDownloadState
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linktrash.domain.entity.TrashState
+import me.proton.core.drive.share.user.data.extension.toShareUserMember
+import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 fun List<DriveLinkEntityWithBlock>.toDriveLinks(): List<DriveLink> =
@@ -37,6 +39,9 @@ fun List<DriveLinkEntityWithBlock>.toDriveLinks(): List<DriveLink> =
                 isMarkedAsOffline = firstEntity.linkOfflineEntity != null,
                 downloadState = entities.mapNotNull { entity -> entity.downloadStateWithBlock }.toDownloadState(),
                 trashState = firstEntity.trashState,
+                shareInvitationCount = firstEntity.shareInvitationCount,
+                shareMemberCount = firstEntity.shareMemberCount,
+                shareUser = firstEntity.shareMemberEntity?.toShareUserMember(),
             )
         }
 
@@ -45,6 +50,9 @@ fun Link.toEncryptedDriveLink(
     isMarkedAsOffline: Boolean,
     downloadState: DownloadState?,
     trashState: TrashState?,
+    shareInvitationCount: Int?,
+    shareMemberCount: Int?,
+    shareUser: ShareUser?,
 ) = when (this) {
     is Link.File -> DriveLink.File(
         link = this,
@@ -53,6 +61,9 @@ fun Link.toEncryptedDriveLink(
         isAnyAncestorMarkedAsOffline = false,
         downloadState = downloadState,
         trashState = trashState,
+        shareInvitationCount = shareInvitationCount,
+        shareMemberCount = shareMemberCount,
+        shareUser = shareUser,
     )
     is Link.Folder -> DriveLink.Folder(
         link = this,
@@ -61,5 +72,8 @@ fun Link.toEncryptedDriveLink(
         isAnyAncestorMarkedAsOffline = false,
         downloadState = downloadState,
         trashState = trashState,
+        shareInvitationCount = shareInvitationCount,
+        shareMemberCount = shareMemberCount,
+        shareUser = shareUser,
     )
 }

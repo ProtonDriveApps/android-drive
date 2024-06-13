@@ -26,10 +26,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
@@ -40,8 +40,7 @@ import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Permissions
-import me.proton.core.drive.base.domain.entity.Permissions.Permission.READ
-import me.proton.core.drive.base.domain.entity.Permissions.Permission.WRITE
+import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -59,9 +58,12 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.usecase.CopyInvitationUrl
+import me.proton.core.drive.share.user.domain.usecase.DeleteInvitation
 import me.proton.core.drive.share.user.domain.usecase.GetInvitationFlow
+import me.proton.core.drive.share.user.domain.usecase.ResendInvitation
 import me.proton.core.drive.share.user.domain.usecase.UpdateInvitationPermissions
 import javax.inject.Inject
+import me.proton.core.drive.i18n.R as I18N
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -72,6 +74,8 @@ class ShareInvitationOptionsViewModel @Inject constructor(
     getInvitationFlow: GetInvitationFlow,
     private val updateInvitationPermissions: UpdateInvitationPermissions,
     private val copyInvitationUrl: CopyInvitationUrl,
+    private val resendInvitation: ResendInvitation,
+    private val deleteInvitation: DeleteInvitation,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
@@ -82,9 +86,6 @@ class ShareInvitationOptionsViewModel @Inject constructor(
         ShareId(userId, savedStateHandle.require(KEY_SHARE_ID)),
         savedStateHandle.require(KEY_LINK_ID)
     )
-
-    private val viewerPermissions = Permissions().add(READ)
-    private val editorPermissions = Permissions().add(READ).add(WRITE)
 
     private val driveLink: Flow<DriveLink?> = getDriveLink(linkId = linkId).mapSuccessValueOrNull()
 
@@ -111,31 +112,45 @@ class ShareInvitationOptionsViewModel @Inject constructor(
             when (option) {
                 InvitationOption.CopyInvitationLink -> true
                 InvitationOption.PermissionsEditor,
-                InvitationOption.PermissionsViewer -> driveLink.permissions.canWrite
+                InvitationOption.PermissionsViewer,
+                InvitationOption.ResendInvitation,
+                InvitationOption.RemoveAccess -> driveLink.permissions.canWrite
             }
         }.map { option ->
             when (option) {
                 is InvitationOption.PermissionsViewer -> option.build(
-                    isSelected = invitation.permissions == viewerPermissions,
+                    isSelected = invitation.permissions == Permissions.viewer,
                     runAction = runAction,
                 ) {
                     viewModelScope.launch {
-                        updatePermissions(driveLink, viewerPermissions) { runAction {} }
+                        updatePermissions(driveLink, Permissions.viewer)
                     }
                 }
 
                 is InvitationOption.PermissionsEditor -> option.build(
-                    isSelected = invitation.permissions == editorPermissions,
+                    isSelected = invitation.permissions == Permissions.editor,
                     runAction = runAction,
                 ) {
                     viewModelScope.launch {
-                        updatePermissions(driveLink, editorPermissions) { runAction {} }
+                        updatePermissions(driveLink, Permissions.editor)
                     }
                 }
 
                 is InvitationOption.CopyInvitationLink -> option.build(runAction) {
                     viewModelScope.launch {
                         copyInvitationUrl(driveLink.volumeId, linkId, invitationId)
+                    }
+                }
+
+                is InvitationOption.ResendInvitation -> option.build(runAction) {
+                    viewModelScope.launch {
+                        resendInvitation(driveLink)
+                    }
+                }
+
+                is InvitationOption.RemoveAccess -> option.build(runAction) {
+                    viewModelScope.launch {
+                        deleteInvitation(driveLink)
                     }
                 }
 
@@ -147,23 +162,64 @@ class ShareInvitationOptionsViewModel @Inject constructor(
     private suspend fun updatePermissions(
         driveLink: DriveLink,
         permissions: Permissions,
-        onComplete: () -> Unit,
     ) {
-        updateInvitationPermissions(
+        val dataResult = updateInvitationPermissions(
             shareId = requireNotNull(driveLink.sharingDetails?.shareId),
             invitationId = invitationId,
             permissions = permissions,
-        ).collectLatest { dataResult ->
-            dataResult.onFailure { error ->
-                error.log(SHARING)
-                broadcastMessages(
-                    userId = userId,
-                    message = error.getDefaultMessage(appContext, configurationProvider.useExceptionMessage),
-                    type = BroadcastMessage.Type.WARNING,
-                )
-            }.onSuccess {
-                onComplete()
-            }
+        ).filterSuccessOrError().last()
+        dataResult.onFailure { error ->
+            error.log(SHARING)
+            broadcastMessages(
+                userId = userId,
+                message = error.getDefaultMessage(
+                    context = appContext,
+                    useExceptionMessage = configurationProvider.useExceptionMessage
+                ),
+                type = BroadcastMessage.Type.WARNING,
+            )
+        }
+    }
+
+    private suspend fun deleteInvitation(driveLink: DriveLink) {
+        val dataResult = deleteInvitation(
+            shareId = requireNotNull(driveLink.sharingDetails?.shareId),
+            invitationId = invitationId,
+        ).filterSuccessOrError().last()
+        dataResult.onFailure { error ->
+            error.log(SHARING)
+            broadcastMessages(
+                userId = userId,
+                message = error.getDefaultMessage(
+                    context = appContext,
+                    useExceptionMessage = configurationProvider.useExceptionMessage
+                ),
+                type = BroadcastMessage.Type.WARNING,
+            )
+        }
+    }
+
+    private suspend fun resendInvitation(driveLink: DriveLink) {
+        val dataResult = resendInvitation(
+            shareId = requireNotNull(driveLink.sharingDetails?.shareId),
+            invitationId = invitationId,
+        ).filterSuccessOrError().last()
+        dataResult.onFailure { error ->
+            error.log(SHARING)
+            broadcastMessages(
+                userId = userId,
+                message = error.getDefaultMessage(
+                    context = appContext,
+                    useExceptionMessage = configurationProvider.useExceptionMessage
+                ),
+                type = BroadcastMessage.Type.ERROR,
+            )
+        }.onSuccess {
+            broadcastMessages(
+                userId = userId,
+                message = appContext.getString(I18N.string.share_via_invitations_resend_invite_success),
+                type = BroadcastMessage.Type.INFO,
+            )
         }
     }
 
@@ -175,7 +231,9 @@ class ShareInvitationOptionsViewModel @Inject constructor(
         private val options = setOf(
             InvitationOption.PermissionsViewer,
             InvitationOption.PermissionsEditor,
+            InvitationOption.ResendInvitation,
             InvitationOption.CopyInvitationLink,
+            InvitationOption.RemoveAccess,
         )
     }
 }

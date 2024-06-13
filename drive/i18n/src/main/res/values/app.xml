@@ -189,6 +189,9 @@
     <string name="description_files_stop_sharing">This will delete the link and remove access to your file or folder for anyone with the link.</string>
     <string name="description_files_stop_sharing_action_success">The link to your file has been deleted.</string>
     <string name="description_files_stop_sharing_action_error">There was an error while deleting the link to your file.</string>
+    <string name="description_files_stop_all_sharing">This will delete link and remove access for everyone.</string>
+    <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
+    <string name="description_files_stop_all_sharing_action_error">There was an error while deleting sharing to your file.</string>
     <string name="ignore_file_signature_action">View anyway</string>
     <string name="action_empty_files_add_files">Upload</string>
 
@@ -222,6 +225,8 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
     <string name="get_more_free_storage_action_link_subtitle">Select any file or folder. Open the options menu and press %1$s.</string>
+    <string name="get_more_free_storage_action_share_title">Share a file</string>
+    <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
     <string name="get_more_free_storage_action_recovery_title">Set a recovery method</string>
     <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link

@@ -79,6 +79,7 @@
     <string name="settings_home_tab">Default home tab</string>
     <string name="settings_section_system">System</string>
     <string name="settings_clear_local_cache_entry">Clear local cache</string>
+    <string name="settings_show_log">Show log</string>
 
     <string name="debug_settings_section" translatable="false">Debug settings</string>
     <string name="debug_settings_host" translatable="false">Host</string>

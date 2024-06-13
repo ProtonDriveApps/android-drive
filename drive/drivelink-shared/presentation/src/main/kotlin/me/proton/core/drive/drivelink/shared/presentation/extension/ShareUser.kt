@@ -38,15 +38,10 @@ private fun ShareUser.firstLetter() =
 
 private fun ShareUser.toPermissionLabel(appContext: Context) = appContext.getString(
     when {
+        permissions.isOwner -> I18N.string.share_via_invitations_permission_owner
         permissions.isAdmin -> I18N.string.share_via_invitations_permission_admin
         permissions.canWrite -> I18N.string.share_via_invitations_permission_editor
         permissions.canRead -> I18N.string.share_via_invitations_permission_viewer
         else -> I18N.string.share_via_invitations_permission_unknown
     }
-).let { permission ->
-    when (this) {
-        is ShareUser.Member -> permission
-        else -> appContext.getString(I18N.string.share_via_invitations_invitation_sent)
-            .format(permission)
-    }
-}
+)

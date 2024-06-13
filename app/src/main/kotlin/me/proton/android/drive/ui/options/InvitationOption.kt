@@ -21,8 +21,8 @@ package me.proton.android.drive.ui.options
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.drive.drivelink.shared.presentation.entry.CopyInviteLinkEntry
 import me.proton.core.drive.drivelink.shared.presentation.entry.PermissionsEntry
-import me.proton.core.drive.i18n.R as I18N
-import me.proton.core.presentation.R as CorePresentation
+import me.proton.core.drive.drivelink.shared.presentation.entry.RemoveAccessEntry
+import me.proton.core.drive.drivelink.shared.presentation.entry.ResendInviteLinkEntry
 
 sealed interface InvitationOption {
 
@@ -52,6 +52,24 @@ sealed interface InvitationOption {
             copyInvitationLinkToClipboard: () -> Unit,
         ) = CopyInviteLinkEntry {
             runAction { copyInvitationLinkToClipboard() }
+        }
+    }
+
+    data object ResendInvitation : InvitationOption {
+        fun build(
+            runAction: RunAction,
+            onClick: () -> Unit,
+        ) = ResendInviteLinkEntry {
+            runAction { onClick() }
+        }
+    }
+
+    data object RemoveAccess : InvitationOption {
+        fun build(
+            runAction: RunAction,
+            onClick: () -> Unit,
+        ) = RemoveAccessEntry {
+            runAction { onClick() }
         }
     }
 }

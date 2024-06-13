@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">App</string>
+  <string name="common_more">Mehr</string>
+  <string name="common_mime_type">MIME-Typ</string>
+  <string name="common_name">Name</string>
+  <string name="common_no">Nein</string>
+  <string name="common_share">Teilen</string>
+  <string name="common_shared">Geteilt</string>
+  <string name="common_size">Größe</string>
+  <string name="common_type">Typ</string>
+  <string name="common_yes">Ja</string>
+  <string name="common_download">Herunterladen</string>
+  <string name="common_downloading">Wird heruntergeladen</string>
+  <string name="common_link">Link</string>
+  <string name="common_password">Passwort</string>
+  <string name="common_retry">Wiederholen</string>
+  <string name="common_settings">Einstellungen</string>
+  <string name="common_trash">Papierkorb</string>
+  <string name="common_uploading">Wird hochgeladen</string>
+  <string name="common_on">Ein</string>
+  <string name="common_off">Aus</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">OK</string>
+  <string name="common_close_action">Schließen</string>
+  <string name="common_retry_action">Wiederholen</string>
+  <string name="common_undo_action">Widerrufen</string>
+  <string name="common_rename_action">Umbenennen</string>
+  <string name="common_send_action">Senden</string>
+  <string name="common_create_action">Erstellen</string>
+  <string name="common_cancel_action">Abbrechen</string>
+  <string name="common_cancel_all_action">Alle abbrechen</string>
+  <string name="common_got_it_action">Verstanden</string>
+  <string name="common_next_action">Weiter</string>
+  <string name="common_save_action">Speichern</string>
+  <string name="common_discard_action">Verwerfen</string>
+  <string name="common_skip_action">Überspringen</string>
+  <string name="common_delete_permanently_action">Dauerhaft löschen</string>
+  <string name="common_make_available_offline_action">Offline verfügbar machen</string>
+  <string name="common_remove_from_offline_available_action">Aus \"Offline verfügbar\" entfernen</string>
+  <string name="common_get_link_action">Link abrufen</string>
+  <string name="common_manage_link_action">Link verwalten</string>
+  <string name="common_manage_access_action">Zugriff verwalten</string>
+  <string name="common_copy_link_action">Link kopieren</string>
+  <string name="common_stop_sharing_action">Freigabe beenden</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">Audio</string>
+  <string name="common_type_calendar">iCalendar-Format</string>
+  <string name="common_type_doc">Dokument</string>
+  <string name="common_type_image">Bild</string>
+  <string name="common_type_keynote">Keynote-Datei</string>
+  <string name="common_type_numbers">Numbers-Datei</string>
+  <string name="common_type_pages">Pages-Datei</string>
+  <string name="common_type_pdf">PDF-Dokument</string>
+  <string name="common_type_ppt">Präsentation</string>
+  <string name="common_type_text">Text</string>
+  <string name="common_type_trustedkey">Vertrauenswürdiger Schlüssel</string>
+  <string name="common_type_unknown">Binär</string>
+  <string name="common_type_video">Video</string>
+  <string name="common_type_xls">Tabellendokument</string>
+  <string name="common_type_xml">XML-Datei</string>
+  <string name="common_type_zip">Archiv</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">Name darf nicht leer sein</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">Der Name darf nicht länger als %1$d Zeichen sein.</string>
+  <string name="common_error_name_with_forbidden_characters">Der Name darf weder unsichtbare Zeichen, noch \"/\" oder \"\\" enthalten.</string>
+  <string name="common_error_name_periods">Der Name darf nicht \".\" oder \"..\" sein.</string>
+  <string name="common_error_no_internet">Keine Internetverbindung</string>
+  <string name="common_error_http_5xx">Ein Serverfehler ist aufgetreten</string>
+  <string name="common_error_internal">Ein interner Fehler ist aufgetreten</string>
+  <string name="common_error_crypto">Ver- oder Entschlüsselung fehlgeschlagen</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">Ver- oder Entschlüsselung fehlgeschlagen: %1$s</string>
+  <string name="common_error_io">Ein- oder Ausgabevorgang fehlgeschlagen</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">Ein- oder Ausgabevorgang fehlgeschlagen: %1$s</string>
+  <string name="common_error_security">Ein Sicherheitsfehler ist aufgetreten</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">Ein Sicherheitsfehler ist aufgetreten: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s heruntergeladen</string>
+  <string name="common_sign_out">Abmelden</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="one">%1$d ausgewählt</item>
+    <item quantity="other">%1$d ausgewählt</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s in die Zwischenablage kopiert</string>
+  <string name="common_in_app_notification_download_started">Download gestartet</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s erfolgreich heruntergeladen</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="one">%1$d Datei erfolgreich heruntergeladen</item>
+    <item quantity="other">%1$d Dateien erfolgreich heruntergeladen</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">Herunterladen von %1$s fehlgeschlagen</string>
+  <string name="common_in_app_notification_download_failed">Download fehlgeschlagen</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">Das System konnte keine Anwendung finden, die %1$s</string>
+  <!-- endregion -->
+</resources>

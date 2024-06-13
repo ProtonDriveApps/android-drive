@@ -33,8 +33,9 @@ import me.proton.android.drive.photos.presentation.viewstate.PhotosStatusViewSta
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultWeak
+import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.files.presentation.component.files.FilesListEmpty
-import me.proton.core.drive.files.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.user.presentation.quota.component.StorageBanner
 import me.proton.core.drive.i18n.R as I18N
 
@@ -72,7 +73,7 @@ fun PhotosEmpty(
         if (viewState is PhotosStatusViewState.InProgress) {
             BackupProgressPhotosEmpty(Modifier.fillMaxSize())
         } else {
-            FilesListEmpty(
+            ListEmpty(
                 state.imageResId,
                 state.titleId,
                 state.descriptionResId,
@@ -134,7 +135,7 @@ private fun PhotosEmptyPreview() {
             imageResId = R.drawable.empty_photos_daynight,
             titleId = I18N.string.photos_empty_title,
             descriptionResId = I18N.string.photos_empty_description,
-            actionResId = 0,
+            actionResId = null,
         ),
         showPhotosStateBanner = true,
         viewState = PhotosStatusViewState.InProgress(0F, "12 345 items left"),

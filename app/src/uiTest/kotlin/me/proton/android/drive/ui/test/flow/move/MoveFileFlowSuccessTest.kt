@@ -111,6 +111,9 @@ class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
             .longClickOnItem(file1)
             .scrollToItemWithName(file2)
             .clickOnItem(file2, LayoutType.List, ItemType.File, FilesTabRobot)
+            .verify {
+                assertFilesSelected(2)
+            }
             .clickOptions()
             .clickMove()
             .clickOnFolderToMove(folder)

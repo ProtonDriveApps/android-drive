@@ -20,14 +20,15 @@ package me.proton.core.drive.drivelink.data.repository
 
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
 import me.proton.core.drive.drivelink.data.extension.toDriveLinks
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.repository.DriveLinkRepository
+import me.proton.core.drive.link.data.extension.toLink
+import me.proton.core.drive.link.data.extension.toLinkWithProperties
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
@@ -52,12 +53,20 @@ class DriveLinkRepositoryImpl @Inject constructor(
 
     override fun getDriveLinks(linkIds: List<LinkId>): Flow<List<DriveLink>> =
         linkIds
-            .groupBy({ linkId -> linkId.shareId }) { linkId -> linkId.id }
-            .map { (shareId, ids) ->
-                driveLinkDao.getLinks(shareId.userId, shareId.id, ids).distinctUntilChanged()
-            }
-            .asFlow()
-            .flatMapConcat { flow ->
-                flow.map { entities -> entities.toDriveLinks() }
-            }
+            .map { linkId -> linkId.id }
+            .takeIf { list -> list.isNotEmpty() }
+            ?.let { list ->
+                val shareIdLinkIdList = linkIds.map { linkId -> linkId.shareId.id to linkId.id }
+                driveLinkDao
+                    .getLinks(linkIds.first().userId, list)
+                    .map { entities ->
+                        entities
+                            .filter { entity ->
+                                with (entity.linkWithPropertiesEntity.toLinkWithProperties().toLink().id) {
+                                    (shareId.id to id) in shareIdLinkIdList
+                                }
+                            }
+                            .distinctBy { entity -> entity.linkWithPropertiesEntity.link.id }.toDriveLinks()
+                    }
+            } ?: flowOf(emptyList())
 }

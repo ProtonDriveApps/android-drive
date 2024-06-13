@@ -169,7 +169,9 @@ fun PreviewUserSelector() {
 }
 
 internal val User.firstLetter: String
-    get() = (displayName ?: name ?: email)?.firstCodePointAsStringOrNull ?: "?"
+    get() = listOfNotNull(displayName, name, email)
+        .firstNotNullOfOrNull { value -> value.firstCodePointAsStringOrNull }
+        ?: "?"
 
 val PREVIEW_USER = User(
     userId = UserId("id"),

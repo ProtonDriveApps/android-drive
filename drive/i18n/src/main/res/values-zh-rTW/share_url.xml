@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">正在 %1$s 創建檔案連結</string>
+  <string name="shared_link_getting_link">正在獲取連結</string>
+  <string name="shared_link_file">檔案</string>
+  <string name="shared_link_folder">資料夾</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">任何人擁有此連結均可存取%1$s。</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">僅同時擁有連結與密碼的人才能存取%1$s。</string>
+  <string name="shared_link_privacy_settings">隱私設定</string>
+  <string name="shared_link_password_protection">保護密碼</string>
+  <string name="shared_link_expiration_date">到期日</string>
+  <string name="shared_link_action_copy_link">複製連結</string>
+  <string name="shared_link_action_copy_password">複製密碼</string>
+  <string name="shared_link_action_share_link">分享連結</string>
+  <string name="shared_link_dialog_title_discard_changes">捨棄變更？</string>
+  <string name="shared_link_dialog_description">您所有未儲存的變更將會消失。</string>
+  <string name="shared_link_hint_expiration_date_field">沒有到期日</string>
+  <string name="shared_link_message_update_share_url">共享設定已更新</string>
+  <string name="shared_link_error_message_update_share_url">更新共享設定失敗</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">密碼長度必須介於 1 到 %1$d 個字符之間</string>
+  <string name="shared_link_error_message_not_found">共享連結不存在或已失效</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">到期日最快必須是明天</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">到期日不能晚於 %1$d  天之後</string>
+  <string name="shared_link_error_legacy_link">這則舊連結已不再管理維護，創建您停止分享這則連結取得新連結。</string>
+  <string name="title_share_via_link">透過連結分享</string>
+  <string name="shared_with_me_title">與我共享</string>
+  <string name="shared_by_me_title">由我分享</string>
+  <string name="shared_with_me_empty_description">Files and folder that you share with others will appear here</string>
+  <string name="shared_by_me_empty_description">Safely share your files and folders with end-to-end encryption</string>
+</resources>

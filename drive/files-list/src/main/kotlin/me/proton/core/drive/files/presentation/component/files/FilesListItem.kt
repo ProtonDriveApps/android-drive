@@ -28,8 +28,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -49,6 +52,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
@@ -58,24 +62,34 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultCornerRadius
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
+import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.compose.theme.captionNorm
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.default
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
 import me.proton.core.drive.base.domain.extension.toPercentString
+import me.proton.core.drive.base.presentation.component.CircleSelection
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
+import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.currentLocale
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.drivelink.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.files.presentation.component.FilesTestTag
 import me.proton.core.drive.link.domain.entity.Folder
-import me.proton.core.drive.link.domain.extension.isSharedUrlExpired
+import me.proton.core.drive.link.domain.entity.SharingDetails
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.presentation.extension.getSize
 import me.proton.core.drive.link.presentation.extension.lastModifiedRelative
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
+import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.user.domain.entity.ShareUser
+import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
@@ -123,15 +137,9 @@ fun FilesListItem(
                 .fillMaxWidth()
                 .padding(start = StartPadding, end = EndPadding)
                 .padding(vertical = VerticalPadding),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-
-            Image(
-                modifier = Modifier
-                    .size(IconSize)
-                    .clip(RoundedCornerShape(DefaultCornerRadius)),
-                painter = link.thumbnailPainter().painter,
-                contentDescription = null,
-            )
+            ListItemIcon(link = link)
             Details(
                 modifier = Modifier
                     .weight(1f)
@@ -175,6 +183,86 @@ fun FilesListItem(
         }
         if (!inMultiselect && showProgress) {
             LinearProgressIndicator(modifier = modifier, progress = transferProgress?.value)
+        }
+    }
+}
+
+@Composable
+fun FilesListItemPlaceholder(
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = StartPadding, end = EndPadding)
+            .padding(vertical = VerticalPadding),
+    ) {
+        Box(
+            modifier = Modifier
+                .size(IconSize)
+                .clip(RoundedCornerShape(DefaultCornerRadius))
+                .background(ProtonTheme.colors.backgroundSecondary)
+        )
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = TitleStartPadding)
+                .align(Alignment.CenterVertically),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(fraction = 0.8f)
+                    .height(18.dp)
+                    .background(
+                        color = ProtonTheme.colors.backgroundSecondary,
+                        shape = ProtonTheme.shapes.small,
+                    )
+            )
+            Box(
+                modifier = Modifier
+                    .padding(top = SmallSpacing)
+                    .fillMaxWidth(fraction = 0.6f)
+                    .height(14.dp)
+                    .background(
+                        color = ProtonTheme.colors.backgroundSecondary,
+                        shape = ProtonTheme.shapes.small,
+                    )
+            )
+        }
+    }
+}
+
+@Composable
+fun ListItemIcon(
+    link: DriveLink,
+    modifier: Modifier = Modifier,
+) {
+    val member = link.shareUser?.takeUnless { it.permissions.isAdmin }
+    Box(
+        modifier = modifier,
+    ) {
+        Image(
+            modifier = Modifier
+                .size(IconSize)
+                .clip(RoundedCornerShape(DefaultCornerRadius)),
+            painter = link.thumbnailPainter().painter,
+            contentDescription = null,
+        )
+        if (member != null) {
+            Box(
+                modifier = Modifier
+                    .offset(x = ExtraSmallSpacing)
+                    .align(Alignment.BottomEnd)
+                    .size(MediumSpacing)
+                    .clip(CircleShape)
+                    .background(ProtonTheme.colors.shade40),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = member.inviter.firstCodePointAsStringOrNull?.uppercase() ?: "?",
+                    style = ProtonTheme.typography.captionNorm,
+                )
+            }
         }
     }
 }
@@ -292,14 +380,14 @@ fun SharedIcon(
     link: DriveLink,
     modifier: Modifier = Modifier,
 ) {
-    if (!link.isShared || link.isSharedUrlExpired) {
+    if (!link.isSharedByLinkOrWithUsers) {
         return
     }
     Icon(
         modifier = modifier
             .size(ExtraSmallIconSize)
             .testTag(FilesTestTag.itemWithSharedIcon),
-        painter = painterResource(id = CorePresentation.drawable.ic_proton_link),
+        painter = painterResource(id = CorePresentation.drawable.ic_proton_users),
         tint = ProtonTheme.colors.iconNorm,
         contentDescription = null
     )
@@ -311,20 +399,34 @@ fun RowScope.DetailsDescription(
     progress: Percentage?,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     Text(
         modifier = modifier.alignByBaseline(),
-        text = if (link is Folder) {
-            stringResource(I18N.string.title_modified_with_date, link.lastModifiedRelative(context))
-        } else {
-            link.downloadStateDescription(progress) ?: "%s, %s".format(
-                link.getSize(context),
-                stringResource(I18N.string.title_modified_with_date, link.lastModifiedRelative(context)),
-            )
+        text = when (link) {
+            is DriveLink.Folder -> link.detailsDescription()
+            is DriveLink.File -> link.detailsDescription(progress)
         },
         style = ProtonTheme.typography.captionWeak,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
     )
 }
+
+@Composable
+fun DriveLink.Folder.detailsDescription(): String =
+    shareUser?.takeUnless { it.permissions.isAdmin }?.description
+        ?: stringResource(I18N.string.title_modified_with_date, lastModifiedRelative(LocalContext.current))
+
+@Composable
+fun DriveLink.File.detailsDescription(progress: Percentage?): String =
+    downloadStateDescription(progress)
+        ?: let {
+            val context = LocalContext.current
+            shareUser?.takeUnless { it.permissions.isAdmin }?.description
+                ?: "%s, %s".format(
+                    getSize(context),
+                    stringResource(I18N.string.title_modified_with_date, lastModifiedRelative(context)),
+                )
+        }
 
 @Composable
 fun DriveLink.downloadStateDescription(progress: Percentage?): String? {
@@ -349,6 +451,8 @@ fun DriveLink.downloadStateDescription(progress: Percentage?): String? {
     }
 }
 
+val ShareUser.description: String get() = "${displayName ?: inviter} \u2022 ${createTime.asHumanReadableString()}"
+
 @Composable
 fun MoreOptions(
     link: DriveLink,
@@ -364,6 +468,24 @@ fun MoreOptions(
             contentDescription = null,
             tint = ProtonTheme.colors.interactionStrongNorm
         )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewFilesListItemPlaceholder() {
+    ProtonTheme {
+        Column {
+            FilesListItemPlaceholder()
+            FilesListItem(
+                link = PREVIEW_DRIVELINK_FOLDER_SHARED_WITH_ME,
+                onClick = {},
+                onLongClick = {},
+                onMoreOptionsClick = {},
+                isClickEnabled = { false },
+                isTextEnabled = { true },
+            )
+        }
     }
 }
 
@@ -395,6 +517,33 @@ fun PreviewListItem() {
         }
     }
 }
+@Preview
+@Composable
+fun PreviewSharedWithMeListItems() {
+    ProtonTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            Column {
+                FilesListItem(
+                    link = PREVIEW_DRIVELINK_FOLDER_SHARED_WITH_ME,
+                    onClick = {},
+                    onLongClick = {},
+                    onMoreOptionsClick = {},
+                    isClickEnabled = { false },
+                    isTextEnabled = { true },
+                )
+                FilesListItem(
+                    link = PREVIEW_DRIVELINK_SHARED_WITH_ME,
+                    onClick = {},
+                    onLongClick = {},
+                    onMoreOptionsClick = {},
+                    isClickEnabled = { false },
+                    isTextEnabled = { true },
+                )
+            }
+        }
+    }
+}
+
 @Preview(
     name = "ListItem in multiselect, selected,  in light mode",
     group = "light mode",
@@ -579,6 +728,10 @@ fun PreviewDownloadedAndFavoriteSharedListItem() {
                     downloadState = DownloadState.Downloaded(emptyList()),
                     link = PREVIEW_LINK.copy(
                         isShared = true,
+                        sharingDetails = SharingDetails(
+                            ShareId(PREVIEW_LINK.userId, ""),
+                            shareUrlId = ShareUrlId(ShareId(PREVIEW_LINK.userId, ""), "")
+                        ),
                         isFavorite = true,
                     )
                 ),

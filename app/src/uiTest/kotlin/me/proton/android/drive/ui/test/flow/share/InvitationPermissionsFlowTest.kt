@@ -24,7 +24,7 @@ import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import org.junit.Test
 
 @HiltAndroidTest
@@ -32,7 +32,7 @@ class InvitationPermissionsFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, withSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING, ENABLED)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun updatePermissionsToEditor() {
         val file = "newShare.txt"
         PhotosTabRobot
@@ -52,7 +52,7 @@ class InvitationPermissionsFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, withSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING, ENABLED)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun updatePermissionsToViewer() {
         val file = "newShare.txt"
         PhotosTabRobot

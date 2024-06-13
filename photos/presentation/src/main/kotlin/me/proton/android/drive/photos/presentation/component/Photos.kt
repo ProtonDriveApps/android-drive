@@ -31,12 +31,12 @@ import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.PhotosViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.PhotosViewState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.files.presentation.component.onContent
-import me.proton.core.drive.files.presentation.component.onEmpty
-import me.proton.core.drive.files.presentation.component.onError
-import me.proton.core.drive.files.presentation.component.onLoading
-import me.proton.core.drive.files.presentation.state.HandleListEffect
-import me.proton.core.drive.files.presentation.state.ListEffect
+import me.proton.core.drive.base.presentation.effect.HandleListEffect
+import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.extension.onContent
+import me.proton.core.drive.base.presentation.extension.onEmpty
+import me.proton.core.drive.base.presentation.extension.onError
+import me.proton.core.drive.base.presentation.extension.onLoading
 import me.proton.core.drive.link.domain.entity.LinkId
 
 @Composable

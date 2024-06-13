@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="file_operation_error_occurred_moving_file">Er is een fout opgetreden tijdens het verplaatsen van het bestand.</string>
+  <string name="file_operation_moving_file_successful">Bestand verplaatst</string>
+  <string name="file_operation_moving_folder_successful">Map verplaatst</string>
+  <string name="file_operation_moving_multiple_successful">%1$d items verplaatst.</string>
+  <string name="file_operation_error_file_already_exists_at_destination">Een item met die naam bestaat al in de doelmap.</string>
+  <string name="folder_options_header_title">In \"%1$s\"</string>
+  <string name="folder_options_header_title_encrypted">In</string>
+  <string name="files_toggle_layout_to_list_content_description">Lijstweergave</string>
+  <string name="files_toggle_layout_to_grid_content_description">Roosterweergave</string>
+  <!--
+        Variable %1$s is a time indicator which is formatted based on the user's locale
+        Examples:
+            "Modified 10:46"
+            "Modified Feb 28"
+            "Modified Dec 22, 2021"
+    -->
+  <string name="title_modified_with_date">Gewijzigd: %1$s</string>
+  <string name="files_restore_from_trash_action">Herstel</string>
+  <string name="files_send_to_trash_action">Naar prullenbak verplaatsen</string>
+  <string name="files_remove_me_action">Verwijder mij</string>
+  <string name="files_move_file_action">Verplaatsen</string>
+  <!--
+        Variable %1$s is a file/folder's name
+        Examples:
+            "'My folder' will be deleted permanently. You cannot undo this action."
+            "'My file.jpg' will be deleted permanently. You cannot undo this action."
+    -->
+  <string name="files_confirm_deletion_message_format">\'%1$s\' wordt permanent verwijderd. U kunt deze actie niet ongedaan maken.</string>
+  <string name="files_confirm_empty_trash_title">Prullenbak leegmaken?</string>
+  <string name="files_confirm_empty_trash_message">Items in de prullenbak worden permanent verwijderd. U kunt deze actie niet ongedaan maken.</string>
+  <string name="files_confirm_empty_trash_confirm_action">Prullenbak leegmaken</string>
+  <string name="files_display_file_info_action">Bestandsdetails</string>
+  <string name="files_display_folder_info_action">Map details</string>
+</resources>

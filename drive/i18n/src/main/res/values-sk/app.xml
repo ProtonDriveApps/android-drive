@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Dešifrovanie</string>
+  <string name="title_files">Súbory</string>
+  <string name="title_shared">Zdieľané</string>
+  <string name="title_my_files">Moje súbory</string>
+  <string name="title_offline_available">Dostupné offline</string>
+  <string name="title_empty_my_files">Do toho, pridajte svoj prvý súbor</string>
+  <string name="title_empty_folder">Poďme naplniť tento priečinok</string>
+  <string name="title_empty_folder_read_only">Prázdny priečinok</string>
+  <string name="title_empty_shared">Majte prehľad o tom, čo sa deje</string>
+  <string name="title_empty_offline_available">V režime offline nie je nič k dispozícii</string>
+  <string name="title_empty_trash">Kôš je prázdny</string>
+  <string name="title_empty_trash_action">Vyprázdniť kôš</string>
+  <string name="title_files_confirm_deletion">Vymazať natrvalo?</string>
+  <string name="title_default_home_screen_tab">Vyberte predvolenú kartu domovskej obrazovky</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Aplikácia</string>
+  <string name="description_signing_out">Odhlasovanie…</string>
+  <string name="settings_about_links_acknowledgments_title">Poďakovanie</string>
+  <string name="settings_about_links_privacy_policy_title">Zásady ochrany osobných údajov</string>
+  <string name="settings_about_links_terms_of_service_title">Podmienky používania</string>
+  <string name="common_error_no_browser_available">Odkaz sa nepodarilo otvoriť, pretože nebol nájdený žiadny nainštalovaný prehliadač.</string>
+  <string name="move_to">Presunúť do</string>
+  <string name="move_file_confirm_action">Presunúť</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">Priečinok nie je možné presunúť sám do seba</string>
+  <string name="folder_option_import_file">Nahrať súbor</string>
+  <string name="folder_option_create_folder">Vytvoriť priečinok</string>
+  <string name="folder_option_take_a_photo">Urobiť novú fotografiu</string>
+  <string name="settings_theme_system_default">Podľa systému</string>
+  <string name="settings_theme_dark">Tmavý</string>
+  <string name="settings_theme_light">Svetlý</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Nahrať do %1$s</string>
+  <string name="upload_title">Nahrať</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">Na %1$s môžu byť nahrané iba súbory</string>
+  <string name="in_app_notification_importing_file_already_exists">Súbor s rovnakým názvom už existuje, skúste vymazať vyrovnávaciu pamäť aplikácie</string>
+  <string name="in_app_notification_clear_local_cache_success">Lokálna vyrovnávacia pamäť úspešne vyčistená</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Plné úložisko</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Nahrávanie súborov do %1$s</string>
+  <string name="notification_content_title_upload_complete">Nahrávanie dokončené</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Nahrávanie %1$d súboru</item>
+    <item quantity="few">Nahrávanie %1$d súborov</item>
+    <item quantity="many">Nahrávanie %1$d súborov</item>
+    <item quantity="other">Nahrávanie %1$d súborov</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d súbor nahraný</item>
+    <item quantity="few">%1$d súbory nahrané</item>
+    <item quantity="many">%1$d súborov nahraných</item>
+    <item quantity="other">%1$d súborov nahraných</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d súbor zrušený</item>
+    <item quantity="few">%1$d súbory zrušené</item>
+    <item quantity="many">%1$d súborov zrušených</item>
+    <item quantity="other">%1$d súborov zrušených</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">%1$d súbor zlyhal</item>
+    <item quantity="few">%1$d súbory zlyhali</item>
+    <item quantity="many">%1$d súborov zlyhalo</item>
+    <item quantity="other">%1$d súborov zlyhalo</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Zálohujem fotografie do %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">Zostáva %1$s položka</item>
+    <item quantity="few">Zostávajú %1$s položky</item>
+    <item quantity="many">Zostáva %1$s položiek</item>
+    <item quantity="other">Zostáva %1$s položiek</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Zálohovanie je dokončené</string>
+  <string name="notification_content_text_backup_uncompleted">Zálohovanie dokončené s problémami</string>
+  <string name="notification_content_text_backup_failed">Zálohovanie zlyhalo</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Úložisko Proton je plné</string>
+  <string name="notification_content_text_backup_failed_local_storage">Lokálne úložisko je plné</string>
+  <string name="notification_content_text_backup_failed_permission">Chýbajú oprávnenia</string>
+  <string name="notification_content_text_backup_failed_connectivity">Žiadne internetové pripojenie</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Čakám na Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Záloha nie je povolená</string>
+  <string name="notification_content_text_backup_paused_disabled">Zálohovanie bolo vypnuté</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Zálohovanie nemôže prebiehať na pozadí</string>
+  <string name="notification_content_title_download_complete">Sťahovanie dokončené</string>
+  <string name="notification_content_title_forced_sign_out">Prihláste sa, prosím</string>
+  <string name="notification_content_text_forced_sign_out">Ospravedlňujeme sa za vyrušenie! Nastal problém so synchronizáciou - prosím prihláste sa znova a všetko bude fungovať bez problémov.</string>
+  <string name="notification_content_title_no_space_left_on_device">V zariadení nie je žiadne miesto</string>
+  <string name="notification_content_text_no_space_left_on_device">Aplikácia nemusí fungovať správne.</string>
+  <string name="notification_channel_group_name_application">Aplikácia</string>
+  <string name="notification_channel_background_title">Pozadie</string>
+  <string name="notification_channel_background_description">Kanál pre operácie na pozadí, napríklad na zálohovanie</string>
+  <string name="notification_channel_transfer_title">Prenos</string>
+  <string name="notification_channel_transfer_description">Kanál pre cloudové úložisko, notifikácie o nahrávaní a sťahovaní</string>
+  <string name="notification_channel_warning_title">Upozornenie</string>
+  <string name="notification_channel_warning_description">Kanál pre varovanie, vyžadujúce konanie používateľa</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Vybrať všetky položky v zozname</string>
+  <string name="content_description_selected_options">Zobraziť viac možností pre vybrané súbory a/alebo priečinky</string>
+  <string name="content_description_files_upload_upload_file">Nahrať súbor</string>
+  <string name="description_empty_my_files">Kliknutím na tlačidlo začnete pridávať súbory.</string>
+  <string name="description_empty_folder_read_only">Nie je tu nič k videniu</string>
+  <string name="description_empty_shared">Tu sa zobrazujú odkazované súbory, takže môžete ľahko sledovať a spravovať, čo zdieľate.</string>
+  <string name="description_empty_trash">Tu zostávajú odstránené súbory, kým ich nevymažete alebo neobnovíte.</string>
+  <string name="description_empty_offline_available">Zaistite, aby dôležité súbory boli vždy k dispozícii, aj keď vaša sieť nie je.</string>
+  <string name="description_no_drive_scope">Užívateľovi chýba rozsah jednotky.</string>
+  <string name="description_file_download_failed">Sťahovanie zlyhalo. Skontrolujte internetové pripojenie a skúste to znova.</string>
+  <string name="description_file_decryption_failed">Nepodarilo sa dešifrovať súbor</string>
+  <string name="description_file_verify_signature_failed">Podpis súboru nemohol byť overený</string>
+  <string name="description_files_stop_sharing">Týmto sa vymaže odkaz a odoberie prístup komukoľvek s odkazom k vášmu súboru alebo priečinku.</string>
+  <string name="description_files_stop_sharing_action_success">Odkaz na váš súbor bol odstránený.</string>
+  <string name="description_files_stop_sharing_action_error">Pri odstraňovaní odkazu na váš súbor došlo k chybe.</string>
+  <string name="description_files_stop_all_sharing">Tým sa odstráni prepojenie a zruší sa pre všetkých prístup.</string>
+  <string name="description_files_stop_all_sharing_action_success">Zdieľanie vášho súboru bolo odstránené.</string>
+  <string name="description_files_stop_all_sharing_action_error">Pri odstraňovaní zdieľania vášho súboru došlo k chybe.</string>
+  <string name="ignore_file_signature_action">Napriek tomu zobraziť</string>
+  <string name="action_empty_files_add_files">Nahrať</string>
+  <string name="error_could_not_send_file">Vyskytla sa chyba pri pokuse o poslanie súboru</string>
+  <string name="error_could_not_load_folder_content">Vyskytla sa chyba pri načítaní obsahu priečinka</string>
+  <string name="error_main_share_locked">Vaše súbory už nie sú prístupné z dôvodu resetovania hesla. Pre obnovenie prístupu znovu nahrajte starý šifrovací kľúč.</string>
+  <string name="error_share_locked">Zdieľanie je uzamknuté.</string>
+  <string name="error_main_share_not_found">Hlavné zdieľanie nebolo nájdené.</string>
+  <string name="error_share_not_found">Zdieľanie nebolo nájdené.</string>
+  <string name="error_creating_photo_share_not_allowed">Zálohovanie fotografií je dočasne zakázané.</string>
+  <string name="error_creating_share_not_allowed">Zdieľanie je dočasne zakázané.</string>
+  <string name="operation_open_document">otvoriť dokument</string>
+  <string name="operation_create_document">vytvoriť dokument</string>
+  <string name="operation_take_picture">odfotiť</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Odomknite %1$s bezplatného úložiska</string>
+  <string name="get_more_free_storage_description">Dokončite tieto kroky počas prvých 30 dní a získajte bezplatný upgrade úložiska.</string>
+  <string name="get_more_free_storage_action_upload_title">Nahrať súbor ALEBO povoliť zálohovanie fotografií</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Všetky vaše súbory budú zašifrované.</string>
+  <string name="get_more_free_storage_action_link_title">Vytvoriť odkaz na zdieľanie</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Vyberte ľubovoľný súbor alebo priečinok. Otvorte menu možností a stlačte %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_recovery_title">Nastaviť metódu obnovenia</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Prihláste sa na %1$s a potom prejdite na Nastavenia -&gt; Obnovenie.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

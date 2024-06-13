@@ -30,10 +30,11 @@ driveModule(
 ) {
     api(project(":drive:drivelink:domain"))
     api(project(":drive:drivelink-crypto:domain"))
+    api(project(":drive:drivelink-sorting:domain"))
     api(project(":drive:event-manager:base:domain"))
     api(project(":drive:key:domain"))
     api(project(":drive:share-crypto:domain"))
     api(project(":drive:share-url:base:domain"))
     api(project(":drive:share-url:crypto:domain"))
-    api(project(":drive:drivelink-sorting:domain"))
+    api(libs.androidx.paging.common)
 }

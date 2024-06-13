@@ -18,189 +18,60 @@
 
 package me.proton.core.drive.base.domain.entity
 
-import junit.framework.Assert.assertFalse
-import junit.framework.Assert.assertTrue
+import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
-class PermissionsTest {
+
+@RunWith(Parameterized::class)
+class PermissionsTest(
+    private val value: Long,
+    private val rights: Rights,
+) {
 
     @Test
-    fun `permission value 0`() {
-        // region Given
-        val value = 0L
-        val permissions = Permissions(value)
-        // endregion
-        // region When
-        val canRead = permissions.canRead
-        val canWrite = permissions.canWrite
-        val canExecute = permissions.canExecute
-        val isAdmin = permissions.isAdmin
-        // endregion
-        // region Then
-        assertFalse(canRead)
-        assertFalse(canWrite)
-        assertFalse(canExecute)
-        assertFalse(isAdmin)
-        // endregion
+    fun permission() {
+        with(Permissions(value)) {
+            assertEquals("canExecute", rights.canExecute, canExecute)
+            assertEquals("canRead", rights.canRead, canRead)
+            assertEquals("canWrite", rights.canWrite, canWrite)
+            assertEquals("isAdmin", rights.isAdmin, isAdmin)
+            assertEquals("isOwner", rights.isOwner, isOwner)
+        }
     }
 
-    @Test
-    fun `permission value 1`() {
-        // region Given
-        val value = 1L
-        val permissions = Permissions(value)
-        // endregion
-        // region When
-        val canRead = permissions.canRead
-        val canWrite = permissions.canWrite
-        val canExecute = permissions.canExecute
-        val isAdmin = permissions.isAdmin
-        // endregion
-        // region Then
-        assertFalse(canRead)
-        assertFalse(canWrite)
-        assertTrue(canExecute)
-        assertFalse(isAdmin)
-        // endregion
-    }
+    companion object {
+        data class Rights(
+            val isOwner: Boolean = false,
+            val isAdmin: Boolean = false,
+            val canWrite: Boolean = false,
+            val canRead: Boolean = false,
+            val canExecute: Boolean = false,
+        )
 
-    @Test
-    fun `permission value 2`() {
-        // region Given
-        val value = 2L
-        val permissions = Permissions(value)
-        // endregion
-        // region When
-        val canRead = permissions.canRead
-        val canWrite = permissions.canWrite
-        val canExecute = permissions.canExecute
-        val isAdmin = permissions.isAdmin
-        // endregion
-        // region Then
-        assertFalse(canRead)
-        assertTrue(canWrite)
-        assertFalse(canExecute)
-        assertFalse(isAdmin)
-        // endregion
-    }
-
-    @Test
-    fun `permission value 3`() {
-        // region Given
-        val value = 3L
-        val permissions = Permissions(value)
-        // endregion
-        // region When
-        val canRead = permissions.canRead
-        val canWrite = permissions.canWrite
-        val canExecute = permissions.canExecute
-        val isAdmin = permissions.isAdmin
-        // endregion
-        // region Then
-        assertFalse(canRead)
-        assertTrue(canWrite)
-        assertTrue(canExecute)
-        assertFalse(isAdmin)
-        // endregion
-    }
-
-    @Test
-    fun `permission value 4`() {
-        // region Given
-        val value = 4L
-        val permissions = Permissions(value)
-        // endregion
-        // region When
-        val canRead = permissions.canRead
-        val canWrite = permissions.canWrite
-        val canExecute = permissions.canExecute
-        val isAdmin = permissions.isAdmin
-        // endregion
-        // region Then
-        assertTrue(canRead)
-        assertFalse(canWrite)
-        assertFalse(canExecute)
-        assertFalse(isAdmin)
-        // endregion
-    }
-
-    @Test
-    fun `permission value 5`() {
-        // region Given
-        val value = 5L
-        val permissions = Permissions(value)
-        // endregion
-        // region When
-        val canRead = permissions.canRead
-        val canWrite = permissions.canWrite
-        val canExecute = permissions.canExecute
-        val isAdmin = permissions.isAdmin
-        // endregion
-        // region Then
-        assertTrue(canRead)
-        assertFalse(canWrite)
-        assertTrue(canExecute)
-        assertFalse(isAdmin)
-        // endregion
-    }
-
-    @Test
-    fun `permission value 6`() {
-        // region Given
-        val value = 6L
-        val permissions = Permissions(value)
-        // endregion
-        // region When
-        val canRead = permissions.canRead
-        val canWrite = permissions.canWrite
-        val canExecute = permissions.canExecute
-        val isAdmin = permissions.isAdmin
-        // endregion
-        // region Then
-        assertTrue(canRead)
-        assertTrue(canWrite)
-        assertFalse(canExecute)
-        assertFalse(isAdmin)
-        // endregion
-    }
-
-    @Test
-    fun `permission value 7`() {
-        // region Given
-        val value = 7L
-        val permissions = Permissions(value)
-        // endregion
-        // region When
-        val canRead = permissions.canRead
-        val canWrite = permissions.canWrite
-        val canExecute = permissions.canExecute
-        val isAdmin = permissions.isAdmin
-        // endregion
-        // region Then
-        assertTrue(canRead)
-        assertTrue(canWrite)
-        assertTrue(canExecute)
-        assertFalse(isAdmin)
-        // endregion
-    }
-
-    @Test
-    fun `permission value 23`() {
-        // region Given
-        val value = 23L
-        val permissions = Permissions(value)
-        // endregion
-        // region When
-        val canRead = permissions.canRead
-        val canWrite = permissions.canWrite
-        val canExecute = permissions.canExecute
-        val isAdmin = permissions.isAdmin
-        // endregion
-        // region Then
-        assertTrue(canRead)
-        assertTrue(canWrite)
-        assertTrue(canExecute)
-        assertTrue(isAdmin)
-        // endregion
+        @get:Parameterized.Parameters(name = "Permission({0}) has rights: {1}")
+        @get:JvmStatic
+        val data = listOf(
+            arrayOf(0, Rights()),
+            arrayOf(1, Rights(canExecute = true)),
+            arrayOf(2, Rights(canWrite = true)),
+            arrayOf(3, Rights(canExecute = true, canWrite = true)),
+            arrayOf(4, Rights(canRead = true)),
+            arrayOf(5, Rights(canExecute = true, canRead = true)),
+            arrayOf(6, Rights(canWrite = true,  canRead = true)),
+            arrayOf(7, Rights(canExecute = true, canWrite = true, canRead = true)),
+            arrayOf(23, Rights(canExecute = true, canWrite = true, canRead = true, isAdmin = true)),
+            arrayOf(
+                55,
+                Rights(
+                    canExecute = true,
+                    canWrite = true,
+                    canRead = true,
+                    isAdmin = true,
+                    isOwner = true
+                )
+            ),
+        )
     }
 }

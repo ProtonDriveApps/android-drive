@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items sent to trash"
+    -->
+  <plurals name="trash_operation_successful_format">
+    <item quantity="one">1 item naar de prullenbak gestuurd</item>
+    <item quantity="other">%1$d items naar de prullenbak gestuurd</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items restored"
+    -->
+  <plurals name="trash_restore_operation_successful_format">
+    <item quantity="one">1 item hersteld</item>
+    <item quantity="other">%d items hersteld</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items deleted permanently"
+    -->
+  <plurals name="trash_delete_operation_successful_format">
+    <item quantity="one">1 item definitief verwijderd</item>
+    <item quantity="other">%d items permanent verwijderd</item>
+  </plurals>
+  <string name="trash_empty_operation_successful">Prullenbak geleegd</string>
+  <string name="trash_error_occurred_sending_to_trash">Er is een fout opgetreden bij het verzenden van uw bestand(en) naar de prullenbak</string>
+  <string name="trash_error_occurred_restoring_from_trash">Er is een fout opgetreden tijdens het herstellen van uw bestand(en)</string>
+  <string name="trash_error_occurred_deleting_from_trash">Er is een fout opgetreden tijdens het verwijderen van uw bestand(en)</string>
+  <string name="trash_error_occurred_emptying_trash">Er is een fout opgetreden bij het legen van de prullenbak</string>
+</resources>

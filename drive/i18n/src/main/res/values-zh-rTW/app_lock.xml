@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">應用程式已鎖定</string>
+  <string name="app_lock_biometric_subtitle_app_locked">使用您的裝置鎖來解鎖</string>
+  <string name="app_lock_biometric_title_confirmation">確認</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">要啟用解鎖，請使用您的裝置鎖確認</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">要停用解鎖，請使用您的裝置鎖確認</string>
+  <string name="app_lock_option_never_set">啟用生物辨識或裝置鎖</string>
+  <string name="app_lock_option_none">維持解鎖</string>
+  <string name="app_lock_option_system">生物辨識或裝置鎖</string>
+  <string name="app_lock_system_dialog_title">開啟生物辨識存取</string>
+  <string name="app_lock_system_dialog_description">設定此裝置上的生物辨識或裝置鎖。</string>
+  <string name="app_lock_system_dialog_settings_button">設定</string>
+  <string name="app_lock_system_not_available">您的裝置上不提供生物辨識或裝置鎖</string>
+  <string name="app_lock_enabled">生物辨識或裝置鎖存取已啟用</string>
+  <string name="app_lock_disabled">應用程式鎖已停用</string>
+  <string name="app_lock_access_title">選擇要如何鎖定應用程式</string>
+  <string name="app_lock_unlock_the_app">解鎖應用程式</string>
+</resources>

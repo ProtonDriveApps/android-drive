@@ -30,9 +30,17 @@ object ShareInvitationOptionRobot : NavigationBarRobot, Robot {
     private val editorButton
         get() = node.withText(I18N.string.share_via_invitations_permission_editor)
             .hasAncestor(content)
+    private val removeAccessButton
+        get() = node.withText(I18N.string.share_via_invitations_remove_access_action)
+            .hasAncestor(content)
+    private val resendInvitation
+        get() = node.withText(I18N.string.share_via_invitations_resend_invite_action)
+            .hasAncestor(content)
 
     fun clickViewer() = viewerButton.clickTo(ManageAccessRobot)
     fun clickEditor() = editorButton.clickTo(ManageAccessRobot)
+    fun clickRemoveAccess() = removeAccessButton.clickTo(ManageAccessRobot)
+    fun clickResendInvitation() = resendInvitation.clickTo(ManageAccessRobot)
 
     override fun robotDisplayed() {
         content.await { assertIsDisplayed() }

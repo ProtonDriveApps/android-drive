@@ -21,10 +21,12 @@ package me.proton.core.drive.db.test
 import me.proton.android.drive.db.DriveDatabase
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.data.api.ShareDto
+import me.proton.core.drive.share.data.db.ShareMembershipEntity
 import me.proton.core.drive.share.domain.entity.ShareId
 
 fun standardShareId(index: Int = defaultIndex) = ShareId(userId, "standard-share-id-$index")
-fun standardRootId(index: Int = defaultIndex) = FolderId(standardShareId(index), "standard-${index}-root-id")
+fun standardRootId(index: Int = defaultIndex) =
+    FolderId(standardShareId(index), "standard-${index}-root-id")
 
 suspend fun DriveDatabaseRule.standardShare(
     id: String,
@@ -54,6 +56,20 @@ suspend fun VolumeContext.standardShare(
             type = ShareDto.TYPE_STANDARD,
         )
     ) {
+        db.shareMembershipDao.insertOrUpdate(
+            ShareMembershipEntity(
+                id = "member-id-$id",
+                userId = userId,
+                shareId = id,
+                inviterEmail = account.email!!,
+                inviteeEmail = account.email!!,
+                permissions = 55,
+                keyPacket = "key-packet-$id",
+                keyPacketSignature = null,
+                sessionKeySignature = null,
+                createTime = 0,
+            )
+        )
         withKey()
         ShareContext(db, user, account, volume, share).block()
     }

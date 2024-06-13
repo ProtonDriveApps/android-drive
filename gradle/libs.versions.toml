@@ -35,7 +35,7 @@ android-tools = "1.1.5"
 # Coil
 coil = "2.4.0"
 # Core
-core = "22.1.0"
+core = "23.2.0"
 core-test-quark = "14.1.0"
 # Dagger
 dagger = "2.49"
@@ -132,6 +132,7 @@ androidx-paging-compose = { module = "androidx.paging:paging-compose", version.r
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
 androidx-room-test = { module = "androidx.room:room-testing", version.ref = "androidx-room" }
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "androidx-room" }
 ## Work
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 
@@ -212,6 +213,7 @@ core-proguard-rules = { module = "me.proton.core:proguard-rules", version.ref = 
 core-push = { module = "me.proton.core:push", version.ref = "core" }
 core-push-data = { module = "me.proton.core:push-data", version.ref = "core" }
 core-report = { module = "me.proton.core:report", version.ref = "core" }
+core-report-domain = { module = "me.proton.core:report-domain", version.ref = "core" }
 core-report-test = { module = "me.proton.core:report-test", version.ref = "core" }
 core-test-android = { module = "me.proton.core:test-android", version.ref = "core" }
 core-test-android-instrumented = { module = "me.proton.core:test-android-instrumented", version.ref = "core" }

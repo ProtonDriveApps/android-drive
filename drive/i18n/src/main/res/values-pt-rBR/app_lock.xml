@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">Aplicativo bloqueado</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Desbloquear usando o bloqueio do seu dispositivo</string>
+  <string name="app_lock_biometric_title_confirmation">Confirmação</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Para ativar o desbloqueio, confirme com o bloqueio do seu dispositivo</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Para desativar o desbloqueio, confirme com o bloqueio do seu dispositivo</string>
+  <string name="app_lock_option_never_set">Ativar biometria ou bloqueio do dispositivo</string>
+  <string name="app_lock_option_none">Manter desbloqueado</string>
+  <string name="app_lock_option_system">Biometria ou bloqueio do dispositivo</string>
+  <string name="app_lock_system_dialog_title">Ativar acesso por biometria</string>
+  <string name="app_lock_system_dialog_description">Configure o acesso por biometria ou com o bloqueio do dispositivo nesse dispositivo.</string>
+  <string name="app_lock_system_dialog_settings_button">Configurações</string>
+  <string name="app_lock_system_not_available">O acesso por biometria ou bloqueio de dispositivo não está disponível no seu dispositivo.</string>
+  <string name="app_lock_enabled">O acesso por biometria ou bloqueio do dispositivo está ativado</string>
+  <string name="app_lock_disabled">O bloqueio do aplicativo foi desativado</string>
+  <string name="app_lock_access_title">Escolha como bloquear o aplicativo</string>
+  <string name="app_lock_unlock_the_app">Desbloquear o aplicativo</string>
+</resources>

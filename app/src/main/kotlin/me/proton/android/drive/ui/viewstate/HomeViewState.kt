@@ -25,6 +25,6 @@ import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewSt
 @Immutable
 data class HomeViewState(
     val tabs: List<NavigationTab>,
-    val selectedTab: NavigationTab,
+    val selectedTab: NavigationTab?,
     val navigationDrawerViewState: NavigationDrawerViewState
 )

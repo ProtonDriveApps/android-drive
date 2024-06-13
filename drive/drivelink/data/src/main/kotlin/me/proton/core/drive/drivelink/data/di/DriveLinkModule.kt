@@ -25,13 +25,17 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.drive.drivelink.data.db.DriveLinkDatabase
 import me.proton.core.drive.drivelink.data.repository.DriveLinkRepositoryImpl
+import me.proton.core.drive.drivelink.data.usecase.UpdateDriveLinkDisplayNameImpl
 import me.proton.core.drive.drivelink.domain.repository.DriveLinkRepository
+import me.proton.core.drive.drivelink.domain.usecase.UpdateDriveLinkDisplayName
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface DriveLinkBindsModule {
     @Binds
     fun bindsDriveLinkRepository(repository: DriveLinkRepositoryImpl): DriveLinkRepository
+    @Binds
+    fun bindsUpdateDriveLinkDisplayName(impl: UpdateDriveLinkDisplayNameImpl): UpdateDriveLinkDisplayName
 }
 
 @Module

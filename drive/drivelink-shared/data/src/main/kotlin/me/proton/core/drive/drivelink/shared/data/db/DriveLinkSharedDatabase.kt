@@ -18,9 +18,31 @@
 
 package me.proton.core.drive.drivelink.shared.data.db
 
+import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
+import me.proton.core.data.room.db.migration.DatabaseMigration
 import me.proton.core.drive.drivelink.shared.data.db.dao.DriveLinkSharedDao
+import me.proton.core.drive.drivelink.shared.data.db.dao.SharedRemoteKeyDao
 
 interface DriveLinkSharedDatabase : Database {
     val driveLinkSharedDao: DriveLinkSharedDao
+    val sharedRemoteKeyDao: SharedRemoteKeyDao
+
+    companion object {
+        val MIGRATION_0 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        CREATE TABLE IF NOT EXISTS `SharedRemoteKeyEntity` (
+                            `id` INTEGER NOT NULL,
+                            `key` TEXT NOT NULL,
+                            `anchor_id` TEXT NOT NULL,
+                            `has_more` INTEGER NOT NULL,
+                             PRIMARY KEY(`id`)
+                         )
+                        """.trimIndent()
+                )
+            }
+        }
+    }
 }

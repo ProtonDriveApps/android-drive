@@ -123,7 +123,10 @@ class PhotoBackupStateTest {
                 volumeId = volumeId,
                 isMarkedAsOffline = false,
                 downloadState = null,
-                trashState = null
+                trashState = null,
+                shareInvitationCount = null,
+                shareMemberCount = null,
+                shareUser = null,
             ) as DriveLink.Folder?).asSuccessOrNullAsError()
         }
         val announceEvent = AnnounceEvent(setOf(handler))

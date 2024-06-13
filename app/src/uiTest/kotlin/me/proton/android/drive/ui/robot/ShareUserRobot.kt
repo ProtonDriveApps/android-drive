@@ -29,12 +29,18 @@ object ShareUserRobot : NavigationBarRobot, Robot {
     private val closeButton get() = node.withText(I18N.string.common_close_action)
     private val emailTextField get() = node.isSetText()
     private val sendButton get() = node.withContentDescription(I18N.string.common_send_action)
+    private val viewerPermissionButton get() = node.withText(I18N.string.share_via_invitations_permission_viewer)
+    private val editorPermissionButton get() = node.withText(I18N.string.share_via_invitations_permission_editor)
     fun typeEmail(text: String) = apply {
         emailTextField.typeText(text).typeText(" ")
     }
 
     fun clickSend() = sendButton.clickTo(this)
     fun <T : Robot> clickClose(goesTo: T): T = closeButton.clickTo(goesTo)
+
+    fun clickOnViewerPermission() = viewerPermissionButton.clickTo(this)
+
+    fun clickOnEditorPermission() = editorPermissionButton.clickTo(this)
 
     fun assertShareFile(folderName: String) = node.withText(
         targetContext.resources.getString(
@@ -54,6 +60,9 @@ object ShareUserRobot : NavigationBarRobot, Robot {
             count
         ).format(count)
     ).await { assertIsDisplayed() }
+
+    fun assertSendButtonDisabled() =
+        node.isClickable().hasDescendant(sendButton).await { assertDisabled() }
 
     override fun robotDisplayed() {
         contentShareScreen.await { assertIsDisplayed() }

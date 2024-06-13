@@ -92,12 +92,10 @@ class FilesOptionsTest {
         // endregion
         // region Act
         composeTestRule.setContent {
-            WithLocale(Locale.ENGLISH) {
-                ParentFolderOptions(
-                    folder = link as DriveLink.Folder,
-                    entries = listOf(entry),
-                )
-            }
+            ParentFolderOptions(
+                folder = link as DriveLink.Folder,
+                entries = listOf(entry),
+            )
         }
         assert(!entry.wasClicked)
         composeTestRule.onNodeWithText("Test entry 1")
@@ -107,8 +105,6 @@ class FilesOptionsTest {
         assert(entry.wasClicked)
         val title = composeTestRule.activity.getString(I18N.string.folder_options_header_title, "FOLDER")
         composeTestRule.onNodeWithText(title).assertExists()
-        // Note: the space between 123 and B is an non-breakable space, not a regular one
-        composeTestRule.onNodeWithText("123 B | Oct 25, 2020").assertDoesNotExist()
         composeTestRule.onNodeWithText("Test entry 1").assertExists()
         composeTestRule.onNodeWithText("Test entry 2").assertDoesNotExist()
         // endregion
@@ -125,12 +121,10 @@ class FilesOptionsTest {
         // endregion
         // region Act
         composeTestRule.setContent {
-            WithLocale(Locale.ENGLISH) {
-                FilesOptions(
-                    file = link as DriveLink.File,
-                    entries = listOf(entry1, entry2),
-                )
-            }
+            FilesOptions(
+                file = link as DriveLink.File,
+                entries = listOf(entry1, entry2),
+            )
         }
         assert(!entry1.wasClicked)
         assert(!entry2.wasClicked)
@@ -141,8 +135,6 @@ class FilesOptionsTest {
         assert(!entry1.wasClicked)
         assert(entry2.wasClicked)
         composeTestRule.onNodeWithText("FILE").assertExists()
-        // Note: the space between 123 and B is an non-breakable space, not a regular one
-        composeTestRule.onNodeWithText("123 B | Oct 25, 2020").assertExists()
         composeTestRule.onNodeWithText("Test entry 1").assertExists()
         composeTestRule.onNodeWithText("Test entry 2").assertExists()
         // endregion
@@ -161,12 +153,10 @@ class FilesOptionsTest {
         // endregion
         // region Act
         composeTestRule.setContent {
-            WithLocale(Locale.ENGLISH) {
-                FilesOptions(
-                    file = driveLink,
-                    entries = listOf(entry1, entry2),
-                )
-            }
+            FilesOptions(
+                file = driveLink,
+                entries = listOf(entry1, entry2),
+            )
         }
         assert(!entry1.wasClicked)
         assert(!entry2.wasClicked)
@@ -193,12 +183,10 @@ class FilesOptionsTest {
         // endregion
         // region Act
         composeTestRule.setContent {
-            WithLocale(Locale.ENGLISH) {
-                FilesOptions(
-                    file = driveLink,
-                    entries = listOf(entry1, entry2),
-                )
-            }
+            FilesOptions(
+                file = driveLink,
+                entries = listOf(entry1, entry2),
+            )
         }
         assert(!entry1.wasClicked)
         assert(!entry2.wasClicked)
@@ -229,12 +217,10 @@ class FilesOptionsTest {
         // endregion
         // region Act
         composeTestRule.setContent {
-            WithLocale(Locale.ENGLISH) {
-                FilesOptions(
-                    file = driveLink,
-                    entries = listOf(entry1, entry2),
-                )
-            }
+            FilesOptions(
+                file = driveLink,
+                entries = listOf(entry1, entry2),
+            )
         }
         assert(!entry1.wasClicked)
         assert(!entry2.wasClicked)

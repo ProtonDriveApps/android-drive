@@ -29,8 +29,7 @@ import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.log.DriveLogger
-import me.proton.android.drive.log.NoOpLogger
-import me.proton.android.drive.log.deviceInfo
+import me.proton.android.drive.log.UserLogger
 import me.proton.android.drive.usecase.GetFileLoggerTree
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.usersettings.domain.UsersSettingsHandler
@@ -46,13 +45,14 @@ class LoggerInitializer : Initializer<Unit> {
             LoggerInitializerEntryPoint::class.java
         )
         val logger = entryPoint.driveLogger()
+        val userLogger = entryPoint.userLogger()
         entryPoint.userSettingsHandler().onUsersSettingsChanged(
             merge = { usersSettings ->
                 usersSettings.none { userSettings -> userSettings?.crashReports == false }
             }
         ) { crashReports ->
             CoreLogger.set(
-                logger = if (crashReports) logger else NoOpLogger()
+                logger = if (crashReports) logger else userLogger
             )
         }
         if (BuildConfig.DEBUG || BuildConfig.FLAVOR == BuildConfig.FLAVOR_ALPHA) {
@@ -96,6 +96,7 @@ class LoggerInitializer : Initializer<Unit> {
     @InstallIn(SingletonComponent::class)
     interface LoggerInitializerEntryPoint {
         fun driveLogger(): DriveLogger
+        fun userLogger(): UserLogger
         fun userSettingsHandler(): UsersSettingsHandler
         fun configurationProvider(): ConfigurationProvider
         fun getFileLoggerTree(): GetFileLoggerTree

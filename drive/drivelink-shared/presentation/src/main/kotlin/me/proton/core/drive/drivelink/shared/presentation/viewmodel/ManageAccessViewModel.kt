@@ -44,7 +44,6 @@ import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
-import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.SHARE
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
@@ -55,8 +54,9 @@ import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.drivelink.domain.extension.isEditor
+import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.drivelink.shared.domain.extension.sharingDetails
 import me.proton.core.drive.drivelink.shared.domain.usecase.GetOrCreateSharedDriveLink
 import me.proton.core.drive.drivelink.shared.domain.usecase.GetSharedDriveLink
 import me.proton.core.drive.drivelink.shared.presentation.extension.toViewState
@@ -64,6 +64,13 @@ import me.proton.core.drive.drivelink.shared.presentation.viewevent.ManageAccess
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.LoadingViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ManageAccessViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -71,6 +78,7 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.usecase.GetShareUsers
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
@@ -85,6 +93,7 @@ class ManageAccessViewModel @Inject constructor(
     getShareUsers: GetShareUsers,
     private val savedStateHandle: SavedStateHandle,
     private val copyToClipboard: CopyToClipboard,
+    private val getFeatureFlagFlow: GetFeatureFlagFlow,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
     @ApplicationContext private val appContext: Context,
@@ -180,12 +189,20 @@ class ManageAccessViewModel @Inject constructor(
         }
     }
 
+    private val killSwitch = getFeatureFlagFlow(driveSharingDisabled(userId))
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = FeatureFlag(driveSharingDisabled(userId), NOT_FOUND)
+        )
+
     val viewState: Flow<ManageAccessViewState> = combine(
         driveLink.filterNotNull(),
         sharedDriveLink.filterSuccessOrError().mapSuccessValueOrNull(),
         sharedLoadingViewState,
-        shareUsers
-    ) { driveLink, sharedDriveLink, sharedLoadingViewState, shareUsers ->
+        shareUsers,
+        killSwitch,
+    ) { driveLink, sharedDriveLink, sharedLoadingViewState, shareUsers, killSwitch ->
         ManageAccessViewState(
             title = appContext.getString(I18N.string.title_manage_access),
             linkId = linkId,
@@ -197,7 +214,8 @@ class ManageAccessViewModel @Inject constructor(
             },
             linkName = driveLink.name,
             isLinkNameEncrypted = driveLink.isNameEncrypted,
-            canEdit = driveLink.isEditor,
+            canEdit = (driveLink.sharePermissions == null || driveLink.sharePermissions?.isAdmin == true)
+                    && killSwitch.state != ENABLED,
             loadingViewState = sharedLoadingViewState,
             shareUsers = shareUsers.toViewState()
         )
@@ -206,7 +224,8 @@ class ManageAccessViewModel @Inject constructor(
     fun viewEvent(
         navigateToShareViaInvitations: (LinkId) -> Unit,
         navigateToShareViaLink: (LinkId) -> Unit,
-        navigateToStopSharing: (LinkId) -> Unit,
+        navigateToStopLinkSharing: (LinkId) -> Unit,
+        navigateToStopAllSharing: (ShareId) -> Unit,
         navigateToInvitationOptions: (LinkId, String) -> Unit,
         navigateToMemberOptions: (LinkId, String) -> Unit,
         navigateBack: () -> Unit
@@ -216,8 +235,13 @@ class ManageAccessViewModel @Inject constructor(
         override val onInvitationOptions: (String) -> Unit = { invitationId -> navigateToInvitationOptions(linkId, invitationId) }
         override val onMemberOptions: (String) -> Unit = { memberId -> navigateToMemberOptions(linkId, memberId) }
         override val onConfigureSharing: () -> Unit = { navigateToShareViaLink(linkId) }
-        override val onStartSharing: () -> Unit = { startSharing() }
-        override val onStopSharing: () -> Unit = { navigateToStopSharing(linkId) }
+        override val onStartLinkSharing: () -> Unit = { startLinkSharing() }
+        override val onStopLinkSharing: () -> Unit = { navigateToStopLinkSharing(linkId) }
+        override val onStopAllSharing: () -> Unit = {
+            driveLink.value?.sharingDetails?.shareId?.let{
+                navigateToStopAllSharing(it)
+            }
+        }
         override val onBackPressed: () -> Unit = { navigateBack() }
         override val onRetry: () -> Unit = ::retry
     }
@@ -232,14 +256,13 @@ class ManageAccessViewModel @Inject constructor(
         copyToClipboard(userId, appContext.getString(I18N.string.common_link), publicUrl)
     }
 
-
-    private fun startSharing() {
+    private fun startLinkSharing() {
         viewModelScope.launch {
             retryTrigger.emit(Unit)
         }
     }
 
-    private fun DriveLink.toLoadingMessage(): String = if (isShared) {
+    private fun DriveLink.toLoadingMessage(): String = if (hasShareLink) {
         appContext.getString(I18N.string.shared_link_getting_link)
     } else {
         val suffix = appContext.getString(

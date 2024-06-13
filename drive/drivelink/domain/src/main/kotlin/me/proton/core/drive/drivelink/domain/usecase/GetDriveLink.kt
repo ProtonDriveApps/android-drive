@@ -48,6 +48,9 @@ class GetDriveLink @Inject constructor(
     private val driveLinkRepository: DriveLinkRepository,
     private val getMainShare: GetOrCreateMainShare,
     private val updateIsAnyAncestorMarkedAsOffline: UpdateIsAnyAncestorMarkedAsOffline,
+    private val updateDriveLinkDisplayName: UpdateDriveLinkDisplayName,
+    private val updateSharePermissions: UpdateSharePermissions,
+    private val updateShareUserDisplayName: UpdateShareUserDisplayName,
 ) {
     @OptIn(ExperimentalCoroutinesApi::class)
     operator fun invoke(
@@ -106,7 +109,10 @@ class GetDriveLink @Inject constructor(
             driveLinkRepository.getDriveLink(linkId)
                 .map { driveLink ->
                     driveLink
-                        ?.let { updateIsAnyAncestorMarkedAsOffline(listOf(driveLink)).first() }
+                        ?.let { link -> updateDriveLinkDisplayName(link) }
+                        ?.let { link -> updateIsAnyAncestorMarkedAsOffline(listOf(link)).first() }
+                        ?.let { link -> updateSharePermissions(link) }
+                        ?.let { link -> updateShareUserDisplayName(link) }
                         .asSuccessOrNullAsError()
                 }
         )

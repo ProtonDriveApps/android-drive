@@ -22,6 +22,5 @@ import me.proton.core.drive.link.domain.entity.LinkId
 
 data class ShareUsersInvitation(
     val linkId: LinkId,
-    val email: String,
     val members: List<ShareUserInvitation>,
 )

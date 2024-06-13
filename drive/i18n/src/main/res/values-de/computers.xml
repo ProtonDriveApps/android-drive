@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="computers_title">Computer</string>
+  <string name="computers_type_windows">Windows</string>
+  <string name="computers_type_mac_os">MacOS</string>
+  <string name="computers_type_linux">Linux</string>
+  <string name="computers_type_unknown">Unbekannt</string>
+  <string name="computers_empty_title">Keine Computer synchronisieren</string>
+  <string name="computers_empty_description">Verwende die Desktop-App\nzum Synchronisieren von Ordnern</string>
+  <string name="computers_synced_folders_empty_title">Keine synchronisierten Ordner</string>
+  <string name="computers_synced_folders_empty_description">Ordner, die du von deinem Computer synchronisierst,\nwerden hier angezeigt.</string>
+  <string name="computers_synced_folders_no_folder">Computer wurde entfernt</string>
+  <string name="computers_rename_title">Computer umbenennen</string>
+  <string name="computers_rename_success">Computer umbenannt</string>
+  <!--
+        Variable %1$s is a computer name
+        Examples:
+            "More options for My laptop"
+    -->
+  <string name="computers_content_description_list_more_options">Mehr Optionen für %1$s</string>
+</resources>

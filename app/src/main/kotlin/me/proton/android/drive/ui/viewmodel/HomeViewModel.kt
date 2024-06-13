@@ -41,6 +41,9 @@ import me.proton.core.domain.entity.SessionUserId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.component.NavigationTab
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEvent
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewState
 import me.proton.core.user.domain.UserManager
@@ -56,6 +59,7 @@ class HomeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     configurationProvider: ConfigurationProvider,
     private val canGetMoreFreeStorage: CanGetMoreFreeStorage,
+    private val getFeatureFlagFlow: GetFeatureFlagFlow,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val tabs: StateFlow<Map<out HomeTab, NavigationTab>> = MutableStateFlow(
@@ -76,7 +80,11 @@ class HomeViewModel @Inject constructor(
             ),
             Screen.Shared to NavigationTab(
                 iconResId = CorePresentation.drawable.ic_proton_link,
-                titleResId = I18N.string.title_shared
+                titleResId = I18N.string.title_shared,
+            ),
+            Screen.SharedTabs to NavigationTab(
+                iconResId = CorePresentation.drawable.ic_proton_users,
+                titleResId = I18N.string.title_shared,
             ),
         ).associateBy({ tab -> tab.first }, { tab -> tab.second })
     )
@@ -90,9 +98,21 @@ class HomeViewModel @Inject constructor(
         combine(
             userManager.observeUser(SessionUserId(userId.id)),
             currentDestination.filterNotNull(),
+            getFeatureFlagFlow(FeatureFlagId.driveSharingInvitations(userId)),
             tabs.filter { tabs -> tabs.isNotEmpty() },
-        ) { user, selectedScreen, tabs ->
-            getViewState(user, selectedScreen, tabs)
+        ) { user, selectedScreen, sharingFeatureFlag, tabs ->
+            val sharingEnabled = sharingFeatureFlag.state == FeatureFlag.State.ENABLED
+            getViewState(
+                user = user,
+                startDestination = selectedScreen,
+                tabs = tabs.filter { tab ->
+                    when(tab.key){
+                        Screen.Shared -> !sharingEnabled
+                        Screen.SharedTabs -> sharingEnabled
+                        else -> true
+                    }
+                }
+            )
         }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
     fun viewEvent(
@@ -129,7 +149,7 @@ class HomeViewModel @Inject constructor(
     ) =
         HomeViewState(
             tabs = tabs.values.toList(),
-            selectedTab = tabs.firstNotNullOf { (screen, tab) ->
+            selectedTab = tabs.firstNotNullOfOrNull { (screen, tab) ->
                 tab.takeIf { screen.route == startDestination }
             },
             navigationDrawerViewState = NavigationDrawerViewState(

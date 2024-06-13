@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">გაშიფვრა</string>
+  <string name="title_files">ფაილები</string>
+  <string name="title_shared">გაზიარებული</string>
+  <string name="title_my_files">ჩემი ფაილები</string>
+  <string name="title_offline_available">ხაზგარეშე რეჟიმშიცაა ხელმისაწვდომი</string>
+  <string name="title_empty_my_files">მიდი, დაამატე შენი პირველი ფაილი</string>
+  <string name="title_empty_folder">მოდით, შევავსოთ ეს საქაღალდე</string>
+  <string name="title_empty_folder_read_only">ცარიელი საქაღალდე</string>
+  <string name="title_empty_shared">მიიღეთ სიახლეები</string>
+  <string name="title_empty_offline_available">ხაზგარეშე ხელმისაწვდომი არაფერია</string>
+  <string name="title_empty_trash">სანაგვე ყუთი ცარიელია</string>
+  <string name="title_empty_trash_action">ნაგვის ყუთის დაცარიელება</string>
+  <string name="title_files_confirm_deletion">წავშალო სამუდამოდ?</string>
+  <string name="title_default_home_screen_tab">აირჩიეთ ნაგულისხმევი საწყისი ეკრანის ჩანართი</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">აპი</string>
+  <string name="description_signing_out">გასვლა…</string>
+  <string name="settings_about_links_acknowledgments_title">მადლობები</string>
+  <string name="settings_about_links_privacy_policy_title">კონფიდენციალობის პოლიტიკა</string>
+  <string name="settings_about_links_terms_of_service_title">მომსახურების პირობები</string>
+  <string name="common_error_no_browser_available">ბმული ვერ გავხსენი, რადგან, როგორც ჩანს, ბრაუზერი არ გიყენიათ</string>
+  <string name="move_to">გადატანა</string>
+  <string name="move_file_confirm_action">გადატანა</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">საქაღალდეს თავის თავში ვერ გადაიტანთ</string>
+  <string name="folder_option_import_file">ფაილის ატვირთვა</string>
+  <string name="folder_option_create_folder">საქაღალდის შექმნა</string>
+  <string name="folder_option_take_a_photo">ახალი სურათის გადაღება</string>
+  <string name="settings_theme_system_default">სისტემის ნაგულისხმები</string>
+  <string name="settings_theme_dark">ბნელი</string>
+  <string name="settings_theme_light">ღია</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">%1$s-ზე ატვირთვა</string>
+  <string name="upload_title">ატვირთვა</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">%1$s-ზე, მხოლოდ, ფაილების ატვირთვაა შესაძლებელი</string>
+  <string name="in_app_notification_importing_file_already_exists">ფაილი იგივე სახელით უკვე არსებობს. სცადეთ, აპის კეში გაასუფთაოთ</string>
+  <string name="in_app_notification_clear_local_cache_success">ლოკალური კეში წარმატებით გაიწმინდა</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">საცავი სავსეა</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">ფაილების ატვირთვა %1$s-ზე</string>
+  <string name="notification_content_title_upload_complete">ატვირთვა დასრულებულია</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">%1$d ფაილის ატვირთვა</item>
+    <item quantity="other">%1$d ფაილის ატვირთვა</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d ფაილი აიტვირთა</item>
+    <item quantity="other">%1$d ფაილი აიტვირთა</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d ფაილი გაუქმდა</item>
+    <item quantity="other">%1$d ფაილი გაუქმდა</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">%1$d ფაილის შეცდომა</item>
+    <item quantity="other">%1$d ფაილის შეცდომა</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">სურათების მარქაფი %1$s-ზე</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">დარჩენილია %1$s ელემენტი</item>
+    <item quantity="other">დარჩენილია %1$s ელემენტი</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">მარქაფი დასრულდა</string>
+  <string name="notification_content_text_backup_uncompleted">მარქაფი პრობლემებით დასრულდა</string>
+  <string name="notification_content_text_backup_failed">სარეზერვო ასლის შექმნა ჩავარდა</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Proton-ის საცავი სავსეა</string>
+  <string name="notification_content_text_backup_failed_local_storage">ლოკალური საცავი სავსეა</string>
+  <string name="notification_content_text_backup_failed_permission">არასაკმარისი წვდომები</string>
+  <string name="notification_content_text_backup_failed_connectivity">ინტერნეტი არ გაქვთ</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Wi-Fi-ის მოლოდინი</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">მარქაფი დაშვებული არაა</string>
+  <string name="notification_content_text_backup_paused_disabled">მარქაფი გათიშული იყო</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">მარქაფს ფონურად ვერ გაუშვებთ</string>
+  <string name="notification_content_title_download_complete">გადმოწერა დასრულებულია</string>
+  <string name="notification_content_title_forced_sign_out">საჭიროა ავტორიზაცია</string>
+  <string name="notification_content_text_forced_sign_out">უკაცრავად, რომ გაწუხებთ! ჩვენ სინქრონიზაციის შეცდომა გვაქვს - შემოდით თავიდან, ჩვენ ყველაფერი გავასწორეთ.</string>
+  <string name="notification_content_title_no_space_left_on_device">მოწყობილობაზე ადგილი აღარაა</string>
+  <string name="notification_content_text_no_space_left_on_device">აპლიკაციამ შეიძლება, არასწორად იმუშაოს.</string>
+  <string name="notification_channel_group_name_application">აპლიკაცია</string>
+  <string name="notification_channel_background_title">ფონი</string>
+  <string name="notification_channel_background_description">არხი მარქაფის მსგავსი ფონური ოპერაციებისთვის</string>
+  <string name="notification_channel_transfer_title">გადაცემა</string>
+  <string name="notification_channel_transfer_description">არხი ღრუბლოვანი საცავისთვის, ატვირთვისა და გადმოწერის გაფრთხილებებისთვის</string>
+  <string name="notification_channel_warning_title">გაფრთხილება</string>
+  <string name="notification_channel_warning_description">გაფრთხილებების არხი, რომელსაც მომხმარებლის ქმედება სჭირდება</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">სიაში ყველა ელემენტის მონიშვნა</string>
+  <string name="content_description_selected_options">მონიშნული ფაილების ან/და საქაღალდეებისთვის მეტი პარამეტრის ჩვენება</string>
+  <string name="content_description_files_upload_upload_file">ფაილის ატვირთვა</string>
+  <string name="description_empty_my_files">ფაილების დამატების დასაწყებად ღილაკზე დაატყაპუნეთ.</string>
+  <string name="description_empty_folder_read_only">აქ არაფერია სანახავი</string>
+  <string name="description_empty_shared">მიბმული ფაილები აქ გამოჩნდებიან და იმისი თვალყურის დევნება, რას აზიარებთ, უფრო ადვილად შეგეძლებათ.</string>
+  <string name="description_empty_trash">ეს ადგილია, სადაც ნაგვის ყუთში გადაყრილი ელემენტები ინახება, სანამ მათ, საბოლოოდ, არ წაშლით, ან არ აღადგენთ</string>
+  <string name="description_empty_offline_available">ძირითადი ფაილების ხელმისაწვდომობა მაშინაც კი, როცა ქსელი ხელმისაწვდომი არაა.</string>
+  <string name="description_no_drive_scope">მომხმარებელს დისკი არ გააჩნია.</string>
+  <string name="description_file_download_failed">გადმოწერის შეცდომა. შეამოწმეთ ინტერნეტკავშირი და თავიდან სცადეთ.</string>
+  <string name="description_file_decryption_failed">ფაილის გაშიფვრის შეცდომა</string>
+  <string name="description_file_verify_signature_failed">ფაილის ხელმოწერის გადამოწმება შეუძლებელია</string>
+  <string name="description_files_stop_sharing">ეს წაშლის ამ ბმულს და აუკრძალავს წვდომას ყველას, ვისაც თქვენს ფაილთან ან საქაღალდესთან ამ ბმულით ჰქონდა წვდომა.</string>
+  <string name="description_files_stop_sharing_action_success">ბმული თქვენს ფაილამდე წაიშალა.</string>
+  <string name="description_files_stop_sharing_action_error">შეცდომა თქვენს ფაილამდე ბმულის წაშლისას.</string>
+  <string name="description_files_stop_all_sharing">ეს წაშლის ბმულს და წვდომებს ყველასთვის.</string>
+  <string name="description_files_stop_all_sharing_action_success">თქვენი ფაილი აღარ ზიარდება.</string>
+  <string name="description_files_stop_all_sharing_action_error">შეცდომა თქვენს ფაილის გაზიარების წაშლისას.</string>
+  <string name="ignore_file_signature_action">მაინც ნახვა</string>
+  <string name="action_empty_files_add_files">ატვირთვა</string>
+  <string name="error_could_not_send_file">შეცდომა ფაილის გაგზავნის მცდელობისას</string>
+  <string name="error_could_not_load_folder_content">შეცდომა საქაღალდის შემცველობის ჩატვირთვის მცდელობისას</string>
+  <string name="error_main_share_locked">თქვენი ფაილები მიუწვდომელია პაროლის თავიდან დაყენების გამო. წვდომის დასაბრუნელად ატვირთეთ დაშიფვრის ძველი გასაღები.</string>
+  <string name="error_share_locked">ზიარი დაბლოკილია.</string>
+  <string name="error_main_share_not_found">მთავარი გაზიარებული ვერ ვიპოვე</string>
+  <string name="error_share_not_found">ზიარი ვერ ვიპოვე.</string>
+  <string name="error_creating_photo_share_not_allowed">სურათების მარქაფი დროებით გამორთულია.</string>
+  <string name="error_creating_share_not_allowed">გაზიარებულის შექმნა დროებით გათიშულია.</string>
+  <string name="operation_open_document">დოკუმენტის გახსნა</string>
+  <string name="operation_create_document">დოკუმენტის შექმნა</string>
+  <string name="operation_take_picture">სურათის გადაღება</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">მიიღეთ %1$s უფასო საცავი</string>
+  <string name="get_more_free_storage_description">დაასრულეთ ეს ნაბიჯები თქვენს პირველ 30 დღეში უფასო საცავის დონის ასაწევად.</string>
+  <string name="get_more_free_storage_action_upload_title">ატვირთეთ ფაილი ან ჩართეთ სურათები მარქაფი</string>
+  <string name="get_more_free_storage_action_upload_subtitle">ყველა თქვენი ფაილი დაიშიფრება</string>
+  <string name="get_more_free_storage_action_link_title">გაზიარების ბმულის შექმნა</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">აირჩიეთ ნებისმიერი ფაილი ან საქაღალდე. გახსენით მორგების მენიუ და დააწექით %1$s-ს.</string>
+  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_recovery_title">აღდგენის მეთოდის დაყენება</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">შედით %1$s-ში, შემდეგ კი გადადით მორგება &gt; აღდგენა.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

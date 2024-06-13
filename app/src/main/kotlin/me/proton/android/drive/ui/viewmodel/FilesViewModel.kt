@@ -51,6 +51,7 @@ import me.proton.android.drive.usecase.OnFilesDriveLinkError
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.onFailure
@@ -58,7 +59,11 @@ import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
+import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.base.presentation.extension.quantityString
+import me.proton.core.drive.base.presentation.state.ListContentAppendingState
+import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
@@ -68,9 +73,6 @@ import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveL
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
-import me.proton.core.drive.files.presentation.state.ListContentAppendingState
-import me.proton.core.drive.files.presentation.state.ListContentState
-import me.proton.core.drive.files.presentation.state.ListEffect
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -174,7 +176,7 @@ class FilesViewModel @Inject constructor(
     private val selectedOptionsAction get() = selectedOptionsAction {
         viewEvent?.onSelectedOptions?.invoke()
     }
-    private val topBarActions: MutableStateFlow<Set<Action>> = MutableStateFlow(setOf(addFilesAction))
+    private val topBarActions: MutableStateFlow<Set<Action>> = MutableStateFlow(emptySet())
     val isBottomNavigationEnabled: Flow<Boolean> = selected.map { set -> set.isEmpty() }
     val initialViewState = FilesViewState(
         title = savedStateHandle[Screen.Files.FOLDER_NAME],
@@ -200,7 +202,7 @@ class FilesViewModel @Inject constructor(
         listContentAppendingState,
         layoutType,
         selected,
-        notificationDotRequested
+        notificationDotRequested,
     ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
@@ -209,7 +211,12 @@ class FilesViewModel @Inject constructor(
             else -> contentState
         }
         if (selected.isEmpty()) {
-            topBarActions.value = setOf(addFilesAction)
+            val permissions = driveLink?.sharePermissions ?: Permissions.owner
+            topBarActions.value = if (permissions.canWrite) {
+                setOf(addFilesAction)
+            } else {
+                emptySet()
+            }
         } else {
             topBarActions.value = setOf(selectAllAction, selectedOptionsAction)
         }
@@ -251,7 +258,7 @@ class FilesViewModel @Inject constructor(
         imageResId = emptyStateImageResId,
         titleId = if (isRootFolder) I18N.string.title_empty_my_files else I18N.string.title_empty_folder,
         descriptionResId = if (isRootFolder) I18N.string.description_empty_my_files else I18N.string.description_empty_folder,
-        actionResId = I18N.string.action_empty_files_add_files,
+        actionResId = I18N.string.action_empty_files_add_files, // TODO: Enable the button only with write permissions
     )
     private val emptyStateImageResId: Int get() = getThemeDrawableId(
         light = BasePresentation.drawable.empty_folder_light,

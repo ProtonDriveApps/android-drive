@@ -26,13 +26,17 @@ import me.proton.core.drive.base.data.di.BaseBindModule
 import me.proton.core.drive.base.data.formatter.DateTimeFormatterImpl
 import me.proton.core.drive.base.data.repository.BaseRepositoryImpl
 import me.proton.core.drive.base.data.usecase.CopyToClipboardImpl
+import me.proton.core.drive.base.data.usecase.DeviceInfoImpl
 import me.proton.core.drive.base.data.usecase.Sha256Impl
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
+import me.proton.core.drive.base.domain.provider.BuildConfigFieldsProvider
 import me.proton.core.drive.base.domain.repository.BaseRepository
 import me.proton.core.drive.base.domain.usecase.CopyToClipboard
+import me.proton.core.drive.base.domain.usecase.DeviceInfo
 import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.base.domain.usecase.GetMemoryInfo
 import me.proton.core.drive.base.domain.usecase.Sha256
+import me.proton.core.drive.test.TestBuildConfigFieldsProvider
 import me.proton.core.drive.test.usecase.TestGetInternalStorageInfo
 import me.proton.core.drive.test.usecase.TestGetMemoryInfo
 import javax.inject.Singleton
@@ -67,4 +71,12 @@ interface TestBaseDataBindModule {
     @Binds
     @Singleton
     fun bindsRepositoryImpl(impl: BaseRepositoryImpl): BaseRepository
+
+    @Binds
+    @Singleton
+    fun bindsDeviceInfoImpl(impl: DeviceInfoImpl): DeviceInfo
+
+    @Binds
+    @Singleton
+    fun provideBuildConfigFieldsProvider(impl: TestBuildConfigFieldsProvider): BuildConfigFieldsProvider
 }

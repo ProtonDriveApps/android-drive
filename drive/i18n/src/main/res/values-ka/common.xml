@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">აპი</string>
+  <string name="common_more">მეტი</string>
+  <string name="common_mime_type">MIME ტიპი</string>
+  <string name="common_name">სახელი</string>
+  <string name="common_no">არა</string>
+  <string name="common_share">გაზიარება</string>
+  <string name="common_shared">გაზიარებული</string>
+  <string name="common_size">ზომა</string>
+  <string name="common_type">ტიპი</string>
+  <string name="common_yes">დიახ</string>
+  <string name="common_download">გადმოწერა</string>
+  <string name="common_downloading">გადმოწერა</string>
+  <string name="common_link">ბმული</string>
+  <string name="common_password">პაროლი</string>
+  <string name="common_retry">თავიდან</string>
+  <string name="common_settings">მორგება</string>
+  <string name="common_trash">ნაგვის ყუთი</string>
+  <string name="common_uploading">ატვირთვა</string>
+  <string name="common_on">ჩართ</string>
+  <string name="common_off">გამორთული</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">დიახ</string>
+  <string name="common_close_action">დახურვა</string>
+  <string name="common_retry_action">თავიდან</string>
+  <string name="common_undo_action">დაბრუნება</string>
+  <string name="common_rename_action">გადარქმევა</string>
+  <string name="common_send_action">გაგზავნა</string>
+  <string name="common_create_action">შექმნა</string>
+  <string name="common_cancel_action">გაუქმება</string>
+  <string name="common_cancel_all_action">ყველას გაუქმება</string>
+  <string name="common_got_it_action">გავიგე</string>
+  <string name="common_next_action">შემდეგი</string>
+  <string name="common_save_action">შენახვა</string>
+  <string name="common_discard_action">მოცილება</string>
+  <string name="common_skip_action">გამოტოვება</string>
+  <string name="common_delete_permanently_action">სამუდამოდ წაშლა</string>
+  <string name="common_make_available_offline_action">ხაზგარეშე ხელმისაწვდომობა</string>
+  <string name="common_remove_from_offline_available_action">წაშლა ინტერნეტის გარეშე წვდომადობიდან</string>
+  <string name="common_get_link_action">ბმულის მიღება</string>
+  <string name="common_manage_link_action">ბმულის მართვა</string>
+  <string name="common_manage_access_action">წვდომის მართვა</string>
+  <string name="common_copy_link_action">ბმულის კოპირება</string>
+  <string name="common_stop_sharing_action">გაზიარების შეწყვეტა</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">აუდიო</string>
+  <string name="common_type_calendar">iCalendar-ის ფორმატი</string>
+  <string name="common_type_doc">დოკუმენტი</string>
+  <string name="common_type_image">გამოსახულება</string>
+  <string name="common_type_keynote">Keynote-ის ფაილი</string>
+  <string name="common_type_numbers">Numbers-ის ფაილი</string>
+  <string name="common_type_pages">Pages-ის ფაილი</string>
+  <string name="common_type_pdf">PDF დოკუმენტი</string>
+  <string name="common_type_ppt">პრეზენტაცია</string>
+  <string name="common_type_text">ტექსტი</string>
+  <string name="common_type_trustedkey">სანდო გასაღები</string>
+  <string name="common_type_unknown">ბინარული</string>
+  <string name="common_type_video">ვიდეო</string>
+  <string name="common_type_xls">ელცხრილი</string>
+  <string name="common_type_xml">XML ფაილი</string>
+  <string name="common_type_zip">არქივი</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">სახელი არ შეიძლება, იყოს ცარიელი</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">სახელი არ შეიძლება, %1$d სიმბოლოზე მეტს შეიცავდეს</string>
+  <string name="common_error_name_with_forbidden_characters">სახელი არ შეიძლება, შეიცავდეს უჩინარ სიმბოლოებს, \"/\" და \"\\"</string>
+  <string name="common_error_name_periods">სახელი \".\" და \"..\" ვერ იქნება</string>
+  <string name="common_error_no_internet">ინტერნეტი არ გაქვთ</string>
+  <string name="common_error_http_5xx">აღმოჩენილია სერვერის შეცდომა</string>
+  <string name="common_error_internal">აღმოჩენილია შიდა შეცდომა</string>
+  <string name="common_error_crypto">დაშიფვრის ან გაშიფვრის შეცდომა</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">დაშიფვრის ან გაშიფვრის შეცდომა: %1$s</string>
+  <string name="common_error_io">შეყვანის ან გამოყვანის ოპერაციის შეცდომა</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">შეყვანის ან გამოყვანის ოპერაციის შეცდომა: %1$s</string>
+  <string name="common_error_security">აღმოჩენილია უსაფრთოების შეცდომა</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">აღმოჩენილია უსაფრთოების შეცდომა: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s გადმოწერილია</string>
+  <string name="common_sign_out">გასვლა</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="one">მონიშნულია %1$d</item>
+    <item quantity="other">მონიშნულია %1$d</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s დაკოპირდა გაცვლის ბუფერში</string>
+  <string name="common_in_app_notification_download_started">გადმოწერა დაწყებულია</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s წარმატებით გადმოიწერა</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="one">%1$d ფაილის გადმოწერა წარმატებულია</item>
+    <item quantity="other">%1$d ფაილის გადმოწერა წარმატებულია</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">%1$s-ის გადმოწერის შეცდომა</string>
+  <string name="common_in_app_notification_download_failed">გადმოწერის შეცდომა</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">სისტემამ ვერ იპოვა აპლიკაცია, რომელსაც შეუძლია %1$s</string>
+  <!-- endregion -->
+</resources>

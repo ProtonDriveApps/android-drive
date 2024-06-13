@@ -28,7 +28,7 @@ import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import org.junit.Test
 import org.junit.runner.RunWith
 import me.proton.core.drive.i18n.R as I18N
@@ -39,7 +39,7 @@ class DeleteSharedLinkManageAccessFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING, ENABLED)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun stopSharingActiveLinkViaManageAccess() {
         val file = "shared.jpg"
 
@@ -56,6 +56,6 @@ class DeleteSharedLinkManageAccessFlowTest : AuthenticatedBaseTest() {
                 robotDisplayed()
             }
             .clickBack(FilesTabRobot)
-            .verify { itemIsDisplayed(file, isShared = false) }
+            .verify { itemIsDisplayed(file, isSharedByLink = false) }
     }
 }

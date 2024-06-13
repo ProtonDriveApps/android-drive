@@ -20,13 +20,15 @@ package me.proton.android.drive.ui.test.flow.share
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.FeatureFlag
+import me.proton.android.drive.ui.annotation.FeatureFlags
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import me.proton.core.test.quark.data.User
 import me.proton.core.test.quark.v2.command.userCreate
 import org.junit.Before
@@ -44,8 +46,8 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlag(DRIVE_SHARING, ENABLED)
-    fun shareFileWithInternalUser() {
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
+    fun shareFileWithInternalUserAsViewer() {
         val file = "image.jpg"
         PhotosTabRobot
             .clickFilesTab()
@@ -56,6 +58,8 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
                 assertShareFile(file)
             }
             .typeEmail(email)
+            .clickOnEditorPermission()
+            .clickOnViewerPermission()
             .clickSend()
             .verify {
                 assertInvitationSent(1)
@@ -65,13 +69,40 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
             .clickMoreOnItem(file)
             .clickManageAccess()
             .verify {
-                assertSharedWith(email)
+                assertInvitedWithViewer(email)
+            }
+    }
+
+    @Test
+    @Scenario(2)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
+    fun shareFolderWithInternalUserAsEditor() {
+        val folder = "folder1"
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickMoreOnItem(folder)
+            .clickShare()
+            .verify {
+                robotDisplayed()
+                assertShareFile(folder)
+            }
+            .typeEmail(email)
+            .clickSend()
+            .verify {
+                assertInvitationSent(1)
+            }
+        FilesTabRobot
+            .verify { robotDisplayed() }
+            .clickMoreOnItem(folder)
+            .clickManageAccess()
+            .verify {
+                assertInvitedWithEditor(email)
             }
     }
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING, ENABLED)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun shareAlreadySharedFileViaManageAccess() {
         val file = "shared.jpg"
         PhotosTabRobot
@@ -95,7 +126,7 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2, isPhotos = true)
-    @FeatureFlag(DRIVE_SHARING, ENABLED)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun shareFileWithMyself() {
         val email = userLoginRule.testUser.email
         val file = "image.jpg"
@@ -115,7 +146,7 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2, isPhotos = true)
-    @FeatureFlag(DRIVE_SHARING, ENABLED)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun sharePhotoWithExternalUser() {
         val email = "external@mail.com"
         val image = ImageName.Main.fileName
@@ -136,7 +167,7 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlag(DRIVE_SHARING, ENABLED)
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun shareFolderToMultipleUsers() {
         val folder = "folder1"
         val email2 = requireNotNull(quarkRule.quarkCommands.userCreate(User()).email)
@@ -160,8 +191,32 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
             .clickMoreOnItem(folder)
             .clickManageAccess()
             .verify {
-                assertSharedWith(email)
-                assertSharedWith(email2)
+                assertInvitedWithEditor(email)
+                assertInvitedWithEditor(email2)
+            }
+    }
+
+    @Test
+    @Scenario(2)
+    @FeatureFlags(
+        [
+            FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED),
+            FeatureFlag(FeatureFlagId.DRIVE_SHARING_DISABLED, ENABLED),
+        ]
+    )
+    fun killSwitch() {
+        val folder = "folder1"
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickMoreOnItem(folder)
+            .clickShare()
+            .verify {
+                robotDisplayed()
+                assertShareFile(folder)
+            }
+            .typeEmail(email)
+            .verify {
+                assertSendButtonDisabled()
             }
     }
 }

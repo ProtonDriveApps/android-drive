@@ -35,9 +35,13 @@ object MoveToFolderRobot : NavigationBarRobot, Robot, LinksRobot, GrowlerRobot {
 
     private fun itemWithName(name: String) = node.withTag(listDetailsTitle).withText(name)
 
-    fun assertMoveButtonIsDisabled() = moveButton.assertDisabled()
+    fun assertMoveButtonIsDisabled() {
+        moveButton.await { assertDisabled() }
+    }
 
-    fun assertCreateFolderButtonDoesNotExist() = addFolderButton.assertDoesNotExist()
+    fun assertCreateFolderButtonDoesNotExist() {
+        addFolderButton.await { assertDoesNotExist() }
+    }
 
     /**
      * Wait the folder to be loaded before clicking back,

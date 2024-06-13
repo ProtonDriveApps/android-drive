@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.test.flow.rename
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.robot.BackendRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.PreviewRobot
 import me.proton.android.drive.ui.rules.Scenario
@@ -51,7 +52,7 @@ class RenamingViaPreviewErrorTest : AuthenticatedBaseTest() {
             .typeName(renamed)
             .clickRename(PreviewRobot)
             .verify {
-                nodeWithTextDisplayed("A file or folder with that name already exists")
+                nodeWithTextDisplayed(BackendRobot.nameAlreadyExist)
             }
     }
 }

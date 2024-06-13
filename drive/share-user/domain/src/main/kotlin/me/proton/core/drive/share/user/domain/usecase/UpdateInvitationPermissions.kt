@@ -21,6 +21,7 @@ package me.proton.core.drive.share.user.domain.usecase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
@@ -49,6 +50,7 @@ class UpdateInvitationPermissions @Inject constructor(
                     invitationId = invitationId,
                     permissions = permissions,
                 )
+                emit(DataResult.Success(ResponseSource.Remote, Unit))
             }
         }
     }

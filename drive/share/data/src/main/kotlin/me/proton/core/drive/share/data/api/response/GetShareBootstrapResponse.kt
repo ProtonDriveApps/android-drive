@@ -27,13 +27,14 @@ import me.proton.core.drive.base.data.api.Dto.FLAGS
 import me.proton.core.drive.base.data.api.Dto.KEY
 import me.proton.core.drive.base.data.api.Dto.LINK_ID
 import me.proton.core.drive.base.data.api.Dto.LOCKED
+import me.proton.core.drive.base.data.api.Dto.MEMBERSHIPS
 import me.proton.core.drive.base.data.api.Dto.PASSPHRASE
 import me.proton.core.drive.base.data.api.Dto.PASSPHRASE_SIGNATURE
 import me.proton.core.drive.base.data.api.Dto.SHARE_ID
 import me.proton.core.drive.base.data.api.Dto.STATE
 import me.proton.core.drive.base.data.api.Dto.TYPE
 import me.proton.core.drive.base.data.api.Dto.VOLUME_ID
-import me.proton.core.drive.share.data.api.ShareDto
+import me.proton.core.drive.share.data.api.MembershipDto
 
 @Serializable
 data class GetShareBootstrapResponse(
@@ -65,21 +66,6 @@ data class GetShareBootstrapResponse(
     val addressId: String? = null,
     @SerialName(CREATION_TIME)
     val creationTime: Long? = null,
+    @SerialName(MEMBERSHIPS)
+    val memberships: List<MembershipDto>
 )
-
-val GetShareBootstrapResponse.shareDto: ShareDto
-    get() = ShareDto(
-        id = shareId,
-        type = type,
-        state = state,
-        linkId = linkId,
-        volumeId = volumeId,
-        creator = creator,
-        flags = flags,
-        locked = locked,
-        key = key,
-        passphrase = passphrase,
-        passphraseSignature = passphraseSignature,
-        addressId = addressId,
-        creationTime = creationTime,
-    )

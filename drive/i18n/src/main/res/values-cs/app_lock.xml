@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">Aplikace uzamčena</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Odemknutí pomocí zámku zařízení</string>
+  <string name="app_lock_biometric_title_confirmation">Potvrzení</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Chcete-li povolit odemknutí, potvrďte zámkem zařízení</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Chcete-li deaktivovat odemykání, potvrďte to svým zámkem zařízení</string>
+  <string name="app_lock_option_never_set">Povolení biometrie nebo zámku zařízení</string>
+  <string name="app_lock_option_none">Nechat odemčeno</string>
+  <string name="app_lock_option_system">Biometrické údaje nebo zámek zařízení</string>
+  <string name="app_lock_system_dialog_title">Zapnutí biometrického přístupu</string>
+  <string name="app_lock_system_dialog_description">Nastavení biometrických údajů nebo přístupu k zámku zařízení v tomto zařízení.</string>
+  <string name="app_lock_system_dialog_settings_button">Nastavení</string>
+  <string name="app_lock_system_not_available">Biometrické údaje nebo zámek zařízení nejsou ve vašem zařízení k dispozici</string>
+  <string name="app_lock_enabled">Biometrika nebo přístup k zámku zařízení aktivován</string>
+  <string name="app_lock_disabled">Zámek aplikace byl deaktivován</string>
+  <string name="app_lock_access_title">Vyberte si způsob zamknutí aplikace</string>
+  <string name="app_lock_unlock_the_app">Odemkout aplikaci</string>
+</resources>
