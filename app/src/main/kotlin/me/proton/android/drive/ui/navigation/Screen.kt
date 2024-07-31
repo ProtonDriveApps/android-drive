@@ -41,6 +41,7 @@ import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.drivelink.device.presentation.viewmodel.RenameDeviceViewModel
 import me.proton.core.drive.drivelink.rename.presentation.viewmodel.RenameViewModel
+import me.proton.core.drive.drivelink.shared.presentation.viewmodel.LinkSettingsViewModel
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.SharedDriveLinkViewModel
 import me.proton.core.drive.folder.create.presentation.CreateFolderViewModel
 import me.proton.core.drive.link.domain.entity.FileId
@@ -473,6 +474,25 @@ sealed class Screen(val route: String) {
         const val SHARE_ID = SharedDriveLinkViewModel.SHARE_ID
     }
 
+    data object LinkSettings : Screen("manageAccess/{userId}/shares/{shareId}/linkId/{linkId}/linkSettings") {
+        operator fun invoke(
+            userId: UserId,
+            linkId: LinkId,
+        ) = "manageAccess/${userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/linkSettings"
+
+        object Dialogs {
+            data object DiscardChanges : Screen("manageAccess/{userId}/shares/{shareId}/linkId/{linkId}/linkSettings/discard_changes"){
+                operator fun invoke(
+                    linkId: LinkId,
+                ) = "manageAccess/${linkId.userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/linkSettings/discard_changes"
+            }
+        }
+
+        const val USER_ID = Screen.USER_ID
+        const val LINK_ID = LinkSettingsViewModel.LINK_ID
+        const val SHARE_ID = LinkSettingsViewModel.SHARE_ID
+    }
+
     data object ShareViaInvitations : Screen("shareViaInvitations/{userId}/shares/{shareId}/linkId/{linkId}") {
         operator fun invoke(
             userId: UserId,
@@ -487,21 +507,37 @@ sealed class Screen(val route: String) {
             }
         }
 
+        data object InternalOptions :
+            Screen("shareViaInvitations/{userId}/shares/{shareId}/linkId/{linkId}/invitation/{invitationId}/options") {
+            operator fun invoke(
+                linkId: LinkId,
+                invitationId: String,
+            ) =
+                "shareViaInvitations/${linkId.userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/invitation/${invitationId}/options"
+
+            const val USER_ID = Screen.USER_ID
+            const val SHARE_ID = ShareInvitationOptionsViewModel.KEY_SHARE_ID
+            const val LINK_ID = ShareInvitationOptionsViewModel.KEY_LINK_ID
+            const val INVITATION_ID = ShareInvitationOptionsViewModel.KEY_INVITATION_ID
+        }
+
+        data object ExternalOptions :
+            Screen("shareViaInvitations/{userId}/shares/{shareId}/linkId/{linkId}/external-invitation/{invitationId}/options") {
+            operator fun invoke(
+                linkId: LinkId,
+                invitationId: String,
+            ) =
+                "shareViaInvitations/${linkId.userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/external-invitation/${invitationId}/options"
+
+            const val USER_ID = Screen.USER_ID
+            const val SHARE_ID = ShareInvitationOptionsViewModel.KEY_SHARE_ID
+            const val LINK_ID = ShareInvitationOptionsViewModel.KEY_LINK_ID
+            const val INVITATION_ID = ShareInvitationOptionsViewModel.KEY_INVITATION_ID
+        }
+
         const val USER_ID = Screen.USER_ID
         const val LINK_ID = SharedDriveLinkViewModel.LINK_ID
         const val SHARE_ID = SharedDriveLinkViewModel.SHARE_ID
-    }
-
-    data object ShareInvitationOptions : Screen("shareViaInvitations/{userId}/shares/{shareId}/linkId/{linkId}/invitation/{invitationId}/options") {
-        operator fun invoke(
-            linkId: LinkId,
-            invitationId: String,
-        ) = "shareViaInvitations/${linkId.userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/invitation/${invitationId}/options"
-
-        const val USER_ID = Screen.USER_ID
-        const val SHARE_ID = ShareInvitationOptionsViewModel.KEY_SHARE_ID
-        const val LINK_ID = ShareInvitationOptionsViewModel.KEY_LINK_ID
-        const val INVITATION_ID = ShareInvitationOptionsViewModel.KEY_INVITATION_ID
     }
 
     data object ShareMemberOptions : Screen("shareViaInvitations/{userId}/shares/{shareId}/linkId/{linkId}/member/{memberId}/options") {

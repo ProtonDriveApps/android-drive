@@ -91,6 +91,62 @@ fun BackupUncompletedState(
 }
 
 @Composable
+fun BackupPreparingState(
+    preparing: PhotosStatusViewState.Preparing,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier,
+        backgroundColor = ProtonTheme.colors.backgroundSecondary,
+        contentColor = ProtonTheme.colors.textNorm,
+        elevation = 0.dp,
+    ) {
+        Column(
+            modifier = Modifier
+                .defaultMinSize(minHeight = ProtonDimens.ListItemHeight),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Row(
+                modifier = Modifier
+                    .padding(
+                        horizontal = ProtonDimens.ListItemTextStartPadding,
+                        vertical = ProtonDimens.ExtraSmallSpacing,
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing),
+            ) {
+                Icon(
+                    painter = painterResource(id = CorePresentation.drawable.ic_proton_hourglass),
+                    contentDescription = null,
+                    tint = ProtonTheme.colors.interactionNorm,
+                )
+                Text(
+                    text = stringResource(
+                        id = I18N.string.photos_backup_state_preparing
+                    ),
+                    style = ProtonTheme.typography.defaultSmallUnspecified,
+                )
+            }
+            val progressModifier = Modifier
+                .padding(
+                    start = ProtonDimens.ListItemTextStartPadding,
+                    end = ProtonDimens.ListItemTextStartPadding,
+                    bottom = ProtonDimens.SmallSpacing,
+                )
+                .height(6.dp)
+                .clip(RoundedCornerShape(ProtonDimens.ExtraSmallSpacing))
+                .fillMaxWidth()
+            LinearProgressIndicator(
+                modifier = progressModifier,
+                color = ProtonTheme.colors.interactionNorm,
+                backgroundColor = ProtonTheme.colors.interactionWeakNorm,
+                progress = preparing.progress,
+            )
+        }
+    }
+}
+
+@Composable
 fun BackupInProgressState(
     inProgress: PhotosStatusViewState.InProgress,
     modifier: Modifier = Modifier,
@@ -502,7 +558,7 @@ private fun BackupState(
 
 @Preview
 @Composable
-private fun BackupCompletedStatePreview() {
+fun BackupCompletedStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackupCompletedState("1 000 items saved")
@@ -512,7 +568,7 @@ private fun BackupCompletedStatePreview() {
 
 @Preview
 @Composable
-private fun BackupUnompletedStatePreview() {
+fun BackupUncompletedStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackupUncompletedState(onResolve = {})
@@ -522,7 +578,21 @@ private fun BackupUnompletedStatePreview() {
 
 @Preview
 @Composable
-private fun EncryptingStatePreview() {
+private fun PreparingStatePreview() {
+    ProtonTheme {
+        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            BackupPreparingState(
+                preparing = PhotosStatusViewState.Preparing(
+                    progress = 0.3F,
+                ),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun EncryptingStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackupInProgressState(
@@ -538,7 +608,7 @@ private fun EncryptingStatePreview() {
 
 @Preview
 @Composable
-private fun UploadingStatePreview() {
+fun UploadingStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackupInProgressState(
@@ -554,7 +624,7 @@ private fun UploadingStatePreview() {
 
 @Preview
 @Composable
-private fun MissingPermissionsStatePreview() {
+fun MissingPermissionsStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             MissingPermissionsState(onPermissions = { })
@@ -564,7 +634,7 @@ private fun MissingPermissionsStatePreview() {
 
 @Preview
 @Composable
-private fun BackupDisableStatePreview() {
+fun BackupDisableStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackupDisableState(onEnableBackup = { })
@@ -574,7 +644,7 @@ private fun BackupDisableStatePreview() {
 
 @Preview
 @Composable
-private fun BackupMissingFolderStatePreview() {
+fun BackupMissingFolderStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackupMissingFolderState(onMore = { })
@@ -584,7 +654,7 @@ private fun BackupMissingFolderStatePreview() {
 
 @Preview
 @Composable
-private fun BackupFailedStatePreview() {
+fun BackupFailedStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackupFailedState(onRetry = { })
@@ -594,7 +664,7 @@ private fun BackupFailedStatePreview() {
 
 @Preview
 @Composable
-private fun BackgroundRestrictionsPreview() {
+fun BackgroundRestrictionsPreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackgroundRestrictions(
@@ -607,7 +677,7 @@ private fun BackgroundRestrictionsPreview() {
 
 @Preview
 @Composable
-private fun LocalStorageStatePreview() {
+fun LocalStorageStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             LocalStorageState(onRetry = { })
@@ -617,7 +687,7 @@ private fun LocalStorageStatePreview() {
 
 @Preview
 @Composable
-private fun BackupTemporarilyDisabledStatePreview() {
+fun BackupTemporarilyDisabledStatePreview() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             BackupTemporarilyDisabledState(onRetry = { })

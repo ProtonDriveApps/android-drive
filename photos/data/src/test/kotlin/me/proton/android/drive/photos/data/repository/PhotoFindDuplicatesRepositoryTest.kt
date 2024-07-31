@@ -23,7 +23,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.domain.entity.BackupDuplicate
-import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId

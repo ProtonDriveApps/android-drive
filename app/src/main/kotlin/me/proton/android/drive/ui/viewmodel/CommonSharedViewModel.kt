@@ -19,8 +19,10 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
@@ -39,8 +41,12 @@ import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
+import me.proton.android.drive.usecase.OpenProtonDocument
+import me.proton.core.drive.base.data.extension.getDefaultMessage
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
+import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.base.presentation.state.ListContentAppendingState
@@ -63,8 +69,10 @@ abstract class CommonSharedViewModel(
     private val appContext: Context,
     private val configurationProvider: ConfigurationProvider,
     private val sharedDriveLinks: SharedDriveLinks,
+    private val openProtonDocument: OpenProtonDocument,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle), HomeTabViewModel {
     private var fetchingJob: Job? = null
+    private var fetchingDriveLinkIds: Set<LinkId> = emptySet()
     private val listContentState = MutableStateFlow<ListContentState>(ListContentState.Loading)
     private val listContentAppendingState = MutableStateFlow<ListContentAppendingState>(
         ListContentAppendingState.Idle
@@ -99,12 +107,15 @@ abstract class CommonSharedViewModel(
         navigateToFiles: (FolderId, String?) -> Unit,
         navigateToPreview: (fileId: FileId) -> Unit,
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+        lifecycle: Lifecycle,
     ): SharedViewEvent = object : SharedViewEvent {
 
         private val driveLinkShareFlow = MutableSharedFlow<DriveLink>(extraBufferCapacity = 1).also { flow ->
             viewModelScope.launch {
-                flow.take(1).collect { driveLink ->
-                    driveLink.onClick(navigateToFiles, navigateToPreview)
+                lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    flow.take(1).collect { driveLink ->
+                        driveLink.onClick(navigateToFiles, navigateToPreview, this@CommonSharedViewModel::openDocument)
+                    }
                 }
             }
         }
@@ -115,7 +126,7 @@ abstract class CommonSharedViewModel(
             listContentState = listContentState,
             listAppendContentState = listContentAppendingState,
             coroutineScope = viewModelScope,
-            emptyState = emptyState,
+            emptyState = MutableStateFlow(emptyState),
         ) { message ->
             viewModelScope.launch {
                 _homeEffect.emit(HomeEffect.ShowSnackbar(message))
@@ -137,7 +148,8 @@ abstract class CommonSharedViewModel(
     }
 
     private fun onScroll(driveLinkIds: Set<LinkId>) {
-        if (driveLinkIds.isNotEmpty()) {
+        if (driveLinkIds.isNotEmpty() && !fetchingDriveLinkIds.containsAll(driveLinkIds)) {
+            fetchingDriveLinkIds = driveLinkIds
             fetchingJob?.cancel()
             fetchingJob = viewModelScope.launch {
                 delay(300.milliseconds)
@@ -164,6 +176,20 @@ abstract class CommonSharedViewModel(
             retryList()
         }
     }
+
+    private suspend fun openDocument(driveLink: DriveLink.File) =
+        openProtonDocument(driveLink)
+            .onFailure { error ->
+                error.log(VIEW_MODEL, "Open document failed")
+                _homeEffect.emit(
+                    HomeEffect.ShowSnackbar(
+                        error.getDefaultMessage(
+                            context = appContext,
+                            useExceptionMessage = configurationProvider.useExceptionMessage,
+                        )
+                    )
+                )
+            }
 
     abstract suspend fun getAllIds(): Result<List<SharedLinkId>>
 }

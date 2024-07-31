@@ -29,7 +29,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.api.ProtonApiCode.NOT_EXISTS
+import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException

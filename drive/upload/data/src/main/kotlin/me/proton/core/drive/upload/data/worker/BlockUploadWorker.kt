@@ -33,9 +33,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.api.ProtonApiCode.ALREADY_EXISTS
-import me.proton.core.drive.base.data.api.ProtonApiCode.INVALID_VALUE
-import me.proton.core.drive.base.data.api.ProtonApiCode.NOT_EXISTS
+import me.proton.core.drive.base.domain.api.ProtonApiCode.ALREADY_EXISTS
+import me.proton.core.drive.base.domain.api.ProtonApiCode.INVALID_VALUE
+import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException

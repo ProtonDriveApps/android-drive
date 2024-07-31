@@ -19,7 +19,7 @@ import me.proton.core.drive.share.user.domain.entity.ShareUsersInvitation
 import me.proton.core.drive.test.DriveRule
 import me.proton.core.drive.test.api.createInvitation
 import me.proton.core.drive.test.api.errorResponse
-import me.proton.core.drive.test.api.getPublicAddressKeys
+import me.proton.core.drive.test.api.getPublicAddressKeysAll
 import me.proton.core.drive.test.api.jsonResponse
 import me.proton.core.drive.test.api.request
 import me.proton.core.drive.test.api.toResponse
@@ -62,7 +62,7 @@ class CreateShareInvitationsTest {
     @Test
     fun `happy path`() = runTest {
         driveRule.server.run {
-            getPublicAddressKeys()
+            getPublicAddressKeysAll()
             createInvitation {
                 val request = request<CreateShareInvitationRequest>()
                 when (request.invitation.inviteeEmail) {

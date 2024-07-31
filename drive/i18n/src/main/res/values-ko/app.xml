@@ -135,6 +135,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">백업이 허용되지 않음</string>
   <string name="notification_content_text_backup_paused_disabled">백업이 비활성화 되었습니다</string>
   <string name="notification_content_text_backup_paused_background_restrictions">백업이 백그라운드에서 작동할 수 없습니다</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
   <string name="notification_content_title_download_complete">다운로드 완료</string>
   <string name="notification_content_title_forced_sign_out">로그인해 주세요</string>
   <string name="notification_content_text_forced_sign_out">잠깐 실례합니다! 동기화 중 문제가 있었습니다. 다시 로그인하시면 잘 돌아갈 것입니다.</string>
@@ -196,8 +197,8 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
   <string name="get_more_free_storage_action_link_subtitle">아무 파일이나 폴더의 옵션 메뉴를 열고 %1$s를 누르세요.</string>
-  <string name="get_more_free_storage_action_share_title">Share a file</string>
-  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_share_title">파일 공유</string>
+  <string name="get_more_free_storage_action_share_subtitle">쉽고 안전합니다.</string>
   <string name="get_more_free_storage_action_recovery_title">복구 방법 설정하기</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link

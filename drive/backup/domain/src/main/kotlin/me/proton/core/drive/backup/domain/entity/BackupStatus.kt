@@ -40,6 +40,24 @@ sealed interface BackupStatus {
             get() = (totalBackupPhotos.toFloat() - pendingBackupPhotos) / totalBackupPhotos
     }
 
+    data class Preparing(override val totalBackupPhotos: Int, val preparingBackupPhotos: Int) : BackupStatus{
+
+        init {
+            require(totalBackupPhotos > 0) {
+                "total should be positive"
+            }
+            require(preparingBackupPhotos >= 0) {
+                "preparing should be positive or zero"
+            }
+            require(preparingBackupPhotos <= totalBackupPhotos) {
+                "preparing should be inferior or equal to total"
+            }
+        }
+
+        val progress: Float
+            get() = (totalBackupPhotos.toFloat() - preparingBackupPhotos) / totalBackupPhotos
+    }
+
     data class Failed(
         val errors: List<BackupError>,
         override val totalBackupPhotos: Int,

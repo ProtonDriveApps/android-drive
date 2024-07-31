@@ -47,6 +47,7 @@ import me.proton.core.drive.files.presentation.entry.TrashEntry
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.isProtonCloudFile
 import me.proton.core.drive.link.domain.extension.isSharedUrlExpired
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -88,7 +89,7 @@ sealed class Option(
 
     data object Download : Option(
         ApplicableQuantity.All,
-        ApplicableTo.ANY_FILE,
+        ApplicableTo.ANY_DOWNLOADABLE_FILE,
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -120,7 +121,7 @@ sealed class Option(
 
     data object Move : Option(
         ApplicableQuantity.All,
-        setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE, ApplicableTo.FILE_PROTON_CLOUD, ApplicableTo.FOLDER),
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -140,7 +141,7 @@ sealed class Option(
 
     data object OfflineToggle : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
+        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_DOWNLOADABLE_FILE,
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -170,7 +171,7 @@ sealed class Option(
 
     data object Rename : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE, ApplicableTo.FOLDER),
+        setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE, ApplicableTo.FILE_PROTON_CLOUD, ApplicableTo.FOLDER),
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -183,7 +184,7 @@ sealed class Option(
 
     data object SendFile : Option(
         ApplicableQuantity.Single,
-        ApplicableTo.ANY_FILE,
+        ApplicableTo.ANY_DOWNLOADABLE_FILE,
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         @Suppress("UNCHECKED_CAST")
@@ -322,10 +323,12 @@ enum class ApplicableTo {
     FILE_MAIN,
     FILE_PHOTO,
     FILE_DEVICE,
+    FILE_PROTON_CLOUD,
     FOLDER;
 
     companion object {
-        val ANY_FILE: Set<ApplicableTo> get() = setOf(FILE_MAIN, FILE_PHOTO, FILE_DEVICE)
+        val ANY_FILE: Set<ApplicableTo> get() = setOf(FILE_MAIN, FILE_PHOTO, FILE_DEVICE, FILE_PROTON_CLOUD)
+        val ANY_DOWNLOADABLE_FILE: Set<ApplicableTo> get() = setOf(FILE_MAIN, FILE_PHOTO, FILE_DEVICE)
     }
 }
 
@@ -352,10 +355,10 @@ fun DriveLink.toOptionState(): Set<State> = setOf(
 )
 
 fun DriveLink.isApplicableTo(applicableTo: Set<ApplicableTo>): Boolean = when (this) {
-    is DriveLink.File -> if (isPhoto) {
-        applicableTo.contains(ApplicableTo.FILE_PHOTO)
-    } else {
-        applicableTo.any { it in setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE) }
+    is DriveLink.File -> when {
+        isPhoto -> applicableTo.contains(ApplicableTo.FILE_PHOTO)
+        isProtonCloudFile -> applicableTo.contains(ApplicableTo.FILE_PROTON_CLOUD)
+        else -> applicableTo.any { it in setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE) }
     }
     is DriveLink.Folder -> applicableTo.contains(ApplicableTo.FOLDER)
 }

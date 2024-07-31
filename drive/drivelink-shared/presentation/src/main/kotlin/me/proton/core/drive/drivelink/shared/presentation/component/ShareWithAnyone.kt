@@ -32,6 +32,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -317,35 +318,39 @@ private val LargeIconSize = 32.dp
 
 @Preview
 @Composable
-private fun ShareWithAnyoneNoLinkPreview() {
+fun ShareWithAnyoneNoLinkPreview() {
     ProtonTheme {
-        ShareWithAnyone(
-            viewState = LoadingViewState.Initial,
-            publicUrl = null,
-            accessibilityDescription = "Anyone with this link",
-            onRetry = { },
-            onStartSharing = { },
-            onStopSharing = { },
-            onCopyLink = { },
-            onConfigureSharing = { },
-        )
+        Surface {
+            ShareWithAnyone(
+                viewState = LoadingViewState.Initial,
+                publicUrl = null,
+                accessibilityDescription = "Anyone with this link",
+                onRetry = { },
+                onStartSharing = { },
+                onStopSharing = { },
+                onCopyLink = { },
+                onConfigureSharing = { },
+            )
+        }
     }
 }
 
 @Preview
 @Composable
-private fun ShareWithAnyoneLoadingPreview() {
+fun ShareWithAnyoneLoadingPreview() {
     ProtonTheme {
-        ShareWithAnyone(
-            viewState = LoadingViewState.Loading("Creating link to file"),
-            publicUrl = null,
-            accessibilityDescription = "Anyone with this link",
-            onRetry = { },
-            onStartSharing = { },
-            onStopSharing = { },
-            onCopyLink = { },
-            onConfigureSharing = { },
-        )
+        Surface {
+            ShareWithAnyone(
+                viewState = LoadingViewState.Loading("Creating link to file"),
+                publicUrl = null,
+                accessibilityDescription = "Anyone with this link",
+                onRetry = { },
+                onStartSharing = { },
+                onStopSharing = { },
+                onCopyLink = { },
+                onConfigureSharing = { },
+            )
+        }
     }
 }
 
@@ -353,16 +358,18 @@ private fun ShareWithAnyoneLoadingPreview() {
 @Composable
 private fun ShareWithAnyoneErrorRetryablePreview() {
     ProtonTheme {
-        ShareWithAnyone(
-            viewState = LoadingViewState.Error.Retryable("Retryable error"),
-            publicUrl = null,
-            accessibilityDescription = "Anyone with this link",
-            onRetry = { },
-            onStartSharing = { },
-            onStopSharing = { },
-            onCopyLink = { },
-            onConfigureSharing = { },
-        )
+        Surface {
+            ShareWithAnyone(
+                viewState = LoadingViewState.Error.Retryable("Retryable error"),
+                publicUrl = null,
+                accessibilityDescription = "Anyone with this link",
+                onRetry = { },
+                onStartSharing = { },
+                onStopSharing = { },
+                onCopyLink = { },
+                onConfigureSharing = { },
+            )
+        }
     }
 }
 
@@ -370,49 +377,55 @@ private fun ShareWithAnyoneErrorRetryablePreview() {
 @Composable
 private fun ShareWithAnyoneErrorNonRetryablePreview() {
     ProtonTheme {
-        ShareWithAnyone(
-            viewState = LoadingViewState.Error.NonRetryable("Non retryable error", 0.seconds),
-            publicUrl = null,
-            accessibilityDescription = "Anyone with this link",
-            onRetry = { },
-            onStartSharing = { },
-            onStopSharing = { },
-            onCopyLink = { },
-            onConfigureSharing = { },
-        )
+        Surface {
+            ShareWithAnyone(
+                viewState = LoadingViewState.Error.NonRetryable("Non retryable error", 0.seconds),
+                publicUrl = null,
+                accessibilityDescription = "Anyone with this link",
+                onRetry = { },
+                onStartSharing = { },
+                onStopSharing = { },
+                onCopyLink = { },
+                onConfigureSharing = { },
+            )
+        }
     }
 }
 
 @Preview
 @Composable
-private fun ShareWithAnyonePublicLinkPreview() {
+fun ShareWithAnyonePublicLinkPreview() {
     ProtonTheme {
-        ShareWithAnyone(
-            viewState = LoadingViewState.Initial,
-            publicUrl = "url",
-            accessibilityDescription = "Anyone with this link",
-            onRetry = { },
-            onStartSharing = { },
-            onStopSharing = { },
-            onCopyLink = { },
-            onConfigureSharing = { },
-        )
+        Surface {
+            ShareWithAnyone(
+                viewState = LoadingViewState.Initial,
+                publicUrl = "url",
+                accessibilityDescription = "Anyone with this link",
+                onRetry = { },
+                onStartSharing = { },
+                onStopSharing = { },
+                onCopyLink = { },
+                onConfigureSharing = { },
+            )
+        }
     }
 }
 
 @Preview
 @Composable
-private fun ShareWithAnyonePasswordLinkPreview() {
+fun ShareWithAnyonePasswordLinkPreview() {
     ProtonTheme {
-        ShareWithAnyone(
-            viewState = LoadingViewState.Initial,
-            publicUrl = "url",
-            accessibilityDescription = "Anyone with the link and password",
-            onRetry = { },
-            onStartSharing = { },
-            onStopSharing = { },
-            onCopyLink = { },
-            onConfigureSharing = { },
-        )
+        Surface {
+            ShareWithAnyone(
+                viewState = LoadingViewState.Initial,
+                publicUrl = "url",
+                accessibilityDescription = "Anyone with the link and password",
+                onRetry = { },
+                onStartSharing = { },
+                onStopSharing = { },
+                onCopyLink = { },
+                onConfigureSharing = { },
+            )
+        }
     }
 }

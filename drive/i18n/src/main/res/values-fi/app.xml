@@ -61,8 +61,8 @@
             "Only files can be uploaded to Proton Drive"
     -->
   <string name="in_app_notification_upload_files_only">%1$sen voidaan tallentaa vain tiedostoja</string>
-  <string name="in_app_notification_importing_file_already_exists">Samanniminen tiedosto on jo olemassa. Kokeile tyhjentää sovelluksen välimuisti</string>
-  <string name="in_app_notification_clear_local_cache_success">Paikallinen välimuisti tyhjennettiin</string>
+  <string name="in_app_notification_importing_file_already_exists">Samanniminen tiedosto on jo olemassa. Kokeile auttaako sovelluksen välimuistin tyhjennys</string>
+  <string name="in_app_notification_clear_local_cache_success">Paikallinen välimuisti on tyhjennetty</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Tallennustila on täynnä</string>
@@ -118,7 +118,7 @@
         Example:
             "Backing up photos to Proton Drive"
     -->
-  <string name="notification_content_title_backup">Varmuuskopioidaan kuvia kohteeseen %1$s</string>
+  <string name="notification_content_title_backup">Varmuuskopioidaan kuvia %1$sen</string>
   <!--
     Variable %1$s is a quantity (formatted) of photos left to upload
     Example:
@@ -130,16 +130,17 @@
     <item quantity="other">%1$s kohdetta jäljellä</item>
   </plurals>
   <string name="notification_content_text_backup_complete">Varmuuskopiointi on valmis</string>
-  <string name="notification_content_text_backup_uncompleted">Varmuuskopiointi suoritettu ongelmien kanssa</string>
+  <string name="notification_content_text_backup_uncompleted">Varmuuskopiointi suoritettiin, mutta siinä oli ongelmia</string>
   <string name="notification_content_text_backup_failed">Varmuuskopiointi epäonnistui</string>
   <string name="notification_content_text_backup_failed_drive_storage">Proton-tallennustila on täynnä</string>
   <string name="notification_content_text_backup_failed_local_storage">Paikallinen tallennustila on täynnä</string>
-  <string name="notification_content_text_backup_failed_permission">Käyttöoikeudet puuttuvat</string>
+  <string name="notification_content_text_backup_failed_permission">Käyttöoikeuksia puuttuu</string>
   <string name="notification_content_text_backup_failed_connectivity">Internet-yhteyttä ei ole</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Odotetaan Wi-Fi-yhteyttä</string>
-  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Varmuuskopiointi ei ole sallittu</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Varmuuskopiointia ei sallita</string>
   <string name="notification_content_text_backup_paused_disabled">Varmuuskopiointi poistettiin käytöstä</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Varmuuskopiointia ei voida suorittaa taustalla</string>
+  <string name="notification_content_text_backup_preparing">Valmistellaan varmuuskopiointia</string>
   <string name="notification_content_title_download_complete">Lataus on valmis</string>
   <string name="notification_content_title_forced_sign_out">Kirjaudu sisään</string>
   <string name="notification_content_text_forced_sign_out">Pahoittelut keskeytyksestä! Synkronoitaessa kohdattiin ongelma - kirjaudu sisään uudelleen, niin kaikki sujuu taas hyvin.</string>
@@ -147,9 +148,9 @@
   <string name="notification_content_text_no_space_left_on_device">Sovellus ei välttämättä toimi oikein.</string>
   <string name="notification_channel_group_name_application">Sovellus</string>
   <string name="notification_channel_background_title">Tausta</string>
-  <string name="notification_channel_background_description">Kanava taustatoimintoja, kuten varmuuskopiointia varten</string>
+  <string name="notification_channel_background_description">Kanava varmuuskopioinnin kaltaisille taustatoiminnoille</string>
   <string name="notification_channel_transfer_title">Siirrot</string>
-  <string name="notification_channel_transfer_description">Kanava pilvitilan, tallennusten ja latausten ilmoituksille</string>
+  <string name="notification_channel_transfer_description">Kanava pilvitallennukselle, tiedostojen lähetyksille ja latauksille</string>
   <string name="notification_channel_warning_title">Varoitus</string>
   <string name="notification_channel_warning_description">Kanava käyttäjän toimia edellyttäville varoituksille</string>
   <!-- endregion -->
@@ -169,14 +170,14 @@
   <string name="description_files_stop_sharing_action_success">Linkki tiedostoosi on poistettiin.</string>
   <string name="description_files_stop_sharing_action_error">Virhe poistrettaessa tiedostosi linkkiä.</string>
   <string name="description_files_stop_all_sharing">Tämä poistaa linkin ja käyttöoikeuden kaikilta.</string>
-  <string name="description_files_stop_all_sharing_action_success">Tiedotosi jakaminen on poistettu</string>
-  <string name="description_files_stop_all_sharing_action_error">Tiedoston jakamista poistettaessa tapahtui virhe.</string>
+  <string name="description_files_stop_all_sharing_action_success">Tiedostojakosi on poistettu.</string>
+  <string name="description_files_stop_all_sharing_action_error">Virhe poistettaessa tiedostojakoa.</string>
   <string name="ignore_file_signature_action">Näytä silti</string>
   <string name="action_empty_files_add_files">Tallenna</string>
   <string name="error_could_not_send_file">Virhe yritettäessä lähettää tiedostoa</string>
   <string name="error_could_not_load_folder_content">Virhe yritettäessä ladata kansion sisältöä</string>
   <string name="error_main_share_locked">Tiedostot eivät ole enää käytettävissä salasanan uudelleenasetuksen vuoksi. Palauta käyttöoikeus lataamalla vanha salausavain uudelleen.</string>
-  <string name="error_share_locked">Jakaminen on lukittu.</string>
+  <string name="error_share_locked">Jako on lukittu.</string>
   <string name="error_main_share_not_found">Ensisijaista jakoa ei löytynyt.</string>
   <string name="error_share_not_found">Jakoa ei löytynyt.</string>
   <string name="error_creating_photo_share_not_allowed">Kuvien varmuuskopiointi on poistettu tilapäisesti käytöstä.</string>
@@ -192,7 +193,7 @@
     -->
   <string name="get_more_free_storage_title">Hanki %1$s ilmaista tallennustilaa</string>
   <string name="get_more_free_storage_description">Suorita nämä toimet ensimmäisten 30 päivän aikana, niin saat veloituksetta lisää tallennustilaa.</string>
-  <string name="get_more_free_storage_action_upload_title">Lähetä tiedosto tai ota kuvien varmuuskopiointi käyttöön</string>
+  <string name="get_more_free_storage_action_upload_title">Tallenna tiedosto tai ota kuvien varmuuskopiointi käyttöön</string>
   <string name="get_more_free_storage_action_upload_subtitle">Kaikki tiedostosi salataan.</string>
   <string name="get_more_free_storage_action_link_title">Luo jakolinkki</string>
   <!--
@@ -201,8 +202,8 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
   <string name="get_more_free_storage_action_link_subtitle">Valitse mikä tahansa tiedosto tai kansio. Avaa asetusvalikko ja paina %1$s.</string>
-  <string name="get_more_free_storage_action_share_title">Share a file</string>
-  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_share_title">Jaa tiedosto</string>
+  <string name="get_more_free_storage_action_share_subtitle">Se on helppoa ja turvallista.</string>
   <string name="get_more_free_storage_action_recovery_title">Määritä palautustapa</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link

@@ -27,14 +27,14 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.entity.PublicAddressKeys
-import me.proton.core.key.domain.entity.key.PublicAddress
+import me.proton.core.key.domain.entity.key.PublicAddressInfo
 import me.proton.core.key.domain.repository.Source
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class GetPublicAddressKeys @Inject constructor(
-    private val getPublicAddress: GetPublicAddress,
+    private val getPublicAddressInfo: GetPublicAddressInfo,
     private val getAddressKeys: GetAddressKeys,
     private val configurationProvider: ConfigurationProvider,
 ) {
@@ -61,14 +61,14 @@ class GetPublicAddressKeys @Inject constructor(
         defaultValue().also { key -> put(email, key) }
 
     private suspend fun createKey(userId: UserId, email: String): Key =
-        userId.getPublicAddress(email)
+        userId.getPublicAddressInfo(email)
             .getOrNull()
-            ?.let { publicAddress ->
-                PublicAddressKeys(publicAddress.keyHolder())
+            ?.let { publicAddressInfo ->
+                PublicAddressKeys(publicAddressInfo.keyHolder())
             } ?: getAddressKeys(userId, email)
 
-    private suspend fun UserId.getPublicAddress(email: String): Result<PublicAddress> = coRunCatching {
-        getPublicAddress(this, email, Source.RemoteNoCache).getOrNull()
-            ?: getPublicAddress(this, email, Source.RemoteOrCached).getOrThrow()
+    private suspend fun UserId.getPublicAddressInfo(email: String): Result<PublicAddressInfo?> = coRunCatching {
+        getPublicAddressInfo(this, email, Source.RemoteNoCache).getOrNull()
+            ?: getPublicAddressInfo(this, email, Source.RemoteOrCached).getOrThrow()
     }
 }

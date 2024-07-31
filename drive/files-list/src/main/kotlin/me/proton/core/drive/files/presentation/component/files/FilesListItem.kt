@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -68,6 +69,8 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.captionNorm
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.default
+import me.proton.core.crypto.common.pgp.VerificationStatus
+import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
 import me.proton.core.drive.base.domain.extension.toPercentString
@@ -83,6 +86,7 @@ import me.proton.core.drive.drivelink.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.files.presentation.component.FilesTestTag
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.entity.SharingDetails
+import me.proton.core.drive.link.domain.extension.isProtonCloudFile
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.presentation.extension.getSize
 import me.proton.core.drive.link.presentation.extension.lastModifiedRelative
@@ -158,6 +162,8 @@ fun FilesListItem(
                                     link = link,
                                     onClick = onMoreOptionsClick,
                                 )
+                            } else {
+                                Spacer(modifier = Modifier.size(SmallSpacing))
                             }
                         } else {
                             CircularProgressIndicator(
@@ -352,7 +358,7 @@ fun OfflineIcon(
     link: DriveLink,
     modifier: Modifier = Modifier,
 ) {
-    if (!(link.isMarkedAsOffline || link.isAnyAncestorMarkedAsOffline)) {
+    if (!(link.isMarkedAsOffline || link.isAnyAncestorMarkedAsOffline) || link.isProtonCloudFile) {
         return
     }
     when (link.downloadState) {
@@ -422,10 +428,17 @@ fun DriveLink.File.detailsDescription(progress: Percentage?): String =
         ?: let {
             val context = LocalContext.current
             shareUser?.takeUnless { it.permissions.isAdmin }?.description
-                ?: "%s, %s".format(
-                    getSize(context),
-                    stringResource(I18N.string.title_modified_with_date, lastModifiedRelative(context)),
-                )
+                ?: let {
+                    val lastModified = stringResource(I18N.string.title_modified_with_date, lastModifiedRelative(context))
+                    if (isProtonCloudFile) {
+                        "%s".format(lastModified)
+                    } else {
+                        "%s, %s".format(
+                            getSize(context),
+                            lastModified,
+                        )
+                    }
+                }
         }
 
 @Composable
@@ -475,7 +488,7 @@ fun MoreOptions(
 @Composable
 fun PreviewFilesListItemPlaceholder() {
     ProtonTheme {
-        Column {
+        Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
             FilesListItemPlaceholder()
             FilesListItem(
                 link = PREVIEW_DRIVELINK_FOLDER_SHARED_WITH_ME,
@@ -489,12 +502,6 @@ fun PreviewFilesListItemPlaceholder() {
     }
 }
 
-@Preview(
-    name = "ListItem not downloaded, not favorite, not shared in light mode",
-    group = "light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-)
 @Preview(
     name = "ListItem not downloaded, not favorite, not shared in dark mode",
     group = "dark mode",
@@ -517,6 +524,7 @@ fun PreviewListItem() {
         }
     }
 }
+
 @Preview
 @Composable
 fun PreviewSharedWithMeListItems() {
@@ -545,12 +553,6 @@ fun PreviewSharedWithMeListItems() {
 }
 
 @Preview(
-    name = "ListItem in multiselect, selected,  in light mode",
-    group = "light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-)
-@Preview(
     name = "ListItem in multiselect, selected,  in dark mode",
     group = "dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -575,12 +577,6 @@ fun PreviewSelectedListItem() {
     }
 }
 
-@Preview(
-    name = "ListItem in multiselect, unselected, in light mode",
-    group = "light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-)
 @Preview(
     name = "ListItem in multiselect, unselected, in dark mode",
     group = "dark mode",
@@ -607,12 +603,6 @@ fun PreviewUnselectedListItem() {
 }
 
 @Preview(
-    name = "ListItem downloaded but not favorite, not shared in light mode",
-    group = "light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-)
-@Preview(
     name = "ListItem downloaded but not favorite, not shared in dark mode",
     group = "dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -638,19 +628,8 @@ fun PreviewDownloadedListItem() {
     }
 }
 
-@Preview(
-    name = "ListItem downloading but not favorite, not shared in light mode",
-    group = "light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-)
-@Preview(
-    name = "ListItem downloading but not favorite, not shared in dark mode",
-    group = "dark mode",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true,
-)
-@Suppress("unused")
+
+@Preview
 @Composable
 fun PreviewDownloadingListItem() {
     ProtonTheme {
@@ -670,19 +649,7 @@ fun PreviewDownloadingListItem() {
     }
 }
 
-@Preview(
-    name = "ListItem downloaded and favorite but not shared in light mode",
-    group = "light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-)
-@Preview(
-    name = "ListItem downloaded and favorite but not shared in dark mode",
-    group = "dark mode",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true,
-)
-@Suppress("unused")
+@Preview
 @Composable
 fun PreviewDownloadedAndFavoriteListItem() {
     ProtonTheme {
@@ -705,21 +672,9 @@ fun PreviewDownloadedAndFavoriteListItem() {
     }
 }
 
-@Preview(
-    name = "ListItem downloaded, favorite and shared in light mode",
-    group = "light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-)
-@Preview(
-    name = "ListItem downloaded, favorite and shared in dark mode",
-    group = "dark mode",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showBackground = true,
-)
-@Suppress("unused", "FunctionMaxLength")
+@Preview
 @Composable
-fun PreviewDownloadedAndFavoriteSharedListItem() {
+fun PreviewDwnldAndFavShrdListItem() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             FilesListItem(
@@ -740,6 +695,37 @@ fun PreviewDownloadedAndFavoriteSharedListItem() {
                 onMoreOptionsClick = {},
                 isClickEnabled = { false },
                 isTextEnabled = { true },
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewItemsWithoutMoreOptions() {
+    ProtonTheme {
+        Column {
+            FilesListItem(
+                link = PREVIEW_DRIVELINK_FOLDER.copy(
+                    cryptoName = CryptoProperty.Decrypted("folder synced from Domantas machine - Copy", VerificationStatus.Success),
+                ),
+                onClick = {},
+                onLongClick = {},
+                onMoreOptionsClick = {},
+                isClickEnabled = { false },
+                isTextEnabled = { true },
+                isMoreOptionsEnabled = false,
+            )
+            FilesListItem(
+                link = PREVIEW_DRIVELINK_FOLDER.copy(
+                    cryptoName = CryptoProperty.Decrypted("folder synced from Domantas machine", VerificationStatus.Success),
+                ),
+                onClick = {},
+                onLongClick = {},
+                onMoreOptionsClick = {},
+                isClickEnabled = { false },
+                isTextEnabled = { true },
+                isMoreOptionsEnabled = false,
             )
         }
     }

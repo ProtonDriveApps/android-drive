@@ -29,8 +29,8 @@ object ShareUserRobot : NavigationBarRobot, Robot {
     private val closeButton get() = node.withText(I18N.string.common_close_action)
     private val emailTextField get() = node.isSetText()
     private val sendButton get() = node.withContentDescription(I18N.string.common_send_action)
-    private val viewerPermissionButton get() = node.withText(I18N.string.share_via_invitations_permission_viewer)
-    private val editorPermissionButton get() = node.withText(I18N.string.share_via_invitations_permission_editor)
+    private val viewerPermissionButton get() = node.withText(I18N.string.common_permission_viewer)
+    private val editorPermissionButton get() = node.withText(I18N.string.common_permission_editor)
     fun typeEmail(text: String) = apply {
         emailTextField.typeText(text).typeText(" ")
     }
@@ -54,12 +54,12 @@ object ShareUserRobot : NavigationBarRobot, Robot {
     fun assertInvalidEmail(email: String) =
         node.withText(email).hasAncestor(node.isValidField(false)).await { assertIsDisplayed() }
 
-    fun assertInvitationSent(count: Int) = node.withText(
+    fun dismissInvitationSent(count: Int) = node.withText(
         targetContext.resources.getQuantityString(
             I18N.plurals.share_via_invitations_person_added,
             count
         ).format(count)
-    ).await { assertIsDisplayed() }
+    ).click()
 
     fun assertSendButtonDisabled() =
         node.isClickable().hasDescendant(sendButton).await { assertDisabled() }

@@ -21,11 +21,16 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.isProtonDocument
 
-fun DriveLink.onClick(
+suspend fun DriveLink.onClick(
     navigateToFolder: (FolderId, String?) -> Unit,
     navigateToPreview: (FileId) -> Unit,
+    openDocument: suspend (DriveLink.File) -> Unit,
 ) = when (this) {
     is DriveLink.Folder -> navigateToFolder(id, if (isNameEncrypted) null else name)
-    is DriveLink.File -> navigateToPreview(id)
+    is DriveLink.File -> when {
+        this.isProtonDocument -> openDocument(this)
+        else -> navigateToPreview(id)
+    }
 }

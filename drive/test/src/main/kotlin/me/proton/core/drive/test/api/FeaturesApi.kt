@@ -18,7 +18,7 @@
 
 package me.proton.core.drive.test.api
 
-import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.featureflag.data.remote.resource.UnleashToggleResource
 import me.proton.core.featureflag.data.remote.resource.UnleashVariantResource
 import me.proton.core.featureflag.data.remote.response.GetUnleashTogglesResponse

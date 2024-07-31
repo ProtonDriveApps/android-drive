@@ -183,7 +183,7 @@ class BackupFileRepositoryImplTest {
         }
 
     @Test
-    fun `Given files with all states then status should be progressing three over four`() =
+    fun `Given files with all states then status should be preparing two over four`() =
         runTest {
             repository.insertFiles(
                 listOf(
@@ -197,7 +197,27 @@ class BackupFileRepositoryImplTest {
             )
 
             assertEquals(
-                BackupStatus.InProgress(totalBackupPhotos = 4, pendingBackupPhotos = 3),
+                BackupStatus.Preparing(totalBackupPhotos = 4, preparingBackupPhotos = 2),
+                repository.getBackupStatus(rootPhotoId).first(),
+            )
+        }
+
+    @Test
+    fun `Given files with all pending and final states then status should be progressing one over four`() =
+        runTest {
+            repository.insertFiles(
+                listOf(
+                    rootPhotoId.backupFile("uri1", state = BackupFileState.DUPLICATED),
+                    rootPhotoId.backupFile("uri2", state = BackupFileState.READY),
+                    rootPhotoId.backupFile("uri3", state = BackupFileState.READY),
+                    rootPhotoId.backupFile("uri4", state = BackupFileState.COMPLETED),
+                    rootPhotoId.backupFile("uri5", state = BackupFileState.COMPLETED),
+                    rootMainId.backupFile("uri6", state = BackupFileState.COMPLETED, bucketId = 1),
+                )
+            )
+
+            assertEquals(
+                BackupStatus.InProgress(totalBackupPhotos = 4, pendingBackupPhotos = 2),
                 repository.getBackupStatus(rootPhotoId).first(),
             )
         }

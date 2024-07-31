@@ -20,8 +20,11 @@ package me.proton.core.drive.drivelink.shared.presentation.extension
 
 import android.content.Context
 import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
+import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType
+import me.proton.core.drive.base.presentation.extension.toPermissionLabel
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
 import me.proton.core.drive.share.user.domain.entity.ShareUser
+import me.proton.core.drive.share.user.domain.entity.ShareUser.ExternalInvitee.State.*
 import me.proton.core.drive.i18n.R as I18N
 
 fun ShareUser.toViewState(appContext: Context) = ShareUserViewState(
@@ -30,18 +33,26 @@ fun ShareUser.toViewState(appContext: Context) = ShareUserViewState(
     permissionLabel = toPermissionLabel(appContext),
     firstLetter = firstLetter(),
     displayName = displayName,
-    isInvitation = this !is ShareUser.Member,
+    type = when (this) {
+        is ShareUser.Invitee -> ShareUserType.INVITATION
+        is ShareUser.ExternalInvitee -> ShareUserType.EXTERNAL_INVITATION
+        is ShareUser.Member -> ShareUserType.MEMBER
+    },
 )
 
 private fun ShareUser.firstLetter() =
     (displayName ?: email).firstCodePointAsStringOrNull?.uppercase() ?: "?"
 
-private fun ShareUser.toPermissionLabel(appContext: Context) = appContext.getString(
-    when {
-        permissions.isOwner -> I18N.string.share_via_invitations_permission_owner
-        permissions.isAdmin -> I18N.string.share_via_invitations_permission_admin
-        permissions.canWrite -> I18N.string.share_via_invitations_permission_editor
-        permissions.canRead -> I18N.string.share_via_invitations_permission_viewer
-        else -> I18N.string.share_via_invitations_permission_unknown
+private fun ShareUser.toPermissionLabel(
+    appContext: Context,
+) = permissions.toPermissionLabel(appContext).let { permission ->
+    if (this is ShareUser.ExternalInvitee) {
+        when (state) {
+            PENDING -> I18N.string.share_via_invitations_external_invitation_pending
+            USER_REGISTERED -> I18N.string.share_via_invitations_external_invitation_accepted
+            UNKNOWN -> I18N.string.share_via_invitations_external_invitation_unknown
+        }.let { stringId -> appContext.getString(stringId) }.format(permission)
+    } else {
+        permission
     }
-)
+}

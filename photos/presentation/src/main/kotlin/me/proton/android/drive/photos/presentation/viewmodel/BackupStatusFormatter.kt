@@ -69,6 +69,10 @@ class BackupStatusFormatter(
                     )
                 )
 
+                is BackupStatus.Preparing -> PhotosStatusViewState.Preparing(
+                    progress = backupStatus.progress,
+                )
+
                 null -> error("Enabled backup should always have a status")
             }
         }

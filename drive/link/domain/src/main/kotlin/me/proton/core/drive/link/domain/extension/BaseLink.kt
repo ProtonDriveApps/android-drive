@@ -19,7 +19,9 @@
 package me.proton.core.drive.link.domain.extension
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.Timestamp
+import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -36,3 +38,9 @@ fun BaseLink.requireParentId(): FolderId = requireNotNull(parentId)
 val BaseLink.isSharedUrlExpired get() = shareUrlExpirationTime?.let { expirationTime ->
     expirationTime < Timestamp.now
 } == true
+
+val BaseLink.isProtonDocument: Boolean
+    get() = mimeType.toFileTypeCategory() == FileTypeCategory.ProtonDoc
+
+val BaseLink.isProtonCloudFile: Boolean
+    get() = mimeType.startsWith("application/vnd.proton.")

@@ -23,6 +23,10 @@ data class ShareUserViewState(
     val email: String,
     val permissionLabel: String,
     val firstLetter: String,
-    val isInvitation: Boolean,
+    val type: ShareUserType,
     val displayName: String? = null,
 )
+
+enum class ShareUserType {
+    INVITATION, EXTERNAL_INVITATION, MEMBER
+}

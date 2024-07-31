@@ -46,6 +46,7 @@ driveModule(
     api(libs.core.key.data) {
         isTransitive = false
     }
+    api(libs.core.label.data)
     api(libs.core.notification.data)
     api(libs.core.observability.data)
     api(libs.core.payment.data) {
@@ -57,6 +58,7 @@ driveModule(
         exclude("me.proton.core", "key-data")
         exclude("me.proton.core", "payment-domain")
     }
+    api(libs.core.userRecovery.data)
     api(libs.core.userSettings.data) {
         exclude("me.proton.core", "key-data")
         exclude("me.proton.core", "payment-domain")

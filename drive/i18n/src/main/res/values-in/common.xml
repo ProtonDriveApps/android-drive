@@ -73,6 +73,7 @@
   <string name="common_type_pages">Berkas Pages</string>
   <string name="common_type_pdf">Dokumen PDF</string>
   <string name="common_type_ppt">Presentasi</string>
+  <string name="common_type_proton_doc">Dokumen Proton</string>
   <string name="common_type_text">Teks</string>
   <string name="common_type_trustedkey">Kunci terpercaya</string>
   <string name="common_type_unknown">Biner</string>
@@ -89,7 +90,13 @@
             "Name must not exceed 280 characters"
     -->
   <string name="common_error_name_too_long">Nama tidak boleh melebihi %1$d karakter</string>
-  <string name="common_error_name_with_forbidden_characters">Nama tidak dapat termasuk karakter yang tidak terlihat, \"/\" atau \"\\"</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">Nama tidak boleh mengandung karakter yang tidak terlihat, \"%1$s\", atau \"%2$s\"</string>
   <string name="common_error_name_periods">Nama tidak boleh diisi dengan \".\" atau \"..\"</string>
   <string name="common_error_no_internet">Tidak ada koneksi internet</string>
   <string name="common_error_http_5xx">Terdapat kesalahan pada server</string>

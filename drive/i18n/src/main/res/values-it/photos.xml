@@ -47,12 +47,12 @@
   <!--
         Variable %1$s is a folder name, %2$s is a quantity of folders found
         Example:
-            "Backing up items from the Camera folder"
-            "Backing up items from 2 Camera folders"
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
     -->
   <plurals name="photos_message_folders_setup">
-    <item quantity="one">Backup degli elementi della cartella %1$s in corso</item>
-    <item quantity="other">Backup degli elementi da %2$d cartelle %1$s in corso</item>
+    <item quantity="one">Backup degli elementi dalla cartella %2$d: %1$s</item>
+    <item quantity="other">Backup degli elementi dalle cartelle %2$d: %1$s</item>
   </plurals>
   <!--
         Variable %1$s is a folder name
@@ -91,6 +91,7 @@
   <string name="photos_backup_state_completed">Backup completato</string>
   <string name="photos_backup_state_uncompleted">Backup completato con problemi</string>
   <string name="photos_backup_state_uncompleted_action">Risolvi</string>
+  <string name="photos_backup_state_preparing">Preparazione del backup in corso</string>
   <string name="photos_backup_state_encrypting">Crittografia in corso</string>
   <string name="photos_backup_state_uploading">Backup in corso</string>
   <!--

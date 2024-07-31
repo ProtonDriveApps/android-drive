@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">%1$s ögesine yalnızca bağlantıya ve parolaya sahip olan kişiler erişebilir</string>
+  <string name="shared_link_settings">Bağlantı ayarları</string>
+  <string name="shared_link_options">Bağlantı seçenekleri</string>
   <string name="shared_link_privacy_settings">Gizlilik ayarları</string>
   <string name="shared_link_password_protection">Parola koruması</string>
   <string name="shared_link_expiration_date">Geçerlilik tarihi</string>

@@ -73,6 +73,7 @@
   <string name="common_type_pages">Pages-ის ფაილი</string>
   <string name="common_type_pdf">PDF დოკუმენტი</string>
   <string name="common_type_ppt">პრეზენტაცია</string>
+  <string name="common_type_proton_doc">Proton-ის დოკუმენტი</string>
   <string name="common_type_text">ტექსტი</string>
   <string name="common_type_trustedkey">სანდო გასაღები</string>
   <string name="common_type_unknown">ბინარული</string>
@@ -89,7 +90,13 @@
             "Name must not exceed 280 characters"
     -->
   <string name="common_error_name_too_long">სახელი არ შეიძლება, %1$d სიმბოლოზე მეტს შეიცავდეს</string>
-  <string name="common_error_name_with_forbidden_characters">სახელი არ შეიძლება, შეიცავდეს უჩინარ სიმბოლოებს, \"/\" და \"\\"</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">სახელი არ შეიძლება, შეიცავდეს უჩინარ სიმბოლოებს, \"%1$s\" ან \"%2$s\"</string>
   <string name="common_error_name_periods">სახელი \".\" და \"..\" ვერ იქნება</string>
   <string name="common_error_no_internet">ინტერნეტი არ გაქვთ</string>
   <string name="common_error_http_5xx">აღმოჩენილია სერვერის შეცდომა</string>

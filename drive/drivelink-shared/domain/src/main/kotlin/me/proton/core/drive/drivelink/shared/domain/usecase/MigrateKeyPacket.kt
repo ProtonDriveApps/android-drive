@@ -18,6 +18,7 @@
 
 package me.proton.core.drive.drivelink.shared.domain.usecase
 
+import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
@@ -46,7 +47,11 @@ class MigrateKeyPacket @Inject constructor(
 ) {
 
     suspend operator fun invoke(userId: UserId) = coRunCatching {
-        val shares = getShares(userId, Share.Type.STANDARD)
+        val shares = getShares(
+            userId = userId,
+            shareType = Share.Type.STANDARD,
+            refresh = flowOf(true),
+        )
             .filterSuccessOrError()
             .toResult()
             .getOrThrow()
@@ -68,7 +73,11 @@ class MigrateKeyPacket @Inject constructor(
                 share.volumeId
             }.distinct()
             val links = volumeIds.flatMap { volumeId ->
-                getSharedDriveLinks(userId, volumeId).filterSuccessOrError().toResult().getOrThrow()
+                getSharedDriveLinks(
+                    userId = userId,
+                    volumeId = volumeId,
+                    refresh = flowOf(true),
+                ).filterSuccessOrError().toResult().getOrThrow()
             }
 
             val result = shareIds.associateWith { shareId ->

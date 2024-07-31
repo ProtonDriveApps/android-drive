@@ -63,7 +63,7 @@ class BaseLinkTest {
         val lastModified = link.lastModifiedRelative(context, now)
         // endregion
         // region Assert
-        lastModified.assertEqual("5:43 AM")
+        lastModified.assertEqual("5:43\u202FAM")
         // endregion
     }
 

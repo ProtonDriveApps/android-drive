@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -83,11 +84,13 @@ fun IllustratedMessage(
 @Composable
 fun PreviewListEmpty() {
     ProtonTheme {
-        IllustratedMessage(
-            imageResId = R.drawable.empty_folder_daynight,
-            titleResId = I18N.string.title_empty_folder,
-            modifier = Modifier.fillMaxSize(),
-        )
+        Surface {
+            IllustratedMessage(
+                imageResId = R.drawable.empty_folder_daynight,
+                titleResId = I18N.string.title_empty_folder,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
     }
 }
 
@@ -95,11 +98,13 @@ fun PreviewListEmpty() {
 @Composable
 fun PreviewListEmptyWithDescription() {
     ProtonTheme {
-        IllustratedMessage(
-            imageResId = R.drawable.empty_folder_daynight,
-            titleResId = I18N.string.title_empty_folder,
-            descriptionResId = I18N.string.description_empty_folder,
-            modifier = Modifier.fillMaxSize(),
-        )
+        Surface {
+            IllustratedMessage(
+                imageResId = R.drawable.empty_folder_daynight,
+                titleResId = I18N.string.title_empty_folder,
+                descriptionResId = I18N.string.description_empty_folder,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
     }
 }

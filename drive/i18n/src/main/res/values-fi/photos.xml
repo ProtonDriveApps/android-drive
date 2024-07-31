@@ -47,12 +47,12 @@
   <!--
         Variable %1$s is a folder name, %2$s is a quantity of folders found
         Example:
-            "Backing up items from the Camera folder"
-            "Backing up items from 2 Camera folders"
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
     -->
   <plurals name="photos_message_folders_setup">
-    <item quantity="one">Kansion %1$s kohteita varmuuskopioidaan</item>
-    <item quantity="other">Varmuuskopioidaan %2$d %1$s-kansion kohteita</item>
+    <item quantity="one">%2$d kansion kohteita varmuuskopioidaan: %1$s</item>
+    <item quantity="other">%2$d kansion kohteita varmuuskopioidaan: %1$s</item>
   </plurals>
   <!--
         Variable %1$s is a folder name
@@ -72,7 +72,7 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Jatkuvia, automaattisia varmuuskopioita varten %1$slle on myönnettävä laitteen asetuksista \"Valokuvat ja videot\" -käyttöoikeus.</string>
-  <string name="photos_error_waiting_connectivity">Internet-yhteyttä ei ole</string>
+  <string name="photos_error_waiting_connectivity">Internet-yhteys puuttuu</string>
   <string name="photos_error_waiting_wifi_connectivity">Odotetaan Wi-Fi-yhteyttä</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Käytä mobiiliyhteyttä</string>
   <string name="photos_error_local_storage">Laitteen tallennustila täynnä</string>
@@ -91,6 +91,7 @@
   <string name="photos_backup_state_completed">Varmuuskopiointi on suoritettu</string>
   <string name="photos_backup_state_uncompleted">Varmuuskopioinnin suorituksessa oli joitakin ongelmia</string>
   <string name="photos_backup_state_uncompleted_action">Ratkaise</string>
+  <string name="photos_backup_state_preparing">Valmistellaan varmuuskopiointia</string>
   <string name="photos_backup_state_encrypting">Salataan…</string>
   <string name="photos_backup_state_uploading">Varmuuskopioidaan…</string>
   <!--

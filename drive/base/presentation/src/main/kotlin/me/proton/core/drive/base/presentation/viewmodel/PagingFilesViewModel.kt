@@ -24,6 +24,7 @@ import androidx.paging.LoadState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ fun onLoadState(
     listContentState: MutableStateFlow<ListContentState>,
     listAppendContentState: MutableStateFlow<ListContentAppendingState>,
     coroutineScope: CoroutineScope,
-    emptyState: ListContentState.Empty,
+    emptyState: StateFlow<ListContentState.Empty>,
     onError: (message: String) -> Unit,
 ): (CombinedLoadStates, Int) -> Unit {
     val flow = MutableSharedFlow<Pair<CombinedLoadStates, Int>>()
@@ -55,7 +56,7 @@ fun onLoadState(
                 isRemoteRefreshLoading = loadState.mediator?.refresh == LoadState.Loading,
                 endOfPaginationReached = loadState.append.endOfPaginationReached,
                 itemCount = itemCount,
-                emptyState = emptyState,
+                emptyState = emptyState.value,
                 onError = onError,
             )
             listAppendContentState.processAppendState(loadState.append, loadState.refresh)

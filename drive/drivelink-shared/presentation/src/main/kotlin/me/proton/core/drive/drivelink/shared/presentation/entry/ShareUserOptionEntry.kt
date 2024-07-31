@@ -58,13 +58,13 @@ data class PermissionsEntry(
     @Suppress("FunctionName")
     companion object {
         fun Viewer(isSelected: Boolean, onClick: () -> Unit) = PermissionsEntry(
-            label = I18N.string.share_via_invitations_permission_viewer,
+            label = I18N.string.common_permission_viewer,
             leadingIcon = CorePresentation.drawable.ic_proton_eye,
             trailingIcon = CorePresentation.drawable.ic_proton_checkmark.takeIf { isSelected },
             onClick = onClick,
         )
         fun Editor(isSelected: Boolean, onClick: () -> Unit) = PermissionsEntry(
-            label = I18N.string.share_via_invitations_permission_editor,
+            label = I18N.string.common_permission_editor,
             leadingIcon = CorePresentation.drawable.ic_proton_pen,
             trailingIcon = CorePresentation.drawable.ic_proton_checkmark.takeIf { isSelected },
             onClick = onClick

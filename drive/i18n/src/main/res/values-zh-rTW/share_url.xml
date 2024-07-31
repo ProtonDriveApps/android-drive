@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">僅同時擁有連結與密碼的人才能存取%1$s。</string>
+  <string name="shared_link_settings">Link settings</string>
+  <string name="shared_link_options">Link options</string>
   <string name="shared_link_privacy_settings">隱私設定</string>
   <string name="shared_link_password_protection">保護密碼</string>
   <string name="shared_link_expiration_date">到期日</string>

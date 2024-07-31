@@ -38,6 +38,7 @@ fun AccountSettingsScreen(
     modifier: Modifier = Modifier,
     navigateToPasswordManagement: () -> Unit,
     navigateToRecoveryEmail: () -> Unit,
+    navigateToSecurityKeys: () -> Unit,
     navigateBack: () -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize()) {
@@ -50,6 +51,7 @@ fun AccountSettingsScreen(
         AccountSettingsList(
             onPasswordManagementClick = navigateToPasswordManagement,
             onRecoveryEmailClick = navigateToRecoveryEmail,
+            onSecurityKeysClick = navigateToSecurityKeys,
             divider = {}
         )
     }
@@ -62,6 +64,7 @@ private fun AccountSettingsScreenPreview() {
         AccountSettingsScreen(
             navigateToPasswordManagement = {},
             navigateToRecoveryEmail = {},
+            navigateToSecurityKeys = {},
             navigateBack = {}
         )
     }

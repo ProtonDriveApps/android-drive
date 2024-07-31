@@ -22,14 +22,13 @@ import android.database.SQLException
 import android.system.ErrnoException
 import kotlinx.coroutines.CancellationException
 import me.proton.core.crypto.common.pgp.exception.CryptoException
-import me.proton.core.drive.base.data.api.ProtonApiCode.FEATURE_DISABLED
+import me.proton.core.drive.base.domain.api.ProtonApiCode.FEATURE_DISABLED
 import me.proton.core.drive.base.domain.exception.BackupStopException
 import me.proton.core.drive.base.domain.exception.BackupSyncException
 import me.proton.core.drive.base.domain.exception.InvalidFieldException
 import me.proton.core.network.data.ProtonErrorException
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
-import me.proton.core.network.domain.hasProtonErrorCode
 import me.proton.core.network.domain.isRetryable
 import me.proton.core.util.kotlin.CoreLogger
 import retrofit2.HttpException

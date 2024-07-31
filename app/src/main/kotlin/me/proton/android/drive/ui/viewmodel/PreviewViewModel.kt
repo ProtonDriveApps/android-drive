@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.ui.viewmodel
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
@@ -49,13 +50,14 @@ import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.getDefaultMessage
+import me.proton.android.drive.extension.log
 import me.proton.android.drive.ui.effect.PreviewEffect
 import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.navigation.Screen
+import me.proton.android.drive.usecase.OpenProtonDocument
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.transformSuccess
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Attributes
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.Permissions
@@ -67,6 +69,7 @@ import me.proton.core.drive.base.domain.function.pagedList
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
@@ -93,7 +96,9 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.isProtonDocument
 import me.proton.core.drive.link.domain.extension.rootFolderId
+import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
@@ -116,6 +121,8 @@ class PreviewViewModel @Inject constructor(
     getDecryptedDriveLink: GetDecryptedDriveLink,
     private val getFile: GetFile,
     private val getDocumentUri: GetDocumentUri,
+    private val openProtonDocument: OpenProtonDocument,
+    private val broadcastMessages: BroadcastMessages,
     getDecryptedDriveLinks: GetDecryptedDriveLinks,
     getDecryptedOfflineDriveLinks: GetDecryptedOfflineDriveLinks,
     getOfflineDriveLinksCount: GetOfflineDriveLinksCount,
@@ -240,6 +247,7 @@ class PreviewViewModel @Inject constructor(
                 toggleFullscreen()
             }
         }
+        override val onOpenInBrowser = { openInBrowser() }
     }
 
     suspend fun onPageChanged(page: Int) {
@@ -294,7 +302,7 @@ class PreviewViewModel @Inject constructor(
     fun getUri(fileId: FileId) = getDocumentUri(userId, fileId)
     private fun DriveLink.File.getContentStateFlow(): Flow<ContentState> =
         contentStatesCache.getOrPut(id) {
-            if (mimeType.toFileTypeCategory().toComposable() == PreviewComposable.Unknown) {
+            if (isProtonDocument || mimeType.toFileTypeCategory().toComposable() == PreviewComposable.Unknown) {
                 NO_PREVIEW_SUPPORTED
             } else {
                 trigger.filter { trigger -> trigger.fileId == id }.flatMapLatest { trigger ->
@@ -324,6 +332,30 @@ class PreviewViewModel @Inject constructor(
                 defaultThumbnailVO to null,
             )
         }
+    }
+
+    private fun openInBrowser() {
+        driveLinks.value.orEmpty().firstOrNull { driveLink -> driveLink.id == fileId }
+            ?.let { driveLink ->
+                viewModelScope.launch {
+                    openProtonDocument(driveLink)
+                        .onFailure { error ->
+                            error.log(LogTag.DEFAULT, "Open document failed")
+                            val message = when {
+                                error is ActivityNotFoundException -> appContext.getString(I18N.string.common_error_no_browser_available)
+                                else -> error.getDefaultMessage(
+                                    context = appContext,
+                                    useExceptionMessage = configurationProvider.useExceptionMessage,
+                                )
+                            }
+                            broadcastMessages(
+                                userId = userId,
+                                message = message,
+                                type = BroadcastMessage.Type.ERROR
+                            )
+                        }
+                }
+            }
     }
 
     private data class Trigger(

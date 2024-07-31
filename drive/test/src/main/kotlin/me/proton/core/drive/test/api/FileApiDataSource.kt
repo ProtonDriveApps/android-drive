@@ -18,7 +18,7 @@
 
 package me.proton.core.drive.test.api
 
-import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.link.data.api.response.LinkResponse
 import me.proton.core.drive.link.data.api.response.LinkResponses
 import okhttp3.mockwebserver.MockResponse

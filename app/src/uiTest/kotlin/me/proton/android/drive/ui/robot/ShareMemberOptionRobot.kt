@@ -25,10 +25,10 @@ import me.proton.core.drive.i18n.R as I18N
 object ShareMemberOptionRobot : NavigationBarRobot, Robot {
     private val content get() = node.withTag(MemberOptionsDialogTestTag.contextMenu)
     private val viewerButton
-        get() = node.withText(I18N.string.share_via_invitations_permission_viewer)
+        get() = node.withText(I18N.string.common_permission_viewer)
             .hasAncestor(content)
     private val editorButton
-        get() = node.withText(I18N.string.share_via_invitations_permission_editor)
+        get() = node.withText(I18N.string.common_permission_editor)
             .hasAncestor(content)
     private val removeAccessButton
         get() = node.withText(I18N.string.share_via_invitations_remove_access_action)

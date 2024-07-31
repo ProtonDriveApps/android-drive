@@ -79,5 +79,12 @@ private fun BackupState.toEvent(folderId: FolderId) =
             status.pendingBackupPhotos
         )
 
+        is BackupStatus.Preparing -> Event.Backup(
+            folderId,
+            Event.Backup.BackupState.PREPARING,
+            status.totalBackupPhotos,
+            status.preparingBackupPhotos
+        )
+
         null -> null
     }

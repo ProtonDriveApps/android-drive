@@ -31,7 +31,7 @@
   <string name="title_empty_trash">A lixeira está vazia</string>
   <string name="title_empty_trash_action">Esvaziar lixeira</string>
   <string name="title_files_confirm_deletion">Excluir permanentemente?</string>
-  <string name="title_default_home_screen_tab">Escolha a guia tela de início padrão</string>
+  <string name="title_default_home_screen_tab">Escolha a guia da tela inicial padrão</string>
   <!-- endregion -->
   <string name="menu_item_header_title_app">Aplicativo</string>
   <string name="description_signing_out">Encerrando a sessão…</string>
@@ -140,6 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">O backup não é permitido</string>
   <string name="notification_content_text_backup_paused_disabled">Backup foi desativado</string>
   <string name="notification_content_text_backup_paused_background_restrictions">O backup não pode ser executado em segundo plano</string>
+  <string name="notification_content_text_backup_preparing">Preparando para voltar.</string>
   <string name="notification_content_title_download_complete">Download concluído</string>
   <string name="notification_content_title_forced_sign_out">Inicie sessão</string>
   <string name="notification_content_text_forced_sign_out">Desculpe interromper! Nós tivemos um problema com a sincronização - inicie a sessão novamente e teremos tudo funcionando perfeitamente.</string>
@@ -169,7 +170,7 @@
   <string name="description_files_stop_sharing_action_success">O link do seu arquivo foi excluído.</string>
   <string name="description_files_stop_sharing_action_error">Ocorreu um erro durante a exclusão do link do seu arquivo.</string>
   <string name="description_files_stop_all_sharing">Isso excluirá o link e removerá o acesso para todos.</string>
-  <string name="description_files_stop_all_sharing_action_success">O acesso compartilhado do seu arquivo foi excluído.</string>
+  <string name="description_files_stop_all_sharing_action_success">O compartilhamento do seu arquivo foi excluído.</string>
   <string name="description_files_stop_all_sharing_action_error">Ocorreu um erro durante a exclusão do compartilhamento do seu arquivo.</string>
   <string name="ignore_file_signature_action">Visualizar mesmo assim</string>
   <string name="action_empty_files_add_files">Enviar</string>
@@ -202,7 +203,7 @@
     -->
   <string name="get_more_free_storage_action_link_subtitle">Selecione qualquer arquivo ou pasta. Abra o menu de opções e pressione %1$s.</string>
   <string name="get_more_free_storage_action_share_title">Compartilhar um arquivo</string>
-  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_share_subtitle">É fácil e seguro.</string>
   <string name="get_more_free_storage_action_recovery_title">Definir um método de recuperação</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link

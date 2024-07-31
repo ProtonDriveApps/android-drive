@@ -356,7 +356,7 @@ fun PreviewDrawerWithUser() {
 
 @Preview(name = "Drawer opened")
 @Composable
-fun PreviewDrawerWithoutUser() {
+private fun PreviewDrawerWithoutUser() {
     ProtonTheme {
         NavigationDrawer(
             drawerState = DrawerState(DrawerValue.Open) { true },

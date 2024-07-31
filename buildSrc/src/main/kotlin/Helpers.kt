@@ -16,6 +16,7 @@
  * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import com.android.build.api.dsl.VariantDimension
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -74,4 +75,16 @@ fun File.findModules(recursive: Boolean = false): Iterable<String> {
     find()
 
     return modules
+}
+
+fun VariantDimension.setAssetLinksResValue(host: String) {
+    resValue(
+        type = "string", name = "asset_statements",
+        value = """
+            [{
+              "relation": ["delegate_permission/common.handle_all_urls", "delegate_permission/common.get_login_creds"],
+              "target": { "namespace": "web", "site": "https://$host" }
+            }]
+        """.trimIndent()
+    )
 }

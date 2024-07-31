@@ -19,7 +19,9 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.PagingData
@@ -358,13 +360,20 @@ class PhotosViewModel @Inject constructor(
         navigateToPhotosIssues: (FolderId) -> Unit,
         navigateToPhotosUpsell: () -> Unit,
         navigateToBackupSettings: () -> Unit,
+        lifecycle: Lifecycle,
     ): PhotosViewEvent = object : PhotosViewEvent {
 
         private val driveLinkShareFlow =
             MutableSharedFlow<DriveLink>(extraBufferCapacity = 1).also { flow ->
                 viewModelScope.launch {
-                    flow.take(1).collect { driveLink ->
-                        driveLink.onClick({ _, _ -> }, navigateToPreview)
+                    lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                        flow.take(1).collect { driveLink ->
+                            driveLink.onClick(
+                                navigateToFolder = { _, _ -> error("Photos should not have folders") },
+                                navigateToPreview = navigateToPreview,
+                                openDocument = { _ -> error("Photos should not have Proton document") },
+                            )
+                        }
                     }
                 }
             }
@@ -385,7 +394,7 @@ class PhotosViewModel @Inject constructor(
             listContentState = listContentState,
             listAppendContentState = listContentAppendingState,
             coroutineScope = viewModelScope,
-            emptyState = emptyState,
+            emptyState = MutableStateFlow(emptyState),
         ) { message ->
             viewModelScope.launch {
                 _homeEffect.emit(HomeEffect.ShowSnackbar(message))
@@ -498,7 +507,7 @@ class PhotosViewModel @Inject constructor(
                             I18N.plurals.photos_message_folders_setup,
                             state.backupFolders.size
                         )
-                        .format(state.folderName, state.backupFolders.size),
+                        .format(state.folderNames.joinToString(", "), state.backupFolders.size),
                     type = BroadcastMessage.Type.INFO,
                 )
             }

@@ -47,14 +47,14 @@
   <!--
         Variable %1$s is a folder name, %2$s is a quantity of folders found
         Example:
-            "Backing up items from the Camera folder"
-            "Backing up items from 2 Camera folders"
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
     -->
   <plurals name="photos_message_folders_setup">
-    <item quantity="one">Varnostno kopiranje predmetov iz mape %1$s.</item>
-    <item quantity="two">Varnostno kopiranje predmetov iz map %2$d %1$s.</item>
-    <item quantity="few">Varnostno kopiranje predmetov iz map %2$d %1$s.</item>
-    <item quantity="other">Varnostno kopiranje predmetov iz map %2$d %1$s.</item>
+    <item quantity="one">Backing up items from %2$d folder: %1$s</item>
+    <item quantity="two">Backing up items from %2$d folders: %1$s</item>
+    <item quantity="few">Backing up items from %2$d folders: %1$s</item>
+    <item quantity="other">Backing up items from %2$d folders: %1$s</item>
   </plurals>
   <!--
         Variable %1$s is a folder name
@@ -93,6 +93,7 @@
   <string name="photos_backup_state_completed">Varnostno kopiranje končano</string>
   <string name="photos_backup_state_uncompleted">Varnostno kopiranje je dokončano s težavami</string>
   <string name="photos_backup_state_uncompleted_action">Razrešeno</string>
+  <string name="photos_backup_state_preparing">Preparing to back up</string>
   <string name="photos_backup_state_encrypting">Šifriranje …</string>
   <string name="photos_backup_state_uploading">Varnostno kopiranje …</string>
   <!--

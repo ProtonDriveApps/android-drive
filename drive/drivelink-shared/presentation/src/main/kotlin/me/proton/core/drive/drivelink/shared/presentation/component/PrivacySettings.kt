@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
@@ -71,6 +72,7 @@ import me.proton.core.presentation.R as CorePresentation
 internal fun PrivacySettings(
     viewState: PrivacySettingsViewState,
     viewEvent: PrivacySettingsViewEvent,
+    title: String = stringResource(id = I18N.string.shared_link_privacy_settings),
     modifier: Modifier = Modifier,
 ) {
     val localContext = LocalContext.current
@@ -82,7 +84,7 @@ internal fun PrivacySettings(
             .padding(horizontal = DefaultSpacing)
     ) {
         Text(
-            text = stringResource(id = I18N.string.shared_link_privacy_settings),
+            text = title,
             style = ProtonTheme.typography.headlineSmall,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -255,4 +257,28 @@ object PrivacySettingsTestTag {
     const val passwordSwitch = "password switch"
     const val expirationDateTextField = "expiration date text field"
     const val expirationDateSwitch = "expiration date switch"
+}
+
+@Preview
+@Composable
+private fun PrivacySettingsPreview() {
+    ProtonTheme {
+        PrivacySettings(
+            viewState = PrivacySettingsViewState(
+                enabled = false,
+                password = null,
+                passwordChecked = false,
+                expirationDate = null,
+                expirationDateChecked = false,
+                minDatePickerDate = 0,
+                maxDatePickerDate = 0
+            ),
+            viewEvent = object : PrivacySettingsViewEvent {
+                override val onPasswordChanged:(String) -> Unit = {}
+                override val onPasswordEnabledChanged: (Boolean) -> Unit = {}
+                override val onExpirationDateChanged: (Int, Int, Int) -> Unit = {_, _, _ ->}
+                override val onExpirationDateEnabledChanged: (Boolean) -> Unit = {}
+            }
+        )
+    }
 }

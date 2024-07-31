@@ -117,7 +117,7 @@ abstract class HostFilesViewModel(
         listContentState = listContentState,
         listAppendContentState = listContentAppendingState,
         coroutineScope = viewModelScope,
-        emptyState = emptyState,
+        emptyState = MutableStateFlow(emptyState),
     ) { message ->
         viewModelScope.launch {
             showError(message)

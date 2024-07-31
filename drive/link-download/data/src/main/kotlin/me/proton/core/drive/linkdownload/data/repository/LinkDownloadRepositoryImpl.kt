@@ -53,7 +53,7 @@ class LinkDownloadRepositoryImpl(
     override suspend fun removeDownloadState(linkId: LinkId, revisionId: String) =
         db.delete(linkId.userId, linkId.shareId.id, linkId.id, revisionId)
 
-    override suspend fun areAllFilesDownloaded(folderId: FolderId): Boolean =
-        db.getAllChildrenStates(folderId.userId, folderId.shareId.id, folderId.id)
+    override suspend fun areAllFilesDownloaded(folderId: FolderId, excludeMimeTypes: Set<String>): Boolean =
+        db.getAllChildrenStates(folderId.userId, folderId.shareId.id, folderId.id, excludeMimeTypes)
             .all { state -> state == LinkDownloadState.DOWNLOADED }
 }

@@ -214,42 +214,44 @@ private val ThumbnailSize = 40.dp
 
 @Preview
 @Composable
-private fun LibraryFoldersListPreview() {
+fun LibraryFoldersListPreview() {
     ProtonTheme {
-        LibraryFoldersList(
-            content = LibraryFoldersState.Content(
-                title = "Upload from",
-                description = "Your Camera folder is backed up automatically." +
-                        " Select additional folders to back up and their photos will appear in the Photos tab.",
-                folders = listOf(
-                    LibraryFolder.NotFound(
-                        name = "Camera",
-                        description = "No Camera folder found for backup"
-                    ),
-                    LibraryFolder.Entry(
-                        id = 2,
-                        name = "MyCamera",
-                        description = "1234 photos, 123 videos",
-                        uri = null,
-                        enabled = true
-                    ),
-                    LibraryFolder.Entry(
-                        id = 0,
-                        name = "Photos",
-                        description = "1 photo",
-                        uri = null,
-                        enabled = false
-                    ),
-                    LibraryFolder.Entry(
-                        id = 1,
-                        name = "Videos",
-                        description = "1 video",
-                        uri = null,
-                        enabled = false
-                    ),
-                )
-            ),
-            onToggleBucket = { _, _ -> }
-        )
+        Surface {
+            LibraryFoldersList(
+                content = LibraryFoldersState.Content(
+                    title = "Upload from",
+                    description = "Your Camera folder is backed up automatically." +
+                            " Select additional folders to back up and their photos will appear in the Photos tab.",
+                    folders = listOf(
+                        LibraryFolder.NotFound(
+                            name = "Camera",
+                            description = "No Camera folder found for backup"
+                        ),
+                        LibraryFolder.Entry(
+                            id = 2,
+                            name = "MyCamera",
+                            description = "1234 photos, 123 videos",
+                            uri = null,
+                            enabled = true
+                        ),
+                        LibraryFolder.Entry(
+                            id = 0,
+                            name = "Photos",
+                            description = "1 photo",
+                            uri = null,
+                            enabled = false
+                        ),
+                        LibraryFolder.Entry(
+                            id = 1,
+                            name = "Videos",
+                            description = "1 video",
+                            uri = null,
+                            enabled = false
+                        ),
+                    )
+                ),
+                onToggleBucket = { _, _ -> }
+            )
+        }
     }
 }

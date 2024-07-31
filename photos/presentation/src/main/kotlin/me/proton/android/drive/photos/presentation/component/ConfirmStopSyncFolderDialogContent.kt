@@ -27,7 +27,7 @@ import me.proton.core.compose.component.ProtonAlertDialog
 import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultWeak
-import me.proton.core.drive.i18n.R
+import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun ConfirmStopSyncFolderDialogContent(
@@ -39,23 +39,23 @@ fun ConfirmStopSyncFolderDialogContent(
     ProtonAlertDialog(
         modifier = modifier,
         onDismissRequest = { onDismiss() },
-        titleResId = R.string.settings_photos_backup_folders_confirm_stop_sync_title,
+        titleResId = I18N.string.settings_photos_backup_folders_confirm_stop_sync_title,
         text = {
             Text(
-                text = stringResource(id = R.string.settings_photos_backup_folders_confirm_stop_sync_description)
+                text = stringResource(id = I18N.string.settings_photos_backup_folders_confirm_stop_sync_description)
                     .format(name),
                 style = ProtonTheme.typography.defaultWeak,
             )
         },
         confirmButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.settings_photos_backup_folders_confirm_stop_sync_confirm_action,
+                titleResId = I18N.string.settings_photos_backup_folders_confirm_stop_sync_confirm_action,
                 onClick = { onConfirm() },
             )
         },
         dismissButton = {
             ProtonAlertDialogButton(
-                titleResId = R.string.settings_photos_backup_folders_confirm_stop_sync_dismiss_action,
+                titleResId = I18N.string.settings_photos_backup_folders_confirm_stop_sync_dismiss_action,
                 onClick = { onDismiss() },
             )
         }

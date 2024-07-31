@@ -20,8 +20,8 @@
   <string name="title_manage_access">Hallitse käyttöoikeuksia</string>
   <string name="manage_access_share_with">Jaa käyttäjälle</string>
   <string name="manage_access_share_with_anyone">Jaa kenelle tahansa</string>
-  <string name="manage_access_link_settings_action">Linkkiasetukset</string>
-  <string name="manage_access_link_description_public">Kuka tahansa, jolla on linkki</string>
+  <string name="manage_access_link_settings_action">Linkin asetukset</string>
+  <string name="manage_access_link_description_public">Kuka tahansa linkin omaava</string>
   <string name="manage_access_link_description_password_protected">Kuka tahansa, jolla on linkki ja salasana</string>
   <string name="manage_access_link_default_permission">Voi tarkastella</string>
 </resources>

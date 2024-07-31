@@ -175,10 +175,10 @@ fun ImagePreview(
 
 @Preview
 @Composable
-fun PreviewImagePreview() {
+private fun PreviewImagePreview() {
     ProtonTheme {
         ImagePreview(
-            source = Uri.parse("https://protonmail.com/images/media/live/protonmail-shot-decrypt.jpg"),
+            source = Uri.parse("https://farm2.staticflickr.com/1533/26541536141_41abe98db3_z_d.jpg"),
             transformationState = rememberTransformationState(),
             isFullScreen = false,
             onRenderFailed = { _, _ -> }

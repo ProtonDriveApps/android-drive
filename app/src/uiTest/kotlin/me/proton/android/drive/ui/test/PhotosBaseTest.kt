@@ -70,4 +70,18 @@ abstract class PhotosBaseTest: AuthenticatedBaseTest() {
             "Photos",
         )
     }
+    @get:Rule
+    val pictureRawFolder = ExternalFilesRule {
+        File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+            "Raw",
+        )
+    }
+    @get:Rule
+    val pictureScreenshotsFolder = ExternalFilesRule {
+        File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+            "Screenshots",
+        )
+    }
 }

@@ -31,6 +31,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import me.proton.core.compose.component.ProtonAlertDialog
 import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
@@ -84,4 +85,21 @@ fun ThemeChooserDialog(
             }
         },
     )
+}
+
+@Preview
+@Composable
+fun ThemeChooserDialogPreview() {
+    ProtonTheme {
+        ThemeChooserDialog(
+            selectedStyle = I18N.string.settings_theme_system_default,
+            availableStyles = listOf(
+                I18N.string.settings_theme_system_default,
+                I18N.string.settings_theme_dark,
+                I18N.string.settings_theme_light,
+            ),
+            onDismiss = {},
+            onThemeSelected = {},
+        )
+    }
 }

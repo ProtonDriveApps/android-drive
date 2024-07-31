@@ -21,7 +21,7 @@ import android.system.OsConstants
 import me.proton.android.drive.verifier.data.extension.log
 import me.proton.android.drive.verifier.domain.exception.VerifierException
 import me.proton.core.drive.announce.event.domain.entity.Event
-import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.data.extension.isErrno
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.network.domain.ApiException

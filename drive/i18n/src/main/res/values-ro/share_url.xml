@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">Numai persoanele care au legătura și parola pot accesa acest %1$s.</string>
+  <string name="shared_link_settings">Setări legătură web</string>
+  <string name="shared_link_options">Opțiuni legătură web</string>
   <string name="shared_link_privacy_settings">Setări de confidențialitate</string>
   <string name="shared_link_password_protection">Protejare cu parolă</string>
   <string name="shared_link_expiration_date">Dată expirare</string>

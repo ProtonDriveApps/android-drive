@@ -140,6 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Backup ist nicht erlaubt</string>
   <string name="notification_content_text_backup_paused_disabled">Sicherung wurde deaktiviert</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Sicherung kann nicht im Hintergrund laufen</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
   <string name="notification_content_title_download_complete">Download abgeschlossen</string>
   <string name="notification_content_title_forced_sign_out">Bitte melde dich an</string>
   <string name="notification_content_text_forced_sign_out">Entschuldigung für die Unterbrechung! Wir hatten ein Problem mit der Synchronisierung - bitte logge dich erneut ein, damit alles reibungslos funktioniert.</string>

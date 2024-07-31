@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import me.proton.android.drive.ui.viewmodel.ShareInternalInvitationOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareInvitationOptionsViewModel
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
@@ -48,7 +49,7 @@ fun ShareInvitationOptions(
 
 @Composable
 fun ShareInvitationOptions(
-    viewModel: ShareInvitationOptionsViewModel,
+    viewModel: ShareInternalInvitationOptionsViewModel,
     runAction: RunAction,
     modifier: Modifier = Modifier,
 ) {

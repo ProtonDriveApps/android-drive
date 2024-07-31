@@ -50,21 +50,42 @@
     <item quantity="one">უზიარებთ 1 პირს</item>
     <item quantity="other">უზიარებთ %1$d პირს</item>
   </plurals>
-  <string name="share_via_invitations_permission_owner">მფლობელი</string>
-  <string name="share_via_invitations_permission_admin">ადმინისტრატორი</string>
-  <string name="share_via_invitations_permission_editor">რედაქტორი</string>
-  <string name="share_via_invitations_permission_viewer">მთვალიერებელი</string>
-  <string name="share_via_invitations_permission_unknown">უცნობი</string>
+  <string name="common_permission_owner">Owner</string>
+  <string name="common_permission_admin">Admin</string>
+  <string name="common_permission_editor">Editor</string>
+  <string name="common_permission_viewer">Viewer</string>
+  <string name="common_permission_unknown">Unknown</string>
   <!--
-        Variable %1$s is the permission
+        Variable %1$s is an email
         Examples:
-            "Editor (Invitation sent)"
+            "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_invitation_sent">%1$s (მოსაწვევი გაგზავნილია)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
   <string name="share_via_invitations_add_people_hint">ხალხის დამატება</string>
   <string name="share_via_invitations_copy_invite_link_action">მოსაწვევის ბმულის კოპირება</string>
   <string name="share_via_invitations_remove_access_action">წვდომის გაუქმება</string>
   <string name="share_via_invitations_stop_sharing_description">ბმულის წაშლა და წვდომების წაშლა ყველასთვის</string>
   <string name="share_via_invitations_resend_invite_action">მოსაწვევის თავიდან გაგზავნა</string>
   <string name="share_via_invitations_resend_invite_success">მოსაწვევი გადაიგზავნა</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="one">%1$d წევრი</item>
+    <item quantity="other">%1$d წევრი</item>
+  </plurals>
 </resources>

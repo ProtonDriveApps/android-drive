@@ -81,6 +81,23 @@ class BackupStatusFormatterTest {
     }
 
     @Test
+    fun preparing() {
+        assertEquals(
+            PhotosStatusViewState.Preparing(0F),
+            formatter.toViewState(
+                backupState = BackupState(
+                    isBackupEnabled = true,
+                    hasDefaultFolder = true,
+                    backupStatus = BackupStatus.Preparing(
+                        totalBackupPhotos = 10000,
+                        preparingBackupPhotos = 10000,
+                    )
+                ),
+            ),
+        )
+    }
+
+    @Test
     fun `InProgress starting`() {
         assertEquals(
             PhotosStatusViewState.InProgress(0F, "10,000 items left"),

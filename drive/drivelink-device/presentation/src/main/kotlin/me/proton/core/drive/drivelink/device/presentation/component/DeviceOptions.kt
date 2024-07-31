@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -143,21 +144,23 @@ private val HeaderSpacing = 12.dp
 
 @Preview
 @Composable
-private fun PreviewDeviceOptions() {
+fun PreviewDeviceOptions() {
     ProtonTheme {
-        DeviceOptions(
-            device = Device(
-                id = DeviceId("device-id"),
-                volumeId = VolumeId("volume-id"),
-                rootLinkId = FolderId(ShareId(UserId("user-id"), "share-id"), "folder-id"),
-                type = Device.Type.WINDOWS,
-                syncState = Device.SyncState.ON,
-                cryptoName = CryptoProperty.Decrypted("DESKTOP", VerificationStatus.Unknown),
-                creationTime = TimestampS(),
-            ),
-            entries = listOf(
-                RenameDeviceOption {},
-            ),
-        )
+        Surface {
+            DeviceOptions(
+                device = Device(
+                    id = DeviceId("device-id"),
+                    volumeId = VolumeId("volume-id"),
+                    rootLinkId = FolderId(ShareId(UserId("user-id"), "share-id"), "folder-id"),
+                    type = Device.Type.WINDOWS,
+                    syncState = Device.SyncState.ON,
+                    cryptoName = CryptoProperty.Decrypted("DESKTOP", VerificationStatus.Unknown),
+                    creationTime = TimestampS(),
+                ),
+                entries = listOf(
+                    RenameDeviceOption {},
+                ),
+            )
+        }
     }
 }

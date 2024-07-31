@@ -18,7 +18,7 @@
 
 package me.proton.core.drive.base.data.extension
 
-import me.proton.core.drive.base.data.api.ProtonApiCode.FEATURE_DISABLED
+import me.proton.core.drive.base.domain.api.ProtonApiCode.FEATURE_DISABLED
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult.Error.Certificate
 import me.proton.core.network.domain.ApiResult.Error.Connection

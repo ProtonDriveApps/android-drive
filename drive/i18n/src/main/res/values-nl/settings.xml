@@ -72,7 +72,7 @@
   <string name="settings_external_link_format">%1$s (opent in een browser)</string>
   <string name="settings_section_appearance_settings">Uiterlijk</string>
   <string name="settings_theme_entry">Thema</string>
-  <string name="settings_home_tab">Default home tab</string>
+  <string name="settings_home_tab">Standaard thuispagina-tabblad</string>
   <string name="settings_section_system">Systeem</string>
   <string name="settings_clear_local_cache_entry">Lokale cache legen</string>
   <string name="settings_show_log">Log weergeven</string>

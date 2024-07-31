@@ -150,6 +150,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Резервное копирование завершено.</string>
   <string name="notification_content_text_backup_paused_disabled">Резервное копирование было завершено</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Резервное копирование не может выполняться в фоновом режиме</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
   <string name="notification_content_title_download_complete">Скачивание завершено</string>
   <string name="notification_content_title_forced_sign_out">Пожалуйста, войдите</string>
   <string name="notification_content_text_forced_sign_out">Извините, что прервали! У нас возникла проблема с синхронизацией - пожалуйста, войдите снова, и мы обеспечим стабильную работу.</string>

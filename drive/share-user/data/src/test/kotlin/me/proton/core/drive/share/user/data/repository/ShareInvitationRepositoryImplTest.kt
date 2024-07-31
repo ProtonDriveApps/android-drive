@@ -4,7 +4,6 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.domain.entity.Permissions
-import me.proton.core.drive.base.domain.entity.Permissions.Permission.READ
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.invitation
 import me.proton.core.drive.db.test.standardShare
@@ -164,7 +163,7 @@ class ShareInvitationRepositoryImplTest {
 
         driveRule.server.createInvitation()
         val shareUserInvitee = repository.createInvitation(
-            standardShareId, ShareInvitationRequest(
+            standardShareId, ShareInvitationRequest.Internal(
                 inviterEmail = "inviter@proton.me",
                 inviteeEmail = "invitee@proton.me",
                 permissions = Permissions(0L),
@@ -192,7 +191,7 @@ class ShareInvitationRepositoryImplTest {
         driveRule.server.createInvitation { errorResponse() }
 
         repository.createInvitation(
-            standardShareId, ShareInvitationRequest(
+            standardShareId, ShareInvitationRequest.Internal(
                 inviterEmail = "inviter@proton.me",
                 inviteeEmail = "invitee@proton.me",
                 permissions = Permissions(0L),

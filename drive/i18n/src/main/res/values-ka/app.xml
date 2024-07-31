@@ -140,6 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">მარქაფი დაშვებული არაა</string>
   <string name="notification_content_text_backup_paused_disabled">მარქაფი გათიშული იყო</string>
   <string name="notification_content_text_backup_paused_background_restrictions">მარქაფს ფონურად ვერ გაუშვებთ</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
   <string name="notification_content_title_download_complete">გადმოწერა დასრულებულია</string>
   <string name="notification_content_title_forced_sign_out">საჭიროა ავტორიზაცია</string>
   <string name="notification_content_text_forced_sign_out">უკაცრავად, რომ გაწუხებთ! ჩვენ სინქრონიზაციის შეცდომა გვაქვს - შემოდით თავიდან, ჩვენ ყველაფერი გავასწორეთ.</string>
@@ -201,8 +202,8 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
   <string name="get_more_free_storage_action_link_subtitle">აირჩიეთ ნებისმიერი ფაილი ან საქაღალდე. გახსენით მორგების მენიუ და დააწექით %1$s-ს.</string>
-  <string name="get_more_free_storage_action_share_title">Share a file</string>
-  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_share_title">ფაილის გაზიარება</string>
+  <string name="get_more_free_storage_action_share_subtitle">ის ადვილია და დაცულია.</string>
   <string name="get_more_free_storage_action_recovery_title">აღდგენის მეთოდის დაყენება</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link

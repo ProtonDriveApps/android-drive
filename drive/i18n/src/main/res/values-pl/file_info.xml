@@ -26,4 +26,5 @@
   <string name="file_info_title_folder">Szczegóły folderu</string>
   <string name="file_info_title_file">Szczegóły pliku</string>
   <string name="file_info_captured_on">Przesłane z</string>
+  <string name="file_info_permissions">Uprawnienia</string>
 </resources>

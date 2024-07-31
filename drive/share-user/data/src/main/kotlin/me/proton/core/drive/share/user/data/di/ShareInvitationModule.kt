@@ -22,8 +22,10 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.drive.share.user.data.repository.ShareExternalInvitationRepositoryImpl
 import me.proton.core.drive.share.user.data.repository.ShareInvitationRepositoryImpl
 import me.proton.core.drive.share.user.data.usecase.CopyInvitationUrlImpl
+import me.proton.core.drive.share.user.domain.repository.ShareExternalInvitationRepository
 import me.proton.core.drive.share.user.domain.repository.ShareInvitationRepository
 import me.proton.core.drive.share.user.domain.usecase.CopyInvitationUrl
 
@@ -33,7 +35,9 @@ interface ShareInvitationModule {
 
     @Binds
     fun bindsShareInvitationRepository(impl: ShareInvitationRepositoryImpl): ShareInvitationRepository
+
+    @Binds
+    fun bindsShareExternalInvitationRepository(impl: ShareExternalInvitationRepositoryImpl): ShareExternalInvitationRepository
     @Binds
     fun bindsCopyInvitationUrl(impl: CopyInvitationUrlImpl): CopyInvitationUrl
-
 }

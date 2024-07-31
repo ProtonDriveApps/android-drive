@@ -17,13 +17,14 @@
  */
 package me.proton.core.drive.drivelink.shared.presentation.viewevent
 
+import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
+
 
 interface ManageAccessViewEvent {
     val onBackPressed: () -> Unit
     val onRetry: () -> Unit
     val onInvite: () -> Unit
-    val onInvitationOptions: (String) -> Unit
-    val onMemberOptions: (String) -> Unit
+    val onOptions: (ShareUserViewState) -> Unit
     val onCopyLink: (String) -> Unit
     val onStartLinkSharing: () -> Unit
     val onStopLinkSharing: () -> Unit

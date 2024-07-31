@@ -136,15 +136,11 @@ fun LazyListScope.FilesGridContent(
 }
 
 @Preview(
-    name = "Empty My files in light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-)
-@Preview(
     name = "Empty My files in dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-private fun PreviewMyFilesEmpty() {
+fun PreviewMyFilesEmpty() {
     ProtonTheme {
         Surface {
             ListEmpty(
@@ -159,15 +155,11 @@ private fun PreviewMyFilesEmpty() {
 }
 
 @Preview(
-    name = "Empty folder in light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-)
-@Preview(
     name = "Empty folder in dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-private fun PreviewFolderEmpty() {
+fun PreviewFolderEmpty() {
     ProtonTheme {
         Surface {
             ListEmpty(
@@ -182,15 +174,11 @@ private fun PreviewFolderEmpty() {
 }
 
 @Preview(
-    name = "Empty trash in light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-)
-@Preview(
     name = "Empty trash in dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-private fun PreviewTrashEmpty() {
+fun PreviewTrashEmpty() {
     ProtonTheme {
         Surface {
             ListEmpty(
@@ -205,15 +193,11 @@ private fun PreviewTrashEmpty() {
 }
 
 @Preview(
-    name = "Empty shared in light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-)
-@Preview(
     name = "Empty shared in dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-private fun PreviewSharedEmpty() {
+fun PreviewSharedEmpty() {
     ProtonTheme {
         Surface {
             ListEmpty(
@@ -228,15 +212,11 @@ private fun PreviewSharedEmpty() {
 }
 
 @Preview(
-    name = "Empty available offline in light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-)
-@Preview(
     name = "Empty available offline in dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
-private fun PreviewAvailableOfflineEmpty() {
+fun PreviewAvailableOfflineEmpty() {
     ProtonTheme {
         Surface {
             ListEmpty(

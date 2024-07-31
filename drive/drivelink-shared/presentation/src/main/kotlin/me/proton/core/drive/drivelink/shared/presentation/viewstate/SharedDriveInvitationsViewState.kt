@@ -18,7 +18,7 @@
 package me.proton.core.drive.drivelink.shared.presentation.viewstate
 
 import androidx.compose.runtime.Immutable
-import me.proton.core.drive.contact.presentation.viewstate.ContactSuggestion
+import me.proton.core.drive.contact.presentation.component.SuggestionItem
 import me.proton.core.drive.share.user.domain.entity.ShareUserInvitation
 
 @Immutable
@@ -27,6 +27,6 @@ data class SharedDriveInvitationsViewState(
     val isLinkNameEncrypted: Boolean,
     val showPermissions: Boolean,
     val invitations: List<ShareUserInvitation>,
-    val contactSuggestions: List<ContactSuggestion> = emptyList(),
+    val suggestionItems: List<SuggestionItem> = emptyList(),
     val permissionsViewState: PermissionsViewState,
 )

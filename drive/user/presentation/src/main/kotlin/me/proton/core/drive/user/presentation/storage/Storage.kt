@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -103,11 +104,13 @@ fun StorageIndicator(
 @Composable
 fun PreviewStorage() {
     ProtonTheme {
-        StorageIndicator(
-            label = stringResource(I18N.string.storage_total_usage),
-            usedBytes = Bytes(242_221_056L), // 231MiB
-            availableBytes = Bytes(2_147_483_648L) // 2GiB
-        )
+        Surface {
+            StorageIndicator(
+                label = stringResource(I18N.string.storage_total_usage),
+                usedBytes = Bytes(242_221_056L), // 231MiB
+                availableBytes = Bytes(2_147_483_648L) // 2GiB
+            )
+        }
     }
 }
 

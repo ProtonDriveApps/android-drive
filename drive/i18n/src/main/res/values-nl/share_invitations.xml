@@ -50,21 +50,42 @@
     <item quantity="one">Delen met 1 persoon</item>
     <item quantity="other">Delen met %1$d personen</item>
   </plurals>
-  <string name="share_via_invitations_permission_owner">Eigenaar</string>
-  <string name="share_via_invitations_permission_admin">Beheerder</string>
-  <string name="share_via_invitations_permission_editor">Bewerker</string>
-  <string name="share_via_invitations_permission_viewer">Kijker</string>
-  <string name="share_via_invitations_permission_unknown">Onbekend</string>
+  <string name="common_permission_owner">Owner</string>
+  <string name="common_permission_admin">Admin</string>
+  <string name="common_permission_editor">Editor</string>
+  <string name="common_permission_viewer">Viewer</string>
+  <string name="common_permission_unknown">Unknown</string>
   <!--
-        Variable %1$s is the permission
+        Variable %1$s is an email
         Examples:
-            "Editor (Invitation sent)"
+            "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_invitation_sent">%1$s (Uitnodiging verzonden)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
   <string name="share_via_invitations_add_people_hint">Personen toevoegen</string>
   <string name="share_via_invitations_copy_invite_link_action">Uitnodigingslink kopiëren</string>
   <string name="share_via_invitations_remove_access_action">Toegang verwijderen</string>
-  <string name="share_via_invitations_stop_sharing_description">Delete link and remove access for everyone</string>
+  <string name="share_via_invitations_stop_sharing_description">Link verwijderen en iedereen toegang ontnemen</string>
   <string name="share_via_invitations_resend_invite_action">Uitnodiging opnieuw verzenden</string>
   <string name="share_via_invitations_resend_invite_success">Uitnodiging werd opnieuw verzonden</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="one">%1$d lid</item>
+    <item quantity="other">%1$d leden</item>
+  </plurals>
 </resources>

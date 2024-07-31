@@ -27,6 +27,13 @@ import me.proton.core.drive.backup.data.extension.toBackupStateCount
 import me.proton.core.drive.backup.data.extension.toEntity
 import me.proton.core.drive.backup.domain.entity.BackupFile
 import me.proton.core.drive.backup.domain.entity.BackupFileState
+import me.proton.core.drive.backup.domain.entity.BackupFileState.COMPLETED
+import me.proton.core.drive.backup.domain.entity.BackupFileState.DUPLICATED
+import me.proton.core.drive.backup.domain.entity.BackupFileState.ENQUEUED
+import me.proton.core.drive.backup.domain.entity.BackupFileState.FAILED
+import me.proton.core.drive.backup.domain.entity.BackupFileState.IDLE
+import me.proton.core.drive.backup.domain.entity.BackupFileState.POSSIBLE_DUPLICATE
+import me.proton.core.drive.backup.domain.entity.BackupFileState.READY
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BackupStateCount
 import me.proton.core.drive.backup.domain.entity.BackupStatus
@@ -153,15 +160,18 @@ class BackupFileRepositoryImpl @Inject constructor(
             shareId = folderId.shareId.id,
             folderId = folderId.id,
         ).distinctUntilChanged().map { progress ->
-            val (pending, failed, total) = progress
-            if (pending == 0) {
-                if (failed == 0) {
+            val preparing = progress.filter { it.backupFileState in listOf(IDLE, POSSIBLE_DUPLICATE) }.sumOf { it.count }
+            val pending = progress.filter { it.backupFileState in listOf(READY, ENQUEUED) }.sumOf { it.count }
+            val failed = progress.filter { it.backupFileState in listOf(FAILED) }.sumOf { it.count }
+            val total = progress.filterNot { it.backupFileState in listOf(DUPLICATED) }.sumOf { it.count }
+            when {
+                preparing != 0 -> BackupStatus.Preparing(total, preparing)
+                pending == 0 -> if (failed == 0) {
                     BackupStatus.Complete(total)
                 } else {
                     BackupStatus.Uncompleted(total, failed)
                 }
-            } else {
-                BackupStatus.InProgress(total, pending)
+                else -> BackupStatus.InProgress(total, pending)
             }
         }
     }
@@ -174,7 +184,7 @@ class BackupFileRepositoryImpl @Inject constructor(
                     shareId = folderId.shareId.id,
                     folderId = folderId.id,
                     uriStrings = chunk,
-                    state = BackupFileState.ENQUEUED,
+                    state = ENQUEUED,
                 )
             }
         }
@@ -186,7 +196,7 @@ class BackupFileRepositoryImpl @Inject constructor(
             shareId = folderId.shareId.id,
             folderId = folderId.id,
             uri = uriString,
-            state = BackupFileState.COMPLETED,
+            state = COMPLETED,
         )
     }
 
@@ -211,7 +221,7 @@ class BackupFileRepositoryImpl @Inject constructor(
                 shareId = folderId.shareId.id,
                 folderId = folderId.id,
                 uri = uriString,
-                state = BackupFileState.FAILED,
+                state = FAILED,
             )
             db.backupFileDao.incrementAttempts(
                 userId = folderId.userId,
@@ -245,7 +255,7 @@ class BackupFileRepositoryImpl @Inject constructor(
             userId = folderId.userId,
             shareId = folderId.shareId.id,
             folderId = folderId.id,
-            target = BackupFileState.IDLE,
+            target = IDLE,
         )
 
     override suspend fun markAllFailedInFolderAsReady(
@@ -258,8 +268,8 @@ class BackupFileRepositoryImpl @Inject constructor(
             shareId = folderId.shareId.id,
             folderId = folderId.id,
             bucketId = bucketId,
-            source = BackupFileState.FAILED,
-            target = BackupFileState.READY,
+            source = FAILED,
+            target = READY,
             maxAttempts = maxAttempts,
         )
 
@@ -276,8 +286,8 @@ class BackupFileRepositoryImpl @Inject constructor(
             shareId = backupFolder.folderId.shareId.id,
             folderId = backupFolder.folderId.id,
             bucketId = backupFolder.bucketId,
-            source = BackupFileState.ENQUEUED,
-            target = BackupFileState.READY,
+            source = ENQUEUED,
+            target = READY,
         )
 
     override suspend fun deleteCompletedFromFolder(backupFolder: BackupFolder) {
@@ -286,8 +296,8 @@ class BackupFileRepositoryImpl @Inject constructor(
             backupFolder.folderId.shareId.id,
             backupFolder.folderId.id,
             backupFolder.bucketId,
-            BackupFileState.DUPLICATED,
-            BackupFileState.COMPLETED
+            DUPLICATED,
+            COMPLETED
         )
     }
 
@@ -296,7 +306,7 @@ class BackupFileRepositoryImpl @Inject constructor(
             folderId.userId,
             folderId.shareId.id,
             folderId.id,
-            BackupFileState.FAILED,
+            FAILED,
         )
     }
 
@@ -306,8 +316,8 @@ class BackupFileRepositoryImpl @Inject constructor(
             backupFolder.folderId.shareId.id,
             backupFolder.folderId.id,
             backupFolder.bucketId,
-            BackupFileState.DUPLICATED,
-            BackupFileState.COMPLETED
+            DUPLICATED,
+            COMPLETED
         )
     }
 

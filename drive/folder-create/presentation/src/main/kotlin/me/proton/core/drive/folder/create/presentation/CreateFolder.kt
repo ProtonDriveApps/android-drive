@@ -34,8 +34,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.delay
@@ -45,6 +47,7 @@ import me.proton.core.compose.component.ProtonAlertDialog
 import me.proton.core.compose.component.ProtonAlertDialogButton
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
+import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.OutlinedTextFieldWithError
 import me.proton.core.drive.i18n.R as I18N
 
@@ -176,6 +179,39 @@ fun CreateFolderContent(
         // TODO: revise after https://issuetracker.google.com/issues/204502668 is fixed
         delay(100)
         focusRequester.requestFocus()
+    }
+}
+
+@Preview
+@Composable
+fun CreateFolderPreview() {
+    ProtonTheme {
+        CreateFolder(
+            titleResId = I18N.string.folder_create_title,
+            folderName = "New folder",
+            selection = null,
+            showProgress = false,
+            onCreateFolder = {},
+            onDismiss = {},
+            onValueChanged = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CreateFolderErrorPreview() {
+    ProtonTheme {
+        CreateFolder(
+            titleResId = I18N.string.folder_create_title,
+            folderName = "..",
+            selection = null,
+            showProgress = false,
+            onCreateFolder = {},
+            onDismiss = {},
+            onValueChanged = {},
+            inputError = stringResource(id = I18N.string.folder_create_error_name_periods)
+        )
     }
 }
 

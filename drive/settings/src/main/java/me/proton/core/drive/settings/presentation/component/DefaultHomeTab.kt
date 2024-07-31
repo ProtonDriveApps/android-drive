@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.RadioButton
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -121,38 +122,40 @@ fun HomeTabItem(
 @Composable
 fun DefaultHomeTabPreview() {
     ProtonTheme {
-        DefaultHomeTab(
-            title = stringResource(id = I18N.string.title_default_home_screen_tab),
-            tabItemsFlow = flowOf(
-                setOf(
-                    TabItem(
-                        iconResId = CorePresentation.drawable.ic_proton_folder,
-                        titleResId = I18N.string.title_files,
-                        route = "files",
-                        isSelected = false,
-                    ),
-                    TabItem(
-                        iconResId = CorePresentation.drawable.ic_proton_image,
-                        titleResId = I18N.string.photos_title,
-                        route = "photos",
-                        isSelected = true,
-                    ),
-                    TabItem(
-                        iconResId = CorePresentation.drawable.ic_proton_tv,
-                        titleResId = I18N.string.computers_title,
-                        route = "computers",
-                        isSelected = false,
-                    ),
-                    TabItem(
-                        iconResId = CorePresentation.drawable.ic_proton_link,
-                        titleResId = I18N.string.title_shared,
-                        route = "shared",
-                        isSelected = false,
-                    ),
-                )
-            ),
-            navigateBack = {},
-            onClick = { _ -> },
-        )
+        Surface {
+            DefaultHomeTab(
+                title = stringResource(id = I18N.string.title_default_home_screen_tab),
+                tabItemsFlow = flowOf(
+                    setOf(
+                        TabItem(
+                            iconResId = CorePresentation.drawable.ic_proton_folder,
+                            titleResId = I18N.string.title_files,
+                            route = "files",
+                            isSelected = false,
+                        ),
+                        TabItem(
+                            iconResId = CorePresentation.drawable.ic_proton_image,
+                            titleResId = I18N.string.photos_title,
+                            route = "photos",
+                            isSelected = true,
+                        ),
+                        TabItem(
+                            iconResId = CorePresentation.drawable.ic_proton_tv,
+                            titleResId = I18N.string.computers_title,
+                            route = "computers",
+                            isSelected = false,
+                        ),
+                        TabItem(
+                            iconResId = CorePresentation.drawable.ic_proton_link,
+                            titleResId = I18N.string.title_shared,
+                            route = "shared",
+                            isSelected = false,
+                        ),
+                    )
+                ),
+                navigateBack = {},
+                onClick = { _ -> },
+            )
+        }
     }
 }

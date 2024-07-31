@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.files.preview.presentation.component
 
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +38,8 @@ fun UnknownPreview(
 @Composable
 fun PreviewUnknownPreview() {
     ProtonTheme {
-        UnknownPreview()
+        Surface {
+            UnknownPreview()
+        }
     }
 }

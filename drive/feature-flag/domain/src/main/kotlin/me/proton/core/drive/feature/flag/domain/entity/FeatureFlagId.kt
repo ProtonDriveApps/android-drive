@@ -28,6 +28,8 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         const val DRIVE_SHARING_INVITATIONS = "DriveSharingInvitations"
         const val DRIVE_SHARING_DISABLED = "DriveSharingDisabled"
         const val DRIVE_SHARING_EDITING_DISABLED = "DriveSharingEditingDisabled"
+        const val DRIVE_SHARING_EXTERNAL_INVITATIONS = "DriveSharingExternalInvitations"
+        const val DRIVE_SHARING_EXTERNAL_INVITATIONS_DISABLED = "DriveSharingExternalInvitationsDisabled"
 
         internal var developments : List<String> = listOf(
         )
@@ -37,5 +39,7 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         fun driveSharingInvitations(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_INVITATIONS)
         fun driveSharingDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_DISABLED)
         fun driveSharingEditingDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_EDITING_DISABLED)
+        fun driveSharingExternalInvitations(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_EXTERNAL_INVITATIONS)
+        fun driveSharingExternalInvitationsDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_EXTERNAL_INVITATIONS_DISABLED)
     }
 }

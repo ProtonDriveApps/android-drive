@@ -148,7 +148,7 @@ class TrashViewModel @Inject constructor(
             listContentState = listContentState,
             listAppendContentState = listContentAppendingState,
             coroutineScope = viewModelScope,
-            emptyState = emptyState,
+            emptyState = MutableStateFlow(emptyState),
         ) { message ->
             viewModelScope.launch {
                 _trashEffect.emit(TrashEffect.ShowSnackbar(message))

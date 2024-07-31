@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -100,12 +101,14 @@ private fun PreviewSorting() {
 @Composable
 fun PreviewFileListHeader() {
     ProtonTheme {
-        Sorting(
-            viewState = SortingViewState(
-                icon = CorePresentation.drawable.ic_proton_arrow_down,
-                title = I18N.string.title_file_type
-            ),
-        ) {}
+        Surface {
+            Sorting(
+                viewState = SortingViewState(
+                    icon = CorePresentation.drawable.ic_proton_arrow_down,
+                    title = I18N.string.title_file_type
+                ),
+            ) {}
+        }
     }
 }
 

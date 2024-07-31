@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -85,8 +86,10 @@ fun StopSharingButton(
 
 @Preview
 @Composable
-private fun StopSharingButtonPreview() {
+fun StopSharingButtonPreview() {
     ProtonTheme {
-        StopSharingButton(onClick = {})
+        Surface {
+            StopSharingButton(onClick = {})
+        }
     }
 }

@@ -31,19 +31,26 @@ import javax.inject.Inject
 class UpdateEventActionImpl @Inject constructor(
     private val eventManagerProvider: EventManagerProvider,
     private val getShare: GetShare,
+    private val getMinimumFetchInterval: GetMinimumFetchInterval,
 ) : UpdateEventAction {
 
     override suspend fun <T> invoke(shareId: ShareId, block: suspend () -> T): T =
-        eventManagerProvider.get(EventManagerConfig.Drive.Volume(
-            userId = shareId.userId,
-            volumeId = getShare(shareId).toResult().getOrThrow().volumeId.id
-        )).suspend(block)
+        getShare(shareId).toResult().getOrThrow().volumeId.let { volumeId ->
+            eventManagerProvider.get(
+                EventManagerConfig.Drive.Volume(
+                    userId = shareId.userId,
+                    volumeId = volumeId.id,
+                    minimumFetchInterval = getMinimumFetchInterval(shareId.userId, volumeId).getOrThrow(),
+                )
+            ).suspend(block)
+        }
 
     override suspend fun <T> invoke(userId: UserId, volumeId: VolumeId, block: suspend () -> T): T =
         eventManagerProvider.get(
             EventManagerConfig.Drive.Volume(
                 userId = userId,
                 volumeId = volumeId.id,
+                minimumFetchInterval = getMinimumFetchInterval(userId, volumeId).getOrThrow(),
             )
         ).suspend(block)
 }

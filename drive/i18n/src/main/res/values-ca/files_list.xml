@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="file_operation_error_occurred_moving_file">S\'ha produït un error en moure el fitxer.</string>
-  <string name="file_operation_moving_file_successful">Fitxer mogut</string>
+  <string name="file_operation_moving_file_successful">El fitxer s\'ha mogut correctament</string>
   <string name="file_operation_moving_folder_successful">Carpeta moguda</string>
   <string name="file_operation_moving_multiple_successful">%1$d elements moguts.</string>
   <string name="file_operation_error_file_already_exists_at_destination">Un element amb aquest nom ja existeix a la carpeta de destí.</string>
@@ -36,7 +36,7 @@
   <string name="title_modified_with_date">Modificació: %1$s</string>
   <string name="files_restore_from_trash_action">Restaura</string>
   <string name="files_send_to_trash_action">Mou a la paperera</string>
-  <string name="files_remove_me_action">Esborri\'m</string>
+  <string name="files_remove_me_action">Esborra\'m</string>
   <string name="files_move_file_action">Mou</string>
   <!--
         Variable %1$s is a file/folder's name

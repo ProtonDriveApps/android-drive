@@ -29,6 +29,7 @@ enum class FileTypeCategory {
     Pages,
     Pdf,
     Ppt,
+    ProtonDoc,
     Text,
     TrustedKey,
     Unknown,
@@ -49,6 +50,7 @@ fun String.toFileTypeCategory(): FileTypeCategory = with(lowercase(Locale.getDef
         this in docMimeTypes -> FileTypeCategory.Doc
         this in xlsMimeTypes -> FileTypeCategory.Xls
         this in pptMimeTypes -> FileTypeCategory.Ppt
+        this in protonDocMimeTypes -> FileTypeCategory.ProtonDoc
         this == "application/vnd.apple.keynote" -> FileTypeCategory.Keynote
         this == "application/vnd.apple.pages" -> FileTypeCategory.Pages
         this == "application/vnd.apple.numbers" -> FileTypeCategory.Numbers
@@ -136,5 +138,9 @@ private val zipMimeTypes = listOf(
     "application/x-zip-compressed",
     "application/zip",
     "multipart/x-zip",
+)
+
+private val protonDocMimeTypes = listOf(
+    "application/vnd.proton.doc"
 )
 // endregion

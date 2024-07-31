@@ -59,5 +59,11 @@ sealed interface ShareUser {
         override val createTime: TimestampS,
         override val permissions: Permissions,
         override val displayName: String? = null,
-    ) : ShareUser
+        val state: State,
+        val signature: String,
+    ) : ShareUser {
+        enum class State {
+            PENDING, USER_REGISTERED, UNKNOWN
+        }
+    }
 }

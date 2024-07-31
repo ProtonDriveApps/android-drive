@@ -20,7 +20,7 @@ package me.proton.core.drive.link.data.api.extension
 
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
-import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.extension.toDataResult
 import me.proton.core.drive.link.data.api.response.LinkResponses
 import me.proton.core.drive.link.domain.entity.LinkId

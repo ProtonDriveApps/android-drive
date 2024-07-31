@@ -26,6 +26,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,8 +55,9 @@ fun SyncedFoldersScreen(
     val viewModel = hiltViewModel<SyncedFoldersViewModel>()
     val viewState by rememberFlowWithLifecycle(flow = viewModel.viewState)
         .collectAsState(initial = viewModel.initialViewState)
-    val viewEvent = remember {
-        viewModel.viewEvent(navigateToFiles, navigateToSortingDialog, navigateBack)
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val viewEvent = remember(lifecycle) {
+        viewModel.viewEvent(navigateToFiles, navigateToSortingDialog, navigateBack, lifecycle)
     }
     viewModel.HandleHomeEffect(homeScaffoldState = homeScaffoldState)
     SyncedFolders(

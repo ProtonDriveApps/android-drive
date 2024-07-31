@@ -40,10 +40,11 @@ class GetInvitationFlow @Inject constructor(
             val contactEmails = getContactEmails(shareId.userId)
                 .filterSuccessOrError().toResult().getOrNull().orEmpty()
 
-            invitee.copy(
-                displayName = contactEmails.firstOrNull { contactEmail ->
-                    contactEmail.email == invitee.email
-                }?.name
-            )
+            contactEmails.firstOrNull { contactEmail ->
+                contactEmail.email == invitee.email
+            }?.name?.let { name ->
+                invitee.copy(displayName = name)
+            } ?: invitee
+
         }
 }

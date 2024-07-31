@@ -27,5 +27,8 @@ class AreAllFilesDownloaded @Inject constructor(
 ) {
 
     suspend operator fun invoke(folderId: FolderId): Boolean =
-        repository.areAllFilesDownloaded(folderId)
+        repository.areAllFilesDownloaded(
+            folderId = folderId,
+            excludeMimeTypes = setOf("application/vnd.proton.doc"),
+        )
 }

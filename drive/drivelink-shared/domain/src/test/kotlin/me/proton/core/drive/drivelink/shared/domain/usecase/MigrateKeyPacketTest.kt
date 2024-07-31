@@ -20,7 +20,7 @@ package me.proton.core.drive.drivelink.shared.domain.usecase
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.base.data.api.ProtonApiCode.ENCRYPTION_VERIFICATION_FAILED
+import me.proton.core.drive.base.domain.api.ProtonApiCode.ENCRYPTION_VERIFICATION_FAILED
 import me.proton.core.drive.db.test.mainRootId
 import me.proton.core.drive.db.test.mainShareId
 import me.proton.core.drive.db.test.photo

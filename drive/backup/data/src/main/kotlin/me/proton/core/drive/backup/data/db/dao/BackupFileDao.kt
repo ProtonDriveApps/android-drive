@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.db.entity.BackupFileEntity
-import me.proton.core.drive.backup.data.db.entity.BackupProgression
+import me.proton.core.drive.backup.data.db.entity.BackupStateCount
 import me.proton.core.drive.backup.data.db.entity.BackupStateCountEntity
 import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.base.data.db.Column
@@ -177,38 +177,24 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
 
     @Query(
         """
-        SELECT (
-            SELECT COUNT(*) FROM BackupFileEntity 
-            WHERE 
-                BackupFileEntity.user_id = :userId AND 
-                BackupFileEntity.bucket_id IN (
-                    SELECT bucket_id FROM BackupFolderEntity WHERE user_id = :userId AND share_id = :shareId AND parent_id = :folderId
-                ) AND           
-                BackupFileEntity.state IN ("IDLE", "POSSIBLE_DUPLICATE", "READY", "ENQUEUED")
-        ) as pending,(
-            SELECT COUNT(*) FROM BackupFileEntity 
-            WHERE 
-                BackupFileEntity.user_id = :userId AND 
-                BackupFileEntity.bucket_id IN (
-                    SELECT bucket_id FROM BackupFolderEntity WHERE user_id = :userId AND share_id = :shareId AND parent_id = :folderId
-                ) AND           
-                BackupFileEntity.state IN ("FAILED")
-        ) as failed,(
-            SELECT COUNT(*) FROM BackupFileEntity 
-            WHERE 
-                BackupFileEntity.user_id = :userId AND 
-                BackupFileEntity.bucket_id IN (
-                    SELECT bucket_id FROM BackupFolderEntity WHERE user_id = :userId AND share_id = :shareId AND parent_id = :folderId
-                ) AND           
-                BackupFileEntity.state IN("IDLE", "POSSIBLE_DUPLICATE", "READY", "ENQUEUED", "FAILED", "COMPLETED") 
-        ) as total
+        SELECT 
+            BackupFileEntity.state AS backupFileState, 
+            COUNT(*) AS count
+        FROM 
+            BackupFileEntity
+        WHERE 
+            BackupFileEntity.user_id = :userId AND  
+            BackupFileEntity.share_id = :shareId AND
+            BackupFileEntity.parent_id = :folderId
+        GROUP BY backupFileState
+        ORDER BY backupFileState ASC
         """
     )
     abstract fun getProgression(
         userId: UserId,
         shareId: String,
         folderId: String,
-    ): Flow<BackupProgression>
+    ): Flow<List<BackupStateCount>>
 
     @Query(
         """

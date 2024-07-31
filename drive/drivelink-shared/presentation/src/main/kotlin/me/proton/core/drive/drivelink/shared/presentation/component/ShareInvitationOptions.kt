@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,6 +36,7 @@ import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.UserThumbnail
 import me.proton.core.drive.drivelink.shared.presentation.entry.CopyInviteLinkEntry
 import me.proton.core.drive.drivelink.shared.presentation.entry.ShareUserOptionEntry
+import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
 
 @Composable
@@ -92,21 +94,23 @@ private fun ShareUserOptionsHeader(
 
 @Preview
 @Composable
-private fun ShareUserOptionsPreview() {
+fun ShareUserOptionsPreview() {
     ProtonTheme {
-        ShareUserOptions(
-            ShareUserViewState(
-                id = "id",
-                email = "invitee@proton.me",
-                displayName = "Invitee",
-                permissionLabel = "",
-                firstLetter = "I",
-                isInvitation = true,
-            ),
-            entries = listOf(
-                CopyInviteLinkEntry {}
-            )
+        Surface {
+            ShareUserOptions(
+                ShareUserViewState(
+                    id = "id",
+                    email = "invitee@proton.me",
+                    displayName = "Invitee",
+                    permissionLabel = "",
+                    firstLetter = "I",
+                    type = ShareUserType.INVITATION,
+                ),
+                entries = listOf(
+                    CopyInviteLinkEntry {}
+                )
 
-        )
+            )
+        }
     }
 }

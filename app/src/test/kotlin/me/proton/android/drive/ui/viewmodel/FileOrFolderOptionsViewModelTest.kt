@@ -294,6 +294,33 @@ class FileOrFolderOptionsViewModelTest {
         Assert.assertTrue(entries.any { it is ToggleTrashEntry })
     }
 
+    @Test
+    fun `file options on main share for non-shared proton document`() = runTest {
+        // Given
+        coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(fileDriveLink.copy(
+            link = fileLink.copy(
+                isShared = false,
+                sharingDetails = null,
+                mimeType = "application/vnd.proton.doc"
+            )
+        ).asSuccess)
+
+        // When
+        val entries = fileOptionEntries()
+
+        // Then
+        assertEquals(
+            listOf(
+                ShareViaLinkEntry::class,
+                MoveFileEntry::class,
+                RenameFileEntry::class,
+                FileInfoEntry::class,
+                ToggleTrashEntry::class,
+            ),
+            entries.map { it.javaClass.kotlin }
+        )
+    }
+
     private suspend fun fileOptionEntries() =
         fileOrFolderOptionsViewModel().entries<DriveLink.File>(
             runAction = {},

@@ -50,7 +50,7 @@ data class XAttr(
         @SerialName("Height")
         val height: Long? = null,
         @SerialName("Duration")
-        val duration: Long? = null,
+        val duration: Double? = null,
     )
 
     @Serializable
@@ -64,11 +64,11 @@ data class XAttr(
     @Serializable
     data class Camera(
         @SerialName("CaptureTime")
-        val captureTime: String,
+        val captureTime: String? = null,
         @SerialName("Device")
-        val device: String,
+        val device: String? = null,
         @SerialName("Orientation")
-        val orientation: Int,
+        val orientation: Int? = null,
         @SerialName("SubjectCoordinates")
         val subjectCoordinates: SubjectCoordinates? = null,
     )

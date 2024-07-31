@@ -48,6 +48,7 @@ class UpsellPhotosUsersTest : PhotosBaseTest() {
 
         PhotosTabRobot
             .enableBackup()
+            .dismissBackupSetupGrowler("Camera", "Camera")
             .verify {
                 assertBackupCompleteDisplayed()
                 assertPhotoCountEquals(5)

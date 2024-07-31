@@ -73,6 +73,7 @@
   <string name="common_type_pages">Файл Pages</string>
   <string name="common_type_pdf">Документ PDF</string>
   <string name="common_type_ppt">Презентация</string>
+  <string name="common_type_proton_doc">Документ Proton</string>
   <string name="common_type_text">Текст</string>
   <string name="common_type_trustedkey">Доверенный ключ</string>
   <string name="common_type_unknown">Двоичный</string>
@@ -89,7 +90,13 @@
             "Name must not exceed 280 characters"
     -->
   <string name="common_error_name_too_long">Название не может быть длиннее %1$d символов</string>
-  <string name="common_error_name_with_forbidden_characters">В имени не может быть невидимых символов, \"/\" или \"\\"</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">Имя не может содержать невидимые символы, \"%1$s\" или \"%2$s\"</string>
   <string name="common_error_name_periods">Название не может быть \".\" или \"..\"</string>
   <string name="common_error_no_internet">Нет подключения к Интернету</string>
   <string name="common_error_http_5xx">Произошла ошибка сервера</string>

@@ -20,6 +20,7 @@ package me.proton.core.drive.drivelink.device.presentation.component
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -63,38 +64,40 @@ fun DevicesContent(
 @Composable
 fun PreviewDevicesContent() {
     ProtonTheme {
-        DevicesContent(
-            devices = listOf(
-                Device(
-                    id = DeviceId("device-id-1"),
-                    volumeId = VolumeId("volume-id"),
-                    rootLinkId = FolderId(ShareId(UserId("user-id"), "share-id-1"), "folder-id-1"),
-                    type = Device.Type.WINDOWS,
-                    syncState = Device.SyncState.ON,
-                    creationTime = TimestampS(),
-                    cryptoName = CryptoProperty.Decrypted("HP zBook", VerificationStatus.Unknown),
+        Surface {
+            DevicesContent(
+                devices = listOf(
+                    Device(
+                        id = DeviceId("device-id-1"),
+                        volumeId = VolumeId("volume-id"),
+                        rootLinkId = FolderId(ShareId(UserId("user-id"), "share-id-1"), "folder-id-1"),
+                        type = Device.Type.WINDOWS,
+                        syncState = Device.SyncState.ON,
+                        creationTime = TimestampS(),
+                        cryptoName = CryptoProperty.Decrypted("HP zBook", VerificationStatus.Unknown),
+                    ),
+                    Device(
+                        id = DeviceId("device-id-2"),
+                        volumeId = VolumeId("volume-id"),
+                        rootLinkId = FolderId(ShareId(UserId("user-id"), "share-id-2"), "folder-id-2"),
+                        type = Device.Type.MAC_OS,
+                        syncState = Device.SyncState.ON,
+                        creationTime = TimestampS(),
+                        cryptoName = CryptoProperty.Decrypted("MacBook Air", VerificationStatus.Unknown),
+                    ),
+                    Device(
+                        id = DeviceId("device-id-3"),
+                        volumeId = VolumeId("volume-id"),
+                        rootLinkId = FolderId(ShareId(UserId("user-id"), "share-id-3"), "folder-id-3"),
+                        type = Device.Type.LINUX,
+                        syncState = Device.SyncState.ON,
+                        creationTime = TimestampS(),
+                        cryptoName = CryptoProperty.Decrypted("QNAP", VerificationStatus.Unknown),
+                    )
                 ),
-                Device(
-                    id = DeviceId("device-id-2"),
-                    volumeId = VolumeId("volume-id"),
-                    rootLinkId = FolderId(ShareId(UserId("user-id"), "share-id-2"), "folder-id-2"),
-                    type = Device.Type.MAC_OS,
-                    syncState = Device.SyncState.ON,
-                    creationTime = TimestampS(),
-                    cryptoName = CryptoProperty.Decrypted("MacBook Air", VerificationStatus.Unknown),
-                ),
-                Device(
-                    id = DeviceId("device-id-3"),
-                    volumeId = VolumeId("volume-id"),
-                    rootLinkId = FolderId(ShareId(UserId("user-id"), "share-id-3"), "folder-id-3"),
-                    type = Device.Type.LINUX,
-                    syncState = Device.SyncState.ON,
-                    creationTime = TimestampS(),
-                    cryptoName = CryptoProperty.Decrypted("QNAP", VerificationStatus.Unknown),
-                )
-            ),
-            onClick = {},
-            onMoreOptions = {},
-        )
+                onClick = {},
+                onMoreOptions = {},
+            )
+        }
     }
 }

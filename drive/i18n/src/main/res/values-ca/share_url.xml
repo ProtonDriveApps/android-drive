@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">Només les persones amb l\'enllaç i la contrasenya poden accedir a %1$s.</string>
+  <string name="shared_link_settings">Configuració de l\'enllaç</string>
+  <string name="shared_link_options">Opcions de l\'enllaç</string>
   <string name="shared_link_privacy_settings">Configuració de privacitat</string>
   <string name="shared_link_password_protection">Protecció amb contrasenya</string>
   <string name="shared_link_expiration_date">Data de caducitat</string>
@@ -68,6 +70,6 @@
   <string name="title_share_via_link">Comparteix amb un enllaç</string>
   <string name="shared_with_me_title">Compartit amb mi</string>
   <string name="shared_by_me_title">Compartit per mi</string>
-  <string name="shared_with_me_empty_description">Els fitxers i les carpetes que comparteix amb altres persones apareixeran aquí</string>
-  <string name="shared_by_me_empty_description">Comparteixi de manera segura els seus fitxers i carpetes amb un xifratge d\'extrem a extrem</string>
+  <string name="shared_with_me_empty_description">Els fitxers i les carpetes que compartiu amb altres persones apareixeran aquí</string>
+  <string name="shared_by_me_empty_description">Compartiu de manera segura els vostres fitxers i carpetes amb un xifratge d\'extrem a extrem</string>
 </resources>

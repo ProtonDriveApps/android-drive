@@ -35,6 +35,7 @@ driveModule(
     implementation(project(":drive:share"))
     implementation(libs.core.contact.data)
     implementation(libs.core.dataRoom)
+    implementation(libs.core.label.data)
     implementation(libs.core.userSettings.data)
     implementation(libs.core.user.data)
     implementation(libs.core.notification.data)

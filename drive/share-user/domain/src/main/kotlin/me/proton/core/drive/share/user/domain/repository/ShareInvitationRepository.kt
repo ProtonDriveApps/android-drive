@@ -32,8 +32,8 @@ interface ShareInvitationRepository {
 
     suspend fun createInvitation(
         shareId: ShareId,
-        request: ShareInvitationRequest,
-    ): ShareUser.Invitee
+        request: ShareInvitationRequest.Internal,
+    ): ShareUser
 
     suspend fun updateInvitation(
         shareId: ShareId,

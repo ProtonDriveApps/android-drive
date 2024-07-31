@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">Kun personer med koblingen og passordet har tilgang til %1$s.</string>
+  <string name="shared_link_settings">Innstillinger for kobling</string>
+  <string name="shared_link_options">Alternativer for kobling</string>
   <string name="shared_link_privacy_settings">Personverninnstillinger</string>
   <string name="shared_link_password_protection">Passordbeskyttelse</string>
   <string name="shared_link_expiration_date">Utløpsdato</string>

@@ -20,7 +20,7 @@ package me.proton.core.drive.backup.data.extension
 
 import android.system.OsConstants
 import me.proton.core.drive.backup.domain.entity.BackupError
-import me.proton.core.drive.base.data.api.ProtonApiCode.EXCEEDED_QUOTA
+import me.proton.core.drive.base.domain.api.ProtonApiCode.EXCEEDED_QUOTA
 import me.proton.core.drive.base.data.extension.isErrno
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.hasProtonErrorCode

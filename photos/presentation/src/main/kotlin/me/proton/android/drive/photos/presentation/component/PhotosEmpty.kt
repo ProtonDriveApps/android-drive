@@ -34,7 +34,6 @@ import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultWeak
 import me.proton.core.drive.base.presentation.component.list.ListEmpty
-import me.proton.core.drive.files.presentation.component.files.FilesListEmpty
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.user.presentation.quota.component.StorageBanner
 import me.proton.core.drive.i18n.R as I18N
@@ -70,7 +69,9 @@ fun PhotosEmpty(
             )
             StorageBanner(onGetStorage = onGetStorage)
         }
-        if (viewState is PhotosStatusViewState.InProgress) {
+        if (viewState is PhotosStatusViewState.Preparing
+            || viewState is PhotosStatusViewState.InProgress
+        ) {
             BackupProgressPhotosEmpty(Modifier.fillMaxSize())
         } else {
             ListEmpty(
@@ -153,7 +154,7 @@ private fun PhotosEmptyPreview() {
 
 @Preview
 @Composable
-fun BackupProgressPhotosEmptyEncryptedPreview() {
+private fun BackupProgressPhotosEmptyEncryptedPreview() {
     ProtonTheme {
         BackupProgressPhotosEmpty(Modifier.fillMaxSize(), true)
     }
@@ -161,7 +162,7 @@ fun BackupProgressPhotosEmptyEncryptedPreview() {
 
 @Preview
 @Composable
-fun BackupProgressPhotosEmptyProgressPreview() {
+private fun BackupProgressPhotosEmptyProgressPreview() {
     ProtonTheme {
         BackupProgressPhotosEmpty(Modifier.fillMaxSize(), false)
     }

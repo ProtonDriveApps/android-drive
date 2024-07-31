@@ -24,8 +24,8 @@
   <string name="content_description_save_log_file">Save log file</string>
   <string name="content_description_more_log_options">More log options</string>
   <string name="log_level_normal">Regular</string>
-  <string name="log_level_warning">Warning</string>
-  <string name="log_level_error">Error</string>
+  <string name="log_level_warning">Попередження</string>
+  <string name="log_level_error">Помилка</string>
   <string name="log_origin_upload">Upload</string>
   <string name="log_origin_download">Download</string>
   <string name="log_origin_network">API</string>

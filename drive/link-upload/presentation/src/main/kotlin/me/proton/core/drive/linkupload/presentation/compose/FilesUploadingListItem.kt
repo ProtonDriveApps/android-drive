@@ -23,12 +23,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -204,10 +206,15 @@ private fun UploadState.title(progress: Percentage? = null): String = when (this
 @Preview
 @Composable
 fun FilesUploadListItemPreview() {
-    FilesUploadingListItem(
-        uploadFileLink = DEFAULT_UPLOAD_FILE_LINK,
-        onCancelClick = {},
-    )
+    ProtonTheme {
+        Surface {
+            FilesUploadingListItem(
+                modifier = Modifier.height(ListItemHeight),
+                uploadFileLink = DEFAULT_UPLOAD_FILE_LINK,
+                onCancelClick = {},
+            )
+        }
+    }
 }
 
 

@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">Hanya mereka yang memiliki tautan dan kata sandi yang akan dapat mengakses %1$s</string>
+  <string name="shared_link_settings">Pengaturan tautan</string>
+  <string name="shared_link_options">Opsi tautan</string>
   <string name="shared_link_privacy_settings">Pengaturan privasi</string>
   <string name="shared_link_password_protection">Perlindungan kata sandi</string>
   <string name="shared_link_expiration_date">Tanggal kedaluwarsa</string>

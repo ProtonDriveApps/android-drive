@@ -56,21 +56,44 @@
     <item quantity="many">Абагулена з %1$d асобамі</item>
     <item quantity="other">Абагулена з %1$d асобамі</item>
   </plurals>
-  <string name="share_via_invitations_permission_owner">Уладальнік</string>
-  <string name="share_via_invitations_permission_admin">Адміністратар</string>
-  <string name="share_via_invitations_permission_editor">Рэдактар​​</string>
-  <string name="share_via_invitations_permission_viewer">Праглядальнік</string>
-  <string name="share_via_invitations_permission_unknown">Невядома</string>
+  <string name="common_permission_owner">Уладальнік</string>
+  <string name="common_permission_admin">Адміністратар</string>
+  <string name="common_permission_editor">Рэдактар​​</string>
+  <string name="common_permission_viewer">Праглядальнік</string>
+  <string name="common_permission_unknown">Невядома</string>
   <!--
-        Variable %1$s is the permission
+        Variable %1$s is an email
         Examples:
-            "Editor (Invitation sent)"
+            "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_invitation_sent">%1$s (Запрашэнне адпраўлена)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (у чаканні)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (прыняты)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (невядомы)</string>
   <string name="share_via_invitations_add_people_hint">Дадаць карыстальнікаў</string>
   <string name="share_via_invitations_copy_invite_link_action">Скапіяваць запрашальную спасылку</string>
   <string name="share_via_invitations_remove_access_action">Выдаліць доступ</string>
   <string name="share_via_invitations_stop_sharing_description">Выдаліць спасылку і доступ для кожнага ўдзельніка</string>
   <string name="share_via_invitations_resend_invite_action">Адправіць запрашэнне паўторна</string>
   <string name="share_via_invitations_resend_invite_success">Запрашэнне адпраўлена паўторна</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="one">%1$d удзельнік</item>
+    <item quantity="few">%1$d удзельнікі</item>
+    <item quantity="many">%1$d удзельнікаў</item>
+    <item quantity="other">%1$d удзельнікаў</item>
+  </plurals>
 </resources>

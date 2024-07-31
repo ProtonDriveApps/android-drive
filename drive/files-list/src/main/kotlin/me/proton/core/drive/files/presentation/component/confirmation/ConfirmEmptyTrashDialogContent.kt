@@ -56,7 +56,7 @@ fun ConfirmEmptyTrashDialogContent(
 
 @Preview
 @Composable
-private fun PreviewConfirmDeletionDialogContent() {
+private fun PreviewEmptyTrashConfirmDeletionDialogContent() {
     ConfirmEmptyTrashDialogContent(
         onDismiss = {},
         onConfirm = {},

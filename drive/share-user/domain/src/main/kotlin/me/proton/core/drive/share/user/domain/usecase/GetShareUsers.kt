@@ -40,6 +40,7 @@ class GetShareUsers @Inject constructor(
     private val getShare: GetShare,
     private val getContactEmails: GetContactEmails,
     private val getInvitationsFlow: GetInvitationsFlow,
+    private val getExternalInvitationsFlow: GetExternalInvitationsFlow,
     private val getMembersFlow: GetMembersFlow,
 ) {
     operator fun invoke(
@@ -56,6 +57,13 @@ class GetShareUsers @Inject constructor(
                         )
                     )
                 }.transformSuccess { (_, invitations) ->
+                    emitAll(getExternalInvitationsFlow(
+                        shareId = shareId,
+                        refresh = flowOf(true), /* Remove when events are implemented */
+                    ).mapSuccess { (_, externalInvitations) ->
+                        (invitations + externalInvitations).asSuccess
+                    })
+                }.transformSuccess { (_, invitations) ->
                     emitAll(getMembersFlow(
                         shareId = shareId,
                         refresh = flowOf(true), /* Remove when events are implemented */
@@ -65,12 +73,15 @@ class GetShareUsers @Inject constructor(
                 }.transformSuccess { (_, shareUsers) ->
                     emitAll(getContactEmails(linkId.userId).mapSuccess { (_, contactEmails) ->
                         shareUsers.map { user ->
-                            val name = contactEmails.firstOrNull { it.email == user.email }?.name
-                            when (user) {
-                                is ShareUser.Member -> user.copy(displayName = name)
-                                is ShareUser.Invitee -> user.copy(displayName = name)
-                                is ShareUser.ExternalInvitee -> user.copy(displayName = name)
-                            }
+                            contactEmails.firstOrNull { contactEmail ->
+                                contactEmail.email == user.email
+                            }?.name?.let { name ->
+                                when (user) {
+                                    is ShareUser.Member -> user.copy(displayName = name)
+                                    is ShareUser.Invitee -> user.copy(displayName = name)
+                                    is ShareUser.ExternalInvitee -> user.copy(displayName = name)
+                                }
+                            } ?: user
                         }.asSuccess
                     })
                 }

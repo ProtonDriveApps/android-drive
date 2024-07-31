@@ -47,12 +47,12 @@
   <!--
         Variable %1$s is a folder name, %2$s is a quantity of folders found
         Example:
-            "Backing up items from the Camera folder"
-            "Backing up items from 2 Camera folders"
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
     -->
   <plurals name="photos_message_folders_setup">
-    <item quantity="one">Fent còpies de seguretat dels elements de la carpeta %1$s</item>
-    <item quantity="other">Fent còpies de seguretat dels elements de las %2$d carpetas %1$s</item>
+    <item quantity="one">S\'estan fent còpies de seguretat dels elements de %2$d carpeta: %1$s</item>
+    <item quantity="other">S\'estan fent còpies de seguretat dels elements de %2$d carpetes: %1$s</item>
   </plurals>
   <!--
         Variable %1$s is a folder name
@@ -91,6 +91,7 @@
   <string name="photos_backup_state_completed">S\'ha finalitzat la còpia de seguretat.</string>
   <string name="photos_backup_state_uncompleted">S\'ha completat la còpia de seguretat amb problemes.</string>
   <string name="photos_backup_state_uncompleted_action">Resol</string>
+  <string name="photos_backup_state_preparing">Preparació de la còpia de seguretat</string>
   <string name="photos_backup_state_encrypting">S\'està xifrant...</string>
   <string name="photos_backup_state_uploading">Realitzant còpia de seguretat…</string>
   <!--

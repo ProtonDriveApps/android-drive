@@ -213,7 +213,7 @@ class GetBackupStatusTest {
         name = "",
         hash = "",
         size = 0.bytes,
-        state = BackupFileState.IDLE,
+        state = BackupFileState.READY,
         date = TimestampS(0),
     )
 }

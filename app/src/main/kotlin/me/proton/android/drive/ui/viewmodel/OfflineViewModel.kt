@@ -19,8 +19,10 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -46,15 +48,22 @@ import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.OfflineViewEvent
 import me.proton.android.drive.ui.viewstate.OfflineViewState
+import me.proton.android.drive.usecase.OpenProtonDocument
 import me.proton.core.domain.arch.onSuccess
+import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.onProcessing
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
+import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.state.ListContentAppendingState
+import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
@@ -62,13 +71,10 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgres
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetPagedOfflineDriveLinksList
 import me.proton.core.drive.files.presentation.state.FilesViewState
-import me.proton.core.drive.base.presentation.state.ListContentAppendingState
-import me.proton.core.drive.base.presentation.state.ListContentState
-import me.proton.core.drive.base.presentation.effect.ListEffect
-import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
@@ -94,6 +100,8 @@ class OfflineViewModel @Inject constructor(
     getLayoutType: GetLayoutType,
     private val toggleLayoutType: ToggleLayoutType,
     private val configurationProvider: ConfigurationProvider,
+    private val openProtonDocument: OpenProtonDocument,
+    private val broadcastMessages: BroadcastMessages,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val shareId = savedStateHandle.get<String>(Screen.Files.SHARE_ID)
@@ -199,20 +207,24 @@ class OfflineViewModel @Inject constructor(
         navigateToSortingDialog: (Sorting) -> Unit,
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
         navigateBack: () -> Unit,
+        lifecycle: Lifecycle,
     ): OfflineViewEvent = object : OfflineViewEvent {
 
         private val driveLinkShareFlow = MutableSharedFlow<DriveLink>(extraBufferCapacity = 1).also { flow ->
             viewModelScope.launch {
-                flow.take(1).collect { driveLink ->
-                    driveLink.onClick(
-                        navigateToFolder = navigateToFiles,
-                        navigateToPreview = { fileId ->
-                            navigateToPreview(
-                                if (isRootFolder) PagerType.OFFLINE else PagerType.FOLDER,
-                                fileId
-                            )
-                        }
-                    )
+                lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    flow.take(1).collect { driveLink ->
+                        driveLink.onClick(
+                            navigateToFolder = navigateToFiles,
+                            navigateToPreview = { fileId ->
+                                navigateToPreview(
+                                    if (isRootFolder) PagerType.OFFLINE else PagerType.FOLDER,
+                                    fileId
+                                )
+                            },
+                            openDocument = this@OfflineViewModel::openDocument,
+                        )
+                    }
                 }
             }
         }
@@ -231,7 +243,7 @@ class OfflineViewModel @Inject constructor(
             listContentState = listContentState,
             listAppendContentState = listContentAppendingState,
             coroutineScope = viewModelScope,
-            emptyState = emptyState,
+            emptyState = MutableStateFlow(emptyState),
         ) { }
         override val onMoreOptions = { driveLink: DriveLink -> navigateToFileOrFolderOptions(driveLink.id) }
         override val onToggleLayout = this@OfflineViewModel::onToggleLayout
@@ -257,4 +269,18 @@ class OfflineViewModel @Inject constructor(
             _listEffect.emit(ListEffect.RETRY)
         }
     }
+
+    private suspend fun openDocument(driveLink: DriveLink.File) =
+        openProtonDocument(driveLink)
+            .onFailure { error ->
+                error.log(VIEW_MODEL, "Open document failed")
+                broadcastMessages(
+                    userId = userId,
+                    message = error.getDefaultMessage(
+                        context = appContext,
+                        useExceptionMessage = configurationProvider.useExceptionMessage,
+                    ),
+                    type = BroadcastMessage.Type.ERROR,
+                )
+            }
 }

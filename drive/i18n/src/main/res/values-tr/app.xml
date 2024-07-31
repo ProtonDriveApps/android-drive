@@ -140,6 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Yedeklemeye izin verilmiyor</string>
   <string name="notification_content_text_backup_paused_disabled">Yedekleme kapalı</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Yedekleme arka planda çalışamaz</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
   <string name="notification_content_title_download_complete">İndirme tamamlandı</string>
   <string name="notification_content_title_forced_sign_out">Lütfen oturum açın</string>
   <string name="notification_content_text_forced_sign_out">Böldüğümüz için üzgünüz! Bir eşitleme sorunu yaşadık. Lütfen yeniden oturum açın ki her şeyin sorunsuz çalışmasını sağlayalım.</string>
@@ -201,8 +202,8 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
   <string name="get_more_free_storage_action_link_subtitle">Herhangi bir dosya veya klasör seçin. Seçenekler menüsünü açın ve %1$s üzerine basın.</string>
-  <string name="get_more_free_storage_action_share_title">Share a file</string>
-  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_share_title">Bir dosya paylaş</string>
+  <string name="get_more_free_storage_action_share_subtitle">Kolay ve güvenli.</string>
   <string name="get_more_free_storage_action_recovery_title">Bir kurtarma yöntemi ayarlayın</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link

@@ -26,6 +26,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.files.presentation.component.common.OptionsHeader
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
+import me.proton.core.drive.link.domain.extension.isProtonCloudFile
 import me.proton.core.drive.link.presentation.extension.getSize
 import me.proton.core.drive.link.presentation.extension.lastModifiedRelative
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
@@ -69,10 +70,14 @@ internal fun FilesOptionsHeader(
         painter = file.thumbnailPainter().painter,
         title = file.name,
         isTitleEncrypted = file.isNameEncrypted,
-        subtitle = "%s | %s".format(
-            file.getSize(LocalContext.current),
-            file.lastModifiedRelative(LocalContext.current)
-        ),
+        subtitle = if (file.isProtonCloudFile) {
+            "%s".format(file.lastModifiedRelative(LocalContext.current))
+        } else {
+            "%s | %s".format(
+                file.getSize(LocalContext.current),
+                file.lastModifiedRelative(LocalContext.current),
+            )
+        },
         modifier = modifier
     )
 }

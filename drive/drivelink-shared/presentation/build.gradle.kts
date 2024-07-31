@@ -27,12 +27,14 @@ driveModule(
     hilt = true,
     compose = true,
     i18n = true,
+    showkase = true,
 ) {
     api(project(":drive:base:presentation"))
     api(project(":drive:contact:domain"))
     api(project(":drive:contact:presentation"))
     api(project(":drive:files-list"))
     api(project(":drive:drivelink-shared:domain"))
+    api(project(":drive:label:domain"))
     api(project(":drive:share-user:domain"))
     api(libs.core.presentation.compose)
     implementation(project(":drive:base:data"))

@@ -23,4 +23,5 @@
   <string name="preview_processing_state">İşleniyor…</string>
   <string name="preview_empty">Ön izlenebilecek bir şey yok…</string>
   <string name="title_not_found">Bulunamadı</string>
+  <string name="preview_proton_doc_open_in_browser_button">Tarayıcıda aç</string>
 </resources>

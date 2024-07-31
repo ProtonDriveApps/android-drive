@@ -62,7 +62,7 @@ class CreateXAttr @Inject constructor(
                 XAttr.Media(
                     width = mediaResolution.width,
                     height = mediaResolution.height,
-                    duration = mediaDuration?.inWholeSeconds,
+                    duration = mediaDuration?.inWholeSeconds?.toDouble(),
                 )
             },
             location = location?.let {

@@ -25,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.ui.navigation.PagerType
@@ -50,13 +51,15 @@ fun OfflineScreen(
     val viewModel = hiltViewModel<OfflineViewModel>()
     val viewState by rememberFlowWithLifecycle(flow = viewModel.viewState)
         .collectAsState(initial = viewModel.initialViewState)
-    val viewEvent = remember {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val viewEvent = remember(lifecycle) {
         viewModel.viewEvent(
             navigateToFiles = navigateToFiles,
             navigateToPreview = navigateToPreview,
             navigateToSortingDialog = navigateToSortingDialog,
             navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
-            navigateBack = navigateBack
+            navigateBack = navigateBack,
+            lifecycle = lifecycle,
         )
     }
 

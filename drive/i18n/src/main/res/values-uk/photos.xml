@@ -47,14 +47,14 @@
   <!--
         Variable %1$s is a folder name, %2$s is a quantity of folders found
         Example:
-            "Backing up items from the Camera folder"
-            "Backing up items from 2 Camera folders"
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
     -->
   <plurals name="photos_message_folders_setup">
-    <item quantity="one">Резервне копіювання з теки %1$s</item>
-    <item quantity="few">Резервне копіювання з %2$d тек %1$s</item>
-    <item quantity="many">Резервне копіювання з %2$d тек %1$s</item>
-    <item quantity="other">Резервне копіювання з %2$d тек %1$s</item>
+    <item quantity="one">Backing up items from %2$d folder: %1$s</item>
+    <item quantity="few">Backing up items from %2$d folders: %1$s</item>
+    <item quantity="many">Backing up items from %2$d folders: %1$s</item>
+    <item quantity="other">Backing up items from %2$d folders: %1$s</item>
   </plurals>
   <!--
         Variable %1$s is a folder name
@@ -93,6 +93,7 @@
   <string name="photos_backup_state_completed">Резервне копіювання завершено</string>
   <string name="photos_backup_state_uncompleted">Резервне копіювання завершено з проблемами</string>
   <string name="photos_backup_state_uncompleted_action">Розв\'язати</string>
+  <string name="photos_backup_state_preparing">Preparing to back up</string>
   <string name="photos_backup_state_encrypting">Шифрування…</string>
   <string name="photos_backup_state_uploading">Резервне копіювання…</string>
   <!--

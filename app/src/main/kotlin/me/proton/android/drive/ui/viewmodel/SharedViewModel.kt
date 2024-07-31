@@ -19,8 +19,10 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.CombinedLoadStates
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,10 +49,12 @@ import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.SharedViewEvent
 import me.proton.android.drive.ui.viewstate.SharedViewState
+import me.proton.android.drive.usecase.OpenProtonDocument
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.onSuccess
+import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.extension.logDefaultMessage
 import me.proton.core.drive.base.domain.entity.Percentage
@@ -100,14 +104,15 @@ class SharedViewModel @Inject constructor(
     @ApplicationContext private val appContext: Context,
     private val configurationProvider: ConfigurationProvider,
     private val getShare: GetShare,
-    private val getThemeStyle: GetThemeStyle,
+    getThemeStyle: GetThemeStyle,
     shouldUpgradeStorage: ShouldUpgradeStorage,
+    private val openProtonDocument: OpenProtonDocument,
 ) : ViewModel(),
     UserViewModel by UserViewModel(savedStateHandle),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
 
-    private val _effects = MutableSharedFlow<HomeEffect>()
+    private val _homeEffect = MutableSharedFlow<HomeEffect>()
     private val refreshTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
     private val volumeId = refreshTrigger.transformLatest {
         savedStateHandle.get<String>(Screen.Shared.SHARE_ID)?.takeIf { shareId -> shareId != "null" }?.let { shareId ->
@@ -200,24 +205,31 @@ class SharedViewModel @Inject constructor(
     )
 
     override val homeEffect: Flow<HomeEffect>
-        get() = _effects.asSharedFlow()
+        get() = _homeEffect.asSharedFlow()
 
     fun viewEvent(
         navigateToFiles: (FolderId, String?) -> Unit,
         navigateToPreview: (FileId) -> Unit,
         navigateToSortingDialog: (Sorting) -> Unit,
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+        lifecycle: Lifecycle,
     ): SharedViewEvent = object : SharedViewEvent {
 
         private val driveLinkShareFlow = MutableSharedFlow<DriveLink>(extraBufferCapacity = 1).also { flow ->
             viewModelScope.launch {
-                flow.take(1).collect { driveLink ->
-                    driveLink.onClick(navigateToFiles, navigateToPreview)
+                lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    flow.take(1).collect { driveLink ->
+                        driveLink.onClick(
+                            navigateToFolder = navigateToFiles,
+                            navigateToPreview = navigateToPreview,
+                            openDocument = this@SharedViewModel::openDocument,
+                        )
+                    }
                 }
             }
         }
         override val onTopAppBarNavigation = {
-            viewModelScope.launch { _effects.emit(HomeEffect.OpenDrawer) }
+            viewModelScope.launch { _homeEffect.emit(HomeEffect.OpenDrawer) }
             Unit
         }
         override val onSorting = navigateToSortingDialog
@@ -255,4 +267,18 @@ class SharedViewModel @Inject constructor(
             refreshTrigger.emit(Unit)
         }
     }
+
+    private suspend fun openDocument(driveLink: DriveLink.File) =
+        openProtonDocument(driveLink)
+            .onFailure { error ->
+                error.log(VIEW_MODEL, "Open document failed")
+                _homeEffect.emit(
+                    HomeEffect.ShowSnackbar(
+                        error.getDefaultMessage(
+                            context = appContext,
+                            useExceptionMessage = configurationProvider.useExceptionMessage,
+                        )
+                    )
+                )
+            }
 }

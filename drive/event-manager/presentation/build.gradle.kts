@@ -28,6 +28,8 @@ driveModule(
     hilt = true,
 ) {
     api(project(":drive:event-manager:base:domain"))
+    api(project(":drive:event-manager:domain"))
+    api(project(":drive:feature-flag:domain"))
     api(project(":drive:share:domain"))
     api(libs.core.eventManager.domain)
     implementation(libs.androidx.lifecycle.runtime.ktx)

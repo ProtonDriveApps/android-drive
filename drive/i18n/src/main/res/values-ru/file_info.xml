@@ -26,4 +26,5 @@
   <string name="file_info_title_folder">Информация о папке</string>
   <string name="file_info_title_file">Информация о файле</string>
   <string name="file_info_captured_on">Запечатлено на</string>
+  <string name="file_info_permissions">Permissions</string>
 </resources>

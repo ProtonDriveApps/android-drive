@@ -23,4 +23,5 @@
   <string name="preview_processing_state">En procés…</string>
   <string name="preview_empty">Sense vista prèvia…</string>
   <string name="title_not_found">No trobat</string>
+  <string name="preview_proton_doc_open_in_browser_button">Obre al navegador</string>
 </resources>

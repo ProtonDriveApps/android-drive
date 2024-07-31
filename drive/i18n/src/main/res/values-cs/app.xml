@@ -150,6 +150,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Zálohování není povoleno</string>
   <string name="notification_content_text_backup_paused_disabled">Zálohování bylo vypnuto</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Zálohování nemůže probíhat na pozadí</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
   <string name="notification_content_title_download_complete">Stahování dokončeno</string>
   <string name="notification_content_title_forced_sign_out">Přihlaste se, prosím</string>
   <string name="notification_content_text_forced_sign_out">Omlouváme se za vyrušení! Nastal problém se synchronizací - prosím přihlaste se znovu a vše bude fungovat bez problémů.</string>
@@ -211,8 +212,8 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
   <string name="get_more_free_storage_action_link_subtitle">Vyberte libovolný soubor nebo složku. Otevřete nabídku možností a stiskněte %1$s.</string>
-  <string name="get_more_free_storage_action_share_title">Share a file</string>
-  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_share_title">Sdílet soubor</string>
+  <string name="get_more_free_storage_action_share_subtitle">Je to snadné a bezpečné.</string>
   <string name="get_more_free_storage_action_recovery_title">Nastavit metodu obnovení</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link

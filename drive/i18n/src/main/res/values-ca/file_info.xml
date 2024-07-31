@@ -20,10 +20,11 @@
   <string name="file_info_uploaded_by_entry">Carregat per</string>
   <string name="file_info_location_entry">Ubicació</string>
   <string name="file_info_last_modified_entry">Modificat</string>
-  <string name="file_info_number_of_accesses_entry">Nombre de descàrregues</string>
+  <string name="file_info_number_of_accesses_entry"># de descàrregues</string>
   <string name="file_info_share_url_expiration_time">Data de caducitat de l\'enllaç</string>
   <string name="file_info_share_url_no_expiration_time">Mai</string>
   <string name="file_info_title_folder">Detalls de la carpeta</string>
   <string name="file_info_title_file">Detalls del fitxer</string>
   <string name="file_info_captured_on">Data de la foto</string>
+  <string name="file_info_permissions">Permissions</string>
 </resources>

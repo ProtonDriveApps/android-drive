@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.PagingData
@@ -76,7 +77,8 @@ fun PhotosScreen(
     val viewModel = hiltViewModel<PhotosViewModel>()
     val viewState by rememberFlowWithLifecycle(flow = viewModel.viewState)
         .collectAsState(initial = viewModel.initialViewState)
-    val viewEvent = remember {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val viewEvent = remember(lifecycle) {
         viewModel.viewEvent(
             navigateToPreview = navigateToPhotosPreview,
             navigateToPhotosOptions = navigateToPhotosOptions,
@@ -85,6 +87,7 @@ fun PhotosScreen(
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
+            lifecycle = lifecycle,
         )
     }
     val photos = rememberFlowWithLifecycle(flow = viewModel.driveLinks)

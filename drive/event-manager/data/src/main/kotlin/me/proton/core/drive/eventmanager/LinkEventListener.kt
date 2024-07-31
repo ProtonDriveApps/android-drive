@@ -19,13 +19,13 @@
 package me.proton.core.drive.eventmanager
 
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import kotlinx.serialization.modules.subclass
 import me.proton.core.drive.base.data.api.Dto
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.eventmanager.api.response.CreateLinksEvent
@@ -39,6 +39,7 @@ import me.proton.core.drive.eventmanager.api.response.WithLinkDto
 import me.proton.core.drive.eventmanager.entity.LinkEventVO
 import me.proton.core.drive.eventmanager.usecase.OnCreateEvent
 import me.proton.core.drive.eventmanager.usecase.OnDeleteEvent
+import me.proton.core.drive.eventmanager.usecase.OnEventEndpointFetchError
 import me.proton.core.drive.eventmanager.usecase.OnResetAllEvent
 import me.proton.core.drive.eventmanager.usecase.OnUpdateContentEvent
 import me.proton.core.drive.eventmanager.usecase.OnUpdateMetadataEvent
@@ -68,6 +69,7 @@ class LinkEventListener @Inject constructor(
     private val onResetAllEvent: OnResetAllEvent,
     private val findLinkIds: FindLinkIds,
     private val getShare: GetShare,
+    private val onEventEndpointFetchError: OnEventEndpointFetchError,
 ) : EventListener<LinkId, LinkEventVO>() {
     internal var onFailure: (Throwable, String) -> Unit = { error, body ->
         error.log(LogTag.EVENTS, "Cannot parse event from response: $body")
@@ -153,6 +155,14 @@ class LinkEventListener @Inject constructor(
                 else -> error("Unexpected event manager config")
             }
         }
+    }
+
+    override suspend fun onFetchError(config: EventManagerConfig, error: Throwable) {
+        (config as? EventManagerConfig.Drive.Volume)
+            ?.let { driveVolumeConfig ->
+                onEventEndpointFetchError(driveVolumeConfig.userId, VolumeId(driveVolumeConfig.volumeId), error)
+                    .getOrNull(LogTag.EVENTS)
+            }
     }
 
     private suspend fun DeleteLinksEvent.getLinkIds(

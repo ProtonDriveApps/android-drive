@@ -27,6 +27,7 @@ driveModule(
     hilt = true,
     compose = true,
     i18n = true,
+    showkase = true,
 ) {
     implementation(project(":drive:base:data"))
     api(project(":drive:base:presentation"))

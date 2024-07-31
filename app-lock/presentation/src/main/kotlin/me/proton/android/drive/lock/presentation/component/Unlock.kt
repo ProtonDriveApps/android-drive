@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -197,15 +198,17 @@ private fun getDrawable(@DrawableRes light: Int, @DrawableRes dark: Int, @Drawab
 
 @Preview
 @Composable
-private fun UnlockPreview() {
+fun UnlockPreview() {
     ProtonTheme {
-        Unlock(
-            userId = UserId("123"),
-            viewEvent = object : UnlockViewEvent {
-                override val onShowBiometric: (UserId) -> Unit = {}
-                override val onSignOut: (UserId) -> Unit = {}
-            }
-        )
+        Surface {
+            Unlock(
+                userId = UserId("123"),
+                viewEvent = object : UnlockViewEvent {
+                    override val onShowBiometric: (UserId) -> Unit = {}
+                    override val onSignOut: (UserId) -> Unit = {}
+                }
+            )
+        }
     }
 }
 

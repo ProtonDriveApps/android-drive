@@ -23,4 +23,5 @@
   <string name="preview_processing_state">Elaborazione in corso</string>
   <string name="preview_empty">Nessuna anteprima</string>
   <string name="title_not_found">Non trovato</string>
+  <string name="preview_proton_doc_open_in_browser_button">Apri nel browser</string>
 </resources>

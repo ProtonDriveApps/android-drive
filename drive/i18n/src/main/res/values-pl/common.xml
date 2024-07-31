@@ -73,6 +73,7 @@
   <string name="common_type_pages">Plik Pages</string>
   <string name="common_type_pdf">Dokument PDF</string>
   <string name="common_type_ppt">Prezentacja</string>
+  <string name="common_type_proton_doc">Dokument Proton</string>
   <string name="common_type_text">Tekst</string>
   <string name="common_type_trustedkey">Zaufany klucz</string>
   <string name="common_type_unknown">Plik binarny</string>
@@ -89,7 +90,13 @@
             "Name must not exceed 280 characters"
     -->
   <string name="common_error_name_too_long">Nazwa nie może przekraczać %1$d znaków</string>
-  <string name="common_error_name_with_forbidden_characters">Nazwa nie może zawierać niewidocznych znaków, \"/\" lub \"\\"</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">Nazwa nie może zawierać niewidocznych znaków, \"%1$s\" lub \"%2$s\"</string>
   <string name="common_error_name_periods">Nazwą nie może być \".\" lub \"..\"</string>
   <string name="common_error_no_internet">Brak połączenia z Internetem</string>
   <string name="common_error_http_5xx">Wystąpił błąd serwera</string>

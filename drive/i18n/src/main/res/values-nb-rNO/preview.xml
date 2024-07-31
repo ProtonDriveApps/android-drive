@@ -23,4 +23,5 @@
   <string name="preview_processing_state">Behandler…</string>
   <string name="preview_empty">Ingenting å forhåndsvise...</string>
   <string name="title_not_found">Ikke funnet</string>
+  <string name="preview_proton_doc_open_in_browser_button">Åpne i nettleser</string>
 </resources>

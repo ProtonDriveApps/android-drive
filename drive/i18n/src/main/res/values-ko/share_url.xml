@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">링크가 비밀번호를 가지고 있는 사람만 이 %1$s 에 접근할 수 있습니다.</string>
+  <string name="shared_link_settings">링크 설정</string>
+  <string name="shared_link_options">링크 옵션</string>
   <string name="shared_link_privacy_settings">개인 정보 보호 설정</string>
   <string name="shared_link_password_protection">비밀번호 보호</string>
   <string name="shared_link_expiration_date">만료 일자</string>

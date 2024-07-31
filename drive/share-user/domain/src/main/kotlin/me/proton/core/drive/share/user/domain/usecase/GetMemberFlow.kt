@@ -37,14 +37,15 @@ class GetMemberFlow @Inject constructor(
     operator fun invoke(
         shareId: ShareId,
         memberId: String,
-    ): Flow<ShareUser.Member> = repository.getMemberFlow(shareId, memberId).map { invitee ->
+    ): Flow<ShareUser.Member> = repository.getMemberFlow(shareId, memberId).map { member ->
         val contactEmails = getContactEmails(shareId.userId)
             .filterSuccessOrError().toResult().getOrNull().orEmpty()
 
-        invitee.copy(
-            displayName = contactEmails.firstOrNull { contactEmail ->
-                contactEmail.email == invitee.email
-            }?.name
-        )
+        contactEmails.firstOrNull { contactEmail ->
+            contactEmail.email == member.email
+        }?.name?.let { name ->
+            member.copy(displayName = name)
+        } ?: member
+
     }
 }

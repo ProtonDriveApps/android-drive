@@ -75,6 +75,7 @@ class GetBackupState @Inject constructor(
                                         is BackupStatus.Uncompleted -> backupStatus.totalBackupPhotos
                                         is BackupStatus.Failed -> backupStatus.pendingBackupPhotos
                                         is BackupStatus.InProgress -> backupStatus.pendingBackupPhotos
+                                        is BackupStatus.Preparing -> 0
                                     }
                                 )
                             },

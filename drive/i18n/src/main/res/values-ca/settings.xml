@@ -48,7 +48,7 @@
     -->
   <string name="settings_photos_backup_folders_description">La vostra carpeta %1$s es fa còpia de seguretat automàticament. Seleccioneu carpetes addicionals per fer-ne còpia de seguretat i les seves fotos apareixeran a la pestanya de Fotos.</string>
   <string name="settings_photos_backup_folders_not_found">No s\'ha trobat la carpeta.</string>
-  <string name="settings_photos_backup_folders_confirm_stop_sync_title">Voleu deixar de fer còpies de seguretat d\'aquesta carpeta?</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_title">Voleu deixar de fer còpies de seguretat de la carpeta?</string>
   <!--
         Variable %1$s is the folder name
         Examples:

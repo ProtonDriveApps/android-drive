@@ -3,6 +3,7 @@ package me.proton.core.drive.share.user.domain.usecase
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
@@ -17,8 +18,16 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.user.domain.entity.ShareUserInvitation
 import me.proton.core.drive.share.user.domain.entity.ShareUsersInvitation
 import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.createExternalInvitation
 import me.proton.core.drive.test.api.createInvitation
 import me.proton.core.drive.test.api.getPublicAddressKeys
+import me.proton.core.drive.test.api.getPublicAddressKeysAll
+import me.proton.core.drive.test.api.jsonResponse
+import me.proton.core.key.data.api.response.ActivePublicKeysResponse
+import me.proton.core.key.data.api.response.AddressDataResponse
+import me.proton.core.key.data.api.response.PublicAddressKeyResponse
+import me.proton.core.key.domain.entity.key.KeyFlags
+import me.proton.core.network.data.protonApi.ProtonErrorData
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -38,7 +47,7 @@ class InviteMembersTest {
     private val folderId = FolderId(mainShareId, "folder-id")
 
     @Test
-    fun test() = runTest {
+    fun internal() = runTest {
         driveRule.db.user {
             volume {
                 val standardShareId = standardShareId()
@@ -52,11 +61,53 @@ class InviteMembersTest {
             }
         }
         driveRule.server.run {
-            getPublicAddressKeys()
+            getPublicAddressKeysAll()
             createInvitation()
         }
         val shareUserInvitation = ShareUserInvitation(
-            email = "invitee@proton.me",
+            email = "invitee@external.com",
+            permissions = Permissions(),
+        )
+        val result = inviteMembers(
+            ShareUsersInvitation(
+                linkId = folderId,
+                members = listOf(
+                    shareUserInvitation
+                )
+            )
+        ).last().toResult().getOrThrow()
+
+        assertEquals("failures", emptySet<ShareUserInvitation>(), result.failures.keys)
+        assertEquals("successes", setOf(shareUserInvitation), result.successes.keys)
+    }
+
+    @Test
+    fun external() = runTest {
+        driveRule.db.user {
+            volume {
+                val standardShareId = standardShareId()
+                standardShare(standardShareId.id)
+                mainShare {
+                    folder(
+                        id = folderId.id,
+                        sharingDetailsShareId = standardShareId.id,
+                    )
+                }
+            }
+        }
+        driveRule.server.run {
+            getPublicAddressKeysAll {
+                jsonResponse(422) {
+                    ProtonErrorData(
+                        code = ProtonApiCode.KEY_GET_DOMAIN_EXTERNAL,
+                        error = "This address does not exist. Please try again",
+                    )
+                }
+            }
+            createExternalInvitation("invitee@external.com")
+        }
+        val shareUserInvitation = ShareUserInvitation(
+            email = "invitee@external.com",
             permissions = Permissions(),
         )
         val result = inviteMembers(

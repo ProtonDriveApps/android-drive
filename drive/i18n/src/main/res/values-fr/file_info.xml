@@ -26,4 +26,5 @@
   <string name="file_info_title_folder">Informations sur le dossier</string>
   <string name="file_info_title_file">Informations sur le fichier</string>
   <string name="file_info_captured_on">Date de la photo</string>
+  <string name="file_info_permissions">Autorisations</string>
 </resources>

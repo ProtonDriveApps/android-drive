@@ -47,14 +47,14 @@
   <!--
         Variable %1$s is a folder name, %2$s is a quantity of folders found
         Example:
-            "Backing up items from the Camera folder"
-            "Backing up items from 2 Camera folders"
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
     -->
   <plurals name="photos_message_folders_setup">
-    <item quantity="one">Tworzenie kopii zapasowej elementów z folderu %1$s</item>
-    <item quantity="few">Tworzenie kopii zapasowej elementów z %2$d folderów %1$s</item>
-    <item quantity="many">Tworzenie kopii zapasowej elementów z %2$d folderów %1$s</item>
-    <item quantity="other">Tworzenie kopii zapasowej elementów z %2$d folderów %1$s</item>
+    <item quantity="one">Tworzenie kopii zapasowej z %2$d folderu: %1$s</item>
+    <item quantity="few">Tworzenie kopii zapasowej z %2$d folderów: %1$s</item>
+    <item quantity="many">Tworzenie kopii zapasowej z %2$d folderów: %1$s</item>
+    <item quantity="other">Tworzenie kopii zapasowej z %2$d folderów: %1$s</item>
   </plurals>
   <!--
         Variable %1$s is a folder name
@@ -93,6 +93,7 @@
   <string name="photos_backup_state_completed">Kopia zapasowa została zakończona</string>
   <string name="photos_backup_state_uncompleted">Kopia zapasowa została częściowo zakończona</string>
   <string name="photos_backup_state_uncompleted_action">Rozwiąż</string>
+  <string name="photos_backup_state_preparing">Przygotowywanie kopii zapasowej</string>
   <string name="photos_backup_state_encrypting">Szyfrowanie…</string>
   <string name="photos_backup_state_uploading">Tworzenie kopii zapasowej…</string>
   <!--

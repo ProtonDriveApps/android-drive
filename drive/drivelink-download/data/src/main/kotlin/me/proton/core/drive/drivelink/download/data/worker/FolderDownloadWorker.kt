@@ -44,6 +44,7 @@ import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_VOLUME
 import me.proton.core.drive.folder.domain.usecase.GetDescendants
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.extension.isProtonCloudFile
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.linknode.domain.entity.LinkNode
@@ -83,7 +84,7 @@ class FolderDownloadWorker @AssistedInject constructor(
         }.getOrNull() ?: return Result.failure()
         val descendants = getDescendants(folder, true).onFailure { error ->
             CoreLogger.d(logTag, error, "Failed to get descendants, retrying")
-        }.getOrNull() ?: return Result.retry()
+        }.getOrNull()?.filterNot { link -> link.isProtonCloudFile } ?: return Result.retry()
         downloadFolderAndDescendants(
             folder = folder,
             descendants = descendants.mapNotNull { link -> getLinkNode(link.id).toResult().getOrNull() }

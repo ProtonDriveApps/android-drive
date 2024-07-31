@@ -23,7 +23,7 @@
   <string name="log_category">Categoria</string>
   <string name="content_description_save_log_file">Desa el fitxer de registre</string>
   <string name="content_description_more_log_options">Més opcions de registre</string>
-  <string name="log_level_normal">Regular</string>
+  <string name="log_level_normal">Normal</string>
   <string name="log_level_warning">Advertència</string>
   <string name="log_level_error">Error</string>
   <string name="log_origin_upload">Carrega</string>

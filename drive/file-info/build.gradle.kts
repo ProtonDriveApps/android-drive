@@ -26,6 +26,8 @@ android {
 driveModule(
     compose = true,
     i18n = true,
+    kapt = true,
+    showkase = true,
 ) {
     api(project(":drive:base:presentation"))
     api(project(":drive:drivelink"))

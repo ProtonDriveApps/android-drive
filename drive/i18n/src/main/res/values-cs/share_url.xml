@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">Pouze lidé s odkazem a heslem mají přístup k %1$s</string>
+  <string name="shared_link_settings">Nastavení odkazu</string>
+  <string name="shared_link_options">Možnosti odkazu</string>
   <string name="shared_link_privacy_settings">Nastavení ochrany osobních údajů</string>
   <string name="shared_link_password_protection">Ochrana heslem</string>
   <string name="shared_link_expiration_date">Datum vypršení platnosti</string>

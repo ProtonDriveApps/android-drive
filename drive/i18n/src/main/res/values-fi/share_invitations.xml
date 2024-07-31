@@ -29,8 +29,8 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">1 henkilö lisättiin</item>
-    <item quantity="other">%1$d henkilöä lisättiin</item>
+    <item quantity="one">Yksi henki lisättiin</item>
+    <item quantity="other">%1$d henki lisättiin</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -38,8 +38,8 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">Yhtä henkilöä ei voida kutsua</item>
-    <item quantity="other">%1$d henkilöä ei voida kutsua</item>
+    <item quantity="one">Yhtä henkeä ei voida kutsua</item>
+    <item quantity="other">%1$d henkeä ei voida kutsua</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -47,24 +47,45 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Jaetaan yhdelle henkilölle</item>
-    <item quantity="other">Jaetaan %1$d henkilölle</item>
+    <item quantity="one">Jaetaan yhdelle hengelle</item>
+    <item quantity="other">Jaetaan %1$d hengelle</item>
   </plurals>
-  <string name="share_via_invitations_permission_owner">Omistaja</string>
-  <string name="share_via_invitations_permission_admin">Ylläpito</string>
-  <string name="share_via_invitations_permission_editor">Muokkaus</string>
-  <string name="share_via_invitations_permission_viewer">Tarkastelu</string>
-  <string name="share_via_invitations_permission_unknown">Tuntematon</string>
+  <string name="common_permission_owner">Omistaja</string>
+  <string name="common_permission_admin">Hallinta</string>
+  <string name="common_permission_editor">Muokkaus</string>
+  <string name="common_permission_viewer">Tarkastelu</string>
+  <string name="common_permission_unknown">Tuntematon</string>
   <!--
-        Variable %1$s is the permission
+        Variable %1$s is an email
         Examples:
-            "Editor (Invitation sent)"
+            "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_invitation_sent">%1$s (kutsu lähetettiin)</string>
-  <string name="share_via_invitations_add_people_hint">Lisää henkilölle</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (odottaa)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (hyväksytty)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (tuntematon)</string>
+  <string name="share_via_invitations_add_people_hint">Lisää henkilöitä</string>
   <string name="share_via_invitations_copy_invite_link_action">Kopioi kutsulinkki</string>
   <string name="share_via_invitations_remove_access_action">Mitätöi käyttöoikeus</string>
   <string name="share_via_invitations_stop_sharing_description">Poista linkki ja käyttöoikeus kaikilta</string>
   <string name="share_via_invitations_resend_invite_action">Lähetä kutsu uudelleen</string>
   <string name="share_via_invitations_resend_invite_success">Kutsu lähetettiin uudelleen</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="one">%1$d jäsen</item>
+    <item quantity="other">%1$d jäsentä</item>
+  </plurals>
 </resources>

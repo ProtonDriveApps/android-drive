@@ -26,7 +26,6 @@ import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.base.domain.usecase.GetUserEmail
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetShare
@@ -38,7 +37,6 @@ class CreateShareInvitations @Inject constructor(
     private val updateEventAction: UpdateEventAction,
     private val getShare: GetShare,
     private val createShareInvitation: CreateShareInvitation,
-    private val getUserEmail: GetUserEmail,
 ) {
     operator fun invoke(
         shareId: ShareId,
@@ -50,10 +48,6 @@ class CreateShareInvitations @Inject constructor(
             invitation.members.associateWith { shareMemberInvitation ->
                 createShareInvitation(
                     shareId = shareId,
-                    inviterEmail = getUserEmail(
-                        userId = shareId.userId,
-                        addressId = requireNotNull(share.addressId) { "Address id is required" }
-                    ),
                     invitation = shareMemberInvitation
                 ).filterSuccessOrError().last()
             }.let { results ->

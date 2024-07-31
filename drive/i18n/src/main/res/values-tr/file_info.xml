@@ -26,4 +26,5 @@
   <string name="file_info_title_folder">Klasör bilgileri</string>
   <string name="file_info_title_file">Dosya bilgileri</string>
   <string name="file_info_captured_on">Çekilme zamanı</string>
+  <string name="file_info_permissions">Permissions</string>
 </resources>

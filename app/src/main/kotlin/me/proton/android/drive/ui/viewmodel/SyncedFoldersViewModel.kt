@@ -19,8 +19,10 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -170,15 +172,19 @@ class SyncedFoldersViewModel @Inject constructor(
         navigateToFiles: (FolderId, String?) -> Unit,
         navigateToSortingDialog: (Sorting) -> Unit,
         navigateBack: () -> Unit,
+        lifecycle: Lifecycle,
     ): FilesViewEvent = object : FilesViewEvent {
 
         private val driveLinkShareFlow = MutableSharedFlow<DriveLink>(extraBufferCapacity = 1).also { flow ->
             viewModelScope.launch {
-                flow.take(1).collect { driveLink ->
-                    driveLink.onClick(
-                        navigateToFolder = navigateToFiles,
-                        navigateToPreview = { error("Preview is not supported here") }
-                    )
+                lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    flow.take(1).collect { driveLink ->
+                        driveLink.onClick(
+                            navigateToFolder = navigateToFiles,
+                            navigateToPreview = { error("Preview is not supported here") },
+                            openDocument = { _ -> error("Preview is not supported here") },
+                        )
+                    }
                 }
             }
         }
@@ -197,7 +203,7 @@ class SyncedFoldersViewModel @Inject constructor(
             listContentState = listContentState,
             listAppendContentState = listContentAppendingState,
             coroutineScope = viewModelScope,
-            emptyState = emptyState,
+            emptyState = MutableStateFlow(emptyState),
         ) { }
         override val onMoreOptions = { _: DriveLink -> error("More options is not supported here") }
         override val onToggleLayout = this@SyncedFoldersViewModel::onToggleLayout

@@ -19,6 +19,7 @@
 package me.proton.core.drive.drivelink.device.presentation.component
 
 import androidx.annotation.StringRes
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,10 +46,12 @@ fun DevicesError(
 @Composable
 fun PreviewDevicesError() {
     ProtonTheme {
-        DevicesError(
-            errorMessage = "No connection",
-            actionResId = null,
-        ) {}
+        Surface {
+            DevicesError(
+                errorMessage = "No connection",
+                actionResId = null,
+            ) {}
+        }
     }
 }
 
@@ -56,9 +59,11 @@ fun PreviewDevicesError() {
 @Composable
 fun PreviewDevicesErrorWithRetry() {
     ProtonTheme {
-        DevicesError(
-            errorMessage = "Server error occurred",
-            actionResId = I18N.string.common_retry_action,
-        ) {}
+        Surface {
+            DevicesError(
+                errorMessage = "Server error occurred",
+                actionResId = I18N.string.common_retry_action,
+            ) {}
+        }
     }
 }

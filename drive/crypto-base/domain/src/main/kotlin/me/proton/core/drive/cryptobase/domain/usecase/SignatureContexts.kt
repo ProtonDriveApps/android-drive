@@ -25,4 +25,8 @@ object SignatureContexts {
         value = "drive.share-member.inviter",
         isCritical = true
     )
+    val DRIVE_SHARE_MEMBER_EXTERNAL_INVITATION = SignatureContext(
+        value = "drive.share-member.external-invitation",
+        isCritical = true
+    )
 }

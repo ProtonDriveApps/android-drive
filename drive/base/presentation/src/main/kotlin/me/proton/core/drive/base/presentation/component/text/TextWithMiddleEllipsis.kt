@@ -86,8 +86,7 @@ fun TextWithMiddleEllipsis(
                 var allowedChars = floor(textLayoutResult.multiParagraph.width / charSize).toInt()
                 var newEllipsizedText: String
                 do {
-                    allowedChars--
-                    newEllipsizedText = text.ellipsizeMiddle(allowedChars)
+                    newEllipsizedText = text.ellipsizeMiddle(allowedChars--)
                 } while (ellipsizedText.length <= newEllipsizedText.length)
                 ellipsizedText = newEllipsizedText
                 // We only show the text when it's ready to avoid visual glitches

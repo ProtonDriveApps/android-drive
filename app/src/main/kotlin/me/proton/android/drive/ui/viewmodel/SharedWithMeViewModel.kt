@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
+import me.proton.android.drive.usecase.OpenProtonDocument
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.state.ListContentState
@@ -58,12 +59,14 @@ class SharedWithMeViewModel @Inject constructor(
     sharedDriveLinks: SharedDriveLinks,
     getPagedSharedWithMeLinkIds: GetPagedSharedWithMeLinkIds,
     getFeatureFlagFlow: GetFeatureFlagFlow,
+    openProtonDocument: OpenProtonDocument,
     private val getAllSharedWithMeIds: GetAllSharedWithMeIds,
 ) : CommonSharedViewModel(
     savedStateHandle = savedStateHandle,
     appContext = appContext,
     configurationProvider = configurationProvider,
     sharedDriveLinks = sharedDriveLinks,
+    openProtonDocument = openProtonDocument,
 ) {
     private val killSwitch = getFeatureFlagFlow(driveSharingDisabled(userId))
         .stateIn(

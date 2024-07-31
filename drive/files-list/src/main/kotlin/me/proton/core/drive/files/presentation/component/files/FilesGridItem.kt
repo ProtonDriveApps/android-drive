@@ -269,12 +269,6 @@ private val MoreButtonPadding = 12.dp
 private const val MoreButtonAlpha = 0.7f
 
 @Preview(
-    name = "GridItem not downloaded, not favorite, not shared in light mode",
-    group = "light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-)
-@Preview(
     name = "GridItem not downloaded, not favorite, not shared in dark mode",
     group = "dark mode",
     uiMode = Configuration.UI_MODE_NIGHT_YES,
@@ -282,7 +276,7 @@ private const val MoreButtonAlpha = 0.7f
 )
 @Suppress("unused")
 @Composable
-private fun PreviewGridItem() {
+fun PreviewGridItem() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             FilesGridItem(
@@ -296,12 +290,7 @@ private fun PreviewGridItem() {
         }
     }
 }
-@Preview(
-    name = "GridItem in multi select, selected in light mode",
-    group = "light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-)
+
 @Preview(
     name = "GridItem in multi select, selected in dark mode",
     group = "dark mode",
@@ -310,7 +299,7 @@ private fun PreviewGridItem() {
 )
 @Suppress("unused")
 @Composable
-private fun PreviewSelectedGridItem() {
+fun PreviewSelectedGridItem() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             FilesGridItem(
@@ -326,12 +315,7 @@ private fun PreviewSelectedGridItem() {
         }
     }
 }
-@Preview(
-    name = "GridItem in multi select, unselected in light mode",
-    group = "light mode",
-    uiMode = Configuration.UI_MODE_NIGHT_NO,
-    showBackground = true,
-)
+
 @Preview(
     name = "GridItem in multi select, unselected in dark mode",
     group = "dark mode",
@@ -340,7 +324,7 @@ private fun PreviewSelectedGridItem() {
 )
 @Suppress("unused")
 @Composable
-private fun PreviewUnselectedGridItem() {
+fun PreviewUnselectedGridItem() {
     ProtonTheme {
         Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
             FilesGridItem(
@@ -356,4 +340,3 @@ private fun PreviewUnselectedGridItem() {
         }
     }
 }
-

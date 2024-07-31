@@ -73,6 +73,7 @@
   <string name="common_type_pages">Файл Pages</string>
   <string name="common_type_pdf">Дакумент PDF</string>
   <string name="common_type_ppt">Прэзентацыя</string>
+  <string name="common_type_proton_doc">Дакумент Proton</string>
   <string name="common_type_text">Тэкст</string>
   <string name="common_type_trustedkey">Давераны ключ</string>
   <string name="common_type_unknown">Двайковы</string>
@@ -89,7 +90,13 @@
             "Name must not exceed 280 characters"
     -->
   <string name="common_error_name_too_long">Колькасць сімвалаў у назве не можа быць большай за %1$d</string>
-  <string name="common_error_name_with_forbidden_characters">Назва не можа змяшчаць нябачныя сімвалы, \"/\" або \"\\"</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">Назва не можа змяшчаць нябачныя сімвалы, \"%1$s\" або \"%2$s\"</string>
   <string name="common_error_name_periods">Назва не можа быць \".\" або \"..\"</string>
   <string name="common_error_no_internet">Няма падключэння да інтэрнэту</string>
   <string name="common_error_http_5xx">Адбылася памылка на серверы</string>

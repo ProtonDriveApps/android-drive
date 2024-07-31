@@ -140,6 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Sikkerhetskopiering er ikke tillat</string>
   <string name="notification_content_text_backup_paused_disabled">Sikkerhetskopiering ble deaktivert</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Sikkerhetskopiering kan ikke kjøres i bakgrunnen</string>
+  <string name="notification_content_text_backup_preparing">Forbereder sikkerhetskopiering</string>
   <string name="notification_content_title_download_complete">Nedlasting fullført</string>
   <string name="notification_content_title_forced_sign_out">Vennligst logg på</string>
   <string name="notification_content_text_forced_sign_out">Beklager å avbryte! Vi hadde et problem med synkronisering - vennligst logg på igjen og vi får alt til å gå på skinner.</string>

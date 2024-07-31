@@ -50,21 +50,42 @@
     <item quantity="one">1 kişiyle paylaşılıyor</item>
     <item quantity="other">%1$d kişiyle paylaşılıyor</item>
   </plurals>
-  <string name="share_via_invitations_permission_owner">Sahibi</string>
-  <string name="share_via_invitations_permission_admin">Yönetici</string>
-  <string name="share_via_invitations_permission_editor">Düzenleyici</string>
-  <string name="share_via_invitations_permission_viewer">Görüntüleyici</string>
-  <string name="share_via_invitations_permission_unknown">Bilinmiyor</string>
+  <string name="common_permission_owner">Owner</string>
+  <string name="common_permission_admin">Admin</string>
+  <string name="common_permission_editor">Editor</string>
+  <string name="common_permission_viewer">Viewer</string>
+  <string name="common_permission_unknown">Unknown</string>
   <!--
-        Variable %1$s is the permission
+        Variable %1$s is an email
         Examples:
-            "Editor (Invitation sent)"
+            "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_invitation_sent">%1$s (davet gönderildi)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
   <string name="share_via_invitations_add_people_hint">Kişi ekle</string>
   <string name="share_via_invitations_copy_invite_link_action">Davet bağlantısını kopyala</string>
   <string name="share_via_invitations_remove_access_action">Erişimi kaldır</string>
   <string name="share_via_invitations_stop_sharing_description">Bağlantıyı sil ve herkesin erişimini kaldır</string>
   <string name="share_via_invitations_resend_invite_action">Daveti yeniden gönder</string>
   <string name="share_via_invitations_resend_invite_success">Davet yeniden gönderildi</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="one">%1$d üye</item>
+    <item quantity="other">%1$d üye</item>
+  </plurals>
 </resources>

@@ -53,6 +53,8 @@ import me.proton.core.drive.drivelink.shared.presentation.viewevent.SharedViewEv
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SharedViewState
 import me.proton.core.drive.files.presentation.component.files.FilesListItem
 import me.proton.core.drive.files.presentation.component.files.FilesListItemPlaceholder
+import me.proton.core.drive.files.presentation.extension.LayoutType
+import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.link.domain.entity.LinkId
 
 @Composable
@@ -220,7 +222,7 @@ private fun SharedItem(
 ) {
     FilesListItem(
         link = link,
-        modifier = modifier,
+        modifier = modifier.driveLinkSemantics(link, LayoutType.List),
         onClick = onDriveLink,
         onLongClick = {},
         onMoreOptionsClick = onMoreOptions,

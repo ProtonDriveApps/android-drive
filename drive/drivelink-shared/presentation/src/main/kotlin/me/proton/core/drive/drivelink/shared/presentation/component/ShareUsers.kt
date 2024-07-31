@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,6 +45,7 @@ import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.compose.theme.defaultSmallNorm
 import me.proton.core.drive.base.presentation.component.UserThumbnail
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
+import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -87,7 +89,7 @@ private fun ShareUser(
             }
             .padding(
                 horizontal = DefaultSpacing,
-                vertical = if (displayName== null) DefaultSpacing else SmallSpacing
+                vertical = if (displayName == null) DefaultSpacing else SmallSpacing
             ),
         horizontalArrangement = Arrangement.spacedBy(ListItemTextStartPadding),
         verticalAlignment = Alignment.CenterVertically,
@@ -122,49 +124,50 @@ private fun ShareUser(
 
 
 @Preview(name = "dark", uiMode = UI_MODE_NIGHT_YES)
-@Preview(name = "light", uiMode = UI_MODE_NIGHT_NO)
 @Composable
 fun ShareUsersPreview() {
     ProtonTheme {
-        ShareUsers(
-            modifier = Modifier
-                .sizeIn(maxWidth = 320.dp)
-                .background(ProtonTheme.colors.backgroundNorm),
-            onMore = {},
-            shareUsers = listOf(
-                ShareUserViewState(
-                    id = "",
-                    email = "verylongaddressemail@protonmail.com",
-                    permissionLabel = "Editor",
-                    displayName = "Very very very Long Display Name",
-                    firstLetter = "V",
-                    isInvitation = false,
+        Surface {
+            ShareUsers(
+                modifier = Modifier
+                    .sizeIn(maxWidth = 320.dp)
+                    .background(ProtonTheme.colors.backgroundNorm),
+                onMore = {},
+                shareUsers = listOf(
+                    ShareUserViewState(
+                        id = "",
+                        email = "verylongaddressemail@protonmail.com",
+                        permissionLabel = "Editor",
+                        displayName = "Very very very Long Display Name",
+                        firstLetter = "V",
+                        type = ShareUserType.MEMBER,
+                    ),
+                    ShareUserViewState(
+                        id = "",
+                        email = "me@pm.me",
+                        permissionLabel = "Editor",
+                        displayName = "Me",
+                        firstLetter = "M",
+                        type = ShareUserType.MEMBER,
+                    ),
+                    ShareUserViewState(
+                        id = "",
+                        email = "invitee@pm.me",
+                        permissionLabel = "Editor",
+                        displayName = "Invitee",
+                        firstLetter = "I",
+                        type = ShareUserType.INVITATION,
+                    ),
+                    ShareUserViewState(
+                        id = "",
+                        email = "external@other.com",
+                        permissionLabel = "Viewer",
+                        displayName = null,
+                        firstLetter = "E",
+                        type = ShareUserType.EXTERNAL_INVITATION,
+                    ),
                 ),
-                ShareUserViewState(
-                    id = "",
-                    email = "me@pm.me",
-                    permissionLabel = "Editor",
-                    displayName = "Me",
-                    firstLetter = "M",
-                    isInvitation = false,
-                ),
-                ShareUserViewState(
-                    id = "",
-                    email = "invitee@pm.me",
-                    permissionLabel = "Editor",
-                    displayName = "Invitee",
-                    firstLetter = "I",
-                    isInvitation = true,
-                ),
-                ShareUserViewState(
-                    id = "",
-                    email = "external@other.com",
-                    permissionLabel = "Viewer",
-                    displayName = null,
-                    firstLetter = "E",
-                    isInvitation = false,
-                ),
-            ),
-        )
+            )
+        }
     }
 }

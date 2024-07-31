@@ -24,12 +24,17 @@ import me.proton.android.drive.ui.extension.withItemType
 import me.proton.android.drive.ui.extension.withLayoutType
 import me.proton.android.drive.ui.extension.withPluralTextResource
 import me.proton.android.drive.ui.extension.withTextResource
+import me.proton.android.drive.ui.robot.ConfirmStopSharingRobot.clickTo
 import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
+import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.files.presentation.extension.ItemType
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.plan.test.robot.SubscriptionRobot
+import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.test.fusion.Fusion.allNodes
 import me.proton.test.fusion.Fusion.node
+import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
@@ -39,7 +44,7 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
         get() = allNodes.withText(I18N.string.photos_permissions_action).onFirst()
 
     private val backupCompleted get() = node.withText(I18N.string.photos_backup_state_completed)
-    private val backupUploading get() = node.withText(I18N.string.photos_backup_state_uploading)
+    private val backupPreparing get() = node.withText(I18N.string.photos_backup_state_preparing)
     private val backupFailed get() = node.withText(I18N.string.photos_error_backup_failed)
     private val noBackupsYet get() = node.withText(I18N.string.photos_empty_title)
     private val missingFolder get() = node.withText(I18N.string.photos_error_backup_missing_folder)
@@ -47,8 +52,10 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
     private val getMoreStorageButton get() = node.withText(I18N.string.storage_quotas_get_storage_action)
     private val storageFullTitle get() =
         node.withTextResource(I18N.string.storage_quotas_full_title, I18N.string.app_name)
-    private fun storageFullTitle(percentage: Int) =
-        node.withTextResource(I18N.string.storage_quotas_not_full_title, "${percentage}%")
+    private fun storageFullTitle(percentage: Int) = node.withTextResource(
+        I18N.string.storage_quotas_not_full_title,
+        Percentage(percentage).toPercentString(Locale.getDefault())
+    )
     private val itCanTakeAWhileLabel get() = node.withText(I18N.string.photos_empty_loading_label_progress)
     private val closeQuotaBannerButton get() = node.withContentDescription(I18N.string.common_close_action)
     private val photosBackupDisabled get() = node.withText(I18N.string.error_creating_photo_share_not_allowed)
@@ -118,7 +125,7 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
 
     fun assertItCanTakeAwhileDisplayed() {
         itCanTakeAWhileLabel.await { assertIsDisplayed() }
-        backupUploading.await { assertIsDisplayed() }
+        backupPreparing.await { assertIsDisplayed() }
     }
 
     fun assertBackupCompleteDisplayed(
@@ -149,6 +156,13 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
     fun assertPhotosBackupDisabled() {
         photosBackupDisabled.await { assertIsDisplayed() }
     }
+
+    fun dismissBackupSetupGrowler(vararg folders: String) = node.withText(
+        StringUtils.pluralStringFromResource(
+            I18N.plurals.photos_message_folders_setup,
+            folders.size,
+        ).format(folders.joinToString(", "), folders.size)
+    ).clickTo(PhotosTabRobot)
 
     override fun robotDisplayed() {
         homeScreenDisplayed()

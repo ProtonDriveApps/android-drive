@@ -25,7 +25,7 @@
   <string name="title_offline_available">Offline beschikbaar</string>
   <string name="title_empty_my_files">Ga uw gang, voeg uw eerste bestand toe</string>
   <string name="title_empty_folder">Laten we deze map vullen</string>
-  <string name="title_empty_folder_read_only">Empty folder</string>
+  <string name="title_empty_folder_read_only">Map leegmaken</string>
   <string name="title_empty_shared">Blijf op de hoogte van wat er is</string>
   <string name="title_empty_offline_available">Niets offline beschikbaar</string>
   <string name="title_empty_trash">Uw prullenbak is leeg</string>
@@ -140,6 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Back-up is niet toegestaan</string>
   <string name="notification_content_text_backup_paused_disabled">Back-up uitgeschakeld</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Back-up kan niet op de achtergrond worden uitgevoerd</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
   <string name="notification_content_title_download_complete">Download voltooid</string>
   <string name="notification_content_title_forced_sign_out">Inloggen</string>
   <string name="notification_content_text_forced_sign_out">Sorry dat ik stoor! We hadden een probleem met synchroniseren - log opnieuw in en we zullen alles soepel laten verlopen.</string>
@@ -168,9 +169,9 @@
   <string name="description_files_stop_sharing">Dit zal de link verwijderen en de toegang tot uw bestand of map voor iedereen met de link verwijderen.</string>
   <string name="description_files_stop_sharing_action_success">De link naar uw bestand is verwijderd.</string>
   <string name="description_files_stop_sharing_action_error">Er is een fout opgetreden bij het verwijderen van de link naar uw bestand.</string>
-  <string name="description_files_stop_all_sharing">This will delete link and remove access for everyone.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
-  <string name="description_files_stop_all_sharing_action_error">There was an error while deleting sharing to your file.</string>
+  <string name="description_files_stop_all_sharing">Hiermee wordt de link verwijderd en iedereen toegang ontnomen.</string>
+  <string name="description_files_stop_all_sharing_action_success">Delen naar uw bestand is verwijderd.</string>
+  <string name="description_files_stop_all_sharing_action_error">Er is een fout opgetreden tijdens het verwijderen van het delen van uw bestand.</string>
   <string name="ignore_file_signature_action">Toch bekijken</string>
   <string name="action_empty_files_add_files">Uploaden</string>
   <string name="error_could_not_send_file">Er is een fout opgetreden tijdens het verzenden van het bestand.</string>
@@ -201,8 +202,8 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
   <string name="get_more_free_storage_action_link_subtitle">Selecteer een bestand of map. Open het optiemenu en druk op %1$s.</string>
-  <string name="get_more_free_storage_action_share_title">Share a file</string>
-  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_share_title">Een bestand delen</string>
+  <string name="get_more_free_storage_action_share_subtitle">Het is eenvoudig en veilig.</string>
   <string name="get_more_free_storage_action_recovery_title">Stel een herstelmethode in</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link

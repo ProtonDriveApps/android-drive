@@ -80,7 +80,7 @@ class RenamingFolderFlowErrorTest(
             arrayOf(
                 "folder1",
                 "folder1/",
-                StringUtils.stringFromResource(I18N.string.common_error_name_with_forbidden_characters),
+                StringUtils.stringFromResource(I18N.string.common_error_name_with_forbidden_characters, "/", "\\"),
                 "Forbidden characters"
             ),
         )

@@ -105,6 +105,7 @@ import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.share.data.db.ShareEntity
 import me.proton.core.drive.share.data.db.ShareMembershipEntity
 import me.proton.core.drive.share.user.data.db.ShareUserDatabase
+import me.proton.core.drive.share.user.data.db.entity.ShareExternalInvitationEntity
 import me.proton.core.drive.share.user.data.db.entity.ShareInvitationEntity
 import me.proton.core.drive.share.user.data.db.entity.ShareMemberEntity
 import me.proton.core.drive.share.user.data.db.entity.SharedByMeListingEntity
@@ -135,10 +136,15 @@ import me.proton.core.key.data.db.KeySaltDatabase
 import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.key.data.entity.KeySaltEntity
 import me.proton.core.key.data.entity.PublicAddressEntity
+import me.proton.core.key.data.entity.PublicAddressInfoEntity
+import me.proton.core.key.data.entity.PublicAddressKeyDataEntity
 import me.proton.core.key.data.entity.PublicAddressKeyEntity
 import me.proton.core.keytransparency.data.local.KeyTransparencyDatabase
 import me.proton.core.keytransparency.data.local.entity.AddressChangeEntity
 import me.proton.core.keytransparency.data.local.entity.SelfAuditResultEntity
+import me.proton.core.label.data.local.LabelConverters
+import me.proton.core.label.data.local.LabelDatabase
+import me.proton.core.label.data.local.LabelEntity
 import me.proton.core.notification.data.local.db.NotificationEntity
 import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.observability.data.entity.ObservabilityEventEntity
@@ -157,6 +163,8 @@ import me.proton.core.user.data.entity.AddressEntity
 import me.proton.core.user.data.entity.AddressKeyEntity
 import me.proton.core.user.data.entity.UserEntity
 import me.proton.core.user.data.entity.UserKeyEntity
+import me.proton.core.userrecovery.data.db.DeviceRecoveryDatabase
+import me.proton.core.userrecovery.data.entity.RecoveryFileEntity
 import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsConverters
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
@@ -202,10 +210,15 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         ContactEmailEntity::class,
         ContactEmailLabelEntity::class,
         ContactEntity::class,
+        RecoveryFileEntity::class,
+        PublicAddressInfoEntity::class,
+        PublicAddressKeyDataEntity::class,
+        LabelEntity::class,
         // Drive
         VolumeEntity::class,
         ShareEntity::class,
         ShareUrlEntity::class,
+        ShareExternalInvitationEntity::class,
         ShareInvitationEntity::class,
         ShareMemberEntity::class,
         ShareMembershipEntity::class,
@@ -302,6 +315,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
     CoreNotificationConverters::class,
     PushConverters::class,
     ContactConverters::class,
+    LabelConverters::class,
     // Drive
     EventConverters::class,
     LinkSelectionConverters::class
@@ -316,6 +330,7 @@ abstract class DriveDatabase :
     HumanVerificationDatabase,
     PublicAddressDatabase,
     UserSettingsDatabase,
+    LabelDatabase,
     OrganizationDatabase,
     FeatureFlagDatabase,
     VolumeDatabase,
@@ -359,10 +374,11 @@ abstract class DriveDatabase :
     MediaStoreVersionDatabase,
     DeviceDatabase,
     DriveBaseDatabase,
-    LogDatabase {
+    LogDatabase,
+    DeviceRecoveryDatabase {
 
     companion object {
-        const val VERSION = 61
+        const val VERSION = 66
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -425,6 +441,11 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_58_59,
             DriveDatabaseMigrations.MIGRATION_59_60,
             DriveDatabaseMigrations.MIGRATION_60_61,
+            DriveDatabaseMigrations.MIGRATION_61_62,
+            DriveDatabaseMigrations.MIGRATION_62_63,
+            DriveDatabaseMigrations.MIGRATION_63_64,
+            DriveDatabaseMigrations.MIGRATION_64_65,
+            DriveDatabaseMigrations.MIGRATION_65_66,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

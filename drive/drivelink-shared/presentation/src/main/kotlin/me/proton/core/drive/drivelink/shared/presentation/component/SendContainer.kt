@@ -109,7 +109,6 @@ internal fun SendContainer(
 }
 
 @Preview(name = "dark", uiMode = Configuration.UI_MODE_NIGHT_YES)
-@Preview(name = "light", uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 fun SendContainerPreview(
     @PreviewParameter(SaveButtonViewStateParameterProvider::class) viewState: SaveButtonViewState,
@@ -124,7 +123,7 @@ fun SendContainerPreview(
     }
 }
 
-private class SaveButtonViewStateParameterProvider : PreviewParameterProvider<SaveButtonViewState> {
+class SaveButtonViewStateParameterProvider : PreviewParameterProvider<SaveButtonViewState> {
     override val values = sequenceOf(
         SaveButtonViewState(
             label = "Label",

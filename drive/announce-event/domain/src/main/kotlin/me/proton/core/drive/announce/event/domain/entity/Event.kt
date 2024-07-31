@@ -87,6 +87,7 @@ sealed class Event {
             PAUSED_DISABLED,
             UNCOMPLETED,
             PAUSE_BACKGROUND_RESTRICTIONS,
+            PREPARING,
         }
     }
 

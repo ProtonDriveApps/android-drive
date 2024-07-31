@@ -140,6 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">La sauvegarde n\'est pas autorisée.</string>
   <string name="notification_content_text_backup_paused_disabled">La sauvegarde a été désactivée.</string>
   <string name="notification_content_text_backup_paused_background_restrictions">La sauvegarde ne peut pas être exécutée en arrière-plan.</string>
+  <string name="notification_content_text_backup_preparing">Préparation de la sauvegarde</string>
   <string name="notification_content_title_download_complete">Le téléchargement est terminé.</string>
   <string name="notification_content_title_forced_sign_out">Connectez-vous</string>
   <string name="notification_content_text_forced_sign_out">Nous sommes désolés de vous interrompre, mais nous avons eu un problème de synchronisation. Nous vous invitons à vous reconnecter, nous ferons en sorte que tout se passe bien.</string>

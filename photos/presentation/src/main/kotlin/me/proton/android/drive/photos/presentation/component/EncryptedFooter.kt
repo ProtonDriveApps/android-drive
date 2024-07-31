@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -63,6 +64,8 @@ fun EncryptedFooter(modifier: Modifier = Modifier) {
 @Composable
 fun EncryptedFooterPreview() {
     ProtonTheme {
-        EncryptedFooter(Modifier.fillMaxWidth())
+        Surface {
+            EncryptedFooter(Modifier.fillMaxWidth())
+        }
     }
 }

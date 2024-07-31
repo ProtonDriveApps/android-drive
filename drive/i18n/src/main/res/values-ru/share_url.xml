@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">Только люди со ссылкой и паролем могут получить доступ к %1$s</string>
+  <string name="shared_link_settings">Настройки ссылки</string>
+  <string name="shared_link_options">Параметры ссылки</string>
   <string name="shared_link_privacy_settings">Настройки конфиденциальности</string>
   <string name="shared_link_password_protection">Защита паролем</string>
   <string name="shared_link_expiration_date">Срок действия</string>

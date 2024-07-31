@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="title_file_type">Tiedostotyyppi</string>
-  <string name="title_last_modified">Viimeksi muokattu</string>
+  <string name="title_last_modified">Muokattu viimeksi</string>
   <string name="title_size">Koko</string>
   <string name="title_sort_by">Järjestysperuste</string>
 </resources>

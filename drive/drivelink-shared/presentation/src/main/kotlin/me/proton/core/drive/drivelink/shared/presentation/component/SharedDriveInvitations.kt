@@ -35,6 +35,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -61,7 +62,6 @@ import me.proton.core.drive.contact.presentation.component.ChipItem
 import me.proton.core.drive.contact.presentation.component.ChipsListField
 import me.proton.core.drive.contact.presentation.component.ContactSuggestionState
 import me.proton.core.drive.contact.presentation.component.SuggestionItem
-import me.proton.core.drive.contact.presentation.viewstate.ContactSuggestion
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.SharedDriveInvitationsViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.PermissionViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.PermissionsViewState
@@ -99,9 +99,9 @@ fun SharedDriveInvitations(
             )
             EmailForm(
                 modifier = Modifier
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState(), reverseScrolling = true),
                 invitations = viewState.invitations,
-                contactSuggestions = viewState.contactSuggestions,
+                suggestionItems = viewState.suggestionItems,
                 onInviteesChanged = viewEvent.onInviteesChanged,
                 onSuggestionTermTyped = viewEvent.onSearchTermChanged,
                 emailValidator = viewEvent.isValidEmailAddress,
@@ -133,7 +133,7 @@ fun SharedDriveInvitations(
 @Composable
 private fun EmailForm(
     invitations: List<ShareUserInvitation>,
-    contactSuggestions: List<ContactSuggestion>,
+    suggestionItems: List<SuggestionItem>,
     onSuggestionTermTyped: (String) -> Unit,
     onInviteesChanged: (List<String>) -> Unit,
     emailValidator: (String) -> Boolean,
@@ -142,15 +142,11 @@ private fun EmailForm(
 
     Column(modifier = modifier) {
 
-        val contactSuggestionState = remember(contactSuggestions) {
+        val contactSuggestionState = remember(suggestionItems) {
             ContactSuggestionState(
-                contactSuggestions.isNotEmpty(),
-                contactSuggestions.map {
-                    SuggestionItem(
-                        it.name,
-                        it.email
-                    )
-                })
+                suggestionItems.isNotEmpty(),
+                suggestionItems
+            )
         }
         val actions = remember {
             ChipsListField.Actions(
@@ -257,25 +253,27 @@ fun SharedDriveInvitationsPreview(
     @PreviewParameter(ViewStateParameterProvider::class) viewState: SharedDriveInvitationsViewState,
 ) {
     ProtonTheme {
-        SharedDriveInvitations(
-            viewState = viewState,
-            viewEvent = object : SharedDriveInvitationsViewEvent {
-                override val onSearchTermChanged: (String) -> Unit = {}
-                override val onInviteesChanged: (List<String>) -> Unit = {}
-                override val onPermissions: () -> Unit = {}
-                override val onPermissionsChanged: (Permissions) -> Unit = {}
-                override val onBackPressed: () -> Unit = {}
-                override val onRetry: () -> Unit = {}
-                override val onSave: () -> Unit = {}
-                override val isValidEmailAddress: (String) -> Boolean = { true }
-            },
-            saveButtonViewState = SaveButtonViewState(
-                label = "Sharing with ${viewState.invitations.size} persons",
-                isVisible = viewState.invitations.isNotEmpty(),
-                isEnabled = true,
-                inProgress = false,
-            ),
-        )
+        Surface {
+            SharedDriveInvitations(
+                viewState = viewState,
+                viewEvent = object : SharedDriveInvitationsViewEvent {
+                    override val onSearchTermChanged: (String) -> Unit = {}
+                    override val onInviteesChanged: (List<String>) -> Unit = {}
+                    override val onPermissions: () -> Unit = {}
+                    override val onPermissionsChanged: (Permissions) -> Unit = {}
+                    override val onBackPressed: () -> Unit = {}
+                    override val onRetry: () -> Unit = {}
+                    override val onSave: () -> Unit = {}
+                    override val isValidEmailAddress: (String) -> Boolean = { true }
+                },
+                saveButtonViewState = SaveButtonViewState(
+                    label = "Sharing with ${viewState.invitations.size} persons",
+                    isVisible = viewState.invitations.isNotEmpty(),
+                    isEnabled = true,
+                    inProgress = false,
+                ),
+            )
+        }
     }
 }
 
@@ -313,7 +311,7 @@ class ViewStateParameterProvider : PreviewParameterProvider<SharedDriveInvitatio
             isLinkNameEncrypted = false,
             showPermissions = true,
             invitations = emptyList(),
-            contactSuggestions = emptyList(),
+            suggestionItems = emptyList(),
             permissionsViewState = PermissionsViewState(
                 options = listOf(
                     PermissionViewState(

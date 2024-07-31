@@ -36,6 +36,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.layout.getDefaultLazyLayoutKey
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -71,7 +72,9 @@ import kotlinx.coroutines.flow.flowOf
 import me.proton.core.compose.component.ErrorPadding
 import me.proton.core.compose.component.ProtonErrorMessage
 import me.proton.core.compose.component.ProtonErrorMessageWithAction
+import me.proton.core.compose.component.ProtonSolidButton
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
+import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.overline
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
@@ -336,6 +339,10 @@ fun PreviewContentAvailable(
             modifier = pointerInputModifier.padding(top = topBarHeight),
             onRenderFailed = viewEvent.onRenderFailed,
         )
+        PreviewComposable.ProtonDoc -> ProtonDocumentPreview(
+            modifier = pointerInputModifier.padding(top = topBarHeight),
+            onOpenInBrowser = viewEvent.onOpenInBrowser,
+        )
         PreviewComposable.Unknown -> UnknownPreview()
     }.exhaustive
 }
@@ -401,6 +408,7 @@ fun PreviewPlaceholder(
     fileTypeCategory: FileTypeCategory,
     modifier: Modifier = Modifier,
     message: String? = null,
+    onMessage: (() -> Unit)? = null,
 ) {
     Box(
         modifier = modifier
@@ -424,10 +432,21 @@ fun PreviewPlaceholder(
                     .align(Alignment.BottomCenter)
                     .padding(PlaceholderMessagePadding),
             ) {
-                Text(
-                    text = message,
-                    style = ProtonTheme.typography.overline(),
-                )
+                if (onMessage == null) {
+                    Text(
+                        text = message,
+                        style = ProtonTheme.typography.overline(),
+                    )
+                } else {
+                    ProtonSolidButton(
+                        onClick = onMessage,
+                    ) {
+                        Text(
+                            text = message,
+                            modifier = Modifier.padding(horizontal = DefaultSpacing)
+                        )
+                    }
+                }
             }
         }
     }
@@ -461,29 +480,32 @@ private val ProgressHeight = 2.dp
 @Composable
 fun PreviewPreviewLoadingState() {
     ProtonTheme {
-        Preview(
-            viewState = PreviewViewState(
-                navigationIconResId = 0,
-                isFullscreen = flowOf(true),
-                currentIndex = 0,
-                previewContentState = PreviewContentState.Content,
-                items = listOf(
-                    PreviewViewState.Item(
-                        key = "key",
-                        title = "Title",
-                        category = FileTypeCategory.Image,
-                        contentState = emptyFlow(),
+        Surface {
+            Preview(
+                viewState = PreviewViewState(
+                    navigationIconResId = CorePresentation.drawable.ic_proton_arrow_back,
+                    isFullscreen = flowOf(true),
+                    currentIndex = 0,
+                    previewContentState = PreviewContentState.Content,
+                    items = listOf(
+                        PreviewViewState.Item(
+                            key = "key",
+                            title = "Title",
+                            category = FileTypeCategory.Image,
+                            contentState = emptyFlow(),
+                        )
                     )
-                )
-            ),
-            viewEvent = object : PreviewViewEvent {
-                override val onTopAppBarNavigation: () -> Unit = {}
-                override val onMoreOptions: () -> Unit = {}
-                override val onSingleTap: () -> Unit = {}
-                override val onRenderFailed: (Throwable, Any) -> Unit = { _, _ -> }
-                override val mediaControllerVisibility: (Boolean) -> Unit = {}
-            },
-        )
+                ),
+                viewEvent = object : PreviewViewEvent {
+                    override val onTopAppBarNavigation: () -> Unit = {}
+                    override val onMoreOptions: () -> Unit = {}
+                    override val onSingleTap: () -> Unit = {}
+                    override val onRenderFailed: (Throwable, Any) -> Unit = { _, _ -> }
+                    override val mediaControllerVisibility: (Boolean) -> Unit = {}
+                    override val onOpenInBrowser: () -> Unit = {}
+                },
+            )
+        }
     }
 }
 
@@ -492,10 +514,12 @@ fun PreviewPreviewLoadingState() {
 @Suppress("MagicNumber")
 fun PreviewPreviewDownloading() {
     ProtonTheme {
-        PreviewDownloadingAndDecrypting(
-            state = ContentState.Downloading(flowOf(Percentage(50))),
-            fileTypeCategory = FileTypeCategory.Zip
-        )
+        Surface {
+            PreviewDownloadingAndDecrypting(
+                state = ContentState.Downloading(flowOf(Percentage(50))),
+                fileTypeCategory = FileTypeCategory.Zip
+            )
+        }
     }
 }
 
@@ -503,7 +527,9 @@ fun PreviewPreviewDownloading() {
 @Composable
 fun PreviewPreviewNotFound() {
     ProtonTheme {
-        PreviewNotFound(deferDuration = 0.seconds)
+        Surface {
+            PreviewNotFound(deferDuration = 0.seconds)
+        }
     }
 }
 
@@ -511,10 +537,12 @@ fun PreviewPreviewNotFound() {
 @Composable
 fun PreviewPreviewError() {
     ProtonTheme {
-        PreviewError(
-            message = "Error message",
-            fileTypeCategory = FileTypeCategory.Keynote,
-        )
+        Surface {
+            PreviewError(
+                message = "Error message",
+                fileTypeCategory = FileTypeCategory.Keynote,
+            )
+        }
     }
 }
 
@@ -524,6 +552,7 @@ fun FileTypeCategory.toComposable(): PreviewComposable = when (this) {
     FileTypeCategory.Pdf -> PreviewComposable.Pdf
     FileTypeCategory.Text -> PreviewComposable.Text
     FileTypeCategory.Video -> PreviewComposable.Video
+    FileTypeCategory.ProtonDoc -> PreviewComposable.ProtonDoc
     FileTypeCategory.Calendar,
     FileTypeCategory.Doc,
     FileTypeCategory.Keynote,
@@ -547,6 +576,7 @@ enum class PreviewComposable {
     Sound,
     Video,
     Pdf,
+    ProtonDoc,
     Text,
     Unknown,
 }

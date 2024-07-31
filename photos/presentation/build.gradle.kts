@@ -28,6 +28,7 @@ driveModule(
     hilt = true,
     compose = true,
     i18n = true,
+    showkase = true,
 ) {
     api(project(":photos:domain"))
     api(project(":photos:data"))

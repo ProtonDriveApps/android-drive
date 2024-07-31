@@ -59,7 +59,7 @@ val Key.keyHolder: KeyHolder
         is ShareKey -> key.keyHolder()
         is NodeKey-> key.keyHolder()
         is AddressKeys -> keyHolder
-        is PublicAddressKeys -> publicAddressKeyHolder
+        is PublicAddressKeys -> publicAddressInfoKeyHolder
     }
 
 val List<Key>.keyHolder: KeyHolder get() = object : KeyHolder {

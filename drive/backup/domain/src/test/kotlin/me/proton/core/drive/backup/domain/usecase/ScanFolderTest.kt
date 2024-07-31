@@ -31,7 +31,7 @@ import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.test.DriveRule
-import me.proton.core.drive.test.api.getPublicAddressKeys
+import me.proton.core.drive.test.api.getPublicAddressKeysAll
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -90,7 +90,7 @@ class ScanFolderTest {
             date = TimestampS(2000),
         )
         addFolder(backupFolder).getOrThrow()
-        driveRule.server.getPublicAddressKeys()
+        driveRule.server.getPublicAddressKeysAll()
     }
 
     @Test

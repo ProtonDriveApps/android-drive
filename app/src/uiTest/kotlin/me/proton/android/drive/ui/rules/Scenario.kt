@@ -25,4 +25,5 @@ annotation class Scenario(
     val isPhotos: Boolean = false,
     val isDevice: Boolean = false,
     val withSharingUser: Boolean = false,
+    val loginWithSharingUser: Boolean = false,
 )

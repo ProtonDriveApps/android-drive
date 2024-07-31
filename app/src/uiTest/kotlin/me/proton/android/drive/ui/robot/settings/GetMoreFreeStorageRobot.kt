@@ -43,14 +43,20 @@ object GetMoreFreeStorageRobot : Robot {
         }
     }
 
-    fun assertActionsDisplayed() {
-        listOf(
-            I18N.string.get_more_free_storage_action_upload_title,
-            I18N.string.get_more_free_storage_action_link_title,
-            I18N.string.get_more_free_storage_action_recovery_title,
-        ).forEach { actionTitleResId ->
-            assertAction(actionTitleResId)
-        }
+    fun assertActionUploadDisplayed() {
+        node.withText(I18N.string.get_more_free_storage_action_upload_title)
+            .await { assertIsDisplayed() }
+    }
+    fun assertActionLinkDisplayed() {
+        node.withText(I18N.string.get_more_free_storage_action_link_title)
+            .await { assertIsDisplayed() }
+    }
+    fun assertActionShareDisplayed() {
+        node.withText(I18N.string.get_more_free_storage_action_share_title)
+            .await { assertIsDisplayed() }
+    }
+    fun assertActionRecoveryDisplayed() {
+        node.withText(I18N.string.get_more_free_storage_action_recovery_title).await { assertIsDisplayed() }
     }
 
     private fun assertAction(titleResId: Int) {

@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">Vain henkilöt, joilla on linkki ja salasana, voivat avata %1$sn</string>
+  <string name="shared_link_settings">Linkkiasetukset</string>
+  <string name="shared_link_options">Linkkivalinnat</string>
   <string name="shared_link_privacy_settings">Yksityisyysasetukset</string>
   <string name="shared_link_password_protection">Salasanasuojaus</string>
   <string name="shared_link_expiration_date">Voimassaolo päättyy</string>

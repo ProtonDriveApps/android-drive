@@ -1,5 +1,5 @@
 default:
-  image: ${CI_REGISTRY}/android/shared/docker-android/oci:v2.0.0
+  image: harbor.protontech.ch/android-shared/docker-android/oci:v2.1.1
   tags:
     - shared-small
 
@@ -28,6 +28,7 @@ before_script:
   - if [[ $CI_COMMIT_REF_NAME == "candidate" ]]; then git fetch --unshallow origin HEAD; fi
 
 stages:
+  - screenshots
   - i18n
   - prepare
   - analyze
@@ -38,6 +39,24 @@ stages:
   - report
   - publish
   - cleanup
+
+screenshots:generate:
+  stage: screenshots
+  # We need to mark it as failable in order not to prevent the pipeline from launching
+  allow_failure: true
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "web" # Do not execute if the pipeline is a manual one
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule" # Do not execute if the pipeline is a scheduled one
+      when: never
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH' # Do not run if it's a merge to the default branch, screenshots should already have been generated
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" # Run manual if it's a MR
+      when: manual
+  tags:
+    - xlarge-k8s
+  script:
+    - screenshot-tests/ci-scripts/generateScreenshotsIfNeeded.sh
 
 prepare-build:
   stage: prepare
@@ -150,7 +169,20 @@ dev debug unit test:
   tags:
     - xlarge-k8s
   script:
-    - ./gradlew testDevDebugUnitTest testDebugUnitTest
+    - ./gradlew testDevDebugUnitTest testDebugUnitTest -x :screenshot-tests:presentation:testDebugUnitTest
+  artifacts:
+    expire_in: 1 week
+    reports:
+      junit: ./**/build/test-results/test*DebugUnitTest/TEST-*.xml
+
+dev debug screenshot tests:
+  stage: test
+  needs:
+    - job: "build:dev:debug"
+  tags:
+    - xlarge-k8s
+  script:
+    - ./gradlew screenshot-tests:presentation:verifyPaparazziDebug
   artifacts:
     expire_in: 1 week
     reports:
@@ -184,7 +216,7 @@ upload to firebase:
     - gcloud config set project $CLOUD_PROJECT_ID --quiet
     - gcloud auth activate-service-account --key-file app/service_account.json --quiet
     - gcloud firebase test android run firebase-device-config.yml:${DEVICE_CONFIG}
-      --timeout 30m
+      --timeout 60m
       --app $REMOTE_APK
       --test $TEST_APP
       --num-flaky-test-attempts=1
@@ -263,6 +295,9 @@ drive-sorting-presentation-firebase-tests:
     ENV_VARIABLES: "host=${DYNAMIC_DOMAIN},proxyToken=${PROXY_TOKEN},clearPackageData=true,debug=false"
   allow_failure: true
   rules:
+    - if: $CI_DEVICE_CONFIG != null
+      variables:
+        DEVICE_CONFIG: $CI_DEVICE_CONFIG
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
     - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:all/'
@@ -283,12 +318,17 @@ test:firebase:e2e:shard-shares:
 test:firebase:e2e:shard-files-1:
   extends: .app-firebase-tests
   variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.details, package me.proton.android.drive.ui.test.flow.rename, package me.proton.android.drive.ui.test.flow.share, package me.proton.android.drive.ui.test.flow.trash"
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.details, package me.proton.android.drive.ui.test.flow.rename, package me.proton.android.drive.ui.test.flow.share.link, package me.proton.android.drive.ui.test.flow.trash"
 
 test:firebase:e2e:shard-files-2:
   extends: .app-firebase-tests
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.preview, package me.proton.android.drive.ui.test.flow.move, package me.proton.android.drive.ui.test.flow.offline"
+
+test:firebase:e2e:shard-files-3:
+  extends: .app-firebase-tests
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.share.user"
 
 test:firebase:e2e:shard-creation:
   extends: .app-firebase-tests
@@ -394,12 +434,20 @@ test:firebase:e2e:settings:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.settings"
     DEVICE_CONFIG: "quickTest-3"
 
-test:firebase:e2e:share:
+test:firebase:e2e:share-link:
   extends: .app-firebase-tests
   rules:
-    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:share/'
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:share-link/'
   variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.share"
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.share.link"
+    DEVICE_CONFIG: "quickTest-2"
+
+test:firebase:e2e:share-user:
+  extends: .app-firebase-tests
+  rules:
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:share-user/'
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.share.user"
     DEVICE_CONFIG: "quickTest-2"
 
 test:firebase:e2e:subscription:

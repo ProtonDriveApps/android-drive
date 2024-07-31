@@ -26,4 +26,5 @@
   <string name="file_info_title_folder">Rincian folder</string>
   <string name="file_info_title_file">Rincian berkas</string>
   <string name="file_info_captured_on">Diambil pada</string>
+  <string name="file_info_permissions">Perizinan</string>
 </resources>

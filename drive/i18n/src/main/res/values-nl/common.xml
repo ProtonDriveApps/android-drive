@@ -73,6 +73,7 @@
   <string name="common_type_pages">Pages-bestand</string>
   <string name="common_type_pdf">PDF-document</string>
   <string name="common_type_ppt">Presentatie</string>
+  <string name="common_type_proton_doc">Proton-document</string>
   <string name="common_type_text">Tekst</string>
   <string name="common_type_trustedkey">Vertrouwde sleutel</string>
   <string name="common_type_unknown">Binair</string>
@@ -89,7 +90,13 @@
             "Name must not exceed 280 characters"
     -->
   <string name="common_error_name_too_long">De naam mag niet langer zijn dan %1$d tekens.</string>
-  <string name="common_error_name_with_forbidden_characters">Naam mag geen onzichtbare tekens bevatten, \"/\" of \"\\"</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">Naam mag geen onzichtbare tekens, \"%1$s\" of \"%2$s\" bevatten</string>
   <string name="common_error_name_periods">Naam mag niet \".\" of \"..\"</string>
   <string name="common_error_no_internet">Geen internetverbinding</string>
   <string name="common_error_http_5xx">Er is een serverfout opgetreden.</string>

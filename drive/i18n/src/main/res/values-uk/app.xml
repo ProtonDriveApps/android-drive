@@ -150,6 +150,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Резервне копіювання не дозволено</string>
   <string name="notification_content_text_backup_paused_disabled">Резервне копіювання було вимкнено</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Резервне копіювання не може працювати на задньому плані</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
   <string name="notification_content_title_download_complete">Звантаження завершено</string>
   <string name="notification_content_title_forced_sign_out">Увійдіть</string>
   <string name="notification_content_text_forced_sign_out">Перепрошуємо, що перериваємо! У нас виникла проблема з синхронізацією. Увійдіть ще раз, і все працюватиме без збоїв.</string>

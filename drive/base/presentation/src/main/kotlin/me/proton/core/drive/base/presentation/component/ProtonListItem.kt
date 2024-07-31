@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -92,14 +93,15 @@ fun ProtonListItem(
 }
 
 @Preview
-@Suppress("unused")
 @Composable
-private fun PreviewListItem() {
+fun PreviewListItem() {
     ProtonTheme {
-        ProtonListItem(
-            icon = ColorPainter(Color.Blue),
-            title = "Title",
-        )
+        Surface {
+            ProtonListItem(
+                icon = ColorPainter(Color.Blue),
+                title = "Title",
+            )
+        }
     }
 }
 

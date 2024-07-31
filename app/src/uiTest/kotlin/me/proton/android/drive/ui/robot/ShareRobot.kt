@@ -85,27 +85,37 @@ object ShareRobot : NavigationBarRobot, Robot {
         stopSharingButton.scrollTo().click()
     }
 
-    fun passwordToggleIsOn() = passwordToggle.interaction.assertIsOn()
-    fun passwordToggleIsOff() = passwordToggle.interaction.assertIsOff()
-    fun expirationDateToggleIsOn() = expirationDateToggle.interaction.assertIsOn()
-    fun expirationDateToggleIsOff() = expirationDateToggle.interaction.assertIsOff()
+    fun passwordToggleIsOn() = passwordToggle.await { assertIsAsserted() }
+    fun passwordToggleIsOff() = passwordToggle.await { assertIsNotAsserted() }
+    fun expirationDateToggleIsOn() = expirationDateToggle.await { assertIsAsserted() }
+    fun expirationDateToggleIsOff() = expirationDateToggle.await { assertIsNotAsserted() }
     fun publicAccessibilityDescriptionWasShown(
         isFile: Boolean = true,
-    ) = accessibilityDescription.assertContainsText(
-        targetContext.getString(
-            I18N.string.shared_link_accessibility_description_public,
-            if (isFile) "file" else "folder",
+    ) = accessibilityDescription.await {
+        assertContainsText(
+            targetContext.getString(
+                I18N.string.shared_link_accessibility_description_public,
+                targetContext.getString(
+                    if (isFile) I18N.string.shared_link_file
+                    else I18N.string.shared_link_folder
+                ),
+            )
         )
-    )
+    }
 
     fun passwordProtectedAccessibilityDescriptionWasShown(
         isFile: Boolean = true,
-    ) = accessibilityDescription.assertContainsText(
-        targetContext.getString(
-            I18N.string.shared_link_accessibility_description_password_protected,
-            if (isFile) "file" else "folder",
+    ) = accessibilityDescription.await {
+        assertContainsText(
+            targetContext.getString(
+                I18N.string.shared_link_accessibility_description_password_protected,
+                targetContext.getString(
+                    if (isFile) I18N.string.shared_link_file
+                    else I18N.string.shared_link_folder
+                ),
+            )
         )
-    )
+    }
 
     fun passwordCopiedToClipboardWasShown() = messageNotificationPasswordCopiedToClipboard
         .await { assertIsDisplayed() }
@@ -123,8 +133,14 @@ object ShareRobot : NavigationBarRobot, Robot {
             )
         }
 
-    fun verifyShareLinkFolder(name: String) = verifyShareLink(name, "folder")
-    fun verifyShareLinkFile(name: String) = verifyShareLink(name, "file")
+    fun verifyShareLinkFolder(name: String) = verifyShareLink(
+        name = name,
+        type = targetContext.resources.getString(I18N.string.shared_link_folder)
+    )
+    fun verifyShareLinkFile(name: String) = verifyShareLink(
+        name = name,
+        type = targetContext.resources.getString(I18N.string.shared_link_file)
+    )
 
     private fun verifyShareLink(name: String, type: String) {
         node.withText(

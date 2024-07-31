@@ -25,11 +25,14 @@ import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.share.crypto.domain.entity.ShareInvitationRequest
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.data.api.ShareInvitationApiDataSource
+import me.proton.core.drive.share.user.data.api.entities.ShareExternalInvitationRequestDto
 import me.proton.core.drive.share.user.data.api.entities.ShareInvitationRequestDto
+import me.proton.core.drive.share.user.data.api.request.CreateShareExternalInvitationRequest
 import me.proton.core.drive.share.user.data.api.request.CreateShareInvitationRequest
 import me.proton.core.drive.share.user.data.api.request.UpdateShareInvitationRequest
 import me.proton.core.drive.share.user.data.db.ShareUserDatabase
 import me.proton.core.drive.share.user.data.extension.toEntity
+import me.proton.core.drive.share.user.data.extension.toShareUserExternalInvitee
 import me.proton.core.drive.share.user.data.extension.toShareUserInvitee
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.repository.ShareInvitationRepository
@@ -85,27 +88,26 @@ class ShareInvitationRepositoryImpl @Inject constructor(
             invitation.toShareUserInvitee()
         }
 
-
     override suspend fun createInvitation(
         shareId: ShareId,
-        request: ShareInvitationRequest,
-    ): ShareUser.Invitee = api.postInvitation(
-        userId = shareId.userId,
-        shareId = shareId.id,
-        request = CreateShareInvitationRequest(
-            ShareInvitationRequestDto(
-                inviterEmail = request.inviterEmail,
-                inviteeEmail = request.inviteeEmail,
-                permissions = request.permissions.value,
-                keyPacket = request.keyPacket,
-                keyPacketSignature = request.keyPacketSignature,
+        request: ShareInvitationRequest.Internal,
+    ) = api.postInvitation(
+            userId = shareId.userId,
+            shareId = shareId.id,
+            request = CreateShareInvitationRequest(
+                ShareInvitationRequestDto(
+                    inviterEmail = request.inviterEmail,
+                    inviteeEmail = request.inviteeEmail,
+                    permissions = request.permissions.value,
+                    keyPacket = request.keyPacket,
+                    keyPacketSignature = request.keyPacketSignature,
+                )
             )
-        )
-    ).invitation.toShareUserInvitee().also { shareUserInvitee ->
-        db.shareInvitationDao.insertOrUpdate(
-            shareUserInvitee.toEntity(shareId)
-        )
-    }
+        ).invitation.toShareUserInvitee().also { shareUserInvitee ->
+            db.shareInvitationDao.insertOrUpdate(
+                shareUserInvitee.toEntity(shareId)
+            )
+        }
 
     override suspend fun updateInvitation(
         shareId: ShareId,

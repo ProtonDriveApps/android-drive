@@ -20,10 +20,11 @@
   <string name="file_info_uploaded_by_entry">Cargado por</string>
   <string name="file_info_location_entry">Ubicación</string>
   <string name="file_info_last_modified_entry">Modificado</string>
-  <string name="file_info_number_of_accesses_entry">Número de descargas</string>
+  <string name="file_info_number_of_accesses_entry"># de descargas</string>
   <string name="file_info_share_url_expiration_time">Tiempo de expiración del enlace</string>
   <string name="file_info_share_url_no_expiration_time">Nunca</string>
   <string name="file_info_title_folder">Detalles de la carpeta</string>
   <string name="file_info_title_file">Detalles del archivo</string>
   <string name="file_info_captured_on">Fecha de la foto</string>
+  <string name="file_info_permissions">Permissions</string>
 </resources>

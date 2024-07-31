@@ -24,4 +24,5 @@ interface PreviewViewEvent {
     val onSingleTap: () -> Unit
     val onRenderFailed: (Throwable, Any) -> Unit
     val mediaControllerVisibility: (Boolean) -> Unit
+    val onOpenInBrowser: () -> Unit
 }

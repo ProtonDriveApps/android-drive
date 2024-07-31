@@ -22,7 +22,7 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 
 sealed interface PhotoBackupState {
     data class Enabled(
-        val folderName: String,
+        val folderNames: List<String>,
         val backupFolders: List<BackupFolder>,
     ) : PhotoBackupState
     data class NoFolder(

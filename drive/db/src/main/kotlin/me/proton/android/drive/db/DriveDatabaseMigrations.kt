@@ -47,6 +47,7 @@ import me.proton.core.featureflag.data.db.FeatureFlagDatabase
 import me.proton.core.humanverification.data.db.HumanVerificationDatabase
 import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.keytransparency.data.local.KeyTransparencyDatabase
+import me.proton.core.label.data.local.LabelDatabase
 import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.payment.data.local.db.PaymentDatabase
 import me.proton.core.push.data.local.db.PushDatabase
@@ -54,6 +55,7 @@ import me.proton.core.telemetry.data.db.TelemetryDatabase
 import me.proton.core.user.data.db.AddressDatabase
 import me.proton.core.user.data.db.UserDatabase
 import me.proton.core.user.data.db.UserKeyDatabase
+import me.proton.core.userrecovery.data.db.DeviceRecoveryDatabase
 import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
@@ -383,6 +385,40 @@ object DriveDatabaseMigrations {
     val MIGRATION_60_61 = object : Migration(60, 61) {
         override fun migrate(database: SupportSQLiteDatabase) {
             LogDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_61_62 = object : Migration(61, 62) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            UserKeyDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_62_63 = object : Migration(62, 63) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            DeviceRecoveryDatabase.MIGRATION_0.migrate(database)
+            DeviceRecoveryDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_63_64 = object : Migration(63, 64) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            AccountDatabase.MIGRATION_8.migrate(database)
+            UserSettingsDatabase.MIGRATION_7.migrate(database)
+            PublicAddressDatabase.MIGRATION_3.migrate(database)
+            EventMetadataDatabase.MIGRATION_3.migrate(database)
+        }
+    }
+
+    val MIGRATION_64_65 = object : Migration(64, 65) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            LabelDatabase.MIGRATION_0.migrate(database)
+        }
+    }
+
+    val MIGRATION_65_66 = object : Migration(65, 66) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            ShareUserDatabase.MIGRATION_5.migrate(database)
         }
     }
 }

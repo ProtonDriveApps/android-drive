@@ -19,11 +19,11 @@
 <resources>
   <string name="log_title">Logboek</string>
   <string name="log_export_successfully_completed">Logboekbestand opgeslagen.</string>
-  <string name="log_level">Level</string>
+  <string name="log_level">Niveau</string>
   <string name="log_category">Categorie</string>
   <string name="content_description_save_log_file">Sla het log bestand op.</string>
-  <string name="content_description_more_log_options">More log options</string>
-  <string name="log_level_normal">Regular</string>
+  <string name="content_description_more_log_options">Meer log-opties</string>
+  <string name="log_level_normal">Regulier</string>
   <string name="log_level_warning">Waarschuwing</string>
   <string name="log_level_error">Fout</string>
   <string name="log_origin_upload">Uploaden</string>

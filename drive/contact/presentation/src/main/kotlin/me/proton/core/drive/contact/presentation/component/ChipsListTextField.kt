@@ -97,7 +97,8 @@ sealed class ChipItem(open val value: String) {
 @Stable
 data class SuggestionItem(
     val header: String,
-    val subheader: String
+    val subheader: String,
+    val value: String,
 )
 
 /*
@@ -247,7 +248,7 @@ fun ChipsListTextField(
 
                             },
                             onClick = {
-                                state.typeWord(selectionOption.subheader)
+                                state.typeWord(selectionOption.value)
                                 actions.onSuggestionsDismissed()
                             },
                             contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding

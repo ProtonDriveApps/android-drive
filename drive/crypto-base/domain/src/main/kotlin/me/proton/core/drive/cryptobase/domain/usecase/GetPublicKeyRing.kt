@@ -19,7 +19,7 @@ package me.proton.core.drive.cryptobase.domain.usecase
 
 import me.proton.core.crypto.common.context.CryptoContext
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.cryptobase.domain.entity.PublicAddressKeyHolder
+import me.proton.core.drive.cryptobase.domain.entity.PublicAddressInfoKeyHolder
 import me.proton.core.key.domain.entity.key.PublicKeyRing
 import me.proton.core.key.domain.entity.keyholder.KeyHolder
 import me.proton.core.key.domain.extension.publicKeyRing
@@ -30,7 +30,7 @@ class GetPublicKeyRing @Inject constructor(
 ) {
     operator fun invoke(keyHolder: KeyHolder): Result<PublicKeyRing> = coRunCatching {
         when (keyHolder) {
-            is PublicAddressKeyHolder -> keyHolder.publicAddress.publicKeyRing()
+            is PublicAddressInfoKeyHolder -> keyHolder.publicAddressInfo.address.keys.publicKeyRing()
             else -> keyHolder.publicKeyRing(cryptoContext)
         }
     }

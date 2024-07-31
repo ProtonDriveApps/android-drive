@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.photos.presentation.component
 
+import androidx.compose.animation.core.EaseInOutElastic
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -30,6 +31,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -66,6 +68,7 @@ fun PhotosStatesIndicator(
             PhotosFailedIndicator(modifier)
         }
 
+        is PhotosStatusViewState.Preparing -> PhotosPreparingIndicator(modifier)
         is PhotosStatusViewState.InProgress -> PhotosProgressIndicator(modifier)
     }
 }
@@ -132,6 +135,31 @@ private fun PhotosProgressIndicator(modifier: Modifier = Modifier) {
 }
 
 @Composable
+private fun PhotosPreparingIndicator(modifier: Modifier = Modifier) {
+    val infiniteTransition = rememberInfiniteTransition(label = "hourglass-transition")
+    val angle by infiniteTransition.animateFloat(
+        label = "hourglass-animation",
+        initialValue = 0F,
+        targetValue = 180F,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = EaseInOutElastic)
+        )
+    )
+
+    val color = ProtonTheme.colors.brandNorm
+    PhotosStateIndicatorContainer(
+        modifier = modifier,
+        color = color,
+    ) {
+        PhotosStateIndicatorIcon(
+            modifier = Modifier.rotate(angle),
+            color = color,
+            icon = CorePresentation.drawable.ic_proton_hourglass,
+        )
+    }
+}
+
+@Composable
 private fun PhotosFailedIndicator(modifier: Modifier = Modifier) {
     PhotosStatesIndicator(
         modifier = modifier,
@@ -189,50 +217,70 @@ private fun PhotosStatesIndicator(color: Color, icon: Int, modifier: Modifier = 
 
 @Preview
 @Composable
-private fun PhotosDisableIconPreview() {
+fun PhotosDisableIconPreview() {
     ProtonTheme {
-        PhotosDisableIndicator()
+        Surface {
+            PhotosDisableIndicator()
+        }
     }
 }
 
 @Preview
 @Composable
-private fun PhotosMissingFolderIconPreview() {
+fun PhotosMissingFolderIconPreview() {
     ProtonTheme {
-        PhotosMissingFolderIndicator()
+        Surface {
+            PhotosMissingFolderIndicator()
+        }
     }
 }
 
 
 @Preview
 @Composable
-private fun PhotosCompleteIconPreview() {
+fun PhotosCompleteIconPreview() {
     ProtonTheme {
-        PhotosCompleteIndicator()
+        Surface {
+            PhotosCompleteIndicator()
+        }
     }
 }
 
 @Preview
 @Composable
-private fun PhotosUncompletedIconPreview() {
+fun PhotosUncompletedIconPreview() {
     ProtonTheme {
-        PhotosUncompletedIndicator()
+        Surface {
+            PhotosUncompletedIndicator()
+        }
     }
 }
 
 @Preview
 @Composable
-private fun PhotosProgressIconPreview() {
+private fun PhotosPreparingIconPreview() {
     ProtonTheme {
-        PhotosProgressIndicator()
+        PhotosPreparingIndicator()
     }
 }
 
 @Preview
 @Composable
-private fun PhotosFailedIconPreview() {
+fun PhotosProgressIconPreview() {
     ProtonTheme {
-        PhotosFailedIndicator()
+        Surface {
+            PhotosProgressIndicator()
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PhotosFailedIconPreview() {
+    ProtonTheme {
+        Surface {
+            PhotosFailedIndicator()
+        }
     }
 }
 
@@ -240,6 +288,8 @@ private fun PhotosFailedIconPreview() {
 @Composable
 private fun PhotosFailedConnectivityIndicatorPreview() {
     ProtonTheme {
-        PhotosFailedConnectivityIndicator()
+        Surface {
+            PhotosFailedConnectivityIndicator()
+        }
     }
 }

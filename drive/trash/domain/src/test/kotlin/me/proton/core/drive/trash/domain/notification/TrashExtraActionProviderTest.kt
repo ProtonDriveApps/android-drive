@@ -20,7 +20,7 @@ package me.proton.core.drive.trash.domain.notification
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.data.api.response.Response
 import me.proton.core.drive.base.domain.extension.firstSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult

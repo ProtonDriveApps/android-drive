@@ -128,7 +128,7 @@ abstract class RenameViewModel(
 
                         ForbiddenCharacters -> appContext.getString(
                             I18N.string.link_rename_error_name_with_forbidden_characters
-                        )
+                        ).format("/", "\\")
 
                         Periods -> appContext.getString(I18N.string.link_rename_error_name_periods)
                         else -> logDefaultMessage(

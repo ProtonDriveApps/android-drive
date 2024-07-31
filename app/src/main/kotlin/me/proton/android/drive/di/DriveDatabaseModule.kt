@@ -68,12 +68,14 @@ import me.proton.core.humanverification.data.db.HumanVerificationDatabase
 import me.proton.core.key.data.db.KeySaltDatabase
 import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.keytransparency.data.local.KeyTransparencyDatabase
+import me.proton.core.label.data.local.LabelDatabase
 import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.payment.data.local.db.PaymentDatabase
 import me.proton.core.push.data.local.db.PushDatabase
 import me.proton.core.telemetry.data.db.TelemetryDatabase
 import me.proton.core.user.data.db.AddressDatabase
 import me.proton.core.user.data.db.UserDatabase
+import me.proton.core.userrecovery.data.db.DeviceRecoveryDatabase
 import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
@@ -147,6 +149,9 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideContactDatabase(db: DriveDatabase): ContactDatabase
+
+    @Binds
+    abstract fun provideLabelDatabase(db: DriveDatabase): LabelDatabase
 
     @Binds
     abstract fun provideFeatureFlagDatabase(db: DriveDatabase): FeatureFlagDatabase
@@ -249,4 +254,7 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideLogDatabase(appDatabase: DriveDatabase): LogDatabase
+
+    @Binds
+    abstract fun provideDeviceRecoveryDatabase(appDatabase: DriveDatabase): DeviceRecoveryDatabase
 }

@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.photos.domain.usecase
 
+import me.proton.android.drive.photos.domain.entity.SetupPhotosBackupResult
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BucketRepository
 import me.proton.core.drive.backup.domain.usecase.AddFolder
@@ -35,22 +36,24 @@ class SetupPhotosBackup @Inject constructor(
 
     suspend operator fun invoke(
         folderId: FolderId,
-        folderName: String,
+        folderNames: List<String>,
     ) = coRunCatching {
         setupPhotosConfigurationBackup(folderId).getOrThrow()
         val bucketEntries = bucketRepository.getAll()
         bucketEntries.filter { entry ->
-            entry.bucketName == folderName
+            entry.bucketName in folderNames
         }.map { entry ->
             BackupFolder(
                 bucketId = entry.bucketId,
                 folderId = folderId,
-            )
-        }.onEach { backupFolder ->
+            ) to entry.bucketName
+        }.onEach { (backupFolder, _) ->
             addFolder(backupFolder).getOrThrow()
+        }.map { (backupFolder, folderName) ->
+            SetupPhotosBackupResult(backupFolder, requireNotNull(folderName))
         }.also { defaultBucketEntries ->
             if (defaultBucketEntries.isEmpty()) {
-                CoreLogger.w(BACKUP, "No bucket with name: $folderName in $bucketEntries")
+                CoreLogger.w(BACKUP, "No bucket with name: $folderNames in $bucketEntries")
             } else {
                 CoreLogger.d(BACKUP, "Setup photos backup for ${defaultBucketEntries.size} buckets")
             }

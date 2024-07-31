@@ -14,9 +14,13 @@ import me.proton.core.drive.db.test.volume
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.test.DriveRule
 import me.proton.core.drive.test.api.getPublicAddressKeys
+import me.proton.core.drive.test.api.getPublicAddressKeysAll
 import me.proton.core.drive.test.api.jsonResponse
+import me.proton.core.key.data.api.response.ActivePublicKeysResponse
+import me.proton.core.key.data.api.response.AddressDataResponse
 import me.proton.core.key.data.api.response.PublicAddressKeyResponse
 import me.proton.core.key.data.api.response.PublicAddressKeysResponse
+import me.proton.core.key.domain.entity.key.KeyFlags
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -54,11 +58,10 @@ class CreateShareInvitationRequestTest {
     @Test
     fun `happy path`() = runTest {
         driveRule.server.run {
-            getPublicAddressKeys()
+            getPublicAddressKeysAll()
         }
         createShareInvitationRequest(
             shareId = standardShareId,
-            inviterEmail = "inviter@proton.me",
             inviteeEmail = "invitee@proton.me",
             permissions = Permissions(),
         ).getOrThrow()
@@ -67,24 +70,27 @@ class CreateShareInvitationRequestTest {
     @Test(expected = CryptoException::class)
     fun `fails crypto`() = runTest {
         driveRule.server.run {
-            getPublicAddressKeys {
+            getPublicAddressKeysAll {
                 jsonResponse {
                     val email = recordedRequest.requestUrl?.queryParameter("Email")
-                    PublicAddressKeysResponse(
-                        recipientType = 1,
-                        keys = listOf(
-                            PublicAddressKeyResponse(
-                                flags = 8,
-                                publicKey = "public-key-$email"
+                    ActivePublicKeysResponse(
+                        address = AddressDataResponse(
+                            keys = listOf(
+                                PublicAddressKeyResponse(
+                                    flags = KeyFlags.EmailNoSign,
+                                    publicKey = "public-key-$email",
+                                )
                             )
-                        )
+                        ),
+                        warnings = emptyList(),
+                        protonMx = false,
+                        isProton = 1,
                     )
                 }
             }
         }
         createShareInvitationRequest(
             shareId = standardShareId,
-            inviterEmail = "inviter@proton.me",
             inviteeEmail = "invitee@proton.me",
             permissions = Permissions(),
         ).getOrThrow()

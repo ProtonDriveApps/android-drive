@@ -22,7 +22,7 @@ import android.content.Context
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
 import me.proton.core.drive.base.domain.extension.avoidDuplicateFileName
 import me.proton.core.drive.base.domain.extension.trimForbiddenChars

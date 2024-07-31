@@ -73,6 +73,7 @@
   <string name="common_type_pages">Fitxer Pages</string>
   <string name="common_type_pdf">Document PDF</string>
   <string name="common_type_ppt">Presentació</string>
+  <string name="common_type_proton_doc">Document Proton</string>
   <string name="common_type_text">Text</string>
   <string name="common_type_trustedkey">Clau de confiança</string>
   <string name="common_type_unknown">Binari</string>
@@ -89,7 +90,13 @@
             "Name must not exceed 280 characters"
     -->
   <string name="common_error_name_too_long">El nom no pot excedir els %1$d caràcters.</string>
-  <string name="common_error_name_with_forbidden_characters">El nom no pot incloure caràcters invisibles, \"/\" o \"\\"</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">El nom no pot incloure caràcters invisibles, \"%1$s\" or\"%2$s\".</string>
   <string name="common_error_name_periods">El nom no pot ser \".\" o \"..\"</string>
   <string name="common_error_no_internet">Sense connexió a internet</string>
   <string name="common_error_http_5xx">S\'ha produït un error en el servidor.</string>
@@ -164,7 +171,7 @@
         Examples:
             "Downloading schedule.pdf failed"
     -->
-  <string name="common_in_app_notification_downloading_failed">Error descarregant %1$s</string>
+  <string name="common_in_app_notification_downloading_failed">Ha fallat la baixada de %1$s</string>
   <string name="common_in_app_notification_download_failed">Error de descàrrega</string>
   <!--
         Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"

@@ -31,7 +31,7 @@
   <string name="title_empty_trash">La paperera és buida.</string>
   <string name="title_empty_trash_action">Buida la paperera</string>
   <string name="title_files_confirm_deletion">Voleu suprimir permanentment?</string>
-  <string name="title_default_home_screen_tab">Choose default home screen tab</string>
+  <string name="title_default_home_screen_tab">Trieu la pestanya per defecte de la pantalla d\'inici</string>
   <!-- endregion -->
   <string name="menu_item_header_title_app">Aplicació</string>
   <string name="description_signing_out">S\'està tancant la sessió…</string>
@@ -140,6 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Les còpies de seguretat no estan permeses.</string>
   <string name="notification_content_text_backup_paused_disabled">S\'ha desactivat la còpia de seguretat.</string>
   <string name="notification_content_text_backup_paused_background_restrictions">La còpia de seguretat no es pot executar en segon pla</string>
+  <string name="notification_content_text_backup_preparing">Preparació de la còpia de seguretat</string>
   <string name="notification_content_title_download_complete">Descàrrega completa</string>
   <string name="notification_content_title_forced_sign_out">Inicia la sessió</string>
   <string name="notification_content_text_forced_sign_out">Lamentem la interrupció. Hem tingut un problema amb la sincronització. Inicieu sessió de nou i tot funcionarà sense problemes.</string>
@@ -149,7 +150,7 @@
   <string name="notification_channel_background_title">Segon pla</string>
   <string name="notification_channel_background_description">Canal per a operacions en segon pla com a còpia de seguretat</string>
   <string name="notification_channel_transfer_title">Transferència</string>
-  <string name="notification_channel_transfer_description">Canal de notificacions per a emmagatzematge al núvol, de càrrega i descàrrega</string>
+  <string name="notification_channel_transfer_description">Canal de notificacions per a emmagatzematge al núvol, càrrega i descàrrega</string>
   <string name="notification_channel_warning_title">Advertència</string>
   <string name="notification_channel_warning_description">Canal per a advertiments que requereixen una acció de l\'usuari</string>
   <!-- endregion -->
@@ -168,9 +169,9 @@
   <string name="description_files_stop_sharing">Això esborrarà l\'enllaç i eliminarà l\'accés al vostre fitxer o carpeta per a qualsevol persona que el tingui.</string>
   <string name="description_files_stop_sharing_action_success">L\'enllaç al vostre fitxer ha estat esborrat.</string>
   <string name="description_files_stop_sharing_action_error">Error en esborrar l\'enllaç al vostre fitxer.</string>
-  <string name="description_files_stop_all_sharing">Això suprimirà l\'enllaç i l\'accés a tothom.</string>
+  <string name="description_files_stop_all_sharing">Això eliminarà l\'enllaç i l\'accés a tothom.</string>
   <string name="description_files_stop_all_sharing_action_success">S\'ha suprimit l\'ús compartit al vostre fitxer.</string>
-  <string name="description_files_stop_all_sharing_action_error">S\'ha produït un error en suprimir l\'ús compartit al seu fitxer.</string>
+  <string name="description_files_stop_all_sharing_action_error">S\'ha produït un error en eliminar l\'ús compartit al vostre fitxer.</string>
   <string name="ignore_file_signature_action">Veure de totes maneres</string>
   <string name="action_empty_files_add_files">Carrega</string>
   <string name="error_could_not_send_file">S\'ha produït un error mentre s\'intentava enviar el fitxer.</string>
@@ -190,17 +191,17 @@
         Example:
             "Unlock 5 GB of secure storage"
     -->
-  <string name="get_more_free_storage_title">Desbloquegi %1$s d\'emmagatzematge gratuït</string>
-  <string name="get_more_free_storage_description">Completi aquests passos durant els primers 30 dies per obtenir una millora gratuïta d\'emmagatzematge.</string>
-  <string name="get_more_free_storage_action_upload_title">Carregui un fitxer O habiliti la còpia de seguretat de les fotos</string>
-  <string name="get_more_free_storage_action_upload_subtitle">Es xifraran tots els seus fitxers.</string>
+  <string name="get_more_free_storage_title">Desbloquegeu %1$s d\'emmagatzematge gratuït</string>
+  <string name="get_more_free_storage_description">Completeu aquests passos durant els primers 30 dies per obtenir una millora gratuïta d\'emmagatzematge.</string>
+  <string name="get_more_free_storage_action_upload_title">Carregueu un fitxer O habiliteu la còpia de seguretat de les fotos</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Es xifraran tots els vostres fitxers.</string>
   <string name="get_more_free_storage_action_link_title">Crea un enllaç per a compartir</string>
   <!--
         Variable %1$s is a @string/common_get_link_action in bold
         Example:
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
-  <string name="get_more_free_storage_action_link_subtitle">Seleccioni qualsevol fitxer o carpeta. Obri el menú d\'opcions i premi %1$s.</string>
+  <string name="get_more_free_storage_action_link_subtitle">Seleccioneu qualsevol fitxer o carpeta. Obriu el menú d\'opcions i premeu %1$s.</string>
   <string name="get_more_free_storage_action_share_title">Compartiu un fitxer</string>
   <string name="get_more_free_storage_action_share_subtitle">És fàcil i segur.</string>
   <string name="get_more_free_storage_action_recovery_title">Configura un mètode de recuperació</string>
@@ -209,7 +210,7 @@
         Example:
             "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
     -->
-  <string name="get_more_free_storage_action_recovery_subtitle">Iniciï la sessió a %1$s i, tot seguit, vagi a Preferències -&gt; Recuperació.</string>
+  <string name="get_more_free_storage_action_recovery_subtitle">Inicieu la sessió a %1$s i, tot seguit, aneu a Preferències -&gt; Recuperació.</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
         Example:

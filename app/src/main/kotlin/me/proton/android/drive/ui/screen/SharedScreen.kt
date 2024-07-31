@@ -24,6 +24,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -56,12 +57,14 @@ fun SharedScreen(
     homeScaffoldState.drawerGesturesEnabled.value = viewState.filesViewState.drawerGesturesEnabled
     viewModel.HandleHomeEffect(homeScaffoldState)
 
-    val viewEvent = remember {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val viewEvent = remember(lifecycle) {
         viewModel.viewEvent(
             navigateToFiles = navigateToFiles,
             navigateToPreview = navigateToPreview,
             navigateToSortingDialog = navigateToSortingDialog,
             navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+            lifecycle = lifecycle,
         )
     }
 

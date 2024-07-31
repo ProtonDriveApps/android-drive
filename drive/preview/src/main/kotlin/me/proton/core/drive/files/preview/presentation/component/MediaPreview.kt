@@ -112,7 +112,7 @@ fun MediaPreview(
 
 @Preview
 @Composable
-fun PreviewMediaPreview() {
+private fun PreviewMediaPreview() {
     ProtonTheme {
         MediaPreview(uri = Uri.parse(""), isFullScreen = true)
     }

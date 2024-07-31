@@ -23,10 +23,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.transform
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.observe
@@ -35,6 +39,12 @@ import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.eventmanager.entity.VolumeConfig
+import me.proton.core.drive.eventmanager.repository.VolumeConfigRepository
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.usecase.GetShares
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -53,9 +63,12 @@ class DriveEventManager @Inject constructor(
     private val accountManager: AccountManager,
     private val getShares: GetShares,
     private val getVolumes: GetVolumes,
+    private val configurationProvider: ConfigurationProvider,
+    private val getFeatureFlag: GetFeatureFlagFlow,
+    private val repository: VolumeConfigRepository
 ) {
     private val scopes = mutableMapOf<UserId, CoroutineScope>()
-    private val startedVolumeIds = mutableSetOf<VolumeId>()
+    private val startedConfigs = mutableSetOf<VolumeConfig>()
 
     fun start() {
         accountManager.observe(appLifecycleProvider.lifecycle, minActiveState = Lifecycle.State.CREATED)
@@ -69,16 +82,23 @@ class DriveEventManager @Inject constructor(
                 account.stopListeningToVolumesEvents()
             }
     }
-    @Suppress("unused")
-    private fun getAllShareIds(userId: UserId) =
-        getShares(userId, Share.Type.MAIN)
+
+    private fun getAllStandardShareVolumeIds(userId: UserId): Flow<Set<VolumeId>> =
+        getShares(
+            userId = userId,
+            shareType = Share.Type.STANDARD,
+            refresh = flowOf(false),
+        )
             .filterSuccessOrError()
             .mapSuccessValueOrNull()
-            .filterNotNull()
-            .map { shares ->
-                shares
-                    .filter { share -> share.isMain && share.isLocked.not() }
-                    .map { share -> share.id }
+            .transform { shares ->
+                emit(
+                    shares
+                        ?.filter { share -> share.isLocked.not() }
+                        ?.map { share -> share.volumeId }
+                        ?.toSet()
+                        ?: emptySet()
+                )
             }
 
     private fun getAllVolumeIds(userId: UserId) =
@@ -90,19 +110,47 @@ class DriveEventManager @Inject constructor(
                 volumes
                     .filter { volume -> volume.isActive }
                     .map { volume -> volume.id }
+                    .toSet()
             }
 
+    private fun getAllConfigs(userId: UserId) = combine(
+        getAllVolumeIds(userId),
+        getAllStandardShareVolumeIds(userId),
+        getFeatureFlag(FeatureFlagId.driveSharingDisabled(userId)),
+    ) { volumeIds, shareVolumeIds, sharingDisabled ->
+        repository.removeAll(userId)
+        listOfNotNull(
+            volumeIds.map { volumeId ->
+                VolumeConfig(volumeId).also { volumeConfig ->
+                    repository.add(userId, volumeId, volumeConfig)
+                }
+            },
+            takeUnless { sharingDisabled.on }
+                ?.let {
+                    shareVolumeIds.subtract(volumeIds).map { volumeId ->
+                        VolumeConfig(volumeId, configurationProvider.minimumSharedVolumeEventFetchInterval).also { volumeConfig ->
+                            repository.add(userId, volumeId, volumeConfig)
+                        }
+                    }
+                },
+        ).flatten().toSet()
+    }
+
     private fun Account.startListeningToVolumesEvents() {
-        getAllVolumeIds(userId).onEach { volumeIds ->
-            val newVolumeIds = volumeIds.toSet().subtract(startedVolumeIds)
-            newVolumeIds.forEach { volumeId ->
-                eventManagerProvider.get(EventManagerConfig.Drive.Volume(userId, volumeId.id)).start()
-                startedVolumeIds.add(volumeId)
+        getAllConfigs(userId).onEach { configs ->
+            val newConfigs = configs.subtract(startedConfigs)
+            newConfigs.forEach { config ->
+                eventManagerProvider.get(
+                    EventManagerConfig.Drive.Volume(userId, config.volumeId.id, config.minimumFetchInterval)
+                ).start()
+                startedConfigs.add(config)
             }
-            val removedVolumeIds = startedVolumeIds.subtract(volumeIds.toSet())
-            removedVolumeIds.forEach { volumeId ->
-                eventManagerProvider.get(EventManagerConfig.Drive.Volume(userId, volumeId.id)).stop()
-                startedVolumeIds.remove(volumeId)
+            val removedConfigs = startedConfigs.subtract(configs)
+            removedConfigs.forEach { config ->
+                eventManagerProvider.get(
+                    EventManagerConfig.Drive.Volume(userId, config.volumeId.id, config.minimumFetchInterval)
+                ).stop()
+                startedConfigs.remove(config)
             }
         }.launchIn(scopes.getOrPut(userId) {
             CoroutineScope(Dispatchers.IO + Job())
@@ -110,9 +158,11 @@ class DriveEventManager @Inject constructor(
     }
 
     private suspend fun Account.stopListeningToVolumesEvents() {
-        startedVolumeIds.forEach { volumeId ->
-            eventManagerProvider.get(EventManagerConfig.Drive.Volume(userId, volumeId.id)).stop()
+        startedConfigs.forEach { config ->
+            eventManagerProvider.get(
+                EventManagerConfig.Drive.Volume(userId, config.volumeId.id, config.minimumFetchInterval)
+            ).stop()
         }
-        startedVolumeIds.clear()
+        startedConfigs.clear()
     }
 }

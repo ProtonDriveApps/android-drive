@@ -50,21 +50,42 @@
     <item quantity="one">Deler med 1 person</item>
     <item quantity="other">Deler med %1$d personer</item>
   </plurals>
-  <string name="share_via_invitations_permission_owner">Eier</string>
-  <string name="share_via_invitations_permission_admin">Administrator</string>
-  <string name="share_via_invitations_permission_editor">Redaktør</string>
-  <string name="share_via_invitations_permission_viewer">Leser</string>
-  <string name="share_via_invitations_permission_unknown">Ukjent</string>
+  <string name="common_permission_owner">Eier</string>
+  <string name="common_permission_admin">Administrator</string>
+  <string name="common_permission_editor">Redigerer</string>
+  <string name="common_permission_viewer">Leser</string>
+  <string name="common_permission_unknown">Ukjent</string>
   <!--
-        Variable %1$s is the permission
+        Variable %1$s is an email
         Examples:
-            "Editor (Invitation sent)"
+            "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_invitation_sent">%1$s (invitasjon sendt)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (Ventende)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Akseptert)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Ukjent)</string>
   <string name="share_via_invitations_add_people_hint">Legg til personer</string>
   <string name="share_via_invitations_copy_invite_link_action">Kopier invitasjonskobling</string>
   <string name="share_via_invitations_remove_access_action">Fjern tilgang</string>
   <string name="share_via_invitations_stop_sharing_description">Slett kobling og fjern tilgangen for alle</string>
   <string name="share_via_invitations_resend_invite_action">Send invitasjon på nytt</string>
   <string name="share_via_invitations_resend_invite_success">Invitasjonen ble sendt på nytt</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="one">%1$d medlem</item>
+    <item quantity="other">%1$d medlemmer</item>
+  </plurals>
 </resources>

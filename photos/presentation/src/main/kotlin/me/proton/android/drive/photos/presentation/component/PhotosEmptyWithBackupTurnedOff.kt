@@ -35,6 +35,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -287,7 +288,9 @@ private fun Section(
 @Composable
 fun PhotosPermissionsPreview() {
     ProtonTheme {
-        PhotosEmptyWithBackupTurnedOff(onEnable = {})
+        Surface {
+            PhotosEmptyWithBackupTurnedOff(onEnable = {})
+        }
     }
 }
 
@@ -295,6 +298,8 @@ fun PhotosPermissionsPreview() {
 @Composable
 fun PhotosPermissionsPreviewLandscape() {
     ProtonTheme {
-        PhotosEmptyWithBackupTurnedOff(onEnable = {})
+        Surface {
+            PhotosEmptyWithBackupTurnedOff(onEnable = {})
+        }
     }
 }

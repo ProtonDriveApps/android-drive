@@ -23,4 +23,5 @@
   <string name="preview_processing_state">Memproses…</string>
   <string name="preview_empty">Tidak ada pratinjau yang dapat ditampilkan…</string>
   <string name="title_not_found">Tidak ditemukan</string>
+  <string name="preview_proton_doc_open_in_browser_button">Buka di browser</string>
 </resources>

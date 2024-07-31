@@ -40,7 +40,7 @@
     <item quantity="other">Después de %1$d días</item>
   </plurals>
   <string name="settings_section_backup">Copia de seguridad</string>
-  <string name="settings_photos_backup_folders_title">Subir desde</string>
+  <string name="settings_photos_backup_folders_title">Cargar desde</string>
   <!--
         Variable %1$s is the default folder name (Camera)
         Examples:

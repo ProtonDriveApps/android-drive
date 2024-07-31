@@ -21,6 +21,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
 import me.proton.core.data.room.db.extension.dropTable
 import me.proton.core.data.room.db.migration.DatabaseMigration
+import me.proton.core.drive.share.user.data.db.dao.ShareExternalInvitationDao
 import me.proton.core.drive.share.user.data.db.dao.ShareInvitationDao
 import me.proton.core.drive.share.user.data.db.dao.ShareMemberDao
 import me.proton.core.drive.share.user.data.db.dao.SharedByMeListingDao
@@ -28,6 +29,7 @@ import me.proton.core.drive.share.user.data.db.dao.SharedWithMeListingDao
 
 interface ShareUserDatabase : Database {
     val shareInvitationDao: ShareInvitationDao
+    val shareExternalInvitationDao: ShareExternalInvitationDao
     val shareMemberDao: ShareMemberDao
     val sharedWithMeListingDao: SharedWithMeListingDao
     val sharedByMeListingDao: SharedByMeListingDao
@@ -234,6 +236,44 @@ interface ShareUserDatabase : Database {
                     """
                    CREATE INDEX IF NOT EXISTS `index_SharedByMeListingEntity_user_id_volume_id_share_id` ON `SharedByMeListingEntity` (`user_id`, `volume_id`, `share_id`)
                 """.trimIndent()
+                )
+            }
+        }
+        val MIGRATION_5 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `ShareExternalInvitationEntity` (
+                        `id` TEXT NOT NULL, `user_id` TEXT NOT NULL,
+                        `share_id` TEXT NOT NULL,
+                        `inviter_email` TEXT NOT NULL,
+                        `invitee_email` TEXT NOT NULL,
+                        `permissions` INTEGER NOT NULL,
+                        `signature` TEXT NOT NULL,
+                        `state` INTEGER NOT NULL, 
+                        `create_time` INTEGER NOT NULL,
+                         PRIMARY KEY(`user_id`, `share_id`, `id`),
+                         FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                         ON UPDATE NO ACTION ON DELETE CASCADE,
+                         FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`)
+                         ON UPDATE NO ACTION ON DELETE CASCADE
+                     )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_ShareExternalInvitationEntity_user_id` ON `ShareExternalInvitationEntity` (`user_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_ShareExternalInvitationEntity_user_id_share_id` ON `ShareExternalInvitationEntity` (`user_id`, `share_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_ShareExternalInvitationEntity_id` ON `ShareExternalInvitationEntity` (`id`)
+                    """.trimIndent()
                 )
             }
         }

@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
+import me.proton.android.drive.usecase.OpenProtonDocument
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
@@ -57,7 +58,8 @@ class SharedByMeViewModel @Inject constructor(
     @ApplicationContext appContext: Context,
     configurationProvider: ConfigurationProvider,
     sharedDriveLinks: SharedDriveLinks,
-    private val getMainShare: GetOrCreateMainShare,
+    getMainShare: GetOrCreateMainShare,
+    openProtonDocument: OpenProtonDocument,
     private val getPagedSharedByMeLinkIds: GetPagedSharedByMeLinkIds,
     private val getAllSharedByMeIds: GetAllSharedByMeIds,
 ) : CommonSharedViewModel(
@@ -65,6 +67,7 @@ class SharedByMeViewModel @Inject constructor(
     appContext = appContext,
     configurationProvider = configurationProvider,
     sharedDriveLinks = sharedDriveLinks,
+    openProtonDocument = openProtonDocument,
 ) {
     private val emptyStateImageResId: Int = getThemeDrawableId(
         light = BasePresentation.drawable.empty_shared_by_me_light,

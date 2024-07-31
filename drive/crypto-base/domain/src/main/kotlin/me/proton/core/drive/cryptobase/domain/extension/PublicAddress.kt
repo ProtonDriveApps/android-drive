@@ -18,9 +18,9 @@
 
 package me.proton.core.drive.cryptobase.domain.extension
 
-import me.proton.core.drive.cryptobase.domain.entity.PublicAddressKeyHolder
-import me.proton.core.key.domain.entity.key.PublicAddress
+import me.proton.core.drive.cryptobase.domain.entity.PublicAddressInfoKeyHolder
+import me.proton.core.key.domain.entity.key.PublicAddressInfo
 
-fun PublicAddress.keyHolder() = object : PublicAddressKeyHolder {
-    override val publicAddress: PublicAddress get() = this@keyHolder
+fun PublicAddressInfo.keyHolder() = object : PublicAddressInfoKeyHolder {
+    override val publicAddressInfo: PublicAddressInfo get() = this@keyHolder
 }

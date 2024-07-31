@@ -20,7 +20,9 @@ package me.proton.android.drive.ui.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -33,6 +35,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -48,7 +51,9 @@ import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
+import me.proton.android.drive.usecase.OpenProtonDocument
 import me.proton.core.domain.arch.onSuccess
+import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.Permissions
@@ -67,6 +72,7 @@ import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.drivelink.domain.extension.isShareReadOnly
 import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgress
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
@@ -111,6 +117,7 @@ class FilesViewModel @Inject constructor(
     private val getUploadFileLinks: GetUploadFileLinks,
     private val getUploadProgress: GetUploadProgress,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
+    private val openProtonDocument: OpenProtonDocument,
     selectLinks: SelectLinks,
     selectAll: SelectAll,
     deselectLinks: DeselectLinks,
@@ -254,17 +261,38 @@ class FilesViewModel @Inject constructor(
     override val homeEffect: Flow<HomeEffect>
         get() = _homeEffect.asSharedFlow()
 
-    private val emptyState = ListContentState.Empty(
+    private val defaultEmptyState = ListContentState.Empty(
         imageResId = emptyStateImageResId,
-        titleId = if (isRootFolder) I18N.string.title_empty_my_files else I18N.string.title_empty_folder,
-        descriptionResId = if (isRootFolder) I18N.string.description_empty_my_files else I18N.string.description_empty_folder,
-        actionResId = I18N.string.action_empty_files_add_files, // TODO: Enable the button only with write permissions
+        titleId = I18N.string.title_empty_folder_read_only,
+        descriptionResId = I18N.string.description_empty_folder_read_only,
+        actionResId = null,
     )
     private val emptyStateImageResId: Int get() = getThemeDrawableId(
         light = BasePresentation.drawable.empty_folder_light,
         dark = BasePresentation.drawable.empty_folder_dark,
         dayNight = BasePresentation.drawable.empty_folder_daynight,
     )
+    private val emptyState = driveLink
+        .filterNotNull()
+        .distinctUntilChanged()
+        .map { folder ->
+            val isNonShareRootFolder = isRootFolder && folder.shareUser == null
+            ListContentState.Empty(
+                imageResId = emptyStateImageResId,
+                titleId = when {
+                    isNonShareRootFolder -> I18N.string.title_empty_my_files
+                    folder.isShareReadOnly -> I18N.string.title_empty_folder_read_only
+                    else -> I18N.string.title_empty_folder
+                },
+                descriptionResId = when {
+                    isNonShareRootFolder -> I18N.string.description_empty_my_files
+                    folder.isShareReadOnly -> I18N.string.description_empty_folder_read_only
+                    else -> I18N.string.description_empty_folder
+                },
+                actionResId = takeUnless { folder.isShareReadOnly }?.let {I18N.string.action_empty_files_add_files },
+            )
+        }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, defaultEmptyState)
     private var viewEvent: FilesViewEvent? = null
     fun viewEvent(
         navigateToFiles: (folderId: FolderId, folderName: String?) -> Unit,
@@ -274,12 +302,15 @@ class FilesViewModel @Inject constructor(
         navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
         navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
         navigateBack: () -> Unit,
+        lifecycle: Lifecycle,
     ): FilesViewEvent = object : FilesViewEvent {
 
         private val driveLinkShareFlow = MutableSharedFlow<DriveLink>(extraBufferCapacity = 1).also { flow ->
             viewModelScope.launch {
-                flow.take(1).collect { driveLink ->
-                    driveLink.onClick(navigateToFiles, navigateToPreview)
+                lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                    flow.take(1).collect { driveLink ->
+                        driveLink.onClick(navigateToFiles, navigateToPreview, this@FilesViewModel::openDocument)
+                    }
                 }
             }
         }
@@ -378,4 +409,18 @@ class FilesViewModel @Inject constructor(
             _listEffect.emit(ListEffect.REFRESH)
         }
     }
+
+    private suspend fun openDocument(driveLink: DriveLink.File) =
+        openProtonDocument(driveLink)
+            .onFailure { error ->
+                error.log(VIEW_MODEL, "Open document failed")
+                _homeEffect.emit(
+                    HomeEffect.ShowSnackbar(
+                        error.getDefaultMessage(
+                            context = appContext,
+                            useExceptionMessage = configurationProvider.useExceptionMessage,
+                        )
+                    )
+                )
+            }
 }

@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">%1$s-სთან წვდომა აქვთ, მხოლოდ მათ, ვისაც ბმულსა და პაროლს გადასცემთ</string>
+  <string name="shared_link_settings">ბმულის მორგება</string>
+  <string name="shared_link_options">ბმულის პარამეტრები</string>
   <string name="shared_link_privacy_settings">კონფიდენციალობის პარამეტრები</string>
   <string name="shared_link_password_protection">პაროლით დაცვა</string>
   <string name="shared_link_expiration_date">ვადის ამოწურვის თარიღი</string>
@@ -68,6 +70,6 @@
   <string name="title_share_via_link">ბმულით გაზიარება</string>
   <string name="shared_with_me_title">ჩემთან გაზიარებული</string>
   <string name="shared_by_me_title">ჩემი გაზიარებული</string>
-  <string name="shared_with_me_empty_description">Files and folder that you share with others will appear here</string>
-  <string name="shared_by_me_empty_description">Safely share your files and folders with end-to-end encryption</string>
+  <string name="shared_with_me_empty_description">ფაილები და საქარალდეები, რომლებსაც სხვებს გაუზიარებთ, აქ გამოჩნდება</string>
+  <string name="shared_by_me_empty_description">გააზიარეთ დაცულად თქვენი ფაილები და საქაღალდეები გამჭოლი დაშიფვრით</string>
 </resources>

@@ -26,6 +26,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -136,7 +137,9 @@ fun UserDetails(
 @Composable
 fun PreviewUserDetails() {
     ProtonTheme {
-        UserDetails(PREVIEW_USER)
+        Surface {
+            UserDetails(PREVIEW_USER)
+        }
     }
 }
 
@@ -147,23 +150,25 @@ fun PreviewUserDetails() {
 @Composable
 fun PreviewUserDetailsWithLongNameAndAddress() {
     ProtonTheme {
-        UserDetails(
-            PREVIEW_USER.copy(
-                displayName = "A very long name to see that everything holds on one line",
-                email = "a.very.long.name.to.see.that.everything.holds.on.one.line@protonmail.com"
+        Surface {
+            UserDetails(
+                PREVIEW_USER.copy(
+                    displayName = "A very long name to see that everything holds on one line",
+                    email = "a.very.long.name.to.see.that.everything.holds.on.one.line@protonmail.com"
+                )
             )
-        )
+        }
     }
 }
 
 @Preview
 @Composable
-fun PreviewUserSelector() {
+private fun PreviewUserSelector() {
     ProtonTheme(colors = ProtonColors.light()) {
-        UserSelector(
-            currentUser = PREVIEW_USER
-        ) {
-
+        Surface {
+            UserSelector(
+                currentUser = PREVIEW_USER
+            ) {}
         }
     }
 }

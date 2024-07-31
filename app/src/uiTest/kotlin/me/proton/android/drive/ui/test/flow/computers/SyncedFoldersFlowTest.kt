@@ -215,7 +215,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
             .typeEmail(email)
             .clickSend()
             .verify {
-                assertInvitationSent(1)
+                dismissInvitationSent(1)
             }
     }
 

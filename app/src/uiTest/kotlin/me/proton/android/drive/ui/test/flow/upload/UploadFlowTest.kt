@@ -119,7 +119,6 @@ class UploadFlowTest : AuthenticatedBaseTest() {
                 assertStageWaiting()
                 assertStageEncrypting()
                 assertStageUploading()
-                assertStageUploadedProgress(0)
                 assertStageUploadedProgress(100)
                 itemIsDisplayed("6MB.txt")
             }

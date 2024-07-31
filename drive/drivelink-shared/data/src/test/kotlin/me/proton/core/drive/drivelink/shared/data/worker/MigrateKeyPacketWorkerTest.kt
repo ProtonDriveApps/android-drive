@@ -28,12 +28,17 @@ import androidx.work.testing.TestListenableWorkerBuilder
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.db.test.photo
 import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.drivelink.shared.domain.usecase.MigrateKeyPacket
 import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.getShare
+import me.proton.core.drive.test.api.getShareBootstrap
 import me.proton.core.drive.test.api.getUnmigratedShares
 import me.proton.core.drive.test.api.response
+import me.proton.core.drive.test.entity.NullableShareDto
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -52,16 +57,17 @@ class MigrateKeyPacketWorkerTest {
     @Inject
     lateinit var migrateKeyPacket: MigrateKeyPacket
 
-    private val standardShareId = "standard-share-id"
+    private val standardShareId = standardShareId()
 
     @Before
     fun setUp() = runTest {
-        driveRule.db.standardShare(standardShareId) {}
+        driveRule.db.photo {}
     }
 
     @Test
     fun success() = runTest {
         driveRule.server.run {
+            getShare(listOf(NullableShareDto(standardShareId.id)))
             getUnmigratedShares { response(404) }
         }
 
@@ -73,6 +79,7 @@ class MigrateKeyPacketWorkerTest {
     @Test
     fun error() = runTest {
         driveRule.server.run {
+            getShare(listOf(NullableShareDto(standardShareId.id)))
             getUnmigratedShares { response(405) }
         }
 

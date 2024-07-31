@@ -80,6 +80,7 @@ interface ConfigurationProvider {
     val allowBackupDeletedFilesEnabled: Boolean get() = false
     val scanBackupPageSize: Int get() = 100
     val backupDefaultBucketName: String get() = "Camera"
+    val backupAdditionalBucketNames: List<String> get() = listOf("Raw", "Screenshots")
     val backupMaxAttempts: Long get() = 5
     val backupSyncWindow: Duration get() = 1.days
     val photoExportData: Boolean get() = false
@@ -105,6 +106,7 @@ interface ConfigurationProvider {
         name = "log.zip",
         mimeType = "application/zip",
     )
+    val minimumSharedVolumeEventFetchInterval: Duration get() = 10.minutes
 
     data class Thumbnail(
         val maxWidth: Int,

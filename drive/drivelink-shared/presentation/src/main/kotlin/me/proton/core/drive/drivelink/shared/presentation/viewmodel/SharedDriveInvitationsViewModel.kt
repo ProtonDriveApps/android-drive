@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
@@ -48,6 +49,7 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.coroutines.timeLimitedScope
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.onProcessing
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -58,7 +60,7 @@ import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.contact.domain.usecase.SearchContacts
-import me.proton.core.drive.contact.presentation.viewstate.ContactSuggestion
+import me.proton.core.drive.contact.presentation.component.SuggestionItem
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.shared.presentation.effect.SharedDriveInvitationsEffect
@@ -68,11 +70,15 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.PermissionsV
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SaveButtonViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SharedDriveInvitationsViewState
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingExternalInvitations
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingExternalInvitationsDisabled
 import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
-import me.proton.core.drive.key.domain.extension.isInternal
-import me.proton.core.drive.key.domain.usecase.GetPublicAddress
+import me.proton.core.drive.key.domain.usecase.GetPublicAddressInfo
+import me.proton.core.drive.label.domain.usecase.SearchLabelsWithContacts
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
@@ -94,11 +100,12 @@ class SharedDriveInvitationsViewModel @Inject constructor(
     getDriveLink: GetDecryptedDriveLink,
     getUserEmailsFlow: GetUserEmailsFlow,
     private val inviteMembers: InviteMembers,
-    private val getPublicAddress: GetPublicAddress,
+    private val getPublicAddressInfo: GetPublicAddressInfo,
     private val isValidEmailAddress: IsValidEmailAddress,
     private val searchContacts: SearchContacts,
+    private val searchLabelsWithContacts: SearchLabelsWithContacts,
     private val broadcastMessage: BroadcastMessages,
-    private val getFeatureFlagFlow: GetFeatureFlagFlow,
+    getFeatureFlagFlow: GetFeatureFlagFlow,
     private val configurationProvider: ConfigurationProvider,
     private val savedStateHandle: SavedStateHandle,
     @ApplicationContext private val appContext: Context,
@@ -111,19 +118,28 @@ class SharedDriveInvitationsViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private var searchContactsJob: Job? = null
+    private var searchLabelsJob: Job? = null
     private val _effect = MutableSharedFlow<SharedDriveInvitationsEffect>()
     val effect: Flow<SharedDriveInvitationsEffect> = _effect.asSharedFlow()
 
-    private val killSwitch = getFeatureFlagFlow(FeatureFlagId.driveSharingDisabled(userId))
+    private val killSwitch = getFeatureFlagFlow(driveSharingDisabled(userId))
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Eagerly,
-            initialValue = FeatureFlag(FeatureFlagId.driveSharingDisabled(userId), FeatureFlag.State.NOT_FOUND)
+            initialValue = FeatureFlag(driveSharingDisabled(userId), NOT_FOUND),
         )
+
+    private val externalInvitationFeatureFlag = combine(
+        getFeatureFlagFlow(driveSharingExternalInvitations(userId)),
+        getFeatureFlagFlow(driveSharingExternalInvitationsDisabled(userId)),
+    ) { featureFlags, killSwitch ->
+        killSwitch.off && featureFlags.on
+    }.distinctUntilChanged().stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private val permissions = MutableStateFlow(Permissions.editor)
 
-    private val suggestedContacts = MutableStateFlow(emptyList<ContactSuggestion>())
+    private val suggestedContacts = MutableStateFlow(emptyList<SuggestionItem>())
+    private val suggestedLabels = MutableStateFlow(emptyList<SuggestionItem>())
     private val invitationEmails = MutableStateFlow(emptyList<String>())
     private val invitations = combine(
         invitationEmails,
@@ -137,15 +153,21 @@ class SharedDriveInvitationsViewModel @Inject constructor(
     private val validatedInvitations = combine(
         getUserEmailsFlow(userId),
         invitations,
-    ) { userEmails, invitations ->
+        externalInvitationFeatureFlag,
+    ) { userEmails, invitations, externalInvitationFeatureFlag ->
         invitations.map { invitation ->
-            getPublicAddress(userId, invitation.email).onFailure { error ->
-                error.log(SHARING, "Cannot get public address")
-            }.getOrNull()?.let { publicAddress ->
+            if (externalInvitationFeatureFlag) {
                 invitation.copy(
-                    isValid = publicAddress.isInternal && invitation.email !in userEmails
+                    isValid = invitation.email !in userEmails
                 )
-            } ?: invitation
+            } else {
+                getPublicAddressInfo(userId, invitation.email)
+                    .getOrNull(SHARING, "Cannot get public address")?.let {
+                        invitation.copy(
+                            isValid = invitation.email !in userEmails
+                        )
+                    } ?: invitation
+            }
         }
     }
 
@@ -167,13 +189,13 @@ class SharedDriveInvitationsViewModel @Inject constructor(
                 options = listOf(
                     PermissionViewState(
                         icon = CorePresentation.drawable.ic_proton_eye,
-                        label = appContext.getString(I18N.string.share_via_invitations_permission_viewer),
+                        label = appContext.getString(I18N.string.common_permission_viewer),
                         selected = permissions == Permissions.viewer,
                         permissions = Permissions.viewer,
                     ),
                     PermissionViewState(
                         icon = CorePresentation.drawable.ic_proton_pen,
-                        label = appContext.getString(I18N.string.share_via_invitations_permission_editor),
+                        label = appContext.getString(I18N.string.common_permission_editor),
                         selected = permissions == Permissions.editor,
                         permissions = Permissions.editor,
                     ),
@@ -213,11 +235,12 @@ class SharedDriveInvitationsViewModel @Inject constructor(
         initialViewState,
         driveLink.filterNotNull(),
         suggestedContacts,
-    ) { initialViewState, driveLink, suggestedContacts ->
+        suggestedLabels,
+    ) { initialViewState, driveLink, suggestedContacts, suggestedLabels ->
         initialViewState.copy(
             linkName = driveLink.name,
             isLinkNameEncrypted = driveLink.isNameEncrypted,
-            contactSuggestions = suggestedContacts,
+            suggestionItems = suggestedContacts + suggestedLabels,
         )
     }
 
@@ -251,6 +274,7 @@ class SharedDriveInvitationsViewModel @Inject constructor(
 
         // cancel previous search Job for this [suggestionsField] type
         searchContactsJob?.cancel()
+        searchLabelsJob?.cancel()
 
         if (searchTerm.isNotBlank()) {
             searchContactsJob = searchContacts(userId, searchTerm).onEach { result ->
@@ -273,23 +297,50 @@ class SharedDriveInvitationsViewModel @Inject constructor(
                         }
                         .flatMap { contact ->
                             contact.contactEmails.map { contactEmail ->
-                                ContactSuggestion(
-                                    name = contactEmail.name.takeIfNotBlank()
+                                SuggestionItem(
+                                    header = contactEmail.name.takeIfNotBlank()
                                         ?: contact.name.takeIfNotBlank()
                                         ?: contactEmail.email,
-                                    email = contactEmail.email
+                                    subheader = contactEmail.email,
+                                    value = contactEmail.email
                                 )
                             }
                         }
 
                     this.suggestedContacts.emit(suggestedContacts)
                 }
-
+            }.launchIn(viewModelScope)
+            searchLabelsJob = searchLabelsWithContacts(userId, searchTerm).onEach { result ->
+                result.onFailure { error ->
+                    broadcastMessage(
+                        userId = userId,
+                        message = error.getDefaultMessage(
+                            appContext,
+                            configurationProvider.useExceptionMessage
+                        ),
+                        type = BroadcastMessage.Type.ERROR,
+                    )
+                }.onSuccess { labelWithContacts ->
+                    val alreadyInvited = invitations.first().map { invitation -> invitation.email }
+                    val suggestionLabels = labelWithContacts.map { label ->
+                        SuggestionItem(
+                            header = label.label.name,
+                            appContext.quantityString(
+                                I18N.plurals.share_via_invitations_group_members,
+                                label.contactEmails.size
+                            ).format(label.contactEmails.size),
+                            value = label.contactEmails.filterNot { contactEmail ->
+                                contactEmail.email in alreadyInvited
+                            }.joinToString(" ") { contactEmail -> contactEmail.email }
+                        )
+                    }
+                    this.suggestedLabels.emit(suggestionLabels)
+                }
             }.launchIn(viewModelScope)
         } else {
             this.suggestedContacts.tryEmit(emptyList())
+            this.suggestedLabels.tryEmit(emptyList())
         }
-
     }
 
     private fun onInviteesChanged(emails: List<String>) = viewModelScope.launch {

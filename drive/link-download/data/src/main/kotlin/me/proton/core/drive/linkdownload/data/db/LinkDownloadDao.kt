@@ -128,12 +128,14 @@ interface LinkDownloadDao : LinkDao {
         WHERE
             LinkEntity.user_id = :userId AND 
             LinkEntity.share_id = :shareId AND 
-            LinkEntity.parent_id = :folderId
+            LinkEntity.parent_id = :folderId AND
+            LinkEntity.mime_type NOT IN (:excludeMimeTypes)
     """)
     suspend fun getAllChildrenStates(
         userId: UserId,
         shareId: String,
         folderId: String,
+        excludeMimeTypes: Set<String>,
     ): List<LinkDownloadState?>
 
     @Transaction

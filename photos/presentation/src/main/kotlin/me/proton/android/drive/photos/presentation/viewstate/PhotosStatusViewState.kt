@@ -31,6 +31,10 @@ sealed interface PhotosStatusViewState {
         val labelItemsLeft: String,
     ) : PhotosStatusViewState
 
+    data class Preparing(
+        val progress: Float,
+    ) : PhotosStatusViewState
+
     data class Failed(
         val errors: List<BackupError>,
     ) : PhotosStatusViewState

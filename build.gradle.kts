@@ -68,4 +68,5 @@ tasks.register("clean", Delete::class) {
 
 plugins {
     alias(libs.plugins.proton.detekt)
+    alias(libs.plugins.paparazzi) apply false
 }

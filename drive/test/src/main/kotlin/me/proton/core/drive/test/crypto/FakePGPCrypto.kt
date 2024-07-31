@@ -318,6 +318,10 @@ class FakePGPCrypto : PGPCrypto {
         return Base64.encode(array, Base64.NO_WRAP).toString()
     }
 
+    override fun getBase64EncodedNoWrap(array: ByteArray): String {
+        return Base64.encode(array, Base64.NO_WRAP).toString()
+    }
+
     override suspend fun getCurrentTime(): Long {
         return System.currentTimeMillis()
     }

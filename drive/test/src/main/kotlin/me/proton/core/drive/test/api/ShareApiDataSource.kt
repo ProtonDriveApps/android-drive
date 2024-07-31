@@ -18,14 +18,13 @@
 
 package me.proton.core.drive.test.api
 
-import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.db.test.findRootId
 import me.proton.core.drive.db.test.findShareType
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.data.api.entity.LinkDto
 import me.proton.core.drive.link.data.api.request.GetLinksRequest
 import me.proton.core.drive.link.data.api.response.GetLinksResponse
-import me.proton.core.drive.share.data.api.MembershipDto
 import me.proton.core.drive.share.data.api.ShareDto
 import me.proton.core.drive.share.data.api.request.ShareAccessWithNodeRequest
 import me.proton.core.drive.share.data.api.response.GetShareBootstrapResponse

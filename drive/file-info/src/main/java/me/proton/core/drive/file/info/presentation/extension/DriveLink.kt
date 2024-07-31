@@ -24,17 +24,19 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.labelResId
+import me.proton.core.drive.base.presentation.extension.toPermissionLabel
 import me.proton.core.drive.base.presentation.extension.toReadableDate
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.file.info.presentation.entity.Item
-import me.proton.core.drive.i18n.R
 import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.core.drive.link.domain.entity.Folder
+import me.proton.core.drive.link.domain.extension.isProtonCloudFile
 import me.proton.core.drive.link.presentation.extension.lastModified
 import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.i18n.R as I18N
 
 fun DriveLink.toItems(
     context: Context,
@@ -43,72 +45,78 @@ fun DriveLink.toItems(
     shareType: Share.Type = Share.Type.PHOTO,
 ): List<Item> = listOfNotNull(
     Item(
-        name = context.getString(R.string.file_info_name_entry),
+        name = context.getString(I18N.string.file_info_name_entry),
         value = name,
         isValueEncrypted = isNameEncrypted,
     ),
     Item(
-        name = context.getString(R.string.file_info_uploaded_by_entry),
+        name = context.getString(I18N.string.file_info_uploaded_by_entry),
         value = uploadedBy,
     ),
     takeIf { shareType == Share.Type.MAIN }?.let {
         Item(
-            name = context.getString(R.string.file_info_location_entry),
+            name = context.getString(I18N.string.file_info_location_entry),
             value = parentPath,
         )
     },
     Item(
-        name = context.getString(R.string.file_info_last_modified_entry),
+        name = context.getString(I18N.string.file_info_last_modified_entry),
         value = lastModified(),
     ),
     takeIf { this !is Folder && shareType == Share.Type.MAIN }?.let {
         Item(
-            name = context.getString(R.string.file_info_type_entry),
+            name = context.getString(I18N.string.file_info_type_entry),
             value = getType(context),
         )
     },
     takeIf { this !is Folder && shareType == Share.Type.MAIN }?.let {
         Item(
-            name = context.getString(R.string.file_info_mime_type_entry),
+            name = context.getString(I18N.string.file_info_mime_type_entry),
             value = mimeType,
         )
     },
-    takeIf { this !is Folder }?.let {
+    takeIf { this !is Folder && this.isProtonCloudFile.not() }?.let {
         Item(
-            name = context.getString(R.string.file_info_size_entry),
+            name = context.getString(I18N.string.file_info_size_entry),
             value = size.asHumanReadableString(context),
         )
     },
     Item(
-        name = context.getString(R.string.file_info_shared_entry),
+        name = context.getString(I18N.string.file_info_shared_entry),
         value = context.getString(
             if (isSharedByLinkOrWithUsers) {
-                R.string.common_yes
+                I18N.string.common_yes
             } else {
-                R.string.common_no
+                I18N.string.common_no
             }
         ),
     ),
     takeIf { hasShareLink }?.let {
         Item(
-            name = context.getString(R.string.file_info_number_of_accesses_entry),
+            name = context.getString(I18N.string.file_info_number_of_accesses_entry),
             value = numberOfAccesses.toString(),
         )
     },
     takeIf { hasShareLink }?.let {
         Item(
-            name = context.getString(R.string.file_info_share_url_expiration_time),
+            name = context.getString(I18N.string.file_info_share_url_expiration_time),
             value = shareUrlExpirationTime?.toReadableDate()
-                ?: context.getString(R.string.file_info_share_url_no_expiration_time),
+                ?: context.getString(I18N.string.file_info_share_url_no_expiration_time),
         )
     },
     takeIf { shareType == Share.Type.PHOTO }?.let {
         capturedOn?.let { timestamp ->
             Item(
-                name = context.getString(R.string.file_info_captured_on),
+                name = context.getString(I18N.string.file_info_captured_on),
                 value = timestamp.asHumanReadableString(context).toString(),
             )
         }
+    },
+    sharePermissions?.let { permissions ->
+        Item(
+            name = context.getString(I18N.string.file_info_permissions),
+            value = permissions.toPermissionLabel(context),
+        )
     }
 )
 

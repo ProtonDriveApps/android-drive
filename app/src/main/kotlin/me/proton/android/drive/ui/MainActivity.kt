@@ -93,6 +93,7 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.thumbnail.presentation.coil.ThumbnailEnabled
 import me.proton.core.notification.presentation.deeplink.DeeplinkManager
 import me.proton.core.notification.presentation.deeplink.onActivityCreate
+import me.proton.core.usersettings.presentation.compose.view.SecurityKeysActivity
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
@@ -169,6 +170,7 @@ class MainActivity : FragmentActivity() {
                         exitApp = { finish() },
                         navigateToPasswordManagement = accountViewModel::startPasswordManagement,
                         navigateToRecoveryEmail = accountViewModel::startUpdateRecoveryEmail,
+                        navigateToSecurityKeys = { SecurityKeysActivity.start(this@MainActivity) },
                         navigateToBugReport = bugReportViewModel::sendBugReport,
                         navigateToSubscription = plansViewModel::showCurrentPlans,
                     ) { isOpen ->
@@ -335,7 +337,7 @@ class MainActivity : FragmentActivity() {
         super.onDestroy()
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         intent?.let {
             processIntent(intent, deepLinkIntent, accountViewModel, true)

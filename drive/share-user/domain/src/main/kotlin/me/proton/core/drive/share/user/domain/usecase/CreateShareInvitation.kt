@@ -24,26 +24,32 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.repository.fetcher
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingExternalInvitationsDisabled
+import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
+import me.proton.core.drive.share.crypto.domain.entity.ShareInvitationRequest
 import me.proton.core.drive.share.crypto.domain.usecase.CreateShareInvitationRequest
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.entity.ShareUserInvitation
+import me.proton.core.drive.share.user.domain.repository.ShareExternalInvitationRepository
 import me.proton.core.drive.share.user.domain.repository.ShareInvitationRepository
 import javax.inject.Inject
 
 class CreateShareInvitation @Inject constructor(
     private val repository: ShareInvitationRepository,
+    private val externalRepository: ShareExternalInvitationRepository,
     private val createShareInvitationRequest: CreateShareInvitationRequest,
+    private val getFeatureFlag: GetFeatureFlag,
 ) {
     operator fun invoke(
         shareId: ShareId,
-        inviterEmail: String,
         invitation: ShareUserInvitation,
-    ): Flow<DataResult<ShareUser.Invitee>> = flow {
+    ): Flow<DataResult<ShareUser>> = flow {
         emit(DataResult.Processing(ResponseSource.Local))
         createShareInvitationRequest(
             shareId = shareId,
-            inviterEmail = inviterEmail,
             inviteeEmail = invitation.email,
             permissions = invitation.permissions
         ).onFailure { error ->
@@ -53,7 +59,20 @@ class CreateShareInvitation @Inject constructor(
             ))
         }.onSuccess { request ->
             fetcher {
-                emit(repository.createInvitation(shareId, request).asSuccess)
+                when(request){
+                    is ShareInvitationRequest.Internal -> {
+                        check(getFeatureFlag(driveSharingDisabled(shareId.userId)).off) {
+                            "Cannot send invitation (feature killed)"
+                        }
+                        emit(repository.createInvitation(shareId, request).asSuccess)
+                    }
+                    is ShareInvitationRequest.External -> {
+                        check(getFeatureFlag(driveSharingExternalInvitationsDisabled(shareId.userId)).off) {
+                            "Cannot send external invitation (feature killed)"
+                        }
+                        emit(externalRepository.createExternalInvitation(shareId, request).asSuccess)
+                    }
+                }
             }
         }
     }

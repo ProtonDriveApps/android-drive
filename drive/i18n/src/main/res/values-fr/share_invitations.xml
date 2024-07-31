@@ -50,21 +50,42 @@
     <item quantity="one">Partage avec 1 personne</item>
     <item quantity="other">Partage avec %1$d personnes</item>
   </plurals>
-  <string name="share_via_invitations_permission_owner">Propriétaire</string>
-  <string name="share_via_invitations_permission_admin">Administrateur</string>
-  <string name="share_via_invitations_permission_editor">Éditeur</string>
-  <string name="share_via_invitations_permission_viewer">Lecteur</string>
-  <string name="share_via_invitations_permission_unknown">Inconnu</string>
+  <string name="common_permission_owner">Propriétaire</string>
+  <string name="common_permission_admin">Administrateur</string>
+  <string name="common_permission_editor">Éditeur</string>
+  <string name="common_permission_viewer">Lecteur</string>
+  <string name="common_permission_unknown">Inconnu</string>
   <!--
-        Variable %1$s is the permission
+        Variable %1$s is an email
         Examples:
-            "Editor (Invitation sent)"
+            "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_invitation_sent">%1$s (invitation envoyée)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (en attente)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (acceptée)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (inconnue)</string>
   <string name="share_via_invitations_add_people_hint">Ajouter des personnes</string>
   <string name="share_via_invitations_copy_invite_link_action">Copier le lien d\'invitation</string>
   <string name="share_via_invitations_remove_access_action">Retirer l’accès</string>
   <string name="share_via_invitations_stop_sharing_description">Supprimer le lien et en retirer l\'accès pour tous</string>
   <string name="share_via_invitations_resend_invite_action">Renvoyer l\'invitation</string>
   <string name="share_via_invitations_resend_invite_success">L\'invitation a été envoyée à nouveau.</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="one">%1$d membre</item>
+    <item quantity="other">%1$d membres</item>
+  </plurals>
 </resources>

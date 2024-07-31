@@ -20,6 +20,7 @@ package me.proton.core.drive.drivelink.shared.presentation.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,26 +58,28 @@ fun PermissionsOptions(
 
 @Preview
 @Composable
-private fun PermissionsOptionsPreview() {
+fun PermissionsOptionsPreview() {
     ProtonTheme {
-        PermissionsOptions(
-            permissionsViewState = PermissionsViewState(
-                options = listOf(
-                    PermissionViewState(
-                        icon = CorePresentation.drawable.ic_proton_eye,
-                        label = "Viewer",
-                        selected = true,
-                        permissions = Permissions()
-                    ),
-                    PermissionViewState(
-                        icon = CorePresentation.drawable.ic_proton_pen,
-                        label = "Editor",
-                        selected = false,
-                        permissions = Permissions()
-                    ),
-                )
-            ),
-            onClick = {},
-        )
+        Surface {
+            PermissionsOptions(
+                permissionsViewState = PermissionsViewState(
+                    options = listOf(
+                        PermissionViewState(
+                            icon = CorePresentation.drawable.ic_proton_eye,
+                            label = "Viewer",
+                            selected = true,
+                            permissions = Permissions()
+                        ),
+                        PermissionViewState(
+                            icon = CorePresentation.drawable.ic_proton_pen,
+                            label = "Editor",
+                            selected = false,
+                            permissions = Permissions()
+                        ),
+                    )
+                ),
+                onClick = {},
+            )
+        }
     }
 }

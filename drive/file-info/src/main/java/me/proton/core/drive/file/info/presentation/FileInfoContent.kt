@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -201,14 +202,14 @@ private val HeaderIconSize = 40.dp
 @Preview
 @Composable
 @Suppress("unused")
-private fun PreviewFileInfoContent() {
+fun PreviewFileInfoContent() {
     val driveLink = DriveLink.File(
         link = Link.File(
             id = FileId(ShareId(UserId("USER_ID"), "SHARE_ID"), "ID"),
             parentId = FolderId(ShareId(UserId("USER_ID"), "SHARE_ID"), "PARENT_ID"),
             activeRevisionId = "revision",
             size = Bytes(123),
-            lastModified = TimestampS(System.currentTimeMillis() / 1000),
+            lastModified = TimestampS(1720000800),
             mimeType = "image/jpg",
             numberOfAccesses = 2,
             isShared = true,
@@ -247,13 +248,15 @@ private fun PreviewFileInfoContent() {
         shareMemberCount = null,
         shareUser = null,
     )
-    FileInfoContent(
-        driveLink = driveLink,
-        items = driveLink.toItems(
-            context = LocalContext.current,
-            parentPath = "/My files/deep nested/Aaaa/3/",
+    Surface {
+        FileInfoContent(
+            driveLink = driveLink,
+            items = driveLink.toItems(
+                context = LocalContext.current,
+                parentPath = "/My files/deep nested/Aaaa/3/",
+            )
         )
-    )
+    }
 }
 
 object FileInfoTestTag {

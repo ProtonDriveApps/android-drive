@@ -26,4 +26,5 @@
   <string name="file_info_title_folder">Detalhes da pasta</string>
   <string name="file_info_title_file">Detalhes do arquivo</string>
   <string name="file_info_captured_on">Capturado em</string>
+  <string name="file_info_permissions">Permissões</string>
 </resources>

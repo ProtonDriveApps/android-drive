@@ -23,4 +23,5 @@
   <string name="preview_processing_state">Spracovávanie…</string>
   <string name="preview_empty">Nič k nahliadnutiu…</string>
   <string name="title_not_found">Nenájdené</string>
+  <string name="preview_proton_doc_open_in_browser_button">Otvoriť v prehliadači</string>
 </resources>

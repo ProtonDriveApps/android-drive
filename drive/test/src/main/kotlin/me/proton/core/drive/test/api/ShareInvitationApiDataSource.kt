@@ -18,7 +18,7 @@
 
 package me.proton.core.drive.test.api
 
-import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.data.api.response.Response
 import me.proton.core.drive.share.user.data.api.entities.ShareInvitationDto
 import me.proton.core.drive.share.user.data.api.request.CreateShareInvitationRequest

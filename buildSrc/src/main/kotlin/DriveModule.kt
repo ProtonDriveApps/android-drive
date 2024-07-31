@@ -31,6 +31,7 @@ import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 import java.io.File
 
 @Suppress("LongMethod")
@@ -44,6 +45,7 @@ fun Project.driveModule(
     i18n: Boolean = false,
     socialTest: Boolean = false,
     kapt: Boolean = hilt || room || socialTest,
+    showkase: Boolean = false,
     dependencies: DependencyHandler.() -> Unit = {},
 ) {
     val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
@@ -127,6 +129,14 @@ fun Project.driveModule(
 
         (this as ExtensionAware).extensions.configure<KotlinJvmOptions>("kotlinOptions") {
             jvmTarget = JavaVersion.VERSION_17.toString()
+        }
+    }
+
+    extensions.findByType(KaptExtension::class.java)?.let { kaptExt ->
+        kaptExt.arguments {
+            if (showkase) {
+                arg("skipPrivatePreviews", "true")
+            }
         }
     }
 
@@ -219,6 +229,10 @@ fun Project.driveModule(
         }
         if (i18n) {
             add("implementation", project(":drive:i18n"))
+        }
+        if (showkase) {
+            add("debugImplementation", catalog.findLibrary("showkase").get())
+            add("kaptDebug", catalog.findLibrary("showkaseProcessor").get())
         }
 
         // region Test

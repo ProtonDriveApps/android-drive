@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -192,42 +193,44 @@ fun LogOptionItem(
 
 @Preview
 @Composable
-private fun LogOptionsPreview() {
+fun LogOptionsPreview() {
     ProtonTheme {
-        LogOptions(
-            logLevelItems = flowOf(
-                setOf(
-                    LogLevelItem(
-                        title = "Default",
-                        isChecked = true,
-                        level = Log.Level.NORMAL,
-                    ),
-                    LogLevelItem(
-                        title = "Error",
-                        isChecked = true,
-                        level = Log.Level.ERROR,
+        Surface {
+            LogOptions(
+                logLevelItems = flowOf(
+                    setOf(
+                        LogLevelItem(
+                            title = "Default",
+                            isChecked = true,
+                            level = Log.Level.NORMAL,
+                        ),
+                        LogLevelItem(
+                            title = "Error",
+                            isChecked = true,
+                            level = Log.Level.ERROR,
+                        )
                     )
-                )
-            ),
-            logOriginItems = flowOf(
-                setOf(
-                    LogOriginItem(
-                        title = "API",
-                        isChecked = true,
-                        origin = Log.Origin.EVENT_NETWORK,
-                    ),
-                    LogOriginItem(
-                        title = "Exception",
-                        isChecked = false,
-                        origin = Log.Origin.EVENT_THROWABLE,
-                    ),
-                )
-            ),
-            viewState = LogOptionsViewState(
-                logLevelItemsLabel = I18N.string.log_level,
-                logOriginItemsLabel = I18N.string.log_category,
-            ),
-            viewEvent = object : LogOptionsViewEvent {},
-        )
+                ),
+                logOriginItems = flowOf(
+                    setOf(
+                        LogOriginItem(
+                            title = "API",
+                            isChecked = true,
+                            origin = Log.Origin.EVENT_NETWORK,
+                        ),
+                        LogOriginItem(
+                            title = "Exception",
+                            isChecked = false,
+                            origin = Log.Origin.EVENT_THROWABLE,
+                        ),
+                    )
+                ),
+                viewState = LogOptionsViewState(
+                    logLevelItemsLabel = I18N.string.log_level,
+                    logOriginItemsLabel = I18N.string.log_category,
+                ),
+                viewEvent = object : LogOptionsViewEvent {},
+            )
+        }
     }
 }

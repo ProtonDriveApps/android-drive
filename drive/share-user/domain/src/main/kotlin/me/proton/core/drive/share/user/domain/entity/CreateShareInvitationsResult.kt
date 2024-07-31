@@ -20,7 +20,7 @@ package me.proton.core.drive.share.user.domain.entity
 
 data class CreateShareInvitationsResult(
     val failures: Map<ShareUserInvitation, Throwable?>,
-    val successes: Map<ShareUserInvitation, ShareUser.Invitee>,
+    val successes: Map<ShareUserInvitation, ShareUser>,
 )
 
 fun CreateShareInvitationsResult.toError(message: String): Throwable? =

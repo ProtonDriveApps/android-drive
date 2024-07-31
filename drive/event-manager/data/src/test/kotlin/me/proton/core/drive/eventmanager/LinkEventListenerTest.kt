@@ -36,6 +36,7 @@ import me.proton.core.drive.eventmanager.api.response.UpdateMetadataLinksEvent
 import me.proton.core.drive.eventmanager.entity.LinkEventVO
 import me.proton.core.drive.eventmanager.usecase.OnCreateEvent
 import me.proton.core.drive.eventmanager.usecase.OnDeleteEvent
+import me.proton.core.drive.eventmanager.usecase.OnEventEndpointFetchError
 import me.proton.core.drive.eventmanager.usecase.OnResetAllEvent
 import me.proton.core.drive.eventmanager.usecase.OnUpdateContentEvent
 import me.proton.core.drive.eventmanager.usecase.OnUpdateMetadataEvent
@@ -56,6 +57,7 @@ import me.proton.core.eventmanager.domain.entity.EventsResponse
 import me.proton.core.eventmanager.domain.entity.RefreshType
 import org.junit.Before
 import org.junit.Test
+import kotlin.time.Duration
 
 class LinkEventListenerTest {
     private val onCreateEvent = mockk<OnCreateEvent>(relaxed = true)
@@ -65,6 +67,7 @@ class LinkEventListenerTest {
     private val onResetAllEvent = mockk<OnResetAllEvent>(relaxed = true)
     private val findLinkIds = mockk<FindLinkIds>(relaxed = true)
     private val getShare = mockk<GetShare>(relaxed = true)
+    private val onEventEndpointFetchError = mockk<OnEventEndpointFetchError>(relaxed = true)
 
     private val listener = LinkEventListener(
         onCreateEvent = onCreateEvent,
@@ -74,6 +77,7 @@ class LinkEventListenerTest {
         onResetAllEvent = onResetAllEvent,
         findLinkIds = findLinkIds,
         getShare = getShare,
+        onEventEndpointFetchError = onEventEndpointFetchError,
     ).apply {
         onFailure = { error, _ -> throw error }
     }
@@ -82,7 +86,7 @@ class LinkEventListenerTest {
     private val shareId = ShareId(userId, "share-id")
     private val volumeId = VolumeId("volume-id")
     private val shareConfig = EventManagerConfig.Drive.Share(userId, shareId.id)
-    private val volumeConfig = EventManagerConfig.Drive.Volume(userId, volumeId.id)
+    private val volumeConfig = EventManagerConfig.Drive.Volume(userId, volumeId.id, Duration.ZERO)
 
     @Before
     fun setUp() {

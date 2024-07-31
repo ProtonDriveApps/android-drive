@@ -18,7 +18,18 @@
 
 package me.proton.android.drive.ui.robot
 
+import me.proton.test.fusion.Fusion.node
+import me.proton.core.drive.i18n.R as I18N
+
 object SharedTabRobot : HomeRobot, LinksRobot {
+    private val sharedWithMeTab get() = node.withText(I18N.string.shared_with_me_title)
+    private val sharedByMeTab get() = node.withText(I18N.string.shared_by_me_title)
+
+    fun clickSharedWithMeTab() =
+        sharedWithMeTab.clickTo(SharedWithMeRobot)
+
+    fun clickSharedByMeTab() =
+        sharedByMeTab.clickTo(SharedByMeRobot)
 
     override fun robotDisplayed() {
         homeScreenDisplayed()

@@ -121,6 +121,7 @@ object Column {
     const val SHOULD_ANNOUNCE_EVENT = "should_announce_event"
     const val SHOULD_BROADCAST_ERROR_MESSAGE = "should_broadcast_error_message"
     const val SHOULD_DELETE_SOURCE_URI = "should_delete_source_uri"
+    const val SIGNATURE = "signature"
     const val SORTING_BY = "sorting_by"
     const val SORTING_DIRECTION = "sorting_direction"
     const val SRP_MODULUS_ID = "srp_modulus_id"

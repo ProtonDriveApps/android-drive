@@ -20,9 +20,9 @@ object Config {
     const val applicationId = "me.proton.android.drive"
     const val compileSdk = 34
     const val minSdk = 23
-    const val targetSdk = 33
+    const val targetSdk = 34
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    const val versionName = "2.6.0"
+    const val versionName = "2.7.0"
     const val archivesBaseName = "ProtonDrive-$versionName"
     val supportedResourceConfigurations = listOf(
         "b+es+419",
@@ -50,7 +50,14 @@ object Config {
         "uk",
         "zh-rTW",
     )
-    val incubatingResourceConfigurations = listOf<String>().checkSupported()
+    val incubatingResourceConfigurations = listOf<String>(
+        "b+es+419",
+        "es-rES",
+        "it",
+        "pl",
+        "pt-rBR",
+        "tr",
+    ).checkSupported()
     val resourceConfigurations = listOf("de", "en", "fr", "ru").checkSupported()
 
     private fun List<String>.checkSupported(): List<String> =

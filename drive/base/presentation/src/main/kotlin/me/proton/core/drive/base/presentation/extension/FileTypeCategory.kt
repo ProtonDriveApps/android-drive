@@ -28,6 +28,7 @@ import me.proton.core.drive.base.domain.entity.FileTypeCategory.Numbers
 import me.proton.core.drive.base.domain.entity.FileTypeCategory.Pages
 import me.proton.core.drive.base.domain.entity.FileTypeCategory.Pdf
 import me.proton.core.drive.base.domain.entity.FileTypeCategory.Ppt
+import me.proton.core.drive.base.domain.entity.FileTypeCategory.ProtonDoc
 import me.proton.core.drive.base.domain.entity.FileTypeCategory.Text
 import me.proton.core.drive.base.domain.entity.FileTypeCategory.TrustedKey
 import me.proton.core.drive.base.domain.entity.FileTypeCategory.Unknown
@@ -49,6 +50,7 @@ val FileTypeCategory.iconResId: Int
         Pages -> R.drawable.ic_pages_48
         Pdf -> R.drawable.ic_pdf_48
         Ppt -> R.drawable.ic_ppt_48
+        ProtonDoc -> R.drawable.ic_proton_docs_48
         Text -> R.drawable.ic_text_48
         TrustedKey -> R.drawable.ic_trust_key_48
         Unknown -> R.drawable.ic_unknown_48
@@ -69,6 +71,7 @@ val FileTypeCategory.labelResId: Int
         Pages -> I18N.string.common_type_pages
         Pdf -> I18N.string.common_type_pdf
         Ppt -> I18N.string.common_type_ppt
+        ProtonDoc -> I18N.string.common_type_proton_doc
         Text -> I18N.string.common_type_text
         TrustedKey -> I18N.string.common_type_trustedkey
         Unknown -> I18N.string.common_type_unknown
@@ -77,5 +80,3 @@ val FileTypeCategory.labelResId: Int
         Xml -> I18N.string.common_type_xml
         Zip -> I18N.string.common_type_zip
     }
-
-

@@ -19,15 +19,20 @@
 package me.proton.android.drive.ui.test.flow.settings
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import org.junit.Test
 
 @HiltAndroidTest
 class GetMoreFreeStorageFreeUserTest : AuthenticatedBaseTest() {
 
     @Test
-    fun freeUserWithoutMaxFreeSpaceShouldHaveGetMoreFreeStorageOption() {
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
+    fun freeUserWithoutMaxFreeSpaceShouldHaveGetMoreFreeStorageOptionLink() {
         FilesTabRobot
             .openSidebarBySwipe()
             .scrollToStorageIndicator()
@@ -36,7 +41,26 @@ class GetMoreFreeStorageFreeUserTest : AuthenticatedBaseTest() {
                 robotDisplayed()
                 assertTitleDisplayed(uiTestHelper.configurationProvider.maxFreeSpace)
                 assertSubtitleDisplayed()
-                assertActionsDisplayed()
+                assertActionUploadDisplayed()
+                assertActionLinkDisplayed()
+                assertActionRecoveryDisplayed()
+            }
+    }
+
+    @Test
+    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
+    fun freeUserWithoutMaxFreeSpaceShouldHaveGetMoreFreeStorageOptionShare() {
+        FilesTabRobot
+            .openSidebarBySwipe()
+            .scrollToStorageIndicator()
+            .clickGetMoreFreeStorage()
+            .verify {
+                robotDisplayed()
+                assertTitleDisplayed(uiTestHelper.configurationProvider.maxFreeSpace)
+                assertSubtitleDisplayed()
+                assertActionUploadDisplayed()
+                assertActionShareDisplayed()
+                assertActionRecoveryDisplayed()
             }
     }
 }

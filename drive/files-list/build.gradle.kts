@@ -28,6 +28,7 @@ driveModule(
     compose = true,
     workManager = true,
     i18n = true,
+    showkase = true,
 ) {
     api(project(":drive:base:presentation"))
     api(project(":drive:crypto:domain"))

@@ -19,11 +19,26 @@
 package me.proton.core.drive.share.crypto.domain.entity
 
 import me.proton.core.drive.base.domain.entity.Permissions
+import me.proton.core.user.domain.entity.AddressId
 
-data class ShareInvitationRequest(
-    val inviterEmail: String,
-    val inviteeEmail: String,
-    val permissions: Permissions,
-    val keyPacket: String,
-    val keyPacketSignature: String,
-)
+sealed interface ShareInvitationRequest {
+
+    val inviteeEmail: String
+    val permissions: Permissions
+    data class Internal(
+        override val inviteeEmail: String,
+        override val permissions: Permissions,
+        val inviterEmail: String,
+        val keyPacket: String,
+        val keyPacketSignature: String,
+    ) : ShareInvitationRequest
+
+    data class External(
+        override val inviteeEmail: String,
+        override val permissions: Permissions,
+        val inviterAddressId: AddressId,
+        val invitationSignature: String,
+    ) : ShareInvitationRequest
+
+
+}

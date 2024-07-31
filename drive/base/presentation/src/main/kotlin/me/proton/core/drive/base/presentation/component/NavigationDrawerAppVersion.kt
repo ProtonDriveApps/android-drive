@@ -19,6 +19,7 @@ package me.proton.core.drive.base.presentation.component
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -51,7 +52,9 @@ fun NavigationDrawerAppVersion(
 @Composable
 fun PreviewNavigationDrawerAppVersion() {
     ProtonTheme(isDark = true) {
-        NavigationDrawerAppVersion(name = "Name", version = "1.0.0")
+        Surface {
+            NavigationDrawerAppVersion(name = "Name", version = "1.0.0")
+        }
     }
 }
 

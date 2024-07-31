@@ -21,7 +21,7 @@ package me.proton.core.drive.volume.domain.usecase
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.base.data.api.ProtonApiCode
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.extension.resultValueOrThrow
 import me.proton.core.drive.db.test.NullableVolumeEntity
 import me.proton.core.drive.db.test.user

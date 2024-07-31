@@ -69,6 +69,7 @@ import me.proton.core.humanverification.data.db.HumanVerificationDatabase
 import me.proton.core.key.data.db.KeySaltDatabase
 import me.proton.core.key.data.db.PublicAddressDatabase
 import me.proton.core.keytransparency.data.local.KeyTransparencyDatabase
+import me.proton.core.label.data.local.LabelDatabase
 import me.proton.core.observability.data.db.ObservabilityDatabase
 import me.proton.core.payment.data.local.db.PaymentDatabase
 import me.proton.core.push.data.local.db.PushDatabase
@@ -146,6 +147,9 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideContactDatabase(db: DriveDatabase): ContactDatabase
+
+    @Binds
+    abstract fun provideLabelDatabase(db: DriveDatabase): LabelDatabase
 
     @Binds
     abstract fun provideFeatureFlagDatabase(db: DriveDatabase): FeatureFlagDatabase

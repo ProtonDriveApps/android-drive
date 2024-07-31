@@ -245,7 +245,7 @@ fun PhotosPermissionRationalePreview() {
 }
 @Preview(widthDp = 600, heightDp = 360)
 @Composable
-fun PhotosPermissionRationalePreviewLandscape() {
+private fun PhotosPermissionRationalePreviewLandscape() {
     ProtonTheme {
         Surface {
             PhotosPermissionRationale(onBack = {})

@@ -42,7 +42,7 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.test.DriveRule
-import me.proton.core.drive.test.api.getPublicAddressKeys
+import me.proton.core.drive.test.api.getPublicAddressKeysAll
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -83,7 +83,7 @@ class BackupCheckDuplicatesWorkerTest {
             folderId = folderId
         )
         addFolder(backupFolder).getOrThrow()
-        driveRule.server.getPublicAddressKeys()
+        driveRule.server.getPublicAddressKeysAll()
     }
 
     @Test

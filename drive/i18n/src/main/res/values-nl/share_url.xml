@@ -39,6 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">Alleen de mensen met de link en het wachtwoord hebben toegang tot %1$s</string>
+  <string name="shared_link_settings">Link-instellingen</string>
+  <string name="shared_link_options">Link-opties</string>
   <string name="shared_link_privacy_settings">Privacyinstellingen</string>
   <string name="shared_link_password_protection">Wachtwoord beveiliging</string>
   <string name="shared_link_expiration_date">Verloopdatum</string>
@@ -68,6 +70,6 @@
   <string name="title_share_via_link">Deel via koppeling</string>
   <string name="shared_with_me_title">Gedeeld met mij</string>
   <string name="shared_by_me_title">Gedeeld door mij</string>
-  <string name="shared_with_me_empty_description">Files and folder that you share with others will appear here</string>
-  <string name="shared_by_me_empty_description">Safely share your files and folders with end-to-end encryption</string>
+  <string name="shared_with_me_empty_description">Bestanden en mappen die u met anderen deelt verschijnen hier</string>
+  <string name="shared_by_me_empty_description">Deel uw bestanden en mappen veilig met end-to-end versleuteling</string>
 </resources>

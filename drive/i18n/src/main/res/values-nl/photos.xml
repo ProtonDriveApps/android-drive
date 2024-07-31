@@ -47,12 +47,12 @@
   <!--
         Variable %1$s is a folder name, %2$s is a quantity of folders found
         Example:
-            "Backing up items from the Camera folder"
-            "Backing up items from 2 Camera folders"
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
     -->
   <plurals name="photos_message_folders_setup">
-    <item quantity="one">Back-up items van de %1$s map</item>
-    <item quantity="other">Back-up items van %2$d %1$s mappen</item>
+    <item quantity="one">Back-up maken van items uit %2$d map: %1$s</item>
+    <item quantity="other">Back-up maken van items uit %2$d mappen: %1$s</item>
   </plurals>
   <!--
         Variable %1$s is a folder name
@@ -91,6 +91,7 @@
   <string name="photos_backup_state_completed">Back-up voltooid</string>
   <string name="photos_backup_state_uncompleted">Back-up is met fouten afgerond</string>
   <string name="photos_backup_state_uncompleted_action">Oplossen</string>
+  <string name="photos_backup_state_preparing">Preparing to back up</string>
   <string name="photos_backup_state_encrypting">Versleutelen...</string>
   <string name="photos_backup_state_uploading">Bezig met back-uppen…</string>
   <!--

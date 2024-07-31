@@ -150,6 +150,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Kopia zapasowa nie jest dozwolona</string>
   <string name="notification_content_text_backup_paused_disabled">Kopia zapasowa została wyłączona</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Kopia zapasowa nie może zostać uruchomiona w tle</string>
+  <string name="notification_content_text_backup_preparing">Przygotowywanie kopii zapasowej</string>
   <string name="notification_content_title_download_complete">Pobieranie zostało zakończone</string>
   <string name="notification_content_title_forced_sign_out">Zaloguj się</string>
   <string name="notification_content_text_forced_sign_out">Przepraszamy za kłopot! Mieliśmy problem z synchronizacją. Zaloguj się ponownie, a wszystko będzie działało sprawnie.</string>

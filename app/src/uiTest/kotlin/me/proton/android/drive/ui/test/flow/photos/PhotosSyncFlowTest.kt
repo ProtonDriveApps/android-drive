@@ -308,6 +308,50 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
             }
     }
 
+    @Test
+    @Scenario(2)
+    fun syncDefaultAndAdditionalFolders() {
+        dcimCameraFolder.copyFileFromAssets("boat.jpg")
+        pictureRawFolder.copyDirFromAssets("images/basic/0_0.png")
+        pictureScreenshotsFolder.copyDirFromAssets("images/basic/0_0.jpg")
+
+        PhotosTabRobot
+            .enableBackup()
+            .verify {
+                assertBackupCompleteDisplayed()
+                assertPhotoDisplayed("boat.jpg")
+                assertPhotoDisplayed("0_0.png")
+                assertPhotoDisplayed("0_0.jpg")
+                assertPhotoCountEquals(3)
+            }
+    }
+
+    @Test
+    @Scenario(2)
+    fun syncOnlyAdditionalFolders() {
+        pictureRawFolder.copyDirFromAssets("images/basic/0_0.png")
+        pictureScreenshotsFolder.copyDirFromAssets("images/basic/0_0.jpg")
+
+        PhotosTabRobot
+            .openSidebarBySwipe()
+            .clickSettings()
+            .clickPhotosBackup()
+            .verify {
+                assertFoldersList()
+            }
+            .clickBackupToggle(SettingsRobot)
+            .verify {
+                robotDisplayed()
+            }
+            .clickBack(PhotosTabRobot)
+            .verify {
+                assertBackupCompleteDisplayed()
+                assertPhotoDisplayed("0_0.png")
+                assertPhotoDisplayed("0_0.jpg")
+                assertPhotoCountEquals(2)
+            }
+    }
+
     @Module
     @InstallIn(SingletonComponent::class)
     @Suppress("Unused")

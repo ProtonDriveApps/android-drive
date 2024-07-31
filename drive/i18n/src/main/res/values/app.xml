@@ -26,6 +26,7 @@
     <string name="title_offline_available">Available offline</string>
     <string name="title_empty_my_files">Go ahead, add your first file</string>
     <string name="title_empty_folder">Let\'s fill this folder</string>
+    <string name="title_empty_folder_read_only">Empty folder</string>
     <string name="title_empty_shared">Keep track of what\'s out there</string>
     <string name="title_empty_offline_available">Nothing available offline</string>
     <string name="title_empty_trash">Trash is empty</string>
@@ -158,6 +159,7 @@
     <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Backup is not allowed</string>
     <string name="notification_content_text_backup_paused_disabled">Backup was disabled</string>
     <string name="notification_content_text_backup_paused_background_restrictions">Backup cannot run in background</string>
+    <string name="notification_content_text_backup_preparing">Preparing to back up</string>
 
     <string name="notification_content_title_download_complete">Download complete</string>
     <string name="notification_content_title_forced_sign_out">Please log in</string>
@@ -179,6 +181,7 @@
 
     <string name="description_empty_my_files">Tap the button to start adding files.</string>
     <string name="description_empty_folder">@string/description_empty_my_files</string>
+    <string name="description_empty_folder_read_only">There is nothing to see here</string>
     <string name="description_empty_shared">Linked files appear here so you can easily track and manage what\'s shared.</string>
     <string name="description_empty_trash">This is where trashed items remain until you delete or restore them.</string>
     <string name="description_empty_offline_available">Make essential files always available even when your network isn\'t.</string>

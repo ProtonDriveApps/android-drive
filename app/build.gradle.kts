@@ -150,9 +150,12 @@ android {
         buildConfigField("String", "FLAVOR_ALPHA", "\"alpha\"")
         buildConfigField("String", "FLAVOR_BETA", "\"beta\"")
         buildConfigField("String", "FLAVOR_PRODUCTION", "\"prod\"")
-        buildConfigField("String", "SENTRY_DSN", "\"https://28f8df131f7a4ca4940e86972ba5038f@drive-api.proton.me/core/v4/reports/sentry/11\"")
+        buildConfigField("String", "SENTRY_DSN", "\"${System.getenv("DRIVE_SENTRY_DSN").orEmpty()}\"")
         buildConfigField("String", "ACCOUNT_SENTRY_DSN", "\"${System.getenv("ACCOUNT_SENTRY_DSN").orEmpty()}\"")
         buildConfigField("String", "GIT_HASH", "\"$gitHash\"")
+
+        setAssetLinksResValue("proton.me")
+
         testInstrumentationRunner = "me.proton.android.drive.ui.HiltTestRunner"
         testInstrumentationRunnerArguments["proxyToken"] = proxyToken
     }
@@ -180,6 +183,8 @@ android {
                 generateEnvFile(buildTypes.getByName("debug"))
             }
             resourceConfigurations.addAll(Config.supportedResourceConfigurations)
+
+            setAssetLinksResValue(dynamicEnvironment)
         }
         create("alpha") {
             versionCode = (versionCodeFromGitCommitCount * 10) + 1

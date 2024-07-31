@@ -64,7 +64,8 @@ class UserLoginRule(
 
             val device = scenarioAnnotation?.isDevice ?: isDevice
             val photos = scenarioAnnotation?.isPhotos ?: isPhotos
-            val withSharingUser = scenarioAnnotation?.withSharingUser ?: false
+            val loginWithSharingUser = scenarioAnnotation?.loginWithSharingUser ?: false
+            val withSharingUser = (scenarioAnnotation?.withSharingUser ?: false) || loginWithSharingUser
 
             if (user.isPaid)
                 quarkCommands.seedNewSubscriber(user)
@@ -99,14 +100,18 @@ class UserLoginRule(
                 TestFeatureFlagRepositoryImpl.flags[featureFlagAnnotation.id] =
                     featureFlagAnnotation.state
             }
-        }
 
-        try {
-            loginTestHelper.login(testUser.name, testUser.password)
-        } catch (ex: IllegalStateException) {
-            val message =
-                "Possibly incorrect rule order, make sure you use @get:Rule(order = 1) for UserLoginRule\n${ex.message}"
-            throw IllegalStateException(message)
+            try {
+                if (loginWithSharingUser) {
+                    loginTestHelper.login(sharingUser.name, sharingUser.password)
+                } else {
+                    loginTestHelper.login(testUser.name, testUser.password)
+                }
+            } catch (ex: IllegalStateException) {
+                val message =
+                    "Possibly incorrect rule order, make sure you use @get:Rule(order = 1) for UserLoginRule\n${ex.message}"
+                throw IllegalStateException(message)
+            }
         }
     }
 

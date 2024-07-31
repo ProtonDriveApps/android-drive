@@ -63,13 +63,12 @@ import me.proton.core.drive.drivelink.shared.presentation.extension.toViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.ManageAccessViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.LoadingViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ManageAccessViewState
+import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
-import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -78,7 +77,6 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.usecase.GetShareUsers
-import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
@@ -93,7 +91,7 @@ class ManageAccessViewModel @Inject constructor(
     getShareUsers: GetShareUsers,
     private val savedStateHandle: SavedStateHandle,
     private val copyToClipboard: CopyToClipboard,
-    private val getFeatureFlagFlow: GetFeatureFlagFlow,
+    getFeatureFlagFlow: GetFeatureFlagFlow,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
     @ApplicationContext private val appContext: Context,
@@ -223,18 +221,25 @@ class ManageAccessViewModel @Inject constructor(
 
     fun viewEvent(
         navigateToShareViaInvitations: (LinkId) -> Unit,
-        navigateToShareViaLink: (LinkId) -> Unit,
+        navigateToLinkSettings: (LinkId) -> Unit,
         navigateToStopLinkSharing: (LinkId) -> Unit,
         navigateToStopAllSharing: (ShareId) -> Unit,
         navigateToInvitationOptions: (LinkId, String) -> Unit,
+        navigateToExternalInvitationOptions: (LinkId, String) -> Unit,
         navigateToMemberOptions: (LinkId, String) -> Unit,
         navigateBack: () -> Unit
     ) = object : ManageAccessViewEvent {
         override val onCopyLink: (String) -> Unit = { publicUrl -> copyLink(publicUrl) }
         override val onInvite: () -> Unit = { navigateToShareViaInvitations(linkId) }
-        override val onInvitationOptions: (String) -> Unit = { invitationId -> navigateToInvitationOptions(linkId, invitationId) }
-        override val onMemberOptions: (String) -> Unit = { memberId -> navigateToMemberOptions(linkId, memberId) }
-        override val onConfigureSharing: () -> Unit = { navigateToShareViaLink(linkId) }
+        override val onOptions: (ShareUserViewState) -> Unit = { user ->
+            when (user.type) {
+                ShareUserType.INVITATION -> navigateToInvitationOptions(linkId, user.id)
+                ShareUserType.MEMBER -> navigateToMemberOptions(linkId, user.id)
+                ShareUserType.EXTERNAL_INVITATION ->
+                    navigateToExternalInvitationOptions(linkId, user.id)
+            }
+        }
+        override val onConfigureSharing: () -> Unit = { navigateToLinkSettings(linkId) }
         override val onStartLinkSharing: () -> Unit = { startLinkSharing() }
         override val onStopLinkSharing: () -> Unit = { navigateToStopLinkSharing(linkId) }
         override val onStopAllSharing: () -> Unit = {

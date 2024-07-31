@@ -145,6 +145,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Conservarea nu este permisă.</string>
   <string name="notification_content_text_backup_paused_disabled">Conservarea este dezactivată</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Conservarea nu poate funcționa în fundal.</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
   <string name="notification_content_title_download_complete">Descărcare finalizată</string>
   <string name="notification_content_title_forced_sign_out">Autentificați-vă</string>
   <string name="notification_content_text_forced_sign_out">Ne pare rău! Am avut o problemă cu sincronizarea - reconectați-vă și totul va funcționa fără probleme.</string>
@@ -206,8 +207,8 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
   <string name="get_more_free_storage_action_link_subtitle">Selectați orice fișier sau folder. Deschideți meniul de opțiuni și apăsați pe %1$s.</string>
-  <string name="get_more_free_storage_action_share_title">Share a file</string>
-  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_share_title">Partajare fișier</string>
+  <string name="get_more_free_storage_action_share_subtitle">Este ușor și sigur.</string>
   <string name="get_more_free_storage_action_recovery_title">Setați o metodă de recuperare</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link

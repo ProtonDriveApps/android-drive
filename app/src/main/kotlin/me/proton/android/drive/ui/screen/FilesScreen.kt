@@ -25,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -65,7 +66,8 @@ fun FilesScreen(
         .collectAsState(initial = null)
     val inMultiselect = remember(selected) { selected?.isNotEmpty() ?: false }
 
-    val viewEvent = remember {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val viewEvent = remember(lifecycle) {
         viewModel.viewEvent(
             navigateToFiles,
             navigateToPreview,
@@ -74,6 +76,7 @@ fun FilesScreen(
             navigateToMultipleFileOrFolderOptions,
             navigateToParentFolderOptions,
             navigateBack,
+            lifecycle,
         )
     }
     BackHandler(enabled = inMultiselect) { viewEvent.onBack() }

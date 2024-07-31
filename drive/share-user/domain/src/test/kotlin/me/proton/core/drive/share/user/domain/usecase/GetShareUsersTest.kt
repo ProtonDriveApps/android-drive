@@ -18,6 +18,7 @@ import me.proton.core.drive.db.test.volume
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.getExternalInvitations
 import me.proton.core.drive.test.api.getInvitations
 import me.proton.core.drive.test.api.getMembers
 import org.junit.Assert.assertEquals
@@ -88,6 +89,7 @@ class GetShareUsersTest {
         }
         driveRule.server.run {
             getInvitations()
+            getExternalInvitations()
             getMembers()
         }
 
@@ -101,6 +103,7 @@ class GetShareUsersTest {
     fun `one invitation one member`() = runTest {
         driveRule.db.user {
             contactEmail("invitee")
+            contactEmail("external-invitee", isProton = false)
             contactEmail("member")
             volume {
                 standardShare(standardShareId.id) {
@@ -118,6 +121,7 @@ class GetShareUsersTest {
         // Replace mock api by database insertion with events are implemented
         driveRule.server.run {
             getInvitations("invitee@proton.me")
+            getExternalInvitations("external-invitee@external.com")
             getMembers("member@proton.me")
         }
 
@@ -134,6 +138,16 @@ class GetShareUsersTest {
                     displayName = "invitee",
                     keyPacket = "invitation-key-packet",
                     keyPacketSignature = "invitation-key-packet-signature",
+                ),
+                ShareUser.ExternalInvitee(
+                    id = "invitation-id-external-invitee@external.com",
+                    inviter = "inviter@proton.me",
+                    email = "external-invitee@external.com",
+                    createTime = TimestampS(0),
+                    permissions = Permissions(0),
+                    displayName = "external-invitee",
+                    signature = "invitation-signature",
+                    state = ShareUser.ExternalInvitee.State.PENDING,
                 ),
                 ShareUser.Member(
                     id = "member-id-member@proton.me",

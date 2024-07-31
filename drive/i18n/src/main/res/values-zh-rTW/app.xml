@@ -135,6 +135,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">不允許備份</string>
   <string name="notification_content_text_backup_paused_disabled">已關閉備份</string>
   <string name="notification_content_text_backup_paused_background_restrictions">備份無法於背景運作</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
   <string name="notification_content_title_download_complete">下載完成</string>
   <string name="notification_content_title_forced_sign_out">請登入</string>
   <string name="notification_content_text_forced_sign_out">抱歉打斷您！出現了同步問題，請重新登入，才能流暢運作。</string>

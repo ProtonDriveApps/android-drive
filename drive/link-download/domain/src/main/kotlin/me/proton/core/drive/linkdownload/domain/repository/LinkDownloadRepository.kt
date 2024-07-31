@@ -51,7 +51,7 @@ interface LinkDownloadRepository {
     )
 
     /**
-     * Tells if all the links within a given [folderId] are downloaded
+     * Tells if all non-excluded ([excludeMimeTypes]) links within a given [folderId] are downloaded
      */
-    suspend fun areAllFilesDownloaded(folderId: FolderId): Boolean
+    suspend fun areAllFilesDownloaded(folderId: FolderId, excludeMimeTypes: Set<String> = emptySet()): Boolean
 }

@@ -22,6 +22,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.proton.android.drive.ui.effect.HandleHomeEffect
@@ -43,11 +45,13 @@ fun SharedByMeScreen(
 ) {
     val viewModel = hiltViewModel<SharedByMeViewModel>()
     val viewState by viewModel.viewState.collectAsStateWithLifecycle(initialValue = viewModel.initialViewState)
-    val viewEvent = remember {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val viewEvent = remember(lifecycle) {
         viewModel.viewEvent(
             navigateToFiles = navigateToFiles,
             navigateToPreview = navigateToPreview,
             navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+            lifecycle = lifecycle,
         )
     }
     viewModel.HandleHomeEffect(homeScaffoldState)
@@ -59,6 +63,11 @@ fun SharedByMeScreen(
         sharedItems = sharedItems,
         listEffect = listEffect,
         driveLinksFlow = viewModel.driveLinksMap,
-        modifier = modifier,
+        modifier = modifier
+            .testTag(SharedByMeTestTag.content),
     )
+}
+
+object SharedByMeTestTag {
+    const val content = "files content"
 }

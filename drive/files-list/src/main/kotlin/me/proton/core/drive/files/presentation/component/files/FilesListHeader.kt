@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -89,15 +90,17 @@ fun FilesListHeader(
 @Composable
 fun PreviewFileListHeader() {
     ProtonTheme {
-        FilesListHeader(
-            sortingViewState = SortingViewState(
-                icon = CorePresentation.drawable.ic_proton_arrow_down,
-                title = I18N.string.title_file_type
-            ),
-            isDisplayingGridView = false,
-            onSorting = {},
-            onToggleLayout = {}
-        )
+        Surface {
+            FilesListHeader(
+                sortingViewState = SortingViewState(
+                    icon = CorePresentation.drawable.ic_proton_arrow_down,
+                    title = I18N.string.title_file_type
+                ),
+                isDisplayingGridView = false,
+                onSorting = {},
+                onToggleLayout = {}
+            )
+        }
     }
 }
 

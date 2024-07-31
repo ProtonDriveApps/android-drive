@@ -26,6 +26,7 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -68,6 +69,7 @@ internal fun PhotosStatesContainer(
                 }
                 is PhotosStatusViewState.Complete -> BackupCompletedState(extraLabel = viewState.labelItemSaved)
                 is PhotosStatusViewState.Uncompleted -> BackupUncompletedState(onResolve = onResolve)
+                is PhotosStatusViewState.Preparing -> BackupPreparingState(preparing = viewState)
                 is PhotosStatusViewState.InProgress -> BackupInProgressState(inProgress = viewState)
                 is PhotosStatusViewState.Failed -> {
                     viewState.errors.forEach { error ->
@@ -98,27 +100,29 @@ internal fun PhotosStatesContainer(
 }
 @Preview
 @Composable
-private fun PhotosStatesContainerPreview(
+fun PhotosStatesContainerPreview(
     @PreviewParameter(ViewStatePreviewParameterProvider::class) viewState: PhotosStatusViewState,
 ) {
     ProtonTheme {
-        PhotosStatesContainer(
-            modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
-            viewState = viewState,
-            showPhotosStateBanner = true,
-            onEnable = { },
-            onPermissions = { },
-            onRetry = { },
-            onResolve = { },
-            onResolveMissingFolder = { },
-            onChangeNetwork = { },
-            onIgnoreBackgroundRestrictions = { },
-            onDismissBackgroundRestrictions = { },
-        )
+        Surface {
+            PhotosStatesContainer(
+                modifier = Modifier.background(ProtonTheme.colors.backgroundNorm),
+                viewState = viewState,
+                showPhotosStateBanner = true,
+                onEnable = { },
+                onPermissions = { },
+                onRetry = { },
+                onResolve = { },
+                onResolveMissingFolder = { },
+                onChangeNetwork = { },
+                onIgnoreBackgroundRestrictions = { },
+                onDismissBackgroundRestrictions = { },
+            )
+        }
     }
 }
 
-private class ViewStatePreviewParameterProvider : CollectionPreviewParameterProvider<PhotosStatusViewState>(
+class ViewStatePreviewParameterProvider : CollectionPreviewParameterProvider<PhotosStatusViewState>(
     listOf(
         PhotosStatusViewState.Disabled(hasDefaultFolder = true),
         PhotosStatusViewState.Disabled(hasDefaultFolder = false),
@@ -133,5 +137,6 @@ private class ViewStatePreviewParameterProvider : CollectionPreviewParameterProv
         PhotosStatusViewState.Failed(listOf(BackupError.WifiConnectivity())),
         PhotosStatusViewState.Failed(listOf(BackupError.PhotosUploadNotAllowed())),
         PhotosStatusViewState.Failed(listOf(BackupError.BackgroundRestrictions())),
+        PhotosStatusViewState.Preparing(0.1F),
     )
 )

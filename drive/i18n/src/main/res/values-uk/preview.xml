@@ -23,4 +23,5 @@
   <string name="preview_processing_state">Обробка…</string>
   <string name="preview_empty">Нічого не має для перегляду…</string>
   <string name="title_not_found">Не знайдено</string>
+  <string name="preview_proton_doc_open_in_browser_button">Відкрити в браузері</string>
 </resources>

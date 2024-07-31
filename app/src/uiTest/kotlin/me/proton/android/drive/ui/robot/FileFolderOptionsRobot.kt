@@ -35,6 +35,7 @@ object FileFolderOptionsRobot : Robot {
     private val manageLinkButton get() = node.withText(I18N.string.common_manage_link_action)
     private val shareButton get() = node.withText(I18N.string.common_share)
     private val manageAccessButton get() = node.withText(I18N.string.common_manage_access_action)
+    private val removeMeButton get() = node.withText(I18N.string.files_remove_me_action)
     private val renameButton get() = node.withText(I18N.string.files_rename_file_action)
     private val fileDetailsButton get() = node.withText(I18N.string.files_display_file_info_action)
     private val folderDetailsButton get() = node.withText(I18N.string.files_display_folder_info_action)
@@ -60,6 +61,7 @@ object FileFolderOptionsRobot : Robot {
     fun clickManageAccess() = ManageAccessRobot.apply {
         manageAccessButton.scrollTo().click()
     }
+    fun <T: Robot >clickRemoveMe(goesTo: T) = removeMeButton.scrollTo().clickTo(goesTo)
     fun clickStopSharing() = ConfirmStopSharingRobot.apply {
         stopSharingButton.scrollTo().click()
     }

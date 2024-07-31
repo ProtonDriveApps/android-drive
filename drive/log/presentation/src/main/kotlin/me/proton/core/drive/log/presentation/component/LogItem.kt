@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -127,10 +128,12 @@ private fun MoreIndicator(
 @Composable
 fun PreviewLogItem() {
     ProtonTheme {
-        LogItem(
-            time = "13:28:24.321",
-            message = "Backup started",
-            content = "Photos will soon be ready for backup",
-        )
+        Surface {
+            LogItem(
+                time = "13:28:24.321",
+                message = "Backup started",
+                content = "Photos will soon be ready for backup",
+            )
+        }
     }
 }
