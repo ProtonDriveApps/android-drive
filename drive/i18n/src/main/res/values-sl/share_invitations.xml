@@ -56,11 +56,11 @@
     <item quantity="few">V skupni rabi s %1$d uporabniki</item>
     <item quantity="other">V skupni rabi s %1$d uporabniki</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
-  <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_owner">Lastnik</string>
+  <string name="common_permission_admin">Skrbnik</string>
+  <string name="common_permission_editor">Urednik</string>
+  <string name="common_permission_viewer">Pregledovalec</string>
+  <string name="common_permission_unknown">Neznano</string>
   <!--
         Variable %1$s is an email
         Examples:
@@ -82,9 +82,9 @@
   <string name="share_via_invitations_add_people_hint">Dodaj osebe</string>
   <string name="share_via_invitations_copy_invite_link_action">Kopiraj povezavo do povabila</string>
   <string name="share_via_invitations_remove_access_action">Odstrani dostop</string>
-  <string name="share_via_invitations_stop_sharing_description">Izbriši povezavo in odstrani dostop za vse</string>
-  <string name="share_via_invitations_resend_invite_action">Ponovno pošlji povabilo</string>
-  <string name="share_via_invitations_resend_invite_success">Povabilo je bilo ponovno poslano</string>
+  <string name="share_via_invitations_stop_sharing_description">Izbriši povezavo in odstrani dostop za vse.</string>
+  <string name="share_via_invitations_resend_invite_action">Ponovno pošlji povabilo.</string>
+  <string name="share_via_invitations_resend_invite_success">Povabilo je bilo ponovno poslano.</string>
   <!--
         Variable %1$d is a number
         Examples:

@@ -34,4 +34,6 @@ data class ShareInvitationRequestDto(
     val keyPacket: String,
     @SerialName(Dto.KEY_PACKET_SIGNATURE)
     val keyPacketSignature: String,
+    @SerialName(Dto.EXTERNAL_INVITATION_ID)
+    val externalInvitationId: String? = null,
 )

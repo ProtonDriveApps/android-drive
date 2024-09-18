@@ -55,14 +55,16 @@ private fun String.optionalArg(
 ): Pair<String, String>? = takeIf { it.isNotEmpty() }?.let { name to it }
 
 fun QuarkCommand.quotaSetUsedSpace(
-    user: User,
+    userId: String,
     usedSpace: String,
+    product: String,
 ): Response =
     route("quark/drive:quota:set-used-space")
         .args(
             listOf(
-                "--username" to user.name,
-                "--used-space" to usedSpace
+                "--user-id" to userId,
+                "--used-space" to usedSpace,
+                "--product" to product,
             ).toEncodedArgs()
         )
         .build()

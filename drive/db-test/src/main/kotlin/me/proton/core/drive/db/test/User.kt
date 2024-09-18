@@ -59,6 +59,8 @@ fun NullableUserEntity(
     userId: UserId = me.proton.core.drive.db.test.userId,
     maxSpace: Long = 5.GiB.value,
     usedSpace: Long = 0,
+    maxDriveSpace: Long? = null,
+    usedDriveSpace: Long? = null,
     subscribed: Int = 0,
 ) = UserEntity(
     userId = userId,
@@ -80,7 +82,7 @@ fun NullableUserEntity(
     passphrase = EncryptedByteArray("user-passphrase".toByteArray()),
     recovery = null,
     maxBaseSpace = null,
-    maxDriveSpace = null,
+    maxDriveSpace = maxDriveSpace,
     usedBaseSpace = null,
-    usedDriveSpace = null,
+    usedDriveSpace = usedDriveSpace,
 )

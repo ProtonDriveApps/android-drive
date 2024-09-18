@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.base.domain.usecase
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.base.domain.repository.ClientUidRepository
@@ -26,8 +25,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.util.UUID
+import kotlin.coroutines.CoroutineContext
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class GetOrCreateClientUidTest {
 
     private lateinit var getOrCreateClientUid: GetOrCreateClientUid
@@ -48,7 +47,7 @@ class GetOrCreateClientUidTest {
         getOrCreateClientUid = GetOrCreateClientUid(
             GetClientUid(repository),
             CreateClientUid(repository, object : CreateUuid {
-                override suspend fun invoke(): UUID = uuid
+                override suspend fun invoke(coroutineContext: CoroutineContext): UUID = uuid
             })
         )
     }

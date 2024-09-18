@@ -22,4 +22,6 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.user.domain.entity.User
 import kotlin.math.max
 
-val User.availableSpace: Bytes get() = max(0, maxSpace - usedSpace).bytes
+val User.availableSpace: Bytes get() = max(0, effectiveMaxDriveSpace.value - effectiveUsedDriveSpace.value).bytes
+val User.effectiveUsedDriveSpace: Bytes get() = (usedDriveSpace ?: usedSpace).bytes
+val User.effectiveMaxDriveSpace: Bytes get() = (maxDriveSpace ?: maxSpace).bytes

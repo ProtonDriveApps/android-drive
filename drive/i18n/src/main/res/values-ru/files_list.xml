@@ -18,9 +18,20 @@
   -->
 <resources>
   <string name="file_operation_error_occurred_moving_file">Произошла ошибка при перемещении файла</string>
-  <string name="file_operation_moving_file_successful">Файл успешно перемещен</string>
+  <string name="file_operation_moving_file_successful">Файл успешно перемещён</string>
   <string name="file_operation_moving_folder_successful">Папка успешно перемещена</string>
-  <string name="file_operation_moving_multiple_successful">%1$d элемента успешно перемещены.</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="one">%1$d элемент успешно перемещён.</item>
+    <item quantity="few">%1$d элемента успешно перемещены.</item>
+    <item quantity="many">%1$d элементов успешно перемещено.</item>
+    <item quantity="other">%1$d элементов успешно перемещено.</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Элемент с таким названием уже существует в папке назначения</string>
   <string name="folder_options_header_title">В \"%1$s\"</string>
   <string name="folder_options_header_title_encrypted">В</string>

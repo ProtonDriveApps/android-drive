@@ -42,6 +42,7 @@ object Column {
     const val ENCRYPTED_NAME = "encrypted_name"
     const val ENCRYPTED_SIGNATURE = "encrypted_signature"
     const val END = "end"
+    const val EMAIL = "email"
     const val ERROR = "error"
     const val EXPIRATION_TIME = "expiration_time"
     const val FLAGS = "flags"
@@ -169,5 +170,6 @@ object Column {
 
     object Core {
         const val USER_ID = "userId"
+        const val PUBLIC_KEY = "publicKey"
     }
 }

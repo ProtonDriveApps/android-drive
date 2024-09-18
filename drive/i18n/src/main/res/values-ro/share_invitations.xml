@@ -53,29 +53,29 @@
     <item quantity="few">Partajare cu %1$d persoane</item>
     <item quantity="other">Partajare cu %1$d de persoane</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
+  <string name="common_permission_owner">Proprietar</string>
+  <string name="common_permission_admin">Administrator</string>
   <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_viewer">Utilizator</string>
+  <string name="common_permission_unknown">Necunoscut</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (În așteptare)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Accepted)"
     -->
-  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Acceptat)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Unknown)"
     -->
-  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Necunoscut)</string>
   <string name="share_via_invitations_add_people_hint">Adăugare persoană</string>
   <string name="share_via_invitations_copy_invite_link_action">Copiere legătură web invitație</string>
   <string name="share_via_invitations_remove_access_action">Eliminare acces</string>

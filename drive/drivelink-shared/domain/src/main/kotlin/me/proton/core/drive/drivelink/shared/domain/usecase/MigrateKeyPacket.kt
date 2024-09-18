@@ -27,21 +27,21 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.base.ReencryptKeyPacket
-import me.proton.core.drive.drivelink.shared.domain.extension.passphrase
-import me.proton.core.drive.drivelink.shared.domain.extension.sharingDetails
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
+import me.proton.core.drive.link.domain.extension.rootFolderId
+import me.proton.core.drive.link.domain.usecase.FetchLinks
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareAccessWithNode
 import me.proton.core.drive.share.domain.repository.MigrationKeyPacketRepository
 import me.proton.core.drive.share.domain.usecase.GetShares
 import me.proton.core.util.kotlin.CoreLogger
-import me.proton.core.util.kotlin.filterNullValues
+import me.proton.core.util.kotlin.filterNotNullValues
 import javax.inject.Inject
 
 class MigrateKeyPacket @Inject constructor(
     private val repository: MigrationKeyPacketRepository,
     private val getShares: GetShares,
-    private val getSharedDriveLinks: GetSharedDriveLinks,
+    private val fetchLinks: FetchLinks,
     private val reencryptKeyPacket: ReencryptKeyPacket,
     private val getNodeKey: GetNodeKey,
 ) {
@@ -51,10 +51,8 @@ class MigrateKeyPacket @Inject constructor(
             userId = userId,
             shareType = Share.Type.STANDARD,
             refresh = flowOf(true),
-        )
-            .filterSuccessOrError()
-            .toResult()
-            .getOrThrow()
+        ).toResult().getOrThrow()
+
         while (true) {
             val shareIds = repository.getAll(userId).onFailure { error ->
                 if (error.hasHttpCode(404)) {
@@ -69,28 +67,20 @@ class MigrateKeyPacket @Inject constructor(
                 return@coRunCatching Result.success(Unit)
             }
 
-            val volumeIds = shares.filter { share -> share.id in shareIds }.map { share ->
-                share.volumeId
-            }.distinct()
-            val links = volumeIds.flatMap { volumeId ->
-                getSharedDriveLinks(
-                    userId = userId,
-                    volumeId = volumeId,
-                    refresh = flowOf(true),
-                ).filterSuccessOrError().toResult().getOrThrow()
-            }
-
             val result = shareIds.associateWith { shareId ->
+                val share = shares.firstOrNull { share -> share.id == shareId }
+
+                val link = share?.rootLinkId?.let { linkId ->
+                    fetchLinks(
+                        shareId = shareId,
+                        linkIds = setOf(linkId),
+                        storeInCache = true,
+                    ).getOrThrow()
+                }?.second?.first()
+
                 coRunCatching {
-                    val share =
-                        requireNotNull(shares.firstOrNull { share -> share.id == shareId }) {
-                            "Share not found: $shareId"
-                        }
-
-                    val link = links.first { link ->
-                        link.id.id == share.rootLinkId && link.sharingDetails?.shareId == shareId
-                    }
-
+                    checkNotNull(share) { "Share not found: $shareId" }
+                    checkNotNull(link) { "Link not found: ${share.rootFolderId}" }
                     reencryptKeyPacket(
                         message = link.passphrase,
                         linkId = link.id,
@@ -113,7 +103,7 @@ class MigrateKeyPacket @Inject constructor(
 
             val migrated = repository.update(
                 userId, ShareAccessWithNode(
-                    passphraseNodeKeyPackets = result.filterNullValues(),
+                    passphraseNodeKeyPackets = result.filterNotNullValues(),
                     unreadableShareIds = result.filter { (_, value) -> value == null }.keys.toList()
                 )
             ).getOrThrow()

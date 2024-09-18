@@ -21,9 +21,10 @@
 package me.proton.core.drive.db.test
 
 import me.proton.core.crypto.common.keystore.EncryptedByteArray
+import me.proton.core.crypto.common.pgp.Armored
 import me.proton.core.domain.entity.UserId
-import me.proton.core.key.data.entity.PublicAddressEntity
-import me.proton.core.key.data.entity.PublicAddressKeyEntity
+import me.proton.core.key.data.entity.PublicAddressInfoEntity
+import me.proton.core.key.data.entity.PublicAddressKeyDataEntity
 import me.proton.core.key.domain.entity.key.KeyId
 import me.proton.core.user.data.entity.AddressEntity
 import me.proton.core.user.data.entity.AddressKeyEntity
@@ -34,14 +35,14 @@ suspend fun UserContext.withKey(
     userKey: UserKeyEntity = NullableUserKeyEntity(),
     address: AddressEntity = NullableAddressEntity(),
     addressKey: AddressKeyEntity = NullableAddressKeyEntity(),
-    publicAddressEntity: PublicAddressEntity = NullablePublicAddressEntity(),
-    publicAddressKeyEntity: PublicAddressKeyEntity = NullablePublicAddressKeyEntity(),
+    publicAddressInfoEntity: PublicAddressInfoEntity = NullablePublicAddressInfoEntity(),
+    publicAddressKeyDataEntity: PublicAddressKeyDataEntity = NullablePublicAddressKeyDataEntity(),
 ) {
     db.userKeyDao().insertOrUpdate(userKey)
     db.addressWithKeysDao().insertOrUpdate(address)
     db.addressKeyDao().insertOrUpdate(addressKey)
-    db.publicAddressDao().insertOrUpdate(publicAddressEntity)
-    db.publicAddressKeyDao().insertOrUpdate(publicAddressKeyEntity)
+    db.publicAddressInfoDao().insertOrUpdate(publicAddressInfoEntity)
+    db.publicAddressKeyDataDao().insertOrUpdate(publicAddressKeyDataEntity)
 }
 
 suspend fun ShareContext.withKey(
@@ -73,10 +74,11 @@ fun NullableUserKeyEntity(
 
 fun UserContext.NullableAddressEntity(
     addressId: AddressId = AddressId("address-id"),
+    email: String = requireNotNull(account.email),
 ) = NullableAddressEntity(
     userId = user.userId,
     addressId = addressId,
-    email = requireNotNull(account.email),
+    email = email,
     displayName = account.username,
 )
 
@@ -141,28 +143,26 @@ fun NullableAddressKeyEntity(
     )
 }
 
-
-fun UserContext.NullablePublicAddressEntity(
+fun UserContext.NullablePublicAddressInfoEntity(
     email: String = account.email ?: "null-email",
-): PublicAddressEntity {
-    return PublicAddressEntity(
-        email = email,
-        recipientType = 1,
-        mimeType = null,
-        signedKeyListEntity = null,
-        ignoreKT = null,
-    )
-}
+) = PublicAddressInfoEntity(
+    email = email,
+    warnings = emptyList(),
+    protonMx = false,
+    isProton = 1,
+    addressSignedKeyList = null,
+    catchAllSignedKeyList = null,
+)
 
-
-fun UserContext.NullablePublicAddressKeyEntity(
+fun UserContext.NullablePublicAddressKeyDataEntity(
     email: String = account.email ?: "null-email",
+    publicKey: Armored = "public-key-$email",
     isPrimary: Boolean = true,
-): PublicAddressKeyEntity {
-    return PublicAddressKeyEntity(
-        email = email,
-        isPrimary = isPrimary,
-        flags = 3,
-        publicKey = "public-key-$email"
-    )
-}
+) = PublicAddressKeyDataEntity(
+    email = email,
+    emailAddressType = 0,
+    flags = 3,
+    publicKey = publicKey,
+    isPrimary = isPrimary,
+    source = null,
+)

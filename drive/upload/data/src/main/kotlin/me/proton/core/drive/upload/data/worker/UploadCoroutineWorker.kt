@@ -18,6 +18,8 @@
 package me.proton.core.drive.upload.data.worker
 
 import android.content.Context
+import android.os.Build
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.CancellationException
@@ -103,7 +105,33 @@ abstract class UploadCoroutineWorker(
 
                 else -> throw e
             }
+        } finally {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && stopReason != WorkInfo.STOP_REASON_NOT_STOPPED) {
+                CoreLogger.d(
+                    tag = logTag(),
+                    message = "${stopReason.toPrintableString()} (id=$id, runAttemptCount=$runAttemptCount)",
+                )
+            }
         }
+    }
+
+    private fun Int.toPrintableString(): String = when (this) {
+        1 -> "STOP_REASON_CANCELLED_BY_APP"
+        2 -> "STOP_REASON_PREEMPT"
+        3 -> "STOP_REASON_TIMEOUT"
+        4 -> "STOP_REASON_DEVICE_STATE"
+        5 -> "STOP_REASON_CONSTRAINT_BATTERY_NOT_LOW"
+        6 -> "STOP_REASON_CONSTRAINT_CHARGING"
+        7 -> "STOP_REASON_CONSTRAINT_CONNECTIVITY"
+        8 -> "STOP_REASON_CONSTRAINT_DEVICE_IDLE"
+        9 -> "STOP_REASON_CONSTRAINT_STORAGE_NOT_LOW"
+        10 -> "STOP_REASON_QUOTA"
+        11 -> "STOP_REASON_BACKGROUND_RESTRICTION"
+        12 -> "STOP_REASON_APP_STANDBY"
+        13 -> "STOP_REASON_USER"
+        14 -> "STOP_REASON_SYSTEM_PROCESSING"
+        15 -> "STOP_REASON_ESTIMATED_APP_LAUNCH_TIME_CHANGED"
+        else -> this.toString()
     }
 
     private fun UploadFileLink?.broadcastMessages(e: Exception) {

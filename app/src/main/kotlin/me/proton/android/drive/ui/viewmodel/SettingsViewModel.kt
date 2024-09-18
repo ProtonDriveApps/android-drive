@@ -42,6 +42,7 @@ import me.proton.android.drive.lock.domain.usecase.GetAutoLockDuration
 import me.proton.android.drive.lock.domain.usecase.HasEnableAppLockTimestamp
 import me.proton.android.drive.photos.domain.usecase.IsPhotosEnabled
 import me.proton.android.drive.settings.DebugSettings
+import me.proton.android.drive.usecase.GetDefaultEnabledDynamicHomeTab
 import me.proton.android.drive.usecase.SendDebugLog
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -55,9 +56,7 @@ import me.proton.core.drive.settings.presentation.event.SettingsViewEvent
 import me.proton.core.drive.settings.presentation.state.DebugSettingsViewState
 import me.proton.core.drive.settings.presentation.state.LegalLink
 import me.proton.core.drive.settings.presentation.state.SettingsViewState
-import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
-import me.proton.drive.android.settings.domain.usecase.GetHomeTab
 import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
 import me.proton.drive.android.settings.domain.usecase.UpdateThemeStyle
 import javax.inject.Inject
@@ -72,7 +71,7 @@ class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val debugSettings: DebugSettings,
     getThemeStyle: GetThemeStyle,
-    getHomeTab: GetHomeTab,
+    getDefaultEnabledDynamicHomeTab: GetDefaultEnabledDynamicHomeTab,
     private val updateThemeStyle: UpdateThemeStyle,
     savedStateHandle: SavedStateHandle,
     appLockManager: AppLockManager,
@@ -163,8 +162,8 @@ class SettingsViewModel @Inject constructor(
         appLockManager.enabled,
         getAutoLockDuration(),
         isPhotosEnabled(userId),
-        getHomeTab(userId),
-    ) {  debugSettings, themeStyle, enabled, autoLockDuration, isBackupEnabled, homeTab ->
+        getDefaultEnabledDynamicHomeTab(userId),
+    ) {  debugSettings, themeStyle, enabled, autoLockDuration, isBackupEnabled, dynamicHomeTab ->
         SettingsViewState(
             navigationIcon = CorePresentation.drawable.ic_arrow_back,
             appNameResId = I18N.string.app_name,
@@ -187,12 +186,7 @@ class SettingsViewModel @Inject constructor(
             autoLockDuration = autoLockDuration,
             isPhotosSettingsVisible = configurationProvider.photosFeatureFlag,
             photosBackupSubtitleResId = getPhotosBackupSubtitleResId(isBackupEnabled),
-            defaultHomeTabResId = when (homeTab) {
-                HomeTab.FILES -> I18N.string.title_files
-                HomeTab.PHOTOS -> I18N.string.photos_title
-                HomeTab.COMPUTERS -> I18N.string.computers_title
-                HomeTab.SHARED -> I18N.string.title_shared
-            },
+            defaultHomeTabResId = dynamicHomeTab.titleResId,
             isLogSettingVisible = configurationProvider.logFeatureFlag,
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)

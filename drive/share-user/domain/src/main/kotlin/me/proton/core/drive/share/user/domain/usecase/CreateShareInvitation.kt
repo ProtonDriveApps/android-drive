@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
+import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.repository.fetcher
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
@@ -46,12 +47,24 @@ class CreateShareInvitation @Inject constructor(
     operator fun invoke(
         shareId: ShareId,
         invitation: ShareUserInvitation,
+    ): Flow<DataResult<ShareUser>> = invoke(
+        shareId = shareId,
+        email = invitation.email,
+        permissions = invitation.permissions
+    )
+
+    operator fun invoke(
+        shareId: ShareId,
+        email: String,
+        permissions: Permissions,
+        externalInvitationId: String? = null
     ): Flow<DataResult<ShareUser>> = flow {
         emit(DataResult.Processing(ResponseSource.Local))
         createShareInvitationRequest(
             shareId = shareId,
-            inviteeEmail = invitation.email,
-            permissions = invitation.permissions
+            inviteeEmail = email,
+            permissions = permissions,
+            externalInvitationId = externalInvitationId,
         ).onFailure { error ->
             emit(DataResult.Error.Local(
                 message = "Cannot create invitation request for ${shareId.id}",

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="files_upload_stage_waiting">アップロード待ち</string>
+  <string name="files_upload_stage_encrypting">暗号化</string>
+  <string name="files_upload_stage_uploading">アップロード</string>
+  <!--
+        Variable %1$s is a string representation of a percentage
+        Example: "23% uploaded"
+    -->
+  <string name="files_upload_stage_uploading_with_progress">%1$s がアップロードされました</string>
+  <string name="files_upload_content_description_cancel_upload">ファイルのアップロードをキャンセルする</string>
+  <string name="files_upload_failure_storage_full_title">ストレージがいっぱいです</string>
+  <string name="files_upload_failure_storage_full_description">アカウントのストレージ容量が不足しています。空き容量を増やすか、より多くのストレージを持つプランにアップグレードしてください。</string>
+</resources>

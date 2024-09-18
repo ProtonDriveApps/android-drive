@@ -66,9 +66,9 @@ object LinkSettingsRobot : NavigationBarRobot, Robot {
         .clickTo(PickerRobot)
 
     fun passwordToggleIsOn() = passwordToggle.await { assertIsAsserted() }
-    fun passwordToggleIsOff() = passwordToggle.await { assertIsNotAsserted() }
+    fun passwordToggleIsOff() = passwordToggle.await { assertIsOff() }
     fun expirationDateToggleIsOn() = expirationDateToggle.await { assertIsAsserted() }
-    fun expirationDateToggleIsOff() = expirationDateToggle.await { assertIsNotAsserted() }
+    fun expirationDateToggleIsOff() = expirationDateToggle.await { assertIsOff() }
 
     fun passwordLengthErrorWasShown(maxLength: Int) =
         messageNotificationPasswordLengthError(maxLength)

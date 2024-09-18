@@ -50,7 +50,7 @@ fun MockWebServer.getPublicAddressKeysAll(block: RequestContext.() -> MockRespon
     get("/core/v4/keys/all", block)
 }
 
-fun MockWebServer.getPublicAddressKeysAll() = getPublicAddressKeysAll {
+fun MockWebServer.getPublicAddressKeysAll(publicKeyResponsePrefix: String = "public-key") = getPublicAddressKeysAll {
     jsonResponse {
         val email = recordedRequest.requestUrl?.queryParameter("Email")
         ActivePublicKeysResponse(
@@ -58,7 +58,7 @@ fun MockWebServer.getPublicAddressKeysAll() = getPublicAddressKeysAll {
                 keys = listOf(
                     PublicAddressKeyResponse(
                         flags = KeyFlags.NotObsolete,
-                        publicKey = "public-key-$email",
+                        publicKey = "$publicKeyResponsePrefix-$email",
                     )
                 )
             ),

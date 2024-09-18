@@ -50,11 +50,11 @@
     <item quantity="one">Compartiendo con 1 persona</item>
     <item quantity="other">Compartiendo con %1$d personas</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
+  <string name="common_permission_owner">Propietario</string>
+  <string name="common_permission_admin">Administrador</string>
   <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_viewer">Lector</string>
+  <string name="common_permission_unknown">Desconocido</string>
   <!--
         Variable %1$s is an email
         Examples:
@@ -75,10 +75,10 @@
   <string name="share_via_invitations_external_invitation_unknown">%1$s (desconocida)</string>
   <string name="share_via_invitations_add_people_hint">Añadir personas</string>
   <string name="share_via_invitations_copy_invite_link_action">Copiar el enlace de invitación</string>
-  <string name="share_via_invitations_remove_access_action">Eliminar el acceso</string>
+  <string name="share_via_invitations_remove_access_action">Borrar el acceso</string>
   <string name="share_via_invitations_stop_sharing_description">Eliminar el enlace y borrar el acceso para todos</string>
   <string name="share_via_invitations_resend_invite_action">Reenviar la invitación</string>
-  <string name="share_via_invitations_resend_invite_success">La invitación ha sido reenviada.</string>
+  <string name="share_via_invitations_resend_invite_success">Se ha reenviado la invitación.</string>
   <!--
         Variable %1$d is a number
         Examples:

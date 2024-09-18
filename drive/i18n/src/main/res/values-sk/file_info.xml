@@ -26,5 +26,5 @@
   <string name="file_info_title_folder">Podrobnosti priečinka</string>
   <string name="file_info_title_file">Podrobnosti súboru</string>
   <string name="file_info_captured_on">Zachytené</string>
-  <string name="file_info_permissions">Permissions</string>
+  <string name="file_info_permissions">Oprávnenia</string>
 </resources>

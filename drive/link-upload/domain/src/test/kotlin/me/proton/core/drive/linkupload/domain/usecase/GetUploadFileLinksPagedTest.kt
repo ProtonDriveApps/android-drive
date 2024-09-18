@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.linkupload.domain.usecase
 
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.DriveDatabaseRule
@@ -32,6 +31,7 @@ import me.proton.core.drive.linkupload.data.factory.UploadBlockFactoryImpl
 import me.proton.core.drive.linkupload.data.repository.LinkUploadRepositoryImpl
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.extension.uploadFileLink
+import me.proton.core.drive.test.TestConfigurationProvider
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -39,7 +39,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class GetUploadFileLinksPagedTest {
 
@@ -59,7 +58,11 @@ class GetUploadFileLinksPagedTest {
 
     @Before
     fun setUp() = runTest {
-        val linkUploadRepository = LinkUploadRepositoryImpl(database.db, UploadBlockFactoryImpl())
+        val linkUploadRepository = LinkUploadRepositoryImpl(
+            db = database.db,
+            uploadBlockFactory = UploadBlockFactoryImpl(),
+            configurationProvider = TestConfigurationProvider(),
+        )
         getUploadFileLinksPaged = GetUploadFileLinksPaged(
             linkUploadRepository,
             object : ConfigurationProvider {

@@ -247,7 +247,7 @@ class FakePGPCrypto : PGPCrypto {
         destination: File,
         sessionKey: SessionKey,
     ): EncryptedFile {
-        source.copyTo(destination)
+        source.copyTo(destination, overwrite = true)
         return destination
     }
 

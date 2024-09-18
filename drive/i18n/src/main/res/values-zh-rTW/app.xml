@@ -197,7 +197,7 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
   <string name="get_more_free_storage_action_link_subtitle">Select any file or folder. Open the options menu and press %1$s.</string>
-  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_title">分享個檔案</string>
   <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
   <string name="get_more_free_storage_action_recovery_title">設定備援方法</string>
   <!--

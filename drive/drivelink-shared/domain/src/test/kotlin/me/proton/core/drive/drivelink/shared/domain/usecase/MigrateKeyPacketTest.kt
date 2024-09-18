@@ -27,14 +27,16 @@ import me.proton.core.drive.db.test.photo
 import me.proton.core.drive.db.test.standardRootId
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.link.data.api.request.GetLinksRequest
+import me.proton.core.drive.link.data.api.response.GetLinksResponse
 import me.proton.core.drive.share.data.api.request.ShareAccessWithNodeRequest
 import me.proton.core.drive.share.data.api.response.UpdateUnmigratedSharesError
 import me.proton.core.drive.share.data.api.response.UpdateUnmigratedSharesResponse
 import me.proton.core.drive.test.DriveRule
-import me.proton.core.drive.test.api.getLinksWithParents
+import me.proton.core.drive.test.api.getLinks
+import me.proton.core.drive.test.api.getPublicAddressKeysAll
 import me.proton.core.drive.test.api.getShare
 import me.proton.core.drive.test.api.getShareBootstrap
-import me.proton.core.drive.test.api.getShareUrls
 import me.proton.core.drive.test.api.getUnmigratedShares
 import me.proton.core.drive.test.api.jsonResponse
 import me.proton.core.drive.test.api.post
@@ -45,8 +47,6 @@ import me.proton.core.drive.test.api.updateUnmigratedShares
 import me.proton.core.drive.test.entity.NullableFileDto
 import me.proton.core.drive.test.entity.NullableFolderDto
 import me.proton.core.drive.test.entity.NullableShareDto
-import me.proton.core.drive.test.entity.NullableShareUrlDto
-import me.proton.core.drive.volume.data.api.entity.ShareUrlContext
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -70,6 +70,9 @@ class MigrateKeyPacketTest {
     @Before
     fun setUp() = runTest {
         driveRule.db.photo { }
+        driveRule.server.run {
+            getPublicAddressKeysAll()
+        }
     }
 
     @Test
@@ -100,70 +103,67 @@ class MigrateKeyPacketTest {
             getShare(listOf(NullableShareDto(standardShareId.id)))
             getShareBootstrap()
             getUnmigratedShares(listOf(standardShareId.id))
-            getShareUrls(listOf(
-                ShareUrlContext(
-                    contextShareId = mainShareId.id,
-                    shareUrls = listOf(NullableShareUrlDto(shareId = standardShareId.id)),
-                    linkIds = listOf(standardRootId.id, "folder-1", mainRootId.id)
-                )
-            ))
-            getLinksWithParents { linkId ->
-                when (linkId) {
-                    standardRootId.id -> NullableFileDto(
-                        id = linkId,
-                        parentId = "folder-1",
-                        shareId = standardShareId.id,
+            getLinks {
+                jsonResponse {
+                    GetLinksResponse(
+                        code = 1000,
+                        links = listOf(
+                            NullableFileDto(
+                                id = request<GetLinksRequest>().linkIds.first(),
+                                parentId = "folder-1",
+                                shareId = standardShareId.id,
+                            )
+                        ),
+                        parents = listOf(
+                            NullableFolderDto(
+                                id = "folder-1",
+                                parentId = mainRootId.id,
+                                shareId = null,
+                            ),
+                            NullableFolderDto(
+                                id = mainRootId.id,
+                                parentId = null,
+                                shareId = mainShareId.id,
+                            )
+                        ),
                     )
-                    "folder-1" -> NullableFolderDto(
-                        id = linkId,
-                        parentId = mainRootId.id,
-                        shareId = null,
-                    )
-                    mainRootId.id -> NullableFolderDto(
-                        id = linkId,
-                        parentId = null,
-                        shareId = mainRootId.id,
-                    )
-                    else -> error("Unknown share id")
                 }
             }
             updateUnmigratedShares()
-
         }
         migrateKeyPacket(userId).getOrThrow()
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun error() = runTest {
         driveRule.server.run {
             getUnmigratedShares(listOf(standardShareId.id))
             getShareBootstrap()
             getShare(listOf(NullableShareDto(standardShareId.id)))
-            getShareUrls(listOf(
-                ShareUrlContext(
-                    contextShareId = mainShareId.id,
-                    shareUrls = listOf(NullableShareUrlDto(shareId = standardShareId.id)),
-                    linkIds = listOf(standardRootId.id, "folder-1", mainRootId.id)
-                )
-            ))
-            getLinksWithParents { linkId ->
-                when (linkId) {
-                    standardRootId.id -> NullableFileDto(
-                        id = linkId,
-                        parentId = "folder-1",
-                        shareId = standardShareId.id,
+            getLinks {
+                jsonResponse {
+                    GetLinksResponse(
+                        code = 1000,
+                        links = listOf(
+                            NullableFileDto(
+                                id = request<GetLinksRequest>().linkIds.first(),
+                                parentId = "folder-1",
+                                shareId = standardShareId.id,
+                            )
+                        ),
+                        parents = listOf(
+                            NullableFolderDto(
+                                id = "folder-1",
+                                parentId = mainRootId.id,
+                                shareId = null,
+                            ),
+                            NullableFolderDto(
+                                id = mainRootId.id,
+                                parentId = null,
+                                shareId = mainShareId.id,
+                            )
+                        ),
                     )
-                    "folder-1" -> NullableFolderDto(
-                        id = linkId,
-                        parentId = mainRootId.id,
-                        shareId = null,
-                    )
-                    mainRootId.id -> NullableFolderDto(
-                        id = linkId,
-                        parentId = null,
-                        shareId = mainRootId.id,
-                    )
-                    else -> error("Unknown share id")
                 }
             }
             routing {

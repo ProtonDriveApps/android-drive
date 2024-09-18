@@ -79,7 +79,7 @@ class CreateUploadFile @Inject constructor(
         cacheOption: CacheOption,
         priority: Long,
         shouldBroadcastErrorMessage: Boolean,
-        coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
+        coroutineContext: CoroutineContext = Dispatchers.IO,
     ): Result<UploadFileLink> = coRunCatching(coroutineContext) {
         val uriInfo = getUploadFileUriInfo(uriString)
         val mimeType = getUploadFileMimeType(uriInfo)

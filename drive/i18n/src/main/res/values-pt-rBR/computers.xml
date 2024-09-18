@@ -26,7 +26,7 @@
   <string name="computers_empty_description">Obtenha o aplicativo para desktop\npara sincronizar pastas</string>
   <string name="computers_synced_folders_empty_title">Sem pastas sincronizadas</string>
   <string name="computers_synced_folders_empty_description">As pastas do seu computador que você sincronizar\naparecerão aqui</string>
-  <string name="computers_synced_folders_no_folder">Computador removido</string>
+  <string name="computers_synced_folders_no_folder">O computador foi removido</string>
   <string name="computers_rename_title">Renomear computador</string>
   <string name="computers_rename_success">Computador renomeado</string>
   <!--

@@ -44,6 +44,7 @@ import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
 import me.proton.core.drive.drivelink.trash.data.db.DriveLinkTrashDatabase
 import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
 import me.proton.core.drive.folder.data.db.FolderDatabase
+import me.proton.core.drive.key.data.db.PublicAddressKeyDatabase
 import me.proton.core.drive.link.data.db.LinkDatabase
 import me.proton.core.drive.link.selection.data.db.LinkSelectionDatabase
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDatabase
@@ -249,4 +250,7 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideLogDatabase(appDatabase: DriveDatabase): LogDatabase
+
+    @Binds
+    abstract fun providePublicAddressKeyDatabase(appDatabase: DriveDatabase): PublicAddressKeyDatabase
 }

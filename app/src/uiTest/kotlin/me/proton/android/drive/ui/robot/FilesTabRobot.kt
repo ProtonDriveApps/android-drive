@@ -18,8 +18,11 @@
 
 package me.proton.android.drive.ui.robot
 
+import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.FusionConfig.targetContext
+import java.util.Locale
 import me.proton.core.drive.i18n.R as I18N
 
 object FilesTabRobot : NavigationBarRobot, HomeRobot, LinksRobot, GrowlerRobot {
@@ -58,7 +61,7 @@ object FilesTabRobot : NavigationBarRobot, HomeRobot, LinksRobot, GrowlerRobot {
     fun assertStageUploadedProgress(progress: Int) = node.withText(
         targetContext.resources
             .getString(I18N.string.files_upload_stage_uploading_with_progress)
-            .format("$progress%")
+            .format(Percentage(progress).toPercentString(Locale.getDefault()))
     ).await { assertIsDisplayed() }
 
     fun assertUploadingFailed(fileName: String, reason: String) = node.withText(

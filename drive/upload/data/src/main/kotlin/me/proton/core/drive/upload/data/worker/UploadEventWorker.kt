@@ -97,6 +97,7 @@ class UploadEventWorker @AssistedInject constructor(
                 userId = userId,
                 states = setOf(
                     UploadState.CREATING_NEW_FILE,
+                    UploadState.SPLITTING_URI_TO_BLOCKS,
                     UploadState.ENCRYPTING_BLOCKS,
                     UploadState.GETTING_UPLOAD_LINKS,
                     UploadState.UPLOADING_BLOCKS,

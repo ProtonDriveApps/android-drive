@@ -26,4 +26,5 @@ data class TabItem(
     @StringRes val titleResId: Int,
     val route: String,
     val isSelected: Boolean,
+    val isEnabled: Boolean,
 )

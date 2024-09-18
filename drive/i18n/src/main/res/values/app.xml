@@ -79,6 +79,7 @@
     <string name="in_app_notification_upload_files_only">Only files can be uploaded to %1$s</string>
     <string name="in_app_notification_importing_file_already_exists">File with same name already exists, try clearing app cache</string>
     <string name="in_app_notification_clear_local_cache_success">Local cache cleared successfully</string>
+    <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
 
     <!-- endregion -->
 

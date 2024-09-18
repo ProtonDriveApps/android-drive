@@ -31,6 +31,7 @@ sealed interface ShareInvitationRequest {
         val inviterEmail: String,
         val keyPacket: String,
         val keyPacketSignature: String,
+        val externalInvitationId: String? = null,
     ) : ShareInvitationRequest
 
     data class External(

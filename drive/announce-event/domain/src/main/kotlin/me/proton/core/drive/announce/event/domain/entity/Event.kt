@@ -22,6 +22,7 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.key.domain.entity.key.PublicKey
 
 @Serializable
 sealed class Event {
@@ -31,7 +32,7 @@ sealed class Event {
     @Serializable
     data class StorageFull(val needed: Bytes) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     @Serializable
@@ -44,7 +45,7 @@ sealed class Event {
     ) : Event() {
         override val id: String =
             "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_$uploadFileLinkId"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
 
         enum class UploadState {
             NEW_UPLOAD,
@@ -72,7 +73,7 @@ sealed class Event {
         val pendingBackupPhotos: Int,
     ) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
 
         enum class BackupState {
             IN_PROGRESS,
@@ -93,27 +94,27 @@ sealed class Event {
 
     data class BackupEnabled(val folderId: FolderId) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     data class BackupDisabled(val folderId: FolderId) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     data class BackupStarted(val folderId: FolderId) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     data class BackupStopped(val folderId: FolderId, val state: Backup.BackupState) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     data class BackupCompleted(val folderId: FolderId) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     @Serializable
@@ -121,17 +122,17 @@ sealed class Event {
         Event() {
         override val id: String =
             "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_$downloadId"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     object ForcedSignOut : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     object NoSpaceLeftOnDevice : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     data class Throwable(
@@ -140,9 +141,7 @@ sealed class Event {
         val level: Logger.Level,
     ) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
-
-
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     data class Network(
@@ -150,7 +149,7 @@ sealed class Event {
         val response: Response,
     ) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
 
         data class Request(
             val occurredAt: TimestampMs,
@@ -172,7 +171,7 @@ sealed class Event {
         val level: Level,
     ) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
-        override val occurredAt: TimestampMs = TimestampMs(System.currentTimeMillis())
+        override val occurredAt: TimestampMs = TimestampMs()
 
         enum class Level {
             ERROR,
@@ -181,6 +180,13 @@ sealed class Event {
             INFO,
             VERBOSE,
         }
+    }
+
+    data class SignatureVerificationFailed(
+        val usedPublicKeys: List<PublicKey>,
+    ) : Event() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     companion object {

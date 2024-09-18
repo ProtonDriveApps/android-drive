@@ -17,11 +17,9 @@
  */
 package me.proton.core.drive.upload.data.resolver
 
-import android.content.ContentResolver
 import android.content.ContentResolver.SCHEME_FILE
 import android.net.Uri
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.extensionOrEmpty
@@ -35,7 +33,7 @@ import kotlin.coroutines.CoroutineContext
 
 class FileUriResolver(
     private val mimeTypeProvider: MimeTypeProvider,
-    private val coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
+    private val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : UriResolver {
     override val schemes: Set<String> get() = setOf(SCHEME_FILE)
 

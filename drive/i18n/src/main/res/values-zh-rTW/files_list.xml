@@ -20,7 +20,15 @@
   <string name="file_operation_error_occurred_moving_file">移動檔案時發生錯誤</string>
   <string name="file_operation_moving_file_successful">成功移動檔案</string>
   <string name="file_operation_moving_folder_successful">成功移動資料夾</string>
-  <string name="file_operation_moving_multiple_successful">%1$d 個項目已成功移動。</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="other">%1$d 個項目已成功移動。</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">目標資料夾已存在一個具有相同名稱的項目</string>
   <string name="folder_options_header_title">在「%1$s」中</string>
   <string name="folder_options_header_title_encrypted">在</string>

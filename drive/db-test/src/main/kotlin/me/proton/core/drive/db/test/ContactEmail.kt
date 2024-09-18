@@ -64,7 +64,8 @@ fun UserContext.NullableContactEmailEntity(
         order = 0,
         contactId = ContactId("contact-id-$name"),
         canonicalEmail = null,
-        isProton = null
+        isProton = null,
+        lastUsedTime = 0,
     )
 
 @Suppress("FunctionName")

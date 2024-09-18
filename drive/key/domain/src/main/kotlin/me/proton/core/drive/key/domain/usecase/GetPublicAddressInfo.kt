@@ -21,7 +21,15 @@ package me.proton.core.drive.key.domain.usecase
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.api.ProtonApiCode.KEY_GET_ADDRESS_MISSING
 import me.proton.core.drive.base.domain.api.ProtonApiCode.KEY_GET_DOMAIN_EXTERNAL
+import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.extension.isOlderThen
+import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.repository.BaseRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.key.domain.repository.StalePublicAddressKeyRepository
+import me.proton.core.key.domain.entity.key.PublicAddressInfo
 import me.proton.core.key.domain.repository.PublicAddressRepository
 import me.proton.core.key.domain.repository.Source
 import me.proton.core.network.domain.hasProtonErrorCode
@@ -29,11 +37,16 @@ import javax.inject.Inject
 
 class GetPublicAddressInfo @Inject constructor(
     private val publicAddressRepository: PublicAddressRepository,
+    private val hasStalePublicAddressKeys: HasStalePublicAddressKeys,
+    private val removeAllStalePublicAddressKeys: RemoveAllStalePublicAddressKeys,
+    private val stalePublicAddressKeyRepository: StalePublicAddressKeyRepository,
+    private val baseRepository: BaseRepository,
+    private val configurationProvider: ConfigurationProvider,
 ) {
     suspend operator fun invoke(
         userId: UserId,
         email: String,
-        source: Source = Source.RemoteOrCached
+        source: Source,
     ) = coRunCatching {
         publicAddressRepository.getPublicAddressInfo(
             sessionUserId = userId,
@@ -52,4 +65,22 @@ class GetPublicAddressInfo @Inject constructor(
             throw error
         }
     }
+
+    suspend operator fun invoke(userId: UserId, email: String): Result<PublicAddressInfo?> = coRunCatching {
+        val url = "$publicAddressInfoUrl?email=$email"
+        if (hasStalePublicAddressKeys(userId, email).getOrThrow() && isAllowedToFetch(userId, url)) {
+            invoke(userId, email, Source.RemoteNoCache).getOrThrow().also {
+                baseRepository.setLastFetch(userId, url, TimestampMs())
+                removeAllStalePublicAddressKeys(userId, email).getOrNull(LogTag.KEY)
+            }
+        } else {
+            invoke(userId, email, Source.LocalIfAvailable).getOrThrow()
+        }
+    }
+
+    private suspend fun isAllowedToFetch(userId: UserId, url: String): Boolean = baseRepository
+        .getLastFetch(userId, url)
+        .isOlderThen(configurationProvider.minimumPublicAddressKeyFetchInterval)
+
+    private val publicAddressInfoUrl: String get() = stalePublicAddressKeyRepository.publicAddressInfoUrl
 }

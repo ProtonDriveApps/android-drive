@@ -48,9 +48,9 @@ import androidx.navigation.navDeepLink
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import me.proton.android.drive.extension.ensureNavGraphSet
 import me.proton.android.drive.extension.get
 import me.proton.android.drive.extension.isCurrentDestination
 import me.proton.android.drive.extension.log
@@ -70,12 +70,12 @@ import me.proton.android.drive.ui.dialog.ConfirmStopAllSharingDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopLinkSharingDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopSyncFolderDialog
 import me.proton.android.drive.ui.dialog.FileOrFolderOptions
-import me.proton.android.drive.ui.dialog.ShareInvitationOptions
 import me.proton.android.drive.ui.dialog.LogOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
 import me.proton.android.drive.ui.dialog.ShareExternalInvitationOptions
+import me.proton.android.drive.ui.dialog.ShareInvitationOptions
 import me.proton.android.drive.ui.dialog.ShareMemberOptions
 import me.proton.android.drive.ui.dialog.SortingList
 import me.proton.android.drive.ui.dialog.SystemAccessDialog
@@ -135,7 +135,7 @@ fun AppNavGraph(
     deepLinkBaseUrl: String,
     clearBackstackTrigger: SharedFlow<Unit>,
     deepLinkIntent: SharedFlow<Intent>,
-    defaultStartDestination: String,
+    defaultStartDestination: String?,
     locked: Flow<Boolean>,
     primaryAccount: Flow<Account?>,
     exitApp: () -> Unit,
@@ -171,39 +171,43 @@ fun AppNavGraph(
     }
     LaunchedEffect(clearBackstackTrigger) {
         clearBackstackTrigger
-            .collectLatest {
-                navController.navigate(Screen.Launcher.route) {
+            .onEach {
+                navController.ensureNavGraphSet().navigate(Screen.Launcher.route) {
                     popUpTo(0)
                 }
                 homeNavController = createNavController(localContext)
             }
+            .launchIn(this)
     }
     LaunchedEffect(deepLinkIntent) {
         deepLinkIntent
-            .collectLatest { intent ->
+            .onEach { intent ->
                 CoreLogger.d(DriveLogTag.UI, "Deep link intent received")
-                if (!navController.handleDeepLink(intent)) {
+                if (!navController.ensureNavGraphSet().handleDeepLink(intent)) {
                     // clear query params with user information before logging
                     val uri = intent.data?.buildUpon()?.apply { clearQuery() }?.build()
                     IllegalStateException("Invalid deep link: $uri").log(DriveLogTag.UI)
                     homeNavController = createNavController(localContext)
                 }
             }
+            .launchIn(this)
     }
     AppLock(locked = locked, primaryAccount = primaryAccount) {
-        AppNavGraph(
-            navController = navController,
-            homeNavController = homeNavController,
-            deepLinkBaseUrl = deepLinkBaseUrl,
-            defaultStartDestination = defaultStartDestination,
-            exitApp = exitApp,
-            navigateToPasswordManagement = navigateToPasswordManagement,
-            navigateToRecoveryEmail= navigateToRecoveryEmail,
-            navigateToSecurityKeys = navigateToSecurityKeys,
-            navigateToBugReport = navigateToBugReport,
-            navigateToSubscription = navigateToSubscription,
-            onDrawerStateChanged = onDrawerStateChanged,
-        )
+        defaultStartDestination?.let {
+            AppNavGraph(
+                navController = navController,
+                homeNavController = homeNavController,
+                deepLinkBaseUrl = deepLinkBaseUrl,
+                defaultStartDestination = defaultStartDestination,
+                exitApp = exitApp,
+                navigateToPasswordManagement = navigateToPasswordManagement,
+                navigateToRecoveryEmail= navigateToRecoveryEmail,
+                navigateToSecurityKeys = navigateToSecurityKeys,
+                navigateToBugReport = navigateToBugReport,
+                navigateToSubscription = navigateToSubscription,
+                onDrawerStateChanged = onDrawerStateChanged,
+            )
+        }
     }
 }
 

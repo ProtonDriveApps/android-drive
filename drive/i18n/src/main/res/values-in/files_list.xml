@@ -20,7 +20,15 @@
   <string name="file_operation_error_occurred_moving_file">Terdapat kesalahan pada saat memindahkan berkas</string>
   <string name="file_operation_moving_file_successful">Berkas berhasil dipindahkan</string>
   <string name="file_operation_moving_folder_successful">Folder berhasil dipindahkan</string>
-  <string name="file_operation_moving_multiple_successful">%1$d item berhasil dipindahkan.</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="other">%1$d item berhasil dipindahkan.</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Item dengan nama ini telah ada pada folder tujuan</string>
   <string name="folder_options_header_title">Pada \"%1$s\"</string>
   <string name="folder_options_header_title_encrypted">Di</string>

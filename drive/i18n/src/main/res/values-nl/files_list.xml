@@ -20,7 +20,16 @@
   <string name="file_operation_error_occurred_moving_file">Er is een fout opgetreden tijdens het verplaatsen van het bestand.</string>
   <string name="file_operation_moving_file_successful">Bestand verplaatst</string>
   <string name="file_operation_moving_folder_successful">Map verplaatst</string>
-  <string name="file_operation_moving_multiple_successful">%1$d items verplaatst.</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="one">%1$d item verplaatst.</item>
+    <item quantity="other">%1$d items succesvol verplaatst.</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Een item met die naam bestaat al in de doelmap.</string>
   <string name="folder_options_header_title">In \"%1$s\"</string>
   <string name="folder_options_header_title_encrypted">In</string>

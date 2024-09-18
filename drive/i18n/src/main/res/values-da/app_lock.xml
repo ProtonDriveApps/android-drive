@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">App er låst</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Lås op med din enheds lås</string>
+  <string name="app_lock_biometric_title_confirmation">Bekræftelse</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">For at aktivere oplåsning skal du bekræfte med din enheds lås</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Bekræft med din enheds lås for at deaktivere oplåsning</string>
+  <string name="app_lock_option_never_set">Aktivér biometri eller enhedslås</string>
+  <string name="app_lock_option_none">Hold oplåst</string>
+  <string name="app_lock_option_system">Biometri eller enhedslås</string>
+  <string name="app_lock_system_dialog_title">Slå biometrisk adgang til</string>
+  <string name="app_lock_system_dialog_description">Indstil adgang med biometri eller enhedslås på denne enhed.</string>
+  <string name="app_lock_system_dialog_settings_button">Indstillinger</string>
+  <string name="app_lock_system_not_available">Biometri eller enhedslås er ikke tilgængelig på din enhed</string>
+  <string name="app_lock_enabled">Adgang med biometri eller enhedslås aktiveret</string>
+  <string name="app_lock_disabled">App-lås er blevet deaktiveret</string>
+  <string name="app_lock_access_title">Vælg, hvordan appen skal låses</string>
+  <string name="app_lock_unlock_the_app">Lås appen op</string>
+</resources>

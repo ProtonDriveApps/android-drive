@@ -257,6 +257,7 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
             user_id = :userId AND
             share_id = :shareId AND
             parent_id = :folderId AND
+            bucket_id = :bucketId AND
             hash IN (:hashes)
         """
     )
@@ -264,6 +265,7 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
         userId: UserId,
         shareId: String,
         folderId: String,
+        bucketId: Int,
         hashes: List<String>,
         state: BackupFileState,
     )

@@ -18,6 +18,6 @@
   -->
 <resources>
   <string name="folder_create_title">Crea una carpeta</string>
-  <string name="folder_create_successful">\"%1$s\" creat</string>
+  <string name="folder_create_successful">\"%1$s\" s\'ha creat correctament</string>
   <string name="folder_create_error_general">Error en crear la carpeta per motiu desconegut</string>
 </resources>

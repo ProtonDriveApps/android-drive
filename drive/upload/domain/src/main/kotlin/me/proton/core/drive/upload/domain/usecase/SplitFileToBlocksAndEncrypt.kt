@@ -18,7 +18,6 @@
 package me.proton.core.drive.upload.domain.usecase
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.size
 import me.proton.core.drive.base.domain.extension.toHex
@@ -86,7 +85,7 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
         uriString: String,
         shouldDeleteSource: Boolean = false,
         includePhotoThumbnail: Boolean = false,
-        coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
+        coroutineContext: CoroutineContext = Dispatchers.IO,
     ): Result<UploadFileLink> = coRunCatching(coroutineContext) {
         val (unencryptedBlocks, digests) = uploadFileLink.splitUriToBlocks(
             uriString = uriString
@@ -94,7 +93,7 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
         updateDigests(
             uploadFileLinkId = uploadFileLink.id,
             digests = digests
-        )
+        ).getOrThrow()
         encryptBlocks(
             uploadFileLink = uploadFileLink,
             unencryptedBlocks = unencryptedBlocks,
@@ -112,7 +111,7 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
         unencryptedBlocks: List<File>,
         uriString: String,
         includePhotoThumbnail: Boolean = false,
-        coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
+        coroutineContext: CoroutineContext,
     ): Result<UploadFileLink> = coRunCatching(coroutineContext) {
         with(uploadFileLink) {
             updateUploadState(id, UploadState.ENCRYPTING_BLOCKS).getOrThrow()
@@ -281,5 +280,5 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
         }
 
     private suspend fun UploadFileLink.addUploadBlocks(uploadBlocks: List<UploadBlock>) =
-        addUploadBlocks(this, uploadBlocks)
+        addUploadBlocks(id, uploadBlocks)
 }

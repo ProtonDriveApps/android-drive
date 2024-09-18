@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">%1$s へのリンクを作成しています</string>
+  <string name="shared_link_getting_link">リンクの取得</string>
+  <string name="shared_link_file">ファイル</string>
+  <string name="shared_link_folder">フォルダー</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">このリンクを知っている人は誰でも %1$s にアクセスできます</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">リンクとパスワードを知っている人だけが %1$s にアクセスできます</string>
+  <string name="shared_link_settings">リンク設定</string>
+  <string name="shared_link_options">リンクオプション</string>
+  <string name="shared_link_privacy_settings">プライバシー設定</string>
+  <string name="shared_link_password_protection">パスワード保護</string>
+  <string name="shared_link_expiration_date">有効期限</string>
+  <string name="shared_link_action_copy_link">リンクをコピー</string>
+  <string name="shared_link_action_copy_password">パスワードをコピー</string>
+  <string name="shared_link_action_share_link">共有リンク</string>
+  <string name="shared_link_dialog_title_discard_changes">変更を破棄？</string>
+  <string name="shared_link_dialog_description">保存されていない変更はすべて失なわれます。</string>
+  <string name="shared_link_hint_expiration_date_field">有効期限なし</string>
+  <string name="shared_link_message_update_share_url">共有設定が更新されました</string>
+  <string name="shared_link_error_message_update_share_url">共有設定の更新に失敗しました</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">パスワードは1文字以上%1$d文字以内でなければいけません</string>
+  <string name="shared_link_error_message_not_found">共有リンクが存在しないか、有効期限が切れています</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">有効期限は少なくとも明日まででなければなりません</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more then 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">有効期限は %1$d 日を超えてはいけません</string>
+  <string name="shared_link_error_legacy_link">これは古いリンクで、管理はサポートされていません。このリンクの共有を中止し、新しいリンクを取得することをお勧めします。</string>
+  <string name="title_share_via_link">リンクで共有</string>
+  <string name="shared_with_me_title">私と共有しました</string>
+  <string name="shared_by_me_title">Shared by me</string>
+  <string name="shared_with_me_empty_description">Files and folder that you share with others will appear here</string>
+  <string name="shared_by_me_empty_description">Safely share your files and folders with end-to-end encryption</string>
+</resources>

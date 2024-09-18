@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">Foton</string>
+  <string name="photos_permissions_title">Kryptera och säkerhetskopiera dina foton och video</string>
+  <string name="photos_permissions_section_1_title">Skydda dina minnen</string>
+  <string name="photos_permissions_section_1_description">Dina foton är end-to-end krypterad, vilket säkerställer total integritet.</string>
+  <string name="photos_permissions_section_2_title">Automatiska säkerhetskopieringar</string>
+  <string name="photos_permissions_section_2_description">Foton säkerhetskopieras regelbundet via WiFi i originalkvalitet.</string>
+  <string name="photos_permissions_action">Slå på säkerhetskopiering</string>
+  <string name="photos_permission_rational_img_text">Tillåt åtkomst</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s behöver full åtkomst till dina foton</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">Detta är nödvändigt för att säkerställa att alla dina foton säkerhetskopieras och är tillgängliga på alla dina enheter.\n%1$s tar din integritet på allvar och kommer endast åt dina foton i syfte att synkronisera och säkerhetskopiera.</string>
+  <string name="photos_permission_rational_confirm_action">Inställningar</string>
+  <string name="photos_permission_rational_dismiss_action">Inte nu</string>
+  <string name="photos_empty_loading_label_encrypted">End-to-end-krypterat</string>
+  <string name="photos_empty_loading_label_progress">Säkerhetskopiering pågår.\nDet kan ta ett tag</string>
+  <string name="photos_separator_current_month">Denna månad</string>
+  <string name="photos_encrypted_footer">End-to-end-krypterat</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="one">Säkerhetskopierar objekt från %2$d mapp: %1$s</item>
+    <item quantity="other">Säkerhetskopierar objekt från %2$d mappar: %1$s</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">Ingen %1$s-mapp hittades för säkerhetskopiering</string>
+  <string name="photos_error_backup_disabled">Säkerhetskopiering inaktiverad.</string>
+  <string name="photos_error_backup_disabled_action">Slå på</string>
+  <string name="photos_error_backup_missing_folder">Säkerhetskopieringsmapp hittades inte</string>
+  <string name="photos_error_backup_failed">Säkerhetskopiering misslyckades.</string>
+  <string name="photos_error_backup_temporarily_disabled">Säkerhetskopiering är tillfälligt inaktiverat.</string>
+  <string name="photos_error_missing_permissions">Saknar behörigheter.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">För kontinuerlig och automatisk säkerhetskopiering, tillåt %1$s åtkomst till alla foton i inställningarna.</string>
+  <string name="photos_error_waiting_connectivity">Ingen Internetanslutning</string>
+  <string name="photos_error_waiting_wifi_connectivity">Väntar på Wi-Fi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Använd mobil</string>
+  <string name="photos_error_local_storage">Enhetens lagringsutrymme fullt</string>
+  <string name="photos_error_local_storage_description">För att fortsätta säkerhetskopieringen måste du frigöra lagringsutrymme på din enhet.</string>
+  <string name="photos_error_background_restrictions">Ställ in batteri på ”Obegränsat” för appaktivitet i bakgrunden</string>
+  <string name="photos_error_background_restrictions_description">För konsekventa säkerhetskopieringar i bakgrunden, justera batteriinställningarna eller öppna appen ofta.</string>
+  <string name="photos_error_background_restrictions_action">Inställningar</string>
+  <string name="photos_empty_title">Inga säkerhetskopieringar ännu</string>
+  <string name="photos_empty_description">Så fort du har foton eller video på din enhet kommer de att visas här.</string>
+  <string name="photos_backup_title">Säkerhetskopiera foton</string>
+  <string name="photos_backup_option_mobile_data">Använd mobildata för att säkerhetskopiera foton</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Inaktivera batterioptimering</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Tillåter oavbruten säkerhetskopiering när appen körs i bakgrunden.</string>
+  <string name="photos_backup_in_app_notification_turned_on">Säkerhetskopiering av foton är på</string>
+  <string name="photos_backup_in_app_notification_turned_off">Säkerhetskopiering av foton är av</string>
+  <string name="photos_backup_state_completed">Säkerhetskopiering klar</string>
+  <string name="photos_backup_state_uncompleted">Säkerhetskopiering slutförd med problem</string>
+  <string name="photos_backup_state_uncompleted_action">Lös</string>
+  <string name="photos_backup_state_preparing">Förbereder att säkerhetskopiera</string>
+  <string name="photos_backup_state_encrypting">Krypterar…</string>
+  <string name="photos_backup_state_uploading">Säkerhetskopierar…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="one">%1$s objekt kvar</item>
+    <item quantity="other">%1$s objekt kvar</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="one">%1$s objekt sparat</item>
+    <item quantity="other">%1$s objekt sparade</item>
+  </plurals>
+  <string name="photos_upsell_title">Få aldrig slut på lagringsutrymme</string>
+  <string name="photos_upsell_description">Uppgradera nu och håll alla dina minnen krypterade och säkra.</string>
+  <string name="photos_upsell_dismiss_action">Inte nu</string>
+</resources>

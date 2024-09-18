@@ -26,5 +26,5 @@
   <string name="file_info_title_folder">Detalii folder</string>
   <string name="file_info_title_file">Detalii fișier</string>
   <string name="file_info_captured_on">Capturat la</string>
-  <string name="file_info_permissions">Permissions</string>
+  <string name="file_info_permissions">Permisiuni</string>
 </resources>

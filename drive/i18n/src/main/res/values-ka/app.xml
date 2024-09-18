@@ -140,7 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">მარქაფი დაშვებული არაა</string>
   <string name="notification_content_text_backup_paused_disabled">მარქაფი გათიშული იყო</string>
   <string name="notification_content_text_backup_paused_background_restrictions">მარქაფს ფონურად ვერ გაუშვებთ</string>
-  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
+  <string name="notification_content_text_backup_preparing">მომზადება მარქაფისთვის</string>
   <string name="notification_content_title_download_complete">გადმოწერა დასრულებულია</string>
   <string name="notification_content_title_forced_sign_out">საჭიროა ავტორიზაცია</string>
   <string name="notification_content_text_forced_sign_out">უკაცრავად, რომ გაწუხებთ! ჩვენ სინქრონიზაციის შეცდომა გვაქვს - შემოდით თავიდან, ჩვენ ყველაფერი გავასწორეთ.</string>

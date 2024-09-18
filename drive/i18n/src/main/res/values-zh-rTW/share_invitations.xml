@@ -22,7 +22,7 @@
         Example:
             "Share Document"
     -->
-  <string name="title_share_via_invitations">Share %1$s</string>
+  <string name="title_share_via_invitations">與 %1$s 共享</string>
   <!--
         Variable %1$d is a number
         Examples:
@@ -47,11 +47,11 @@
   <plurals name="share_via_invitations_sharing_with">
     <item quantity="other">Sharing with %1$d persons</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
-  <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_owner">擁有者</string>
+  <string name="common_permission_admin">系統管理員</string>
+  <string name="common_permission_editor">編輯者</string>
+  <string name="common_permission_viewer">檢視者</string>
+  <string name="common_permission_unknown">未知</string>
   <!--
         Variable %1$s is an email
         Examples:
@@ -71,10 +71,10 @@
     -->
   <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
   <string name="share_via_invitations_add_people_hint">Add people</string>
-  <string name="share_via_invitations_copy_invite_link_action">Copy invite link</string>
-  <string name="share_via_invitations_remove_access_action">Remove access</string>
+  <string name="share_via_invitations_copy_invite_link_action">複製邀請連結</string>
+  <string name="share_via_invitations_remove_access_action">移除存取權限</string>
   <string name="share_via_invitations_stop_sharing_description">Delete link and remove access for everyone</string>
-  <string name="share_via_invitations_resend_invite_action">Resend invite</string>
+  <string name="share_via_invitations_resend_invite_action">重新發送邀請</string>
   <string name="share_via_invitations_resend_invite_success">Invitation was resent</string>
   <!--
         Variable %1$d is a number

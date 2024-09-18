@@ -74,7 +74,7 @@
   <string name="photos_error_missing_permissions_description">Jatkuvia, automaattisia varmuuskopioita varten %1$slle on myönnettävä laitteen asetuksista \"Valokuvat ja videot\" -käyttöoikeus.</string>
   <string name="photos_error_waiting_connectivity">Internet-yhteys puuttuu</string>
   <string name="photos_error_waiting_wifi_connectivity">Odotetaan Wi-Fi-yhteyttä</string>
-  <string name="photos_error_waiting_wifi_connectivity_action">Käytä mobiiliyhteyttä</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Käytä mobiiliverkkoa</string>
   <string name="photos_error_local_storage">Laitteen tallennustila täynnä</string>
   <string name="photos_error_local_storage_description">Varmuuskopioinnin jatkamiseksi sinun on vapautettava tallennustilaa laitteeltasi.</string>
   <string name="photos_error_background_restrictions">Aseta sovelluksen akkuvirran kulutus taustatoiminnoille rajoittamattomaksi</string>

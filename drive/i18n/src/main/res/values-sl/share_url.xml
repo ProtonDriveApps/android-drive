@@ -70,6 +70,6 @@
   <string name="title_share_via_link">Deli prek povezave</string>
   <string name="shared_with_me_title">Deljeno z menoj</string>
   <string name="shared_by_me_title">Kaj delim z drugimi</string>
-  <string name="shared_with_me_empty_description">Datoteke in mape, ki jih delite z drugimi, bodo prikazane tukaj</string>
-  <string name="shared_by_me_empty_description">Varno delite svoje datoteke in mape s šifriranjem od konca do konca</string>
+  <string name="shared_with_me_empty_description">Datoteke in mape, ki jih delite z drugimi, bodo prikazane tukaj.</string>
+  <string name="shared_by_me_empty_description">Varno delite svoje datoteke in mape s šifriranjem od konca do konca.</string>
 </resources>

@@ -61,6 +61,7 @@ import me.proton.core.drive.base.domain.repository.ClientUidRepository
 import me.proton.core.drive.base.domain.usecase.DriveUrlBuilder
 import me.proton.core.drive.base.domain.usecase.DeviceInfo
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentsProviderRoots
+import me.proton.core.drive.key.domain.handler.PublicKeyEventHandler
 import me.proton.core.drive.log.domain.handler.LogEventHandler
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
 import me.proton.core.drive.upload.data.worker.UploadEventWorker
@@ -172,7 +173,8 @@ object ApplicationModule {
         photos: PhotosEventHandler,
         telemetry: TelemetryEventHandler,
         log: LogEventHandler,
-    ) = setOf(notification, telemetry, photos, stats, log)
+        publicKeyEventHandler: PublicKeyEventHandler,
+    ) = setOf(notification, telemetry, photos, stats, log, publicKeyEventHandler)
 }
 
 @Module

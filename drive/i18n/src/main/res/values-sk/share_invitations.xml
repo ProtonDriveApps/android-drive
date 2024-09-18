@@ -56,29 +56,29 @@
     <item quantity="many">Zdieľanie s %1$d osobami</item>
     <item quantity="other">Zdieľanie s %1$d osobami</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
-  <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_owner">Vlastník</string>
+  <string name="common_permission_admin">Administrátor</string>
+  <string name="common_permission_editor">Redaktor</string>
+  <string name="common_permission_viewer">Čitateľ</string>
+  <string name="common_permission_unknown">Neznáme</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (Čakajúce)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Accepted)"
     -->
-  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Akceptované)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Unknown)"
     -->
-  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Neznáme)</string>
   <string name="share_via_invitations_add_people_hint">Pridať ľudí</string>
   <string name="share_via_invitations_copy_invite_link_action">Skopírovať pozývací odkaz</string>
   <string name="share_via_invitations_remove_access_action">Odobrať prístup</string>

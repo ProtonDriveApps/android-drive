@@ -24,7 +24,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.extensionOrEmpty
@@ -43,7 +42,7 @@ import kotlin.coroutines.CoroutineContext
 class ContentUriResolver(
     private val applicationContext: Context,
     private val mimeTypeProvider: MimeTypeProvider,
-    private val coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
+    private val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : UriResolver {
     override val schemes: Set<String> get() = setOf(SCHEME_CONTENT)
 

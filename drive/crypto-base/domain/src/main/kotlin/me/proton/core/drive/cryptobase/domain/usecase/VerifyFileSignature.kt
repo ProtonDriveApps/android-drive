@@ -20,6 +20,8 @@ package me.proton.core.drive.cryptobase.domain.usecase
 
 import me.proton.core.crypto.common.context.CryptoContext
 import me.proton.core.crypto.common.pgp.VerificationStatus
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.CryptoScope
@@ -36,6 +38,7 @@ import kotlin.coroutines.CoroutineContext
 
 class VerifyFileSignature @Inject constructor(
     private val cryptoContext: CryptoContext,
+    private val announceEvent: AnnounceEvent,
 ) {
     suspend operator fun invoke(
         decryptKey: KeyHolder,
@@ -47,7 +50,11 @@ class VerifyFileSignature @Inject constructor(
         when {
             encSignature == null -> VerificationStatus.Unknown
             decryptKey.useKeys(cryptoContext) {
-                verifyFileEncrypted(file.toDecryptedFile().file, encSignature, verifyKeyRing)
+                verifyFileEncrypted(file.toDecryptedFile().file, encSignature, verifyKeyRing).also { verified ->
+                    if (!verified) {
+                        announceEvent(Event.SignatureVerificationFailed(verifyKeyRing.keys))
+                    }
+                }
             } -> VerificationStatus.Success
             else -> VerificationStatus.Failure
         }.also { status ->

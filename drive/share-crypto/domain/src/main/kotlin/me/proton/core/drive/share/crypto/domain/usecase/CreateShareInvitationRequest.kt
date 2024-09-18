@@ -22,18 +22,13 @@ import android.util.Base64
 import me.proton.core.crypto.common.context.CryptoContext
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
-import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.GetUserEmail
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.SignData
 import me.proton.core.drive.cryptobase.domain.usecase.GetSessionKeyFromEncryptedMessage
 import me.proton.core.drive.cryptobase.domain.usecase.GetUnarmored
 import me.proton.core.drive.cryptobase.domain.usecase.SignatureContexts
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingExternalInvitationsDisabled
-import me.proton.core.drive.feature.flag.domain.extension.off
-import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetPublicAddressInfo
@@ -57,7 +52,8 @@ class CreateShareInvitationRequest @Inject constructor(
     suspend operator fun invoke(
         shareId: ShareId,
         inviteeEmail: String,
-        permissions: Permissions
+        permissions: Permissions,
+        externalInvitationId: String? = null,
     ): Result<ShareInvitationRequest> = coRunCatching {
         val publicAddress = getPublicAddressInfo(
             userId = shareId.userId,
@@ -69,6 +65,7 @@ class CreateShareInvitationRequest @Inject constructor(
                 inviteeEmail = inviteeEmail,
                 permissions = permissions,
                 publicAddressInfo = publicAddress,
+                externalInvitationId = externalInvitationId,
             )
         } else {
             createExternalRequest(
@@ -84,6 +81,7 @@ class CreateShareInvitationRequest @Inject constructor(
         inviteeEmail: String,
         permissions: Permissions,
         publicAddressInfo: PublicAddressInfo,
+        externalInvitationId: String? = null,
     ): ShareInvitationRequest.Internal {
         val share = getShare(shareId).filterSuccessOrError().toResult().getOrThrow()
         val addressId = requireNotNull(share.addressId)
@@ -113,6 +111,7 @@ class CreateShareInvitationRequest @Inject constructor(
                 getUnarmored(contentKeyPacketSignature).getOrThrow(),
                 Base64.NO_WRAP
             ),
+            externalInvitationId = externalInvitationId,
         )
     }
 

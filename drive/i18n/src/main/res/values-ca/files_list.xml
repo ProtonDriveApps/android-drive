@@ -19,8 +19,17 @@
 <resources>
   <string name="file_operation_error_occurred_moving_file">S\'ha produït un error en moure el fitxer.</string>
   <string name="file_operation_moving_file_successful">El fitxer s\'ha mogut correctament</string>
-  <string name="file_operation_moving_folder_successful">Carpeta moguda</string>
-  <string name="file_operation_moving_multiple_successful">%1$d elements moguts.</string>
+  <string name="file_operation_moving_folder_successful">La carpeta s\'ha mogut correctament</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="one">S\'ha mogut %1$d element.</item>
+    <item quantity="other">S\'han mogut %1$d elements.</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Un element amb aquest nom ja existeix a la carpeta de destí.</string>
   <string name="folder_options_header_title">En \"%1$s\"</string>
   <string name="folder_options_header_title_encrypted">En</string>

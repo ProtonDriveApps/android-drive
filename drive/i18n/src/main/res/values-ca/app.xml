@@ -27,7 +27,7 @@
   <string name="title_empty_folder">Ja podeu omplir aquesta carpeta</string>
   <string name="title_empty_folder_read_only">Carpeta buida</string>
   <string name="title_empty_shared">Estigueu assabentats del que està passant</string>
-  <string name="title_empty_offline_available">No teniu res disponible fora de línia</string>
+  <string name="title_empty_offline_available">Res disponible fora de línia</string>
   <string name="title_empty_trash">La paperera és buida.</string>
   <string name="title_empty_trash_action">Buida la paperera</string>
   <string name="title_files_confirm_deletion">Voleu suprimir permanentment?</string>
@@ -62,7 +62,7 @@
     -->
   <string name="in_app_notification_upload_files_only">A %1$s només podeu pujar-hi fitxers</string>
   <string name="in_app_notification_importing_file_already_exists">Ja existeix un fitxer amb aquest nom, proveu de netejar la memòria cau de l\'aplicació</string>
-  <string name="in_app_notification_clear_local_cache_success">Memòria cau netejada exitosament</string>
+  <string name="in_app_notification_clear_local_cache_success">La memòria cau local s\'ha netejat correctament</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Emmagatzematge ple</string>
@@ -118,7 +118,7 @@
         Example:
             "Backing up photos to Proton Drive"
     -->
-  <string name="notification_content_title_backup">Realitzant còpia de seguretat de les fotos a %1$s</string>
+  <string name="notification_content_title_backup">S\'està fent una còpia de seguretat de les fotos a %1$s</string>
   <!--
     Variable %1$s is a quantity (formatted) of photos left to upload
     Example:
@@ -140,12 +140,12 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Les còpies de seguretat no estan permeses.</string>
   <string name="notification_content_text_backup_paused_disabled">S\'ha desactivat la còpia de seguretat.</string>
   <string name="notification_content_text_backup_paused_background_restrictions">La còpia de seguretat no es pot executar en segon pla</string>
-  <string name="notification_content_text_backup_preparing">Preparació de la còpia de seguretat</string>
+  <string name="notification_content_text_backup_preparing">S\'està preparant per a fer una còpia de seguretat</string>
   <string name="notification_content_title_download_complete">Descàrrega completa</string>
   <string name="notification_content_title_forced_sign_out">Inicia la sessió</string>
-  <string name="notification_content_text_forced_sign_out">Lamentem la interrupció. Hem tingut un problema amb la sincronització. Inicieu sessió de nou i tot funcionarà sense problemes.</string>
+  <string name="notification_content_text_forced_sign_out">Hi ha hagut un problema amb la sincronització. Inicieu sessió de nou i tot funcionarà sense problemes.</string>
   <string name="notification_content_title_no_space_left_on_device">No queda espai al dispositiu</string>
-  <string name="notification_content_text_no_space_left_on_device">L\'aplicació pot no funcionar correctament.</string>
+  <string name="notification_content_text_no_space_left_on_device">És possible que l\'aplicació no funcioni correctament.</string>
   <string name="notification_channel_group_name_application">Aplicació</string>
   <string name="notification_channel_background_title">Segon pla</string>
   <string name="notification_channel_background_description">Canal per a operacions en segon pla com a còpia de seguretat</string>
@@ -155,33 +155,33 @@
   <string name="notification_channel_warning_description">Canal per a advertiments que requereixen una acció de l\'usuari</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecciona tots els elements a la llista</string>
-  <string name="content_description_selected_options">Mostrar més opcions per als fitxers o carpetes seleccionats</string>
+  <string name="content_description_selected_options">Mostra més opcions per als fitxers i/o carpetes seleccionades</string>
   <string name="content_description_files_upload_upload_file">Carrega un fitxer</string>
-  <string name="description_empty_my_files">Toqueu el botó per començar a afegir fitxers.</string>
+  <string name="description_empty_my_files">Toqueu el botó per a començar a afegir fitxers.</string>
   <string name="description_empty_folder_read_only">Aquí no hi ha res a veure</string>
-  <string name="description_empty_shared">Els fitxers enllaçats apareixen aquí perquè es puguin rastrejar-los i gestionar els elements compartits.</string>
+  <string name="description_empty_shared">Els fitxers enllaçats apareixen aquí perquè pugueu fer-ne un seguiment i gestionar fàcilment els elements compartits.</string>
   <string name="description_empty_trash">Aquí és on romanen els elements esborrats fins que els elimineu o restaureu.</string>
   <string name="description_empty_offline_available">Feu que els fitxers essencials estiguin sempre disponibles, fins i tot quan la vostra xarxa no ho estigui.</string>
   <string name="description_no_drive_scope">L\'usuari no té permís per accedir-hi.</string>
-  <string name="description_file_download_failed">Error de descàrrega. Verifica la connexió de xarxa i torna a provar.</string>
+  <string name="description_file_download_failed">Ha fallat la descàrrega. Verifiqueu la connexió de xarxa i torneu-ho a provar.</string>
   <string name="description_file_decryption_failed">No s\'ha pogut desxifrar el fitxer.</string>
   <string name="description_file_verify_signature_failed">No s\'ha pogut verificar la signatura del fitxer.</string>
-  <string name="description_files_stop_sharing">Això esborrarà l\'enllaç i eliminarà l\'accés al vostre fitxer o carpeta per a qualsevol persona que el tingui.</string>
-  <string name="description_files_stop_sharing_action_success">L\'enllaç al vostre fitxer ha estat esborrat.</string>
-  <string name="description_files_stop_sharing_action_error">Error en esborrar l\'enllaç al vostre fitxer.</string>
-  <string name="description_files_stop_all_sharing">Això eliminarà l\'enllaç i l\'accés a tothom.</string>
+  <string name="description_files_stop_sharing">Això esborrarà l\'enllaç i eliminarà l\'accés al vostre fitxer o carpeta per a qualsevol persona que tingui l\'enllaç.</string>
+  <string name="description_files_stop_sharing_action_success">S\'ha esborrat l\'enllaç al fitxer.</string>
+  <string name="description_files_stop_sharing_action_error">S\'ha produït un error en esborrar l\'enllaç al fitxer.</string>
+  <string name="description_files_stop_all_sharing">Això esborrarà l\'enllaç i eliminarà l\'accés per a tothom.</string>
   <string name="description_files_stop_all_sharing_action_success">S\'ha suprimit l\'ús compartit al vostre fitxer.</string>
-  <string name="description_files_stop_all_sharing_action_error">S\'ha produït un error en eliminar l\'ús compartit al vostre fitxer.</string>
+  <string name="description_files_stop_all_sharing_action_error">S\'ha produït un error en suprimir la compartició al fitxer.</string>
   <string name="ignore_file_signature_action">Veure de totes maneres</string>
   <string name="action_empty_files_add_files">Carrega</string>
-  <string name="error_could_not_send_file">S\'ha produït un error mentre s\'intentava enviar el fitxer.</string>
-  <string name="error_could_not_load_folder_content">S\'ha produït un error en provar de carregar el contingut de la carpeta.</string>
+  <string name="error_could_not_send_file">S\'ha produït un error en intentar enviar el fitxer</string>
+  <string name="error_could_not_load_folder_content">S\'ha produït un error en intentar carregar el contingut de la carpeta</string>
   <string name="error_main_share_locked">Els vostres arxius ja no són accessibles a causa d\'un restabliment de contrasenya. Torneu a carregar la clau de xifratge antiga per recuperar-ne l\'accés.</string>
   <string name="error_share_locked">La compartició està bloquejada.</string>
   <string name="error_main_share_not_found">No s\'ha trobat la carpeta principal.</string>
   <string name="error_share_not_found">No s\'ha trobat la compartició.</string>
-  <string name="error_creating_photo_share_not_allowed">Les còpies de seguretat de les fotos estan temporalment desactivades.</string>
-  <string name="error_creating_share_not_allowed">La creació d\'elements compartits està desactivada temporalment.</string>
+  <string name="error_creating_photo_share_not_allowed">La còpia de seguretat de les fotos està desactivada temporalment.</string>
+  <string name="error_creating_share_not_allowed">S\'ha desactivat temporalment la creació d\'elements compartits.</string>
   <string name="operation_open_document">obrir un document</string>
   <string name="operation_create_document">crear un document</string>
   <string name="operation_take_picture">fer una foto</string>
@@ -194,7 +194,7 @@
   <string name="get_more_free_storage_title">Desbloquegeu %1$s d\'emmagatzematge gratuït</string>
   <string name="get_more_free_storage_description">Completeu aquests passos durant els primers 30 dies per obtenir una millora gratuïta d\'emmagatzematge.</string>
   <string name="get_more_free_storage_action_upload_title">Carregueu un fitxer O habiliteu la còpia de seguretat de les fotos</string>
-  <string name="get_more_free_storage_action_upload_subtitle">Es xifraran tots els vostres fitxers.</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Tots els fitxers es xifraran.</string>
   <string name="get_more_free_storage_action_link_title">Crea un enllaç per a compartir</string>
   <!--
         Variable %1$s is a @string/common_get_link_action in bold

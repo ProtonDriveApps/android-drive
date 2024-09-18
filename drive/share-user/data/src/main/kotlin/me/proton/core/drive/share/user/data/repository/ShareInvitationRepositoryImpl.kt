@@ -101,6 +101,7 @@ class ShareInvitationRepositoryImpl @Inject constructor(
                     permissions = request.permissions.value,
                     keyPacket = request.keyPacket,
                     keyPacketSignature = request.keyPacketSignature,
+                    externalInvitationId = request.externalInvitationId,
                 )
             )
         ).invitation.toShareUserInvitee().also { shareUserInvitee ->

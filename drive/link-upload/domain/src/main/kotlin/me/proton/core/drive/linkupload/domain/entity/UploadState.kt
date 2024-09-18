@@ -20,6 +20,7 @@ package me.proton.core.drive.linkupload.domain.entity
 enum class UploadState {
     IDLE,
     CREATING_NEW_FILE,
+    SPLITTING_URI_TO_BLOCKS,
     ENCRYPTING_BLOCKS,
     GETTING_UPLOAD_LINKS,
     UPLOADING_BLOCKS,

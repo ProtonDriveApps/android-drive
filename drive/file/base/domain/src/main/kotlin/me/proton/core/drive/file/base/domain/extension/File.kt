@@ -36,7 +36,7 @@ suspend fun File.verifyOrDelete(
     false
 }
 
-suspend fun File.sha256(coroutineContext: CoroutineContext = Job() + Dispatchers.IO): String =
+suspend fun File.sha256(coroutineContext: CoroutineContext = Dispatchers.IO): String =
     withContext(coroutineContext) {
         Base64.encodeToString(sha256, Base64.NO_WRAP)
     }

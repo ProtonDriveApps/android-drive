@@ -50,11 +50,11 @@
     <item quantity="one">Geteilt mit 1 Person</item>
     <item quantity="other">Geteilt mit %1$d Personen</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
-  <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_owner">Besitzer</string>
+  <string name="common_permission_admin">Administrator</string>
+  <string name="common_permission_editor">Bearbeiter</string>
+  <string name="common_permission_viewer">Leseberechtigter</string>
+  <string name="common_permission_unknown">Unbekannt</string>
   <!--
         Variable %1$s is an email
         Examples:

@@ -18,6 +18,8 @@
 package me.proton.core.drive.cryptobase.domain.usecase
 
 import me.proton.core.crypto.common.context.CryptoContext
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.key.domain.entity.key.PublicKey
@@ -28,6 +30,7 @@ import kotlin.coroutines.CoroutineContext
 
 class VerifyData @Inject constructor(
     private val cryptoContext: CryptoContext,
+    private val announceEvent: AnnounceEvent,
 ) {
     suspend operator fun invoke(
         verifyKeyRing: PublicKeyRing,
@@ -35,7 +38,11 @@ class VerifyData @Inject constructor(
         signature: String,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ) = coRunCatching(coroutineContext) {
-        verifyKeyRing.verifyData(cryptoContext, input, signature)
+        verifyKeyRing.verifyData(cryptoContext, input, signature).also { verified ->
+            if (!verified) {
+                announceEvent(Event.SignatureVerificationFailed(verifyKeyRing.keys))
+            }
+        }
     }
 
     suspend operator fun invoke(
@@ -44,6 +51,10 @@ class VerifyData @Inject constructor(
         signature: String,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ) = coRunCatching(coroutineContext) {
-        publicKey.verifyData(cryptoContext, input, signature)
+        publicKey.verifyData(cryptoContext, input, signature).also { verified ->
+            if (!verified) {
+                announceEvent(Event.SignatureVerificationFailed(listOf(publicKey)))
+            }
+        }
     }
 }

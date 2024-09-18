@@ -45,7 +45,7 @@ object PhotosBackupRobot : Robot, NavigationBarRobot {
         assertIsAsserted()
     }
     fun assertFolderDisable(name: String) = node.isCheckable().hasDescendant(node.withText(name)).await {
-        assertIsNotAsserted()
+        assertIsOff()
     }
 
     fun clickFolder(name: String) = node.withText(name).clickTo(PhotosBackupRobot)

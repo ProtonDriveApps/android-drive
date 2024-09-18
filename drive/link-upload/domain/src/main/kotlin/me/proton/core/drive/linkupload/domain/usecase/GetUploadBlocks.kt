@@ -31,7 +31,7 @@ class GetUploadBlocks @Inject constructor(
 ) {
     suspend operator fun invoke(
         uploadFileLink: UploadFileLink,
-        coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
+        coroutineContext: CoroutineContext = Dispatchers.IO,
     ): Result<List<UploadBlock>> = coRunCatching(coroutineContext) {
         linkUploadRepository.getUploadBlocks(uploadFileLink)
     }

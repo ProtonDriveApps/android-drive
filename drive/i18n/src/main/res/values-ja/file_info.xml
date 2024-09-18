@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="file_info_uploaded_by_entry">アップロードしたユーザー</string>
+  <string name="file_info_location_entry">場所</string>
+  <string name="file_info_last_modified_entry">修正済み</string>
+  <string name="file_info_number_of_accesses_entry">ダウンロード数</string>
+  <string name="file_info_share_url_expiration_time">リンクの有効期限</string>
+  <string name="file_info_share_url_no_expiration_time">なし</string>
+  <string name="file_info_title_folder">フォルダ詳細</string>
+  <string name="file_info_title_file">ファイル詳細</string>
+  <string name="file_info_captured_on">撮影日</string>
+  <string name="file_info_permissions">権限</string>
+</resources>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="settings_app_lock">アプリロック</string>
+  <string name="settings_section_security">セキュリティ</string>
+  <string name="settings_section_about">詳細</string>
+  <string name="settings_section_statistics">使用統計</string>
+  <string name="settings_auto_lock">アプリを自動的にロックする</string>
+  <string name="settings_auto_lock_durations_immediately">すぐに</string>
+  <plurals name="settings_auto_lock_durations_seconds">
+    <item quantity="other">%1$d 秒後</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_minutes">
+    <item quantity="other">%1$d 分後</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_hours">
+    <item quantity="other">%1$d 時間後</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_days">
+    <item quantity="other">%1$d 日後</item>
+  </plurals>
+  <string name="settings_section_backup">バックアップ</string>
+  <string name="settings_photos_backup_folders_title">アップロード元</string>
+  <!--
+        Variable %1$s is the default folder name (Camera)
+        Examples:
+            "Your Camera folder is backed up automatically."
+    -->
+  <string name="settings_photos_backup_folders_description">%1$s フォルダーは自動的にバックアップされます。 バックアップする追加のフォルダーを選択すると、その写真が [写真] タブに表示されます。</string>
+  <string name="settings_photos_backup_folders_not_found">フォルダーが見つかりませんでした</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_title">フォルダーのバックアップを停止しますか?</string>
+  <!--
+        Variable %1$s is the folder name
+        Examples:
+            "Camera will no longer be backing up to the cloud."
+    -->
+  <string name="settings_photos_backup_folders_confirm_stop_sync_description">%1$s はクラウドにバックアップされなくなります。 すでにバックアップされている写真は削除されません。</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">バックアップを停止する</string>
+  <plurals name="settings_photos_backup_folders_description_photos">
+    <item quantity="other">%1$d 枚の写真</item>
+  </plurals>
+  <plurals name="settings_photos_backup_folders_description_videos">
+    <item quantity="other">%1$d 本のビデオ</item>
+  </plurals>
+  <!--
+        Variable %1$s is an entry in a list
+        Examples:
+            "Privacy Policy (opens in a browser)"
+    -->
+  <string name="settings_external_link_format">%1$s (ブラウザで開きます)</string>
+  <string name="settings_section_appearance_settings">外観</string>
+  <string name="settings_theme_entry">テーマ</string>
+  <string name="settings_home_tab">Default home tab</string>
+  <string name="settings_section_system">システム</string>
+  <string name="settings_clear_local_cache_entry">ローカルキャッシュをクリアする</string>
+  <string name="settings_show_log">ログを表示</string>
+</resources>

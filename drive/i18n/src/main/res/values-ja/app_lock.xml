@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">アプリはロックされています</string>
+  <string name="app_lock_biometric_subtitle_app_locked">デバイスのロック機能を使ってロックを解除</string>
+  <string name="app_lock_biometric_title_confirmation">確認</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">ロック解除を有効にするには、デバイスのロックを確認します。</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">ロック解除を無効にするには、デバイスのロックを確認します。</string>
+  <string name="app_lock_option_never_set">生体認証または端末のロック機能を有効にする</string>
+  <string name="app_lock_option_none">ロックを解除したままにする</string>
+  <string name="app_lock_option_system">生体認証または端末のロック機能</string>
+  <string name="app_lock_system_dialog_title">生体認証へのアクセスを有効化</string>
+  <string name="app_lock_system_dialog_description">このデバイスで生体認証またはデバイスロックアクセスを設定します。</string>
+  <string name="app_lock_system_dialog_settings_button">設定</string>
+  <string name="app_lock_system_not_available">お使いのデバイスで生体認証またはデバイスロックが利用できません。</string>
+  <string name="app_lock_enabled">生体認証または端末のロック機構が有効化されました</string>
+  <string name="app_lock_disabled">アプリのロックが無効化されました</string>
+  <string name="app_lock_access_title">アプリのロック方法を選択</string>
+  <string name="app_lock_unlock_the_app">アプリのロックを解除</string>
+</resources>

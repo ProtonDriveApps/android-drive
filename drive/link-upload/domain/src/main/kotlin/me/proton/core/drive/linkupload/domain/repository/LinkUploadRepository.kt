@@ -27,6 +27,7 @@ import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.linkupload.domain.entity.RawBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadCount
@@ -143,7 +144,7 @@ interface LinkUploadRepository {
 
     suspend fun removeAllUploadFileLinks(folderId: FolderId, uriStrings: List<String>, uploadState: UploadState)
 
-    suspend fun insertUploadBlocks(uploadFileLink: UploadFileLink, uploadBlocks: List<UploadBlock>)
+    suspend fun insertUploadBlocks(uploadFileLinkId: Long, uploadBlocks: List<UploadBlock>)
 
     suspend fun getUploadBlock(
         uploadFileLinkId: Long,
@@ -175,4 +176,12 @@ interface LinkUploadRepository {
     suspend fun removeUploadBulk(uploadBulkId: Long): UploadBulk?
 
     suspend fun removeUploadBulkUriStrings(uploadBulkId: Long, uriStrings: List<String>)
+
+    suspend fun getRawBlocks(uploadFileLinkId: Long): List<RawBlock>
+
+    suspend fun removeRawBlock(uploadFileLinkId: Long, index: Long)
+
+    suspend fun removeAllRawBlocks(uploadFileLinkId: Long)
+
+    suspend fun insertOrUpdateRawBlocks(rawBlocks: Set<RawBlock>)
 }

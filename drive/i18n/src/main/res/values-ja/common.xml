@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">アプリ</string>
+  <string name="common_more">もっと見る</string>
+  <string name="common_mime_type">MIME タイプ</string>
+  <string name="common_name">名前</string>
+  <string name="common_no">いいえ</string>
+  <string name="common_share">共有</string>
+  <string name="common_shared">共有中</string>
+  <string name="common_size">サイズ</string>
+  <string name="common_type">種類</string>
+  <string name="common_yes">はい</string>
+  <string name="common_download">ダウンロード</string>
+  <string name="common_downloading">ダウンロード中</string>
+  <string name="common_link">リンク</string>
+  <string name="common_password">パスワード</string>
+  <string name="common_retry">再試行</string>
+  <string name="common_settings">設定</string>
+  <string name="common_trash">ごみ箱</string>
+  <string name="common_uploading">アップロード中</string>
+  <string name="common_on">オン</string>
+  <string name="common_off">オフ</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">OK</string>
+  <string name="common_close_action">閉じる</string>
+  <string name="common_retry_action">再試行</string>
+  <string name="common_undo_action">取り消し</string>
+  <string name="common_rename_action">名前を変更</string>
+  <string name="common_send_action">送信</string>
+  <string name="common_create_action">作成</string>
+  <string name="common_cancel_action">キャンセル</string>
+  <string name="common_cancel_all_action">すべてキャンセル</string>
+  <string name="common_got_it_action">了解</string>
+  <string name="common_next_action">次へ</string>
+  <string name="common_save_action">保存</string>
+  <string name="common_discard_action">破棄</string>
+  <string name="common_skip_action">スキップ</string>
+  <string name="common_delete_permanently_action">完全に削除</string>
+  <string name="common_make_available_offline_action">オフラインで利用可能にする</string>
+  <string name="common_remove_from_offline_available_action">オフラインから削除</string>
+  <string name="common_get_link_action">リンクを作成</string>
+  <string name="common_manage_link_action">リンクを管理</string>
+  <string name="common_manage_access_action">アクセス管理</string>
+  <string name="common_copy_link_action">リンクをコピー</string>
+  <string name="common_stop_sharing_action">共有を停止</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">音声</string>
+  <string name="common_type_calendar">iCalendar 形式</string>
+  <string name="common_type_doc">ドキュメント</string>
+  <string name="common_type_image">画像</string>
+  <string name="common_type_keynote">Keynote ファイル</string>
+  <string name="common_type_numbers">Numbers ファイル</string>
+  <string name="common_type_pages">Pages ファイル</string>
+  <string name="common_type_pdf">PDFドキュメント</string>
+  <string name="common_type_ppt">プレゼンテーション</string>
+  <string name="common_type_proton_doc">Proton document</string>
+  <string name="common_type_text">テキスト</string>
+  <string name="common_type_trustedkey">信頼できるキー</string>
+  <string name="common_type_unknown">バイナリ</string>
+  <string name="common_type_video">動画</string>
+  <string name="common_type_xls">スプレッドシート</string>
+  <string name="common_type_xml">XML ファイル</string>
+  <string name="common_type_zip">アーカイブ</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">名前を入力してください</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">名前は %1$d 文字を超えてはなりません</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">名前に非表示文字「%1$s」または「%2$s」を含めることはできません</string>
+  <string name="common_error_name_periods">名前に「.」や「..」は使用できません。</string>
+  <string name="common_error_no_internet">インターネット接続なし</string>
+  <string name="common_error_http_5xx">サーバーエラーが発生しました</string>
+  <string name="common_error_internal">内部エラーが発生した</string>
+  <string name="common_error_crypto">暗号化または復号化に失敗した</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">暗号化または復号化に失敗しました: %1$s</string>
+  <string name="common_error_io">入力または出力操作が失敗しました</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">入力または出力操作が失敗しました: %1$s</string>
+  <string name="common_error_security">セキュリティエラーが発生しました</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">セキュリティエラーが発生しました： %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$sをダウンロードしました</string>
+  <string name="common_sign_out">サインアウト</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="other">%1$d 個が選択されました</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s がクリップボードにコピーされました</string>
+  <string name="common_in_app_notification_download_started">ダウンロード開始</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$sが正常にダウンロードされました。</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="other">%1$d個のファイルが正常にダウンロードされました。</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">%1$s のダウンロードに失敗しました。</string>
+  <string name="common_in_app_notification_download_failed">ダウンロード失敗</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">%1$s を実行できるアプリケーションが見つかりませんでした。</string>
+  <!-- endregion -->
+</resources>

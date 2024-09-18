@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="app_lock_biometric_title_app_locked">Aplicación bloqueada</string>
-  <string name="app_lock_biometric_subtitle_app_locked">Desbloquear utilizando la función de bloqueo del dispositivo</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Desbloquear usando la función de bloqueo del dispositivo</string>
   <string name="app_lock_biometric_title_confirmation">Confirmación</string>
   <string name="app_lock_biometric_subtitle_confirmation_enable">Para activar el desbloqueo, confirma con la función de bloqueo del dispositivo.</string>
   <string name="app_lock_biometric_subtitle_confirmation_disable">Para desactivar el desbloqueo, confirma con la función de bloqueo del dispositivo.</string>

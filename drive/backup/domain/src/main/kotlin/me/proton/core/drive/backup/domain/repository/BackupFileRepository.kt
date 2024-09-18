@@ -71,6 +71,7 @@ interface BackupFileRepository {
     )
     suspend fun markAs(
         folderId: FolderId,
+        bucketId: Int,
         hashes: List<String>,
         backupFileState: BackupFileState,
     )

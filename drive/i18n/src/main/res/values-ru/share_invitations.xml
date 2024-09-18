@@ -56,29 +56,29 @@
     <item quantity="many">Делимся с %1$d людьми</item>
     <item quantity="other">Делимся с %1$d людьми</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
-  <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_owner">Владелец</string>
+  <string name="common_permission_admin">Администратор</string>
+  <string name="common_permission_editor">Редактор</string>
+  <string name="common_permission_viewer">Только просмотр</string>
+  <string name="common_permission_unknown">Неизвестный тип</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (в ожидании)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Accepted)"
     -->
-  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (принято)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Unknown)"
     -->
-  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (неизвестно)</string>
   <string name="share_via_invitations_add_people_hint">Добавить пользователей</string>
   <string name="share_via_invitations_copy_invite_link_action">Скопировать ссылку-приглашение</string>
   <string name="share_via_invitations_remove_access_action">Отменить доступ</string>

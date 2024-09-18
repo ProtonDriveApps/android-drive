@@ -74,12 +74,12 @@ import me.proton.android.drive.lock.domain.manager.AppLockManager
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.provider.ActivityLauncher
 import me.proton.android.drive.ui.navigation.AppNavGraph
-import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.provider.LocalSnackbarPadding
 import me.proton.android.drive.ui.provider.ProvideLocalSnackbarPadding
 import me.proton.android.drive.ui.viewmodel.AccountViewModel
 import me.proton.android.drive.ui.viewmodel.BugReportViewModel
 import me.proton.android.drive.ui.viewmodel.PlansViewModel
+import me.proton.android.drive.usecase.GetDefaultEnabledDynamicHomeTab
 import me.proton.android.drive.usecase.ProcessIntent
 import me.proton.core.compose.component.ProtonSnackbarHost
 import me.proton.core.compose.component.ProtonSnackbarHostState
@@ -95,7 +95,6 @@ import me.proton.core.notification.presentation.deeplink.DeeplinkManager
 import me.proton.core.notification.presentation.deeplink.onActivityCreate
 import me.proton.core.usersettings.presentation.compose.view.SecurityKeysActivity
 import me.proton.core.util.kotlin.CoreLogger
-import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.usecase.GetHomeTab
 import me.proton.drive.android.settings.domain.usecase.GetThemeStyle
@@ -110,6 +109,7 @@ class MainActivity : FragmentActivity() {
     @Inject lateinit var actionProvider: ActionProvider
     @Inject lateinit var getThemeStyle: GetThemeStyle
     @Inject lateinit var getHomeTab: GetHomeTab
+    @Inject lateinit var getDefaultEnabledDynamicHomeTab: GetDefaultEnabledDynamicHomeTab
     @Inject lateinit var processIntent: ProcessIntent
     @Inject lateinit var biometricPromptProvider: BiometricPromptProvider
     @Inject lateinit var appLockManager: AppLockManager
@@ -216,25 +216,17 @@ class MainActivity : FragmentActivity() {
     }
 
     @Composable
-    private fun defaultStartDestination(): State<String> {
-        val default = HomeTab.DEFAULT.destination
-        return remember {
+    private fun defaultStartDestination(): State<String?> =
+        remember {
             accountViewModel.primaryAccount.flatMapLatest { account ->
                 account?.let {
-                    getHomeTab(account.userId).map { homeTab ->
-                        homeTab.destination
-                    }
-                } ?: flowOf(default)
+                    getDefaultEnabledDynamicHomeTab(account.userId)
+                        .map { dynamicHomeTab ->
+                            dynamicHomeTab.route
+                        }
+                } ?: flowOf(null)
             }
-        }.collectAsState(initial = default)
-    }
-
-    private val HomeTab.destination: String get() = when (this) {
-        HomeTab.FILES -> Screen.Files.route
-        HomeTab.PHOTOS -> Screen.Photos.route
-        HomeTab.COMPUTERS -> Screen.Computers.route
-        HomeTab.SHARED -> Screen.Shared.route
-    }
+        }.collectAsState(initial = null)
 
     @Composable
     private fun SystemBarColorLaunchedEffect(isDrawerOpen: Boolean, isDarkTheme: Boolean) {

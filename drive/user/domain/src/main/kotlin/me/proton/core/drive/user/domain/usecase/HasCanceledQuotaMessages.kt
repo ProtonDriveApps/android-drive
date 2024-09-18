@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.base.domain.extension.effectiveMaxDriveSpace
 import me.proton.core.drive.user.domain.entity.QuotaLevel
 import me.proton.core.drive.user.domain.repository.QuotaRepository
 import me.proton.core.user.domain.UserManager
@@ -35,6 +36,6 @@ class HasCanceledQuotaMessages @Inject constructor(
 ) {
     operator fun invoke(userId: UserId, level: QuotaLevel) =
         userManager.observeUser(userId).filterNotNull().flatMapLatest { user ->
-            repository.exists(userId, level, user.maxSpace.bytes)
+            repository.exists(userId, level, user.effectiveMaxDriveSpace)
         }
 }

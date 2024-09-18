@@ -46,6 +46,7 @@ object Dto {
     const val DATA = "Data"
     const val DELETED_URL_ID = "DeletedURLID"
     const val EXTERNAL_INVITATION_ID = "ExternalInvitationID"
+    const val EXTERNAL_INVITATION_SIGNUP = "ExternalInvitationSignup"
     const val DEVICE = "Device"
     const val DEVICES = "Devices"
     const val DEVICE_ID = "DeviceID"

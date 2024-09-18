@@ -31,7 +31,7 @@ import kotlin.coroutines.CoroutineContext
 
 class StorageLocationProviderImpl @Inject constructor(
     @ApplicationContext private val appContext: Context,
-    private val coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
+    private val coroutineContext: CoroutineContext = Dispatchers.IO,
 ) : StorageLocationProvider {
 
     override suspend fun getCacheFolder(): File = appContext.cacheDir

@@ -23,7 +23,12 @@ android {
     namespace = "me.proton.core.drive.key.domain"
 }
 
-driveModule(hilt = true) {
+driveModule(
+    hilt = true,
+    socialTest = true,
+) {
+    api(project(":drive:announce-event:domain"))
+    api(project(":drive:base:domain"))
     api(project(":drive:link-node:domain"))
     api(project(":drive:link-upload:domain"))
     api(project(":drive:share:domain"))

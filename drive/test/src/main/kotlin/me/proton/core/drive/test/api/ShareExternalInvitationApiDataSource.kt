@@ -24,7 +24,6 @@ import me.proton.core.drive.share.user.data.api.entities.ShareExternalInvitation
 import me.proton.core.drive.share.user.data.api.request.CreateShareExternalInvitationRequest
 import me.proton.core.drive.share.user.data.api.response.GetSharesExternalInvitationsResponse
 import me.proton.core.drive.share.user.data.api.response.PostShareExternalInvitationResponse
-import me.proton.core.drive.share.user.domain.entity.ShareUser
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 
@@ -51,6 +50,26 @@ fun MockWebServer.getExternalInvitations(vararg emails: String) {
                         createTime = 0,
                     )
                 }
+            )
+        }
+    }
+}
+
+fun MockWebServer.getExternalInvitations(email: String, state: Long) {
+    getExternalInvitations {
+        jsonResponse {
+            GetSharesExternalInvitationsResponse(
+                listOf(
+                    ShareExternalInvitationDto(
+                        id = "invitation-id-$email",
+                        inviterEmail = "inviter@proton.me",
+                        inviteeEmail = email,
+                        permissions = 0,
+                        externalInvitationSignature = "invitation-signature",
+                        state = state,
+                        createTime = 0,
+                    )
+                )
             )
         }
     }

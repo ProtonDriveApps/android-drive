@@ -18,7 +18,7 @@
 
 package me.proton.android.drive.usecase
 
-import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.base.domain.extension.effectiveMaxDriveSpace
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.user.domain.extension.isFree
 import me.proton.core.user.domain.entity.User
@@ -32,5 +32,5 @@ class CanGetMoreFreeStorage @Inject constructor(
         isFree && isNotUsingMaxFreeSpace
     }
 
-    private val User.isNotUsingMaxFreeSpace get() = maxSpace.bytes < configurationProvider.maxFreeSpace
+    private val User.isNotUsingMaxFreeSpace get() = effectiveMaxDriveSpace < configurationProvider.maxFreeSpace
 }

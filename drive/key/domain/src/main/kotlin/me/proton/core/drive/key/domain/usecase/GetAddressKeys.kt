@@ -28,9 +28,29 @@ import javax.inject.Inject
 class GetAddressKeys @Inject constructor(
     private val userAddressRepository: UserAddressRepository,
 ) {
-    suspend operator fun invoke(userId: UserId, addressId: AddressId): Key =
-        AddressKeys(userAddressRepository.getAddressKeys(userId, addressId))
+    suspend operator fun invoke(
+        userId: UserId,
+        addressId: AddressId,
+        fallbackToAllAddressKeys: Boolean = true,
+    ): Key =
+        AddressKeys(
+            userAddressRepository.getAddressKeys(
+                userId = userId,
+                addressId = addressId,
+                fallbackToAllAddressKeys = fallbackToAllAddressKeys,
+            )
+        )
 
-    suspend operator fun invoke(userId: UserId, email: String): Key =
-        AddressKeys(userAddressRepository.getAddressKeys(userId, email))
+    suspend operator fun invoke(
+        userId: UserId,
+        email: String,
+        fallbackToAllAddressKeys: Boolean = true,
+    ): Key =
+        AddressKeys(
+            userAddressRepository.getAddressKeys(
+                userId = userId,
+                email = email,
+                fallbackToAllAddressKeys = fallbackToAllAddressKeys,
+            )
+        )
 }

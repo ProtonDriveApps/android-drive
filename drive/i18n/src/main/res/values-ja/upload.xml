@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the file name if available
+        Variable %2$s is message field from exception
+        Example:
+            "Uploading file My file.jpg failed with reason: Something went wrong"
+    -->
+  <string name="files_upload_failure_with_description">ファイル %1$s のアップロードが失敗しました: %2$s</string>
+  <!--
+        Variable %1$d is a quantity of files that are being uploaded
+        Variable %2$s is a folder name where files are being uploaded to
+        Example:
+            "1 file is being uploaded to: Files"
+            "3 files are being uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_being_uploaded_notification">
+    <item quantity="other">%1$d 個のファイルが %2$s にアップロードされています</item>
+  </plurals>
+  <string name="files_upload_preparing">アップロードを準備しています。 これは時間がかかる場合があります。</string>
+  <!--
+        Variable %1$s is the maximum number of uploading files
+        Example:
+            "Uploads are currently limited to 250 files at a time. Try again with fewer files."
+    -->
+  <string name="files_upload_limit_reached">現在、アップロードは一度に %1$d ファイルに制限されています。 ファイル数を減らして再試行してください。</string>
+  <!--
+        Variable %1$d is a quantity of items that are being used
+        Example:
+            "1 item"
+            "33 items"
+    -->
+  <plurals name="number_of_items">
+    <item quantity="other">%1$d 個のアイテム</item>
+  </plurals>
+  <string name="files_upload_verification_failed">アップロード失敗: データの検証に失敗しました</string>
+</resources>

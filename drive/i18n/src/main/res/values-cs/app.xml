@@ -150,7 +150,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Zálohování není povoleno</string>
   <string name="notification_content_text_backup_paused_disabled">Zálohování bylo vypnuto</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Zálohování nemůže probíhat na pozadí</string>
-  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
+  <string name="notification_content_text_backup_preparing">Příprava zálohování</string>
   <string name="notification_content_title_download_complete">Stahování dokončeno</string>
   <string name="notification_content_title_forced_sign_out">Přihlaste se, prosím</string>
   <string name="notification_content_text_forced_sign_out">Omlouváme se za vyrušení! Nastal problém se synchronizací - prosím přihlaste se znovu a vše bude fungovat bez problémů.</string>

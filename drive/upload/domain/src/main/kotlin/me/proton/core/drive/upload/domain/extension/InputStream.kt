@@ -30,8 +30,9 @@ import java.security.NoSuchAlgorithmException
 fun InputStream.saveToBlocks(
     destinationFolder: File,
     blockMaxSize: Bytes,
+    listener: MultipleFileOutputStream.Listener? = null,
 ): List<File> =
-    MultipleFileOutputStream(destinationFolder, blockMaxSize)
+    MultipleFileOutputStream(destinationFolder, blockMaxSize, listener)
         .apply { use { outputStream -> copyTo(outputStream) } }
         .files
 

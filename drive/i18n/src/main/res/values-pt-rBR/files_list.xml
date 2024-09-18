@@ -20,7 +20,16 @@
   <string name="file_operation_error_occurred_moving_file">Ocorreu um erro durante a movimentação do arquivo</string>
   <string name="file_operation_moving_file_successful">Arquivo movido</string>
   <string name="file_operation_moving_folder_successful">Pasta movida</string>
-  <string name="file_operation_moving_multiple_successful">%1$d itens movidos.</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="one">%1$d item movido com sucesso.</item>
+    <item quantity="other">%1$d itens movidos com sucesso.</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Um item com esse nome já existe na pasta de destino.</string>
   <string name="folder_options_header_title">Em \"%1$s\"</string>
   <string name="folder_options_header_title_encrypted">Em</string>

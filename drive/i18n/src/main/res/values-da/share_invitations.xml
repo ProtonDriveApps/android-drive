@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the link name
+        Example:
+            "Share Document"
+    -->
+  <string name="title_share_via_invitations">Del %1$s</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons added"
+    -->
+  <plurals name="share_via_invitations_person_added">
+    <item quantity="one">1 person tilføjet</item>
+    <item quantity="other">%1$d personer tilføjet</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons cannot be invited"
+    -->
+  <plurals name="share_via_invitations_person_added_error">
+    <item quantity="one">1 person kan ikke inviteres</item>
+    <item quantity="other">%1$d personer kan ikke inviteres</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "Sharing with 2 persons"
+    -->
+  <plurals name="share_via_invitations_sharing_with">
+    <item quantity="one">Deles med 1 person</item>
+    <item quantity="other">Deles med %1$d personer</item>
+  </plurals>
+  <string name="common_permission_owner">Ejer</string>
+  <string name="common_permission_admin">Admin</string>
+  <string name="common_permission_editor">Redaktør</string>
+  <string name="common_permission_viewer">Seer</string>
+  <string name="common_permission_unknown">Ukendt</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Pending)"
+    -->
+  <string name="share_via_invitations_external_invitation_pending">%1$s (Afventer)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Godkendt)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Ukendt)</string>
+  <string name="share_via_invitations_add_people_hint">Tilføj personer</string>
+  <string name="share_via_invitations_copy_invite_link_action">Kopiér invitationslink</string>
+  <string name="share_via_invitations_remove_access_action">Fjern adgang</string>
+  <string name="share_via_invitations_stop_sharing_description">Slet link og fjern adgang for alle</string>
+  <string name="share_via_invitations_resend_invite_action">Gensend invitation</string>
+  <string name="share_via_invitations_resend_invite_success">Invitationen er gensendt</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="one">%1$d medlem</item>
+    <item quantity="other">%1$d medlemmer</item>
+  </plurals>
+</resources>

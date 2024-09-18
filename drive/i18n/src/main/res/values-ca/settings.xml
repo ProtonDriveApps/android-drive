@@ -21,7 +21,7 @@
   <string name="settings_section_security">Seguretat</string>
   <string name="settings_section_about">Quant a</string>
   <string name="settings_section_statistics">Estadístiques d\'ús</string>
-  <string name="settings_auto_lock">Blocar l\'aplicació automàticament</string>
+  <string name="settings_auto_lock">Bloca l\'aplicació automàticament</string>
   <string name="settings_auto_lock_durations_immediately">Immediatament</string>
   <plurals name="settings_auto_lock_durations_seconds">
     <item quantity="one">Després d\'%1$d segon</item>

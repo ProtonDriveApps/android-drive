@@ -37,7 +37,6 @@ import org.junit.Test
 
 private val testUserId = UserId("user-id")
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class SearchContactsTest {
 
     private val getContacts = mockk<GetContacts> {
@@ -128,6 +127,88 @@ class SearchContactsTest {
         }
 
     @Test
+    fun `when there are contacts matched, they are sorted by last usage`() =
+        runTest {
+            // Given
+            val query = "mail"
+
+            val contact1 = ContactTestData.buildContactWith(
+                userId = testUserId,
+                name = "important contact display name",
+                contactEmails = listOf(
+                    ContactTestData.buildContactEmailWith(
+                        name = "name 1",
+                        address = "address1@protonmail.ch",
+                        lastUsedTime = 4000,
+                    ),
+                    ContactTestData.buildContactEmailWith(
+                        name = "name 2",
+                        address = "address2@protonmail.ch",
+                        lastUsedTime = 6000,
+                    )
+                )
+            )
+
+            val contact2 = ContactTestData.buildContactWith(
+                userId = testUserId,
+                name = "important contact display name",
+                contactEmails = listOf(
+                    ContactTestData.buildContactEmailWith(
+                        name = "name 3",
+                        address = "address3@protonmail.ch",
+                        lastUsedTime = 10000,
+                    ),
+                    ContactTestData.buildContactEmailWith(
+                        name = "name 4",
+                        address = "address4@protonmail.ch",
+                        lastUsedTime = 2000,
+                    )
+                )
+            )
+            coEvery { getContacts(testUserId) } returns flowOf(DataResult.Success(
+                ResponseSource.Local,
+                ContactTestData.contacts + contact1 + contact2,
+            ))
+
+            val contacts = searchContacts(testUserId, query).filterSuccessOrError().toResult().getOrThrow()
+
+            assertEquals(listOf(
+                ContactTestData.buildContactWith(
+                    userId = testUserId,
+                    name = "important contact display name",
+                    contactEmails = listOf(
+                        ContactTestData.buildContactEmailWith(
+                            name = "name 3",
+                            address = "address3@protonmail.ch",
+                            lastUsedTime = 10000,
+                        ),
+                        ContactTestData.buildContactEmailWith(
+                            name = "name 4",
+                            address = "address4@protonmail.ch",
+                            lastUsedTime = 2000,
+                        ),
+                    )
+                ),
+                ContactTestData.buildContactWith(
+                    userId = testUserId,
+                    name = "important contact display name",
+                    contactEmails = listOf(
+                        ContactTestData.buildContactEmailWith(
+                            name = "name 2",
+                            address = "address2@protonmail.ch",
+                            lastUsedTime = 6000,
+                        ),
+                        ContactTestData.buildContactEmailWith(
+                            name = "name 1",
+                            address = "address1@protonmail.ch",
+                            lastUsedTime = 4000,
+                        ),
+                    )
+                )
+            ), contacts)
+        }
+
+    @Test
     fun `when there are no matching contacts, empty list is emitted`() = runTest {
         val query = "there is no contact like this"
 
@@ -164,7 +245,8 @@ object ContactTestData {
         contactEmailId: ContactEmailId = ContactIdTestData.contactEmailId1,
         contactId: ContactId = ContactIdTestData.contactId1,
         name: String,
-        address: String
+        address: String,
+        lastUsedTime: Long = 0,
     ) = ContactEmail(
         userId = userId,
         id = contactEmailId,
@@ -175,7 +257,8 @@ object ContactTestData {
         contactId = contactId,
         canonicalEmail = address,
         labelIds = emptyList(),
-        isProton = null
+        isProton = null,
+        lastUsedTime = lastUsedTime
     )
 }
 

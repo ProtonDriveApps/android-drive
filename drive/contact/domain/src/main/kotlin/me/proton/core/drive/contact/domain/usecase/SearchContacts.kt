@@ -49,11 +49,13 @@ class SearchContacts @Inject constructor(
         } else { // otherwise, return Contact with only matching contactEmails
             val matchingContactEmails = contact.contactEmails.filter { contactEmail ->
                 contactEmail.email.containsNoCase(query)
-            }
+            }.sortedByDescending { contactEmail -> contactEmail.lastUsedTime }
 
             if (matchingContactEmails.isNotEmpty()) {
                 contact.copy(contactEmails = matchingContactEmails)
             } else null
         }
+    }.sortedByDescending { contact: Contact ->
+        contact.contactEmails.maxOfOrNull { contactEmail -> contactEmail.lastUsedTime } ?: 0
     }
 }

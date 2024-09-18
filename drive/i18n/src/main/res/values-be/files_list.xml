@@ -20,7 +20,18 @@
   <string name="file_operation_error_occurred_moving_file">Падчас перамяшчэння файла адбылася памылка</string>
   <string name="file_operation_moving_file_successful">Файл паспяхова перамешчаны</string>
   <string name="file_operation_moving_folder_successful">Папка паспяхова перамешчана</string>
-  <string name="file_operation_moving_multiple_successful">Паспяхова перамешчана элементаў: %1$d</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="one">%1$d элемент паспяхова перамешчаны.</item>
+    <item quantity="few">%1$d элементы паспяхова перамешчаны.</item>
+    <item quantity="many">%1$d элементаў паспяхова перамешчаны.</item>
+    <item quantity="other">%1$d элементаў паспяхова перамешчаны.</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Элемент з такой назвай ужо існуе ў папцы прызначэння</string>
   <string name="folder_options_header_title">У \"%1$s\"</string>
   <string name="folder_options_header_title_encrypted">У</string>

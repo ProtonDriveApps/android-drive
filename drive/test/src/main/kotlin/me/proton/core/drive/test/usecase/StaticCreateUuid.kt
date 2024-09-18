@@ -24,9 +24,12 @@ import kotlinx.coroutines.withContext
 import me.proton.core.drive.base.domain.usecase.CreateUuid
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class StaticCreateUuid @Inject constructor(): CreateUuid {
-    override suspend fun invoke(): UUID = withContext(Job() + Dispatchers.Default) {
+    override suspend fun invoke(
+        coroutineContext: CoroutineContext,
+    ): UUID = withContext(coroutineContext) {
         uuid
     }
 

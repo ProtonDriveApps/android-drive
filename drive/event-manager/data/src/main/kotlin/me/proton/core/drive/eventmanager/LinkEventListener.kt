@@ -125,6 +125,7 @@ class LinkEventListener @Inject constructor(
             volumeId = volumeId,
             link = link.toLinkWithProperties(shareId).toLink(),
             deletedShareUrlIds = data?.deletedUrlId ?: emptyList(),
+            externalInvitationSignup = data?.externalInvitationSignup,
         )
         return Event(action, vo.link.id, vo)
     }

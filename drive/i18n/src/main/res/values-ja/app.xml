@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">復号化</string>
+  <string name="title_files">ファイル</string>
+  <string name="title_shared">共有中</string>
+  <string name="title_my_files">自分のファイル</string>
+  <string name="title_offline_available">オフラインで利用可能</string>
+  <string name="title_empty_my_files">どうぞ、あなたの最初のファイルを追加してください。</string>
+  <string name="title_empty_folder">このフォルダを埋めてみましょう</string>
+  <string name="title_empty_folder_read_only">Empty folder</string>
+  <string name="title_empty_shared">追跡する</string>
+  <string name="title_empty_offline_available">オフラインで利用可能なものはありません。</string>
+  <string name="title_empty_trash">ごみ箱は空です</string>
+  <string name="title_empty_trash_action">ごみ箱を空にする</string>
+  <string name="title_files_confirm_deletion">完全に削除しますか？</string>
+  <string name="title_default_home_screen_tab">Choose default home screen tab</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">アプリ</string>
+  <string name="description_signing_out">サインアウト中…</string>
+  <string name="settings_about_links_acknowledgments_title">謝辞</string>
+  <string name="settings_about_links_privacy_policy_title">プライバシーポリシー</string>
+  <string name="settings_about_links_terms_of_service_title">利用規約</string>
+  <string name="common_error_no_browser_available">ブラウザがインストールされていないようですので、リンクを開けませんでした</string>
+  <string name="move_to">移動先</string>
+  <string name="move_file_confirm_action">移動</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">同じフォルダに移動することは出来ません</string>
+  <string name="folder_option_import_file">ファイルをアップロード</string>
+  <string name="folder_option_create_folder">フォルダを作成</string>
+  <string name="folder_option_take_a_photo">新しい写真を撮る</string>
+  <string name="settings_theme_system_default">システム標準</string>
+  <string name="settings_theme_dark">ダーク</string>
+  <string name="settings_theme_light">ライト</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">%1$s にアップロードする。</string>
+  <string name="upload_title">アップロード</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">%1$s にアップロードできるのはファイルのみです</string>
+  <string name="in_app_notification_importing_file_already_exists">同じ名前のファイルがすでに存在します。アプリのキャッシュをクリアしてみてください</string>
+  <string name="in_app_notification_clear_local_cache_success">キャッシュをクリアしました</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">ストレージの空き容量がありません</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">%1$s にアップロードしているファイル</string>
+  <string name="notification_content_title_upload_complete">アップロード完了</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="other">%1$d ファイルをアップロード中</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="other">%1$d ファイルをアップロードしました</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="other">%1$d ファイルがキャンセルされました</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="other">%1$d ファイルが失敗しました</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">写真を %1$s にバックアップする</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="other">残り %1$s アイテム</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">バックアップが完了しました</string>
+  <string name="notification_content_text_backup_uncompleted">問題はあるもののバックアップは完了しました</string>
+  <string name="notification_content_text_backup_failed">バックアップに失敗しました</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Proton ストレージがいっぱいです</string>
+  <string name="notification_content_text_backup_failed_local_storage">ローカルストレージがいっぱいです</string>
+  <string name="notification_content_text_backup_failed_permission">権限がありません</string>
+  <string name="notification_content_text_backup_failed_connectivity">インターネット接続なし</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Wi-Fi待ち</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">バックアップは許可されていません</string>
+  <string name="notification_content_text_backup_paused_disabled">バックアップが無効になりました</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">バックアップはバックグラウンドで実行できません</string>
+  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
+  <string name="notification_content_title_download_complete">ダウンロード完了</string>
+  <string name="notification_content_title_forced_sign_out">ログインしてください</string>
+  <string name="notification_content_text_forced_sign_out">申し訳ありません！同期中に問題が発生しました。- もう一度ログインしてください。すべてがスムーズに実行されます。</string>
+  <string name="notification_content_title_no_space_left_on_device">デバイスに空き容量がありません</string>
+  <string name="notification_content_text_no_space_left_on_device">アプリが適切に動いていないようです。</string>
+  <string name="notification_channel_group_name_application">アプリケーション</string>
+  <string name="notification_channel_background_title">バックグラウンド</string>
+  <string name="notification_channel_background_description">バックアップのようなバックグラウンド操作のためのチャンネル</string>
+  <string name="notification_channel_transfer_title">転送</string>
+  <string name="notification_channel_transfer_description">クラウド ストレージ、アップロードおよびダウンロード通知のチャネル</string>
+  <string name="notification_channel_warning_title">警告</string>
+  <string name="notification_channel_warning_description">ユーザーのアクションが必要な警告のチャネル</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">リスト内のすべての項目を選択します</string>
+  <string name="content_description_selected_options">選択したファイルやフォルダーのその他のオプションを表示します</string>
+  <string name="content_description_files_upload_upload_file">ファイルをアップロード</string>
+  <string name="description_empty_my_files">ボタンをタップしてファイルの追加を開始します。</string>
+  <string name="description_empty_folder_read_only">There is nothing to see here</string>
+  <string name="description_empty_shared">リンクされたファイルはここに表示されるので、共有されているファイルを簡単に追跡・管理できます。</string>
+  <string name="description_empty_trash">ここには、ごみ箱に入れられたアイテムが削除または復元されるまで残ります。</string>
+  <string name="description_empty_offline_available">ネットワークが使用できない場合でも、重要なファイルを常に利用できるようにします。</string>
+  <string name="description_no_drive_scope">ユーザーにドライブスコープがありません。</string>
+  <string name="description_file_download_failed">ダウンロードに失敗しました。 ネットワーク接続を確認して、再試行してください。</string>
+  <string name="description_file_decryption_failed">ファイルを復号化できませんでした</string>
+  <string name="description_file_verify_signature_failed">ファイルの署名が検証できませんでした。</string>
+  <string name="description_files_stop_sharing">これにより、リンクが削除され、そのリンクを持つ人からのファイルやフォルダへのアクセスがなくなります。</string>
+  <string name="description_files_stop_sharing_action_success">あなたのファイルへのリンクは削除されました。</string>
+  <string name="description_files_stop_sharing_action_error">あなたのファイルへのリンクを削除する際にエラーが発生しました。</string>
+  <string name="description_files_stop_all_sharing">This will delete link and remove access for everyone.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_error">There was an error while deleting sharing to your file.</string>
+  <string name="ignore_file_signature_action">いずれにせよ</string>
+  <string name="action_empty_files_add_files">アップロード</string>
+  <string name="error_could_not_send_file">ファイルを送信しようとしたときにエラーが発生しました</string>
+  <string name="error_could_not_load_folder_content">フォルダーのコンテンツをロードしようとしたときにエラーが発生しました</string>
+  <string name="error_main_share_locked">パスワードを変更したためファイルにアクセスできません。古い暗号鍵を再度アップロードすることでアクセス可能になります。</string>
+  <string name="error_share_locked">共有はロックされています。</string>
+  <string name="error_main_share_not_found">メインシェアが見つかりません。</string>
+  <string name="error_share_not_found">共有が見つかりません。</string>
+  <string name="error_creating_photo_share_not_allowed">写真のバックアップは一時的に無効になっています。</string>
+  <string name="error_creating_share_not_allowed">共有の作成は一時的に無効にされています。</string>
+  <string name="operation_open_document">ドキュメントを開く</string>
+  <string name="operation_create_document">ドキュメントの作成</string>
+  <string name="operation_take_picture">写真を撮らせて</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">無料ストレージ %1$s のロックを解除する</string>
+  <string name="get_more_free_storage_description">無料でストレージをアップグレードするには、最初の 30 日間に次の手順を完了してください。</string>
+  <string name="get_more_free_storage_action_upload_title">ファイルをアップロードするか、写真のバックアップを有効にしてください</string>
+  <string name="get_more_free_storage_action_upload_subtitle">すべてのファイルは暗号化されます。</string>
+  <string name="get_more_free_storage_action_link_title">共有リンクを作成</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">任意のファイルまたはフォルダーを選択します。 オプション メニューを開き、%1$s を押します。</string>
+  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_subtitle">簡単に使用でき安全で.</string>
+  <string name="get_more_free_storage_action_recovery_title">回復手段を設定</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">%1$s でサインインし、[設定] -&gt; [ 回復] に移動します。</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+</resources>

@@ -30,11 +30,16 @@ import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.iterator
+import me.proton.core.drive.base.domain.function.pagedList
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
+import me.proton.core.drive.linkupload.data.db.entity.RawBlockEntity
 import me.proton.core.drive.linkupload.data.extension.toLinkUploadEntity
+import me.proton.core.drive.linkupload.data.extension.toRawBlock
+import me.proton.core.drive.linkupload.data.extension.toRawBlockEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadBlock
 import me.proton.core.drive.linkupload.data.extension.toUploadBlockEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadBulk
@@ -42,6 +47,7 @@ import me.proton.core.drive.linkupload.data.extension.toUploadBulkEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadBulkUriStringEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadCount
 import me.proton.core.drive.linkupload.data.extension.toUploadFileLink
+import me.proton.core.drive.linkupload.domain.entity.RawBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk
 import me.proton.core.drive.linkupload.domain.entity.UploadCount
@@ -58,6 +64,7 @@ import kotlin.time.Duration
 class LinkUploadRepositoryImpl @Inject constructor(
     private val db: LinkUploadDatabase,
     private val uploadBlockFactory: UploadBlockFactory,
+    private val configurationProvider: ConfigurationProvider,
 ) : LinkUploadRepository {
 
     override suspend fun insertUploadFileLink(uploadFileLink: UploadFileLink): UploadFileLink =
@@ -293,17 +300,14 @@ class LinkUploadRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun insertUploadBlocks(uploadFileLink: UploadFileLink, uploadBlocks: List<UploadBlock>) =
-        db.inTransaction {
-            db.uploadBlockDao.delete(uploadFileLink.id)
-            db.uploadBlockDao.insertOrIgnore(
-                *uploadBlocks.map { uploadBlock ->
-                    uploadBlock.toUploadBlockEntity(
-                        uploadFileLinkId = uploadFileLink.id
-                    )
-                }.toTypedArray()
-            )
-        }
+    override suspend fun insertUploadBlocks(uploadFileLinkId: Long, uploadBlocks: List<UploadBlock>) =
+        db.uploadBlockDao.insertOrIgnore(
+            *uploadBlocks.map { uploadBlock ->
+                uploadBlock.toUploadBlockEntity(
+                    uploadFileLinkId = uploadFileLinkId
+                )
+            }.toTypedArray()
+        )
 
     override suspend fun getUploadBlock(
         uploadFileLinkId: Long,
@@ -372,4 +376,26 @@ class LinkUploadRepositoryImpl @Inject constructor(
 
     override suspend fun removeUploadBulkUriStrings(uploadBulkId: Long, uriStrings: List<String>) =
         db.uploadBulkDao.delete(uploadBulkId, uriStrings)
+
+    override suspend fun getRawBlocks(uploadFileLinkId: Long,): List<RawBlock> =
+        db.inTransaction {
+            pagedList(
+                pageSize = configurationProvider.dbPageSize,
+            ) { fromIndex, count ->
+                db.rawBlockDao.get(uploadFileLinkId, count, fromIndex)
+            }
+        }.map { entity -> entity.toRawBlock() }
+
+    override suspend fun removeRawBlock(uploadFileLinkId: Long, index: Long) =
+        db.rawBlockDao.delete(uploadFileLinkId, index)
+
+    override suspend fun removeAllRawBlocks(uploadFileLinkId: Long) =
+        db.rawBlockDao.deleteAll(uploadFileLinkId)
+
+    override suspend fun insertOrUpdateRawBlocks(rawBlocks: Set<RawBlock>) =
+        db.rawBlockDao.insertOrUpdate(
+            *rawBlocks
+                .map { rawBlock -> rawBlock.toRawBlockEntity() }
+                .toTypedArray()
+        )
 }

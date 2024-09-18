@@ -23,16 +23,36 @@ import me.proton.core.key.domain.entity.keyholder.KeyHolderPrivateKey
 import me.proton.core.user.domain.entity.AddressId
 import me.proton.core.user.domain.repository.UserAddressRepository
 
-suspend fun UserAddressRepository.getAddressKeys(userId: UserId, email: String): KeyHolder =
+suspend fun UserAddressRepository.getAddressKeys(
+    userId: UserId,
+    email: String,
+    fallbackToAllAddressKeys: Boolean = true,
+): KeyHolder =
     with (getAddresses(userId)) {
         firstOrNull { userAddress -> userAddress.email == email }?.keys?.keyHolder()
-            ?: flatMap { userAddress -> userAddress.keys }.keyHolder()
+            ?: let {
+                if (fallbackToAllAddressKeys) {
+                    flatMap { userAddress -> userAddress.keys }.keyHolder()
+                } else {
+                    throw NoSuchElementException("Could not found user address for email: $email")
+                }
+            }
     }
 
-suspend fun UserAddressRepository.getAddressKeys(userId: UserId, addressId: AddressId): KeyHolder =
+suspend fun UserAddressRepository.getAddressKeys(
+    userId: UserId,
+    addressId: AddressId,
+    fallbackToAllAddressKeys: Boolean = true,
+): KeyHolder =
     with (getAddresses(userId)) {
         firstOrNull { userAddress -> userAddress.addressId == addressId }?.keys?.keyHolder()
-            ?: flatMap { userAddress -> userAddress.keys }.keyHolder()
+            ?: let {
+                if (fallbackToAllAddressKeys) {
+                    flatMap { userAddress -> userAddress.keys }.keyHolder()
+                } else {
+                    throw NoSuchElementException("Could not found user address for address ID: ${addressId.id}")
+                }
+            }
     }
 
 fun List<KeyHolderPrivateKey>.keyHolder() = object : KeyHolder {

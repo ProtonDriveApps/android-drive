@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="file_operation_error_occurred_moving_file">ファイルの移動中にエラーが発生しました。</string>
+  <string name="file_operation_moving_file_successful">ファイルの移動に成功</string>
+  <string name="file_operation_moving_folder_successful">フォルダの移動に成功</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="other">%1$d 個のアイテムが正常に移動されました。</item>
+  </plurals>
+  <string name="file_operation_error_file_already_exists_at_destination">その名前のアイテムは宛先フォルダーに既に存在します</string>
+  <string name="folder_options_header_title">「%1$s」内</string>
+  <string name="folder_options_header_title_encrypted">In</string>
+  <string name="files_toggle_layout_to_list_content_description">リストのレイアウト</string>
+  <string name="files_toggle_layout_to_grid_content_description">グリッド表示</string>
+  <!--
+        Variable %1$s is a time indicator which is formatted based on the user's locale
+        Examples:
+            "Modified 10:46"
+            "Modified Feb 28"
+            "Modified Dec 22, 2021"
+    -->
+  <string name="title_modified_with_date">%1$sが変更されました</string>
+  <string name="files_restore_from_trash_action">復元</string>
+  <string name="files_send_to_trash_action">ごみ箱へ移動</string>
+  <string name="files_remove_me_action">Remove me</string>
+  <string name="files_move_file_action">移動</string>
+  <!--
+        Variable %1$s is a file/folder's name
+        Examples:
+            "'My folder' will be deleted permanently. You cannot undo this action."
+            "'My file.jpg' will be deleted permanently. You cannot undo this action."
+    -->
+  <string name="files_confirm_deletion_message_format">\'%1$s\' は完全に削除されます。 この操作を元に戻すことはできません。</string>
+  <string name="files_confirm_empty_trash_title">ごみ箱を空にしますか？</string>
+  <string name="files_confirm_empty_trash_message">ごみ箱内のアイテムは永久に削除されます。この操作を元に戻すことはできません。</string>
+  <string name="files_confirm_empty_trash_confirm_action">ごみ箱を空にする</string>
+  <string name="files_display_file_info_action">ファイル詳細</string>
+  <string name="files_display_folder_info_action">フォルダ詳細</string>
+</resources>

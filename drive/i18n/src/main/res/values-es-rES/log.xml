@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="log_title">Registro</string>
-  <string name="log_export_successfully_completed">El archivo de registro ha sido guardado.</string>
+  <string name="log_export_successfully_completed">Se ha guardado el archivo de registro.</string>
   <string name="log_level">Nivel</string>
   <string name="log_category">Categoría</string>
   <string name="content_description_save_log_file">Guardar el archivo de registro</string>

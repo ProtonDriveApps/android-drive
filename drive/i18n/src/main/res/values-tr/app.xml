@@ -140,7 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Yedeklemeye izin verilmiyor</string>
   <string name="notification_content_text_backup_paused_disabled">Yedekleme kapalı</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Yedekleme arka planda çalışamaz</string>
-  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
+  <string name="notification_content_text_backup_preparing">Yedeklemeye hazırlanıyor</string>
   <string name="notification_content_title_download_complete">İndirme tamamlandı</string>
   <string name="notification_content_title_forced_sign_out">Lütfen oturum açın</string>
   <string name="notification_content_text_forced_sign_out">Böldüğümüz için üzgünüz! Bir eşitleme sorunu yaşadık. Lütfen yeniden oturum açın ki her şeyin sorunsuz çalışmasını sağlayalım.</string>

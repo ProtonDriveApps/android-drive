@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="title_manage_access">管理存取</string>
-  <string name="manage_access_share_with">Share with</string>
+  <string name="manage_access_share_with">請共享</string>
   <string name="manage_access_share_with_anyone">與任何人分享</string>
   <string name="manage_access_link_settings_action">連結設定</string>
   <string name="manage_access_link_description_public">任何有此連結的人</string>

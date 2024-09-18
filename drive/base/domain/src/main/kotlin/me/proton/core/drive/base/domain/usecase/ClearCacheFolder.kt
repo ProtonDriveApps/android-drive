@@ -19,15 +19,17 @@
 package me.proton.core.drive.base.domain.usecase
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.provider.StorageLocationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class ClearCacheFolder @Inject constructor(
     private val storageLocationProvider: StorageLocationProvider,
 ) {
-    suspend operator fun invoke() = coRunCatching(Job() + Dispatchers.IO) {
+    suspend operator fun invoke(
+        coroutineContext: CoroutineContext = Dispatchers.IO,
+    ) = coRunCatching(coroutineContext) {
         val cacheFolder = storageLocationProvider.getCacheFolder()
         cacheFolder
             .walk()

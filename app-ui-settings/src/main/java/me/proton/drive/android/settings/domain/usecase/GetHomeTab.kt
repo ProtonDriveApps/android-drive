@@ -29,7 +29,7 @@ import javax.inject.Inject
 class GetHomeTab @Inject constructor(
     private val repository: UiSettingsRepository,
 ) {
-    operator fun invoke(userId: UserId): Flow<HomeTab> = repository.getUiSettingsFlow(userId)
+    operator fun invoke(userId: UserId): Flow<HomeTab?> = repository.getUiSettingsFlow(userId)
         .map { uiSettings -> uiSettings.homeTab }
         .distinctUntilChanged()
 }

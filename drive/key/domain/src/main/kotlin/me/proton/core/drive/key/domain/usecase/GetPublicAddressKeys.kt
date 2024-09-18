@@ -18,17 +18,13 @@
 
 package me.proton.core.drive.key.domain.usecase
 
-import android.util.LruCache
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.entity.PublicAddressKeys
-import me.proton.core.key.domain.entity.key.PublicAddressInfo
-import me.proton.core.key.domain.repository.Source
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,39 +32,26 @@ import javax.inject.Singleton
 class GetPublicAddressKeys @Inject constructor(
     private val getPublicAddressInfo: GetPublicAddressInfo,
     private val getAddressKeys: GetAddressKeys,
-    private val configurationProvider: ConfigurationProvider,
 ) {
-    private val usersCache: MutableMap<UserId, LruCache<String, Key>> = mutableMapOf()
-    private val mutex = Mutex()
 
     suspend operator fun invoke(userId: UserId, email: String): Result<Key> = coRunCatching {
-        mutex.withLock {
-            userId.cache.getOrPut(email) {
-                createKey(userId, email)
+        getAddressKey(userId, email)
+            .getOrNull()
+            ?: let {
+                getPublicAddressInfo(userId, email)
+                    .getOrNull(LogTag.KEY, "get public address info for email $email failed")
+                    ?.let { publicAddressInfo ->
+                        PublicAddressKeys(publicAddressInfo.keyHolder())
+                    }
             }
-        }
+            ?: getAddressKeys(userId, email)
     }
 
-    private val UserId.cache: LruCache<String, Key>
-        get() = usersCache.getOrPut(this) {
-            LruCache<String, Key>(configurationProvider.cacheMaxEntries)
-        }
-
-    private suspend fun LruCache<String, Key>.getOrPut(email: String, defaultValue: suspend () -> Key): Key =
-        get(email) ?: put(email, defaultValue)
-
-    private suspend fun LruCache<String, Key>.put(email: String, defaultValue: suspend () -> Key) =
-        defaultValue().also { key -> put(email, key) }
-
-    private suspend fun createKey(userId: UserId, email: String): Key =
-        userId.getPublicAddressInfo(email)
-            .getOrNull()
-            ?.let { publicAddressInfo ->
-                PublicAddressKeys(publicAddressInfo.keyHolder())
-            } ?: getAddressKeys(userId, email)
-
-    private suspend fun UserId.getPublicAddressInfo(email: String): Result<PublicAddressInfo?> = coRunCatching {
-        getPublicAddressInfo(this, email, Source.RemoteNoCache).getOrNull()
-            ?: getPublicAddressInfo(this, email, Source.RemoteOrCached).getOrThrow()
+    private suspend fun getAddressKey(userId: UserId, email: String): Result<Key> = coRunCatching {
+        getAddressKeys(
+            userId = userId,
+            email = email,
+            fallbackToAllAddressKeys = false,
+        )
     }
 }

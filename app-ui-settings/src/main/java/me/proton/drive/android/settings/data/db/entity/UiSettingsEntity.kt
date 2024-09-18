@@ -50,6 +50,6 @@ data class UiSettingsEntity(
     val layoutType: LayoutType,
     @ColumnInfo(name = THEME_STYLE)
     val themeStyle: ThemeStyle,
-    @ColumnInfo(name = HOME_TAB)
-    val homeTab: HomeTab,
+    @ColumnInfo(name = HOME_TAB, defaultValue = "NULL")
+    val homeTab: HomeTab? = null,
 )

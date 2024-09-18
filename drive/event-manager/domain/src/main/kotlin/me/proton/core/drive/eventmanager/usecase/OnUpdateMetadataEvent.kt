@@ -31,6 +31,7 @@ class OnUpdateMetadataEvent @Inject constructor(
     private val hasLink: HasLink,
     private val handleEventLinks: HandleCreateOrUpdateLinksEvent,
     private val handleDeletedShareUrlIds: HandleDeletedShareUrlIds,
+    private val handleExternalInvitationSignup: HandleExternalInvitationSignup,
     private val deleteLinks: HandleOnDeleteEvent,
 ) {
 
@@ -50,5 +51,6 @@ class OnUpdateMetadataEvent @Inject constructor(
             deleteLinks(linksWithoutParentInCache.map { vo -> vo.link.id })
         }
         handleDeletedShareUrlIds(vos)
+        handleExternalInvitationSignup(vos)
     }
 }

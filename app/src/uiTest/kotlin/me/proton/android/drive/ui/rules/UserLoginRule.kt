@@ -47,6 +47,7 @@ class UserLoginRule(
 ) : TestWatcher() {
 
     var userId: UserId? = null
+    var decryptedUserId: Long = -1
     var sharingUser = User()
 
     override fun starting(description: Description) {
@@ -73,6 +74,7 @@ class UserLoginRule(
                 quarkCommands.userCreate(user).also { response ->
                     testUser = testUser.copy(email = response.email.orEmpty())
                     userId = response.userId.let(::UserId)
+                    decryptedUserId = response.decryptedUserId
                 }
 
             if (withSharingUser) {
@@ -88,7 +90,11 @@ class UserLoginRule(
 
                 if (it.percentageFull in 1..100) {
                     val usedSpace = (it.value.toDouble() * it.percentageFull / 100).roundToInt()
-                    quarkCommands.quotaSetUsedSpace(user, "${usedSpace}${it.unit}")
+                    quarkCommands.quotaSetUsedSpace(
+                        userId = decryptedUserId.toString(),
+                        usedSpace = "${usedSpace}${it.unit}",
+                        product = it.product,
+                    )
                 }
             }
 

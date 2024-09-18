@@ -149,7 +149,8 @@ object ContactTestData {
         contactId = ContactId(index.toString()),
         canonicalEmail = "address$index",
         labelIds = labelsIds.map { labelId -> labelId.id },
-        isProton = null
+        isProton = null,
+        lastUsedTime = 0,
     )
 }
 

@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="title_manage_access">Hallitse käyttöoikeuksia</string>
-  <string name="manage_access_share_with">Jaa käyttäjälle</string>
+  <string name="manage_access_share_with">Jaa henkilöille</string>
   <string name="manage_access_share_with_anyone">Jaa kenelle tahansa</string>
   <string name="manage_access_link_settings_action">Linkin asetukset</string>
   <string name="manage_access_link_description_public">Kuka tahansa linkin omaava</string>

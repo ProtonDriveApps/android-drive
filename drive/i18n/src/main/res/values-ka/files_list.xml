@@ -20,7 +20,16 @@
   <string name="file_operation_error_occurred_moving_file">შეცდომა ფაილის გადატანისას</string>
   <string name="file_operation_moving_file_successful">ფაილის გადატანა წარმატებულია</string>
   <string name="file_operation_moving_folder_successful">საქაღალდის გადატანა წარმატებულია</string>
-  <string name="file_operation_moving_multiple_successful">%1$d ელემენტის გადატანა წარმატებულია.</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="one">%1$d ელემენტის გადატანა წარმატებულია.</item>
+    <item quantity="other">%1$d ელემენტის გადატანა წარმატებულია.</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">ჩანაწერი ამ სახელით სამიზნე საქაღალდეში უკვე არსებობს</string>
   <string name="folder_options_header_title">\"%1$s\"-ში</string>
   <string name="folder_options_header_title_encrypted">შიგნით</string>

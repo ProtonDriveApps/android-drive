@@ -19,6 +19,7 @@
 package me.proton.core.drive.user.domain.usecase
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.effectiveMaxDriveSpace
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.user.domain.UserManager
 import javax.inject.Inject
@@ -27,6 +28,6 @@ class GetUserMaxSpace @Inject constructor(
     private val userManager: UserManager,
 ) {
     suspend operator fun invoke(userId: UserId) = coRunCatching {
-        userManager.getUser(userId).maxSpace
+        userManager.getUser(userId).effectiveMaxDriveSpace.value
     }
 }

@@ -27,20 +27,11 @@ import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.entity.UiSettings
 
 interface UiSettingsRepository {
-    /**
-     * Retrieve the [UiSettings] for a given [userId]
-     */
-    suspend fun getUiSettings(userId: UserId) = getUiSettingsFlow(userId).first()
 
     /**
      * A [Flow] of [UiSettings] for a given [userId] which emits when the settings for that [userId] changes
      */
     fun getUiSettingsFlow(userId: UserId): Flow<UiSettings>
-
-    /**
-     * Update the [UiSettings] for a given [userId]
-     */
-    suspend fun updateUiSettings(userId: UserId, settings: UiSettings)
 
     /**
      * Update the [LayoutType] for a given [userId]

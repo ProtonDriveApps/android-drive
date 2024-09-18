@@ -67,6 +67,8 @@ import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
 import me.proton.core.drive.feature.flag.data.db.entity.DriveFeatureFlagRefreshEntity
 import me.proton.core.drive.folder.data.db.FolderDatabase
 import me.proton.core.drive.folder.data.db.FolderMetadataEntity
+import me.proton.core.drive.key.data.db.PublicAddressKeyDatabase
+import me.proton.core.drive.key.data.db.entity.StalePublicAddressKeyEntity
 import me.proton.core.drive.link.data.db.LinkDatabase
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
@@ -86,13 +88,14 @@ import me.proton.core.drive.linktrash.data.db.entity.TrashMetadataEntity
 import me.proton.core.drive.linktrash.data.db.entity.TrashWorkEntity
 import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
+import me.proton.core.drive.linkupload.data.db.entity.RawBlockEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBlockEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkUriStringEntity
 import me.proton.core.drive.log.data.db.LogDatabase
 import me.proton.core.drive.log.data.db.entity.LogEntity
-import me.proton.core.drive.log.data.db.entity.LogOriginEntity
 import me.proton.core.drive.log.data.db.entity.LogLevelEntity
+import me.proton.core.drive.log.data.db.entity.LogOriginEntity
 import me.proton.core.drive.messagequeue.data.storage.db.MessageQueueDatabase
 import me.proton.core.drive.messagequeue.data.storage.db.entity.MessageEntity
 import me.proton.core.drive.notification.data.db.NotificationDatabase
@@ -246,6 +249,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         UploadBulkUriStringEntity::class,
         FolderMetadataEntity::class,
         TrashMetadataEntity::class,
+        RawBlockEntity::class,
         // Backup
         BackupConfigurationEntity::class,
         BackupDuplicateEntity::class,
@@ -284,6 +288,8 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         SharedWithMeListingEntity::class,
         SharedByMeListingEntity::class,
         SharedRemoteKeyEntity::class,
+        // Key
+        StalePublicAddressKeyEntity::class,
     ],
     version = DriveDatabase.VERSION,
     autoMigrations = [
@@ -375,10 +381,11 @@ abstract class DriveDatabase :
     DeviceDatabase,
     DriveBaseDatabase,
     LogDatabase,
-    DeviceRecoveryDatabase {
+    DeviceRecoveryDatabase,
+    PublicAddressKeyDatabase {
 
     companion object {
-        const val VERSION = 66
+        const val VERSION = 68
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -446,6 +453,8 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_63_64,
             DriveDatabaseMigrations.MIGRATION_64_65,
             DriveDatabaseMigrations.MIGRATION_65_66,
+            DriveDatabaseMigrations.MIGRATION_66_67,
+            DriveDatabaseMigrations.MIGRATION_67_68,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

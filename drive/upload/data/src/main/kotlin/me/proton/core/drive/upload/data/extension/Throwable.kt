@@ -24,6 +24,7 @@ import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.data.extension.isErrno
 import me.proton.core.drive.base.data.extension.isRetryable
+import me.proton.core.drive.upload.domain.exception.InconsistencyException
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.hasProtonErrorCode
 import me.proton.core.drive.base.data.extension.log as baseLog
@@ -31,12 +32,14 @@ import me.proton.core.drive.base.data.extension.log as baseLog
 internal val Throwable.isRetryable: Boolean
     get() = when (this) {
         is VerifierException -> this.cause.isRetryable
+        is InconsistencyException -> true
         else -> isRetryable
     }
 
 internal fun Throwable.log(tag: String, message: String? = null): Throwable = this.also {
     when (this) {
         is VerifierException -> this.log(tag, message.orEmpty())
+        is InconsistencyException -> this.log(tag, message.orEmpty())
         else -> this.baseLog(tag, message)
     }
 }

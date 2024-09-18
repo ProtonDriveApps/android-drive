@@ -25,6 +25,7 @@ import me.proton.core.data.room.db.extension.recreateTable
 import me.proton.core.data.room.db.migration.DatabaseMigration
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.linkupload.data.db.dao.LinkUploadDao
+import me.proton.core.drive.linkupload.data.db.dao.RawBlockDao
 import me.proton.core.drive.linkupload.data.db.dao.UploadBlockDao
 import me.proton.core.drive.linkupload.data.db.dao.UploadBulkDao
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkUriStringEntity
@@ -34,6 +35,7 @@ interface LinkUploadDatabase : Database {
     val linkUploadDao: LinkUploadDao
     val uploadBlockDao: UploadBlockDao
     val uploadBulkDao: UploadBulkDao
+    val rawBlockDao: RawBlockDao
 
     companion object {
         val MIGRATION_0 = object : DatabaseMigration {
@@ -201,6 +203,24 @@ interface LinkUploadDatabase : Database {
                             """.trimIndent()
                         )
                     },
+                )
+            }
+        }
+        val MIGRATION_6 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `RawBlockEntity` (
+                    `upload_link_id` INTEGER NOT NULL,
+                    `index` INTEGER NOT NULL,
+                    `name` TEXT NOT NULL,
+                    PRIMARY KEY(`upload_link_id`, `index`)
+                    FOREIGN KEY(`upload_link_id`) REFERENCES `LinkUploadEntity`(`id`)
+                    ON UPDATE NO ACTION ON DELETE CASCADE )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_RawBlockEntity_upload_link_id` ON `RawBlockEntity` (`upload_link_id`)"
                 )
             }
         }

@@ -66,6 +66,10 @@ tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
 
+tasks.register("deleteTest", Delete::class) {
+    delete(rootProject.files("screenshot-tests"))
+}
+
 plugins {
     alias(libs.plugins.proton.detekt)
     alias(libs.plugins.paparazzi) apply false

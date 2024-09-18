@@ -19,7 +19,6 @@ package me.proton.core.drive.upload.domain.usecase
 
 import android.net.Uri
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.usecase.GetCacheTempFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -33,12 +32,12 @@ class CopyUriToCacheTempFolder @Inject constructor(
     private val uriResolver: UriResolver,
     private val getCacheTempFolder: GetCacheTempFolder,
 ) {
-    private val coroutineContext: CoroutineContext = Job() + Dispatchers.IO
 
     suspend operator fun invoke(
         userId: UserId,
         uriString: String,
         fileName: String?,
+        coroutineContext: CoroutineContext = Dispatchers.IO,
     ): Result<Uri> = coRunCatching(coroutineContext) {
         val name = fileName ?: uriResolver.getName(uriString) ?: UUID.randomUUID().toString()
         val lastModified = uriResolver.getLastModified(uriString)

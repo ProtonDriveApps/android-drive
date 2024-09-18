@@ -18,20 +18,16 @@
 
 package me.proton.core.drive.upload.data.usecase
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
-import kotlin.coroutines.CoroutineContext
 
 class RemoveUploadFileImpl(
     private val linkUploadRepository: LinkUploadRepository,
-    private val coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
 ) : RemoveUploadFile {
 
-    override suspend operator fun invoke(uploadFileLink: UploadFileLink) = coRunCatching(coroutineContext) {
+    override suspend operator fun invoke(uploadFileLink: UploadFileLink) = coRunCatching {
         linkUploadRepository.removeUploadBlocks(uploadFileLink)
         linkUploadRepository.removeUploadFileLink(uploadFileLink.id)
     }

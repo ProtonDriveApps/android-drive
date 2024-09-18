@@ -18,7 +18,6 @@
 package me.proton.core.drive.base.domain.usecase
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.provider.StorageLocationProvider
@@ -30,7 +29,7 @@ class GetCacheTempFolder @Inject constructor(
 ) {
     suspend operator fun invoke(
         userId: UserId,
-        coroutineContext: CoroutineContext = Job() + Dispatchers.IO
+        coroutineContext: CoroutineContext = Dispatchers.IO
     ) =
         withContext(coroutineContext) {
             storageLocationProvider.getCacheTempFolder(userId)

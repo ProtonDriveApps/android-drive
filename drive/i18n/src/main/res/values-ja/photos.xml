@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">写真</string>
+  <string name="photos_permissions_title">写真や動画を暗号化してバックアップしましょう</string>
+  <string name="photos_permissions_section_1_title">思い出を守る</string>
+  <string name="photos_permissions_section_1_description">写真はエンドツーエンド暗号化され、完全なプライバシーが確保されます。</string>
+  <string name="photos_permissions_section_2_title">自動バックアップ</string>
+  <string name="photos_permissions_section_2_description">オリジナル画質の写真を、Wi-Fi経由で定期的にバックアップします。</string>
+  <string name="photos_permissions_action">バックアップをオンにする</string>
+  <string name="photos_permission_rational_img_text">アクセスを許可</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s にはあなたの写真へのフルアクセスが必要です</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">これは、すべての写真がバックアップされ、すべてのデバイスで利用できるようにするために必要です。\n%1$s はあなたのプライバシーを重視しており、同期とバックアップの目的でのみあなたの写真にアクセスします。</string>
+  <string name="photos_permission_rational_confirm_action">設定</string>
+  <string name="photos_permission_rational_dismiss_action">後で</string>
+  <string name="photos_empty_loading_label_encrypted">エンドツーエンド暗号化</string>
+  <string name="photos_empty_loading_label_progress">バックアップが進行中です。\nしばらく時間がかかる場合があります</string>
+  <string name="photos_separator_current_month">今月</string>
+  <string name="photos_encrypted_footer">エンドツーエンド暗号化</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="other">Backing up items from %2$d folders: %1$s</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">バックアップ用の %1$s フォルダーが見つかりません</string>
+  <string name="photos_error_backup_disabled">バックアップが無効になりました。</string>
+  <string name="photos_error_backup_disabled_action">オンにする</string>
+  <string name="photos_error_backup_missing_folder">バックアップフォルダーが見つかりませんでした</string>
+  <string name="photos_error_backup_failed">バックアップに失敗しました。</string>
+  <string name="photos_error_backup_temporarily_disabled">バックアップは一時的に無効にされています。</string>
+  <string name="photos_error_missing_permissions">権限がありません。</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">継続的かつ自動バックアップを行うには、設定で %1$s によるすべての写真へのアクセスを許可してください。</string>
+  <string name="photos_error_waiting_connectivity">インターネット接続なし</string>
+  <string name="photos_error_waiting_wifi_connectivity">Wi-Fi待ち</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">モバイル通信を使用</string>
+  <string name="photos_error_local_storage">デバイスストレージがいっぱいです</string>
+  <string name="photos_error_local_storage_description">バックアップを続行するには、デバイスのストレージを解放する必要があります。</string>
+  <string name="photos_error_background_restrictions">アプリのバックグラウンド動作のためにバッテリーを「無制限」に設定します</string>
+  <string name="photos_error_background_restrictions_description">一貫したバックグラウンド バックアップを行うには、バッテリー設定を調整するか、アプリを頻繁に開きます。</string>
+  <string name="photos_error_background_restrictions_action">設定</string>
+  <string name="photos_empty_title">バックアップはまだない</string>
+  <string name="photos_empty_description">あなたのデバイスに写真やビデオがあれば、すぐにここに表示されます。</string>
+  <string name="photos_backup_title">写真のバックアップ</string>
+  <string name="photos_backup_option_mobile_data">モバイルデータを使用して写真をバックアップする</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">バッテリーの最適化を無効にする</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">アプリがバックグラウンドで実行されているときに、中断のないバックアップが可能になります。</string>
+  <string name="photos_backup_in_app_notification_turned_on">写真のバックアップがオンになっています</string>
+  <string name="photos_backup_in_app_notification_turned_off">写真のバックアップがオフになっています</string>
+  <string name="photos_backup_state_completed">バックアップ完了</string>
+  <string name="photos_backup_state_uncompleted">問題はあるもののバックアップは完了しました</string>
+  <string name="photos_backup_state_uncompleted_action">解決する</string>
+  <string name="photos_backup_state_preparing">Preparing to back up</string>
+  <string name="photos_backup_state_encrypting">暗号化中…</string>
+  <string name="photos_backup_state_uploading">バックアップ中…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="other">%1$s 個のアイテムが残っています</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="other">%1$s 個のアイテムが保存されています</item>
+  </plurals>
+  <string name="photos_upsell_title">ストレージが不足することはありません</string>
+  <string name="photos_upsell_description">今すぐアップグレードして、すべての思い出を暗号化して安全に保ちましょう。</string>
+  <string name="photos_upsell_dismiss_action">今はしない</string>
+</resources>

@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.ui.robot
 
+import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -53,6 +54,13 @@ interface Robot {
         node
             .withText(
                 FusionConfig.targetContext.getString(stringRes, *formatArgs)
+            )
+            .await { assertIsDisplayed() }
+
+    fun nodeWithQuantityTextDisplayed(@PluralsRes pluralsRes: Int, quantity: Int, vararg formatArgs: Any) =
+        node
+            .withText(
+                FusionConfig.targetContext.resources.getQuantityString(pluralsRes, quantity, *formatArgs)
             )
             .await { assertIsDisplayed() }
 

@@ -26,7 +26,6 @@ import me.proton.core.drive.backup.domain.entity.BackupFileState
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupDuplicateRepository
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
-import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.db.test.myFiles
@@ -59,7 +58,8 @@ class FindDuplicatesTest {
     @get:Rule
     val driveRule = DriveRule(this)
     private lateinit var folderId: FolderId
-    private lateinit var backupFolder: BackupFolder
+    private lateinit var backupFolder1: BackupFolder
+    private lateinit var backupFolder2: BackupFolder
 
     @Inject
     lateinit var addFolder: AddFolder
@@ -79,18 +79,23 @@ class FindDuplicatesTest {
     @Before
     fun setUp() = runTest {
         folderId = driveRule.db.myFiles { }
-        backupFolder = BackupFolder(
-            bucketId = 0,
+        backupFolder1 = BackupFolder(
+            bucketId = 1,
             folderId = folderId
         )
-        addFolder(backupFolder).getOrThrow()
+        backupFolder2 = BackupFolder(
+            bucketId = 2,
+            folderId = folderId
+        )
+        addFolder(backupFolder1).getOrThrow()
+        addFolder(backupFolder2).getOrThrow()
         configurationProvider.apiPageSize = 2
     }
 
     @Test
     fun empty() = runTest {
 
-        findDuplicates(backupFolder).getOrThrow()
+        findDuplicates(backupFolder1).getOrThrow()
 
         assertEquals(
             emptyList<BackupFile>(),
@@ -102,9 +107,9 @@ class FindDuplicatesTest {
     fun duplicates() = runTest {
         backupFileRepository.insertFiles(
             backupFiles = listOf(
-                backupFile(index = 2, backupFileState = BackupFileState.IDLE),
-                backupFile(index = 1, backupFileState = BackupFileState.IDLE),
-                backupFile(index = 0, backupFileState = BackupFileState.IDLE),
+                backupFolder1.backupFile(index = 2, backupFileState = BackupFileState.IDLE),
+                backupFolder1.backupFile(index = 1, backupFileState = BackupFileState.IDLE),
+                backupFolder1.backupFile(index = 0, backupFileState = BackupFileState.IDLE),
             )
         )
 
@@ -129,13 +134,13 @@ class FindDuplicatesTest {
             }
         }
 
-        findDuplicates(backupFolder).getOrThrow()
+        findDuplicates(backupFolder1).getOrThrow()
 
         assertEquals(
             listOf(
-                backupFile(index = 2, backupFileState = BackupFileState.POSSIBLE_DUPLICATE),
-                backupFile(index = 1, backupFileState = BackupFileState.READY),
-                backupFile(index = 0, backupFileState = BackupFileState.READY),
+                backupFolder1.backupFile(index = 2, backupFileState = BackupFileState.POSSIBLE_DUPLICATE),
+                backupFolder1.backupFile(index = 1, backupFileState = BackupFileState.READY),
+                backupFolder1.backupFile(index = 0, backupFileState = BackupFileState.READY),
             ),
             backupFileRepository.getAllFiles(folderId, 0, 100),
         )
@@ -167,45 +172,109 @@ class FindDuplicatesTest {
     }
 
     @Test
+    fun `bucket collision`() = runTest {
+        backupFileRepository.insertFiles(
+            backupFiles = listOf(
+                backupFolder1.backupFile(
+                    uriString = "uri1",
+                    hash = "hashA",
+                    backupFileState = BackupFileState.COMPLETED
+                ),
+                backupFolder2.backupFile(
+                    uriString = "uri2",
+                    hash = "hashA",
+                    backupFileState = BackupFileState.IDLE
+                ),
+            )
+        )
+
+        driveRule.server.run {
+            checkAvailableHashes {
+                jsonResponse {
+                    val request = request<CheckAvailableHashesRequest>()
+                    CheckAvailableHashesResponse(
+                        code = 1000,
+                        availableHashes = emptyList(),
+                        pendingHashDtos = emptyList()
+                    )
+                }
+            }
+        }
+
+        findDuplicates(backupFolder2).getOrThrow()
+
+        assertEquals(
+            listOf(
+                backupFolder1.backupFile(
+                    uriString = "uri1",
+                    hash = "hashA",
+                    backupFileState = BackupFileState.COMPLETED
+                ),
+                backupFolder2.backupFile(
+                    uriString = "uri2",
+                    hash = "hashA",
+                    backupFileState = BackupFileState.POSSIBLE_DUPLICATE
+                ),
+            ),
+            backupFileRepository.getAllFiles(folderId, 0, 100),
+        )
+        assertEquals(
+            listOf(
+                BackupDuplicate(
+                    id = 1,
+                    parentId = folderId,
+                    hash = "hashA",
+                    contentHash = null,
+                    linkId = null,
+                    linkState = Link.State.ACTIVE,
+                    revisionId = null,
+                    clientUid = StaticCreateUuid.uuid.toString()
+                ),
+            ),
+            backupDuplicateRepository.getAll(folderId, 0, 100).sortedBy { it.id },
+        )
+    }
+
+    @Test
     fun error() = runTest {
         backupFileRepository.insertFiles(
             backupFiles = listOf(
-                backupFile(index = 2, backupFileState = BackupFileState.IDLE),
-                backupFile(index = 1, backupFileState = BackupFileState.IDLE),
-                backupFile(index = 0, backupFileState = BackupFileState.IDLE),
+                backupFolder1.backupFile(index = 2, backupFileState = BackupFileState.IDLE),
+                backupFolder1.backupFile(index = 1, backupFileState = BackupFileState.IDLE),
+                backupFolder1.backupFile(index = 0, backupFileState = BackupFileState.IDLE),
             )
         )
 
         driveRule.server.checkAvailableHashes { retryableErrorResponse() }
 
-        val result = findDuplicates(backupFolder)
+        val result = findDuplicates(backupFolder1)
         assertThrows(ApiException::class.java) { result.getOrThrow() }
 
         assertEquals(
             listOf(
-                backupFile(index = 2, backupFileState = BackupFileState.IDLE),
-                backupFile(index = 1, backupFileState = BackupFileState.IDLE),
-                backupFile(index = 0, backupFileState = BackupFileState.IDLE),
+                backupFolder1.backupFile(index = 2, backupFileState = BackupFileState.IDLE),
+                backupFolder1.backupFile(index = 1, backupFileState = BackupFileState.IDLE),
+                backupFolder1.backupFile(index = 0, backupFileState = BackupFileState.IDLE),
             ),
             backupFileRepository.getAllFiles(folderId, 0, 100),
         )
     }
 
-    private fun backupFile(index: Int, backupFileState: BackupFileState) = backupFile(
+    private fun BackupFolder.backupFile(index: Int, backupFileState: BackupFileState) = backupFile(
         uriString = "uri$index",
         hash = "hash$index",
         backupFileState = backupFileState,
         date = TimestampS(index.toLong())
     )
 
-    private fun backupFile(
+    private fun BackupFolder.backupFile(
         uriString: String,
         hash: String,
         backupFileState: BackupFileState,
         date: TimestampS = TimestampS(0),
     ) =
         BackupFile(
-            bucketId = backupFolder.bucketId,
+            bucketId = bucketId,
             folderId = folderId,
             uriString = uriString,
             mimeType = "",

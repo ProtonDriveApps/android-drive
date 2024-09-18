@@ -20,7 +20,7 @@
   <string name="photos_title">Bilder</string>
   <string name="photos_permissions_title">Krypter og sikkerhetskopier dine bilder og videoer</string>
   <string name="photos_permissions_section_1_title">Ta vare på minnene dine</string>
-  <string name="photos_permissions_section_1_description">Bildene dine er ende-til-ende kryptert, noe som sikrer total personvern.</string>
+  <string name="photos_permissions_section_1_description">Bildene dine er ende-til-ende-krypterte, noe som sikrer total personvern.</string>
   <string name="photos_permissions_section_2_title">Automatiske sikkerhetskopier</string>
   <string name="photos_permissions_section_2_description">Bilder sikkerhetskopieres regelmessig over Wi-Fi i sin opprinnelige kvalitet.</string>
   <string name="photos_permissions_action">Slå på sikkerhetskopiering</string>
@@ -40,10 +40,10 @@
   <string name="photos_permission_rational_description">Dette er nødvendig for å sikre at alle bildene dine er sikkerhetskopiert og tilgjengelige på alle enhetene dine.\n%1$s tar personvernet ditt på alvor og får bare tilgang til bildene dine for synkronisering og sikkerhetskopiering.</string>
   <string name="photos_permission_rational_confirm_action">Innstillinger</string>
   <string name="photos_permission_rational_dismiss_action">Ikke nå</string>
-  <string name="photos_empty_loading_label_encrypted">Ende-til-ende kryptert</string>
+  <string name="photos_empty_loading_label_encrypted">Ende-til-ende-kryptert</string>
   <string name="photos_empty_loading_label_progress">Sikkerhetskopiering pågår.\nDet kan ta litt tid</string>
   <string name="photos_separator_current_month">Denne måneden</string>
-  <string name="photos_encrypted_footer">Ende-til-ende kryptert</string>
+  <string name="photos_encrypted_footer">Ende-til-ende-kryptert</string>
   <!--
         Variable %1$s is a folder name, %2$s is a quantity of folders found
         Example:

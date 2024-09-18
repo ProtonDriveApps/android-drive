@@ -31,6 +31,7 @@ driveModule(
     api(libs.core.cryptoCommon)
     api(libs.core.domain)
     api(libs.core.user.domain)
+    api(libs.core.userSettings.domain)
 
     implementation(libs.core.accountManager.domain)
     implementation(libs.core.data)

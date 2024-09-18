@@ -395,18 +395,18 @@ internal class ChipsListState(
     fun getTypedText(): String = typedText.value
 
     fun type(newValue: String) {
+        val delimiters = arrayOf(
+            WordSeparator,
+            NewLineDelimiter,
+            CarriageReturnNewLineDelimiter,
+            CommaDelimiter,
+            SemiColonDelimiter,
+            TabDelimiter,
+        )
         when {
             typedText.value + newValue.trim() == EmptyString -> clearTypedText()
-            newValue.endsWith(WordSeparator) -> {
-
-                val words = typedText.value.split(
-                    WordSeparator,
-                    NewLineDelimiter,
-                    CarriageReturnNewLineDelimiter,
-                    CommaDelimiter,
-                    SemiColonDelimiter,
-                    TabDelimiter
-                ).mapNotNull { it.takeIfNotBlank() }
+            delimiters.any { delimiter -> newValue.endsWith(delimiter) } -> {
+                val words = typedText.value.split(*delimiters).mapNotNull { it.takeIfNotBlank() }
 
                 if (words.isNotEmpty()) {
                     words.forEach { add(it) }

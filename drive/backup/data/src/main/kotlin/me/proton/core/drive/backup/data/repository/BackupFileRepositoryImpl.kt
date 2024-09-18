@@ -234,6 +234,7 @@ class BackupFileRepositoryImpl @Inject constructor(
 
     override suspend fun markAs(
         folderId: FolderId,
+        bucketId: Int,
         hashes: List<String>,
         backupFileState: BackupFileState,
     ) {
@@ -243,6 +244,7 @@ class BackupFileRepositoryImpl @Inject constructor(
                     userId = folderId.userId,
                     shareId = folderId.shareId.id,
                     folderId = folderId.id,
+                    bucketId = bucketId,
                     hashes = chunk,
                     state = backupFileState,
                 )

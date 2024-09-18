@@ -50,11 +50,11 @@
     <item quantity="one">Compartir amb 1 persona</item>
     <item quantity="other">S\'està compartint amb %1$d persones</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
+  <string name="common_permission_owner">Propietari</string>
+  <string name="common_permission_admin">Administrador</string>
   <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_viewer">Visualitzador</string>
+  <string name="common_permission_unknown">Desconegut</string>
   <!--
         Variable %1$s is an email
         Examples:

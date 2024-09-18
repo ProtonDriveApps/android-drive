@@ -19,7 +19,6 @@ package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
-import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import javax.inject.Inject
 
@@ -27,9 +26,9 @@ class AddUploadBlocks @Inject constructor(
     private val linkUploadRepository: LinkUploadRepository,
 ) {
     suspend operator fun invoke(
-        uploadFileLink: UploadFileLink,
+        uploadFileLinkId: Long,
         uploadBlocks: List<UploadBlock>,
     ) = coRunCatching {
-        linkUploadRepository.insertUploadBlocks(uploadFileLink, uploadBlocks)
+        linkUploadRepository.insertUploadBlocks(uploadFileLinkId, uploadBlocks)
     }
 }

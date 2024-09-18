@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
-import me.proton.drive.android.settings.data.datastore.AppUiSettingsDataStore
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import me.proton.drive.android.settings.data.extension.toDomain
 import me.proton.drive.android.settings.data.extension.toEntity
@@ -45,10 +44,6 @@ class UiSettingsRepositoryImpl @Inject constructor(
             .map { entity ->
                 entity?.toDomain() ?: UiSettings()
             }
-
-    override suspend fun updateUiSettings(userId: UserId, settings: UiSettings) {
-        dao.insertOrUpdate(settings.toEntity(userId))
-    }
 
     override suspend fun updateLayoutType(userId: UserId, layoutType: LayoutType) {
         updateOrInsert(userId, { dao.updateLayoutType(userId, layoutType) }) {

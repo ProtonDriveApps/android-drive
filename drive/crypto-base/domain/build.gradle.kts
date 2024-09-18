@@ -24,6 +24,7 @@ android {
 }
 
 driveModule(hilt = true) {
+    api(project(":drive:announce-event:domain"))
     api(project(":drive:base:domain"))
     api(libs.core.auth.domain)
     api(libs.core.cryptoCommon)

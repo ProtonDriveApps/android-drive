@@ -50,29 +50,29 @@
     <item quantity="one">Delen met 1 persoon</item>
     <item quantity="other">Delen met %1$d personen</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
-  <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_owner">Eigenaar</string>
+  <string name="common_permission_admin">Beheerder</string>
+  <string name="common_permission_editor">Bewerker</string>
+  <string name="common_permission_viewer">Kijker</string>
+  <string name="common_permission_unknown">Onbekend</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (In afwachting)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Accepted)"
     -->
-  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Geaccepteerd)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Unknown)"
     -->
-  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Onbekend)</string>
   <string name="share_via_invitations_add_people_hint">Personen toevoegen</string>
   <string name="share_via_invitations_copy_invite_link_action">Uitnodigingslink kopiëren</string>
   <string name="share_via_invitations_remove_access_action">Toegang verwijderen</string>

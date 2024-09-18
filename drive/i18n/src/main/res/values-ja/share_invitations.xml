@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the link name
+        Example:
+            "Share Document"
+    -->
+  <string name="title_share_via_invitations">Share %1$s</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons added"
+    -->
+  <plurals name="share_via_invitations_person_added">
+    <item quantity="other">%1$d 人が追加されました</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons cannot be invited"
+    -->
+  <plurals name="share_via_invitations_person_added_error">
+    <item quantity="other">%1$d persons cannot be invited</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "Sharing with 2 persons"
+    -->
+  <plurals name="share_via_invitations_sharing_with">
+    <item quantity="other">%1$d 人と共有しています</item>
+  </plurals>
+  <string name="common_permission_owner">所有者</string>
+  <string name="common_permission_admin">管理者</string>
+  <string name="common_permission_editor">編集者</string>
+  <string name="common_permission_viewer">閲覧者</string>
+  <string name="common_permission_unknown">不明</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Pending)"
+    -->
+  <string name="share_via_invitations_external_invitation_pending">%1$s (人が未回答)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (不明)</string>
+  <string name="share_via_invitations_add_people_hint">人を追加する</string>
+  <string name="share_via_invitations_copy_invite_link_action">招待リンクをコピーする</string>
+  <string name="share_via_invitations_remove_access_action">アクセス権の削除</string>
+  <string name="share_via_invitations_stop_sharing_description">Delete link and remove access for everyone</string>
+  <string name="share_via_invitations_resend_invite_action">招待を再送信する</string>
+  <string name="share_via_invitations_resend_invite_success">Invitation was resent</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="other">メンバー %1$d人</item>
+  </plurals>
+</resources>

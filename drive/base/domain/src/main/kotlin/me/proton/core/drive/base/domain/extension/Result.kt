@@ -22,7 +22,6 @@ import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
-import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.network.domain.ApiException
 import me.proton.core.util.kotlin.CoreLogger
 

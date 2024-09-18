@@ -22,6 +22,8 @@ import me.proton.core.crypto.common.pgp.DataPacket
 import me.proton.core.crypto.common.pgp.DecryptedData
 import me.proton.core.crypto.common.pgp.KeyPacket
 import me.proton.core.crypto.common.pgp.VerificationStatus
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.CryptoScope
@@ -36,6 +38,7 @@ import kotlin.coroutines.CoroutineContext
 
 class DecryptAndVerifyData @Inject constructor(
     private val cryptoContext: CryptoContext,
+    private val announceEvent: AnnounceEvent,
 ) {
     suspend operator fun invoke(
         decryptKey: KeyHolder,
@@ -52,6 +55,7 @@ class DecryptAndVerifyData @Inject constructor(
                 verifyKeyRing = verifyKeyRing,
             ).also { decryptedData ->
                 if (decryptedData.status != VerificationStatus.Success) {
+                    announceEvent(Event.SignatureVerificationFailed(verifyKeyRing.keys))
                     CoreLogger.d(
                         tag = LogTag.ENCRYPTION,
                         e = VerificationException(

@@ -50,29 +50,29 @@
     <item quantity="one">უზიარებთ 1 პირს</item>
     <item quantity="other">უზიარებთ %1$d პირს</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
-  <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_owner">მფლობელი</string>
+  <string name="common_permission_admin">ადმინისტრატორი</string>
+  <string name="common_permission_editor">რედაქტორი</string>
+  <string name="common_permission_viewer">მთვალიერებელი</string>
+  <string name="common_permission_unknown">უცნობი</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (დარჩენილია)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Accepted)"
     -->
-  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (მიღებულია)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Unknown)"
     -->
-  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (უცნობი)</string>
   <string name="share_via_invitations_add_people_hint">ხალხის დამატება</string>
   <string name="share_via_invitations_copy_invite_link_action">მოსაწვევის ბმულის კოპირება</string>
   <string name="share_via_invitations_remove_access_action">წვდომის გაუქმება</string>

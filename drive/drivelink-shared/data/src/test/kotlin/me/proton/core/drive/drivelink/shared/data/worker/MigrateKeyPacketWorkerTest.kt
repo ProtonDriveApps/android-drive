@@ -34,10 +34,12 @@ import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.drivelink.shared.domain.usecase.MigrateKeyPacket
 import me.proton.core.drive.test.DriveRule
+import me.proton.core.drive.test.api.errorResponse
 import me.proton.core.drive.test.api.getShare
 import me.proton.core.drive.test.api.getShareBootstrap
 import me.proton.core.drive.test.api.getUnmigratedShares
 import me.proton.core.drive.test.api.response
+import me.proton.core.drive.test.api.retryableErrorResponse
 import me.proton.core.drive.test.entity.NullableShareDto
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -80,7 +82,7 @@ class MigrateKeyPacketWorkerTest {
     fun error() = runTest {
         driveRule.server.run {
             getShare(listOf(NullableShareDto(standardShareId.id)))
-            getUnmigratedShares { response(405) }
+            getUnmigratedShares { errorResponse() }
         }
 
         val result = makeWorker(userId).doWork()
@@ -91,7 +93,7 @@ class MigrateKeyPacketWorkerTest {
     @Test
     fun retry() = runTest {
         driveRule.server.run {
-            getUnmigratedShares { response(408) }
+            getUnmigratedShares { retryableErrorResponse() }
         }
 
         val result = makeWorker(userId).doWork()

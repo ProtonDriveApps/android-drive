@@ -33,7 +33,7 @@ class GetBlockFolder @Inject constructor(
     suspend operator fun invoke(
         userId: UserId,
         uploadFileLink: UploadFileLink,
-        coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
+        coroutineContext: CoroutineContext = Dispatchers.IO,
     ): Result<File> = coRunCatching {
         with (uploadFileLink) {
             require(uploadFileLink.draftRevisionId.isNotEmpty()) { "Draft revision id must not be empty" }

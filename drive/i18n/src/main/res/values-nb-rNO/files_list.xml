@@ -20,7 +20,16 @@
   <string name="file_operation_error_occurred_moving_file">En feil oppstod ved flytting av filen</string>
   <string name="file_operation_moving_file_successful">Fil flyttet</string>
   <string name="file_operation_moving_folder_successful">Mappe flyttet</string>
-  <string name="file_operation_moving_multiple_successful">%1$d elementer flyttet.</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="one">%1$d element flyttet.</item>
+    <item quantity="other">%1$d elementer flyttet.</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Et element med dette navnet finnes allerede i mappen.</string>
   <string name="folder_options_header_title">I \"%1$s\"</string>
   <string name="folder_options_header_title_encrypted">I</string>

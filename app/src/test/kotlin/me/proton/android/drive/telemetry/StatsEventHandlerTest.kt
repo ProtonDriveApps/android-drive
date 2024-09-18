@@ -60,6 +60,7 @@ import me.proton.core.drive.stats.domain.usecase.GetUploadStats
 import me.proton.core.drive.stats.domain.usecase.IsInitialBackup
 import me.proton.core.drive.stats.domain.usecase.SetOrIgnoreInitialBackup
 import me.proton.core.drive.stats.domain.usecase.UpdateUploadStats
+import me.proton.core.drive.test.TestConfigurationProvider
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertThrows
@@ -111,7 +112,11 @@ class StatsEventHandlerTest {
             }
         }
 
-        linkUploadRepository = LinkUploadRepositoryImpl(database.db, UploadBlockFactoryImpl())
+        linkUploadRepository = LinkUploadRepositoryImpl(
+            db = database.db,
+            uploadBlockFactory = UploadBlockFactoryImpl(),
+            configurationProvider = TestConfigurationProvider(),
+        )
 
         val clock = { TimestampS(10) }
         handler = StatsEventHandler(

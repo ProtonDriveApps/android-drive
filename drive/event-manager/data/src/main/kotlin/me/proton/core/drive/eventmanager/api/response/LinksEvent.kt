@@ -24,6 +24,7 @@ import kotlinx.serialization.Transient
 import me.proton.core.drive.base.data.api.Dto.CONTEXT_SHARE_ID
 import me.proton.core.drive.base.data.api.Dto.DATA
 import me.proton.core.drive.base.data.api.Dto.DELETED_URL_ID
+import me.proton.core.drive.base.data.api.Dto.EXTERNAL_INVITATION_SIGNUP
 import me.proton.core.drive.base.data.api.Dto.LINK
 import me.proton.core.drive.base.data.api.Dto.LINK_ID
 import me.proton.core.drive.link.data.api.entity.LinkDto
@@ -58,6 +59,8 @@ interface WithLinkDto {
 data class Data(
     @SerialName(DELETED_URL_ID)
     val deletedUrlId: List<String> = emptyList(),
+    @SerialName(EXTERNAL_INVITATION_SIGNUP)
+    val externalInvitationSignup: String? = null,
 )
 
 @Serializable

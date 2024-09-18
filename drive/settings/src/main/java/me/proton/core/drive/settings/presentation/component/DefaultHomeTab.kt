@@ -40,6 +40,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.compose.theme.defaultNorm
+import me.proton.core.compose.theme.defaultWeak
 import me.proton.core.drive.base.presentation.component.ProtonListItem
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.settings.presentation.entity.TabItem
@@ -99,20 +101,23 @@ fun HomeTabItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable {
+            .clickable(enabled = tabItem.isEnabled) {
                 onClick(tabItem)
             },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ProtonListItem(
             icon = painterResource(id = tabItem.iconResId),
+            iconTintColor = if (tabItem.isEnabled) ProtonTheme.colors.iconNorm else ProtonTheme.colors.iconDisabled,
             title = stringResource(id = tabItem.titleResId),
+            textStyle = if (tabItem.isEnabled) ProtonTheme.typography.defaultNorm else ProtonTheme.typography.defaultWeak,
             modifier = modifier
                 .weight(1f)
                 .padding(start = ProtonDimens.DefaultSpacing),
         )
         RadioButton(
             selected = tabItem.isSelected,
+            enabled = tabItem.isEnabled,
             onClick = { onClick(tabItem) },
         )
     }
@@ -132,24 +137,28 @@ fun DefaultHomeTabPreview() {
                             titleResId = I18N.string.title_files,
                             route = "files",
                             isSelected = false,
+                            isEnabled = true,
                         ),
                         TabItem(
                             iconResId = CorePresentation.drawable.ic_proton_image,
                             titleResId = I18N.string.photos_title,
                             route = "photos",
                             isSelected = true,
+                            isEnabled = false,
                         ),
                         TabItem(
                             iconResId = CorePresentation.drawable.ic_proton_tv,
                             titleResId = I18N.string.computers_title,
                             route = "computers",
                             isSelected = false,
+                            isEnabled = true,
                         ),
                         TabItem(
                             iconResId = CorePresentation.drawable.ic_proton_link,
                             titleResId = I18N.string.title_shared,
                             route = "shared",
                             isSelected = false,
+                            isEnabled = true,
                         ),
                     )
                 ),

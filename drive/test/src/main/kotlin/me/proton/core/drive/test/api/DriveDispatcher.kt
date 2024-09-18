@@ -20,11 +20,16 @@ package me.proton.core.drive.test.api
 
 import kotlinx.serialization.json.Json
 import me.proton.core.util.kotlin.serialize
+import okhttp3.internal.UTC
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import java.net.HttpURLConnection
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class DriveDispatcher : Dispatcher() {
     var handlers: List<RecordedRequest.() -> MockResponse?> = emptyList()
@@ -103,6 +108,16 @@ private fun RoutingConfiguration.route(
     handlers = handlers + Handler(method, path, block)
 }
 
+private val STANDARD_DATE_FORMAT = object : ThreadLocal<DateFormat>() {
+    override fun initialValue(): DateFormat {
+        // Date format specified by RFC 7231 section 7.1.1.1.
+        return SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss 'GMT'", Locale.US).apply {
+            isLenient = false
+            timeZone = UTC
+        }
+    }
+}
+
 data class Handler(
     private val method: String,
     private val path: String,
@@ -142,7 +157,7 @@ data class Handler(
             }
         }.associate { it }
         return RequestContext(request, parameters, ++times).block().apply {
-            addHeader("date", System.currentTimeMillis())
+            addHeader("date", requireNotNull(STANDARD_DATE_FORMAT.get()).format(Date()))
         }
     }
 }

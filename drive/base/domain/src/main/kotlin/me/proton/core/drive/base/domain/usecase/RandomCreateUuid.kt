@@ -23,9 +23,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 class RandomCreateUuid @Inject constructor() : CreateUuid {
-    override suspend fun invoke(): UUID = withContext(Job() + Dispatchers.Default) {
+    override suspend fun invoke(
+        coroutineContext: CoroutineContext,
+    ): UUID = withContext(coroutineContext) {
         UUID.randomUUID()
     }
 }

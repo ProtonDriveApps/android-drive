@@ -76,23 +76,6 @@ fun MockWebServer.getShareBootstrap() = routing {
         }
     }
 }
-
-fun MockWebServer.getLinks(block: RequestContext.() -> MockResponse) = routing {
-    post("/drive/shares/{enc_shareID}/links/fetch_metadata", block)
-}
-
-fun MockWebServer.getLinksWithParents(block: (String) -> LinkDto) {
-    getLinks {
-        jsonResponse {
-            GetLinksResponse(
-                code = 1000,
-                links = request<GetLinksRequest>().linkIds.map(block),
-                parents = emptyList(),
-            )
-        }
-    }
-}
-
 fun MockWebServer.getUnmigratedShares(block: RequestContext.() -> MockResponse) = routing {
     get("/drive/migrations/shareaccesswithnode/unmigrated", block)
 }

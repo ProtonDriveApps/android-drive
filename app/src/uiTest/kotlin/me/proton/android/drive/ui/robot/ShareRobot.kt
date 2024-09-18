@@ -86,9 +86,9 @@ object ShareRobot : NavigationBarRobot, Robot {
     }
 
     fun passwordToggleIsOn() = passwordToggle.await { assertIsAsserted() }
-    fun passwordToggleIsOff() = passwordToggle.await { assertIsNotAsserted() }
+    fun passwordToggleIsOff() = passwordToggle.await { assertIsOff() }
     fun expirationDateToggleIsOn() = expirationDateToggle.await { assertIsAsserted() }
-    fun expirationDateToggleIsOff() = expirationDateToggle.await { assertIsNotAsserted() }
+    fun expirationDateToggleIsOff() = expirationDateToggle.await { assertIsOff() }
     fun publicAccessibilityDescriptionWasShown(
         isFile: Boolean = true,
     ) = accessibilityDescription.await {

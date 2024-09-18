@@ -98,7 +98,7 @@ class RecreateFile @Inject constructor(
                             )
                         }
                     }
-                addUploadBlocks(this, uploadBlocks).getOrThrow()
+                addUploadBlocks(id, uploadBlocks).getOrThrow()
                 updateLinkFileInfo(
                     uploadFileLinkId = id,
                     newFileInfo = newFileInfo,

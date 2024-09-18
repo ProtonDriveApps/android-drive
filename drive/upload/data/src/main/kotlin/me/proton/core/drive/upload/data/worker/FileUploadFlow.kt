@@ -50,6 +50,13 @@ internal sealed class FileUploadFlow {
                     tags = uploadTags,
                 )
             ).then(
+                SplitUriToBlocksWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    uriString = uriString,
+                    tags = uploadTags,
+                )
+            ).then(
                 EncryptBlocksWorker.getWorkRequest(
                     userId = userId,
                     uploadFileLinkId = uploadFileLinkId,
@@ -123,6 +130,14 @@ internal sealed class FileUploadFlow {
 
         override suspend fun enqueueWork(uploadTags: List<String>, uriString: String) = workManager
             .beginWith(
+                SplitUriToBlocksWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    uriString = uriString,
+                    tags = uploadTags,
+                )
+
+            ).then(
                 EncryptBlocksWorker.getWorkRequest(
                     userId = userId,
                     uploadFileLinkId = uploadFileLinkId,

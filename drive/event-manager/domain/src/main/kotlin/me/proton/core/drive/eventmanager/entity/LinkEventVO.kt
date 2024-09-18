@@ -25,4 +25,5 @@ data class LinkEventVO(
     val volumeId: VolumeId,
     val link: Link,
     val deletedShareUrlIds: List<String>,
+    val externalInvitationSignup: String? = null,
 )

@@ -19,7 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Canvia el nom del fitxer</string>
   <string name="link_rename_title_folder">Canvia el nom d\'una carpeta</string>
-  <string name="link_rename_successful">Nom de \"%1$s\" canviat</string>
+  <string name="link_rename_successful">S\'ha canviat el nom a \"%1$s\" correctament</string>
   <string name="link_rename_error_link_not_found">Error en canviar el nom perquè ja no es pot trobar el fitxer o la carpeta</string>
   <string name="link_rename_error_general">Error en canviar el nom per motiu desconegut</string>
 </resources>

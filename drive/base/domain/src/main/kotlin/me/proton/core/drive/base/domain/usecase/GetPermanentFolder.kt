@@ -18,7 +18,6 @@
 package me.proton.core.drive.base.domain.usecase
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.VolumeWithRevision
@@ -31,7 +30,7 @@ class GetPermanentFolder @Inject constructor(
 ){
     suspend operator fun invoke(
         userId: UserId,
-        coroutineContext: CoroutineContext = Job() + Dispatchers.IO
+        coroutineContext: CoroutineContext = Dispatchers.IO
     ) =
         withContext(coroutineContext) {
             storageLocationProvider.getPermanentFolder(userId)
@@ -41,7 +40,7 @@ class GetPermanentFolder @Inject constructor(
         userId: UserId,
         volumeId: String,
         revisionId: String,
-        coroutineContext: CoroutineContext = Job() + Dispatchers.IO
+        coroutineContext: CoroutineContext = Dispatchers.IO
     ) =
         withContext(coroutineContext) {
             storageLocationProvider.getPermanentFolder(

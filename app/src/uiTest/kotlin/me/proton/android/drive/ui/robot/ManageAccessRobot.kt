@@ -84,7 +84,7 @@ object ManageAccessRobot : NavigationBarRobot, Robot {
     }
 
     fun assertLinkIsNotShareWithAnyonePublic() {
-        allowToAnyonePublicSwitch.await { assertIsNotAsserted() }
+        allowToAnyonePublicSwitch.await { assertIsOff() }
         copyLinkButton.await { assertDoesNotExist() }
         linkSettingsButton.await { assertDoesNotExist() }
     }

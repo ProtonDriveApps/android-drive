@@ -30,6 +30,7 @@ import me.proton.core.drive.device.data.db.DeviceDatabase
 import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
 import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
 import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
+import me.proton.core.drive.key.data.db.PublicAddressKeyDatabase
 import me.proton.core.drive.link.data.db.LinkDatabase
 import me.proton.core.drive.link.selection.data.db.LinkSelectionDatabase
 import me.proton.core.drive.linktrash.data.db.LinkTrashDatabase
@@ -419,6 +420,20 @@ object DriveDatabaseMigrations {
     val MIGRATION_65_66 = object : Migration(65, 66) {
         override fun migrate(database: SupportSQLiteDatabase) {
             ShareUserDatabase.MIGRATION_5.migrate(database)
+        }
+    }
+
+    val MIGRATION_66_67 = object : Migration(66, 67) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            AppUiSettingsDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+    
+    val MIGRATION_67_68 = object : Migration(67, 68) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            PublicAddressKeyDatabase.MIGRATION_0.migrate(database)
+            ContactDatabase.MIGRATION_2.migrate(database)
+            LinkUploadDatabase.MIGRATION_6.migrate(database)
         }
     }
 }

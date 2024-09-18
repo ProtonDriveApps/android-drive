@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items sent to trash"
+    -->
+  <plurals name="trash_operation_successful_format">
+    <item quantity="one">1 element sendt til papirkurven</item>
+    <item quantity="other">%1$d elementer sendt til papirkurven</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items restored"
+    -->
+  <plurals name="trash_restore_operation_successful_format">
+    <item quantity="one">1 element gendannet</item>
+    <item quantity="other">%d elementer gendannet</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items deleted permanently"
+    -->
+  <plurals name="trash_delete_operation_successful_format">
+    <item quantity="one">1 element slettet permanent</item>
+    <item quantity="other">%d elementer slettet permanent</item>
+  </plurals>
+  <string name="trash_empty_operation_successful">Papirkurv tømt</string>
+  <string name="trash_error_occurred_sending_to_trash">Der opstod en fejl under forsøget på at sende din(e) fil(er) til papirkurven.</string>
+  <string name="trash_error_occurred_restoring_from_trash">Der opstod en fejl under forsøget på at gendanne din(e) fil(er)</string>
+  <string name="trash_error_occurred_deleting_from_trash">Der opstod en fejl under forsøget på at slette filen/filerne.</string>
+  <string name="trash_error_occurred_emptying_trash">Der opstod en fejl under forsøget på at tømme papirkurven.</string>
+</resources>

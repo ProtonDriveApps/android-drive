@@ -129,7 +129,7 @@
     <item quantity="one">Queda %1$s elemento.</item>
     <item quantity="other">Quedan %1$s elementos.</item>
   </plurals>
-  <string name="notification_content_text_backup_complete">La copia de seguridad ha finalizado.</string>
+  <string name="notification_content_text_backup_complete">Se ha finalizado la copia de seguridad.</string>
   <string name="notification_content_text_backup_uncompleted">La copia de seguridad se ha completado con problemas.</string>
   <string name="notification_content_text_backup_failed">Error de copia de seguridad</string>
   <string name="notification_content_text_backup_failed_drive_storage">El almacenamiento de Proton está lleno.</string>
@@ -138,9 +138,9 @@
   <string name="notification_content_text_backup_failed_connectivity">No hay conexión a Internet.</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Esperando una conexión Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">La copia de seguridad no está permitida.</string>
-  <string name="notification_content_text_backup_paused_disabled">La copia de seguridad está desactivada.</string>
+  <string name="notification_content_text_backup_paused_disabled">Se ha desactivado la copia de seguridad.</string>
   <string name="notification_content_text_backup_paused_background_restrictions">La copia de seguridad no puede ejecutarse en segundo plano.</string>
-  <string name="notification_content_text_backup_preparing">Preparando a hacer copia de seguridad</string>
+  <string name="notification_content_text_backup_preparing">Preparando a hacer una copia de seguridad</string>
   <string name="notification_content_title_download_complete">Descarga completada</string>
   <string name="notification_content_title_forced_sign_out">Inicia sesión</string>
   <string name="notification_content_text_forced_sign_out">Lamentamos la interrupción. Hemos tenido un problema con la sincronización. Inicia sesión de nuevo y todo funcionará sin problemas.</string>
@@ -179,7 +179,7 @@
   <string name="error_main_share_locked">Tus archivos ya no son accesibles debido a un restablecimiento de la contraseña. Vuelve a cargar la antigua clave de cifrado para recuperar el acceso.</string>
   <string name="error_share_locked">La compartición está bloqueada.</string>
   <string name="error_main_share_not_found">No se ha encontrado la carpeta principal.</string>
-  <string name="error_share_not_found">No se encuentra la compartición.</string>
+  <string name="error_share_not_found">No se ha encontrado el recurso compartido</string>
   <string name="error_creating_photo_share_not_allowed">La copia de seguridad de fotos está temporalmente desactivada.</string>
   <string name="error_creating_share_not_allowed">La creación de recursos compartidos está temporalmente desactivada.</string>
   <string name="operation_open_document">abrir un documento</string>

@@ -18,13 +18,50 @@
 
 package me.proton.core.drive.test.api
 
+import me.proton.core.drive.link.data.api.entity.LinkDto
+import me.proton.core.drive.link.data.api.request.GetLinksRequest
+import me.proton.core.drive.link.data.api.response.GetLinkResponse
+import me.proton.core.drive.link.data.api.response.GetLinksResponse
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 
-fun MockWebServer.checkAvailableHashes(block: RequestContext.() -> MockResponse){
+fun MockWebServer.checkAvailableHashes(block: RequestContext.() -> MockResponse) {
     routing {
         post("/drive/shares/@{enc_shareID}/links/@{enc_linkID}/checkAvailableHashes") {
             block()
         }
     }
 }
+
+fun MockWebServer.getLink(block: RequestContext.() -> MockResponse) = routing {
+    get("/drive/shares/@{enc_shareID}/links/@{enc_linkID}", block)
+}
+
+fun MockWebServer.getLink(link: LinkDto) {
+    getLink {
+        jsonResponse {
+            GetLinkResponse(
+                code = 1000,
+                linkDto = link,
+            )
+        }
+    }
+}
+
+
+fun MockWebServer.getLinks(block: RequestContext.() -> MockResponse) = routing {
+    post("/drive/shares/{enc_shareID}/links/fetch_metadata", block)
+}
+
+fun MockWebServer.getLinksWithParents(block: (String) -> LinkDto) {
+    getLinks {
+        jsonResponse {
+            GetLinksResponse(
+                code = 1000,
+                links = request<GetLinksRequest>().linkIds.map(block),
+                parents = emptyList(),
+            )
+        }
+    }
+}
+

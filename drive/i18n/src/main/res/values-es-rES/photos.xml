@@ -74,7 +74,7 @@
   <string name="photos_error_missing_permissions_description">Para realizar copias de seguridad continuas y automáticas, permite a %1$s acceder a todas las fotos en los ajustes.</string>
   <string name="photos_error_waiting_connectivity">No hay conexión a Internet.</string>
   <string name="photos_error_waiting_wifi_connectivity">Esperando una conexión Wi-Fi</string>
-  <string name="photos_error_waiting_wifi_connectivity_action">Utilizar el teléfono móvil</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Usar el teléfono móvil</string>
   <string name="photos_error_local_storage">El almacenamiento del dispositivo está lleno.</string>
   <string name="photos_error_local_storage_description">Para continuar con la copia de seguridad, necesitas liberar espacio de almacenamiento en tu dispositivo.</string>
   <string name="photos_error_background_restrictions">Establece la batería a \"Sin restricciones\" para la actividad de la aplicación en segundo plano.</string>
@@ -88,7 +88,7 @@
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Permite realizar copias de seguridad ininterrumpidas cuando la aplicación se ejecuta en segundo plano.</string>
   <string name="photos_backup_in_app_notification_turned_on">La copia de seguridad de las fotos está activada.</string>
   <string name="photos_backup_in_app_notification_turned_off">La copia de seguridad de las fotos está desactivada.</string>
-  <string name="photos_backup_state_completed">La copia de seguridad ha finalizado.</string>
+  <string name="photos_backup_state_completed">Se ha finalizado la copia de seguridad.</string>
   <string name="photos_backup_state_uncompleted">La copia de seguridad se ha terminado con problemas.</string>
   <string name="photos_backup_state_uncompleted_action">Solucionar</string>
   <string name="photos_backup_state_preparing">Preparando a hacer copia de seguridad</string>

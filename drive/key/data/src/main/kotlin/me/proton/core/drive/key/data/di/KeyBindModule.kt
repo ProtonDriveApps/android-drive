@@ -23,8 +23,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.drive.key.data.factory.ContentKeyFactoryImpl
 import me.proton.core.drive.key.data.repository.KeyRepositoryImpl
+import me.proton.core.drive.key.data.repository.StalePublicAddressKeyRepositoryImpl
 import me.proton.core.drive.key.domain.factory.ContentKeyFactory
 import me.proton.core.drive.key.domain.repository.KeyRepository
+import me.proton.core.drive.key.domain.repository.StalePublicAddressKeyRepository
 import javax.inject.Singleton
 
 @Module
@@ -33,9 +35,15 @@ interface KeyBindModule {
 
     @Binds
     @Singleton
-    fun bindsRepositoryImpl(impl: KeyRepositoryImpl): KeyRepository
+    fun bindsKeyRepositoryImpl(impl: KeyRepositoryImpl): KeyRepository
 
     @Binds
     @Singleton
     fun bindsFactoryImpl(impl: ContentKeyFactoryImpl): ContentKeyFactory
+
+    @Binds
+    @Singleton
+    fun bindsStalePublicAddressKeRepositoryImpl(
+        impl: StalePublicAddressKeyRepositoryImpl
+    ): StalePublicAddressKeyRepository
 }

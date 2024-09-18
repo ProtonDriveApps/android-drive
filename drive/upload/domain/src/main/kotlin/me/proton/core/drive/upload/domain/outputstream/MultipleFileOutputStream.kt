@@ -33,6 +33,7 @@ import java.util.UUID
 class MultipleFileOutputStream(
     private val destinationFolder: File,
     private val blockMaxSize: Bytes,
+    private val listener: Listener? = null,
     private val fileGenerator: FileGenerator = RandomFileGenerator(),
 ) : OutputStream() {
     private val _files = mutableListOf<FileWithOutputStream>()
@@ -79,14 +80,22 @@ class MultipleFileOutputStream(
 
     private fun addNewFile() {
         val newFile = fileGenerator.newFile(destinationFolder)
-        if (::_current.isInitialized) {
+        val previousFile: File? = if (::_current.isInitialized) {
             _current.outputStream.close()
+            _current.file
+        } else {
+            null
         }
-        _current = FileWithOutputStream(newFile, MaxSizeFileOutputStream(newFile,blockMaxSize))
+        _current = FileWithOutputStream(newFile, MaxSizeFileOutputStream(newFile, blockMaxSize))
         _files.add(_current)
+        listener?.onAddedNewFile(_current.file, previousFile)
     }
 
     private data class FileWithOutputStream(val file: File, val outputStream: MaxSizeFileOutputStream)
+
+    interface Listener {
+        fun onAddedNewFile(file: File, previousFile: File?)
+    }
 
     interface FileGenerator {
         fun newFile(destinationFolder: File): File

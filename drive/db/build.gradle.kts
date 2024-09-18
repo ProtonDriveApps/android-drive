@@ -84,6 +84,7 @@ driveModule(
     api(project(":drive:drivelink-trash:data"))
     api(project(":drive:feature-flag:data"))
     api(project(":drive:folder:data"))
+    api(project(":drive:key:data"))
     api(project(":drive:link:data"))
     api(project(":drive:link-download:data"))
     api(project(":drive:link-node:data"))

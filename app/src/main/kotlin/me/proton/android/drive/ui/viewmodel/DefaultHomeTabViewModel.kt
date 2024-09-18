@@ -26,72 +26,45 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.navigation.Screen
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.android.drive.usecase.GetDynamicHomeTabsFlow
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.settings.presentation.entity.TabItem
 import me.proton.drive.android.settings.domain.entity.HomeTab
-import me.proton.drive.android.settings.domain.usecase.GetHomeTab
 import me.proton.drive.android.settings.domain.usecase.UpdateHomeTab
 import javax.inject.Inject
-import me.proton.core.presentation.R as CorePresentation
-import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class DefaultHomeTabViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    getHomeTab: GetHomeTab,
-    configurationProvider: ConfigurationProvider,
+    getDynamicHomeTabsFlow: GetDynamicHomeTabsFlow,
     private val updateHomeTab: UpdateHomeTab,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
-    private val tabItems = listOfNotNull(
-        TabItem(
-            iconResId = CorePresentation.drawable.ic_proton_folder,
-            titleResId = I18N.string.title_files,
-            route = Screen.Files.route,
-            isSelected = false,
-        ),
-        takeIf { configurationProvider.photosFeatureFlag }
-            ?.let {
-                TabItem(
-                    iconResId = CorePresentation.drawable.ic_proton_image,
-                    titleResId = I18N.string.photos_title,
-                    route = Screen.Photos.route,
-                    isSelected = false,
-                )
-            },
-        TabItem(
-            iconResId = CorePresentation.drawable.ic_proton_tv,
-            titleResId = I18N.string.computers_title,
-            route = Screen.Computers.route,
-            isSelected = false,
-        ),
-        TabItem(
-            iconResId = CorePresentation.drawable.ic_proton_link,
-            titleResId = I18N.string.title_shared,
-            route = Screen.Shared.route,
-            isSelected = false,
-        ),
-    )
 
-    val homeTabItems: Flow<Set<TabItem>> = getHomeTab(userId).map { homeTab ->
-        tabItems.map { tabItem ->
-            if (tabItem.toHomeTab() == homeTab) {
-                tabItem.copy(isSelected = true)
-            } else {
-                tabItem
-            }
-        }.toSet()
-    }
+    val homeTabItems: Flow<Set<TabItem>> = getDynamicHomeTabsFlow(userId)
+        .map { dynamicHomeTabs ->
+            dynamicHomeTabs
+                .sortedBy { dynamicHomeTab -> dynamicHomeTab.order }
+                .map { dynamicHomeTab ->
+                    TabItem(
+                        iconResId = dynamicHomeTab.iconResId,
+                        titleResId = dynamicHomeTab.titleResId,
+                        route = dynamicHomeTab.route,
+                        isSelected = dynamicHomeTab.isUserDefault,
+                        isEnabled = dynamicHomeTab.isEnabled,
+                    )
+                }.toSet()
+        }
 
     fun onTabItem(tabItem: TabItem) = viewModelScope.launch {
         updateHomeTab(userId, tabItem.toHomeTab())
     }
 
-    private fun TabItem.toHomeTab(): HomeTab = when {
-        route == Screen.Files.route -> HomeTab.FILES
-        route == Screen.Photos.route -> HomeTab.PHOTOS
-        route == Screen.Computers.route -> HomeTab.COMPUTERS
-        route == Screen.Shared.route -> HomeTab.SHARED
+    private fun TabItem.toHomeTab(): HomeTab = when (route) {
+        Screen.Files.route -> HomeTab.FILES
+        Screen.Photos.route -> HomeTab.PHOTOS
+        Screen.Computers.route -> HomeTab.COMPUTERS
+        Screen.Shared.route -> HomeTab.SHARED
+        Screen.SharedTabs.route -> HomeTab.SHARED
         else -> error("Unhandled tab item route: $route")
     }
 }

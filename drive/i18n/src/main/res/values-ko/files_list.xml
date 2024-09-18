@@ -20,7 +20,15 @@
   <string name="file_operation_error_occurred_moving_file">파일 이동 중 문제가 발생했습니다</string>
   <string name="file_operation_moving_file_successful">파일을 성공적으로 이동했습니다</string>
   <string name="file_operation_moving_folder_successful">폴더를 성공적으로 이동했습니다</string>
-  <string name="file_operation_moving_multiple_successful">%1$d개가 성공적으로 삭제되었습니다.</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="other">%1$d개가 성공적으로 삭제되었습니다.</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">동일한 이름을 가진 항목이 이미 대상 폴더에 존재합니다.</string>
   <string name="folder_options_header_title">\"%1$s\"에서</string>
   <string name="folder_options_header_title_encrypted">에</string>

@@ -19,7 +19,7 @@ package me.proton.core.drive.upload.domain.extension
 
 import java.io.File
 
-fun File.blockFile(index: Long): File {
+fun File.blockFile(index: Long, suffix: String? = null): File {
     val parent = requireNotNull(parentFile) { "Parent file must not be null" }
-    return File("${parent.path}/$index").apply { createNewFile() }
+    return File("${parent.path}/${index}${suffix.orEmpty()}").apply { createNewFile() }
 }

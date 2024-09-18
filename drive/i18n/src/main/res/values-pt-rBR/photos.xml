@@ -91,7 +91,7 @@
   <string name="photos_backup_state_completed">Backup completo</string>
   <string name="photos_backup_state_uncompleted">Backup concluído com problemas</string>
   <string name="photos_backup_state_uncompleted_action">Resolver</string>
-  <string name="photos_backup_state_preparing">Preparing to back up</string>
+  <string name="photos_backup_state_preparing">Preparando para voltar.</string>
   <string name="photos_backup_state_encrypting">Criptografando…</string>
   <string name="photos_backup_state_uploading">Fazendo backup…</string>
   <!--

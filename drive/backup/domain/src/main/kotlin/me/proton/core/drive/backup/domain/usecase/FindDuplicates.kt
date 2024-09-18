@@ -44,9 +44,10 @@ class FindDuplicates @Inject constructor(
         var files: List<BackupFile>
         do {
             val folderId = backupFolder.folderId
+            val bucketId = backupFolder.bucketId
             files = backupFileRepository.getAllInFolderWithState(
                 folderId = folderId,
-                bucketId = backupFolder.bucketId,
+                bucketId = bucketId,
                 state = BackupFileState.IDLE,
                 count = count,
             )
@@ -72,12 +73,14 @@ class FindDuplicates @Inject constructor(
 
                 backupFileRepository.markAs(
                     folderId = folderId,
+                    bucketId = bucketId,
                     hashes = hashes - possibleDuplicatesHashes.toSet(),
                     backupFileState = BackupFileState.READY,
                 )
 
                 backupFileRepository.markAs(
                     folderId = folderId,
+                    bucketId = bucketId,
                     hashes = possibleDuplicatesHashes,
                     backupFileState = BackupFileState.POSSIBLE_DUPLICATE,
                 )

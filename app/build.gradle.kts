@@ -83,10 +83,12 @@ driveModule(
     androidTestUtil(libs.androidx.test.services)
 
     testImplementation(project(":drive:db-test"))
+    testImplementation(project(":drive:test"))
     androidTestImplementation(libs.androidx.navigation.compose)
     androidTestImplementation(libs.androidx.test.espresso.contrib)
     androidTestImplementation(libs.bundles.core.test)
     androidTestImplementation(libs.fusion)
+    androidTestImplementation(libs.okhttpLoggingInterceptor)
     androidTestImplementation(project(":drive:backup:data"))
     androidTestUtil(libs.androidx.test.orchestrator)
 
@@ -171,8 +173,7 @@ android {
 
             protonEnvironment {
                 host = dynamicEnvironment
-                apiPrefix = "drive"
-                baseUrl = "https://$apiHost/api"
+                apiPrefix = "drive-api"
             }
 
             testInstrumentationRunnerArguments["clearPackageData"] = "true"

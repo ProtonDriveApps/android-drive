@@ -28,7 +28,7 @@
   <string name="computers_synced_folders_empty_description">Las carpetas sincronizadas se\nmostrarán aquí.</string>
   <string name="computers_synced_folders_no_folder">El ordenador se ha borrado.</string>
   <string name="computers_rename_title">Cambiar el nombre del ordenador</string>
-  <string name="computers_rename_success">El nombre del ordenador ha sido cambiado.</string>
+  <string name="computers_rename_success">Se ha cambiado el nombre del ordenador.</string>
   <!--
         Variable %1$s is a computer name
         Examples:

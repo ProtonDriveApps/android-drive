@@ -49,6 +49,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_I
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_URI_STRING
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
+import me.proton.core.drive.upload.domain.usecase.EncryptBlocks
 import me.proton.core.drive.upload.domain.usecase.SplitFileToBlocksAndEncrypt
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -65,7 +66,7 @@ class EncryptBlocksWorker @AssistedInject constructor(
     getUploadFileLink: GetUploadFileLink,
     private val getShare: GetShare,
     uploadErrorManager: UploadErrorManager,
-    private val splitFileToBlocksAndEncrypt: SplitFileToBlocksAndEncrypt,
+    private val encryptBlocks: EncryptBlocks,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
     run: Run,
@@ -87,12 +88,14 @@ class EncryptBlocksWorker @AssistedInject constructor(
     private val shouldDeleteSource = inputData.getBoolean(KEY_SHOULD_DELETE_SOURCE, false)
 
     override suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result {
-        uploadFileLink.logWorkState("split (size = ${uploadFileLink.size}) and encrypt")
-        splitFileToBlocksAndEncrypt(
+        uploadFileLink.logWorkState("encrypt (size = ${uploadFileLink.size}) blocks")
+        encryptBlocks(
             uploadFileLink = uploadFileLink,
             uriString = uriString,
+            outputFileSuffix = takeIf { runAttemptCount > 0 }?.let { "_$runAttemptCount" },
             shouldDeleteSource = shouldDeleteSource,
             includePhotoThumbnail = uploadFileLink.isBiggerThenPhotoThumbnail && uploadFileLink.isImagePhoto(),
+            isCancelled = ::isStopped,
         )
             .onFailure { error ->
                 val retryable = error.isRetryable

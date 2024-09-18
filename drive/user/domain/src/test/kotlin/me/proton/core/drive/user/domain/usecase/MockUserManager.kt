@@ -64,4 +64,8 @@ private fun UserEntity.toUser() = User(
     recovery = null,
     createdAtUtc = 0,
     type = null,
+    usedBaseSpace = usedBaseSpace,
+    maxBaseSpace = maxBaseSpace,
+    usedDriveSpace = usedDriveSpace,
+    maxDriveSpace = maxDriveSpace,
 )

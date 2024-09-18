@@ -20,7 +20,18 @@
   <string name="file_operation_error_occurred_moving_file">Wystąpił błąd podczas przenoszenia pliku</string>
   <string name="file_operation_moving_file_successful">Plik został przeniesiony</string>
   <string name="file_operation_moving_folder_successful">Folder został przeniesiony</string>
-  <string name="file_operation_moving_multiple_successful">%1$d items successfully moved.</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="one">%1$d element został przeniesiony.</item>
+    <item quantity="few">%1$d elementy zostały przeniesione.</item>
+    <item quantity="many">%1$d elementów zostało przeniesionych.</item>
+    <item quantity="other">%1$d elementów zostało przeniesionych.</item>
+  </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Element o tej nazwie już istnieje w folderze docelowym</string>
   <string name="folder_options_header_title">W \"%1$s\"</string>
   <string name="folder_options_header_title_encrypted">W</string>

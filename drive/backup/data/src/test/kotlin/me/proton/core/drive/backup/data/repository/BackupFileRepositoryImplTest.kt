@@ -297,11 +297,13 @@ class BackupFileRepositoryImplTest {
             )
             repository.markAs(
                 folderId = rootPhotoId,
+                bucketId = bucketId,
                 hashes = listOf("hash1", "hash2"),
                 backupFileState = BackupFileState.READY,
             )
             repository.markAs(
                 folderId = rootPhotoId,
+                bucketId = bucketId,
                 hashes = listOf("hash3", "hash4"),
                 backupFileState = BackupFileState.POSSIBLE_DUPLICATE,
             )

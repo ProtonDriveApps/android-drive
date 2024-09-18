@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">Fotos</string>
+  <string name="photos_permissions_title">Kryptér og sikkerhedskopiér dine fotos og videoer</string>
+  <string name="photos_permissions_section_1_title">Beskyt dine minder</string>
+  <string name="photos_permissions_section_1_description">Dine fotos er end-to-end-krypterede, hvilket sikrer fuldstændig fortrolighed.</string>
+  <string name="photos_permissions_section_2_title">Automatisk sikkerhedskopiering</string>
+  <string name="photos_permissions_section_2_description">Fotos sikkerhedskopieres regelmæssigt over WiFi i deres originale kvalitet.</string>
+  <string name="photos_permissions_action">Slå sikkerhedskopier til</string>
+  <string name="photos_permission_rational_img_text">Tillad adgang</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s skal have fuld adgang til dine fotos</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">Dette er nødvendigt for at sikre, at alle dine fotos er sikkerhedskopieret og tilgængelige på alle dine enheder.\n%1$s tager dit privatliv alvorligt og tilgå dine fotos med henblik på synkronisering og sikkerhedskopiering.</string>
+  <string name="photos_permission_rational_confirm_action">Indstillinger</string>
+  <string name="photos_permission_rational_dismiss_action">Ikke nu</string>
+  <string name="photos_empty_loading_label_encrypted">End-to-end krypteret</string>
+  <string name="photos_empty_loading_label_progress">Sikkerhedskopiering er i gang.\nDet kan tage noget tid</string>
+  <string name="photos_separator_current_month">Denne måned</string>
+  <string name="photos_encrypted_footer">End-to-end krypteret</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="one">Sikkerhedskopierer elementer fra %2$d-mappen: %1$s</item>
+    <item quantity="other">Sikkerhedskopierer elementer fra %2$d-mapper: %1$s</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">Ingen %1$s-mappe fundet til sikkerhedskopiering</string>
+  <string name="photos_error_backup_disabled">Sikkerhedskopiering deaktiveret.</string>
+  <string name="photos_error_backup_disabled_action">Slå til</string>
+  <string name="photos_error_backup_missing_folder">Sikkerhedskopimappen blev ikke fundet</string>
+  <string name="photos_error_backup_failed">Sikkerhedskopiering mislykkedes.</string>
+  <string name="photos_error_backup_temporarily_disabled">Sikkerhedskopiering er midlertidigt deaktiveret.</string>
+  <string name="photos_error_missing_permissions">Manglende tilladelser.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">For kontinuerlig og automatisk sikkerhedskopiering skal du give %1$s adgang til Alle fotos i indstillingerne.</string>
+  <string name="photos_error_waiting_connectivity">Ingen internetforbindelse</string>
+  <string name="photos_error_waiting_wifi_connectivity">Venter på WiFi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Brug mobilnettet</string>
+  <string name="photos_error_local_storage">Enhedens lager er fyldt</string>
+  <string name="photos_error_local_storage_description">For at fortsætte sikkerhedskopieringen skal du frigøre lagerplads på din enhed.</string>
+  <string name="photos_error_background_restrictions">Indstil batteriet til \'Ubegrænset\' for app-aktivitet i baggrunden</string>
+  <string name="photos_error_background_restrictions_description">Hvis du vil have løbende sikkerhedskopiering i baggrunden, skal du justere batteriindstillingerne eller åbne appen ofte.</string>
+  <string name="photos_error_background_restrictions_action">Indstillinger</string>
+  <string name="photos_empty_title">Ingen sikkerhedskopier endnu</string>
+  <string name="photos_empty_description">Så snart du har fotos eller videoer på din enhed, vil de blive vist her.</string>
+  <string name="photos_backup_title">Sikkerhedskopiering af fotos</string>
+  <string name="photos_backup_option_mobile_data">Brug mobildata til at sikkerhedskopiere fotos</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Deaktivér batterioptimering</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Tillader uafbrudt sikkerhedskopiering, når appen kører i baggrunden.</string>
+  <string name="photos_backup_in_app_notification_turned_on">Sikkerhedskopiering af fotos er slået til</string>
+  <string name="photos_backup_in_app_notification_turned_off">Sikkerhedskopiering af fotos er slået fra</string>
+  <string name="photos_backup_state_completed">Sikkerhedskopiering færdig</string>
+  <string name="photos_backup_state_uncompleted">Sikkerhedskopiering gennemført med problemer</string>
+  <string name="photos_backup_state_uncompleted_action">Løs</string>
+  <string name="photos_backup_state_preparing">Klargøring til sikkerhedskopiering</string>
+  <string name="photos_backup_state_encrypting">Krypterer…</string>
+  <string name="photos_backup_state_uploading">Sikkerhedskopierer…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="one">%1$s element tilbage</item>
+    <item quantity="other">%1$s elementer tilbage</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="one">%1$s element gemt</item>
+    <item quantity="other">%1$s elementer gemt</item>
+  </plurals>
+  <string name="photos_upsell_title">Løb aldrig tør for lagerplads</string>
+  <string name="photos_upsell_description">Opgrader nu, og hold alle dine minder krypterede og sikre.</string>
+  <string name="photos_upsell_dismiss_action">Ikke nu</string>
+</resources>

@@ -47,29 +47,29 @@
   <plurals name="share_via_invitations_sharing_with">
     <item quantity="other">%1$d명과 공유</item>
   </plurals>
-  <string name="common_permission_owner">Owner</string>
-  <string name="common_permission_admin">Admin</string>
-  <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Viewer</string>
-  <string name="common_permission_unknown">Unknown</string>
+  <string name="common_permission_owner">소유자</string>
+  <string name="common_permission_admin">관리자</string>
+  <string name="common_permission_editor">편집자</string>
+  <string name="common_permission_viewer">뷰어</string>
+  <string name="common_permission_unknown">알 수 없음</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (대기 중)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Accepted)"
     -->
-  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (수락됨)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Unknown)"
     -->
-  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (알 수 없음)</string>
   <string name="share_via_invitations_add_people_hint">사용자 추가하기</string>
   <string name="share_via_invitations_copy_invite_link_action">초대 링크 복사</string>
   <string name="share_via_invitations_remove_access_action">액세스 제거</string>

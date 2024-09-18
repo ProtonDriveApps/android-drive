@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="log_title">Dnevnik</string>
-  <string name="log_export_successfully_completed">Dnevnik je shranjen</string>
+  <string name="log_export_successfully_completed">Dnevnik je shranjen.</string>
   <string name="log_level">Raven</string>
   <string name="log_category">Kategorija</string>
   <string name="content_description_save_log_file">Shrani dnevnik</string>

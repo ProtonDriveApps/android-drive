@@ -62,7 +62,7 @@
   <string name="photos_error_no_folders">No s\'ha trobat cap carpeta %1$s per a la còpia de seguretat.</string>
   <string name="photos_error_backup_disabled">S\'ha desactivat la còpia de seguretat.</string>
   <string name="photos_error_backup_disabled_action">Activa</string>
-  <string name="photos_error_backup_missing_folder">La carpeta de la còpia de seguretat no s\'ha trobat.</string>
+  <string name="photos_error_backup_missing_folder">No s\'ha trobat la carpeta de còpia de seguretat</string>
   <string name="photos_error_backup_failed">Error en la còpia de seguretat.</string>
   <string name="photos_error_backup_temporarily_disabled">Les còpies de seguretat estan temporalment desactivades.</string>
   <string name="photos_error_missing_permissions">Falten permisos.</string>
@@ -91,7 +91,7 @@
   <string name="photos_backup_state_completed">S\'ha finalitzat la còpia de seguretat.</string>
   <string name="photos_backup_state_uncompleted">S\'ha completat la còpia de seguretat amb problemes.</string>
   <string name="photos_backup_state_uncompleted_action">Resol</string>
-  <string name="photos_backup_state_preparing">Preparació de la còpia de seguretat</string>
+  <string name="photos_backup_state_preparing">S\'està preparant per a fer una còpia de seguretat</string>
   <string name="photos_backup_state_encrypting">S\'està xifrant...</string>
   <string name="photos_backup_state_uploading">Realitzant còpia de seguretat…</string>
   <!--

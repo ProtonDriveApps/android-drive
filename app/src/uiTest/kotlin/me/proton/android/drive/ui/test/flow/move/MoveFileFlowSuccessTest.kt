@@ -119,7 +119,11 @@ class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
             .clickOnFolderToMove(folder)
             .clickMoveToFolder(folder)
             .verify {
-                nodeWithTextDisplayed(I18N.string.file_operation_moving_multiple_successful, 2)
+                nodeWithQuantityTextDisplayed(
+                    pluralsRes = I18N.plurals.file_operation_moving_multiple_successful,
+                    quantity = 2,
+                    2,
+                )
             }
             .scrollToItemWithName(folder)
             .clickOnFolder(folder)

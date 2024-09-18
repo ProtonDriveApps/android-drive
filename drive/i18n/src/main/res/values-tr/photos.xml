@@ -91,7 +91,7 @@
   <string name="photos_backup_state_completed">Yedekleme tamamlandı</string>
   <string name="photos_backup_state_uncompleted">Yedekleme sorunlarla tamamlandı</string>
   <string name="photos_backup_state_uncompleted_action">Düzelt</string>
-  <string name="photos_backup_state_preparing">Preparing to back up</string>
+  <string name="photos_backup_state_preparing">Yedeklemeye hazırlanıyor</string>
   <string name="photos_backup_state_encrypting">Şifreleniyor…</string>
   <string name="photos_backup_state_uploading">Yedekleniyor…</string>
   <!--

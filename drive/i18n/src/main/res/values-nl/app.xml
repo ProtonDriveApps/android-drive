@@ -140,7 +140,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Back-up is niet toegestaan</string>
   <string name="notification_content_text_backup_paused_disabled">Back-up uitgeschakeld</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Back-up kan niet op de achtergrond worden uitgevoerd</string>
-  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
+  <string name="notification_content_text_backup_preparing">Back-up voorbereiden</string>
   <string name="notification_content_title_download_complete">Download voltooid</string>
   <string name="notification_content_title_forced_sign_out">Inloggen</string>
   <string name="notification_content_text_forced_sign_out">Sorry dat ik stoor! We hadden een probleem met synchroniseren - log opnieuw in en we zullen alles soepel laten verlopen.</string>

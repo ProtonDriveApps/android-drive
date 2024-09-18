@@ -76,7 +76,7 @@
   <string name="share_via_invitations_add_people_hint">Ajouter des personnes</string>
   <string name="share_via_invitations_copy_invite_link_action">Copier le lien d\'invitation</string>
   <string name="share_via_invitations_remove_access_action">Retirer l’accès</string>
-  <string name="share_via_invitations_stop_sharing_description">Supprimer le lien et en retirer l\'accès pour tous</string>
+  <string name="share_via_invitations_stop_sharing_description">Supprimer le lien et retirer l\'accès pour tous</string>
   <string name="share_via_invitations_resend_invite_action">Renvoyer l\'invitation</string>
   <string name="share_via_invitations_resend_invite_success">L\'invitation a été envoyée à nouveau.</string>
   <!--

@@ -30,11 +30,13 @@ driveModule(
     serialization = true,
     socialTest = true,
     room = true,
+    workManager = true,
 ) {
     api(project(":drive:share:data"))
     api(project(":drive:share-user:domain"))
     api(project(":drive:user:domain"))
     api(project(":drive:volume:data"))
+    api(project(":drive:worker:data"))
     api(libs.androidx.room.paging)
     implementation(project(":drive:link:data"))
     implementation(libs.retrofit)

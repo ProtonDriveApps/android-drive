@@ -84,4 +84,12 @@ class GetQuotaLevelTest {
 
         assertEquals(QuotaLevel.ERROR, getQuotaLevel(userId).first())
     }
+
+    @Test
+    fun errorWithStorageSplit() = runTest {
+        database.db.user(NullableUserEntity(maxDriveSpace = 300.MiB.value)) {}
+        database.db.userDao().setUsedDriveSpace(userId, 290.MiB.value)
+
+        assertEquals(QuotaLevel.ERROR, getQuotaLevel(userId).first())
+    }
 }

@@ -18,8 +18,10 @@
 
 package me.proton.core.drive.base.domain.usecase
 
+import kotlinx.coroutines.Dispatchers
 import java.util.UUID
+import kotlin.coroutines.CoroutineContext
 
 interface CreateUuid {
-    suspend operator fun invoke(): UUID
+    suspend operator fun invoke(coroutineContext: CoroutineContext = Dispatchers.Default): UUID
 }

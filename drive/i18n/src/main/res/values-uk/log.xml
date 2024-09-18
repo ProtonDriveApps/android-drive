@@ -18,17 +18,17 @@
   -->
 <resources>
   <string name="log_title">Журнал</string>
-  <string name="log_export_successfully_completed">Log file saved.</string>
-  <string name="log_level">Level</string>
-  <string name="log_category">Category</string>
-  <string name="content_description_save_log_file">Save log file</string>
-  <string name="content_description_more_log_options">More log options</string>
-  <string name="log_level_normal">Regular</string>
+  <string name="log_export_successfully_completed">Файл журналу збережено.</string>
+  <string name="log_level">Рівень</string>
+  <string name="log_category">Категорія</string>
+  <string name="content_description_save_log_file">Зберегти файл журналу</string>
+  <string name="content_description_more_log_options">Додаткові параметри журналу</string>
+  <string name="log_level_normal">Звичайний</string>
   <string name="log_level_warning">Попередження</string>
   <string name="log_level_error">Помилка</string>
-  <string name="log_origin_upload">Upload</string>
-  <string name="log_origin_download">Download</string>
+  <string name="log_origin_upload">Вивантажити</string>
+  <string name="log_origin_download">Завантажити</string>
   <string name="log_origin_network">API</string>
-  <string name="log_origin_throwable">Exception</string>
-  <string name="log_origin_logger">Logger</string>
+  <string name="log_origin_throwable">Виключення</string>
+  <string name="log_origin_logger">Реєстратор</string>
 </resources>

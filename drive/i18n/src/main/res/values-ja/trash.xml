@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items sent to trash"
+    -->
+  <plurals name="trash_operation_successful_format">
+    <item quantity="other">%1$d 個のアイテムがごみ箱に送られました</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items restored"
+    -->
+  <plurals name="trash_restore_operation_successful_format">
+    <item quantity="other">%d 件のアイテムが復元されました</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "5 items deleted permanently"
+    -->
+  <plurals name="trash_delete_operation_successful_format">
+    <item quantity="other">%d 個のアイテムが完全に削除されました</item>
+  </plurals>
+  <string name="trash_empty_operation_successful">ごみ箱を空にしました</string>
+  <string name="trash_error_occurred_sending_to_trash">一つ(複数)のファイルをごみ箱に送信しようとしたときにエラーが発生しました</string>
+  <string name="trash_error_occurred_restoring_from_trash">一つ(複数)のファイルを復元しようとしたときにエラーが発生しました</string>
+  <string name="trash_error_occurred_deleting_from_trash">一つ(複数)のファイルを削除しようとしたときにエラーが発生しました</string>
+  <string name="trash_error_occurred_emptying_trash">ごみ箱を空にしようとしたときにエラーが発生しました</string>
+</resources>

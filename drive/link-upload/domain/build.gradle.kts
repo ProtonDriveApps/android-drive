@@ -26,8 +26,10 @@ android {
 
 driveModule(
     hilt = true,
+    socialTest = true,
 ) {
     api(project(":drive:link:domain"))
     api(project(":drive:file:base:domain"))
     testImplementation(project(":drive:db-test"))
+    testImplementation(project(":drive:test"))
 }

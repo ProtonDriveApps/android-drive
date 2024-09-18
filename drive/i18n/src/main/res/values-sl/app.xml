@@ -168,7 +168,7 @@
   <string name="content_description_selected_options">Pokaži več možnosti za izbrane datoteke in/ali mape</string>
   <string name="content_description_files_upload_upload_file">Naloži datoteko</string>
   <string name="description_empty_my_files">Tapnite gumb, da začnete dodajati datoteke.</string>
-  <string name="description_empty_folder_read_only">Tukaj ni ničesar za videti</string>
+  <string name="description_empty_folder_read_only">Tukaj ni ničesar videti.</string>
   <string name="description_empty_shared">Povezane datoteke so prikazane tukaj, tako da lahko preprosto sledite in upravljate, kar je v skupni rabi.</string>
   <string name="description_empty_trash">Tukaj ostanejo predmeti v smetnjaku, dokler jih ne izbrišete ali obnovite.</string>
   <string name="description_empty_offline_available">Naj bodo bistvene datoteke vedno na voljo, tudi ko vaše omrežje ni.</string>
@@ -212,7 +212,7 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
   <string name="get_more_free_storage_action_link_subtitle">Izberite katero koli datoteko ali mapo. Odprite meni z možnostmi in pritisnite %1$s.</string>
-  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_title">Skupna raba datoteke</string>
   <string name="get_more_free_storage_action_share_subtitle">Preprosto in varno.</string>
   <string name="get_more_free_storage_action_recovery_title">Nastavite način obnovitve</string>
   <!--

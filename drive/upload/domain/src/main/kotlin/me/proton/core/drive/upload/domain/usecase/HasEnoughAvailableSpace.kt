@@ -19,6 +19,8 @@ package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.extension.effectiveMaxDriveSpace
+import me.proton.core.drive.base.domain.extension.effectiveUsedDriveSpace
 import me.proton.core.user.domain.repository.UserRepository
 import javax.inject.Inject
 import kotlin.math.abs
@@ -33,8 +35,8 @@ class HasEnoughAvailableSpace @Inject constructor(
         onNotEnough: (suspend (Bytes) -> Unit)? = null,
     ): Boolean =
         userRepository.getUser(userId).let { user ->
-            val availableSpace =
-                user.maxSpace - user.usedSpace - uriStrings.sumOf { uriString -> getUploadFileSize(uriString).value }
+            val uploadSize = uriStrings.sumOf { uriString -> getUploadFileSize(uriString).value }
+            val availableSpace = user.effectiveMaxDriveSpace.value - user.effectiveUsedDriveSpace.value - uploadSize
             return (availableSpace >= 0).also { hasEnoughSpace ->
                 if (!hasEnoughSpace) onNotEnough?.invoke(Bytes(abs(availableSpace)))
             }

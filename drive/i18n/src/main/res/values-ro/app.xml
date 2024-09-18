@@ -145,7 +145,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Conservarea nu este permisă.</string>
   <string name="notification_content_text_backup_paused_disabled">Conservarea este dezactivată</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Conservarea nu poate funcționa în fundal.</string>
-  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
+  <string name="notification_content_text_backup_preparing">Se pregătește conservarea</string>
   <string name="notification_content_title_download_complete">Descărcare finalizată</string>
   <string name="notification_content_title_forced_sign_out">Autentificați-vă</string>
   <string name="notification_content_text_forced_sign_out">Ne pare rău! Am avut o problemă cu sincronizarea - reconectați-vă și totul va funcționa fără probleme.</string>

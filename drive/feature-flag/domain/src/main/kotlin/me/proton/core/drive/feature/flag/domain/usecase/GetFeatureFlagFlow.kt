@@ -38,8 +38,11 @@ class GetFeatureFlagFlow @Inject constructor(
     operator fun invoke(
         featureFlagId: FeatureFlagId,
         refresh: FeatureFlagCachePolicy = refreshAfterDuration,
+        emitNotFoundInitially: Boolean = true,
     ): Flow<FeatureFlag> = flow {
-        emit(FeatureFlag(featureFlagId, FeatureFlag.State.NOT_FOUND))
+        if (emitNotFoundInitially){
+            emit(FeatureFlag(featureFlagId, FeatureFlag.State.NOT_FOUND))
+        }
         if (refresh(featureFlagId)) {
             refreshFeatureFlag(featureFlagId)
         }

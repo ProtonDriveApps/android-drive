@@ -19,13 +19,14 @@
 package me.proton.android.drive.ui.rules
 
 import androidx.test.platform.app.InstrumentationRegistry
-import me.proton.android.drive.test.BuildConfig
 import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.test.quark.Quark
 import me.proton.core.test.quark.v2.QuarkCommand
 import me.proton.core.test.quark.v2.command.systemEnv
+import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.deserialize
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.rules.ExternalResource
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -45,6 +46,9 @@ class QuarkRule(
                     .connectTimeout(it)
                     .readTimeout(it)
                     .writeTimeout(it)
+                    .addInterceptor(HttpLoggingInterceptor { message ->
+                        CoreLogger.d(QuarkCommand.quarkCommandTag, message)
+                    }.apply { level = HttpLoggingInterceptor.Level.BODY })
                     .build()
             }
     }

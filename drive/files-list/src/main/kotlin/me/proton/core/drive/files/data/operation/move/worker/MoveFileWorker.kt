@@ -42,6 +42,7 @@ import me.proton.core.drive.base.data.workmanager.onProtonHttpException
 import me.proton.core.drive.base.domain.extension.resultValueOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.files.domain.operation.notification.MoveFileExtra
@@ -147,8 +148,8 @@ class MoveFileWorker @AssistedInject constructor(
                 I18N.string.file_operation_moving_file_successful
             }
         )
-        else -> applicationContext.getString(
-            I18N.string.file_operation_moving_multiple_successful,
+        else -> applicationContext.quantityString(
+            I18N.plurals.file_operation_moving_multiple_successful,
             size,
         )
     }
