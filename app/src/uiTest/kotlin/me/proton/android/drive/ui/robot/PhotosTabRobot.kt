@@ -157,6 +157,10 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
         photosBackupDisabled.await { assertIsDisplayed() }
     }
 
+    fun assertBackupPreparing() {
+        backupPreparing.await { assertIsDisplayed() }
+    }
+
     fun dismissBackupSetupGrowler(vararg folders: String) = node.withText(
         StringUtils.pluralStringFromResource(
             I18N.plurals.photos_message_folders_setup,

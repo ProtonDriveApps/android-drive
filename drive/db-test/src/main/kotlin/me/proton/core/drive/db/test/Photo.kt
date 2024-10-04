@@ -44,8 +44,6 @@ suspend fun VolumeContext.photoShare(
 ) : FolderId = share(
     shareEntity = NullableShareEntity(
         id = photoShareId.id,
-        userId = user.userId,
-        volumeId = volumeId.id,
         linkId = photoRootId.id,
         type = ShareDto.TYPE_PHOTO,
     )

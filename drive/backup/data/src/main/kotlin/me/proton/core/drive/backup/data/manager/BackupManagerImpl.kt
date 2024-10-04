@@ -24,7 +24,6 @@ import androidx.work.WorkManager
 import androidx.work.await
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.backup.data.extension.uniqueFolderIdTag
 import me.proton.core.drive.backup.data.extension.uniqueScanWorkName
 import me.proton.core.drive.backup.data.worker.BackupCheckDuplicatesWorker
 import me.proton.core.drive.backup.data.worker.BackupCleanRevisionsWorker
@@ -70,7 +69,7 @@ class BackupManagerImpl @Inject constructor(
                     syncAllFolders(folderId)
                 }
                 .onEnabled {
-                    CoreLogger.d(BACKUP, "Backup is disabled by DisableDrivePhotosUpload feature flag")
+                    CoreLogger.d(BACKUP, "Backup is disabled by DrivePhotosUploadDisabled feature flag")
                     addBackupError(
                         folderId = folderId,
                         error = BackupError(
@@ -159,10 +158,6 @@ class BackupManagerImpl @Inject constructor(
     }
 
     override fun isEnabled(folderId: FolderId): Flow<Boolean> = hasFolders(folderId)
-
-    override fun isUploading(folderId: FolderId): Flow<Boolean> = uploadWorkManager.isUploading(
-        folderId.uniqueFolderIdTag()
-    )
 
     override suspend fun updateNotification(folderId: FolderId) {
         workManager.enqueue(

@@ -5,12 +5,11 @@ import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.entity.Permissions
-import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.db.test.folder
 import me.proton.core.drive.db.test.mainShare
 import me.proton.core.drive.db.test.mainShareId
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.volume
@@ -20,13 +19,8 @@ import me.proton.core.drive.share.user.domain.entity.ShareUsersInvitation
 import me.proton.core.drive.test.DriveRule
 import me.proton.core.drive.test.api.createExternalInvitation
 import me.proton.core.drive.test.api.createInvitation
-import me.proton.core.drive.test.api.getPublicAddressKeys
 import me.proton.core.drive.test.api.getPublicAddressKeysAll
 import me.proton.core.drive.test.api.jsonResponse
-import me.proton.core.key.data.api.response.ActivePublicKeysResponse
-import me.proton.core.key.data.api.response.AddressDataResponse
-import me.proton.core.key.data.api.response.PublicAddressKeyResponse
-import me.proton.core.key.domain.entity.key.KeyFlags
 import me.proton.core.network.data.protonApi.ProtonErrorData
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -51,7 +45,7 @@ class InviteMembersTest {
         driveRule.db.user {
             volume {
                 val standardShareId = standardShareId()
-                standardShare(standardShareId.id)
+                standardShareByMe(standardShareId.id)
                 mainShare {
                     folder(
                         id = folderId.id,
@@ -86,7 +80,7 @@ class InviteMembersTest {
         driveRule.db.user {
             volume {
                 val standardShareId = standardShareId()
-                standardShare(standardShareId.id)
+                standardShareByMe(standardShareId.id)
                 mainShare {
                     folder(
                         id = folderId.id,

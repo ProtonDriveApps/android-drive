@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.robot
 
 import me.proton.android.drive.ui.extension.isValidField
 import me.proton.core.drive.drivelink.shared.presentation.component.ShareViaInvitationsTestTag
+import me.proton.core.drive.drivelink.shared.presentation.component.SharedDriveInvitationsTestTags
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.FusionConfig.targetContext
 import me.proton.core.drive.i18n.R as I18N
@@ -28,8 +29,12 @@ object ShareUserRobot : NavigationBarRobot, Robot {
     private val contentShareScreen get() = node.withTag(ShareViaInvitationsTestTag.content)
     private val closeButton get() = node.withText(I18N.string.common_close_action)
     private val emailTextField get() = node.isSetText()
+        .hasAncestor(node.withTag(SharedDriveInvitationsTestTags.emailField))
     private val sendButton get() = node.withContentDescription(I18N.string.common_send_action)
     private val viewerPermissionButton get() = node.withText(I18N.string.common_permission_viewer)
+    private val sendMessageAndNameLabel get() = node.withText(I18N.string.share_via_invitations_send_message_and_name_label)
+    private val messageTextField get() = node.isSetText()
+        .hasAncestor(node.withTag(SharedDriveInvitationsTestTags.messageField))
     private val editorPermissionButton get() = node.withText(I18N.string.common_permission_editor)
     fun typeEmail(text: String) = apply {
         emailTextField.typeText(text).typeText(" ")
@@ -40,6 +45,12 @@ object ShareUserRobot : NavigationBarRobot, Robot {
 
     fun clickOnViewerPermission() = viewerPermissionButton.clickTo(this)
 
+    fun clickOnSendMessageAndName() = sendMessageAndNameLabel.scrollTo().clickTo(this)
+
+    fun typeMessage(text: String) = apply {
+        messageTextField.typeText(text)
+    }
+
     fun clickOnEditorPermission() = editorPermissionButton.clickTo(this)
 
     fun assertShareFile(folderName: String) = node.withText(
@@ -49,10 +60,10 @@ object ShareUserRobot : NavigationBarRobot, Robot {
     ).await { assertIsDisplayed() }
 
     fun assertValidEmail(email: String) =
-        node.withText(email).hasAncestor(node.isValidField(true)).await { assertIsDisplayed() }
+        node.withText(email).hasAncestor(node.isValidField(true)).scrollTo().await { assertIsDisplayed() }
 
     fun assertInvalidEmail(email: String) =
-        node.withText(email).hasAncestor(node.isValidField(false)).await { assertIsDisplayed() }
+        node.withText(email).hasAncestor(node.isValidField(false)).scrollTo().await { assertIsDisplayed() }
 
     fun dismissInvitationSent(count: Int) = node.withText(
         targetContext.resources.getQuantityString(

@@ -23,7 +23,6 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.size
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.upload.EncryptUploadBlocks
 import me.proton.core.drive.crypto.domain.usecase.upload.EncryptUploadThumbnail
@@ -48,6 +47,7 @@ import me.proton.core.drive.linkupload.domain.usecase.GetUploadBlocks
 import me.proton.core.drive.linkupload.domain.usecase.RemoveRawUploadBlock
 import me.proton.core.drive.linkupload.domain.usecase.UpdateManifestSignature
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import me.proton.core.drive.upload.domain.extension.blockFile
 import me.proton.core.drive.upload.domain.provider.FileProvider
@@ -91,7 +91,7 @@ class EncryptBlocks @Inject constructor(
             try {
                 val blockFolder = getBlockFolder(userId, this).getOrThrow()
                 val unencryptedBlocks = getRawBlocks(id, blockFolder).getOrThrow()
-                val signatureAddress = getSignatureAddress(userId)
+                val signatureAddress = getSignatureAddress(uploadFileLink.shareId).getOrThrow()
                 val uploadFileKey = buildFileKey(signatureAddress)
                 val uploadFileContentKey = buildContentKey(uploadFileKey)
                 val addressKey = getAddressKeys(userId, signatureAddress)

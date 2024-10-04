@@ -24,5 +24,10 @@
     <string name="preview_processing_state">Processing…</string>
     <string name="preview_empty">Nothing to preview…</string>
     <string name="title_not_found">Not found</string>
-    <string name="preview_proton_doc_open_in_browser_button">Open in browser</string>
+    <string name="preview_proton_doc_open_in_browser_button">@string/common_open_in_browser_action</string>
+    <string name="proton_docs_insert_image_header_title">Insert image</string>
+    <string name="proton_docs_option_select_file">Select a file</string>
+    <string name="proton_docs_option_take_photo">@string/folder_option_take_a_photo</string>
+    <string name="proton_docs_unsupported_file_type">Only inserting images is supported for now</string>
+    <string name="proton_docs_load_error">Loading document failed</string>
 </resources>

@@ -43,8 +43,6 @@ suspend fun VolumeContext.deviceShare(index: Int = defaultIndex, block: suspend 
     share(
         shareEntity = NullableShareEntity(
             id = deviceShareId(index).id,
-            userId = user.userId,
-            volumeId = volumeId.id,
             linkId = deviceRootId(index).id,
             type = ShareDto.TYPE_DEVICE,
         )

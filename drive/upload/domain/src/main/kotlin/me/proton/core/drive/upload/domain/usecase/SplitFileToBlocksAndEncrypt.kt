@@ -23,7 +23,6 @@ import me.proton.core.drive.base.domain.extension.size
 import me.proton.core.drive.base.domain.extension.toHex
 import me.proton.core.drive.base.domain.log.LogTag.UploadTag.logTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.upload.EncryptUploadBlocks
 import me.proton.core.drive.crypto.domain.usecase.upload.EncryptUploadThumbnail
@@ -48,6 +47,7 @@ import me.proton.core.drive.linkupload.domain.factory.UploadBlockFactory
 import me.proton.core.drive.linkupload.domain.usecase.UpdateDigests
 import me.proton.core.drive.linkupload.domain.usecase.UpdateManifestSignature
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import me.proton.core.drive.upload.domain.extension.blockFile
 import me.proton.core.drive.upload.domain.extension.injectMessageDigests
@@ -116,7 +116,7 @@ class SplitFileToBlocksAndEncrypt @Inject constructor(
         with(uploadFileLink) {
             updateUploadState(id, UploadState.ENCRYPTING_BLOCKS).getOrThrow()
             try {
-                val signatureAddress = getSignatureAddress(userId)
+                val signatureAddress = getSignatureAddress(uploadFileLink.shareId).getOrThrow()
                 val uploadFileKey = buildFileKey(signatureAddress)
                 val uploadFileContentKey = buildContentKey(uploadFileKey)
                 val addressKey = getAddressKeys(userId, signatureAddress)

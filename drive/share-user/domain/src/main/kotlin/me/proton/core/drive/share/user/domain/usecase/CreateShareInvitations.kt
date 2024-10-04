@@ -48,7 +48,10 @@ class CreateShareInvitations @Inject constructor(
             invitation.members.associateWith { shareMemberInvitation ->
                 createShareInvitation(
                     shareId = shareId,
-                    invitation = shareMemberInvitation
+                    email = shareMemberInvitation.email,
+                    permissions = shareMemberInvitation.permissions,
+                    message = invitation.message,
+                    itemName = invitation.itemName,
                 ).filterSuccessOrError().last()
             }.let { results ->
                 emit(

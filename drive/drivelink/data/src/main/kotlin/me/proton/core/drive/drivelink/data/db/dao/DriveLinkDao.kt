@@ -132,6 +132,7 @@ interface DriveLinkDao : LinkDao {
             ShareMembershipEntity.${Column.SESSION_KEY_SIGNATURE} AS ${SHARE_MEMBER_PREFIX}_${Column.SESSION_KEY_SIGNATURE},
             ShareMembershipEntity.${Column.INVITER_EMAIL} AS ${SHARE_MEMBER_PREFIX}_${Column.INVITER_EMAIL},
             ShareMembershipEntity.${Column.INVITEE_EMAIL} AS ${SHARE_MEMBER_PREFIX}_${Column.INVITEE_EMAIL},
+            ShareMembershipEntity.${Column.ADDRESS_ID} AS ${SHARE_MEMBER_PREFIX}_${Column.ADDRESS_ID},
             ShareMembershipEntity.${Column.PERMISSIONS} AS ${SHARE_MEMBER_PREFIX}_${Column.PERMISSIONS},
             ShareMembershipEntity.${Column.CREATE_TIME} AS ${SHARE_MEMBER_PREFIX}_${Column.CREATE_TIME}
         """

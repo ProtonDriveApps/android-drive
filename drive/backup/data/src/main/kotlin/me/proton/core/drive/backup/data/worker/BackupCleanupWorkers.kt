@@ -34,16 +34,13 @@ class BackupCleanupWorkers @Inject constructor(
 
     override suspend fun additionalCleanupWorkers(
         uploadFileLinkId: Long,
-        tags: List<String>
     ): List<OneTimeWorkRequest> =
         additionalCleanupWorkers(
             uploadFileLink = getUploadFileLink(uploadFileLinkId).toResult().getOrThrow(),
-            tags = tags,
         )
 
     override suspend fun additionalCleanupWorkers(
         uploadFileLink: UploadFileLink,
-        tags: List<String>,
     ): List<OneTimeWorkRequest> {
         val userId = uploadFileLink.userId
         val uriString = uploadFileLink.uriString
@@ -56,10 +53,9 @@ class BackupCleanupWorkers @Inject constructor(
                     BackupScheduleUploadFolderWorker.getWorkRequest(
                         backupFolder = backupFolder,
                         delay = 60.seconds,
-                        tags = tags,
                     ),
-                    BackupNotificationWorker.getWorkRequest(backupFolder.folderId, tags),
-                    BackupClearFileWorker.getWorkRequest(backupFolder, uriString, tags),
+                    BackupNotificationWorker.getWorkRequest(backupFolder.folderId),
+                    BackupClearFileWorker.getWorkRequest(backupFolder, uriString),
                 )
             }.orEmpty()
         }

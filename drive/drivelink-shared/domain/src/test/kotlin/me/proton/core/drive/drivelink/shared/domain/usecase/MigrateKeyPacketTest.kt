@@ -101,7 +101,7 @@ class MigrateKeyPacketTest {
     fun migration() = runTest {
         driveRule.server.run {
             getShare(listOf(NullableShareDto(standardShareId.id)))
-            getShareBootstrap()
+            getShareBootstrap("address-id-user-id@proton.test")
             getUnmigratedShares(listOf(standardShareId.id))
             getLinks {
                 jsonResponse {
@@ -138,7 +138,7 @@ class MigrateKeyPacketTest {
     fun error() = runTest {
         driveRule.server.run {
             getUnmigratedShares(listOf(standardShareId.id))
-            getShareBootstrap()
+            getShareBootstrap("address-id-user-id@proton.test")
             getShare(listOf(NullableShareDto(standardShareId.id)))
             getLinks {
                 jsonResponse {

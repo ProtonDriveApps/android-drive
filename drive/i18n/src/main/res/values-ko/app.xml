@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">파일 업로드</string>
   <string name="folder_option_create_folder">폴더 생성</string>
   <string name="folder_option_take_a_photo">새 사진 촬영</string>
+  <string name="folder_option_create_document">문서 생성</string>
   <string name="settings_theme_system_default">시스템 기본값</string>
   <string name="settings_theme_dark">다크</string>
   <string name="settings_theme_light">라이트</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">오직 %1$s 으로 파일을 업로드할 수 있습니다.</string>
   <string name="in_app_notification_importing_file_already_exists">같은 이름의 파일이 이미 존재합니다, 앱 캐시 제거를 시도하십시오.</string>
   <string name="in_app_notification_clear_local_cache_success">로컬 캐시 성공적으로 지워짐</string>
+  <string name="in_app_notification_destination_screen_not_found">대상 폴더를 찾을 수 없음</string>
+  <string name="in_app_notification_create_document_success">문서 생성됨</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">저장 공간이 가득 찼습니다.</string>
@@ -175,7 +178,7 @@
   <string name="error_share_locked">공유가 잠겼습니다.</string>
   <string name="error_main_share_not_found">주 공유를 찾을 수 없습니다.</string>
   <string name="error_share_not_found">공유를 찾을 수 없습니다.</string>
-  <string name="error_creating_photo_share_not_allowed">사진 백업을 일시적으로 사용할 수 없습니다.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">공유를 일시적으로 생성할 수 없습니다.</string>
   <string name="operation_open_document">문서 열기</string>
   <string name="operation_create_document">문서 생성</string>
@@ -212,4 +215,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">무제 문서 %1$s</string>
 </resources>

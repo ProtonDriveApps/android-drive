@@ -27,6 +27,7 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.data.api.ShareExternalInvitationApiDataSource
 import me.proton.core.drive.share.user.data.api.entities.ShareExternalInvitationRequestDto
 import me.proton.core.drive.share.user.data.api.request.CreateShareExternalInvitationRequest
+import me.proton.core.drive.share.user.data.api.request.InvitationEmailDetailsRequestDto
 import me.proton.core.drive.share.user.data.api.request.UpdateShareInvitationRequest
 import me.proton.core.drive.share.user.data.db.ShareUserDatabase
 import me.proton.core.drive.share.user.data.extension.toEntity
@@ -94,12 +95,16 @@ class ShareExternalInvitationRepositoryImpl @Inject constructor(
         userId = shareId.userId,
         shareId = shareId.id,
         request = CreateShareExternalInvitationRequest(
-            ShareExternalInvitationRequestDto(
+            invitation = ShareExternalInvitationRequestDto(
                 inviterAddressId = request.inviterAddressId.id,
                 inviteeEmail = request.inviteeEmail,
                 permissions = request.permissions.value,
                 externalInvitationSignature = request.invitationSignature,
-            )
+            ),
+            emailDetails = InvitationEmailDetailsRequestDto(
+                message = request.message,
+                itemName = request.itemName,
+            ),
         )
     ).externalInvitation.toShareUserExternalInvitee().also { externalInvitee ->
         db.shareExternalInvitationDao.insertOrUpdate(

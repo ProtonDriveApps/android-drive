@@ -160,7 +160,6 @@ class UploadWorkManagerImpl @Inject constructor(
         folder: Folder,
         showPreparingUpload: Boolean,
         showFilesBeingUploaded: Boolean,
-        tags : List<String>,
     ) {
         workManager.enqueueUniqueWork(
             uploadBulk.userId.uniqueUploadBulkWorkName,
@@ -169,7 +168,6 @@ class UploadWorkManagerImpl @Inject constructor(
                 uploadBulk,
                 folder.name,
                 showFilesBeingUploaded,
-                tags,
             ),
         )
         if (showPreparingUpload) {
@@ -194,7 +192,7 @@ class UploadWorkManagerImpl @Inject constructor(
     }
 
     override suspend fun cancel(uploadFileLink: UploadFileLink): Unit = with (uploadFileLink) {
-        workManager.cancelAllWorkByTag(id.uniqueUploadWorkName)
+        workManager.cancelAllWorkByTag(id.uniqueUploadWorkName).await()
         if (!linkId.isNullOrEmpty()) {
             workManager.enqueue(
                 UploadCleanupWorker.getWorkRequest(
@@ -202,9 +200,9 @@ class UploadWorkManagerImpl @Inject constructor(
                     uploadFileLinkId = id,
                     isCancelled = true
                 )
-            )
+            ).await()
         } else {
-            removeUploadFileAndAnnounceCancelled(uploadFileLink)
+            removeUploadFileAndAnnounceCancelled(uploadFileLink).getOrThrow()
         }
     }
 
@@ -305,15 +303,6 @@ class UploadWorkManagerImpl @Inject constructor(
             ),
             type = BroadcastMessage.Type.WARNING,
         )
-
-    override fun isUploading(tag: String): Flow<Boolean> =
-        workManager.getWorkInfosByTagLiveData(TAG_UPLOAD_WORKER)
-            .asFlow().map { workInfos ->
-                workInfos.asSequence()
-                    .filter { workInfo -> workInfo.state == WorkInfo.State.RUNNING }
-                    .filter { workInfo -> workInfo.tags.contains(tag) }
-                    .count()
-            }.map { count -> count > 0 }.distinctUntilChanged()
 
     private fun newUploadEvent(uploadFileLinkId: Long) = Event.Upload(
         state = Event.Upload.UploadState.NEW_UPLOAD,

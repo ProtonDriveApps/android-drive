@@ -11,7 +11,7 @@ import me.proton.core.drive.db.test.folder
 import me.proton.core.drive.db.test.mainShare
 import me.proton.core.drive.db.test.mainShareId
 import me.proton.core.drive.db.test.myFiles
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.volume
@@ -47,7 +47,7 @@ class GetShareUsersTest {
         driveRule.db.user {
             contactEmail("invitee")
             volume {
-                standardShare(standardShareId.id)
+                standardShareByMe(standardShareId.id)
                 mainShare {
                     folder(
                         id = folderId.id,
@@ -78,7 +78,7 @@ class GetShareUsersTest {
         driveRule.db.user {
             contactEmail("invitee")
             volume {
-                standardShare(standardShareId.id)
+                standardShareByMe(standardShareId.id)
                 mainShare {
                     folder(
                         id = folderId.id,
@@ -106,7 +106,7 @@ class GetShareUsersTest {
             contactEmail("external-invitee", isProton = false)
             contactEmail("member")
             volume {
-                standardShare(standardShareId.id) {
+                standardShareByMe(standardShareId.id) {
                     //invitation("invitee@proton.me")
                     //member("member@proton.me")
                 }

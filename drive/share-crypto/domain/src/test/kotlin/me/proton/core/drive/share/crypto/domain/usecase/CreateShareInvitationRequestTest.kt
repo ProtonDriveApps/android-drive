@@ -4,23 +4,24 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
 import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.drive.base.domain.entity.Permissions
+import me.proton.core.drive.db.test.addPrimaryAddress
 import me.proton.core.drive.db.test.folder
 import me.proton.core.drive.db.test.mainShare
 import me.proton.core.drive.db.test.mainShareId
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.volume
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.share.crypto.domain.entity.ShareInvitationRequest
 import me.proton.core.drive.test.DriveRule
-import me.proton.core.drive.test.api.getPublicAddressKeys
 import me.proton.core.drive.test.api.getPublicAddressKeysAll
 import me.proton.core.drive.test.api.jsonResponse
 import me.proton.core.key.data.api.response.ActivePublicKeysResponse
 import me.proton.core.key.data.api.response.AddressDataResponse
 import me.proton.core.key.data.api.response.PublicAddressKeyResponse
-import me.proton.core.key.data.api.response.PublicAddressKeysResponse
 import me.proton.core.key.domain.entity.key.KeyFlags
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -41,10 +42,13 @@ class CreateShareInvitationRequestTest {
     private val folderId = FolderId(mainShareId, "folder-id")
 
     @Before
-    fun setUp() = runTest{
+    fun setUp() = runTest {
         driveRule.db.user {
             volume {
-                standardShare(standardShareId.id)
+                standardShareByMe(
+                    id = standardShareId.id,
+                    email = "second@proton.test",
+                )
                 mainShare {
                     folder(
                         id = folderId.id,
@@ -52,6 +56,7 @@ class CreateShareInvitationRequestTest {
                     )
                 }
             }
+            addPrimaryAddress("second@proton.test")
         }
     }
 
@@ -60,11 +65,13 @@ class CreateShareInvitationRequestTest {
         driveRule.server.run {
             getPublicAddressKeysAll()
         }
-        createShareInvitationRequest(
+        val shareInvitationRequest = createShareInvitationRequest(
             shareId = standardShareId,
             inviteeEmail = "invitee@proton.me",
             permissions = Permissions(),
-        ).getOrThrow()
+        ).getOrThrow() as ShareInvitationRequest.Internal
+
+        assertEquals("user-id@proton.test", shareInvitationRequest.inviterEmail)
     }
 
     @Test(expected = CryptoException::class)

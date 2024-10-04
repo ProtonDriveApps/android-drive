@@ -29,19 +29,22 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.compose.theme.default
+import me.proton.core.compose.theme.defaultNorm
 
 @Composable
 fun BottomSheetEntry(
     @DrawableRes leadingIcon: Int,
     @DrawableRes trailingIcon: Int?,
     title: String,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    trailingIconTintColor: Color? = null,
+    notificationDotVisible: Boolean = false,
+    onClick: () -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -51,21 +54,29 @@ fun BottomSheetEntry(
             .height(ItemHeight),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = leadingIcon),
-            contentDescription = null,
-            modifier = Modifier.padding(start = ProtonDimens.DefaultSpacing, end = ProtonDimens.MediumSpacing)
-        )
+        BoxWithNotificationDot(
+            notificationDotVisible = notificationDotVisible,
+            modifier = Modifier.padding(start = ProtonDimens.DefaultSpacing, end = ProtonDimens.MediumSpacing),
+        ) { modifier ->
+            Icon(
+                painter = painterResource(id = leadingIcon),
+                contentDescription = null,
+                modifier = modifier,
+            )
+        }
         Text(
             text = title,
-            style = ProtonTheme.typography.default,
-            modifier = Modifier.weight(1F).padding(end = ProtonDimens.DefaultSpacing),
+            style = ProtonTheme.typography.defaultNorm,
+            modifier = Modifier
+                .weight(1F)
+                .padding(end = ProtonDimens.DefaultSpacing),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        if(trailingIcon != null) {
+        if (trailingIcon != null) {
             Icon(
                 painter = painterResource(id = trailingIcon),
+                tint = trailingIconTintColor ?: ProtonTheme.colors.iconNorm,
                 contentDescription = null,
                 modifier = Modifier.padding(
                     start = ProtonDimens.DefaultSpacing,

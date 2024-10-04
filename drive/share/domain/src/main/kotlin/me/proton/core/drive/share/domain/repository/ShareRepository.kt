@@ -24,6 +24,7 @@ import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.entity.ShareInfo
+import me.proton.core.drive.share.domain.entity.ShareMembership
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface ShareRepository {
@@ -97,6 +98,10 @@ interface ShareRepository {
      */
     suspend fun createShare(userId: UserId, volumeId: VolumeId, shareInfo: ShareInfo): Result<ShareId>
 
+    suspend fun hasMembership(shareId: ShareId): Boolean
+
     suspend fun getAllMembershipIds(userId: UserId): List<String>
     suspend fun getPermissions(shareIds: List<ShareId>): List<Permissions>
+
+    fun getMembership(shareId: ShareId): Flow<DataResult<ShareMembership>>
 }

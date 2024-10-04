@@ -17,6 +17,9 @@
  */
 package me.proton.core.drive.files.preview.presentation.component
 
+import android.net.Uri
+import android.webkit.ValueCallback
+import android.webkit.WebChromeClient
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.slideInVertically
@@ -146,6 +149,8 @@ fun Preview(
                 PreviewContent(
                     viewState.items[page],
                     isFullScreen,
+                    viewState.host,
+                    viewState.appVersionHeader,
                     viewEvent,
                     with(LocalDensity.current) { topBarHeightAnimated.toDp() },
                     isFocused = pagerState.currentPage == page,
@@ -197,6 +202,8 @@ private val appBarGradient: Brush @Composable get() = Brush.verticalGradient(
 fun PreviewContent(
     item: PreviewViewState.Item,
     isFullScreen: Boolean,
+    host: String,
+    appVersionHeader: String,
     viewEvent: PreviewViewEvent,
     topBarHeight: Dp,
     isFocused: Boolean,
@@ -217,6 +224,9 @@ fun PreviewContent(
         }
         is ContentState.Available -> PreviewContentAvailable(
             contentStateLocal,
+            item.title,
+            host,
+            appVersionHeader,
             item.category.toComposable(),
             isFullScreen,
             viewEvent,
@@ -276,6 +286,9 @@ fun PreviewDownloadingAndDecrypting(
 @Suppress("LongParameterList")
 fun PreviewContentAvailable(
     contentState: ContentState.Available,
+    title: String,
+    host: String,
+    appVersionHeader: String,
     previewComposable: PreviewComposable,
     isFullScreen: Boolean,
     viewEvent: PreviewViewEvent,
@@ -290,9 +303,12 @@ fun PreviewContentAvailable(
 
     if (isFocused) {
         DisposableEffect(dragEnable) {
-            userScrollEnabled.value = !dragEnable
+            userScrollEnabled.value = when {
+                previewComposable == PreviewComposable.ProtonDoc -> false
+                else -> !dragEnable
+            }
             onDispose {
-                userScrollEnabled.value = true
+                userScrollEnabled.value = previewComposable != PreviewComposable.ProtonDoc
             }
         }
     }
@@ -339,10 +355,22 @@ fun PreviewContentAvailable(
             modifier = pointerInputModifier.padding(top = topBarHeight),
             onRenderFailed = viewEvent.onRenderFailed,
         )
-        PreviewComposable.ProtonDoc -> ProtonDocumentPreview(
-            modifier = pointerInputModifier.padding(top = topBarHeight),
-            onOpenInBrowser = viewEvent.onOpenInBrowser,
-        )
+        PreviewComposable.ProtonDoc -> when (contentState.source) {
+            is String -> ProtonDocumentPreview(
+                uriString = requireIsInstance(contentState.source),
+                title = title,
+                host = host,
+                appVersionHeader = appVersionHeader,
+                modifier = pointerInputModifier.padding(top = topBarHeight),
+                onDownloadResult = viewEvent.onProtonDocsDownloadResult,
+                onShowFileChooser = viewEvent.onProtonDocsShowFileChooser,
+            )
+            is Uri -> ProtonDocumentPreview(
+                modifier = pointerInputModifier.padding(top = topBarHeight),
+                onOpenInBrowser = viewEvent.onOpenInBrowser,
+            )
+            else -> Unit
+        }
         PreviewComposable.Unknown -> UnknownPreview()
     }.exhaustive
 }
@@ -494,7 +522,9 @@ fun PreviewPreviewLoadingState() {
                             category = FileTypeCategory.Image,
                             contentState = emptyFlow(),
                         )
-                    )
+                    ),
+                    host = "proton.me",
+                    appVersionHeader = "android-drive@1.0.0",
                 ),
                 viewEvent = object : PreviewViewEvent {
                     override val onTopAppBarNavigation: () -> Unit = {}
@@ -503,6 +533,8 @@ fun PreviewPreviewLoadingState() {
                     override val onRenderFailed: (Throwable, Any) -> Unit = { _, _ -> }
                     override val mediaControllerVisibility: (Boolean) -> Unit = {}
                     override val onOpenInBrowser: () -> Unit = {}
+                    override val onProtonDocsDownloadResult: (Result<String>) -> Unit = {}
+                    override val onProtonDocsShowFileChooser: (ValueCallback<Array<Uri>>?, WebChromeClient.FileChooserParams?) -> Boolean = { _, _ -> false }
                 },
             )
         }

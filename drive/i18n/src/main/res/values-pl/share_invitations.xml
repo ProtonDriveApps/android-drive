@@ -96,4 +96,6 @@
     <item quantity="many">%1$d członków</item>
     <item quantity="other">%1$d członków</item>
   </plurals>
+  <string name="share_via_invitations_message_placeholder">Add a message</string>
+  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
 </resources>

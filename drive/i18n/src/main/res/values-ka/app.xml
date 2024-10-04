@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">ფაილის ატვირთვა</string>
   <string name="folder_option_create_folder">საქაღალდის შექმნა</string>
   <string name="folder_option_take_a_photo">ახალი სურათის გადაღება</string>
+  <string name="folder_option_create_document">დოკუმენტის შექმნა</string>
   <string name="settings_theme_system_default">სისტემის ნაგულისხმები</string>
   <string name="settings_theme_dark">ბნელი</string>
   <string name="settings_theme_light">ღია</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">%1$s-ზე, მხოლოდ, ფაილების ატვირთვაა შესაძლებელი</string>
   <string name="in_app_notification_importing_file_already_exists">ფაილი იგივე სახელით უკვე არსებობს. სცადეთ, აპის კეში გაასუფთაოთ</string>
   <string name="in_app_notification_clear_local_cache_success">ლოკალური კეში წარმატებით გაიწმინდა</string>
+  <string name="in_app_notification_destination_screen_not_found">სამიზნე ეკრანი არ არსებობს</string>
+  <string name="in_app_notification_create_document_success">დოკუმენტი შეიქმნა</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">საცავი სავსეა</string>
@@ -180,7 +183,7 @@
   <string name="error_share_locked">ზიარი დაბლოკილია.</string>
   <string name="error_main_share_not_found">მთავარი გაზიარებული ვერ ვიპოვე</string>
   <string name="error_share_not_found">ზიარი ვერ ვიპოვე.</string>
-  <string name="error_creating_photo_share_not_allowed">სურათების მარქაფი დროებით გამორთულია.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">გაზიარებულის შექმნა დროებით გათიშულია.</string>
   <string name="operation_open_document">დოკუმენტის გახსნა</string>
   <string name="operation_create_document">დოკუმენტის შექმნა</string>
@@ -217,4 +220,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">უსათაურო დოკუმენტი %1$s</string>
 </resources>

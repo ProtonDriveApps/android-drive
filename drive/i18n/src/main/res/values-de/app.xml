@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">Datei hochladen</string>
   <string name="folder_option_create_folder">Ordner erstellen</string>
   <string name="folder_option_take_a_photo">Neues Foto aufnehmen</string>
+  <string name="folder_option_create_document">Dokument erstellen</string>
   <string name="settings_theme_system_default">Systemstandard</string>
   <string name="settings_theme_dark">Dunkel</string>
   <string name="settings_theme_light">Hell</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">Nur Dateien können zu %1$s hochgeladen werden.</string>
   <string name="in_app_notification_importing_file_already_exists">Eine Datei mit demselben Namen existiert bereits. Versuche, den App-Cache zu löschen.</string>
   <string name="in_app_notification_clear_local_cache_success">Lokaler Cache wurde erfolgreich geleert</string>
+  <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
+  <string name="in_app_notification_create_document_success">Dokument erstellt</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Speicherplatz voll</string>
@@ -180,7 +183,7 @@
   <string name="error_share_locked">Freigabe ist gesperrt.</string>
   <string name="error_main_share_not_found">Das freigegebene Hauptverzeichnis konnte nicht gefunden werden.</string>
   <string name="error_share_not_found">Freigabe nicht gefunden.</string>
-  <string name="error_creating_photo_share_not_allowed">Die Fotosicherung ist vorübergehend deaktiviert.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">Das Erstellen von Freigaben ist vorübergehend deaktiviert.</string>
   <string name="operation_open_document">Dokumente öffnen kann</string>
   <string name="operation_create_document">Dokumente erstellen kann</string>
@@ -217,4 +220,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Unbenanntes Dokument %1$s</string>
 </resources>

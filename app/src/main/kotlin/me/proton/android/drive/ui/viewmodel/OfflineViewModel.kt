@@ -48,8 +48,9 @@ import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.OfflineViewEvent
 import me.proton.android.drive.ui.viewstate.OfflineViewState
-import me.proton.android.drive.usecase.OpenProtonDocument
+import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.domain.arch.onSuccess
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Percentage
@@ -60,6 +61,7 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.state.ListContentAppendingState
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
@@ -71,6 +73,7 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgres
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetPagedOfflineDriveLinksList
 import me.proton.core.drive.files.presentation.state.FilesViewState
+import me.proton.core.drive.files.preview.presentation.component.ProtonDocsInWebViewFeatureFlag
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -100,14 +103,17 @@ class OfflineViewModel @Inject constructor(
     getLayoutType: GetLayoutType,
     private val toggleLayoutType: ToggleLayoutType,
     private val configurationProvider: ConfigurationProvider,
-    private val openProtonDocument: OpenProtonDocument,
+    private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     private val broadcastMessages: BroadcastMessages,
+    protonDocsInWebViewFeatureFlag: ProtonDocsInWebViewFeatureFlag,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val shareId = savedStateHandle.get<String>(Screen.Files.SHARE_ID)
     private val folderId = savedStateHandle.get<String>(Screen.Files.FOLDER_ID)?.let { folderId ->
         shareId?.let { FolderId(ShareId(userId, shareId), folderId) }
     }
+    val openProtonDocsInWebView: StateFlow<Boolean> = protonDocsInWebViewFeatureFlag(userId)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
     val driveLink: StateFlow<DriveLink.Folder?> = getDriveLink(userId, folderId, failOnDecryptionError = false)
         .map { result ->
             result
@@ -223,6 +229,7 @@ class OfflineViewModel @Inject constructor(
                                 )
                             },
                             openDocument = this@OfflineViewModel::openDocument,
+                            openProtonDocsInWebView = openProtonDocsInWebView,
                         )
                     }
                 }
@@ -271,7 +278,7 @@ class OfflineViewModel @Inject constructor(
     }
 
     private suspend fun openDocument(driveLink: DriveLink.File) =
-        openProtonDocument(driveLink)
+        openProtonDocumentInBrowser(driveLink)
             .onFailure { error ->
                 error.log(VIEW_MODEL, "Open document failed")
                 broadcastMessages(

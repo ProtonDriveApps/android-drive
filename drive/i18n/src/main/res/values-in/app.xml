@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">Unggah berkas</string>
   <string name="folder_option_create_folder">Buat folder</string>
   <string name="folder_option_take_a_photo">Ambil foto baru</string>
+  <string name="folder_option_create_document">Buat dokumen</string>
   <string name="settings_theme_system_default">Bawaan sistem</string>
   <string name="settings_theme_dark">Gelap</string>
   <string name="settings_theme_light">Terang</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">Hanya berkas yang dapat diunggah ke %1$s</string>
   <string name="in_app_notification_importing_file_already_exists">Berkas dengan nama yang sama telah ada. Cobalah untuk membersihkan cache aplikasi</string>
   <string name="in_app_notification_clear_local_cache_success">Cache lokal berhasil dihapus</string>
+  <string name="in_app_notification_destination_screen_not_found">Layar tujuan tidak ditemukan</string>
+  <string name="in_app_notification_create_document_success">Dokumen dibuat</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Ruang penyimpanan penuh</string>
@@ -175,7 +178,7 @@
   <string name="error_share_locked">Pembagian terkunci.</string>
   <string name="error_main_share_not_found">Partisi share utama tidak ditemukan.</string>
   <string name="error_share_not_found">Pembagian tidak ditemukan.</string>
-  <string name="error_creating_photo_share_not_allowed">Pencadangan foto untuk sementara dinonaktifkan.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">Pembuatan tautan berbagi untuk sementara dinonaktifkan.</string>
   <string name="operation_open_document">buka dokumen</string>
   <string name="operation_create_document">buat dokumen</string>
@@ -212,4 +215,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Dokumen tak berjudul %1$s</string>
 </resources>

@@ -18,6 +18,10 @@
 
 package me.proton.core.drive.files.preview.presentation.component.event
 
+import android.net.Uri
+import android.webkit.ValueCallback
+import android.webkit.WebChromeClient.FileChooserParams
+
 interface PreviewViewEvent {
     val onTopAppBarNavigation: () -> Unit
     val onMoreOptions: () -> Unit
@@ -25,4 +29,6 @@ interface PreviewViewEvent {
     val onRenderFailed: (Throwable, Any) -> Unit
     val mediaControllerVisibility: (Boolean) -> Unit
     val onOpenInBrowser: () -> Unit
+    val onProtonDocsDownloadResult: (Result<String>) -> Unit
+    val onProtonDocsShowFileChooser: (ValueCallback<Array<Uri>>?, FileChooserParams?) -> Boolean
 }

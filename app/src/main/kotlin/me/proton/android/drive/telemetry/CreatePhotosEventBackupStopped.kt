@@ -41,15 +41,9 @@ class CreatePhotosEventBackupStopped(
     suspend operator fun invoke(
         folderId: FolderId,
         reason: PhotosEvent.Reason,
-    ): DriveTelemetryEvent = when (reason) {
-        PhotosEvent.Reason.COMPLETED,
-        PhotosEvent.Reason.PAUSED_DISABLED,
-        -> getUploadStats(folderId).getOrNull()
-            ?.backupStop(reason, folderId)
-            ?: backupStopNoBackup(reason, folderId)
-
-        else -> getUploadStats(folderId).getOrThrow().backupStop(reason, folderId)
-    }
+    ): DriveTelemetryEvent = getUploadStats(folderId).getOrNull()
+        ?.backupStop(reason, folderId)
+        ?: backupStopNoBackup(reason, folderId)
 
 
     private suspend fun UploadStats.backupStop(

@@ -25,12 +25,16 @@ sealed interface ShareInvitationRequest {
 
     val inviteeEmail: String
     val permissions: Permissions
+    val message: String?
+    val itemName: String?
     data class Internal(
         override val inviteeEmail: String,
         override val permissions: Permissions,
         val inviterEmail: String,
         val keyPacket: String,
         val keyPacketSignature: String,
+        override val message: String? = null,
+        override val itemName: String? = null,
         val externalInvitationId: String? = null,
     ) : ShareInvitationRequest
 
@@ -39,6 +43,8 @@ sealed interface ShareInvitationRequest {
         override val permissions: Permissions,
         val inviterAddressId: AddressId,
         val invitationSignature: String,
+        override val message: String? = null,
+        override val itemName: String? = null,
     ) : ShareInvitationRequest
 
 

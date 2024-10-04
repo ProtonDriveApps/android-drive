@@ -51,8 +51,9 @@ import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
-import me.proton.android.drive.usecase.OpenProtonDocument
+import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.domain.arch.onSuccess
+import me.proton.core.drive.base.data.datastore.GetUserDataStore
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Percentage
@@ -79,6 +80,7 @@ import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveL
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
+import me.proton.core.drive.files.preview.presentation.component.ProtonDocsInWebViewFeatureFlag
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -90,6 +92,7 @@ import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinks
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
+import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.domain.usecase.CancelUploadFile
 import me.proton.core.drive.upload.domain.usecase.GetUploadProgress
 import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
@@ -117,7 +120,8 @@ class FilesViewModel @Inject constructor(
     private val getUploadFileLinks: GetUploadFileLinks,
     private val getUploadProgress: GetUploadProgress,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
-    private val openProtonDocument: OpenProtonDocument,
+    protonDocsInWebViewFeatureFlag: ProtonDocsInWebViewFeatureFlag,
+    private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     selectLinks: SelectLinks,
     selectAll: SelectAll,
     deselectLinks: DeselectLinks,
@@ -126,6 +130,7 @@ class FilesViewModel @Inject constructor(
     getSorting: GetSorting,
     private val configurationProvider: ConfigurationProvider,
     shouldUpgradeStorage: ShouldUpgradeStorage,
+    getUserDataStore: GetUserDataStore,
 ) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
@@ -134,6 +139,8 @@ class FilesViewModel @Inject constructor(
     private val folderId = savedStateHandle.get<String>(Screen.Files.FOLDER_ID)?.let { folderId ->
         shareId?.let { FolderId(ShareId(userId, shareId), folderId) }
     }
+    val openProtonDocsInWebView: StateFlow<Boolean> = protonDocsInWebViewFeatureFlag(userId)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
     private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
     val driveLink: StateFlow<DriveLink.Folder?> = retryTrigger.transformLatest {
         emitAll(
@@ -177,12 +184,17 @@ class FilesViewModel @Inject constructor(
     private val addFilesAction = Action(
         iconResId = CorePresentation.drawable.ic_proton_plus,
         contentDescriptionResId = I18N.string.content_description_files_upload_upload_file,
+        notificationDotVisible = true,
         onAction = { viewEvent?.onParentFolderOptions?.invoke() },
     )
 
     private val selectedOptionsAction get() = selectedOptionsAction {
         viewEvent?.onSelectedOptions?.invoke()
     }
+    private val createDocumentNotificationDotViewModel = CreateDocumentNotificationDotViewModel(
+        userId = userId,
+        getUserDataStore = getUserDataStore,
+    )
     private val topBarActions: MutableStateFlow<Set<Action>> = MutableStateFlow(emptySet())
     val isBottomNavigationEnabled: Flow<Boolean> = selected.map { set -> set.isEmpty() }
     val initialViewState = FilesViewState(
@@ -210,7 +222,9 @@ class FilesViewModel @Inject constructor(
         layoutType,
         selected,
         notificationDotRequested,
-    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested ->
+        createDocumentNotificationDotViewModel.notificationDotRequested,
+
+    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested, createDocumentNotificationDotRequested ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -220,7 +234,11 @@ class FilesViewModel @Inject constructor(
         if (selected.isEmpty()) {
             val permissions = driveLink?.sharePermissions ?: Permissions.owner
             topBarActions.value = if (permissions.canWrite) {
-                setOf(addFilesAction)
+                setOf(
+                    addFilesAction.copy(
+                        notificationDotVisible = createDocumentNotificationDotRequested,
+                    )
+                )
             } else {
                 emptySet()
             }
@@ -309,7 +327,12 @@ class FilesViewModel @Inject constructor(
             viewModelScope.launch {
                 lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     flow.take(1).collect { driveLink ->
-                        driveLink.onClick(navigateToFiles, navigateToPreview, this@FilesViewModel::openDocument)
+                        driveLink.onClick(
+                            navigateToFolder = navigateToFiles,
+                            navigateToPreview = navigateToPreview,
+                            openDocument = this@FilesViewModel::openDocument,
+                            openProtonDocsInWebView = openProtonDocsInWebView,
+                        )
                     }
                 }
             }
@@ -400,7 +423,17 @@ class FilesViewModel @Inject constructor(
 
     private fun onCancelUpload(uploadFileLink: UploadFileLink) {
         viewModelScope.launch {
-            cancelUploadFile(uploadFileLink)
+            cancelUploadFile(uploadFileLink).onFailure { error ->
+                error.log(uploadFileLink.logTag(), "Cannot cancel upload")
+                _homeEffect.emit(
+                    HomeEffect.ShowSnackbar(
+                        error.getDefaultMessage(
+                            context = appContext,
+                            useExceptionMessage = configurationProvider.useExceptionMessage,
+                        )
+                    )
+                )
+            }
         }
     }
 
@@ -411,7 +444,7 @@ class FilesViewModel @Inject constructor(
     }
 
     private suspend fun openDocument(driveLink: DriveLink.File) =
-        openProtonDocument(driveLink)
+        openProtonDocumentInBrowser(driveLink)
             .onFailure { error ->
                 error.log(VIEW_MODEL, "Open document failed")
                 _homeEffect.emit(

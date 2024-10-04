@@ -6,7 +6,7 @@ import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.db.test.externalInvitation
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.test.DriveRule
 import me.proton.core.drive.test.api.deleteExternalInvitation
@@ -35,7 +35,7 @@ class DeleteExternalInvitationTest {
 
     @Before
     fun setUp() = runTest {
-        driveRule.db.standardShare(standardShareId.id) {
+        driveRule.db.standardShareByMe(standardShareId.id) {
             externalInvitation("invitee@external.com")
         }
     }

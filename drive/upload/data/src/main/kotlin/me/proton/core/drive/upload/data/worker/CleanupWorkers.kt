@@ -25,21 +25,18 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 interface CleanupWorkers {
     suspend fun additionalCleanupWorkers(
         uploadFileLink: UploadFileLink,
-        tags: List<String>,
     ): List<OneTimeWorkRequest>
 
     suspend fun additionalCleanupWorkers(
         uploadFileLinkId: Long,
-        tags: List<String>,
     ): List<OneTimeWorkRequest>
 
     suspend operator fun invoke(
         userId: UserId,
         uploadFileLink: UploadFileLink,
         uploadTag: List<String>,
-        tags: List<String>,
     ): List<OneTimeWorkRequest> =
-        additionalCleanupWorkers(uploadFileLink, tags) + UploadSuccessCleanupWorker.getWorkRequest(
+        additionalCleanupWorkers(uploadFileLink) + UploadSuccessCleanupWorker.getWorkRequest(
             userId = userId,
             uploadFileLinkId = uploadFileLink.id,
             tags = uploadTag
@@ -49,9 +46,8 @@ interface CleanupWorkers {
         userId: UserId,
         uploadFileLinkId: Long,
         uploadTag: List<String>,
-        tags: List<String>,
     ): List<OneTimeWorkRequest> =
-        additionalCleanupWorkers(uploadFileLinkId, tags) + UploadSuccessCleanupWorker.getWorkRequest(
+        additionalCleanupWorkers(uploadFileLinkId) + UploadSuccessCleanupWorker.getWorkRequest(
             userId = userId,
             uploadFileLinkId = uploadFileLinkId,
             tags = uploadTag

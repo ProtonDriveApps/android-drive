@@ -183,6 +183,7 @@ class SyncedFoldersViewModel @Inject constructor(
                             navigateToFolder = navigateToFiles,
                             navigateToPreview = { error("Preview is not supported here") },
                             openDocument = { _ -> error("Preview is not supported here") },
+                            openProtonDocsInWebView = MutableStateFlow(false),
                         )
                     }
                 }

@@ -23,5 +23,8 @@
   <string name="preview_processing_state">Memproses…</string>
   <string name="preview_empty">Tidak ada pratinjau yang dapat ditampilkan…</string>
   <string name="title_not_found">Tidak ditemukan</string>
-  <string name="preview_proton_doc_open_in_browser_button">Buka di browser</string>
+  <string name="proton_docs_insert_image_header_title">Sisipkan gambar</string>
+  <string name="proton_docs_option_select_file">Pilih berkas</string>
+  <string name="proton_docs_unsupported_file_type">Hanya penyisipan gambar yang didukung untuk saat ini</string>
+  <string name="proton_docs_load_error">Loading document failed</string>
 </resources>

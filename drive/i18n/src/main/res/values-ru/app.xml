@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">Загрузить файл</string>
   <string name="folder_option_create_folder">Создать папку</string>
   <string name="folder_option_take_a_photo">Сделать новое фото</string>
+  <string name="folder_option_create_document">Создать документ</string>
   <string name="settings_theme_system_default">Настройки по умолчанию</string>
   <string name="settings_theme_dark">Тёмная</string>
   <string name="settings_theme_light">Светлая</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">Только файлы могут быть загружены в %1$s</string>
   <string name="in_app_notification_importing_file_already_exists">Файл с таким именем уже существует, попробуйте очистить кэш приложения</string>
   <string name="in_app_notification_clear_local_cache_success">Локальный кеш очищен успешно</string>
+  <string name="in_app_notification_destination_screen_not_found">Экран назначения не найден</string>
+  <string name="in_app_notification_create_document_success">Документ создан</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Хранилище заполнено</string>
@@ -140,21 +143,21 @@
     <item quantity="other">Осталось %1$s элементов</item>
   </plurals>
   <string name="notification_content_text_backup_complete">Резервное копирование завершено</string>
-  <string name="notification_content_text_backup_uncompleted">Резервное копирование завершено с проблемами.</string>
-  <string name="notification_content_text_backup_failed">Резервное копирование завершено</string>
+  <string name="notification_content_text_backup_uncompleted">Резервное копирование завершено с проблемами</string>
+  <string name="notification_content_text_backup_failed">Не удалось выполнить резервное копирование</string>
   <string name="notification_content_text_backup_failed_drive_storage">Хранилище Proton заполнено</string>
-  <string name="notification_content_text_backup_failed_local_storage">Местное хранилище заполнено.</string>
-  <string name="notification_content_text_backup_failed_permission">Отсутствуют разрешения</string>
+  <string name="notification_content_text_backup_failed_local_storage">Локальное хранилище заполнено</string>
+  <string name="notification_content_text_backup_failed_permission">Разрешения отсутствуют</string>
   <string name="notification_content_text_backup_failed_connectivity">Нет подключения к Интернету</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Ожидание Wi-Fi</string>
-  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Резервное копирование завершено.</string>
-  <string name="notification_content_text_backup_paused_disabled">Резервное копирование было завершено</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Резервное копирование запрещено</string>
+  <string name="notification_content_text_backup_paused_disabled">Резервное копирование было отключено</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Резервное копирование не может выполняться в фоновом режиме</string>
   <string name="notification_content_text_backup_preparing">Подготовка к созданию резервной копии</string>
   <string name="notification_content_title_download_complete">Скачивание завершено</string>
-  <string name="notification_content_title_forced_sign_out">Пожалуйста, войдите</string>
-  <string name="notification_content_text_forced_sign_out">Извините, что прервали! У нас возникла проблема с синхронизацией - пожалуйста, войдите снова, и мы обеспечим стабильную работу.</string>
-  <string name="notification_content_title_no_space_left_on_device">Недостаточно места на устройстве</string>
+  <string name="notification_content_title_forced_sign_out">Войдите</string>
+  <string name="notification_content_text_forced_sign_out">Извините за неудобства! Произошла ошибка при синхронизации — пожалуйста, войдите снова, и всё будет работать как надо.</string>
+  <string name="notification_content_title_no_space_left_on_device">На устройстве недостаточно места</string>
   <string name="notification_content_text_no_space_left_on_device">Приложение может работать некорректно.</string>
   <string name="notification_channel_group_name_application">Приложение</string>
   <string name="notification_channel_background_title">Фон</string>
@@ -164,7 +167,7 @@
   <string name="notification_channel_warning_title">Предупреждение</string>
   <string name="notification_channel_warning_description">Канал для предупреждений, требующих действий пользователя</string>
   <!-- endregion -->
-  <string name="content_description_select_all">Выбрать все объекты в списке</string>
+  <string name="content_description_select_all">Выбрать все элементы в списке</string>
   <string name="content_description_selected_options">Показать дополнительные опции для выбранных файлов и/или папок</string>
   <string name="content_description_files_upload_upload_file">Загрузить файл</string>
   <string name="description_empty_my_files">Нажмите кнопку, чтобы начать добавление файлов.</string>
@@ -190,7 +193,7 @@
   <string name="error_share_locked">Общий доступ заблокирован.</string>
   <string name="error_main_share_not_found">Основной ресурс не найден.</string>
   <string name="error_share_not_found">Ссылка общего доступа не найдена.</string>
-  <string name="error_creating_photo_share_not_allowed">Резервное копирование фотографий временно отключено.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">Создание общего доступа временно отключено.</string>
   <string name="operation_open_document">открыть документ</string>
   <string name="operation_create_document">создать документ</string>
@@ -227,4 +230,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Документ без названия %1$s</string>
 </resources>

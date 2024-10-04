@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.compose.theme.default
 import me.proton.core.compose.theme.defaultNorm
 
 @Composable

@@ -24,6 +24,7 @@ import androidx.room.Index
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
+import me.proton.core.drive.base.data.db.Column.ADDRESS_ID
 import me.proton.core.drive.base.data.db.Column.CREATE_TIME
 import me.proton.core.drive.base.data.db.Column.ID
 import me.proton.core.drive.base.data.db.Column.INVITEE_EMAIL
@@ -68,6 +69,8 @@ data class ShareMembershipEntity(
     val inviterEmail: String,
     @ColumnInfo(INVITEE_EMAIL)
     val inviteeEmail: String,
+    @ColumnInfo(ADDRESS_ID)
+    val addressId: String,
     @ColumnInfo(PERMISSIONS)
     val permissions: Long,
     @ColumnInfo(KEY_PACKET)

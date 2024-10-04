@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.upload.domain.usecase
 
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.upload.domain.manager.UploadWorkManager
 import javax.inject.Inject
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class CancelUploadFile @Inject constructor(
     private val uploadWorkManager: UploadWorkManager,
 ) {
-    suspend operator fun invoke(uploadFileLink: UploadFileLink) =
+    suspend operator fun invoke(uploadFileLink: UploadFileLink) = coRunCatching {
         uploadWorkManager.cancel(uploadFileLink)
+    }
 }

@@ -6,7 +6,7 @@ import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.db.test.folder
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareWithMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.volume
@@ -38,7 +38,7 @@ class LeaveShareTest {
     fun `happy path`() = runTest {
         val folderId = driveRule.db.user {
             volume {
-                standardShare(standardShareId.id) {
+                standardShareWithMe(standardShareId.id) {
                     folder("shared-folder") {}
                 }
             }
@@ -58,7 +58,7 @@ class LeaveShareTest {
     fun `fails with server error`() = runTest {
         val folderId = driveRule.db.user {
             volume {
-                standardShare(standardShareId.id) {
+                standardShareWithMe(standardShareId.id) {
                     folder("shared-folder") {}
                 }
             }

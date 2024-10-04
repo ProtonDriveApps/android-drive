@@ -48,7 +48,7 @@
     -->
   <string name="settings_photos_backup_folders_description">Se realiza una copia de seguridad de la carpeta %1$s automáticamente. Seleccione carpetas adicionales para realizar una copia de seguridad y sus fotos aparecerán en la pestaña Fotos.</string>
   <string name="settings_photos_backup_folders_not_found">No se encontró la carpeta</string>
-  <string name="settings_photos_backup_folders_confirm_stop_sync_title">¿Dejar de hacer copia de seguridad de la carpeta?</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_title">¿Dejar de hacer copias de seguridad de la carpeta?</string>
   <!--
         Variable %1$s is the folder name
         Examples:

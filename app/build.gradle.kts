@@ -218,6 +218,10 @@ android {
     compileOptions {
         isCoreLibraryDesugaringEnabled = true
     }
+
+    lint {
+        abortOnError = false
+    }
 }
 
 tasks.create("publishGeneratedReleaseNotes") {

@@ -50,6 +50,9 @@ interface Robot {
     fun nodeWithTextDisplayed(@StringRes stringRes: Int) =
         node.withText(stringRes).await { assertIsDisplayed() }
 
+    fun nodeWithTextSubstringDisplayed(text: String) =
+        node.withTextSubstring(text).await { assertIsDisplayed() }
+
     fun nodeWithTextDisplayed(@StringRes stringRes: Int, vararg formatArgs: Any) =
         node
             .withText(

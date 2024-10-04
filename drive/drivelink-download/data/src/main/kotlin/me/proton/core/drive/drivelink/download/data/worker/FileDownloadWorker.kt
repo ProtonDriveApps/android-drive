@@ -41,6 +41,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.data.extension.logTag
 import me.proton.core.drive.drivelink.download.data.extension.uniqueWorkName
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FILE_ID
+import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FILE_TAGS
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_RETRYABLE
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_REVISION_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SHARE_ID
@@ -81,6 +82,7 @@ class FileDownloadWorker @AssistedInject constructor(
     private val fileId = FileId(shareId, requireNotNull(inputData.getString(KEY_FILE_ID)))
     private val revisionId = requireNotNull(inputData.getString(KEY_REVISION_ID))
     private val isRetryable = inputData.getBoolean(KEY_RETRYABLE, false)
+    private val fileTags = inputData.getStringArray(KEY_FILE_TAGS).orEmpty().toList()
     override val logTag = fileId.logTag
 
     override suspend fun doLimitedRetryWork(): Result =
@@ -111,12 +113,12 @@ class FileDownloadWorker @AssistedInject constructor(
     private fun downloadBlocks(revision: Revision): Result {
         revision.blocks.map { block ->
             BlockDownloadWorker.getWorkRequest(
-                userId,
-                volumeId,
-                revisionId,
-                block,
-                isRetryable,
-                tags,
+                userId = userId,
+                volumeId = volumeId,
+                revisionId = revisionId,
+                block = block,
+                isRetryable = isRetryable,
+                tags = fileTags,
             )
         }
             .also { blocks ->
@@ -151,12 +153,12 @@ class FileDownloadWorker @AssistedInject constructor(
     }
 
     private fun verifyDownload() = FileDownloadVerifyWorker.getWorkRequest(
-        userId,
-        volumeId,
-        fileId,
-        revisionId,
-        isRetryable,
-        tags,
+        userId = userId,
+        volumeId = volumeId,
+        fileId = fileId,
+        revisionId = revisionId,
+        retryable = isRetryable,
+        fileTags = fileTags,
     )
 
     companion object {
@@ -167,6 +169,7 @@ class FileDownloadWorker @AssistedInject constructor(
             fileId: FileId,
             revisionId: String,
             isRetryable: Boolean,
+            fileTags: List<String> = emptyList(),
             tags: Collection<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(FileDownloadWorker::class.java)
@@ -183,6 +186,7 @@ class FileDownloadWorker @AssistedInject constructor(
                         .putString(KEY_FILE_ID, fileId.id)
                         .putString(KEY_REVISION_ID, revisionId)
                         .putBoolean(KEY_RETRYABLE, isRetryable)
+                        .putStringArray(KEY_FILE_TAGS, fileTags.toTypedArray())
                         .build()
                 )
                 .setBackoffCriteria(
@@ -190,7 +194,7 @@ class FileDownloadWorker @AssistedInject constructor(
                     WorkRequest.MIN_BACKOFF_MILLIS,
                     TimeUnit.MILLISECONDS
                 )
-                .addTags(listOf(userId.id) + tags)
+                .addTags(listOf(userId.id) + fileTags + tags)
                 .build()
 
 
@@ -205,7 +209,8 @@ class FileDownloadWorker @AssistedInject constructor(
                 fileId = driveLink.id,
                 revisionId = driveLink.activeRevisionId,
                 isRetryable = retryable,
-                tags = listOf(driveLink.uniqueWorkName) + tags,
+                fileTags = listOf(driveLink.uniqueWorkName),
+                tags = tags,
             )
     }
 }

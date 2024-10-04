@@ -30,7 +30,7 @@
     <item quantity="one">S\'ha mogut %1$d element.</item>
     <item quantity="other">S\'han mogut %1$d elements.</item>
   </plurals>
-  <string name="file_operation_error_file_already_exists_at_destination">Un element amb aquest nom ja existeix a la carpeta de destí.</string>
+  <string name="file_operation_error_file_already_exists_at_destination">Ja existeix un element amb aquest nom a la carpeta de destinació</string>
   <string name="folder_options_header_title">En \"%1$s\"</string>
   <string name="folder_options_header_title_encrypted">En</string>
   <string name="files_toggle_layout_to_list_content_description">Disseny de llista</string>

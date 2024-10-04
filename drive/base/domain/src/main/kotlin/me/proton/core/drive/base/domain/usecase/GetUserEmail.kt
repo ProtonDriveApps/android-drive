@@ -18,8 +18,12 @@
 package me.proton.core.drive.base.domain.usecase
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.log.LogTag.KEY
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.AddressId
+import me.proton.core.user.domain.extension.primary
+import me.proton.core.user.domain.extension.sorted
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class GetUserEmail @Inject constructor(
@@ -27,7 +31,18 @@ class GetUserEmail @Inject constructor(
 ) {
     suspend operator fun invoke(userId: UserId): String =
         userManager.getUser(userId).email
-            ?: userManager.getAddresses(userId).first().email
+            ?: userManager.getAddresses(userId).primary().let { userAddress ->
+                if (userAddress == null) {
+                    CoreLogger.e(
+                        KEY,
+                        IllegalStateException("Primary address not found"),
+                        "Primary address not found for $userId"
+                    )
+                    userManager.getAddresses(userId).sorted().first()
+                } else {
+                    userAddress
+                }.email
+            }
 
     suspend operator fun invoke(userId: UserId, addressId: AddressId): String =
         userManager.getAddresses(userId)

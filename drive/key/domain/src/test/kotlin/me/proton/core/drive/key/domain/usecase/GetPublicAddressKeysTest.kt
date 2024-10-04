@@ -27,6 +27,7 @@ import me.proton.core.drive.db.test.NullableAddressKeyEntity
 import me.proton.core.drive.db.test.NullablePublicAddressInfoEntity
 import me.proton.core.drive.db.test.NullablePublicAddressKeyDataEntity
 import me.proton.core.drive.db.test.NullableUserEntity
+import me.proton.core.drive.db.test.addAddress
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.withKey
@@ -39,6 +40,7 @@ import me.proton.core.drive.test.api.getPublicAddressKeysAll
 import me.proton.core.drive.test.api.jsonResponse
 import me.proton.core.key.domain.entity.key.KeyId
 import me.proton.core.user.domain.entity.AddressId
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -63,7 +65,6 @@ class GetPublicAddressKeysTest {
 
     @Before
     fun before() = runTest {
-        val addressId2 = AddressId("address-id-2")
         driveRule.db.user {
             withKey(
                 publicAddressInfoEntity = NullablePublicAddressInfoEntity(
@@ -73,18 +74,7 @@ class GetPublicAddressKeysTest {
                     email = otherUserEmail
                 )
             )
-            db.addressDao().insertOrUpdate(
-                NullableAddressEntity(
-                    addressId = addressId2,
-                    email = email2,
-                )
-            )
-            db.addressKeyDao().insertOrUpdate(
-                NullableAddressKeyEntity(
-                    addressId = addressId2,
-                    keyId = KeyId("key-id-2"),
-                )
-            )
+            addAddress(email2)
         }
     }
 
@@ -95,8 +85,8 @@ class GetPublicAddressKeysTest {
 
         // Then
         assertTrue(key is AddressKeys)
-        assertTrue(key.keyHolder.keys.size == 1)
-        assertTrue(key.keyHolder.keys.first().keyId == KeyId("key-id"))
+        assertEquals(1, key.keyHolder.keys.size)
+        assertEquals(KeyId("key-id-user-id@proton.test"), key.keyHolder.keys.first().keyId)
     }
 
     @Test
@@ -109,7 +99,7 @@ class GetPublicAddressKeysTest {
         assertTrue(key is PublicAddressKeys)
         val publicAddressKeys = requireNotNull(key as? PublicAddressKeys)
         val firstKey = publicAddressKeys.publicAddressInfoKeyHolder.publicAddressInfo.address.keys.first()
-        assertTrue(firstKey.publicKey.key == "public-key-$otherUserEmail")
+        assertEquals("public-key-$otherUserEmail", firstKey.publicKey.key)
     }
 
     @Test
@@ -133,7 +123,7 @@ class GetPublicAddressKeysTest {
         assertTrue(key is PublicAddressKeys)
         val publicAddressKeys = requireNotNull(key as? PublicAddressKeys)
         val firstKey = publicAddressKeys.publicAddressInfoKeyHolder.publicAddressInfo.address.keys.first()
-        assertTrue(firstKey.publicKey.key == newPublicKey)
+        assertEquals(newPublicKey, firstKey.publicKey.key)
     }
 
     @Test
@@ -147,6 +137,6 @@ class GetPublicAddressKeysTest {
 
         // Then
         assertTrue(key is AddressKeys)
-        assertTrue(key.keyHolder.keys.size == 2)
+        assertEquals(2, key.keyHolder.keys.size)
     }
 }

@@ -35,6 +35,13 @@ object FilesTabRobot : NavigationBarRobot, HomeRobot, LinksRobot, GrowlerRobot {
     fun clickAddFilesButton() = addFilesButton.clickTo(ParentFolderOptionsRobot)
     fun clickCancelUpload() = cancelUploadButton.clickTo(this)
 
+    fun dismissFilesBeingUploaded(count: Int, folderName: String) = node.withText(
+        targetContext.resources.getQuantityString(
+            I18N.plurals.files_upload_being_uploaded_notification,
+            count
+        ).format(count, folderName)
+    ).click()
+
     fun assertFilesBeingUploaded(count: Int, folderName: String) = node.withText(
         targetContext.resources.getQuantityString(
             I18N.plurals.files_upload_being_uploaded_notification,

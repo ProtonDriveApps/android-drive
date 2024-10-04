@@ -23,5 +23,8 @@
   <string name="preview_processing_state">Behandler…</string>
   <string name="preview_empty">Ingenting å forhåndsvise...</string>
   <string name="title_not_found">Ikke funnet</string>
-  <string name="preview_proton_doc_open_in_browser_button">Åpne i nettleser</string>
+  <string name="proton_docs_insert_image_header_title">Sett inn bilde</string>
+  <string name="proton_docs_option_select_file">Velg en fil</string>
+  <string name="proton_docs_unsupported_file_type">Bare innsetting av bilder støttes foreløpig</string>
+  <string name="proton_docs_load_error">Loading document failed</string>
 </resources>

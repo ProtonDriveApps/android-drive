@@ -23,5 +23,8 @@
   <string name="preview_processing_state">İşleniyor…</string>
   <string name="preview_empty">Ön izlenebilecek bir şey yok…</string>
   <string name="title_not_found">Bulunamadı</string>
-  <string name="preview_proton_doc_open_in_browser_button">Tarayıcıda aç</string>
+  <string name="proton_docs_insert_image_header_title">Görsel ekle</string>
+  <string name="proton_docs_option_select_file">Bir dosya seçin</string>
+  <string name="proton_docs_unsupported_file_type">Şu anda yalnızca görsellerin eklenmesi destekleniyor</string>
+  <string name="proton_docs_load_error">Loading document failed</string>
 </resources>

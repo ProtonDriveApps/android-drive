@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">Încărcați un fișier</string>
   <string name="folder_option_create_folder">Creare folder</string>
   <string name="folder_option_take_a_photo">Fotografie nouă</string>
+  <string name="folder_option_create_document">Creare document</string>
   <string name="settings_theme_system_default">Implicit din sistem</string>
   <string name="settings_theme_dark">Neagră</string>
   <string name="settings_theme_light">Albă</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">Se pot încărca doar fișiere în %1$s.</string>
   <string name="in_app_notification_importing_file_already_exists">Există fișiere cu același nume. Încercați să goliți memoria aplicației.</string>
   <string name="in_app_notification_clear_local_cache_success">Bufferul local a fost golit cu succes.</string>
+  <string name="in_app_notification_destination_screen_not_found">Ecranul de destinație nu a fost găsit.</string>
+  <string name="in_app_notification_create_document_success">Document creat</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Spațiu de stocare plin</string>
@@ -173,7 +176,7 @@
   <string name="description_file_verify_signature_failed">Semnătura fișierului nu a putut fi verificată.</string>
   <string name="description_files_stop_sharing">Această operație va șterge și elimina accesul la fișier sau folder pentru oricine are legătura.</string>
   <string name="description_files_stop_sharing_action_success">Legătura către fișier a fost ștearsă.</string>
-  <string name="description_files_stop_sharing_action_error">A apărut o eroare în timpul ștergerii legăturii către fișier.</string>
+  <string name="description_files_stop_sharing_action_error">A apărut o eroare în timpul ștergerii legături webi către fișier.</string>
   <string name="description_files_stop_all_sharing">Aceasta va șterge legătura web și va anula accesul tuturor.</string>
   <string name="description_files_stop_all_sharing_action_success">Partajarea către fișier a fost ștearsă.</string>
   <string name="description_files_stop_all_sharing_action_error">A apărut o eroare în timpul ștergerii partajării către fișier.</string>
@@ -185,7 +188,7 @@
   <string name="error_share_locked">Partajarea este blocată.</string>
   <string name="error_main_share_not_found">Partajarea principală nu se poate găsi.</string>
   <string name="error_share_not_found">Partajarea nu a fost găsită.</string>
-  <string name="error_creating_photo_share_not_allowed">Conservarea fotografiilor este momentan dezactivată.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">Crearea partajărilor este momentan dezactivată.</string>
   <string name="operation_open_document">deschidă un document</string>
   <string name="operation_create_document">creeze un document</string>
@@ -200,7 +203,7 @@
   <string name="get_more_free_storage_description">Completați acești pași în primele 30 de zile pentru a vă mări spațiul de stocare.</string>
   <string name="get_more_free_storage_action_upload_title">Încărcați un fișier sau activați conservarea fotografiilor</string>
   <string name="get_more_free_storage_action_upload_subtitle">Toate fișierele vor fi criptate.</string>
-  <string name="get_more_free_storage_action_link_title">Creați o legătură de partajare</string>
+  <string name="get_more_free_storage_action_link_title">Creați o legătură web de partajare</string>
   <!--
         Variable %1$s is a @string/common_get_link_action in bold
         Example:
@@ -222,4 +225,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Document nedenumit %1$s</string>
 </resources>

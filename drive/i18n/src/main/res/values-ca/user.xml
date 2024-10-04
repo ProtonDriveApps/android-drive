@@ -25,7 +25,7 @@
         Examples:
             "Your storage is more than 50% full"
     -->
-  <string name="storage_quotas_not_full_title">El vostre emmagatzematge és més del %1$s ple.</string>
+  <string name="storage_quotas_not_full_title">L\'emmagatzematge està més del %1$s ple.</string>
   <!--
         Variable %1$s is an application name
         Examples:

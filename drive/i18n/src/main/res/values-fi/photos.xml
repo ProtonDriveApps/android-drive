@@ -75,7 +75,7 @@
   <string name="photos_error_waiting_connectivity">Internet-yhteys puuttuu</string>
   <string name="photos_error_waiting_wifi_connectivity">Odotetaan Wi-Fi-yhteyttä</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Käytä mobiiliverkkoa</string>
-  <string name="photos_error_local_storage">Laitteen tallennustila täynnä</string>
+  <string name="photos_error_local_storage">Laitteen tallennustila on täynnä</string>
   <string name="photos_error_local_storage_description">Varmuuskopioinnin jatkamiseksi sinun on vapautettava tallennustilaa laitteeltasi.</string>
   <string name="photos_error_background_restrictions">Aseta sovelluksen akkuvirran kulutus taustatoiminnoille rajoittamattomaksi</string>
   <string name="photos_error_background_restrictions_description">Taustavarmuuskopioinnin jatkuvan toiminnan varmistamiseksi, säädä akkuvirran kulutusasetuksia tai avaa sovellus säännöllisesti.</string>

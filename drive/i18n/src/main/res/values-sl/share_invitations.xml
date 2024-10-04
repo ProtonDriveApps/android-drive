@@ -66,19 +66,19 @@
         Examples:
             "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (v teku)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Accepted)"
     -->
-  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (sprejeto)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Unknown)"
     -->
-  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (neznano)</string>
   <string name="share_via_invitations_add_people_hint">Dodaj osebe</string>
   <string name="share_via_invitations_copy_invite_link_action">Kopiraj povezavo do povabila</string>
   <string name="share_via_invitations_remove_access_action">Odstrani dostop</string>
@@ -96,4 +96,6 @@
     <item quantity="few">%1$d člani</item>
     <item quantity="other">%1$d članov</item>
   </plurals>
+  <string name="share_via_invitations_message_placeholder">Add a message</string>
+  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
 </resources>

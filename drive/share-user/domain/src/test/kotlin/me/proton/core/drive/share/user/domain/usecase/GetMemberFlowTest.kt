@@ -6,15 +6,11 @@ import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.contactEmail
-import me.proton.core.drive.db.test.folder
-import me.proton.core.drive.db.test.mainShare
-import me.proton.core.drive.db.test.mainShareId
 import me.proton.core.drive.db.test.member
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.volume
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
@@ -41,7 +37,7 @@ class GetMemberFlowTest {
         driveRule.db.user {
             contactEmail("member")
             volume {
-                standardShare(standardShareId.id) {
+                standardShareByMe(standardShareId.id) {
                     member("member@proton.me")
                 }
             }

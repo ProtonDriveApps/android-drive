@@ -7,7 +7,7 @@ import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.contactEmail
 import me.proton.core.drive.db.test.invitation
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.volume
@@ -38,7 +38,7 @@ class GetInvitationFlowTest {
         driveRule.db.user {
             contactEmail("invitee")
             volume {
-                standardShare(standardShareId.id) {
+                standardShareByMe(standardShareId.id) {
                     invitation("invitee@proton.me")
                 }
             }

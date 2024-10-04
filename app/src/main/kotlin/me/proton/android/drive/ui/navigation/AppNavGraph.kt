@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -73,6 +74,7 @@ import me.proton.android.drive.ui.dialog.FileOrFolderOptions
 import me.proton.android.drive.ui.dialog.LogOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
+import me.proton.android.drive.ui.dialog.ProtonDocsInsertImageOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
 import me.proton.android.drive.ui.dialog.ShareExternalInvitationOptions
 import me.proton.android.drive.ui.dialog.ShareInvitationOptions
@@ -106,6 +108,7 @@ import me.proton.android.drive.ui.screen.SigningOutScreen
 import me.proton.android.drive.ui.screen.TrashScreen
 import me.proton.android.drive.ui.screen.UploadToScreen
 import me.proton.android.drive.ui.viewmodel.ConfirmStopSyncFolderDialogViewModel
+import me.proton.android.drive.ui.viewmodel.PreviewViewModel
 import me.proton.core.account.domain.entity.Account
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
@@ -337,6 +340,7 @@ fun AppNavGraph(
         addDefaultHomeTab(navController)
         addLog(navController)
         addLogOptions()
+        addProtonDocsInsertImageOptions(navController)
     }
 }
 
@@ -551,6 +555,11 @@ fun NavGraphBuilder.addParentFolderOptions(
         },
         navigateToStorageFull = {
             navController.navigate(Screen.Dialogs.StorageFull(userId)) {
+                popUpTo(route = Screen.ParentFolderOptions.route) { inclusive = true }
+            }
+        },
+        navigateToPreview = { fileId ->
+            navController.navigate(Screen.PagerPreview(PagerType.SINGLE, userId, fileId)) {
                 popUpTo(route = Screen.ParentFolderOptions.route) { inclusive = true }
             }
         },
@@ -1211,6 +1220,11 @@ fun NavGraphBuilder.addPagerPreview(navController: NavHostController) = composab
                 Screen.FileOrFolderOptions(userId, linkId, optionsFilter)
             )
         },
+        navigateToProtonDocsInsertImageOptions = {
+            navController.navigate(
+                Screen.ProtonDocsInsertImageOptions(userId)
+            )
+        }
     )
 }
 
@@ -1881,4 +1895,29 @@ fun NavGraphBuilder.addLogOptions() = modalBottomSheet(
     ),
 ) { _, _ ->
     LogOptions()
+}
+
+fun NavGraphBuilder.addProtonDocsInsertImageOptions(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.ProtonDocsInsertImageOptions.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+    arguments = listOf(
+        navArgument(Screen.USER_ID) { type = NavType.StringType },
+    ),
+) { _, _ ->
+    val viewModel = navController.previousBackStackEntry?.let { prevNavBackStackEntry ->
+        runCatching { hiltViewModel<PreviewViewModel>(prevNavBackStackEntry) }.getOrNull()
+    }
+    ProtonDocsInsertImageOptions(
+        saveResult = { uris ->
+            viewModel?.savedStateHandle?.set(PreviewViewModel.PROTON_DOCS_IMAGE_URIS, uris)
+        },
+        dismiss = {
+            navController.popBackStack(
+                route = Screen.ProtonDocsInsertImageOptions.route,
+                inclusive = true,
+            )
+        },
+    )
 }

@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">Upload en fil</string>
   <string name="folder_option_create_folder">Opret mappe</string>
   <string name="folder_option_take_a_photo">Tag et nyt foto</string>
+  <string name="folder_option_create_document">Opret dokument</string>
   <string name="settings_theme_system_default">Systemstandard</string>
   <string name="settings_theme_dark">Mørk</string>
   <string name="settings_theme_light">Lys</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">Kun filer kan uploades til %1$s</string>
   <string name="in_app_notification_importing_file_already_exists">En fil med det samme navn eksisterer allerede, prøv at rydde appens cache</string>
   <string name="in_app_notification_clear_local_cache_success">Lokal cache blev ryddet</string>
+  <string name="in_app_notification_destination_screen_not_found">Destinationsskærm ikke fundet</string>
+  <string name="in_app_notification_create_document_success">Dokument oprettet</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Lager fuldt</string>
@@ -180,7 +183,7 @@
   <string name="error_share_locked">Deling er låst.</string>
   <string name="error_main_share_not_found">Hoveddelen er ikke fundet.</string>
   <string name="error_share_not_found">Deling ikke fundet.</string>
-  <string name="error_creating_photo_share_not_allowed">Sikkerhedskopiering af fotos er midlertidigt deaktiveret.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">Oprettelse af deling er midlertidigt deaktiveret.</string>
   <string name="operation_open_document">åbn et dokument</string>
   <string name="operation_create_document">opret et dokument</string>
@@ -217,4 +220,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Dokument uden titel %1$s</string>
 </resources>

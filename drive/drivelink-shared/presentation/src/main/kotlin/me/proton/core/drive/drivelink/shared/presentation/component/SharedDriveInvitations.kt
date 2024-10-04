@@ -18,14 +18,15 @@
 package me.proton.core.drive.drivelink.shared.presentation.component
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -33,10 +34,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -44,12 +48,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.dp
+import me.proton.core.compose.component.protonOutlineTextFieldColors
 import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
@@ -62,6 +70,8 @@ import me.proton.core.drive.contact.presentation.component.ChipItem
 import me.proton.core.drive.contact.presentation.component.ChipsListField
 import me.proton.core.drive.contact.presentation.component.ContactSuggestionState
 import me.proton.core.drive.contact.presentation.component.SuggestionItem
+import me.proton.core.drive.drivelink.shared.presentation.component.SharedDriveInvitationsTestTags.emailField
+import me.proton.core.drive.drivelink.shared.presentation.component.SharedDriveInvitationsTestTags.messageField
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.SharedDriveInvitationsViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.PermissionViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.PermissionsViewState
@@ -97,31 +107,49 @@ fun SharedDriveInvitations(
                 ),
                 modifier = Modifier.statusBarsPadding(),
             )
-            EmailForm(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState(), reverseScrolling = true),
-                invitations = viewState.invitations,
-                suggestionItems = viewState.suggestionItems,
-                onInviteesChanged = viewEvent.onInviteesChanged,
-                onSuggestionTermTyped = viewEvent.onSearchTermChanged,
-                emailValidator = viewEvent.isValidEmailAddress,
-            )
-            Divider(
-                color = ProtonTheme.colors.separatorNorm,
-            )
-            if (viewState.showPermissions) {
-                PermissionSelect(
-                    permissionViewState = viewState.permissionsViewState.selected,
-                    onClick = {
-                        viewEvent.onPermissions()
-                        keyboardController?.hide()
-                    },
+            Column(modifier = Modifier
+                .weight(1F)
+                .verticalScroll(rememberScrollState(), reverseScrolling = true)
+            ) {
+                EmailForm(
+                    modifier = Modifier.testTag(emailField),
+                    invitations = viewState.invitations,
+                    suggestionItems = viewState.suggestionItems,
+                    onInviteesChanged = viewEvent.onInviteesChanged,
+                    onSuggestionTermTyped = viewEvent.onSearchTermChanged,
+                    emailValidator = viewEvent.isValidEmailAddress,
                 )
                 Divider(
                     color = ProtonTheme.colors.separatorNorm,
                 )
+                if (viewState.showFullForm) {
+                    PermissionSelect(
+                        permissionViewState = viewState.permissionsViewState.selected,
+                        onClick = {
+                            viewEvent.onPermissions()
+                            keyboardController?.hide()
+                        },
+                    )
+                    Divider(
+                        color = ProtonTheme.colors.separatorNorm,
+                    )
+                    SendNameCheckbox(
+                        checked = viewState.sendMessageAndName,
+                        label = stringResource(id = I18N.string.share_via_invitations_send_message_and_name_label),
+                        onCheckedChange = viewEvent.onSendMessageAndName
+                    )
+                    Divider(
+                        color = ProtonTheme.colors.separatorNorm,
+                    )
+                    MessageTextField(
+                        modifier = Modifier.testTag(messageField),
+                        enabled = viewState.sendMessageAndName,
+                        message = viewState.message,
+                        onTextChanged = viewEvent.onMessageChanged,
+                        placeHolderText = stringResource(id = I18N.string.share_via_invitations_message_placeholder),
+                    )
+                }
             }
-            Spacer(modifier = Modifier.weight(1F))
         }
         SendContainer(saveButtonViewState, onSave = {
             keyboardController?.hide()
@@ -240,6 +268,89 @@ private fun PermissionSelect(
     }
 }
 
+@Composable
+private fun MessageTextField(
+    enabled: Boolean,
+    message: String,
+    onTextChanged: (String) -> Unit,
+    placeHolderText: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.padding(
+            horizontal = ExtraSmallSpacing,
+            vertical = ExtraSmallSpacing,
+        ),
+        verticalAlignment = CenterVertically
+    ) {
+        Box(
+            modifier = Modifier.height(DefaultButtonMinHeight)
+                .padding(start = 12.dp, end = 4.dp), // TextField has a default padding of 16dp
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                modifier = Modifier
+                    .size(DefaultIconSize),
+                painter = painterResource(id = CorePresentation.drawable.ic_proton_speech_bubble),
+                tint = ProtonTheme.colors.iconWeak,
+                contentDescription = null,
+            )
+        }
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            enabled = enabled,
+            value = message,
+            onValueChange = { value ->
+                onTextChanged(value)
+            },
+            placeholder = {
+                Text(placeHolderText)
+            },
+            colors = TextFieldDefaults.protonOutlineTextFieldColors(),
+        )
+    }
+}
+
+
+@Composable
+private fun SendNameCheckbox(
+    checked: Boolean,
+    label: String,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+
+    Row(
+        modifier = modifier
+            .clickable { onCheckedChange(!checked) }
+            .fillMaxWidth()
+            .padding(
+                horizontal = ExtraSmallSpacing,
+                vertical = SmallSpacing
+            ),
+        horizontalArrangement = Arrangement.spacedBy(SmallSpacing)
+    ) {
+        Box(
+            modifier = Modifier.size(DefaultButtonMinHeight),
+            contentAlignment = Alignment.Center
+        ) {
+            Checkbox(
+                modifier = Modifier
+                    .size(DefaultIconSize),
+                checked = checked,
+                onCheckedChange = null,
+            )
+        }
+        Text(
+            modifier = Modifier
+                .align(CenterVertically)
+                .weight(1F),
+            text = label,
+            style = ProtonTheme.typography.defaultNorm,
+        )
+    }
+}
+
 
 private fun List<ShareUserInvitation>.toChipItem(): List<ChipItem> = map { it.toChipItem() }
 private fun ShareUserInvitation.toChipItem(): ChipItem = when (isValid) {
@@ -265,6 +376,8 @@ fun SharedDriveInvitationsPreview(
                     override val onRetry: () -> Unit = {}
                     override val onSave: () -> Unit = {}
                     override val isValidEmailAddress: (String) -> Boolean = { true }
+                    override val onMessageChanged: (String) -> Unit = {}
+                    override val onSendMessageAndName: (Boolean) -> Unit = {}
                 },
                 saveButtonViewState = SaveButtonViewState(
                     label = "Sharing with ${viewState.invitations.size} persons",
@@ -309,7 +422,7 @@ class ViewStateParameterProvider : PreviewParameterProvider<SharedDriveInvitatio
         SharedDriveInvitationsViewState(
             linkName = "Folder",
             isLinkNameEncrypted = false,
-            showPermissions = true,
+            showFullForm = true,
             invitations = emptyList(),
             suggestionItems = emptyList(),
             permissionsViewState = PermissionsViewState(
@@ -327,16 +440,22 @@ class ViewStateParameterProvider : PreviewParameterProvider<SharedDriveInvitatio
                         permissions = Permissions()
                     ),
                 )
-            )
+            ),
+            message = "",
+            sendMessageAndName = false
         )
     override val values = sequenceOf(
-        emptyViewState,
-        emptyViewState.copy(invitations = invitations.subList(0, 1)),
+        emptyViewState.copy(showFullForm = false),
+        emptyViewState.copy(
+            invitations = invitations.subList(0, 1),
+            message = "I'm sharing this folder with you.",
+            sendMessageAndName = true
+        ),
         emptyViewState.copy(
             invitations = (1..9).map { invitations }.flatten()
         ),
         emptyViewState.copy(
-            showPermissions = false,
+            showFullForm = false,
             invitations = listOf(
                 ShareUserInvitation(
                     email = "external@mail.com",
@@ -346,4 +465,9 @@ class ViewStateParameterProvider : PreviewParameterProvider<SharedDriveInvitatio
             )
         ),
     )
+}
+
+object SharedDriveInvitationsTestTags {
+    val emailField = "email-field"
+    val messageField = "message-field"
 }

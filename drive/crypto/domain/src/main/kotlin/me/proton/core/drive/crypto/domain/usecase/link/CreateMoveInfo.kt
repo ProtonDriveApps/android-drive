@@ -20,7 +20,6 @@ package me.proton.core.drive.crypto.domain.usecase.link
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.DecryptLinkName
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.crypto.domain.usecase.HmacSha256
 import me.proton.core.drive.cryptobase.domain.usecase.ChangeMessage
 import me.proton.core.drive.key.domain.extension.keyHolder
@@ -33,8 +32,10 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.MoveInfo
 import me.proton.core.drive.link.domain.extension.requireParentId
+import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import javax.inject.Inject
 
 class CreateMoveInfo @Inject constructor(
@@ -60,7 +61,7 @@ class CreateMoveInfo @Inject constructor(
         val newParentFolderKey = getNodeKey(newParentFolder).getOrThrow()
         val newParentFolderHashKey = getNodeHashKey(newParentFolder, newParentFolderKey).getOrThrow()
         val userId = linkId.userId
-        val signatureAddress = getSignatureAddress(userId)
+        val signatureAddress = getSignatureAddress(link.shareId).getOrThrow()
         val newLinkKey = moveNodeKey(
             userId = userId,
             key = getNodeKey(linkId).getOrThrow(),

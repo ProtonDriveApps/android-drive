@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">Nahrať súbor</string>
   <string name="folder_option_create_folder">Vytvoriť priečinok</string>
   <string name="folder_option_take_a_photo">Urobiť novú fotografiu</string>
+  <string name="folder_option_create_document">Vytvoriť dokument</string>
   <string name="settings_theme_system_default">Podľa systému</string>
   <string name="settings_theme_dark">Tmavý</string>
   <string name="settings_theme_light">Svetlý</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">Na %1$s môžu byť nahrané iba súbory</string>
   <string name="in_app_notification_importing_file_already_exists">Súbor s rovnakým názvom už existuje, skúste vymazať vyrovnávaciu pamäť aplikácie</string>
   <string name="in_app_notification_clear_local_cache_success">Lokálna vyrovnávacia pamäť úspešne vyčistená</string>
+  <string name="in_app_notification_destination_screen_not_found">Cieľová obrazovka nebola nájdená</string>
+  <string name="in_app_notification_create_document_success">Dokument bol vytvorený</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Plné úložisko</string>
@@ -190,7 +193,7 @@
   <string name="error_share_locked">Zdieľanie je uzamknuté.</string>
   <string name="error_main_share_not_found">Hlavné zdieľanie nebolo nájdené.</string>
   <string name="error_share_not_found">Zdieľanie nebolo nájdené.</string>
-  <string name="error_creating_photo_share_not_allowed">Zálohovanie fotografií je dočasne zakázané.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">Zdieľanie je dočasne zakázané.</string>
   <string name="operation_open_document">otvoriť dokument</string>
   <string name="operation_create_document">vytvoriť dokument</string>
@@ -227,4 +230,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Dokument bez názvu %1$s</string>
 </resources>

@@ -130,7 +130,7 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
                     type = BroadcastMessage.Type.INFO,
                 )
             }
-            workManager.enqueueUpload(userId, shouldAnnounceEvent, tags)
+            workManager.enqueueUpload(userId, shouldAnnounceEvent)
             deleteUploadBulk(uploadBulkId).onFailure { error ->
                 error.log(UPLOAD_BULK, "Cannot delete upload bulk for: $uploadBulkId")
             }.getOrThrow()

@@ -30,4 +30,5 @@ object WorkerKeys {
     const val KEY_FILE_ID = "key.fileId"
     const val KEY_RETRYABLE = "key.retryable"
     const val KEY_IS_DOWNLOAD_FINISHED = "key.isDownloadFinished"
+    const val KEY_FILE_TAGS = "key.fileTags"
 }

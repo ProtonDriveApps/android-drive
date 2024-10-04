@@ -18,7 +18,6 @@
 package me.proton.core.drive.key.domain.usecase
 
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.key.domain.entity.ContentKey
 import me.proton.core.drive.key.domain.entity.Key
@@ -26,6 +25,8 @@ import me.proton.core.drive.key.domain.factory.ContentKeyFactory
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import javax.inject.Inject
 
 class BuildContentKey @Inject constructor(
@@ -56,6 +57,7 @@ class BuildContentKey @Inject constructor(
         fileKey: Key.Node,
     ): Result<ContentKey> = invoke(
         userId = userId,
+        shareId = uploadFile.shareId.id,
         contentKeyPacket = uploadFile.contentKeyPacket,
         contentKeyPacketSignature = uploadFile.contentKeyPacketSignature,
         fileKey = fileKey,
@@ -63,13 +65,15 @@ class BuildContentKey @Inject constructor(
 
     suspend operator fun invoke(
         userId: UserId,
+        shareId: String,
         contentKeyPacket: String,
         contentKeyPacketSignature: String,
         fileKey: Key.Node,
     ): Result<ContentKey> = coRunCatching {
+        val signatureAddress = getSignatureAddress(ShareId(userId, shareId)).getOrThrow()
         contentKeyFactory.createContentKey(
             decryptKey = fileKey,
-            verifyKey = listOf(fileKey, getAddressKeys(userId, getSignatureAddress(userId))),
+            verifyKey = listOf(fileKey, getAddressKeys(userId, signatureAddress)),
             contentKeyPacket = contentKeyPacket,
             contentKeyPacketSignature = contentKeyPacketSignature
         )

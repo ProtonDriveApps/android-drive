@@ -26,6 +26,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.drivelink.domain.extension.isPhoto
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
+import me.proton.core.drive.feature.flag.domain.extension.off
 import me.proton.core.drive.files.presentation.entry.CopySharedLinkEntity
 import me.proton.core.drive.files.presentation.entry.DeletePermanentlyEntry
 import me.proton.core.drive.files.presentation.entry.DownloadEntry
@@ -35,6 +36,7 @@ import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.files.presentation.entry.ManageAccessEntity
 import me.proton.core.drive.files.presentation.entry.MoveEntry
 import me.proton.core.drive.files.presentation.entry.MoveFileEntry
+import me.proton.core.drive.files.presentation.entry.OpenInBrowserProtonDocsEntity
 import me.proton.core.drive.files.presentation.entry.RemoveMeEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
@@ -57,6 +59,25 @@ sealed class Option(
     val applicableTo: Set<ApplicableTo>,
     val applicableStates: Set<State>,
 ) {
+    data object CreateDocument : Option(
+        ApplicableQuantity.Single,
+        setOf(ApplicableTo.FOLDER),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            notificationDotVisible: Boolean,
+            createDocument: (FolderId) -> Unit,
+        ) = folderEntry(
+            icon = CorePresentation.drawable.ic_proton_file,
+            labelResId = I18N.string.folder_option_create_document,
+            notificationDotVisible = notificationDotVisible,
+            runAction = runAction,
+        ) {
+            createDocument(id)
+        }
+    }
+
     data object CreateFolder : Option(
         ApplicableQuantity.Single,
         setOf(ApplicableTo.FOLDER),
@@ -154,6 +175,21 @@ sealed class Option(
         }
     }
 
+    data object OpenInBrowser : Option(
+        ApplicableQuantity.Single,
+        setOf(ApplicableTo.FILE_PROTON_CLOUD),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            openInBrowser: suspend (DriveLink.File) -> Unit,
+        ) = OpenInBrowserProtonDocsEntity { driveLink ->
+            runAction {
+                openInBrowser(driveLink)
+            }
+        } as FileOptionEntry<DriveLink>
+    }
+
     data object RemoveMe : Option(
         ApplicableQuantity.Single,
         setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
@@ -202,10 +238,12 @@ sealed class Option(
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
+            notificationDotVisible: Boolean = false,
             takeAPhoto: () -> Unit,
         ) = FolderEntry(
             icon = CorePresentation.drawable.ic_proton_camera,
             labelResId = I18N.string.folder_option_take_a_photo,
+            notificationDotVisible = notificationDotVisible,
             onClick = { takeAPhoto() }
         )
     }
@@ -240,10 +278,12 @@ sealed class Option(
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
+            notificationDotVisible: Boolean = false,
             showFilePicker: () -> Unit,
         ) = FolderEntry(
             icon = CorePresentation.drawable.ic_proton_file_arrow_in_up,
             labelResId = I18N.string.folder_option_import_file,
+            notificationDotVisible = notificationDotVisible,
             onClick = { showFilePicker() }
         )
     }
@@ -438,6 +478,7 @@ fun Iterable<Option>.filterPermissions(
 ) = filter { option ->
     when (option) {
         Option.CopySharedLink -> permissions.isAdmin
+        Option.CreateDocument -> permissions.canWrite
         Option.CreateFolder -> permissions.canWrite
         Option.DeletePermanently -> permissions.canWrite
         Option.Download -> permissions.canRead
@@ -445,6 +486,7 @@ fun Iterable<Option>.filterPermissions(
         Option.ManageAccess -> permissions.isAdmin
         Option.Move -> permissions.canWrite
         Option.OfflineToggle -> permissions.canRead
+        Option.OpenInBrowser -> permissions.canRead
         Option.Rename -> permissions.canWrite
         Option.SendFile -> permissions.canRead
         Option.ShareViaInvitations -> permissions.isAdmin
@@ -454,6 +496,14 @@ fun Iterable<Option>.filterPermissions(
         Option.Trash -> permissions.isAdmin
         Option.UploadFile -> permissions.canWrite
         Option.RemoveMe -> permissions.canRead
+    }
+}
+
+fun Iterable<Option>.filterProtonDocs(killSwitch: FeatureFlag) = filter { option ->
+    when (option) {
+        Option.CreateDocument -> killSwitch.off
+        Option.OpenInBrowser -> killSwitch.off
+        else -> true
     }
 }
 

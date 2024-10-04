@@ -18,12 +18,12 @@
 
 package me.proton.core.drive.upload.domain.usecase
 
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.upload.ManifestSignature
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.UpdateManifestSignature
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import javax.inject.Inject
 
 class UpdateEmptyFileManifestSignature @Inject constructor(
@@ -38,7 +38,7 @@ class UpdateEmptyFileManifestSignature @Inject constructor(
             manifestSignature = manifestSignature(
                 signKey = getAddressKeys(
                     userId = uploadFileLink.userId,
-                    email = getSignatureAddress(uploadFileLink.userId),
+                    email = getSignatureAddress(uploadFileLink.shareId).getOrThrow(),
                 )
             ).getOrThrow()
         ).getOrThrow()

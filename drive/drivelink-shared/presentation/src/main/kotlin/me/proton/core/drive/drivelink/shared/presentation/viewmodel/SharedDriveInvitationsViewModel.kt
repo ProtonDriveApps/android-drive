@@ -138,6 +138,9 @@ class SharedDriveInvitationsViewModel @Inject constructor(
 
     private val permissions = MutableStateFlow(Permissions.editor)
 
+    private val message = MutableStateFlow("")
+    private val sendMessageAndName = MutableStateFlow(false)
+
     private val suggestedContacts = MutableStateFlow(emptyList<SuggestionItem>())
     private val suggestedLabels = MutableStateFlow(emptyList<SuggestionItem>())
     private val invitationEmails = MutableStateFlow(emptyList<String>())
@@ -178,12 +181,14 @@ class SharedDriveInvitationsViewModel @Inject constructor(
     val initialViewState = combine(
         permissions,
         validatedInvitations,
-        validInvitations
-    ) { permissions, validatedInvitations, internalInvitations ->
+        validInvitations,
+        message,
+        sendMessageAndName,
+    ) { permissions, validatedInvitations, internalInvitations, message, sendMessageAndName ->
         SharedDriveInvitationsViewState(
             linkName = "",
             isLinkNameEncrypted = true,
-            showPermissions = internalInvitations.isNotEmpty(),
+            showFullForm = internalInvitations.isNotEmpty(),
             invitations = validatedInvitations,
             permissionsViewState = PermissionsViewState(
                 options = listOf(
@@ -200,7 +205,9 @@ class SharedDriveInvitationsViewModel @Inject constructor(
                         permissions = Permissions.editor,
                     ),
                 )
-            )
+            ),
+            message = message,
+            sendMessageAndName = sendMessageAndName,
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
     private val saveInProgress = MutableStateFlow(false)
@@ -266,6 +273,12 @@ class SharedDriveInvitationsViewModel @Inject constructor(
         override val onSave: () -> Unit = { save(navigateBack) }
         override val isValidEmailAddress: (String) -> Boolean =
             { email -> this@SharedDriveInvitationsViewModel.isValidEmailAddress(email) }
+        override val onMessageChanged: (String) -> Unit = { message ->
+            this@SharedDriveInvitationsViewModel.message.value = message
+        }
+        override val onSendMessageAndName: (Boolean) -> Unit = { sendName ->
+            this@SharedDriveInvitationsViewModel.sendMessageAndName.value = sendName
+        }
 
     }
 
@@ -370,8 +383,16 @@ class SharedDriveInvitationsViewModel @Inject constructor(
         timeLimitedScope(SHARING) {
             val invitations = validInvitations.first()
             CoreLogger.i(SHARING, "Start sending invitations (${invitations.size})")
+            val sendMessageAndName = sendMessageAndName.value
+            val message = message.value.takeIf { sendMessageAndName }
+            val itemName = driveLink.value?.name?.takeIf { sendMessageAndName }
             val dataResult = inviteMembers(
-                ShareUsersInvitation(linkId, invitations)
+                ShareUsersInvitation(
+                    linkId = linkId,
+                    members = invitations,
+                    message = message,
+                    itemName = itemName,
+                )
             ).onEach { dataResult ->
                 dataResult.onProcessing { saveInProgress.emit(true) }
             }.last()

@@ -21,8 +21,8 @@
   <string name="photos_permissions_title">Criptați-vă și conservați-vă fotografiile și filmele</string>
   <string name="photos_permissions_section_1_title">Protejați-vă amintirile</string>
   <string name="photos_permissions_section_1_description">Fotografiile sunt criptate în ambele sensuri, asigurându-vă intimitatea.</string>
-  <string name="photos_permissions_section_2_title">Conservări automate</string>
-  <string name="photos_permissions_section_2_description">Fotografiile sunt conservate regulat prin W-iFi cu calitate originală.</string>
+  <string name="photos_permissions_section_2_title">Copii de rezervă automate</string>
+  <string name="photos_permissions_section_2_description">Fotografiile sunt conservate regulat prin Wi-Fi la calitate originală.</string>
   <string name="photos_permissions_action">Activare conservare</string>
   <string name="photos_permission_rational_img_text">Permitere acces</string>
   <!--

@@ -21,8 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import me.proton.core.compose.component.bottomsheet.BottomSheetContent
-import me.proton.core.compose.component.bottomsheet.BottomSheetEntry
-import me.proton.core.drive.base.domain.entity.CryptoProperty
+import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.files.presentation.component.common.OptionsHeader
@@ -43,13 +42,19 @@ fun FolderOptions(
             entries.forEach { entry ->
                 when (entry) {
                     is FileOptionEntry.SimpleEntry -> BottomSheetEntry(
-                        icon = entry.icon,
+                        leadingIcon = entry.icon,
+                        trailingIcon = entry.trailingIcon,
+                        trailingIconTintColor = entry.trailingIconTintColor,
                         title = entry.getLabel(),
+                        notificationDotVisible = entry.notificationDotVisible,
                         onClick = { entry.onClick(folder) }
                     )
                     is FileOptionEntry.StateBasedEntry -> BottomSheetEntry(
-                        icon = entry.getIcon(folder),
+                        leadingIcon = entry.getIcon(folder),
+                        trailingIcon = entry.trailingIcon,
+                        trailingIconTintColor = entry.trailingIconTintColor,
                         title = entry.getLabel(folder),
+                        notificationDotVisible = entry.notificationDotVisible,
                         onClick = { entry.onClick(folder) }
                     )
                 }

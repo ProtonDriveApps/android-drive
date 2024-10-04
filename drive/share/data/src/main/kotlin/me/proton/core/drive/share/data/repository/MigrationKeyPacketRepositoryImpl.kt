@@ -21,7 +21,6 @@ package me.proton.core.drive.share.data.repository
 import androidx.datastore.preferences.core.edit
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.datastore.GetUserDataStore
-import me.proton.core.drive.base.data.datastore.migrationKeyPacketLastUpdate
 import me.proton.core.drive.base.data.extension.get
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
@@ -71,11 +70,11 @@ class MigrationKeyPacketRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getLastUpdate(userId: UserId): TimestampS? =
-        getUserDataStore(userId).get(migrationKeyPacketLastUpdate)?.let(::TimestampS)
+        getUserDataStore(userId).get(GetUserDataStore.Keys.migrationKeyPacketLastUpdate)?.let(::TimestampS)
 
     override suspend fun setLastUpdate(userId: UserId, date: TimestampS) {
         getUserDataStore(userId).edit { preferences ->
-            preferences[migrationKeyPacketLastUpdate] = date.value
+            preferences[GetUserDataStore.Keys.migrationKeyPacketLastUpdate] = date.value
         }
     }
 }

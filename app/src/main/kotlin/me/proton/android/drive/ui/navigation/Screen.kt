@@ -156,6 +156,14 @@ sealed class Screen(val route: String) {
         const val DEVICE_ID = ComputerOptionsViewModel.KEY_DEVICE_ID
     }
 
+    data object ProtonDocsInsertImageOptions : Screen(
+        "options/protonDocsInsertImage/{userId}/"
+    ) {
+        operator fun invoke(
+            userId: UserId,
+        ) = "options/protonDocsInsertImage/${userId.id}/"
+    }
+
     data object Info : Screen("info/{userId}/shares/{shareId}/files?linkId={linkId}") {
         operator fun invoke(
             userId: UserId,

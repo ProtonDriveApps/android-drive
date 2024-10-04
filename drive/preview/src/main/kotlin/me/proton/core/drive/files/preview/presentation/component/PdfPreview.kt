@@ -253,7 +253,7 @@ class PdfReader(private val context: Context) {
                 page.use {
                     val width = min(page.width.fromPtToPx(density), maxWidth)
                     val height = min(page.height.fromPtToPx(density), maxWidth * RATIO)
-                    val (w, h) = if (width * RATIO < height) {
+                    val (w, h) = if (page.width >= page.height) {
                         width to page.height * width / page.width
                     } else {
                         page.width * height / page.height to height

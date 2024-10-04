@@ -90,11 +90,13 @@ class BackupCleanRevisionsWorker @AssistedInject constructor(
                     .build()
             )
             .setInputData(workDataOf(folderId))
-            .addTags(listOf(
-                folderId.userId.id,
-                folderId.id,
-                BackupManagerImpl.TAG
-            ) + tags)
+            .addTags(
+                listOf(
+                    folderId.userId.id,
+                    folderId.id,
+                    BackupManagerImpl.TAG
+                ) + tags
+            )
             .build()
 
         internal fun workDataOf(

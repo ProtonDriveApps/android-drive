@@ -46,24 +46,19 @@ class CreateShareInvitation @Inject constructor(
 ) {
     operator fun invoke(
         shareId: ShareId,
-        invitation: ShareUserInvitation,
-    ): Flow<DataResult<ShareUser>> = invoke(
-        shareId = shareId,
-        email = invitation.email,
-        permissions = invitation.permissions
-    )
-
-    operator fun invoke(
-        shareId: ShareId,
         email: String,
         permissions: Permissions,
-        externalInvitationId: String? = null
+        message: String? = null,
+        itemName: String? = null,
+        externalInvitationId: String? = null,
     ): Flow<DataResult<ShareUser>> = flow {
         emit(DataResult.Processing(ResponseSource.Local))
         createShareInvitationRequest(
             shareId = shareId,
             inviteeEmail = email,
             permissions = permissions,
+            message = message,
+            itemName = itemName,
             externalInvitationId = externalInvitationId,
         ).onFailure { error ->
             emit(DataResult.Error.Local(

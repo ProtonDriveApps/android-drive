@@ -9,7 +9,7 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.db.test.folder
 import me.proton.core.drive.db.test.mainShare
 import me.proton.core.drive.db.test.mainShareId
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.volume
@@ -19,7 +19,6 @@ import me.proton.core.drive.test.DriveRule
 import me.proton.core.drive.test.api.createExternalInvitation
 import me.proton.core.drive.test.api.createInvitation
 import me.proton.core.drive.test.api.errorResponse
-import me.proton.core.drive.test.api.getPublicAddressKeys
 import me.proton.core.drive.test.api.getPublicAddressKeysAll
 import me.proton.core.drive.test.api.jsonResponse
 import me.proton.core.network.data.protonApi.ProtonErrorData
@@ -46,7 +45,7 @@ class CreateShareInvitationTest {
     @Before fun setUp() = runTest{
         driveRule.db.user {
             volume {
-                standardShare(standardShareId.id)
+                standardShareByMe(standardShareId.id)
                 mainShare {
                     folder(
                         id = folderId.id,
@@ -65,10 +64,8 @@ class CreateShareInvitationTest {
         }
         createShareInvitation(
             shareId = standardShareId,
-            invitation = ShareUserInvitation(
-                email = "invitee@proton.me",
-                permissions = Permissions(),
-            )
+            email = "invitee@proton.me",
+            permissions = Permissions(),
         ).filterSuccessOrError().toResult().getOrThrow()
     }
 
@@ -87,10 +84,8 @@ class CreateShareInvitationTest {
         }
         createShareInvitation(
             shareId = standardShareId,
-            invitation = ShareUserInvitation(
-                email = "invitee@external.com",
-                permissions = Permissions(),
-            )
+            email = "invitee@external.com",
+            permissions = Permissions(),
         ).filterSuccessOrError().toResult().getOrThrow()
     }
 
@@ -102,10 +97,8 @@ class CreateShareInvitationTest {
         }
         createShareInvitation(
             shareId = standardShareId,
-            invitation = ShareUserInvitation(
-                email = "invitee@proton.me",
-                permissions = Permissions(),
-            )
+            email = "invitee@proton.me",
+            permissions = Permissions(),
         ).filterSuccessOrError().toResult().getOrThrow()
     }
 }

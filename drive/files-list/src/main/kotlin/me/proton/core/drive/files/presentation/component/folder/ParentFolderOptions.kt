@@ -25,10 +25,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import me.proton.core.compose.component.bottomsheet.BottomSheetContent
-import me.proton.core.compose.component.bottomsheet.BottomSheetEntry
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallStrong
+import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -60,9 +60,12 @@ fun ParentFolderOptions(
                 when (entry) {
                     is FileOptionEntry.SimpleEntry ->
                         BottomSheetEntry(
-                            icon = entry.icon,
+                            leadingIcon = entry.icon,
+                            trailingIcon = entry.trailingIcon,
+                            trailingIconTintColor = entry.trailingIconTintColor,
+                            notificationDotVisible = entry.notificationDotVisible,
                             title = entry.getLabel(),
-                            onClick = { entry.onClick(folder) }
+                            onClick = { entry.onClick(folder) },
                         )
                     else -> throw NotImplementedError("Action for ${entry.javaClass.simpleName} is missing")
                 }

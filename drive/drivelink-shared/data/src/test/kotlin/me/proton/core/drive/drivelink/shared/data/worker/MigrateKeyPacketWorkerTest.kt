@@ -29,14 +29,12 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.db.test.photo
-import me.proton.core.drive.db.test.standardShare
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.drivelink.shared.domain.usecase.MigrateKeyPacket
 import me.proton.core.drive.test.DriveRule
 import me.proton.core.drive.test.api.errorResponse
 import me.proton.core.drive.test.api.getShare
-import me.proton.core.drive.test.api.getShareBootstrap
 import me.proton.core.drive.test.api.getUnmigratedShares
 import me.proton.core.drive.test.api.response
 import me.proton.core.drive.test.api.retryableErrorResponse

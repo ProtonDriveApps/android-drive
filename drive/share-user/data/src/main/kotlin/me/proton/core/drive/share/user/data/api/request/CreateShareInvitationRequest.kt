@@ -27,4 +27,6 @@ import me.proton.core.drive.share.user.data.api.entities.ShareInvitationRequestD
 data class CreateShareInvitationRequest(
     @SerialName(Dto.INVITATION)
     val invitation: ShareInvitationRequestDto,
+    @SerialName(Dto.EMAIL_DETAILS)
+    val emailDetails: InvitationEmailDetailsRequestDto? = null,
 )

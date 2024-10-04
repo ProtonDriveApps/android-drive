@@ -100,11 +100,13 @@ class BackupFindDuplicatesWorker @AssistedInject constructor(
                     .build()
             )
             .setInputData(workDataOf(backupFolder))
-            .addTags(listOf(
-                backupFolder.folderId.userId.id,
-                backupFolder.folderId.id,
-                BackupManagerImpl.TAG
-            ) + tags)
+            .addTags(
+                listOf(
+                    backupFolder.folderId.userId.id,
+                    backupFolder.folderId.id,
+                    BackupManagerImpl.TAG
+                ) + tags
+            )
             .build()
 
         internal fun workDataOf(

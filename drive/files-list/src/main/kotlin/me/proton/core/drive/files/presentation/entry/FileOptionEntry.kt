@@ -20,7 +20,9 @@ package me.proton.core.drive.files.presentation.entry
 
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.link.domain.entity.Folder
@@ -30,17 +32,29 @@ import me.proton.core.presentation.R as CorePresentation
 sealed interface FileOptionEntry<in T : DriveLink> {
 
     val onClick: (T) -> Unit
+    val notificationDotVisible: Boolean get() = false
 
     interface SimpleEntry<T : DriveLink> : FileOptionEntry<T> {
 
         @get:DrawableRes
         val icon: Int
 
+        @get:DrawableRes
+        val trailingIcon: Int? get() = null
+
+        val trailingIconTintColor: Color? @Composable get() = null
+
         @Composable
         fun getLabel(): String
     }
 
     interface StateBasedEntry<T : DriveLink> : FileOptionEntry<T> {
+
+        @get:DrawableRes
+        val trailingIcon: Int? get() = null
+
+        val trailingIconTintColor: Color? @Composable get() = null
+
         @Composable
         fun getLabel(driveLink: DriveLink): String
 
@@ -215,4 +229,17 @@ class DownloadFileEntity(
 
     @Composable
     override fun getLabel(): String = stringResource(id = I18N.string.common_download)
+}
+
+class OpenInBrowserProtonDocsEntity(
+    override val onClick: (DriveLink.File) -> Unit,
+) : FileOptionEntry.SimpleEntry<DriveLink.File> {
+    override val icon: Int = CorePresentation.drawable.ic_proton_globe
+
+    override val trailingIcon: Int = CorePresentation.drawable.ic_proton_arrow_out_square
+
+    override val trailingIconTintColor: Color @Composable get() = ProtonTheme.colors.iconWeak
+
+    @Composable
+    override fun getLabel(): String = stringResource(id = I18N.string.common_open_in_browser_action)
 }

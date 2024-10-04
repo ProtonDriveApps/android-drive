@@ -57,7 +57,6 @@ class StubbedUploadWorkManager @Inject constructor() : UploadWorkManager {
         folder: Folder,
         showPreparingUpload: Boolean,
         showFilesBeingUploaded: Boolean,
-        tags: List<String>
     ) {
         bulks[folder.id] = uploadBulk
     }
@@ -104,10 +103,6 @@ class StubbedUploadWorkManager @Inject constructor() : UploadWorkManager {
     }
 
     override fun broadcastUploadLimitReached(userId: UserId) {
-        TODO("Not yet implemented")
-    }
-
-    override fun isUploading(tag: String): Flow<Boolean> {
         TODO("Not yet implemented")
     }
 }

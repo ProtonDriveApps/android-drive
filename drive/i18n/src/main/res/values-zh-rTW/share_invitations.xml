@@ -84,4 +84,6 @@
   <plurals name="share_via_invitations_group_members">
     <item quantity="other">%1$d 個成員</item>
   </plurals>
+  <string name="share_via_invitations_message_placeholder">Add a message</string>
+  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
 </resources>

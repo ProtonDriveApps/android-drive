@@ -42,8 +42,6 @@ interface BackupManager {
 
     fun isEnabled(folderId: FolderId): Flow<Boolean>
 
-    fun isUploading(folderId: FolderId): Flow<Boolean>
-
     suspend fun updateNotification(folderId: FolderId)
 
 }

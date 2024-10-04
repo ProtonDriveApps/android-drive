@@ -69,19 +69,31 @@ class BackupFileWatcherWorker @AssistedInject constructor(
         }
         val mediaUris = triggeredContentUris - notMediaUris.toSet()
         if (triggeredContentAuthorities.isEmpty()) {
-            rescanAllFolders { "no authorities" }.onFailure { error ->
+            CoreLogger.d(BACKUP, "BackupFileWatcherWorker rescan all folders: no authorities")
+            rescanAllFolders(userId).onFailure { error ->
                 error.log(BACKUP, "Cannot rescan all folders")
             }
         } else {
             if (notMediaUris.isNotEmpty()) {
-                BackupSyncException("Non media uris: $notMediaUris")
-                    .log(BACKUP, "Cannot sync non media uris ${notMediaUris.size}), media uri: ${mediaUris.size}")
-            }
-
-            if (mediaUris.isNotEmpty()) {
-                syncAllFoldersFromUri(mediaUris).onFailure { error ->
+                CoreLogger.d(
+                    BACKUP,
+                    "BackupFileWatcherWorker Non media uris: $notMediaUris, syncing all buckets"
+                )
+                syncFolders(
+                    userId = userId,
+                    uploadPriority = UploadFileLink.RECENT_BACKUP_PRIORITY
+                ).onFailure { error ->
                     error.log(BACKUP, "Cannot sync all folders")
                 }
+            } else if (mediaUris.isNotEmpty()) {
+                syncAllFoldersFromUri(mediaUris).onFailure { error ->
+                    error.log(BACKUP, "Cannot sync some folders")
+                }
+            } else {
+                CoreLogger.d(
+                    BACKUP,
+                    "BackupFileWatcherWorker No uris for $triggeredContentAuthorities, do nothing"
+                )
             }
         }
         workManager.enqueueUniqueWork(
@@ -92,18 +104,9 @@ class BackupFileWatcherWorker @AssistedInject constructor(
         return Result.success()
     }
 
-    private suspend fun rescanAllFolders(
-        message: () -> String,
-    ) = coRunCatching {
-        CoreLogger.d(
-            BACKUP, "BackupFileWatcherWorker rescan all folders: ${message()}"
-        )
-        rescanAllFolders(userId).getOrThrow()
-    }
-
     private suspend fun syncAllFoldersFromUri(uris: List<Uri>) = coRunCatching {
         contextScanFilesRepository(uris).onSuccess { scanResults ->
-            val founds = scanResults.filterIsInstance(ScanResult.Data::class.java)
+            val founds = scanResults.filterIsInstance<ScanResult.Data>()
             val foundCount = founds.size
             if (foundCount == 0) {
                 CoreLogger.d(BACKUP, "BackupFileWatcherWorker no files were found")

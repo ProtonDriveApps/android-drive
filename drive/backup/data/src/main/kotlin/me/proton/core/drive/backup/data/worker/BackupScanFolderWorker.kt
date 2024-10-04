@@ -99,11 +99,13 @@ class BackupScanFolderWorker @AssistedInject constructor(
             tags: Collection<String> = emptyList(),
         ) = OneTimeWorkRequest.Builder(BackupScanFolderWorker::class.java)
             .setInputData(workDataOf(backupFolder, uploadPriority))
-            .addTags(listOf(
-                backupFolder.folderId.userId.id,
-                backupFolder.folderId.id,
-                BackupManagerImpl.TAG
-            ) + tags)
+            .addTags(
+                listOf(
+                    backupFolder.folderId.userId.id,
+                    backupFolder.folderId.id,
+                    BackupManagerImpl.TAG
+                ) + tags
+            )
             .build()
 
         internal fun workDataOf(

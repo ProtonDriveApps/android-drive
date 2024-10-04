@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -41,7 +42,8 @@ import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
-import me.proton.android.drive.usecase.OpenProtonDocument
+import me.proton.core.domain.entity.UserId
+import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.getOrNull
@@ -49,6 +51,7 @@ import me.proton.core.drive.base.domain.log.LogTag.SHARING
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.state.ListContentAppendingState
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
@@ -58,6 +61,7 @@ import me.proton.core.drive.drivelink.shared.domain.usecase.SharedDriveLinks
 import me.proton.core.drive.drivelink.shared.presentation.entity.SharedItem
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.SharedViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SharedViewState
+import me.proton.core.drive.files.preview.presentation.component.ProtonDocsInWebViewFeatureFlag
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -69,7 +73,8 @@ abstract class CommonSharedViewModel(
     private val appContext: Context,
     private val configurationProvider: ConfigurationProvider,
     private val sharedDriveLinks: SharedDriveLinks,
-    private val openProtonDocument: OpenProtonDocument,
+    private val protonDocsInWebViewFeatureFlag: ProtonDocsInWebViewFeatureFlag,
+    private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle), HomeTabViewModel {
     private var fetchingJob: Job? = null
     private var fetchingDriveLinkIds: Set<LinkId> = emptySet()
@@ -79,6 +84,9 @@ abstract class CommonSharedViewModel(
     )
     abstract val driveLinks: Flow<PagingData<SharedItem>>
     protected abstract val emptyState: ListContentState.Empty
+    val openProtonDocsInWebView: StateFlow<Boolean> = protonDocsInWebViewFeatureFlag(
+        UserId(savedStateHandle.require(UserViewModel.KEY_USER_ID))
+    ).stateIn(viewModelScope, SharingStarted.Eagerly, false)
     private val _listEffect = MutableSharedFlow<ListEffect>()
     val listEffect: Flow<ListEffect>
         get() = _listEffect.asSharedFlow()
@@ -114,7 +122,12 @@ abstract class CommonSharedViewModel(
             viewModelScope.launch {
                 lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                     flow.take(1).collect { driveLink ->
-                        driveLink.onClick(navigateToFiles, navigateToPreview, this@CommonSharedViewModel::openDocument)
+                        driveLink.onClick(
+                            navigateToFolder = navigateToFiles,
+                            navigateToPreview = navigateToPreview,
+                            openDocument = this@CommonSharedViewModel::openDocument,
+                            openProtonDocsInWebView = openProtonDocsInWebView,
+                        )
                     }
                 }
             }
@@ -178,7 +191,7 @@ abstract class CommonSharedViewModel(
     }
 
     private suspend fun openDocument(driveLink: DriveLink.File) =
-        openProtonDocument(driveLink)
+        openProtonDocumentInBrowser(driveLink)
             .onFailure { error ->
                 error.log(VIEW_MODEL, "Open document failed")
                 _homeEffect.emit(

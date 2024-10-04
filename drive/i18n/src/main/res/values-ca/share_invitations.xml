@@ -47,7 +47,7 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Compartir amb 1 persona</item>
+    <item quantity="one">S\'està compartint amb una persona</item>
     <item quantity="other">S\'està compartint amb %1$d persones</item>
   </plurals>
   <string name="common_permission_owner">Propietari</string>
@@ -88,4 +88,6 @@
     <item quantity="one">%1$d membre</item>
     <item quantity="other">%1$d membres</item>
   </plurals>
+  <string name="share_via_invitations_message_placeholder">Add a message</string>
+  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
 </resources>

@@ -23,5 +23,8 @@
   <string name="preview_processing_state">Апрацоўка…</string>
   <string name="preview_empty">Папярэдні прагляд адсутнічае…</string>
   <string name="title_not_found">Не знойдзена</string>
-  <string name="preview_proton_doc_open_in_browser_button">Адкрыць у браўзеры</string>
+  <string name="proton_docs_insert_image_header_title">Уставіць відарыс</string>
+  <string name="proton_docs_option_select_file">Выбраць файл</string>
+  <string name="proton_docs_unsupported_file_type">Пакуль падтрымліваецца толькі ўстаўка відарысаў</string>
+  <string name="proton_docs_load_error">Loading document failed</string>
 </resources>

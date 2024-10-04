@@ -34,6 +34,7 @@ import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetPublicAddressInfo
 import me.proton.core.drive.share.crypto.domain.entity.ShareInvitationRequest
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetAddressId
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.key.domain.encryptSessionKey
 import me.proton.core.key.domain.entity.key.PublicAddressInfo
@@ -42,6 +43,7 @@ import javax.inject.Inject
 class CreateShareInvitationRequest @Inject constructor(
     private val getShare: GetShare,
     private val getPublicAddressInfo: GetPublicAddressInfo,
+    private val getAddressId: GetAddressId,
     private val getAddressKeys: GetAddressKeys,
     private val getUserEmail: GetUserEmail,
     private val cryptoContext: CryptoContext,
@@ -53,6 +55,8 @@ class CreateShareInvitationRequest @Inject constructor(
         shareId: ShareId,
         inviteeEmail: String,
         permissions: Permissions,
+        message: String? = null,
+        itemName: String? = null,
         externalInvitationId: String? = null,
     ): Result<ShareInvitationRequest> = coRunCatching {
         val publicAddress = getPublicAddressInfo(
@@ -65,6 +69,8 @@ class CreateShareInvitationRequest @Inject constructor(
                 inviteeEmail = inviteeEmail,
                 permissions = permissions,
                 publicAddressInfo = publicAddress,
+                message = message,
+                itemName = itemName,
                 externalInvitationId = externalInvitationId,
             )
         } else {
@@ -72,6 +78,8 @@ class CreateShareInvitationRequest @Inject constructor(
                 shareId = shareId,
                 inviteeEmail = inviteeEmail,
                 permissions = permissions,
+                message = message,
+                itemName = itemName,
             )
         }
     }
@@ -80,11 +88,13 @@ class CreateShareInvitationRequest @Inject constructor(
         shareId: ShareId,
         inviteeEmail: String,
         permissions: Permissions,
+        message: String?,
+        itemName: String?,
         publicAddressInfo: PublicAddressInfo,
         externalInvitationId: String? = null,
     ): ShareInvitationRequest.Internal {
         val share = getShare(shareId).filterSuccessOrError().toResult().getOrThrow()
-        val addressId = requireNotNull(share.addressId)
+        val addressId = getAddressId(shareId.userId, share.volumeId).getOrThrow()
         val addressKeys = getAddressKeys(
             userId = shareId.userId,
             addressId = addressId
@@ -111,6 +121,8 @@ class CreateShareInvitationRequest @Inject constructor(
                 getUnarmored(contentKeyPacketSignature).getOrThrow(),
                 Base64.NO_WRAP
             ),
+            message = message,
+            itemName = itemName,
             externalInvitationId = externalInvitationId,
         )
     }
@@ -119,6 +131,8 @@ class CreateShareInvitationRequest @Inject constructor(
         shareId: ShareId,
         inviteeEmail: String,
         permissions: Permissions,
+        message: String?,
+        itemName: String?,
     ): ShareInvitationRequest.External {
         val share = getShare(shareId).filterSuccessOrError().toResult().getOrThrow()
         val addressId = requireNotNull(share.addressId)
@@ -145,6 +159,8 @@ class CreateShareInvitationRequest @Inject constructor(
                 getUnarmored(signature).getOrThrow(),
                 Base64.NO_WRAP
             ),
+            message = message,
+            itemName = itemName,
         )
     }
 }

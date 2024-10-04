@@ -30,6 +30,10 @@ import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.account.data.entity.AccountMetadataEntity
 import me.proton.core.account.data.entity.SessionDetailsEntity
 import me.proton.core.account.data.entity.SessionEntity
+import me.proton.core.auth.data.db.AuthConverters
+import me.proton.core.auth.data.db.AuthDatabase
+import me.proton.core.auth.data.entity.AuthDeviceEntity
+import me.proton.core.auth.data.entity.DeviceSecretEntity
 import me.proton.core.challenge.data.db.ChallengeConverters
 import me.proton.core.challenge.data.db.ChallengeDatabase
 import me.proton.core.challenge.data.entity.ChallengeFrameEntity
@@ -217,6 +221,8 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         PublicAddressInfoEntity::class,
         PublicAddressKeyDataEntity::class,
         LabelEntity::class,
+        AuthDeviceEntity::class,
+        DeviceSecretEntity::class,
         // Drive
         VolumeEntity::class,
         ShareEntity::class,
@@ -322,6 +328,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
     PushConverters::class,
     ContactConverters::class,
     LabelConverters::class,
+    AuthConverters::class,
     // Drive
     EventConverters::class,
     LinkSelectionConverters::class
@@ -382,10 +389,11 @@ abstract class DriveDatabase :
     DriveBaseDatabase,
     LogDatabase,
     DeviceRecoveryDatabase,
-    PublicAddressKeyDatabase {
+    PublicAddressKeyDatabase,
+    AuthDatabase {
 
     companion object {
-        const val VERSION = 68
+        const val VERSION = 70
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -455,6 +463,8 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_65_66,
             DriveDatabaseMigrations.MIGRATION_66_67,
             DriveDatabaseMigrations.MIGRATION_67_68,
+            DriveDatabaseMigrations.MIGRATION_68_69,
+            DriveDatabaseMigrations.MIGRATION_69_70,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

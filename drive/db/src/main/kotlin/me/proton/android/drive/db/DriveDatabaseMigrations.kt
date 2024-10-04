@@ -22,6 +22,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
 import me.proton.core.account.data.db.AccountDatabase
+import me.proton.core.auth.data.db.AuthDatabase
 import me.proton.core.challenge.data.db.ChallengeDatabase
 import me.proton.core.contact.data.local.db.ContactDatabase
 import me.proton.core.drive.backup.data.db.BackupDatabase
@@ -434,6 +435,19 @@ object DriveDatabaseMigrations {
             PublicAddressKeyDatabase.MIGRATION_0.migrate(database)
             ContactDatabase.MIGRATION_2.migrate(database)
             LinkUploadDatabase.MIGRATION_6.migrate(database)
+        }
+    }
+
+    val MIGRATION_68_69 = object : Migration(68, 69) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            ShareDatabase.MIGRATION_3.migrate(database)
+        }
+    }
+
+    val MIGRATION_69_70 = object : Migration(69, 70) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            AuthDatabase.MIGRATION_0.migrate(database)
+            AuthDatabase.MIGRATION_1.migrate(database)
         }
     }
 }

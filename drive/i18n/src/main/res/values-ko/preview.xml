@@ -23,5 +23,8 @@
   <string name="preview_processing_state">처리 중...</string>
   <string name="preview_empty">미리 볼 내용 없음...</string>
   <string name="title_not_found">찾을 수 없음</string>
-  <string name="preview_proton_doc_open_in_browser_button">브라우저에서 열기</string>
+  <string name="proton_docs_insert_image_header_title">이미지 삽입</string>
+  <string name="proton_docs_option_select_file">파일 선택</string>
+  <string name="proton_docs_unsupported_file_type">현재 이미지 삽입만 지원됩니다.</string>
+  <string name="proton_docs_load_error">Loading document failed</string>
 </resources>

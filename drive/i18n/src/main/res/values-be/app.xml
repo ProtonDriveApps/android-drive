@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">Запампаваць файл</string>
   <string name="folder_option_create_folder">Стварыць папку</string>
   <string name="folder_option_take_a_photo">Зрабіць новую фатаграфію</string>
+  <string name="folder_option_create_document">Стварыць дакумент</string>
   <string name="settings_theme_system_default">Адпаведна сістэме</string>
   <string name="settings_theme_dark">Цёмная</string>
   <string name="settings_theme_light">Светлая</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">У %1$s могуць быць запампаваны толькі файлы</string>
   <string name="in_app_notification_importing_file_already_exists">Файл з такой назвай ужо існуе. Паспрабуйце ачысціць кэш праграмы</string>
   <string name="in_app_notification_clear_local_cache_success">Лакальны кэш паспяхова ачышчаны</string>
+  <string name="in_app_notification_destination_screen_not_found">Экран прызначэння не знойдзены</string>
+  <string name="in_app_notification_create_document_success">Дакумент створаны</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Сховішча запоўнена</string>
@@ -190,7 +193,7 @@
   <string name="error_share_locked">Абагульванне заблакіравана.</string>
   <string name="error_main_share_not_found">Не атрымалася знайсці асноўны раздзел.</string>
   <string name="error_share_not_found">Абагульванне не знойдзена.</string>
-  <string name="error_creating_photo_share_not_allowed">Рэзервовая копія фатаграфій часова адключана.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">Абагульненне часова адключана.</string>
   <string name="operation_open_document">адкрыць дакумент</string>
   <string name="operation_create_document">стварыць дакумент</string>
@@ -227,4 +230,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Дакумент без назвы ад %1$s</string>
 </resources>

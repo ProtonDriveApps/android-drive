@@ -72,7 +72,7 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Para realizar copias de seguridad continuas y automáticas, permite a %1$s acceder a todas las fotos en los ajustes.</string>
-  <string name="photos_error_waiting_connectivity">No hay conexión a Internet.</string>
+  <string name="photos_error_waiting_connectivity">No hay conexión a internet.</string>
   <string name="photos_error_waiting_wifi_connectivity">Esperando una conexión Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Usar el teléfono móvil</string>
   <string name="photos_error_local_storage">El almacenamiento del dispositivo está lleno.</string>
@@ -91,7 +91,7 @@
   <string name="photos_backup_state_completed">Se ha finalizado la copia de seguridad.</string>
   <string name="photos_backup_state_uncompleted">La copia de seguridad se ha terminado con problemas.</string>
   <string name="photos_backup_state_uncompleted_action">Solucionar</string>
-  <string name="photos_backup_state_preparing">Preparando a hacer copia de seguridad</string>
+  <string name="photos_backup_state_preparing">Preparando a hacer una copia de seguridad</string>
   <string name="photos_backup_state_encrypting">Cifrando…</string>
   <string name="photos_backup_state_uploading">Haciendo una copia de seguridad…</string>
   <!--
@@ -114,7 +114,7 @@
     <item quantity="one">%1$s elemento guardado</item>
     <item quantity="other">%1$s elementos guardados</item>
   </plurals>
-  <string name="photos_upsell_title">Nunca te quedarás sin almacenamiento</string>
+  <string name="photos_upsell_title">Nunca te quedarás sin almacenamiento.</string>
   <string name="photos_upsell_description">Mejora tu plan ahora y mantén tus recuerdos cifrados y seguros.</string>
   <string name="photos_upsell_dismiss_action">Ahora no</string>
 </resources>

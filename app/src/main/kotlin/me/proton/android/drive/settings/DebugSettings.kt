@@ -139,6 +139,7 @@ class DebugSettings(
         default = buildConfig.photosUpsellPhotoCount,
     )
     override var logFeatureFlag: Boolean = true
+    override val protonDocsWebViewFeatureFlag: Boolean = true
 
     fun reset(coroutineScope: CoroutineScope) {
         coroutineScope.launch {

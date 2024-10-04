@@ -72,11 +72,13 @@ class BackupSyncFoldersWorker @AssistedInject constructor(
             tags: Collection<String> = emptyList(),
         ) = OneTimeWorkRequest.Builder(BackupSyncFoldersWorker::class.java)
             .setInputData(workDataOf(folderId, uploadPriority))
-            .addTags(listOf(
-                folderId.userId.id,
-                folderId.id,
-                BackupManagerImpl.TAG
-            ) + tags)
+            .addTags(
+                listOf(
+                    folderId.userId.id,
+                    folderId.id,
+                    BackupManagerImpl.TAG
+                ) + tags
+            )
             .build()
 
         internal fun workDataOf(folderId: FolderId, uploadPriority: Long) = Data.Builder()

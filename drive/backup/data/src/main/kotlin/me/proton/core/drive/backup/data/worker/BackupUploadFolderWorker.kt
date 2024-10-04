@@ -30,7 +30,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.extension.toBackupError
-import me.proton.core.drive.backup.data.extension.uniqueFolderIdTag
 import me.proton.core.drive.backup.data.manager.BackupManagerImpl
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_SHARE_ID
@@ -63,7 +62,6 @@ class BackupUploadFolderWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         uploadFolder(
             backupFolder = BackupFolder(bucketId, folderId),
-            tags = listOf(folderId.uniqueFolderIdTag()),
         ).onFailure { error ->
             error.log(LogTag.BACKUP, "Cannot upload bucket: $bucketId")
             addBackupError(folderId, error.toBackupError())
@@ -85,11 +83,13 @@ class BackupUploadFolderWorker @AssistedInject constructor(
                         .build()
                 )
                 .setInputData(workDataOf(backupFolder))
-                .addTags(listOf(
-                    backupFolder.folderId.userId.id,
-                    backupFolder.folderId.id,
-                    BackupManagerImpl.TAG
-                ) + tags)
+                .addTags(
+                    listOf(
+                        backupFolder.folderId.userId.id,
+                        backupFolder.folderId.id,
+                        BackupManagerImpl.TAG
+                    ) + tags
+                )
                 .setInitialDelay(delay.inWholeSeconds, TimeUnit.SECONDS)
                 .build()
         }

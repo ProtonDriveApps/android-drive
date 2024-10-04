@@ -63,6 +63,8 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
             .typeEmail(email)
             .clickOnEditorPermission()
             .clickOnViewerPermission()
+            .clickOnSendMessageAndName()
+            .typeMessage("Hello! You can view this file")
             .clickSend()
             .verify {
                 dismissInvitationSent(1)
@@ -194,6 +196,8 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
                 assertShareFile(image)
             }
             .typeEmail(email)
+            .clickOnSendMessageAndName()
+            .typeMessage("Hello! I hope you will receive this invite")
             .clickSend()
             .verify {
                 dismissInvitationSent(1)

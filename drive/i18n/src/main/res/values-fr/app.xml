@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">Importer un fichier</string>
   <string name="folder_option_create_folder">Créer un dossier</string>
   <string name="folder_option_take_a_photo">Prendre une nouvelle photo</string>
+  <string name="folder_option_create_document">Créer un document</string>
   <string name="settings_theme_system_default">Identique au système</string>
   <string name="settings_theme_dark">Sombre</string>
   <string name="settings_theme_light">Clair</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">Seuls des fichiers peuvent être importés dans %1$s.</string>
   <string name="in_app_notification_importing_file_already_exists">Un fichier portant le même nom existe déjà, essayez de vider le cache de l\'application.</string>
   <string name="in_app_notification_clear_local_cache_success">Le cache local a été effacé.</string>
+  <string name="in_app_notification_destination_screen_not_found">L\'écran de destination est introuvable.</string>
+  <string name="in_app_notification_create_document_success">Le document a été créé.</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">L\'espace de stockage est plein.</string>
@@ -217,4 +220,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Document sans titre %1$s</string>
 </resources>

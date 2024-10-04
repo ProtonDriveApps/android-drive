@@ -20,7 +20,7 @@
   <string name="backup_issues_title">Problemes amb la còpia de seguretat</string>
   <string name="backup_issues_retry_all_action">Torna-ho a provar tot</string>
   <string name="backup_issues_skip_action">Omet</string>
-  <string name="backup_issues_skip_confirmation_title">Voleu ometre la còpia de seguretat per aquestes fotos?</string>
+  <string name="backup_issues_skip_confirmation_title">Voleu ometre la còpia de seguretat d\'aquestes fotos?</string>
   <string name="backup_issues_skip_confirmation_description">Esteu segur que voleu saltar les fotos que no han estat copiades de seguretat? No seran copiades.</string>
   <string name="backup_issues_skip_confirmation_action">Omet</string>
 </resources>

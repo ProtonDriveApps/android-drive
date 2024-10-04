@@ -109,6 +109,7 @@ interface ConfigurationProvider {
     val minimumSharedVolumeEventFetchInterval: Duration get() = 10.minutes
     val minimumPublicAddressKeyFetchInterval: Duration get() = 10.minutes
     val minimumOrganizationFetchInterval: Duration get() = 1.days
+    val protonDocsWebViewFeatureFlag: Boolean get() = true
 
     data class Thumbnail(
         val maxWidth: Int,

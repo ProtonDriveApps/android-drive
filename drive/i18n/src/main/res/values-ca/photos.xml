@@ -18,9 +18,9 @@
   -->
 <resources>
   <string name="photos_title">Fotos</string>
-  <string name="photos_permissions_title">Xifre i feu còpies de seguretat de les vostres fotos i vídeos.</string>
+  <string name="photos_permissions_title">Xifreu i feu còpies de seguretat de les vostres fotos i vídeos.</string>
   <string name="photos_permissions_section_1_title">Protegiu els vostres records.</string>
-  <string name="photos_permissions_section_1_description">Les vostres fotos estan xifrades d\'extrem a extrem assegurant privadesa total.</string>
+  <string name="photos_permissions_section_1_description">Les vostres fotos estan xifrades d\'extrem a extrem, garantint la privacitat total.</string>
   <string name="photos_permissions_section_2_title">Còpies de seguretat automàtiques</string>
   <string name="photos_permissions_section_2_description">Es fa una còpia de seguretat de les fotos periòdicament mitjançant Wi-Fi en la seva qualitat original.</string>
   <string name="photos_permissions_action">Activa la còpia de seguretat</string>
@@ -37,7 +37,7 @@
             "...available across all your devices.
              Proton Drive takes your privacy seriously..."
     -->
-  <string name="photos_permission_rational_description">Això és necessari per garantir que es faci una còpia de seguretat de totes les vostres fotos i estigui disponible a tots els vostres dispositius.\n%1$s es pren seriosament la vostra privadesa i només accedirà a les vostres fotos per a la sincronització i la còpia de seguretat.</string>
+  <string name="photos_permission_rational_description">Això és necessari per garantir que es faci una còpia de seguretat de totes les fotos i que estiguin disponibles a tots els vostres dispositius.\n%1$s es pren seriosament la vostra privadesa i només accedirà a les vostres fotos amb la finalitat de sincronitzar i fer còpies de seguretat.</string>
   <string name="photos_permission_rational_confirm_action">Preferències</string>
   <string name="photos_permission_rational_dismiss_action">Ara no</string>
   <string name="photos_empty_loading_label_encrypted">Xifrat d\'extrem a extrem</string>
@@ -83,7 +83,7 @@
   <string name="photos_empty_title">No hi ha encara còpies de seguretat.</string>
   <string name="photos_empty_description">Tan aviat com tingueu fotos o vídeos al dispositiu, apareixeran aquí.</string>
   <string name="photos_backup_title">Còpia de seguretat de les fotos</string>
-  <string name="photos_backup_option_mobile_data">Utilitza dades mòbils per fer còpies de seguretat de les fotos</string>
+  <string name="photos_backup_option_mobile_data">Utilitza dades mòbils per a fer còpies de seguretat de les fotos</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Desactiva l\'optimització de la bateria</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Permet una còpia de seguretat ininterrompuda quan l\'aplicació s\'està executant en segon pla.</string>
   <string name="photos_backup_in_app_notification_turned_on">La còpia de seguretat de les fotos està activada.</string>

@@ -45,7 +45,7 @@
     <item quantity="other">%d elements suprimits permanentment</item>
   </plurals>
   <string name="trash_empty_operation_successful">Paperera buida</string>
-  <string name="trash_error_occurred_sending_to_trash">S\'ha produït un error en provar d\'enviar un o més fitxers a la paperera.</string>
+  <string name="trash_error_occurred_sending_to_trash">S\'ha produït un error en intentar enviar un o més fitxers a la paperera.</string>
   <string name="trash_error_occurred_restoring_from_trash">S\'ha produït un error en provar de restaurar un o més fitxers.</string>
   <string name="trash_error_occurred_deleting_from_trash">S\'ha produït un error en eliminar un o més fitxers.</string>
   <string name="trash_error_occurred_emptying_trash">S\'ha produït un error en buidar la paperera.</string>

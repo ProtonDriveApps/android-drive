@@ -21,5 +21,6 @@ package me.proton.core.drive.base.presentation.common
 data class Action(
     val iconResId: Int,
     val contentDescriptionResId: Int,
+    val notificationDotVisible: Boolean = false,
     val onAction: () -> Unit
 )

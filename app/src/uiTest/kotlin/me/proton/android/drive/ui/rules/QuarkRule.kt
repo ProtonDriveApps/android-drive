@@ -22,21 +22,25 @@ import androidx.test.platform.app.InstrumentationRegistry
 import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.test.quark.Quark
 import me.proton.core.test.quark.v2.QuarkCommand
+import me.proton.core.test.quark.v2.command.jailUnban
 import me.proton.core.test.quark.v2.command.systemEnv
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.deserialize
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.junit.rules.ExternalResource
+import org.junit.runner.Description
+import org.junit.runners.model.Statement
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.toJavaDuration
 
 class QuarkRule(
-    envConfig: EnvironmentConfiguration,
+    private val envConfig: EnvironmentConfiguration,
     clientTimeout: Duration = 60.seconds
 ) : ExternalResource() {
 
+    private var isDriveTest: Boolean = false
     private val quarkClient by lazy {
         clientTimeout
             .toJavaDuration()
@@ -64,12 +68,42 @@ class QuarkRule(
             .use { it.readText() }
             .deserialize())
 
-    val quarkCommands: QuarkCommand = QuarkCommand(quarkClient)
-        .baseUrl("https://${envConfig.host}/api/internal")
-        .proxyToken(envConfig.proxyToken)
+    val quarkCommands: QuarkCommand
+        get() = QuarkCommand(quarkClient)
+            .baseUrl("https://${envConfig.host}/api/internal")
+            .proxyToken(envConfig.proxyToken)
+
+    override fun apply(base: Statement, description: Description): Statement {
+        isDriveTest =
+            description.isTest && !description.testClass.name.contains("account|subscription".toRegex())
+        return super.apply(base, description)
+    }
 
     override fun before() {
         // For /core/v4/keys that is deprecated
-        quarkCommands.systemEnv("PROHIBIT_DEPRECATED_DEV_CLIENT_ENV", "0")
+        var attempt = 0
+        with(quarkCommands) {
+            onResponse(
+                condition = { code >= 300 },
+                handlerBlock = {
+                    if (code >= 500 && attempt < 5) {
+                        attempt += 1
+                        val time = 30 * attempt
+                        CoreLogger.d(
+                            QuarkCommand.quarkCommandTag,
+                            "Waiting for env to be stable for: ${time}s ($attempt)"
+                        )
+                        Thread.sleep(time * 1000L)
+                        systemEnv("PROHIBIT_DEPRECATED_DEV_CLIENT_ENV", "0")
+                    } else {
+                        error("Quark response failed after $attempt attempts with status code: $code:\n$message")
+                    }
+                },
+            ).systemEnv("PROHIBIT_DEPRECATED_DEV_CLIENT_ENV", "0")
+        }
+
+        if (isDriveTest) {
+            quarkCommands.jailUnban()
+        }
     }
 }

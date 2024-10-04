@@ -25,8 +25,10 @@ import me.proton.core.drive.share.user.domain.entity.ShareUserInvitation
 data class SharedDriveInvitationsViewState(
     val linkName: String,
     val isLinkNameEncrypted: Boolean,
-    val showPermissions: Boolean,
+    val showFullForm: Boolean,
     val invitations: List<ShareUserInvitation>,
     val suggestionItems: List<SuggestionItem> = emptyList(),
     val permissionsViewState: PermissionsViewState,
+    val message: String,
+    val sendMessageAndName: Boolean,
 )

@@ -24,7 +24,9 @@ import me.proton.core.account.domain.entity.AccountState
 import me.proton.core.crypto.common.keystore.EncryptedByteArray
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.GiB
+import me.proton.core.key.domain.entity.key.KeyId
 import me.proton.core.user.data.entity.UserEntity
+import me.proton.core.user.domain.entity.AddressId
 
 
 data class UserContext(
@@ -54,7 +56,7 @@ suspend fun <T> DriveDatabase.user(
 
 val userId = UserId("user-id")
 
-@Suppress("FunctionName")
+@Suppress("FunctionName, LongParameterList")
 fun NullableUserEntity(
     userId: UserId = me.proton.core.drive.db.test.userId,
     maxSpace: Long = 5.GiB.value,
@@ -62,9 +64,10 @@ fun NullableUserEntity(
     maxDriveSpace: Long? = null,
     usedDriveSpace: Long? = null,
     subscribed: Int = 0,
+    email: String = "${userId.id}@proton.test"
 ) = UserEntity(
     userId = userId,
-    email = "${userId.id}@proton.test",
+    email = email,
     name = null,
     displayName = null,
     currency = "EUR",
@@ -86,3 +89,24 @@ fun NullableUserEntity(
     usedBaseSpace = null,
     usedDriveSpace = usedDriveSpace,
 )
+
+suspend fun UserContext.addPrimaryAddress(email: String) {
+    addAddress(email)
+    db.userDao().update(this.user.copy(email = email))
+}
+
+suspend fun UserContext.addAddress(email: String) {
+    val addressId = AddressId("address-id-$email")
+    db.addressWithKeysDao().insertOrUpdate(
+        NullableAddressEntity(
+            addressId = addressId,
+            email = email,
+        )
+    )
+    db.addressKeyDao().insertOrUpdate(
+        NullableAddressKeyEntity(
+            addressId = addressId,
+            keyId = KeyId("key-id-${addressId.id}"),
+        )
+    )
+}

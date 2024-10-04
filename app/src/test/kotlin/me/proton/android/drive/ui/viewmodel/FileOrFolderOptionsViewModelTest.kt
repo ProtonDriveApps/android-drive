@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.usecase.NotifyActivityNotFound
+import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Attributes
@@ -52,6 +53,7 @@ import me.proton.core.drive.files.presentation.entry.DownloadFileEntity
 import me.proton.core.drive.files.presentation.entry.FileInfoEntry
 import me.proton.core.drive.files.presentation.entry.ManageAccessEntity
 import me.proton.core.drive.files.presentation.entry.MoveFileEntry
+import me.proton.core.drive.files.presentation.entry.OpenInBrowserProtonDocsEntity
 import me.proton.core.drive.files.presentation.entry.RemoveMeEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
@@ -92,6 +94,7 @@ class FileOrFolderOptionsViewModelTest {
     private val exportTo = mockk<ExportTo>()
     private val notifyActivityNotFound = mockk<NotifyActivityNotFound>()
     private val getFeatureFlagFlow = mockk<GetFeatureFlagFlow>()
+    private val openProtonDocumentInBrowser = mockk<OpenProtonDocumentInBrowser>()
 
     @Before
     fun before() {
@@ -314,6 +317,7 @@ class FileOrFolderOptionsViewModelTest {
                 ShareViaLinkEntry::class,
                 MoveFileEntry::class,
                 RenameFileEntry::class,
+                OpenInBrowserProtonDocsEntity::class,
                 FileInfoEntry::class,
                 ToggleTrashEntry::class,
             ),
@@ -349,6 +353,7 @@ class FileOrFolderOptionsViewModelTest {
         leaveShare = leaveShare,
         configurationProvider = configurationProvider,
         broadcastMessages = broadcastMessages,
+        openProtonDocumentInBrowser = openProtonDocumentInBrowser,
     )
 
     private val fileLink = Link.File(

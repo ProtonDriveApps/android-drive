@@ -41,8 +41,6 @@ data class ShareContext(
 suspend fun <T> VolumeContext.share(
     shareEntity: ShareEntity = NullableShareEntity(
         id = volume.shareId,
-        userId = user.userId,
-        volumeId = volume.id,
         linkId = "main-root-id",
         type = ShareDto.TYPE_MAIN,
     ),
@@ -53,32 +51,30 @@ suspend fun <T> VolumeContext.share(
 }
 
 @Suppress("FunctionName")
-fun NullableShareEntity(
+fun VolumeContext.NullableShareEntity(
     id: String,
-    userId: UserId,
-    volumeId: String,
     linkId: String,
+    userId: UserId = user.userId,
+    volumeId: String = volume.id,
+    addressId: AddressId? = AddressId("address-id-${account.email}"),
     type: Long = ShareDto.TYPE_STANDARD,
-    addressId: AddressId? = AddressId("address-id-$id"),
     key: String = "key-$id",
     passphrase: String = "s".repeat(32),
     passphraseSignature: String = "passphrase-signature-$id",
-): ShareEntity {
-    return ShareEntity(
-        id = id,
-        userId = userId,
-        volumeId = volumeId,
-        addressId = addressId,
-        flags = if (type == ShareDto.TYPE_MAIN) 1 else 0,
-        linkId = linkId,
-        isLocked = false,
-        key = key,
-        passphrase = passphrase,
-        passphraseSignature = passphraseSignature,
-        creationTime = null,
-        type = type,
-    )
-}
+): ShareEntity = ShareEntity(
+    id = id,
+    userId = userId,
+    volumeId = volumeId,
+    addressId = addressId,
+    flags = if (type == ShareDto.TYPE_MAIN) 1 else 0,
+    linkId = linkId,
+    isLocked = false,
+    key = key,
+    passphrase = passphrase,
+    passphraseSignature = passphraseSignature,
+    creationTime = null,
+    type = type,
+)
 
 fun findRootId(shareId: String): FolderId {
     val deviceRegex = """device-share-id-(\d+)""".toRegex()
@@ -94,7 +90,7 @@ fun findRootId(shareId: String): FolderId {
             } else if (standardResult != null) {
                 standardRootId(standardResult.groupValues[1].toInt())
             } else {
-                error("Unkown share id: $shareId")
+                error("Unknown share id: $shareId")
             }
         }
     }

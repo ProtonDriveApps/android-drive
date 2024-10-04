@@ -21,7 +21,7 @@
   <string name="file_info_location_entry">Loc</string>
   <string name="file_info_last_modified_entry">Modificat</string>
   <string name="file_info_number_of_accesses_entry">Nr. descărcări</string>
-  <string name="file_info_share_url_expiration_time">Timp expirare legătură</string>
+  <string name="file_info_share_url_expiration_time">Timp expirare legătură web</string>
   <string name="file_info_share_url_no_expiration_time">Niciodată</string>
   <string name="file_info_title_folder">Detalii folder</string>
   <string name="file_info_title_file">Detalii fișier</string>

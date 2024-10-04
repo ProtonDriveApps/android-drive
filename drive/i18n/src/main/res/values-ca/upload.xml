@@ -35,7 +35,7 @@
     <item quantity="one">Pujant %1$d fitxer a: %2$s</item>
     <item quantity="other">Pujant %1$d fitxers a: %2$s</item>
   </plurals>
-  <string name="files_upload_preparing">Preparant la pujada. Això pot prendre una estona.</string>
+  <string name="files_upload_preparing">S\'està preparant la pujada. Això pot trigar una estona.</string>
   <!--
         Variable %1$s is the maximum number of uploading files
         Example:

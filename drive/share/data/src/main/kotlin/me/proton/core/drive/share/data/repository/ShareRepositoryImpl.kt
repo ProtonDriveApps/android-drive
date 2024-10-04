@@ -33,11 +33,13 @@ import me.proton.core.drive.share.data.db.ShareEntity
 import me.proton.core.drive.share.data.extension.toLong
 import me.proton.core.drive.share.data.extension.toShare
 import me.proton.core.drive.share.data.extension.toShareEntity
+import me.proton.core.drive.share.data.extension.toShareMembership
 import me.proton.core.drive.share.data.extension.toShareType
 import me.proton.core.drive.share.data.extension.toShareUserMember
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.entity.ShareInfo
+import me.proton.core.drive.share.domain.entity.ShareMembership
 import me.proton.core.drive.share.domain.repository.ShareRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.user.domain.entity.AddressId
@@ -137,6 +139,9 @@ class ShareRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun hasMembership(shareId: ShareId): Boolean =
+        db.shareMembershipDao.hasMembership(shareId.userId, shareId.id)
+
     override suspend fun getAllMembershipIds(userId: UserId): List<String> =
         db.shareMembershipDao.getAllIds(userId)
 
@@ -150,5 +155,13 @@ class ShareRepositoryImpl @Inject constructor(
             Permissions(value)
         }
     }.orEmpty()
+
+    override fun getMembership(shareId: ShareId): Flow<DataResult<ShareMembership>> =
+        db.shareMembershipDao.get(
+            userId = shareId.userId,
+            shareId = shareId.id
+        ).map { entity ->
+            entity.toShareMembership().asSuccess
+        }
 }
 

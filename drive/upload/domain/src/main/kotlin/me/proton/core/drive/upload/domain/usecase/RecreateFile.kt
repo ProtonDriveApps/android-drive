@@ -20,7 +20,6 @@ package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.extension.updateRevisionInPath
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.file.CreateNewFileInfo
 import me.proton.core.drive.file.base.domain.repository.FileRepository
@@ -37,6 +36,7 @@ import me.proton.core.drive.linkupload.domain.factory.UploadBlockFactory
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadBlocks
 import me.proton.core.drive.linkupload.domain.usecase.UpdateLinkFileInfo
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import javax.inject.Inject
 
 class RecreateFile @Inject constructor(
@@ -61,7 +61,7 @@ class RecreateFile @Inject constructor(
             ) {
                 "Node key is required for recreate file"
             }
-            val signatureAddress = getSignatureAddress(userId)
+            val signatureAddress = getSignatureAddress(uploadFileLink.shareId).getOrThrow()
             val fileKey = buildFileKey(signatureAddress)
             val newFileInfo = createNewFileInfo(
                 folder = getLink(parentLinkId).toResult().getOrThrow(),

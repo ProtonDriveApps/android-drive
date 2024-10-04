@@ -23,7 +23,6 @@ import me.proton.core.drive.base.domain.entity.toTimestampS
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.file.GetContentHash
 import me.proton.core.drive.crypto.domain.usecase.file.VerifyManifestSignaturePrimary
@@ -45,6 +44,7 @@ import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.usecase.GetShare
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import me.proton.core.util.kotlin.CoreLogger
 import java.util.Date
 import javax.inject.Inject
@@ -82,7 +82,7 @@ class UpdateRevision @Inject constructor(
             try {
                 val fileId = requireFileId()
                 val folderKey = getNodeKey(parentLinkId).getOrThrow()
-                val signatureAddress = getSignatureAddress(userId)
+                val signatureAddress = getSignatureAddress(fileId.shareId).getOrThrow()
                 val uploadFileKey = buildNodeKey(userId, folderKey, this, signatureAddress).getOrThrow()
                 val uploadBlocks = linkUploadRepository.getUploadBlocks(this)
                 val manifestSignatureVerified = verifyManifestSignaturePrimary(
@@ -136,7 +136,7 @@ class UpdateRevision @Inject constructor(
         share: Share,
         folderKey: Key.Node,
     ): PhotoAttributes? = takeIf { share.type == Share.Type.PHOTO }?.let {
-        with (uploadFileLink) {
+        with(uploadFileLink) {
             PhotoAttributes(
                 captureTime = fileCreationDateTime
                     ?: lastModified?.toTimestampS()
@@ -148,10 +148,11 @@ class UpdateRevision @Inject constructor(
                             )
                         }
                     },
-                contentHash = digests.values.getValue(configurationProvider.contentDigestAlgorithm)
-                    .let { contentDigest ->
-                        getContentHash(parentLinkId, folderKey, contentDigest).getOrThrow()
-                    },
+                contentHash = requireNotNull(digests.values[configurationProvider.contentDigestAlgorithm]) {
+                    "${configurationProvider.contentDigestAlgorithm} cannot be found in digests: ${digests.values.keys}"
+                }.let { contentDigest ->
+                    getContentHash(parentLinkId, folderKey, contentDigest).getOrThrow()
+                },
             )
         }
     }

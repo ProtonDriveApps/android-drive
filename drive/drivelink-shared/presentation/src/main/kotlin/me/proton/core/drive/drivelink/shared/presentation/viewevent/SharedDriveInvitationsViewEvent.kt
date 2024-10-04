@@ -28,4 +28,6 @@ interface SharedDriveInvitationsViewEvent {
     val onRetry: () -> Unit
     val onSave: () -> Unit
     val isValidEmailAddress: (String) -> Boolean
+    val onMessageChanged: (String) -> Unit
+    val onSendMessageAndName: (Boolean) -> Unit
 }

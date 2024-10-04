@@ -19,7 +19,6 @@ package me.proton.core.drive.crypto.domain.usecase.file
 
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.usecase.GetOrCreateClientUid
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.HmacSha256
 import me.proton.core.drive.cryptobase.domain.usecase.EncryptText
@@ -36,10 +35,12 @@ import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetNodeHashKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.usecase.GetShare
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import javax.inject.Inject
 
 class CreateNewFileInfo @Inject constructor(
@@ -76,7 +77,7 @@ class CreateNewFileInfo @Inject constructor(
             ).getOrThrow()
         }
         val userId = folder.userId
-        val signatureAddress = getSignatureAddress(userId)
+        val signatureAddress = getSignatureAddress(folder.shareId).getOrThrow()
         NewFileInfo(
             parentId = folder.id,
             name = fileName,
@@ -104,7 +105,11 @@ class CreateNewFileInfo @Inject constructor(
     ): Result<NewFileInfo> = coRunCatching {
         val folderKey = getNodeKey(folder).getOrThrow()
         val userId = folder.userId
-        val fileKey = generateNodeKey(userId, folderKey, getSignatureAddress(userId)).getOrThrow()
+        val fileKey = generateNodeKey(
+            userId = userId,
+            parent = folderKey,
+            signatureAddress = getSignatureAddress(folder.shareId).getOrThrow(),
+        ).getOrThrow()
         invoke(
             folder = folder,
             name = name,

@@ -55,7 +55,7 @@ class SetupPhotosBackup @Inject constructor(
             if (defaultBucketEntries.isEmpty()) {
                 CoreLogger.w(BACKUP, "No bucket with name: $folderNames in $bucketEntries")
             } else {
-                CoreLogger.d(BACKUP, "Setup photos backup for ${defaultBucketEntries.size} buckets")
+                CoreLogger.d(BACKUP, "Setup photo backup for ${defaultBucketEntries.size} buckets")
             }
         }
     }

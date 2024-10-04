@@ -42,6 +42,7 @@ class BuildVerifier @Inject constructor(
         val verificationData = repository.getVerificationData(userId, shareId, linkId, revisionId)
         val contentKey = buildContentKey(
             userId = userId,
+            shareId = shareId,
             contentKeyPacket = verificationData.contentKeyPacket,
             contentKeyPacketSignature = "",
             fileKey = fileKey

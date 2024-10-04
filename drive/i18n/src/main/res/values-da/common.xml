@@ -62,6 +62,7 @@
   <string name="common_manage_access_action">Administrer adgang</string>
   <string name="common_copy_link_action">Kopiér link</string>
   <string name="common_stop_sharing_action">Stop deling</string>
+  <string name="common_open_in_browser_action">Åbn i browser</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Lyd</string>

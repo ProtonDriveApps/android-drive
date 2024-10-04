@@ -24,6 +24,8 @@ import me.proton.android.drive.ui.robot.settings.GetMoreFreeStorageRobot
 import me.proton.android.drive.ui.screen.HomeScreenTestTag
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerTestTag
 import me.proton.test.fusion.Fusion.node
+import me.proton.test.fusion.ui.common.enums.SwipeDirection
+import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
 object SidebarRobot : Robot {
@@ -34,6 +36,10 @@ object SidebarRobot : Robot {
     private val trashNavigationItem get() = node.withText(I18N.string.navigation_item_trash)
     private val offlineNavigationItem get() = node.withText(I18N.string.navigation_item_offline)
     private val getMoreFreeStorageItem get() = node.withText(I18N.string.navigation_item_get_free_storage)
+
+    fun <T: Robot> closeSidebarBySwipe(goesTo: T) = goesTo.apply {
+        sidebar.swipe(SwipeDirection.Left)
+    }
 
     private fun clickSidebarMenuItem(@StringRes menuItemName: Int) {
         node.withText(menuItemName).click()
@@ -67,6 +73,9 @@ object SidebarRobot : Robot {
 
     fun assertGetMoreFreeStorageIsNotDisplayed() {
         getMoreFreeStorageItem.await { doesNotExist() }
+    }
+    fun assertDisplayNameIsDisplayed(name: String) {
+        node.withText(name).await(90.seconds) { assertIsDisplayed() }
     }
 
     override fun robotDisplayed() {

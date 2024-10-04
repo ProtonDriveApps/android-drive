@@ -28,6 +28,7 @@ fun MembershipDto.toShareUserMember(shareId: ShareId, email: String) = ShareMemb
     shareId = shareId.id,
     inviterEmail = inviter,
     inviteeEmail = email,
+    addressId = addressId,
     createTime = creationTime,
     permissions = permissions,
     keyPacket = keyPacket,

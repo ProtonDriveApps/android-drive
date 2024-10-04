@@ -18,7 +18,6 @@
 package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.usecase.GetAddressId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.block.domain.entity.UploadBlocksUrl
 import me.proton.core.drive.block.domain.repository.BlockRepository
@@ -29,6 +28,7 @@ import me.proton.core.drive.linkupload.domain.extension.isThumbnail
 import me.proton.core.drive.linkupload.domain.extension.requireFileId
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
+import me.proton.core.drive.share.domain.usecase.GetAddressId
 import javax.inject.Inject
 
 class GetBlocksUploadUrl @Inject constructor(
@@ -50,7 +50,7 @@ class GetBlocksUploadUrl @Inject constructor(
                         val fileBlocks = uploadBlocks.filterNot { uploadBlock -> uploadBlock.isThumbnail }
                         blockRepository.getUploadBlocksUrl(
                             userId = userId,
-                            addressId = getAddressId(userId),
+                            addressId = getAddressId(uploadFileLink.shareId).getOrThrow(),
                             fileId = uploadFileLink.requireFileId(),
                             revisionId = draftRevisionId,
                             uploadBlocks = fileBlocks,
@@ -76,7 +76,7 @@ class GetBlocksUploadUrl @Inject constructor(
         with (uploadFileLink) {
             blockRepository.getUploadBlocksUrl(
                 userId = userId,
-                addressId = getAddressId(userId),
+                addressId = getAddressId(uploadFileLink.shareId).getOrThrow(),
                 fileId = uploadFileLink.requireFileId(),
                 revisionId = draftRevisionId,
                 uploadBlocks = uploadBlock,

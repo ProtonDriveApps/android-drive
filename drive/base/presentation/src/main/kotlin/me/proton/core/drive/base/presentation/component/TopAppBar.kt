@@ -41,7 +41,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
-import me.proton.core.compose.component.BoxWithNotificationDot
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
@@ -138,10 +137,11 @@ private fun NavigationIconButton(
     ) {
         BoxWithNotificationDot(
             notificationDotVisible = notificationDotVisible,
-        ) {
+        ) { modifier ->
             Icon(
                 painter = navigationIcon,
                 contentDescription = null,
+                modifier = modifier.padding(4.dp),
             )
         }
     }
@@ -154,6 +154,7 @@ fun ActionButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     iconTintColor: Color = IconTintColor,
+    notificationDotVisible: Boolean = false,
     onClick: () -> Unit,
 ) {
     IconButton(
@@ -164,12 +165,16 @@ fun ActionButton(
         onClick = { onClick() },
         enabled = enabled,
     ) {
-        Icon(
-            modifier = Modifier.size(ActionIconSize),
-            painter = painterResource(id = icon),
-            contentDescription = stringResource(id = contentDescription),
-            tint = iconTintColor,
-        )
+        BoxWithNotificationDot(notificationDotVisible = notificationDotVisible) { modifier ->
+            Icon(
+                modifier = modifier
+                    .padding(4.dp)
+                    .size(ActionIconSize),
+                painter = painterResource(id = icon),
+                contentDescription = stringResource(id = contentDescription),
+                tint = iconTintColor,
+            )
+        }
     }
 }
 
@@ -182,6 +187,7 @@ fun TopBarActions(
         ActionButton(
             icon = action.iconResId,
             contentDescription = action.contentDescriptionResId,
+            notificationDotVisible = action.notificationDotVisible,
             onClick = action.onAction
         )
     }

@@ -18,7 +18,6 @@
 package me.proton.core.drive.crypto.domain.usecase.folder
 
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.crypto.domain.usecase.HmacSha256
 import me.proton.core.drive.crypto.domain.usecase.link.EncryptAndSignXAttr
 import me.proton.core.drive.cryptobase.domain.usecase.EncryptAndSignText
@@ -34,8 +33,10 @@ import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetNodeHashKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import javax.inject.Inject
 
 class CreateFolderInfo @Inject constructor(
@@ -59,7 +60,7 @@ class CreateFolderInfo @Inject constructor(
         val parentFolderKey = getNodeKey(parentFolder).getOrThrow()
         val parentFolderHashKey = getNodeHashKey(parentFolder, parentFolderKey).getOrThrow()
         val userId = parentFolder.id.userId
-        val signatureAddress = getSignatureAddress(userId)
+        val signatureAddress = getSignatureAddress(parentFolder.shareId).getOrThrow()
         val folderKey = generateNodeKey(userId, parentFolderKey, signatureAddress).getOrThrow()
         val folderHashKey = generateNodeHashKey(folderKey).getOrThrow()
         folderName to FolderInfo(

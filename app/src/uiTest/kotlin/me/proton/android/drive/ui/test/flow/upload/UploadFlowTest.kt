@@ -105,8 +105,8 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    fun upload6MBFile() {
-        val file = externalFilesRule.createFile("6MB.txt", 6 * 1024 * 1024)
+    fun upload50MBFile() {
+        val file = externalFilesRule.createFile("50MB.txt", 6 * 1024 * 1024)
 
         Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
 
@@ -120,7 +120,7 @@ class UploadFlowTest : AuthenticatedBaseTest() {
                 assertStageEncrypting()
                 assertStageUploading()
                 assertStageUploadedProgress(100)
-                itemIsDisplayed("6MB.txt")
+                itemIsDisplayed("50MB.txt")
             }
     }
 

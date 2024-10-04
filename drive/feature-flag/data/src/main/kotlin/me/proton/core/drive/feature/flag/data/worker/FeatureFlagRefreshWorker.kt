@@ -95,7 +95,7 @@ class FeatureFlagRefreshWorker @AssistedInject constructor(
                     .build()
             )
             .setInitialDelay(initialDelay.inWholeSeconds, TimeUnit.SECONDS)
-            .addTags(tags)
+            .addTags(listOf(userId.id) + tags)
             .build()
     }
 }

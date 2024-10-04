@@ -54,7 +54,6 @@ import me.proton.core.drive.upload.data.extension.getSizeData
 import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.extension.setSize
-import me.proton.core.drive.upload.data.manager.UploadWorkManagerImpl.Companion.TAG_UPLOAD_WORKER
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_BLOCK_INDEX
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_BLOCK_TOKEN
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_BLOCK_URL
@@ -246,7 +245,7 @@ class BlockUploadWorker @AssistedInject constructor(
                         .putLong(KEY_BLOCK_INDEX, blockIndex)
                         .build()
                 )
-                .addTags(listOf(userId.id) + TAG_UPLOAD_WORKER + TAG + tags)
+                .addTags(listOf(userId.id) + TAG + tags)
                 .build()
     }
 }

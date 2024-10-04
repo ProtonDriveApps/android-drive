@@ -88,4 +88,6 @@
     <item quantity="one">%1$d membre</item>
     <item quantity="other">%1$d membres</item>
   </plurals>
+  <string name="share_via_invitations_message_placeholder">Ajouter un message</string>
+  <string name="share_via_invitations_send_message_and_name_label">Inclure le message et le nom du fichier dans l\'e-mail d\'invitation</string>
 </resources>

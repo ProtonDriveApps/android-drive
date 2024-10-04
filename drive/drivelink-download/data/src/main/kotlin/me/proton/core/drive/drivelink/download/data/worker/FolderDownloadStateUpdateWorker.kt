@@ -64,7 +64,13 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
                 downloadState = downloadState,
             )
         } else {
-            workManager.enqueue(getWorkRequest(userId, folderId, isDownloadFinished, tags.toList(), DEFAULT_RETRY_DELAY))
+            workManager.enqueue(getWorkRequest(
+                userId = userId,
+                folderId = folderId,
+                isDownloadFinished = isDownloadFinished,
+                tags = tags.toList(),
+                delayInSeconds = DEFAULT_RETRY_DELAY
+            ))
         }
         return Result.success()
     }

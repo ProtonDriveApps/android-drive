@@ -23,5 +23,8 @@
   <string name="preview_processing_state">Обробка…</string>
   <string name="preview_empty">Нічого не має для перегляду…</string>
   <string name="title_not_found">Не знайдено</string>
-  <string name="preview_proton_doc_open_in_browser_button">Відкрити в браузері</string>
+  <string name="proton_docs_insert_image_header_title">Insert image</string>
+  <string name="proton_docs_option_select_file">Select a file</string>
+  <string name="proton_docs_unsupported_file_type">Only inserting images is supported for now</string>
+  <string name="proton_docs_load_error">Loading document failed</string>
 </resources>

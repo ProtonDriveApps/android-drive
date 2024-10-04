@@ -129,7 +129,6 @@ class UploadFolder @Inject constructor(
                             networkTypeProviderType = NetworkTypeProviderType.BACKUP,
                             shouldBroadcastErrorMessage = false,
                             priority = priority,
-                            tags = tags,
                         ).getOrThrow()
                     }
             }

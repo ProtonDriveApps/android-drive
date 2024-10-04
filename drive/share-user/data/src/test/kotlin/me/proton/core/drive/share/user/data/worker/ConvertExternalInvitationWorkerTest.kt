@@ -13,7 +13,7 @@ import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.db.test.folder
 import me.proton.core.drive.db.test.mainShareId
 import me.proton.core.drive.db.test.myFiles
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -65,7 +65,7 @@ class ConvertExternalInvitationWorkerTest {
     @Before
     fun setUp() = runTest {
         driveRule.db.run {
-            standardShare(standardShareId.id)
+            standardShareByMe(standardShareId.id)
             myFiles {
                 folder(
                     id = folderId.id,

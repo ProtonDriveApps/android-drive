@@ -53,10 +53,12 @@ import kotlin.time.Duration.Companion.seconds
 fun PreviewScreen(
     navigateBack: () -> Unit,
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToProtonDocsInsertImageOptions: () -> Unit,
 ) = PreviewScreen(
     viewModel = hiltViewModel(),
     navigateBack = navigateBack,
     navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+    navigateToProtonDocsInsertImageOptions = navigateToProtonDocsInsertImageOptions,
     modifier = Modifier.fillMaxSize(),
 )
 
@@ -66,6 +68,7 @@ fun PreviewScreen(
     viewModel: PreviewViewModel,
     navigateBack: () -> Unit,
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToProtonDocsInsertImageOptions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     KeepScreenOn()
@@ -107,6 +110,7 @@ fun PreviewScreen(
                     viewEvent = viewModel.viewEvent(
                         navigateBack = navigateBack,
                         navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+                        navigateToProtonDocsInsertImageOptions = navigateToProtonDocsInsertImageOptions,
                     ),
                     modifier = modifier,
                 ) { page ->

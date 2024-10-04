@@ -96,6 +96,50 @@ interface ShareDatabase : Database {
             }
         }
 
+        val MIGRATION_3 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("DELETE FROM `ShareEntity` WHERE type = 2")
+                database.execSQL("DROP TABLE `ShareMembershipEntity`")
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `ShareMembershipEntity` (
+                        `id` TEXT NOT NULL,
+                        `user_id` TEXT NOT NULL,
+                        `share_id` TEXT NOT NULL,
+                        `inviter_email` TEXT NOT NULL,
+                        `invitee_email` TEXT NOT NULL,
+                        `address_id` TEXT NOT NULL,
+                        `permissions` INTEGER NOT NULL,
+                        `key_packet` TEXT NOT NULL,
+                        `key_packet_signature` TEXT NULL,
+                        `session_key_signature` TEXT NULL,
+                        `create_time` INTEGER NOT NULL,
+                        PRIMARY KEY(`user_id`, `share_id`, `id`),
+                        FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE,
+                        FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                   CREATE INDEX IF NOT EXISTS `index_ShareMembershipEntity_user_id` ON `ShareMembershipEntity` (`user_id`)
+                """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                   CREATE INDEX IF NOT EXISTS `index_ShareMembershipEntity_user_id_share_id` ON `ShareMembershipEntity` (`user_id`, `share_id`)
+                """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                   CREATE INDEX IF NOT EXISTS `index_ShareMembershipEntity_id` ON `ShareMembershipEntity` (`id`)
+                """.trimIndent()
+                )
+            }
+        }
+
         private fun SupportSQLiteDatabase.updateShareEntityType() {
             query("SELECT * FROM ShareEntity")?.use { cursor ->
                 while (cursor.moveToNext()) {

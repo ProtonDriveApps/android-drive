@@ -19,12 +19,14 @@ package me.proton.core.drive.linkupload.data.extension
 
 import kotlinx.serialization.SerializationException
 import me.proton.core.data.room.BuildConfig
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.CameraExifTags
 import me.proton.core.drive.base.domain.entity.Location
 import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.base.domain.log.LogTag.UploadTag.logTag
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
 import me.proton.core.drive.linkupload.domain.entity.UploadDigests
@@ -66,10 +68,11 @@ fun LinkUploadEntity.toUploadFileLink() =
         digests = digests?.let { json ->
             try {
                 UploadDigests(json.deserialize())
-            }catch (e: SerializationException){
+            } catch (e: SerializationException) {
                 if (BuildConfig.DEBUG) {
                     throw e
                 }
+                e.log(id.logTag(), "Cannot parse digest")
                 UploadDigests()
             }
         } ?: UploadDigests(),

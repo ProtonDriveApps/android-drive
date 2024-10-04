@@ -23,5 +23,8 @@
   <string name="preview_processing_state">დამუშავება…</string>
   <string name="preview_empty">გადასახედი არაფერია…</string>
   <string name="title_not_found">ვერ ვიპოვე</string>
-  <string name="preview_proton_doc_open_in_browser_button">ბრაუზერში გახსნა</string>
+  <string name="proton_docs_insert_image_header_title">გამოსახულების ჩასმა</string>
+  <string name="proton_docs_option_select_file">აირჩიეთ ფაილი</string>
+  <string name="proton_docs_unsupported_file_type">ჯერჯერობით, მხოლოდ, სურათების ჩასმაა მხარდაჭერილი</string>
+  <string name="proton_docs_load_error">Loading document failed</string>
 </resources>

@@ -35,6 +35,7 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.drivelink.download.data.extension.logTag
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FILE_ID
+import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FILE_TAGS
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_RETRYABLE
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_REVISION_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SHARE_ID
@@ -60,6 +61,7 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
     private val fileId = FileId(shareId, requireNotNull(inputData.getString(KEY_FILE_ID)))
     private val revisionId = requireNotNull(inputData.getString(KEY_REVISION_ID))
     private val retryable = inputData.getBoolean(KEY_RETRYABLE, false)
+    private val fileTags = inputData.getStringArray(KEY_FILE_TAGS).orEmpty().toList()
     private val logTag = fileId.logTag
 
     override suspend fun doWork(): Result {
@@ -74,11 +76,12 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
                     if (retryable) {
                         workManager.enqueue(
                             FileDownloadWorker.getWorkRequest(
-                                userId,
-                                volumeId,
-                                fileId,
-                                revisionId,
-                                retryable,
+                                userId = userId,
+                                volumeId = volumeId,
+                                fileId = fileId,
+                                revisionId = revisionId,
+                                isRetryable = retryable,
+                                fileTags = fileTags,
                             )
                         )
                     }
@@ -95,6 +98,7 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
             fileId: FileId,
             revisionId: String,
             retryable: Boolean,
+            fileTags: List<String> = emptyList(),
             tags: Collection<String> = emptyList(),
         ) = OneTimeWorkRequest.Builder(FileDownloadVerifyWorker::class.java)
             .setConstraints(
@@ -110,6 +114,7 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
                     .putString(KEY_FILE_ID, fileId.id)
                     .putString(KEY_REVISION_ID, revisionId)
                     .putBoolean(KEY_RETRYABLE, retryable)
+                    .putStringArray(KEY_FILE_TAGS, fileTags.toTypedArray())
                     .build()
             )
             .setBackoffCriteria(

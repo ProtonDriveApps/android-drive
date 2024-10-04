@@ -18,8 +18,11 @@
 
 package me.proton.android.drive.ui.extension
 
+import me.proton.core.test.quark.Quark.GenKeys
 import me.proton.core.test.quark.data.User
+import me.proton.core.test.quark.response.CreateUserAddressQuarkResponse
 import me.proton.core.test.quark.v2.QuarkCommand
+import me.proton.core.test.quark.v2.command.USERS_CREATE_ADDRESS
 import me.proton.core.test.quark.v2.toEncodedArgs
 import okhttp3.Response
 
@@ -86,3 +89,29 @@ fun QuarkCommand.volumeCreate(
         .let {
             client.executeQuarkRequest(it)
         }
+
+fun QuarkCommand.userCreatePrimaryAddress(
+    decryptedUserId: Long,
+    password: String,
+    email: String,
+    genKeys: GenKeys = GenKeys.Curve25519
+): CreateUserAddressQuarkResponse =
+    route(USERS_CREATE_ADDRESS)
+        .args(
+            listOf(
+                "userID" to decryptedUserId.toString(),
+                "password" to password,
+                "email" to email,
+                "--gen-keys" to genKeys.name,
+                "--primary" to "true",
+                "--format" to "json"
+            ).toEncodedArgs()
+        )
+        .build()
+        .let {
+            client.executeQuarkRequest(it)
+        }
+        .let {
+            json.decodeFromString(it.body!!.string())
+        }
+

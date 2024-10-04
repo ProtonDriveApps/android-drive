@@ -51,7 +51,7 @@ fun MockWebServer.getShare(shares: List<ShareDto>) = routing {
     }
 }
 
-fun MockWebServer.getShareBootstrap() = routing {
+fun MockWebServer.getShareBootstrap(addressId: String = "address-id") = routing {
     get("/drive/shares/@{enc_shareID}") {
         jsonResponse {
             val shareId = requireNotNull(parameters["enc_shareID"])
@@ -69,7 +69,7 @@ fun MockWebServer.getShareBootstrap() = routing {
                 key = "",
                 passphrase = "s".repeat(32),
                 passphraseSignature = "",
-                addressId = "address-id",
+                addressId = addressId,
                 creationTime = null,
                 memberships = emptyList(),
             )

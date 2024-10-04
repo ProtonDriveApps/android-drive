@@ -20,7 +20,7 @@
   <string name="file_info_uploaded_by_entry">Tallentanut</string>
   <string name="file_info_location_entry">Sijainti</string>
   <string name="file_info_last_modified_entry">Muokattu</string>
-  <string name="file_info_number_of_accesses_entry">Latausten määrä</string>
+  <string name="file_info_number_of_accesses_entry">Latausmäärä</string>
   <string name="file_info_share_url_expiration_time">Linkin erääntymisaika</string>
   <string name="file_info_share_url_no_expiration_time">Ei koskaan</string>
   <string name="file_info_title_folder">Kansion tiedot</string>

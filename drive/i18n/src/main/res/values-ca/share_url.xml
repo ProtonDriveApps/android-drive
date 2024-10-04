@@ -32,7 +32,7 @@
         Example:
             "Anyone with this link can access your file"
     -->
-  <string name="shared_link_accessibility_description_public">Qualsevol que tingui aquest enllaç pot accedir a %1$s.</string>
+  <string name="shared_link_accessibility_description_public">Qualsevol persona amb aquest enllaç pot accedir a %1$s</string>
   <!--
         Variable %1$s is either "shared_link_file" or "shared_link_folder"
         Example:
@@ -57,9 +57,9 @@
         Example:
             "Password length must be between 1 and 50 characters"
     -->
-  <string name="shared_link_error_message_invalid_password_length">La llargada de la contrasenya ha de ser entre 1 i %1$d caràcters.</string>
+  <string name="shared_link_error_message_invalid_password_length">La llargada de la contrasenya ha de tenir entre 1 i %1$d caràcters.</string>
   <string name="shared_link_error_message_not_found">L’enllaç compartit no existeix o bé ha caducat.</string>
-  <string name="shared_link_error_message_expiration_date_too_soon">La data de caducitat ha de ser com a mínim demà</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">La data de caducitat ha de ser almenys demà</string>
   <!--
         Variable %1$d is max number of days
         Example:
@@ -70,6 +70,6 @@
   <string name="title_share_via_link">Comparteix amb un enllaç</string>
   <string name="shared_with_me_title">Compartit amb mi</string>
   <string name="shared_by_me_title">Compartit per mi</string>
-  <string name="shared_with_me_empty_description">Els fitxers i les carpetes que compartiu amb altres persones apareixeran aquí</string>
+  <string name="shared_with_me_empty_description">Aquí apareixeran fitxers i carpetes que compartiu amb altres persones</string>
   <string name="shared_by_me_empty_description">Compartiu de manera segura els vostres fitxers i carpetes amb un xifratge d\'extrem a extrem</string>
 </resources>

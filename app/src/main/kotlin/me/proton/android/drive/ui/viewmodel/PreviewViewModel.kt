@@ -21,6 +21,8 @@ package me.proton.android.drive.ui.viewmodel
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.net.Uri
+import android.webkit.ValueCallback
+import android.webkit.WebChromeClient.FileChooserParams
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -41,8 +43,10 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
@@ -54,10 +58,11 @@ import me.proton.android.drive.extension.log
 import me.proton.android.drive.ui.effect.PreviewEffect
 import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.navigation.Screen
-import me.proton.android.drive.usecase.OpenProtonDocument
+import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.transformSuccess
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.domain.entity.Attributes
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.Permissions
@@ -75,6 +80,7 @@ import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentUri
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
+import me.proton.core.drive.drivelink.crypto.domain.usecase.GetSessionForkProtonDocumentUriString
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.getThumbnailId
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
@@ -87,6 +93,7 @@ import me.proton.core.drive.drivelink.offline.domain.usecase.GetOfflineDriveLink
 import me.proton.core.drive.drivelink.sorting.domain.usecase.SortDriveLinks
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.files.preview.presentation.component.PreviewComposable
+import me.proton.core.drive.files.preview.presentation.component.ProtonDocsInWebViewFeatureFlag
 import me.proton.core.drive.files.preview.presentation.component.event.PreviewViewEvent
 import me.proton.core.drive.files.preview.presentation.component.state.ContentState
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewContentState
@@ -107,6 +114,8 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVO
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.util.kotlin.startsWith
+import me.proton.core.util.kotlin.takeIfNotEmpty
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -121,8 +130,10 @@ class PreviewViewModel @Inject constructor(
     getDecryptedDriveLink: GetDecryptedDriveLink,
     private val getFile: GetFile,
     private val getDocumentUri: GetDocumentUri,
-    private val openProtonDocument: OpenProtonDocument,
+    private val getSessionForkProtonDocumentUriString: GetSessionForkProtonDocumentUriString,
+    private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     private val broadcastMessages: BroadcastMessages,
+    private val protonDocsInWebViewFeatureFlag: ProtonDocsInWebViewFeatureFlag,
     getDecryptedDriveLinks: GetDecryptedDriveLinks,
     getDecryptedOfflineDriveLinks: GetDecryptedOfflineDriveLinks,
     getOfflineDriveLinksCount: GetOfflineDriveLinksCount,
@@ -131,7 +142,7 @@ class PreviewViewModel @Inject constructor(
     getPhotoShare: GetPhotoShare,
     photoRepository: PhotoRepository,
     sortDriveLinks: SortDriveLinks,
-    savedStateHandle: SavedStateHandle,
+    val savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val trigger = MutableSharedFlow<Trigger>(1).apply {
@@ -142,6 +153,17 @@ class PreviewViewModel @Inject constructor(
     private val fileId: FileId
         get() = trigger.replayCache.first().fileId
     private val currentIndex = MutableStateFlow(-1)
+
+    private var onInsertImageCallback: ((List<Uri>) -> Unit)? = null
+    val _unused = savedStateHandle.getStateFlow<List<Uri>>(PROTON_DOCS_IMAGE_URIS, emptyList())
+        .onEach { uris ->
+            CoreLogger.d(VIEW_MODEL, "$PROTON_DOCS_IMAGE_URIS: $uris")
+            onInsertImageCallback?.invoke(uris)?.also {
+                onInsertImageCallback = null
+                savedStateHandle.set<List<Uri>>(PROTON_DOCS_IMAGE_URIS, emptyList())
+            }
+        }
+        .launchIn(viewModelScope)
 
     private val provider: PreviewContentProvider =
         when (savedStateHandle.require<PagerType>(Screen.PagerPreview.PAGER_TYPE)) {
@@ -179,6 +201,7 @@ class PreviewViewModel @Inject constructor(
         }
 
     private val contentStatesCache = mutableMapOf<FileId, Flow<ContentState>>()
+    private val protonDocumentUriStringCache = mutableMapOf<FileId, String>()
 
     private val driveLinks: StateFlow<List<DriveLink.File>?> = trigger.transformLatest { trigger ->
         emitAll(
@@ -195,6 +218,8 @@ class PreviewViewModel @Inject constructor(
         previewContentState = PreviewContentState.Loading,
         items = emptyList(),
         currentIndex = 0,
+        host = configurationProvider.host,
+        appVersionHeader = configurationProvider.appVersionHeader,
     )
     val viewState: Flow<PreviewViewState> = driveLinks.filterNotNull().transformLatest { driveLinks ->
         if (driveLinks.isEmpty() && currentIndex.value != -1) {
@@ -237,6 +262,7 @@ class PreviewViewModel @Inject constructor(
     fun viewEvent(
         navigateBack: () -> Unit,
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+        navigateToProtonDocsInsertImageOptions: () -> Unit,
     ): PreviewViewEvent = object : PreviewViewEvent {
         override val onTopAppBarNavigation = { navigateBack() }
         override val onMoreOptions = { navigateToFileOrFolderOptions(fileId) }
@@ -248,6 +274,63 @@ class PreviewViewModel @Inject constructor(
             }
         }
         override val onOpenInBrowser = { openInBrowser() }
+        override val onProtonDocsDownloadResult = { result: Result<String> ->
+            result
+                .onSuccess { name ->
+                    broadcastMessages(
+                        userId = userId,
+                        message = appContext.getString(
+                            I18N.string.common_in_app_notification_download_complete,
+                            name,
+                        ),
+                        type = BroadcastMessage.Type.INFO,
+                    )
+                }
+                .onFailure { error ->
+                    error.log(VIEW_MODEL)
+                    broadcastMessages(
+                        userId = userId,
+                        message = error.getDefaultMessage(
+                            context = appContext,
+                            useExceptionMessage = configurationProvider.useExceptionMessage,
+                        ),
+                        type = BroadcastMessage.Type.ERROR,
+                    )
+                }
+            Unit
+        }
+        override val onProtonDocsShowFileChooser = {
+            filePathCallback: ValueCallback<Array<Uri>>?, fileChooserParams: FileChooserParams? ->
+            val acceptTypes = fileChooserParams?.acceptTypes?.toList() ?: listOf("image/*")
+            when {
+                acceptTypes.any { mimeType -> mimeType.startsWith("image/")} -> let {
+                    navigateToProtonDocsInsertImageOptions().also {
+                        this@PreviewViewModel.onInsertImageCallback = { uris ->
+                            CoreLogger.d(LogTag.WEBVIEW, "onShowFileChooser callback ${uris.joinToString()}")
+                            filePathCallback?.onReceiveValue(uris.takeIfNotEmpty()?.toTypedArray())
+                        }
+                    }
+                    if (acceptTypes.any { mimeType -> !mimeType.startsWith("image/") }) {
+                        CoreLogger.w(VIEW_MODEL, "Unsupported file type: ${acceptTypes.joinToString()}")
+                        broadcastMessages(
+                            userId = userId,
+                            message = appContext.getString(I18N.string.proton_docs_unsupported_file_type),
+                            type = BroadcastMessage.Type.WARNING,
+                        )
+                    }
+                    true
+                }
+                else -> let {
+                    CoreLogger.e(VIEW_MODEL, "Unsupported file type: ${acceptTypes.joinToString()}")
+                    broadcastMessages(
+                        userId = userId,
+                        message = appContext.getString(I18N.string.proton_docs_unsupported_file_type),
+                        type = BroadcastMessage.Type.ERROR,
+                    )
+                    false
+                }
+            }
+        }
     }
 
     suspend fun onPageChanged(page: Int) {
@@ -265,7 +348,8 @@ class PreviewViewModel @Inject constructor(
             trigger.emit(
                 Trigger(
                     fileId = fileId,
-                    verifySignature = verifySignature
+                    verifySignature = verifySignature,
+                    retry = true,
                 )
             )
         }
@@ -300,10 +384,47 @@ class PreviewViewModel @Inject constructor(
     }
 
     fun getUri(fileId: FileId) = getDocumentUri(userId, fileId)
+
     private fun DriveLink.File.getContentStateFlow(): Flow<ContentState> =
         contentStatesCache.getOrPut(id) {
-            if (isProtonDocument || mimeType.toFileTypeCategory().toComposable() == PreviewComposable.Unknown) {
+            if (mimeType.toFileTypeCategory().toComposable() == PreviewComposable.Unknown) {
                 NO_PREVIEW_SUPPORTED
+            } else if (isProtonDocument) {
+                combine(
+                    trigger,
+                    protonDocsInWebViewFeatureFlag(userId),
+                ) { trigger, showProtonDocsInWebView ->
+                    if (showProtonDocsInWebView) {
+                        getProtonDocumentUriString(this@getContentStateFlow, trigger.retry)
+                            .fold(
+                                onSuccess = { uriString ->
+                                    ContentState.Available(uriString).also {
+                                        protonDocumentUriStringCache[id] = uriString
+                                    }
+                                },
+                                onFailure = { error ->
+                                    if (error.isRetryable) {
+                                        ContentState.Error.Retryable(
+                                            messageResId = I18N.string.proton_docs_load_error,
+                                            actionResId = I18N.string.common_retry,
+                                        ) {
+                                            retry(verifySignature = true)
+                                        }
+                                    } else {
+                                        ContentState.Error.NonRetryable(
+                                            message = error.getDefaultMessage(
+                                                context = appContext,
+                                                useExceptionMessage = configurationProvider.useExceptionMessage,
+                                            ),
+                                            messageResId = 0,
+                                        )
+                                    }
+                                }
+                            )
+                    } else {
+                        ContentState.Available(Uri.EMPTY)
+                    }
+                }
             } else {
                 trigger.filter { trigger -> trigger.fileId == id }.flatMapLatest { trigger ->
                     combine(
@@ -315,6 +436,19 @@ class PreviewViewModel @Inject constructor(
                 }
             }
         }
+
+    private suspend fun getProtonDocumentUriString(driveLink: DriveLink.File, refresh: Boolean): Result<String> {
+        val cachedUriString = protonDocumentUriStringCache[driveLink.id]
+        return if (cachedUriString != null && !refresh) {
+            Result.success(cachedUriString)
+        } else {
+            getSessionForkProtonDocumentUriString(driveLink).also { result ->
+                if (result.isSuccess) {
+                    protonDocumentUriStringCache[driveLink.id] = result.getOrThrow()
+                }
+            }
+        }
+    }
 
     private val DriveLink.File.previewFallbackSources: Map<Any, Any?> get() {
         val uri = getUri(id)
@@ -338,7 +472,7 @@ class PreviewViewModel @Inject constructor(
         driveLinks.value.orEmpty().firstOrNull { driveLink -> driveLink.id == fileId }
             ?.let { driveLink ->
                 viewModelScope.launch {
-                    openProtonDocument(driveLink)
+                    openProtonDocumentInBrowser(driveLink)
                         .onFailure { error ->
                             error.log(LogTag.DEFAULT, "Open document failed")
                             val message = when {
@@ -361,10 +495,12 @@ class PreviewViewModel @Inject constructor(
     private data class Trigger(
         val fileId: FileId,
         val verifySignature: Boolean = true,
+        val retry: Boolean = false,
     )
 
     companion object {
         private val NO_PREVIEW_SUPPORTED = flowOf(ContentState.Available(Uri.EMPTY))
+        const val PROTON_DOCS_IMAGE_URIS = "protonDocsImageUris"
     }
 }
 

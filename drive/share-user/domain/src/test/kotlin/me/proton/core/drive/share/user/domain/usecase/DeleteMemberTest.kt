@@ -1,22 +1,16 @@
 package me.proton.core.drive.share.user.domain.usecase
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.arch.DataResult
-import me.proton.core.drive.base.domain.entity.Permissions
-import me.proton.core.drive.base.domain.entity.Permissions.Permission.READ
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.db.test.member
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.test.DriveRule
 import me.proton.core.drive.test.api.deleteMember
 import me.proton.core.drive.test.api.errorResponse
-import me.proton.core.drive.test.api.updateInvitation
-import me.proton.core.drive.test.api.updateMember
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
@@ -41,7 +35,7 @@ class DeleteMemberTest {
 
     @Before
     fun setUp() = runTest {
-        driveRule.db.standardShare(standardShareId.id) {
+        driveRule.db.standardShareByMe(standardShareId.id) {
             member("member@proton.me")
         }
     }

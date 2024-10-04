@@ -41,8 +41,6 @@ suspend fun VolumeContext.mainShare(block: suspend FolderContext.() -> Unit): Fo
     share(
         shareEntity = NullableShareEntity(
             id = mainShareId.id,
-            userId = user.userId,
-            volumeId = volumeId.id,
             linkId = mainRootId.id,
             type = ShareDto.TYPE_MAIN,
         )

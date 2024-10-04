@@ -28,17 +28,20 @@ import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 inline fun folderEntry(
     @DrawableRes icon: Int,
     @StringRes labelResId: Int,
+    notificationDotVisible: Boolean = false,
     crossinline runAction: (suspend () -> Unit) -> Unit,
     crossinline block: DriveLink.Folder.() -> Unit,
 ) = FolderEntry(
     icon = icon,
     labelResId = labelResId,
+    notificationDotVisible = notificationDotVisible,
     onClick = { driveLink -> runAction { driveLink.block() } }
 )
 
 class FolderEntry(
     @DrawableRes override val icon: Int,
     @StringRes private val labelResId: Int,
+    override val notificationDotVisible: Boolean,
     override val onClick: (DriveLink.Folder) -> Unit,
 ) : FileOptionEntry.SimpleEntry<DriveLink.Folder> {
 

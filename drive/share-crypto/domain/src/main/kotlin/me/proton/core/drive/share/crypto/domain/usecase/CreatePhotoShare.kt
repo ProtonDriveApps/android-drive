@@ -26,9 +26,7 @@ import kotlinx.coroutines.flow.flow
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.toDataResult
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.extension.transformSuccess
-import me.proton.core.drive.base.domain.usecase.GetAddressId
 import me.proton.core.drive.crypto.domain.usecase.photo.CreatePhotoInfo
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.extension.onDisabledOrNotFound
@@ -38,7 +36,7 @@ import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.exception.ShareException
-import me.proton.core.drive.share.domain.usecase.GetMainShare
+import me.proton.core.drive.share.domain.usecase.GetAddressId
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.network.domain.ApiException
@@ -51,7 +49,6 @@ class CreatePhotoShare @Inject constructor(
     private val getOrCreateMainShare: GetOrCreateMainShare,
     private val getShare: GetShare,
     private val withFeatureFlag: WithFeatureFlag,
-    private val getMainShare: GetMainShare,
     private val getAddressId: GetAddressId,
 ) {
     operator fun invoke(userId: UserId): Flow<DataResult<Share>> =
@@ -71,8 +68,7 @@ class CreatePhotoShare @Inject constructor(
             withFeatureFlag(FeatureFlagId.drivePhotosUploadDisabled(userId)) { featureFlag ->
                 featureFlag
                     .onDisabledOrNotFound {
-                        val addressId = getMainShare(userId, volumeId).toResult().getOrNull()?.addressId
-                            ?: getAddressId(userId)
+                        val addressId = getAddressId(userId, volumeId).getOrThrow()
                         val (photoShareId, _) = photoRepository.createPhotoShareWithRootLink(
                             userId = userId,
                             photoInfo = createPhotoInfo(userId, volumeId, addressId).getOrThrow(),

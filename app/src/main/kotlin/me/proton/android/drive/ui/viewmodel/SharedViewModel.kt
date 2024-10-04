@@ -31,6 +31,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -49,7 +50,7 @@ import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.SharedViewEvent
 import me.proton.android.drive.ui.viewstate.SharedViewState
-import me.proton.android.drive.usecase.OpenProtonDocument
+import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.arch.mapSuccessValueOrNull
@@ -70,6 +71,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgress
 import me.proton.core.drive.drivelink.shared.domain.usecase.GetDecryptedSharedDriveLinks
 import me.proton.core.drive.files.presentation.state.FilesViewState
+import me.proton.core.drive.files.preview.presentation.component.ProtonDocsInWebViewFeatureFlag
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -106,7 +108,8 @@ class SharedViewModel @Inject constructor(
     private val getShare: GetShare,
     getThemeStyle: GetThemeStyle,
     shouldUpgradeStorage: ShouldUpgradeStorage,
-    private val openProtonDocument: OpenProtonDocument,
+    protonDocsInWebViewFeatureFlag: ProtonDocsInWebViewFeatureFlag,
+    private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
 ) : ViewModel(),
     UserViewModel by UserViewModel(savedStateHandle),
     HomeTabViewModel,
@@ -132,6 +135,8 @@ class SharedViewModel @Inject constructor(
                 .distinctUntilChanged()
         )
     }
+    val openProtonDocsInWebView: StateFlow<Boolean> = protonDocsInWebViewFeatureFlag(userId)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private val driveLinks: Flow<DataResult<List<DriveLink>>> = volumeId.flatMapLatest { volumeId ->
         getSharedDriveLinks(userId, volumeId, refresh = true)
@@ -223,6 +228,7 @@ class SharedViewModel @Inject constructor(
                             navigateToFolder = navigateToFiles,
                             navigateToPreview = navigateToPreview,
                             openDocument = this@SharedViewModel::openDocument,
+                            openProtonDocsInWebView = openProtonDocsInWebView,
                         )
                     }
                 }
@@ -269,7 +275,7 @@ class SharedViewModel @Inject constructor(
     }
 
     private suspend fun openDocument(driveLink: DriveLink.File) =
-        openProtonDocument(driveLink)
+        openProtonDocumentInBrowser(driveLink)
             .onFailure { error ->
                 error.log(VIEW_MODEL, "Open document failed")
                 _homeEffect.emit(

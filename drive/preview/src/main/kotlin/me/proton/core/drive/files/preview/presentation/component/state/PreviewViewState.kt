@@ -28,6 +28,8 @@ data class PreviewViewState(
     val previewContentState: PreviewContentState,
     val items: List<Item>,
     val currentIndex: Int,
+    val host: String,
+    val appVersionHeader: String,
 ) {
 
     @Immutable

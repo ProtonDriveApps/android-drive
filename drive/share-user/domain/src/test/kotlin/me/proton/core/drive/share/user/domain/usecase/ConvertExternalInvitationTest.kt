@@ -4,6 +4,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.db.test.mainShareId
 import me.proton.core.drive.db.test.myFiles
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.test.DriveRule
@@ -46,7 +47,7 @@ class ConvertExternalInvitationTest {
     fun `happy path`() = runTest {
         driveRule.server.run {
             getLink(NullableFolderDto(id = folderId.id, shareId = standardShareId.id))
-            getShareBootstrap()
+            getShareBootstrap("address-id-user-id@proton.test")
             getExternalInvitations("external@mail.com", 2)
             createInvitation()
         }
@@ -58,7 +59,7 @@ class ConvertExternalInvitationTest {
     fun `fails when creating the invitation`() = runTest {
         driveRule.server.run {
             getLink(NullableFolderDto(id = folderId.id, shareId = standardShareId.id))
-            getShareBootstrap()
+            getShareBootstrap("address-id-user-id@proton.test")
             getExternalInvitations("external@mail.com", 2)
             createInvitation { errorResponse() }
         }
@@ -70,7 +71,7 @@ class ConvertExternalInvitationTest {
     fun `fails when invitation state is not register user`() = runTest {
         driveRule.server.run {
             getLink(NullableFolderDto(id = folderId.id, shareId = standardShareId.id))
-            getShareBootstrap()
+            getShareBootstrap("address-id-user-id@proton.test")
             getExternalInvitations("external@mail.com", 1)
         }
 
@@ -81,7 +82,7 @@ class ConvertExternalInvitationTest {
     fun `fails when invitation is not found`() = runTest {
         driveRule.server.run {
             getLink(NullableFolderDto(id = folderId.id, shareId = standardShareId.id))
-            getShareBootstrap()
+            getShareBootstrap("address-id-user-id@proton.test")
             getExternalInvitations()
         }
 

@@ -38,20 +38,20 @@ abstract class UploadBlockDao : BaseDao<UploadBlockEntity>() {
             upload_link_id = :uploadLinkId ORDER BY `index` ASC
     """
     )
-    abstract fun get(uploadLinkId: Long): List<UploadBlockEntity>
+    abstract suspend fun get(uploadLinkId: Long): List<UploadBlockEntity>
 
     @Query(
         """
         DELETE FROM UploadBlockEntity WHERE upload_link_id = :uploadLinkId
     """
     )
-    abstract fun delete(uploadLinkId: Long)
+    abstract suspend fun delete(uploadLinkId: Long)
 
     @Query("""
         UPDATE UploadBlockEntity SET token = :token WHERE
             upload_link_id = :uploadLinkId AND `index` = :index
     """)
-    abstract fun updateToken(
+    abstract suspend fun updateToken(
         uploadLinkId: Long,
         index: Long,
         token: String,
@@ -61,7 +61,7 @@ abstract class UploadBlockDao : BaseDao<UploadBlockEntity>() {
         UPDATE UploadBlockEntity SET verifier_token = :verifierToken WHERE
             upload_link_id = :uploadLinkId AND `index` = :index
     """)
-    abstract fun updateVerifierToken(
+    abstract suspend fun updateVerifierToken(
         uploadLinkId: Long,
         index: Long,
         verifierToken: String,

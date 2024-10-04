@@ -26,6 +26,7 @@ android {
 driveModule(
     hilt = true,
     serialization = true,
+    socialTest = true,
 ) {
     api(project(":drive:message-queue:domain"))
     api(libs.core.cryptoCommon)

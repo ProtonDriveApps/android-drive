@@ -207,9 +207,9 @@ private fun PhotosBackupPreview() {
     ProtonTheme {
         PhotosBackup(
             viewState = PhotosBackupViewState(
-                title = "Photos Backup",
+                title = "Photo backup",
                 backup = PhotosBackupOption(
-                    title = "Photos Backup",
+                    title = "Photo backup",
                     checked = true,
                 ),
                 mobileData = PhotosBackupOption(
@@ -242,7 +242,7 @@ private fun PreviewBackupPhotosToggle() {
     ProtonTheme {
         BackupPhotosToggle(
             PhotosBackupOption(
-                title = "Photos backup",
+                title = "Photo backup",
                 checked = true,
             ),
             onToggle = {},

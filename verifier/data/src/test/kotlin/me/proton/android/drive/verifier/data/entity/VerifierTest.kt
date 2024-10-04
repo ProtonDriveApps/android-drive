@@ -20,7 +20,6 @@ package me.proton.android.drive.verifier.data.entity
 
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.android.drive.verifier.data.extension.createFile
 import me.proton.android.drive.verifier.domain.exception.VerifierException
@@ -40,7 +39,6 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class VerifierTest {
     private val buildContentKey = mockk<BuildContentKey>()
     private val decryptFiles = mockk<DecryptFiles>()
@@ -59,6 +57,7 @@ class VerifierTest {
         coEvery {
             buildContentKey(
                 userId = any(),
+                shareId = any(),
                 contentKeyPacket = any(),
                 contentKeyPacketSignature = any(),
                 fileKey = fileKey,

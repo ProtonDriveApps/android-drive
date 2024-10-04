@@ -6,7 +6,7 @@ import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.externalInvitation
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.share.crypto.domain.entity.ShareInvitationRequest
 import me.proton.core.drive.share.user.domain.entity.ShareUser
@@ -45,14 +45,14 @@ class ShareExternalInvitationRepositoryImplTest {
     @Test
     fun hasExternalInvitations_empty() = runTest {
         driveRule.db.run {
-            standardShare(standardShareId.id)
+            standardShareByMe(standardShareId.id)
         }
         assertFalse(repository.hasExternalInvitations(standardShareId))
     }
 
     @Test
     fun hasExternalInvitations_one() = runTest {
-        driveRule.db.standardShare(standardShareId.id) {
+        driveRule.db.standardShareByMe(standardShareId.id) {
             externalInvitation("invitee@external.com")
         }
 
@@ -61,7 +61,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test
     fun getExternalInvitationsFlow_empty() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShareByMe(standardShareId.id)
         assertEquals(
             emptyList<ShareUser>(),
             repository.getExternalInvitationsFlow(standardShareId, 500).first()
@@ -70,7 +70,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test
     fun getExternalInvitationsFlow_one() = runTest {
-        driveRule.db.standardShare(standardShareId.id) {
+        driveRule.db.standardShareByMe(standardShareId.id) {
             externalInvitation("invitee@external.com")
         }
 
@@ -91,7 +91,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test
     fun getExternalInvitationFlow() = runTest {
-        driveRule.db.standardShare(standardShareId.id) {
+        driveRule.db.standardShareByMe(standardShareId.id) {
             externalInvitation("invitee@external.com")
         }
 
@@ -114,7 +114,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test
     fun fetchExternalInvitations() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShareByMe(standardShareId.id)
         driveRule.server.getExternalInvitations("invitee@external.com")
         val fetchInvitations = repository.fetchExternalInvitations(standardShareId)
         assertEquals(
@@ -134,7 +134,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test
     fun `fetchExternalInvitations should delete all previous invitations`() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShareByMe(standardShareId.id)
 
         driveRule.server.getExternalInvitations("invitee1@external.com")
         repository.fetchExternalInvitations(standardShareId)
@@ -160,7 +160,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test
     fun createExternalInvitation() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShareByMe(standardShareId.id)
 
         driveRule.server.createExternalInvitation("inviter@proton.me")
         val shareUserInvitee = repository.createExternalInvitation(
@@ -186,7 +186,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test(expected = ApiException::class)
     fun createExternalInvitation_error() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShareByMe(standardShareId.id)
 
         driveRule.server.createExternalInvitation { errorResponse() }
 
@@ -202,7 +202,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test
     fun updateExternalInvitation() = runTest {
-        driveRule.db.standardShare(standardShareId.id) {
+        driveRule.db.standardShareByMe(standardShareId.id) {
             externalInvitation("invitee@external.com")
         }
 
@@ -217,7 +217,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test(expected = ApiException::class)
     fun updateExternalInvitation_error() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShareByMe(standardShareId.id)
 
         driveRule.server.updateExternalInvitation { errorResponse() }
 
@@ -230,7 +230,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test
     fun deleteExternalInvitation() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShareByMe(standardShareId.id)
 
         driveRule.server.deleteExternalInvitation()
 
@@ -242,7 +242,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test(expected = ApiException::class)
     fun deleteExternalInvitation_error() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShareByMe(standardShareId.id)
 
         driveRule.server.deleteExternalInvitation { errorResponse() }
 
@@ -254,7 +254,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test
     fun resendExternalInvitation() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShareByMe(standardShareId.id)
 
         driveRule.server.sendExternalEmail()
 
@@ -266,7 +266,7 @@ class ShareExternalInvitationRepositoryImplTest {
 
     @Test(expected = ApiException::class)
     fun resendExternalInvitation_error() = runTest {
-        driveRule.db.standardShare(standardShareId.id)
+        driveRule.db.standardShareByMe(standardShareId.id)
 
         driveRule.server.sendExternalEmail { errorResponse() }
 

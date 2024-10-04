@@ -372,6 +372,7 @@ class PhotosViewModel @Inject constructor(
                                 navigateToFolder = { _, _ -> error("Photos should not have folders") },
                                 navigateToPreview = navigateToPreview,
                                 openDocument = { _ -> error("Photos should not have Proton document") },
+                                openProtonDocsInWebView = MutableStateFlow(false),
                             )
                         }
                     }

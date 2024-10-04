@@ -315,8 +315,6 @@ class PhotoBackupStateTest {
         override fun isEnabled(folderId: FolderId): Flow<Boolean> =
             repository.hasFolders(folderId)
 
-        override fun isUploading(folderId: FolderId): Flow<Boolean> = flowOf(true)
-
         override suspend fun updateNotification(folderId: FolderId) {
             // do nothing
         }

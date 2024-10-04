@@ -61,7 +61,7 @@ class UploadThrottleWorker @AssistedInject constructor(
             CoreLogger.d(UPLOAD, "UploadThrottleWorker($runAttemptCount) upload ${uploadFileLinks.size} files")
         }.forEach { uploadFileLink ->
             if (uploadFileLink.isNotEnqueued()) {
-                uploadFileLink.enqueue(userId, tags).await()
+                uploadFileLink.enqueue(userId).await()
                 updateUploadState(uploadFileLink.id, UploadState.IDLE)
                 CoreLogger.d(
                     tag = uploadFileLink.logTag(),
@@ -105,7 +105,6 @@ class UploadThrottleWorker @AssistedInject constructor(
 
     private suspend fun UploadFileLink.enqueue(
         userId: UserId,
-        tags: Set<String> = emptySet(),
     ) = requireNotNull(networkTypeProviders[networkTypeProviderType])
         .get(parentLinkId)
         .let { networkType ->
@@ -150,7 +149,10 @@ class UploadThrottleWorker @AssistedInject constructor(
                 )
 
                 else -> error("Unhandled file upload flow ")
-            }.enqueueWork(listOf(id.uniqueUploadWorkName) + tags, requireNotNull(uriString))
+            }.enqueueWork(
+                uploadTags = listOf(id.uniqueUploadWorkName),
+                uriString = requireNotNull(uriString),
+            )
         }
 
     companion object {

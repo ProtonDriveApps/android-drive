@@ -50,7 +50,6 @@ class UploadFiles @Inject constructor(
         networkTypeProviderType: NetworkTypeProviderType = NetworkTypeProviderType.DEFAULT,
         shouldBroadcastErrorMessage: Boolean = true,
         priority: Long,
-        tags : List<String> = emptyList(),
     ): Result<Unit> = coRunCatching {
         if (uploadFileDescriptions.isEmpty()) return@coRunCatching
 
@@ -73,7 +72,6 @@ class UploadFiles @Inject constructor(
                 priority = priority,
                 shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
                 shouldDeleteSource = shouldDeleteSource,
-                tags = tags,
             )
         } else {
             processInForeground(
@@ -138,7 +136,6 @@ class UploadFiles @Inject constructor(
         priority: Long,
         shouldDeleteSource: Boolean = false,
         shouldBroadcastErrorMessage: Boolean,
-        tags : List<String> = emptyList(),
     ) =
         uploadWorkManager.upload(
             createUploadBulk(
@@ -155,6 +152,5 @@ class UploadFiles @Inject constructor(
             folder,
             showPreparingUpload = notifications.inApp.showPreparingUpload,
             showFilesBeingUploaded = notifications.inApp.showFilesBeingUploaded,
-            tags = tags,
         )
 }

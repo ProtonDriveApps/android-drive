@@ -18,7 +18,6 @@
 package me.proton.core.drive.crypto.domain.usecase.share
 
 import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.base.domain.usecase.GetAddressId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.base.ReencryptKeyPacket
 import me.proton.core.drive.key.domain.extension.nodeKey
@@ -28,6 +27,7 @@ import me.proton.core.drive.key.domain.usecase.GenerateShareKey
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.share.domain.entity.ShareInfo
+import me.proton.core.drive.share.domain.usecase.GetAddressId
 import javax.inject.Inject
 
 class CreateShareInfo @Inject constructor(
@@ -39,7 +39,7 @@ class CreateShareInfo @Inject constructor(
     suspend operator fun invoke(linkId: LinkId, name: String): Result<ShareInfo> = coRunCatching {
         val userId = linkId.shareId.userId
         val link = getLink(linkId).toResult().getOrThrow()
-        val addressId = getAddressId(userId)
+        val addressId = getAddressId(linkId.shareId).getOrThrow()
         val shareKey = generateShareKey(userId, addressId, linkId).getOrThrow()
         ShareInfo(
             addressId = addressId,

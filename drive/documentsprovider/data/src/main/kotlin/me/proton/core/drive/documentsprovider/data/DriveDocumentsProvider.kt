@@ -162,7 +162,7 @@ class DriveDocumentsProvider : DocumentsProvider() {
 
     override fun deleteDocument(documentId: String?) = runBlocking {
         injections.withUploadFileLink(documentId.toDocumentId()) { _, uploadFileNode ->
-            injections.cancelUploadFile(uploadFileNode)
+            injections.cancelUploadFile(uploadFileNode).getOrNull()
         } ?: injections.withDriveLink(documentId.toDocumentId()) { userId, driveLink ->
             injections.sendToTrash(userId, driveLink)
         }

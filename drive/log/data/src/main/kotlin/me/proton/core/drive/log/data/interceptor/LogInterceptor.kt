@@ -24,6 +24,7 @@ import me.proton.core.drive.announce.event.domain.usecase.AsyncAnnounceEvent
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.MiB
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -79,7 +80,10 @@ class LogInterceptor : Interceptor {
             occurredAt = responseOccurredAt,
             code = response.code,
             message = response.message,
-            jsonBody = response.peekBody(byteCount = MAX_BYTE_COUNT.value).jsonString,
+            jsonBody = runCatching {
+                // Avoid Socket is closed error (SocketException)
+                response.peekBody(byteCount = MAX_BYTE_COUNT.value).jsonString
+            }.getOrNull(LogTag.LOG, "Cannot read body"),
         ),
     )
 

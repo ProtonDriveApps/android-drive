@@ -29,6 +29,7 @@ import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.crypto.common.srp.SrpChallenge
 import me.proton.core.crypto.common.srp.SrpCrypto
 import me.proton.core.crypto.dagger.CoreCryptoModule
+import me.proton.core.drive.test.crypto.FakeAeadCrypto
 import me.proton.core.drive.test.crypto.FakeKeyStoreCrypto
 import me.proton.core.drive.test.crypto.FakePGPCrypto
 import me.proton.core.drive.test.crypto.FakeSrpChallenge
@@ -52,7 +53,12 @@ class TestCryptoModule {
     fun provideCryptoContext(
         keyStoreCrypto: KeyStoreCrypto,
     ): CryptoContext =
-        AndroidCryptoContext(keyStoreCrypto, FakePGPCrypto(), FakeSrpCrypto())
+        AndroidCryptoContext(
+            keyStoreCrypto = keyStoreCrypto,
+            aeadCrypto = FakeAeadCrypto(),
+            pgpCrypto = FakePGPCrypto(),
+            srpCrypto = FakeSrpCrypto(),
+        )
 
     @Provides
     @Singleton

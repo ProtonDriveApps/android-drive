@@ -21,7 +21,6 @@ package me.proton.core.drive.upload.domain.usecase
 import me.proton.android.drive.verifier.domain.usecase.BuildVerifier
 import me.proton.android.drive.verifier.domain.usecase.CleanupVerifier
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.usecase.BuildNodeKey
@@ -29,6 +28,7 @@ import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadBlocks
 import me.proton.core.drive.linkupload.domain.usecase.UpdateVerifierToken
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import javax.inject.Inject
 
 class VerifyBlocks @Inject constructor(
@@ -75,6 +75,6 @@ class VerifyBlocks @Inject constructor(
             userId = userId,
             parentKey = getNodeKey(parentLinkId).getOrThrow(),
             uploadFileLink = this,
-            signatureAddress = getSignatureAddress(userId),
+            signatureAddress = getSignatureAddress(shareId).getOrThrow(),
         ).getOrThrow()
 }

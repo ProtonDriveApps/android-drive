@@ -57,11 +57,12 @@
   <string name="common_delete_permanently_action">Ștergere permanentă</string>
   <string name="common_make_available_offline_action">Disponibil fără conexiune</string>
   <string name="common_remove_from_offline_available_action">Eliminare din disponibile fără conexiune</string>
-  <string name="common_get_link_action">Obțineținere legătură</string>
-  <string name="common_manage_link_action">Gestionare legătură</string>
+  <string name="common_get_link_action">Obținere legătură web</string>
+  <string name="common_manage_link_action">Gestionare legătură web</string>
   <string name="common_manage_access_action">Gestionare acces</string>
-  <string name="common_copy_link_action">Copiere legătură</string>
+  <string name="common_copy_link_action">Copiere legătură web</string>
   <string name="common_stop_sharing_action">Oprire partajare</string>
+  <string name="common_open_in_browser_action">Deschidere în navigator web</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

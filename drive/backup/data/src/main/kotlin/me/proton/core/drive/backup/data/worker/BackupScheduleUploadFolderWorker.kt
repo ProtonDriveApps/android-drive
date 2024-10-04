@@ -68,7 +68,6 @@ class BackupScheduleUploadFolderWorker @AssistedInject constructor(
             BackupUploadFolderWorker.getWorkRequest(
                 backupFolder = backupFolder,
                 delay = delay,
-                tags = tags,
             ),
         )
         return Result.success()
@@ -82,11 +81,13 @@ class BackupScheduleUploadFolderWorker @AssistedInject constructor(
         ): OneTimeWorkRequest {
             return OneTimeWorkRequest.Builder(BackupScheduleUploadFolderWorker::class.java)
                 .setInputData(workDataOf(backupFolder, delay))
-                .addTags(listOf(
-                    backupFolder.folderId.userId.id,
-                    backupFolder.folderId.id,
-                    BackupManagerImpl.TAG
-                ) + tags)
+                .addTags(
+                    listOf(
+                        backupFolder.folderId.userId.id,
+                        backupFolder.folderId.id,
+                        BackupManagerImpl.TAG
+                    ) + tags
+                )
                 .build()
         }
 

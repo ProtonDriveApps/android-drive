@@ -48,7 +48,6 @@ interface UploadWorkManager {
         folder: Folder,
         showPreparingUpload: Boolean = true,
         showFilesBeingUploaded: Boolean = true,
-        tags : List<String> = emptyList(),
     )
 
     suspend fun uploadAlreadyCreated(
@@ -75,6 +74,4 @@ interface UploadWorkManager {
     fun broadcastFilesBeingUploaded(folder: Folder, uriStrings: List<String>)
 
     fun broadcastUploadLimitReached(userId: UserId)
-
-    fun isUploading(tag: String): Flow<Boolean>
 }

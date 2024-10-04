@@ -18,7 +18,6 @@
 package me.proton.core.drive.crypto.domain.usecase.link
 
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.base.domain.usecase.GetSignatureAddress
 import me.proton.core.drive.crypto.domain.usecase.HmacSha256
 import me.proton.core.drive.cryptobase.domain.usecase.ChangeMessage
 import me.proton.core.drive.key.domain.extension.keyHolder
@@ -28,8 +27,10 @@ import me.proton.core.drive.key.domain.usecase.GetNodeHashKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.RenameInfo
+import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName
+import me.proton.core.drive.share.domain.usecase.GetSignatureAddress
 import java.util.UUID
 import javax.inject.Inject
 
@@ -52,7 +53,7 @@ class CreateRenameInfo @Inject constructor(
         val linkName = validateLinkName(name).getOrThrow()
         val parentFolderKey = getNodeKey(parentFolder).getOrThrow()
         val parentFolderHashKey = getNodeHashKey(parentFolder, parentFolderKey).getOrThrow()
-        val signatureAddress = getSignatureAddress(link.userId)
+        val signatureAddress = getSignatureAddress(link.shareId).getOrThrow()
         RenameInfo(
             name = changeMessage(
                 oldMessage = link.name,
@@ -79,7 +80,7 @@ class CreateRenameInfo @Inject constructor(
             name
         }
         val parentKey = getLinkParentKey(rootFolder).getOrThrow()
-        val signatureAddress = getSignatureAddress(rootFolder.userId)
+        val signatureAddress = getSignatureAddress(rootFolder.shareId).getOrThrow()
         RenameInfo(
             name = changeMessage(
                 oldMessage = rootFolder.name,

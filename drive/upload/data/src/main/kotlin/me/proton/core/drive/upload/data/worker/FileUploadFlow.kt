@@ -116,7 +116,7 @@ internal sealed class FileUploadFlow {
                     tags = uploadTags,
                 )
             ).then(
-                cleanupWorkers(userId, uploadFileLinkId, uploadTags, emptyList())
+                cleanupWorkers(userId, uploadFileLinkId, uploadTags)
             ).enqueue()
     }
 
@@ -184,7 +184,7 @@ internal sealed class FileUploadFlow {
                     tags = uploadTags,
                 )
             ).then(
-                cleanupWorkers(userId, uploadFileLinkId, uploadTags, emptyList())
+                cleanupWorkers(userId, uploadFileLinkId, uploadTags)
             ).enqueue()
     }
 

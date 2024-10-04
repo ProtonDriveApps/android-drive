@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">Bir dosya yükleyin</string>
   <string name="folder_option_create_folder">Klasör ekle</string>
   <string name="folder_option_take_a_photo">Yeni bir fotoğraf çekin</string>
+  <string name="folder_option_create_document">Belge oluştur</string>
   <string name="settings_theme_system_default">Sistem varsayılanı</string>
   <string name="settings_theme_dark">Koyu</string>
   <string name="settings_theme_light">Açık</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">%1$s üzerine yalnızca dosyalar yüklenebilir</string>
   <string name="in_app_notification_importing_file_already_exists">Aynı adlı bir dosya zaten var. Uygulama ön belleğini temizlemeyi deneyin</string>
   <string name="in_app_notification_clear_local_cache_success">Yerel ön bellek temizlendi</string>
+  <string name="in_app_notification_destination_screen_not_found">Hedef ekran bulunamadı</string>
+  <string name="in_app_notification_create_document_success">Belge oluşturuldu</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Depolama alanı dolu</string>
@@ -180,7 +183,7 @@
   <string name="error_share_locked">Paylaşım kilitli.</string>
   <string name="error_main_share_not_found">Temel paylaşım bulunamadı.</string>
   <string name="error_share_not_found">Paylaşım bulunamadı.</string>
-  <string name="error_creating_photo_share_not_allowed">Fotoğraf yedekleme özelliği geçici olarak kullanılamıyor.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">Paylaşım oluşturma özelliği geçici olarak kullanılamıyor.</string>
   <string name="operation_open_document">bir belge aç</string>
   <string name="operation_create_document">bir belge oluştur</string>
@@ -217,4 +220,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Adlandırılmamış belge %1$s</string>
 </resources>

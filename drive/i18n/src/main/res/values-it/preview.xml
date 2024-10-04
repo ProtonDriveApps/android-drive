@@ -23,5 +23,8 @@
   <string name="preview_processing_state">Elaborazione in corso</string>
   <string name="preview_empty">Nessuna anteprima</string>
   <string name="title_not_found">Non trovato</string>
-  <string name="preview_proton_doc_open_in_browser_button">Apri nel browser</string>
+  <string name="proton_docs_insert_image_header_title">Inserisci immagine</string>
+  <string name="proton_docs_option_select_file">Seleziona un file</string>
+  <string name="proton_docs_unsupported_file_type">Attualmente è supportato solo l\'inserimento di immagini</string>
+  <string name="proton_docs_load_error">Loading document failed</string>
 </resources>

@@ -27,10 +27,10 @@
             "9 items successfully moved."
     -->
   <plurals name="file_operation_moving_multiple_successful">
-    <item quantity="one">%1$d item successfully moved.</item>
-    <item quantity="two">%1$d predmeti so bili uspešno premaknjeni.</item>
+    <item quantity="one">%1$d predmet je bil uspešno premaknjen.</item>
+    <item quantity="two">%1$d predmeta sta bila uspešno premaknjena.</item>
     <item quantity="few">%1$d predmeti so bili uspešno premaknjeni.</item>
-    <item quantity="other">%1$d predmeti so bili uspešno premaknjeni.</item>
+    <item quantity="other">%1$d predmetov je bilo uspešno premaknjenih.</item>
   </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Datoteka z enakim imenom že obstaja v ciljni mapi</string>
   <string name="folder_options_header_title">V \"%1$s\"</string>

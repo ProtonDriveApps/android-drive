@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright (c) 2024 Proton AG.
  * This file is part of Proton Core.
  *
@@ -23,4 +23,6 @@ import me.proton.core.drive.link.domain.entity.LinkId
 data class ShareUsersInvitation(
     val linkId: LinkId,
     val members: List<ShareUserInvitation>,
+    val message: String? = null,
+    val itemName: String? = null,
 )

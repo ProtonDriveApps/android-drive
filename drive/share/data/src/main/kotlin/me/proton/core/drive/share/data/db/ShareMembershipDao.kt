@@ -19,12 +19,23 @@ package me.proton.core.drive.share.data.db
 
 import androidx.room.Dao
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
 
 @Dao
 abstract class ShareMembershipDao : BaseDao<ShareMembershipEntity>() {
+
+
+    @Query(
+        """
+        SELECT EXISTS(
+            SELECT * FROM ShareMembershipEntity WHERE user_id = :userId AND share_id = :shareId
+        ) 
+        """
+    )
+    abstract suspend fun hasMembership(userId: UserId, shareId: String): Boolean
 
 
     @Query(
@@ -43,6 +54,16 @@ abstract class ShareMembershipDao : BaseDao<ShareMembershipEntity>() {
         """
     )
     abstract suspend fun getPermissions(userId: UserId, shareIds: List<String>): List<Long>
+
+
+    @Query(
+        """
+        SELECT * FROM ShareMembershipEntity WHERE 
+            user_id = :userId AND 
+            share_id = :shareId
+        """
+    )
+    abstract fun get(userId: UserId, shareId: String): Flow<ShareMembershipEntity>
 
     companion object {
         const val LINK_JOIN_STATEMENT = """

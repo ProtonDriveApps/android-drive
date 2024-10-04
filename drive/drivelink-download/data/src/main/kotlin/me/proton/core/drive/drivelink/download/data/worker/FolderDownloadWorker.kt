@@ -177,7 +177,7 @@ class FolderDownloadWorker @AssistedInject constructor(
             fileId = id,
             revisionId = activeRevisionId,
             isRetryable = true,
-            tags = listOf(folderTag),
+            fileTags = listOf(folderTag),
         )
 
     companion object {

@@ -23,7 +23,11 @@ android {
     namespace = "me.proton.core.drive.crypto.domain"
 }
 
-driveModule(hilt = true) {
+driveModule(
+    hilt = true,
+    serialization = true,
+) {
+    api(project(":drive:document:base:domain"))
     api(project(":drive:file:base:domain"))
     api(project(":drive:folder:domain"))
     api(project(":drive:key:domain"))

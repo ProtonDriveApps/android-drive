@@ -125,7 +125,7 @@ class RecreateFileWorker @AssistedInject constructor(
                     WorkRequest.MIN_BACKOFF_MILLIS,
                     TimeUnit.MILLISECONDS
                 )
-                .addTags(listOf(userId.id) + UploadWorkManagerImpl.TAG_UPLOAD_WORKER + tags)
+                .addTags(listOf(userId.id) + tags)
                 .build()
     }
 }

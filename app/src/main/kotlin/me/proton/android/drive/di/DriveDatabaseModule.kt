@@ -28,6 +28,7 @@ import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.db.DriveDatabase
 import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
 import me.proton.core.account.data.db.AccountDatabase
+import me.proton.core.auth.data.db.AuthDatabase
 import me.proton.core.challenge.data.db.ChallengeDatabase
 import me.proton.core.contact.data.local.db.ContactDatabase
 import me.proton.core.drive.backup.data.db.BackupDatabase
@@ -261,4 +262,7 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun providePublicAddressKeyDatabase(appDatabase: DriveDatabase): PublicAddressKeyDatabase
+
+    @Binds
+    abstract fun provideAuthDatabase(appDatabase: DriveDatabase): AuthDatabase
 }

@@ -54,6 +54,7 @@
     <string name="folder_option_import_file">Upload a file</string>
     <string name="folder_option_create_folder">Create folder</string>
     <string name="folder_option_take_a_photo">Take a new photo</string>
+    <string name="folder_option_create_document">Create document</string>
 
     <string name="settings_theme_system_default">System default</string>
     <string name="settings_theme_dark">Dark</string>
@@ -80,6 +81,7 @@
     <string name="in_app_notification_importing_file_already_exists">File with same name already exists, try clearing app cache</string>
     <string name="in_app_notification_clear_local_cache_success">Local cache cleared successfully</string>
     <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
+    <string name="in_app_notification_create_document_success">Document created</string>
 
     <!-- endregion -->
 
@@ -205,7 +207,7 @@
     <string name="error_share_locked">Share is locked.</string>
     <string name="error_main_share_not_found">Main share is not found.</string>
     <string name="error_share_not_found">Share is not found.</string>
-    <string name="error_creating_photo_share_not_allowed">Photos backup is temporarily disabled.</string>
+    <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
     <string name="error_creating_share_not_allowed">Creating share is temporarily disabled.</string>
 
     <string name="operation_open_document">open a document</string>
@@ -246,5 +248,12 @@
     -->
     <string name="get_more_free_storage_action_recovery_subtitle_url" translatable="false">https://%1$s</string>
     <!-- endregion -->
+
+    <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+    <string name="new_document_name">Untitled document %1$s</string>
 
 </resources>

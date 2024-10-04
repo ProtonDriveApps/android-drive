@@ -73,7 +73,7 @@ fun NullableUserKeyEntity(
 )
 
 fun UserContext.NullableAddressEntity(
-    addressId: AddressId = AddressId("address-id"),
+    addressId: AddressId = AddressId("address-id-${account.email}"),
     email: String = requireNotNull(account.email),
 ) = NullableAddressEntity(
     userId = user.userId,
@@ -93,8 +93,8 @@ fun ShareContext.NullableAddressEntity(
 
 fun NullableAddressEntity(
     userId: UserId,
-    addressId: AddressId = AddressId("address-id"),
     email: String,
+    addressId: AddressId = AddressId("address-id-$email"),
     displayName: String? = null,
 ) = AddressEntity(
     userId = userId,
@@ -115,13 +115,21 @@ fun ShareContext.NullableAddressKeyEntity(
     active: Boolean = true,
 ): AddressKeyEntity = NullableAddressKeyEntity(
     addressId = requireNotNull(share.addressId),
-    keyId = KeyId("key-id-${share.id}"),
+    keyId = KeyId("key-id-${share.addressId}"),
     active = active
 )
 
+fun UserContext.NullableAddressKeyEntity(
+    active: Boolean = true,
+): AddressKeyEntity = NullableAddressKeyEntity(
+    addressId = AddressId("address-id-${account.email}"),
+    keyId = KeyId("key-id-${account.email}"),
+    active = active,
+)
+
 fun NullableAddressKeyEntity(
-    addressId: AddressId = AddressId("address-id"),
-    keyId: KeyId = KeyId("key-id"),
+    addressId: AddressId,
+    keyId: KeyId,
     active: Boolean = true,
 ): AddressKeyEntity {
     val token = (0..7).joinToString("") { "abcdef01" }

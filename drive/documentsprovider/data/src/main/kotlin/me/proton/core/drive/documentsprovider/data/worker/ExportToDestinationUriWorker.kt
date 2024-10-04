@@ -47,6 +47,7 @@ import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLin
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
 
 @HiltWorker
@@ -106,7 +107,7 @@ class ExportToDestinationUriWorker @AssistedInject constructor(
                         .putString(KEY_DESTINATION_URI, destinationUri.toString())
                         .build()
                 )
-                .addTags(tags)
+                .addTags(listOf(fileId.userId.id) + tags)
                 .build()
     }
 }

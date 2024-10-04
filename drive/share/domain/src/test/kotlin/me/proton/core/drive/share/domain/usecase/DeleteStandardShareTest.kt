@@ -2,9 +2,7 @@ package me.proton.core.drive.share.domain.usecase
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.db.test.mainShare
-import me.proton.core.drive.db.test.mainShareId
-import me.proton.core.drive.db.test.standardShare
+import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.volume
@@ -34,7 +32,7 @@ class DeleteStandardShareTest {
         driveRule.server.deleteShare()
         driveRule.db.user {
             volume {
-                standardShare(shareId.id) {}
+                standardShareByMe(shareId.id) {}
             }
         }
     }

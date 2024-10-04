@@ -45,6 +45,7 @@
   <string name="folder_option_import_file">Carica un file</string>
   <string name="folder_option_create_folder">Crea cartella</string>
   <string name="folder_option_take_a_photo">Scatta una nuova foto</string>
+  <string name="folder_option_create_document">Crea un documento</string>
   <string name="settings_theme_system_default">Predefinito di sistema</string>
   <string name="settings_theme_dark">Scuro</string>
   <string name="settings_theme_light">Chiaro</string>
@@ -63,6 +64,8 @@
   <string name="in_app_notification_upload_files_only">Solamente i file possono essere caricati su %1$s</string>
   <string name="in_app_notification_importing_file_already_exists">Un file con lo stesso nome esiste già, prova a cancellare la cache dell\'applicazione</string>
   <string name="in_app_notification_clear_local_cache_success">Cache locale cancellata con successo</string>
+  <string name="in_app_notification_destination_screen_not_found">Schermata di destinazione non trovata</string>
+  <string name="in_app_notification_create_document_success">Documento creato</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Memoria piena</string>
@@ -180,7 +183,7 @@
   <string name="error_share_locked">La condivisione è bloccata.</string>
   <string name="error_main_share_not_found">La cartella principale non è stata trovata.</string>
   <string name="error_share_not_found">La condivisione non è stata trovata.</string>
-  <string name="error_creating_photo_share_not_allowed">Il backup delle foto è temporaneamente disabilitato.</string>
+  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
   <string name="error_creating_share_not_allowed">La creazione della condivisione è temporaneamente disabilitata.</string>
   <string name="operation_open_document">apri un documento</string>
   <string name="operation_create_document">creare un documento</string>
@@ -217,4 +220,10 @@
             "https://account.proton.me"
     -->
   <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Documento senza titolo %1$s</string>
 </resources>

@@ -62,6 +62,7 @@
   <string name="common_manage_access_action">Керувати доступом</string>
   <string name="common_copy_link_action">Копіювати посилання</string>
   <string name="common_stop_sharing_action">Закрити доступ</string>
+  <string name="common_open_in_browser_action">Open in browser</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аудіо</string>

@@ -270,7 +270,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
         PhotosTabRobot
             .enableBackup()
             .verify {
-                assertLeftToBackup(5)
+                assertBackupPreparing()
             }
 
         dcimCameraFolder.deleteFile("mp4.mp4")
