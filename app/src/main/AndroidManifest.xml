@@ -119,7 +119,7 @@
                 android:value="androidx.startup"
                 tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data
-                android:name="me.proton.android.drive.initializer.SelectionInitializer"
+                android:name="me.proton.android.drive.initializer.CleanupInitializer"
                 android:value="androidx.startup"
                 tools:node="remove" /><!-- Initialized by MainInitializer -->
             <meta-data

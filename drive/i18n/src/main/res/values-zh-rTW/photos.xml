@@ -51,7 +51,7 @@
             "Backing up items from 3 folders: Camera, Raw, Screenshots"
     -->
   <plurals name="photos_message_folders_setup">
-    <item quantity="other">Backing up items from %2$d folders: %1$s</item>
+    <item quantity="other">正在從 %2$d 資料夾備份項目：%1$s</item>
   </plurals>
   <!--
         Variable %1$s is a folder name
@@ -76,7 +76,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">使用行動數據</string>
   <string name="photos_error_local_storage">裝置儲存空間已滿</string>
   <string name="photos_error_local_storage_description">要繼續備份，您必須釋放裝置上的儲存空間。</string>
-  <string name="photos_error_background_restrictions">設定背景應用程式活動的電量為「無限制」</string>
+  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">為使背景備份連貫，請調整電量設定或經常開啟應用程式。</string>
   <string name="photos_error_background_restrictions_action">設定</string>
   <string name="photos_empty_title">尚無備份</string>
@@ -90,9 +90,9 @@
   <string name="photos_backup_state_completed">備份完成</string>
   <string name="photos_backup_state_uncompleted">備份完成，發現問題</string>
   <string name="photos_backup_state_uncompleted_action">解決</string>
-  <string name="photos_backup_state_preparing">Preparing to back up</string>
-  <string name="photos_backup_state_encrypting">正在加密……</string>
-  <string name="photos_backup_state_uploading">正在備份……</string>
+  <string name="photos_backup_state_preparing">正在準備備份</string>
+  <string name="photos_backup_state_encrypting">正在加密…</string>
+  <string name="photos_backup_state_uploading">正在備份…</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos left to upload
         Example:

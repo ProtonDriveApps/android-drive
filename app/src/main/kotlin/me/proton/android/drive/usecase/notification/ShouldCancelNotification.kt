@@ -30,15 +30,24 @@ class ShouldCancelNotification @Inject constructor(
 ) {
     suspend operator fun invoke(
         notificationId: NotificationId,
+        events: List<Event>,
+    ): Boolean = events.any { event -> invoke(notificationId, event) }
+
+    suspend operator fun invoke(
+        notificationId: NotificationId,
         event: Event,
     ): Boolean = when (event) {
         is Event.StorageFull -> false
         is Event.Upload -> {
-            val uploadEvents = notificationRepository.getAllNotificationEvents(
-                notificationId = requireIsInstance(notificationId),
-            )
-                .filterIsInstance<Event.Upload>()
-            (uploadEvents.isEmpty() || uploadEvents.allFinished()) && event.state == UploadState.UPLOAD_CANCELLED
+            if (event.state == UploadState.UPLOAD_CANCELLED) {
+                val uploadEvents = notificationRepository.getAllNotificationEvents(
+                    notificationId = requireIsInstance(notificationId),
+                )
+                    .filterIsInstance<Event.Upload>()
+                uploadEvents.isEmpty() || uploadEvents.allFinished()
+            } else {
+                false
+            }
         }
 
         is Event.Download -> false

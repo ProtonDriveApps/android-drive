@@ -18,11 +18,9 @@
 
 package me.proton.core.drive.drivelink.sorting.domain.sorter
 
-import android.os.Build
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.sorting.domain.entity.Direction
-import java.text.Collator
 import android.icu.text.Collator as IcuCollator
 import android.icu.text.RuleBasedCollator as IcuRuleBasedCollator
 
@@ -44,12 +42,10 @@ data class LocaleNameSorter internal constructor(
 
     companion object {
         operator fun invoke(): LocaleNameSorter =
-            LocaleNameSorter(if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            LocaleNameSorter(
                 (IcuCollator.getInstance() as IcuRuleBasedCollator).apply {
                     numericCollation = true
                 }
-            } else {
-                Collator.getInstance()
-            })
+            )
     }
 }

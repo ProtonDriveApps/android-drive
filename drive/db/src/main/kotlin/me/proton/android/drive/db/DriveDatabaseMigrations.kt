@@ -61,6 +61,7 @@ import me.proton.core.userrecovery.data.db.DeviceRecoveryDatabase
 import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
+import me.proton.core.drive.observability.data.db.ObservabilityDatabase as DriveObservabilityDatabase
 import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNotificationDatabase
 
 @Suppress("MagicNumber")
@@ -448,6 +449,12 @@ object DriveDatabaseMigrations {
         override fun migrate(database: SupportSQLiteDatabase) {
             AuthDatabase.MIGRATION_0.migrate(database)
             AuthDatabase.MIGRATION_1.migrate(database)
+        }
+    }
+
+    val MIGRATION_70_71 = object : Migration(70, 71) {
+        override fun migrate(database: SupportSQLiteDatabase) {
+            DriveObservabilityDatabase.MIGRATION_0.migrate(database)
         }
     }
 }

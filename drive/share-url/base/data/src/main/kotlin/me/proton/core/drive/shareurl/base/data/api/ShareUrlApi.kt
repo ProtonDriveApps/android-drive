@@ -36,7 +36,7 @@ import retrofit2.http.Query
 
 interface ShareUrlApi : BaseRetrofitApi {
 
-    @GET("drive/shares/@{enc_shareID}/urls")
+    @GET("drive/shares/{enc_shareID}/urls")
     suspend fun getAllShareUrls(
         @Path("enc_shareID") shareId: String,
         @Query("Page") page: Int,
@@ -44,40 +44,40 @@ interface ShareUrlApi : BaseRetrofitApi {
         @Query("Recursive") recursive: Int,
     ): GetShareUrlsResponse
 
-    @POST("drive/shares/@{enc_shareID}/urls")
+    @POST("drive/shares/{enc_shareID}/urls")
     suspend fun createShareUrl(
         @Path("enc_shareID") shareId: String,
         @Body request: ShareUrlRequest,
     ): GetShareUrlResponse
 
-    @PUT("drive/shares/@{enc_shareID}/urls/@{enc_urlID}")
+    @PUT("drive/shares/{enc_shareID}/urls/{enc_urlID}")
     suspend fun updateShareUrl(
         @Path("enc_shareID") shareId: String,
         @Path("enc_urlID") urlId: String,
         @Body request: UpdateShareUrlRequest,
     ): GetShareUrlResponse
 
-    @PUT("drive/shares/@{enc_shareID}/urls/@{enc_urlID}")
+    @PUT("drive/shares/{enc_shareID}/urls/{enc_urlID}")
     suspend fun updateShareUrl(
         @Path("enc_shareID") shareId: String,
         @Path("enc_urlID") urlId: String,
         @Body request: UpdateCustomPasswordShareUrlRequest,
     ): GetShareUrlResponse
 
-    @PUT("drive/shares/@{enc_shareID}/urls/@{enc_urlID}")
+    @PUT("drive/shares/{enc_shareID}/urls/{enc_urlID}")
     suspend fun updateShareUrl(
         @Path("enc_shareID") shareId: String,
         @Path("enc_urlID") urlId: String,
         @Body request: UpdateExpirationDurationShareUrlRequest,
     ): GetShareUrlResponse
 
-    @DELETE("drive/shares/@{enc_shareID}/urls/@{enc_urlID}")
+    @DELETE("drive/shares/{enc_shareID}/urls/{enc_urlID}")
     suspend fun deleteShareUrl(
         @Path("enc_shareID") shareId: String,
         @Path("enc_urlID") urlId: String,
     )
 
-    @POST("drive/shares/@{enc_shareID}/urls")
+    @POST("drive/shares/{enc_shareID}/urls")
     suspend fun deleteShareUrls(
         @Path("enc_shareID") shareId: String,
         @Body request: DeleteShareUrlsRequest,

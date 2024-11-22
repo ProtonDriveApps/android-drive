@@ -45,7 +45,7 @@
   <string name="folder_option_import_file">Вивантажити файл</string>
   <string name="folder_option_create_folder">Створити теку</string>
   <string name="folder_option_take_a_photo">Зробити нове фото</string>
-  <string name="folder_option_create_document">Create document</string>
+  <string name="folder_option_create_document">Створити документ</string>
   <string name="settings_theme_system_default">Системна</string>
   <string name="settings_theme_dark">Темна</string>
   <string name="settings_theme_light">Світла</string>
@@ -64,8 +64,8 @@
   <string name="in_app_notification_upload_files_only">До %1$s можна вивантажувати лише файли</string>
   <string name="in_app_notification_importing_file_already_exists">Файл з такою назвою вже існує, спробуйте очистити кеш програми</string>
   <string name="in_app_notification_clear_local_cache_success">Локальний кеш успішно очищено</string>
-  <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
-  <string name="in_app_notification_create_document_success">Document created</string>
+  <string name="in_app_notification_destination_screen_not_found">Вікно призначення не знайдено</string>
+  <string name="in_app_notification_create_document_success">Документ створено</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Сховище заповнене</string>
@@ -166,6 +166,10 @@
   <string name="notification_channel_transfer_description">Канал для хмарного сховища, сповіщень про завантаження та вивантаження</string>
   <string name="notification_channel_warning_title">Попередження</string>
   <string name="notification_channel_warning_description">Канал для попереджень, які вимагають дій від користувача</string>
+  <string name="notification_permission_rationale_title_backup">Будьте в курсі стану вашого резервного копіювання</string>
+  <string name="notification_permission_rationale_description_backup">Отримуйте сповіщення про прогрес і стан резервних копій.</string>
+  <string name="notification_permission_rationale_action_accept">Увімкнути сповіщення</string>
+  <string name="notification_permission_rationale_action_reject">Не зараз</string>
   <!-- endregion -->
   <string name="content_description_select_all">Вибрати усі елементи у цьому списку</string>
   <string name="content_description_selected_options">Показати більше опцій для вибраних файлів і/або тек</string>
@@ -183,7 +187,7 @@
   <string name="description_files_stop_sharing_action_success">Посилання на ваш файл було видалено.</string>
   <string name="description_files_stop_sharing_action_error">Сталася помилка під час видалення посилання на ваш файл.</string>
   <string name="description_files_stop_all_sharing">Ця дія видалить посилання і скасує доступ для всіх.</string>
-  <string name="description_files_stop_all_sharing_action_success">Спільний доступ для вашого файлу скасовано.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Під час скасування спільного доступу до вашого файлу виникла помилка.</string>
   <string name="ignore_file_signature_action">Усе одно переглянути</string>
   <string name="action_empty_files_add_files">Вивантажити</string>
@@ -193,7 +197,7 @@
   <string name="error_share_locked">Спільний доступ обмежено.</string>
   <string name="error_main_share_not_found">Основний спільний елемент не знайдено</string>
   <string name="error_share_not_found">Спільний доступ не знайдено.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Резервне копіювання фотографій тимчасово вимкнено.</string>
   <string name="error_creating_share_not_allowed">Створення спільного доступу тимчасово вимкнено.</string>
   <string name="operation_open_document">відкрити документ</string>
   <string name="operation_create_document">створити документ</string>
@@ -235,5 +239,5 @@
         Example:
             "Untitled document 2025-11-28 12.34.56"
     -->
-  <string name="new_document_name">Untitled document %1$s</string>
+  <string name="new_document_name">Документ без назви %1$s</string>
 </resources>

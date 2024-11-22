@@ -26,11 +26,11 @@ import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.link.data.db.LinkDao
 import me.proton.core.drive.linkdownload.data.db.entity.DownloadBlockEntity
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadState
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadStateEntity
-import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadStateWithBlockEntity
 import me.proton.core.drive.linkdownload.data.extension.toDownloadBlockEntity
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 
@@ -78,9 +78,34 @@ interface LinkDownloadDao : LinkDao {
 
     @Query("""
         SELECT * FROM DownloadBlockEntity WHERE
-            user_id = :userId AND share_id = :shareId AND link_id = :linkId AND revision_id = :revisionId ORDER BY `index` ASC
+            user_id = :userId AND 
+            share_id = :shareId AND 
+            link_id = :linkId AND 
+            revision_id = :revisionId
+            ORDER BY `index` ASC LIMIT :limit OFFSET :offset
     """)
-    fun getDownloadBlocksFlow(userId: UserId, shareId: String, linkId: String, revisionId: String): Flow<List<DownloadBlockEntity>>
+    suspend fun getDownloadBlocks(
+        userId: UserId,
+        shareId: String,
+        linkId: String,
+        revisionId: String,
+        limit: Int,
+        offset: Int
+    ): List<DownloadBlockEntity>
+
+    @Query("""
+        SELECT COUNT(*) FROM DownloadBlockEntity WHERE
+            user_id = :userId AND 
+            share_id = :shareId AND 
+            link_id = :linkId AND 
+            revision_id = :revisionId
+    """)
+    fun getDownloadBlocksCountFlow(
+        userId: UserId,
+        shareId: String,
+        linkId: String,
+        revisionId: String,
+    ): Flow<Int>
 
     @Query("""
         DELETE FROM DownloadBlockEntity WHERE
@@ -91,30 +116,19 @@ interface LinkDownloadDao : LinkDao {
     // We cannot use "SELECT * FROM" here because otherwise room throws an exception
     // java.lang.NullPointerException: Parameter specified as non-null is null: [...] parameter shareId
     @Query("""
-        SELECT 
-            LinkDownloadStateEntity.*,
-            DownloadBlockEntity.`index`,
-            DownloadBlockEntity.encrypted_signature,
-            DownloadBlockEntity.uri
-        FROM 
-            LinkDownloadStateEntity 
-        LEFT JOIN DownloadBlockEntity ON 
-            LinkDownloadStateEntity.user_id = DownloadBlockEntity.user_id AND 
-            LinkDownloadStateEntity.share_id = DownloadBlockEntity.share_id AND 
-            LinkDownloadStateEntity.link_id = DownloadBlockEntity.link_id AND
-            LinkDownloadStateEntity.revision_id = DownloadBlockEntity.revision_id
+        SELECT * FROM LinkDownloadStateEntity
         WHERE
             LinkDownloadStateEntity.user_id = :userId AND 
             LinkDownloadStateEntity.share_id = :shareId AND 
             LinkDownloadStateEntity.link_id = :linkId AND
             LinkDownloadStateEntity.revision_id = :revisionId
     """)
-    fun getDownloadStateWithBlocksFlow(
+    fun getDownloadStateFlow(
         userId: UserId,
         shareId: String,
         linkId: String,
         revisionId: String,
-    ): Flow<List<LinkDownloadStateWithBlockEntity>>
+    ): Flow<LinkDownloadStateEntity?>
 
     @Query("""
         SELECT 
@@ -145,6 +159,7 @@ interface LinkDownloadDao : LinkDao {
         linkId: String,
         revisionId: String,
         downloadState: DownloadState,
+        blocks: List<Block>?,
     ) {
         deleteDownloadBlocks(userId, shareId, linkId, revisionId)
         insertOrUpdate(
@@ -162,9 +177,9 @@ interface LinkDownloadDao : LinkDao {
                 signatureAddress = (downloadState as? DownloadState.Downloaded)?.signatureAddress,
             )
         )
-        if (downloadState is DownloadState.Downloaded) {
+        if (downloadState is DownloadState.Downloaded && blocks != null) {
             insertOrIgnore(
-                *downloadState.blocks.map { block ->
+                *blocks.map { block ->
                     block.toDownloadBlockEntity(userId, shareId, linkId, revisionId)
                 }.toTypedArray()
             )
@@ -179,11 +194,6 @@ interface LinkDownloadDao : LinkDao {
                 LinkEntity.id = LinkDownloadStateEntity.link_id AND
                 (LinkFilePropertiesEntity.revision_id = LinkDownloadStateEntity.revision_id OR
                 LinkFolderPropertiesEntity.folder_link_id IS NOT NULL)
-            LEFT JOIN DownloadBlockEntity ON
-                LinkDownloadStateEntity.user_id = DownloadBlockEntity.user_id AND 
-                LinkDownloadStateEntity.share_id = DownloadBlockEntity.share_id AND 
-                LinkDownloadStateEntity.link_id = DownloadBlockEntity.link_id AND
-                LinkDownloadStateEntity.revision_id = DownloadBlockEntity.revision_id
         """
     }
 }

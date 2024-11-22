@@ -18,7 +18,7 @@
 
 package me.proton.core.drive.drivelink.data.extension
 
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.data.extension.toLink
 import me.proton.core.drive.link.data.extension.toLinkWithProperties
@@ -30,20 +30,18 @@ import me.proton.core.drive.share.user.data.extension.toShareUserMember
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
-fun List<DriveLinkEntityWithBlock>.toDriveLinks(): List<DriveLink> =
-    groupBy { entity -> entity.linkWithPropertiesEntity.toLinkWithProperties().toLink() }
-        .map { (link, entities) ->
-            val firstEntity = entities.first()
-            link.toEncryptedDriveLink(
-                volumeId = VolumeId(firstEntity.volumeId),
-                isMarkedAsOffline = firstEntity.linkOfflineEntity != null,
-                downloadState = entities.mapNotNull { entity -> entity.downloadStateWithBlock }.toDownloadState(),
-                trashState = firstEntity.trashState,
-                shareInvitationCount = firstEntity.shareInvitationCount,
-                shareMemberCount = firstEntity.shareMemberCount,
-                shareUser = firstEntity.shareMemberEntity?.toShareUserMember(),
-            )
-        }
+fun List<DriveLinkEntity>.toDriveLinks(): List<DriveLink> = map { entity ->
+    val link = entity.linkWithPropertiesEntity.toLinkWithProperties().toLink()
+    link.toEncryptedDriveLink(
+        volumeId = VolumeId(entity.volumeId),
+        isMarkedAsOffline = entity.linkOfflineEntity != null,
+        downloadState = entity.downloadStateEntity?.toDownloadState(),
+        trashState = entity.trashState,
+        shareInvitationCount = entity.shareInvitationCount,
+        shareMemberCount = entity.shareMemberCount,
+        shareUser = entity.shareMemberEntity?.toShareUserMember(),
+    )
+}
 
 fun Link.toEncryptedDriveLink(
     volumeId: VolumeId,

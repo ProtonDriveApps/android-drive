@@ -31,7 +31,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -40,12 +39,12 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.UpdateName
 import me.proton.core.drive.upload.data.extension.isRetryable
-import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.CreateNewFile
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -64,6 +63,7 @@ class CreateNewFileWorker @AssistedInject constructor(
     updateName: UpdateName,
     refreshFeatureFlags: RefreshFeatureFlags,
     configurationProvider: ConfigurationProvider,
+    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -77,6 +77,7 @@ class CreateNewFileWorker @AssistedInject constructor(
     updateName = updateName,
     refreshFeatureFlags = refreshFeatureFlags,
     configurationProvider = configurationProvider,
+    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -89,14 +90,12 @@ class CreateNewFileWorker @AssistedInject constructor(
                 error.handleFeatureDisabled()
                 val retryable = error.isRetryable || error.handle(uploadFileLink)
                 val canRetry = canRetry()
-                error.log(
-                    tag = uploadFileLink.logTag(),
-                    message = """
-                        Creating new file failed "${error.message}" retryable $retryable, 
-                        max retries reached ${!canRetry}
-                    """.trimIndent().replace("\n", " ")
+                return uploadFileLink.retryOrAbort(
+                    retryable = retryable,
+                    canRetry = canRetry,
+                    error = error,
+                    message = "Creating new file failed"
                 )
-                return retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
             }
         return Result.success()
     }

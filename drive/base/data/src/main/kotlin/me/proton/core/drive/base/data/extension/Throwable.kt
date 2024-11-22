@@ -22,6 +22,7 @@ import android.database.SQLException
 import android.system.ErrnoException
 import kotlinx.coroutines.CancellationException
 import me.proton.core.crypto.common.pgp.exception.CryptoException
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.domain.api.ProtonApiCode.FEATURE_DISABLED
 import me.proton.core.drive.base.domain.exception.BackupStopException
 import me.proton.core.drive.base.domain.exception.BackupSyncException
@@ -30,7 +31,6 @@ import me.proton.core.network.data.ProtonErrorException
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
 import me.proton.core.network.domain.isRetryable
-import me.proton.core.util.kotlin.CoreLogger
 import retrofit2.HttpException
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -63,23 +63,23 @@ fun Throwable.getDefaultMessage(
     }
 }
 
-fun Throwable.log(tag: String, message: String? = null): Throwable = this.also {
+fun Throwable.log(tag: String, message: String? = null, level: LoggerLevel? = null): Throwable = this.also {
     when (this) {
-        is ApiException -> message?.let { log(tag, message) } ?: log(tag)
-        is BackupStopException -> message?.let { log(tag, message) } ?: log(tag)
-        is BackupSyncException -> message?.let { log(tag, message) } ?: log(tag)
-        is CancellationException -> message?.let { log(tag, message) } ?: log(tag)
-        is CryptoException -> message?.let { log(tag, message) } ?: log(tag)
-        is HttpException -> message?.let { log(tag, message) } ?: log(tag)
-        is IllegalArgumentException -> message?.let { log(tag, message) } ?: log(tag)
-        is IllegalStateException -> message?.let { log(tag, message) } ?: log(tag)
-        is ProtonErrorException -> message?.let { log(tag, message) } ?: log(tag)
-        is SQLException -> message?.let { log(tag, message) } ?: log(tag)
-        is UnsupportedOperationException -> message?.let { log(tag, message) } ?: log(tag)
-        is IOException -> message?.let { log(tag, message) } ?: log(tag)
-        is SecurityException -> message?.let { log(tag, message) } ?: log(tag)
-        is RuntimeException -> message?.let { log(tag, message) } ?: log(tag)
-        else -> message?.let { CoreLogger.e(tag, this, message) } ?: CoreLogger.e(tag, this)
+        is ApiException -> log(tag, message, level)
+        is BackupStopException -> log(tag, message, level)
+        is BackupSyncException -> log(tag, message, level)
+        is CancellationException -> log(tag, message, level)
+        is CryptoException -> log(tag, message, level)
+        is HttpException -> log(tag, message, level)
+        is IllegalArgumentException -> log(tag, message, level)
+        is IllegalStateException -> log(tag, message, level)
+        is ProtonErrorException -> log(tag, message, level)
+        is SQLException -> log(tag, message, level)
+        is UnsupportedOperationException -> log(tag, message, level)
+        is IOException -> log(tag, message, level)
+        is SecurityException -> log(tag, message, level)
+        is RuntimeException -> log(tag, message, level)
+        else -> level.log(tag, this, message)
     }
 }
 

@@ -22,7 +22,6 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -33,6 +32,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.extension.getDefaultMessage
@@ -49,6 +49,11 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.ClearCacheFolder
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidUserLogDisabled
+import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.settings.presentation.component.DebugSettingsStateAndEvent
 import me.proton.core.drive.settings.presentation.event.DebugSettingsViewEvent
@@ -81,11 +86,16 @@ class SettingsViewModel @Inject constructor(
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
     private val sendDebugLog: SendDebugLog,
+    getFeatureFlagFlow: GetFeatureFlagFlow,
     isPhotosEnabled: IsPhotosEnabled,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val _errorMessage = MutableSharedFlow<String>()
     val errorMessage: SharedFlow<String> = _errorMessage
+    private val userLogKillSwitch = getFeatureFlagFlow(
+        featureFlagId = driveAndroidUserLogDisabled(userId),
+        emitNotFoundInitially = false,
+    ).stateIn(viewModelScope, SharingStarted.Eagerly, FeatureFlag(driveAndroidUserLogDisabled(userId), NOT_FOUND))
 
     private val debugSettingsViewEvent = object : DebugSettingsViewEvent {
         override val onUpdateHost = { host: String -> debugSettings.host = host }
@@ -163,7 +173,8 @@ class SettingsViewModel @Inject constructor(
         getAutoLockDuration(),
         isPhotosEnabled(userId),
         getDefaultEnabledDynamicHomeTab(userId),
-    ) {  debugSettings, themeStyle, enabled, autoLockDuration, isBackupEnabled, dynamicHomeTab ->
+        userLogKillSwitch,
+    ) {  debugSettings, themeStyle, enabled, autoLockDuration, isBackupEnabled, dynamicHomeTab, userLogKillSwitch ->
         SettingsViewState(
             navigationIcon = CorePresentation.drawable.ic_arrow_back,
             appNameResId = I18N.string.app_name,
@@ -182,12 +193,12 @@ class SettingsViewModel @Inject constructor(
             currentStyle = themeStyle.resId,
             debugSettingsStateAndEvent = debugSettings,
             appAccessSubtitleResId = getAppAccessSubtitleResId(enabled),
-            isAutoLockDurationsVisible = enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O,
+            isAutoLockDurationsVisible = enabled,
             autoLockDuration = autoLockDuration,
-            isPhotosSettingsVisible = configurationProvider.photosFeatureFlag,
+            isPhotosSettingsVisible = true,
             photosBackupSubtitleResId = getPhotosBackupSubtitleResId(isBackupEnabled),
             defaultHomeTabResId = dynamicHomeTab.titleResId,
-            isLogSettingVisible = configurationProvider.logFeatureFlag,
+            isLogSettingVisible = userLogKillSwitch.off,
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 

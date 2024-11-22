@@ -38,10 +38,9 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.upload.data.extension.isRetryable
-import me.proton.core.drive.upload.data.extension.log
-import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.upload.domain.usecase.VerifyBlocks
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -60,6 +59,7 @@ class VerifyBlocksWorker @AssistedInject constructor(
     uploadErrorManager: UploadErrorManager,
     private val verifyBlocks: VerifyBlocks,
     configurationProvider: ConfigurationProvider,
+    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -71,6 +71,7 @@ class VerifyBlocksWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
+    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -80,16 +81,12 @@ class VerifyBlocksWorker @AssistedInject constructor(
         uploadFileLink.logWorkState()
         verifyBlocks(uploadFileLink)
             .onFailure { error ->
-                val retryable = error.isRetryable
-                val canRetry = canRetry()
-                error.log(
-                    tag = uploadFileLink.logTag(),
-                    message = """
-                        Verify blocks failed with "${error.message}" retryable $retryable, 
-                        max retries reached ${!canRetry}
-                    """.trimIndent().replace("\n", " ")
+                return uploadFileLink.retryOrAbort(
+                    retryable = error.isRetryable,
+                    canRetry = canRetry(),
+                    error = error,
+                    message = "Verify blocks failed",
                 )
-                return retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
             }
         return Result.success()
     }

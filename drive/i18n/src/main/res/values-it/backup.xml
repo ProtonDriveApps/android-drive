@@ -21,6 +21,6 @@
   <string name="backup_issues_retry_all_action">Riprova tutto</string>
   <string name="backup_issues_skip_action">Ignora</string>
   <string name="backup_issues_skip_confirmation_title">Vuoi ignorare il backup per queste foto?</string>
-  <string name="backup_issues_skip_confirmation_description">Sei sicuro di voler ignorare le foto che non sono state sottoposte a backup? Non verranno sottoposte al backup.</string>
+  <string name="backup_issues_skip_confirmation_description">Sei sicuro di voler ignorare le foto che non sono state sottoposte a backup? Non verranno sottoposte al backup.</string>
   <string name="backup_issues_skip_confirmation_action">Ignora</string>
 </resources>

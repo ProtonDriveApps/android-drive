@@ -31,15 +31,13 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOf
 import me.proton.android.drive.ui.viewstate.GetMoreFreeStorageViewState
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import javax.inject.Inject
@@ -94,21 +92,15 @@ class GetMoreFreeStorageViewModel @Inject constructor(
         actions = listOf(uploadAFile, createAShareLink, setARecoveryMethod),
     )
 
-    val viewState: Flow<GetMoreFreeStorageViewState> =
-        getFeatureFlag(FeatureFlagId.driveSharingInvitations(userId))
-            .map { sharingInvitations ->
-                initialViewState.copy(
-                    actions = listOf(
-                        uploadAFile,
-                        if (sharingInvitations.on) {
-                            shareAFile
-                        } else {
-                            createAShareLink
-                        },
-                        setARecoveryMethod,
-                    )
-                )
-            }
+    val viewState: Flow<GetMoreFreeStorageViewState> = flowOf(
+        initialViewState.copy(
+            actions = listOf(
+                uploadAFile,
+                shareAFile,
+                setARecoveryMethod,
+            )
+        )
+    )
 
     private val isDoneIconResId = CorePresentation.drawable.ic_proton_checkmark
 

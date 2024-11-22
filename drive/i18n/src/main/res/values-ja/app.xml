@@ -151,6 +151,10 @@
   <string name="notification_channel_transfer_description">クラウド ストレージ、アップロードおよびダウンロード通知のチャネル</string>
   <string name="notification_channel_warning_title">警告</string>
   <string name="notification_channel_warning_description">ユーザーのアクションが必要な警告のチャネル</string>
+  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
+  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
+  <string name="notification_permission_rationale_action_accept">Enable notifications</string>
+  <string name="notification_permission_rationale_action_reject">Not now</string>
   <!-- endregion -->
   <string name="content_description_select_all">リスト内のすべての項目を選択します</string>
   <string name="content_description_selected_options">選択したファイルやフォルダーのその他のオプションを表示します</string>
@@ -168,7 +172,7 @@
   <string name="description_files_stop_sharing_action_success">あなたのファイルへのリンクは削除されました。</string>
   <string name="description_files_stop_sharing_action_error">あなたのファイルへのリンクを削除する際にエラーが発生しました。</string>
   <string name="description_files_stop_all_sharing">This will delete link and remove access for everyone.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">There was an error while deleting sharing to your file.</string>
   <string name="ignore_file_signature_action">いずれにせよ</string>
   <string name="action_empty_files_add_files">アップロード</string>

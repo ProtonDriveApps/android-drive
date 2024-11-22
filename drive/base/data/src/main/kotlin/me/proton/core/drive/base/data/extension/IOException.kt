@@ -18,7 +18,7 @@
 package me.proton.core.drive.base.data.extension
 
 import android.content.Context
-import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import java.io.IOException
 import me.proton.core.drive.i18n.R as I18N
 
@@ -29,6 +29,10 @@ fun IOException.getDefaultMessage(context: Context): String = message?.let {
     )
 } ?: context.getString(I18N.string.common_error_io)
 
-fun IOException.log(tag: String, message: String = this.message.orEmpty()): IOException = also {
-    CoreLogger.d(tag, this, message)
+fun IOException.log(
+    tag: String,
+    message: String? = null,
+    level: LoggerLevel? = LoggerLevel.DEBUG,
+): IOException = also {
+    level.log(tag, this, message)
 }

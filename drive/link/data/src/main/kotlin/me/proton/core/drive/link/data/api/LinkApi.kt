@@ -33,34 +33,34 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface LinkApi : BaseRetrofitApi {
-    @GET("drive/shares/@{enc_shareID}/links/@{enc_linkID}")
+    @GET("drive/shares/{enc_shareID}/links/{enc_linkID}")
     suspend fun getLink(
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") linkId: String
     ): GetLinkResponse
 
-    @POST("drive/shares/@{enc_shareID}/links/@{enc_linkID}/checkAvailableHashes")
+    @POST("drive/shares/{enc_shareID}/links/{enc_linkID}/checkAvailableHashes")
     suspend fun checkAvailableHashes(
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") linkId: String,
         @Body request: CheckAvailableHashesRequest,
     ): CheckAvailableHashesResponse
 
-    @PUT("drive/shares/@{enc_shareID}/links/@{enc_linkID}/move")
+    @PUT("drive/shares/{enc_shareID}/links/{enc_linkID}/move")
     suspend fun moveLink(
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") folderLinkId: String,
         @Body request: MoveLinkRequest
     ): CodeResponse
 
-    @PUT("drive/shares/@{enc_shareID}/links/@{enc_linkID}/rename")
+    @PUT("drive/shares/{enc_shareID}/links/{enc_linkID}/rename")
     suspend fun renameLink(
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") linkId: String,
         @Body request: RenameLinkRequest,
     ): CodeResponse
 
-    @POST("drive/shares/@{enc_shareID}/links/fetch_metadata")
+    @POST("drive/shares/{enc_shareID}/links/fetch_metadata")
     suspend fun getLinks(
         @Path("enc_shareID") shareId: String,
         @Body request: GetLinksRequest,

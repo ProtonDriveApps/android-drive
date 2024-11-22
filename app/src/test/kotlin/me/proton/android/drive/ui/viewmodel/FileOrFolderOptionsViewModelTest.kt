@@ -48,7 +48,6 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
-import me.proton.core.drive.files.presentation.entry.CopySharedLinkEntity
 import me.proton.core.drive.files.presentation.entry.DownloadFileEntity
 import me.proton.core.drive.files.presentation.entry.FileInfoEntry
 import me.proton.core.drive.files.presentation.entry.ManageAccessEntity
@@ -58,8 +57,6 @@ import me.proton.core.drive.files.presentation.entry.RemoveMeEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
 import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntity
-import me.proton.core.drive.files.presentation.entry.ShareViaLinkEntry
-import me.proton.core.drive.files.presentation.entry.StopSharingEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
 import me.proton.core.drive.files.presentation.entry.ToggleTrashEntry
 import me.proton.core.drive.link.domain.entity.FileId
@@ -72,7 +69,6 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.usecase.LeaveShare
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
-import me.proton.core.drive.shareurl.crypto.domain.usecase.CopyPublicUrl
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert
 import org.junit.Assert.assertEquals
@@ -87,7 +83,6 @@ class FileOrFolderOptionsViewModelTest {
     private val getDriveLink = mockk<GetDecryptedDriveLink>()
     private val toggleOffline = mockk<ToggleOffline>()
     private val toggleTrashState = mockk<ToggleTrashState>()
-    private val copyPublicUrl = mockk<CopyPublicUrl>()
     private val leaveShare = mockk<LeaveShare>()
     private val configurationProvider = mockk<ConfigurationProvider>()
     private val broadcastMessages = mockk<BroadcastMessages>()
@@ -123,7 +118,8 @@ class FileOrFolderOptionsViewModelTest {
         assertEquals(
             listOf(
                 ToggleOfflineEntry::class,
-                ShareViaLinkEntry::class,
+                ShareViaInvitationsEntity::class,
+                ManageAccessEntity::class,
                 SendFileEntry::class,
                 DownloadFileEntity::class,
                 MoveFileEntry::class,
@@ -153,7 +149,8 @@ class FileOrFolderOptionsViewModelTest {
         assertEquals(
             listOf(
                 ToggleOfflineEntry::class,
-                ShareViaLinkEntry::class,
+                ShareViaInvitationsEntity::class,
+                ManageAccessEntity::class,
                 SendFileEntry::class,
                 DownloadFileEntity::class,
                 FileInfoEntry::class,
@@ -174,14 +171,13 @@ class FileOrFolderOptionsViewModelTest {
         assertEquals(
             listOf(
                 ToggleOfflineEntry::class,
-                CopySharedLinkEntity::class,
-                ShareViaLinkEntry::class,
+                ShareViaInvitationsEntity::class,
+                ManageAccessEntity::class,
                 SendFileEntry::class,
                 DownloadFileEntity::class,
                 MoveFileEntry::class,
                 RenameFileEntry::class,
                 FileInfoEntry::class,
-                StopSharingEntry::class,
                 ToggleTrashEntry::class,
             ),
             entries.map { it.javaClass.kotlin }
@@ -288,7 +284,8 @@ class FileOrFolderOptionsViewModelTest {
 
         // Then
         Assert.assertTrue(entries.any { it is ToggleOfflineEntry })
-        Assert.assertTrue(entries.any { it is ShareViaLinkEntry })
+        Assert.assertTrue(entries.any { it is ShareViaInvitationsEntity })
+        Assert.assertTrue(entries.any { it is ManageAccessEntity })
         Assert.assertTrue(entries.any { it is SendFileEntry })
         Assert.assertTrue(entries.any { it is DownloadFileEntity })
         Assert.assertFalse(entries.any { it is MoveFileEntry })
@@ -314,7 +311,8 @@ class FileOrFolderOptionsViewModelTest {
         // Then
         assertEquals(
             listOf(
-                ShareViaLinkEntry::class,
+                ShareViaInvitationsEntity::class,
+                ManageAccessEntity::class,
                 MoveFileEntry::class,
                 RenameFileEntry::class,
                 OpenInBrowserProtonDocsEntity::class,
@@ -346,7 +344,6 @@ class FileOrFolderOptionsViewModelTest {
         getDriveLink = getDriveLink,
         toggleOffline = toggleOffline,
         toggleTrashState = toggleTrashState,
-        copyPublicUrl = copyPublicUrl,
         exportTo = exportTo,
         notifyActivityNotFound = notifyActivityNotFound,
         getFeatureFlagFlow = getFeatureFlagFlow,
@@ -402,7 +399,7 @@ class FileOrFolderOptionsViewModelTest {
         volumeId = VolumeId("VOLUME_ID"),
         isMarkedAsOffline = true,
         isAnyAncestorMarkedAsOffline = false,
-        downloadState = DownloadState.Downloaded(emptyList()),
+        downloadState = DownloadState.Downloaded(),
         trashState = null,
         cryptoName = CryptoProperty.Decrypted("Link name", VerificationStatus.Success),
         cryptoXAttr = CryptoProperty.Decrypted(

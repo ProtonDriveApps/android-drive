@@ -21,6 +21,7 @@
 package me.proton.android.drive.ui.navigation
 
 import android.content.Intent
+import android.os.Build
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -46,9 +47,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.extension.ensureNavGraphSet
@@ -73,6 +77,7 @@ import me.proton.android.drive.ui.dialog.ConfirmStopSyncFolderDialog
 import me.proton.android.drive.ui.dialog.FileOrFolderOptions
 import me.proton.android.drive.ui.dialog.LogOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
+import me.proton.android.drive.ui.dialog.Onboarding
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
 import me.proton.android.drive.ui.dialog.ProtonDocsInsertImageOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
@@ -113,6 +118,8 @@ import me.proton.core.account.domain.entity.Account
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.drivelink.device.presentation.component.RenameDevice
 import me.proton.core.drive.drivelink.rename.presentation.Rename
@@ -124,6 +131,8 @@ import me.proton.core.drive.drivelink.shared.presentation.component.ShareViaLink
 import me.proton.core.drive.folder.create.presentation.CreateFolder
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.presentation.compose.StorageFullDialog
+import me.proton.core.drive.notification.presentation.component.NotificationPermissionRationale
+import me.proton.core.drive.notification.presentation.viewmodel.NotificationPermissionRationaleViewModel
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.By
 import me.proton.core.drive.sorting.domain.entity.Direction
@@ -141,6 +150,7 @@ fun AppNavGraph(
     defaultStartDestination: String?,
     locked: Flow<Boolean>,
     primaryAccount: Flow<Account?>,
+    announceEvent: AnnounceEvent,
     exitApp: () -> Unit,
     navigateToPasswordManagement: (UserId) -> Unit,
     navigateToRecoveryEmail: (UserId) -> Unit,
@@ -155,6 +165,7 @@ fun AppNavGraph(
         mutableStateOf(createNavController(localContext))
     }
     LaunchedEffect(navController) {
+        announceScreen(announceEvent, primaryAccount, navController, "App")
         navController
             .currentBackStack
             .onEach { backStackEntries ->
@@ -164,6 +175,7 @@ fun AppNavGraph(
             .launchIn(this)
     }
     LaunchedEffect(homeNavController) {
+        announceScreen(announceEvent, primaryAccount, homeNavController, "Home")
         homeNavController
             .currentBackStack
             .onEach { backStackEntries ->
@@ -258,14 +270,6 @@ fun AppNavGraph(
             navigateToSubscription = navigateToSubscription,
             onDrawerStateChanged = onDrawerStateChanged,
         )
-        addHomeShared(
-            navController = navController,
-            homeNavController = homeNavController,
-            deepLinkBaseUrl = deepLinkBaseUrl,
-            navigateToBugReport = navigateToBugReport,
-            navigateToSubscription = navigateToSubscription,
-            onDrawerStateChanged = onDrawerStateChanged,
-        )
         addHomePhotos(
             navController = navController,
             homeNavController = homeNavController,
@@ -341,6 +345,8 @@ fun AppNavGraph(
         addLog(navController)
         addLogOptions()
         addProtonDocsInsertImageOptions(navController)
+        addOnboarding(navController)
+        addNotificationPermissionRationale(navController)
     }
 }
 
@@ -494,6 +500,16 @@ fun NavGraphBuilder.addFileOrFolderOptions(
                 popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
             }
         },
+        navigateToNotificationPermissionRationale = {
+            navController.navigate(
+                Screen.NotificationPermissionRationale(
+                    userId = userId,
+                    rationaleContext = NotificationPermissionRationaleViewModel.RationaleContext.DEFAULT,
+                )
+            ) {
+                popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
+            }
+        },
         dismiss = {
             navController.popBackStack(
                 route = Screen.FileOrFolderOptions.route,
@@ -560,6 +576,16 @@ fun NavGraphBuilder.addParentFolderOptions(
         },
         navigateToPreview = { fileId ->
             navController.navigate(Screen.PagerPreview(PagerType.SINGLE, userId, fileId)) {
+                popUpTo(route = Screen.ParentFolderOptions.route) { inclusive = true }
+            }
+        },
+        navigateToNotificationPermissionRationale = {
+            navController.navigate(
+                Screen.NotificationPermissionRationale(
+                    userId = userId,
+                    rationaleContext = NotificationPermissionRationaleViewModel.RationaleContext.DEFAULT,
+                )
+            ) {
                 popUpTo(route = Screen.ParentFolderOptions.route) { inclusive = true }
             }
         },
@@ -751,7 +777,6 @@ internal fun NavGraphBuilder.addHome(
         Screen.Home.TAB_FILES -> Screen.Files.route
         Screen.Home.TAB_PHOTOS -> Screen.Photos.route
         Screen.Home.TAB_COMPUTERS -> Screen.Computers.route
-        Screen.Home.TAB_SHARED -> Screen.Shared.route
         Screen.Home.TAB_SHARED_TABS -> Screen.SharedTabs.route
         else -> defaultStartDestination
     }
@@ -835,6 +860,19 @@ internal fun NavGraphBuilder.addHome(
                 Screen.GetMoreFreeStorage(userId)
             )
         },
+        navigateToOnboarding = {
+            navController.navigate(
+                Screen.Onboarding(userId)
+            )
+        },
+        navigateToNotificationPermissionRationale = {
+            navController.navigate(
+                Screen.NotificationPermissionRationale(
+                    userId = userId,
+                    rationaleContext = NotificationPermissionRationaleViewModel.RationaleContext.BACKUP,
+                )
+            )
+        },
         modifier = Modifier.fillMaxSize(),
     )
 }
@@ -900,26 +938,6 @@ fun NavGraphBuilder.addHomeFiles(
             defaultValue = null
         },
     ),
-)
-
-@ExperimentalAnimationApi
-@ExperimentalCoroutinesApi
-fun NavGraphBuilder.addHomeShared(
-    navController: NavHostController,
-    homeNavController: NavHostController,
-    deepLinkBaseUrl: String,
-    navigateToBugReport: () -> Unit,
-    navigateToSubscription: () -> Unit,
-    onDrawerStateChanged: (Boolean) -> Unit,
-) = addHome(
-    navController = navController,
-    homeNavController = homeNavController,
-    deepLinkBaseUrl = deepLinkBaseUrl,
-    route = Screen.Shared.route,
-    defaultStartDestination = Screen.Shared.route,
-    navigateToBugReport = navigateToBugReport,
-    navigateToSubscription = navigateToSubscription,
-    onDrawerStateChanged = onDrawerStateChanged
 )
 
 @ExperimentalAnimationApi
@@ -1756,6 +1774,14 @@ fun NavGraphBuilder.addPhotosBackup(navController: NavHostController) = composab
                 Screen.Settings.PhotosBackup.Dialogs.ConfirmStopSyncFolder.invoke(folderId, id)
             )
         },
+        navigateToNotificationPermissionRationale = {
+            navController.navigate(
+                Screen.NotificationPermissionRationale(
+                    userId = userId,
+                    rationaleContext = NotificationPermissionRationaleViewModel.RationaleContext.BACKUP,
+                )
+            )
+        },
         navigateBack = {
             navController.popBackStack(
                 route = Screen.Settings.PhotosBackup.route,
@@ -1920,4 +1946,67 @@ fun NavGraphBuilder.addProtonDocsInsertImageOptions(
             )
         },
     )
+}
+
+fun NavGraphBuilder.addOnboarding(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.Onboarding.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+    arguments = listOf(
+        navArgument(Screen.Onboarding.USER_ID) { type = NavType.StringType },
+    ),
+) { _, _ ->
+    Onboarding(
+        dismiss = {
+            navController.popBackStack(
+                route = Screen.Onboarding.route,
+                inclusive = true,
+            )
+        }
+    )
+}
+
+fun NavGraphBuilder.addNotificationPermissionRationale(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.NotificationPermissionRationale.route,
+    viewState = ModalBottomSheetViewState(),
+    arguments = listOf(
+        navArgument(Screen.NotificationPermissionRationale.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.NotificationPermissionRationale.RATIONALE_CONTEXT) { type = NavType.StringType },
+    ),
+) { _, runAction ->
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        NotificationPermissionRationale(
+            runAction = runAction,
+            dismiss = {
+                navController.popBackStack(
+                    route = Screen.NotificationPermissionRationale.route,
+                    inclusive = true,
+                )
+            },
+        )
+    } else {
+        CoreLogger.w(
+            tag = DriveLogTag.UI,
+            message = "NotificationPermissionRationale invoked on API level ${Build.VERSION.SDK_INT}",
+        )
+    }
+}
+
+private suspend fun CoroutineScope.announceScreen(
+    announceEvent: AnnounceEvent,
+    primaryAccount: Flow<Account?>,
+    navController: NavHostController,
+    source: String
+) {
+    combine(
+        primaryAccount.filterNotNull(),
+        navController.currentBackStackEntryFlow,
+    ) { account, entry ->
+        account.userId to entry.destination.route
+    }.onEach { (userId, route) ->
+        announceEvent(userId, Event.Screen(source, route))
+    }.launchIn(this)
 }

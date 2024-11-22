@@ -21,7 +21,6 @@ package me.proton.android.drive.ui.test.flow.details
 import android.content.Context
 import android.os.Build
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SharedTabRobot
@@ -32,9 +31,6 @@ import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.labelResId
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import me.proton.core.drive.file.info.presentation.FileInfoTestTag
 import me.proton.test.fusion.FusionConfig.targetContext
 import org.junit.Test
@@ -148,7 +144,6 @@ class DetailsFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, loginWithSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun checkSharingDetailsAndCloseDetails() {
         val link = readOnlyFile(userLoginRule.testUser.email)
         PhotosTabRobot.waitUntilLoaded()

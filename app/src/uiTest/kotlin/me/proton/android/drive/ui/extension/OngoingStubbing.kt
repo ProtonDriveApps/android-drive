@@ -28,11 +28,14 @@ import androidx.test.espresso.intent.OngoingStubbing
 import java.io.File
 
 
+fun OngoingStubbing.respondWithFile(block:() -> File) {
+    respondWithFunction {
+        Instrumentation.ActivityResult(Activity.RESULT_OK, Intent().setData(Uri.fromFile(block())))
+    }
+}
 
 fun OngoingStubbing.respondWithFile(file: File) {
-    respondWithFunction {
-        Instrumentation.ActivityResult(Activity.RESULT_OK, Intent().setData(Uri.fromFile(file)))
-    }
+    respondWithFile { file }
 }
 
 fun OngoingStubbing.respondWithFiles(files: List<File>) {

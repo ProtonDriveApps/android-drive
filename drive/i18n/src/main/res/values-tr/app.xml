@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Bulut depolama, yükleme ve indirme bildirimleri kanalı</string>
   <string name="notification_channel_warning_title">Uyarı</string>
   <string name="notification_channel_warning_description">Kullanıcının yapması gereken işlemler bildirimleri kanalı</string>
+  <string name="notification_permission_rationale_title_backup">Yedekleme durumunuzla ilgili bilgi alın</string>
+  <string name="notification_permission_rationale_description_backup">Yedeklemelerinizin ilerlemesi ve durumuyla ilgili bildirimler alın.</string>
+  <string name="notification_permission_rationale_action_accept">Bildirimleri aç</string>
+  <string name="notification_permission_rationale_action_reject">Şimdi değil</string>
   <!-- endregion -->
   <string name="content_description_select_all">Listedeki tüm ögeleri seç</string>
   <string name="content_description_selected_options">Seçilmiş dosya ve/veya klasörler için diğer seçenekleri görüntüle</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">Dosya bağlantınız silindi.</string>
   <string name="description_files_stop_sharing_action_error">Dosya bağlantınız silinirken bir sorun çıktı.</string>
   <string name="description_files_stop_all_sharing">Bu işlem, bağlantıyı siler ve herkesin erişimini kaldırır.</string>
-  <string name="description_files_stop_all_sharing_action_success">Dosyanızın paylaşımı silindi.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Dosyanızın paylaşımı silinirken bir sorun çıktı.</string>
   <string name="ignore_file_signature_action">Yine de görüntüle</string>
   <string name="action_empty_files_add_files">Yükle</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">Paylaşım kilitli.</string>
   <string name="error_main_share_not_found">Temel paylaşım bulunamadı.</string>
   <string name="error_share_not_found">Paylaşım bulunamadı.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Fotoğraf yedekleme özelliği geçici olarak kullanılamıyor.</string>
   <string name="error_creating_share_not_allowed">Paylaşım oluşturma özelliği geçici olarak kullanılamıyor.</string>
   <string name="operation_open_document">bir belge aç</string>
   <string name="operation_create_document">bir belge oluştur</string>

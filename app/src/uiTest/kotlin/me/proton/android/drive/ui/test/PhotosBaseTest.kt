@@ -27,7 +27,7 @@ import org.junit.Rule
 import java.io.File
 
 abstract class PhotosBaseTest: AuthenticatedBaseTest() {
-    private val permissions =
+    private val backupPermissions =
         listOf(
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -47,7 +47,7 @@ abstract class PhotosBaseTest: AuthenticatedBaseTest() {
         }
 
     @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(*permissions.toTypedArray())
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(*backupPermissions.toTypedArray())
 
     @get:Rule
     val dcimCameraFolder = ExternalFilesRule {

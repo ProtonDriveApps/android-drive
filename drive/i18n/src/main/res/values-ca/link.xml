@@ -27,5 +27,5 @@
   <string name="files_upload_stage_uploading_with_progress">Progrés de la càrrega: %1$s</string>
   <string name="files_upload_content_description_cancel_upload">Cancel·la la càrrega del fitxer</string>
   <string name="files_upload_failure_storage_full_title">Emmagatzematge ple</string>
-  <string name="files_upload_failure_storage_full_description">El vostre compte no té espai d\'emmagatzematge. Allibereu espai o actualitzeu a un pla amb més emmagatzematge.</string>
+  <string name="files_upload_failure_storage_full_description">El vostre compte no té espai d\'emmagatzematge. Allibereu espai o milloreu a un pla amb més emmagatzematge.</string>
 </resources>

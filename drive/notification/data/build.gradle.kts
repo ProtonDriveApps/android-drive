@@ -33,4 +33,5 @@ driveModule(
     api(project(":drive:notification:domain"))
     api(project(":drive:base:data"))
     api(libs.androidx.core.core)
+    implementation(libs.androidx.dataStore.preferences)
 }

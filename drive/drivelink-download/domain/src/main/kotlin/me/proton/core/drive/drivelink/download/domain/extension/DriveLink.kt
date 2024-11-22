@@ -20,13 +20,18 @@ package me.proton.core.drive.drivelink.download.domain.extension
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
-suspend fun DriveLink.isDownloaded(coroutineContext: CoroutineContext = Dispatchers.IO): Boolean {
-    val downloadState = downloadState as? DownloadState.Downloaded ?: return false
-    return withContext(coroutineContext) {
-        downloadState.blocks.all { block -> File(block.url).exists() }
+suspend fun DriveLink.isDownloaded(
+    blocks: List<Block>,
+    coroutineContext: CoroutineContext = Dispatchers.IO,
+): Boolean = if (downloadState !is DownloadState.Downloaded) {
+    false
+} else {
+    withContext(coroutineContext) {
+        blocks.all { block -> File(block.url).exists() }
     }
 }

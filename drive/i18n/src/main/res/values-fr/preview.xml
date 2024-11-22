@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Aperçu du contenu du fichier</string>
-  <string name="content_description_more_options">Afficher plus d\'options pour un fichier</string>
+  <string name="content_description_more_options">Afficher plus d\'options pour le fichier</string>
   <string name="preview_downloading_state">Téléchargement en cours</string>
   <string name="preview_processing_state">Traitement en cours</string>
   <string name="preview_empty">Aucun aperçu à afficher…</string>

@@ -26,19 +26,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.proton.android.drive.photos.presentation.component.BackupPermissions
 import me.proton.android.drive.photos.presentation.component.LibraryFolders
 import me.proton.android.drive.ui.action.PhotoExtractDataAction
@@ -47,7 +51,6 @@ import me.proton.android.drive.ui.viewmodel.PhotosBackupViewModel
 import me.proton.android.drive.ui.viewstate.PhotosBackupOption
 import me.proton.android.drive.ui.viewstate.PhotosBackupViewState
 import me.proton.core.compose.component.ProtonRawListItem
-import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
@@ -63,13 +66,13 @@ fun PhotosBackupScreen(
     modifier: Modifier = Modifier,
     navigateToPhotosPermissionRationale: () -> Unit,
     navigateToConfirmStopSyncFolder: (FolderId, Int) -> Unit,
+    navigateToNotificationPermissionRationale: () -> Unit,
     navigateBack: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosBackupViewModel>()
-    val viewState by rememberFlowWithLifecycle(flow = viewModel.viewState)
-        .collectAsState(initial = viewModel.initialViewState)
+    val viewState by viewModel.viewState.collectAsStateWithLifecycle(initialValue = viewModel.initialViewState)
     val viewEvent = remember {
-        viewModel.viewEvent(navigateBack = navigateBack)
+        viewModel.viewEvent()
     }
     PhotosBackup(
         viewState = viewState,
@@ -89,7 +92,8 @@ fun PhotosBackupScreen(
         viewState = viewModel.backupPermissionsViewModel.initialViewState,
         viewEvent = viewModel.backupPermissionsViewModel.viewEvent(
             navigateToPhotosPermissionRationale
-        )
+        ),
+        navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
     )
 }
 
@@ -108,19 +112,29 @@ fun PhotosBackup(
             title = viewState.title,
         )
         val localContext = LocalContext.current
-        BackupPhotosOptions(
-            onToggleBackup = { viewEvent.onToggleBackup() },
-            onToggleMobileData = { viewEvent.onToggleMobileData() },
-            onToggleIgnoringBatteryOptimizations = {
-                viewEvent.onToggleIgnoringBatteryOptimizations(
-                    localContext
-                )
-            },
-            backup = viewState.backup,
-            mobileData = viewState.mobileData,
-            ignoringBatteryOptimizations = viewState.ignoringBatteryOptimizations,
-        )
-        content()
+        val nestedScrollConnection = remember {
+            object : NestedScrollConnection {}
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .nestedScroll(nestedScrollConnection)
+        ) {
+            BackupPhotosOptions(
+                onToggleBackup = { viewEvent.onToggleBackup() },
+                onToggleMobileData = { viewEvent.onToggleMobileData() },
+                onToggleIgnoringBatteryOptimizations = {
+                    viewEvent.onToggleIgnoringBatteryOptimizations(
+                        localContext
+                    )
+                },
+                backup = viewState.backup,
+                mobileData = viewState.mobileData,
+                ignoringBatteryOptimizations = viewState.ignoringBatteryOptimizations,
+            )
+            content()
+        }
     }
 }
 

@@ -25,8 +25,9 @@ import kotlinx.coroutines.flow.Flow
 data class BackupPermissionsViewState(
     val permissions: List<String>,
     val effect: Flow<BackupPermissionsEffect>,
+    val shouldRequestNotificationPermission: Boolean = true,
 )
 
 sealed class BackupPermissionsEffect {
-    object RequestPermission : BackupPermissionsEffect()
+    data object RequestPermission : BackupPermissionsEffect()
 }

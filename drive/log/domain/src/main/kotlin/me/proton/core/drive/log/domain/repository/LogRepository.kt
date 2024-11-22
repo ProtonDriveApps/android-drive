@@ -24,9 +24,9 @@ import me.proton.core.drive.log.domain.entity.Log
 
 interface LogRepository {
 
-    suspend fun insert(log: Log)
+    suspend fun insert(logs: List<Log>)
 
-    suspend fun getAllLogs(userId: UserId): List<Log>
+    suspend fun processAllLogs(userId: UserId, block: suspend (List<Log>) -> Unit)
 
     suspend fun toggleLogLevel(userId: UserId, level: Log.Level)
 

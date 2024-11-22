@@ -21,6 +21,9 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 
 interface EventHandler {
+    suspend fun onEvents(userId: UserId, events: List<Event>) = events.forEach { event ->
+        onEvent(userId, event)
+    }
     suspend fun onEvent(userId: UserId, event: Event)
     suspend fun onEvent(event: Event) {
         // do nothing

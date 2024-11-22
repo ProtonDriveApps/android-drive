@@ -42,14 +42,13 @@ import me.proton.android.drive.ui.viewevent.HomeViewEvent
 import me.proton.android.drive.ui.viewstate.HomeViewState
 import me.proton.android.drive.usecase.CanGetMoreFreeStorage
 import me.proton.android.drive.usecase.GetDynamicHomeTabsFlow
+import me.proton.android.drive.usecase.ShouldShowOnboarding
 import me.proton.core.domain.entity.SessionUserId
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.component.NavigationTab
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEvent
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewState
@@ -67,9 +66,9 @@ class HomeViewModel @Inject constructor(
     userManager: UserManager,
     savedStateHandle: SavedStateHandle,
     private val canGetMoreFreeStorage: CanGetMoreFreeStorage,
-    getFeatureFlagFlow: GetFeatureFlagFlow,
     getDynamicHomeTabsFlow: GetDynamicHomeTabsFlow,
     private val broadcastMessages: BroadcastMessages,
+    private val shouldShowOnboarding: ShouldShowOnboarding,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private var navigateToTab: ((route: String) -> Unit)? = null
 
@@ -97,21 +96,13 @@ class HomeViewModel @Inject constructor(
         combine(
             userManager.observeUser(SessionUserId(userId.id)),
             currentDestination.filterNotNull(),
-            getFeatureFlagFlow(FeatureFlagId.driveSharingInvitations(userId), emitNotFoundInitially = false),
             tabs.filter { tabs -> tabs.isNotEmpty() },
-        ) { user, selectedScreen, sharingFeatureFlag, tabs ->
+        ) { user, selectedScreen, tabs ->
             handleInvalidDestination(selectedScreen, tabs)
-            val sharingEnabled = sharingFeatureFlag.state == FeatureFlag.State.ENABLED
             getViewState(
                 user = user,
                 startDestination = selectedScreen,
-                tabs = tabs.filter { tab ->
-                    when(tab.key){
-                        Screen.Shared -> !sharingEnabled
-                        Screen.SharedTabs -> sharingEnabled
-                        else -> true
-                    }
-                }
+                tabs = tabs,
             )
         }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
@@ -141,6 +132,9 @@ class HomeViewModel @Inject constructor(
         this.navigateToTab = navigateToTab
     }
 
+    suspend fun shouldShowOnboarding(): Boolean =
+        shouldShowOnboarding(userId).getOrNull(VIEW_MODEL, "Should show onboarding failed") ?: false
+
     private val NavigationTab.screen: HomeTab
         get() = tabs.value.firstNotNullOf { (screen, value) -> screen.takeIf { value == this } }
 
@@ -148,7 +142,6 @@ class HomeViewModel @Inject constructor(
         Screen.Files.route -> Screen.Files
         Screen.Photos.route -> Screen.Photos
         Screen.Computers.route -> Screen.Computers
-        Screen.Shared.route -> Screen.Shared
         Screen.SharedTabs.route -> Screen.SharedTabs
         else -> error("Unhandled tab item route: $route")
     }

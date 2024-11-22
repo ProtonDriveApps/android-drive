@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">არხი ღრუბლოვანი საცავისთვის, ატვირთვისა და გადმოწერის გაფრთხილებებისთვის</string>
   <string name="notification_channel_warning_title">გაფრთხილება</string>
   <string name="notification_channel_warning_description">გაფრთხილებების არხი, რომელსაც მომხმარებლის ქმედება სჭირდება</string>
+  <string name="notification_permission_rationale_title_backup">მიიღეთ განახლებები თქვენი მარქაფის სტატუსის შესახებ</string>
+  <string name="notification_permission_rationale_description_backup">გაფრთხილებების მიღება თქვენი მარქაფების მიმდინარეობისა და სტატუსის შესახებ.</string>
+  <string name="notification_permission_rationale_action_accept">გაფრთხილებების ჩართვა</string>
+  <string name="notification_permission_rationale_action_reject">არა ახლა</string>
   <!-- endregion -->
   <string name="content_description_select_all">სიაში ყველა ელემენტის მონიშვნა</string>
   <string name="content_description_selected_options">მონიშნული ფაილების ან/და საქაღალდეებისთვის მეტი პარამეტრის ჩვენება</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">ბმული თქვენს ფაილამდე წაიშალა.</string>
   <string name="description_files_stop_sharing_action_error">შეცდომა თქვენს ფაილამდე ბმულის წაშლისას.</string>
   <string name="description_files_stop_all_sharing">ეს წაშლის ბმულს და წვდომებს ყველასთვის.</string>
-  <string name="description_files_stop_all_sharing_action_success">თქვენი ფაილი აღარ ზიარდება.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">შეცდომა თქვენს ფაილის გაზიარების წაშლისას.</string>
   <string name="ignore_file_signature_action">მაინც ნახვა</string>
   <string name="action_empty_files_add_files">ატვირთვა</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">ზიარი დაბლოკილია.</string>
   <string name="error_main_share_not_found">მთავარი გაზიარებული ვერ ვიპოვე</string>
   <string name="error_share_not_found">ზიარი ვერ ვიპოვე.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">სურათების მარქაფი დროებით გამორთულია.</string>
   <string name="error_creating_share_not_allowed">გაზიარებულის შექმნა დროებით გათიშულია.</string>
   <string name="operation_open_document">დოკუმენტის გახსნა</string>
   <string name="operation_create_document">დოკუმენტის შექმნა</string>

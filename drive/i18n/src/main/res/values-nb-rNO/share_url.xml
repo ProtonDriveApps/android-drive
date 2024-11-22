@@ -24,7 +24,7 @@
             "Creating link to folder"
     -->
   <string name="shared_link_loading">Oppretter kobling til %1$s</string>
-  <string name="shared_link_getting_link">Får kobling</string>
+  <string name="shared_link_getting_link">Henter kobling</string>
   <string name="shared_link_file">fil</string>
   <string name="shared_link_folder">mappe</string>
   <!--

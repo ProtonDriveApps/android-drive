@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Canal de notificaciones para almacenamiento en la nube, de carga y descarga</string>
   <string name="notification_channel_warning_title">Advertencia</string>
   <string name="notification_channel_warning_description">Canal para advertencias que requieren acción del usuario</string>
+  <string name="notification_permission_rationale_title_backup">Manténgase actualizado sobre el estado de su copia de seguridad</string>
+  <string name="notification_permission_rationale_description_backup">Reciba notificaciones sobre el progreso y estado de sus copias de seguridad.</string>
+  <string name="notification_permission_rationale_action_accept">Activar las notificaciones</string>
+  <string name="notification_permission_rationale_action_reject">Ahora no</string>
   <!-- endregion -->
   <string name="content_description_select_all">Seleccionar todos los elementos en la lista</string>
   <string name="content_description_selected_options">Mostrar más opciones para los archivos o carpetas seleccionados</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">El enlace al archivo fue eliminado.</string>
   <string name="description_files_stop_sharing_action_error">Hubo un error al eliminar el enlace al archivo.</string>
   <string name="description_files_stop_all_sharing">Esto eliminará el enlace y borrará el acceso para todos.</string>
-  <string name="description_files_stop_all_sharing_action_success">El acceso compartido al archivo fue eliminado.</string>
+  <string name="description_files_stop_all_sharing_action_success">Se eliminó el acceso compartido al archivo.</string>
   <string name="description_files_stop_all_sharing_action_error">Ocurrió un error al eliminar el acceso compartido al archivo.</string>
   <string name="ignore_file_signature_action">Ver de todos modos</string>
   <string name="action_empty_files_add_files">Cargar</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">El recurso compartido está bloqueado</string>
   <string name="error_main_share_not_found">No se ha encontrado la carpeta principal.</string>
   <string name="error_share_not_found">No se encontró el recurso compartido</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">La copia de seguridad de fotos está temporalmente desactivada.</string>
   <string name="error_creating_share_not_allowed">La creación de recursos compartidos está temporalmente desactivada.</string>
   <string name="operation_open_document">abrir un documento</string>
   <string name="operation_create_document">crear un documento</string>

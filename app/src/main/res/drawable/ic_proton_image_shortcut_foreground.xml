@@ -1,0 +1,33 @@
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Drive.
+  ~
+  ~ Proton Drive is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Drive is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <group android:scaleX="0.47666666"
+      android:scaleY="0.47666666"
+      android:translateX="6.28"
+      android:translateY="6.28">
+    <path
+        android:pathData="M4.8571,4.9287H19.1429C19.8924,4.9287 20.5,5.5363 20.5,6.2859V17.7144C20.5,18.464 19.8924,19.0716 19.1429,19.0716H4.8571C4.1076,19.0716 3.5,18.464 3.5,17.7144V6.2859C3.5,5.5363 4.1076,4.9287 4.8571,4.9287ZM2,6.2859C2,4.7079 3.2792,3.4287 4.8571,3.4287H19.1429C20.7208,3.4287 22,4.7079 22,6.2859V17.7144C22,19.2924 20.7208,20.5716 19.1429,20.5716H4.8571C3.2792,20.5716 2,19.2924 2,17.7144V6.2859ZM9.8574,10.5716C10.6464,10.5716 11.286,9.932 11.286,9.143C11.286,8.354 10.6464,7.7144 9.8574,7.7144C9.0684,7.7144 8.4289,8.354 8.4289,9.143C8.4289,9.932 9.0684,10.5716 9.8574,10.5716ZM18.9915,16.531C19.3699,17.0241 18.9968,17.7144 18.3518,17.7144H5.6488C5.0038,17.7144 4.6307,17.0241 5.0091,16.531L8.0099,12.621C8.1991,12.3744 8.5882,12.3744 8.7775,12.621L10.5694,14.9558L13.7922,10.7565C13.9814,10.5099 14.3705,10.5099 14.5598,10.7565L18.9915,16.531Z"
+        android:fillColor="#000000"
+        android:fillType="evenOdd"/>
+  </group>
+</vector>

@@ -21,9 +21,15 @@ package me.proton.core.drive.linkupload.domain.extension
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.observability.domain.metrics.common.Initiator
 
 val UploadFileLink.fileId get() = linkId?.let { FileId(shareId, linkId) }
 
 fun UploadFileLink.requireFileId() = requireNotNull(fileId)
 
 val UploadFileLink.sizeOrZero get() = size ?: 0.bytes
+
+fun UploadFileLink.toInitiator(): Initiator = when (priority) {
+    in 1..UploadFileLink.USER_PRIORITY -> Initiator.explicit
+    else -> Initiator.background
+}

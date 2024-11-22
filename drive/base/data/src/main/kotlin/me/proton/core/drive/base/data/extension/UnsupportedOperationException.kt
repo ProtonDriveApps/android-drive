@@ -18,7 +18,7 @@
 package me.proton.core.drive.base.data.extension
 
 import android.content.Context
-import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.i18n.R as I18N
 
 fun UnsupportedOperationException.getDefaultMessage(context: Context): String =
@@ -26,7 +26,8 @@ fun UnsupportedOperationException.getDefaultMessage(context: Context): String =
 
 fun UnsupportedOperationException.log(
     tag: String,
-    message: String = this.message.orEmpty(),
+    message: String? = null,
+    level: LoggerLevel? = LoggerLevel.ERROR,
 ): UnsupportedOperationException = also {
-    CoreLogger.e(tag, this, message)
+    level.log(tag, this, message)
 }

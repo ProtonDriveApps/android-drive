@@ -31,7 +31,6 @@ object FileFolderOptionsRobot : Robot {
     private val makeAvailableOfflineButton get() = node.withText(I18N.string.common_make_available_offline_action)
     private val removeAvailableOfflineButton get() = node
         .withText(I18N.string.common_remove_from_offline_available_action)
-    private val getLinkButton get() = node.withText(I18N.string.common_get_link_action)
     private val manageLinkButton get() = node.withText(I18N.string.common_manage_link_action)
     private val shareButton get() = node.withText(I18N.string.common_share)
     private val manageAccessButton get() = node.withText(I18N.string.common_manage_access_action)
@@ -48,9 +47,6 @@ object FileFolderOptionsRobot : Robot {
     }
     fun clickRename() = RenameRobot.apply {
         renameButton.scrollTo().click()
-    }
-    fun clickGetLink() = ShareRobot.apply {
-        getLinkButton.scrollTo().click()
     }
     fun clickManageLink() = ShareRobot.apply {
         manageLinkButton.scrollTo().click()

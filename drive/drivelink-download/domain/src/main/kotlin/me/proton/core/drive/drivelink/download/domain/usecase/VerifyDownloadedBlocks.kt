@@ -62,10 +62,10 @@ class VerifyDownloadedBlocks @Inject constructor(
             setDownloadState(
                 linkId = fileId,
                 downloadState = DownloadState.Downloaded(
-                    blocks = blocks,
                     manifestSignature = revision.manifestSignature,
                     signatureAddress = revision.signatureAddress,
                 ),
+                blocks = blocks,
             )
             true
         } catch (e: NullPointerException) {

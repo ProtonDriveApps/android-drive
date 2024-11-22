@@ -23,7 +23,7 @@ import me.proton.android.drive.utils.getRandomString
 import me.proton.core.test.quark.data.User
 import org.junit.Rule
 
-abstract class AuthenticatedBaseTest: BaseTest() {
+abstract class AuthenticatedBaseTest : BaseTest() {
     val testUser = User(name = "proton_drive_${getRandomString(15)}")
 
     @get:Rule(order = 1)

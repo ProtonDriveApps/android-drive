@@ -32,6 +32,7 @@ object PhotosBackupRobot : Robot, NavigationBarRobot {
     private val confirmButton =
         node.withText(I18N.string.settings_photos_backup_folders_confirm_stop_sync_confirm_action)
 
+    private val photosBackupTurnOn get() = node.withText(I18N.string.photos_backup_in_app_notification_turned_on)
     private val photosBackupDisabled get() = node.withText(I18N.string.error_creating_photo_share_not_allowed)
 
     fun <T : Robot> clickBackupToggle(goesTo: T) = photosBackupToggle.clickTo(goesTo)
@@ -53,6 +54,10 @@ object PhotosBackupRobot : Robot, NavigationBarRobot {
 
     fun assertPhotosBackupDisabled() {
         photosBackupDisabled.await { assertIsDisplayed() }
+    }
+
+    fun assertPhotosBackupTurnOn() {
+        photosBackupTurnOn.await { assertIsDisplayed() }
     }
 
     override fun robotDisplayed() {

@@ -35,8 +35,18 @@ suspend fun FileContext.download(
             linkId = link.id,
             revisionId = revisionId,
             state = state,
-            null,
-            null
+            manifestSignature = """
+                -----BEGIN PGP SIGNATURE-----
+                Version: ProtonMail
+
+                wnUEABYKACcFAmbYVSMJEO2DvT2OWfEwFiEEq1golLRLwjzLn0Sk7YO9PY5Z
+                8TAAAE0rAP483nBGOiZewbcyGwy10rUxKbHc65Lj3UOHR4b0Zaa1wAD/ejxR
+                hniVi/wqf2eZe5UcOoUQX2LMxzw3g6r0Pszo1A4=
+                =XsNv
+                -----END PGP SIGNATURE-----
+
+            """.trimIndent(),
+            signatureAddress = account.email,
         )
     )
     DownloadContext(this).block()
@@ -51,8 +61,20 @@ suspend fun DownloadContext.block(index: Long) {
                 linkId = link.id,
                 revisionId = revisionId,
                 index = index,
-                uri = "",
-                encryptedSignature = null
+                uri = "/data/user/0/me.proton.android.drive.dev/files/${user.userId.id}/${volume.id}/${revisionId.take(2)}/${revisionId.substring(2)}/$index",
+                encryptedSignature = """
+                    -----BEGIN PGP MESSAGE-----
+                    Version: ProtonMail
+
+                    wV4DAwrs8Q3Z0I4SAQdALT2+XUPDXMClHPIq2FOCprLHyv2Jn655jmbYzOcq
+                    QxUwxbkcowpauPhb/KKTH5mCvMPNlMQWzYnNmBVvoW3+CSucJZ954/zvkUhD
+                    l3mZ/IiQ0qgBQROHhb4QuWNTN4g2sALhgOrayj7vgGpcQtY+Gx6nh9/VGh2R
+                    5SkHsMmaEG2++lxnoQSS4wBLTAl0sCorx2/pOgCwVdkBTF9W2A6K2y7XoNuZ
+                    qoG2njtoykADRXNY/unqTIZUCVoSfaR4B4K4wbd/zjzv4djaxpcxpPePqhnY
+                    el6oj4CY9TAmJzKRXKPYYW+6oKDPdwutFienpaoS6WEfVeJmOBlqPPc=
+                    =4ovv
+                    -----END PGP MESSAGE-----
+                """.trimIndent()
             )
         )
     }

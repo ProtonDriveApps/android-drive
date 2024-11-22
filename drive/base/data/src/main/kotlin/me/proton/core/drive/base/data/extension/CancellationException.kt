@@ -19,7 +19,7 @@ package me.proton.core.drive.base.data.extension
 
 import android.content.Context
 import kotlinx.coroutines.CancellationException
-import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.i18n.R as I18N
 
 fun CancellationException.getDefaultMessage(context: Context): String =
@@ -27,7 +27,8 @@ fun CancellationException.getDefaultMessage(context: Context): String =
 
 fun CancellationException.log(
     tag: String,
-    message: String = this.message.orEmpty(),
+    message: String? = null,
+    level: LoggerLevel? = LoggerLevel.DEBUG,
 ): CancellationException = also {
-    CoreLogger.d(tag, this, message)
+    level.log(tag, this, message)
 }

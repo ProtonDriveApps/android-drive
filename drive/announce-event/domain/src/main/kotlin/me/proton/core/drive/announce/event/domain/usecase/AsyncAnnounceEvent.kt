@@ -63,4 +63,29 @@ class AsyncAnnounceEvent @Inject constructor(
             cancel()
         }
     }
+
+    operator fun invoke(
+        userId: UserId,
+        events: List<Event>,
+    ) = coroutineScope.launch {
+        val deferred = eventHandlers.map { handler ->
+            async {
+                coRunCatching {
+                    handler.onEvents(userId, events)
+                }.onFailure { error ->
+                    CoreLogger.d(
+                        LogTag.ANNOUNCE_EVENT,
+                        error,
+                        "Error during broadcast of events to $handler"
+                    )
+                }
+            }
+        }
+        try {
+            deferred.awaitAll()
+        } catch (e: CancellationException) {
+            CoreLogger.d(LogTag.ANNOUNCE_EVENT, e, "Handling events is cancelled")
+            cancel()
+        }
+    }
 }

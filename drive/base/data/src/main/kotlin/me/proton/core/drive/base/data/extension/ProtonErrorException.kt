@@ -18,13 +18,17 @@
 package me.proton.core.drive.base.data.extension
 
 import android.content.Context
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.network.data.ProtonErrorException
-import me.proton.core.util.kotlin.CoreLogger
 
 @Suppress("UNUSED_PARAMETER")
 fun ProtonErrorException.getDefaultMessage(context: Context): String =
     protonData.error
 
-fun ProtonErrorException.log(tag: String, message: String = this.message.orEmpty()): ProtonErrorException = also {
-    CoreLogger.d(tag, this, message)
+fun ProtonErrorException.log(
+    tag: String,
+    message: String? = null,
+    level: LoggerLevel? = LoggerLevel.DEBUG,
+): ProtonErrorException = also {
+    level.log(tag, this, message)
 }

@@ -89,18 +89,12 @@ class AvailableOfflineFlowTest : AuthenticatedBaseTest() {
     @Test
     @Scenario(2)
     fun newlyAddedFilesToAFolderShouldBeDownloadedInstantly() {
-
         val file = "image.jpg"
         val folder = "folder1"
         PhotosTabRobot
             .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickMakeAvailableOffline()
-            .verify {
-                // Wait for folder to be downloaded before after adding a new file
-                // else it will be ignored
-                itemIsDisplayed(folder, downloadState = SemanticsDownloadState.Downloaded)
-            }
             .clickMoreOnItem(file)
             .clickMove()
             .clickOnFolderToMove(folder)

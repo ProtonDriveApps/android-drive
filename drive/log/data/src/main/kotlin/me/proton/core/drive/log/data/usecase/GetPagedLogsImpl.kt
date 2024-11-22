@@ -39,8 +39,8 @@ class GetPagedLogsImpl @Inject constructor(
     override fun invoke(userId: UserId): Flow<PagingData<Log>> =
         Pager(
             PagingConfig(
-                pageSize = configurationProvider.dbPageSize,
-                initialLoadSize = configurationProvider.dbPageSize,
+                pageSize = configurationProvider.uiPageSize,
+                initialLoadSize = configurationProvider.uiPageSize,
                 enablePlaceholders = false,
             ),
             pagingSourceFactory = {

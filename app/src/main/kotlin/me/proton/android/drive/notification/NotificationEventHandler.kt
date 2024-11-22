@@ -43,11 +43,17 @@ class NotificationEventHandler @Inject constructor(
 ) : EventHandler {
     private val mutex = Mutex()
 
+    override suspend fun onEvents(userId: UserId, events: List<Event>) {
+        events.groupBy { createUserNotificationId(userId, it) }.onEach { (notificationId, events) ->
+            onNotificationEvent(notificationId, events)
+        }
+    }
+
     override suspend fun onEvent(userId: UserId, event: Event) {
         val notificationId = createUserNotificationId(userId, event)
         onNotificationEvent(
             notificationId = notificationId,
-            event = event,
+            events = listOf(event),
         )
     }
 
@@ -55,21 +61,29 @@ class NotificationEventHandler @Inject constructor(
         val notificationId = event.createNotificationId()
         onNotificationEvent(
             notificationId = notificationId,
-            event = event,
+            events = listOf(event),
         )
     }
 
     private suspend fun onNotificationEvent(
         notificationId: NotificationId,
-        event: Event,
-    ) = mutex.withLock {
-        if (acceptNotificationEvent(notificationId, event)) {
-            saveAndPublishNotification(notificationId, event)
-                .onFailure { error ->
-                    CoreLogger.d(LogTag.NOTIFICATION, error, "Save and publish notification failed")
+        events: List<Event>,
+    ) {
+        val acceptedEvents =
+            events.filter { event -> acceptNotificationEvent(notificationId, event) }
+        if (acceptedEvents.isNotEmpty()) {
+            mutex.withLock {
+                saveAndPublishNotification(notificationId, acceptedEvents)
+                    .onFailure { error ->
+                        CoreLogger.d(
+                            LogTag.NOTIFICATION,
+                            error,
+                            "Save and publish notification failed"
+                        )
+                    }
+                if (shouldCancelNotification(notificationId, acceptedEvents)) {
+                    cancelAndRemoveNotification(notificationId)
                 }
-            if (shouldCancelNotification(notificationId, event)) {
-                cancelAndRemoveNotification(notificationId)
             }
         }
     }

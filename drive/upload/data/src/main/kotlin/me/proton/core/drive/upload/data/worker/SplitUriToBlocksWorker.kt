@@ -30,20 +30,19 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.upload.data.extension.isRetryable
-import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_URI_STRING
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.SplitUriToBlocks
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -60,6 +59,7 @@ class SplitUriToBlocksWorker @AssistedInject constructor(
     uploadErrorManager: UploadErrorManager,
     private val splitUriToBlocks: SplitUriToBlocks,
     configurationProvider: ConfigurationProvider,
+    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -71,6 +71,7 @@ class SplitUriToBlocksWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
+    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -85,16 +86,12 @@ class SplitUriToBlocksWorker @AssistedInject constructor(
             isCancelled = ::isStopped,
         ).fold(
             onFailure = { error ->
-                val retryable = error.isRetryable
-                val canRetry = canRetry()
-                error.log(
-                    tag = uploadFileLink.logTag(),
-                    message = """
-                        Splitting Uri to blocks failed "${error.message}" retryable $retryable,
-                        max retries reached ${!canRetry}
-                    """.trimIndent().replace("\n", " ")
+                uploadFileLink.retryOrAbort(
+                    retryable = error.isRetryable,
+                    canRetry = canRetry(),
+                    error = error,
+                    message = "Splitting Uri to blocks failed",
                 )
-                retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
             },
             onSuccess = {
                 Result.success()

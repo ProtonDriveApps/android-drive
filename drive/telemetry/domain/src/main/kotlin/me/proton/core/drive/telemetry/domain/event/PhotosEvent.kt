@@ -19,6 +19,7 @@
 package me.proton.core.drive.telemetry.domain.event
 
 import me.proton.core.drive.telemetry.domain.entity.DriveTelemetryEvent
+import me.proton.core.drive.base.domain.extension.mapOfNotNull
 import me.proton.core.drive.telemetry.domain.extension.toYesOrNo
 
 @Suppress("FunctionNaming")
@@ -36,6 +37,11 @@ object PhotosEvent {
         PAUSED_BACKGROUND_RESTRICTIONS("paused", "background mode expired"),
     }
 
+    enum class MediaType(internal val value: String) {
+        PHOTO("photo"),
+        VIDEO("video"),
+    }
+
     const val group = "drive.any.photos"
     fun SettingDisabled() = DriveTelemetryEvent(
         group = group,
@@ -47,17 +53,24 @@ object PhotosEvent {
         name = "setting.enabled",
     )
 
-    fun UploadDone(duration: Long, sizeKB: Long, reason: Reason) = DriveTelemetryEvent(
+    fun UploadDone(
+        duration: Long,
+        sizeKB: Long,
+        reason: Reason,
+        mediaType: MediaType? = null,
+    ) = DriveTelemetryEvent(
         group = group,
         name = "upload.done",
         values = mapOf(
             "duration_seconds" to duration.toFloat(),
             "kilobytes_uploaded" to sizeKB.toFloat(),
         ),
-        dimensions = mapOf(
+        dimensions = mapOfNotNull(
             "reason_group" to reason.group,
             "reason" to reason.key,
-        )
+            "result" to reason.group,
+            "mediaType" to mediaType?.value,
+        ),
     )
 
     fun BackupStopped(

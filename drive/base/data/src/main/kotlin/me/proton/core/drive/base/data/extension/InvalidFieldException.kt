@@ -18,14 +18,16 @@
 package me.proton.core.drive.base.data.extension
 
 import android.content.Context
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.domain.exception.InvalidFieldException
-import me.proton.core.util.kotlin.CoreLogger
 
 @Suppress("UNUSED_PARAMETER")
 fun InvalidFieldException.getDefaultMessage(context: Context): String = message
 
 fun InvalidFieldException.log(
-    tag: String, message: String = this.message
+    tag: String,
+    message: String = this.message,
+    level: LoggerLevel? = LoggerLevel.DEBUG,
 ): InvalidFieldException = also {
-    CoreLogger.d(tag, this, message)
+    level.log(tag, this, message)
 }

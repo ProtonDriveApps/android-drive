@@ -31,4 +31,11 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Исключение</string>
   <string name="log_origin_logger">Логгер</string>
+  <string name="log_origin_screen">Экран</string>
+  <string name="log_origin_application_state">Состояние приложения</string>
+  <string name="log_origin_workers">Работники</string>
+  <string name="log_origin_backup">Резервное копирование</string>
+  <string name="log_origin_user">Пользователь</string>
+  <string name="log_origin_device">Устройство</string>
+  <string name="log_origin_crypto">Crypto</string>
 </resources>

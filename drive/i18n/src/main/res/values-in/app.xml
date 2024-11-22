@@ -151,6 +151,10 @@
   <string name="notification_channel_transfer_description">Saluran notifikasi penyimpanan cloud, pengunggahan, dan pengunduhan</string>
   <string name="notification_channel_warning_title">Peringatan</string>
   <string name="notification_channel_warning_description">Saluran untuk peringatan yang membutuhkan tindakan pengguna</string>
+  <string name="notification_permission_rationale_title_backup">Tetap terkini pada status pencadangan Anda</string>
+  <string name="notification_permission_rationale_description_backup">Terima notifikasi tentang proses dan status pencadangan Anda.</string>
+  <string name="notification_permission_rationale_action_accept">Aktifkan notifikasi</string>
+  <string name="notification_permission_rationale_action_reject">Tidak sekarang</string>
   <!-- endregion -->
   <string name="content_description_select_all">Pilih semua item dalam daftar</string>
   <string name="content_description_selected_options">Tampilkan lebih banyak pilihan untuk berkas dan/atau folder yang dipilih</string>
@@ -168,7 +172,7 @@
   <string name="description_files_stop_sharing_action_success">Tautan ke berkas Anda telah dihapus.</string>
   <string name="description_files_stop_sharing_action_error">Terdapat kesalahan pada saat menghapus tautan ke berkas Anda.</string>
   <string name="description_files_stop_all_sharing">Tindakan ini akan menghapus tautan dan menganulir akses bagi semua.</string>
-  <string name="description_files_stop_all_sharing_action_success">Berbagi ke file Anda telah dihapus.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Terjadi kesalahan saat menghapus berbagi file Anda.</string>
   <string name="ignore_file_signature_action">Tetap lihat</string>
   <string name="action_empty_files_add_files">Unggah</string>
@@ -178,7 +182,7 @@
   <string name="error_share_locked">Pembagian terkunci.</string>
   <string name="error_main_share_not_found">Partisi share utama tidak ditemukan.</string>
   <string name="error_share_not_found">Pembagian tidak ditemukan.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Pencadangan foto sementara dinonaktifkan.</string>
   <string name="error_creating_share_not_allowed">Pembuatan tautan berbagi untuk sementara dinonaktifkan.</string>
   <string name="operation_open_document">buka dokumen</string>
   <string name="operation_create_document">buat dokumen</string>

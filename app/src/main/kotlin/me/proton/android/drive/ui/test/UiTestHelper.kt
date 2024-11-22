@@ -19,10 +19,16 @@
 package me.proton.android.drive.ui.test
 
 import androidx.annotation.RestrictTo
+import me.proton.android.drive.usecase.MarkOnboardingAsShown
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import javax.inject.Inject
 
 @RestrictTo(RestrictTo.Scope.TESTS)
 class UiTestHelper @Inject constructor(
     val configurationProvider: ConfigurationProvider,
-)
+    private val markOnboardingAsShown: MarkOnboardingAsShown,
+) {
+    suspend fun doNotShowOnboardingAfterLogin() {
+        markOnboardingAsShown()
+    }
+}

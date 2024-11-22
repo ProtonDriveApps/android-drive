@@ -1,0 +1,32 @@
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Drive.
+  ~
+  ~ Proton Drive is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Drive is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <group android:scaleX="0.47666666"
+      android:scaleY="0.47666666"
+      android:translateX="6.28"
+      android:translateY="5.962222">
+    <path
+        android:pathData="M2.75,15.5577H2H2.75ZM19.8269,4.1731V3.4231V4.1731ZM4.1731,4.1731V4.9231V4.1731ZM2.75,5.5962H3.5H2.75ZM12.75,16.9808C12.75,16.5666 12.4142,16.2308 12,16.2308C11.5858,16.2308 11.25,16.5666 11.25,16.9808H12.75ZM7.7308,20.5C7.3166,20.5 6.9808,20.8358 6.9808,21.25C6.9808,21.6642 7.3166,22 7.7308,22V20.5ZM16.2692,22C16.6834,22 17.0192,21.6642 17.0192,21.25C17.0192,20.8358 16.6834,20.5 16.2692,20.5V22ZM4.1731,4.9231H19.8269V3.4231H4.1731V4.9231ZM20.5,5.5962V15.5577H22V5.5962H20.5ZM19.8269,16.2308H4.1731V17.7308H19.8269V16.2308ZM3.5,15.5577V5.5962H2V15.5577H3.5ZM4.1731,16.2308C3.8014,16.2308 3.5,15.9294 3.5,15.5577H2C2,16.7579 2.9729,17.7308 4.1731,17.7308V16.2308ZM20.5,15.5577C20.5,15.9294 20.1987,16.2308 19.8269,16.2308V17.7308C21.0271,17.7308 22,16.7579 22,15.5577H20.5ZM19.8269,4.9231C20.1987,4.9231 20.5,5.2244 20.5,5.5962H22C22,4.396 21.0271,3.4231 19.8269,3.4231V4.9231ZM4.1731,3.4231C2.9729,3.4231 2,4.396 2,5.5962H3.5C3.5,5.2244 3.8014,4.9231 4.1731,4.9231V3.4231ZM11.25,16.9808V21.25H12.75V16.9808H11.25ZM12,20.5H7.7308V22H12V20.5ZM12,22H16.2692V20.5H12V22Z"
+        android:fillColor="#000000"/>
+  </group>
+</vector>

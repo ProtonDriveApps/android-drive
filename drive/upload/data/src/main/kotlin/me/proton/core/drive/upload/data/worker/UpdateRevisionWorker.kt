@@ -31,13 +31,12 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.data.workmanager.onProtonHttpException
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.api.ProtonApiCode.INVALID_REQUIREMENTS
 import me.proton.core.drive.base.domain.api.ProtonApiCode.INVALID_VALUE
 import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
-import me.proton.core.drive.base.data.extension.log
-import me.proton.core.drive.base.data.workmanager.addTags
-import me.proton.core.drive.base.data.workmanager.onProtonHttpException
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
@@ -52,6 +51,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.ApplyCacheOption
 import me.proton.core.drive.upload.domain.usecase.UpdateRevision
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -72,6 +72,7 @@ class UpdateRevisionWorker @AssistedInject constructor(
     private val cleanupWorkers: CleanupWorkers,
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     private val applyCacheOption: ApplyCacheOption,
+    uploadMetricsNotifier: UploadMetricsNotifier,
     configurationProvider: ConfigurationProvider,
     canRun: CanRun,
     run: Run,
@@ -84,6 +85,7 @@ class UpdateRevisionWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
+    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -99,21 +101,26 @@ class UpdateRevisionWorker @AssistedInject constructor(
                     throw cause
                 }
             }.onFailure { error ->
-                val retryable = error.isRetryable
-                val canRetry = canRetry()
-                error.log(
-                    tag = logTag(),
-                    message = """
-                        Updating revision failed "${error.message}" retryable $retryable, 
-                        max retries reached ${!canRetry}
-                    """.trimIndent().replace("\n", " ")
-                )
                 return if (error.handle(uploadFileLink)) {
+                    uploadMetricsNotifier(
+                        uploadFileLink = uploadFileLink,
+                        isSuccess = false,
+                        throwable = error,
+                    )
                     Result.failure()
                 } else {
-                    retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
+                    uploadFileLink.retryOrAbort(
+                        retryable = error.isRetryable,
+                        canRetry = canRetry(),
+                        error = error,
+                        message = "Updating revision failed"
+                    )
                 }
             }.onSuccess {
+                uploadMetricsNotifier(
+                    uploadFileLink = uploadFileLink,
+                    isSuccess = true,
+                )
                 applyCacheOption(uploadFileLink)
             }
         return Result.success()

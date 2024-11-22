@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Предпросмотр содержимого файла</string>
-  <string name="content_description_more_options">Показать дополнительные параметры для файла</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">Скачивание…</string>
   <string name="preview_processing_state">Обработка…</string>
   <string name="preview_empty">Нет ничего для предпросмотра...</string>
@@ -26,5 +26,5 @@
   <string name="proton_docs_insert_image_header_title">Вставить изображение</string>
   <string name="proton_docs_option_select_file">Выбрать файл</string>
   <string name="proton_docs_unsupported_file_type">Пока поддерживается только вставка изображений</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_load_error">Не удалось загрузить документ</string>
 </resources>

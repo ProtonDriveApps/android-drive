@@ -79,7 +79,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Выкарыстоўваюць мабільную сетку</string>
   <string name="photos_error_local_storage">Сховішча прылады запоўнена</string>
   <string name="photos_error_local_storage_description">Для працягу рэзервовага капіявання неабходна вызваліць месца ў сховішчы вашай прылады.</string>
-  <string name="photos_error_background_restrictions">Задайце статус для акумулятара \"Неабмежавана\" для тых праграм, якія працуюць у фоне</string>
+  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">Для пастаяннага рэзервовага капіявання, вам неабходна змяніць налады акумулятара або перыядычна адкрываць праграму.</string>
   <string name="photos_error_background_restrictions_action">Налады</string>
   <string name="photos_empty_title">Пакуль рэзервовыя копіі адсутнічаюць</string>

@@ -32,14 +32,15 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.isConnectedToNetwork
-import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptLinkContent
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
+import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptLinkContent
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.download.domain.extension.isDownloaded
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
+import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadBlocks
 import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadState
 import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
@@ -55,6 +56,7 @@ class GetFile @Inject constructor(
     private val getDriveLink: GetDriveLink,
     private val isConnectedToNetwork: isConnectedToNetwork,
     private val verifyDownloadedState: VerifyDownloadedState,
+    private val getDownloadBlocks: GetDownloadBlocks,
 ) {
     operator fun invoke(
         driveLink: DriveLink.File,
@@ -74,7 +76,7 @@ class GetFile @Inject constructor(
             .onFailure { error ->
                 CoreLogger.d(LogTag.GET_FILE, error, "Downloaded state verification failed")
             }
-        val downloadedDriveLink: DriveLink.File = if (!driveLink.isDownloaded()) {
+        val downloadedDriveLink: DriveLink.File = if (!driveLink.isDownloaded(getDownloadBlocks(driveLink.id).getOrThrow())) {
             CoreLogger.d(LogTag.GET_FILE, "File ${driveLink.id.id.logId()} is not downloaded yet, let's download it!")
             if (!retryable && !isConnectedToNetwork()) {
                 CoreLogger.d(LogTag.GET_FILE, "Download ${driveLink.id.id.logId()} failed as it is not retryable and there is no network connection")
@@ -123,6 +125,7 @@ class GetFile @Inject constructor(
     private suspend fun FlowCollector<State>.waitForDownloadedState(fileId: FileId): DownloadState.Downloaded {
         CoreLogger.d(LogTag.GET_FILE, "Waiting for file ${fileId.id.logId()} to be downloaded!")
         var emittedDownloadingOnce = false
+        var previousState: DownloadState? = DownloadState.Error
         while (true) {
             val state = getDownloadState(fileId).first { result ->
                 when (result) {
@@ -131,10 +134,13 @@ class GetFile @Inject constructor(
                     is DataResult.Error -> true
                 }
             }.toResult().getOrThrow()
-            CoreLogger.d(
-                tag = LogTag.GET_FILE,
-                message = "Current download state for file ${fileId.id.logId()} is ${state?.javaClass?.simpleName}",
-            )
+            if (previousState?.javaClass != state?.javaClass) {
+                CoreLogger.d(
+                    tag = LogTag.GET_FILE,
+                    message = "Current download state for file ${fileId.id.logId()} is ${state?.javaClass?.simpleName}",
+                )
+                previousState = state
+            }
             when (state) {
                 null -> continue
                 DownloadState.Downloading -> {

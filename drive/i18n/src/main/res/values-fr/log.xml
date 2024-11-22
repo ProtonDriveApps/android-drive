@@ -31,4 +31,11 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Exception</string>
   <string name="log_origin_logger">Registre</string>
+  <string name="log_origin_screen">Écran</string>
+  <string name="log_origin_application_state">État de l\'application</string>
+  <string name="log_origin_workers">Employés</string>
+  <string name="log_origin_backup">Sauvegarde</string>
+  <string name="log_origin_user">Utilisateur</string>
+  <string name="log_origin_device">Appareil</string>
+  <string name="log_origin_crypto">Cryptomonnaie</string>
 </resources>

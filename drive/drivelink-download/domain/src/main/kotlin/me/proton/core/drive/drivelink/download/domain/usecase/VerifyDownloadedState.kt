@@ -21,18 +21,22 @@ package me.proton.core.drive.drivelink.download.domain.usecase
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
+import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadBlocks
 import me.proton.core.drive.linkdownload.domain.usecase.RemoveDownloadState
 import java.io.File
 import javax.inject.Inject
 
 class VerifyDownloadedState @Inject constructor(
     private val removeDownloadState: RemoveDownloadState,
+    private val getDownloadBlocks: GetDownloadBlocks,
 ) {
     suspend operator fun invoke(driveLink: DriveLink) = coRunCatching {
         driveLink.downloadState?.let { downloadState ->
-            if (downloadState is DownloadState.Downloaded &&
-                downloadState.blocks.all { block -> File(block.url).exists() }.not()) {
-                removeDownloadState(driveLink.id)
+            if (downloadState is DownloadState.Downloaded) {
+                val blocks = getDownloadBlocks(driveLink.link).getOrThrow()
+                if (blocks.all { block -> File(block.url).exists() }.not()) {
+                    removeDownloadState(driveLink.id)
+                }
             }
         }
     }

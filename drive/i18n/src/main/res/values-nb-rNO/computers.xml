@@ -23,7 +23,7 @@
   <string name="computers_type_linux">Linux</string>
   <string name="computers_type_unknown">Ukjent</string>
   <string name="computers_empty_title">Ingen datamaskiner synkroniseres</string>
-  <string name="computers_empty_description">Få skrivebordsappen\nfor å synkronisere mapper</string>
+  <string name="computers_empty_description">Skaff deg skrivebordsappen\nfor å synkronisere mapper</string>
   <string name="computers_synced_folders_empty_title">Ingen synkroniserte mapper</string>
   <string name="computers_synced_folders_empty_description">Mapper du synkroniserer fra datamaskinen vil\nvises her.</string>
   <string name="computers_synced_folders_no_folder">Datamaskin er fjernet</string>

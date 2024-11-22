@@ -42,5 +42,12 @@ data class Log(
         EVENT_THROWABLE,
         EVENT_NETWORK,
         EVENT_LOGGER,
+        EVENT_SCREEN,
+        EVENT_APPLICATION_STATE,
+        EVENT_WORKERS,
+        EVENT_BACKUP,
+        EVENT_USER,
+        EVENT_DEVICE,
+        EVENT_CRYPTO,
     }
 }

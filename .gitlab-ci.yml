@@ -9,11 +9,14 @@ variables:
   # Use no compression for artifacts
   ARTIFACT_COMPRESSION_LEVEL: "fastest"
   ATLAS_DEPLOY_ENV: "true"
+  IMAGES: $IMAGES
+  PUBLISH_APK_NAME: "ProtonDrive-Android.apk"
 
 workflow:
   rules:
     - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-    - if: $CI_PIPELINE_SOURCE == "schedule" && $CI_COMMIT_REF_NAME == "candidate"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
 
 before_script:
@@ -72,6 +75,7 @@ prepare-build:
     - shared-small
   script:
     - echo PROXY_TOKEN="$(curl -o - https://proxy.proton.black/token/get)" >> deploy.env
+    - if [[ $DYNAMIC_DOMAIN != '' ]]; then echo DYNAMIC_DOMAIN="$DYNAMIC_DOMAIN" >> deploy.env; fi
     - echo "$PROTON_KEYSTORE_PRIVATE_PROPERTIES" >> private.properties
 
 prepare-gradle-build-scan:
@@ -130,6 +134,20 @@ build:dev:debug:
     reports:
       dotenv: app/build/variables.env
 
+build payments black bundle:
+  extends: [.build]
+  when: manual
+  script:
+    - ./gradlew assembleDevRelease
+    - ./gradlew bundleDevRelease
+  variables:
+    TEST_ENV_DOMAIN: "payments.proton.black"
+  artifacts:
+    paths:
+      - app/build/outputs/apk/dev/release
+      - app/build/outputs/bundle/devRelease
+      - app/build/outputs/mapping/devRelease
+
 build alpha release:
   extends: [.build]
   script:
@@ -156,6 +174,7 @@ build prod release:
     - ./gradlew assembleProdRelease
   when: manual
   artifacts:
+    expire_in: 4 weeks
     paths:
       - app/build/outputs/apk/prod/release
       - app/build/outputs/mapping/prodRelease
@@ -289,6 +308,7 @@ drive-sorting-presentation-firebase-tests:
 
 .app-firebase-tests:
   extends: .tests_preparation_script
+  timeout: 4h
   variables:
     TEST_APP: "$REMOTE_TEST_APK"
     TEST_RUNNER_CLASS: "me.proton.android.drive.ui.HiltTestRunner"
@@ -298,48 +318,28 @@ drive-sorting-presentation-firebase-tests:
     - if: $CI_DEVICE_CONFIG != null
       variables:
         DEVICE_CONFIG: $CI_DEVICE_CONFIG
-    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
-    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+    - if: $DYNAMIC_DOMAIN != null
+      when: manual
+      # disable E2E test on default branch to avoid large expense on firebase
+    #- if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH && $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" && $CI_PIPELINE_SOURCE == "schedule"
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:all/'
-    - if: $CI_DEVICE_CONFIG != null
-      variables:
-        DEVICE_CONFIG: $CI_DEVICE_CONFIG
 
-test:firebase:e2e:shard-account:
+test:firebase:app-ui:
   extends: .app-firebase-tests
+  rules:
+    - when: on_success
   variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.account, package me.proton.android.drive.ui.test.flow.subscription"
+    TEST_TARGETS: "package me.proton.android.drive.ui.dialog, package me.proton.android.drive.ui.navigation"
 
-test:firebase:e2e:shard-shares:
+
+test:firebase:app-background:
   extends: .app-firebase-tests
+  rules:
+    - when: on_success
   variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.computers,package me.proton.android.drive.ui.test.flow.photos"
-
-test:firebase:e2e:shard-files-1:
-  extends: .app-firebase-tests
-  variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.details, package me.proton.android.drive.ui.test.flow.rename, package me.proton.android.drive.ui.test.flow.share.link, package me.proton.android.drive.ui.test.flow.trash"
-
-test:firebase:e2e:shard-files-2:
-  extends: .app-firebase-tests
-  variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.preview, package me.proton.android.drive.ui.test.flow.move, package me.proton.android.drive.ui.test.flow.offline"
-
-test:firebase:e2e:shard-files-3:
-  extends: .app-firebase-tests
-  variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.share.user"
-
-test:firebase:e2e:shard-creation:
-  extends: .app-firebase-tests
-  variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.creatingFolder, package me.proton.android.drive.ui.test.flow.upload"
-
-test:firebase:e2e:shard-misc:
-  extends: .app-firebase-tests
-  variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.deeplink, package me.proton.android.drive.ui.test.flow.settings"
-
+    TEST_TARGETS: "package me.proton.android.drive.background"
 
 test:firebase:e2e:smoke:
   extends: .app-firebase-tests
@@ -356,120 +356,151 @@ test:firebase:e2e:smoke:
 
 test:firebase:e2e:account:
   extends: .app-firebase-tests
+  resource_group: "shard-5-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:account/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.account"
-
+    SCOPE: "account"
 
 test:firebase:e2e:computers:
   extends: .app-firebase-tests
+  resource_group: "shard-2-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:computers/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.computers"
 
 test:firebase:e2e:creatingFolder:
   extends: .app-firebase-tests
+  resource_group: "shard-1-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:creatingFolder/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.creatingFolder"
 
 test:firebase:e2e:deeplink:
   extends: .app-firebase-tests
+  resource_group: "shard-1-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:deeplink/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.deeplink"
 
 test:firebase:e2e:details:
   extends: .app-firebase-tests
+  resource_group: "shard-1-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:details/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.details"
 
 test:firebase:e2e:move:
   extends: .app-firebase-tests
+  resource_group: "shard-3-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:move/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.move"
     DEVICE_CONFIG: "quickTest-2"
 
 test:firebase:e2e:offline:
   extends: .app-firebase-tests
+  resource_group: "shard-2-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:offline/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.offline"
 
 test:firebase:e2e:photos:
   extends: .app-firebase-tests
+  resource_group: "shard-3-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:photos/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.photos"
 
 test:firebase:e2e:preview:
   extends: .app-firebase-tests
+  resource_group: "shard-1-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:preview/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.preview"
 
 test:firebase:e2e:rename:
   extends: .app-firebase-tests
+  resource_group: "shard-2-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:rename/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.rename"
 
 test:firebase:e2e:settings:
   extends: .app-firebase-tests
+  resource_group: "shard-1-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:settings/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.settings"
     DEVICE_CONFIG: "quickTest-3"
 
-test:firebase:e2e:share-link:
-  extends: .app-firebase-tests
-  rules:
-    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:share-link/'
-  variables:
-    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.share.link"
-    DEVICE_CONFIG: "quickTest-2"
-
 test:firebase:e2e:share-user:
   extends: .app-firebase-tests
+  resource_group: "shard-4-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:share-user/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.share.user"
     DEVICE_CONFIG: "quickTest-2"
 
 test:firebase:e2e:subscription:
   extends: .app-firebase-tests
+  resource_group: "shard-1-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:subscription/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.subscription"
 
 test:firebase:e2e:trash:
   extends: .app-firebase-tests
+  resource_group: "shard-1-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:trash/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.trash"
 
 test:firebase:e2e:upload:
   extends: .app-firebase-tests
+  resource_group: "shard-3-$CI_COMMIT_SHORT_SHA"
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:upload/'
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.upload"
+
+test:firebase:e2e:onboarding:
+  extends: .app-firebase-tests
+  rules:
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:onboarding/'
+    - if: $DYNAMIC_DOMAIN != null
+      when: manual
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.onboarding"
 
 coverage report:
   stage: report
@@ -551,7 +582,7 @@ distribute:debug:mr:
       allow_failure: true
   script:
     - /usr/local/bin/nexus/mr_created_commit_pushed.py
-      --token "$PRIVATE_TOKEN_GITLAB_API_PROTON_CI"
+      --token "$DRIVE_ANDROID_READ_ACCESS_TOKEN"
       --component "/Drive/Android"
       --file_paths "$LOCAL_APK" "$LOCAL_TEST_APK"
       --file_names "drive-dev-debug.apk" "drive-dev-debug-test.apk"
@@ -567,10 +598,29 @@ distribute:debug:post-merge:
       allow_failure: true
   script:
     - /usr/local/bin/nexus/mr_merged_with_post_merge_pipeline.py
-      --token "$PRIVATE_TOKEN_GITLAB_API_PROTON_CI"
+      --token "$DRIVE_ANDROID_READ_ACCESS_TOKEN"
       --component "/Drive/Android"
       --file_paths "$LOCAL_APK" "$LOCAL_TEST_APK"
       --file_names "drive-dev-debug.apk" "drive-dev-debug-test.apk"
+
+
+# New job
+publish:protonapps:s3:
+  extends:
+    - artifactlift-s3-upload-prod
+  variables:
+    FF_KUBERNETES_HONOR_ENTRYPOINT: "false"
+  stage: publish
+  allow_failure: true
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"
+      when: manual
+  needs:
+    - job: "build prod release"
+      artifacts: true
+  before_script:
+    - mkdir -p s3-out/
+    - mv app/build/outputs/apk/prod/release/*.apk "s3-out/${PUBLISH_APK_NAME}"
 
 startReview:
   needs:
@@ -600,9 +650,7 @@ include:
   - project: 'proton/mobile/android/proton-libs'
     ref: main
     file: '/ci/templates-shared/appetize-integration.yml'
-  - project: 'proton/devops/atlas-deploy'
-    ref: main
-    file: '/scenarios/pipeline-env.yml'
+
   - project: 'tpe/testmo-reporter'
     ref: master
     file: '/scenarios/testmo-simple.yml'
@@ -614,6 +662,59 @@ include:
   - project: 'translations/generator'
     ref: master
     file: '/jobs/commit-locales.gitlab-ci.yml'
+
+  - component: gitlab.protontech.ch/proton/devops/cicd-components/kubernetes/atlas-deploy/pipenv@0.5.0
+    inputs:
+      cleanup-stage: cleanup
+      key: env-pipenv-$CI_PROJECT_ID-$CI_PIPELINE_ID
+      features: $FEATURES
+    rules:
+      - if: $DYNAMIC_DOMAIN != null
+        when: never
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && '$CI_MERGE_REQUEST_LABELS =~ /scope:.*/'
+        when: never
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event" ||  $CI_PIPELINE_SOURCE == "web" ||  $CI_PIPELINE_SOURCE == "schedule" || $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+        when: always
+      - when: never
+
+  - component: gitlab.protontech.ch/proton/devops/cicd-components/kubernetes/atlas-deploy/pipenv@0.5.0
+    inputs:
+      cleanup-stage: cleanup
+      key: mr-env-pipenv-$CI_PROJECT_ID-$CI_PIPELINE_ID
+      features: "high-availability"
+      suffix: ":mr"
+    rules:
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && '$CI_MERGE_REQUEST_LABELS =~ /scope:.*/'
+        when: always
+      - when: never
+
+  - component: gitlab.protontech.ch/proton/devops/cicd-components/kubernetes/atlas-deploy/pipenv@0.7.0
+    inputs:
+      cleanup-stage: cleanup
+      deploy: manual
+      cleanup: manual
+      images: $IMAGES
+      key: custom-env-pipenv-$CI_PROJECT_ID-$CI_PIPELINE_ID
+      suffix: ":custom"
+    rules:
+      - if: $DYNAMIC_DOMAIN != null
+        when: never
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+        when: always
+      - when: never
+  # Component to upload the artifacts to S3
+  - component: gitlab.protontech.ch/proton/devops/cicd-components/tools/artifactlift/s3-upload@0.1.20
+    inputs:
+      stage: publish
+      destination-directory: android
+      destination-repository: drive-releases
+      destination-cluster: prod
+      artifact-list: "s3-out/${PUBLISH_APK_NAME}"
+
+# Disable the default S3 jobs
+artifactlift-s3-upload-prod:
+  rules:
+    - when: never
 
 i18n-sync-crowdin:
   stage: i18n

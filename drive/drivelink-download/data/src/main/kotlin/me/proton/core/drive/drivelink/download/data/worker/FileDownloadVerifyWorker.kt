@@ -122,7 +122,7 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
                 WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
-            .addTags(listOf(userId.id) + tags)
+            .addTags(listOf(userId.id) + fileTags + tags)
             .build()
     }
 }

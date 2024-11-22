@@ -19,75 +19,56 @@
 package me.proton.android.drive.usecase
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.getOrNull
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.HasBusinessPlan
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.extension.on
-import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.drive.android.settings.domain.entity.DynamicHomeTab
 import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.usecase.GetHomeTab
 import javax.inject.Inject
-import me.proton.core.presentation.R as CorePresentation
 import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.presentation.R as CorePresentation
 
 class GetDynamicHomeTabsFlow @Inject constructor(
     private val getHomeTab: GetHomeTab,
-    private val getFeatureFlagFlow: GetFeatureFlagFlow,
     private val hasBusinessPlan: HasBusinessPlan,
-    private val configurationProvider: ConfigurationProvider,
 ) {
-    operator fun invoke(userId: UserId): Flow<List<DynamicHomeTab>> = combine(
-        getHomeTab(userId),
-        getFeatureFlagFlow(FeatureFlagId.driveSharingInvitations(userId), emitNotFoundInitially = false),
-    ) { userDefaultHomeTab, collaborativeSharing ->
-        HomeTab
-            .entries
-            .mapNotNull { homeTab: HomeTab ->
-                takeIf { homeTab != HomeTab.PHOTOS || configurationProvider.photosFeatureFlag }
-                    ?.let {
-                        DynamicHomeTab(
-                            id = homeTab,
-                            route = homeTab.route(collaborativeSharing.on),
-                            order = homeTab.ordinal,
-                            iconResId = homeTab.iconResId(collaborativeSharing.on),
-                            titleResId = homeTab.titleResId,
-                            isEnabled = true,
-                            isUserDefault = homeTab.isUserDefault(
-                                userDefaultHomeTab = userDefaultHomeTab,
-                                hasBusinessPlan = hasBusinessPlan(userId).getOrNull(DriveLogTag.UI) ?: false,
-                            ),
-                        )
-                    }
-            }
-            .ifNoDefaultMakeFirstDefault()
-    }
+    operator fun invoke(userId: UserId): Flow<List<DynamicHomeTab>> = getHomeTab(userId)
+        .map { userDefaultHomeTab ->
+            HomeTab
+                .entries
+                .map { homeTab: HomeTab ->
+                    DynamicHomeTab(
+                        id = homeTab,
+                        route = homeTab.route(),
+                        order = homeTab.ordinal,
+                        iconResId = homeTab.iconResId(),
+                        titleResId = homeTab.titleResId,
+                        isEnabled = true,
+                        isUserDefault = homeTab.isUserDefault(
+                            userDefaultHomeTab = userDefaultHomeTab,
+                            hasBusinessPlan = hasBusinessPlan(userId).getOrNull(DriveLogTag.UI) ?: false,
+                        ),
+                    )
+                }
+                .ifNoDefaultMakeFirstDefault()
+        }
 
-    private fun HomeTab.route(hasCollaborativeSharing: Boolean = true): String = when (this) {
+    private fun HomeTab.route(): String = when (this) {
         HomeTab.FILES -> Screen.Files.route
         HomeTab.PHOTOS -> Screen.Photos.route
         HomeTab.COMPUTERS -> Screen.Computers.route
-        HomeTab.SHARED -> if (hasCollaborativeSharing) {
-            Screen.SharedTabs.route
-        } else {
-            Screen.Shared.route
-        }
+        HomeTab.SHARED -> Screen.SharedTabs.route
     }
 
-    private fun HomeTab.iconResId(hasCollaborativeSharing: Boolean = true): Int = when (this) {
+    private fun HomeTab.iconResId(): Int = when (this) {
         HomeTab.FILES -> CorePresentation.drawable.ic_proton_folder
         HomeTab.PHOTOS -> CorePresentation.drawable.ic_proton_image
         HomeTab.COMPUTERS -> CorePresentation.drawable.ic_proton_tv
-        HomeTab.SHARED -> if (hasCollaborativeSharing) {
-            CorePresentation.drawable.ic_proton_users
-        } else {
-            CorePresentation.drawable.ic_proton_link
-        }
+        HomeTab.SHARED -> CorePresentation.drawable.ic_proton_users
     }
 
     private val HomeTab.titleResId: Int get() = when (this) {

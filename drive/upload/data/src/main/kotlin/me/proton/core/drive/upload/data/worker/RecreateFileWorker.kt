@@ -32,7 +32,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -41,11 +40,10 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.UpdateName
 import me.proton.core.drive.upload.data.extension.isRetryable
-import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.retryOrAbort
-import me.proton.core.drive.upload.data.manager.UploadWorkManagerImpl
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.RecreateFile
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -64,6 +62,7 @@ class RecreateFileWorker @AssistedInject constructor(
     updateName: UpdateName,
     refreshFeatureFlags: RefreshFeatureFlags,
     configurationProvider: ConfigurationProvider,
+    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -77,6 +76,7 @@ class RecreateFileWorker @AssistedInject constructor(
     updateName = updateName,
     refreshFeatureFlags = refreshFeatureFlags,
     configurationProvider = configurationProvider,
+    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -87,16 +87,12 @@ class RecreateFileWorker @AssistedInject constructor(
         recreateFile(uploadFileLink)
             .onFailure { error ->
                 error.handleFeatureDisabled()
-                val retryable = error.isRetryable || error.handle(uploadFileLink)
-                val canRetry = canRetry()
-                error.log(
-                    tag = uploadFileLink.logTag(),
-                    message = """
-                        Recreating file failed "${error.message}" retryable $retryable, 
-                        max retries reached ${!canRetry}
-                    """.trimIndent().replace("\n", " ")
+                return uploadFileLink.retryOrAbort(
+                    retryable = error.isRetryable || error.handle(uploadFileLink),
+                    canRetry = canRetry(),
+                    error = error,
+                    message = "Recreating file failed",
                 )
-                return retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
             }
         return Result.success()
     }

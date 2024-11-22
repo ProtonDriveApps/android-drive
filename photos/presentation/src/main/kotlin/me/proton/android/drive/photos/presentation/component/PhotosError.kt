@@ -21,6 +21,7 @@ package me.proton.android.drive.photos.presentation.component
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.list.ListError
@@ -46,7 +47,7 @@ fun PhotosError(
 fun PreviewPhotosError() {
     ProtonTheme {
         PhotosError(
-            message = "No internet connection",
+            message = stringResource(id = I18N.string.photos_error_waiting_connectivity),
             actionResId = I18N.string.common_retry_action,
         ) {}
     }

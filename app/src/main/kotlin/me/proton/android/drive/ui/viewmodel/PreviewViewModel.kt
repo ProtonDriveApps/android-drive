@@ -317,8 +317,10 @@ class PreviewViewModel @Inject constructor(
                             message = appContext.getString(I18N.string.proton_docs_unsupported_file_type),
                             type = BroadcastMessage.Type.WARNING,
                         )
+                        false
+                    } else {
+                        true
                     }
-                    true
                 }
                 else -> let {
                     CoreLogger.e(VIEW_MODEL, "Unsupported file type: ${acceptTypes.joinToString()}")

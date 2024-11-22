@@ -19,7 +19,7 @@ package me.proton.core.drive.base.data.extension
 
 import android.content.Context
 import me.proton.core.crypto.common.pgp.exception.CryptoException
-import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.i18n.R as I18N
 
 fun CryptoException.getDefaultMessage(context: Context): String = message?.let {
@@ -29,6 +29,10 @@ fun CryptoException.getDefaultMessage(context: Context): String = message?.let {
     )
 } ?: context.getString(I18N.string.common_error_crypto)
 
-fun CryptoException.log(tag: String, message: String = this.message.orEmpty()): CryptoException = also {
-    CoreLogger.d(tag, this, message)
+fun CryptoException.log(
+    tag: String,
+    message: String? = null,
+    level: LoggerLevel? = LoggerLevel.DEBUG,
+): CryptoException = also {
+    level.log(tag, this, message)
 }

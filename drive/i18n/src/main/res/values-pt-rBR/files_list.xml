@@ -44,7 +44,7 @@
     -->
   <string name="title_modified_with_date">Modificação: %1$s</string>
   <string name="files_restore_from_trash_action">Restaurar</string>
-  <string name="files_send_to_trash_action">Mover para lixeira</string>
+  <string name="files_send_to_trash_action">Mover para a lixeira</string>
   <string name="files_remove_me_action">Remover</string>
   <string name="files_move_file_action">Mover</string>
   <!--

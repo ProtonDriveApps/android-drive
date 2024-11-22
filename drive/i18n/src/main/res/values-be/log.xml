@@ -31,4 +31,11 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Выключэнне</string>
   <string name="log_origin_logger">Рэгістратар</string>
+  <string name="log_origin_screen">Экран</string>
+  <string name="log_origin_application_state">Стан праграмы</string>
+  <string name="log_origin_workers">Супрацоўнікі</string>
+  <string name="log_origin_backup">Рэзервовае капіяванне</string>
+  <string name="log_origin_user">Карыстальнік</string>
+  <string name="log_origin_device">Прылада</string>
+  <string name="log_origin_crypto">Crypto</string>
 </resources>

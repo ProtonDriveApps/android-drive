@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.coroutines.flow.Flow
@@ -70,6 +71,7 @@ fun Photos(
                         state = state,
                         viewState = viewState.backupStatusViewState,
                         showPhotosStateBanner = viewState.showPhotosStateBanner,
+                        modifier = modifier,
                         onEnable = viewEvent.onEnable,
                         onPermissions = viewEvent.onPermissions,
                         onRetry = viewEvent.onRetry,
@@ -89,11 +91,12 @@ fun Photos(
                     )
                 }
             }
-            .onLoading { PhotosLoading(modifier) }
+            .onLoading { PhotosLoading(modifier.testTag(PhotosTestTag.loading)) }
             .onError { state ->
                 PhotosError(
                     message = state.message,
                     actionResId = state.actionResId,
+                    modifier = modifier,
                     onAction = viewEvent.onErrorAction,
                 )
             }
@@ -103,6 +106,7 @@ fun Photos(
                     driveLinksFlow = driveLinksFlow,
                     viewState = viewState.backupStatusViewState,
                     showPhotosStateBanner = viewState.showPhotosStateBanner,
+                    modifier = modifier.testTag(PhotosTestTag.content),
                     selectedPhotos = selectedPhotos,
                     onClick = viewEvent.onDriveLink,
                     onLongClick = viewEvent.onSelectDriveLink,
@@ -124,4 +128,9 @@ fun Photos(
                 )
             }
     }
+}
+
+object PhotosTestTag {
+    const val content = "photos tab content"
+    const val loading = "photos tab loading"
 }

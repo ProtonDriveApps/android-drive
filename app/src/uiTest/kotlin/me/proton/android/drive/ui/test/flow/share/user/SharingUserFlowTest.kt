@@ -20,17 +20,13 @@ package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.FeatureFlag
-import me.proton.android.drive.ui.annotation.FeatureFlags
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_EXTERNAL_INVITATIONS
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_DISABLED
 import me.proton.core.test.quark.data.User
 import me.proton.core.test.quark.v2.command.userCreate
 import me.proton.core.util.kotlin.random
@@ -49,7 +45,6 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun shareFileWithInternalUserAsViewer() {
         val file = "image.jpg"
         PhotosTabRobot
@@ -80,7 +75,33 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
+    fun shareFileWithInternalUserWithUnverifiedKeysAsEditor() {
+        val file = "image.jpg"
+        val email = "free@${envConfig.host}"
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickMoreOnItem(file)
+            .clickShare()
+            .verify {
+                robotDisplayed()
+                assertShareFile(file)
+            }
+            .typeEmail(email)
+            .clickSend()
+            .verify {
+                dismissInvitationSent(1)
+            }
+        FilesTabRobot
+            .verify { robotDisplayed() }
+            .clickMoreOnItem(file)
+            .clickManageAccess()
+            .verify {
+                assertInvitedWithEditor(email)
+            }
+    }
+
+    @Test
+    @Scenario(2)
     fun shareFolderWithInternalUserAsEditor() {
         val folder = "folder1"
         PhotosTabRobot
@@ -107,7 +128,6 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun shareAlreadySharedFileViaManageAccess() {
         val file = "shared.jpg"
         PhotosTabRobot
@@ -131,7 +151,6 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2, isPhotos = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun shareFileWithMyself() {
         val email = userLoginRule.testUser.email
         val file = "image.jpg"
@@ -151,38 +170,6 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2, isPhotos = true)
-    @FeatureFlags(
-        [
-            FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED),
-            FeatureFlag(DRIVE_SHARING_EXTERNAL_INVITATIONS, NOT_FOUND),
-        ]
-    )
-    fun sharePhotoWithExternalUserDisallowed() {
-        val email = "external_${String.random()}@mail.com"
-        val image = ImageName.Main.fileName
-        PhotosTabRobot.waitUntilLoaded()
-        PhotosTabRobot
-            .longClickOnPhoto(image)
-            .clickOptions()
-            .clickShare()
-            .verify {
-                robotDisplayed()
-                assertShareFile(image)
-            }
-            .typeEmail(email)
-            .verify {
-                assertInvalidEmail(email)
-            }
-    }
-
-    @Test
-    @Scenario(2, isPhotos = true)
-    @FeatureFlags(
-        [
-            FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED),
-            FeatureFlag(DRIVE_SHARING_EXTERNAL_INVITATIONS, ENABLED),
-        ]
-    )
     fun sharePhotoWithExternalUserAllowed() {
         val email = "external_${String.random()}@mail.com"
         val image = ImageName.Main.fileName
@@ -206,7 +193,6 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun shareFolderToMultipleUsers() {
         val folder = "folder1"
         val email2 = requireNotNull(quarkRule.quarkCommands.userCreate(User()).email)
@@ -237,12 +223,7 @@ class SharingUserFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlags(
-        [
-            FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED),
-            FeatureFlag(FeatureFlagId.DRIVE_SHARING_DISABLED, ENABLED),
-        ]
-    )
+    @FeatureFlag(DRIVE_SHARING_DISABLED, ENABLED)
     fun killSwitch() {
         val folder = "folder1"
         PhotosTabRobot

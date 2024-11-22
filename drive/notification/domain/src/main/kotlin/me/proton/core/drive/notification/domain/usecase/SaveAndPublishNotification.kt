@@ -29,14 +29,14 @@ class SaveAndPublishNotification @Inject constructor(
 ) {
     suspend operator fun invoke(
         notificationId: NotificationId,
-        event: Event,
+        events: List<Event>,
     ) = coRunCatching {
         when (notificationId) {
             is NotificationId.User -> {
-                notificationRepository.insertNotificationEvent(notificationId, event)
+                notificationRepository.insertNotificationEvents(notificationId, events)
                 publishNotification(notificationId, notificationRepository.getAllNotificationEvents(notificationId))
             }
-            is NotificationId.App -> publishNotification(notificationId, listOf(event))
+            is NotificationId.App -> publishNotification(notificationId, events)
         }
     }
 }

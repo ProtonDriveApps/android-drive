@@ -77,7 +77,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Bruk mobil</string>
   <string name="photos_error_local_storage">Enhetens lagringsplass full</string>
   <string name="photos_error_local_storage_description">For å fortsette sikkerhetskopieringen må du frigjøre lagringsplass på enheten.</string>
-  <string name="photos_error_background_restrictions">Sett batteriet til \'ubegrenset\' for bakgrunnsappaktivitet</string>
+  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">For konsekvent sikkerhetskopiering i bakgrunnen, juster batteriinnstillingene eller åpne appen ofte.</string>
   <string name="photos_error_background_restrictions_action">Innstillinger</string>
   <string name="photos_empty_title">Ingen sikkerhetskopier enda</string>

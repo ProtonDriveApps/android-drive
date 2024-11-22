@@ -45,7 +45,7 @@
   <string name="folder_option_import_file">Upload een bestand</string>
   <string name="folder_option_create_folder">Map aanmaken</string>
   <string name="folder_option_take_a_photo">Neem een nieuwe foto</string>
-  <string name="folder_option_create_document">Create document</string>
+  <string name="folder_option_create_document">Document aanmaken</string>
   <string name="settings_theme_system_default">Systeemstandaard</string>
   <string name="settings_theme_dark">Donker</string>
   <string name="settings_theme_light">Licht</string>
@@ -64,8 +64,8 @@
   <string name="in_app_notification_upload_files_only">Alleen bestanden kunnen worden geüpload naar %1$s</string>
   <string name="in_app_notification_importing_file_already_exists">Er bestaat al een bestand met dezelfde naam. Probeer de app-cache te wissen</string>
   <string name="in_app_notification_clear_local_cache_success">Lokale cache is succesvol gewist</string>
-  <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
-  <string name="in_app_notification_create_document_success">Document created</string>
+  <string name="in_app_notification_destination_screen_not_found">Doelscherm niet gevonden</string>
+  <string name="in_app_notification_create_document_success">Document aangemaakt</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Opslag vol</string>
@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Kanaal voor cloudopslag, upload- en downloadmeldingen</string>
   <string name="notification_channel_warning_title">Waarschuwing</string>
   <string name="notification_channel_warning_description">Kanaal voor waarschuwingen die actie van de gebruiker vereisen</string>
+  <string name="notification_permission_rationale_title_backup">Blijf op de hoogte van uw back-upstatus</string>
+  <string name="notification_permission_rationale_description_backup">Ontvang meldingen over de voortgang en status van uw back-ups.</string>
+  <string name="notification_permission_rationale_action_accept">Meldingen inschakelen</string>
+  <string name="notification_permission_rationale_action_reject">Niet nu</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecteer alle items in de lijst</string>
   <string name="content_description_selected_options">Toon meer opties voor geselecteerde bestanden en/of mappen</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">De link naar uw bestand is verwijderd.</string>
   <string name="description_files_stop_sharing_action_error">Er is een fout opgetreden bij het verwijderen van de link naar uw bestand.</string>
   <string name="description_files_stop_all_sharing">Hiermee wordt de link verwijderd en iedereen toegang ontnomen.</string>
-  <string name="description_files_stop_all_sharing_action_success">Delen naar uw bestand is verwijderd.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Er is een fout opgetreden tijdens het verwijderen van het delen van uw bestand.</string>
   <string name="ignore_file_signature_action">Toch bekijken</string>
   <string name="action_empty_files_add_files">Uploaden</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">Delen is vergrendeld.</string>
   <string name="error_main_share_not_found">Hoofdmap is niet gevonden.</string>
   <string name="error_share_not_found">Delen niet gevonden.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Fotoback-up is tijdelijk uitgeschakeld.</string>
   <string name="error_creating_share_not_allowed">Delen aanmaken is tijdelijk onbeschikbaar.</string>
   <string name="operation_open_document">een document openen</string>
   <string name="operation_create_document">een document maken</string>
@@ -225,5 +229,5 @@
         Example:
             "Untitled document 2025-11-28 12.34.56"
     -->
-  <string name="new_document_name">Untitled document %1$s</string>
+  <string name="new_document_name">Naamloos document %1$s</string>
 </resources>

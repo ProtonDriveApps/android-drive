@@ -77,7 +77,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Mobiel gebruiken</string>
   <string name="photos_error_local_storage">Apparaatopslag vol</string>
   <string name="photos_error_local_storage_description">Om verder te gaan met de back-up moet u opslag vrijmaken op uw toestel.</string>
-  <string name="photos_error_background_restrictions">Zet batterij op \'Onbeperkt\' voor achtergrond-app activiteit</string>
+  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">Voor back-ups, consistente achtergronden, pas de batterijinstellingen aan of open de app regelmatig.</string>
   <string name="photos_error_background_restrictions_action">Instellingen</string>
   <string name="photos_empty_title">Nog geen back-ups</string>
@@ -91,7 +91,7 @@
   <string name="photos_backup_state_completed">Back-up voltooid</string>
   <string name="photos_backup_state_uncompleted">Back-up is met fouten afgerond</string>
   <string name="photos_backup_state_uncompleted_action">Oplossen</string>
-  <string name="photos_backup_state_preparing">Preparing to back up</string>
+  <string name="photos_backup_state_preparing">Back-up voorbereiden</string>
   <string name="photos_backup_state_encrypting">Versleutelen...</string>
   <string name="photos_backup_state_uploading">Bezig met back-uppen…</string>
   <!--

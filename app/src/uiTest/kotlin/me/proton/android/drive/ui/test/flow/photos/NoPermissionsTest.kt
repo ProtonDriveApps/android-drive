@@ -33,7 +33,7 @@ class NoPermissionsTest : AuthenticatedBaseTest() {
             .enableBackup()
 
         PhotosNoPermissionsRobot
-            .denyPermissions()
+            .denyPermissions(PhotosNoPermissionsRobot)
             .verify {
                 robotDisplayed()
             }
@@ -54,7 +54,7 @@ class NoPermissionsTest : AuthenticatedBaseTest() {
             .clickSettings()
             .clickPhotosBackup()
             .clickBackupToggle(PhotosNoPermissionsRobot)
-            .denyPermissions()
+            .denyPermissions(PhotosNoPermissionsRobot)
             .verify {
                 robotDisplayed()
             }

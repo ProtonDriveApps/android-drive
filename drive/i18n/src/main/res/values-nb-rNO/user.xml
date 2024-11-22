@@ -32,7 +32,7 @@
             "Free up space on your Proton Drive storage or upgrade your plan for uninterrupted backup."
     -->
   <string name="storage_quotas_full_title">Frigjør plass på din %1$ss-lagringsplass eller oppgrader planen for uavbrutt sikkerhetskopiering.</string>
-  <string name="storage_quotas_get_storage_action">Få mer lagringskapasitet</string>
+  <string name="storage_quotas_get_storage_action">Skaff deg mer lagringskapasitet</string>
   <string name="user_select_other_account_content_description">Velg en annen konto</string>
   <string name="description_remove_account">Du blir logget av og all data tilknyttet denne kontoen vil bli fjernet fra denne enheten.</string>
 </resources>

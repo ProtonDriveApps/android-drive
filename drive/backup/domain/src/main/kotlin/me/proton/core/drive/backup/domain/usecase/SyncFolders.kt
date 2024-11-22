@@ -23,6 +23,7 @@ import me.proton.core.drive.backup.domain.entity.BucketUpdate
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.util.kotlin.filterNotNullValues
 import me.proton.core.util.kotlin.filterNullValues
 import javax.inject.Inject
 
@@ -46,14 +47,20 @@ class SyncFolders @Inject constructor(
         userId: UserId,
         bucketUpdates: List<BucketUpdate>,
         uploadPriority: Long,
+        allBuckets: Boolean = false,
     ) = coRunCatching {
         getAllFolders(userId)
             .getOrThrow()
             .associateWith { backupFolder ->
                 bucketUpdates.firstOrNull { bucketUpdate -> bucketUpdate.bucketId == backupFolder.bucketId }
-            }.filterNullValues()
-            .map { (backupFolder, bucketUpdate) ->
-                if (backupFolder.updateTime != null) {
+            }.let { backupFolderBucketUpdateMap ->
+                if (allBuckets) {
+                    backupFolderBucketUpdateMap
+                } else {
+                    backupFolderBucketUpdateMap.filterNotNullValues()
+                }
+            }.map { (backupFolder, bucketUpdate) ->
+                if (backupFolder.updateTime != null && bucketUpdate?.oldestAddedTime != null) {
                     backupFolder.copy(
                         updateTime = minOf(
                             backupFolder.updateTime,

@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.time.Duration.Companion.seconds
 
 abstract class AbstractBaseTest {
-    private val permissions = when {
+    open val permissions: List<String> = when {
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
             listOf(Manifest.permission.POST_NOTIFICATIONS)
         else -> emptyList()
@@ -53,11 +53,16 @@ abstract class AbstractBaseTest {
 
     val quarkRule = QuarkRule(envConfig)
 
+    open val doNotShowOnboardingAfterLogin get() = true
+
     private val configurationRule = before {
         // Initialize components *before* injecting via Hilt.
         MainInitializer.init(targetContext)
         // Inject via Hilt/Dagger.
         hiltRule.inject()
+        if (doNotShowOnboardingAfterLogin) {
+            uiTestHelper.doNotShowOnboardingAfterLogin()
+        }
         configureFusion()
     }
 

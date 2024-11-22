@@ -36,3 +36,21 @@ suspend fun <T> pagedList(
     } while (loaded == pageSize)
     return items
 }
+
+suspend fun <T> processPagedList(
+    pageSize: Int,
+    page: suspend (fromIndex: Int, count: Int) -> List<T>,
+    block: suspend (List<T>) -> Unit,
+) {
+    require(pageSize > 0) {
+        "pageSize should be strictly positive"
+    }
+    var loaded: Int
+    var fromIndex = 0
+    do {
+        val pageItems = page(fromIndex, pageSize)
+        fromIndex += pageSize
+        loaded = pageItems.size
+        block(pageItems)
+    } while (loaded == pageSize)
+}

@@ -23,7 +23,7 @@ import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity
 import me.proton.core.drive.linkoffline.data.db.LinkOfflineDao
 import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 
@@ -49,5 +49,5 @@ interface DriveLinkOfflineDao : DriveLinkDao {
             ${LinkTrashDao.NOT_TRASHED_CONDITION}
         LIMIT :limit OFFSET :offset
     """)
-    fun getOfflineLinks(userId: UserId, limit: Int, offset: Int): Flow<List<DriveLinkEntityWithBlock>>
+    fun getOfflineLinks(userId: UserId, limit: Int, offset: Int): Flow<List<DriveLinkEntity>>
 }

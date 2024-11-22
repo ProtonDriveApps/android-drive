@@ -17,7 +17,6 @@
  */
 package me.proton.core.drive.base.domain.provider
 
-import android.os.Build
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.extension.GiB
 import me.proton.core.drive.base.domain.extension.KiB
@@ -66,7 +65,6 @@ interface ConfigurationProvider {
     val validateUploadLimit: Boolean get() = true
     val uploadLimitThreshold: Int get() = Int.MAX_VALUE
     val useExceptionMessage: Boolean get() = false
-    val photosFeatureFlag: Boolean get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
     val photosSavedCounter: Boolean get() = false
     val photosUpsellPhotoCount: Int get() = 5
     val backupLeftSpace: Bytes get() = 25.MiB
@@ -92,7 +90,7 @@ interface ConfigurationProvider {
     val maxFreeSpace: Bytes get() = 5.GiB
     val activeUserPingDuration: Duration get() = 6.hours
     val disableFeatureFlagInDevelopment: Boolean get() = true
-    val logFeatureFlag: Boolean get() = false
+    val logDbMinLimit: Int get() = 1_000
     val logDbLimit: Int get() = 10_000
     val logDeviceInfoFile: LogFile get() = LogFile(
         name = "device_info.txt",
@@ -110,6 +108,8 @@ interface ConfigurationProvider {
     val minimumPublicAddressKeyFetchInterval: Duration get() = 10.minutes
     val minimumOrganizationFetchInterval: Duration get() = 1.days
     val protonDocsWebViewFeatureFlag: Boolean get() = true
+    val observeWorkManagerInterval: Duration get() = 1.minutes
+    val cacheInternalStorageLimit: Bytes get() = 512.MiB
 
     data class Thumbnail(
         val maxWidth: Int,

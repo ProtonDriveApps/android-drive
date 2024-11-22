@@ -70,6 +70,7 @@ dependencies {
     api(project(":drive:trash:data"))
     api(project(":drive:db-test"))
     api(project(":drive:key:data"))
+    api(project(":drive:observability:data"))
 
     implementation(libs.dagger.hilt.android)
     implementation(libs.dagger.hilt.android.testing)

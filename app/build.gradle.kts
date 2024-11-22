@@ -169,15 +169,17 @@ android {
             versionNameSuffix = "-dev ($gitHash)"
             isDefault = true
 
+            val testEnvironment = System.getenv("TEST_ENV_DOMAIN")
             val dynamicEnvironment = privateProperties.getProperty("HOST", "proton.black")
+            val environment = testEnvironment ?: dynamicEnvironment
 
             protonEnvironment {
-                host = dynamicEnvironment
+                host = environment
                 apiPrefix = "drive-api"
             }
 
             testInstrumentationRunnerArguments["clearPackageData"] = "true"
-            testInstrumentationRunnerArguments["host"] = dynamicEnvironment
+            testInstrumentationRunnerArguments["host"] = environment
 
             // If running on gitlab CI
             if (!System.getenv("CI_SERVER_NAME").isNullOrEmpty()) {
@@ -185,7 +187,7 @@ android {
             }
             resourceConfigurations.addAll(Config.supportedResourceConfigurations)
 
-            setAssetLinksResValue(dynamicEnvironment)
+            setAssetLinksResValue(environment)
         }
         create("alpha") {
             versionCode = (versionCodeFromGitCommitCount * 10) + 1
@@ -220,7 +222,7 @@ android {
     }
 
     lint {
-        abortOnError = false
+        abortOnError = true
     }
 }
 

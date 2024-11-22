@@ -23,10 +23,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.extension.toDataResult
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.extension.transformSuccess
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.photo.CreatePhotoInfo
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.extension.onDisabledOrNotFound
@@ -38,8 +42,11 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.exception.ShareException
 import me.proton.core.drive.share.domain.usecase.GetAddressId
 import me.proton.core.drive.share.domain.usecase.GetShare
+import me.proton.core.drive.share.domain.usecase.GetShares
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.network.domain.ApiException
+import me.proton.core.network.domain.hasProtonErrorCode
+import me.proton.core.user.domain.entity.AddressId
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -48,6 +55,8 @@ class CreatePhotoShare @Inject constructor(
     private val photoRepository: PhotoRepository,
     private val getOrCreateMainShare: GetOrCreateMainShare,
     private val getShare: GetShare,
+    private val getShares: GetShares,
+    private val getPhotoShare: GetPhotoShare,
     private val withFeatureFlag: WithFeatureFlag,
     private val getAddressId: GetAddressId,
 ) {
@@ -69,11 +78,8 @@ class CreatePhotoShare @Inject constructor(
                 featureFlag
                     .onDisabledOrNotFound {
                         val addressId = getAddressId(userId, volumeId).getOrThrow()
-                        val (photoShareId, _) = photoRepository.createPhotoShareWithRootLink(
-                            userId = userId,
-                            photoInfo = createPhotoInfo(userId, volumeId, addressId).getOrThrow(),
-                        )
-                        emitAll(getShare(ShareId(userId, photoShareId)))
+                        val photoShareId = createPhotoShare(userId, volumeId, addressId)
+                        emitAll(getShare(photoShareId))
                     }
                     .onEnabled {
                         emit(
@@ -90,4 +96,25 @@ class CreatePhotoShare @Inject constructor(
             emit(DataResult.Error.Local("Cannot read share", e))
         }
     }
+
+    private suspend fun createPhotoShare(
+        userId: UserId,
+        volumeId: VolumeId,
+        addressId: AddressId,
+    ): ShareId = coRunCatching {
+        photoRepository.createPhotoShareWithRootLink(
+            userId = userId,
+            photoInfo = createPhotoInfo(userId, volumeId, addressId).getOrThrow(),
+        )
+    }.fold(
+        onSuccess = { (shareId, _) -> ShareId(userId, shareId) },
+        onFailure = { error ->
+            if (error.hasProtonErrorCode(ProtonApiCode.ALREADY_EXISTS)) {
+                getShares(userId, Share.Type.PHOTO, refresh = flowOf(true)).toResult().getOrThrow()
+                getPhotoShare(userId, volumeId).toResult().getOrThrow().id
+            } else {
+                throw error
+            }
+        }
+    )
 }

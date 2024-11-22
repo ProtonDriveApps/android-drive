@@ -45,7 +45,6 @@ import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
-import me.proton.core.drive.backup.domain.handler.UploadErrorHandler
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.usecase.CheckAvailableSpace
 import me.proton.core.drive.backup.domain.usecase.HasFolders
@@ -56,9 +55,7 @@ import me.proton.core.drive.backup.domain.usecase.UnwatchFolders
 import me.proton.core.drive.backup.domain.usecase.WatchFolders
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.presentation.app.AppLifecycleProvider
 import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.CoreLogger
@@ -73,13 +70,6 @@ class BackupInitializer : Initializer<Unit> {
             context.applicationContext,
             BackupInitializerEntryPoint::class.java
         ).run {
-            if (!configurationProvider.photosFeatureFlag) {
-                CoreLogger.d(BACKUP, "Backup feature disabled")
-                return
-            }
-            uploadErrorManager.errors
-                .onEach(uploadErrorHandler::onError)
-                .launchIn(appLifecycleProvider.lifecycle.coroutineScope)
             syncStaleFoldersOnForeground(appLifecycleProvider.lifecycle.coroutineScope)
             accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.STARTED)
                 .onAccountReady { account ->
@@ -162,12 +152,9 @@ class BackupInitializer : Initializer<Unit> {
         val userManager: UserManager
         val watchFolders: WatchFolders
         val unwatchFolders: UnwatchFolders
-        val uploadErrorHandler: UploadErrorHandler
-        val uploadErrorManager: UploadErrorManager
         val backupPermissionsManager: BackupPermissionsManager
         val startBackupAfterErrorResolved: StartBackupAfterErrorResolved
         val appLifecycleProvider: AppLifecycleProvider
-        val configurationProvider: ConfigurationProvider
         val rescanOnMediaStoreUpdate: RescanOnMediaStoreUpdate
         val observeConfigurationChanges: ObserveConfigurationChanges
         val syncStaleFolders: SyncStaleFolders

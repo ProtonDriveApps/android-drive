@@ -18,14 +18,12 @@
 
 package me.proton.android.drive.ui.robot
 
-import android.os.Build
 import me.proton.android.drive.ui.extension.withTextResource
-import me.proton.test.fusion.Fusion.byObject
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
 
 
-object PhotosNoPermissionsRobot: Robot {
+object PhotosNoPermissionsRobot : SystemPhotosNoPermissionRobot, Robot {
     private val photoPermissionsTitle =
         node.withTextResource(I18N.string.photos_permission_rational_title, I18N.string.app_name)
     private val photosPermissionDescription =
@@ -33,22 +31,6 @@ object PhotosNoPermissionsRobot: Robot {
     private val settingsButton = node.withText(I18N.string.photos_permission_rational_confirm_action)
     private val notNowButton = node.withText(I18N.string.photos_permission_rational_dismiss_action)
     private val allowAccessImage = node.withText(I18N.string.photos_permission_rational_img_text)
-
-    fun allowPermissions() = apply {
-        byObject.withResName(
-            when (Build.VERSION.SDK_INT) {
-                in 24..28 -> "com.android.packageinstaller:id/permission_allow_button"
-                else -> "com.android.permissioncontroller:id/permission_allow_button"
-            }
-        ).waitForClickable().click()
-    }
-
-    fun denyPermissions() = apply {
-        byObject.withResName(when (Build.VERSION.SDK_INT) {
-            in 24..28 -> "com.android.packageinstaller:id/permission_deny_button"
-            else -> "com.android.permissioncontroller:id/permission_deny_button"
-        }).waitForClickable().click()
-    }
 
     fun <T: Robot> clickNotNow(goesTo: T) = notNowButton.clickTo(goesTo)
 

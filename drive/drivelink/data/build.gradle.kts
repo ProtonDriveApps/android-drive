@@ -27,6 +27,7 @@ driveModule(
     hilt = true,
     i18n = true,
     room = true,
+    socialTest = true,
 ) {
     api(project(":drive:link:data"))
     api(project(":drive:link-download:data"))
@@ -35,6 +36,4 @@ driveModule(
     api(project(":drive:link-selection:data"))
     api(project(":drive:drivelink:domain"))
     api(project(":drive:share-user:data"))
-
-    testImplementation(project(":drive:db-test"))
 }

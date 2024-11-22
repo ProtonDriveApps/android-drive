@@ -166,6 +166,10 @@
   <string name="notification_channel_transfer_description">Kanal za shranjevanje v oblaku, obvestila o nalaganju in prenosu</string>
   <string name="notification_channel_warning_title">Opozorilo</string>
   <string name="notification_channel_warning_description">Kanal za opozorila, ki zahtevajo ukrepanje uporabnika</string>
+  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
+  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
+  <string name="notification_permission_rationale_action_accept">Enable notifications</string>
+  <string name="notification_permission_rationale_action_reject">Not now</string>
   <!-- endregion -->
   <string name="content_description_select_all">Izberite vse predmete na seznamu</string>
   <string name="content_description_selected_options">Pokaži več možnosti za izbrane datoteke in/ali mape</string>
@@ -183,7 +187,7 @@
   <string name="description_files_stop_sharing_action_success">Povezava do vaše datoteke je bila izbrisana.</string>
   <string name="description_files_stop_sharing_action_error">Pri brisanju povezave do vaše datoteke je prišlo do napake.</string>
   <string name="description_files_stop_all_sharing">S tem boste izbrisali povezavo in onemogočili dostop za vse.</string>
-  <string name="description_files_stop_all_sharing_action_success">Skupna raba vaše datoteke je bila izbrisana.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Med brisanjem skupne rabe vaše datoteke je prišlo do napake.</string>
   <string name="ignore_file_signature_action">Vseeno si oglejte</string>
   <string name="action_empty_files_add_files">Naloži</string>

@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Kanava pilvitallennukselle, tiedostojen lähetyksille ja latauksille</string>
   <string name="notification_channel_warning_title">Varoitus</string>
   <string name="notification_channel_warning_description">Kanava käyttäjän toimia edellyttäville varoituksille</string>
+  <string name="notification_permission_rationale_title_backup">Pysy ajan tasalla varmuuskopiointisi tilasta</string>
+  <string name="notification_permission_rationale_description_backup">Saat ilmoituksia varmuuskopioidesi edistymisestä ja tilasta.</string>
+  <string name="notification_permission_rationale_action_accept">Ota ilmoitukset käyttöön</string>
+  <string name="notification_permission_rationale_action_reject">Ei nyt</string>
   <!-- endregion -->
   <string name="content_description_select_all">Valitse listan kaikki kohteet</string>
   <string name="content_description_selected_options">Näytä lisää valintoja valituille tiedostoille ja/tai kansioille</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">Linkki tiedostoosi on poistettiin.</string>
   <string name="description_files_stop_sharing_action_error">Virhe poistrettaessa tiedostosi linkkiä.</string>
   <string name="description_files_stop_all_sharing">Tämä poistaa linkin ja käyttöoikeuden kaikilta.</string>
-  <string name="description_files_stop_all_sharing_action_success">Tiedostojakosi on poistettu.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Virhe poistettaessa tiedostojakoa.</string>
   <string name="ignore_file_signature_action">Näytä silti</string>
   <string name="action_empty_files_add_files">Tallenna</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">Jako on lukittu.</string>
   <string name="error_main_share_not_found">Ensisijaista jakoa ei löytynyt.</string>
   <string name="error_share_not_found">Jakoa ei löytynyt.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Kuvien varmuuskopiointi on poistettu tilapäisesti käytöstä.</string>
   <string name="error_creating_share_not_allowed">Jakojen luonti on poistettu tilapäisesti käytöstä.</string>
   <string name="operation_open_document">avaa dokumentti</string>
   <string name="operation_create_document">luoda dokumentin</string>

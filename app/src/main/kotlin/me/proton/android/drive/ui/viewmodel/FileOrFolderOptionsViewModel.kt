@@ -35,11 +35,10 @@ import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.options.Option
 import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.options.filter
-import me.proton.android.drive.ui.options.filterProtonDocs
 import me.proton.android.drive.ui.options.filterPermissions
+import me.proton.android.drive.ui.options.filterProtonDocs
 import me.proton.android.drive.ui.options.filterRoot
 import me.proton.android.drive.ui.options.filterShareMember
-import me.proton.android.drive.ui.options.filterSharing
 import me.proton.android.drive.usecase.NotifyActivityNotFound
 import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.domain.arch.mapSuccessValueOrNull
@@ -66,7 +65,6 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDevelopment
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingInvitations
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.link.domain.entity.FileId
@@ -76,7 +74,6 @@ import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.usecase.LeaveShare
-import me.proton.core.drive.shareurl.crypto.domain.usecase.CopyPublicUrl
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
@@ -89,7 +86,6 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     getFeatureFlagFlow: GetFeatureFlagFlow,
     private val toggleOffline: ToggleOffline,
     private val toggleTrashState: ToggleTrashState,
-    private val copyPublicUrl: CopyPublicUrl,
     private val exportTo: ExportTo,
     private val notifyActivityNotFound: NotifyActivityNotFound,
     private val leaveShare: LeaveShare,
@@ -116,9 +112,6 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         .stateIn(viewModelScope, Eagerly, null)
     private val optionsFilter = savedStateHandle.require<OptionsFilter>(OPTIONS_FILTER)
 
-    private val sharingInvitations = getFeatureFlagFlow(driveSharingInvitations(userId))
-        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveSharingInvitations(userId), NOT_FOUND))
-
     private val sharingDevelopment = getFeatureFlagFlow(driveSharingDevelopment(userId))
         .stateIn(viewModelScope, Eagerly, FeatureFlag(driveSharingDevelopment(userId), NOT_FOUND))
 
@@ -140,14 +133,12 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         showCreateDocumentPicker: (String, () -> Unit) -> Unit = { _, _ -> },
     ): Flow<List<FileOptionEntry<T>>> = combine(
         this.driveLink.filterNotNull(),
-        sharingInvitations,
         sharingDevelopment,
         docsKillSwitch,
-    ) { driveLink, sharingInvitations, sharingDevelopment, protonDocsKillSwitch ->
+    ) { driveLink, sharingDevelopment, protonDocsKillSwitch ->
         options
             .filter(driveLink)
             .filter(optionsFilter)
-            .filterSharing(sharingInvitations)
             .filterRoot(driveLink, sharingDevelopment)
             .filterShareMember(driveLink.isShareMember)
             .filterPermissions(driveLink.sharePermissions ?: Permissions.owner)
@@ -175,15 +166,8 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                     is Option.Download -> option.build { filename ->
                         showCreateDocumentPicker(filename) { handleActivityNotFound() }
                     }
-                    is Option.CopySharedLink -> option.build(runAction) { linkId ->
-                        viewModelScope.launch {
-                            copyPublicUrl(driveLink.volumeId, linkId)
-                        }
-                    }
                     is Option.ManageAccess -> option.build(runAction, navigateToManageAccess)
                     is Option.ShareViaInvitations -> option.build(runAction, navigateToShareViaInvitations)
-                    is Option.ShareViaLink -> option.build(runAction, navigateToShareViaLink)
-                    is Option.StopSharing -> option.build(runAction, navigateToStopSharing)
                     is Option.RemoveMe -> option.build(runAction) { driveLink ->
                         viewModelScope.launch {
                             leaveShare(driveLink)
@@ -246,17 +230,14 @@ class FileOrFolderOptionsViewModel @Inject constructor(
 
         private val options = setOf(
             Option.OfflineToggle,
-            Option.CopySharedLink,
             Option.ShareViaInvitations,
             Option.ManageAccess,
-            Option.ShareViaLink,
             Option.SendFile,
             Option.Download,
             Option.Move,
             Option.Rename,
             Option.OpenInBrowser,
             Option.Info,
-            Option.StopSharing,
             Option.Trash,
             Option.DeletePermanently,
             Option.RemoveMe,

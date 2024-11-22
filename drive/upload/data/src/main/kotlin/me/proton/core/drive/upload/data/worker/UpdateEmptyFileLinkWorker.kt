@@ -34,11 +34,10 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.upload.data.extension.isRetryable
-import me.proton.core.drive.upload.data.extension.log
-import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.UpdateEmptyFileLink
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -53,6 +52,7 @@ class UpdateEmptyFileLinkWorker @AssistedInject constructor(
     getUploadFileLink: GetUploadFileLink,
     uploadErrorManager: UploadErrorManager,
     configurationProvider: ConfigurationProvider,
+    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -65,6 +65,7 @@ class UpdateEmptyFileLinkWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
+    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -74,16 +75,12 @@ class UpdateEmptyFileLinkWorker @AssistedInject constructor(
         uploadFileLink.logWorkState()
         updateEmptyFileLink(uploadFileLink)
             .onFailure { error ->
-                val retryable = error.isRetryable
-                val canRetry = canRetry()
-                error.log(
-                    tag = uploadFileLink.logTag(),
-                    message = """
-                        Update empty file manifest signature failed with "${error.message}" retryable $retryable,
-                        max retries reached ${!canRetry}
-                    """.trimIndent().replace("\n", " ")
+                return uploadFileLink.retryOrAbort(
+                    retryable = error.isRetryable,
+                    canRetry = canRetry(),
+                    error = error,
+                    message = "Update empty file manifest signature failed"
                 )
-                return retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
             }
         return Result.success()
     }

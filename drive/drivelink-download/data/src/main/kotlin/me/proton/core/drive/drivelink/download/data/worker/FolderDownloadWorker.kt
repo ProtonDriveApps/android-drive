@@ -27,9 +27,11 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
+import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.extension.toResult
@@ -37,6 +39,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.data.extension.logTag
 import me.proton.core.drive.drivelink.download.data.extension.uniqueFolderWorkName
 import me.proton.core.drive.drivelink.download.data.extension.uniqueWorkName
+import me.proton.core.drive.drivelink.download.data.worker.FolderDownloadStateUpdateWorker.Companion.ROOT_FOLDER_DOWNLOAD_STATE_UPDATE_TAG
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_USER_ID
@@ -83,7 +86,7 @@ class FolderDownloadWorker @AssistedInject constructor(
             error.log(logTag, "Cannot get link")
         }.getOrNull() ?: return Result.failure()
         val descendants = getDescendants(folder, true).onFailure { error ->
-            CoreLogger.d(logTag, error, "Failed to get descendants, retrying")
+            error.log(logTag, "Failed to get descendants, will retry", WARNING)
         }.getOrNull()?.filterNot { link -> link.isProtonCloudFile } ?: return Result.retry()
         downloadFolderAndDescendants(
             folder = folder,
@@ -93,14 +96,14 @@ class FolderDownloadWorker @AssistedInject constructor(
     }
 
     @Suppress("EnqueueWork")
-    private fun downloadFolderAndDescendants(
+    private suspend fun downloadFolderAndDescendants(
         folder: Link.Folder,
         descendants: List<LinkNode>,
     ) {
         val folderTag = uniqueFolderWorkName(folderId)
         // First we create task for WorkManager's to set all node as downloading
         var workContinuation = workManager.beginWith(
-            (listOf(folder) + descendants.map { node -> node.link }).setAsDownloading(userId, folderTag)
+            (listOf(folder) + descendants.map { node -> node.link }).setAsDownloading(userId, folder.id)
         )
         // We then sort them from deepest in the hierarchy to highest, keeping folders before files
         val mutableDescendants = descendants.sortedWith(
@@ -115,13 +118,22 @@ class FolderDownloadWorker @AssistedInject constructor(
             // We peek at the first node in the list
             val currentDescendant = mutableDescendants.first()
             val parentId = currentDescendant.parentId
+            // If descendants list does not contain any child of parent folder, we can mark parent folder as downloaded
+            if (mutableDescendants.none { link -> link.parentId == parentId }) {
+                mutableDescendants
+                    .filterIsInstance<Link.Folder>()
+                    .find { link -> link.id == parentId}
+                    ?.let { parent ->
+                        workContinuation = workContinuation.then(parent.setAsDownloaded(userId, folder.id))
+                    }
+            }
             workContinuation = when (currentDescendant) {
                 is Link.Folder -> {
                     // Since it's a folder, we assume all its children have already been taken care of
                     // so we mark it as downloaded (this task will follow after all the node inside have
                     // been downloaded). And we remove it from the unhandled children
                     mutableDescendants.removeFirst()
-                    workContinuation.then(currentDescendant.setAsDownloaded(userId, folderTag))
+                    workContinuation.then(currentDescendant.setAsDownloaded(userId, folder.id))
                 }
                 is Link.File -> {
                     // We are handling a file inside a folder, we retrieve all the files from that same
@@ -135,39 +147,33 @@ class FolderDownloadWorker @AssistedInject constructor(
                         }
                 }
             }
-            // If descendants list does not contain any child of parent folder, we can mark parent folder as downloaded
-            if (mutableDescendants.none { link -> link.parentId == parentId }) {
-                mutableDescendants
-                    .filterIsInstance(Link.Folder::class.java)
-                    .find { link -> link.id == parentId}
-                    ?.let { parent ->
-                        workContinuation = workContinuation.then(parent.setAsDownloaded(userId, folderTag))
-                    }
-            }
         }
         // Finally, we can mark this drive node as downloaded and finish this worker successfully
-        workContinuation.then(folder.setAsDownloaded(userId, folderTag)).enqueue()
+        workContinuation.then(folder.setAsDownloaded(userId, folder.id)).enqueue().await()
     }
 
-    private fun List<Link>.setAsDownloading(userId: UserId, folderTag: String) =
+    private fun List<Link>.setAsDownloading(userId: UserId, rootFolderId: FolderId) =
         filterIsInstance<Link.Folder>()
-            .map { link ->
-                (link as? Link.Folder)?.let { folder ->
-                    FolderDownloadStateUpdateWorker.getWorkRequest(
-                        userId = userId,
-                        folderId = folder.id,
-                        isDownloadFinished = false,
-                        tags = listOf(folderTag),
-                    )
-                }
+            .map { folder ->
+                FolderDownloadStateUpdateWorker.getWorkRequest(
+                    userId = userId,
+                    folderId = folder.id,
+                    rootFolderId = rootFolderId,
+                    isDownloadFinished = false,
+                    tags = listOf(uniqueFolderWorkName(rootFolderId)),
+                )
             }
 
-    private fun Link.Folder.setAsDownloaded(userId: UserId, folderTag: String) =
+    private fun Link.Folder.setAsDownloaded(userId: UserId, rootFolderId: FolderId) =
         FolderDownloadStateUpdateWorker.getWorkRequest(
             userId = userId,
             folderId = id,
+            rootFolderId = rootFolderId,
             isDownloadFinished = true,
-            tags = listOf(folderTag),
+            tags = listOfNotNull(
+                uniqueFolderWorkName(rootFolderId),
+                takeIf { id == rootFolderId }?.let { ROOT_FOLDER_DOWNLOAD_STATE_UPDATE_TAG }
+            ),
         )
 
     private fun Link.File.setAsToDownload(userId: UserId, folderTag: String) =
@@ -177,7 +183,7 @@ class FolderDownloadWorker @AssistedInject constructor(
             fileId = id,
             revisionId = activeRevisionId,
             isRetryable = true,
-            fileTags = listOf(folderTag),
+            fileTags = listOfNotNull(folderTag, parentId?.let { uniqueFolderWorkName(it) }),
         )
 
     companion object {

@@ -1,0 +1,33 @@
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Drive.
+  ~
+  ~ Proton Drive is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Drive is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+  <group android:scaleX="0.46630436"
+      android:scaleY="0.46630436"
+      android:translateX="6.3007245"
+      android:translateY="6.3007245">
+    <path
+        android:pathData="M8.5326,10.7C9.6924,10.7 10.6326,9.7598 10.6326,8.6C10.6326,7.4402 9.6924,6.5 8.5326,6.5C7.3728,6.5 6.4326,7.4402 6.4326,8.6C6.4326,9.7598 7.3728,10.7 8.5326,10.7ZM8.5326,12.2C10.5208,12.2 12.1326,10.5882 12.1326,8.6C12.1326,6.6118 10.5208,5 8.5326,5C6.5444,5 4.9326,6.6118 4.9326,8.6C4.9326,10.5882 6.5444,12.2 8.5326,12.2ZM17.9838,13.6104H15.0127V15.1104H17.9838C18.6159,15.1104 19.2154,15.3911 19.6201,15.8768L20.782,17.271C21.0001,17.5328 20.814,17.9304 20.4731,17.9304H16.4527V19.4304H20.4731C22.0857,19.4304 22.9666,17.5495 21.9343,16.3107L20.7724,14.9165C20.0827,14.0889 19.0611,13.6104 17.9838,13.6104ZM5.8095,15.1396H11.257C11.7329,15.1396 12.1751,15.3848 12.4273,15.7882L13.5289,17.5508C13.6238,17.7027 13.5146,17.8996 13.3355,17.8996H3.731C3.5519,17.8996 3.4428,17.7027 3.5377,17.5508L4.6393,15.7882C4.8915,15.3848 5.3337,15.1396 5.8095,15.1396ZM3.3673,14.9933C3.8936,14.1512 4.8165,13.6396 5.8095,13.6396H11.257C12.25,13.6396 13.173,14.1512 13.6993,14.9933L14.8009,16.7558C15.5202,17.9067 14.6928,19.3996 13.3355,19.3996H3.731C2.3738,19.3996 1.5464,17.9067 2.2657,16.7558L3.3673,14.9933ZM17.8332,9.3204C17.8332,10.0826 17.2154,10.7004 16.4532,10.7004C15.6911,10.7004 15.0732,10.0826 15.0732,9.3204C15.0732,8.5583 15.6911,7.9404 16.4532,7.9404C17.2154,7.9404 17.8332,8.5583 17.8332,9.3204ZM19.3332,9.3204C19.3332,10.911 18.0438,12.2004 16.4532,12.2004C14.8627,12.2004 13.5732,10.911 13.5732,9.3204C13.5732,7.7298 14.8627,6.4404 16.4532,6.4404C18.0438,6.4404 19.3332,7.7298 19.3332,9.3204Z"
+        android:fillColor="#000000"
+        android:fillType="evenOdd"/>
+  </group>
+</vector>

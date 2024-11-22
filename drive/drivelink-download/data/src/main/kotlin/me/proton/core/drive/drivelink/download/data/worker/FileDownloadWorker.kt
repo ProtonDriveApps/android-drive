@@ -29,10 +29,12 @@ import androidx.work.WorkContinuation
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import androidx.work.WorkerParameters
+import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.logId
@@ -96,7 +98,8 @@ class FileDownloadWorker @AssistedInject constructor(
             if (isRetryable && e is ApiException && e.isRetryable()) {
                 e.log(
                     tag = logTag,
-                    message = "Downloading file with revision ${revisionId.logId()} failed but will retry"
+                    message = "Downloading file with revision ${revisionId.logId()} failed, will retry",
+                    level = WARNING,
                 )
                 Result.retry()
             } else {
@@ -110,7 +113,7 @@ class FileDownloadWorker @AssistedInject constructor(
         }
 
     @SuppressLint("EnqueueWork")
-    private fun downloadBlocks(revision: Revision): Result {
+    private suspend fun downloadBlocks(revision: Revision): Result {
         revision.blocks.map { block ->
             BlockDownloadWorker.getWorkRequest(
                 userId = userId,
@@ -123,7 +126,7 @@ class FileDownloadWorker @AssistedInject constructor(
         }
             .also { blocks ->
                 if (blocks.isEmpty()) {
-                    workManager.enqueue(verifyDownload())
+                    workManager.enqueue(verifyDownload()).await()
                     return Result.success()
                 }
             }
@@ -147,6 +150,7 @@ class FileDownloadWorker @AssistedInject constructor(
                 WorkContinuation.combine(continuations)
                     .then(verifyDownload())
                     .enqueue()
+                    .await()
             }
 
         return Result.success()

@@ -46,6 +46,23 @@ class AnnounceEvent @Inject constructor(
     }
 
     suspend operator fun invoke(
+        userId: UserId,
+        events: List<Event>,
+    ) = coRunCatching {
+        eventHandlers.forEach { handler ->
+            coRunCatching {
+                handler.onEvents(userId, events)
+            }.onFailure { error ->
+                CoreLogger.e(
+                    ANNOUNCE_EVENT,
+                    error,
+                    "Error during broadcast of events to $handler"
+                )
+            }
+        }
+    }
+
+    suspend operator fun invoke(
         event: Event,
     ) = coRunCatching {
         eventHandlers.forEach { handler ->

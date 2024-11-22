@@ -77,8 +77,10 @@ open class BaseExportLog(
     }
 
     private suspend fun ZipOutputStream.exportLogDataAsCsv(userId: UserId) {
-        repository.getAllLogs(userId).forEach { log ->
-            write(log.toCsvLine().toByteArray())
+        repository.processAllLogs(userId) { logs ->
+            logs.forEach { log ->
+                write(log.toCsvLine().toByteArray())
+            }
         }
     }
 

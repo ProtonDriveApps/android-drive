@@ -18,13 +18,17 @@
 package me.proton.core.drive.base.data.extension
 
 import android.content.Context
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.domain.exception.BackupStopException
-import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.drive.i18n.R as I18N
 
 fun BackupStopException.getDefaultMessage(context: Context): String =
     context.getString(I18N.string.common_error_internal)
 
-fun BackupStopException.log(tag: String, message: String = this.message.orEmpty()): BackupStopException = also {
-    CoreLogger.e(tag, this, message)
+fun BackupStopException.log(
+    tag: String,
+    message: String? = null,
+    level: LoggerLevel? = LoggerLevel.ERROR
+): BackupStopException = also {
+    level.log(tag, this, message)
 }

@@ -30,7 +30,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FolderApi : BaseRetrofitApi {
-    @GET("drive/shares/@{enc_shareID}/folders/@{enc_linkID}/children")
+    @GET("drive/shares/{enc_shareID}/folders/{enc_linkID}/children")
     suspend fun getFolderChildren(
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") linkId: String,
@@ -40,13 +40,13 @@ interface FolderApi : BaseRetrofitApi {
         @Query("Desc") isDescending: Int
     ): GetFolderChildrenResponse
 
-    @POST("drive/shares/@{enc_shareID}/folders")
+    @POST("drive/shares/{enc_shareID}/folders")
     suspend fun createFolder(
         @Path("enc_shareID") shareId: String,
         @Body request: CreateFolderRequest,
     ): CreateFolderResponse
 
-    @POST("drive/shares/@{enc_shareID}/folders/@{enc_linkID}/delete_multiple")
+    @POST("drive/shares/{enc_shareID}/folders/{enc_linkID}/delete_multiple")
     suspend fun deleteFolderChildren(
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") folderLinkId: String,

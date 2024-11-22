@@ -22,7 +22,6 @@ import android.os.Build
 import android.os.LocaleList
 import me.proton.core.drive.base.domain.provider.BuildConfigFieldsProvider
 import me.proton.core.drive.base.domain.usecase.DeviceInfo
-import java.util.Locale
 import javax.inject.Inject
 
 class DeviceInfoImpl @Inject constructor(
@@ -34,11 +33,7 @@ class DeviceInfoImpl @Inject constructor(
         block("DEVICE:      ${Build.MANUFACTURER} ${Build.MODEL}")
         block("FINGERPRINT: ${Build.FINGERPRINT}")
         block("ABI:         ${Build.SUPPORTED_ABIS.joinToString(",")}")
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            block("LOCALE:      ${Locale.getDefault().toLanguageTag()}")
-        } else {
-            block("LOCALE(S):   ${LocaleList.getDefault().toLanguageTags()}")
-        }
+        block("LOCALE(S):   ${LocaleList.getDefault().toLanguageTags()}")
         block("APP VERSION: ${buildConfigFieldsProvider.buildConfigFields.appVersionName}")
         block("-----------------------------------------")
     }

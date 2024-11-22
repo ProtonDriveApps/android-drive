@@ -35,10 +35,11 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.api.ProtonApiCode
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.block.domain.entity.UploadBlocksUrl
@@ -55,6 +56,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_I
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.GetBlocksUploadUrl
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -73,6 +75,7 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
     private val cleanUpWorkers: CleanupWorkers,
     private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     configurationProvider: ConfigurationProvider,
+    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -84,6 +87,7 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
+    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -93,32 +97,42 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
         uploadFileLink.logWorkState("get block urls")
         return getBlocksUploadUrl(uploadFileLink).fold(
             onFailure = { error ->
-                val retryable = error.isRetryable
-                val canRetry = canRetry()
-                error.log(
-                    tag = uploadFileLink.logTag(),
-                    message = """
-                        Get blocks URL failed "${error.message}" retryable $retryable, 
-                        max retries reached ${!canRetry}
-                    """.trimIndent().replace("\n", " ")
-                )
                 if (error.handle(uploadFileLink)) {
+                    uploadMetricsNotifier(
+                        uploadFileLink = uploadFileLink,
+                        isSuccess = false,
+                        throwable = error,
+                    )
                     Result.failure()
                 } else {
-                    retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
+                    uploadFileLink.retryOrAbort(
+                        retryable = error.isRetryable,
+                        canRetry = canRetry(),
+                        error = error,
+                        message = "Get blocks URL failed"
+                    )
                 }
             },
             onSuccess = { uploadBlocksUrl ->
                 uploadBlocks(uploadBlocksUrl, uploadFileLink).fold(
                     onFailure = { error ->
-                        error.log(
-                            tag = uploadFileLink.logTag(),
-                            message = "GetBlocksUploadUrlWorker($runAttemptCount) Cannot enqueue files to be uploaded"
-                        )
                         when {
                             error is CancellationException -> throw error
-                            error.isRetryable -> Result.retry()
-                            else -> Result.failure()
+                            error.isRetryable -> {
+                                error.log(
+                                    tag = uploadFileLink.logTag(),
+                                    message = "Cannot enqueue files to be uploaded, will retry",
+                                    level = WARNING,
+                                )
+                                Result.retry()
+                            }
+                            else -> {
+                                error.log(
+                                    tag = uploadFileLink.logTag(),
+                                    message = "Cannot enqueue files to be uploaded"
+                                )
+                                Result.failure()
+                            }
                         }
                     },
                     onSuccess = { Result.success() }

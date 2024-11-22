@@ -25,25 +25,25 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
     companion object {
         const val DRIVE_PHOTOS_UPLOAD_DISABLED = "DrivePhotosUploadDisabled"
         const val DRIVE_SHARING_DEVELOPMENT = "DriveSharingDevelopment"
-        const val DRIVE_SHARING_INVITATIONS = "DriveSharingInvitations"
         const val DRIVE_SHARING_DISABLED = "DriveSharingDisabled"
         const val DRIVE_SHARING_EDITING_DISABLED = "DriveSharingEditingDisabled"
-        const val DRIVE_SHARING_EXTERNAL_INVITATIONS = "DriveSharingExternalInvitations"
         const val DRIVE_SHARING_EXTERNAL_INVITATIONS_DISABLED = "DriveSharingExternalInvitationsDisabled"
         const val DRIVE_DOCS_WEBVIEW = "DriveDocsWebView"
         const val DRIVE_DOCS_DISABLED = "DriveDocsDisabled"
+        const val DRIVE_ANDROID_NEW_ONBOARDING = "DriveAndroidNewOnboarding"
+        const val DRIVE_ANDROID_USER_LOG_DISABLED = "DriveAndroidUserLogDisabled"
 
         internal var developments : List<String> = listOf(
         )
 
         fun drivePhotosUploadDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_PHOTOS_UPLOAD_DISABLED)
         fun driveSharingDevelopment(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_DEVELOPMENT)
-        fun driveSharingInvitations(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_INVITATIONS)
         fun driveSharingDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_DISABLED)
         fun driveSharingEditingDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_EDITING_DISABLED)
-        fun driveSharingExternalInvitations(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_EXTERNAL_INVITATIONS)
         fun driveSharingExternalInvitationsDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_EXTERNAL_INVITATIONS_DISABLED)
         fun driveDocsWebView(userId: UserId) = FeatureFlagId(userId, DRIVE_DOCS_WEBVIEW)
         fun driveDocsDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_DOCS_DISABLED)
+        fun driveAndroidNewOnboarding(userId: UserId) = FeatureFlagId(userId, DRIVE_ANDROID_NEW_ONBOARDING)
+        fun driveAndroidUserLogDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_ANDROID_USER_LOG_DISABLED)
     }
 }

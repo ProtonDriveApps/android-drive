@@ -55,7 +55,7 @@ class LocaleNameSorterTest {
     )
 
     @Test
-    @Config(sdk = [24])
+    @Config(sdk = [26])
     fun `sort files by locale names ascending`() {
 
         val sorted = Sorter.Factory[By.NAME].sort(files, Direction.ASCENDING)
@@ -75,7 +75,7 @@ class LocaleNameSorterTest {
     }
 
     @Test
-    @Config(sdk = [24])
+    @Config(sdk = [26])
     fun `sort files by locale names descending`() {
 
         val sorted = Sorter.Factory[By.NAME].sort(files, Direction.DESCENDING)
@@ -94,48 +94,9 @@ class LocaleNameSorterTest {
         )
     }
 
-    @Test
-    @Config(sdk = [23])
-    fun `sort files by names ascending`() {
-
-        val sorted = Sorter.Factory[By.NAME].sort(files, Direction.ASCENDING)
-
-        assertEquals(
-            listOf(
-                File1,
-                file2,
-                file22,
-                file3,
-                file4,
-                file45,
-                file5,
-            ).map { it.name },
-            sorted.map { it.name },
-        )
-    }
-
-    @Test
-    @Config(sdk = [23])
-    fun `sort files by names descending`() {
-
-        val sorted = Sorter.Factory[By.NAME].sort(files, Direction.DESCENDING)
-
-        assertEquals(
-            listOf(
-                file5,
-                file45,
-                file4,
-                file3,
-                file22,
-                file2,
-                File1,
-            ).map { it.name },
-            sorted.map { it.name },
-        )
-    }
 
     @Test(expected = None::class)
-    @Config(sdk = [23, 24])
+    @Config(sdk = [26])
     fun `async sort names ascending`() = runTest {
         val driveLinks = names.map { name ->
             file(name = name)

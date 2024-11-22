@@ -30,10 +30,10 @@ import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.viewmodel.ComputerOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ConfirmStopAllSharingDialogViewModel
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
-import me.proton.android.drive.ui.viewmodel.ShareInvitationOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.MoveToFolderViewModel
 import me.proton.android.drive.ui.viewmodel.MultipleFileOrFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ParentFolderOptionsViewModel
+import me.proton.android.drive.ui.viewmodel.ShareInvitationOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareMemberOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.UploadToViewModel
 import me.proton.core.domain.entity.UserId
@@ -49,6 +49,7 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
+import me.proton.core.drive.notification.presentation.viewmodel.NotificationPermissionRationaleViewModel
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.By
 import me.proton.core.drive.sorting.domain.entity.Direction
@@ -79,7 +80,6 @@ sealed class Screen(val route: String) {
         const val TAB_FILES = "files"
         const val TAB_PHOTOS = "photos"
         const val TAB_COMPUTERS = "computers"
-        const val TAB_SHARED = "shared"
         const val TAB_SHARED_TABS = "shared_tabs"
     }
 
@@ -295,15 +295,6 @@ sealed class Screen(val route: String) {
         const val PARENT_SHARE_ID = "parentShareId"
     }
 
-    data object Shared : Screen("home/{userId}/shared/{shareId}"), HomeTab {
-
-        override fun invoke(userId: UserId) = invoke(userId, null)
-
-        operator fun invoke(userId: UserId, shareId: ShareId?) = "home/${userId.id}/shared/${shareId?.id}"
-
-        const val USER_ID = Screen.USER_ID
-        const val SHARE_ID = "shareId"
-    }
     data object SharedTabs : Screen(filesBrowsableRoute("shared")), HomeTab {
         override fun invoke(userId: UserId) =
             filesBrowsableBuildRoute("shared", userId, null, null)
@@ -560,7 +551,7 @@ sealed class Screen(val route: String) {
         const val MEMBER_ID = ShareMemberOptionsViewModel.KEY_MEMBER_ID
     }
 
-    object Upload : Screen("upload/{userId}/files?uris={uris}&parentShareId={parentShareId}&parentId={parentId}") {
+    data object Upload : Screen("upload/{userId}/files?uris={uris}&parentShareId={parentShareId}&parentId={parentId}") {
         operator fun invoke(
             userId: UserId,
             uris: List<UriWithFileName>,
@@ -628,6 +619,26 @@ sealed class Screen(val route: String) {
         }
 
         const val USER_ID = Screen.USER_ID
+    }
+
+    data object Onboarding : Screen("onboarding/{userId}/show") {
+
+        operator fun invoke(userId: UserId) = "onboarding/${userId.id}/show"
+
+        const val USER_ID = Screen.USER_ID
+    }
+
+    data object NotificationPermissionRationale : Screen(
+        "rationale/{userId}/notificationPermission?context={rationaleContext}"
+    ) {
+
+        operator fun invoke(
+            userId: UserId,
+            rationaleContext: NotificationPermissionRationaleViewModel.RationaleContext,
+        ) = "rationale/${userId.id}/notificationPermission?context=${rationaleContext.name}"
+
+        const val USER_ID = Screen.USER_ID
+        const val RATIONALE_CONTEXT = NotificationPermissionRationaleViewModel.RATIONALE_CONTEXT
     }
 
     companion object {

@@ -106,7 +106,7 @@ class UploadFlowTest : AuthenticatedBaseTest() {
 
     @Test
     fun upload50MBFile() {
-        val file = externalFilesRule.createFile("50MB.txt", 6 * 1024 * 1024)
+        val file = externalFilesRule.createFile("50MB.txt", 50 * 1024 * 1024)
 
         Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
 

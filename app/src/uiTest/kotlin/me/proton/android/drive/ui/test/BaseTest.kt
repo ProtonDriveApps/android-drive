@@ -31,6 +31,8 @@ abstract class BaseTest : AbstractBaseTest() {
     @Suppress("unused")
     protected fun signIn(existingUser: User) {
         AddAccountRobot
+            .uiElementsDisplayed()
+        AddAccountRobot
             .clickSignIn()
             .login(existingUser)
     }

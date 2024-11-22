@@ -19,6 +19,7 @@
 package me.proton.drive.android.settings.data.datastore
 
 import android.content.Context
+import androidx.datastore.preferences.core.longPreferencesKey
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.core.drive.base.data.datastore.BaseDataStore
 import javax.inject.Inject
@@ -26,8 +27,11 @@ import javax.inject.Inject
 class AppUiSettingsDataStore @Inject constructor(
     @ApplicationContext appContext: Context,
 ) : BaseDataStore(APP_SETTINGS_PREFERENCES) {
+    private val prefsKeyOnboardingShown = longPreferencesKey(ONBOARDING_SHOWN)
+    var onboardingShown by Delegate(appContext.dataStore, prefsKeyOnboardingShown, default = 0L)
 
     companion object {
         const val APP_SETTINGS_PREFERENCES = "app_settings_prefs"
+        const val ONBOARDING_SHOWN = "onboarding_shown"
     }
 }

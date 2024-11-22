@@ -27,14 +27,14 @@ import okhttp3.mockwebserver.MockWebServer
 
 fun MockWebServer.checkAvailableHashes(block: RequestContext.() -> MockResponse) {
     routing {
-        post("/drive/shares/@{enc_shareID}/links/@{enc_linkID}/checkAvailableHashes") {
+        post("/drive/shares/{enc_shareID}/links/{enc_linkID}/checkAvailableHashes") {
             block()
         }
     }
 }
 
 fun MockWebServer.getLink(block: RequestContext.() -> MockResponse) = routing {
-    get("/drive/shares/@{enc_shareID}/links/@{enc_linkID}", block)
+    get("/drive/shares/{enc_shareID}/links/{enc_linkID}", block)
 }
 
 fun MockWebServer.getLink(link: LinkDto) {

@@ -18,13 +18,15 @@
 
 package me.proton.android.drive.ui.robot
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.SemanticsMatcher
+import me.proton.android.drive.photos.presentation.component.PhotosTestTag
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.extension.doesNotExist
 import me.proton.android.drive.ui.extension.withItemType
 import me.proton.android.drive.ui.extension.withLayoutType
-import me.proton.android.drive.ui.extension.withPluralTextResource
 import me.proton.android.drive.ui.extension.withTextResource
-import me.proton.android.drive.ui.robot.ConfirmStopSharingRobot.clickTo
 import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.toPercentString
@@ -39,7 +41,13 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
-object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
+object PhotosTabRobot :
+    SystemNotificationPermissionRobot,
+    SystemPhotosPermissionSelectionRobot,
+    SystemPhotosNoPermissionRobot,
+    HomeRobot,
+    LinksRobot,
+    NavigationBarRobot {
     private val enableBackupButton
         get() = allNodes.withText(I18N.string.photos_permissions_action).onFirst()
 
@@ -59,6 +67,11 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
     private val itCanTakeAWhileLabel get() = node.withText(I18N.string.photos_empty_loading_label_progress)
     private val closeQuotaBannerButton get() = node.withContentDescription(I18N.string.common_close_action)
     private val photosBackupDisabled get() = node.withText(I18N.string.error_creating_photo_share_not_allowed)
+    val eitherLoadingOrContentMatcher = SemanticsMatcher("Either loading or content") {
+        it.config.getOrNull(SemanticsProperties.TestTag)?.let { tag ->
+            tag == PhotosTestTag.loading || tag == PhotosTestTag.content
+        } == true
+    }
     private fun itemsLeft(items: Int) =
         node.withPluralTextResource(I18N.plurals.notification_content_text_backup_in_progress, items)
 
@@ -105,6 +118,10 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
 
     fun assertPhotoDisplayed(fileName: String) {
         photoWithName(fileName).await(90.seconds) { assertIsDisplayed() }
+    }
+
+    fun assertPhotoNotDisplayed(fileName: String) {
+        photoWithName(fileName).assertIsNotDisplayed()
     }
 
     fun assertEnableBackupDisplayed() {
@@ -160,6 +177,10 @@ object PhotosTabRobot : HomeRobot, LinksRobot, NavigationBarRobot {
     fun assertBackupPreparing() {
         backupPreparing.await { assertIsDisplayed() }
     }
+
+    fun assertPhotosLoadingOrContentDisplayed() = node
+        .addSemanticMatcher(eitherLoadingOrContentMatcher)
+        .await { assertIsDisplayed() }
 
     fun dismissBackupSetupGrowler(vararg folders: String) = node.withText(
         StringUtils.pluralStringFromResource(

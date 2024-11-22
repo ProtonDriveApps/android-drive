@@ -46,6 +46,7 @@ import javax.inject.Inject
 class BackupFileRepositoryImpl @Inject constructor(
     private val db: BackupDatabase,
 ) : BackupFileRepository {
+
     override suspend fun getCountByState(
         folderId: FolderId,
         state: BackupFileState,
@@ -66,6 +67,9 @@ class BackupFileRepositoryImpl @Inject constructor(
         ).map { entity ->
             entity.toBackupFile()
         }
+
+    override suspend fun getFile(folderId: FolderId, uriString: String): BackupFile? =
+        db.backupFileDao.get(folderId.userId, folderId.shareId.id, folderId.id, uriString)?.toBackupFile()
 
     override suspend fun getAllInFolderWithState(
         folderId: FolderId,

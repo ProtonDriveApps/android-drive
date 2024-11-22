@@ -166,6 +166,10 @@
   <string name="notification_channel_transfer_description">Kanał dla przestrzeni dyskowej i powiadomień transferów</string>
   <string name="notification_channel_warning_title">Ostrzeżenie</string>
   <string name="notification_channel_warning_description">Kanał dla ostrzeżeń, które wymagają działania użytkownika</string>
+  <string name="notification_permission_rationale_title_backup">Bądź na bieżąco ze statusem kopii zapasowej</string>
+  <string name="notification_permission_rationale_description_backup">Otrzymuj powiadomienia o postępach i statusie kopii zapasowych.</string>
+  <string name="notification_permission_rationale_action_accept">Włącz powiadomienia</string>
+  <string name="notification_permission_rationale_action_reject">Nie teraz</string>
   <!-- endregion -->
   <string name="content_description_select_all">Zaznacz wszystkie elementy z listy</string>
   <string name="content_description_selected_options">Pokaż więcej opcji dla zaznaczonych plików i folderów</string>
@@ -183,7 +187,7 @@
   <string name="description_files_stop_sharing_action_success">Link do pliku został usunięty.</string>
   <string name="description_files_stop_sharing_action_error">Wystąpił błąd podczas usuwania linku do pliku.</string>
   <string name="description_files_stop_all_sharing">Spowoduje to usunięcie linku i dostępu do elementu.</string>
-  <string name="description_files_stop_all_sharing_action_success">Link do pliku został usunięty.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Wystąpił błąd podczas usuwania linku do pliku.</string>
   <string name="ignore_file_signature_action">Pokaż pomimo tego</string>
   <string name="action_empty_files_add_files">Prześlij</string>
@@ -193,7 +197,7 @@
   <string name="error_share_locked">Udostępniony obiekt jest zablokowany.</string>
   <string name="error_main_share_not_found">Główny udostępniony obiekt nie został znaleziony.</string>
   <string name="error_share_not_found">Udostępniony obiekt nie został znaleziony.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Tworzenie kopii zapasowej zdjęć jest tymczasowo wyłączone.</string>
   <string name="error_creating_share_not_allowed">Udostępnianie jest tymczasowo wyłączone.</string>
   <string name="operation_open_document">otwarcia dokumentu</string>
   <string name="operation_create_document">utworzenia dokumentu</string>

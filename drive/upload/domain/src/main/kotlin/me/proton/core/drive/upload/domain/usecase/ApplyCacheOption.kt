@@ -19,6 +19,12 @@
 package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.base.domain.extension.size
+import me.proton.core.drive.base.domain.log.LogTag.UploadTag.logTag
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.usecase.GetInternalStorageInfo
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.file.base.domain.coroutines.FileScope
@@ -28,16 +34,19 @@ import me.proton.core.drive.file.base.domain.usecase.MoveToCache
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
 import javax.inject.Inject
 
 class ApplyCacheOption @Inject constructor(
     private val moveToCache: MoveToCache,
     private val getPermanentFolder: GetPermanentFolder,
+    private val getInternalStorageInfo: GetInternalStorageInfo,
+    private val configurationProvider: ConfigurationProvider,
 ) {
     suspend operator fun invoke(uploadFileLink: UploadFileLink): Result<Unit> = coRunCatching {
         with(uploadFileLink) {
-            when (cacheOption) {
+            when (internalStorageLimitConstraint()) {
                 CacheOption.NONE -> deleteAll(userId, volumeId, draftRevisionId)
                 CacheOption.ALL -> moveToCache(userId, volumeId, draftRevisionId)
                 CacheOption.THUMBNAIL_DEFAULT -> {
@@ -57,6 +66,33 @@ class ApplyCacheOption @Inject constructor(
                     deleteAll(userId, volumeId, draftRevisionId)
                 }
             }
+        }
+    }
+
+    private suspend fun UploadFileLink.internalStorageLimitConstraint() = when (cacheOption) {
+        CacheOption.NONE -> cacheOption
+        CacheOption.ALL -> internalStorageLimitConstraint(fileSize = size ?: 0.bytes)
+        CacheOption.THUMBNAIL_DEFAULT -> internalStorageLimitConstraint(
+            fileSize = getThumbnailFile(
+                userId = userId,
+                volumeId = volumeId,
+                revisionId = draftRevisionId,
+                thumbnailType = ThumbnailType.DEFAULT,
+            )?.size ?: 0.bytes
+        )
+    }
+
+    private fun UploadFileLink.internalStorageLimitConstraint(fileSize: Bytes): CacheOption {
+        val storageInfo = getInternalStorageInfo().getOrThrow()
+        val limit = configurationProvider.cacheInternalStorageLimit
+        return if (storageInfo.available - fileSize < limit) {
+            CoreLogger.w(
+                id.logTag(),
+                "Overriding cache option to NONE, local storage is low: ${storageInfo.available} for $fileSize"
+            )
+            CacheOption.NONE
+        } else {
+            cacheOption
         }
     }
 

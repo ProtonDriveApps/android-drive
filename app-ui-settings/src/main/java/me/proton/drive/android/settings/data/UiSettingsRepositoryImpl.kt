@@ -22,6 +22,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.drive.android.settings.data.datastore.AppUiSettingsDataStore
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import me.proton.drive.android.settings.data.extension.toDomain
 import me.proton.drive.android.settings.data.extension.toEntity
@@ -34,6 +36,7 @@ import javax.inject.Inject
 
 class UiSettingsRepositoryImpl @Inject constructor(
     private val database: AppUiSettingsDatabase,
+    private val dataStore: AppUiSettingsDataStore,
 ) : UiSettingsRepository {
 
     private val dao = database.uiSettingsDao
@@ -62,6 +65,14 @@ class UiSettingsRepositoryImpl @Inject constructor(
             UiSettings(homeTab = homeTab)
         }
     }
+
+    override suspend fun hasShownOnboarding(): Boolean =
+        dataStore.onboardingShown > 0L
+
+    override suspend fun updateOnboardingShown(timestamp: TimestampS) {
+        dataStore.onboardingShown = timestamp.value
+    }
+
 
     private suspend inline fun updateOrInsert(
         userId: UserId,

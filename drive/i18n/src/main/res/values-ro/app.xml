@@ -161,6 +161,10 @@
   <string name="notification_channel_transfer_description">Canal pentru stocare în cloud, notificări de încărcare și descărcare.</string>
   <string name="notification_channel_warning_title">Avertizare</string>
   <string name="notification_channel_warning_description">Canal pentru avertismente care necesită acțiunea utilizatorului.</string>
+  <string name="notification_permission_rationale_title_backup">Fiți la curent cu starea copiei de rezervă</string>
+  <string name="notification_permission_rationale_description_backup">Primiți notificări despre progresul și starea copiilor de rezervă.</string>
+  <string name="notification_permission_rationale_action_accept">Activare notificări</string>
+  <string name="notification_permission_rationale_action_reject">Nu acum</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selectare toate din listă</string>
   <string name="content_description_selected_options">Afișare mai multe opțiuni pentru fișierele și/sau folderele selectate.</string>
@@ -178,7 +182,7 @@
   <string name="description_files_stop_sharing_action_success">Legătura către fișier a fost ștearsă.</string>
   <string name="description_files_stop_sharing_action_error">A apărut o eroare în timpul ștergerii legături webi către fișier.</string>
   <string name="description_files_stop_all_sharing">Aceasta va șterge legătura web și va anula accesul tuturor.</string>
-  <string name="description_files_stop_all_sharing_action_success">Partajarea către fișier a fost ștearsă.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">A apărut o eroare în timpul ștergerii partajării către fișier.</string>
   <string name="ignore_file_signature_action">Afișare așa</string>
   <string name="action_empty_files_add_files">Încărcare</string>
@@ -188,7 +192,7 @@
   <string name="error_share_locked">Partajarea este blocată.</string>
   <string name="error_main_share_not_found">Partajarea principală nu se poate găsi.</string>
   <string name="error_share_not_found">Partajarea nu a fost găsită.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Conservarea fotografiilor este momentan dezactivată.</string>
   <string name="error_creating_share_not_allowed">Crearea partajărilor este momentan dezactivată.</string>
   <string name="operation_open_document">deschidă un document</string>
   <string name="operation_create_document">creeze un document</string>

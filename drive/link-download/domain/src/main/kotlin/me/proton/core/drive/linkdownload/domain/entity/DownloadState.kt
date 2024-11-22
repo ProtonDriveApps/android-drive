@@ -17,13 +17,10 @@
  */
 package me.proton.core.drive.linkdownload.domain.entity
 
-import me.proton.core.drive.file.base.domain.entity.Block
-
 sealed class DownloadState(val isFinished: Boolean) {
-    object Downloading : DownloadState(false)
-    object Error : DownloadState(true)
+    data object Downloading : DownloadState(false)
+    data object Error : DownloadState(true)
     data class Downloaded(
-        val blocks: List<Block>,
         val manifestSignature: String? = null,
         val signatureAddress: String? = null,
     ) : DownloadState(true)

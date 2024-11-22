@@ -56,9 +56,12 @@ class MainInitializer : Initializer<Unit> {
         BackupInitializer::class.java,
         ShareInitializer::class.java,
         TelemetryInitializer::class.java,
-        SelectionInitializer::class.java,
+        CleanupInitializer::class.java,
         PingActiveUserInitializer::class.java,
         LogInterceptorInitializer::class.java,
+        AccountReadyObserverInitializer::class.java,
+        FirstAppUsageInitializer::class.java,
+        UploadInitializer::class.java,
     )
 
     companion object {

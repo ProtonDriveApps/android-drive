@@ -28,6 +28,9 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.DeviceInfo
 import me.proton.core.drive.base.domain.usecase.GetCacheTempFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidUserLogDisabled
+import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.log.data.usecase.BaseExportLog
 import me.proton.core.drive.log.domain.repository.LogRepository
 import me.proton.core.report.domain.provider.BugReportLogProvider
@@ -42,11 +45,13 @@ class BugReportLogProviderImpl @Inject constructor(
     private val getCacheTempFolder: GetCacheTempFolder,
     private val accountManager: AccountManager,
     private val configurationProvider: ConfigurationProvider,
+    private val getFeatureFlag: GetFeatureFlag,
 ) : BugReportLogProvider, BaseExportLog(dateTimeFormatter, deviceInfo, repository, configurationProvider) {
 
     override suspend fun getLog(): File? = coRunCatching {
         accountManager.getPrimaryUserId().firstOrNull()?.let { userId ->
-            takeIf { configurationProvider.logFeatureFlag }?.let {
+            val userLogKillSwitch = getFeatureFlag(driveAndroidUserLogDisabled(userId))
+            takeIf { userLogKillSwitch.off }?.let {
                 zipLog(userId)
             }
         }

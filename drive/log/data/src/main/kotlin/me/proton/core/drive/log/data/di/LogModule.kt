@@ -28,6 +28,7 @@ import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.DeviceInfo
 import me.proton.core.drive.base.domain.usecase.GetCacheTempFolder
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.log.data.interceptor.LogInterceptor
 import me.proton.core.drive.log.data.provider.BugReportLogProviderImpl
 import me.proton.core.drive.log.domain.repository.LogRepository
@@ -61,6 +62,7 @@ object LogModule {
         accountManager: AccountManager,
         deviceInfo: DeviceInfo,
         configurationProvider: ConfigurationProvider,
+        getFeatureFlag: GetFeatureFlag,
     ): BugReportLogProvider =
         BugReportLogProviderImpl(
             getCacheTempFolder = getCacheTempFolder,
@@ -69,5 +71,6 @@ object LogModule {
             accountManager = accountManager,
             deviceInfo = deviceInfo,
             configurationProvider = configurationProvider,
+            getFeatureFlag = getFeatureFlag,
         )
 }

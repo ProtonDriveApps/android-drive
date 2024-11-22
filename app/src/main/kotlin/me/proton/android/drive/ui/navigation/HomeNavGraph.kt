@@ -39,9 +39,7 @@ import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.screen.ComputersScreen
 import me.proton.android.drive.ui.screen.FilesScreen
 import me.proton.android.drive.ui.screen.PhotosScreen
-import me.proton.android.drive.ui.screen.SharedScreen
 import me.proton.android.drive.ui.screen.SharedTabsScreen
-import me.proton.android.drive.ui.screen.SharedWithMeScreen
 import me.proton.android.drive.ui.screen.SyncedFoldersScreen
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.domain.entity.UserId
@@ -73,6 +71,7 @@ fun HomeNavGraph(
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
+    navigateToNotificationPermissionRationale: () -> Unit,
 ) = DriveNavHost(
     navController = homeNavController,
     startDestination = startDestination
@@ -87,15 +86,6 @@ fun HomeNavGraph(
         { linkId -> navigateToFileOrFolderOptions(linkId, OptionsFilter.FILES) },
         { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.FILES) },
         navigateToParentFolderOptions,
-    )
-    addShared(
-        homeNavController,
-        deepLinkBaseUrl,
-        arguments,
-        homeScaffoldState,
-        { fileId -> navigateToPreview(fileId, PagerType.SINGLE, OptionsFilter.FILES) },
-        navigateToSorting,
-        { linkId -> navigateToFileOrFolderOptions(linkId, OptionsFilter.FILES) },
     )
     addPhotos(
         homeNavController,
@@ -112,6 +102,7 @@ fun HomeNavGraph(
         navigateToPhotosIssues = navigateToPhotosIssues,
         navigateToPhotosUpsell = navigateToPhotosUpsell,
         navigateToBackupSettings = navigateToBackupSettings,
+        navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
     )
     addComputers(
         homeNavController,
@@ -216,53 +207,6 @@ fun NavGraphBuilder.addFiles(
 }
 
 @ExperimentalAnimationApi
-fun NavGraphBuilder.addShared(
-    navController: NavHostController,
-    deepLinkBaseUrl: String,
-    arguments: Bundle,
-    homeScaffoldState: HomeScaffoldState,
-    navigateToPreview: (linkId: FileId) -> Unit,
-    navigateToSorting: (sorting: Sorting) -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
-) = composable(
-    route = Screen.Shared.route,
-    arguments = listOf(
-        navArgument(Screen.Shared.USER_ID) { type = NavType.StringType },
-        navArgument(Screen.Shared.SHARE_ID) {
-            type = NavType.StringType
-            nullable = true
-            defaultValue = null
-        },
-    ),
-    deepLinks = listOf(
-        navDeepLink { uriPattern = Screen.Shared.deepLink(deepLinkBaseUrl) }
-    )
-) { navBackStackEntry ->
-    navBackStackEntry.get<String>(Screen.Shared.USER_ID)?.let { userId ->
-        SharedScreen(
-            homeScaffoldState = homeScaffoldState,
-            navigateToFiles = { folderId, folderName ->
-                navController.navigate(Screen.Files(UserId(userId), folderId, folderName))
-            },
-            navigateToPreview = navigateToPreview,
-            navigateToSortingDialog = navigateToSorting,
-            navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
-        )
-    } ?: let {
-        val userId = UserId(requireNotNull(arguments.getString(Screen.Shared.USER_ID)))
-        val shareId = arguments.getString(Screen.Shared.SHARE_ID)?.let { shareId ->
-            ShareId(userId, shareId)
-        }
-        navController.navigate(Screen.Shared(userId, shareId)) {
-            popUpTo(navController.graph.findStartDestination().id) {
-                inclusive = true
-            }
-        }
-    }
-}
-
-
-@ExperimentalAnimationApi
 fun NavGraphBuilder.addPhotos(
     navController: NavHostController,
     deepLinkBaseUrl: String,
@@ -276,6 +220,7 @@ fun NavGraphBuilder.addPhotos(
     navigateToPhotosIssues: (FolderId) -> Unit,
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
+    navigateToNotificationPermissionRationale: () -> Unit,
 ) = composable(
     route = Screen.Photos.route,
     arguments = listOf(
@@ -301,6 +246,7 @@ fun NavGraphBuilder.addPhotos(
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
+            navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
         )
     } ?: let {
         val userId = UserId(requireNotNull(arguments.getString(Screen.Photos.USER_ID)))

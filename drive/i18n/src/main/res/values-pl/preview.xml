@@ -18,13 +18,13 @@
   -->
 <resources>
   <string name="content_description_file_preview">Podgląd zawartości pliku</string>
-  <string name="content_description_more_options">Pokaż więcej opcji dla pliku</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">Pobieranie…</string>
   <string name="preview_processing_state">Przetwarzanie…</string>
   <string name="preview_empty">Brak podglądu…</string>
   <string name="title_not_found">Nie znaleziono</string>
   <string name="proton_docs_insert_image_header_title">Wstaw obraz</string>
   <string name="proton_docs_option_select_file">Wybierz plik</string>
-  <string name="proton_docs_unsupported_file_type">Only inserting images is supported for now</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_unsupported_file_type">Tylko wstawianie obrazów jest obecnie obsługiwane</string>
+  <string name="proton_docs_load_error">Ładowanie dokumentu nie powiodło się</string>
 </resources>

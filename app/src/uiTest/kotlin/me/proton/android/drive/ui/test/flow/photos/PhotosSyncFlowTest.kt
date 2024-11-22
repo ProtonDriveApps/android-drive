@@ -144,7 +144,11 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
             .verify {
                 assertFoldersList()
             }
-            .clickBackupToggle(SettingsRobot)
+            .clickBackupToggle(PhotosBackupRobot)
+            .verify {
+                assertPhotosBackupTurnOn()
+            }
+            .clickBack(SettingsRobot)
             .verify {
                 robotDisplayed()
             }
@@ -264,8 +268,9 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
 
     @Test
     fun deleteFileWhileBackupIsInProgress() {
-        pictureCameraFolder.copyDirFromAssets("images/basic/1")
-        pictureCameraFolder.copyDirFromAssets("videos/formats")
+        (0..8).forEach { index ->
+            pictureCameraFolder.create1BFile("photos_$index.jpg")
+        }
 
         PhotosTabRobot
             .enableBackup()
@@ -273,16 +278,15 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
                 assertBackupPreparing()
             }
 
-        dcimCameraFolder.deleteFile("mp4.mp4")
+        pictureCameraFolder.deleteFile("photos_4.jpg")
 
         PhotosTabRobot
             .verify {
                 assertBackupCompleteDisplayed()
-                assertPhotoCountEquals(4)
-                assertPhotoDisplayed("1_0.jpg")
-                assertPhotoDisplayed("1_0.png")
-                assertPhotoDisplayed("3gp.3gp")
-                assertPhotoDisplayed("mov.mov")
+                assertPhotoCountEquals(8)
+                assertPhotoDisplayed("photos_0.jpg")
+                assertPhotoDisplayed("photos_8.jpg")
+                assertPhotoNotDisplayed("photos_4.jpg")
             }
     }
 
@@ -339,7 +343,11 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
             .verify {
                 assertFoldersList()
             }
-            .clickBackupToggle(SettingsRobot)
+            .clickBackupToggle(PhotosBackupRobot)
+            .verify {
+                assertPhotosBackupTurnOn()
+            }
+            .clickBack(SettingsRobot)
             .verify {
                 robotDisplayed()
             }

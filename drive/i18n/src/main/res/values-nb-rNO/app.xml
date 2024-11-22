@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Kanal for skylagring, opplasting- og nedlastingsvarslinger.</string>
   <string name="notification_channel_warning_title">Advarsel</string>
   <string name="notification_channel_warning_description">Kanal for advarsler som krever brukerhandling.</string>
+  <string name="notification_permission_rationale_title_backup">Hold deg oppdatert på sikkerhetskopieringsstatusen din</string>
+  <string name="notification_permission_rationale_description_backup">Motta varsler om fremdriften og statusen til sikkerhetskopiene dine.</string>
+  <string name="notification_permission_rationale_action_accept">Aktiver varslinger</string>
+  <string name="notification_permission_rationale_action_reject">Ikke nå</string>
   <!-- endregion -->
   <string name="content_description_select_all">Velg alle elementer i listen</string>
   <string name="content_description_selected_options">Vis flere alternativer for valgte filer og/eller mapper</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">Koblingen til filen din er slettet.</string>
   <string name="description_files_stop_sharing_action_error">Det oppstod en feil ved sletting av koblingen til filen din.</string>
   <string name="description_files_stop_all_sharing">Dette vil slette koblingen og fjerne tilgangen for alle.</string>
-  <string name="description_files_stop_all_sharing_action_success">Deling til filen din er slettet.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Det oppstod en feil ved sletting av delingen til filen din.</string>
   <string name="ignore_file_signature_action">Vis uansett</string>
   <string name="action_empty_files_add_files">Last opp</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">Delt ressurs er låst.</string>
   <string name="error_main_share_not_found">Hoveddelingsressursen ble ikke funnet.</string>
   <string name="error_share_not_found">Deleressursen ble ikke funnet.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Sikkerhetskopi av bilde er midlertidig deaktivert.</string>
   <string name="error_creating_share_not_allowed">Oppretting av delt ressurs er midlertidig deaktivert.</string>
   <string name="operation_open_document">åpne et dokument</string>
   <string name="operation_create_document">opprett et dokument</string>

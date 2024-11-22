@@ -60,8 +60,8 @@ class CreateShare @Inject constructor(
         )
             .onSuccess { shareId ->
                 // Should be removed when an event will be sent after share creation
-                getLink(linkId, refresh = flowOf(true)).filterSuccessOrError().toResult().onFailure {
-                    CoreLogger.w(LogTag.SHARE, "Cannot update link")
+                getLink(linkId, refresh = flowOf(true)).filterSuccessOrError().toResult().onFailure { error ->
+                    CoreLogger.w(LogTag.SHARE, error, "Cannot update link")
                 }
             }
             .onFailure { cause ->

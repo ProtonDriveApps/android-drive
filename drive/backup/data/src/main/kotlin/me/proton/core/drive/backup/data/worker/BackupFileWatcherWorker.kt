@@ -40,7 +40,6 @@ import me.proton.core.drive.backup.domain.entity.BucketUpdate
 import me.proton.core.drive.backup.domain.usecase.RescanAllFolders
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.log
-import me.proton.core.drive.base.domain.exception.BackupSyncException
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -123,26 +122,20 @@ class BackupFileWatcherWorker @AssistedInject constructor(
                             oldestAddedTime = found.dateAdded
                         )
                     } else {
+                        CoreLogger.w(BACKUP, "No update found for: ${found.uri}")
                         null
                     }
                 }.distinct()
-                if (bucketUpdates.any { bucketUpdate -> bucketUpdate == null }) {
-                    CoreLogger.d(BACKUP, "BackupFileWatcherWorker syncing all buckets")
-                    syncFolders(
-                        userId = userId,
-                        uploadPriority = UploadFileLink.RECENT_BACKUP_PRIORITY
-                    )
-                } else {
-                    CoreLogger.d(
-                        BACKUP,
-                        "BackupFileWatcherWorker syncing buckets: $bucketUpdates"
-                    )
-                    syncFolders(
-                        userId = userId,
-                        bucketUpdates = bucketUpdates.filterNotNull(),
-                        uploadPriority = UploadFileLink.RECENT_BACKUP_PRIORITY
-                    )
-                }.onFailure { error ->
+                CoreLogger.d(
+                    BACKUP,
+                    "BackupFileWatcherWorker syncing buckets: $bucketUpdates"
+                )
+                syncFolders(
+                    userId = userId,
+                    bucketUpdates = bucketUpdates.filterNotNull(),
+                    uploadPriority = UploadFileLink.RECENT_BACKUP_PRIORITY,
+                    allBuckets = bucketUpdates.any { bucketUpdate -> bucketUpdate == null },
+                ).onFailure { error ->
                     CoreLogger.d(BACKUP, error, "Cannot sync buckets")
                 }.onSuccess { backupFolders ->
                     CoreLogger.d(BACKUP, "Synced ${backupFolders.size} buckets")

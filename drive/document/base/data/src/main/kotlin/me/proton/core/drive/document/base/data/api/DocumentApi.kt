@@ -27,7 +27,7 @@ import retrofit2.http.Path
 
 interface DocumentApi : BaseRetrofitApi {
 
-    @POST("drive/shares/@{shareID}/documents")
+    @POST("drive/shares/{shareID}/documents")
     suspend fun createDocument(
         @Path("shareID") shareId: String,
         @Body request: CreateDocumentRequest

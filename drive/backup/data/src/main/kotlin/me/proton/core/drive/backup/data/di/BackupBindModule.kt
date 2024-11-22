@@ -23,7 +23,8 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.IntoMap
-import me.proton.core.drive.backup.data.handler.UploadErrorHandlerImpl
+import dagger.multibindings.IntoSet
+import me.proton.core.drive.backup.data.handler.BackupUploadErrorHandler
 import me.proton.core.drive.backup.data.manager.BackupPermissionsManagerImpl
 import me.proton.core.drive.backup.data.provider.BackupNetworkTypeProvider
 import me.proton.core.drive.backup.data.repository.BackupConfigurationRepositoryImpl
@@ -31,20 +32,14 @@ import me.proton.core.drive.backup.data.repository.BackupDuplicateRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupErrorRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFileRepositoryImpl
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
-import me.proton.core.drive.backup.data.repository.ContextBucketRepository
-import me.proton.core.drive.backup.data.repository.ContextCountLibraryItemsRepository
-import me.proton.core.drive.backup.data.repository.ContextScanFolderRepository
 import me.proton.core.drive.backup.data.worker.BackupCleanupWorkers
-import me.proton.core.drive.backup.domain.handler.UploadErrorHandler
+import me.proton.core.drive.upload.domain.handler.UploadErrorHandler
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.repository.BackupConfigurationRepository
 import me.proton.core.drive.backup.domain.repository.BackupDuplicateRepository
 import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
-import me.proton.core.drive.backup.domain.repository.BucketRepository
-import me.proton.core.drive.backup.domain.repository.CountLibraryItemsRepository
-import me.proton.core.drive.backup.domain.repository.ScanFolderRepository
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.upload.data.di.UploadModule
 import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
@@ -83,8 +78,8 @@ interface BackupBindModule {
     fun bindBackupPermissionsManager(impl: BackupPermissionsManagerImpl): BackupPermissionsManager
 
     @Binds
-    @Singleton
-    fun bindUploadErrorHandler(impl: UploadErrorHandlerImpl): UploadErrorHandler
+    @IntoSet
+    fun bindUploadErrorHandler(impl: BackupUploadErrorHandler): UploadErrorHandler
 
     @Binds
     @IntoMap

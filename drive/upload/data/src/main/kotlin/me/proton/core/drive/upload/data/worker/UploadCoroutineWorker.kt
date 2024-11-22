@@ -45,6 +45,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_I
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.manager.post
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.data.LimitedRetryCoroutineWorker
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -62,6 +63,7 @@ abstract class UploadCoroutineWorker(
     private val getUploadFileLink: GetUploadFileLink,
     private val uploadErrorManager: UploadErrorManager,
     protected val configurationProvider: ConfigurationProvider,
+    protected val uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -82,11 +84,25 @@ abstract class UploadCoroutineWorker(
             CoreLogger.d(logTag(), "Retrying due to cancellation exception in ${javaClass.simpleName}")
             Result.retry()
         } catch (e: NoSuchElementException) {
-            uploadFileLink?.post(e)
+            uploadFileLink?.run {
+                post(e)
+                uploadMetricsNotifier(
+                    uploadFileLink = this,
+                    isSuccess = false,
+                    throwable = e,
+                )
+            }
             CoreLogger.d(logTag(), "Cannot find upload file link")
             Result.failure()
         } catch (e: Exception) {
-            uploadFileLink?.post(e)
+            uploadFileLink?.run {
+                post(e)
+                uploadMetricsNotifier(
+                    uploadFileLink = this,
+                    isSuccess = false,
+                    throwable = e,
+                )
+            }
             when (e) {
                 is UploadCleanupException,
                 is IOException,

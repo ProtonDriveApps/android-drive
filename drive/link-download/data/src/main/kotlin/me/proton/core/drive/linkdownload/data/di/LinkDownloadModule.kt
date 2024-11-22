@@ -21,6 +21,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDao
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDatabase
 import me.proton.core.drive.linkdownload.data.repository.LinkDownloadRepositoryImpl
@@ -40,6 +41,9 @@ object LinkDownloadModule {
     @Provides
     fun provideLinkDownloadRepository(
         linkDownloadDao: LinkDownloadDao,
-    ): LinkDownloadRepository =
-        LinkDownloadRepositoryImpl(linkDownloadDao)
+        configurationProvider: ConfigurationProvider,
+    ): LinkDownloadRepository = LinkDownloadRepositoryImpl(
+        db = linkDownloadDao,
+        configurationProvider = configurationProvider,
+    )
 }

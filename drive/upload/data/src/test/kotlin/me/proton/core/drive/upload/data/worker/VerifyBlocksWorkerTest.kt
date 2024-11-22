@@ -31,7 +31,6 @@ import androidx.work.testing.TestListenableWorkerBuilder
 import io.mockk.coEvery
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.android.drive.verifier.domain.exception.VerifierException
 import me.proton.core.crypto.common.pgp.exception.CryptoException
@@ -43,6 +42,7 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.upload.domain.usecase.VerifyBlocks
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
@@ -55,7 +55,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
-@OptIn(ExperimentalCoroutinesApi::class)
+
 @RunWith(RobolectricTestRunner::class)
 class VerifyBlocksWorkerTest {
     private val userId: UserId = UserId("user-id")
@@ -71,6 +71,7 @@ class VerifyBlocksWorkerTest {
     private val uploadFileLink = mockk<UploadFileLink>()
     private val operation = mockk<Operation>()
     private val logger = mockk<Logger>()
+    private val uploadMetricsNotifier = mockk<UploadMetricsNotifier>()
 
     @Before
     fun before() {
@@ -86,6 +87,7 @@ class VerifyBlocksWorkerTest {
         coEvery { broadcastMessages(userId, any(), any(), any()) } returns Unit
         coEvery { logger.d(any(), any()) } returns Unit
         coEvery { logger.e(any(), any(), any()) } returns Unit
+        coEvery { uploadMetricsNotifier(any(), any(), any(), any()) } returns Unit
     }
 
     @Test
@@ -105,10 +107,7 @@ class VerifyBlocksWorkerTest {
             logger.e(
                 tag = "core.drive.upload.$uploadFileLinkId",
                 e = error,
-                message = """
-                    Verify blocks failed with "${error.message}" retryable false, 
-                    max retries reached false
-                """.trimIndent().replace("\n", " "),
+                message = "Verify blocks failed retryable false, max retries reached false",
             )
         }
     }
@@ -132,6 +131,7 @@ class VerifyBlocksWorkerTest {
                         getUploadFileLink = getUploadFileLink,
                         uploadErrorManager = uploadErrorManager,
                         verifyBlocks = verifyBlocks,
+                        uploadMetricsNotifier = uploadMetricsNotifier,
                         configurationProvider = configurationProvider,
                         canRun = canRun,
                         run = run,

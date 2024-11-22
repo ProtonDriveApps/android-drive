@@ -19,7 +19,6 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SharedTabRobot
 import me.proton.android.drive.ui.robot.SharedWithMeRobot
@@ -29,8 +28,6 @@ import me.proton.android.drive.ui.test.flow.details.DetailsFlowTest.LinkDetails
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
 import me.proton.test.fusion.FusionConfig
 import org.junit.Test
@@ -41,7 +38,6 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun emptyList() {
         PhotosTabRobot
             .navigateToSharedWithMeTab()
@@ -52,7 +48,6 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, loginWithSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun browseSharedFolder() {
         val folder = "ReadWriteFolder"
         val fileInFolder = "EditableFile.txt"
@@ -67,7 +62,6 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, loginWithSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun previewTextFile() {
         val file = "newShareInsideLegacy.txt"
         PhotosTabRobot
@@ -81,7 +75,6 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, loginWithSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun makeAvailableOffline() {
         val file = "newShareInsideLegacy.txt"
         PhotosTabRobot
@@ -101,7 +94,6 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, loginWithSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun fileDetails() {
         PhotosTabRobot
             .navigateToSharedWithMeTab()
@@ -138,7 +130,6 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, loginWithSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun leaveShare() {
         val newShare = "newShareInsideLegacy.txt"
         PhotosTabRobot
@@ -164,7 +155,6 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
         this
             .verify {
                 robotDisplayed()
-                waitUntilLoaded() // TODO: remove once old "Shared" tab is removed
             }
             .clickSharedTab()
             .clickSharedWithMeTab()

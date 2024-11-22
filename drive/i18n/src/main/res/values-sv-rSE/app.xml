@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Kanal för molnlagring, uppladdning och nedladdningsaviseringar</string>
   <string name="notification_channel_warning_title">Varning</string>
   <string name="notification_channel_warning_description">Kanal för varningar som kräver användarens åtgärder</string>
+  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
+  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
+  <string name="notification_permission_rationale_action_accept">Aktivera aviseringar</string>
+  <string name="notification_permission_rationale_action_reject">Inte nu</string>
   <!-- endregion -->
   <string name="content_description_select_all">Välj alla objekt i listan</string>
   <string name="content_description_selected_options">Visa fler alternativ för valda filer och/eller mappar</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">Länken till din fil har tagits bort.</string>
   <string name="description_files_stop_sharing_action_error">Det uppstod ett fel när länken till din fil skulle tas bort.</string>
   <string name="description_files_stop_all_sharing">Detta kommer ta bort länk och ta bort åtkomst för alla.</string>
-  <string name="description_files_stop_all_sharing_action_success">Delning till din fil har tagits bort.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Det uppstod ett fel när delning till din fil skulle tas bort.</string>
   <string name="ignore_file_signature_action">Visa ändå</string>
   <string name="action_empty_files_add_files">Ladda upp</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">Delning är låst.</string>
   <string name="error_main_share_not_found">Huvuddelning hittades inte.</string>
   <string name="error_share_not_found">Delning hittades inte.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Säkerhetskopiering av foton är tillfälligt inaktiverat.</string>
   <string name="error_creating_share_not_allowed">Skapa delning är tillfälligt inaktiverat.</string>
   <string name="operation_open_document">öppna ett dokument</string>
   <string name="operation_create_document">skapa ett dokument</string>

@@ -24,7 +24,7 @@ import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity
 import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 
 @Dao
@@ -43,7 +43,7 @@ interface DriveLinkTrashDao : DriveLinkDao {
         userId: UserId,
         limit: Int,
         offset: Int,
-    ): Flow<List<DriveLinkEntityWithBlock>>
+    ): Flow<List<DriveLinkEntity>>
 
     //TODO: Once LinkEntity gets volumeId, WHERE clause should check for volumeId also
     @Transaction

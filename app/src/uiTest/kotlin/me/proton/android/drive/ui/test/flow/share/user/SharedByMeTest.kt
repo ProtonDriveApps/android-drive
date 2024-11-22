@@ -19,7 +19,6 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.ConfirmStopSharingRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
@@ -32,8 +31,6 @@ import me.proton.android.drive.ui.test.flow.details.DetailsFlowTest.LinkDetails
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
 import me.proton.test.fusion.FusionConfig
 import org.junit.Test
@@ -44,7 +41,6 @@ class SharedByMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun emptySharedByMe() {
         PhotosTabRobot
             .navigateToSharedByMeTab()
@@ -55,7 +51,6 @@ class SharedByMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun previewTextFile() {
         val file = "newShare.txt"
         PhotosTabRobot
@@ -69,7 +64,6 @@ class SharedByMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun renameFile() {
         val itemToBeRenamed = "newShare.txt"
         val newItemName = "renamedShare.txt"
@@ -90,7 +84,6 @@ class SharedByMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun moveFileToTrashAndRestoreIt() {
         val file = "newShare.txt"
         PhotosTabRobot
@@ -118,7 +111,6 @@ class SharedByMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun makeAvailableOffline() {
         val file = "newShare.txt"
         PhotosTabRobot
@@ -138,7 +130,6 @@ class SharedByMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun fileDetails() {
         PhotosTabRobot
             .navigateToSharedByMeTab()
@@ -183,7 +174,6 @@ class SharedByMeTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun stopSharing() {
         val file = "newShare.txt"
         PhotosTabRobot
@@ -213,7 +203,6 @@ class SharedByMeTest : AuthenticatedBaseTest() {
         this
             .verify {
                 robotDisplayed()
-                waitUntilLoaded() // TODO: remove once old "Shared" tab is removed
             }
             .clickSharedTab()
             .clickSharedByMeTab()

@@ -45,6 +45,7 @@ import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.ApplyCacheOption
 import me.proton.core.drive.upload.domain.usecase.UpdateRevision
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -73,6 +74,7 @@ class UpdateRevisionWorkerTest {
     private val uploadFileLink = mockk<UploadFileLink>()
     private val operation = mockk<Operation>()
     private val cleanupWorkers = mockk<CleanupWorkers>()
+    private val uploadMetricsNotifier = mockk<UploadMetricsNotifier>()
 
     @Before
     fun before() {
@@ -86,6 +88,7 @@ class UpdateRevisionWorkerTest {
         coEvery { uploadFileLink.uriString } returns "uriString"
         coEvery { uploadFileLink.shouldBroadcastErrorMessage } returns true
         coEvery { applyCacheOption(any()) } returns Result.success(Unit)
+        coEvery { uploadMetricsNotifier(any(), any(), any(), any()) } returns Unit
     }
 
     @Test
@@ -147,6 +150,7 @@ class UpdateRevisionWorkerTest {
                             NetworkTypeProviderType.BACKUP to networkTypeProvider,
                         ),
                         applyCacheOption = applyCacheOption,
+                        uploadMetricsNotifier = uploadMetricsNotifier,
                         configurationProvider = configurationProvider,
                         canRun = canRun,
                         run = run,

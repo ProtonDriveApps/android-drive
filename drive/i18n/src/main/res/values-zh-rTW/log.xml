@@ -18,17 +18,24 @@
   -->
 <resources>
   <string name="log_title">日誌</string>
-  <string name="log_export_successfully_completed">Log file saved.</string>
-  <string name="log_level">Level</string>
+  <string name="log_export_successfully_completed">已儲存紀錄檔。</string>
+  <string name="log_level">等級</string>
   <string name="log_category">類別</string>
-  <string name="content_description_save_log_file">Save log file</string>
-  <string name="content_description_more_log_options">More log options</string>
-  <string name="log_level_normal">Regular</string>
+  <string name="content_description_save_log_file">儲存紀錄檔</string>
+  <string name="content_description_more_log_options">更多紀錄檔選項</string>
+  <string name="log_level_normal">一般</string>
   <string name="log_level_warning">注意</string>
   <string name="log_level_error">錯誤</string>
   <string name="log_origin_upload">上傳</string>
   <string name="log_origin_download">下載</string>
   <string name="log_origin_network">API</string>
-  <string name="log_origin_throwable">Exception</string>
-  <string name="log_origin_logger">Logger</string>
+  <string name="log_origin_throwable">例外</string>
+  <string name="log_origin_logger">記錄程式</string>
+  <string name="log_origin_screen">Screen</string>
+  <string name="log_origin_application_state">Application State</string>
+  <string name="log_origin_workers">Workers</string>
+  <string name="log_origin_backup">Backup</string>
+  <string name="log_origin_user">User</string>
+  <string name="log_origin_device">Device</string>
+  <string name="log_origin_crypto">Crypto</string>
 </resources>

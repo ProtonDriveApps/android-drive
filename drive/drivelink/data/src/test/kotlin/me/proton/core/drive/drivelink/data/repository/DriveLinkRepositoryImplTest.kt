@@ -77,4 +77,21 @@ class DriveLinkRepositoryImplTest {
         val count = repository.getDriveLinksCount(folderId).first()
         assertEquals(1, count)
     }
+
+    @Test
+    fun `Given folder with a 10 large files with 10 blocks when get drive links then should 10`() = runTest {
+        val folderId = database.myFiles {
+            for(fileIndex in 1..10) {
+                file("file_$fileIndex") {
+                    download {
+                        for(blockIndex in 1..10) {
+                            block(blockIndex.toLong())
+                        }
+                    }
+                }
+            }
+        }
+        val driveLinks = repository.getDriveLinks(folderId, 0, 50).first()
+        assertEquals(10, driveLinks.size)
+    }
 }

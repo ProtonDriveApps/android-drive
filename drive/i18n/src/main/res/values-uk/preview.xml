@@ -18,13 +18,13 @@
   -->
 <resources>
   <string name="content_description_file_preview">Попередній перегляд вмісту файлу</string>
-  <string name="content_description_more_options">Показати більше опцій для файлу</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">Завантаження…</string>
   <string name="preview_processing_state">Обробка…</string>
   <string name="preview_empty">Нічого не має для перегляду…</string>
   <string name="title_not_found">Не знайдено</string>
-  <string name="proton_docs_insert_image_header_title">Insert image</string>
-  <string name="proton_docs_option_select_file">Select a file</string>
-  <string name="proton_docs_unsupported_file_type">Only inserting images is supported for now</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_insert_image_header_title">Вставити зображення</string>
+  <string name="proton_docs_option_select_file">Вибрати файл</string>
+  <string name="proton_docs_unsupported_file_type">Підтримується тільки вставка зображень</string>
+  <string name="proton_docs_load_error">Не вдалося завантажити документ</string>
 </resources>

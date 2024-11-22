@@ -22,8 +22,8 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.SELECTION_PREFIX
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity.Companion.SELECTION_PREFIX
 import me.proton.core.drive.link.selection.data.db.dao.LinkSelectionDao
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
@@ -40,5 +40,5 @@ interface DriveLinkSelectionDao : DriveLinkDao {
         WHERE ${SELECTION_PREFIX}_${Column.SELECTION_ID} = :selectionId AND ${LinkTrashDao.NOT_TRASHED_CONDITION}
         """
     )
-    fun getSelectedLinks(selectionId: SelectionId): Flow<List<DriveLinkEntityWithBlock>>
+    fun getSelectedLinks(selectionId: SelectionId): Flow<List<DriveLinkEntity>>
 }

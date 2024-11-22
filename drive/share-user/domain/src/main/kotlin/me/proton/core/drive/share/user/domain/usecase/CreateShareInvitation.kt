@@ -33,7 +33,6 @@ import me.proton.core.drive.share.crypto.domain.entity.ShareInvitationRequest
 import me.proton.core.drive.share.crypto.domain.usecase.CreateShareInvitationRequest
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
-import me.proton.core.drive.share.user.domain.entity.ShareUserInvitation
 import me.proton.core.drive.share.user.domain.repository.ShareExternalInvitationRepository
 import me.proton.core.drive.share.user.domain.repository.ShareInvitationRepository
 import javax.inject.Inject

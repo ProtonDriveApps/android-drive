@@ -23,6 +23,7 @@ import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -86,7 +87,8 @@ fun ProtonDocsInsertImageOptions(
     ProtonDocsInsertImageOptions(
         entries = entries,
         modifier = modifier
-            .navigationBarsPadding(),
+            .navigationBarsPadding()
+            .imePadding(),
     )
 }
 

@@ -23,15 +23,21 @@ import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.handler.EventHandler
 import me.proton.core.drive.log.domain.entity.Log
 import me.proton.core.drive.log.domain.extension.toLog
-import me.proton.core.drive.log.domain.usecase.InsertLog
+import me.proton.core.drive.log.domain.usecase.InsertLogs
 import javax.inject.Inject
 
 class LogEventHandler @Inject constructor(
-    private val insertLog: InsertLog,
+    private val insertLogs: InsertLogs,
 ) : EventHandler {
+    override suspend fun onEvents(userId: UserId, events: List<Event>) {
+        events.mapNotNull { event -> event.log(userId) }.takeIf { it.isNotEmpty() }?.let { logs ->
+            insertLogs(logs)
+        }
+    }
+
     override suspend fun onEvent(userId: UserId, event: Event) {
         event.log(userId)?.let { log ->
-            insertLog(log)
+            insertLogs(listOf(log))
         }
     }
 
@@ -41,6 +47,18 @@ class LogEventHandler @Inject constructor(
         is Event.Throwable -> toLog(userId)
         is Event.Network -> toLog(userId)
         is Event.Logger -> toLog(userId)
-        else -> null
+        is Event.Screen -> toLog(userId)
+        is Event.ApplicationState -> toLog(userId)
+        is Event.Workers -> toLog(userId)
+        is Event.Backup -> toLog(userId)
+        is Event.BackupCompleted -> toLog(userId)
+        is Event.BackupDisabled -> toLog(userId)
+        is Event.BackupEnabled -> toLog(userId)
+        is Event.BackupStarted -> toLog(userId)
+        is Event.BackupStopped -> toLog(userId)
+        is Event.StorageFull -> toLog(userId)
+        is Event.ForcedSignOut -> toLog(userId)
+        is Event.NoSpaceLeftOnDevice -> toLog(userId)
+        is Event.SignatureVerificationFailed -> toLog(userId)
     }
 }

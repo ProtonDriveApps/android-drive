@@ -93,9 +93,7 @@ fun KeyGenParameterSpec.Builder.defaultKeyGenParameterSpecBuilder(
             KeyProperties.AUTH_BIOMETRIC_STRONG or KeyProperties.AUTH_DEVICE_CREDENTIAL,
         )
     }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        setInvalidatedByBiometricEnrollment(invalidateKeyByBiometricEnrollment)
-    }
+    setInvalidatedByBiometricEnrollment(invalidateKeyByBiometricEnrollment)
     return this
 }
 

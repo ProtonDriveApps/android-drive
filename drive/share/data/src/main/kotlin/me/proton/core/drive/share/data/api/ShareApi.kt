@@ -39,7 +39,7 @@ interface ShareApi : BaseRetrofitApi {
         @Query("ShareType") shareType: Long,
     ): GetSharesResponse
 
-    @GET("drive/shares/@{enc_shareID}")
+    @GET("drive/shares/{enc_shareID}")
     suspend fun getShareBootstrap(@Path("enc_shareID") shareId: String): GetShareBootstrapResponse
 
     @POST("drive/volumes/{enc_volumeID}/shares")
@@ -48,7 +48,7 @@ interface ShareApi : BaseRetrofitApi {
         @Body request: CreateShareRequest
     ): CreateShareResponse
 
-    @DELETE("drive/shares/@{enc_shareID}")
+    @DELETE("drive/shares/{enc_shareID}")
     suspend fun deleteShare(
         @Path("enc_shareID") shareId: String,
         @Query("Force") force: Long,

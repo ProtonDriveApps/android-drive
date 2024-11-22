@@ -26,6 +26,9 @@ android {
 driveModule(
     hilt = true,
     compose = true,
+    i18n = true,
 ) {
+    api(project(":drive:base:presentation"))
+    api(project(":drive:notification:domain"))
     api(libs.accompanist.permissions)
 }

@@ -17,7 +17,28 @@
  */
 package me.proton.core.drive.upload.data.extension
 
+import androidx.work.ListenableWorker.Result
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.upload.data.exception.UploadCleanupException
 
 fun UploadFileLink.logTag() = with(LogTag.UploadTag) { id.logTag() }
+
+@ExperimentalCoroutinesApi
+fun UploadFileLink.retryOrAbort(
+    retryable: Boolean,
+    canRetry: Boolean,
+    error: Throwable,
+    message: String,
+): Result {
+    return if (retryable && canRetry) {
+        error.log(logTag(), "$message, will retry", WARNING)
+        Result.retry()
+    } else {
+        error.log(logTag(), "$message retryable $retryable, max retries reached ${!canRetry}")
+        throw UploadCleanupException(error, name)
+    }
+}

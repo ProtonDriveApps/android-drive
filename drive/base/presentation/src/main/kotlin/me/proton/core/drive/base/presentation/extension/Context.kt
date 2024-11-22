@@ -20,18 +20,12 @@ package me.proton.core.drive.base.presentation.extension
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import androidx.annotation.PluralsRes
 import java.util.Locale
 
-@Suppress("DEPRECATION")
 val Context.currentLocale: Locale
-    get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        resources.configuration.locales[0]
-    } else {
-        resources.configuration.locale
-    }
+    get() = resources.configuration.locales[0]
 
 fun Context.quantityString(@PluralsRes pluralRes: Int, quantity: Int): String =
     resources.getQuantityString(

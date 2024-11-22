@@ -19,15 +19,12 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.extension.tomorrow
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.ManageAccessRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import org.junit.Test
 
 @HiltAndroidTest
@@ -35,7 +32,6 @@ class ChangeExpirationDateManageAccessTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun setExpirationDate() {
         val fileName = "image.jpg"
         PhotosTabRobot
@@ -67,7 +63,6 @@ class ChangeExpirationDateManageAccessTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun changeExpirationDateOfExpiredLink() {
         val fileName = "expiredSharedFile.jpg"
         PhotosTabRobot

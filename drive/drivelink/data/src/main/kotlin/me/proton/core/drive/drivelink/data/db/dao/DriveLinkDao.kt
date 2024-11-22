@@ -18,19 +18,18 @@
 
 package me.proton.core.drive.drivelink.data.db.dao
 
-import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.BASE_PREFIX
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.DOWNLOAD_PREFIX
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.OFFLINE_PREFIX
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.SHARE_MEMBER_PREFIX
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock.Companion.TRASH_PREFIX
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity.Companion.BASE_PREFIX
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity.Companion.DOWNLOAD_PREFIX
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity.Companion.OFFLINE_PREFIX
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity.Companion.SHARE_MEMBER_PREFIX
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity.Companion.TRASH_PREFIX
 import me.proton.core.drive.link.data.db.LinkDao
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDao
 import me.proton.core.drive.linkoffline.data.db.LinkOfflineDao
@@ -47,7 +46,7 @@ interface DriveLinkDao : LinkDao {
             LinkEntity.share_id = :shareId AND
             LinkEntity.id = :linkId
     """)
-    fun getLink(userId: UserId, shareId: String, linkId: String?): Flow<List<DriveLinkEntityWithBlock>>
+    fun getLink(userId: UserId, shareId: String, linkId: String?): Flow<List<DriveLinkEntity>>
 
     @Transaction
     @Query("""
@@ -65,7 +64,7 @@ interface DriveLinkDao : LinkDao {
         parentId: String?,
         limit: Int,
         offset: Int,
-    ): Flow<List<DriveLinkEntityWithBlock>>
+    ): Flow<List<DriveLinkEntity>>
 
     @Transaction
     @Query("""
@@ -84,7 +83,7 @@ interface DriveLinkDao : LinkDao {
             LinkEntity.user_id = :userId AND
             LinkEntity.id in (:ids)
     """)
-    fun getLinks(userId: UserId, ids: List<String>): Flow<List<DriveLinkEntityWithBlock>>
+    fun getLinks(userId: UserId, ids: List<String>): Flow<List<DriveLinkEntity>>
 
     companion object {
 
@@ -118,9 +117,6 @@ interface DriveLinkDao : LinkDao {
             LinkDownloadStateEntity.${Column.STATE} AS ${DOWNLOAD_PREFIX}_${Column.STATE},
             LinkDownloadStateEntity.${Column.MANIFEST_SIGNATURE} AS ${DOWNLOAD_PREFIX}_${Column.MANIFEST_SIGNATURE},
             LinkDownloadStateEntity.${Column.SIGNATURE_ADDRESS} AS ${DOWNLOAD_PREFIX}_${Column.SIGNATURE_ADDRESS},
-            DownloadBlockEntity.`${Column.INDEX}` AS ${DOWNLOAD_PREFIX}_${Column.INDEX},
-            DownloadBlockEntity.${Column.URI} AS ${DOWNLOAD_PREFIX}_${Column.URI},
-            DownloadBlockEntity.${Column.ENCRYPTED_SIGNATURE} AS ${DOWNLOAD_PREFIX}_${Column.ENCRYPTED_SIGNATURE},
             LinkTrashStateEntity.${Column.STATE} AS ${TRASH_PREFIX}_${Column.STATE},
             $DRIVE_LINK_SHARE_INVITATION_COUNT,
             $DRIVE_LINK_SHARE_MEMBER_COUNT,

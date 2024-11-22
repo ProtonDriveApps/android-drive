@@ -29,6 +29,7 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
@@ -48,8 +49,17 @@ class MigrateKeyPacketWorker @AssistedInject constructor(
         CoreLogger.d(LogTag.SHARING, "MigrateKeyPacketWorker: Starting migration")
         return migrateKeyPacket(userId).fold(
             onFailure = { error ->
-                error.log(LogTag.SHARING, "Cannot migrate key packet")
-                if (error.isRetryable) Result.retry() else Result.failure()
+                if (error.isRetryable) {
+                    error.log(
+                        tag = LogTag.SHARING,
+                        message = "Cannot migrate key packet, will retry",
+                        level = WARNING
+                    )
+                    Result.retry()
+                } else {
+                    error.log(LogTag.SHARING, "Cannot migrate key packet")
+                    Result.failure()
+                }
             },
             onSuccess = {
                 Result.success()

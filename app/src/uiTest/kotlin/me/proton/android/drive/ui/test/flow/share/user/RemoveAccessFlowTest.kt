@@ -19,15 +19,10 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.annotation.FeatureFlag
-import me.proton.android.drive.ui.annotation.FeatureFlags
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_EXTERNAL_INVITATIONS
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import me.proton.core.util.kotlin.random
 import org.junit.Test
 
@@ -36,7 +31,6 @@ class RemoveAccessFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, withSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun removeInvitation() {
         val file = "newShare.txt"
         PhotosTabRobot
@@ -58,12 +52,6 @@ class RemoveAccessFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlags(
-        [
-            FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED),
-            FeatureFlag(DRIVE_SHARING_EXTERNAL_INVITATIONS, ENABLED),
-        ]
-    )
     fun removeExternalInvitation() {
         val file = "image.jpg"
         val email = "external_${String.random()}@mail.com"
@@ -96,7 +84,6 @@ class RemoveAccessFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, withSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun removeMember() {
         val folder = "legacyShare"
         PhotosTabRobot

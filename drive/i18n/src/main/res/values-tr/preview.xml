@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Dosya içeriği ön izlemesi</string>
-  <string name="content_description_more_options">Bir dosya için diğer seçenekleri görüntüle</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">İndiriliyor…</string>
   <string name="preview_processing_state">İşleniyor…</string>
   <string name="preview_empty">Ön izlenebilecek bir şey yok…</string>
@@ -26,5 +26,5 @@
   <string name="proton_docs_insert_image_header_title">Görsel ekle</string>
   <string name="proton_docs_option_select_file">Bir dosya seçin</string>
   <string name="proton_docs_unsupported_file_type">Şu anda yalnızca görsellerin eklenmesi destekleniyor</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_load_error">Belge yüklenemedi</string>
 </resources>

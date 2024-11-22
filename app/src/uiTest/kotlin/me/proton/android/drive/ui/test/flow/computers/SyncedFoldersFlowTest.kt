@@ -26,7 +26,6 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.intent.rule.IntentsRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.ComputersTabRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.ShareRobot
@@ -34,9 +33,6 @@ import me.proton.android.drive.ui.rules.ExternalFilesRule
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.base.domain.extension.bytes
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
 import me.proton.core.test.quark.data.User
 import me.proton.core.test.quark.v2.command.userCreate
@@ -178,20 +174,21 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(value = 2, isDevice = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, NOT_FOUND)
     fun shareFile() {
         val file = "picWithThumbnail.jpg"
         FilesTabRobot
             .navigateToComputerSyncedFolder(MY_DEVICE_1, MY_DEVICE_1_SYNC_FOLDER)
             .clickMoreOnItem(file)
-            .clickGetLink()
-            .verifyShareLinkFile(file)
+            .clickManageAccess()
+            .clickAllowToAnyone()
+            .verify { assertLinkIsShareWithAnyonePublic() }
 
         ShareRobot
             .clickBack(ComputersTabRobot)
 
         FilesTabRobot
             .clickSharedTab()
+            .clickSharedByMeTab()
             .scrollToItemWithName(file)
             .verify {
                 itemIsDisplayed(file)
@@ -200,7 +197,6 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(value = 2, isDevice = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun shareFileWithInternalUser() {
         val email = requireNotNull(quarkRule.quarkCommands.userCreate(User()).email)
         val file = "picWithThumbnail.jpg"

@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="title_file_type">Typ pliku</string>
-  <string name="title_last_modified">Ostatnia modyfikacja</string>
+  <string name="title_last_modified">Zmodyfikowano</string>
   <string name="title_size">Rozmiar</string>
   <string name="title_sort_by">Sortuj</string>
 </resources>

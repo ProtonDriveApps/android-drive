@@ -19,10 +19,10 @@
 object Config {
     const val applicationId = "me.proton.android.drive"
     const val compileSdk = 34
-    const val minSdk = 23
+    const val minSdk = 26
     const val targetSdk = 34
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    const val versionName = "2.9.0"
+    const val versionName = "2.11.0"
     const val archivesBaseName = "ProtonDrive-$versionName"
     val supportedResourceConfigurations = listOf(
         "b+es+419",

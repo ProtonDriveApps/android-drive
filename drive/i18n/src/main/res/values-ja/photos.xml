@@ -76,7 +76,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">モバイル通信を使用</string>
   <string name="photos_error_local_storage">デバイスストレージがいっぱいです</string>
   <string name="photos_error_local_storage_description">バックアップを続行するには、デバイスのストレージを解放する必要があります。</string>
-  <string name="photos_error_background_restrictions">アプリのバックグラウンド動作のためにバッテリーを「無制限」に設定します</string>
+  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">一貫したバックグラウンド バックアップを行うには、バッテリー設定を調整するか、アプリを頻繁に開きます。</string>
   <string name="photos_error_background_restrictions_action">設定</string>
   <string name="photos_empty_title">バックアップはまだない</string>

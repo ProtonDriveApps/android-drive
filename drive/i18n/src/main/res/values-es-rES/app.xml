@@ -41,7 +41,7 @@
   <string name="common_error_no_browser_available">No hemos podido abrir el enlace porque no pareces tener un navegador instalado.</string>
   <string name="move_to">Mover a</string>
   <string name="move_file_confirm_action">Mover</string>
-  <string name="move_file_error_cannot_move_folder_into_itself">No puedes mover una carpeta dentro de sí misma.</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">No se puede mover una carpeta dentro de sí misma.</string>
   <string name="folder_option_import_file">Cargar un archivo</string>
   <string name="folder_option_create_folder">Crear una carpeta</string>
   <string name="folder_option_take_a_photo">Tomar una nueva foto</string>
@@ -138,7 +138,7 @@
   <string name="notification_content_text_backup_failed_drive_storage">El almacenamiento de Proton está lleno.</string>
   <string name="notification_content_text_backup_failed_local_storage">El almacenamiento local está lleno.</string>
   <string name="notification_content_text_backup_failed_permission">Faltan los permisos.</string>
-  <string name="notification_content_text_backup_failed_connectivity">No hay conexión a Internet.</string>
+  <string name="notification_content_text_backup_failed_connectivity">No hay conexión a internet.</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Esperando una conexión Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">La copia de seguridad no está permitida.</string>
   <string name="notification_content_text_backup_paused_disabled">Se ha desactivado la copia de seguridad.</string>
@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Canal de notificaciones para almacenamiento en la nube, de carga y descarga</string>
   <string name="notification_channel_warning_title">Advertencia</string>
   <string name="notification_channel_warning_description">Canal para advertencias que requieren una acción del usuario</string>
+  <string name="notification_permission_rationale_title_backup">Manténgase actualizado sobre el estado de su copia de seguridad</string>
+  <string name="notification_permission_rationale_description_backup">Recibe notificaciones sobre el progreso y estado de tus copias de seguridad.</string>
+  <string name="notification_permission_rationale_action_accept">Activar las notificaciones</string>
+  <string name="notification_permission_rationale_action_reject">Ahora no</string>
   <!-- endregion -->
   <string name="content_description_select_all">Seleccionar todos los elementos en la lista</string>
   <string name="content_description_selected_options">Mostrar más opciones para los archivos o carpetas seleccionados</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">El enlace a tu archivo ha sido eliminado.</string>
   <string name="description_files_stop_sharing_action_error">Se ha producido un error al eliminar el enlace a tu archivo.</string>
   <string name="description_files_stop_all_sharing">Esto eliminará el enlace y borrará el acceso para todos.</string>
-  <string name="description_files_stop_all_sharing_action_success">El acceso compartido al archivo fue eliminado.</string>
+  <string name="description_files_stop_all_sharing_action_success">Se ha eliminado el acceso compartido al archivo.</string>
   <string name="description_files_stop_all_sharing_action_error">Se ha producido un error al eliminar el acceso compartido al archivo.</string>
   <string name="ignore_file_signature_action">Ver de todos modos</string>
   <string name="action_empty_files_add_files">Cargar</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">La compartición está bloqueada.</string>
   <string name="error_main_share_not_found">No se ha encontrado la carpeta principal.</string>
   <string name="error_share_not_found">No se ha encontrado el recurso compartido</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">La copia de seguridad de fotos está temporalmente desactivada.</string>
   <string name="error_creating_share_not_allowed">La creación de recursos compartidos está temporalmente desactivada.</string>
   <string name="operation_open_document">abrir un documento</string>
   <string name="operation_create_document">crear un documento</string>

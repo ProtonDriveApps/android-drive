@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Canale per le notifiche di archiviazione cloud, caricamento e scaricamento</string>
   <string name="notification_channel_warning_title">Avviso</string>
   <string name="notification_channel_warning_description">Canale per avvisi che richiedono l\'azione dell\'utente</string>
+  <string name="notification_permission_rationale_title_backup">Rimani aggiornato sullo stato del tuo backup</string>
+  <string name="notification_permission_rationale_description_backup">Ricevi notifiche sull\'avanzamento e sullo stato dei tuoi backup.</string>
+  <string name="notification_permission_rationale_action_accept">Abilita le notifiche</string>
+  <string name="notification_permission_rationale_action_reject">Non adesso</string>
   <!-- endregion -->
   <string name="content_description_select_all">Seleziona tutti gli elementi nella lista</string>
   <string name="content_description_selected_options">Mostra più opzioni per i file e/o le cartelle selezionati</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">Il link al tuo file è stato eliminato.</string>
   <string name="description_files_stop_sharing_action_error">C\'è stato un errore durante l\'eliminazione del link al tuo file.</string>
   <string name="description_files_stop_all_sharing">Questa azione eliminerà il collegamento e rimuoverà l\'accesso per tutti.</string>
-  <string name="description_files_stop_all_sharing_action_success">La condivisione al tuo file è stata eliminata.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Si è verificato un errore durante l\'eliminazione della condivisione al tuo file.</string>
   <string name="ignore_file_signature_action">Visualizza comunque</string>
   <string name="action_empty_files_add_files">Carica</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">La condivisione è bloccata.</string>
   <string name="error_main_share_not_found">La cartella principale non è stata trovata.</string>
   <string name="error_share_not_found">La condivisione non è stata trovata.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Il backup delle foto è temporaneamente disabilitato.</string>
   <string name="error_creating_share_not_allowed">La creazione della condivisione è temporaneamente disabilitata.</string>
   <string name="operation_open_document">apri un documento</string>
   <string name="operation_create_document">creare un documento</string>

@@ -31,4 +31,11 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">გამონაკლისი</string>
   <string name="log_origin_logger">რეგისტრატორი</string>
+  <string name="log_origin_screen">ეკრანი</string>
+  <string name="log_origin_application_state">აპლიკაციის მდგომარეობა</string>
+  <string name="log_origin_workers">მუშები</string>
+  <string name="log_origin_backup">მარქაფი</string>
+  <string name="log_origin_user">მომხმარებელი</string>
+  <string name="log_origin_device">მოწყობილობა</string>
+  <string name="log_origin_crypto">Crypto</string>
 </resources>

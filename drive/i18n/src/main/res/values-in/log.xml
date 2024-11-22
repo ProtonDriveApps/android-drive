@@ -31,4 +31,11 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Pengecualian</string>
   <string name="log_origin_logger">Pembuat log</string>
+  <string name="log_origin_screen">Layar</string>
+  <string name="log_origin_application_state">Keadaan Aplikasi</string>
+  <string name="log_origin_workers">Pekerja</string>
+  <string name="log_origin_backup">Cadangan</string>
+  <string name="log_origin_user">Pengguna</string>
+  <string name="log_origin_device">Perangkat</string>
+  <string name="log_origin_crypto">Crypto</string>
 </resources>

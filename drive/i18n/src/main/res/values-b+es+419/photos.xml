@@ -77,7 +77,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Usar datos móviles</string>
   <string name="photos_error_local_storage">El almacenamiento del dispositivo está lleno</string>
   <string name="photos_error_local_storage_description">Para continuar con la copia de seguridad, necesita liberar espacio de almacenamiento en el dispositivo.</string>
-  <string name="photos_error_background_restrictions">Establezca la batería a \"Sin restricciones\" para la actividad de la aplicación en segundo plano</string>
+  <string name="photos_error_background_restrictions">Establezca el uso de la batería a «Sin restricciones» para la actividad de la aplicación en segundo plano.</string>
   <string name="photos_error_background_restrictions_description">Para realizar copias de seguridad en segundo plano consistentes, ajuste la configuración de la batería o abra la aplicación con frecuencia.</string>
   <string name="photos_error_background_restrictions_action">Ajustes</string>
   <string name="photos_empty_title">Todavía no hay copias de seguridad.</string>

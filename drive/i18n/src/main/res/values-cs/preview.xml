@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Náhled obsahu souboru</string>
-  <string name="content_description_more_options">Ukázat více možností pro soubor</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">Stahování…</string>
   <string name="preview_processing_state">Zpracovávání…</string>
   <string name="preview_empty">Nic k nahlédnutí…</string>
@@ -26,5 +26,5 @@
   <string name="proton_docs_insert_image_header_title">Vložit obrázek</string>
   <string name="proton_docs_option_select_file">Vybrat soubor</string>
   <string name="proton_docs_unsupported_file_type">Momentálně je dostupné pouze vkládání obrázků</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_load_error">Načtení dokumentu selhalo</string>
 </resources>

@@ -24,7 +24,7 @@ import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity
 import me.proton.core.drive.link.data.db.LinkDao
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDao
 import me.proton.core.drive.linkoffline.data.db.LinkOfflineDao
@@ -52,5 +52,5 @@ interface DriveLinkSharedDao : DriveLinkDao {
             ${LinkTrashDao.NOT_TRASHED_CONDITION}
             """
     )
-    fun getSharedLinks(userId: UserId, volumeId: String): Flow<List<DriveLinkEntityWithBlock>>
+    fun getSharedLinks(userId: UserId, volumeId: String): Flow<List<DriveLinkEntity>>
 }

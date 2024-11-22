@@ -20,10 +20,11 @@ package me.proton.android.drive.extension
 
 import android.content.Context
 import me.proton.android.drive.lock.domain.exception.LockException
+import me.proton.core.drive.base.data.entity.LoggerLevel
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.exception.DriveException
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.exception.ShareException
-import me.proton.core.util.kotlin.CoreLogger
 import me.proton.android.drive.lock.presentation.extension.getDefaultMessage as lockGetDefaultMessage
 import me.proton.core.drive.i18n.R as I18N
 
@@ -44,6 +45,10 @@ fun DriveException.getDefaultMessage(context: Context): String = when (val excep
     else -> error("Default message for exception is missing")
 }
 
-fun DriveException.log(tag: String, message: String = this.message.orEmpty()): DriveException = also {
-    CoreLogger.d(tag, this, message)
+fun DriveException.log(
+    tag: String,
+    message: String? = null,
+    level: LoggerLevel? = null,
+): DriveException = also {
+    level.log(tag, this, message)
 }

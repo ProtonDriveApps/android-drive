@@ -20,15 +20,12 @@ package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.FeatureFlag
-import me.proton.android.drive.ui.annotation.FeatureFlags
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_DISABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_EXTERNAL_INVITATIONS
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import me.proton.core.util.kotlin.random
 import org.junit.Test
 
@@ -37,7 +34,6 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, withSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun updateInvitationPermissionsToEditor() {
         val file = "newShare.txt"
         PhotosTabRobot
@@ -57,7 +53,6 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, withSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun updateInvitationPermissionsToViewer() {
         val folder = "newShare"
         PhotosTabRobot
@@ -77,12 +72,6 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlags(
-        [
-            FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED),
-            FeatureFlag(DRIVE_SHARING_EXTERNAL_INVITATIONS, ENABLED),
-        ]
-    )
     fun updateExternalInvitationPermissionsToEditor() {
         val file = "image.jpg"
         val email = "invitee@external.com"
@@ -115,12 +104,6 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(2)
-    @FeatureFlags(
-        [
-            FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED),
-            FeatureFlag(DRIVE_SHARING_EXTERNAL_INVITATIONS, ENABLED),
-        ]
-    )
     fun updateExternalInvitationPermissionsToViewer() {
         val file = "image.jpg"
         val email = "external_${String.random()}@mail.com"
@@ -151,7 +134,6 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, withSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun updateMemberPermissionsToEditor() {
         val folder = "legacyShare"
         PhotosTabRobot
@@ -171,7 +153,6 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, withSharingUser = true)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun updateMemberPermissionsToViewer() {
         val folder = "legacyShare"
         val file = "newShareInsideLegacy.txt"
@@ -193,12 +174,7 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(6, withSharingUser = true)
-    @FeatureFlags(
-        [
-            FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED),
-            FeatureFlag(DRIVE_SHARING_DISABLED, ENABLED),
-        ]
-    )
+    @FeatureFlag(DRIVE_SHARING_DISABLED, ENABLED)
     fun killSwitch() {
         val folder = "legacyShare"
         val file = "newShareInsideLegacy.txt"

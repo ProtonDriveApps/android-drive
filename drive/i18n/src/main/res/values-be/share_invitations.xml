@@ -96,6 +96,6 @@
     <item quantity="many">%1$d удзельнікаў</item>
     <item quantity="other">%1$d удзельнікаў</item>
   </plurals>
-  <string name="share_via_invitations_message_placeholder">Add a message</string>
-  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
+  <string name="share_via_invitations_message_placeholder">Дадаць паведамленне</string>
+  <string name="share_via_invitations_send_message_and_name_label">Уключаць паведамленне і назву файла ў запрашальны ліст</string>
 </resources>

@@ -42,13 +42,13 @@ import retrofit2.http.Streaming
 import retrofit2.http.Url
 
 interface FileApi : BaseRetrofitApi {
-    @POST("drive/shares/@{enc_shareID}/files")
+    @POST("drive/shares/{enc_shareID}/files")
     suspend fun createFile(
         @Path("enc_shareID") shareId: String,
         @Body request: CreateFileRequest
     ): CreateFileResponse
 
-    @GET("drive/shares/@{enc_shareID}/files/@{enc_linkID}/revisions/@{enc_revisionID}")
+    @GET("drive/shares/{enc_shareID}/files/{enc_linkID}/revisions/{enc_revisionID}")
     suspend fun getRevision(
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") linkId: String,
@@ -57,7 +57,7 @@ interface FileApi : BaseRetrofitApi {
         @Query("PageSize") pageSize: Int,
     ): GetRevisionResponse
 
-    @PUT("drive/shares/@{enc_shareID}/files/@{enc_linkID}/revisions/@{enc_revisionID}")
+    @PUT("drive/shares/{enc_shareID}/files/{enc_linkID}/revisions/{enc_revisionID}")
     suspend fun updateRevision(
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") linkId: String,

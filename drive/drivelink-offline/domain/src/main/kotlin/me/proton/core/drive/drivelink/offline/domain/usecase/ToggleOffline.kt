@@ -17,16 +17,20 @@
  */
 package me.proton.core.drive.drivelink.offline.domain.usecase
 
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.domain.usecase.CancelDownload
 import me.proton.core.drive.drivelink.download.domain.usecase.Download
+import me.proton.core.drive.linkoffline.domain.usecase.IsAnyAncestorMarkedAsOffline
 import me.proton.core.drive.linkoffline.domain.usecase.IsLinkOrAnyAncestorMarkedAsOffline
 import me.proton.core.drive.linkoffline.domain.usecase.ToggleOffline
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class ToggleOffline @Inject constructor(
     private val toggleOffline: ToggleOffline,
     private val isLinkOrAnyAncestorMarkedAsOffline: IsLinkOrAnyAncestorMarkedAsOffline,
+    private val isAnyAncestorMarkedAsOffline: IsAnyAncestorMarkedAsOffline,
     private val download: Download,
     private val cancelDownload: CancelDownload,
 ) {
@@ -36,7 +40,18 @@ class ToggleOffline @Inject constructor(
         if (isAvailableOffline) {
             download(driveLink, isRetryable)
         } else {
-            cancelDownload(driveLink)
+            val isAnyAncestorMarkedAsOffline = isAnyAncestorMarkedAsOffline(driveLink.id)
+                .onFailure { error ->
+                    CoreLogger.d(
+                        tag = LogTag.DEFAULT,
+                        e = error,
+                        message = "Failed getting isAnyAncestorMarkedAsOffline",
+                    )
+                }
+                .getOrDefault(false)
+            if (!isAnyAncestorMarkedAsOffline) {
+                cancelDownload(driveLink)
+            }
         }
     }
 }

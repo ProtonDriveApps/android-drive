@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Canal para armazenamento em nuvem, notificações de envio e dowload</string>
   <string name="notification_channel_warning_title">Alerta</string>
   <string name="notification_channel_warning_description">Canal para avisos que requerem a ação do usuário</string>
+  <string name="notification_permission_rationale_title_backup">Mantenha-se atualizado sobre o status do backup</string>
+  <string name="notification_permission_rationale_description_backup">Receba notificações sobre o andamento e o status de seus backups.</string>
+  <string name="notification_permission_rationale_action_accept">Ativar notificações</string>
+  <string name="notification_permission_rationale_action_reject">Agora não</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecionar todos os itens na lista</string>
   <string name="content_description_selected_options">Mostrar mais opções para a seleção de arquivos e/ou pastas</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">O link do seu arquivo foi excluído.</string>
   <string name="description_files_stop_sharing_action_error">Ocorreu um erro durante a exclusão do link do seu arquivo.</string>
   <string name="description_files_stop_all_sharing">Isso excluirá o link e removerá o acesso para todos.</string>
-  <string name="description_files_stop_all_sharing_action_success">O compartilhamento do seu arquivo foi excluído.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Ocorreu um erro durante a exclusão do compartilhamento do seu arquivo.</string>
   <string name="ignore_file_signature_action">Visualizar mesmo assim</string>
   <string name="action_empty_files_add_files">Enviar</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">O compartilhamento está bloqueado.</string>
   <string name="error_main_share_not_found">Compartilhamento principal não encontrado.</string>
   <string name="error_share_not_found">O compartilhamento não é encontrado.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">O backup de fotos está temporariamente desativado.</string>
   <string name="error_creating_share_not_allowed">A criação de compartilhamento está temporariamente desativada.</string>
   <string name="operation_open_document">abrir um documento</string>
   <string name="operation_create_document">criar um documento</string>

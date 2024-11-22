@@ -34,6 +34,7 @@ driveModule(
     api(project(":drive:upload:domain"))
 
     implementation(project(":drive:announce-event:domain"))
+    implementation(project(":drive:backup:domain"))
     implementation(project(":drive:feature-flag:domain"))
     implementation(project(":drive:folder:domain"))
     implementation(project(":drive:link:data"))

@@ -151,6 +151,10 @@
   <string name="notification_channel_transfer_description">클라우드 저장 공간, 업로드 및 다운로드 알림 채널</string>
   <string name="notification_channel_warning_title">경고</string>
   <string name="notification_channel_warning_description">사용자 조치가 필요한 경고 알림 유형</string>
+  <string name="notification_permission_rationale_title_backup">백업 상황 업데이트받기</string>
+  <string name="notification_permission_rationale_description_backup">백업에 대한 진행 상황 및 상태에 대한 알림을 수신받으세요.</string>
+  <string name="notification_permission_rationale_action_accept">알림 사용</string>
+  <string name="notification_permission_rationale_action_reject">나중에</string>
   <!-- endregion -->
   <string name="content_description_select_all">목록의 모든 항목 선택</string>
   <string name="content_description_selected_options">선택한 파일 또는 폴더에 대한 추가 옵션 표시</string>
@@ -168,7 +172,7 @@
   <string name="description_files_stop_sharing_action_success">파일의 링크가 삭제되었습니다.</string>
   <string name="description_files_stop_sharing_action_error">파일의 링크를 삭제하는데 오류가 발생했습니다.</string>
   <string name="description_files_stop_all_sharing">이것으로 링크를 삭제하고 모두의 접근 권한을 없애게 됩니다.</string>
-  <string name="description_files_stop_all_sharing_action_success">파일의 공유가 삭제되었습니다.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">파일의 공유를 삭제하던 중 오류가 발생했습니다.</string>
   <string name="ignore_file_signature_action">보기</string>
   <string name="action_empty_files_add_files">업로드</string>
@@ -178,7 +182,7 @@
   <string name="error_share_locked">공유가 잠겼습니다.</string>
   <string name="error_main_share_not_found">주 공유를 찾을 수 없습니다.</string>
   <string name="error_share_not_found">공유를 찾을 수 없습니다.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">사진 백업이 일시적으로 비활성화되었습니다.</string>
   <string name="error_creating_share_not_allowed">공유를 일시적으로 생성할 수 없습니다.</string>
   <string name="operation_open_document">문서 열기</string>
   <string name="operation_create_document">문서 생성</string>

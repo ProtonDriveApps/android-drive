@@ -37,6 +37,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Checkbox
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -306,7 +307,22 @@ private fun MessageTextField(
             placeholder = {
                 Text(placeHolderText)
             },
-            colors = TextFieldDefaults.protonOutlineTextFieldColors(),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                textColor = ProtonTheme.colors.textNorm,
+                backgroundColor = Color.Transparent,
+
+                focusedLabelColor = ProtonTheme.colors.textNorm,
+                focusedBorderColor = Color.Transparent,
+
+                unfocusedLabelColor = ProtonTheme.colors.textHint,
+                unfocusedBorderColor = Color.Transparent,
+
+                disabledLabelColor = ProtonTheme.colors.textDisabled,
+                disabledBorderColor = Color.Transparent,
+
+                errorLabelColor = ProtonTheme.colors.notificationError,
+                errorBorderColor = ProtonTheme.colors.notificationError,
+            ),
         )
     }
 }
@@ -364,7 +380,7 @@ fun SharedDriveInvitationsPreview(
     @PreviewParameter(ViewStateParameterProvider::class) viewState: SharedDriveInvitationsViewState,
 ) {
     ProtonTheme {
-        Surface {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             SharedDriveInvitations(
                 viewState = viewState,
                 viewEvent = object : SharedDriveInvitationsViewEvent {

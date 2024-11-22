@@ -98,7 +98,7 @@ inline fun <reified T> RequestContext.request(): T {
     return Json.decodeFromString(recordedRequest.body.readUtf8())
 }
 
-private val parameterRegex = """@?\{(.*)\}""".toRegex()
+private val parameterRegex = """\{(.*)\}""".toRegex()
 
 private fun RoutingConfiguration.route(
     method: String,

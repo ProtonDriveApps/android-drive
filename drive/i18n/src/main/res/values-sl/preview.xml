@@ -18,13 +18,13 @@
   -->
 <resources>
   <string name="content_description_file_preview">Predogled vsebine datoteke</string>
-  <string name="content_description_more_options">Pokaži več možnosti za datoteko</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">Prenašanje …</string>
   <string name="preview_processing_state">V obdelavi …</string>
   <string name="preview_empty">Ničesar za predogled …</string>
   <string name="title_not_found">Ni najdeno</string>
-  <string name="proton_docs_insert_image_header_title">Insert image</string>
-  <string name="proton_docs_option_select_file">Select a file</string>
+  <string name="proton_docs_insert_image_header_title">Vstavi sliko</string>
+  <string name="proton_docs_option_select_file">Izberite datoteko</string>
   <string name="proton_docs_unsupported_file_type">Only inserting images is supported for now</string>
   <string name="proton_docs_load_error">Loading document failed</string>
 </resources>

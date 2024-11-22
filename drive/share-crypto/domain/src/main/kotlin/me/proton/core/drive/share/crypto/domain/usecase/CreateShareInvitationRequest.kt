@@ -30,6 +30,7 @@ import me.proton.core.drive.cryptobase.domain.usecase.GetSessionKeyFromEncrypted
 import me.proton.core.drive.cryptobase.domain.usecase.GetUnarmored
 import me.proton.core.drive.cryptobase.domain.usecase.SignatureContexts
 import me.proton.core.drive.key.domain.extension.keyHolder
+import me.proton.core.drive.key.domain.extension.primaryPublicKey
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetPublicAddressInfo
 import me.proton.core.drive.share.crypto.domain.entity.ShareInvitationRequest
@@ -61,7 +62,8 @@ class CreateShareInvitationRequest @Inject constructor(
     ): Result<ShareInvitationRequest> = coRunCatching {
         val publicAddress = getPublicAddressInfo(
             userId = shareId.userId,
-            email = inviteeEmail
+            email = inviteeEmail,
+            unverified = true,
         ).getOrThrow()
         if (publicAddress != null) {
             createInternalRequest(
@@ -103,9 +105,10 @@ class CreateShareInvitationRequest @Inject constructor(
             decryptKey = addressKeys.keyHolder,
             message = share.passphrase
         ).getOrThrow()
-        val encryptedKeyPacket = publicAddressInfo.address.keys.first { publicAddressKey ->
-            publicAddressKey.publicKey.isPrimary
-        }.publicKey.encryptSessionKey(cryptoContext, sessionKey)
+        val encryptedKeyPacket = publicAddressInfo
+            .primaryPublicKey(unverified = true)
+            .publicKey
+            .encryptSessionKey(cryptoContext, sessionKey)
         val contentKeyPacketSignature = signData(
             signKey = addressKeys,
             input = encryptedKeyPacket,

@@ -19,6 +19,7 @@ package me.proton.core.drive.linkdownload.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
@@ -40,6 +41,7 @@ interface LinkDownloadRepository {
         linkId: LinkId,
         revisionId: String,
         downloadState: DownloadState,
+        blocks: List<Block>?,
     )
 
     /**
@@ -53,5 +55,13 @@ interface LinkDownloadRepository {
     /**
      * Tells if all non-excluded ([excludeMimeTypes]) links within a given [folderId] are downloaded
      */
-    suspend fun areAllFilesDownloaded(folderId: FolderId, excludeMimeTypes: Set<String> = emptySet()): Boolean
+    suspend fun areAllFilesDownloaded(
+        folderId: FolderId,
+        excludeMimeTypes: Set<String> = emptySet(),
+    ): Boolean
+
+    suspend fun getDownloadBlocks(
+        linkId: LinkId,
+        revisionId: String,
+    ): List<Block>
 }

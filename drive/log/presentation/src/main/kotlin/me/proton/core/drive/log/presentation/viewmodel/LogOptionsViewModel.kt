@@ -121,6 +121,13 @@ class LogOptionsViewModel @Inject constructor(
             Log.Origin.EVENT_THROWABLE -> I18N.string.log_origin_throwable
             Log.Origin.EVENT_UPLOAD -> I18N.string.log_origin_upload
             Log.Origin.EVENT_LOGGER -> I18N.string.log_origin_logger
+            Log.Origin.EVENT_SCREEN -> I18N.string.log_origin_screen
+            Log.Origin.EVENT_APPLICATION_STATE -> I18N.string.log_origin_application_state
+            Log.Origin.EVENT_WORKERS -> I18N.string.log_origin_workers
+            Log.Origin.EVENT_BACKUP -> I18N.string.log_origin_backup
+            Log.Origin.EVENT_USER -> I18N.string.log_origin_user
+            Log.Origin.EVENT_DEVICE -> I18N.string.log_origin_device
+            Log.Origin.EVENT_CRYPTO -> I18N.string.log_origin_crypto
         }
     )
 }

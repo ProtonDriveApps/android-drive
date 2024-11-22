@@ -21,6 +21,7 @@ package me.proton.drive.android.settings.domain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
@@ -47,4 +48,14 @@ interface UiSettingsRepository {
      * Update the [HomeTab] for a given [userId]
      */
     suspend fun updateHomeTab(userId: UserId, homeTab: HomeTab)
+
+    /**
+     * Retrieves setting if onboarding screen has been shown to the user
+     */
+    suspend fun hasShownOnboarding(): Boolean
+
+    /**
+     * Update timestamp when onboarding was shown
+     */
+    suspend fun updateOnboardingShown(timestamp: TimestampS)
 }

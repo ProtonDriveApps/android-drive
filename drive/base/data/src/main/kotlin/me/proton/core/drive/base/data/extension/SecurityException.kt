@@ -19,7 +19,7 @@
 package me.proton.core.drive.base.data.extension
 
 import android.content.Context
-import me.proton.core.util.kotlin.CoreLogger
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.i18n.R as I18N
 
 fun SecurityException.getDefaultMessage(context: Context): String = message?.let {
@@ -29,6 +29,10 @@ fun SecurityException.getDefaultMessage(context: Context): String = message?.let
     )
 } ?: context.getString(I18N.string.common_error_security)
 
-fun SecurityException.log(tag: String, message: String = this.message.orEmpty()): SecurityException = also {
-    CoreLogger.d(tag, this, message)
+fun SecurityException.log(
+    tag: String,
+    message: String? = null,
+    level: LoggerLevel? = LoggerLevel.DEBUG,
+): SecurityException = also {
+    level.log(tag, this, message)
 }

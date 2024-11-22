@@ -43,6 +43,7 @@ fun PhotosEmpty(
     state: ListContentState.Empty,
     viewState: PhotosStatusViewState,
     showPhotosStateBanner: Boolean,
+    modifier: Modifier = Modifier,
     onEnable: () -> Unit,
     onPermissions: () -> Unit,
     onRetry: () -> Unit,
@@ -53,7 +54,7 @@ fun PhotosEmpty(
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
 ) {
-    Column {
+    Column(modifier = modifier) {
         PhotosBanners {
             PhotosStatesContainer(
                 viewState = viewState,

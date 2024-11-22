@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Canal pour le stockage cloud, notifications d\'importation et de téléchargement.</string>
   <string name="notification_channel_warning_title">Avertissement</string>
   <string name="notification_channel_warning_description">Canal pour les alertes qui nécessitent une action de la part de l\'utilisateur.</string>
+  <string name="notification_permission_rationale_title_backup">Restez informé de l\'état de votre sauvegarde</string>
+  <string name="notification_permission_rationale_description_backup">Soyez notifié de l\'avancement et de l\'état de vos sauvegardes.</string>
+  <string name="notification_permission_rationale_action_accept">Activer les notifications</string>
+  <string name="notification_permission_rationale_action_reject">Plus tard</string>
   <!-- endregion -->
   <string name="content_description_select_all">Sélectionner tous les éléments de la liste</string>
   <string name="content_description_selected_options">Afficher plus d\'options pour les fichiers et/ou dossiers sélectionnés</string>

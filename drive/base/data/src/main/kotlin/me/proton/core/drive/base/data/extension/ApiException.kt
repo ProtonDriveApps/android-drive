@@ -18,9 +18,9 @@
 package me.proton.core.drive.base.data.extension
 
 import android.content.Context
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
-import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.drive.i18n.R as I18N
 
 fun ApiException.getDefaultMessage(context: Context): String = when (val cause = error) {
@@ -33,16 +33,19 @@ fun ApiException.getDefaultMessage(context: Context): String = when (val cause =
     }
 }
 
-fun ApiException.log(tag: String, message: String = this.message.orEmpty()): ApiException = also {
-    val logToSentry = when (val cause = error) {
-        is ApiResult.Error.Certificate -> true
+fun ApiException.log(
+    tag: String,
+    message: String? = null,
+    level: LoggerLevel? = null
+): ApiException = also {
+    val loggerLevel = level ?: when (val cause = error) {
+        is ApiResult.Error.Certificate -> LoggerLevel.ERROR
         is ApiResult.Error.Http -> when (cause.httpCode) {
-            502, 503 -> true
-            else -> false
+            502, 503 -> LoggerLevel.ERROR
+            else -> LoggerLevel.DEBUG
         }
-        is ApiResult.Error.Parse -> true
-        else -> false
+        is ApiResult.Error.Parse -> LoggerLevel.ERROR
+        else -> LoggerLevel.DEBUG
     }
-    val log: (String, Throwable, String) -> Unit = if (logToSentry) CoreLogger::e else CoreLogger::d
-    log(tag, this, message)
+    loggerLevel.log(tag, this, message)
 }

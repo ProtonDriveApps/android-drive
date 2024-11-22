@@ -40,7 +40,7 @@ import me.proton.core.drive.base.presentation.extension.launchWithNotFound
 import me.proton.core.drive.files.presentation.component.folder.ParentFolderOptions
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.notification.presentation.NotificationPermission
+import me.proton.core.drive.notification.presentation.component.NotificationPermission
 
 /**
  * This method is split into two because we want to decouple the retrieval of the view model from the content.
@@ -57,6 +57,7 @@ fun ParentFolderOptions(
     navigateToCreateFolder: (folderId: FolderId) -> Unit,
     navigateToStorageFull: () -> Unit,
     navigateToPreview: (FileId) -> Unit,
+    navigateToNotificationPermissionRationale: () -> Unit,
     modifier: Modifier = Modifier,
     dismiss: () -> Unit,
 ) = ParentFolderOptions(
@@ -65,6 +66,7 @@ fun ParentFolderOptions(
     navigateToCreateFolder = navigateToCreateFolder,
     navigateToStorageFull = navigateToStorageFull,
     navigateToPreview = navigateToPreview,
+    navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
     modifier = modifier
         .testTag(ParentFolderOptionsDialogTestTag.contextMenu),
     dismiss = dismiss,
@@ -77,6 +79,7 @@ fun ParentFolderOptions(
     navigateToCreateFolder: (folderId: FolderId) -> Unit,
     navigateToStorageFull: () -> Unit,
     navigateToPreview: (FileId) -> Unit,
+    navigateToNotificationPermissionRationale: () -> Unit,
     modifier: Modifier = Modifier,
     dismiss: () -> Unit,
 ) {
@@ -122,7 +125,10 @@ fun ParentFolderOptions(
         entries = parentFolderEntries,
         modifier = modifier.navigationBarsPadding(),
     )
-    NotificationPermission()
+    NotificationPermission(
+        shouldShowRationale = false,
+        navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
+    )
 }
 
 object ParentFolderOptionsDialogTestTag {

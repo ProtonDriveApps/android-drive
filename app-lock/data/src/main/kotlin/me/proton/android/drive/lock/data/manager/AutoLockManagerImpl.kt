@@ -18,7 +18,6 @@
 
 package me.proton.android.drive.lock.data.manager
 
-import android.os.Build
 import androidx.work.WorkManager
 import kotlinx.coroutines.flow.first
 import me.proton.android.drive.lock.data.worker.AppLockWorker
@@ -35,7 +34,7 @@ class AutoLockManagerImpl @Inject constructor(
 
     override suspend fun autoLock() {
         val lockAfter = getAutoLockDuration().first()
-        if (lockAfter.inWholeSeconds == 0L || Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (lockAfter.inWholeSeconds == 0L) {
             lockApp()
         } else {
             workManager.enqueue(

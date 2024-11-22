@@ -19,22 +19,18 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.ManageAccessRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.ShareRobot
 import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.AuthenticatedBaseTest
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_INVITATIONS
 import org.junit.Test
 
 @HiltAndroidTest
 class SetCustomPasswordManageAccessFlowTest : AuthenticatedBaseTest() {
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun deleteCustomPassword() {
         val file = FOLDER_SHARED_WITH_PASSWORD
         PhotosTabRobot
@@ -63,7 +59,6 @@ class SetCustomPasswordManageAccessFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun setCustomPassword() {
         val file = FILE_SHARED
         PhotosTabRobot
@@ -94,7 +89,6 @@ class SetCustomPasswordManageAccessFlowTest : AuthenticatedBaseTest() {
 
     @Test
     @Scenario(4)
-    @FeatureFlag(DRIVE_SHARING_INVITATIONS, ENABLED)
     fun discardPasswordChanges() {
         val file = FILE
         PhotosTabRobot
@@ -125,7 +119,6 @@ class SetCustomPasswordManageAccessFlowTest : AuthenticatedBaseTest() {
 
     companion object {
         private const val FILE_SHARED = "shared.jpg"
-        private const val FILE_SHARED_WITH_PASSWORD = "sharedWithPassword.jpg"
         private const val FOLDER_SHARED_WITH_PASSWORD = "sharedFolderWithPassword"
         private const val FILE = "image.jpg"
         private const val FILE_SHARE_PASSWORD = "1234"

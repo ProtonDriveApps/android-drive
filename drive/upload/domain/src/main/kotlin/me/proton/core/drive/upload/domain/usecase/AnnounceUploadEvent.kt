@@ -18,6 +18,7 @@
 
 package me.proton.core.drive.upload.domain.usecase
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.extension.toResult
@@ -29,6 +30,13 @@ class AnnounceUploadEvent @Inject constructor(
     private val announceEvent: AnnounceEvent,
     private val getUploadFileLink: GetUploadFileLink,
 ) {
+    suspend operator fun invoke(userId: UserId, uploadEvents: List<Event.Upload>) {
+        announceEvent(
+            userId = userId,
+            events = uploadEvents,
+        )
+    }
+
     suspend operator fun invoke(uploadFileLink: UploadFileLink, uploadEvent: Event.Upload) {
         announceEvent(
             userId = uploadFileLink.userId,

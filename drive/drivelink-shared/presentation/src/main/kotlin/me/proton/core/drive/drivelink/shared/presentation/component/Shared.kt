@@ -23,6 +23,8 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -82,8 +84,11 @@ fun Shared(
                 titleResInt = state.titleId,
                 descriptionResId = state.descriptionResId,
                 actionResId = null,
+                isRefreshEnabled = viewState.isRefreshEnabled,
+                isRefreshing = viewState.listContentState.isRefreshing,
                 modifier = modifier,
                 onAction = {},
+                onRefresh = viewEvent.onRefresh,
             )
         }
         .onLoading {
@@ -93,8 +98,11 @@ fun Shared(
             SharedError(
                 message = state.message,
                 actionResId = state.actionResId,
+                isRefreshEnabled = viewState.isRefreshEnabled,
+                isRefreshing = viewState.listContentState.isRefreshing,
                 modifier = modifier,
                 onAction = viewEvent.onErrorAction,
+                onRefresh = viewEvent.onRefresh,
             )
         }
         .onContent {
@@ -244,17 +252,28 @@ private fun SharedEmpty(
     @StringRes titleResInt: Int,
     @StringRes descriptionResId: Int?,
     @StringRes actionResId: Int?,
+    isRefreshEnabled: Boolean,
+    isRefreshing: Boolean,
     modifier: Modifier = Modifier,
     onAction: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
-    ListEmpty(
-        imageResId = imageResId,
-        titleResId = titleResInt,
-        descriptionResId = descriptionResId,
-        actionResId = actionResId,
-        modifier = modifier,
-        onAction = onAction,
-    )
+    ProtonPullToRefresh(
+        isPullToRefreshEnabled = isRefreshEnabled,
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+    ) {
+        ListEmpty(
+            imageResId = imageResId,
+            titleResId = titleResInt,
+            descriptionResId = descriptionResId,
+            actionResId = actionResId,
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            onAction = onAction,
+        )
+    }
 }
 
 @Composable
@@ -268,15 +287,26 @@ private fun SharedLoading(
 private fun SharedError(
     message: String,
     @StringRes actionResId: Int?,
+    isRefreshEnabled: Boolean,
+    isRefreshing: Boolean,
     modifier: Modifier = Modifier,
     onAction: () -> Unit,
+    onRefresh: () -> Unit,
 ) {
-    ListError(
-        message = message,
-        actionResId = actionResId,
-        modifier = modifier,
-        onAction = onAction,
-    )
+    ProtonPullToRefresh(
+        isPullToRefreshEnabled = isRefreshEnabled,
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+    ) {
+        ListError(
+            message = message,
+            actionResId = actionResId,
+            modifier = modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            onAction = onAction,
+        )
+    }
 }
 
 @Composable

@@ -29,6 +29,7 @@ driveModule(
 ) {
     api(project(":drive:announce-event:domain"))
     api(project(":drive:base:domain"))
+    api(project(":drive:feature-flag:domain"))
     api(libs.androidx.paging.common)
     api(libs.core.report.domain)
 }

@@ -25,17 +25,18 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.android.drive.photos.presentation.viewevent.BackupPermissionsViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsEffect
 import me.proton.android.drive.photos.presentation.viewstate.BackupPermissionsViewState
-import me.proton.core.drive.notification.presentation.NotificationPermission
+import me.proton.core.drive.backup.domain.entity.BackupPermissions
+import me.proton.core.drive.notification.presentation.component.NotificationPermission
 
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 fun BackupPermissions(
     viewState: BackupPermissionsViewState,
     viewEvent: BackupPermissionsViewEvent,
+    navigateToNotificationPermissionRationale: () -> Unit,
 ) {
     val permissionsState = rememberMultiplePermissionsState(
         permissions = viewState.permissions,
@@ -59,7 +60,10 @@ fun BackupPermissions(
             }
             .launchIn(this)
     }
-    if (permissionsState.allPermissionsGranted) {
-        NotificationPermission()
+    if (viewState.shouldRequestNotificationPermission && permissionsState.allPermissionsGranted) {
+        NotificationPermission(
+            shouldShowRationale = true,
+            navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale
+        )
     }
 }

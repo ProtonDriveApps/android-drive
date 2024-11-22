@@ -28,6 +28,7 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.repository.BaseRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.key.domain.extension.hasKeys
 import me.proton.core.drive.key.domain.repository.StalePublicAddressKeyRepository
 import me.proton.core.key.domain.entity.key.PublicAddressInfo
 import me.proton.core.key.domain.repository.PublicAddressRepository
@@ -47,6 +48,7 @@ class GetPublicAddressInfo @Inject constructor(
         userId: UserId,
         email: String,
         source: Source,
+        unverified: Boolean = false
     ) = coRunCatching {
         publicAddressRepository.getPublicAddressInfo(
             sessionUserId = userId,
@@ -55,7 +57,7 @@ class GetPublicAddressInfo @Inject constructor(
             source = source,
         )
     }.map { publicAddressInfo ->
-        publicAddressInfo.takeUnless { publicAddressInfo.address.keys.isEmpty() }
+        publicAddressInfo.takeIf { publicAddressInfo.hasKeys(unverified) }
     }.recoverCatching { error ->
         if (error.hasProtonErrorCode(KEY_GET_ADDRESS_MISSING)
             || error.hasProtonErrorCode(KEY_GET_DOMAIN_EXTERNAL)
@@ -66,15 +68,19 @@ class GetPublicAddressInfo @Inject constructor(
         }
     }
 
-    suspend operator fun invoke(userId: UserId, email: String): Result<PublicAddressInfo?> = coRunCatching {
+    suspend operator fun invoke(
+        userId: UserId,
+        email: String,
+        unverified: Boolean = false
+    ): Result<PublicAddressInfo?> = coRunCatching {
         val url = "$publicAddressInfoUrl?email=$email"
         if (hasStalePublicAddressKeys(userId, email).getOrThrow() && isAllowedToFetch(userId, url)) {
-            invoke(userId, email, Source.RemoteNoCache).getOrThrow().also {
+            invoke(userId, email, Source.RemoteNoCache, unverified).getOrThrow().also {
                 baseRepository.setLastFetch(userId, url, TimestampMs())
                 removeAllStalePublicAddressKeys(userId, email).getOrNull(LogTag.KEY)
             }
         } else {
-            invoke(userId, email, Source.LocalIfAvailable).getOrThrow()
+            invoke(userId, email, Source.LocalIfAvailable, unverified).getOrThrow()
         }
     }
 

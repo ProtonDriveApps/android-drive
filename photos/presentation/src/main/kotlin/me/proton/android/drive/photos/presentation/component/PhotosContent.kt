@@ -581,7 +581,7 @@ fun MediaItemPreview() {
         volumeId = VolumeId("VOLUME_ID"),
         isMarkedAsOffline = true,
         isAnyAncestorMarkedAsOffline = false,
-        downloadState = DownloadState.Downloaded(emptyList()),
+        downloadState = DownloadState.Downloaded(),
         trashState = null,
         cryptoName = CryptoProperty.Decrypted("Link name", VerificationStatus.Success),
         cryptoXAttr = CryptoProperty.Decrypted(

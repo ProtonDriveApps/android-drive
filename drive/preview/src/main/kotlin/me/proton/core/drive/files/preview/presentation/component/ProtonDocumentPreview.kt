@@ -30,6 +30,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
@@ -85,6 +87,7 @@ fun ProtonDocumentPreview(
     }
     val localWebView = remember(uriString) { mutableStateOf<WebView?>(null) }
     val webViewBundle = rememberSaveable(uriString) { mutableStateOf<Bundle?>(null) }
+    val focusManager = LocalFocusManager.current
     AndroidView(
         factory = { context ->
             localWebView.value ?: WebView(context).apply {
@@ -127,6 +130,7 @@ fun ProtonDocumentPreview(
                         fileChooserParams: FileChooserParams?,
                     ): Boolean {
                         CoreLogger.d(LogTag.WEBVIEW, "WebChromeClient onShowFileChooser")
+                        focusManager.clearFocus()
                         return onShowFileChooser(filePathCallback, fileChooserParams)
                     }
                 }
@@ -166,7 +170,8 @@ fun ProtonDocumentPreview(
         },
         modifier = modifier
             .fillMaxSize()
-            .navigationBarsPadding(),
+            .navigationBarsPadding()
+            .imePadding(),
     )
 }
 

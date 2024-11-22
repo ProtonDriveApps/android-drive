@@ -31,12 +31,18 @@ object SettingsRobot : NavigationBarRobot {
     private val photosBackup get() = node.withText(I18N.string.settings_photos_backup)
     private val account get() = node.withTag(SettingsTestTag.account)
     private val clearLocalCache get() = node.withText(I18N.string.settings_clear_local_cache_entry)
+    private val showLog get() = node.withText(I18N.string.settings_show_log)
+    private val appVersion get() = node.withTag(SettingsTestTag.appVersion)
     private val messageNotificationLocalCacheClearedSuccessfully get() = node
         .withText(I18N.string.in_app_notification_clear_local_cache_success)
 
     fun clickToClearLocalCache(): SettingsRobot = apply {
         settingsList.scrollTo(clearLocalCache)
         clearLocalCache.click()
+    }
+    fun clickToShowLog(): SettingsLogRobot {
+        settingsList.scrollTo(showLog)
+        return showLog.clickTo(SettingsLogRobot)
     }
 
     fun clickPhotosBackup() = photosBackup.clickTo(PhotosBackupRobot)
@@ -45,6 +51,11 @@ object SettingsRobot : NavigationBarRobot {
 
     fun localCacheClearedSuccessfullyWasShown() = messageNotificationLocalCacheClearedSuccessfully
         .await { assertIsDisplayed() }
+
+    fun assertUserLogIsNotDisplayed() {
+        settingsList.scrollTo(appVersion)
+        showLog.assertIsNotDisplayed()
+    }
 
     override fun robotDisplayed() {
         settingsScreen.await { assertIsDisplayed() }

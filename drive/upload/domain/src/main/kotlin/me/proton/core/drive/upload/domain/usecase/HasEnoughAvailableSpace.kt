@@ -21,6 +21,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.extension.effectiveMaxDriveSpace
 import me.proton.core.drive.base.domain.extension.effectiveUsedDriveSpace
+import me.proton.core.drive.linkupload.domain.entity.UploadFileDescription
 import me.proton.core.user.domain.repository.UserRepository
 import javax.inject.Inject
 import kotlin.math.abs
@@ -33,12 +34,32 @@ class HasEnoughAvailableSpace @Inject constructor(
         userId: UserId,
         uriStrings: List<String>,
         onNotEnough: (suspend (Bytes) -> Unit)? = null,
-    ): Boolean =
-        userRepository.getUser(userId).let { user ->
-            val uploadSize = uriStrings.sumOf { uriString -> getUploadFileSize(uriString).value }
-            val availableSpace = user.effectiveMaxDriveSpace.value - user.effectiveUsedDriveSpace.value - uploadSize
-            return (availableSpace >= 0).also { hasEnoughSpace ->
-                if (!hasEnoughSpace) onNotEnough?.invoke(Bytes(abs(availableSpace)))
-            }
+    ): Boolean {
+        val uploadSize = uriStrings.sumOf { uriString -> getUploadFileSize(uriString).value }
+        return hasEnoughDriveSpace(userId, uploadSize, onNotEnough)
+    }
+
+    @JvmName("hasEnoughAvailableSpaceWithDescription")
+    suspend operator fun invoke(
+        userId: UserId,
+        uploadFileDescriptions: List<UploadFileDescription>,
+        onNotEnough: (suspend (Bytes) -> Unit)? = null,
+    ): Boolean {
+        val uploadSize = uploadFileDescriptions.sumOf { uploadFileDescription ->
+            getUploadFileSize(uploadFileDescription).value
         }
+        return hasEnoughDriveSpace(userId, uploadSize, onNotEnough)
+    }
+
+    private suspend fun hasEnoughDriveSpace(
+        userId: UserId,
+        uploadSize: Long,
+        onNotEnough: (suspend (Bytes) -> Unit)?
+    ) = userRepository.getUser(userId).let { user ->
+        val availableSpace =
+            user.effectiveMaxDriveSpace.value - user.effectiveUsedDriveSpace.value - uploadSize
+        (availableSpace >= 0).also { hasEnoughSpace ->
+            if (!hasEnoughSpace) onNotEnough?.invoke(Bytes(abs(availableSpace)))
+        }
+    }
 }

@@ -106,6 +106,7 @@ import me.proton.core.drive.notification.data.db.NotificationDatabase
 import me.proton.core.drive.notification.data.db.entity.NotificationChannelEntity
 import me.proton.core.drive.notification.data.db.entity.NotificationEventEntity
 import me.proton.core.drive.notification.data.db.entity.TaglessNotificationEventEntity
+import me.proton.core.drive.observability.data.db.entity.CounterEntity
 import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
 import me.proton.core.drive.share.data.db.ShareDatabase
@@ -181,6 +182,7 @@ import me.proton.core.usersettings.data.entity.UserSettingsEntity
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import me.proton.drive.android.settings.data.db.entity.UiSettingsEntity
 import me.proton.core.drive.base.data.db.BaseDatabase as DriveBaseDatabase
+import me.proton.core.drive.observability.data.db.ObservabilityDatabase as DriveObservabilityDatabase
 import me.proton.core.notification.data.local.db.NotificationConverters as CoreNotificationConverters
 import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNotificationDatabase
 
@@ -296,6 +298,8 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         SharedRemoteKeyEntity::class,
         // Key
         StalePublicAddressKeyEntity::class,
+        // Observability
+        CounterEntity::class,
     ],
     version = DriveDatabase.VERSION,
     autoMigrations = [
@@ -390,10 +394,11 @@ abstract class DriveDatabase :
     LogDatabase,
     DeviceRecoveryDatabase,
     PublicAddressKeyDatabase,
-    AuthDatabase {
+    AuthDatabase,
+    DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 70
+        const val VERSION = 71
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -465,6 +470,7 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_67_68,
             DriveDatabaseMigrations.MIGRATION_68_69,
             DriveDatabaseMigrations.MIGRATION_69_70,
+            DriveDatabaseMigrations.MIGRATION_70_71,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

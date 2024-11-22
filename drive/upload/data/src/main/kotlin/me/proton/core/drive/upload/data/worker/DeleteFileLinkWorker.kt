@@ -29,6 +29,7 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
@@ -66,13 +67,13 @@ class DeleteFileLinkWorker @AssistedInject constructor(
     override suspend fun doLimitedRetryWork(): Result {
         deleteFolderChildren(folderId, listOf(uploadFileId))
             .onFailure { error ->
-                error.log(
-                    tag = logTag,
-                    message = """
-                        Deleting file link failed "${error.message}" retryable ${error.isRetryable}
-                    """.trimIndent(),
-                )
-                return if (error.isRetryable) Result.retry() else Result.failure()
+                return if (error.isRetryable) {
+                    error.log(logTag, "Cannot delete file link, will retry", WARNING)
+                    Result.retry()
+                } else {
+                    error.log(logTag, "Cannot delete file link")
+                    Result.failure()
+                }
             }
         return Result.success()
     }

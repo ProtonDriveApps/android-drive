@@ -19,6 +19,7 @@
 package me.proton.android.drive.extension
 
 import android.content.Context
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.domain.exception.DriveException
 import me.proton.core.drive.base.data.extension.getDefaultMessage as baseGetDefaultMessage
 import me.proton.core.drive.base.data.extension.log as baseLog
@@ -31,9 +32,9 @@ fun Throwable.getDefaultMessage(
     else -> baseGetDefaultMessage(context, useExceptionMessage)
 }
 
-fun Throwable.log(tag: String, message: String? = null): Throwable = this.also {
+fun Throwable.log(tag: String, message: String? = null, level: LoggerLevel? = null): Throwable = this.also {
     when (this) {
-        is DriveException -> message?.let { log(tag, message) } ?: log(tag)
-        else -> baseLog(tag, message)
+        is DriveException -> message?.let { log(tag, message, level) } ?: log(tag)
+        else -> baseLog(tag, message, level)
     }
 }

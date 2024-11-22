@@ -26,7 +26,7 @@ import okhttp3.mockwebserver.MockWebServer
 
 fun MockWebServer.foldersDeleteMultiple(block: RequestContext.() -> MockResponse) {
     routing {
-        post("/drive/shares/@{enc_shareID}/folders/@{enc_linkID}/delete_multiple") {
+        post("/drive/shares/{enc_shareID}/folders/{enc_linkID}/delete_multiple") {
             block()
         }
     }

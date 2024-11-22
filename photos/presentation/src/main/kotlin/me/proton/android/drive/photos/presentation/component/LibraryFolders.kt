@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -99,7 +100,10 @@ private fun LibraryFoldersList(
     onToggleBucket: (Int, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier) {
+    Column(
+        modifier
+            .height(1000.dp) // Needed because of nested scrolling
+    ) {
         ProtonSettingsHeader(title = content.title)
         Text(
             modifier = Modifier.padding(horizontal = ProtonDimens.DefaultSpacing),

@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Anteprima del contenuto del file</string>
-  <string name="content_description_more_options">Mostra più opzioni per un file</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">Scaricamento in corso</string>
   <string name="preview_processing_state">Elaborazione in corso</string>
   <string name="preview_empty">Nessuna anteprima</string>
@@ -26,5 +26,5 @@
   <string name="proton_docs_insert_image_header_title">Inserisci immagine</string>
   <string name="proton_docs_option_select_file">Seleziona un file</string>
   <string name="proton_docs_unsupported_file_type">Attualmente è supportato solo l\'inserimento di immagini</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_load_error">Caricamento del documento non riuscito</string>
 </resources>

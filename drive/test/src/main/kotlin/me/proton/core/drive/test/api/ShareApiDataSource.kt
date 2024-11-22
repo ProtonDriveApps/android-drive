@@ -52,7 +52,7 @@ fun MockWebServer.getShare(shares: List<ShareDto>) = routing {
 }
 
 fun MockWebServer.getShareBootstrap(addressId: String = "address-id") = routing {
-    get("/drive/shares/@{enc_shareID}") {
+    get("/drive/shares/{enc_shareID}") {
         jsonResponse {
             val shareId = requireNotNull(parameters["enc_shareID"])
             val shareType = findShareType(shareId)
@@ -114,7 +114,7 @@ fun MockWebServer.updateUnmigratedShares() = routing {
 
 fun MockWebServer.deleteShare(block: RequestContext.() -> MockResponse) = routing {
     routing {
-        delete("/drive/shares/@{enc_shareID}") {
+        delete("/drive/shares/{enc_shareID}") {
             block()
         }
     }

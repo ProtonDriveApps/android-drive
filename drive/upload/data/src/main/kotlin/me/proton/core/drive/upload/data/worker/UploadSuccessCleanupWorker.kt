@@ -45,6 +45,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
 import me.proton.core.drive.upload.domain.usecase.RemoveUploadFile
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -62,6 +63,7 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
     private val removeUploadFile: RemoveUploadFile,
     private val announceUploadEvent: AnnounceUploadEvent,
     configurationProvider: ConfigurationProvider,
+    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -73,6 +75,7 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
+    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -82,15 +85,6 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
         uploadFileLink: UploadFileLink,
     ): Result = with(uploadFileLink) {
         logWorkState("clean ${uploadFileLink.uriString}")
-        coRunCatching {
-            workManager.enqueueUniqueWork(
-                userId.uniqueUploadThrottleWorkName,
-                ExistingWorkPolicy.KEEP,
-                UploadThrottleWorker.getWorkRequest(userId)
-            ).await()
-        }.onFailure { error ->
-            error.log(uploadFileLink.logTag(), "Cannot enqueue UploadSuccessCleanupWorker")
-        }
         announceUploadEvent(
             uploadFileLink = uploadFileLink,
             uploadEvent = Event.Upload(
@@ -102,6 +96,15 @@ class UploadSuccessCleanupWorker @AssistedInject constructor(
         )
         removeUploadFile(uploadFileLink = this).onFailure { error ->
             error.log(uploadFileLink.logTag(), "Cannot remove upload file")
+        }
+        coRunCatching {
+            workManager.enqueueUniqueWork(
+                userId.uniqueUploadThrottleWorkName,
+                ExistingWorkPolicy.KEEP,
+                UploadThrottleWorker.getWorkRequest(userId)
+            ).await()
+        }.onFailure { error ->
+            error.log(uploadFileLink.logTag(), "Cannot enqueue UploadSuccessCleanupWorker")
         }
         Result.success()
     }

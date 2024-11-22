@@ -166,6 +166,10 @@
   <string name="notification_channel_transfer_description">Канал для уведомлений о загрузке и скачивании файлов в облачном хранилище</string>
   <string name="notification_channel_warning_title">Предупреждение</string>
   <string name="notification_channel_warning_description">Канал для предупреждений, требующих действий пользователя</string>
+  <string name="notification_permission_rationale_title_backup">Будьте в курсе состояния резервного копирования</string>
+  <string name="notification_permission_rationale_description_backup">Получайте уведомления о ходе и состоянии резервного копирования.</string>
+  <string name="notification_permission_rationale_action_accept">Включите уведомления</string>
+  <string name="notification_permission_rationale_action_reject">Не сейчас</string>
   <!-- endregion -->
   <string name="content_description_select_all">Выбрать все элементы в списке</string>
   <string name="content_description_selected_options">Показать дополнительные опции для выбранных файлов и/или папок</string>
@@ -183,7 +187,7 @@
   <string name="description_files_stop_sharing_action_success">Ссылка на ваш файл удалена.</string>
   <string name="description_files_stop_sharing_action_error">Произошла ошибка при удалении ссылки на ваш файл.</string>
   <string name="description_files_stop_all_sharing">Это удалит ссылку и удалит доступ для всех.</string>
-  <string name="description_files_stop_all_sharing_action_success">Поделиться вашего файла было удалено.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Произошла ошибка при удалении ссылки на ваш файл.</string>
   <string name="ignore_file_signature_action">Посмотреть в любом случае</string>
   <string name="action_empty_files_add_files">Загрузить</string>

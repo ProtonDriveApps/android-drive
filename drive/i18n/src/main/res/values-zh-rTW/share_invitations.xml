@@ -29,7 +29,7 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="other">%1$d persons added</item>
+    <item quantity="other">已新增 %1$d 個人</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -37,7 +37,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="other">%1$d persons cannot be invited</item>
+    <item quantity="other">無法邀請 %1$d 個人</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -45,7 +45,7 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="other">Sharing with %1$d persons</item>
+    <item quantity="other">與 %1$d 個人分享</item>
   </plurals>
   <string name="common_permission_owner">擁有者</string>
   <string name="common_permission_admin">系統管理員</string>
@@ -57,25 +57,25 @@
         Examples:
             "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_external_invitation_pending">%1$s (Pending)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s（擱置中）</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Accepted)"
     -->
-  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <string name="share_via_invitations_external_invitation_accepted">%1$s（已接受）</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Unknown)"
     -->
-  <string name="share_via_invitations_external_invitation_unknown">%1$s (Unknown)</string>
-  <string name="share_via_invitations_add_people_hint">Add people</string>
+  <string name="share_via_invitations_external_invitation_unknown">%1$s（未知）</string>
+  <string name="share_via_invitations_add_people_hint">新增人員</string>
   <string name="share_via_invitations_copy_invite_link_action">複製邀請連結</string>
   <string name="share_via_invitations_remove_access_action">移除存取權限</string>
-  <string name="share_via_invitations_stop_sharing_description">Delete link and remove access for everyone</string>
+  <string name="share_via_invitations_stop_sharing_description">刪除連結並移除所有人的存取權</string>
   <string name="share_via_invitations_resend_invite_action">重新發送邀請</string>
-  <string name="share_via_invitations_resend_invite_success">Invitation was resent</string>
+  <string name="share_via_invitations_resend_invite_success">已重新寄送邀請</string>
   <!--
         Variable %1$d is a number
         Examples:
@@ -84,6 +84,6 @@
   <plurals name="share_via_invitations_group_members">
     <item quantity="other">%1$d 個成員</item>
   </plurals>
-  <string name="share_via_invitations_message_placeholder">Add a message</string>
-  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
+  <string name="share_via_invitations_message_placeholder">新增訊息</string>
+  <string name="share_via_invitations_send_message_and_name_label">在邀請電子郵件中包含訊息與檔案名稱</string>
 </resources>

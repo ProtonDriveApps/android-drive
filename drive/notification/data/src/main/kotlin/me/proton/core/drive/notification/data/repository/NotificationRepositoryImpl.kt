@@ -17,8 +17,12 @@
  */
 package me.proton.core.drive.notification.data.repository
 
+import androidx.datastore.preferences.core.edit
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.base.data.datastore.GetUserDataStore
+import me.proton.core.drive.base.data.extension.get
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.notification.data.db.NotificationDatabase
 import me.proton.core.drive.notification.data.db.entity.NotificationEventEntity
@@ -33,6 +37,8 @@ import javax.inject.Inject
 
 class NotificationRepositoryImpl @Inject constructor(
     private val db: NotificationDatabase,
+    private val getUserDataStore: GetUserDataStore,
+    private val configurationProvider: ConfigurationProvider,
 ) : NotificationRepository {
 
     override suspend fun insertChannels(channels: List<Channel.User>) {
@@ -75,6 +81,45 @@ class NotificationRepositoryImpl @Inject constructor(
                         notificationEvent = event,
                     )
                 )
+            }
+        }
+    }
+
+    override suspend fun insertNotificationEvents(
+        notificationId: NotificationId.User,
+        events: List<Event>,
+    ) = coRunCatching {
+        with(notificationId) {
+            val notificationTag = tag
+            db.inTransaction {
+                events.chunked(configurationProvider.dbPageSize).forEach { events ->
+                    if (notificationTag == null) {
+                        db.taglessEventDao.insertOrUpdate(
+                            *events.map { event ->
+                                TaglessNotificationEventEntity(
+                                    userId = channel.userId,
+                                    channelType = channel.type,
+                                    notificationId = id,
+                                    notificationEventId = event.id,
+                                    notificationEvent = event,
+                                )
+                            }.toTypedArray()
+                        )
+                    } else {
+                        db.eventDao.insertOrUpdate(
+                            *events.map { event ->
+                                NotificationEventEntity(
+                                    userId = channel.userId,
+                                    channelType = channel.type,
+                                    notificationTag = notificationTag,
+                                    notificationId = id,
+                                    notificationEventId = event.id,
+                                    notificationEvent = event,
+                                )
+                            }.toTypedArray()
+                        )
+                    }
+                }
             }
         }
     }
@@ -139,6 +184,15 @@ class NotificationRepositoryImpl @Inject constructor(
     override suspend fun removeNotificationEvents(userId: UserId) = db.inTransaction {
         db.taglessEventDao.deleteAll(userId)
         db.eventDao.deleteAll(userId)
+    }
+
+    override suspend fun hasUserRejectNotificationPermissionRationale(userId: UserId): Boolean? =
+        getUserDataStore(userId).get(GetUserDataStore.Keys.notificationPermissionRationaleRejected)
+
+    override suspend fun setUserRejectNotificationPermissionRationale(userId: UserId, value: Boolean) {
+        getUserDataStore(userId).edit { preferences ->
+            preferences[GetUserDataStore.Keys.notificationPermissionRationaleRejected] = value
+        }
     }
 }
 

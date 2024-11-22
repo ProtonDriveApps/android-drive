@@ -29,7 +29,7 @@ data class UploadThumbnailDto(
     @SerialName(SIZE)
     val size: Long,
     @SerialName(TYPE)
-    val type: String,
+    val type: Long,
     @SerialName(HASH)
     val hash: String,
 )

@@ -86,6 +86,7 @@ import me.proton.core.compose.component.ProtonSnackbarHostState
 import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.ListenToBroadcastMessages
 import me.proton.core.drive.messagequeue.domain.ActionProvider
@@ -115,6 +116,7 @@ class MainActivity : FragmentActivity() {
     @Inject lateinit var appLockManager: AppLockManager
     @Inject lateinit var deeplinkManager: DeeplinkManager
     @Inject lateinit var activityLauncher: ActivityLauncher
+    @Inject lateinit var announceEvent: AnnounceEvent
 
     lateinit var configurationProvider: ConfigurationProvider
     private val accountViewModel: AccountViewModel by viewModels()
@@ -167,6 +169,7 @@ class MainActivity : FragmentActivity() {
                         defaultStartDestination = startDestination,
                         locked = appLockManager.locked,
                         primaryAccount = accountViewModel.primaryAccount,
+                        announceEvent = announceEvent,
                         exitApp = { finish() },
                         navigateToPasswordManagement = accountViewModel::startPasswordManagement,
                         navigateToRecoveryEmail = accountViewModel::startUpdateRecoveryEmail,

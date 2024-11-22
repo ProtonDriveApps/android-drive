@@ -40,7 +40,8 @@ import me.proton.core.drive.files.presentation.component.folder.FolderOptions
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.notification.presentation.NotificationPermission
+import me.proton.core.drive.notification.presentation.component.NotificationPermission
+import me.proton.core.drive.notification.presentation.viewmodel.NotificationPermissionRationaleViewModel
 
 @Composable
 fun FileOrFolderOptions(
@@ -54,6 +55,7 @@ fun FileOrFolderOptions(
     navigateToManageAccess: (linkId: LinkId) -> Unit,
     navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
     navigateToShareViaLink: (linkId: LinkId) -> Unit,
+    navigateToNotificationPermissionRationale: () -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -78,7 +80,10 @@ fun FileOrFolderOptions(
             .navigationBarsPadding()
             .testTag(FileFolderOptionsDialogTestTag.fileOrFolderOptions),
     )
-    NotificationPermission()
+    NotificationPermission(
+        shouldShowRationale = false,
+        navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
+    )
 }
 
 @Composable

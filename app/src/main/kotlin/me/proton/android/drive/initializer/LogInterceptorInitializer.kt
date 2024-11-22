@@ -44,7 +44,7 @@ class LogInterceptorInitializer : Initializer<Unit> {
                 LogInterceptorInitializerEntryPoint::class.java,
             )
         ) {
-            logInterceptor.announceEvent = announceEvent
+            logInterceptor.announceEvent = asyncAnnounceEvent
             accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.STARTED)
                 .onAccountReady { account ->
                     logInterceptor.userId = account.userId
@@ -73,7 +73,7 @@ class LogInterceptorInitializer : Initializer<Unit> {
     interface LogInterceptorInitializerEntryPoint {
         val accountManager: AccountManager
         val appLifecycleProvider: AppLifecycleProvider
-        val announceEvent: AsyncAnnounceEvent
+        val asyncAnnounceEvent: AsyncAnnounceEvent
         val logInterceptor: LogInterceptor
     }
 }

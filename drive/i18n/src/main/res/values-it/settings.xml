@@ -17,11 +17,11 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="settings_app_lock">Blocco dell\'app</string>
+  <string name="settings_app_lock">Metodo di blocco</string>
   <string name="settings_section_security">Sicurezza</string>
   <string name="settings_section_about">Informazioni</string>
   <string name="settings_section_statistics">Statistiche di utilizzo</string>
-  <string name="settings_auto_lock">Blocco automatico dell\'app</string>
+  <string name="settings_auto_lock">Blocco automatico</string>
   <string name="settings_auto_lock_durations_immediately">Immediato</string>
   <plurals name="settings_auto_lock_durations_seconds">
     <item quantity="one">%1$d secondo</item>

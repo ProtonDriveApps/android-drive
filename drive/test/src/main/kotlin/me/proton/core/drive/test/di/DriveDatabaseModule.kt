@@ -81,6 +81,7 @@ import me.proton.core.usersettings.data.db.OrganizationDatabase
 import me.proton.core.usersettings.data.db.UserSettingsDatabase
 import me.proton.drive.android.settings.data.db.AppUiSettingsDatabase
 import javax.inject.Singleton
+import me.proton.core.drive.observability.data.db.ObservabilityDatabase as DriveObservabilityDatabase
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -253,4 +254,7 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun providePublicAddressKeyDatabase(appDatabase: DriveDatabase): PublicAddressKeyDatabase
+
+    @Binds
+    abstract fun provideDriveObservabilityDatabase(appDatabase: DriveDatabase): DriveObservabilityDatabase
 }

@@ -76,7 +76,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Gunakan data seluler</string>
   <string name="photos_error_local_storage">Penyimpanan perangkat penuh</string>
   <string name="photos_error_local_storage_description">Untuk melanjutkan pencadangan, Anda perlu membebaskan ruang penyimpanan di perangkat Anda.</string>
-  <string name="photos_error_background_restrictions">Atur penggunaan baterai ke \'Tak terbatas\' untuk menjalankan aplikasi di latar belakang</string>
+  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">Untuk pencadangan latar yang konsisten, sesuaikan pengaturan baterai atau buka aplikasi secara rutin.</string>
   <string name="photos_error_background_restrictions_action">Pengaturan</string>
   <string name="photos_empty_title">Belum ada cadangan</string>

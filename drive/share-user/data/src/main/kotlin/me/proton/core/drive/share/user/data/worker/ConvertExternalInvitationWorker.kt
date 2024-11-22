@@ -21,7 +21,6 @@ package me.proton.core.drive.share.user.data.worker
 import android.content.Context
 import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
-import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequest
@@ -29,6 +28,7 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
@@ -68,10 +68,11 @@ class ConvertExternalInvitationWorker @AssistedInject constructor(
     override suspend fun doLimitedRetryWork(): Result = convertExternalInvitation(linkId, id).fold(
         onSuccess = { Result.success() },
         onFailure = { error ->
-            error.log(SHARING, "Cannot convert external invitation: $id")
             if (error.isRetryable) {
+                error.log(logTag, "Cannot convert external invitation: $id, will retry", WARNING)
                 Result.retry()
             } else {
+                error.log(logTag, "Cannot convert external invitation: $id")
                 Result.failure()
             }
         }

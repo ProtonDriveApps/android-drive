@@ -36,8 +36,8 @@ fun UploadBlock.toUploadThumbnailDto() =
     UploadThumbnailDto(
         size = size.value,
         type = when (type) {
-            Block.Type.THUMBNAIL_DEFAULT -> "1"
-            Block.Type.THUMBNAIL_PHOTO -> "2"
+            Block.Type.THUMBNAIL_DEFAULT -> 1
+            Block.Type.THUMBNAIL_PHOTO -> 2
             else -> error("Unexpected block type: $type")
         },
         hash = hashSha256,

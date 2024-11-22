@@ -21,39 +21,81 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.drive.base.domain.extension.asSuccess
+import me.proton.core.drive.base.domain.function.pagedList
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDao
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadState
+import me.proton.core.drive.linkdownload.data.extension.toDownloadBlock
 import me.proton.core.drive.linkdownload.data.extension.toDownloadState
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.repository.LinkDownloadRepository
 
 class LinkDownloadRepositoryImpl(
     private val db: LinkDownloadDao,
+    private val configurationProvider: ConfigurationProvider,
 ) : LinkDownloadRepository {
 
     override fun getDownloadStateFlow(
         linkId: LinkId,
         revisionId: String,
-    ): Flow<DataResult<DownloadState?>> =
-        db.getDownloadStateWithBlocksFlow(linkId.userId, linkId.shareId.id, linkId.id, revisionId)
-            .map { downloadStateWithBlocks ->
-                downloadStateWithBlocks.toDownloadState().asSuccess
-            }
+    ): Flow<DataResult<DownloadState?>> = db.getDownloadStateFlow(
+        userId = linkId.userId,
+        shareId = linkId.shareId.id,
+        linkId = linkId.id,
+        revisionId = revisionId,
+    ).map { entity ->
+        entity?.toDownloadState().asSuccess
+    }
+
+    override suspend fun getDownloadBlocks(
+        linkId: LinkId,
+        revisionId: String,
+    ): List<Block> = pagedList(configurationProvider.dbPageSize) { fromIndex, count ->
+        db.getDownloadBlocks(
+            userId = linkId.userId,
+            shareId = linkId.shareId.id,
+            linkId = linkId.id,
+            revisionId = revisionId,
+            limit = count,
+            offset = fromIndex,
+        ).map { entity ->
+            entity.toDownloadBlock()
+        }
+    }
 
     override suspend fun insertOrUpdateDownloadState(
         linkId: LinkId,
         revisionId: String,
         downloadState: DownloadState,
-    ) =
-        db.insertOrUpdate(linkId.userId, linkId.shareId.id, linkId.id, revisionId, downloadState)
+        blocks: List<Block>?,
+    ) = db.insertOrUpdate(
+        userId = linkId.userId,
+        shareId = linkId.shareId.id,
+        linkId = linkId.id,
+        revisionId = revisionId,
+        downloadState = downloadState,
+        blocks = blocks,
+    )
 
     override suspend fun removeDownloadState(linkId: LinkId, revisionId: String) =
-        db.delete(linkId.userId, linkId.shareId.id, linkId.id, revisionId)
+        db.delete(
+            userId = linkId.userId,
+            shareId = linkId.shareId.id,
+            linkId = linkId.id,
+            revisionId = revisionId,
+        )
 
-    override suspend fun areAllFilesDownloaded(folderId: FolderId, excludeMimeTypes: Set<String>): Boolean =
-        db.getAllChildrenStates(folderId.userId, folderId.shareId.id, folderId.id, excludeMimeTypes)
-            .all { state -> state == LinkDownloadState.DOWNLOADED }
+    override suspend fun areAllFilesDownloaded(
+        folderId: FolderId,
+        excludeMimeTypes: Set<String>,
+    ): Boolean = db.getAllChildrenStates(
+        userId = folderId.userId,
+        shareId = folderId.shareId.id,
+        folderId = folderId.id,
+        excludeMimeTypes = excludeMimeTypes,
+    ).all { state -> state == LinkDownloadState.DOWNLOADED }
 }

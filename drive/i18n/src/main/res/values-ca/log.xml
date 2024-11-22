@@ -31,4 +31,11 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Excepció</string>
   <string name="log_origin_logger">Enregistrador</string>
+  <string name="log_origin_screen">Pantalla</string>
+  <string name="log_origin_application_state">Estat de l\'aplicació</string>
+  <string name="log_origin_workers">Empleats</string>
+  <string name="log_origin_backup">Còpia de seguretat</string>
+  <string name="log_origin_user">Usuari</string>
+  <string name="log_origin_device">Dispositiu</string>
+  <string name="log_origin_crypto">Criptomoneda</string>
 </resources>

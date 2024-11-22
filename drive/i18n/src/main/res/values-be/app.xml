@@ -166,6 +166,10 @@
   <string name="notification_channel_transfer_description">Канал перадачы апавяшчэнняў для воблачнага сховішча</string>
   <string name="notification_channel_warning_title">Папярэджанне</string>
   <string name="notification_channel_warning_description">Канал для папярэджанняў, якія патрабуюць дзеянняў з боку карыстальніка</string>
+  <string name="notification_permission_rationale_title_backup">Будзьце ў курсе аб статусе рэзервовага капіявання</string>
+  <string name="notification_permission_rationale_description_backup">Атрымлівайце апавяшчэнні аб выкананні і статусе вашых рэзервовых копій.</string>
+  <string name="notification_permission_rationale_action_accept">Уключыць апавяшчэнні</string>
+  <string name="notification_permission_rationale_action_reject">Не зараз</string>
   <!-- endregion -->
   <string name="content_description_select_all">Выбраць усе элементы ў спісе</string>
   <string name="content_description_selected_options">Паказаць больш параметраў для выбраных файлаў і/або папак</string>
@@ -183,7 +187,7 @@
   <string name="description_files_stop_sharing_action_success">Спасылка на ваш файл была выдалена.</string>
   <string name="description_files_stop_sharing_action_error">Адбылася памылка падчас выдалення спасылкі на ваш файл.</string>
   <string name="description_files_stop_all_sharing">Гэта дзеянне прывядзе да выдалення спасылкі і доступу для кожнага ўдзельніка.</string>
-  <string name="description_files_stop_all_sharing_action_success">Ваш файл больш не абагульваецца.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Адбылася памылка падчас выдалення абагульвання вашага файла.</string>
   <string name="ignore_file_signature_action">Усё роўна паглядзець</string>
   <string name="action_empty_files_add_files">Запампаваць</string>
@@ -193,7 +197,7 @@
   <string name="error_share_locked">Абагульванне заблакіравана.</string>
   <string name="error_main_share_not_found">Не атрымалася знайсці асноўны раздзел.</string>
   <string name="error_share_not_found">Абагульванне не знойдзена.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Рэзервовая копія фатаграфій часова адключана.</string>
   <string name="error_creating_share_not_allowed">Абагульненне часова адключана.</string>
   <string name="operation_open_document">адкрыць дакумент</string>
   <string name="operation_create_document">стварыць дакумент</string>

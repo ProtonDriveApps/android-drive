@@ -68,7 +68,6 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.shareurl.crypto.domain.usecase.UpdateShareUrl
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.util.kotlin.CoreLogger
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
@@ -110,9 +109,7 @@ class LinkSettingsViewModel @Inject constructor(
                     minDatePickerDate = startOfFirstDay.timeInMillis,
                     maxDatePickerDate = endOfLastDay.timeInMillis,
                 )
-            ).also {
-                CoreLogger.d("caca", "data $it")
-            }
+            )
         }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
     private val passwordField = MutableStateFlow<String?>(null)
     private val passwordEnabled = MutableStateFlow(false)
@@ -184,18 +181,14 @@ class LinkSettingsViewModel @Inject constructor(
     ) { initialViewState, password, passwordEnabled, expirationDate, expirationDateEnabled, hasUnsavedChanges, saveInProgress->
         initialViewState.copy(
             hasUnsavedChanges = hasUnsavedChanges,
-            privacySettingsViewState = initialViewState.privacySettingsViewState.also {
-                CoreLogger.d("caca", "conbine$it")
-            }.copy(
+            privacySettingsViewState = initialViewState.privacySettingsViewState.copy(
                 enabled = !saveInProgress,
                 password = password,
                 passwordChecked = passwordEnabled,
                 expirationDate = expirationDate,
                 expirationDateChecked = expirationDateEnabled,
             )
-        ).also {
-            CoreLogger.d("caca", "conbine2 $it")
-        }
+        )
     }
     fun viewEvent(
         navigateToDiscardChanges: (LinkId) -> Unit,

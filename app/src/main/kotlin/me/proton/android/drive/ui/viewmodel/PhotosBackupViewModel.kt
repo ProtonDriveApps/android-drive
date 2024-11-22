@@ -105,9 +105,7 @@ class PhotosBackupViewModel @Inject constructor(
         )
     }
 
-    fun viewEvent(
-        navigateBack: () -> Unit,
-    ): PhotosBackupViewEvent = object : PhotosBackupViewEvent {
+    fun viewEvent(): PhotosBackupViewEvent = object : PhotosBackupViewEvent {
         override val onToggleBackup = {
             viewModelScope.launch {
                 coRunCatching {
@@ -120,7 +118,6 @@ class PhotosBackupViewModel @Inject constructor(
                                 message = message,
                                 type = type,
                             )
-                            action()
                         }
                     }
                 }.onFailure { error ->
@@ -185,13 +182,6 @@ class PhotosBackupViewModel @Inject constructor(
                 PhotoBackupState.Disabled -> BroadcastMessage.Type.INFO
                 is PhotoBackupState.Enabled -> BroadcastMessage.Type.INFO
                 is PhotoBackupState.NoFolder -> BroadcastMessage.Type.WARNING
-            }
-
-        private val PhotoBackupState.action: () -> Unit
-            get() = when (this) {
-                PhotoBackupState.Disabled -> navigateBack
-                is PhotoBackupState.Enabled -> navigateBack
-                is PhotoBackupState.NoFolder -> { -> }
             }
     }
 }

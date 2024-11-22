@@ -53,10 +53,14 @@ class GetUserDataStore @Inject constructor(
         private const val DATASTORE_USER_PREFERENCES_FILE = "user.preferences_pb"
         private const val KEY_MIGRATION_KEY_PACKET_LAST_UPDATE = "migration_key_packet_last_update"
         private const val KEY_CREATE_DOCUMENT_ACITON_INVOKED = "create_document_action_invoked"
+        private const val KEY_NOTIFICATION_PERMISSION_RATIONALE_REJECTED = "notification_permission_rationale_rejected"
     }
 
     data object Keys {
         val migrationKeyPacketLastUpdate get() = longPreferencesKey(KEY_MIGRATION_KEY_PACKET_LAST_UPDATE)
         val createDocumentActionInvoked get() = booleanPreferencesKey(KEY_CREATE_DOCUMENT_ACITON_INVOKED)
+        val notificationPermissionRationaleRejected get() = booleanPreferencesKey(
+            KEY_NOTIFICATION_PERMISSION_RATIONALE_REJECTED
+        )
     }
 }

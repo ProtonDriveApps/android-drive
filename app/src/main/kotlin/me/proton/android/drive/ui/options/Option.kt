@@ -27,7 +27,6 @@ import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.drivelink.domain.extension.isPhoto
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.extension.off
-import me.proton.core.drive.files.presentation.entry.CopySharedLinkEntity
 import me.proton.core.drive.files.presentation.entry.DeletePermanentlyEntry
 import me.proton.core.drive.files.presentation.entry.DownloadEntry
 import me.proton.core.drive.files.presentation.entry.DownloadFileEntity
@@ -41,8 +40,6 @@ import me.proton.core.drive.files.presentation.entry.RemoveMeEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
 import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntity
-import me.proton.core.drive.files.presentation.entry.ShareViaLinkEntry
-import me.proton.core.drive.files.presentation.entry.StopSharingEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
 import me.proton.core.drive.files.presentation.entry.ToggleTrashEntry
 import me.proton.core.drive.files.presentation.entry.TrashEntry
@@ -313,45 +310,6 @@ sealed class Option(
             runAction { navigateToShareViaInvitations(driveLink.id) }
         }
     }
-
-    data object ShareViaLink : Option(
-        ApplicableQuantity.Single,
-        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
-        setOf(State.NOT_TRASHED) + State.ANY_SHARED
-    ) {
-        fun build(
-            runAction: RunAction,
-            navigateToShareViaLink: (LinkId) -> Unit,
-        ) = ShareViaLinkEntry { driveLink ->
-            runAction { navigateToShareViaLink(driveLink.id) }
-        }
-    }
-
-    data object StopSharing : Option(
-        ApplicableQuantity.Single,
-        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
-        setOf(State.NOT_TRASHED, State.SHARED, State.SHARED_EXPIRED),
-    ) {
-        fun build(
-            runAction: RunAction,
-            stopSharing: suspend (linkId: LinkId) -> Unit,
-        ) = StopSharingEntry { driveLink ->
-            runAction { stopSharing(driveLink.id) }
-        }
-    }
-
-    data object CopySharedLink : Option(
-        ApplicableQuantity.Single,
-        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
-        setOf(State.NOT_TRASHED, State.SHARED),
-    ) {
-        fun build(
-            runAction: RunAction,
-            copySharedLinkToClipboard: suspend (linkId: LinkId) -> Unit,
-        ) = CopySharedLinkEntity { driveLink ->
-            runAction { copySharedLinkToClipboard(driveLink.id) }
-        }
-    }
 }
 
 sealed class ApplicableQuantity(open val quantity: Long) {
@@ -412,8 +370,6 @@ private val photosOptions = listOf(
     Option.OfflineToggle,
     Option.ShareViaInvitations,
     Option.ManageAccess,
-    Option.ShareViaLink,
-    Option.CopySharedLink,
     Option.SendFile,
     Option.Download,
     Option.Info,
@@ -425,28 +381,6 @@ fun Iterable<Option>.filter(optionsFilter: OptionsFilter) =
         OptionsFilter.FILES -> this
         OptionsFilter.PHOTOS -> filter { option -> option in photosOptions }
     }
-
-fun Iterable<Option>.filterSharing(featureFlag: FeatureFlag) = filter { option ->
-    if (featureFlag.state == FeatureFlag.State.ENABLED) {
-        when (option) {
-            Option.CopySharedLink,
-            Option.ShareViaLink,
-            Option.StopSharing,
-            -> false
-
-            else -> true
-        }
-    } else {
-        when (option) {
-            Option.ShareViaInvitations,
-            Option.ManageAccess,
-            Option.RemoveMe,
-            -> false
-
-            else -> true
-        }
-    }
-}
 
 fun Iterable<Option>.filterRoot(driveLink: DriveLink, featureFlag: FeatureFlag) = filter { option ->
     if (driveLink.parentId == null) {
@@ -477,7 +411,6 @@ fun Iterable<Option>.filterPermissions(
     permissions: Permissions
 ) = filter { option ->
     when (option) {
-        Option.CopySharedLink -> permissions.isAdmin
         Option.CreateDocument -> permissions.canWrite
         Option.CreateFolder -> permissions.canWrite
         Option.DeletePermanently -> permissions.canWrite
@@ -490,8 +423,6 @@ fun Iterable<Option>.filterPermissions(
         Option.Rename -> permissions.canWrite
         Option.SendFile -> permissions.canRead
         Option.ShareViaInvitations -> permissions.isAdmin
-        Option.ShareViaLink -> permissions.isAdmin
-        Option.StopSharing -> permissions.isAdmin
         Option.TakeAPhoto -> permissions.canWrite
         Option.Trash -> permissions.isAdmin
         Option.UploadFile -> permissions.canWrite

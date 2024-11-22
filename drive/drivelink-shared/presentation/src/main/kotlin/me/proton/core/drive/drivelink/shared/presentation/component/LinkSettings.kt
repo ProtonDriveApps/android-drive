@@ -56,7 +56,6 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.LinkSettings
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.PrivacySettingsViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SaveButtonViewState
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
@@ -146,7 +145,7 @@ fun LinkSettingsContent(
             .testTag(SharedDriveLinkTestTag.content)
     ) {
         PrivacySettings(
-            viewState = viewState.privacySettingsViewState.also { CoreLogger.d("caca", it.toString()) },
+            viewState = viewState.privacySettingsViewState,
             viewEvent = viewEvent,
             modifier = Modifier.padding(bottom = MediumSpacing),
             title = stringResource(id = I18N.string.shared_link_options)

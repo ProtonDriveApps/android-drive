@@ -31,4 +31,11 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Sorun</string>
   <string name="log_origin_logger">Günlük oluşturucu</string>
+  <string name="log_origin_screen">Ekran</string>
+  <string name="log_origin_application_state">Uygulama durumu</string>
+  <string name="log_origin_workers">İşlemler</string>
+  <string name="log_origin_backup">Yedekleme</string>
+  <string name="log_origin_user">Kullanıcı</string>
+  <string name="log_origin_device">Aygıt</string>
+  <string name="log_origin_crypto">Crypto</string>
 </resources>

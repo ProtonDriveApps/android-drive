@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright (c) 2023-2024 Proton AG.
   ~ This file is part of Proton Core.
   ~
@@ -15,7 +16,6 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
-
 <resources>
     <string name="photos_title">Photos</string>
     <string name="photos_permissions_title">Encrypt and back up your photos and videos</string>
@@ -80,7 +80,7 @@
     <string name="photos_error_local_storage">Device storage full</string>
     <string name="photos_error_local_storage_description">To continue the backup, you need to free up storage on your device.</string>
     <string name="photos_error_local_storage_action" translatable="false">@string/common_retry</string>
-    <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
+    <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
     <string name="photos_error_background_restrictions_description">For consistent background backups, adjust battery settings or open the app frequently.</string>
     <string name="photos_error_background_restrictions_action">Settings</string>
     <string name="photos_empty_title">No backups yet</string>

@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.backup.data.manager
 
-import android.os.Build
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import androidx.work.await
@@ -140,21 +139,17 @@ class BackupManagerImpl @Inject constructor(
     }
 
     override suspend fun watchFolders(userId: UserId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            CoreLogger.d(BACKUP, "Watch folders for $userId")
-            workManager.enqueueUniqueWork(
-                BackupFileWatcherWorker.uniqueWorkName(userId),
-                ExistingWorkPolicy.KEEP,
-                BackupFileWatcherWorker.getWorkRequest(userId),
-            ).await()
-        }
+        CoreLogger.d(BACKUP, "Watch folders for $userId")
+        workManager.enqueueUniqueWork(
+            BackupFileWatcherWorker.uniqueWorkName(userId),
+            ExistingWorkPolicy.KEEP,
+            BackupFileWatcherWorker.getWorkRequest(userId),
+        ).await()
     }
 
     override suspend fun unwatchFolders(userId: UserId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            CoreLogger.d(BACKUP, "Unwatch folders for $userId")
-            workManager.cancelUniqueWork(BackupFileWatcherWorker.uniqueWorkName(userId)).await()
-        }
+        CoreLogger.d(BACKUP, "Unwatch folders for $userId")
+        workManager.cancelUniqueWork(BackupFileWatcherWorker.uniqueWorkName(userId)).await()
     }
 
     override fun isEnabled(folderId: FolderId): Flow<Boolean> = hasFolders(folderId)

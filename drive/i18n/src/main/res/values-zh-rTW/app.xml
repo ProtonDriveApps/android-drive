@@ -45,7 +45,7 @@
   <string name="folder_option_import_file">上傳檔案</string>
   <string name="folder_option_create_folder">建立資料夾</string>
   <string name="folder_option_take_a_photo">拍攝新照片</string>
-  <string name="folder_option_create_document">Create document</string>
+  <string name="folder_option_create_document">建立文件</string>
   <string name="settings_theme_system_default">系統預設</string>
   <string name="settings_theme_dark">深色</string>
   <string name="settings_theme_light">淺色</string>
@@ -64,8 +64,8 @@
   <string name="in_app_notification_upload_files_only">僅有檔案可以上傳至 %1$s</string>
   <string name="in_app_notification_importing_file_already_exists">已有相同名稱的檔案，請嘗試清除應用程式快取</string>
   <string name="in_app_notification_clear_local_cache_success">本機快取已成功清除</string>
-  <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
-  <string name="in_app_notification_create_document_success">Document created</string>
+  <string name="in_app_notification_destination_screen_not_found">找不到目標畫面</string>
+  <string name="in_app_notification_create_document_success">文件已建立</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">儲存空間已滿</string>
@@ -138,7 +138,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">不允許備份</string>
   <string name="notification_content_text_backup_paused_disabled">已關閉備份</string>
   <string name="notification_content_text_backup_paused_background_restrictions">備份無法於背景運作</string>
-  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
+  <string name="notification_content_text_backup_preparing">正在準備備份</string>
   <string name="notification_content_title_download_complete">下載完成</string>
   <string name="notification_content_title_forced_sign_out">請登入</string>
   <string name="notification_content_text_forced_sign_out">抱歉打斷您！出現了同步問題，請重新登入，才能流暢運作。</string>
@@ -151,6 +151,10 @@
   <string name="notification_channel_transfer_description">雲端儲存、上傳與下載通知的管道</string>
   <string name="notification_channel_warning_title">警告</string>
   <string name="notification_channel_warning_description">需要使用者動作的警告管道</string>
+  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
+  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
+  <string name="notification_permission_rationale_action_accept">Enable notifications</string>
+  <string name="notification_permission_rationale_action_reject">Not now</string>
   <!-- endregion -->
   <string name="content_description_select_all">顯示清單中所有的項目</string>
   <string name="content_description_selected_options">顯示所選檔案及/或資料夾的更多選項</string>
@@ -167,9 +171,9 @@
   <string name="description_files_stop_sharing">此操作將會刪除連結，並且阻止其他嘗試使用此連結存取檔案或資料夾的人。</string>
   <string name="description_files_stop_sharing_action_success">您檔案的連結已被刪除。</string>
   <string name="description_files_stop_sharing_action_error">刪除檔案連結時出現錯誤</string>
-  <string name="description_files_stop_all_sharing">This will delete link and remove access for everyone.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
-  <string name="description_files_stop_all_sharing_action_error">There was an error while deleting sharing to your file.</string>
+  <string name="description_files_stop_all_sharing">這將會刪除連結並移除所有人的存取權.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_error">刪除檔案分享時發生錯誤。</string>
   <string name="ignore_file_signature_action">仍要閱覽</string>
   <string name="action_empty_files_add_files">上傳</string>
   <string name="error_could_not_send_file">試圖傳送檔案時發生錯誤</string>
@@ -178,7 +182,7 @@
   <string name="error_share_locked">已鎖定分享。</string>
   <string name="error_main_share_not_found">找不到主要分享。</string>
   <string name="error_share_not_found">找不到分享。</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">照片備份已暫時停用。</string>
   <string name="error_creating_share_not_allowed">創建分享已暫時停用。</string>
   <string name="operation_open_document">開啟文件</string>
   <string name="operation_create_document">建立新文件</string>
@@ -190,7 +194,7 @@
             "Unlock 5 GB of secure storage"
     -->
   <string name="get_more_free_storage_title">解鎖%1$s免費儲存</string>
-  <string name="get_more_free_storage_description">Complete these steps in your first 30 days for a free storage upgrade.</string>
+  <string name="get_more_free_storage_description">在前30天完成這些步驟即可免費升級儲存空間。</string>
   <string name="get_more_free_storage_action_upload_title">上載檔案或啟用檔案備份</string>
   <string name="get_more_free_storage_action_upload_subtitle">您的所有檔案將被加密</string>
   <string name="get_more_free_storage_action_link_title">創建一個分享連結</string>
@@ -199,9 +203,9 @@
         Example:
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
-  <string name="get_more_free_storage_action_link_subtitle">Select any file or folder. Open the options menu and press %1$s.</string>
+  <string name="get_more_free_storage_action_link_subtitle">選取任何檔案或資料夾。開啟選項選單並按 %1$s。</string>
   <string name="get_more_free_storage_action_share_title">分享個檔案</string>
-  <string name="get_more_free_storage_action_share_subtitle">It\'s easy and secure.</string>
+  <string name="get_more_free_storage_action_share_subtitle">既簡單又安全。</string>
   <string name="get_more_free_storage_action_recovery_title">設定備援方法</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
@@ -220,5 +224,5 @@
         Example:
             "Untitled document 2025-11-28 12.34.56"
     -->
-  <string name="new_document_name">Untitled document %1$s</string>
+  <string name="new_document_name">未命名文件 %1$s</string>
 </resources>

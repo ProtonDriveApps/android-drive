@@ -20,8 +20,6 @@ package me.proton.android.drive.ui.rules
 
 import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.repository.TestFeatureFlagRepositoryImpl
-import me.proton.android.drive.ui.annotation.FeatureFlag
-import me.proton.android.drive.ui.annotation.FeatureFlags
 import me.proton.android.drive.ui.annotation.Quota
 import me.proton.android.drive.ui.extension.getFeatureFlagAnnotations
 import me.proton.android.drive.ui.extension.populate
@@ -29,12 +27,10 @@ import me.proton.android.drive.ui.extension.quotaSetUsedSpace
 import me.proton.android.drive.ui.extension.volumeCreate
 import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.loginTestHelper
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.test.quark.data.User
 import me.proton.core.test.quark.v2.QuarkCommand
 import me.proton.core.test.quark.v2.command.seedNewSubscriber
 import me.proton.core.test.quark.v2.command.userCreate
-import me.proton.core.util.kotlin.CoreLogger
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import kotlin.math.roundToInt

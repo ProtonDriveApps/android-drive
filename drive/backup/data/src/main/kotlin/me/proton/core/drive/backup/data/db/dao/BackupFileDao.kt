@@ -50,6 +50,21 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
     ): Int
 
     @Query("""
+        SELECT * FROM BackupFileEntity
+        WHERE
+            user_id = :userId AND
+            share_id = :shareId AND
+            parent_id = :folderId AND
+            uri = :uriString
+    """)
+    abstract suspend fun get(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+        uriString: String,
+    ): BackupFileEntity?
+
+    @Query("""
         SELECT * FROM BackupFileEntity 
         WHERE 
             user_id = :userId AND

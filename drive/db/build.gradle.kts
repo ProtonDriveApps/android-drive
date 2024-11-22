@@ -95,6 +95,7 @@ driveModule(
     api(project(":drive:log:data"))
     api(project(":drive:message-queue:data"))
     api(project(":drive:notification:data"))
+    api(project(":drive:observability:data"))
     api(project(":drive:photo:data"))
     api(project(":drive:share:data"))
     api(project(":drive:share-user:data"))

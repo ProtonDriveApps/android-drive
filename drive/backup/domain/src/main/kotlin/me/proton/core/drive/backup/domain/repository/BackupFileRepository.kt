@@ -28,6 +28,7 @@ import me.proton.core.drive.link.domain.entity.FolderId
 
 interface BackupFileRepository {
     suspend fun getCountByState(folderId: FolderId, state: BackupFileState): Int
+    suspend fun getFile(folderId: FolderId, uriString: String): BackupFile?
     suspend fun getAllFiles(folderId: FolderId, fromIndex: Int, count: Int): List<BackupFile>
     suspend fun getAllInFolderWithState(
         folderId: FolderId,

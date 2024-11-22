@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Kanal til cloud-lagring, upload- og download-notifikationer</string>
   <string name="notification_channel_warning_title">Advarsel</string>
   <string name="notification_channel_warning_description">Kanal til advarsler, der kræver brugerhandling</string>
+  <string name="notification_permission_rationale_title_backup">Hold dig opdateret om din status for din sikkerhedskopiering</string>
+  <string name="notification_permission_rationale_description_backup">Modtag notifikationer om fremskridt og status for dine sikkerhedskopieringer.</string>
+  <string name="notification_permission_rationale_action_accept">Aktivér notifikationer</string>
+  <string name="notification_permission_rationale_action_reject">Ikke nu</string>
   <!-- endregion -->
   <string name="content_description_select_all">Vælg alle elementer på listen</string>
   <string name="content_description_selected_options">Vis flere muligheder for valgte filer og/eller mapper</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">Linket til din fil er blevet slettet.</string>
   <string name="description_files_stop_sharing_action_error">Der opstod en fejl under sletningen af linket til din fil.</string>
   <string name="description_files_stop_all_sharing">Dette vil slette linket og fjerne adgangen for alle.</string>
-  <string name="description_files_stop_all_sharing_action_success">Du har fået slettet delingen af din fil.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Der opstod en fejl under sletning af deling af din fil.</string>
   <string name="ignore_file_signature_action">Vis alligevel</string>
   <string name="action_empty_files_add_files">Upload</string>
@@ -183,7 +187,7 @@
   <string name="error_share_locked">Deling er låst.</string>
   <string name="error_main_share_not_found">Hoveddelen er ikke fundet.</string>
   <string name="error_share_not_found">Deling ikke fundet.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Sikkerhedskopiering af fotos er midlertidigt deaktiveret.</string>
   <string name="error_creating_share_not_allowed">Oprettelse af deling er midlertidigt deaktiveret.</string>
   <string name="operation_open_document">åbn et dokument</string>
   <string name="operation_create_document">opret et dokument</string>

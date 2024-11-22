@@ -17,13 +17,23 @@
  */
 package me.proton.core.drive.drivelink.download.domain.usecase
 
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadWorkManager
+import me.proton.core.drive.link.domain.entity.LinkId
 import javax.inject.Inject
 
 class Download @Inject constructor(
     private val downloadWorkManager: DownloadWorkManager,
+    private val getDriveLink: GetDriveLink,
 ) {
+
+    suspend operator fun invoke(linkId: LinkId, retryable: Boolean = true) =
+        getDriveLink(linkId).toResult().getOrThrow().let { driveLink ->
+            invoke(driveLink, retryable)
+        }
+
     suspend operator fun invoke(driveLink: DriveLink, retryable: Boolean = true) =
         invoke(listOf(driveLink), retryable)
 

@@ -616,7 +616,7 @@ fun PreviewDownloadedListItem() {
             FilesListItem(
                 link = PREVIEW_DRIVELINK.copy(
                     isMarkedAsOffline = true,
-                    downloadState = DownloadState.Downloaded(emptyList()),
+                    downloadState = DownloadState.Downloaded(),
                 ),
                 onClick = {},
                 onLongClick = {},
@@ -657,7 +657,7 @@ fun PreviewDownloadedAndFavoriteListItem() {
             FilesListItem(
                 link = PREVIEW_DRIVELINK.copy(
                     isMarkedAsOffline = true,
-                    downloadState = DownloadState.Downloaded(emptyList()),
+                    downloadState = DownloadState.Downloaded(),
                     link = PREVIEW_LINK.copy(
                         isFavorite = true,
                     )
@@ -680,7 +680,7 @@ fun PreviewDwnldAndFavShrdListItem() {
             FilesListItem(
                 link = PREVIEW_DRIVELINK.copy(
                     isMarkedAsOffline = true,
-                    downloadState = DownloadState.Downloaded(emptyList()),
+                    downloadState = DownloadState.Downloaded(),
                     link = PREVIEW_LINK.copy(
                         isShared = true,
                         sharingDetails = SharingDetails(

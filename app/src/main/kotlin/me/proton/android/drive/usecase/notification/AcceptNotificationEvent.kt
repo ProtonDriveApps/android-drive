@@ -31,12 +31,8 @@ class AcceptNotificationEvent @Inject constructor(
     suspend operator fun invoke(notificationId: NotificationId, newEvent: Event): Boolean =
         when (newEvent) {
             is Event.StorageFull -> true
-            is Event.Upload -> newEvent.shouldShow && notificationRepository.getNotificationEvent(
-                notificationId = requireIsInstance(notificationId),
-                notificationEventId = newEvent.id,
-            ).let { oldEvent ->
-                oldEvent != null || newEvent.state == UploadState.NEW_UPLOAD
-            }
+            is Event.Upload -> newEvent.shouldShow
+                    && (newEvent.state == UploadState.NEW_UPLOAD || newEvent.exists(notificationId))
 
             is Event.Download -> true
             is Event.ForcedSignOut -> true
@@ -44,4 +40,11 @@ class AcceptNotificationEvent @Inject constructor(
             is Event.Backup -> true
             else -> false
         }
+
+    private suspend fun Event.exists(
+        notificationId: NotificationId
+    ) = notificationRepository.getNotificationEvent(
+        notificationId = requireIsInstance(notificationId),
+        notificationEventId = id,
+    ) != null
 }

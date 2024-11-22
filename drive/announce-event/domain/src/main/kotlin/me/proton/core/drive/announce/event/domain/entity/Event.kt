@@ -23,6 +23,7 @@ import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.key.domain.entity.key.PublicKey
+import java.util.UUID
 
 @Serializable
 sealed class Event {
@@ -179,6 +180,45 @@ sealed class Event {
             DEBUG,
             INFO,
             VERBOSE,
+        }
+    }
+
+    data class Screen(
+        val source: String,
+        val name: String?,
+    ) : Event() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs()
+    }
+
+    data class ApplicationState(
+        val inForeground: Boolean,
+        val connectivity: String,
+    ) : Event() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs()
+    }
+
+    data class Workers(
+        val infos: List<Infos>,
+    ) : Event() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs()
+
+        data class Infos(
+            val id: UUID,
+            val name: String,
+            val state: State,
+            val attempts: Int,
+        ) {
+            enum class State {
+                ENQUEUED,
+                RUNNING,
+                SUCCEEDED,
+                FAILED,
+                BLOCKED,
+                CANCELLED,
+            }
         }
     }
 

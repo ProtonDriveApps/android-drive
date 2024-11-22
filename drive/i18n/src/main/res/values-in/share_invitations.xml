@@ -84,6 +84,6 @@
   <plurals name="share_via_invitations_group_members">
     <item quantity="other">%1$d anggota</item>
   </plurals>
-  <string name="share_via_invitations_message_placeholder">Add a message</string>
-  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
+  <string name="share_via_invitations_message_placeholder">Tambahkan pesan</string>
+  <string name="share_via_invitations_send_message_and_name_label">Sertakan pesan dan nama berkas dalam email undangan</string>
 </resources>

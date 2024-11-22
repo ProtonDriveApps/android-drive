@@ -33,12 +33,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.api.ProtonApiCode.ALREADY_EXISTS
-import me.proton.core.drive.base.domain.api.ProtonApiCode.INVALID_VALUE
-import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
+import me.proton.core.drive.base.domain.api.ProtonApiCode.ALREADY_EXISTS
+import me.proton.core.drive.base.domain.api.ProtonApiCode.INVALID_VALUE
+import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.domain.extension.size
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -62,6 +63,7 @@ import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.GetBlocksUploadUrl
 import me.proton.core.drive.upload.domain.usecase.UploadBlock
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -82,6 +84,7 @@ class BlockUploadWorker @AssistedInject constructor(
     private val updateToken: UpdateToken,
     private val getBlocksUploadUrl: GetBlocksUploadUrl,
     configurationProvider: ConfigurationProvider,
+    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -93,6 +96,7 @@ class BlockUploadWorker @AssistedInject constructor(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
+    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
@@ -118,16 +122,19 @@ class BlockUploadWorker @AssistedInject constructor(
                 .onFailure { error ->
                     val retryable = error.isRetryable
                     val canRetry = canRetry()
-                    error.log(
-                        tag = blockLogTag(),
-                        message = """
-                            Getting block url and token failed "${error.message}" retryable $retryable,
-                            max retries reached ${!canRetry}
-                        """.trimIndent().replace("\n", " "),
-                    )
+
                     return@coroutineScope if (retryable && canRetry) {
+                        error.log(
+                            tag = blockLogTag(),
+                            message = "Getting block url and token failed, will retry",
+                            level = WARNING,
+                        )
                         Result.retry()
                     } else {
+                        error.log(
+                            tag = blockLogTag(),
+                            message = "Getting block url and token failed, retryable $retryable, max retries reached $canRetry",
+                        )
                         Result.success(getSizeData(progress.value))
                     }
                 }
@@ -147,16 +154,12 @@ class BlockUploadWorker @AssistedInject constructor(
                     }
                 }
                 .onFailure { error ->
-                    val retryable = error.isRetryable || error.handle(uploadBlock)
-                    val canRetry = canRetry()
-                    error.log(
-                        tag = blockLogTag(),
-                        message = """
-                            Uploading block failed "${error.message}" retryable $retryable,
-                            max retries reached ${!canRetry}
-                        """.trimIndent(),
+                    return@coroutineScope uploadFileLink.retryOrAbort(
+                        retryable = error.isRetryable || error.handle(uploadBlock),
+                        canRetry = canRetry(),
+                        error = error,
+                        message = "Uploading block failed"
                     )
-                    return@coroutineScope retryOrAbort(retryable && canRetry, error, uploadFileLink.name)
                 }
         } finally {
             job.cancel()

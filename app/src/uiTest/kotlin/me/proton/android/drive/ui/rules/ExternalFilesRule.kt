@@ -20,9 +20,11 @@ package me.proton.android.drive.ui.rules
 
 import android.app.Application
 import android.content.Context
+import android.media.MediaScannerConnection
 import android.os.Environment
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
+import me.proton.core.util.kotlin.CoreLogger
 import org.junit.rules.ExternalResource
 import java.io.File
 import java.io.FileOutputStream
@@ -30,7 +32,10 @@ import java.io.RandomAccessFile
 
 class ExternalFilesRule(
     private val folderBuilder: (Context) -> File = { context ->
-        File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "ui-test")
+        File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            "ui-test"
+        )
     },
 ) : ExternalResource() {
 
@@ -51,12 +56,14 @@ class ExternalFilesRule(
         dir.deleteRecursively()
     }
 
+    fun getFile(name: String) = File(dir, name)
+
     fun createFile(name: String, size: Long) = File(dir, name).apply {
         createNewFile()
         if (size > 0L) {
             RandomAccessFile(this, "rw").use { it.setLength(size) }
         }
-    }
+    }.also { file -> listOf(file).scan() }
 
     fun deleteFile(name: String) = File(dir, name).delete()
 
@@ -76,19 +83,29 @@ class ExternalFilesRule(
                 input.copyTo(output)
             }
         }
-    }
+    }.also { file -> listOf(file).scan() }
 
-    fun copyDirFromAssets(name: String, flatten: Boolean = true) {
+    fun copyDirFromAssets(name: String, flatten: Boolean = true) : List<File> {
         val fileList = assetManager.list(name) ?: error("Could not list files in $name")
 
-        if (fileList.isEmpty())
-            copyFileFromAssets(name, flatten)
-        else
-            fileList.forEach {
+        return if (fileList.isEmpty()) {
+            listOf(copyFileFromAssets(name, flatten))
+        } else {
+            fileList.map {
                 if (!flatten) {
                     File(dir, name).mkdirs()
                 }
                 copyDirFromAssets("$name/$it", flatten)
-            }
+            }.flatten()
+        }.also { files -> files.scan() }
+    }
+}
+
+fun List<File>.scan() {
+    MediaScannerConnection.scanFile(
+        ApplicationProvider.getApplicationContext<Application>(),
+        this.map { it.path }.toTypedArray(), null
+    ) { path, uri ->
+        CoreLogger.d("ExternalFilesRule", "Add file to media: $path as $uri")
     }
 }

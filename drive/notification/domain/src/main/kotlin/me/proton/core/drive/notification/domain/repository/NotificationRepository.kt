@@ -45,6 +45,11 @@ interface NotificationRepository {
     suspend fun insertNotificationEvent(notificationId: NotificationId.User, event: Event): Result<Unit>
 
     /**
+     * Inserts or updates list of [Event] in cache based on [NotificationId]
+     */
+    suspend fun insertNotificationEvents(notificationId: NotificationId.User, events: List<Event>): Result<Unit>
+
+    /**
      * Gets all [NotificationId] for a given user
      */
     suspend fun getAllNotificationIds(userId: UserId): List<NotificationId.User>
@@ -70,4 +75,14 @@ interface NotificationRepository {
      * Removes all [Event] for a given user
      */
     suspend fun removeNotificationEvents(userId: UserId)
+
+    /**
+     * Checks if user has rejected notification permission rationale
+     */
+    suspend fun hasUserRejectNotificationPermissionRationale(userId: UserId): Boolean?
+
+    /**
+     * Sets user reject notification permission rationale
+     */
+    suspend fun setUserRejectNotificationPermissionRationale(userId: UserId, value: Boolean)
 }

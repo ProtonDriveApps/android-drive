@@ -16,7 +16,6 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
-
 <resources>
     <!-- region Titles -->
     <string name="title_decrypting">Decrypting</string>
@@ -35,7 +34,6 @@
     <string name="title_files_confirm_deletion">Delete permanently?</string>
     <string name="title_default_home_screen_tab">Choose default home screen tab</string>
     <!-- endregion -->
-
     <string name="app_name" translatable="false">Proton Drive</string>
     <string name="menu_item_header_title_app">App</string>
     <string name="description_signing_out">Signing out…</string>
@@ -55,15 +53,12 @@
     <string name="folder_option_create_folder">Create folder</string>
     <string name="folder_option_take_a_photo">Take a new photo</string>
     <string name="folder_option_create_document">Create document</string>
-
     <string name="settings_theme_system_default">System default</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_theme_light">Light</string>
-
     <string name="deeplink_scheme" translatable="false">drive</string>
     <string name="deeplink_host" translatable="false">proton.me</string>
     <string name="deeplink_url" translatable="false">%1$s://%2$s</string>
-
     <!--
         Variable %1$s is a title_my_files
         Examples:
@@ -82,9 +77,7 @@
     <string name="in_app_notification_clear_local_cache_success">Local cache cleared successfully</string>
     <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
     <string name="in_app_notification_create_document_success">Document created</string>
-
     <!-- endregion -->
-
     <!-- region Notification -->
     <string name="notification_content_title_storage_full">Storage full</string>
     <!--
@@ -134,7 +127,6 @@
         <item quantity="one">%1$d file failed</item>
         <item quantity="other">%1$d files failed</item>
     </plurals>
-
     <!--
         Variable %1$s is an application name
         Example:
@@ -163,7 +155,6 @@
     <string name="notification_content_text_backup_paused_disabled">Backup was disabled</string>
     <string name="notification_content_text_backup_paused_background_restrictions">Backup cannot run in background</string>
     <string name="notification_content_text_backup_preparing">Preparing to back up</string>
-
     <string name="notification_content_title_download_complete">Download complete</string>
     <string name="notification_content_title_forced_sign_out">Please log in</string>
     <string name="notification_content_text_forced_sign_out">Sorry to interrupt! We had an issue with syncing - please log in again and we\'ll have everything running smoothly.</string>
@@ -176,12 +167,14 @@
     <string name="notification_channel_transfer_description">Channel for cloud storage, upload and download notifications</string>
     <string name="notification_channel_warning_title">Warning</string>
     <string name="notification_channel_warning_description">Channel for warnings that require user action</string>
+    <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
+    <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
+    <string name="notification_permission_rationale_action_accept">Enable notifications</string>
+    <string name="notification_permission_rationale_action_reject">Not now</string>
     <!-- endregion -->
-
     <string name="content_description_select_all">Select all items in the list</string>
     <string name="content_description_selected_options">Show more options for selected files and/or folders</string>
     <string name="content_description_files_upload_upload_file">Upload a file</string>
-
     <string name="description_empty_my_files">Tap the button to start adding files.</string>
     <string name="description_empty_folder">@string/description_empty_my_files</string>
     <string name="description_empty_folder_read_only">There is nothing to see here</string>
@@ -196,11 +189,10 @@
     <string name="description_files_stop_sharing_action_success">The link to your file has been deleted.</string>
     <string name="description_files_stop_sharing_action_error">There was an error while deleting the link to your file.</string>
     <string name="description_files_stop_all_sharing">This will delete link and remove access for everyone.</string>
-    <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
+    <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
     <string name="description_files_stop_all_sharing_action_error">There was an error while deleting sharing to your file.</string>
     <string name="ignore_file_signature_action">View anyway</string>
     <string name="action_empty_files_add_files">Upload</string>
-
     <string name="error_could_not_send_file">An error occurred while trying to send the file</string>
     <string name="error_could_not_load_folder_content">An error occurred while trying to load folder content</string>
     <string name="error_main_share_locked">Your files are no longer accessible due to a password reset. Re-upload the old encryption key to regain the access.</string>
@@ -209,11 +201,9 @@
     <string name="error_share_not_found">Share is not found.</string>
     <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
     <string name="error_creating_share_not_allowed">Creating share is temporarily disabled.</string>
-
     <string name="operation_open_document">open a document</string>
     <string name="operation_create_document">create a document</string>
     <string name="operation_take_picture">take a picture</string>
-
     <!-- region Get more free storage -->
     <!--
         Variable %1$s is a quantity (formatted) of max free storage
@@ -239,7 +229,7 @@
         Example:
             "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
     -->
-    <string name="get_more_free_storage_action_recovery_subtitle">Sign in at %1$s, then go to Settings -> Recovery.</string>
+    <string name="get_more_free_storage_action_recovery_subtitle">Sign in at %1$s, then go to Settings -&gt; Recovery.</string>
     <string name="get_more_free_storage_action_recovery_subtitle_url_string" translatable="false">account.proton.me</string>
     <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
@@ -248,12 +238,10 @@
     -->
     <string name="get_more_free_storage_action_recovery_subtitle_url" translatable="false">https://%1$s</string>
     <!-- endregion -->
-
     <!--
         Variable %1$s is a string representation of a date and time
         Example:
             "Untitled document 2025-11-28 12.34.56"
     -->
     <string name="new_document_name">Untitled document %1$s</string>
-
 </resources>

@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Esikatselu tiedoston sisällöstä</string>
-  <string name="content_description_more_options">Näytä lisää tiedostokohtaisia valintoja</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">Ladataan…</string>
   <string name="preview_processing_state">Käsitellään…</string>
   <string name="preview_empty">Esikatseltavaa ei ole…</string>
@@ -26,5 +26,5 @@
   <string name="proton_docs_insert_image_header_title">Lisää kuva</string>
   <string name="proton_docs_option_select_file">Valitse tiedosto</string>
   <string name="proton_docs_unsupported_file_type">Vain kuvien lisäämistä tuetaan toistaiseksi</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_load_error">Dokumentin lataaminen epäonnistui</string>
 </resources>

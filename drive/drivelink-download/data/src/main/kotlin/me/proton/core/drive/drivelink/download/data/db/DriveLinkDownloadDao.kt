@@ -22,7 +22,7 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.data.db.dao.DriveLinkDao
-import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntityWithBlock
+import me.proton.core.drive.drivelink.data.db.entity.DriveLinkEntity
 import me.proton.core.drive.linkdownload.data.db.entity.LinkDownloadState
 
 @Dao
@@ -37,5 +37,5 @@ interface DriveLinkDownloadDao : DriveLinkDao {
     fun getLinksWithDownloadState(
         userId: UserId,
         downloadState: LinkDownloadState,
-    ): Flow<List<DriveLinkEntityWithBlock>>
+    ): Flow<List<DriveLinkEntity>>
 }

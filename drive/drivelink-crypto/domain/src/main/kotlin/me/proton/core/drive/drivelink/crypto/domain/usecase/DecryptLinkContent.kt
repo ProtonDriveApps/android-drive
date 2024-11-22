@@ -36,6 +36,7 @@ import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
+import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadBlocks
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailBlock
 import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
@@ -51,6 +52,7 @@ class DecryptLinkContent @Inject constructor(
     private val getThumbnailBlock: GetThumbnailBlock,
     private val getNodeKey: GetNodeKey,
     private val getPublicAddressKeys: GetPublicAddressKeys,
+    private val getDownloadBlocks: GetDownloadBlocks,
 ) {
     suspend operator fun invoke(
         driveLink: DriveLink.File,
@@ -59,7 +61,7 @@ class DecryptLinkContent @Inject constructor(
     ): Result<File> = coRunCatching {
         val link = getLink(driveLink.id).toResult().getOrThrow()
         val downloadState = requireIsInstance<DownloadState.Downloaded>(driveLink.downloadState)
-        val encryptedFileBlocks = downloadState.blocks.also { blocks ->
+        val encryptedFileBlocks = getDownloadBlocks(link).getOrThrow().also { blocks ->
             blocks.requireSortedAscending()
         }
         val encryptedThumbnailBlocks = link.getThumbnailIds(driveLink.volumeId).map { thumbnailId ->

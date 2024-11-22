@@ -72,11 +72,10 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.SharedDriveI
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingExternalInvitations
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingExternalInvitationsDisabled
 import me.proton.core.drive.feature.flag.domain.extension.off
-import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
+import me.proton.core.drive.key.domain.extension.hasKeys
 import me.proton.core.drive.key.domain.usecase.GetPublicAddressInfo
 import me.proton.core.drive.label.domain.usecase.SearchLabelsWithContacts
 import me.proton.core.drive.link.domain.entity.FileId
@@ -129,12 +128,11 @@ class SharedDriveInvitationsViewModel @Inject constructor(
             initialValue = FeatureFlag(driveSharingDisabled(userId), NOT_FOUND),
         )
 
-    private val externalInvitationFeatureFlag = combine(
-        getFeatureFlagFlow(driveSharingExternalInvitations(userId)),
-        getFeatureFlagFlow(driveSharingExternalInvitationsDisabled(userId)),
-    ) { featureFlags, killSwitch ->
-        killSwitch.off && featureFlags.on
-    }.distinctUntilChanged().stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    private val externalInvitationFeatureFlag =
+        getFeatureFlagFlow(driveSharingExternalInvitationsDisabled(userId))
+            .map { killSwitch -> killSwitch.off }
+            .distinctUntilChanged()
+            .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     private val permissions = MutableStateFlow(Permissions.editor)
 
@@ -165,9 +163,11 @@ class SharedDriveInvitationsViewModel @Inject constructor(
                 )
             } else {
                 getPublicAddressInfo(userId, invitation.email)
-                    .getOrNull(SHARING, "Cannot get public address")?.let {
+                    .getOrNull(SHARING, "Cannot get public address")?.let { publicAddressInfo ->
                         invitation.copy(
-                            isValid = invitation.email !in userEmails
+                            isValid = invitation.email !in userEmails && publicAddressInfo.hasKeys(
+                                unverified = true
+                            )
                         )
                     } ?: invitation
             }

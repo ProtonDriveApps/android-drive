@@ -37,6 +37,7 @@ import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.FindDuplicates
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
@@ -72,16 +73,18 @@ class BackupFindDuplicatesWorker @AssistedInject constructor(
         findDuplicates(BackupFolder(bucketId, folderId, timestamp)).onFailure { error ->
             val canRetry = runAttemptCount <= configurationProvider.maxApiAutoRetries
             val retryable = error.isRetryable
-            error.log(
-                tag = BACKUP,
-                message = """
-                    Cannot find duplicates for: ${folderId.id} retryable $retryable,
-                    max retries reached ${!canRetry}
-                """.trimIndent()
-            )
             return if (canRetry && retryable) {
+                error.log(
+                    tag = BACKUP,
+                    message = "Cannot find duplicates for: ${folderId.id}, will retry",
+                    level = WARNING,
+                )
                 Result.retry()
             } else {
+                error.log(
+                    tag = BACKUP,
+                    message = "Cannot find duplicates for: ${folderId.id} retryable $retryable, max retries reached $canRetry"
+                )
                 addBackupError(folderId, BackupError.Other(retryable))
                 Result.failure()
             }

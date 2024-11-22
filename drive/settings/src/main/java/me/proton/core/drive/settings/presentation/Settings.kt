@@ -181,7 +181,9 @@ fun Settings(
             }
 
             NavigationDrawerAppVersion(
-                modifier = Modifier.padding(top = DefaultSpacing),
+                modifier = Modifier
+                    .padding(top = DefaultSpacing)
+                    .testTag(SettingsTestTag.appVersion),
                 name = stringResource(id = viewState.appNameResId),
                 version = viewState.appVersion
             )
@@ -243,4 +245,5 @@ private fun SettingsPreview() {
 object SettingsTestTag {
     const val list = "settings list"
     const val account = "account"
+    const val appVersion = "app version"
 }

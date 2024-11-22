@@ -25,7 +25,7 @@ import retrofit2.http.Path
 
 interface VerifierApi : BaseRetrofitApi {
 
-    @GET("drive/shares/@{enc_shareID}/links/@{enc_linkID}/revisions/@{enc_revisionID}/verification")
+    @GET("drive/shares/{enc_shareID}/links/{enc_linkID}/revisions/{enc_revisionID}/verification")
     suspend fun getVerificationData(
         @Path("enc_shareID") shareId: String,
         @Path("enc_linkID") linkId: String,

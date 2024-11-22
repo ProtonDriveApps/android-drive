@@ -22,7 +22,9 @@ import kotlinx.coroutines.flow.flowOf
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.entity.Event.Upload.Reason
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -61,7 +63,12 @@ class UploadEventMapper(
                             Reason.ERROR_DRIVE_STORAGE -> PhotosEvent.Reason.FAILED_DRIVE_STORAGE
                             Reason.ERROR_LOCAL_STORAGE -> PhotosEvent.Reason.FAILED_LOCAL_STORAGE
                             Reason.ERROR_NOT_ALLOWED -> PhotosEvent.Reason.FAILED_NOT_ALLOWED
-                        }
+                        },
+                        mediaType = when (uploadFileLink.mimeType.toFileTypeCategory()) {
+                            FileTypeCategory.Image -> PhotosEvent.MediaType.PHOTO
+                            FileTypeCategory.Video -> PhotosEvent.MediaType.VIDEO
+                            else -> null
+                        },
                     )
                 }
         } else {

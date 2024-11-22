@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Forhåndsvisning af filindhold</string>
-  <string name="content_description_more_options">Vis flere valgmuligheder for en fil</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">Downloader…</string>
   <string name="preview_processing_state">Behandler…</string>
   <string name="preview_empty">Intet at vise...</string>
@@ -26,5 +26,5 @@
   <string name="proton_docs_insert_image_header_title">Indsæt billede</string>
   <string name="proton_docs_option_select_file">Vælg en fil</string>
   <string name="proton_docs_unsupported_file_type">Kun billedindsættelse er understøttet indtil videre</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_load_error">Indlæsning af dokument mislykkedes</string>
 </resources>

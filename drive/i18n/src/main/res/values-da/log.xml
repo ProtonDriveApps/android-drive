@@ -31,4 +31,11 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Undtagelse</string>
   <string name="log_origin_logger">Logbog</string>
+  <string name="log_origin_screen">Skærm</string>
+  <string name="log_origin_application_state">Applikationsstatus</string>
+  <string name="log_origin_workers">Workers</string>
+  <string name="log_origin_backup">Sikkerhedskopiering</string>
+  <string name="log_origin_user">Bruger</string>
+  <string name="log_origin_device">Enhed</string>
+  <string name="log_origin_crypto">Crypto</string>
 </resources>

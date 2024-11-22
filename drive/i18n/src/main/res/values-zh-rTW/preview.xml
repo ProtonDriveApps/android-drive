@@ -18,13 +18,13 @@
   -->
 <resources>
   <string name="content_description_file_preview">預覽檔案內容</string>
-  <string name="content_description_more_options">顯示檔案的更多選項</string>
+  <string name="content_description_more_options">Show more options for the file</string>
   <string name="preview_downloading_state">正在下載……</string>
   <string name="preview_processing_state">正在處理……</string>
   <string name="preview_empty">無可預覽的項目……</string>
   <string name="title_not_found">找不到</string>
-  <string name="proton_docs_insert_image_header_title">Insert image</string>
-  <string name="proton_docs_option_select_file">Select a file</string>
-  <string name="proton_docs_unsupported_file_type">Only inserting images is supported for now</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_insert_image_header_title">插入影像</string>
+  <string name="proton_docs_option_select_file">選取檔案</string>
+  <string name="proton_docs_unsupported_file_type">目前僅支援插入影像</string>
+  <string name="proton_docs_load_error">載入文件失敗</string>
 </resources>

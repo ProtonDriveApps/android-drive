@@ -75,7 +75,8 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
                 logWorkState("Adding ${uploadFileDescriptions.size} files to upload")
                 val hasEnoughSpace = hasEnoughAvailableSpace(
                     userId = userId,
-                    uriStrings = uploadFileDescriptions.map { description -> description.uri }) { needed ->
+                    uploadFileDescriptions = uploadFileDescriptions,
+                ) { needed ->
                     announceEvent(
                         userId = userId,
                         event = Event.StorageFull(needed)
@@ -106,17 +107,17 @@ class CreateUploadFileLinkWorker @AssistedInject constructor(
                     error.log(UPLOAD_BULK, "Cannot delete upload bulk for ${uploadFileDescriptions.size} files")
                 }.getOrThrow()
                 logWorkState("${uploadFileLinks.size} files were added to upload")
-                uploadFileLinks.forEach { uploadFileLink ->
-                    announceUploadEvent(
-                        uploadFileLink = uploadFileLink,
-                        uploadEvent = Event.Upload(
+                announceUploadEvent(
+                    userId = userId,
+                    uploadEvents = uploadFileLinks.map { uploadFileLink ->
+                        Event.Upload(
                             state = Event.Upload.UploadState.NEW_UPLOAD,
                             uploadFileLinkId = uploadFileLink.id,
                             percentage = Percentage(0),
                             shouldShow = uploadFileLink.shouldAnnounceEvent,
                         )
-                    )
-                }
+                    }
+                )
             }
             if (showFilesBeingUploaded) {
                 broadcastMessages(

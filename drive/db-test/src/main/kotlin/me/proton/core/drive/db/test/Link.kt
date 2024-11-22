@@ -48,6 +48,7 @@ data class FileContext(
     val db: DriveDatabase,
     val user: UserEntity,
     val account: AccountEntity,
+    val volume: VolumeEntity,
     val share: ShareEntity,
     val link: LinkEntity,
     val parent: LinkEntity,
@@ -161,7 +162,7 @@ suspend fun FolderContext.file(
             )
         )
     }
-    FileContext(db, user, account, share, link, this.link, properties.activeRevisionId).block()
+    FileContext(db, user, account, volume, share, link, this.link, properties.activeRevisionId).block()
 }
 
 @Suppress("FunctionName")

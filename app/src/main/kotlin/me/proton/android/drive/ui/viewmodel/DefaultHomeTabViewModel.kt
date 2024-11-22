@@ -63,7 +63,6 @@ class DefaultHomeTabViewModel @Inject constructor(
         Screen.Files.route -> HomeTab.FILES
         Screen.Photos.route -> HomeTab.PHOTOS
         Screen.Computers.route -> HomeTab.COMPUTERS
-        Screen.Shared.route -> HomeTab.SHARED
         Screen.SharedTabs.route -> HomeTab.SHARED
         else -> error("Unhandled tab item route: $route")
     }

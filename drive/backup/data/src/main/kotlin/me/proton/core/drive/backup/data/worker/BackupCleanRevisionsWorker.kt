@@ -36,6 +36,7 @@ import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.CleanRevisions
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
@@ -62,16 +63,19 @@ class BackupCleanRevisionsWorker @AssistedInject constructor(
         cleanRevisions(folderId).onFailure { error ->
             val canRetry = runAttemptCount <= configurationProvider.maxApiAutoRetries
             val retryable = error.isRetryable
-            error.log(
-                tag = BACKUP,
-                message = """
-                    Cannot clean revisions for: ${folderId.id} retryable $retryable,
-                    max retries reached ${!canRetry}
-                """.trimIndent()
-            )
+
             return if (canRetry && retryable) {
+                error.log(
+                    tag = BACKUP,
+                    message = "Cannot clean revisions for: ${folderId.id}, will retry",
+                    level = WARNING,
+                )
                 Result.retry()
             } else {
+                error.log(
+                    tag = BACKUP,
+                    message = "Cannot clean revisions for: ${folderId.id} retryable $retryable, max retries reached $canRetry"
+                )
                 addBackupError(folderId, BackupError.Other(retryable))
                 Result.failure()
             }

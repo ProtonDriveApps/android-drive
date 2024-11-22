@@ -31,4 +31,11 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Výjimka</string>
   <string name="log_origin_logger">Záznamník logů</string>
+  <string name="log_origin_screen">Obrazovka</string>
+  <string name="log_origin_application_state">Stav aplikace</string>
+  <string name="log_origin_workers">Pracovníci</string>
+  <string name="log_origin_backup">Zálohování</string>
+  <string name="log_origin_user">Uživatel</string>
+  <string name="log_origin_device">Zařízení</string>
+  <string name="log_origin_crypto">Crypto</string>
 </resources>

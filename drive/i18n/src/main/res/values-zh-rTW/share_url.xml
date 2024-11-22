@@ -40,7 +40,7 @@
     -->
   <string name="shared_link_accessibility_description_password_protected">僅同時擁有連結與密碼的人才能存取%1$s。</string>
   <string name="shared_link_settings">連結設定</string>
-  <string name="shared_link_options">Link options</string>
+  <string name="shared_link_options">連結選項</string>
   <string name="shared_link_privacy_settings">隱私設定</string>
   <string name="shared_link_password_protection">保護密碼</string>
   <string name="shared_link_expiration_date">到期日</string>
@@ -70,6 +70,6 @@
   <string name="title_share_via_link">透過連結分享</string>
   <string name="shared_with_me_title">與我共享</string>
   <string name="shared_by_me_title">由我分享</string>
-  <string name="shared_with_me_empty_description">Files and folder that you share with others will appear here</string>
-  <string name="shared_by_me_empty_description">Safely share your files and folders with end-to-end encryption</string>
+  <string name="shared_with_me_empty_description">您與其他人分享的檔案與資料夾將會在此出現</string>
+  <string name="shared_by_me_empty_description">透過端到端加密安全地分享您的檔案與資料夾</string>
 </resources>

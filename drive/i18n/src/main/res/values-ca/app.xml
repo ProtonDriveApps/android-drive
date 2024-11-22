@@ -26,7 +26,7 @@
   <string name="title_empty_my_files">Endavant, afegiu el primer fitxer</string>
   <string name="title_empty_folder">Ja podeu omplir aquesta carpeta</string>
   <string name="title_empty_folder_read_only">Carpeta buida</string>
-  <string name="title_empty_shared">Estigueu assabentats del que està passant</string>
+  <string name="title_empty_shared">Feu un seguiment del que està passant</string>
   <string name="title_empty_offline_available">Res disponible fora de línia</string>
   <string name="title_empty_trash">La paperera és buida.</string>
   <string name="title_empty_trash_action">Buida la paperera</string>
@@ -146,7 +146,7 @@
   <string name="notification_content_text_backup_preparing">S\'està preparant per a fer una còpia de seguretat</string>
   <string name="notification_content_title_download_complete">Descàrrega completa</string>
   <string name="notification_content_title_forced_sign_out">Inicia la sessió</string>
-  <string name="notification_content_text_forced_sign_out">Hi ha hagut un problema amb la sincronització. Inicieu sessió de nou i tot funcionarà sense problemes.</string>
+  <string name="notification_content_text_forced_sign_out">Hi ha hagut un problema amb la sincronització. Torneu a iniciar la sessió i tot funcionarà sense problemes.</string>
   <string name="notification_content_title_no_space_left_on_device">No queda espai al dispositiu</string>
   <string name="notification_content_text_no_space_left_on_device">És possible que l\'aplicació no funcioni correctament.</string>
   <string name="notification_channel_group_name_application">Aplicació</string>
@@ -156,6 +156,10 @@
   <string name="notification_channel_transfer_description">Canal de notificacions per a emmagatzematge al núvol, càrrega i descàrrega</string>
   <string name="notification_channel_warning_title">Advertència</string>
   <string name="notification_channel_warning_description">Canal per a advertiments que requereixen una acció de l\'usuari</string>
+  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
+  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
+  <string name="notification_permission_rationale_action_accept">Activa les notificacions</string>
+  <string name="notification_permission_rationale_action_reject">Ara no</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecciona tots els elements a la llista</string>
   <string name="content_description_selected_options">Mostra més opcions per als fitxers i/o carpetes seleccionades</string>
@@ -173,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">S\'ha esborrat l\'enllaç al fitxer.</string>
   <string name="description_files_stop_sharing_action_error">S\'ha produït un error en esborrar l\'enllaç al fitxer.</string>
   <string name="description_files_stop_all_sharing">Això esborrarà l\'enllaç i eliminarà l\'accés per a tothom.</string>
-  <string name="description_files_stop_all_sharing_action_success">S\'ha suprimit l\'ús compartit al vostre fitxer.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">S\'ha produït un error en suprimir la compartició al fitxer.</string>
   <string name="ignore_file_signature_action">Veure de totes maneres</string>
   <string name="action_empty_files_add_files">Carrega</string>

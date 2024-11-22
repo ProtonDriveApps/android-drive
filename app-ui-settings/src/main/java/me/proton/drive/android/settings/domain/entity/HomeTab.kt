@@ -18,16 +18,10 @@
 
 package me.proton.drive.android.settings.domain.entity
 
-import android.os.Build
-
 enum class HomeTab {
     FILES, PHOTOS, COMPUTERS, SHARED;
 
     companion object {
-        val DEFAULT = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            PHOTOS
-        } else {
-            FILES
-        }
+        val DEFAULT = PHOTOS
     }
 }

@@ -84,6 +84,6 @@
   <plurals name="share_via_invitations_group_members">
     <item quantity="other">구성원 %1$d명</item>
   </plurals>
-  <string name="share_via_invitations_message_placeholder">Add a message</string>
-  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
+  <string name="share_via_invitations_message_placeholder">메시지 추가</string>
+  <string name="share_via_invitations_send_message_and_name_label">초대 이메일에 메시지 및 파일 이름을 포함하기</string>
 </resources>

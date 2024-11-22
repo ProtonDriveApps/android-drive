@@ -31,4 +31,11 @@
   <string name="log_origin_network">Interfejs API</string>
   <string name="log_origin_throwable">Wyjątek</string>
   <string name="log_origin_logger">Rejestrator</string>
+  <string name="log_origin_screen">Ekran</string>
+  <string name="log_origin_application_state">Status aplikacji</string>
+  <string name="log_origin_workers">Pracownicy</string>
+  <string name="log_origin_backup">Kopia zapasowa</string>
+  <string name="log_origin_user">Użytkownik</string>
+  <string name="log_origin_device">Urządzenie</string>
+  <string name="log_origin_crypto">Crypto</string>
 </resources>

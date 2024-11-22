@@ -28,6 +28,8 @@ import androidx.core.content.ContextCompat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.notification.data.extension.buildNotificationChannelCompat
 import me.proton.core.drive.notification.data.extension.id
@@ -35,7 +37,6 @@ import me.proton.core.drive.notification.data.provider.NotificationBuilderProvid
 import me.proton.core.drive.notification.domain.entity.Channel
 import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.drive.notification.domain.manager.NotificationManager
-import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class NotificationManagerImpl @Inject constructor(
@@ -99,10 +100,10 @@ class NotificationManagerImpl @Inject constructor(
             if (throwable !is SecurityException) {
                 throw throwable
             } else {
-                CoreLogger.w(
+                throwable.log(
                     tag = LogTag.NOTIFICATION,
-                    e = throwable,
                     message = "Failed removing notification channel $channelId",
+                    level = WARNING,
                 )
             }
         }

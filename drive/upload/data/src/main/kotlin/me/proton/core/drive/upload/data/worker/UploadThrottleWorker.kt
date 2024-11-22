@@ -29,6 +29,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
@@ -85,14 +86,16 @@ class UploadThrottleWorker @AssistedInject constructor(
     }.fold(
         onSuccess = { Result.success() },
         onFailure = { error ->
-            error.log(
-                UPLOAD,
-                "UploadThrottleWorker($runAttemptCount) Cannot enqueue files to be uploaded"
-            )
             when {
                 error is CancellationException -> throw error
-                error.isRetryable -> Result.retry()
-                else -> Result.failure()
+                error.isRetryable -> {
+                    error.log(UPLOAD, "Cannot enqueue files to be uploaded, will retry", WARNING)
+                    Result.retry()
+                }
+                else -> {
+                    error.log(UPLOAD, "Cannot enqueue files to be uploaded")
+                    Result.failure()
+                }
             }
         }
     )

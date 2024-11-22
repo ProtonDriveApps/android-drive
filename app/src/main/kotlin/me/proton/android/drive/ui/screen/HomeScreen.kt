@@ -33,7 +33,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -59,7 +59,6 @@ import me.proton.core.compose.component.ProtonSnackbarHost
 import me.proton.core.compose.component.ProtonSnackbarHostState
 import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.compose.component.bottomsheet.ModalBottomSheetViewState
-import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.BottomNavigation
@@ -99,6 +98,8 @@ fun HomeScreen(
     navigateToPhotosPermissionRationale: () -> Unit,
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     navigateToGetMoreFreeStorage: () -> Unit,
+    navigateToOnboarding: () -> Unit,
+    navigateToNotificationPermissionRationale: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     setLocalSnackbarPadding(BottomNavigationHeight)
@@ -113,8 +114,7 @@ fun HomeScreen(
             homeNavController.removeOnDestinationChangedListener(listener)
         }
     }
-    val viewState by rememberFlowWithLifecycle(flow = homeViewModel.viewState)
-        .collectAsState(initial = null)
+    val viewState by homeViewModel.viewState.collectAsStateWithLifecycle(initialValue = null)
     viewState?.let { currentViewState ->
         Home(
             homeNavController = homeNavController,
@@ -132,6 +132,7 @@ fun HomeScreen(
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
             navigateToComputerOptions = navigateToComputerOptions,
+            navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
             arguments = arguments,
             viewState = currentViewState,
             viewEvent = homeViewModel.viewEvent(
@@ -154,6 +155,11 @@ fun HomeScreen(
                 .testTag(HomeScreenTestTag.screen),
         )
     } ?: DeferredCircularProgressIndicator(modifier)
+    LaunchedEffect(Unit) {
+        if (homeViewModel.shouldShowOnboarding()) {
+            navigateToOnboarding()
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -180,6 +186,7 @@ internal fun Home(
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
+    navigateToNotificationPermissionRationale: () -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
     val isDrawerOpen = with(homeScaffoldState.scaffoldState.drawerState) {
@@ -274,6 +281,7 @@ internal fun Home(
                     navigateToPhotosUpsell,
                     navigateToBackupSettings,
                     navigateToComputerOptions,
+                    navigateToNotificationPermissionRationale,
                 )
             }
         }

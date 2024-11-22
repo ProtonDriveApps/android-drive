@@ -22,8 +22,8 @@ import android.content.Context
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.extension.avoidDuplicateFileName
 import me.proton.core.drive.base.domain.extension.trimForbiddenChars
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -34,6 +34,7 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.UpdateName
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
+import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -49,6 +50,7 @@ abstract class CommonCreateFileWorker(
     private val updateName: UpdateName,
     private val refreshFeatureFlags: RefreshFeatureFlags,
     configurationProvider: ConfigurationProvider,
+    uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -60,6 +62,7 @@ abstract class CommonCreateFileWorker(
     getUploadFileLink = getUploadFileLink,
     uploadErrorManager = uploadErrorManager,
     configurationProvider = configurationProvider,
+    uploadMetricsNotifier = uploadMetricsNotifier,
     canRun = canRun,
     run = run,
     done = done,
