@@ -19,22 +19,25 @@
 package me.proton.android.drive.ui.test.flow.trash
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.files.presentation.extension.LayoutType.Grid
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class MoveToTrashTests : AuthenticatedBaseTest() {
+class MoveToTrashTests : BaseTest() {
 
     private val fileName = "image.jpg"
     private val folderName = "folder1"
 
     @Test
-    @Scenario(1)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 1, sharedWithUserTag = "sharingUser")
     fun removeEmptyFolderInGrid() {
         val folder1 = "folder1"
         val folder4 = "folder4"
@@ -68,7 +71,8 @@ class MoveToTrashTests : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2, isPhotos = true)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isPhotos = true)
     fun moveAFileAndPhotoToTrash() {
         PhotosTabRobot.waitUntilLoaded()
         PhotosTabRobot
@@ -99,15 +103,17 @@ class MoveToTrashTests : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2)
-    fun removeFolderWithFiles() {
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 9)
+    fun removeAnonymousFile() {
+        val filename = "anonymous-file"
         PhotosTabRobot
             .clickFilesTab()
-            .clickMoreOnItem(folderName)
+            .clickMoreOnItem(filename)
             .clickMoveToTrash()
             .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
             .verify {
-                itemIsNotDisplayed(folderName)
+                itemIsNotDisplayed(filename)
             }
 
         FilesTabRobot
@@ -115,7 +121,7 @@ class MoveToTrashTests : AuthenticatedBaseTest() {
             .clickSidebarButton()
             .clickTrash()
             .verify {
-                itemIsDisplayed(folderName)
+                itemIsDisplayed(filename)
             }
     }
 }

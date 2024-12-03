@@ -26,6 +26,7 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
+import me.proton.core.drive.cryptobase.domain.extension.failed
 import me.proton.core.drive.cryptobase.domain.extension.toDecryptedFile
 import me.proton.core.key.domain.entity.key.PublicKeyRing
 import me.proton.core.key.domain.entity.keyholder.KeyHolder
@@ -48,7 +49,7 @@ class VerifyFileSignature @Inject constructor(
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecryptWithIO.coroutineContext,
     ): Result<VerificationStatus> = coRunCatching(coroutineContext) {
         when {
-            encSignature == null -> VerificationStatus.Unknown
+            encSignature == null -> VerificationStatus.NotSigned
             decryptKey.useKeys(cryptoContext) {
                 verifyFileEncrypted(file.toDecryptedFile().file, encSignature, verifyKeyRing).also { verified ->
                     if (!verified) {
@@ -58,7 +59,7 @@ class VerifyFileSignature @Inject constructor(
             } -> VerificationStatus.Success
             else -> VerificationStatus.Failure
         }.also { status ->
-            if (status != VerificationStatus.Success) {
+            if (status.failed) {
                 CoreLogger.d(
                     tag = LogTag.ENCRYPTION,
                     e = VerificationException("Verification status ${status.name}"),

@@ -19,17 +19,19 @@
 package me.proton.android.drive.ui.test.flow.computers
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.ComputersTabRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class RenamingComputerSuccessFlowTest : AuthenticatedBaseTest() {
+class RenamingComputerSuccessFlowTest : BaseTest() {
 
     @Test
-    @Scenario(value = 2, isDevice = true)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isDevice = true)
     fun renameComputer() {
         val computerToBeRenamed = MY_DEVICE_1
         val newComputerName = "My device X"

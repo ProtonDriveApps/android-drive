@@ -19,20 +19,22 @@
 package me.proton.android.drive.ui.test.flow.offline
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.OfflineRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
+class RemoveAvailableOfflineFlowTest : BaseTest() {
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun removeFileFromAvailableOfflineFromMyFile() {
         val file = "shared.jpg"
         PhotosTabRobot
@@ -51,7 +53,8 @@ class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun removeFileFromAvailableOfflineFromOffline() {
         val file = "shared.jpg"
         PhotosTabRobot
@@ -73,7 +76,8 @@ class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun removeFolderFromAvailableOffline() {
         val folder = "folder1"
         PhotosTabRobot
@@ -98,7 +102,8 @@ class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun separatelyAddedFileAreAvailableOfflineAfterParentIsRemoved() {
         val folder = "sharedFolder"
         val file = "sharedChild.html"
@@ -132,7 +137,8 @@ class RemoveAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2, isPhotos = true)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isPhotos = true)
     fun removePhotoFromAvailableOffline() {
         val image = ImageName.Now
 

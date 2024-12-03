@@ -28,6 +28,7 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
+import me.proton.core.drive.cryptobase.domain.extension.failed
 import me.proton.core.key.domain.decryptAndVerifyData
 import me.proton.core.key.domain.entity.key.PublicKeyRing
 import me.proton.core.key.domain.entity.keyholder.KeyHolder
@@ -54,7 +55,7 @@ class DecryptAndVerifyData @Inject constructor(
                 keyPacket = keyPacket,
                 verifyKeyRing = verifyKeyRing,
             ).also { decryptedData ->
-                if (decryptedData.status != VerificationStatus.Success) {
+                if (decryptedData.status.failed) {
                     announceEvent(Event.SignatureVerificationFailed(verifyKeyRing.keys))
                     CoreLogger.d(
                         tag = LogTag.ENCRYPTION,

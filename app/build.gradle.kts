@@ -90,6 +90,9 @@ driveModule(
     androidTestImplementation(libs.fusion)
     androidTestImplementation(libs.okhttpLoggingInterceptor)
     androidTestImplementation(project(":drive:backup:data"))
+    androidTestImplementation(libs.core.test.android.test.rule)
+    androidTestImplementation(libs.androidx.work.testing)
+    androidTestImplementation(libs.kotlin.reflect)
     androidTestUtil(libs.androidx.test.orchestrator)
 
     coreLibraryDesugaring(libs.desugar.jdk.libs)
@@ -122,8 +125,10 @@ android {
             keyPassword = privateProperties.getProperty("SIGN_KEY_ALIAS_PASSWORD")
         }
     }
+
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        animationsDisabled = true
         managedDevices {
             localDevices {
                 create("pixel2api30") {
@@ -159,6 +164,7 @@ android {
         setAssetLinksResValue("proton.me")
 
         testInstrumentationRunner = "me.proton.android.drive.ui.HiltTestRunner"
+        testInstrumentationRunnerArguments["clearPackageData"] = "true"
         testInstrumentationRunnerArguments["proxyToken"] = proxyToken
     }
     flavorDimensions.add("default")
@@ -174,12 +180,20 @@ android {
             val environment = testEnvironment ?: dynamicEnvironment
 
             protonEnvironment {
-                host = environment
-                apiPrefix = "drive-api"
+                if (environment.startsWith("10.0.2.2")) {
+                    baseUrl = "http://$environment"
+                } else {
+                    host = environment
+                    apiPrefix = "drive-api"
+                }
             }
 
             testInstrumentationRunnerArguments["clearPackageData"] = "true"
-            testInstrumentationRunnerArguments["host"] = environment
+            if (environment.startsWith("10.0.2.2")) {
+                testInstrumentationRunnerArguments["baseUrl"] = "http://$environment"
+            } else {
+                testInstrumentationRunnerArguments["host"] = environment
+            }
 
             // If running on gitlab CI
             if (!System.getenv("CI_SERVER_NAME").isNullOrEmpty()) {

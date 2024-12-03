@@ -20,43 +20,21 @@ package me.proton.android.drive.ui.test.flow.account
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import io.mockk.every
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.test.ExternalStorageBaseTest
 import me.proton.core.accountrecovery.dagger.CoreAccountRecoveryFeaturesModule
-import me.proton.core.accountrecovery.domain.IsAccountRecoveryEnabled
-import me.proton.core.accountrecovery.domain.IsAccountRecoveryResetEnabled
-import me.proton.core.test.quark.Quark
 import me.proton.core.usersettings.test.MinimalUserSettingsTest
-import org.junit.Before
-import org.junit.Rule
-import org.junit.rules.ExternalResource
-import javax.inject.Inject
 
 @HiltAndroidTest
 @UninstallModules(CoreAccountRecoveryFeaturesModule::class)
-class AccountSettingsFlowTest : BaseTest(), MinimalUserSettingsTest {
+open class AccountSettingsFlowTest : ExternalStorageBaseTest(), MinimalUserSettingsTest {
 
-    override val quark: Quark = quarkRule.quark
-
-    @get:Rule(order = 1)
-    val initFeaturesRule = object : ExternalResource() {
-        override fun before() {
-            every { isAccountRecoveryEnabled(any()) } returns true
-            every { isAccountRecoveryResetEnabled(any()) } returns true
-        }
-    }
-
-    @Inject
-    internal lateinit var isAccountRecoveryEnabled: IsAccountRecoveryEnabled
-
-    @Inject
-    internal lateinit var isAccountRecoveryResetEnabled: IsAccountRecoveryResetEnabled
-
-    @Before
-    fun preventHumanVerification() {
-        quark.jailUnban()
-    }
+    /**
+     * Check TestCoreFeaturesModule for proper mocks set for provideIsAccountRecoveryEnabled,
+     * provideIsAccountRecoveryResetEnabled and provideIsNotificationsEnabled.
+     * Currently all of them are set to true.
+     */
 
     private fun startAccountSettings() = PhotosTabRobot
         .openSidebarBySwipe()

@@ -24,4 +24,5 @@
   <string name="manage_access_link_description_public">Qualsevol persona amb aquest enllaç</string>
   <string name="manage_access_link_description_password_protected">Qualsevol persona amb l\'enllaç i la contrasenya</string>
   <string name="manage_access_link_default_permission">Pot veure</string>
+  <string name="manage_access_link_editor_permission">Edita</string>
 </resources>

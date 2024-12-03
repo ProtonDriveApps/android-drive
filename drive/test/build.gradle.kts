@@ -44,6 +44,7 @@ dependencies {
         exclude("me.proton.core", "notification-dagger")
         exclude("me.proton.core", "notification-presentation")
         exclude("me.proton.core", "account-recovery-presentation-compose")
+        exclude("me.proton.core", "auth-presentation")
     }
     api(libs.core.accountRecovery.dagger)
     api(libs.core.crypto.dagger)

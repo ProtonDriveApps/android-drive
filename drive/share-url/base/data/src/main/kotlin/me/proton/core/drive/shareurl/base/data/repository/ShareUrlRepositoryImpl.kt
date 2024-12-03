@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -203,6 +204,19 @@ class ShareUrlRepositoryImpl @Inject constructor(
             shareUrlId = shareUrlId,
             shareUrlCustomPasswordInfo = shareUrlCustomPasswordInfo,
             shareUrlExpirationDurationInfo = shareUrlExpirationDurationInfo,
+        ).shareUrl.toShareUrlEntity(shareUrlId.shareId.userId, volumeId)
+        dao.insertOrUpdate(shareUrlEntity)
+        shareUrlEntity.toShareUrl()
+    }
+
+    override suspend fun updateShareUrlPermissions(
+        volumeId: VolumeId,
+        shareUrlId: ShareUrlId,
+        permissions: Permissions,
+    ): Result<ShareUrl> = coRunCatching {
+        val shareUrlEntity = api.updateShareUrlPermissions(
+            shareUrlId = shareUrlId,
+            permissions = permissions,
         ).shareUrl.toShareUrlEntity(shareUrlId.shareId.userId, volumeId)
         dao.insertOrUpdate(shareUrlEntity)
         shareUrlEntity.toShareUrl()

@@ -31,7 +31,7 @@ import java.io.FileOutputStream
 import java.io.RandomAccessFile
 
 class ExternalFilesRule(
-    private val folderBuilder: (Context) -> File = { context ->
+    private val folderBuilder: (Context) -> File = {
         File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
             "ui-test"
@@ -56,14 +56,14 @@ class ExternalFilesRule(
         dir.deleteRecursively()
     }
 
-    fun getFile(name: String) = File(dir, name)
-
     fun createFile(name: String, size: Long) = File(dir, name).apply {
         createNewFile()
         if (size > 0L) {
             RandomAccessFile(this, "rw").use { it.setLength(size) }
         }
     }.also { file -> listOf(file).scan() }
+
+    fun getFile(name: String) = File(dir, name)
 
     fun deleteFile(name: String) = File(dir, name).delete()
 

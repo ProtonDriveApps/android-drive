@@ -26,9 +26,11 @@ data class ManageAccessViewState(
     val linkId: LinkId,
     val publicUrl: String?,
     val accessibilityDescription: String,
+    val permissionsDescription: String,
     val linkName: String,
     val isLinkNameEncrypted: Boolean,
-    val canEdit: Boolean,
+    val canEditMembers: Boolean,
+    val canEditLink: Boolean,
     val loadingViewState: LoadingViewState,
     val shareUsers: List<ShareUserViewState> = emptyList(),
 )

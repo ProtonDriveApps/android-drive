@@ -20,6 +20,7 @@ package me.proton.core.drive.drivelink.shared.presentation.component
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,12 +50,14 @@ import me.proton.core.compose.component.protonButtonColors
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
+import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallIconSize
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.default
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.compose.theme.defaultSmallNorm
+import me.proton.core.compose.theme.defaultStrongNorm
 import me.proton.core.drive.base.presentation.component.Deferred
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.LoadingViewState
 import kotlin.time.Duration
@@ -67,23 +70,33 @@ fun ShareWithAnyone(
     viewState: LoadingViewState,
     publicUrl: String?,
     accessibilityDescription: String,
+    permissionsDescription: String,
     onRetry: () -> Unit,
     onStartSharing: () -> Unit,
     onStopSharing: () -> Unit,
     onCopyLink: (String) -> Unit,
     onConfigureSharing: () -> Unit,
     modifier: Modifier = Modifier,
+    onMore: (() -> Unit)? = null,
 ) {
     val isShared = publicUrl != null
-    Column(modifier.padding(horizontal = DefaultSpacing)) {
-        ShareWithAnyoneSwitch(
-            accessibilityDescription = accessibilityDescription,
+    Column(modifier) {
+        ShareWithAnyoneTitle(
+            modifier = Modifier.padding(horizontal = DefaultSpacing),
             isShared = isShared,
             isLoading = viewState is LoadingViewState.Loading,
             onStartSharing = onStartSharing,
             onStopSharing = onStopSharing,
         )
+        ShareWithAnyoneSwitch(
+            modifier = Modifier.padding(horizontal = DefaultSpacing),
+            accessibilityDescription = accessibilityDescription,
+            permissionDescription = permissionsDescription,
+            isShared = isShared,
+            onMore = onMore,
+        )
         ShareWithAnyoneContent(
+            modifier = Modifier.padding(horizontal = DefaultSpacing),
             viewState = viewState,
             publicUrl = publicUrl,
             onRetry = onRetry,
@@ -94,48 +107,85 @@ fun ShareWithAnyone(
 }
 
 @Composable
-private fun ShareWithAnyoneSwitch(
-    accessibilityDescription: String,
+private fun ShareWithAnyoneTitle(
     isShared: Boolean,
     isLoading: Boolean,
     onStartSharing: () -> Unit,
     onStopSharing: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    Row(modifier = modifier
+        .toggleable(
+            value = isShared,
+            enabled = !isLoading
+        ) { checked ->
+            if (checked) {
+                onStartSharing()
+            } else {
+                onStopSharing()
+            }
+        }
+        .padding(
+            top = MediumSpacing,
+            bottom = SmallSpacing
+        ),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.weight(1F),
+            text = stringResource(I18N.string.manage_access_share_with_anyone),
+            style = ProtonTheme.typography.defaultStrongNorm,
+        )
+
+        Switch(
+            enabled = !isLoading,
+            checked = isShared,
+            onCheckedChange = null,
+        )
+    }
+}
+
+@Composable
+private fun ShareWithAnyoneSwitch(
+    accessibilityDescription: String,
+    permissionDescription: String,
+    isShared: Boolean,
+    modifier: Modifier = Modifier,
+    onMore: (() -> Unit)? = null,
+) {
     Row(
         modifier = modifier
-            .toggleable(
-                value = isShared,
-                enabled = !isLoading
-            ) { checked ->
-                if (checked) {
-                    onStartSharing()
-                } else {
-                    onStopSharing()
-                }
-            }
-            .padding(vertical = SmallSpacing),
+            .padding(vertical = SmallSpacing)
+            .clickable(enabled = isShared) {
+                onMore?.invoke()
+            },
         horizontalArrangement = Arrangement.spacedBy(ProtonDimens.ListItemTextStartPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ShareWithAnyoneIcon(isShared = isShared)
-        Column(modifier.weight(1F)) {
+        Column(Modifier.weight(1F)) {
             Text(
                 text = accessibilityDescription,
                 maxLines = 1,
                 style = ProtonTheme.typography.defaultNorm,
             )
             Text(
-                text = stringResource(id = I18N.string.manage_access_link_default_permission),
+                text = permissionDescription,
                 maxLines = 1,
                 style = ProtonTheme.typography.defaultSmallNorm,
             )
         }
-        Switch(
-            enabled = !isLoading,
-            checked = isShared,
-            onCheckedChange = null,
-        )
+        if (onMore != null) {
+            Icon(
+                painter = painterResource(id = CorePresentation.drawable.ic_proton_chevron_down_filled),
+                contentDescription = stringResource(id = I18N.string.common_more),
+                tint = if (isShared) {
+                    ProtonTheme.colors.iconNorm
+                } else {
+                    ProtonTheme.colors.iconDisabled
+                },
+            )
+        }
     }
 }
 
@@ -157,7 +207,7 @@ private fun ShareWithAnyoneIcon(
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            modifier = modifier.size(SmallIconSize),
+            modifier = Modifier.size(SmallIconSize),
             painter = painterResource(id = CorePresentation.drawable.ic_proton_globe),
             tint = if (isShared) {
                 ProtonTheme.colors.notificationSuccess
@@ -324,12 +374,14 @@ fun ShareWithAnyoneNoLinkPreview() {
             ShareWithAnyone(
                 viewState = LoadingViewState.Initial,
                 publicUrl = null,
-                accessibilityDescription = "Anyone with this link",
+                accessibilityDescription = stringResource(id = I18N.string.manage_access_link_description_public),
+                permissionsDescription = stringResource(id = I18N.string.manage_access_link_viewer_permission),
                 onRetry = { },
                 onStartSharing = { },
                 onStopSharing = { },
                 onCopyLink = { },
                 onConfigureSharing = { },
+                onMore = { },
             )
         }
     }
@@ -343,12 +395,14 @@ fun ShareWithAnyoneLoadingPreview() {
             ShareWithAnyone(
                 viewState = LoadingViewState.Loading("Creating link to file"),
                 publicUrl = null,
-                accessibilityDescription = "Anyone with this link",
+                accessibilityDescription = stringResource(id = I18N.string.manage_access_link_description_public),
+                permissionsDescription = stringResource(id = I18N.string.manage_access_link_viewer_permission),
                 onRetry = { },
                 onStartSharing = { },
                 onStopSharing = { },
                 onCopyLink = { },
                 onConfigureSharing = { },
+                onMore = null,
             )
         }
     }
@@ -362,12 +416,14 @@ private fun ShareWithAnyoneErrorRetryablePreview() {
             ShareWithAnyone(
                 viewState = LoadingViewState.Error.Retryable("Retryable error"),
                 publicUrl = null,
-                accessibilityDescription = "Anyone with this link",
+                accessibilityDescription = stringResource(id = I18N.string.manage_access_link_description_public),
+                permissionsDescription = stringResource(id = I18N.string.manage_access_link_viewer_permission),
                 onRetry = { },
                 onStartSharing = { },
                 onStopSharing = { },
                 onCopyLink = { },
                 onConfigureSharing = { },
+                onMore = null,
             )
         }
     }
@@ -381,12 +437,14 @@ private fun ShareWithAnyoneErrorNonRetryablePreview() {
             ShareWithAnyone(
                 viewState = LoadingViewState.Error.NonRetryable("Non retryable error", 0.seconds),
                 publicUrl = null,
-                accessibilityDescription = "Anyone with this link",
+                accessibilityDescription = stringResource(id = I18N.string.manage_access_link_description_public),
+                permissionsDescription = stringResource(id = I18N.string.manage_access_link_viewer_permission),
                 onRetry = { },
                 onStartSharing = { },
                 onStopSharing = { },
                 onCopyLink = { },
                 onConfigureSharing = { },
+                onMore = null,
             )
         }
     }
@@ -394,18 +452,20 @@ private fun ShareWithAnyoneErrorNonRetryablePreview() {
 
 @Preview
 @Composable
-fun ShareWithAnyonePublicLinkPreview() {
+fun ShareWithAnyoneEditorPreview() {
     ProtonTheme {
         Surface {
             ShareWithAnyone(
                 viewState = LoadingViewState.Initial,
                 publicUrl = "url",
-                accessibilityDescription = "Anyone with this link",
+                accessibilityDescription = stringResource(id = I18N.string.manage_access_link_description_public),
+                permissionsDescription = stringResource(id = I18N.string.manage_access_link_editor_permission),
                 onRetry = { },
                 onStartSharing = { },
                 onStopSharing = { },
                 onCopyLink = { },
                 onConfigureSharing = { },
+                onMore = { },
             )
         }
     }
@@ -419,12 +479,16 @@ fun ShareWithAnyonePasswordLinkPreview() {
             ShareWithAnyone(
                 viewState = LoadingViewState.Initial,
                 publicUrl = "url",
-                accessibilityDescription = "Anyone with the link and password",
+                accessibilityDescription = stringResource(
+                    id = I18N.string.manage_access_link_description_password_protected
+                ),
+                permissionsDescription = stringResource(id = I18N.string.manage_access_link_viewer_permission),
                 onRetry = { },
                 onStartSharing = { },
                 onStopSharing = { },
                 onCopyLink = { },
                 onConfigureSharing = { },
+                onMore = { },
             )
         }
     }

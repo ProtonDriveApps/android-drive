@@ -24,31 +24,24 @@ import android.content.Intent
 import android.net.Uri
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.intent.rule.IntentsRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.ComputersTabRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.ShareRobot
-import me.proton.android.drive.ui.rules.ExternalFilesRule
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.ExternalStorageBaseTest
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
-import me.proton.core.test.quark.data.User
-import me.proton.core.test.quark.v2.command.userCreate
-import org.junit.Rule
+import me.proton.core.test.rule.annotation.PrepareUser
+import me.proton.core.util.kotlin.random
 import org.junit.Test
 
 @HiltAndroidTest
-class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
-
-    @get:Rule
-    val intentsTestRule = IntentsRule()
-
-    @get:Rule
-    val externalFilesRule = ExternalFilesRule()
+class SyncedFoldersFlowTest : ExternalStorageBaseTest() {
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun emptySyncedFolders() {
         FilesTabRobot
@@ -61,14 +54,19 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun uploadAFile() {
         val fileName = "1kB.txt"
         val file = externalFilesRule.createFile(fileName, 1000.bytes.value)
 
-        Intents.intending(IntentMatchers.hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFunction {
-            Instrumentation.ActivityResult(Activity.RESULT_OK, Intent().setData(Uri.fromFile(file)))
-        }
+        Intents.intending(IntentMatchers.hasAction(Intent.ACTION_OPEN_DOCUMENT))
+            .respondWithFunction {
+                Instrumentation.ActivityResult(
+                    Activity.RESULT_OK,
+                    Intent().setData(Uri.fromFile(file))
+                )
+            }
 
         FilesTabRobot
             .navigateToComputerSyncedFolder(MY_DEVICE_1, MY_DEVICE_1_SYNC_FOLDER)
@@ -80,9 +78,10 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun createAFolderViaPlusButton() {
-        val newFolderName = "TestFolder"
+        val newFolderName = "TestFolder ${String.random(5)}"
 
         FilesTabRobot
             .navigateToComputerSyncedFolder(MY_DEVICE_1, MY_DEVICE_1_SYNC_FOLDER)
@@ -97,6 +96,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun moveFile() {
         val file = "file3"
@@ -120,6 +120,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun moveFileToAnotherSyncedFolder() {
         val file = "file1"
@@ -153,6 +154,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun renameFile() {
         val itemToBeRenamed = "presentation.pdf"
@@ -173,6 +175,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun shareFile() {
         val file = "picWithThumbnail.jpg"
@@ -196,11 +199,14 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(value = 2, isDevice = true)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isDevice = true)
+    @PrepareUser("sharingUser")
     fun shareFileWithInternalUser() {
-        val email = requireNotNull(quarkRule.quarkCommands.userCreate(User()).email)
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingUser"]!!
         val file = "picWithThumbnail.jpg"
-        FilesTabRobot
+        PhotosTabRobot
+            .clickFilesTab()
             .navigateToComputerSyncedFolder(MY_DEVICE_1, MY_DEVICE_1_SYNC_FOLDER)
             .clickMoreOnItem(file)
             .clickShare()
@@ -208,7 +214,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
                 robotDisplayed()
                 assertShareFile(file)
             }
-            .typeEmail(email)
+            .typeEmail(sharingUser.email)
             .clickSend()
             .verify {
                 dismissInvitationSent(1)
@@ -216,6 +222,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun moveFileToTrash() {
         val file = "picWithThumbnail.jpg"
@@ -235,6 +242,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun restoreFromTrash() {
         val file = "trashedFileInDevice"
@@ -251,6 +259,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun makeAvailableOffline() {
         val file = "presentation.pdf"
@@ -270,6 +279,7 @@ class SyncedFoldersFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(value = 2, isDevice = true)
     fun previewPdfFile() {
         val file = "presentation.pdf"

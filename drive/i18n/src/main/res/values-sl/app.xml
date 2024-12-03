@@ -45,7 +45,7 @@
   <string name="folder_option_import_file">Naloži datoteko</string>
   <string name="folder_option_create_folder">Ustvari mapo</string>
   <string name="folder_option_take_a_photo">Posnemi novo fotografijo</string>
-  <string name="folder_option_create_document">Create document</string>
+  <string name="folder_option_create_document">Ustvarite dokument.</string>
   <string name="settings_theme_system_default">Sistemsko privzeto</string>
   <string name="settings_theme_dark">Temna</string>
   <string name="settings_theme_light">Svetla</string>
@@ -168,8 +168,8 @@
   <string name="notification_channel_warning_description">Kanal za opozorila, ki zahtevajo ukrepanje uporabnika</string>
   <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
   <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
-  <string name="notification_permission_rationale_action_accept">Enable notifications</string>
-  <string name="notification_permission_rationale_action_reject">Not now</string>
+  <string name="notification_permission_rationale_action_accept">Omogoči obvestila</string>
+  <string name="notification_permission_rationale_action_reject">Ne zdaj</string>
   <!-- endregion -->
   <string name="content_description_select_all">Izberite vse predmete na seznamu</string>
   <string name="content_description_selected_options">Pokaži več možnosti za izbrane datoteke in/ali mape</string>
@@ -239,5 +239,5 @@
         Example:
             "Untitled document 2025-11-28 12.34.56"
     -->
-  <string name="new_document_name">Untitled document %1$s</string>
+  <string name="new_document_name">Neimenovan dokument %1$s</string>
 </resources>

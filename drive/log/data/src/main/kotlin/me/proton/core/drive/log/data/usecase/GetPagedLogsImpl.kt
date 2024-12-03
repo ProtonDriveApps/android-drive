@@ -40,8 +40,7 @@ class GetPagedLogsImpl @Inject constructor(
         Pager(
             PagingConfig(
                 pageSize = configurationProvider.uiPageSize,
-                initialLoadSize = configurationProvider.uiPageSize,
-                enablePlaceholders = false,
+                enablePlaceholders = true,
             ),
             pagingSourceFactory = {
                 db.logDao.getLogsPagingSource(userId = userId)

@@ -139,6 +139,7 @@ class DebugSettings(
         default = buildConfig.photosUpsellPhotoCount,
     )
     override val protonDocsWebViewFeatureFlag: Boolean = true
+    override val drivePublicShareEditMode: Boolean = true
 
     fun reset(coroutineScope: CoroutineScope) {
         coroutineScope.launch {

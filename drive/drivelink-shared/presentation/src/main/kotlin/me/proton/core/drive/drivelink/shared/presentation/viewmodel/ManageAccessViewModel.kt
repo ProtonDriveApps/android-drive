@@ -43,7 +43,9 @@ import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.extension.combine
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.SHARE
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
@@ -68,7 +70,11 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserVie
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.drivePublicShareEditMode
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.drivePublicShareEditModeDisabled
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
+import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -77,6 +83,9 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.usecase.GetShareUsers
+import me.proton.core.user.domain.entity.User
+import me.proton.core.user.domain.extension.hasSubscription
+import me.proton.core.user.domain.usecase.GetUser
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
@@ -92,6 +101,7 @@ class ManageAccessViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val copyToClipboard: CopyToClipboard,
     getFeatureFlagFlow: GetFeatureFlagFlow,
+    getUser: GetUser,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
     @ApplicationContext private val appContext: Context,
@@ -168,6 +178,10 @@ class ManageAccessViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, LoadingViewState.Initial)
 
+    private val user: Flow<User> = flowOf {
+        getUser(userId, refresh = false)
+    }
+
     private val shareUsers = getShareUsers(linkId).transformLatest { dataResult ->
         dataResult.onSuccess { list ->
             emit(list)
@@ -187,6 +201,20 @@ class ManageAccessViewModel @Inject constructor(
         }
     }
 
+    private val drivePublicShareEditModeFeatureFlag = getFeatureFlagFlow(drivePublicShareEditMode(userId))
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = FeatureFlag(driveSharingDisabled(userId), NOT_FOUND)
+        )
+
+    private val drivePublicShareEditModeKillSwitch = getFeatureFlagFlow(drivePublicShareEditModeDisabled(userId))
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = FeatureFlag(driveSharingDisabled(userId), NOT_FOUND)
+        )
+
     private val killSwitch = getFeatureFlagFlow(driveSharingDisabled(userId))
         .stateIn(
             scope = viewModelScope,
@@ -198,22 +226,32 @@ class ManageAccessViewModel @Inject constructor(
         driveLink.filterNotNull(),
         sharedDriveLink.filterSuccessOrError().mapSuccessValueOrNull(),
         sharedLoadingViewState,
+        user,
         shareUsers,
         killSwitch,
-    ) { driveLink, sharedDriveLink, sharedLoadingViewState, shareUsers, killSwitch ->
+        drivePublicShareEditModeFeatureFlag,
+        drivePublicShareEditModeKillSwitch,
+    ) { driveLink, sharedDriveLink, sharedLoadingViewState, user, shareUsers, killSwitch, drivePublicShareEditModeFeatureFlag, drivePublicShareEditModeKillSwitch ->
+        val publicUrl = sharedDriveLink?.publicUrl?.value
         ManageAccessViewState(
             title = appContext.getString(I18N.string.title_manage_access),
             linkId = linkId,
-            publicUrl = sharedDriveLink?.publicUrl?.value,
+            publicUrl = publicUrl,
             accessibilityDescription = if ( sharedDriveLink?.customPassword != null) {
                 appContext.getString(I18N.string.manage_access_link_description_password_protected)
             } else {
                 appContext.getString(I18N.string.manage_access_link_description_public)
             },
+            permissionsDescription = if(sharedDriveLink?.permissions?.canWrite == true) {
+                appContext.getString(I18N.string.manage_access_link_editor_permission)
+            }else{
+                appContext.getString(I18N.string.manage_access_link_viewer_permission)
+            },
             linkName = driveLink.name,
             isLinkNameEncrypted = driveLink.isNameEncrypted,
-            canEdit = (driveLink.sharePermissions == null || driveLink.sharePermissions?.isAdmin == true)
+            canEditMembers = (driveLink.sharePermissions == null || driveLink.sharePermissions?.isAdmin == true)
                     && killSwitch.state != ENABLED,
+            canEditLink = configurationProvider.drivePublicShareEditMode && drivePublicShareEditModeKillSwitch.off && drivePublicShareEditModeFeatureFlag.on,
             loadingViewState = sharedLoadingViewState,
             shareUsers = shareUsers.toViewState()
         )
@@ -227,6 +265,7 @@ class ManageAccessViewModel @Inject constructor(
         navigateToInvitationOptions: (LinkId, String) -> Unit,
         navigateToExternalInvitationOptions: (LinkId, String) -> Unit,
         navigateToMemberOptions: (LinkId, String) -> Unit,
+        navigateToShareLinkPermissions: (LinkId) -> Unit,
         navigateBack: () -> Unit
     ) = object : ManageAccessViewEvent {
         override val onCopyLink: (String) -> Unit = { publicUrl -> copyLink(publicUrl) }
@@ -249,6 +288,7 @@ class ManageAccessViewModel @Inject constructor(
         }
         override val onBackPressed: () -> Unit = { navigateBack() }
         override val onRetry: () -> Unit = ::retry
+        override val onEditLinkPermissions: () -> Unit = { navigateToShareLinkPermissions(linkId) }
     }
 
     private fun retry() {

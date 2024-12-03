@@ -94,5 +94,6 @@ class UserAvailableSpaceTest {
         recovery = null,
         createdAtUtc = 0,
         type = null,
+        flags = emptyMap(),
     )
 }

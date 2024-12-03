@@ -39,8 +39,10 @@ import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
+import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.upload.domain.usecase.VerifyBlocks
@@ -64,6 +66,7 @@ class VerifyBlocksWorkerTest {
     private val getUploadFileLink = mockk<GetUploadFileLink>()
     private val uploadErrorManager = mockk<UploadErrorManager>()
     private val verifyBlocks = mockk<VerifyBlocks>()
+    private val cleanupWorkers = mockk<CleanupWorkers>()
     private val configurationProvider = mockk<ConfigurationProvider>()
     private val canRun = mockk<CanRun>()
     private val run = mockk<Run>()
@@ -72,6 +75,7 @@ class VerifyBlocksWorkerTest {
     private val operation = mockk<Operation>()
     private val logger = mockk<Logger>()
     private val uploadMetricsNotifier = mockk<UploadMetricsNotifier>()
+    private val networkTypeProvider = mockk<NetworkTypeProvider>()
 
     @Before
     fun before() {
@@ -131,6 +135,11 @@ class VerifyBlocksWorkerTest {
                         getUploadFileLink = getUploadFileLink,
                         uploadErrorManager = uploadErrorManager,
                         verifyBlocks = verifyBlocks,
+                        cleanupWorkers = cleanupWorkers,
+                        networkTypeProviders = mapOf(
+                            NetworkTypeProviderType.DEFAULT to networkTypeProvider,
+                            NetworkTypeProviderType.BACKUP to networkTypeProvider,
+                        ),
                         uploadMetricsNotifier = uploadMetricsNotifier,
                         configurationProvider = configurationProvider,
                         canRun = canRun,

@@ -74,11 +74,9 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
     }
     private val isDownloadFinished = inputData.getBoolean(KEY_IS_DOWNLOAD_FINISHED, false)
     private val logTag = folderId.logTag
-
     override suspend fun doWork(): Result {
         val downloadState = if (isDownloadFinished) DownloadState.Downloaded() else DownloadState.Downloading
-        val folderDriveLink = getDriveLink(folderId).toResult().getOrThrow()
-        if (!isDownloadFinished || areAllDescendantsDownloaded(folderDriveLink)) {
+        if (!isDownloadFinished || areAllFilesDownloaded(folderId)) {
             CoreLogger.d(logTag, "Setting downloading state to ${downloadState::class.simpleName}")
             setDownloadState(
                 linkId = folderId,
@@ -95,6 +93,7 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
                     return Result.retry()
                 }
                 if (BuildConfig.DEBUG) {
+                    val folderDriveLink = getDriveLink(folderId).toResult().getOrThrow()
                     CoreLogger.d(
                         tag = logTag,
                         message = "Download is finished but not all files are downloaded, re-downloading",
@@ -167,6 +166,7 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
     companion object {
         private const val MAX_ATTEMPT_COUNT = 10
         private const val FOLDER_DOWNLOAD_STATE_UPDATE_TAG = "folderDownloadStateUpdate"
+
         const val ROOT_FOLDER_DOWNLOAD_STATE_UPDATE_TAG = "rootFolderDownloadStateUpdate"
 
         fun getWorkRequest(

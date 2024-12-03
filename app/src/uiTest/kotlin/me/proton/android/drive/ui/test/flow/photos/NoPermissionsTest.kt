@@ -22,12 +22,15 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.PhotosNoPermissionsRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class NoPermissionsTest : AuthenticatedBaseTest() {
+class NoPermissionsTest : BaseTest() {
+
     @Test
+    @PrepareUser(loginBefore = true)
     fun denyPermissionsFromPhotoTab() {
         PhotosTabRobot
             .enableBackup()
@@ -44,6 +47,7 @@ class NoPermissionsTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun denyPermissionsFromSettings() {
         PhotosTabRobot
             .verify {

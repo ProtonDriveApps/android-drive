@@ -85,7 +85,14 @@ class BuildNodeKey @Inject constructor(
             key = decryptNestedPrivateKey(
                 decryptKey = parentKey.keyHolder,
                 key = link.nestedPrivateKey,
-                verifySignatureKey = getPublicAddressKeys(link.id.userId, link.signatureAddress).getOrThrow().keyHolder,
+                verifySignatureKey = if (link.signatureAddress.isEmpty()) {
+                    parentKey.keyHolder
+                } else {
+                    getPublicAddressKeys(
+                        link.id.userId,
+                        link.signatureAddress
+                    ).getOrThrow().keyHolder
+                },
                 allowCompromisedVerificationKeys = true,
             ).getOrThrow(),
             parent = parentKey,

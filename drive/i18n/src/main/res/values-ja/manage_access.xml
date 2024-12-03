@@ -24,4 +24,5 @@
   <string name="manage_access_link_description_public">このリンクを知っている人は誰でも</string>
   <string name="manage_access_link_description_password_protected">リンクとパスワードを知っている人なら誰でも</string>
   <string name="manage_access_link_default_permission">閲覧可能</string>
+  <string name="manage_access_link_editor_permission">Can edit</string>
 </resources>

@@ -144,12 +144,15 @@ interface LinkDownloadDao : LinkDao {
             LinkEntity.share_id = :shareId AND 
             LinkEntity.parent_id = :folderId AND
             LinkEntity.mime_type NOT IN (:excludeMimeTypes)
+        LIMIT :limit OFFSET :offset
     """)
     suspend fun getAllChildrenStates(
         userId: UserId,
         shareId: String,
         folderId: String,
         excludeMimeTypes: Set<String>,
+        limit: Int,
+        offset: Int,
     ): List<LinkDownloadState?>
 
     @Transaction

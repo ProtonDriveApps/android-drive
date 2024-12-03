@@ -27,4 +27,5 @@
   <string name="file_info_title_file">Dosya bilgileri</string>
   <string name="file_info_captured_on">Çekilme zamanı</string>
   <string name="file_info_permissions">İzinler</string>
+  <string name="file_info_uploaded_by_anonymous">Anonymous</string>
 </resources>

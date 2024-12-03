@@ -88,6 +88,7 @@ fun NullableUserEntity(
     maxDriveSpace = maxDriveSpace,
     usedBaseSpace = null,
     usedDriveSpace = usedDriveSpace,
+    flags = null
 )
 
 suspend fun UserContext.addPrimaryAddress(email: String) {

@@ -19,25 +19,30 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
+import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SharedTabRobot
 import me.proton.android.drive.ui.robot.SharedWithMeRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.ui.test.flow.details.DetailsFlowTest.LinkDetails
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
+import me.proton.core.test.rule.QuarkTestDataRule
+import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.test.fusion.FusionConfig
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
-class SharedWithMeTest : AuthenticatedBaseTest() {
+class SharedWithMeTest : BaseTest() {
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun emptyList() {
         PhotosTabRobot
             .navigateToSharedWithMeTab()
@@ -47,7 +52,9 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(6, loginWithSharingUser = true)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
     fun browseSharedFolder() {
         val folder = "ReadWriteFolder"
         val fileInFolder = "EditableFile.txt"
@@ -61,7 +68,9 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(6, loginWithSharingUser = true)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
     fun previewTextFile() {
         val file = "newShareInsideLegacy.txt"
         PhotosTabRobot
@@ -74,7 +83,9 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(6, loginWithSharingUser = true)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
     fun makeAvailableOffline() {
         val file = "newShareInsideLegacy.txt"
         PhotosTabRobot
@@ -93,35 +104,38 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(6, loginWithSharingUser = true)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
     fun fileDetails() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingUser"]!!
         PhotosTabRobot
             .navigateToSharedWithMeTab()
-            .scrollToItemWithName(newShareInsideLegacy.name)
-            .clickMoreOnItem(newShareInsideLegacy.name)
+            .scrollToItemWithName(newShareInsideLegacy(sharingUser.name).name)
+            .clickMoreOnItem(newShareInsideLegacy(sharingUser.name).name)
             .clickFileDetails()
             .verify {
                 robotDisplayed()
-                hasHeaderTitle(newShareInsideLegacy.name)
+                hasHeaderTitle(newShareInsideLegacy(sharingUser.name).name)
                 hasInfoItem(
                     name = FusionConfig.targetContext.getString(I18N.string.file_info_name_entry),
-                    value = newShareInsideLegacy.name,
+                    value = newShareInsideLegacy(sharingUser.name).name,
                 )
                 hasInfoItem(
                     name = FusionConfig.targetContext.getString(I18N.string.file_info_uploaded_by_entry),
-                    value = newShareInsideLegacy.uploadedBy,
+                    value = newShareInsideLegacy(sharingUser.name).uploadedBy,
                 )
                 hasInfoItem(
                     name = FusionConfig.targetContext.getString(I18N.string.file_info_last_modified_entry),
-                    value = newShareInsideLegacy.modified,
+                    value = newShareInsideLegacy(sharingUser.name).modified,
                 )
                 hasInfoItem(
                     name = FusionConfig.targetContext.getString(I18N.string.file_info_size_entry),
-                    value = requireNotNull(newShareInsideLegacy.size),
+                    value = requireNotNull(newShareInsideLegacy(sharingUser.name).size),
                 )
                 hasInfoItem(
                     name = FusionConfig.targetContext.getString(I18N.string.file_info_shared_entry),
-                    value = newShareInsideLegacy.isShared,
+                    value = newShareInsideLegacy(sharingUser.name).isShared,
                 )
             }
             .clickBack(SharedTabRobot)
@@ -129,7 +143,9 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(6, loginWithSharingUser = true)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
     fun leaveShare() {
         val newShare = "newShareInsideLegacy.txt"
         PhotosTabRobot
@@ -142,14 +158,14 @@ class SharedWithMeTest : AuthenticatedBaseTest() {
             }
     }
 
-    private val newShareInsideLegacy get() = LinkDetails(
-        name = "newShareInsideLegacy.txt",
-        uploadedBy = "${testUser.name}@${envConfig.host}",
-        modified = TimestampS().asHumanReadableString(),
-        isShared = FusionConfig.targetContext.getString(I18N.string.common_yes),
-        mimeType = "text/plain",
-        size = 63.bytes.asHumanReadableString(FusionConfig.targetContext),
-    )
+    private fun newShareInsideLegacy(name: String) = LinkDetails(
+            name = "newShareInsideLegacy.txt",
+            uploadedBy = "$name@${envConfig.host}",
+            modified = TimestampS().asHumanReadableString(),
+            isShared = FusionConfig.targetContext.getString(I18N.string.common_yes),
+            mimeType = "text/plain",
+            size = 63.bytes.asHumanReadableString(FusionConfig.targetContext),
+        )
 
     private fun PhotosTabRobot.navigateToSharedWithMeTab(): SharedWithMeRobot =
         this

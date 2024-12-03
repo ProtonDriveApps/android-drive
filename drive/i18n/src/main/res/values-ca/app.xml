@@ -63,7 +63,7 @@
     -->
   <string name="in_app_notification_upload_files_only">Només es poden pujar fitxers a %1$s</string>
   <string name="in_app_notification_importing_file_already_exists">Ja existeix un fitxer amb aquest nom, proveu de netejar la memòria cau de l\'aplicació</string>
-  <string name="in_app_notification_clear_local_cache_success">La memòria cau local s\'ha netejat correctament</string>
+  <string name="in_app_notification_clear_local_cache_success">La memòria cau local s\'ha netejat.</string>
   <string name="in_app_notification_destination_screen_not_found">No s\'ha trobat la pantalla de destinació.</string>
   <string name="in_app_notification_create_document_success">S\'ha creat el document.</string>
   <!-- endregion -->
@@ -156,8 +156,8 @@
   <string name="notification_channel_transfer_description">Canal de notificacions per a emmagatzematge al núvol, càrrega i descàrrega</string>
   <string name="notification_channel_warning_title">Advertència</string>
   <string name="notification_channel_warning_description">Canal per a advertiments que requereixen una acció de l\'usuari</string>
-  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
-  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
+  <string name="notification_permission_rationale_title_backup">Manteniu-vos informat sobre l\'estat de la vostra còpia de seguretat</string>
+  <string name="notification_permission_rationale_description_backup">Rebeu notificacions sobre el progrés i l\'estat de les vostres còpies de seguretat.</string>
   <string name="notification_permission_rationale_action_accept">Activa les notificacions</string>
   <string name="notification_permission_rationale_action_reject">Ara no</string>
   <!-- endregion -->
@@ -177,7 +177,7 @@
   <string name="description_files_stop_sharing_action_success">S\'ha esborrat l\'enllaç al fitxer.</string>
   <string name="description_files_stop_sharing_action_error">S\'ha produït un error en esborrar l\'enllaç al fitxer.</string>
   <string name="description_files_stop_all_sharing">Això esborrarà l\'enllaç i eliminarà l\'accés per a tothom.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">S\'ha eliminat l\'accés compartit al fitxer.</string>
   <string name="description_files_stop_all_sharing_action_error">S\'ha produït un error en suprimir la compartició al fitxer.</string>
   <string name="ignore_file_signature_action">Veure de totes maneres</string>
   <string name="action_empty_files_add_files">Carrega</string>
@@ -187,7 +187,7 @@
   <string name="error_share_locked">La compartició està bloquejada.</string>
   <string name="error_main_share_not_found">No s\'ha trobat la carpeta principal.</string>
   <string name="error_share_not_found">No s\'ha trobat la compartició.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">La còpia de seguretat de fotos està desactivada temporalment.</string>
   <string name="error_creating_share_not_allowed">S\'ha desactivat temporalment la creació d\'elements compartits.</string>
   <string name="operation_open_document">obrir un document</string>
   <string name="operation_create_document">crear un document</string>

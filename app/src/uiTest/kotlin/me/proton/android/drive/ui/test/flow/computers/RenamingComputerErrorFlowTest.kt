@@ -19,12 +19,13 @@
 package me.proton.android.drive.ui.test.flow.computers
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.RenameRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.utils.getRandomString
 import me.proton.core.test.android.instrumented.utils.StringUtils
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -37,10 +38,11 @@ class RenamingComputerErrorFlowTest(
     private val newComputerName: String,
     private val errorMessage: String,
     @Suppress("unused") private val friendlyName: String,
-) : AuthenticatedBaseTest() {
+) : BaseTest() {
 
     @Test
-    @Scenario(value = 2, isDevice = true)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isDevice = true)
     fun renameComputerWithInvalidName() {
         FilesTabRobot
             .clickComputersTab()
@@ -57,6 +59,7 @@ class RenamingComputerErrorFlowTest(
 
     companion object {
         private const val MY_DEVICE_1 = "MyDevice1"
+
         @get:Parameterized.Parameters(name = "{3}")
         @get:JvmStatic
         val data = listOf(

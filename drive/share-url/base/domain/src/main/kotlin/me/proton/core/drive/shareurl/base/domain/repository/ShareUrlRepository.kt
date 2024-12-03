@@ -20,6 +20,7 @@ package me.proton.core.drive.shareurl.base.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrl
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlCustomPasswordInfo
@@ -87,5 +88,11 @@ interface ShareUrlRepository {
         shareUrlId: ShareUrlId,
         shareUrlCustomPasswordInfo: ShareUrlCustomPasswordInfo?,
         shareUrlExpirationDurationInfo: ShareUrlExpirationDurationInfo?,
+    ): Result<ShareUrl>
+
+    suspend fun updateShareUrlPermissions(
+        volumeId: VolumeId,
+        shareUrlId: ShareUrlId,
+        permissions: Permissions,
     ): Result<ShareUrl>
 }

@@ -24,4 +24,5 @@
   <string name="manage_access_link_description_public">Любы карыстальнік з гэтай спасылкай</string>
   <string name="manage_access_link_description_password_protected">Любы карыстальнік з гэтай спасылкай і паролем</string>
   <string name="manage_access_link_default_permission">Можа праглядаць</string>
+  <string name="manage_access_link_editor_permission">Can edit</string>
 </resources>

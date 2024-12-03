@@ -19,18 +19,22 @@
 package me.proton.android.drive.ui.test.flow.rename
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
+import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.PreviewRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.test.android.instrumented.utils.StringUtils
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
-class RenamingFileSuccessFlowTest : AuthenticatedBaseTest() {
+class RenamingFileSuccessFlowTest : BaseTest() {
+
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun renameViaPreviewWindowSucceeds() {
         val oldName = "image.jpg"
         val newName = "picture.jpg"
@@ -45,8 +49,36 @@ class RenamingFileSuccessFlowTest : AuthenticatedBaseTest() {
             .typeName(newName)
             .clickRename(PreviewRobot)
             .verify {
-                nodeWithTextDisplayed(StringUtils.stringFromResource(I18N.string.link_rename_successful, newName))
+                nodeWithTextDisplayed(
+                    StringUtils.stringFromResource(
+                        I18N.string.link_rename_successful,
+                        newName
+                    )
+                )
                 topBarWithTextDisplayed(newName)
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 9)
+    fun renameAnonymousFile() {
+        val oldName = "anonymous-file"
+        val newName = "anonymous-file-renamed"
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickMoreOnItem(oldName)
+            .clickRename()
+            .typeName(newName)
+            .clickRename(FilesTabRobot)
+            .verify {
+                nodeWithTextDisplayed(
+                    StringUtils.stringFromResource(
+                        I18N.string.link_rename_successful,
+                        newName
+                    )
+                )
+                itemIsDisplayed(newName)
             }
     }
 }

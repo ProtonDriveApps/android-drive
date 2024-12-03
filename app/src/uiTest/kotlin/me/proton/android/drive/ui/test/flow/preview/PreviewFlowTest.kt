@@ -19,21 +19,23 @@
 package me.proton.android.drive.ui.test.flow.preview
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
-import me.proton.android.drive.ui.test.SmokeTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.annotation.SmokeTest
 import me.proton.core.drive.files.presentation.extension.LayoutType
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
-class PreviewFlowTest : AuthenticatedBaseTest() {
+class PreviewFlowTest : BaseTest() {
 
     private val parent = "folder1"
 
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun previewTextFileInGrid() {
         val file = "example.txt"
         PhotosTabRobot
@@ -49,7 +51,8 @@ class PreviewFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     @SmokeTest
     fun previewImageFile() {
         val file = "image.jpg"
@@ -65,7 +68,8 @@ class PreviewFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun previewBrokenImageFile() {
         val file = "broken.jpg"
         PhotosTabRobot
@@ -80,7 +84,8 @@ class PreviewFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun previewPdfFile() {
         val file = "presentation.pdf"
         PhotosTabRobot
@@ -91,6 +96,21 @@ class PreviewFlowTest : AuthenticatedBaseTest() {
             .clickOnFile(file)
             .verify {
                 nodeWithTextDisplayed("1 / 1")
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 9)
+    fun previewAnonymousTextFile() {
+        val file = "anonymous-file"
+        PhotosTabRobot
+            .clickFilesTab()
+            .verify { robotDisplayed() }
+            .scrollToItemWithName(file)
+            .clickOnFile(file)
+            .verify {
+                nodeWithTextDisplayed("This is an anonymous file")
             }
     }
 }

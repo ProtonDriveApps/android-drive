@@ -19,75 +19,141 @@
 package me.proton.android.drive.ui.test
 
 import android.Manifest
+import android.content.Context
 import android.os.Build
-import androidx.test.rule.GrantPermissionRule
+import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.android.testing.HiltAndroidRule
-import kotlinx.coroutines.runBlocking
-import me.proton.android.drive.di.TestEnvironmentConfigModule
-import me.proton.android.drive.initializer.MainInitializer
+import dagger.hilt.android.testing.HiltAndroidTest
+import io.mockk.every
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import me.proton.android.drive.extension.debug
 import me.proton.android.drive.ui.robot.Robot
+import me.proton.android.drive.ui.rules.DriveTestDataRule
 import me.proton.android.drive.ui.rules.QuarkRule
-import me.proton.android.drive.ui.rules.SlowTestRule
 import me.proton.android.drive.utils.screenshot
+import me.proton.core.accountrecovery.domain.IsAccountRecoveryEnabled
+import me.proton.core.accountrecovery.domain.IsAccountRecoveryResetEnabled
 import me.proton.core.auth.presentation.testing.ProtonTestEntryPoint
+import me.proton.core.configuration.ContentResolverConfigManager
+import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.notification.domain.usecase.IsNotificationsEnabled
+import me.proton.core.test.rule.di.TestEnvironmentConfigModule.provideEnvironmentConfiguration
 import me.proton.test.fusion.FusionConfig
-import me.proton.test.fusion.FusionConfig.targetContext
+import org.junit.Before
 import org.junit.Rule
-import org.junit.rules.ExternalResource
-import org.junit.rules.RuleChain
 import org.junit.rules.TestName
 import java.util.concurrent.atomic.AtomicInteger
+import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 
+@HiltAndroidTest
 abstract class AbstractBaseTest {
-    open val permissions: List<String> = when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
-            listOf(Manifest.permission.POST_NOTIFICATIONS)
-        else -> emptyList()
-    }
 
-    private val hiltRule = HiltAndroidRule(this)
-
-    val envConfig = TestEnvironmentConfigModule.provideEnvironmentConfiguration()
-
-    val quarkRule = QuarkRule(envConfig)
-
-    open val doNotShowOnboardingAfterLogin get() = true
-
-    private val configurationRule = before {
-        // Initialize components *before* injecting via Hilt.
-        MainInitializer.init(targetContext)
-        // Inject via Hilt/Dagger.
-        hiltRule.inject()
-        if (doNotShowOnboardingAfterLogin) {
-            uiTestHelper.doNotShowOnboardingAfterLogin()
-        }
-        configureFusion()
-    }
+    val envConfig =
+        provideEnvironmentConfiguration(ContentResolverConfigManager(targetContext))
 
     @get:Rule(order = 0)
-    val ruleChain: RuleChain = RuleChain
-        .outerRule(hiltRule)
-        .around(testName)
-        .around(GrantPermissionRule.grant(*permissions.toTypedArray()))
-        .around(configurationRule)
-        .around(quarkRule)
-        .around(SlowTestRule())
+    val quarkRule = QuarkRule(envConfig)
+
+    @get:Rule(order = 1)
+    val driveTestDataRule = DriveTestDataRule()
+
+    internal open val shouldShowOnboardingAfterLogin get() = false
+    internal open val shouldShowWhatsNewAfterLogin get() = false
+
+    internal fun setOnboardingDisplayStateAfterLogin() {
+        if (!shouldShowOnboardingAfterLogin) {
+            CoroutineScope(Dispatchers.Main).launch {
+                Companion.uiTestHelper.doNotShowOnboardingAfterLogin()
+            }
+        }
+    }
+
+    internal fun setWhatsNewDisplayStateAfterLogin() {
+        if (!shouldShowWhatsNewAfterLogin) {
+            CoroutineScope(Dispatchers.Main).launch {
+                Companion.uiTestHelper.doNotShowWhatsNewAfterLogin()
+            }
+        }
+    }
+
+    internal val baseTestPermissions =
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+                listOf(Manifest.permission.POST_NOTIFICATIONS)
+
+            else -> emptyList()
+        }
+
+    internal val externalStoragePermissions =
+        listOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        ) + when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU ->
+                listOf(Manifest.permission.POST_NOTIFICATIONS)
+
+            else -> emptyList()
+        }
+
+    val uiTestHelper by lazy { uiTestEntryPoint.uiTestHelper }
+
+    internal val photosTestPermissions =
+        listOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        ) + when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> listOf(
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.READ_MEDIA_VIDEO,
+                Manifest.permission.ACCESS_MEDIA_LOCATION,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> listOf(
+                Manifest.permission.ACCESS_MEDIA_LOCATION,
+            )
+
+            else -> emptyList()
+        }
+
+    @Inject
+    internal lateinit var isAccountRecoveryEnabled: IsAccountRecoveryEnabled
+
+    @Inject
+    internal lateinit var isAccountRecoveryResetEnabled: IsAccountRecoveryResetEnabled
+
+    @Inject
+    internal lateinit var isNotificationsEnabled: IsNotificationsEnabled
+
+    @Before
+    fun setupMocks() {
+        every { isAccountRecoveryEnabled(any()) } returns true
+        every { isNotificationsEnabled(any<UserId>()) } returns true
+    }
 
     fun <T : Robot> T.verify(block: T.() -> Any): T =
         apply { block() }
 
-    private fun configureFusion() {
-        FusionConfig.Compose.useUnmergedTree.set(true)
-        FusionConfig.Compose.onFailure = { screenshot() }
-        FusionConfig.Compose.waitTimeout.set(60.seconds)
-        FusionConfig.Espresso.onFailure = { screenshot() }
-        FusionConfig.Espresso.waitTimeout.set(60.seconds)
-        screenshotCounter.set(0)
-    }
-
     companion object {
+
+        fun configureFusion() {
+            FusionConfig.Compose.useUnmergedTree.set(true)
+            FusionConfig.Compose.onFailure = { screenshot() }
+            FusionConfig.Compose.waitTimeout.set(60.seconds)
+            FusionConfig.Compose.assertTimeout.set(60.seconds)
+            FusionConfig.Compose.shouldPrintHierarchyOnFailure.set(true)
+            me.proton.core.test.android.instrumented.FusionConfig.Compose.shouldPrintHierarchyOnFailure = true
+            me.proton.core.test.android.instrumented.FusionConfig.Compose.shouldPrintToLog = true
+            FusionConfig.Espresso.onFailure = { screenshot() }
+            FusionConfig.Espresso.waitTimeout.set(60.seconds)
+            FusionConfig.Espresso.assertTimeout.set(60.seconds)
+            screenshotCounter.set(0)
+        }
+
         private val protonTestEntryPoint by lazy {
             EntryPointAccessors.fromApplication(targetContext, ProtonTestEntryPoint::class.java)
         }
@@ -98,18 +164,17 @@ abstract class AbstractBaseTest {
 
         val loginTestHelper by lazy { protonTestEntryPoint.loginTestHelper }
         val uiTestHelper by lazy { uiTestEntryPoint.uiTestHelper }
+
         val testName = TestName()
-        val screenshotLocation get() = "/sdcard/Pictures/Screenshots/${testName.methodName}/"
+        val targetContext: Context = InstrumentationRegistry.getInstrumentation().targetContext
+        val screenshotLocation
+            get() =
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+                    "/sdcard/Pictures/Screenshots/${testName.methodName}/"
+                } else {
+                    "${targetContext.getExternalFilesDir(null)?.path}/Screenshots/${testName.methodName}/"
+                }
         val screenshotCounter = AtomicInteger(0)
     }
 }
 
-
-private fun <T> T.before(block: suspend T.() -> Any): ExternalResource =
-    object : ExternalResource() {
-        override fun before() {
-            runBlocking {
-                block()
-            }
-        }
-    }

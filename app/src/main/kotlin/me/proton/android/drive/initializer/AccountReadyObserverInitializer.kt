@@ -32,6 +32,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.stats.ObserveApplicationState
+import me.proton.android.drive.stats.ObserveWorkManager
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountReady
@@ -58,6 +59,9 @@ class AccountReadyObserverInitializer : Initializer<Unit> {
                     observeApplicationState().onEach { applicationState ->
                         announceEvent(userId, applicationState)
                     }.launchIn(scope)
+                    observeWorkManager(userId).onEach { workers ->
+                        announceEvent(userId, workers)
+                    }.launchIn(scope)
                 }
                 .onAccountRemoved { account ->
                     scopes.remove(account.userId)?.cancel()
@@ -75,6 +79,7 @@ class AccountReadyObserverInitializer : Initializer<Unit> {
         val accountManager: AccountManager
         val appLifecycleProvider: AppLifecycleProvider
         val observeApplicationState: ObserveApplicationState
+        val observeWorkManager: ObserveWorkManager
         val announceEvent: AnnounceEvent
     }
 }

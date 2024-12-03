@@ -36,6 +36,7 @@ import me.proton.android.drive.ui.viewmodel.ParentFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareInvitationOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareMemberOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.UploadToViewModel
+import me.proton.android.drive.ui.viewmodel.WhatsNewViewModel
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.device.domain.entity.DeviceId
@@ -53,6 +54,7 @@ import me.proton.core.drive.notification.presentation.viewmodel.NotificationPerm
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.By
 import me.proton.core.drive.sorting.domain.entity.Direction
+import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 
 sealed class Screen(val route: String) {
     open fun deepLink(baseUrl: String): String? = "$baseUrl/$route"
@@ -551,6 +553,16 @@ sealed class Screen(val route: String) {
         const val MEMBER_ID = ShareMemberOptionsViewModel.KEY_MEMBER_ID
     }
 
+    data object ShareLinkPermissions : Screen("shareViaLink/{userId}/shares/{shareId}/linkId/{linkId}/permissions") {
+        operator fun invoke(
+            linkId: LinkId,
+        ) = "shareViaLink/${linkId.userId.id}/shares/${linkId.shareId.id}/linkId/${linkId.id}/permissions"
+
+        const val USER_ID = Screen.USER_ID
+        const val SHARE_ID = ShareMemberOptionsViewModel.KEY_SHARE_ID
+        const val LINK_ID = ShareMemberOptionsViewModel.KEY_LINK_ID
+    }
+
     data object Upload : Screen("upload/{userId}/files?uris={uris}&parentShareId={parentShareId}&parentId={parentId}") {
         operator fun invoke(
             userId: UserId,
@@ -626,6 +638,14 @@ sealed class Screen(val route: String) {
         operator fun invoke(userId: UserId) = "onboarding/${userId.id}/show"
 
         const val USER_ID = Screen.USER_ID
+    }
+
+    data object WhatsNew : Screen("whatsNew/{userId}/show/{key}") {
+
+        operator fun invoke(userId: UserId, key: WhatsNewKey) = "whatsNew/${userId.id}/show/${key}"
+
+        const val USER_ID = Screen.USER_ID
+        const val KEY = WhatsNewViewModel.KEY
     }
 
     data object NotificationPermissionRationale : Screen(

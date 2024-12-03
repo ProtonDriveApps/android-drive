@@ -51,7 +51,7 @@
             "Backing up items from 3 folders: Camera, Raw, Screenshots"
     -->
   <plurals name="photos_message_folders_setup">
-    <item quantity="other">Backing up items from %2$d folders: %1$s</item>
+    <item quantity="other">フォルダー %2$d からアイテムをバックアップ中：%1$s</item>
   </plurals>
   <!--
         Variable %1$s is a folder name
@@ -90,7 +90,7 @@
   <string name="photos_backup_state_completed">バックアップ完了</string>
   <string name="photos_backup_state_uncompleted">問題はあるもののバックアップは完了しました</string>
   <string name="photos_backup_state_uncompleted_action">解決する</string>
-  <string name="photos_backup_state_preparing">Preparing to back up</string>
+  <string name="photos_backup_state_preparing">バックアップ準備中</string>
   <string name="photos_backup_state_encrypting">暗号化中…</string>
   <string name="photos_backup_state_uploading">バックアップ中…</string>
   <!--

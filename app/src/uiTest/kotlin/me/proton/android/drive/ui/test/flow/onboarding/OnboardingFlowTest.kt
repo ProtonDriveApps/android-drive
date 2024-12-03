@@ -22,37 +22,38 @@ import android.os.Build
 import android.os.Environment
 import androidx.test.filters.SdkSuppress
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.extension.debug
 import me.proton.android.drive.ui.extension.allowPhotosPermissions
 import me.proton.android.drive.ui.robot.NotificationPermissionRobot
 import me.proton.android.drive.ui.robot.OnboardingRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
 import me.proton.android.drive.ui.rules.ExternalFilesRule
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.ShowOnboardingBaseTest
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.test.android.robots.auth.AddAccountRobot
+import me.proton.core.test.android.robots.auth.login.LoginRobot
+import me.proton.core.test.rule.annotation.PrepareUser
+import me.proton.core.test.rule.annotation.mapToUser
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.io.File
+import javax.inject.Inject
 
 @HiltAndroidTest
-class OnboardingFlowTest : AuthenticatedBaseTest() {
-    override val doNotShowOnboardingAfterLogin get() = false
-    override val permissions get() = emptyList<String>()
+class OnboardingFlowTest : ShowOnboardingBaseTest() {
 
-    @get:Rule
-    val dcimCameraFolder = ExternalFilesRule {
-        File(
-            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
-            "Camera",
-        )
-    }
+    @Inject lateinit var configurationProvider: ConfigurationProvider
 
     @Before
     fun before() {
         dcimCameraFolder.copyDirFromAssets("images/formats")
+        configurationProvider.debug.photosUpsellPhotoCount = Int.MAX_VALUE
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun pressingNotNowShouldDismissOnboarding() {
         OnboardingRobot
             .verify {
@@ -65,6 +66,7 @@ class OnboardingFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun denyPhotosPermissionsShouldDismissOnboarding() {
         OnboardingRobot
             .verify {
@@ -78,6 +80,7 @@ class OnboardingFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun secondLoginShouldNotShowOnboarding() {
         OnboardingRobot
             .verify {
@@ -94,6 +97,7 @@ class OnboardingFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun goingBackFromPhotoBackupShowsMainOnboardingScreen() {
         OnboardingRobot
             .verify {
@@ -111,6 +115,7 @@ class OnboardingFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun turnOnCameraUpload() {
         OnboardingRobot
             .verify {
@@ -122,6 +127,7 @@ class OnboardingFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun turnOnCameraUploadForSelectedItems() {
         //TODO: In order for this to work we need to prepare firebase test device so that it have some content
@@ -138,6 +144,7 @@ class OnboardingFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun moreOptionsTurnOnPhotoBackupForSelectedItems() {
         //TODO: In order for this to work we need to prepare firebase test device so that it have some content
@@ -159,6 +166,7 @@ class OnboardingFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun moreOptionsTurnOnPhotoBackup() {
         OnboardingRobot
             .verify {
@@ -179,7 +187,8 @@ class OnboardingFlowTest : AuthenticatedBaseTest() {
         // Without this sleep on emulator with API level 30 test stays on first login screen
         // and "Sign in" is not clicked
         Thread.sleep(1000)
-        signIn(testUser)
+        AddAccountRobot().signIn()
+        LoginRobot().loginUser<LoginRobot>(protonRule.testDataRule.mainTestUser!!.mapToUser())
     }
 
     private fun PhotosTabRobot.notificationPermissionFlow() = this.apply {

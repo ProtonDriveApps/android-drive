@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
  */
-
+ 
 package me.proton.core.drive.log.domain.usecase
 
 import me.proton.core.domain.entity.UserId
@@ -40,6 +40,7 @@ class InsertLogs @Inject constructor(
     }
 
     private suspend fun onUserLogKillSwitchOff(userId: UserId, block: suspend () -> Unit) =
-        takeIf { getFeatureFlag(driveAndroidUserLogDisabled(userId)).off }
+        takeIf { getFeatureFlag(driveAndroidUserLogDisabled(userId), { false }).off }
             ?.let { block() }
 }
+

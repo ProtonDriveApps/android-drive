@@ -27,25 +27,21 @@ import android.provider.OpenableColumns
 import androidx.core.content.IntentCompat.getParcelableExtra
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.intent.rule.IntentsRule
 import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.i18n.R
 import me.proton.core.test.android.instrumented.utils.StringUtils
+import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.test.fusion.FusionConfig.targetContext
-import org.junit.Rule
 import org.junit.Test
 
-
 @HiltAndroidTest
-class TakeAPhotoFlowTest : AuthenticatedBaseTest() {
-
-    @get:Rule
-    val intentsTestRule = IntentsRule()
+class TakeAPhotoFlowTest : BaseTest() {
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun takeAPhotoAndUploadIt() {
         var uri: Uri? = null
 

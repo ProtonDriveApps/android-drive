@@ -19,24 +19,26 @@
 package me.proton.android.drive.ui.test.flow.creatingFolder
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.CreateFolderRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.MoveToFolderRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
-import me.proton.android.drive.ui.test.SmokeTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.annotation.SmokeTest
 import me.proton.android.drive.utils.getRandomString
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class CreatingFolderFlowSuccessTest : AuthenticatedBaseTest() {
+class CreatingFolderFlowSuccessTest : BaseTest() {
 
     private val randomFolderName get() = getRandomString()
 
     @Test
-    @Scenario(2)
     @SmokeTest
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun createFolderViaMoveWindow() {
         val subFolderName = "folder1"
         val newFolderName = getRandomString()
@@ -57,7 +59,8 @@ class CreatingFolderFlowSuccessTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(value = 2)
     fun createFolderInGridLayout() {
         PhotosTabRobot
             .clickFilesTab()
@@ -69,7 +72,8 @@ class CreatingFolderFlowSuccessTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(value = 2)
     fun createAFolderViaSubFolderPlusButton() {
         val subFolderName = "folder1"
 

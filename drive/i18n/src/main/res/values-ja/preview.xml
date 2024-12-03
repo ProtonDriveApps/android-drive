@@ -23,8 +23,8 @@
   <string name="preview_processing_state">処理中...</string>
   <string name="preview_empty">プレビューするものがありません...</string>
   <string name="title_not_found">見つかりません</string>
-  <string name="proton_docs_insert_image_header_title">Insert image</string>
-  <string name="proton_docs_option_select_file">Select a file</string>
-  <string name="proton_docs_unsupported_file_type">Only inserting images is supported for now</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_insert_image_header_title">画像を挿入</string>
+  <string name="proton_docs_option_select_file">ファイルを選択</string>
+  <string name="proton_docs_unsupported_file_type">今は画像の挿入のみサポートされています</string>
+  <string name="proton_docs_load_error">文書の読み込みに失敗</string>
 </resources>

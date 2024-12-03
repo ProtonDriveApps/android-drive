@@ -32,7 +32,7 @@
   <string name="log_origin_throwable">예외</string>
   <string name="log_origin_logger">로거</string>
   <string name="log_origin_screen">화면</string>
-  <string name="log_origin_application_state">앱 상태</string>
+  <string name="log_origin_application_state">어플리케이션 상태</string>
   <string name="log_origin_workers">작업자</string>
   <string name="log_origin_backup">백업</string>
   <string name="log_origin_user">사용자</string>

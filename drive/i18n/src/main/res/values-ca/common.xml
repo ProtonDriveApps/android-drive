@@ -164,8 +164,8 @@
             "17 files successfully downloaded"
     -->
   <plurals name="common_in_app_notification_files_download_complete">
-    <item quantity="one">S\'ha baixat correctament %1$d fitxer</item>
-    <item quantity="other">S\'han baixat correctament %1$d fitxers</item>
+    <item quantity="one">S\'ha descarregat %1$d fitxer.</item>
+    <item quantity="other">S\'han descarregat %1$d fitxers.</item>
   </plurals>
   <!--
         Variable %1$s is a file name

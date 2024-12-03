@@ -349,10 +349,12 @@ test:firebase:e2e:smoke:
       when: never
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:all/'
       when: never
+    - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
+      when: on_success
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
       when: on_success
   variables:
-    TEST_TARGETS: "annotation me.proton.android.drive.ui.test.SmokeTest"
+    TEST_TARGETS: "annotation me.proton.android.drive.ui.annotation.SmokeTest"
 
 test:firebase:e2e:account:
   extends: .app-firebase-tests
@@ -497,8 +499,7 @@ test:firebase:e2e:onboarding:
   extends: .app-firebase-tests
   rules:
     - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:onboarding/'
-    - if: $DYNAMIC_DOMAIN != null
-      when: manual
+    - !reference [.app-firebase-tests, rules]
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.onboarding"
 

@@ -31,14 +31,19 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import me.proton.android.drive.verifier.domain.exception.VerifierException
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.workmanager.addTags
+import me.proton.core.drive.base.data.workmanager.onProtonHttpException
+import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.retryOrAbort
+import me.proton.core.drive.upload.data.provider.NetworkTypeProvider
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.upload.domain.usecase.VerifyBlocks
@@ -58,6 +63,8 @@ class VerifyBlocksWorker @AssistedInject constructor(
     getUploadFileLink: GetUploadFileLink,
     uploadErrorManager: UploadErrorManager,
     private val verifyBlocks: VerifyBlocks,
+    private val cleanupWorkers: CleanupWorkers,
+    private val networkTypeProviders: @JvmSuppressWildcards Map<NetworkTypeProviderType, NetworkTypeProvider>,
     configurationProvider: ConfigurationProvider,
     uploadMetricsNotifier: UploadMetricsNotifier,
     canRun: CanRun,
@@ -81,15 +88,29 @@ class VerifyBlocksWorker @AssistedInject constructor(
         uploadFileLink.logWorkState()
         verifyBlocks(uploadFileLink)
             .onFailure { error ->
-                return uploadFileLink.retryOrAbort(
-                    retryable = error.isRetryable,
-                    canRetry = canRetry(),
-                    error = error,
-                    message = "Verify blocks failed",
-                )
+                return if (error is VerifierException && error.cause.handle(uploadFileLink)) {
+                    Result.failure()
+                } else {
+                    return uploadFileLink.retryOrAbort(
+                        retryable = error.isRetryable,
+                        canRetry = canRetry(),
+                        error = error,
+                        message = "Verify blocks failed",
+                    )
+                }
             }
         return Result.success()
     }
+
+    private suspend fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean =
+        onProtonHttpException { protonCode ->
+            when (protonCode) {
+                NOT_EXISTS,
+                -> true.also { recreateFile(uploadFileLink, cleanupWorkers, networkTypeProviders) }
+
+                else -> false
+            }
+        } ?: false
 
     companion object {
         fun getWorkRequest(

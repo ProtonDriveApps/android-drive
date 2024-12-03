@@ -44,7 +44,7 @@
   <string name="title_modified_with_date">%1$sが変更されました</string>
   <string name="files_restore_from_trash_action">復元</string>
   <string name="files_send_to_trash_action">ごみ箱へ移動</string>
-  <string name="files_remove_me_action">Remove me</string>
+  <string name="files_remove_me_action">自分自身を削除</string>
   <string name="files_move_file_action">移動</string>
   <!--
         Variable %1$s is a file/folder's name

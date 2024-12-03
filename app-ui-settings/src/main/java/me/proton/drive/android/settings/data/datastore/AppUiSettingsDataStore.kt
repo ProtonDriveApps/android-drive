@@ -25,13 +25,25 @@ import me.proton.core.drive.base.data.datastore.BaseDataStore
 import javax.inject.Inject
 
 class AppUiSettingsDataStore @Inject constructor(
-    @ApplicationContext appContext: Context,
+    @ApplicationContext private val appContext: Context,
 ) : BaseDataStore(APP_SETTINGS_PREFERENCES) {
-    private val prefsKeyOnboardingShown = longPreferencesKey(ONBOARDING_SHOWN)
-    var onboardingShown by Delegate(appContext.dataStore, prefsKeyOnboardingShown, default = 0L)
+    var onboardingShown by Delegate(
+        dataStore = appContext.dataStore,
+        key = longPreferencesKey(ONBOARDING_SHOWN),
+        default = 0L
+    )
+
+    inner class WhatsNew(key: String) {
+        var shown by Delegate(
+            dataStore = appContext.dataStore,
+            key = longPreferencesKey(WHATS_NEW_SHOWN + key),
+            default = 0L
+        )
+    }
 
     companion object {
         const val APP_SETTINGS_PREFERENCES = "app_settings_prefs"
         const val ONBOARDING_SHOWN = "onboarding_shown"
+        const val WHATS_NEW_SHOWN = "whats_new_shown_"
     }
 }

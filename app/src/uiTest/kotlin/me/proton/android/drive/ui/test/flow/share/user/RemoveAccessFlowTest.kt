@@ -19,19 +19,23 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.core.util.kotlin.random
 import org.junit.Test
 
 @HiltAndroidTest
-class RemoveAccessFlowTest : AuthenticatedBaseTest() {
+class RemoveAccessFlowTest : BaseTest() {
 
     @Test
-    @Scenario(6, withSharingUser = true)
+    @PrepareUser(loginBefore = true)
+    @PrepareUser(withTag = "sharingWithUser")
+    @Scenario(forTag = "main", value = 6, sharedWithUserTag = "sharingWithUser")
     fun removeInvitation() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingWithUser"]!!
         val file = "newShare.txt"
         PhotosTabRobot
             .clickFilesTab()
@@ -40,18 +44,19 @@ class RemoveAccessFlowTest : AuthenticatedBaseTest() {
             .verify {
                 robotDisplayed()
             }
-            .clickInvitation(userLoginRule.sharingUser.email)
+            .clickInvitation(sharingUser.email)
             .clickRemoveAccess()
             .verify {
                 robotDisplayed()
-                assertNotSharedWith(userLoginRule.sharingUser.email)
+                assertNotSharedWith(sharingUser.email)
             }
             .clickBack(FilesTabRobot)
             .verify { itemIsDisplayed(file, isSharedWithUsers = false) }
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun removeExternalInvitation() {
         val file = "image.jpg"
         val email = "external_${String.random()}@mail.com"
@@ -83,8 +88,11 @@ class RemoveAccessFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(6, withSharingUser = true)
+    @PrepareUser(loginBefore = true)
+    @PrepareUser(withTag = "sharingWithUser")
+    @Scenario(forTag = "main", value = 6, sharedWithUserTag = "sharingWithUser")
     fun removeMember() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingWithUser"]!!
         val folder = "legacyShare"
         PhotosTabRobot
             .clickFilesTab()
@@ -93,11 +101,11 @@ class RemoveAccessFlowTest : AuthenticatedBaseTest() {
             .verify {
                 robotDisplayed()
             }
-            .clickMember(userLoginRule.sharingUser.email)
+            .clickMember(sharingUser.email)
             .clickRemoveAccess()
             .verify {
                 robotDisplayed()
-                assertNotSharedWith(userLoginRule.sharingUser.email)
+                assertNotSharedWith(sharingUser.email)
             }
             .clickBack(FilesTabRobot)
             .verify { itemIsDisplayed(folder, isSharedWithUsers = false) }

@@ -18,18 +18,22 @@
 
 package me.proton.android.drive.ui.robot
 
+import me.proton.core.drive.base.domain.entity.FileAttributes
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.FusionConfig.targetContext
 import java.util.Locale
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
 object FilesTabRobot : NavigationBarRobot, HomeRobot, LinksRobot, GrowlerRobot {
     private val addFilesButton get() = node.withText(I18N.string.action_empty_files_add_files)
     private val plusButton get() = node.withContentDescription(I18N.string.content_description_files_upload_upload_file)
-    private val cancelUploadButton get() = node
-        .withContentDescription(I18N.string.files_upload_content_description_cancel_upload)
+    private val cancelUploadButton
+        get() = node
+            .withContentDescription(I18N.string.files_upload_content_description_cancel_upload)
 
     fun clickPlusButton() = plusButton.clickTo(ParentFolderOptionsRobot)
     fun clickAddFilesButton() = addFilesButton.clickTo(ParentFolderOptionsRobot)
@@ -65,11 +69,11 @@ object FilesTabRobot : NavigationBarRobot, HomeRobot, LinksRobot, GrowlerRobot {
     fun assertStageUploading() =
         node.withText(I18N.string.files_upload_stage_uploading).await { assertIsDisplayed() }
 
-    fun assertStageUploadedProgress(progress: Int) = node.withText(
+    fun assertStageUploadedProgress(progress: Int, await: Duration = 60.seconds) = node.withText(
         targetContext.resources
             .getString(I18N.string.files_upload_stage_uploading_with_progress)
             .format(Percentage(progress).toPercentString(Locale.getDefault()))
-    ).await { assertIsDisplayed() }
+    ).await(await) { assertIsDisplayed() }
 
     fun assertUploadingFailed(fileName: String, reason: String) = node.withText(
         targetContext.resources.getString(
@@ -79,6 +83,6 @@ object FilesTabRobot : NavigationBarRobot, HomeRobot, LinksRobot, GrowlerRobot {
 
     override fun robotDisplayed() {
         homeScreenDisplayed()
-        filesTab.assertIsSelected()
+        filesTab.await { assertIsSelected() }
     }
 }

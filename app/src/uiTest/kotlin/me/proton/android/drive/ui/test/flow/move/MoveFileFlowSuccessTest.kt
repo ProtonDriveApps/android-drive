@@ -19,20 +19,23 @@
 package me.proton.android.drive.ui.test.flow.move
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.files.presentation.extension.ItemType
 import me.proton.core.drive.files.presentation.extension.LayoutType
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
-class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
+class MoveFileFlowSuccessTest : BaseTest() {
+
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun moveAFileToRoot() {
         val file = "sharedChild.html"
         val folder = "sharedFolder"
@@ -57,7 +60,8 @@ class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun moveRootFileToFolder() {
         val file = "shared.jpg"
         val folder = "folder3"
@@ -81,7 +85,8 @@ class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun moveFileFromRootFolderToAnotherFolder() {
         val file = "shared.jpg"
         val folder = "folder3"
@@ -100,7 +105,8 @@ class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun moveFilesFromRootFolderToAnotherFolderViaMultiSelection() {
         val file1 = "shared.jpg"
         val file2 = "shared.html"
@@ -122,7 +128,7 @@ class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
                 nodeWithQuantityTextDisplayed(
                     pluralsRes = I18N.plurals.file_operation_moving_multiple_successful,
                     quantity = 2,
-                    2,
+                    2
                 )
             }
             .scrollToItemWithName(folder)
@@ -138,7 +144,8 @@ class MoveFileFlowSuccessTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     // This test might be flaky due to snackbar not showing
     fun undoMoveRootFileToFolder() {
         val file = "shared.jpg"

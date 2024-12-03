@@ -19,18 +19,20 @@
 package me.proton.android.drive.ui.test.flow.move
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
-class MoveFileDeepFlowSuccessTest : AuthenticatedBaseTest() {
+class MoveFileDeepFlowSuccessTest : BaseTest() {
 
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun moveAFileToParent() {
         val file = "file4"
         val folder2 = "folder2"
@@ -52,8 +54,10 @@ class MoveFileDeepFlowSuccessTest : AuthenticatedBaseTest() {
                 itemIsDisplayed(file)
             }
     }
+
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun moveFileFromParentFolderToChildFolderOfAnotherFolder() {
         val file = "file4"
         val folder1 = "folder1"

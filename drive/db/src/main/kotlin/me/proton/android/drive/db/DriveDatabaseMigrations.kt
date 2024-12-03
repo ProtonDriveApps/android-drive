@@ -457,4 +457,15 @@ object DriveDatabaseMigrations {
             DriveObservabilityDatabase.MIGRATION_0.migrate(database)
         }
     }
+
+    val MIGRATION_71_72 = object : Migration(71, 72) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            AuthDatabase.MIGRATION_2.migrate(db)
+            AuthDatabase.MIGRATION_3.migrate(db)
+            AuthDatabase.MIGRATION_4.migrate(db)
+            AuthDatabase.MIGRATION_5.migrate(db)
+            UserDatabase.MIGRATION_6.migrate(db)
+            AccountDatabase.MIGRATION_9.migrate(db)
+        }
+    }
 }

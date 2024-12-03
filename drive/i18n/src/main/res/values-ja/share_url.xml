@@ -69,7 +69,7 @@
   <string name="shared_link_error_legacy_link">これは古いリンクで、管理はサポートされていません。このリンクの共有を中止し、新しいリンクを取得することをお勧めします。</string>
   <string name="title_share_via_link">リンクで共有</string>
   <string name="shared_with_me_title">私と共有しました</string>
-  <string name="shared_by_me_title">Shared by me</string>
-  <string name="shared_with_me_empty_description">Files and folder that you share with others will appear here</string>
-  <string name="shared_by_me_empty_description">Safely share your files and folders with end-to-end encryption</string>
+  <string name="shared_by_me_title">自分が共有済み</string>
+  <string name="shared_with_me_empty_description">あなたが他の人に共有したファイルやフォルダはここに表示されます</string>
+  <string name="shared_by_me_empty_description">エンドツーエンド暗号化でファイルとフォルダを安全に共有</string>
 </resources>

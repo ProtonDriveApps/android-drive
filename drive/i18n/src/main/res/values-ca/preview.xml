@@ -25,6 +25,6 @@
   <string name="title_not_found">No trobat</string>
   <string name="proton_docs_insert_image_header_title">Insereix una imatge</string>
   <string name="proton_docs_option_select_file">Seleccioneu un fitxer</string>
-  <string name="proton_docs_unsupported_file_type">Only inserting images is supported for now</string>
+  <string name="proton_docs_unsupported_file_type">De moment només s\'admet la inserció d\'imatges.</string>
   <string name="proton_docs_load_error">No s\'ha pogut carregar el document.</string>
 </resources>

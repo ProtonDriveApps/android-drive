@@ -17,11 +17,11 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Not now</string>
+  <string name="onboarding_action_skip">Ne zdaj</string>
   <string name="onboarding_title">Automatically save and encrypt your photos and videos</string>
   <string name="onboarding_description_part_one">Keep your memories safe with</string>
   <string name="onboarding_description_part_two">end-to-end encrypted storage</string>
-  <string name="onboarding_description_free">free</string>
+  <string name="onboarding_description_free">brezplačno</string>
   <string name="onboarding_action_primary">Turn on camera uploads</string>
   <string name="onboarding_action_secondary">More upload options</string>
   <string name="onboarding_action_done">Done</string>

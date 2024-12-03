@@ -27,4 +27,5 @@
   <string name="file_info_title_file">Fildetaljer</string>
   <string name="file_info_captured_on">Taget</string>
   <string name="file_info_permissions">Tilladelser</string>
+  <string name="file_info_uploaded_by_anonymous">Anonymous</string>
 </resources>

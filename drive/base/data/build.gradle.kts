@@ -33,6 +33,7 @@ driveModule(
     api(libs.core.account.data)
     api(libs.core.data)
     api(libs.core.network.data)
+    api(libs.core.network.presentation)
     implementation(libs.androidx.dataStore.core)
     implementation(libs.androidx.dataStore.preferences)
     implementation(libs.androidx.exif)

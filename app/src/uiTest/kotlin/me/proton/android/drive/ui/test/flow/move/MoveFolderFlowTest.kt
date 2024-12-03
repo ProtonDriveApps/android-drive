@@ -19,21 +19,23 @@
 package me.proton.android.drive.ui.test.flow.move
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.annotation.Slow
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.MoveToFolderRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
 @Slow
-class MoveFolderFlowTest : AuthenticatedBaseTest() {
+class MoveFolderFlowTest : BaseTest() {
 
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun moveAFolderToRoot() {
         val parent = "folder1"
         val folder = "folder3"
@@ -55,7 +57,8 @@ class MoveFolderFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun moveRootFolderToFolder() {
         val folder = "folder1"
         val folderDestination = "folder2"
@@ -76,7 +79,8 @@ class MoveFolderFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun moveChildFolderToOtherFolder() {
         val parent = "folder1"
         val folder = "folder3"
@@ -103,7 +107,8 @@ class MoveFolderFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun cannotMoveAFolderToSubFolderOfItself() {
         val folder = "folder1"
         PhotosTabRobot

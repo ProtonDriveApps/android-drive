@@ -18,6 +18,8 @@
 
 package me.proton.core.drive.feature.flag.domain.usecase
 
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.isOlderThen
 import me.proton.core.drive.base.domain.log.LogTag
@@ -27,28 +29,33 @@ import me.proton.core.drive.feature.flag.domain.repository.FeatureFlagRepository
 import me.proton.core.drive.feature.flag.domain.repository.FeatureFlagRepository.RefreshId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RefreshFeatureFlags @Inject constructor(
     private val featureFlagRepository: FeatureFlagRepository,
     private val configurationProvider: ConfigurationProvider,
 ) {
+    private val mutex = Mutex()
 
     suspend operator fun invoke(
         userId: UserId,
         refreshId: RefreshId = RefreshId.DEFAULT,
     ): Result<Unit> = coRunCatching {
-        takeIf {
-            featureFlagRepository
-                .getLastRefreshTimestamp(userId, refreshId)
-                .isOlderThen(configurationProvider.featureFlagFreshDuration)
-        }?.let {
-            CoreLogger.d(LogTag.FEATURE_FLAG, "Refreshing feature flags ${refreshId.id}")
-            featureFlagRepository.refresh(userId, refreshId).getOrThrow()
-        } ?: throw IllegalStateException(
-            """
+        mutex.withLock {
+            takeIf {
+                featureFlagRepository
+                    .getLastRefreshTimestamp(userId, refreshId)
+                    .isOlderThen(configurationProvider.featureFlagFreshDuration)
+            }?.let {
+                CoreLogger.d(LogTag.FEATURE_FLAG, "Refreshing feature flags ${refreshId.id}")
+                featureFlagRepository.refresh(userId, refreshId).getOrThrow()
+            } ?: throw IllegalStateException(
+                """
                 "Too many attempts. Refresh is allowed once in a
                 ${configurationProvider.featureFlagFreshDuration.inWholeMinutes} minutes"
             """.trimIndent().replace("\n", " ")
-        )
+            )
+        }
     }
 }

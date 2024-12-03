@@ -27,7 +27,7 @@ import me.proton.core.drive.cryptobase.domain.usecase.GetPublicKeyRing
 import me.proton.core.drive.cryptobase.domain.usecase.UnlockKey
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.usecase.GetLinkParentKey
-import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
+import me.proton.core.drive.key.domain.usecase.GetVerificationKeys
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.usecase.GetLink
@@ -42,7 +42,7 @@ class DecryptLinkName @Inject constructor(
     private val getLinkParentKey: GetLinkParentKey,
     private val unlockKey: UnlockKey,
     private val decryptAndVerifyText: DecryptAndVerifyText,
-    private val getPublicAddressKeys: GetPublicAddressKeys,
+    private val getVerificationKeys: GetVerificationKeys,
     private val getLink: GetLink,
     private val getPublicKeyRing: GetPublicKeyRing,
 ) {
@@ -62,12 +62,16 @@ class DecryptLinkName @Inject constructor(
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ): Result<DecryptedText> = coRunCatching(coroutineContext) {
         val link = getLink(linkId).toResult().getOrThrow()
-        val userId = link.id.shareId.userId
-        val addressKey = getPublicAddressKeys(userId, link.nameSignatureEmail ?: link.signatureAddress).getOrThrow()
+        val email = link.nameSignatureEmail ?: link.signatureAddress
+        val verificationKeys = getVerificationKeys(
+            link = link,
+            email = email,
+            fallbackTo = GetVerificationKeys.FallbackTo.PARENT_NODE_KEY
+        ).getOrThrow().keyHolder
         decryptAndVerifyText(
             unlockedKey = unlockedKey,
             text = link.name,
-            verifyKeyRing = getPublicKeyRing(addressKey.keyHolder).getOrThrow(),
+            verifyKeyRing = getPublicKeyRing(verificationKeys).getOrThrow(),
             verificationFailedContext = javaClass.simpleName,
             coroutineContext = coroutineContext,
         ).getOrThrow()

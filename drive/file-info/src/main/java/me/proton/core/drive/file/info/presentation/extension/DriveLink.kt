@@ -51,7 +51,8 @@ fun DriveLink.toItems(
     ),
     Item(
         name = context.getString(I18N.string.file_info_uploaded_by_entry),
-        value = uploadedBy,
+        value = uploadedBy.takeUnless { it.isEmpty() }
+            ?: context.getString(I18N.string.file_info_uploaded_by_anonymous),
     ),
     takeIf { shareType == Share.Type.MAIN }?.let {
         Item(

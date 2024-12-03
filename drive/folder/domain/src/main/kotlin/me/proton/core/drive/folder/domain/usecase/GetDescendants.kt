@@ -32,7 +32,7 @@ class GetDescendants @Inject constructor(
         val descendants = mutableListOf<Link>()
         val refreshFolderChildren = if (refresh) true else null
         while (folders.isNotEmpty()) {
-            val parent = folders.removeFirst()
+            val parent = folders.removeAt(0)
             getAllFolderChildren(
                 parent.id,
                 refreshFolderChildren,

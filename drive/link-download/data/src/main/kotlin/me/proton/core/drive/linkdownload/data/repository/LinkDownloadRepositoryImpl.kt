@@ -92,10 +92,14 @@ class LinkDownloadRepositoryImpl(
     override suspend fun areAllFilesDownloaded(
         folderId: FolderId,
         excludeMimeTypes: Set<String>,
-    ): Boolean = db.getAllChildrenStates(
-        userId = folderId.userId,
-        shareId = folderId.shareId.id,
-        folderId = folderId.id,
-        excludeMimeTypes = excludeMimeTypes,
-    ).all { state -> state == LinkDownloadState.DOWNLOADED }
+    ): Boolean = pagedList(configurationProvider.dbPageSize) { fromIndex, count ->
+        db.getAllChildrenStates(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+            excludeMimeTypes = excludeMimeTypes,
+            limit = count,
+            offset = fromIndex,
+        )
+    }.all { state -> state == LinkDownloadState.DOWNLOADED }
 }

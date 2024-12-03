@@ -31,7 +31,7 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Izjema</string>
   <string name="log_origin_logger">Zapisovalnik</string>
-  <string name="log_origin_screen">Screen</string>
+  <string name="log_origin_screen">Zaslon</string>
   <string name="log_origin_application_state">Application State</string>
   <string name="log_origin_workers">Workers</string>
   <string name="log_origin_backup">Varnostna kopija</string>

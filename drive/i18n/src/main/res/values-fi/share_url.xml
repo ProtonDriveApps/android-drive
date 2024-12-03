@@ -66,7 +66,7 @@
             "Expiration date must not be after more then 90 days"
     -->
   <string name="shared_link_error_message_expiration_date_too_late">Erääntymispäivä ei voi olla %1$d päivää kauempana</string>
-  <string name="shared_link_error_legacy_link">Tämä on vanha linkki, jonka hallintaa ei tueta. Suosittelemme, että lopetat tämän linkin jakamisen ja hankit uuden.</string>
+  <string name="shared_link_error_legacy_link">Tämä on vanha linkki, jonka hallintaa ei tueta. Suosittelemme, että lopetat sen jakamisen ja hankit uuden.</string>
   <string name="title_share_via_link">Jaa linkkinä</string>
   <string name="shared_with_me_title">Jaettu minulle</string>
   <string name="shared_by_me_title">Minun jakamani</string>

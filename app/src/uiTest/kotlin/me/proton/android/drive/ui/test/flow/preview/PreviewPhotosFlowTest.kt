@@ -19,11 +19,12 @@
 package me.proton.android.drive.ui.test.flow.preview
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
-import me.proton.android.drive.ui.test.SmokeTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.annotation.SmokeTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.test.fusion.FusionConfig
 import me.proton.test.fusion.ui.common.enums.SwipeDirection
 import org.junit.Before
@@ -31,7 +32,7 @@ import org.junit.Test
 import kotlin.time.Duration.Companion.seconds
 
 @HiltAndroidTest
-class PreviewPhotosFlowTest: AuthenticatedBaseTest() {
+class PreviewPhotosFlowTest : BaseTest() {
 
     @Before
     fun setUp() {
@@ -40,7 +41,8 @@ class PreviewPhotosFlowTest: AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2, isPhotos = true)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isPhotos = true)
     @SmokeTest
     fun previewPhotoTest() {
 

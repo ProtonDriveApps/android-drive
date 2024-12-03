@@ -24,4 +24,5 @@
   <string name="manage_access_link_description_public">Oricine cu această legătură web</string>
   <string name="manage_access_link_description_password_protected">Oricine cu această legătură web și cu parolă</string>
   <string name="manage_access_link_default_permission">Poate vedea</string>
+  <string name="manage_access_link_editor_permission">Can edit</string>
 </resources>

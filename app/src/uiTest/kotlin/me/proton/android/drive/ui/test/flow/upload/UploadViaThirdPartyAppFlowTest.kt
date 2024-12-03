@@ -18,42 +18,25 @@
 
 package me.proton.android.drive.ui.test.flow.upload
 
-import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.annotation.Quota
 import me.proton.android.drive.ui.robot.LauncherRobot
 import me.proton.android.drive.ui.robot.StorageFullRobot
 import me.proton.android.drive.ui.robot.UploadToRobot
-import me.proton.android.drive.ui.rules.ExternalFilesRule
-import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.test.EmptyBaseTest
-import me.proton.android.drive.utils.getRandomString
+import me.proton.android.drive.ui.test.ExternalStorageBaseTest
 import me.proton.core.drive.base.domain.extension.KiB
 import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.test.android.instrumented.utils.StringUtils
-import me.proton.core.test.quark.data.User
-import org.junit.Rule
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
-class UploadViaThirdPartyAppFlowTest : EmptyBaseTest() {
-
-    private val testUser = User(name = "proton_drive_${getRandomString(15)}")
-
-    @get:Rule(order = 1)
-    val userLoginRule: UserLoginRule = UserLoginRule(testUser, quarkCommands = quarkRule.quarkCommands)
-
-    @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        android.Manifest.permission.READ_EXTERNAL_STORAGE,
-        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-    )
-
-    @get:Rule
-    val externalFilesRule = ExternalFilesRule()
+class UploadViaThirdPartyAppFlowTest : ExternalStorageBaseTest() {
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun uploadEmptyFileViaThirdPartyApp() {
         val file = externalFilesRule.createEmptyFile("empty.txt")
 
@@ -72,6 +55,7 @@ class UploadViaThirdPartyAppFlowTest : EmptyBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun uploadMultipleItemsIntoNewlyCreatedFolder() {
         val files = listOf(
             externalFilesRule.createFile("1.txt", 1.KiB.value),
@@ -100,7 +84,8 @@ class UploadViaThirdPartyAppFlowTest : EmptyBaseTest() {
     }
 
     @Test
-    @Quota(percentageFull = 99)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", quota = Quota(percentageFull = 99))
     fun uploadMultipleItemsWhenStorageIsAlmostFull() {
         val files = listOf(
             externalFilesRule.createFile("1.txt", 10.MiB.value),

@@ -68,4 +68,5 @@ private fun UserEntity.toUser() = User(
     maxBaseSpace = maxBaseSpace,
     usedDriveSpace = usedDriveSpace,
     maxDriveSpace = maxDriveSpace,
+    flags = emptyMap(),
 )

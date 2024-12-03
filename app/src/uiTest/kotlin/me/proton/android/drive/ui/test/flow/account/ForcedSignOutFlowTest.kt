@@ -20,30 +20,31 @@ package me.proton.android.drive.ui.test.flow.account
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.test.ExternalStorageBaseTest
 import me.proton.core.auth.test.robot.AddAccountRobot
 import me.proton.core.test.quark.v2.command.expireSession
-import me.proton.test.fusion.Fusion
-import me.proton.test.fusion.ui.compose.ComposeWaiter.waitFor
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import kotlin.time.Duration.Companion.seconds
 
 @HiltAndroidTest
-class ForcedSignOutFlowTest : AuthenticatedBaseTest() {
+class ForcedSignOutFlowTest : ExternalStorageBaseTest() {
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun forcedSignOut() {
         PhotosTabRobot.verify {
             robotDisplayed()
+            clickFilesTab()
         }
-
-        quarkRule.quarkCommands.expireSession(
-            username = testUser.name,
+        protonRule.testDataRule.quarkCommand.expireSession(
+            username = protonRule.testDataRule.mainTestUser?.name!!,
             expireRefreshToken = true
         )
 
-        Fusion.node.isEnabled().waitFor(120.seconds) {
-            AddAccountRobot.uiElementsDisplayed()
-        }
+        PhotosTabRobot.clickFilesTab()
+
+        AddAccountRobot.uiElementsDisplayed(120.seconds)
     }
 }

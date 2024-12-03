@@ -17,12 +17,12 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Not now</string>
-  <string name="onboarding_title">Automatically save and encrypt your photos and videos</string>
-  <string name="onboarding_description_part_one">Keep your memories safe with</string>
-  <string name="onboarding_description_part_two">end-to-end encrypted storage</string>
-  <string name="onboarding_description_free">free</string>
-  <string name="onboarding_action_primary">Turn on camera uploads</string>
-  <string name="onboarding_action_secondary">More upload options</string>
-  <string name="onboarding_action_done">Done</string>
+  <string name="onboarding_action_skip">あとで</string>
+  <string name="onboarding_title">写真とビデオは自動的に保存され暗号化</string>
+  <string name="onboarding_description_part_one">で思い出を安全に保管</string>
+  <string name="onboarding_description_part_two">エンドツーエンド暗号化ストレージ</string>
+  <string name="onboarding_description_free">無料</string>
+  <string name="onboarding_action_primary">カメラアップロードをオン</string>
+  <string name="onboarding_action_secondary">アップロードオプションの詳細</string>
+  <string name="onboarding_action_done">完了</string>
 </resources>

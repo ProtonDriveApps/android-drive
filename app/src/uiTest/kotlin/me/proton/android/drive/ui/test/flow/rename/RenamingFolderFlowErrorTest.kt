@@ -19,12 +19,13 @@
 package me.proton.android.drive.ui.test.flow.rename
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.BackendRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.utils.getRandomString
 import me.proton.core.test.android.instrumented.utils.StringUtils
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -37,10 +38,11 @@ class RenamingFolderFlowErrorTest(
     private val newItemName: String,
     private val errorMessage: String,
     @Suppress("unused") private val friendlyName: String
-) : AuthenticatedBaseTest() {
+) : BaseTest() {
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun renameError() {
         PhotosTabRobot
             .clickFilesTab()

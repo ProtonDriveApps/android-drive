@@ -18,66 +18,82 @@
 
 package me.proton.android.drive.ui.test
 
-import android.Manifest
-import android.os.Build
 import android.os.Environment
+import androidx.test.espresso.intent.rule.IntentsRule
 import androidx.test.rule.GrantPermissionRule
+import kotlinx.coroutines.runBlocking
+import me.proton.android.drive.initializer.MainInitializer
+import me.proton.android.drive.ui.MainActivity
 import me.proton.android.drive.ui.rules.ExternalFilesRule
+import me.proton.android.drive.ui.rules.SlowTestRule
+import me.proton.core.test.rule.ProtonRule
+import me.proton.core.test.rule.extension.protonAndroidComposeRule
 import org.junit.Rule
+import org.junit.rules.RuleChain
 import java.io.File
 
-abstract class PhotosBaseTest: AuthenticatedBaseTest() {
-    private val backupPermissions =
-        listOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-        ) + when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> listOf(
-                Manifest.permission.READ_MEDIA_IMAGES,
-                Manifest.permission.READ_MEDIA_VIDEO,
-                Manifest.permission.ACCESS_MEDIA_LOCATION,
-                Manifest.permission.POST_NOTIFICATIONS,
-            )
+abstract class PhotosBaseTest : AbstractBaseTest() {
 
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> listOf(
-                Manifest.permission.ACCESS_MEDIA_LOCATION,
-            )
+    private val permissionRule: GrantPermissionRule = runBlocking {
+        GrantPermissionRule.grant(*photosTestPermissions.toTypedArray())
+    }
 
-            else -> emptyList()
-        }
+    val protonRule: ProtonRule = protonAndroidComposeRule<MainActivity>(
+        annotationTestData = driveTestDataRule.scenarioAnnotationTestData,
+        fusionEnabled = true,
+        additionalRules = linkedSetOf(
+            IntentsRule(),
+            SlowTestRule()
+        ),
+        beforeHilt = {
+            configureFusion()
+        },
+        afterHilt = {
+            MainInitializer.init(it.targetContext)
+            setOnboardingDisplayStateAfterLogin()
+            setWhatsNewDisplayStateAfterLogin()
+        },
+        logoutBefore = true
+    )
 
-    @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(*backupPermissions.toTypedArray())
+    @get:Rule(order = 2)
+    val ruleChain: RuleChain = RuleChain
+        .outerRule(permissionRule)
+        .around(protonRule)
 
-    @get:Rule
+    @get:Rule(order = 3)
     val dcimCameraFolder = ExternalFilesRule {
         File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM),
             "Camera",
         )
     }
-    @get:Rule
-    val pictureCameraFolder = ExternalFilesRule {
+
+    @get:Rule(order = 3)
+    var pictureCameraFolder = ExternalFilesRule {
         File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
             "Camera",
         )
     }
-    @get:Rule
+
+    @get:Rule(order = 3)
     val picturePhotosFolder = ExternalFilesRule {
         File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
             "Photos",
         )
     }
-    @get:Rule
+
+    @get:Rule(order = 3)
     val pictureRawFolder = ExternalFilesRule {
         File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
             "Raw",
         )
     }
-    @get:Rule
+
+    @get:Rule(order = 3)
     val pictureScreenshotsFolder = ExternalFilesRule {
         File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),

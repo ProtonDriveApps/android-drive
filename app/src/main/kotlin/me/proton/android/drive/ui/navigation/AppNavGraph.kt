@@ -83,9 +83,11 @@ import me.proton.android.drive.ui.dialog.ProtonDocsInsertImageOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
 import me.proton.android.drive.ui.dialog.ShareExternalInvitationOptions
 import me.proton.android.drive.ui.dialog.ShareInvitationOptions
+import me.proton.android.drive.ui.dialog.ShareLinkPermissions
 import me.proton.android.drive.ui.dialog.ShareMemberOptions
 import me.proton.android.drive.ui.dialog.SortingList
 import me.proton.android.drive.ui.dialog.SystemAccessDialog
+import me.proton.android.drive.ui.dialog.WhatsNew
 import me.proton.android.drive.ui.navigation.animation.defaultEnterSlideTransition
 import me.proton.android.drive.ui.navigation.animation.defaultPopExitSlideTransition
 import me.proton.android.drive.ui.navigation.internal.DriveNavHost
@@ -139,6 +141,7 @@ import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.user.presentation.user.SignOutConfirmationDialog
 import me.proton.core.util.kotlin.CoreLogger
+import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 
 @Composable
 @ExperimentalAnimationApi
@@ -329,6 +332,7 @@ fun AppNavGraph(
         addInvitationOptions(navController)
         addExternalInvitationOptions(navController)
         addMemberOptions(navController)
+        addShareLinkPermissions(navController)
         addDiscardShareViaInvitationsChanges(navController)
         addShareViaLink(navController)
         addDiscardShareViaLinkChanges(navController)
@@ -346,6 +350,7 @@ fun AppNavGraph(
         addLogOptions()
         addProtonDocsInsertImageOptions(navController)
         addOnboarding(navController)
+        addWhatsNew(navController)
         addNotificationPermissionRationale(navController)
     }
 }
@@ -649,6 +654,22 @@ fun NavGraphBuilder.addMemberOptions(
     )
 }
 
+fun NavGraphBuilder.addShareLinkPermissions(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.ShareLinkPermissions.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+    arguments = listOf(
+        navArgument(Screen.ShareLinkPermissions.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareLinkPermissions.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareLinkPermissions.LINK_ID) { type = NavType.StringType },
+    ),
+) { _, runAction ->
+    ShareLinkPermissions(
+        runAction = runAction
+    )
+}
+
 @ExperimentalCoroutinesApi
 fun NavGraphBuilder.addConfirmDeletionDialog(navController: NavHostController) = dialog(
     route = Screen.Files.Dialogs.ConfirmDeletion.route,
@@ -863,6 +884,11 @@ internal fun NavGraphBuilder.addHome(
         navigateToOnboarding = {
             navController.navigate(
                 Screen.Onboarding(userId)
+            )
+        },
+        navigateToWhatsNew = { key ->
+            navController.navigate(
+                Screen.WhatsNew(userId, key)
             )
         },
         navigateToNotificationPermissionRationale = {
@@ -1547,6 +1573,9 @@ fun NavGraphBuilder.addManageAccess(navController: NavHostController) = composab
         navigateToMemberOptions = { linkId, memberId ->
             navController.navigate(Screen.ShareMemberOptions(linkId, memberId))
         },
+        navigateToShareLinkPermissions = { linkId ->
+            navController.navigate(Screen.ShareLinkPermissions(linkId))
+        },
         navigateToStopAllSharing = { shareId ->
             navController.navigate(Screen.Files.Dialogs.ConfirmStopAllSharing(shareId, confirmPopUpRoute = Screen.ManageAccess.route))
         },
@@ -1961,6 +1990,26 @@ fun NavGraphBuilder.addOnboarding(
         dismiss = {
             navController.popBackStack(
                 route = Screen.Onboarding.route,
+                inclusive = true,
+            )
+        }
+    )
+}
+
+fun NavGraphBuilder.addWhatsNew(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.WhatsNew.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+    arguments = listOf(
+        navArgument(Screen.WhatsNew.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.WhatsNew.KEY) { type = NavType.EnumType(WhatsNewKey::class.java) },
+    ),
+) { _, _ ->
+    WhatsNew(
+        dismiss = {
+            navController.popBackStack(
+                route = Screen.WhatsNew.route,
                 inclusive = true,
             )
         }

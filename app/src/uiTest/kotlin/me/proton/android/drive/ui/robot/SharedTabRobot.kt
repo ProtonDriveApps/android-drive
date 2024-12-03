@@ -19,6 +19,8 @@
 package me.proton.android.drive.ui.robot
 
 import me.proton.test.fusion.Fusion.node
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
 object SharedTabRobot : HomeRobot, LinksRobot {
@@ -33,6 +35,6 @@ object SharedTabRobot : HomeRobot, LinksRobot {
 
     override fun robotDisplayed() {
         homeScreenDisplayed()
-        sharedTab.assertIsSelected()
+        sharedTab.await(120.seconds) { assertIsSelected() }
     }
 }

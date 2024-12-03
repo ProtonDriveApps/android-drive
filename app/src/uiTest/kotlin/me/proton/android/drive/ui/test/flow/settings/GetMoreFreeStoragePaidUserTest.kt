@@ -19,28 +19,20 @@
 package me.proton.android.drive.ui.test.flow.settings
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.rules.UserLoginRule
+import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.BaseTest
-import me.proton.android.drive.utils.getRandomString
 import me.proton.core.test.quark.data.Plan
-import me.proton.core.test.quark.data.User
-import org.junit.Rule
+import me.proton.core.test.rule.annotation.PrepareUser
+import me.proton.core.test.rule.annotation.payments.TestSubscriptionData
 import org.junit.Test
 
 @HiltAndroidTest
 class GetMoreFreeStoragePaidUserTest : BaseTest() {
-    private val paidUser = User(
-        name = "proton_drive_${getRandomString(15)}",
-        plan = Plan.Unlimited,
-    )
-
-    @get:Rule(order = 1)
-    val userLoginRule: UserLoginRule = UserLoginRule(paidUser, quarkCommands = quarkRule.quarkCommands)
 
     @Test
+    @PrepareUser(subscriptionData = TestSubscriptionData(plan = Plan.Unlimited), loginBefore = true)
     fun paidUserShouldNotHaveGetMoreFreeStorageOption() {
-        FilesTabRobot
+        PhotosTabRobot
             .openSidebarBySwipe()
             .scrollToStorageIndicator()
             .verify {

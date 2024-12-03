@@ -19,18 +19,21 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.ManageAccessRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.ShareRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class SetCustomPasswordManageAccessFlowTest : AuthenticatedBaseTest() {
+class SetCustomPasswordManageAccessFlowTest : BaseTest() {
+
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun deleteCustomPassword() {
         val file = FOLDER_SHARED_WITH_PASSWORD
         PhotosTabRobot
@@ -58,7 +61,8 @@ class SetCustomPasswordManageAccessFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun setCustomPassword() {
         val file = FILE_SHARED
         PhotosTabRobot
@@ -88,7 +92,8 @@ class SetCustomPasswordManageAccessFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun discardPasswordChanges() {
         val file = FILE
         PhotosTabRobot

@@ -22,7 +22,7 @@
         Example:
             "Share Document"
     -->
-  <string name="title_share_via_invitations">Share %1$s</string>
+  <string name="title_share_via_invitations">%1$sを共有</string>
   <!--
         Variable %1$d is a number
         Examples:
@@ -37,7 +37,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="other">%1$d persons cannot be invited</item>
+    <item quantity="other">%1$d人は招待できません</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -63,7 +63,7 @@
         Examples:
             "user@mail.com (Accepted)"
     -->
-  <string name="share_via_invitations_external_invitation_accepted">%1$s (Accepted)</string>
+  <string name="share_via_invitations_external_invitation_accepted">%1$s(承認済み)</string>
   <!--
         Variable %1$s is an email
         Examples:
@@ -73,9 +73,9 @@
   <string name="share_via_invitations_add_people_hint">人を追加する</string>
   <string name="share_via_invitations_copy_invite_link_action">招待リンクをコピーする</string>
   <string name="share_via_invitations_remove_access_action">アクセス権の削除</string>
-  <string name="share_via_invitations_stop_sharing_description">Delete link and remove access for everyone</string>
+  <string name="share_via_invitations_stop_sharing_description">リンクを削除して全員のアクセスを削除</string>
   <string name="share_via_invitations_resend_invite_action">招待を再送信する</string>
-  <string name="share_via_invitations_resend_invite_success">Invitation was resent</string>
+  <string name="share_via_invitations_resend_invite_success">招待は再送信されました</string>
   <!--
         Variable %1$d is a number
         Examples:
@@ -84,6 +84,6 @@
   <plurals name="share_via_invitations_group_members">
     <item quantity="other">メンバー %1$d人</item>
   </plurals>
-  <string name="share_via_invitations_message_placeholder">Add a message</string>
-  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
+  <string name="share_via_invitations_message_placeholder">メッセージを追加</string>
+  <string name="share_via_invitations_send_message_and_name_label">招待メールにはメッセージとファイルが含まれています</string>
 </resources>

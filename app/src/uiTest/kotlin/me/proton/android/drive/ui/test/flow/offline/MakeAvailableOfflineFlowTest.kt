@@ -19,21 +19,24 @@
 package me.proton.android.drive.ui.test.flow.offline
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.FileFolderOptionsRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.NetworkSimulator
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import kotlin.time.Duration.Companion.seconds
 
 @HiltAndroidTest
-class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
+class MakeAvailableOfflineFlowTest : BaseTest() {
+
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun makeFileAvailableOffline() {
         val folder = "folder1"
         val file = "presentation.pdf"
@@ -54,7 +57,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun makeFolderWithChildFolderAvailableOffline() {
         val folder = "folder2"
         val subfolder = "folder5"
@@ -78,7 +82,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun makeEmptyFolderAvailableOffline() {
         val folder = "folder1"
         PhotosTabRobot
@@ -96,7 +101,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2, isPhotos = true)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isPhotos = true)
     fun makeMultiplePhotosAvailableOffline() {
         val firstImage = ImageName.Yesterday
         val secondImage = ImageName.Now
@@ -126,7 +132,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun makeFolderWithFileInsideAvailableOffline() {
         val folder = "sharedFolder"
         val file = "sharedChild.html"
@@ -154,7 +161,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun makeFolderAndChildFileAvailableOfflineSeparately() {
         val folder = "sharedFolder"
         val file = "sharedChild.html"
@@ -175,7 +183,8 @@ class MakeAvailableOfflineFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun loseConnectionWhenDownloadingIsStarted() {
 
         val file = "image.jpg"

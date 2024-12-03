@@ -35,6 +35,7 @@ class GetPublicAddressKeys @Inject constructor(
 ) {
 
     suspend operator fun invoke(userId: UserId, email: String): Result<Key> = coRunCatching {
+        check(email.isNotEmpty()) { "Cannot found key for anonymous user" }
         getAddressKey(userId, email)
             .getOrNull()
             ?: let {

@@ -66,7 +66,7 @@
   <string name="settings_external_link_format">%1$s (ブラウザで開きます)</string>
   <string name="settings_section_appearance_settings">外観</string>
   <string name="settings_theme_entry">テーマ</string>
-  <string name="settings_home_tab">Default home tab</string>
+  <string name="settings_home_tab">デフォルトホームタブ</string>
   <string name="settings_section_system">システム</string>
   <string name="settings_clear_local_cache_entry">ローカルキャッシュをクリアする</string>
   <string name="settings_show_log">ログを表示</string>

@@ -20,17 +20,21 @@ package me.proton.android.drive.ui.test.flow.onboarding
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.rules.UserPlan
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.test.ShowOnboardingBaseTest
 import me.proton.core.test.quark.data.Plan
+import me.proton.core.test.rule.annotation.PrepareUser
+import me.proton.core.test.rule.annotation.payments.TestSubscriptionData
 import org.junit.Test
 
 @HiltAndroidTest
-class OnboardingB2BUserFlowTest : AuthenticatedBaseTest() {
-    override val doNotShowOnboardingAfterLogin get() = false
+class OnboardingB2BUserFlowTest : ShowOnboardingBaseTest() {
 
     @Test
-    @UserPlan(Plan.DriveProfessional)
+    @PrepareUser(
+        loginBefore = true,
+        subscriptionData = TestSubscriptionData(plan = Plan.DriveProfessional)
+    )
     fun businessUserShouldNotSeeOnboardingScreen() {
         FilesTabRobot
             .verify {

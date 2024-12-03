@@ -19,23 +19,28 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_SHARING_DISABLED
+import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.core.util.kotlin.random
 import org.junit.Test
 
 @HiltAndroidTest
-class PermissionsFlowTest : AuthenticatedBaseTest() {
+class PermissionsFlowTest : BaseTest() {
 
     @Test
-    @Scenario(6, withSharingUser = true)
+    @PrepareUser(loginBefore = true)
+    @PrepareUser(withTag = "sharingWithUser")
+    @Scenario(forTag = "main", value = 6, sharedWithUserTag = "sharingWithUser")
     fun updateInvitationPermissionsToEditor() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingWithUser"]!!
         val file = "newShare.txt"
+
         PhotosTabRobot
             .clickFilesTab()
             .clickMoreOnItem(file)
@@ -43,17 +48,20 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
             .verify {
                 robotDisplayed()
             }
-            .clickInvitation(userLoginRule.sharingUser.email)
+            .clickInvitation(sharingUser.email)
             .clickEditor()
             .verify {
                 robotDisplayed()
-                assertInvitedWithEditor(userLoginRule.sharingUser.email)
+                assertInvitedWithEditor(sharingUser.email)
             }
     }
 
     @Test
-    @Scenario(6, withSharingUser = true)
+    @PrepareUser(loginBefore = true)
+    @PrepareUser(withTag = "sharingWithUser")
+    @Scenario(forTag = "main", value = 6, sharedWithUserTag = "sharingWithUser")
     fun updateInvitationPermissionsToViewer() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingWithUser"]!!
         val folder = "newShare"
         PhotosTabRobot
             .clickFilesTab()
@@ -62,16 +70,17 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
             .verify {
                 robotDisplayed()
             }
-            .clickInvitation(userLoginRule.sharingUser.email)
+            .clickInvitation(sharingUser.email)
             .clickViewer()
             .verify {
                 robotDisplayed()
-                assertInvitedWithViewer(userLoginRule.sharingUser.email)
+                assertInvitedWithViewer(sharingUser.email)
             }
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun updateExternalInvitationPermissionsToEditor() {
         val file = "image.jpg"
         val email = "invitee@external.com"
@@ -103,7 +112,8 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun updateExternalInvitationPermissionsToViewer() {
         val file = "image.jpg"
         val email = "external_${String.random()}@mail.com"
@@ -133,8 +143,11 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(6, withSharingUser = true)
+    @PrepareUser(loginBefore = true)
+    @PrepareUser(withTag = "sharingWithUser")
+    @Scenario(forTag = "main", value = 6, sharedWithUserTag = "sharingWithUser")
     fun updateMemberPermissionsToEditor() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingWithUser"]!!
         val folder = "legacyShare"
         PhotosTabRobot
             .clickFilesTab()
@@ -143,17 +156,20 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
             .verify {
                 robotDisplayed()
             }
-            .clickMember(userLoginRule.sharingUser.email)
+            .clickMember(sharingUser.email)
             .clickEditor()
             .verify {
                 robotDisplayed()
-                assertMemberWithEditor(userLoginRule.sharingUser.email)
+                assertMemberWithEditor(sharingUser.email)
             }
     }
 
     @Test
-    @Scenario(6, withSharingUser = true)
+    @PrepareUser(loginBefore = true)
+    @PrepareUser(withTag = "sharingWithUser")
+    @Scenario(forTag = "main", value = 6, sharedWithUserTag = "sharingWithUser")
     fun updateMemberPermissionsToViewer() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingWithUser"]!!
         val folder = "legacyShare"
         val file = "newShareInsideLegacy.txt"
         PhotosTabRobot
@@ -164,18 +180,21 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
             .verify {
                 robotDisplayed()
             }
-            .clickMember(userLoginRule.sharingUser.email)
+            .clickMember(sharingUser.email)
             .clickViewer()
             .verify {
                 robotDisplayed()
-                assertMemberWithViewer(userLoginRule.sharingUser.email)
+                assertMemberWithViewer(sharingUser.email)
             }
     }
 
     @Test
-    @Scenario(6, withSharingUser = true)
+    @PrepareUser(loginBefore = true)
+    @PrepareUser(withTag = "sharingWithUser")
+    @Scenario(forTag = "main", value = 6, sharedWithUserTag = "sharingWithUser")
     @FeatureFlag(DRIVE_SHARING_DISABLED, ENABLED)
     fun killSwitch() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingWithUser"]!!
         val folder = "legacyShare"
         val file = "newShareInsideLegacy.txt"
         PhotosTabRobot
@@ -185,7 +204,7 @@ class PermissionsFlowTest : AuthenticatedBaseTest() {
             .clickManageAccess()
             .verify {
                 robotDisplayed()
-                assertUserIsNotEditable(userLoginRule.sharingUser.email)
+                assertUserIsNotEditable(sharingUser.email) // <- issue is here
             }
     }
 }

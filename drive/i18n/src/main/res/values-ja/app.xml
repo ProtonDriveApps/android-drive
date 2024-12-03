@@ -25,13 +25,13 @@
   <string name="title_offline_available">オフラインで利用可能</string>
   <string name="title_empty_my_files">どうぞ、あなたの最初のファイルを追加してください。</string>
   <string name="title_empty_folder">このフォルダを埋めてみましょう</string>
-  <string name="title_empty_folder_read_only">Empty folder</string>
+  <string name="title_empty_folder_read_only">フォルダは空</string>
   <string name="title_empty_shared">追跡する</string>
   <string name="title_empty_offline_available">オフラインで利用可能なものはありません。</string>
   <string name="title_empty_trash">ごみ箱は空です</string>
   <string name="title_empty_trash_action">ごみ箱を空にする</string>
   <string name="title_files_confirm_deletion">完全に削除しますか？</string>
-  <string name="title_default_home_screen_tab">Choose default home screen tab</string>
+  <string name="title_default_home_screen_tab">デフォルトのホームスクリーンタブを選んでください</string>
   <!-- endregion -->
   <string name="menu_item_header_title_app">アプリ</string>
   <string name="description_signing_out">サインアウト中…</string>
@@ -45,7 +45,7 @@
   <string name="folder_option_import_file">ファイルをアップロード</string>
   <string name="folder_option_create_folder">フォルダを作成</string>
   <string name="folder_option_take_a_photo">新しい写真を撮る</string>
-  <string name="folder_option_create_document">Create document</string>
+  <string name="folder_option_create_document">ドキュメントを作成</string>
   <string name="settings_theme_system_default">システム標準</string>
   <string name="settings_theme_dark">ダーク</string>
   <string name="settings_theme_light">ライト</string>
@@ -64,8 +64,8 @@
   <string name="in_app_notification_upload_files_only">%1$s にアップロードできるのはファイルのみです</string>
   <string name="in_app_notification_importing_file_already_exists">同じ名前のファイルがすでに存在します。アプリのキャッシュをクリアしてみてください</string>
   <string name="in_app_notification_clear_local_cache_success">キャッシュをクリアしました</string>
-  <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
-  <string name="in_app_notification_create_document_success">Document created</string>
+  <string name="in_app_notification_destination_screen_not_found">移動先の画面が見つかりません</string>
+  <string name="in_app_notification_create_document_success">ドキュメントが作成されました</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">ストレージの空き容量がありません</string>
@@ -138,7 +138,7 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">バックアップは許可されていません</string>
   <string name="notification_content_text_backup_paused_disabled">バックアップが無効になりました</string>
   <string name="notification_content_text_backup_paused_background_restrictions">バックアップはバックグラウンドで実行できません</string>
-  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
+  <string name="notification_content_text_backup_preparing">バックアップを準備中</string>
   <string name="notification_content_title_download_complete">ダウンロード完了</string>
   <string name="notification_content_title_forced_sign_out">ログインしてください</string>
   <string name="notification_content_text_forced_sign_out">申し訳ありません！同期中に問題が発生しました。- もう一度ログインしてください。すべてがスムーズに実行されます。</string>
@@ -151,16 +151,16 @@
   <string name="notification_channel_transfer_description">クラウド ストレージ、アップロードおよびダウンロード通知のチャネル</string>
   <string name="notification_channel_warning_title">警告</string>
   <string name="notification_channel_warning_description">ユーザーのアクションが必要な警告のチャネル</string>
-  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
-  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
-  <string name="notification_permission_rationale_action_accept">Enable notifications</string>
-  <string name="notification_permission_rationale_action_reject">Not now</string>
+  <string name="notification_permission_rationale_title_backup">バックアップの状態を常に把握</string>
+  <string name="notification_permission_rationale_description_backup">バックアップの状態と進行度についての通知を受け取る</string>
+  <string name="notification_permission_rationale_action_accept">通知を有効化</string>
+  <string name="notification_permission_rationale_action_reject">あとで</string>
   <!-- endregion -->
   <string name="content_description_select_all">リスト内のすべての項目を選択します</string>
   <string name="content_description_selected_options">選択したファイルやフォルダーのその他のオプションを表示します</string>
   <string name="content_description_files_upload_upload_file">ファイルをアップロード</string>
   <string name="description_empty_my_files">ボタンをタップしてファイルの追加を開始します。</string>
-  <string name="description_empty_folder_read_only">There is nothing to see here</string>
+  <string name="description_empty_folder_read_only">ここには何もありません</string>
   <string name="description_empty_shared">リンクされたファイルはここに表示されるので、共有されているファイルを簡単に追跡・管理できます。</string>
   <string name="description_empty_trash">ここには、ごみ箱に入れられたアイテムが削除または復元されるまで残ります。</string>
   <string name="description_empty_offline_available">ネットワークが使用できない場合でも、重要なファイルを常に利用できるようにします。</string>
@@ -171,9 +171,9 @@
   <string name="description_files_stop_sharing">これにより、リンクが削除され、そのリンクを持つ人からのファイルやフォルダへのアクセスがなくなります。</string>
   <string name="description_files_stop_sharing_action_success">あなたのファイルへのリンクは削除されました。</string>
   <string name="description_files_stop_sharing_action_error">あなたのファイルへのリンクを削除する際にエラーが発生しました。</string>
-  <string name="description_files_stop_all_sharing">This will delete link and remove access for everyone.</string>
+  <string name="description_files_stop_all_sharing">これによりリンクは削除され、全員のアクセスは削除されます。</string>
   <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
-  <string name="description_files_stop_all_sharing_action_error">There was an error while deleting sharing to your file.</string>
+  <string name="description_files_stop_all_sharing_action_error">ファイルの共有を削除する際にエラーが発生しました。</string>
   <string name="ignore_file_signature_action">いずれにせよ</string>
   <string name="action_empty_files_add_files">アップロード</string>
   <string name="error_could_not_send_file">ファイルを送信しようとしたときにエラーが発生しました</string>
@@ -182,7 +182,7 @@
   <string name="error_share_locked">共有はロックされています。</string>
   <string name="error_main_share_not_found">メインシェアが見つかりません。</string>
   <string name="error_share_not_found">共有が見つかりません。</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">写真バックアップは一時的に無効</string>
   <string name="error_creating_share_not_allowed">共有の作成は一時的に無効にされています。</string>
   <string name="operation_open_document">ドキュメントを開く</string>
   <string name="operation_create_document">ドキュメントの作成</string>
@@ -204,7 +204,7 @@
             "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
     -->
   <string name="get_more_free_storage_action_link_subtitle">任意のファイルまたはフォルダーを選択します。 オプション メニューを開き、%1$s を押します。</string>
-  <string name="get_more_free_storage_action_share_title">Share a file</string>
+  <string name="get_more_free_storage_action_share_title">ファイルを共有</string>
   <string name="get_more_free_storage_action_share_subtitle">簡単に使用でき安全で.</string>
   <string name="get_more_free_storage_action_recovery_title">回復手段を設定</string>
   <!--
@@ -224,5 +224,5 @@
         Example:
             "Untitled document 2025-11-28 12.34.56"
     -->
-  <string name="new_document_name">Untitled document %1$s</string>
+  <string name="new_document_name">不明なドキュメント%1$s</string>
 </resources>

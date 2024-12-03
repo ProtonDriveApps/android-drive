@@ -25,14 +25,11 @@ import android.net.Uri
 import android.os.Build
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.intent.rule.IntentsRule
-import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.ExternalFilesRule
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.ExternalStorageBaseTest
 import me.proton.core.test.android.instrumented.utils.StringUtils
-import org.junit.Rule
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -43,20 +40,10 @@ import me.proton.core.drive.i18n.R as I18N
 class UploadWithThumbnailFlowTest(
     private val fileName: String,
     private val hasThumbnail: () -> Boolean
-) : AuthenticatedBaseTest() {
-    @get:Rule
-    val intentsTestRule = IntentsRule()
-
-    @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        android.Manifest.permission.READ_EXTERNAL_STORAGE,
-        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-    )
-
-    @get:Rule
-    val externalFilesRule = ExternalFilesRule()
+) : ExternalStorageBaseTest() {
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun uploadWithThumbnail() {
         val file = externalFilesRule.copyFileFromAssets(fileName)
 

@@ -200,7 +200,7 @@
     -->
   <string name="get_more_free_storage_title">Hanki %1$s ilmaista tallennustilaa</string>
   <string name="get_more_free_storage_description">Suorita nämä toimet ensimmäisten 30 päivän aikana, niin saat veloituksetta lisää tallennustilaa.</string>
-  <string name="get_more_free_storage_action_upload_title">Tallenna tiedosto tai ota kuvien varmuuskopiointi käyttöön</string>
+  <string name="get_more_free_storage_action_upload_title">Lähetä tiedosto TAI ota kuvien varmuuskopiointi käyttöön</string>
   <string name="get_more_free_storage_action_upload_subtitle">Kaikki tiedostosi salataan.</string>
   <string name="get_more_free_storage_action_link_title">Luo jakolinkki</string>
   <!--

@@ -18,22 +18,45 @@
 
 package me.proton.android.drive.ui.test
 
+import androidx.test.espresso.intent.rule.IntentsRule
+import androidx.test.rule.GrantPermissionRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
+import me.proton.android.drive.initializer.MainInitializer
 import me.proton.android.drive.ui.MainActivity
-import me.proton.android.drive.ui.extension.createFusionAndroidComposeRule
-import me.proton.core.auth.test.robot.AddAccountRobot
-import me.proton.core.test.quark.data.User
+import me.proton.android.drive.ui.rules.SlowTestRule
+import me.proton.core.test.rule.ProtonRule
+import me.proton.core.test.rule.extension.protonAndroidComposeRule
 import org.junit.Rule
+import org.junit.rules.RuleChain
 
+@HiltAndroidTest
 abstract class BaseTest : AbstractBaseTest() {
-    @get:Rule(order = 2)
-    val fusionComposeRule = createFusionAndroidComposeRule<MainActivity>()
 
-    @Suppress("unused")
-    protected fun signIn(existingUser: User) {
-        AddAccountRobot
-            .uiElementsDisplayed()
-        AddAccountRobot
-            .clickSignIn()
-            .login(existingUser)
+    private val permissionRule: GrantPermissionRule = runBlocking {
+        GrantPermissionRule.grant(*baseTestPermissions.toTypedArray())
     }
+
+    val protonRule: ProtonRule = protonAndroidComposeRule<MainActivity>(
+        annotationTestData = driveTestDataRule.scenarioAnnotationTestData,
+        fusionEnabled = true,
+        additionalRules = linkedSetOf(
+            IntentsRule(),
+            SlowTestRule()
+        ),
+        beforeHilt = {
+            configureFusion()
+        },
+        afterHilt = {
+            MainInitializer.init(it.targetContext)
+            setOnboardingDisplayStateAfterLogin()
+            setWhatsNewDisplayStateAfterLogin()
+        },
+        logoutBefore = true
+    )
+
+    @get:Rule(order = 2)
+    val ruleChain: RuleChain = RuleChain
+        .outerRule(permissionRule)
+        .around(protonRule)
 }

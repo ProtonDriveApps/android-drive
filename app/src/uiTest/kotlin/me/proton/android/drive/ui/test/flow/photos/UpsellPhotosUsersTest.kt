@@ -27,13 +27,14 @@ import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.photos.data.di.PhotosConfigurationModule
 import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
 import me.proton.android.drive.provider.PhotosConnectedDefaultConfigurationProvider
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.PhotosUpsellRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.rules.UserPlan
 import me.proton.android.drive.ui.test.PhotosBaseTest
 import me.proton.core.plan.test.robot.SubscriptionRobot
 import me.proton.core.test.quark.data.Plan
+import me.proton.core.test.rule.annotation.PrepareUser
+import me.proton.core.test.rule.annotation.payments.TestSubscriptionData
 import org.junit.Before
 import org.junit.Test
 import javax.inject.Singleton
@@ -42,7 +43,8 @@ import javax.inject.Singleton
 @UninstallModules(PhotosConfigurationModule::class)
 class UpsellPhotosUsersTest : PhotosBaseTest() {
 
-    @Before fun setUp(){
+    @Before
+    fun setUp() {
         pictureCameraFolder.copyDirFromAssets("images/basic")
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
 
@@ -56,8 +58,8 @@ class UpsellPhotosUsersTest : PhotosBaseTest() {
     }
 
     @Test
-    @Scenario(2)
-    @UserPlan(Plan.Free)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun upsellPopUpIsShownForFreeUsers() {
         PhotosUpsellRobot
             .verify {
@@ -65,13 +67,13 @@ class UpsellPhotosUsersTest : PhotosBaseTest() {
             }
             .clickGetStorage()
             .verify {
-                SubscriptionRobot.verifySubscriptionIsShown()
+                SubscriptionRobot.verifyAtLeastOnePlanIsShown()
             }
     }
 
     @Test
-    @Scenario(2)
-    @UserPlan(Plan.PassPlus)
+    @PrepareUser(subscriptionData = TestSubscriptionData(plan = Plan.PassPlus), loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun upsellPopUpIsShownForPassPlusUsers() {
         PhotosUpsellRobot
             .verify {
@@ -79,13 +81,13 @@ class UpsellPhotosUsersTest : PhotosBaseTest() {
             }
             .clickGetStorage()
             .verify {
-                SubscriptionRobot.verifySubscriptionIsShown()
+                SubscriptionRobot.currentPlanIsDisplayed()
             }
     }
 
     @Test
-    @Scenario(2)
-    @UserPlan(Plan.MailPlus)
+    @PrepareUser(subscriptionData = TestSubscriptionData(plan = Plan.MailPlus), loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun upsellPopUpIsNotShownForMailPlusUsers() {
         PhotosUpsellRobot
             .verify {
@@ -94,9 +96,11 @@ class UpsellPhotosUsersTest : PhotosBaseTest() {
     }
 
     @Test
-    @Scenario(2)
-    @UserPlan(Plan.Unlimited)
+    @PrepareUser(subscriptionData = TestSubscriptionData(plan = Plan.Unlimited), loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun upsellPopUpIsNotShownForDriveUsers() {
+
+        val user = protonRule.testDataRule.mainTestUser
         PhotosUpsellRobot
             .verify {
                 robotDoesNotExist()

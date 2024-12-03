@@ -19,32 +19,9 @@
 package me.proton.android.drive.ui.test.flow.account
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.OnboardingRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.auth.test.MinimalSignUpExternalTests
-import me.proton.core.test.quark.v2.command.jailUnban
-import me.proton.test.fusion.FusionConfig
-import org.junit.Before
-import kotlin.time.Duration.Companion.seconds
 
 @HiltAndroidTest
-class SignUpFlowTest : BaseTest(), MinimalSignUpExternalTests {
+open class SignUpFlowTest : BaseTest(), MinimalSignUpExternalTests
 
-    override val isCongratsDisplayed = true
-    override val doNotShowOnboardingAfterLogin get() = false
-
-    @Before
-    fun setTimeouts() {
-        FusionConfig.Espresso.waitTimeout.set(90.seconds)
-        FusionConfig.Compose.waitTimeout.set(90.seconds)
-    }
-
-    @Before
-    fun preventHumanVerification() {
-        quarkRule.quarkCommands.jailUnban()
-    }
-
-    override fun verifyAfter() {
-        OnboardingRobot.robotDisplayed()
-    }
-}

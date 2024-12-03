@@ -20,12 +20,10 @@ package me.proton.android.drive.ui.test.flow.account
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
-import io.mockk.every
 import me.proton.android.drive.ui.robot.SharedTabRobot
-import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.test.ExternalStorageBaseTest
 import me.proton.core.accountmanager.data.AccountStateHandler
 import me.proton.core.accountrecovery.dagger.CoreAccountRecoveryFeaturesModule
-import me.proton.core.accountrecovery.domain.IsAccountRecoveryEnabled
 import me.proton.core.accountrecovery.test.MinimalAccountRecoveryNotificationTest
 import me.proton.core.auth.test.usecase.WaitForPrimaryAccount
 import me.proton.core.eventmanager.domain.EventManagerProvider
@@ -33,10 +31,6 @@ import me.proton.core.eventmanager.domain.repository.EventMetadataRepository
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.notification.dagger.CoreNotificationFeaturesModule
 import me.proton.core.notification.domain.repository.NotificationRepository
-import me.proton.core.notification.domain.usecase.IsNotificationsEnabled
-import me.proton.core.test.quark.Quark
-import org.junit.Rule
-import org.junit.rules.ExternalResource
 import javax.inject.Inject
 
 @HiltAndroidTest
@@ -44,20 +38,8 @@ import javax.inject.Inject
     CoreAccountRecoveryFeaturesModule::class,
     CoreNotificationFeaturesModule::class,
 )
-class AccountRecoveryFlowTest : BaseTest(), MinimalAccountRecoveryNotificationTest {
-    @get:Rule(order = 1)
-    val initFeaturesRule = object : ExternalResource() {
-        override fun before() {
-            every { isAccountRecoveryEnabled(any()) } returns true
-            every { isNotificationsEnabled(any()) } returns true
-        }
-    }
-
-    @Inject
-    internal lateinit var isAccountRecoveryEnabled: IsAccountRecoveryEnabled
-
-    @Inject
-    internal lateinit var isNotificationsEnabled: IsNotificationsEnabled
+open class AccountRecoveryFlowTest : ExternalStorageBaseTest(),
+    MinimalAccountRecoveryNotificationTest {
 
     @Inject
     override lateinit var accountStateHandler: AccountStateHandler
@@ -76,10 +58,6 @@ class AccountRecoveryFlowTest : BaseTest(), MinimalAccountRecoveryNotificationTe
 
     @Inject
     override lateinit var waitForPrimaryAccount: WaitForPrimaryAccount
-
-    override val quark: Quark = quarkRule.quark
-
-    init { initFusion(fusionComposeRule) }
 
     override fun verifyAfterLogin() {
         SharedTabRobot.homeScreenDisplayed()

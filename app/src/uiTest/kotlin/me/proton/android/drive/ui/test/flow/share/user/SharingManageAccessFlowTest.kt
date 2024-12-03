@@ -19,17 +19,27 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.FeatureFlag
+import me.proton.android.drive.ui.annotation.FeatureFlags
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.drive.base.domain.entity.Permissions
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PUBLIC_SHARE_EDIT_MODE
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED
+import me.proton.core.test.quark.data.Plan
+import me.proton.core.test.rule.annotation.PrepareUser
+import me.proton.core.test.rule.annotation.payments.TestSubscriptionData
 import org.junit.Test
 
 @HiltAndroidTest
-class SharingManageAccessFlowTest : AuthenticatedBaseTest() {
+class SharingManageAccessFlowTest : BaseTest() {
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun shareFile() {
         val file = "image.jpg"
         PhotosTabRobot
@@ -41,7 +51,8 @@ class SharingManageAccessFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2, isPhotos = true)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isPhotos = true)
     fun sharePhoto() {
         val image = ImageName.Main
         PhotosTabRobot.waitUntilLoaded()
@@ -54,14 +65,44 @@ class SharingManageAccessFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2)
-    fun shareFolder() {
+    @FeatureFlag(DRIVE_PUBLIC_SHARE_EDIT_MODE, ENABLED)
+    @PrepareUser(loginBefore = true, subscriptionData = TestSubscriptionData(Plan.DriveProfessional))
+    @Scenario(forTag = "main", value = 2)
+    fun shareFolderAsEditor() {
         val folder = "folder1"
         PhotosTabRobot
             .clickFilesTab()
             .clickMoreOnItem(folder)
             .clickManageAccess()
             .clickAllowToAnyone()
-            .verify { assertLinkIsShareWithAnyonePublic() }
+            .verify { assertLinkIsShareWithAnyonePublic(Permissions.viewer) }
+            .clickViewerPermissions()
+            .clickEditor()
+            .verify { assertLinkIsShareWithAnyonePublic(Permissions.editor) }
+    }
+
+    @Test
+    @FeatureFlags(
+        [
+            FeatureFlag(DRIVE_PUBLIC_SHARE_EDIT_MODE, ENABLED),
+            FeatureFlag(DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED, ENABLED)
+        ]
+    )
+    @PrepareUser(
+        loginBefore = true,
+        subscriptionData = TestSubscriptionData(Plan.DriveProfessional)
+    )
+    @Scenario(forTag = "main", value = 2)
+    fun shareFolderAsEditorKillSwitch() {
+        val folder = "folder1"
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickMoreOnItem(folder)
+            .clickManageAccess()
+            .clickAllowToAnyone()
+            .verify {
+                assertLinkIsShareWithAnyonePublic(Permissions.viewer)
+                assertViewerPermissionsIsNotClickable()
+            }
     }
 }

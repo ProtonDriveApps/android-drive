@@ -43,6 +43,7 @@ import me.proton.android.drive.ui.viewstate.HomeViewState
 import me.proton.android.drive.usecase.CanGetMoreFreeStorage
 import me.proton.android.drive.usecase.GetDynamicHomeTabsFlow
 import me.proton.android.drive.usecase.ShouldShowOnboarding
+import me.proton.android.drive.usecase.ShouldShowWhatsNew
 import me.proton.core.domain.entity.SessionUserId
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -56,6 +57,7 @@ import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.User
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.android.settings.domain.entity.DynamicHomeTab
+import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 
@@ -69,6 +71,7 @@ class HomeViewModel @Inject constructor(
     getDynamicHomeTabsFlow: GetDynamicHomeTabsFlow,
     private val broadcastMessages: BroadcastMessages,
     private val shouldShowOnboarding: ShouldShowOnboarding,
+    private val shouldShowWhatsNew: ShouldShowWhatsNew,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private var navigateToTab: ((route: String) -> Unit)? = null
 
@@ -134,6 +137,9 @@ class HomeViewModel @Inject constructor(
 
     suspend fun shouldShowOnboarding(): Boolean =
         shouldShowOnboarding(userId).getOrNull(VIEW_MODEL, "Should show onboarding failed") ?: false
+
+    suspend fun getWhatsNew(): WhatsNewKey? =
+        shouldShowWhatsNew(userId).getOrNull(VIEW_MODEL, "Should show whats new failed")
 
     private val NavigationTab.screen: HomeTab
         get() = tabs.value.firstNotNullOf { (screen, value) -> screen.takeIf { value == this } }

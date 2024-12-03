@@ -24,13 +24,13 @@ import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
+import me.proton.core.drive.cryptobase.domain.extension.failed
 import me.proton.core.drive.cryptobase.domain.usecase.DecryptAndVerifyData
 import me.proton.core.drive.cryptobase.domain.usecase.GetPublicKeyRing
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.usecase.GetContentKey
-import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
+import me.proton.core.drive.key.domain.usecase.GetVerificationKeys
 import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import java.io.InputStream
 import javax.inject.Inject
@@ -39,7 +39,7 @@ import javax.inject.Inject
 class DecryptThumbnail @Inject constructor(
     private val getLink: GetLink,
     private val getContentKey: GetContentKey,
-    private val getPublicAddressKeys: GetPublicAddressKeys,
+    private val getVerificationKeys: GetVerificationKeys,
     private val decryptAndVerifyData: DecryptAndVerifyData,
     private val getPublicKeyRing: GetPublicKeyRing,
 ) {
@@ -51,17 +51,16 @@ class DecryptThumbnail @Inject constructor(
     ): Result<DecryptedData> = coRunCatching {
         val file = getLink(fileId).toResult().getOrThrow()
         val nodeKey = getContentKey(file).getOrThrow()
+        val verificationKeys = getVerificationKeys(fileId, file.uploadedBy).getOrThrow().keyHolder
         inputStream.use {
             decryptAndVerifyData(
                 decryptKey = nodeKey.decryptKey.keyHolder,
                 keyPacket = nodeKey.encryptedKeyPacket,
-                verifyKeyRing = getPublicKeyRing(
-                    getPublicAddressKeys(fileId.userId, file.uploadedBy).getOrThrow().keyHolder
-                ).getOrThrow(),
+                verifyKeyRing = getPublicKeyRing(verificationKeys).getOrThrow(),
                 data = inputStream.readBytes(),
                 verificationFailedContext = javaClass.simpleName,
             ).getOrThrow().also { decryptedThumbnail ->
-                if (decryptedThumbnail.status != VerificationStatus.Success && checkSignature) {
+                if (decryptedThumbnail.status.failed && checkSignature) {
                     throw VerificationException(
                         message = "Verification status ${decryptedThumbnail.status.name} ${javaClass.simpleName}"
                     )

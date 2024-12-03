@@ -37,5 +37,5 @@
   <string name="log_origin_backup">Резервное копирование</string>
   <string name="log_origin_user">Пользователь</string>
   <string name="log_origin_device">Устройство</string>
-  <string name="log_origin_crypto">Crypto</string>
+  <string name="log_origin_crypto">Крипто</string>
 </resources>

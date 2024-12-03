@@ -35,7 +35,7 @@ android-tools = "1.1.5"
 # Coil
 coil = "2.4.0"
 # Core
-core = "27.2.1"
+core = "29.0.0"
 core-test-quark = "14.1.0"
 # Dagger
 dagger = "2.49"
@@ -202,6 +202,7 @@ core-label-domain = { module = "me.proton.core:label-domain", version.ref = "cor
 core-network = { module = "me.proton.core:network", version.ref = "core" }
 core-network-data = { module = "me.proton.core:network-data", version.ref = "core" }
 core-network-domain = { module = "me.proton.core:network-domain", version.ref = "core" }
+core-network-presentation = { module = "me.proton.core:network-presentation", version.ref = "core" }
 core-notification = { module = "me.proton.core:notification", version.ref = "core" }
 core-notification-data = { module = "me.proton.core:notification-data", version.ref = "core" }
 core-observability = { module = "me.proton.core:observability", version.ref = "core" }
@@ -229,6 +230,7 @@ core-test-android = { module = "me.proton.core:test-android", version.ref = "cor
 core-test-android-instrumented = { module = "me.proton.core:test-android-instrumented", version.ref = "core" }
 core-test-kotlin = { module = "me.proton.core:test-kotlin", version.ref = "core" }
 core-test-quark = { module = "me.proton.core:test-quark", version.ref = "core-test-quark" }
+core-test-android-test-rule = { module = "me.proton.core:test-rule", version.ref = "core" }
 core-telemetry = { module = "me.proton.core:telemetry", version.ref = "core" }
 core-telemetry-domain = { module = "me.proton.core:telemetry-domain", version.ref = "core" }
 core-telemetry-data = { module = "me.proton.core:telemetry-data", version.ref = "core" }

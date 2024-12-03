@@ -22,6 +22,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
@@ -38,13 +39,17 @@ abstract class LimitedRetryCoroutineWorker(
     protected abstract val logTag: String
 
     final override suspend fun doWork(): Result {
+        if (isLimitOverreached()) {
+            CoreLogger.w(logTag, "Max retries already reached, hard stop")
+            return Result.failure()
+        }
         try {
             run(userId, id.toString())
             return when (val result = doLimitedRetryWork()) {
                 is Result.Retry -> if (canRetry()){
                     result
                 } else {
-                    CoreLogger.d(logTag, "Max reties reached, giving up")
+                    CoreLogger.d(logTag, "Max retries reached, giving up")
                     done()
                     Result.failure()
                 }
@@ -62,6 +67,8 @@ abstract class LimitedRetryCoroutineWorker(
     abstract suspend fun doLimitedRetryWork(): Result
 
     suspend fun canRetry(): Boolean = canRun(userId, id.toString()).getOrNull() ?: true
+
+    private fun isLimitOverreached() = canRun(runAttemptCount - 1).getOrNull(logTag) != true
 
     private suspend fun done() = done(userId, id.toString())
 }

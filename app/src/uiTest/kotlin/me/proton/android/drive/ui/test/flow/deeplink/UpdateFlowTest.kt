@@ -21,18 +21,20 @@ package me.proton.android.drive.ui.test.flow.deeplink
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.extension.debug
 import me.proton.android.drive.ui.robot.ForceUpdateRobot
-import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import javax.inject.Inject
 
 @HiltAndroidTest
-class UpdateFlowTest : AuthenticatedBaseTest() {
+class UpdateFlowTest : BaseTest() {
 
     @Inject
     lateinit var configurationProvider: ConfigurationProvider
+
     @Test
+    @PrepareUser(loginBefore = true)
     fun deprecatedVersion() {
         configurationProvider.debug.appVersionHeader = "android-drive@1.0.0"
 

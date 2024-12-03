@@ -34,6 +34,7 @@ import me.proton.core.auth.data.db.AuthConverters
 import me.proton.core.auth.data.db.AuthDatabase
 import me.proton.core.auth.data.entity.AuthDeviceEntity
 import me.proton.core.auth.data.entity.DeviceSecretEntity
+import me.proton.core.auth.data.entity.MemberDeviceEntity
 import me.proton.core.challenge.data.db.ChallengeConverters
 import me.proton.core.challenge.data.db.ChallengeDatabase
 import me.proton.core.challenge.data.entity.ChallengeFrameEntity
@@ -225,6 +226,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         LabelEntity::class,
         AuthDeviceEntity::class,
         DeviceSecretEntity::class,
+        MemberDeviceEntity::class,
         // Drive
         VolumeEntity::class,
         ShareEntity::class,
@@ -398,7 +400,7 @@ abstract class DriveDatabase :
     DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 71
+        const val VERSION = 72
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -471,6 +473,7 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_68_69,
             DriveDatabaseMigrations.MIGRATION_69_70,
             DriveDatabaseMigrations.MIGRATION_70_71,
+            DriveDatabaseMigrations.MIGRATION_71_72,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

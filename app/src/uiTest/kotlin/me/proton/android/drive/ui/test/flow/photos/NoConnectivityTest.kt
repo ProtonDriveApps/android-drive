@@ -22,6 +22,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.NetworkSimulator
 import me.proton.android.drive.ui.test.PhotosBaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Before
 import org.junit.Test
 
@@ -39,6 +40,7 @@ class NoConnectivityTest: PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun backUpWithNoConnectivity() {
 
         NetworkSimulator.disableNetwork()
@@ -61,6 +63,7 @@ class NoConnectivityTest: PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun resumeBackupAfterNetworkTimeout() {
 
         NetworkSimulator.setNetworkTimeout(true)

@@ -26,14 +26,13 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.file.DecryptAndVerifyFiles
 import me.proton.core.drive.crypto.domain.usecase.file.VerifyManifestSignature
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
+import me.proton.core.drive.cryptobase.domain.extension.failed
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.file.base.domain.extension.getThumbnailIds
 import me.proton.core.drive.file.base.domain.extension.requireSortedAscending
 import me.proton.core.drive.key.domain.usecase.GetContentKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
-import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
-import me.proton.core.drive.link.domain.extension.shareId
-import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.key.domain.usecase.GetVerificationKeys
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadBlocks
@@ -51,7 +50,7 @@ class DecryptLinkContent @Inject constructor(
     private val verifyManifestSignature: VerifyManifestSignature,
     private val getThumbnailBlock: GetThumbnailBlock,
     private val getNodeKey: GetNodeKey,
-    private val getPublicAddressKeys: GetPublicAddressKeys,
+    private val getVerificationKeys: GetVerificationKeys,
     private val getDownloadBlocks: GetDownloadBlocks,
 ) {
     suspend operator fun invoke(
@@ -78,7 +77,7 @@ class DecryptLinkContent @Inject constructor(
             "Download state signature address is null"
         }
         val manifestSignatureVerified = verifyManifestSignature(
-            userId = link.userId,
+            link = link,
             signatureAddress = signatureAddress,
             blocks = encryptedFileBlocks + encryptedThumbnailBlocks,
             manifestSignature = requireNotNull(downloadState.manifestSignature) {
@@ -90,13 +89,11 @@ class DecryptLinkContent @Inject constructor(
         decryptAndVerifyFiles(
             contentKey = contentKey,
             decryptSignatureKey = fileKey,
-            verifySignatureKey = getPublicAddressKeys(link.shareId.userId, signatureAddress).getOrThrow(),
+            verifySignatureKey = getVerificationKeys(link, signatureAddress).getOrThrow(),
             input = encryptedFileBlocks.map { block -> block.encSignature to File(block.url) },
             output = encryptedFileBlocks.map { block -> File("${block.url}.${UUID.randomUUID()}") },
         ).map { decryptedBlocks ->
-            val verificationFailed = decryptedBlocks.any { decryptedFile ->
-                decryptedFile.status != VerificationStatus.Success
-            }
+            val verificationFailed = decryptedBlocks.any { decryptedFile -> decryptedFile.status.failed }
             if ((verificationFailed || !manifestSignatureVerified) && checkSignature) {
                 throw VerificationException("Verification of blocks failed")
             }

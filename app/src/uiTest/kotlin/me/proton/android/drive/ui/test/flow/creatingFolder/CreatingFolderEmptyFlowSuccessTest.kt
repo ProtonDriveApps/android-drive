@@ -22,16 +22,19 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.CreateFolderRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.utils.getRandomString
+import me.proton.core.test.rule.annotation.PrepareUser
+import me.proton.core.test.rule.annotation.TestUserData
 import org.junit.Test
 
 @HiltAndroidTest
-class CreatingFolderEmptyFlowSuccessTest : AuthenticatedBaseTest() {
+class CreatingFolderEmptyFlowSuccessTest : BaseTest() {
 
     private val randomFolderName get() = getRandomString()
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun createAFolderViaPlusButton() {
         PhotosTabRobot
             .clickFilesTab()
@@ -42,8 +45,8 @@ class CreatingFolderEmptyFlowSuccessTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun createChildFolderViaCTAButton() {
-
         PhotosTabRobot
             .clickFilesTab()
             .clickAddFilesButton()

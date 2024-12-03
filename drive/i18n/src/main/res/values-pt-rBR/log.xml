@@ -27,7 +27,7 @@
   <string name="log_level_warning">Aviso</string>
   <string name="log_level_error">Erro</string>
   <string name="log_origin_upload">Enviar</string>
-  <string name="log_origin_download">Baixar</string>
+  <string name="log_origin_download">Download</string>
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Exceção</string>
   <string name="log_origin_logger">Registrador</string>

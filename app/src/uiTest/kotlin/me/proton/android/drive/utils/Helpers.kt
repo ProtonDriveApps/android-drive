@@ -38,6 +38,16 @@ fun getRandomString(length: Int = 10): String {
         .joinToString("")
 }
 
+fun String.replaceEmailPrefix(newPrefix: String): String {
+    val atIndex = this.indexOf('@')
+
+    return if (atIndex != -1) {
+        newPrefix + this.substring(atIndex)
+    } else {
+        error("Given string doesn't follow expected format.")
+    }
+}
+
 fun AbstractBaseTest.Companion.screenshot() {
     val screenshotNumber = screenshotCounter.getAndIncrement()
     val fileName = "${screenshotLocation}/${screenshotNumber}_${testName.methodName}.png"

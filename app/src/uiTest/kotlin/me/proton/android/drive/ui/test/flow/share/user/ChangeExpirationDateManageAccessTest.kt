@@ -19,19 +19,21 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.extension.tomorrow
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.ManageAccessRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class ChangeExpirationDateManageAccessTest : AuthenticatedBaseTest() {
+class ChangeExpirationDateManageAccessTest : BaseTest() {
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun setExpirationDate() {
         val fileName = "image.jpg"
         PhotosTabRobot
@@ -62,7 +64,8 @@ class ChangeExpirationDateManageAccessTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun changeExpirationDateOfExpiredLink() {
         val fileName = "expiredSharedFile.jpg"
         PhotosTabRobot

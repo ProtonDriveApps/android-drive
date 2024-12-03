@@ -32,6 +32,7 @@ import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.entity.UiSettings
+import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 import javax.inject.Inject
 
 class UiSettingsRepositoryImpl @Inject constructor(
@@ -73,6 +74,12 @@ class UiSettingsRepositoryImpl @Inject constructor(
         dataStore.onboardingShown = timestamp.value
     }
 
+    override suspend fun hasShownWhatsNew(key: WhatsNewKey): Boolean =
+        dataStore.WhatsNew(key.name).shown > 0L
+
+    override suspend fun updateWhatsNewShown(key: WhatsNewKey, timestamp: TimestampS) {
+        dataStore.WhatsNew(key.name).shown = timestamp.value
+    }
 
     private suspend inline fun updateOrInsert(
         userId: UserId,

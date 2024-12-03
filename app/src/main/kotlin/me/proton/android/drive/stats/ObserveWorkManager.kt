@@ -29,7 +29,6 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.minutes
 
 class ObserveWorkManager @Inject constructor(
     private val workManager: WorkManager,

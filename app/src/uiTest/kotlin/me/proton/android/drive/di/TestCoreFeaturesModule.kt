@@ -43,18 +43,18 @@ class TestCoreFeaturesModule {
     @Singleton
     @Provides
     fun provideIsAccountRecoveryEnabled(): IsAccountRecoveryEnabled = mockk {
-        every { this@mockk.invoke(any()) } returns false
+        every { this@mockk.invoke(any()) } returns true
     }
 
     @Singleton
     @Provides
     fun provideIsAccountRecoveryResetEnabled(): IsAccountRecoveryResetEnabled = mockk {
-        every { this@mockk.invoke(any()) } returns false
+        every { this@mockk.invoke(any()) } returns true
     }
 
     @Singleton
     @Provides
     fun provideIsNotificationsEnabled(): IsNotificationsEnabled = mockk {
-        every { this@mockk.invoke(any()) } returns false
+        every { this@mockk.invoke(any()) } returns true
     }
 }

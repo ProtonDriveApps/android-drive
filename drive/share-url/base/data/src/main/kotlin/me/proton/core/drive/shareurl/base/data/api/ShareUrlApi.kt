@@ -22,6 +22,7 @@ import me.proton.core.drive.shareurl.base.data.api.request.DeleteShareUrlsReques
 import me.proton.core.drive.shareurl.base.data.api.request.ShareUrlRequest
 import me.proton.core.drive.shareurl.base.data.api.request.UpdateCustomPasswordShareUrlRequest
 import me.proton.core.drive.shareurl.base.data.api.request.UpdateExpirationDurationShareUrlRequest
+import me.proton.core.drive.shareurl.base.data.api.request.UpdatePermissionsShareUrlRequest
 import me.proton.core.drive.shareurl.base.data.api.request.UpdateShareUrlRequest
 import me.proton.core.drive.shareurl.base.data.api.response.GetShareUrlResponse
 import me.proton.core.drive.shareurl.base.data.api.response.GetShareUrlsResponse
@@ -69,6 +70,13 @@ interface ShareUrlApi : BaseRetrofitApi {
         @Path("enc_shareID") shareId: String,
         @Path("enc_urlID") urlId: String,
         @Body request: UpdateExpirationDurationShareUrlRequest,
+    ): GetShareUrlResponse
+
+    @PUT("drive/shares/{enc_shareID}/urls/{enc_urlID}")
+    suspend fun updateShareUrl(
+        @Path("enc_shareID") shareId: String,
+        @Path("enc_urlID") urlId: String,
+        @Body request: UpdatePermissionsShareUrlRequest,
     ): GetShareUrlResponse
 
     @DELETE("drive/shares/{enc_shareID}/urls/{enc_urlID}")

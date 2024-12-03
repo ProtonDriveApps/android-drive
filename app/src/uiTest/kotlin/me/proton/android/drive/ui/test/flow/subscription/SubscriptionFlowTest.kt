@@ -18,43 +18,45 @@
 
 package me.proton.android.drive.ui.test.flow.subscription
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.test.BaseTest
-import me.proton.core.auth.test.robot.AddAccountRobot
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import me.proton.android.drive.initializer.MainInitializer
+import me.proton.android.drive.ui.MainActivity
+import me.proton.android.drive.ui.robot.PhotosTabRobot
+import me.proton.android.drive.ui.rules.SlowTestRule
+import me.proton.android.drive.ui.test.AbstractBaseTest
+import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.configureFusion
 import me.proton.core.plan.test.MinimalSubscriptionTests
-import me.proton.core.test.quark.Quark
-import me.proton.core.test.quark.data.Plan
-import me.proton.core.test.quark.data.User
-import org.junit.runner.RunWith
+import me.proton.core.plan.test.robot.SubscriptionRobot
+import me.proton.core.test.rule.ProtonRule
+import me.proton.core.test.rule.extension.protonAndroidComposeRule
+import org.junit.Rule
 
 @HiltAndroidTest
-@RunWith(AndroidJUnit4::class)
-class SubscriptionFlowTest : BaseTest(), MinimalSubscriptionTests {
+open class SubscriptionFlowTest : MinimalSubscriptionTests() {
 
-    private val freeUser = User()
-    private val paidUser = User(plan = Plan.MailPlus)
-
-    override val quark: Quark = quarkRule.quark
-    override val users: User.Users = User.Users(
-        listOf(freeUser, paidUser)
+    @get:Rule(order = 2)
+    val protonRule: ProtonRule = protonAndroidComposeRule<MainActivity>(
+        fusionEnabled = true,
+        additionalRules = linkedSetOf(SlowTestRule()),
+        beforeHilt = { configureFusion() },
+        afterHilt = {
+            MainInitializer.init(it.targetContext)
+            CoroutineScope(Dispatchers.Main).launch {
+                AbstractBaseTest.uiTestHelper.doNotShowOnboardingAfterLogin()
+            }
+        },
+        logoutBefore = true
     )
 
-    override fun startSubscription(user: User) {
-        quark.seedNewSubscriber(user)
-        signInAndShowSubscriptionScreen(user)
-    }
-
-    private fun signInAndShowSubscriptionScreen(user: User) {
-        AddAccountRobot
-            .clickSignIn()
-            .login(user)
-
-        FilesTabRobot
-            .verify { homeScreenDisplayed() }
-            .openSidebarBySwipe()
-            .verify { robotDisplayed() }
+    override fun startSubscription(): SubscriptionRobot {
+        PhotosTabRobot
+            .robotDisplayed()
+        PhotosTabRobot
+            .clickSidebarButton()
             .clickSubscription()
+        return SubscriptionRobot
     }
 }

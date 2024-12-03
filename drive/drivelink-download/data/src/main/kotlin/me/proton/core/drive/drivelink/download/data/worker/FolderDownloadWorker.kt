@@ -31,6 +31,7 @@ import androidx.work.await
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.entity.LoggerLevel.ERROR
 import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
@@ -86,6 +87,11 @@ class FolderDownloadWorker @AssistedInject constructor(
             error.log(logTag, "Cannot get link")
         }.getOrNull() ?: return Result.failure()
         val descendants = getDescendants(folder, true).onFailure { error ->
+            if (error is OutOfMemoryError) {
+                System.gc()
+                error.log(logTag, "Failed to get descendants", ERROR)
+                return Result.failure()
+            }
             error.log(logTag, "Failed to get descendants, will retry", WARNING)
         }.getOrNull()?.filterNot { link -> link.isProtonCloudFile } ?: return Result.retry()
         downloadFolderAndDescendants(
@@ -132,7 +138,7 @@ class FolderDownloadWorker @AssistedInject constructor(
                     // Since it's a folder, we assume all its children have already been taken care of
                     // so we mark it as downloaded (this task will follow after all the node inside have
                     // been downloaded). And we remove it from the unhandled children
-                    mutableDescendants.removeFirst()
+                    mutableDescendants.removeAt(0)
                     workContinuation.then(currentDescendant.setAsDownloaded(userId, folder.id))
                 }
                 is Link.File -> {

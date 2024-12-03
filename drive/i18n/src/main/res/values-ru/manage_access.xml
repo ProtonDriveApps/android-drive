@@ -24,4 +24,5 @@
   <string name="manage_access_link_description_public">Все, у кого есть ссылка</string>
   <string name="manage_access_link_description_password_protected">Все, у кого есть ссылка и пароль</string>
   <string name="manage_access_link_default_permission">Только просмотр</string>
+  <string name="manage_access_link_editor_permission">Can edit</string>
 </resources>

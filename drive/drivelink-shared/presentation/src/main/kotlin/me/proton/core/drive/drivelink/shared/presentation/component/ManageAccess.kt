@@ -21,13 +21,11 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,11 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import me.proton.core.compose.component.DeferredCircularProgressIndicator
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
-import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
-import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
-import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.compose.theme.defaultStrongNorm
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.TopAppBar
@@ -51,7 +45,6 @@ import me.proton.core.drive.drivelink.shared.presentation.viewevent.ManageAccess
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.ManageAccessViewModel
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.LoadingViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ManageAccessViewState
-import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType.*
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
 import me.proton.core.drive.link.domain.entity.FileId
@@ -69,6 +62,7 @@ fun ManageAccess(
     navigateToInvitationOptions: (LinkId, String) -> Unit,
     navigateToExternalInvitationOptions: (LinkId, String) -> Unit,
     navigateToMemberOptions: (LinkId, String) -> Unit,
+    navigateToShareLinkPermissions: (LinkId) -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -86,6 +80,7 @@ fun ManageAccess(
             navigateToInvitationOptions = navigateToInvitationOptions,
             navigateToExternalInvitationOptions = navigateToExternalInvitationOptions,
             navigateToMemberOptions = navigateToMemberOptions,
+            navigateToShareLinkPermissions = navigateToShareLinkPermissions,
             navigateBack = navigateBack,
         ),
         modifier = modifier
@@ -137,22 +132,25 @@ fun ManageAccessContent(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.verticalScroll(rememberScrollState())) {
-        SectionTitle(stringResource(I18N.string.manage_access_share_with_anyone))
         ShareWithAnyone(
             viewState = viewState.loadingViewState,
             publicUrl = viewState.publicUrl,
             accessibilityDescription = viewState.accessibilityDescription,
+            permissionsDescription = viewState.permissionsDescription,
             onRetry = viewEvent.onRetry,
             onStartSharing = viewEvent.onStartLinkSharing,
             onStopSharing = viewEvent.onStopLinkSharing,
             onCopyLink = viewEvent.onCopyLink,
             onConfigureSharing = viewEvent.onConfigureSharing,
+            onMore = viewState.takeIf { it.canEditLink }?.let {
+                viewEvent.onEditLinkPermissions
+            },
         )
         if (viewState.shareUsers.isNotEmpty()) {
             SectionTitle(stringResource(I18N.string.manage_access_share_with))
             ShareUsers(
                 shareUsers = viewState.shareUsers,
-                onMore = viewState.takeIf { it.canEdit }?.let {
+                onMore = viewState.takeIf { it.canEditMembers }?.let {
                     { user ->
                         viewEvent.onOptions(user)
                     }
@@ -166,23 +164,6 @@ fun ManageAccessContent(
     }
 }
 
-@Composable
-private fun SectionTitle(
-    text: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        modifier = modifier.padding(
-            top = MediumSpacing,
-            start = DefaultSpacing,
-            end = DefaultSpacing,
-            bottom = SmallSpacing
-        ),
-        text = text,
-        style = ProtonTheme.typography.defaultStrongNorm,
-    )
-}
-
 @Preview
 @Composable
 fun ManageAccessSharedPreview() {
@@ -193,10 +174,12 @@ fun ManageAccessSharedPreview() {
                     title = stringResource(id = I18N.string.title_manage_access),
                     linkId = FileId(ShareId(UserId(""), ""), ""),
                     publicUrl = "",
-                    accessibilityDescription = "Anyone with this link",
+                    accessibilityDescription = stringResource(id = I18N.string.manage_access_link_description_public),
+                    permissionsDescription = stringResource(id = I18N.string.manage_access_link_viewer_permission),
                     linkName = "name",
                     isLinkNameEncrypted = false,
-                    canEdit = true,
+                    canEditMembers = true,
+                    canEditLink = true,
                     loadingViewState = LoadingViewState.Initial,
                     shareUsers = listOf(
                         ShareUserViewState(
@@ -207,7 +190,7 @@ fun ManageAccessSharedPreview() {
                             displayName = "Proton user",
                             type = INVITATION,
                         )
-                    )
+                    ),
                 ),
                 viewEvent = object : ManageAccessViewEvent {
                     override val onBackPressed: () -> Unit = {}
@@ -219,6 +202,7 @@ fun ManageAccessSharedPreview() {
                     override val onStopLinkSharing: () -> Unit = {}
                     override val onStopAllSharing: () -> Unit = {}
                     override val onConfigureSharing: () -> Unit = {}
+                    override val onEditLinkPermissions: () -> Unit = {}
                 }
             )
         }
@@ -235,12 +219,14 @@ fun ManageAccessNotSharedPreview() {
                     title = stringResource(id = I18N.string.title_manage_access),
                     linkId = FileId(ShareId(UserId(""), ""), ""),
                     publicUrl = null,
-                    accessibilityDescription = "Anyone with this link",
+                    accessibilityDescription = stringResource(id = I18N.string.manage_access_link_description_public),
+                    permissionsDescription = stringResource(id = I18N.string.manage_access_link_viewer_permission),
                     linkName = "name",
                     isLinkNameEncrypted = false,
-                    canEdit = true,
+                    canEditMembers = true,
+                    canEditLink = true,
                     loadingViewState = LoadingViewState.Initial,
-                    shareUsers = emptyList()
+                    shareUsers = emptyList(),
                 ),
                 viewEvent = object : ManageAccessViewEvent {
                     override val onBackPressed: () -> Unit = {}
@@ -252,6 +238,7 @@ fun ManageAccessNotSharedPreview() {
                     override val onStopLinkSharing: () -> Unit = {}
                     override val onStopAllSharing: () -> Unit = {}
                     override val onConfigureSharing: () -> Unit = {}
+                    override val onEditLinkPermissions: () -> Unit = {}
                 }
             )
         }

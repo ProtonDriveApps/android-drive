@@ -28,90 +28,93 @@ import me.proton.android.drive.ui.robot.LauncherRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SharedTabRobot
 import me.proton.android.drive.ui.robot.StorageFullRobot
-import me.proton.android.drive.ui.rules.UserLoginRule
-import me.proton.android.drive.ui.rules.UserPlan
-import me.proton.android.drive.ui.test.EmptyBaseTest
-import me.proton.android.drive.utils.getRandomString
-import me.proton.core.test.quark.data.Plan
-import me.proton.core.test.quark.data.User
-import org.junit.Rule
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class DeeplinkFlowTest : EmptyBaseTest() {
-
-    private val testUser = User(name = "proton_drive_${getRandomString(15)}")
-
-    @get:Rule(order = 1)
-    val userLoginRule: UserLoginRule =
-        UserLoginRule(testUser, quarkCommands = quarkRule.quarkCommands)
+class DeeplinkFlowTest : BaseTest() {
 
     @Test
-    fun photosTabIsDefaultForB2CUsers() {
-        ActivityScenario.launch(MainActivity::class.java)
-        PhotosTabRobot.verify { robotDisplayed() }
-    }
-
-    @Test
-    @UserPlan(Plan.DriveProfessional)
-    fun myFilesTabIsDefaultForB2BUsers() {
-        ActivityScenario.launch(MainActivity::class.java)
-        FilesTabRobot.verify { robotDisplayed() }
-    }
-
-    @Test
+    @PrepareUser(loginBefore = true)
     fun launchFiles() {
         LauncherRobot.launch("files", FilesTabRobot)
             .verify { robotDisplayed() }
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun homeFiles() {
-        LauncherRobot.deeplinkTo(Screen.Files(userLoginRule.userId!!), FilesTabRobot)
+        val id = protonRule.testDataRule.mainTestUser!!.id
+        LauncherRobot.deeplinkTo(
+            Screen.Files(UserId(id)),
+            FilesTabRobot
+        )
             .verify { robotDisplayed() }
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun launchPhotos() {
         LauncherRobot.launch("photos", PhotosTabRobot)
             .verify { robotDisplayed() }
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun homePhotos() {
-        LauncherRobot.deeplinkTo(Screen.Photos(userLoginRule.userId!!), PhotosTabRobot)
+        val id = protonRule.testDataRule.mainTestUser!!.id
+        LauncherRobot.deeplinkTo(
+            Screen.Photos(UserId(id)),
+            PhotosTabRobot
+        )
             .verify { robotDisplayed() }
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun launchComputers() {
         LauncherRobot.launch("computers", ComputersTabRobot)
             .verify { robotDisplayed() }
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun homeComputers() {
-        LauncherRobot.deeplinkTo(Screen.Computers(userLoginRule.userId!!), ComputersTabRobot)
+        val id = protonRule.testDataRule.mainTestUser!!.id
+        LauncherRobot.deeplinkTo(
+            Screen.Computers(UserId(id)),
+            ComputersTabRobot
+        )
             .verify { robotDisplayed() }
     }
 
-
     @Test
+    @PrepareUser(loginBefore = true)
     fun launchShared() {
         LauncherRobot.launch("shared_tabs", SharedTabRobot)
             .verify { robotDisplayed() }
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun homeShared() {
-        LauncherRobot.deeplinkTo(Screen.SharedTabs(userLoginRule.userId!!), SharedTabRobot)
+        val id = protonRule.testDataRule.mainTestUser!!.id
+        LauncherRobot.deeplinkTo(
+            Screen.SharedTabs(UserId(id)),
+            SharedTabRobot
+        )
             .verify { robotDisplayed() }
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun storageFull() {
+        val id = protonRule.testDataRule.mainTestUser!!.id
         LauncherRobot.deeplinkTo(
-            Screen.Dialogs.StorageFull(userLoginRule.userId!!),
+            Screen.Dialogs.StorageFull(UserId(id)),
             StorageFullRobot
         )
             .verify { robotDisplayed() }

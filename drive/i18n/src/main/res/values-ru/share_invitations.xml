@@ -97,5 +97,5 @@
     <item quantity="other">%1$d член</item>
   </plurals>
   <string name="share_via_invitations_message_placeholder">Добавить сообщение</string>
-  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
+  <string name="share_via_invitations_send_message_and_name_label">Включите сообщение и имя файла в электронное письмо с приглашением</string>
 </resources>

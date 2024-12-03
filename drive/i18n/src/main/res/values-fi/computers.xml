@@ -25,7 +25,7 @@
   <string name="computers_empty_title">Synkronoituja tietokoneita ei ole</string>
   <string name="computers_empty_description">Hanki työpöytäsovellus\nsynkronoidaksesi kansioita</string>
   <string name="computers_synced_folders_empty_title">Synkronoituja kansioita ei ole</string>
-  <string name="computers_synced_folders_empty_description">Tietokoneesi synkronoidut kansiot\nnäkyvät tässä</string>
+  <string name="computers_synced_folders_empty_description">Tietokoneesi synkronoidut\nkansiot näkyvät tässä</string>
   <string name="computers_synced_folders_no_folder">Tietokone on poistettu</string>
   <string name="computers_rename_title">Nimeä tietokone uudelleen</string>
   <string name="computers_rename_success">Tietokone nimettiin uudelleen</string>

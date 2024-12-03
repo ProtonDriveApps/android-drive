@@ -27,9 +27,11 @@ import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.photos.data.di.PhotosConfigurationModule
 import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
 import me.proton.android.drive.provider.PhotosConnectedDefaultConfigurationProvider
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.annotation.Quota
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.PhotosBaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Before
 import org.junit.Test
 import javax.inject.Singleton
@@ -47,7 +49,8 @@ class UsedSpaceTest : PhotosBaseTest() {
     }
 
     @Test
-    @Quota(percentageFull = 100)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", quota = Quota(percentageFull = 100))
     fun storageFull() {
         PhotosTabRobot
             .verify {
@@ -57,7 +60,8 @@ class UsedSpaceTest : PhotosBaseTest() {
     }
 
     @Test
-    @Quota(percentageFull = 50)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", quota = Quota(percentageFull = 50))
     fun storageHalfFull() {
         PhotosTabRobot
             .verify {
@@ -65,11 +69,12 @@ class UsedSpaceTest : PhotosBaseTest() {
                 assertStorageFull(50)
             }
             .clickGetMoreStorage()
-            .verifySubscriptionIsShown()
+            .verifyAtLeastOnePlanIsShown()
     }
 
     @Test
-    @Quota(percentageFull = 80)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", quota = Quota(percentageFull = 80))
     fun storage80PercentFull() {
         PhotosTabRobot
             .verify {

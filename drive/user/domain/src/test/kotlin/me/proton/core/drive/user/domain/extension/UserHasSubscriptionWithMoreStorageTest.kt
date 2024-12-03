@@ -56,6 +56,7 @@ class UserHasSubscriptionWithMoreStorageTest(
             keys = emptyList(),
             recovery = null,
             type = Type.Proton,
+            flags = emptyMap(),
         )
 
         private const val MASK_NONE = 0 // 0000

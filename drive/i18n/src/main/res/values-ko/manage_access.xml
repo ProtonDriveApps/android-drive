@@ -24,4 +24,5 @@
   <string name="manage_access_link_description_public">이 링크가 있는 누구나</string>
   <string name="manage_access_link_description_password_protected">이 링크와 비밀번호가 있는 누구나</string>
   <string name="manage_access_link_default_permission">보기 가능</string>
+  <string name="manage_access_link_editor_permission">Can edit</string>
 </resources>

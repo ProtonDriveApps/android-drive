@@ -95,7 +95,7 @@ private fun ExifInterface.getDate(tagDateTime: String, tagOffsetTime: String) =
                 }
                 .parse(dateTime)?.let { date ->
                     utcOffsetTime(date, tagOffsetTime)
-                }
+                }?.takeIf { date -> date.value >= 0 } // avoiding negative value
         }
 
 fun ExifInterface.utcOffsetTime(date: Date, key: String): TimestampS {

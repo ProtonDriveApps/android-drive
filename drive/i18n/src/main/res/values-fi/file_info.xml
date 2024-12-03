@@ -27,4 +27,5 @@
   <string name="file_info_title_file">Tiedoston tiedot</string>
   <string name="file_info_captured_on">Otettu</string>
   <string name="file_info_permissions">Käyttöoikeudet</string>
+  <string name="file_info_uploaded_by_anonymous">Anonymous</string>
 </resources>

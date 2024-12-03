@@ -24,12 +24,11 @@ import me.proton.core.drive.cryptobase.domain.usecase.GetPublicKeyRing
 import me.proton.core.drive.cryptobase.domain.usecase.UnlockKey
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
-import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
+import me.proton.core.drive.key.domain.usecase.GetVerificationKeys
 import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.core.drive.link.domain.entity.File
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import javax.inject.Inject
 
@@ -37,7 +36,7 @@ class DecryptLinkXAttr @Inject constructor(
     private val getLink: GetLink,
     private val getLinkKey: GetNodeKey,
     private val decryptAndVerifyText: DecryptAndVerifyText,
-    private val getPublicAddressKeys: GetPublicAddressKeys,
+    private val getVerificationKeys: GetVerificationKeys,
     private val getPublicKeyRing: GetPublicKeyRing,
     private val unlockKey: UnlockKey,
 ) {
@@ -47,13 +46,12 @@ class DecryptLinkXAttr @Inject constructor(
             is Folder -> link.signatureAddress
             else -> throw IllegalStateException("Link must be either file or folder and it was not")
         }
+        val verificationKeys = getVerificationKeys(link.id, signatureAddress).getOrThrow().keyHolder
         unlockKey(decryptKey.keyHolder) { unlockedKey ->
             decryptAndVerifyText(
                 unlockedKey = unlockedKey,
                 text = requireNotNull(link.xAttr),
-                verifyKeyRing = getPublicKeyRing(
-                    getPublicAddressKeys(link.shareId.userId, signatureAddress).getOrThrow().keyHolder
-                ).getOrThrow(),
+                verifyKeyRing = getPublicKeyRing(verificationKeys).getOrThrow(),
                 verificationFailedContext = javaClass.simpleName,
             ).getOrThrow()
         }.getOrThrow()

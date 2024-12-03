@@ -19,20 +19,22 @@
 package me.proton.android.drive.ui.test.flow.trash
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.BackendRobot
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.TrashRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class RestoreFlowTest : AuthenticatedBaseTest() {
+class RestoreFlowTest : BaseTest() {
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun restoreAnItemFromTrashViaThreeDotsButtonOfTheItem() {
         val fileName = "trashedFile.json"
         PhotosTabRobot
@@ -53,7 +55,8 @@ class RestoreFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun restoreAFolderWithFilesInside() {
         val folderName = "trashedFolderWithChildren"
 
@@ -76,7 +79,8 @@ class RestoreFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun restoreAnItemWhenParentFolderIsInTrash() {
         val parent = "folder1"
         val child = "file2"
@@ -98,7 +102,8 @@ class RestoreFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(1)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
     fun restoreAChildFolder() {
         val folder1 = "folder1"
         val folder3 = "folder3"
@@ -123,7 +128,8 @@ class RestoreFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2, isPhotos = true)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isPhotos = true)
     fun restoreAPhoto() {
         val item = ImageName.Main.fileName
         PhotosTabRobot.waitUntilLoaded()

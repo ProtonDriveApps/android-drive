@@ -20,6 +20,7 @@ package me.proton.core.drive.log.presentation.component
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.paging.PagingData
@@ -38,6 +39,7 @@ fun Log(
     val pagingData = logs.collectAsLazyPagingItems()
     LazyColumn(
         modifier = modifier.fillMaxSize(),
+        state = rememberLazyListState(),
     )
     {
         items(

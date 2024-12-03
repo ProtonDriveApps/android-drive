@@ -31,7 +31,10 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         const val DRIVE_DOCS_WEBVIEW = "DriveDocsWebView"
         const val DRIVE_DOCS_DISABLED = "DriveDocsDisabled"
         const val DRIVE_ANDROID_NEW_ONBOARDING = "DriveAndroidNewOnboarding"
+        const val DRIVE_ANDROID_WHATS_NEW = "DriveAndroidWhatsNew"
         const val DRIVE_ANDROID_USER_LOG_DISABLED = "DriveAndroidUserLogDisabled"
+        const val DRIVE_PUBLIC_SHARE_EDIT_MODE = "DrivePublicShareEditMode"
+        const val DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED = "DrivePublicShareEditModeDisabled"
 
         internal var developments : List<String> = listOf(
         )
@@ -44,6 +47,9 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         fun driveDocsWebView(userId: UserId) = FeatureFlagId(userId, DRIVE_DOCS_WEBVIEW)
         fun driveDocsDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_DOCS_DISABLED)
         fun driveAndroidNewOnboarding(userId: UserId) = FeatureFlagId(userId, DRIVE_ANDROID_NEW_ONBOARDING)
+        fun driveAndroidWhatsNew(userId: UserId) = FeatureFlagId(userId, DRIVE_ANDROID_WHATS_NEW)
         fun driveAndroidUserLogDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_ANDROID_USER_LOG_DISABLED)
+        fun drivePublicShareEditMode(userId: UserId) = FeatureFlagId(userId, DRIVE_PUBLIC_SHARE_EDIT_MODE)
+        fun drivePublicShareEditModeDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED)
     }
 }

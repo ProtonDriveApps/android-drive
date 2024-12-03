@@ -20,13 +20,15 @@ package me.proton.android.drive.ui.test.flow.computers
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.FilesTabRobot
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class EmptyComputersTabTest : AuthenticatedBaseTest() {
+class EmptyComputersTabTest : BaseTest() {
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun emptyComputers() {
         FilesTabRobot
             .clickComputersTab()

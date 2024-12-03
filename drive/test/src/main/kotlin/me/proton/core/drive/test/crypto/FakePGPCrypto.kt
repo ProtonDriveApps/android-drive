@@ -286,6 +286,14 @@ class FakePGPCrypto : PGPCrypto {
         return "key-salt"
     }
 
+    override fun generateNewToken(size: Int): ByteArray {
+        return ByteArray(size)
+    }
+
+    override fun generateRandomBytes(size: Int): ByteArray {
+        return ByteArray(size)
+    }
+
     override fun generateNewPrivateKey(
         username: String,
         domain: String,
@@ -296,14 +304,6 @@ class FakePGPCrypto : PGPCrypto {
 
     override fun generateNewSessionKey(): SessionKey {
         return SessionKey("session-key".toByteArray())
-    }
-
-    override fun generateNewToken(size: Long): ByteArray {
-        return ByteArray(size.toInt())
-    }
-
-    override fun generateRandomBytes(size: Long): ByteArray {
-        return ByteArray(size.toInt())
     }
 
     override fun getArmored(data: Unarmored, header: PGPHeader): Armored {
@@ -335,6 +335,10 @@ class FakePGPCrypto : PGPCrypto {
 
     override fun getFingerprint(key: Armored): String {
         return "fingerprint:$key"
+    }
+
+    override fun getSHA256Fingerprint(key: Armored): String {
+        return "sha256_fingerprint:$key"
     }
 
     override fun getJsonSHA256Fingerprints(key: Armored): String {

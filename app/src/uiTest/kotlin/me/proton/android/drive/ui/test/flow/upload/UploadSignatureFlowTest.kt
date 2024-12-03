@@ -18,7 +18,6 @@
 
 package me.proton.android.drive.ui.test.flow.upload
 
-import android.Manifest
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.intent.Intents
@@ -26,70 +25,92 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.rule.IntentsRule
 import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
+import me.proton.android.drive.initializer.MainInitializer
 import me.proton.android.drive.ui.MainActivity
-import me.proton.android.drive.ui.extension.populate
+import me.proton.android.drive.ui.extension.createFusionComposeRule
 import me.proton.android.drive.ui.extension.respondWithFile
-import me.proton.android.drive.ui.extension.userCreatePrimaryAddress
-import me.proton.android.drive.ui.extension.volumeCreate
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SharedByMeRobot
 import me.proton.android.drive.ui.rules.ExternalFilesRule
-import me.proton.android.drive.ui.test.EmptyBaseTest
+import me.proton.android.drive.ui.rules.SlowTestRule
+import me.proton.android.drive.ui.test.AbstractBaseTest
 import me.proton.android.drive.utils.getRandomString
+import me.proton.android.drive.utils.replaceEmailPrefix
 import me.proton.core.drive.i18n.R
 import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.core.test.quark.data.User
-import me.proton.core.test.quark.v2.command.userCreate
+import me.proton.core.test.quark.v2.command.populate
+import me.proton.core.test.quark.v2.command.userCreateAddress
+import me.proton.core.test.quark.v2.command.volumeCreate
+import me.proton.core.test.rule.ProtonRule
+import me.proton.core.test.rule.annotation.PrepareUser
+import me.proton.core.test.rule.annotation.mapToUser
+import me.proton.core.test.rule.extension.protonRule
 import me.proton.test.fusion.FusionConfig.targetContext
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.RuleChain
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
-class UploadSignatureFlowTest : EmptyBaseTest() {
+class UploadSignatureFlowTest : AbstractBaseTest() {
 
-    @get:Rule
-    val intentsTestRule = IntentsRule()
-
-    @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        Manifest.permission.READ_EXTERNAL_STORAGE,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+    private val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
+        *externalStoragePermissions.toTypedArray()
     )
 
-    @get:Rule
+    val protonRule: ProtonRule = protonRule(
+        annotationTestData = driveTestDataRule.scenarioAnnotationTestData,
+        additionalRules = linkedSetOf(
+            IntentsRule(),
+            SlowTestRule()
+        ),
+        beforeHilt = {
+            configureFusion()
+        },
+        afterHilt = {
+            MainInitializer.init(it.targetContext)
+            setOnboardingDisplayStateAfterLogin()
+            setWhatsNewDisplayStateAfterLogin()
+        },
+        logoutBefore = true
+    )
+
+    @get:Rule(order = 2)
+    val ruleChain: RuleChain = RuleChain
+        .outerRule(permissionRule)
+        .around(protonRule)
+
+    @get:Rule(order = 3)
     val externalFilesRule = ExternalFilesRule()
+
+    @get:Rule(order = 4)
+    val composeContentTestRule = createFusionComposeRule()
 
     @Before
     fun setUp() {
         val file = externalFilesRule.create1BFile("file.txt")
-
         Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
     }
 
-    @After
-    fun tearDown() {
-        loginTestHelper.logoutAll()
-    }
-
     @Test
+    @PrepareUser
     fun uploadWithContextShareAddress() {
-        val testUser = User(name = "proton_drive_${getRandomString(15)}")
-        val user = quarkRule.quarkCommands.userCreate(testUser)
+        val user = protonRule.testDataRule.mainTestUser!!
+        val primaryName = getRandomString(10)
+        val primaryEmail = user.email.replaceEmailPrefix(primaryName)
 
-        quarkRule.quarkCommands.volumeCreate(testUser)
+        quarkRule.quarkCommands.volumeCreate(user.mapToUser())
 
-        val primaryEmail = user.email!!.replace("proton_drive", "pd")
-        val primaryName = user.name!!.replace("proton_drive", "pd")
-        quarkRule.quarkCommands.userCreatePrimaryAddress(
+        protonRule.testDataRule.quarkCommand.userCreateAddress(
             decryptedUserId = user.decryptedUserId,
             password = user.password,
             email = primaryEmail,
+            isPrimary = true
         )
-
-        loginTestHelper.login(user.name!!, user.password)
+        loginTestHelper.login(user.name, user.password)
         ActivityScenario.launch(MainActivity::class.java)
 
         PhotosTabRobot
@@ -107,50 +128,46 @@ class UploadSignatureFlowTest : EmptyBaseTest() {
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
-                dismissFilesBeingUploaded(1, StringUtils.stringFromResource(R.string.title_my_files))
+                dismissFilesBeingUploaded(
+                    1,
+                    StringUtils.stringFromResource(R.string.title_my_files)
+                )
             }
             .clickMoreOnItem("file.txt")
             .clickFileDetails()
             .verify {
                 hasInfoItem(
                     name = targetContext.getString(I18N.string.file_info_uploaded_by_entry),
-                    value = user.email!!,
+                    value = user.email,
                 )
             }
     }
 
     @Test
+    @PrepareUser(withTag = "main")
+    @PrepareUser(withTag = "testUserTo")
     fun uploadWithMembershipShareAddress() {
-        val testUserFrom = User(
-            name = "proton_drive_from_${getRandomString(15)}",
-            dataSetScenario = "6",
-        )
-        val testUserTo = User(name = "proton_drive_to_${getRandomString(15)}")
+        val testUserFrom = protonRule.testDataRule.mainTestUser!!
+        val testUserTo = protonRule.testDataRule.preparedUsers["testUserTo"]!!
 
-        quarkRule.quarkCommands.userCreate(testUserFrom)
-        val user2 = quarkRule.quarkCommands.userCreate(testUserTo)
+        quarkRule.quarkCommands.volumeCreate(testUserTo.mapToUser())
 
-        quarkRule.quarkCommands.volumeCreate(testUserTo)
+        val invitationName = "invitation${getRandomString(5)}"
+        val invitationEmail = testUserTo.email.replaceEmailPrefix(invitationName)
+        val primaryName = "primary${getRandomString(5)}"
+        val primaryEmail = testUserTo.email.replaceEmailPrefix(primaryName)
 
-        val invitationEmail = user2.email!!.replace("proton_drive", "inv")
-        quarkRule.quarkCommands.userCreatePrimaryAddress(
-            decryptedUserId = user2.decryptedUserId,
-            password = user2.password,
-            email = invitationEmail,
-        )
+        createPrimaryAddress(testUserTo.mapToUser(), invitationEmail)
 
-        quarkRule.quarkCommands.populate(testUserFrom, sharingUser = testUserTo)
-
-        val primaryEmail = user2.email!!.replace("proton_drive", "pd")
-        val primaryName = user2.name!!.replace("proton_drive", "pd")
-        quarkRule.quarkCommands.userCreatePrimaryAddress(
-            decryptedUserId = user2.decryptedUserId,
-            password = user2.password,
-            email = primaryEmail,
+        quarkRule.quarkCommands.populate(
+            user = testUserFrom.mapToUser(),
+            scenario = 6,
+            sharingUser = testUserTo.mapToUser()
         )
 
-        loginTestHelper.login(user2.name!!, user2.password)
+        createPrimaryAddress(testUserTo.mapToUser(), primaryEmail)
 
+        loginTestHelper.login(testUserTo.name, testUserTo.password)
         ActivityScenario.launch(MainActivity::class.java)
 
         PhotosTabRobot
@@ -185,4 +202,12 @@ class UploadSignatureFlowTest : EmptyBaseTest() {
             }
     }
 
+    private fun createPrimaryAddress(user: User, primaryEmail: String) {
+        protonRule.testDataRule.quarkCommand.userCreateAddress(
+            decryptedUserId = user.decryptedUserId,
+            password = user.password,
+            email = primaryEmail,
+            isPrimary = true
+        )
+    }
 }

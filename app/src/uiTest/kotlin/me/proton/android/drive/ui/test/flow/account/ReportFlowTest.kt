@@ -18,41 +18,18 @@
 
 package me.proton.android.drive.ui.test.flow.account
 
-import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.test.ExternalStorageBaseTest
 import me.proton.core.report.test.MinimalReportInternalTests
-import me.proton.core.test.quark.Quark
-import me.proton.core.test.quark.data.User
-import me.proton.core.util.kotlin.deserializeList
-import org.junit.Before
 
 @HiltAndroidTest
-class ReportFlowTest : BaseTest(), MinimalReportInternalTests {
-
-    override val quark: Quark = quarkRule.quark
-    override val users: User.Users = User.Users(
-        InstrumentationRegistry.getInstrumentation().context
-            .assets
-            .open("users.json")
-            .bufferedReader()
-            .use { it.readText() }
-            .deserializeList()
-    )
-
-    @Before
-    fun preventHumanVerification() {
-        quark.jailUnban()
-    }
-
-    override fun verifyBefore() {
-        PhotosTabRobot
-            .verify { homeScreenDisplayed() }
-    }
+open class ReportFlowTest : BaseTest(), MinimalReportInternalTests {
 
     override fun startReport() {
         PhotosTabRobot
+            .verify { homeScreenDisplayed() }
             .openSidebarBySwipe()
             .verify { robotDisplayed() }
             .clickReportBug()

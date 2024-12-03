@@ -21,26 +21,28 @@ package me.proton.android.drive.ui.test.flow.details
 import android.content.Context
 import android.os.Build
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SharedTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.labelResId
 import me.proton.core.drive.file.info.presentation.FileInfoTestTag
-import me.proton.test.fusion.FusionConfig.targetContext
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
-class DetailsFlowTest : AuthenticatedBaseTest() {
+class DetailsFlowTest : BaseTest() {
 
     @Test
-    @Scenario(4)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 4, sharedWithUserTag = "sharingUser")
     fun checkFileDetailsAndCloseDetails() {
         PhotosTabRobot
             .clickFilesTab()
@@ -93,7 +95,8 @@ class DetailsFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(4)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @Scenario(forTag = "main", value = 4)
     fun checkFolderDetailsAndCloseDetails() {
         PhotosTabRobot
             .clickFilesTab()
@@ -143,9 +146,11 @@ class DetailsFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(6, loginWithSharingUser = true)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
     fun checkSharingDetailsAndCloseDetails() {
-        val link = readOnlyFile(userLoginRule.testUser.email)
+        val link = readOnlyFile(protonRule.testDataRule.preparedUsers["sharingUser"]!!.email)
         PhotosTabRobot.waitUntilLoaded()
         PhotosTabRobot
             .clickSharedTab()
@@ -195,6 +200,28 @@ class DetailsFlowTest : AuthenticatedBaseTest() {
             .verify { robotDisplayed() }
     }
 
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @Scenario(forTag = "main", value = 9)
+    fun checkAnonymousDetails() {
+        val filename = "anonymous-file"
+        PhotosTabRobot
+            .clickFilesTab()
+            .verify { robotDisplayed() }
+            .scrollToItemWithName(filename)
+            .clickMoreOnItem(filename)
+            .clickFileDetails()
+            .verify {
+                robotDisplayed()
+                hasInfoItem(
+                    name = targetContext.getString(I18N.string.file_info_uploaded_by_entry),
+                    value = targetContext.getString(I18N.string.file_info_uploaded_by_anonymous),
+                )
+            }
+            .clickBack(FilesTabRobot)
+            .verify { robotDisplayed() }
+    }
+
     data class LinkDetails(
         val name: String,
         val uploadedBy: String,
@@ -209,7 +236,7 @@ class DetailsFlowTest : AuthenticatedBaseTest() {
 
     private val sharedImage get() = LinkDetails(
         name = "shared.jpg",
-        uploadedBy = "${testUser.name}@${envConfig.host}",
+        uploadedBy = "${protonRule.testDataRule.mainTestUser?.name}@${envConfig.host}",
         location = "/" + targetContext.getString(I18N.string.title_my_files),
         modified = TimestampS().asHumanReadableString(),
         isShared = targetContext.getString(I18N.string.common_yes),
@@ -227,7 +254,7 @@ class DetailsFlowTest : AuthenticatedBaseTest() {
 
     private val sharedFolder get() = LinkDetails(
         name = "sharedFolder",
-        uploadedBy = "${testUser.name}@${envConfig.host}",
+        uploadedBy = "${protonRule.testDataRule.mainTestUser?.name}@${envConfig.host}",
         location = "/" + targetContext.getString(I18N.string.title_my_files),
         modified = TimestampS().asHumanReadableString(),
         isShared = targetContext.getString(I18N.string.common_yes),

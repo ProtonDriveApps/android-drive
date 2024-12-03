@@ -20,12 +20,14 @@ package me.proton.android.drive.ui.test.flow.settings
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class ClearLocalCacheFlowTest : AuthenticatedBaseTest() {
+class ClearLocalCacheFlowTest : BaseTest() {
     @Test
+    @PrepareUser(loginBefore = true)
     fun clearLocalCacheSucceeds() {
         PhotosTabRobot
             .openSidebarBySwipe()

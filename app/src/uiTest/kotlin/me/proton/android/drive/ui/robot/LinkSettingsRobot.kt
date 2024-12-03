@@ -18,11 +18,7 @@
 
 package me.proton.android.drive.ui.robot
 
-import androidx.compose.ui.test.assertIsOff
-import androidx.compose.ui.test.assertIsOn
-import me.proton.android.drive.ui.extension.setDate
 import me.proton.core.drive.drivelink.shared.presentation.component.PrivacySettingsTestTag
-import me.proton.core.drive.drivelink.shared.presentation.component.SharedDriveLinkTestTag
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.Fusion.view
 import me.proton.test.fusion.FusionConfig.targetContext

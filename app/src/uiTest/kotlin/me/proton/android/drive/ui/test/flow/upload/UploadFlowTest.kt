@@ -21,42 +21,29 @@ package me.proton.android.drive.ui.test.flow.upload
 import android.content.Intent
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
-import androidx.test.espresso.intent.rule.IntentsRule
-import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.ui.annotation.Quota
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.extension.respondWithFile
 import me.proton.android.drive.ui.extension.respondWithFiles
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.StorageFullRobot
-import me.proton.android.drive.ui.rules.ExternalFilesRule
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.ExternalStorageBaseTest
 import me.proton.core.drive.base.domain.extension.MiB
 import me.proton.core.test.android.instrumented.utils.StringUtils
-import org.junit.Rule
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
+import kotlin.time.Duration.Companion.minutes
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
-class UploadFlowTest : AuthenticatedBaseTest() {
-
-    @get:Rule
-    val intentsTestRule = IntentsRule()
-
-    @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        android.Manifest.permission.READ_EXTERNAL_STORAGE,
-        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-    )
-
-    @get:Rule
-    val externalFilesRule = ExternalFilesRule()
+class UploadFlowTest : ExternalStorageBaseTest() {
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun uploadEmptyFileWithPlusButton() {
         val file = externalFilesRule.createEmptyFile("empty.txt")
 
@@ -67,12 +54,16 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
-                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+                assertFilesBeingUploaded(
+                    1,
+                    StringUtils.stringFromResource(I18N.string.title_my_files)
+                )
                 itemIsDisplayed("empty.txt")
             }
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun uploadEmptyFileWithAddFilesButton() {
         val file = externalFilesRule.createEmptyFile("empty.txt")
 
@@ -83,12 +74,16 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickAddFilesButton()
             .clickUploadAFile()
             .verify {
-                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+                assertFilesBeingUploaded(
+                    1,
+                    StringUtils.stringFromResource(I18N.string.title_my_files)
+                )
                 itemIsDisplayed("empty.txt")
             }
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun cancelFileUpload() {
         val file = externalFilesRule.create1BFile("cancel.txt")
 
@@ -105,6 +100,7 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun upload50MBFile() {
         val file = externalFilesRule.createFile("50MB.txt", 50 * 1024 * 1024)
 
@@ -115,16 +111,20 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
-                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+                assertFilesBeingUploaded(
+                    1,
+                    StringUtils.stringFromResource(I18N.string.title_my_files)
+                )
                 assertStageWaiting()
                 assertStageEncrypting()
                 assertStageUploading()
-                assertStageUploadedProgress(100)
+                assertStageUploadedProgress(100, 5.minutes)
                 itemIsDisplayed("50MB.txt")
             }
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun uploadMultipleFiles() {
         val file1 = externalFilesRule.create1BFile("file1.txt")
         val file2 = externalFilesRule.create1BFile("file2.txt")
@@ -138,7 +138,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
-                assertFilesBeingUploaded(3, StringUtils.stringFromResource(I18N.string.title_my_files))
+                assertFilesBeingUploaded(
+                    3,
+                    StringUtils.stringFromResource(I18N.string.title_my_files)
+                )
             }
             .verify {
                 itemIsDisplayed("file1.txt")
@@ -148,7 +151,8 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun uploadAFileInGridSucceeds() {
         val file = externalFilesRule.create1BFile("file.txt")
 
@@ -160,7 +164,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
-                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+                assertFilesBeingUploaded(
+                    1,
+                    StringUtils.stringFromResource(I18N.string.title_my_files)
+                )
             }
             .verify {
                 itemIsDisplayed("file.txt")
@@ -168,6 +175,7 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun uploadTheSameFileTwice() {
         val file = externalFilesRule.create1BFile("file.txt")
 
@@ -178,7 +186,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
-                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+                assertFilesBeingUploaded(
+                    1,
+                    StringUtils.stringFromResource(I18N.string.title_my_files)
+                )
             }
             .verify {
                 itemIsDisplayed("file.txt")
@@ -186,7 +197,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
-                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+                assertFilesBeingUploaded(
+                    1,
+                    StringUtils.stringFromResource(I18N.string.title_my_files)
+                )
             }
             .verify {
                 itemIsDisplayed("file (1).txt")
@@ -194,8 +208,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Quota(percentageFull = 99)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", quota = Quota(percentageFull = 99))
     fun notEnoughSpaceWhenUploadOneFileBiggerThanStorage() {
+
         val file = externalFilesRule.createFile("50MB.txt", 50.MiB.value)
 
         Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFile(file)
@@ -210,6 +226,7 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun uploadMultipleBatches() {
         val batch200 = (1..200).map { index ->
             externalFilesRule.create1BFile("file$index.txt")
@@ -225,7 +242,10 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
-                assertFilesBeingUploaded(200, StringUtils.stringFromResource(I18N.string.title_my_files))
+                assertFilesBeingUploaded(
+                    200,
+                    StringUtils.stringFromResource(I18N.string.title_my_files)
+                )
             }
 
         Intents.intending(hasAction(Intent.ACTION_OPEN_DOCUMENT)).respondWithFiles(batch100)
@@ -234,12 +254,16 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
-                assertFilesBeingUploaded(100, StringUtils.stringFromResource(I18N.string.title_my_files))
+                assertFilesBeingUploaded(
+                    100,
+                    StringUtils.stringFromResource(I18N.string.title_my_files)
+                )
             }
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun navigationIsAllowedDuringFileUpload() {
         val file = externalFilesRule.create1BFile("file.txt")
 
@@ -263,7 +287,8 @@ class UploadFlowTest : AuthenticatedBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun switchLayoutWhileUploading() {
         val file = externalFilesRule.create1BFile("file.txt")
 
@@ -274,12 +299,14 @@ class UploadFlowTest : AuthenticatedBaseTest() {
             .clickPlusButton()
             .clickUploadAFile()
             .verify {
-                assertFilesBeingUploaded(1, StringUtils.stringFromResource(I18N.string.title_my_files))
+                assertFilesBeingUploaded(
+                    1,
+                    StringUtils.stringFromResource(I18N.string.title_my_files)
+                )
             }
             .clickLayoutSwitcher()
             .verify {
                 itemIsDisplayed("file.txt")
             }
     }
-
 }

@@ -197,4 +197,5 @@ val PREVIEW_USER = User(
     delinquent = null,
     recovery = null,
     keys = emptyList(),
+    flags = emptyMap(),
 )

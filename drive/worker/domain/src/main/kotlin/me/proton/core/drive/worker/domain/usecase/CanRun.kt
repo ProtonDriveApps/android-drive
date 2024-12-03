@@ -29,6 +29,10 @@ class CanRun @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
 ) {
     suspend operator fun invoke(userId: UserId, workerId: String): Result<Boolean> = coRunCatching {
-        workerRepository.getAllWorkerRuns(userId, workerId).size < configurationProvider.maxApiAutoRetries
+        invoke(workerRepository.getAllWorkerRuns(userId, workerId).size).getOrThrow()
     }
+
+    operator fun invoke(attempt: Int): Result<Boolean> = Result.success(
+        attempt < configurationProvider.maxApiAutoRetries
+    )
 }

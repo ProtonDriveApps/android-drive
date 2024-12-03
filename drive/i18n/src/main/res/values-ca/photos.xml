@@ -77,7 +77,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Utilitza la xarxa mòbil</string>
   <string name="photos_error_local_storage">L\'emmagatzematge del dispositiu és ple.</string>
   <string name="photos_error_local_storage_description">Per continuar amb la còpia de seguretat, heu d\'alliberar espai d\'emmagatzematge al vostre dispositiu.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Establiu l\'ús de la bateria a «Sense restriccions» per a l\'activitat en segon pla de l\'aplicació</string>
   <string name="photos_error_background_restrictions_description">Per a còpies de seguretat consistents en segon pla, ajusteu la configuració de la bateria o obriu l\'aplicació amb freqüència.</string>
   <string name="photos_error_background_restrictions_action">Preferències</string>
   <string name="photos_empty_title">No hi ha encara còpies de seguretat.</string>

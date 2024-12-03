@@ -18,13 +18,16 @@
 
 package me.proton.android.drive.ui.annotation
 
+
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Quota(
     val value: Int = 2_048,
     val unit: QuotaUnit = QuotaUnit.MB,
     val percentageFull: Int = 0,
-    val product: String = "Drive",
+    val product: String = "Drive"
 )
 
 enum class QuotaUnit { KB, MB, GB, TB, PB }
+
+fun Quota.isDefault(): Boolean = this == Quota()

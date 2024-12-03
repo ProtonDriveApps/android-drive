@@ -31,7 +31,7 @@ class GeneratePassphraseImpl @Inject constructor(
 
     override operator fun invoke(): ByteArray =
         Base64.encode(
-            cryptoContext.pgpCrypto.generateRandomBytes(configurationProvider.passphraseSize.value),
+            cryptoContext.pgpCrypto.generateRandomBytes(configurationProvider.passphraseSize.value.toInt()),
             Base64.NO_WRAP,
         )
 
@@ -41,7 +41,7 @@ class GeneratePassphraseImpl @Inject constructor(
     ): String {
         val additionalFlags = if (encodeToBase64Url) Base64.URL_SAFE else 0
         return Base64.encodeToString(
-            cryptoContext.pgpCrypto.generateRandomBytes(size.value),
+            cryptoContext.pgpCrypto.generateRandomBytes(size.value.toInt()),
             Base64.NO_WRAP or additionalFlags,
         )
     }

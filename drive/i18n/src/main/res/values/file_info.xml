@@ -33,4 +33,5 @@
     <string name="file_info_title_file">File details</string>
     <string name="file_info_captured_on">Captured on</string>
     <string name="file_info_permissions">Permissions</string>
+    <string name="file_info_uploaded_by_anonymous">Anonymous</string>
 </resources>

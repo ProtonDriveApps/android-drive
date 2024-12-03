@@ -91,7 +91,7 @@ interface ConfigurationProvider {
     val activeUserPingDuration: Duration get() = 6.hours
     val disableFeatureFlagInDevelopment: Boolean get() = true
     val logDbMinLimit: Int get() = 1_000
-    val logDbLimit: Int get() = 10_000
+    val logDbLimit: Int get() = 20_000
     val logDeviceInfoFile: LogFile get() = LogFile(
         name = "device_info.txt",
         mimeType = "text/plain",
@@ -110,6 +110,7 @@ interface ConfigurationProvider {
     val protonDocsWebViewFeatureFlag: Boolean get() = true
     val observeWorkManagerInterval: Duration get() = 1.minutes
     val cacheInternalStorageLimit: Bytes get() = 512.MiB
+    val drivePublicShareEditMode: Boolean get() = false // implement entitlements PublicCollaboration
 
     data class Thumbnail(
         val maxWidth: Int,

@@ -19,17 +19,21 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class InvitationPermissionsFlowTest : AuthenticatedBaseTest() {
+class InvitationPermissionsFlowTest : BaseTest() {
 
     @Test
-    @Scenario(6, withSharingUser = true)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 6, sharedWithUserTag = "sharingUser")
     fun updatePermissionsToEditor() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingUser"]!!
         val file = "newShare.txt"
         PhotosTabRobot
             .clickFilesTab()
@@ -38,17 +42,20 @@ class InvitationPermissionsFlowTest : AuthenticatedBaseTest() {
             .verify {
                 robotDisplayed()
             }
-            .clickInvitation(userLoginRule.sharingUser.email)
+            .clickInvitation(sharingUser.email)
             .clickEditor()
             .verify {
                 robotDisplayed()
-                assertSharedWithEditor(userLoginRule.sharingUser.email)
+                assertSharedWithEditor(sharingUser.email)
             }
     }
 
     @Test
-    @Scenario(6, withSharingUser = true)
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 6, sharedWithUserTag = "sharingUser")
     fun updatePermissionsToViewer() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingUser"]!!
         val file = "newShare.txt"
         PhotosTabRobot
             .clickFilesTab()
@@ -57,13 +64,13 @@ class InvitationPermissionsFlowTest : AuthenticatedBaseTest() {
             .verify {
                 robotDisplayed()
             }
-            .clickInvitation(userLoginRule.sharingUser.email)
+            .clickInvitation(sharingUser.email)
             .clickEditor()
-            .clickInvitation(userLoginRule.sharingUser.email)
+            .clickInvitation(sharingUser.email)
             .clickViewer()
             .verify {
                 robotDisplayed()
-                assertSharedWithViewer(userLoginRule.sharingUser.email)
+                assertSharedWithViewer(sharingUser.email)
             }
     }
 }

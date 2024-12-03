@@ -20,6 +20,8 @@ package me.proton.core.drive.drivelink.crypto.domain.usecase
 import me.proton.core.drive.crypto.domain.usecase.DecryptLinkName
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.drive.base.domain.entity.CryptoProperty
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.Sha256
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.DecryptLinkXAttr
@@ -113,7 +115,7 @@ class DecryptDriveLink @Inject constructor(
                 .onSuccess { decryptedXAttr ->
                     decryptedTextRepository.addDecryptedText(userId, xAttrKey, decryptedXAttr)
                 }
-                .getOrNull()
+                .getOrNull(LogTag.ENCRYPTION, "Cannot decrypt xAttr")
         return decryptedXAttr?.let {
             when (this) {
                 is DriveLink.File -> {

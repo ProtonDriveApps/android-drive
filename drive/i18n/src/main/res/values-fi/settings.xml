@@ -55,7 +55,7 @@
             "Camera will no longer be backing up to the cloud."
     -->
   <string name="settings_photos_backup_folders_confirm_stop_sync_description">Kansiota %1$s ei enää varmuuskopioida pilveen. Aiemmin varmuuskopioituja kuvia ei poisteta.</string>
-  <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">Pysäytä varmuuskopiointi</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">Lopeta varmuuskopiointi</string>
   <plurals name="settings_photos_backup_folders_description_photos">
     <item quantity="one">%1$d kuva</item>
     <item quantity="other">%1$d kuvaa</item>

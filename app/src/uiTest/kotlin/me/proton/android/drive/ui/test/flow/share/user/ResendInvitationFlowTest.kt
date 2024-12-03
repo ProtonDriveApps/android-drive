@@ -19,20 +19,27 @@
 package me.proton.android.drive.ui.test.flow.share.user
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.Scenario
+import me.proton.android.drive.ui.annotation.FeatureFlag
+import me.proton.android.drive.ui.annotation.FeatureFlags
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.core.util.kotlin.random
 import org.junit.Test
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
-class ResendInvitationFlowTest : AuthenticatedBaseTest() {
+class ResendInvitationFlowTest : BaseTest() {
 
     @Test
-    @Scenario(6, withSharingUser = true)
+    @PrepareUser(loginBefore = true)
+    @PrepareUser(withTag = "sharingWithUser")
+    @Scenario(forTag = "main", value = 6, sharedWithUserTag = "sharingWithUser")
     fun resendInvitation() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingWithUser"]!!
         val file = "newShare.txt"
         PhotosTabRobot
             .clickFilesTab()
@@ -41,13 +48,14 @@ class ResendInvitationFlowTest : AuthenticatedBaseTest() {
             .verify {
                 robotDisplayed()
             }
-            .clickInvitation(userLoginRule.sharingUser.email)
+            .clickInvitation(sharingUser.email)
             .clickResendInvitation()
             .verify { nodeWithTextDisplayed(I18N.string.share_via_invitations_resend_invite_success) }
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun resendExternalInvitation() {
         val file = "image.jpg"
         val email = "external_${String.random()}@mail.com"

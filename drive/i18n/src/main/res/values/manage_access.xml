@@ -25,4 +25,6 @@
     <string name="manage_access_link_description_public">Anyone with this link</string>
     <string name="manage_access_link_description_password_protected">Anyone with the link and password</string>
     <string name="manage_access_link_default_permission">Can view</string>
+    <string name="manage_access_link_viewer_permission">@string/manage_access_link_default_permission</string>
+    <string name="manage_access_link_editor_permission">Can edit</string>
 </resources>

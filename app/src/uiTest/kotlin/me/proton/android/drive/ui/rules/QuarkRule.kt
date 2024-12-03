@@ -70,7 +70,7 @@ class QuarkRule(
 
     val quarkCommands: QuarkCommand
         get() = QuarkCommand(quarkClient)
-            .baseUrl("https://${envConfig.host}/api/internal")
+            .baseUrl("${envConfig.baseUrl}/api/internal")
             .proxyToken(envConfig.proxyToken)
 
     override fun apply(base: Statement, description: Description): Statement {
@@ -81,6 +81,10 @@ class QuarkRule(
 
     override fun before() {
         // For /core/v4/keys that is deprecated
+        if (envConfig.baseUrl.contains("10.0.2.2")) {
+            // quark commands are not implemented in local server
+            return
+        }
         var attempt = 0
         with(quarkCommands) {
             onResponse(

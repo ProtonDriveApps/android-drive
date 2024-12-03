@@ -19,13 +19,13 @@
 package me.proton.drive.android.settings.domain
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.entity.UiSettings
+import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 
 interface UiSettingsRepository {
 
@@ -58,4 +58,14 @@ interface UiSettingsRepository {
      * Update timestamp when onboarding was shown
      */
     suspend fun updateOnboardingShown(timestamp: TimestampS)
+
+    /**
+     * Retrieves setting if whats new screen has been shown to the user
+     */
+    suspend fun hasShownWhatsNew(key: WhatsNewKey): Boolean
+
+    /**
+     * Update timestamp when whats new was shown
+     */
+    suspend fun updateWhatsNewShown(key: WhatsNewKey, timestamp: TimestampS)
 }

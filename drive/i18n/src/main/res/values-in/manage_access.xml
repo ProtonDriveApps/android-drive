@@ -24,4 +24,5 @@
   <string name="manage_access_link_description_public">Siapa pun yang memiliki tautan</string>
   <string name="manage_access_link_description_password_protected">Siapa pun yang memiliki tautan dan kata sandi</string>
   <string name="manage_access_link_default_permission">Dapat melihat</string>
+  <string name="manage_access_link_editor_permission">Can edit</string>
 </resources>

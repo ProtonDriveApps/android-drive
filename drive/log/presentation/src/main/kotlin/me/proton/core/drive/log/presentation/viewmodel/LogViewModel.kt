@@ -23,10 +23,12 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import androidx.paging.insertSeparators
 import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -58,6 +60,7 @@ class LogViewModel @Inject constructor(
     private val separatorSdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
 
     val logs = getPagedLogs(userId)
+        .distinctUntilChanged()
         .map { pagingData ->
             pagingData.map { log ->
                 val creationDateTime = Date(log.creationTime.value)
@@ -68,6 +71,7 @@ class LogViewModel @Inject constructor(
                     message = log.message,
                     moreContent = log.moreContent,
                     isError = log.level == Log.Level.ERROR,
+                    originalCreationTime = log.creationTime.value,
                 )
             }
         }
@@ -81,12 +85,10 @@ class LogViewModel @Inject constructor(
                     )
                 } else {
                     val beforeCalendar = Calendar.getInstance().apply {
-                        timeInMillis = requireNotNull(separatorSdf.parse(before.creationDate)).time +
-                                requireNotNull(logSdf.parse(before.creationTime)).time
+                        timeInMillis = before.originalCreationTime
                     }
                     val afterCalendar = Calendar.getInstance().apply {
-                        timeInMillis = requireNotNull(separatorSdf.parse(after.creationDate)).time +
-                                requireNotNull(logSdf.parse(after.creationTime)).time
+                        timeInMillis = after.originalCreationTime
                     }
                     if (beforeCalendar.get(Calendar.YEAR)
                         != afterCalendar.get(Calendar.YEAR) ||
@@ -103,7 +105,7 @@ class LogViewModel @Inject constructor(
                     }
                 }
             }
-        }
+        }.cachedIn(viewModelScope)
 
     val mimeType = configurationProvider.logZipFile.mimeType
 

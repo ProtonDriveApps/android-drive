@@ -18,8 +18,8 @@
   -->
 <resources>
   <string name="file_operation_error_occurred_moving_file">S\'ha produït un error en moure el fitxer.</string>
-  <string name="file_operation_moving_file_successful">El fitxer s\'ha mogut correctament</string>
-  <string name="file_operation_moving_folder_successful">La carpeta s\'ha mogut correctament</string>
+  <string name="file_operation_moving_file_successful">S\'ha mogut el fitxer.</string>
+  <string name="file_operation_moving_folder_successful">S\'ha mogut la carpeta.</string>
   <!--
         Variable %1$d is a quantity of items that have been successfully moved
         Example:

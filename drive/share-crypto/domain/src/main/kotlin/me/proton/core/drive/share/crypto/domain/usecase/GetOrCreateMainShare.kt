@@ -25,8 +25,10 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.transformSuccess
 import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.exception.ShareException
 import me.proton.core.drive.share.domain.usecase.GetMainShare
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.volume.crypto.domain.usecase.GetOrCreateVolume
 import javax.inject.Inject
 
@@ -34,6 +36,7 @@ import javax.inject.Inject
 class GetOrCreateMainShare @Inject constructor(
     private val getOrCreateVolume: GetOrCreateVolume,
     private val getMainShare: GetMainShare,
+    private val getShare: GetShare,
 ) {
     operator fun invoke(userId: UserId): Flow<DataResult<Share>> =
         getMainShare(userId).transformLatest { result ->
@@ -57,6 +60,6 @@ class GetOrCreateMainShare @Inject constructor(
         userId: UserId,
     ): Flow<DataResult<Share>> = getOrCreateVolume(userId)
         .transformSuccess { result ->
-            emitAll(getMainShare(userId, result.value.id))
+            emitAll(getShare(ShareId(userId, result.value.shareId)))
         }
 }

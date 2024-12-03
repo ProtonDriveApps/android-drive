@@ -70,6 +70,7 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawer
 import me.proton.core.drive.sorting.domain.entity.Sorting
+import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 
 @Composable
 @ExperimentalAnimationApi
@@ -99,6 +100,7 @@ fun HomeScreen(
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     navigateToGetMoreFreeStorage: () -> Unit,
     navigateToOnboarding: () -> Unit,
+    navigateToWhatsNew: (WhatsNewKey) -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -158,6 +160,10 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         if (homeViewModel.shouldShowOnboarding()) {
             navigateToOnboarding()
+        } else {
+            homeViewModel.getWhatsNew()?.let { key ->
+                navigateToWhatsNew(key)
+            }
         }
     }
 }

@@ -49,6 +49,7 @@ abstract class BaseSharedDriveLink(
         ),
         expirationTime = getExpirationTime(this),
         isLegacy = this.flags.isLegacy,
+        permissions = permissions,
     )
 
     private suspend fun getPublicUrlProperty(

@@ -17,34 +17,33 @@
  */
 package me.proton.core.drive.crypto.domain.usecase.file
 
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.drive.cryptobase.domain.usecase.GetPublicKeyRing
 import me.proton.core.drive.cryptobase.domain.usecase.VerifyData
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.key.domain.extension.keyHolder
-import me.proton.core.drive.key.domain.usecase.GetPublicAddressKeys
+import me.proton.core.drive.key.domain.usecase.GetVerificationKeys
+import me.proton.core.drive.link.domain.entity.Link
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class VerifyManifestSignature @Inject constructor(
-    private val getPublicAddressKeys: GetPublicAddressKeys,
+    private val getVerificationKeys: GetVerificationKeys,
     private val verifyData: VerifyData,
     private val getManifest: GetManifest,
     private val getPublicKeyRing: GetPublicKeyRing,
 ) {
     suspend operator fun invoke(
-        userId: UserId,
+        link: Link,
         signatureAddress: String,
         blocks: List<Block>,
         manifestSignature: String,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ): Result<Boolean> = coRunCatching(coroutineContext) {
+        val verificationKeys = getVerificationKeys(link, signatureAddress).getOrThrow().keyHolder
         verifyData(
-            verifyKeyRing = getPublicKeyRing(
-                getPublicAddressKeys(userId, signatureAddress).getOrThrow().keyHolder
-            ).getOrThrow(),
+            verifyKeyRing = getPublicKeyRing(verificationKeys).getOrThrow(),
             input = getManifest(blocks).getOrThrow(),
             signature = manifestSignature,
         ).getOrThrow()

@@ -28,16 +28,17 @@ import me.proton.android.drive.extension.debug
 import me.proton.android.drive.photos.data.di.PhotosConfigurationModule
 import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
 import me.proton.android.drive.provider.PhotosConnectedDefaultConfigurationProvider
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SettingsRobot
 import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
-import me.proton.android.drive.ui.rules.Scenario
 import me.proton.android.drive.ui.test.PhotosBaseTest
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PHOTOS_UPLOAD_DISABLED
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Before
 import org.junit.Test
 import javax.inject.Inject
@@ -55,7 +56,8 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun syncMultipleFolders() {
         pictureCameraFolder.copyDirFromAssets("images/basic")
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
@@ -70,6 +72,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun syncNewPhotos() {
         dcimCameraFolder.copyDirFromAssets("images/basic")
 
@@ -90,6 +93,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun addPhotoWhileUploading() {
         dcimCameraFolder.copyDirFromAssets("images/basic")
         dcimCameraFolder.copyFileFromAssets("boat.mp4")
@@ -109,6 +113,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun backupVideoAndMakeAvailableOffline() {
         val videoFile = "boat.mp4"
         pictureCameraFolder.copyFileFromAssets(videoFile)
@@ -129,7 +134,8 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun turnOnBackupWithFilesInCameraFolderFromSettings() {
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
 
@@ -160,6 +166,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun noPhotoInCameraFolder() {
         PhotosTabRobot
             .openSidebarBySwipe()
@@ -171,6 +178,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun photosFolderEnableFromSettings() {
         picturePhotosFolder.copyFileFromAssets("boat.jpg")
 
@@ -197,6 +205,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun photosFolderEnableFromPhoto() {
         picturePhotosFolder.copyFileFromAssets("boat.jpg")
 
@@ -218,6 +227,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun photosFolderEnableAndDisableFromSettings() {
         picturePhotosFolder.copyFileFromAssets("boat.jpg")
 
@@ -245,6 +255,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun backupDifferentVideoFormatFiles() {
         pictureCameraFolder.copyDirFromAssets("videos/formats")
         val videoFiles = arrayOf("3gp.3gp", "mov.mov", "mp4.mp4")
@@ -267,6 +278,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun deleteFileWhileBackupIsInProgress() {
         (0..8).forEach { index ->
             pictureCameraFolder.create1BFile("photos_$index.jpg")
@@ -291,6 +303,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @FeatureFlag(DRIVE_PHOTOS_UPLOAD_DISABLED, ENABLED)
     fun featureDisabled() {
         PhotosTabRobot
@@ -300,6 +313,7 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @FeatureFlag(DRIVE_PHOTOS_UPLOAD_DISABLED, ENABLED)
     fun featureDisabledFromSettings() {
         PhotosTabRobot
@@ -313,7 +327,8 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun syncDefaultAndAdditionalFolders() {
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
         pictureRawFolder.copyDirFromAssets("images/basic/0_0.png")
@@ -331,7 +346,8 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
     }
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
     fun syncOnlyAdditionalFolders() {
         pictureRawFolder.copyDirFromAssets("images/basic/0_0.png")
         pictureScreenshotsFolder.copyDirFromAssets("images/basic/0_0.jpg")

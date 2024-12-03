@@ -26,14 +26,16 @@ import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.rules.ExternalFilesRule
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import java.io.File
 
 @HiltAndroidTest
-class AllowSelectedPermissionsTest : AuthenticatedBaseTest() {
+class AllowSelectedPermissionsTest : BaseTest() {
+
     @get:Rule
     val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
         Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -54,6 +56,7 @@ class AllowSelectedPermissionsTest : AuthenticatedBaseTest() {
     }
 
     @Test
+    @PrepareUser(loginBefore = true)
     @SdkSuppress(minSdkVersion = Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun allowSelectedPermissions() {
         PhotosTabRobot

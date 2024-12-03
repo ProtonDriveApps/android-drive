@@ -20,25 +20,22 @@ package me.proton.android.drive.ui.test.flow.account
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.robot.SharedTabRobot
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.BaseTest
+import me.proton.android.drive.ui.test.ExternalStorageBaseTest
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
 @HiltAndroidTest
-class HomeFlowTest : AuthenticatedBaseTest() {
+class HomeFlowTest : ExternalStorageBaseTest() {
     @Test
+    @PrepareUser(loginBefore = true)
     fun selectTabs() {
         SharedTabRobot
             .clickFilesTab()
-            .verify {
-                robotDisplayed()
-            }
+            .verify { robotDisplayed() }
             .clickPhotosTab()
-            .verify {
-                robotDisplayed()
-            }
+            .verify { robotDisplayed() }
             .clickSharedTab()
-            .verify {
-                robotDisplayed()
-            }
+            .verify { robotDisplayed() }
     }
 }

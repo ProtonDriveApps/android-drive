@@ -23,36 +23,22 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasType
-import androidx.test.espresso.intent.rule.IntentsRule
-import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.extension.respondWithFile
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.rules.ExternalFilesRule
-import me.proton.android.drive.ui.test.AuthenticatedBaseTest
+import me.proton.android.drive.ui.test.ExternalStorageBaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ANDROID_USER_LOG_DISABLED
+import me.proton.core.test.rule.annotation.PrepareUser
 import org.hamcrest.Matchers.allOf
-import org.junit.Rule
 import org.junit.Test
 
 @HiltAndroidTest
-class LogFlowTest : AuthenticatedBaseTest() {
-
-    @get:Rule
-    val intentsTestRule = IntentsRule()
-
-    @get:Rule
-    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(
-        android.Manifest.permission.READ_EXTERNAL_STORAGE,
-        android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-    )
-
-    @get:Rule
-    val externalFilesRule = ExternalFilesRule()
+class LogFlowTest : ExternalStorageBaseTest() {
 
     @Test
+    @PrepareUser(loginBefore = true)
     fun downloadLog() {
         val filename = "log.zip"
         Intents.intending(
@@ -77,8 +63,9 @@ class LogFlowTest : AuthenticatedBaseTest() {
                 check(file.length() > 0) { "File ${file.name} is empty" }
             }
     }
-
+    
     @Test
+    @PrepareUser(loginBefore = true)
     @FeatureFlag(DRIVE_ANDROID_USER_LOG_DISABLED, ENABLED)
     fun killSwitch() {
         PhotosTabRobot

@@ -30,4 +30,5 @@ interface ManageAccessViewEvent {
     val onStopLinkSharing: () -> Unit
     val onStopAllSharing: () -> Unit
     val onConfigureSharing: () -> Unit
+    val onEditLinkPermissions: () -> Unit
 }

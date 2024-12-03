@@ -24,4 +24,5 @@
   <string name="manage_access_link_description_public">ამ ბმულის მქონე ყველა</string>
   <string name="manage_access_link_description_password_protected">ყველას ბმულით და პაროლით</string>
   <string name="manage_access_link_default_permission">შეუძლია, ნახოს</string>
+  <string name="manage_access_link_editor_permission">Can edit</string>
 </resources>

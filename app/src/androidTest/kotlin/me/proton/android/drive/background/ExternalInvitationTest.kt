@@ -22,10 +22,9 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import me.proton.android.drive.ui.rules.Scenario
-import me.proton.android.drive.ui.rules.UserLoginRule
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.test.AbstractBaseTest
-import me.proton.android.drive.utils.getRandomString
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.drive.base.domain.entity.Permissions
@@ -45,20 +44,14 @@ import me.proton.core.drive.share.user.domain.usecase.GetInvitationsFlow
 import me.proton.core.drive.share.user.domain.usecase.InviteMembers
 import me.proton.core.test.quark.data.User
 import me.proton.core.test.quark.v2.command.userCreate
+import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.core.util.kotlin.random
 import org.junit.Assert.assertEquals
-import org.junit.Rule
 import org.junit.Test
 import javax.inject.Inject
 
 @HiltAndroidTest
-class ExternalInvitationTest : AbstractBaseTest() {
-    val testUser = User(name = "proton_drive_${getRandomString(15)}")
-
-    @get:Rule(order = 1)
-    val userLoginRule: UserLoginRule =
-        UserLoginRule(testUser, quarkCommands = quarkRule.quarkCommands)
-
+class ExternalInvitationTest : BaseTest() {
     @Inject
     lateinit var inviteMembers: InviteMembers
 
@@ -87,7 +80,8 @@ class ExternalInvitationTest : AbstractBaseTest() {
     lateinit var convertExternalInvitation: ConvertExternalInvitation
 
     @Test
-    @Scenario(2)
+    @PrepareUser(loginBefore = true)
+    @Scenario(value = 2)
     fun givenExternalInvitationWhenAccountCreatedShouldConvertItToInternalInvitation() = runTest {
         val file = "image.jpg"
         val email = "external_${String.random()}@mail.com"

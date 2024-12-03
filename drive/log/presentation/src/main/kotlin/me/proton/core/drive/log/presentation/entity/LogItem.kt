@@ -18,6 +18,9 @@
 
 package me.proton.core.drive.log.presentation.entity
 
+import androidx.compose.runtime.Stable
+
+@Stable
 sealed class LogItem(val id: String) {
 
     data class Separator(val value: String) : LogItem("separator_$value")
@@ -29,5 +32,6 @@ sealed class LogItem(val id: String) {
         val message: String,
         val moreContent: String? = null,
         val isError: Boolean = false,
+        val originalCreationTime: Long,
     ) : LogItem("log_$identifier")
 }
