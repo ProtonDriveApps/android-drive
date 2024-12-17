@@ -88,18 +88,18 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
+import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.base.presentation.extension.launchApplicationDetailsSettings
 import me.proton.core.drive.base.presentation.extension.launchIgnoreBatteryOptimizations
 import me.proton.core.drive.base.presentation.extension.quantityString
+import me.proton.core.drive.base.presentation.state.ListContentAppendingState
+import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPagedPhotoListingsList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
-import me.proton.core.drive.base.presentation.state.ListContentAppendingState
-import me.proton.core.drive.base.presentation.state.ListContentState
-import me.proton.core.drive.base.presentation.effect.ListEffect
-import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -371,8 +371,6 @@ class PhotosViewModel @Inject constructor(
                             driveLink.onClick(
                                 navigateToFolder = { _, _ -> error("Photos should not have folders") },
                                 navigateToPreview = navigateToPreview,
-                                openDocument = { _ -> error("Photos should not have Proton document") },
-                                openProtonDocsInWebView = MutableStateFlow(false),
                             )
                         }
                     }

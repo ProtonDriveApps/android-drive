@@ -96,10 +96,11 @@ class CreateShareInvitationRequest @Inject constructor(
         externalInvitationId: String? = null,
     ): ShareInvitationRequest.Internal {
         val share = getShare(shareId).filterSuccessOrError().toResult().getOrThrow()
-        val addressId = getAddressId(shareId.userId, share.volumeId).getOrThrow()
+        val contextAddressId = getAddressId(shareId.userId, share.volumeId).getOrThrow()
+        val shareAddressId = getAddressId(shareId).getOrThrow()
         val addressKeys = getAddressKeys(
             userId = shareId.userId,
-            addressId = addressId
+            addressId = shareAddressId
         )
         val sessionKey = getSessionKeyFromEncryptedMessage(
             decryptKey = addressKeys.keyHolder,
@@ -116,7 +117,7 @@ class CreateShareInvitationRequest @Inject constructor(
         ).getOrThrow()
 
         return ShareInvitationRequest.Internal(
-            inviterEmail = getUserEmail(shareId.userId, addressId),
+            inviterEmail = getUserEmail(shareId.userId, contextAddressId),
             inviteeEmail = inviteeEmail,
             permissions = permissions,
             keyPacket = Base64.encodeToString(encryptedKeyPacket, Base64.NO_WRAP),

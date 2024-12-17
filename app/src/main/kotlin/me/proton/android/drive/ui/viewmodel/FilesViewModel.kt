@@ -80,7 +80,6 @@ import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveL
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
-import me.proton.core.drive.files.preview.presentation.component.ProtonDocsInWebViewFeatureFlag
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -120,7 +119,6 @@ class FilesViewModel @Inject constructor(
     private val getUploadFileLinks: GetUploadFileLinks,
     private val getUploadProgress: GetUploadProgress,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
-    protonDocsInWebViewFeatureFlag: ProtonDocsInWebViewFeatureFlag,
     private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     selectLinks: SelectLinks,
     selectAll: SelectAll,
@@ -139,8 +137,6 @@ class FilesViewModel @Inject constructor(
     private val folderId = savedStateHandle.get<String>(Screen.Files.FOLDER_ID)?.let { folderId ->
         shareId?.let { FolderId(ShareId(userId, shareId), folderId) }
     }
-    val openProtonDocsInWebView: StateFlow<Boolean> = protonDocsInWebViewFeatureFlag(userId)
-        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
     private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
     val driveLink: StateFlow<DriveLink.Folder?> = retryTrigger.transformLatest {
         emitAll(
@@ -330,8 +326,6 @@ class FilesViewModel @Inject constructor(
                         driveLink.onClick(
                             navigateToFolder = navigateToFiles,
                             navigateToPreview = navigateToPreview,
-                            openDocument = this@FilesViewModel::openDocument,
-                            openProtonDocsInWebView = openProtonDocsInWebView,
                         )
                     }
                 }

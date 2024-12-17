@@ -107,7 +107,6 @@ interface ConfigurationProvider {
     val minimumSharedVolumeEventFetchInterval: Duration get() = 10.minutes
     val minimumPublicAddressKeyFetchInterval: Duration get() = 10.minutes
     val minimumOrganizationFetchInterval: Duration get() = 1.days
-    val protonDocsWebViewFeatureFlag: Boolean get() = true
     val observeWorkManagerInterval: Duration get() = 1.minutes
     val cacheInternalStorageLimit: Bytes get() = 512.MiB
     val drivePublicShareEditMode: Boolean get() = false // implement entitlements PublicCollaboration

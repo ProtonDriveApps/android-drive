@@ -36,7 +36,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
-import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
@@ -44,7 +43,6 @@ import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.drivelink.shared.domain.usecase.GetPagedSharedByMeLinkIds
 import me.proton.core.drive.drivelink.shared.domain.usecase.SharedDriveLinks
 import me.proton.core.drive.drivelink.shared.presentation.entity.SharedItem
-import me.proton.core.drive.files.preview.presentation.component.ProtonDocsInWebViewFeatureFlag
 import me.proton.core.drive.share.crypto.domain.usecase.GetOrCreateMainShare
 import me.proton.core.drive.share.user.domain.usecase.GetAllSharedByMeIds
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -60,8 +58,6 @@ class SharedByMeViewModel @Inject constructor(
     configurationProvider: ConfigurationProvider,
     sharedDriveLinks: SharedDriveLinks,
     getMainShare: GetOrCreateMainShare,
-    protonDocsInWebViewFeatureFlag: ProtonDocsInWebViewFeatureFlag,
-    openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     private val getPagedSharedByMeLinkIds: GetPagedSharedByMeLinkIds,
     private val getAllSharedByMeIds: GetAllSharedByMeIds,
 ) : CommonSharedViewModel(
@@ -69,8 +65,6 @@ class SharedByMeViewModel @Inject constructor(
     appContext = appContext,
     configurationProvider = configurationProvider,
     sharedDriveLinks = sharedDriveLinks,
-    protonDocsInWebViewFeatureFlag = protonDocsInWebViewFeatureFlag,
-    openProtonDocumentInBrowser = openProtonDocumentInBrowser,
 ) {
     private val emptyStateImageResId: Int = getThemeDrawableId(
         light = BasePresentation.drawable.empty_shared_by_me_light,

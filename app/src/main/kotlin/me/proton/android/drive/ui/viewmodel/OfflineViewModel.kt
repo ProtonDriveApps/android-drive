@@ -73,7 +73,6 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgres
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetPagedOfflineDriveLinksList
 import me.proton.core.drive.files.presentation.state.FilesViewState
-import me.proton.core.drive.files.preview.presentation.component.ProtonDocsInWebViewFeatureFlag
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -105,15 +104,12 @@ class OfflineViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     private val broadcastMessages: BroadcastMessages,
-    protonDocsInWebViewFeatureFlag: ProtonDocsInWebViewFeatureFlag,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val shareId = savedStateHandle.get<String>(Screen.Files.SHARE_ID)
     private val folderId = savedStateHandle.get<String>(Screen.Files.FOLDER_ID)?.let { folderId ->
         shareId?.let { FolderId(ShareId(userId, shareId), folderId) }
     }
-    val openProtonDocsInWebView: StateFlow<Boolean> = protonDocsInWebViewFeatureFlag(userId)
-        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
     val driveLink: StateFlow<DriveLink.Folder?> = getDriveLink(userId, folderId, failOnDecryptionError = false)
         .map { result ->
             result
@@ -228,8 +224,6 @@ class OfflineViewModel @Inject constructor(
                                     fileId
                                 )
                             },
-                            openDocument = this@OfflineViewModel::openDocument,
-                            openProtonDocsInWebView = openProtonDocsInWebView,
                         )
                     }
                 }

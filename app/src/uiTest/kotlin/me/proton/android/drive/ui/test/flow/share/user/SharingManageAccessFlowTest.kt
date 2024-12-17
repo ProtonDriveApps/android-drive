@@ -27,6 +27,7 @@ import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_DYNAMIC_ENTITLEMENT_CONFIGURATION
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PUBLIC_SHARE_EDIT_MODE
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED
 import me.proton.core.test.quark.data.Plan
@@ -65,7 +66,12 @@ class SharingManageAccessFlowTest : BaseTest() {
     }
 
     @Test
-    @FeatureFlag(DRIVE_PUBLIC_SHARE_EDIT_MODE, ENABLED)
+    @FeatureFlags(
+        [
+            FeatureFlag(DRIVE_PUBLIC_SHARE_EDIT_MODE, ENABLED),
+            FeatureFlag(DRIVE_DYNAMIC_ENTITLEMENT_CONFIGURATION, ENABLED)
+        ]
+    )
     @PrepareUser(loginBefore = true, subscriptionData = TestSubscriptionData(Plan.DriveProfessional))
     @Scenario(forTag = "main", value = 2)
     fun shareFolderAsEditor() {

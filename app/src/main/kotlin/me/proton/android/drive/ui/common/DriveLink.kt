@@ -17,27 +17,15 @@
  */
 package me.proton.android.drive.ui.common
 
-import kotlinx.coroutines.flow.StateFlow
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.link.domain.extension.isProtonDocument
 
-suspend fun DriveLink.onClick(
+fun DriveLink.onClick(
     navigateToFolder: (FolderId, String?) -> Unit,
     navigateToPreview: (FileId) -> Unit,
-    openDocument: suspend (DriveLink.File) -> Unit,
-    openProtonDocsInWebView: StateFlow<Boolean>,
 ) = when (this) {
     is DriveLink.Folder -> navigateToFolder(id, if (isNameEncrypted) null else name)
-    is DriveLink.File -> when {
-        this.isProtonDocument ->
-            if (openProtonDocsInWebView.value) {
-                navigateToPreview(id)
-            } else {
-                openDocument(this)
-            }
-        else -> navigateToPreview(id)
-    }
+    is DriveLink.File -> navigateToPreview(id)
 }

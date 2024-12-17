@@ -83,16 +83,16 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
                 downloadState = downloadState,
             )
         } else {
-            if (finishedWorkers()) {
-                // download is finished but not all files are downloaded
-                if (runAttemptCount == 0) {
-                    CoreLogger.d(
-                        tag = logTag,
-                        message = "Download is finished but not all files are downloaded, re-checking once",
-                    )
-                    return Result.retry()
-                }
-                if (BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
+                if (finishedWorkers()) {
+                    // download is finished but not all files are downloaded
+                    if (runAttemptCount == 0) {
+                        CoreLogger.d(
+                            tag = logTag,
+                            message = "Download is finished but not all files are downloaded, re-checking once",
+                        )
+                        return Result.retry()
+                    }
                     val folderDriveLink = getDriveLink(folderId).toResult().getOrThrow()
                     CoreLogger.d(
                         tag = logTag,
@@ -105,20 +105,28 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
                         )
                     ).await()
                 } else {
-                    CoreLogger.e(
-                        tag = logTag,
-                        message = "Download is finished but not all files are downloaded",
-                    )
-                    return Result.failure()
+                    if (hasEnqueuedWorker()) {
+                        CoreLogger.d(
+                            tag = logTag,
+                            message = "Download is finished but not all files are downloaded, enqueued worker will re-check",
+                        )
+                        return Result.success()
+                    }
+                    return if (runAttemptCount < MAX_ATTEMPT_COUNT) {
+                        CoreLogger.d(
+                            tag = logTag,
+                            message = "Download is finished but not all files are downloaded, re-checking ($runAttemptCount)",
+                        )
+                        Result.retry()
+                    } else {
+                        CoreLogger.d(
+                            tag = logTag,
+                            message = "Download is finished but not all files are downloaded, too many attempts, giving up",
+                        )
+                        Result.failure()
+                    }
                 }
             } else {
-                if (hasEnqueuedWorker()) {
-                    CoreLogger.d(
-                        tag = logTag,
-                        message = "Download is finished but not all files are downloaded, enqueued worker will re-check",
-                    )
-                    return Result.success()
-                }
                 return if (runAttemptCount < MAX_ATTEMPT_COUNT) {
                     CoreLogger.d(
                         tag = logTag,

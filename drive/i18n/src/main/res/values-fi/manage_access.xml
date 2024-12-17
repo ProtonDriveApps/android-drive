@@ -24,5 +24,5 @@
   <string name="manage_access_link_description_public">Kuka tahansa linkin omaava</string>
   <string name="manage_access_link_description_password_protected">Kuka tahansa, jolla on linkki ja salasana</string>
   <string name="manage_access_link_default_permission">Voi tarkastella</string>
-  <string name="manage_access_link_editor_permission">Can edit</string>
+  <string name="manage_access_link_editor_permission">Voi muokata</string>
 </resources>

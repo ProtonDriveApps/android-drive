@@ -40,6 +40,7 @@ class MainInitializer : Initializer<Unit> {
         LoggerInitializer::class.java,
         UncaughtExceptionHandlerInitializer::class.java,
         FeatureFlagInitializer::class.java,
+        EntitlementInitializer::class.java,
         AccountStateHandlerInitializer::class.java,
         AccountRemovedHandlerInitializer::class.java,
         NotificationChannelInitializer::class.java,

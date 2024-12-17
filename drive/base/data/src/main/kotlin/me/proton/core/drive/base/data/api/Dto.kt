@@ -55,6 +55,7 @@ object Dto {
     const val EMAIL = "Email"
     const val EMAIL_DETAILS = "EmailDetails"
     const val ENC_SIGNATURE = "EncSignature"
+    const val ENTITLEMENTS = "Entitlements"
     const val ERROR = "Error"
     const val ERRORS = "Errors"
     const val EVENTS = "Events"

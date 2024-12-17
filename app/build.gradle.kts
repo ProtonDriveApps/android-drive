@@ -238,6 +238,10 @@ android {
     lint {
         abortOnError = true
     }
+
+    androidResources {
+        generateLocaleConfig = true
+    }
 }
 
 tasks.create("publishGeneratedReleaseNotes") {

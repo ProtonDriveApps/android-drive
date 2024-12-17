@@ -93,7 +93,6 @@ import me.proton.core.drive.drivelink.offline.domain.usecase.GetOfflineDriveLink
 import me.proton.core.drive.drivelink.sorting.domain.usecase.SortDriveLinks
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.files.preview.presentation.component.PreviewComposable
-import me.proton.core.drive.files.preview.presentation.component.ProtonDocsInWebViewFeatureFlag
 import me.proton.core.drive.files.preview.presentation.component.event.PreviewViewEvent
 import me.proton.core.drive.files.preview.presentation.component.state.ContentState
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewContentState
@@ -133,7 +132,6 @@ class PreviewViewModel @Inject constructor(
     private val getSessionForkProtonDocumentUriString: GetSessionForkProtonDocumentUriString,
     private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     private val broadcastMessages: BroadcastMessages,
-    private val protonDocsInWebViewFeatureFlag: ProtonDocsInWebViewFeatureFlag,
     getDecryptedDriveLinks: GetDecryptedDriveLinks,
     getDecryptedOfflineDriveLinks: GetDecryptedOfflineDriveLinks,
     getOfflineDriveLinksCount: GetOfflineDriveLinksCount,
@@ -392,40 +390,33 @@ class PreviewViewModel @Inject constructor(
             if (mimeType.toFileTypeCategory().toComposable() == PreviewComposable.Unknown) {
                 NO_PREVIEW_SUPPORTED
             } else if (isProtonDocument) {
-                combine(
-                    trigger,
-                    protonDocsInWebViewFeatureFlag(userId),
-                ) { trigger, showProtonDocsInWebView ->
-                    if (showProtonDocsInWebView) {
-                        getProtonDocumentUriString(this@getContentStateFlow, trigger.retry)
-                            .fold(
-                                onSuccess = { uriString ->
-                                    ContentState.Available(uriString).also {
-                                        protonDocumentUriStringCache[id] = uriString
-                                    }
-                                },
-                                onFailure = { error ->
-                                    if (error.isRetryable) {
-                                        ContentState.Error.Retryable(
-                                            messageResId = I18N.string.proton_docs_load_error,
-                                            actionResId = I18N.string.common_retry,
-                                        ) {
-                                            retry(verifySignature = true)
-                                        }
-                                    } else {
-                                        ContentState.Error.NonRetryable(
-                                            message = error.getDefaultMessage(
-                                                context = appContext,
-                                                useExceptionMessage = configurationProvider.useExceptionMessage,
-                                            ),
-                                            messageResId = 0,
-                                        )
-                                    }
+                trigger.map {
+                    getProtonDocumentUriString(this@getContentStateFlow, it.retry)
+                        .fold(
+                            onSuccess = { uriString ->
+                                ContentState.Available(uriString).also {
+                                    protonDocumentUriStringCache[id] = uriString
                                 }
-                            )
-                    } else {
-                        ContentState.Available(Uri.EMPTY)
-                    }
+                            },
+                            onFailure = { error ->
+                                if (error.isRetryable) {
+                                    ContentState.Error.Retryable(
+                                        messageResId = I18N.string.proton_docs_load_error,
+                                        actionResId = I18N.string.common_retry,
+                                    ) {
+                                        retry(verifySignature = true)
+                                    }
+                                } else {
+                                    ContentState.Error.NonRetryable(
+                                        message = error.getDefaultMessage(
+                                            context = appContext,
+                                            useExceptionMessage = configurationProvider.useExceptionMessage,
+                                        ),
+                                        messageResId = 0,
+                                    )
+                                }
+                            }
+                        )
                 }
             } else {
                 trigger.filter { trigger -> trigger.fileId == id }.flatMapLatest { trigger ->

@@ -19,12 +19,14 @@
 package me.proton.core.drive.test.api
 
 import me.proton.core.drive.base.domain.api.ProtonApiCode
+import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.db.test.findRootId
 import me.proton.core.drive.db.test.findShareType
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.data.api.entity.LinkDto
 import me.proton.core.drive.link.data.api.request.GetLinksRequest
 import me.proton.core.drive.link.data.api.response.GetLinksResponse
+import me.proton.core.drive.share.data.api.MembershipDto
 import me.proton.core.drive.share.data.api.ShareDto
 import me.proton.core.drive.share.data.api.request.ShareAccessWithNodeRequest
 import me.proton.core.drive.share.data.api.response.GetShareBootstrapResponse
@@ -56,6 +58,7 @@ fun MockWebServer.getShareBootstrap(addressId: String = "address-id") = routing 
         jsonResponse {
             val shareId = requireNotNull(parameters["enc_shareID"])
             val shareType = findShareType(shareId)
+            val creator = "user-id@proton.test"
             GetShareBootstrapResponse(
                 code = ProtonApiCode.SUCCESS,
                 shareId = shareId,
@@ -63,7 +66,7 @@ fun MockWebServer.getShareBootstrap(addressId: String = "address-id") = routing 
                 state = 1,
                 linkId = findRootId(shareId).id,
                 volumeId = volumeId.id,
-                creator = "",
+                creator = creator,
                 flags = 0,
                 locked = false,
                 key = "",
@@ -71,7 +74,17 @@ fun MockWebServer.getShareBootstrap(addressId: String = "address-id") = routing 
                 passphraseSignature = "",
                 addressId = addressId,
                 creationTime = null,
-                memberships = emptyList(),
+                memberships = listOf(MembershipDto(
+                    memberId = "member-id-$shareId",
+                    shareId = shareId,
+                    inviter = creator,
+                    creationTime = 0L,
+                    permissions = Permissions.viewer.value,
+                    addressId = addressId,
+                    keyPacket = "membership-key-packet",
+                    keyPacketSignature = null,
+                    sessionKeySignature = null,
+                )),
             )
         }
     }

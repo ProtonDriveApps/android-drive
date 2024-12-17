@@ -22,7 +22,7 @@ object Config {
     const val minSdk = 26
     const val targetSdk = 34
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    const val versionName = "2.12.0"
+    const val versionName = "2.13.0"
     const val archivesBaseName = "ProtonDrive-$versionName"
     val supportedResourceConfigurations = listOf(
         "b+es+419",
@@ -54,21 +54,40 @@ object Config {
         "uk",
         "zh-rTW",
     )
-    val incubatingResourceConfigurations = listOf<String>(
-        "b+es+419",
-        "cs",
-        "da",
-        "es-rES",
-        "id",
-        "ja",
-        "ko",
+    val incubatingResourceConfigurations = listOf<String>().checkSupported()
+    val resourceConfigurations = listOf(
+        "en",
+        // Tier-1
+        "de",
+        "fr",
         "nl",
+        // Tier-2
+        "es-rES",
+        "b+es+419",
+        "it",
         "pl",
         "pt-rBR",
+        "ru",
+        "tr",
+        // Tier-3
+        "be",
+        "ca",
+        "cs",
+        "da",
+        "fi",
+        "id",
+        "ja",
+        "ka",
+        "ko",
         "ro",
+        "sk",
+        "sl",
         "sv-rSE",
+        "uk",
+        "zh-rTW",
+        // Tier-4
+        "nb-rNO",
     ).checkSupported()
-    val resourceConfigurations = listOf("de", "en", "fr", "it", "ru", "tr").checkSupported()
 
     private fun List<String>.checkSupported(): List<String> =
         onEach { language -> check(language in supportedResourceConfigurations) }

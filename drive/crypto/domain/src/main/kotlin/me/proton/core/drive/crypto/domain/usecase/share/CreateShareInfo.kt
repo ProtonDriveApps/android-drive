@@ -25,21 +25,25 @@ import me.proton.core.drive.key.domain.extension.nodePassphrase
 import me.proton.core.drive.key.domain.extension.nodePassphraseSignature
 import me.proton.core.drive.key.domain.usecase.GenerateShareKey
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.share.domain.entity.ShareInfo
 import me.proton.core.drive.share.domain.usecase.GetAddressId
+import me.proton.core.drive.share.domain.usecase.GetShare
 import javax.inject.Inject
 
 class CreateShareInfo @Inject constructor(
     private val getAddressId: GetAddressId,
     private val generateShareKey: GenerateShareKey,
     private val reencryptKeyPacket: ReencryptKeyPacket,
+    private val getShare: GetShare,
     private val getLink: GetLink,
 ) {
     suspend operator fun invoke(linkId: LinkId, name: String): Result<ShareInfo> = coRunCatching {
         val userId = linkId.shareId.userId
         val link = getLink(linkId).toResult().getOrThrow()
-        val addressId = getAddressId(linkId.shareId).getOrThrow()
+        val volumeId = getShare(linkId.shareId).toResult().getOrThrow().volumeId
+        val addressId = getAddressId(linkId.userId, volumeId).getOrThrow()
         val shareKey = generateShareKey(userId, addressId, linkId).getOrThrow()
         ShareInfo(
             addressId = addressId,

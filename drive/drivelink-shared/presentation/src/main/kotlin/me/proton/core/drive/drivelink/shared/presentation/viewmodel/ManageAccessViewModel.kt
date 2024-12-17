@@ -45,7 +45,6 @@ import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.combine
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
-import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.SHARE
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
@@ -67,6 +66,9 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.LoadingViewS
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ManageAccessViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
+import me.proton.core.drive.entitlement.domain.entity.Entitlement
+import me.proton.core.drive.entitlement.domain.extension.on
+import me.proton.core.drive.entitlement.domain.usecase.GetEntitlement
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
@@ -83,9 +85,6 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.usecase.GetShareUsers
-import me.proton.core.user.domain.entity.User
-import me.proton.core.user.domain.extension.hasSubscription
-import me.proton.core.user.domain.usecase.GetUser
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
@@ -101,7 +100,7 @@ class ManageAccessViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val copyToClipboard: CopyToClipboard,
     getFeatureFlagFlow: GetFeatureFlagFlow,
-    getUser: GetUser,
+    getEntitlement: GetEntitlement,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
     @ApplicationContext private val appContext: Context,
@@ -178,9 +177,7 @@ class ManageAccessViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, LoadingViewState.Initial)
 
-    private val user: Flow<User> = flowOf {
-        getUser(userId, refresh = false)
-    }
+    private val entitlement = getEntitlement(userId, Entitlement.Key.PublicCollaboration).mapSuccessValueOrNull()
 
     private val shareUsers = getShareUsers(linkId).transformLatest { dataResult ->
         dataResult.onSuccess { list ->
@@ -226,12 +223,13 @@ class ManageAccessViewModel @Inject constructor(
         driveLink.filterNotNull(),
         sharedDriveLink.filterSuccessOrError().mapSuccessValueOrNull(),
         sharedLoadingViewState,
-        user,
+        entitlement,
         shareUsers,
         killSwitch,
         drivePublicShareEditModeFeatureFlag,
         drivePublicShareEditModeKillSwitch,
-    ) { driveLink, sharedDriveLink, sharedLoadingViewState, user, shareUsers, killSwitch, drivePublicShareEditModeFeatureFlag, drivePublicShareEditModeKillSwitch ->
+    ) { driveLink, sharedDriveLink, sharedLoadingViewState, entitlement, shareUsers,
+        killSwitch, drivePublicShareEditModeFeatureFlag, drivePublicShareEditModeKillSwitch ->
         val publicUrl = sharedDriveLink?.publicUrl?.value
         ManageAccessViewState(
             title = appContext.getString(I18N.string.title_manage_access),
@@ -251,7 +249,8 @@ class ManageAccessViewModel @Inject constructor(
             isLinkNameEncrypted = driveLink.isNameEncrypted,
             canEditMembers = (driveLink.sharePermissions == null || driveLink.sharePermissions?.isAdmin == true)
                     && killSwitch.state != ENABLED,
-            canEditLink = configurationProvider.drivePublicShareEditMode && drivePublicShareEditModeKillSwitch.off && drivePublicShareEditModeFeatureFlag.on,
+            canEditLink = drivePublicShareEditModeKillSwitch.off
+                    && drivePublicShareEditModeFeatureFlag.on && entitlement.on,
             loadingViewState = sharedLoadingViewState,
             shareUsers = shareUsers.toViewState()
         )

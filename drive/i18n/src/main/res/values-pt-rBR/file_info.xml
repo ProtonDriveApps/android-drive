@@ -27,5 +27,5 @@
   <string name="file_info_title_file">Detalhes do arquivo</string>
   <string name="file_info_captured_on">Capturado em</string>
   <string name="file_info_permissions">Permissões</string>
-  <string name="file_info_uploaded_by_anonymous">Anonymous</string>
+  <string name="file_info_uploaded_by_anonymous">Anônimo</string>
 </resources>

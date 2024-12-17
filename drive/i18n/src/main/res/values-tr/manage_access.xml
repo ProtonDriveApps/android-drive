@@ -24,5 +24,5 @@
   <string name="manage_access_link_description_public">Bu bağlantıyı bilen herkes</string>
   <string name="manage_access_link_description_password_protected">Bağlantı ve parolayı bilen herkes</string>
   <string name="manage_access_link_default_permission">Görüntüleyebilir</string>
-  <string name="manage_access_link_editor_permission">Can edit</string>
+  <string name="manage_access_link_editor_permission">Düzenleyebilir</string>
 </resources>

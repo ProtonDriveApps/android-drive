@@ -20,12 +20,12 @@
   <string name="file_info_uploaded_by_entry">アップロードしたユーザー</string>
   <string name="file_info_location_entry">場所</string>
   <string name="file_info_last_modified_entry">修正済み</string>
-  <string name="file_info_number_of_accesses_entry">ダウンロード数</string>
+  <string name="file_info_number_of_accesses_entry"># ダウンロード数</string>
   <string name="file_info_share_url_expiration_time">リンクの有効期限</string>
   <string name="file_info_share_url_no_expiration_time">なし</string>
   <string name="file_info_title_folder">フォルダ詳細</string>
   <string name="file_info_title_file">ファイル詳細</string>
   <string name="file_info_captured_on">撮影日</string>
   <string name="file_info_permissions">権限</string>
-  <string name="file_info_uploaded_by_anonymous">Anonymous</string>
+  <string name="file_info_uploaded_by_anonymous">匿名</string>
 </resources>

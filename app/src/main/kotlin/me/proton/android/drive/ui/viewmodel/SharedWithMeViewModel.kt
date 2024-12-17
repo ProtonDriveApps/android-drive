@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
-import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.state.ListContentState
@@ -45,7 +44,6 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
-import me.proton.core.drive.files.preview.presentation.component.ProtonDocsInWebViewFeatureFlag
 import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 import me.proton.core.drive.share.user.domain.usecase.GetAllSharedWithMeIds
 import javax.inject.Inject
@@ -60,16 +58,12 @@ class SharedWithMeViewModel @Inject constructor(
     sharedDriveLinks: SharedDriveLinks,
     getPagedSharedWithMeLinkIds: GetPagedSharedWithMeLinkIds,
     getFeatureFlagFlow: GetFeatureFlagFlow,
-    protonDocsInWebViewFeatureFlag: ProtonDocsInWebViewFeatureFlag,
-    openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     private val getAllSharedWithMeIds: GetAllSharedWithMeIds,
 ) : CommonSharedViewModel(
     savedStateHandle = savedStateHandle,
     appContext = appContext,
     configurationProvider = configurationProvider,
     sharedDriveLinks = sharedDriveLinks,
-    protonDocsInWebViewFeatureFlag = protonDocsInWebViewFeatureFlag,
-    openProtonDocumentInBrowser = openProtonDocumentInBrowser,
 ) {
     private val killSwitch = getFeatureFlagFlow(driveSharingDisabled(userId))
         .stateIn(

@@ -24,5 +24,5 @@
   <string name="manage_access_link_description_public">Ktokoľvek s týmto odkazom</string>
   <string name="manage_access_link_description_password_protected">Ktokoľvek s odkazom a heslom</string>
   <string name="manage_access_link_default_permission">Môže zobraziť</string>
-  <string name="manage_access_link_editor_permission">Can edit</string>
+  <string name="manage_access_link_editor_permission">Môže upravovať</string>
 </resources>

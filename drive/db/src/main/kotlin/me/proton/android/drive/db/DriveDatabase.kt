@@ -68,6 +68,8 @@ import me.proton.core.drive.drivelink.selection.data.db.DriveLinkSelectionDataba
 import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
 import me.proton.core.drive.drivelink.shared.data.db.entity.SharedRemoteKeyEntity
 import me.proton.core.drive.drivelink.trash.data.db.DriveLinkTrashDatabase
+import me.proton.core.drive.entitlement.data.db.EntitlementDatabase
+import me.proton.core.drive.entitlement.data.db.entity.EntitlementEntity
 import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
 import me.proton.core.drive.feature.flag.data.db.entity.DriveFeatureFlagRefreshEntity
 import me.proton.core.drive.folder.data.db.FolderDatabase
@@ -203,6 +205,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         PublicAddressKeyEntity::class,
         HumanVerificationEntity::class,
         UserSettingsEntity::class,
+        EntitlementEntity::class,
         OrganizationEntity::class,
         OrganizationKeysEntity::class,
         EventMetadataEntity::class,
@@ -349,6 +352,7 @@ abstract class DriveDatabase :
     HumanVerificationDatabase,
     PublicAddressDatabase,
     UserSettingsDatabase,
+    EntitlementDatabase,
     LabelDatabase,
     OrganizationDatabase,
     FeatureFlagDatabase,
@@ -400,7 +404,7 @@ abstract class DriveDatabase :
     DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 72
+        const val VERSION = 73
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -474,6 +478,7 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_69_70,
             DriveDatabaseMigrations.MIGRATION_70_71,
             DriveDatabaseMigrations.MIGRATION_71_72,
+            DriveDatabaseMigrations.MIGRATION_72_73,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

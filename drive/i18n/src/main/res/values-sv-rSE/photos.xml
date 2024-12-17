@@ -74,13 +74,13 @@
   <string name="photos_error_missing_permissions_description">För kontinuerlig och automatisk säkerhetskopiering, tillåt %1$s åtkomst till alla foton i inställningarna.</string>
   <string name="photos_error_waiting_connectivity">Ingen Internetanslutning</string>
   <string name="photos_error_waiting_wifi_connectivity">Väntar på Wi-Fi</string>
-  <string name="photos_error_waiting_wifi_connectivity_action">Använd mobil</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Använd mobilt nätverk</string>
   <string name="photos_error_local_storage">Enhetens lagringsutrymme fullt</string>
   <string name="photos_error_local_storage_description">För att fortsätta säkerhetskopieringen måste du frigöra lagringsutrymme på din enhet.</string>
   <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">För konsekventa säkerhetskopieringar i bakgrunden, justera batteriinställningarna eller öppna appen ofta.</string>
   <string name="photos_error_background_restrictions_action">Inställningar</string>
-  <string name="photos_empty_title">Inga säkerhetskopieringar ännu</string>
+  <string name="photos_empty_title">Inga säkerhetskopior än</string>
   <string name="photos_empty_description">Så fort du har foton eller video på din enhet kommer de att visas här.</string>
   <string name="photos_backup_title">Säkerhetskopiera foton</string>
   <string name="photos_backup_option_mobile_data">Använd mobildata för att säkerhetskopiera foton</string>

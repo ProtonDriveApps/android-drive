@@ -82,6 +82,7 @@ driveModule(
     api(project(":drive:drivelink-selection:data"))
     api(project(":drive:drivelink-shared:data"))
     api(project(":drive:drivelink-trash:data"))
+    api(project(":drive:entitlement:data"))
     api(project(":drive:feature-flag:data"))
     api(project(":drive:folder:data"))
     api(project(":drive:key:data"))

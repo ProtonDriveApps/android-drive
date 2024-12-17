@@ -67,6 +67,7 @@ dependencies {
     api(project(":drive:crypto:data"))
     api(project(":drive:crypto-base:data"))
     api(project(":drive:event-manager:data"))
+    api(project(":drive:entitlement:data"))
     api(project(":drive:user:data"))
     api(project(":drive:trash:data"))
     api(project(":drive:db-test"))

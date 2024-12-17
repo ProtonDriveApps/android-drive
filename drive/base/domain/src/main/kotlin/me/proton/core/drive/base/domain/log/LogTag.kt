@@ -45,6 +45,7 @@ object LogTag {
     const val TRASH = "$DEFAULT.trash"
     const val THUMBNAIL = "$DEFAULT.thumbnail"
     const val FEATURE_FLAG = "$DEFAULT.feature.flag"
+    const val ENTITLEMENT = "$DEFAULT.entitlement"
     const val LOG = "$DEFAULT.log"
     const val WEBVIEW = "$DEFAULT.webview"
     const val PROTON_DOCS = "$WEBVIEW.proton.docs"

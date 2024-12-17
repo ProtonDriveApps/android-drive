@@ -28,13 +28,13 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         const val DRIVE_SHARING_DISABLED = "DriveSharingDisabled"
         const val DRIVE_SHARING_EDITING_DISABLED = "DriveSharingEditingDisabled"
         const val DRIVE_SHARING_EXTERNAL_INVITATIONS_DISABLED = "DriveSharingExternalInvitationsDisabled"
-        const val DRIVE_DOCS_WEBVIEW = "DriveDocsWebView"
         const val DRIVE_DOCS_DISABLED = "DriveDocsDisabled"
         const val DRIVE_ANDROID_NEW_ONBOARDING = "DriveAndroidNewOnboarding"
         const val DRIVE_ANDROID_WHATS_NEW = "DriveAndroidWhatsNew"
         const val DRIVE_ANDROID_USER_LOG_DISABLED = "DriveAndroidUserLogDisabled"
         const val DRIVE_PUBLIC_SHARE_EDIT_MODE = "DrivePublicShareEditMode"
         const val DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED = "DrivePublicShareEditModeDisabled"
+        const val DRIVE_DYNAMIC_ENTITLEMENT_CONFIGURATION = "DriveDynamicEntitlementConfiguration"
 
         internal var developments : List<String> = listOf(
         )
@@ -44,12 +44,12 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         fun driveSharingDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_DISABLED)
         fun driveSharingEditingDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_EDITING_DISABLED)
         fun driveSharingExternalInvitationsDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_SHARING_EXTERNAL_INVITATIONS_DISABLED)
-        fun driveDocsWebView(userId: UserId) = FeatureFlagId(userId, DRIVE_DOCS_WEBVIEW)
         fun driveDocsDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_DOCS_DISABLED)
         fun driveAndroidNewOnboarding(userId: UserId) = FeatureFlagId(userId, DRIVE_ANDROID_NEW_ONBOARDING)
         fun driveAndroidWhatsNew(userId: UserId) = FeatureFlagId(userId, DRIVE_ANDROID_WHATS_NEW)
         fun driveAndroidUserLogDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_ANDROID_USER_LOG_DISABLED)
         fun drivePublicShareEditMode(userId: UserId) = FeatureFlagId(userId, DRIVE_PUBLIC_SHARE_EDIT_MODE)
         fun drivePublicShareEditModeDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED)
+        fun driveDynamicEntitlementConfiguration(userId: UserId) = FeatureFlagId(userId, DRIVE_DYNAMIC_ENTITLEMENT_CONFIGURATION)
     }
 }

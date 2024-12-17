@@ -18,7 +18,6 @@
 package me.proton.core.drive.drivelink.crypto.domain.usecase
 
 import me.proton.core.crypto.common.pgp.DecryptedFile
-import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
@@ -93,9 +92,22 @@ class DecryptLinkContent @Inject constructor(
             input = encryptedFileBlocks.map { block -> block.encSignature to File(block.url) },
             output = encryptedFileBlocks.map { block -> File("${block.url}.${UUID.randomUUID()}") },
         ).map { decryptedBlocks ->
-            val verificationFailed = decryptedBlocks.any { decryptedFile -> decryptedFile.status.failed }
-            if ((verificationFailed || !manifestSignatureVerified) && checkSignature) {
-                throw VerificationException("Verification of blocks failed")
+            if (checkSignature) {
+                if (decryptedBlocks.any { decryptedFile -> decryptedFile.status.failed }) {
+                    val statusMessage = decryptedBlocks.groupBy { it.status }
+                        .map { (key, value) -> "$key: ${value.count()}" }
+                    throw VerificationException("Verification of blocks failed $statusMessage")
+                }
+                if (!manifestSignatureVerified) {
+                    val signatureAddressMessage = if (signatureAddress.isEmpty()) {
+                        "no email"
+                    } else {
+                        "with email"
+                    }
+                    throw VerificationException(
+                        "Verification of manifest signature for blocks failed ($signatureAddressMessage)"
+                    )
+                }
             }
             decryptedBlocks.mergeBlocks(targetFile)
         }.getOrThrow()

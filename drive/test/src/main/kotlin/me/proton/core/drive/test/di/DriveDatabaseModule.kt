@@ -42,6 +42,7 @@ import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
 import me.proton.core.drive.drivelink.selection.data.db.DriveLinkSelectionDatabase
 import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
 import me.proton.core.drive.drivelink.trash.data.db.DriveLinkTrashDatabase
+import me.proton.core.drive.entitlement.data.db.EntitlementDatabase
 import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
 import me.proton.core.drive.folder.data.db.FolderDatabase
 import me.proton.core.drive.key.data.db.PublicAddressKeyDatabase
@@ -167,6 +168,9 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideUserSettingsDatabase(db: DriveDatabase): UserSettingsDatabase
+
+    @Binds
+    abstract fun provideEntitlementDatabase(db: DriveDatabase): EntitlementDatabase
 
     @Binds
     abstract fun provideOrganizationDatabase(db: DriveDatabase): OrganizationDatabase

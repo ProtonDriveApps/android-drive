@@ -182,8 +182,6 @@ class SyncedFoldersViewModel @Inject constructor(
                         driveLink.onClick(
                             navigateToFolder = navigateToFiles,
                             navigateToPreview = { error("Preview is not supported here") },
-                            openDocument = { _ -> error("Preview is not supported here") },
-                            openProtonDocsInWebView = MutableStateFlow(false),
                         )
                     }
                 }
