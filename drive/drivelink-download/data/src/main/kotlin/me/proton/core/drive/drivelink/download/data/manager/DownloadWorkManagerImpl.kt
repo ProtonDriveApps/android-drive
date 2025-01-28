@@ -26,8 +26,12 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.getLong
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.log.LogTag.DOWNLOAD
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.data.extension.isNotDownloading
 import me.proton.core.drive.drivelink.download.data.extension.logTag
@@ -101,6 +105,8 @@ class DownloadWorkManagerImpl @Inject constructor(
                                 }
                         )
                     }
+                }.onFailure { error ->
+                    error.log(DOWNLOAD, "Cannot get active revision for ${driveLink.id.id.logId()}", WARNING)
                 }
             }
         }

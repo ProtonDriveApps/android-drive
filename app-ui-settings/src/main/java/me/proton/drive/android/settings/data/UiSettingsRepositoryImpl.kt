@@ -34,13 +34,17 @@ import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.entity.UiSettings
 import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UiSettingsRepositoryImpl @Inject constructor(
     private val database: AppUiSettingsDatabase,
     private val dataStore: AppUiSettingsDataStore,
 ) : UiSettingsRepository {
 
     private val dao = database.uiSettingsDao
+
+    private var overlayShown = false
 
     override fun getUiSettingsFlow(userId: UserId): Flow<UiSettings> =
         dao.getFlow(userId)
@@ -72,6 +76,7 @@ class UiSettingsRepositoryImpl @Inject constructor(
 
     override suspend fun updateOnboardingShown(timestamp: TimestampS) {
         dataStore.onboardingShown = timestamp.value
+        overlayShown = true
     }
 
     override suspend fun hasShownWhatsNew(key: WhatsNewKey): Boolean =
@@ -79,7 +84,18 @@ class UiSettingsRepositoryImpl @Inject constructor(
 
     override suspend fun updateWhatsNewShown(key: WhatsNewKey, timestamp: TimestampS) {
         dataStore.WhatsNew(key.name).shown = timestamp.value
+        overlayShown = true
     }
+
+    override suspend fun updateRatingBoosterShown(timestamp: TimestampS) {
+        dataStore.ratingBooster = timestamp.value
+        overlayShown = true
+    }
+
+    override suspend fun hasShownRatingBooster(): Boolean =
+        dataStore.ratingBooster > 0L
+
+    override suspend fun hasShownOverlay(): Boolean = overlayShown
 
     private suspend inline fun updateOrInsert(
         userId: UserId,

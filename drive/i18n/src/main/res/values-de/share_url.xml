@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Als Link teilen</string>
   <string name="shared_with_me_title">Mit mir geteilt</string>
   <string name="shared_by_me_title">Von mir geteilt</string>
-  <string name="shared_with_me_empty_description">Dateien und Ordner, die du mit anderen teilst, werden hier angezeigt.</string>
+  <string name="shared_empty_title">Noch nichts geteilt</string>
+  <string name="shared_with_me_empty_description">Ordner und Dateien, die mit dir geteilt sind, werden hier angezeigt</string>
   <string name="shared_by_me_empty_description">Teile deine Dateien und Ordner sicher mit Ende-zu-Ende-Verschlüsselung</string>
 </resources>

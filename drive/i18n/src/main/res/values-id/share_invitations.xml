@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the link name
+        Example:
+            "Share Document"
+    -->
+  <string name="title_share_via_invitations">Bagikan %1$s</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons added"
+    -->
+  <plurals name="share_via_invitations_person_added">
+    <item quantity="other">%1$d anggota ditambahkan</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons cannot be invited"
+    -->
+  <plurals name="share_via_invitations_person_added_error">
+    <item quantity="other">%1$d pengguna tidak dapat diundang</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "Sharing with 2 persons"
+    -->
+  <plurals name="share_via_invitations_sharing_with">
+    <item quantity="other">Dibagikan dengan %1$d orang</item>
+  </plurals>
+  <string name="common_permission_owner">Pemilik</string>
+  <string name="common_permission_admin">Admin</string>
+  <string name="common_permission_editor">Penyunting</string>
+  <string name="common_permission_viewer">Pengamat</string>
+  <string name="common_permission_unknown">Tidak diketahui</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Pending)"
+    -->
+  <string name="share_via_invitations_external_invitation_pending">%1$s (Menunggu jawaban)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Diterima)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Tidak diketahui)</string>
+  <string name="share_via_invitations_add_people_hint">Tambah pengguna</string>
+  <string name="share_via_invitations_copy_invite_link_action">Salin tautan undangan</string>
+  <string name="share_via_invitations_remove_access_action">Hapus akses</string>
+  <string name="share_via_invitations_stop_sharing_description">Hapus tautan dan anulir akses bagi semua</string>
+  <string name="share_via_invitations_resend_invite_action">Kirim ulang undangan</string>
+  <string name="share_via_invitations_resend_invite_success">Undangan dikirim ulang</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="other">%1$d anggota</item>
+  </plurals>
+  <string name="share_via_invitations_message_placeholder">Tambahkan pesan</string>
+  <string name="share_via_invitations_send_message_and_name_label">Sertakan pesan dan nama berkas dalam email undangan</string>
+</resources>

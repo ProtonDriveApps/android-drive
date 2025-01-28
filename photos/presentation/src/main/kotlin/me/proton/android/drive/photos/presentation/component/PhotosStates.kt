@@ -23,23 +23,24 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
-import androidx.compose.foundation.background
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -58,6 +59,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallNorm
 import me.proton.core.compose.theme.defaultSmallStrongUnspecified
 import me.proton.core.compose.theme.defaultSmallUnspecified
+import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
@@ -66,7 +68,7 @@ fun BackupCompletedState(
     extraLabel: String?,
     modifier: Modifier = Modifier,
 ) {
-    BackupState(
+    BackupStateCard(
         modifier = modifier,
         icon = CorePresentation.drawable.ic_proton_checkmark_circle,
         tint = ProtonTheme.colors.notificationSuccess,
@@ -80,13 +82,13 @@ fun BackupUncompletedState(
     onResolve: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BackupState(
+    BackupStateCard(
         modifier = modifier,
         icon = CorePresentation.drawable.ic_proton_exclamation_circle,
         tint = ProtonTheme.colors.notificationWarning,
         text = I18N.string.photos_backup_state_uncompleted,
         action = I18N.string.photos_backup_state_uncompleted_action,
-        onAction = onResolve
+        onClick = onResolve
     )
 }
 
@@ -187,7 +189,7 @@ private fun BackupInProgressState(
                     targetState = encrypting,
                     modifier = Modifier.size(ProtonDimens.DefaultIconSize),
                     transitionSpec = {
-                        fadeIn(animationSpec = tween(220, delayMillis = 90)) with
+                        fadeIn(animationSpec = tween(220, delayMillis = 90)) togetherWith
                                 fadeOut(animationSpec = tween(90))
                     }
                 ) { encrypting ->
@@ -209,7 +211,7 @@ private fun BackupInProgressState(
                     targetState = encrypting,
                     modifier = Modifier.weight(1F),
                     transitionSpec = {
-                        fadeIn(animationSpec = tween(220, delayMillis = 90)) with
+                        fadeIn(animationSpec = tween(220, delayMillis = 90)) togetherWith
                                 fadeOut(animationSpec = tween(90))
                     },
                 ) { encrypting ->
@@ -253,23 +255,31 @@ fun MissingPermissionsState(
     modifier: Modifier = Modifier,
     onPermissions: () -> Unit,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing)
+    BackupCard(
+        modifier = modifier,
+        onClick = onPermissions,
     ) {
-        BackupState(
-            modifier = modifier,
-            icon = CorePresentation.drawable.ic_proton_exclamation_circle,
-            tint = ProtonTheme.colors.notificationError,
-            text = I18N.string.photos_error_missing_permissions,
-            action = I18N.string.photos_permission_rational_confirm_action,
-            onAction = onPermissions,
-        )
-        ErrorDetails(
-            stringResource(
-                I18N.string.photos_error_missing_permissions_description,
-                stringResource(id = I18N.string.app_name),
+        Column {
+            BackupState(
+                icon = CorePresentation.drawable.ic_proton_exclamation_circle,
+                tint = ProtonTheme.colors.notificationError,
+                text = I18N.string.photos_error_missing_permissions,
             )
-        )
+            Divider(
+                color = ProtonTheme.colors.separatorNorm,
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+            )
+            ErrorDetails(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(
+                    I18N.string.photos_error_missing_permissions_description,
+                    stringResource(id = I18N.string.app_name),
+                ),
+                action = I18N.string.photos_permission_rational_confirm_action,
+            )
+        }
     }
 }
 
@@ -278,73 +288,60 @@ fun LocalStorageState(
     modifier: Modifier = Modifier,
     onRetry: () -> Unit,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing)
+    BackupCard(
+        modifier = modifier,
+        onClick = onRetry,
     ) {
-        BackupState(
-            modifier = modifier,
-            icon = CorePresentation.drawable.ic_proton_exclamation_circle_filled,
-            tint = ProtonTheme.colors.notificationError,
-            text = I18N.string.photos_error_local_storage,
-            action = I18N.string.photos_error_local_storage_action,
-            onAction = onRetry,
-        )
-        ErrorDetails(
-            stringResource(
-                I18N.string.photos_error_local_storage_description,
-                stringResource(id = I18N.string.app_name),
+        Column {
+            BackupStateCard(
+                modifier = Modifier,
+                icon = CorePresentation.drawable.ic_proton_exclamation_circle_filled,
+                tint = ProtonTheme.colors.notificationError,
+                text = I18N.string.photos_error_local_storage,
             )
-        )
+            Divider(
+                color = ProtonTheme.colors.separatorNorm,
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+            )
+            ErrorDetails(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(
+                    I18N.string.photos_error_local_storage_description,
+                    stringResource(id = I18N.string.app_name),
+                ),
+                action = I18N.string.photos_error_local_storage_action,
+            )
+        }
     }
 }
 
 @Composable
-private fun ErrorDetails(text: String) {
-    Card(
-        backgroundColor = ProtonTheme.colors.backgroundSecondary,
-        contentColor = ProtonTheme.colors.textNorm,
-        elevation = 0.dp,
+private fun ErrorDetails(
+    text: String,
+    action: Int,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+) {
+    Column(
+        modifier = modifier
+            .conditional(onClick != null) {
+                clickable { onClick?.invoke() }
+            }
+            .padding(ProtonDimens.ListItemTextStartPadding),
+        verticalArrangement = Arrangement.spacedBy(ProtonDimens.DefaultSpacing)
     ) {
         Text(
-            modifier = Modifier
-                .defaultMinSize(minHeight = ProtonDimens.ListItemHeight)
-                .padding(
-                    horizontal = ProtonDimens.ListItemTextStartPadding,
-                    vertical = ProtonDimens.SmallSpacing,
-                ),
             text = text,
             style = ProtonTheme.typography.defaultSmallNorm,
         )
-    }
-}
-
-@Composable
-private fun ErrorDetails(text: String, onDismiss: () -> Unit) {
-    Card(
-        backgroundColor = ProtonTheme.colors.backgroundSecondary,
-        contentColor = ProtonTheme.colors.textNorm,
-        elevation = 0.dp,
-    ) {
-        Row {
-            Text(
-                modifier = Modifier
-                    .defaultMinSize(minHeight = ProtonDimens.ListItemHeight)
-                    .weight(1F)
-                    .padding(
-                        start = ProtonDimens.ListItemTextStartPadding,
-                        top = ProtonDimens.SmallSpacing,
-                        bottom = ProtonDimens.SmallSpacing,
-                    ),
-                text = text,
-                style = ProtonTheme.typography.defaultSmallNorm,
-            )
-            IconButton(onClick = { onDismiss() }) {
-                Icon(
-                    painter = painterResource(id = CorePresentation.drawable.ic_proton_cross),
-                    contentDescription = stringResource(id = I18N.string.common_close_action)
-                )
-            }
-        }
+        Text(
+            modifier = Modifier.align(Alignment.End),
+            text = stringResource(id = action),
+            style = ProtonTheme.typography.defaultSmallStrongUnspecified,
+            color = ProtonTheme.colors.interactionNorm,
+        )
     }
 }
 
@@ -353,13 +350,13 @@ fun BackupDisableState(
     modifier: Modifier = Modifier,
     onEnableBackup: () -> Unit,
 ) {
-    BackupState(
+    BackupStateCard(
         modifier = modifier,
         icon = R.drawable.ic_proton_cloud_slash,
         tint = ProtonTheme.colors.iconWeak,
         text = I18N.string.photos_error_backup_disabled,
         action = I18N.string.photos_error_backup_disabled_action,
-        onAction = onEnableBackup
+        onClick = onEnableBackup
     )
 }
 
@@ -368,13 +365,13 @@ fun BackupMissingFolderState(
     modifier: Modifier = Modifier,
     onMore: () -> Unit,
 ) {
-    BackupState(
+    BackupStateCard(
         modifier = modifier,
         icon = CorePresentation.drawable.ic_proton_exclamation_circle,
         tint = ProtonTheme.colors.notificationWarning,
         text = I18N.string.photos_error_backup_missing_folder,
         action = I18N.string.photos_error_backup_missing_folder_action,
-        onAction = onMore
+        onClick = onMore
     )
 }
 
@@ -383,13 +380,13 @@ fun BackupFailedState(
     modifier: Modifier = Modifier,
     onRetry: () -> Unit,
 ) {
-    BackupState(
+    BackupStateCard(
         modifier = modifier,
         icon = CorePresentation.drawable.ic_proton_exclamation_circle,
         tint = ProtonTheme.colors.notificationError,
         text = I18N.string.photos_error_backup_failed,
         action = I18N.string.photos_error_backup_failed_action,
-        onAction = onRetry
+        onClick = onRetry
     )
 }
 
@@ -399,24 +396,37 @@ fun BackgroundRestrictions(
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing)
-    ) {
-        BackupState(
-            modifier = modifier,
-            icon = CorePresentation.drawable.ic_proton_exclamation_circle,
-            tint = ProtonTheme.colors.notificationWarning,
-            text = I18N.string.photos_error_background_restrictions,
-            action = I18N.string.photos_error_background_restrictions_action,
-            onAction = onIgnoreBackgroundRestrictions,
-        )
-        ErrorDetails(
-            stringResource(
-                I18N.string.photos_error_background_restrictions_description,
-                stringResource(id = I18N.string.app_name),
-            ),
-            onDismiss = onDismissBackgroundRestrictions,
-        )
+    BackupCard(modifier = modifier) {
+        Column {
+            BackupState(
+                icon = CorePresentation.drawable.ic_proton_exclamation_circle,
+                tint = ProtonTheme.colors.notificationWarning,
+                text = I18N.string.photos_error_background_restrictions,
+            ) {
+                IconButton(modifier = Modifier.offset(x = ProtonDimens.ListItemTextStartPadding),
+                    onClick = { onDismissBackgroundRestrictions() }) {
+                    Icon(
+                        painter = painterResource(id = CorePresentation.drawable.ic_proton_cross),
+                        contentDescription = stringResource(id = I18N.string.common_close_action)
+                    )
+                }
+            }
+            Divider(
+                color = ProtonTheme.colors.separatorNorm,
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+            )
+            ErrorDetails(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(
+                    I18N.string.photos_error_background_restrictions_description,
+                    stringResource(id = I18N.string.app_name),
+                ),
+                action = I18N.string.photos_error_background_restrictions_action,
+                onClick = onIgnoreBackgroundRestrictions,
+            )
+        }
     }
 }
 
@@ -425,13 +435,13 @@ fun BackupTemporarilyDisabledState(
     modifier: Modifier = Modifier,
     onRetry: () -> Unit,
 ) {
-    BackupState(
+    BackupStateCard(
         modifier = modifier,
         icon = CorePresentation.drawable.ic_proton_exclamation_circle,
         tint = ProtonTheme.colors.notificationWarning,
         text = I18N.string.photos_error_backup_temporarily_disabled,
         action = I18N.string.photos_error_backup_failed_action,
-        onAction = onRetry
+        onClick = onRetry
     )
 }
 
@@ -440,13 +450,13 @@ fun WaitingConnectivityState(
     modifier: Modifier = Modifier,
     onChangeNetwork: () -> Unit,
 ) {
-    BackupState(
+    BackupStateCard(
         modifier = modifier,
         icon = R.drawable.ic_no_wifi,
         tint = ProtonTheme.colors.notificationError,
         text = I18N.string.photos_error_waiting_wifi_connectivity,
         action = I18N.string.photos_error_waiting_wifi_connectivity_action,
-        onAction = onChangeNetwork
+        onClick = onChangeNetwork
     )
 }
 
@@ -454,7 +464,7 @@ fun WaitingConnectivityState(
 fun NoConnectivityState(
     modifier: Modifier = Modifier,
 ) {
-    BackupState(
+    BackupStateCard(
         modifier = modifier,
         icon = R.drawable.ic_no_wifi,
         tint = ProtonTheme.colors.notificationError,
@@ -464,66 +474,112 @@ fun NoConnectivityState(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun BackupState(
+private fun BackupCard(
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    content: @Composable () -> Unit,
+) {
+    if (onClick == null) {
+        Card(
+            modifier = modifier,
+            shape = ProtonTheme.shapes.medium,
+            backgroundColor = ProtonTheme.colors.backgroundSecondary,
+            contentColor = ProtonTheme.colors.textNorm,
+            elevation = 0.dp,
+            content = content,
+        )
+    } else {
+        Card(
+            modifier = modifier,
+            onClick = onClick,
+            shape = ProtonTheme.shapes.medium,
+            backgroundColor = ProtonTheme.colors.backgroundSecondary,
+            contentColor = ProtonTheme.colors.textNorm,
+            elevation = 0.dp,
+            content = content,
+        )
+    }
+}
+
+@Composable
+private fun BackupStateCard(
     modifier: Modifier = Modifier,
     icon: Int,
     tint: Color,
     text: Int,
     action: Int,
-    onAction: () -> Unit,
+    onClick: (() -> Unit)? = null,
 ) {
-    Card(
+    BackupCard(
         modifier = modifier,
-        onClick = onAction,
-        backgroundColor = ProtonTheme.colors.backgroundSecondary,
-        contentColor = ProtonTheme.colors.textNorm,
-        elevation = 0.dp,
+        onClick = onClick,
     ) {
-        Row(
-            modifier = Modifier
-                .defaultMinSize(minHeight = ProtonDimens.ListItemHeight)
-                .padding(
-                    horizontal = ProtonDimens.ListItemTextStartPadding,
-                    vertical = ProtonDimens.SmallSpacing,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing)
-        ) {
-            Icon(
-                modifier = Modifier.size(ProtonDimens.DefaultIconSize),
-                painter = painterResource(id = icon),
-                contentDescription = null,
-                tint = tint,
-            )
-            Text(
-                modifier = Modifier.weight(1F),
-                text = stringResource(id = text),
-                style = ProtonTheme.typography.defaultSmallUnspecified,
-            )
-            Text(
-                text = stringResource(id = action),
-                style = ProtonTheme.typography.defaultSmallStrongUnspecified,
-                color = ProtonTheme.colors.interactionNorm,
-            )
-        }
+        BackupState(
+            icon = icon,
+            tint = tint,
+            text = text,
+            action = action,
+        )
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun BackupState(
+    icon: Int,
+    tint: Color,
+    text: Int,
+    content: @Composable () -> Unit = {}
+) {
+    Row(
+        modifier = Modifier
+            .defaultMinSize(minHeight = ProtonDimens.ListItemHeight)
+            .padding(
+                horizontal = ProtonDimens.ListItemTextStartPadding,
+                vertical = ProtonDimens.SmallSpacing,
+            ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing)
+    ) {
+        Icon(
+            modifier = Modifier.size(ProtonDimens.DefaultIconSize),
+            painter = painterResource(id = icon),
+            contentDescription = null,
+            tint = tint,
+        )
+        Text(
+            modifier = Modifier.weight(1F),
+            text = stringResource(id = text),
+            style = ProtonTheme.typography.defaultSmallUnspecified,
+        )
+        content()
+    }
+}
+
+@Composable
+private fun BackupState(
+    icon: Int,
+    tint: Color,
+    text: Int,
+    action: Int,
+) {
+    BackupState(icon, tint, text) {
+        Text(
+            text = stringResource(id = action),
+            style = ProtonTheme.typography.defaultSmallStrongUnspecified,
+            color = ProtonTheme.colors.interactionNorm,
+        )
+    }
+}
+
+@Composable
+private fun BackupStateCard(
     modifier: Modifier = Modifier,
     icon: Int,
     tint: Color,
     text: Int,
     secondaryText: String? = null,
 ) {
-    Card(
-        modifier = modifier,
-        backgroundColor = ProtonTheme.colors.backgroundSecondary,
-        contentColor = ProtonTheme.colors.textNorm,
-        elevation = 0.dp,
-    ) {
+    BackupCard(modifier = modifier) {
         Row(
             modifier = Modifier
                 .defaultMinSize(minHeight = ProtonDimens.ListItemHeight)
@@ -560,7 +616,7 @@ private fun BackupState(
 @Composable
 fun BackupCompletedStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupCompletedState("1 000 items saved")
         }
     }
@@ -570,7 +626,7 @@ fun BackupCompletedStatePreview() {
 @Composable
 fun BackupUncompletedStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupUncompletedState(onResolve = {})
         }
     }
@@ -580,7 +636,7 @@ fun BackupUncompletedStatePreview() {
 @Composable
 private fun PreparingStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupPreparingState(
                 preparing = PhotosStatusViewState.Preparing(
                     progress = 0.3F,
@@ -594,7 +650,7 @@ private fun PreparingStatePreview() {
 @Composable
 fun EncryptingStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupInProgressState(
                 inProgress = PhotosStatusViewState.InProgress(
                     progress = 0.3F,
@@ -610,7 +666,7 @@ fun EncryptingStatePreview() {
 @Composable
 fun UploadingStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupInProgressState(
                 inProgress = PhotosStatusViewState.InProgress(
                     progress = 0.9F,
@@ -626,7 +682,7 @@ fun UploadingStatePreview() {
 @Composable
 fun MissingPermissionsStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             MissingPermissionsState(onPermissions = { })
         }
     }
@@ -636,7 +692,7 @@ fun MissingPermissionsStatePreview() {
 @Composable
 fun BackupDisableStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupDisableState(onEnableBackup = { })
         }
     }
@@ -646,7 +702,7 @@ fun BackupDisableStatePreview() {
 @Composable
 fun BackupMissingFolderStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupMissingFolderState(onMore = { })
         }
     }
@@ -656,7 +712,7 @@ fun BackupMissingFolderStatePreview() {
 @Composable
 fun BackupFailedStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupFailedState(onRetry = { })
         }
     }
@@ -666,7 +722,7 @@ fun BackupFailedStatePreview() {
 @Composable
 fun BackgroundRestrictionsPreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackgroundRestrictions(
                 onIgnoreBackgroundRestrictions = { },
                 onDismissBackgroundRestrictions = { },
@@ -679,7 +735,7 @@ fun BackgroundRestrictionsPreview() {
 @Composable
 fun LocalStorageStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             LocalStorageState(onRetry = { })
         }
     }
@@ -689,7 +745,7 @@ fun LocalStorageStatePreview() {
 @Composable
 fun BackupTemporarilyDisabledStatePreview() {
     ProtonTheme {
-        Surface(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupTemporarilyDisabledState(onRetry = { })
         }
     }

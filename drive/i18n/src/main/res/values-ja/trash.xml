@@ -31,7 +31,7 @@
             "5 items restored"
     -->
   <plurals name="trash_restore_operation_successful_format">
-    <item quantity="other">%d 件のアイテムが復元されました</item>
+    <item quantity="other">%d 個のアイテムが復元されました</item>
   </plurals>
   <!--
         Variable %1$d is a number

@@ -70,6 +70,7 @@
   <string name="title_share_via_link">링크로 공유</string>
   <string name="shared_with_me_title">나와 공유함</string>
   <string name="shared_by_me_title">내가 공유함</string>
-  <string name="shared_with_me_empty_description">내가 다른 사람과 공유하는 파일과 폴더가 여기에 나타납니다</string>
+  <string name="shared_empty_title">아직 아무것도 공유하지 않음</string>
+  <string name="shared_with_me_empty_description">내게 공유된 파일들과 폴더들은 여기에 표시됩니다</string>
   <string name="shared_by_me_empty_description">종단간 암호화를 통해 파일과 폴더를 안전하게 공유하세요</string>
 </resources>

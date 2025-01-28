@@ -70,6 +70,7 @@
   <string name="title_share_via_link">透過連結分享</string>
   <string name="shared_with_me_title">與我共享</string>
   <string name="shared_by_me_title">由我分享</string>
-  <string name="shared_with_me_empty_description">您與其他人分享的檔案與資料夾將會在此出現</string>
+  <string name="shared_empty_title">Nothing shared yet</string>
+  <string name="shared_with_me_empty_description">Files and folders that are shared with you will appear here</string>
   <string name="shared_by_me_empty_description">透過端到端加密安全地分享您的檔案與資料夾</string>
 </resources>

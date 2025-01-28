@@ -63,7 +63,7 @@
     -->
   <string name="in_app_notification_upload_files_only">Només es poden pujar fitxers a %1$s</string>
   <string name="in_app_notification_importing_file_already_exists">Ja existeix un fitxer amb aquest nom, proveu de netejar la memòria cau de l\'aplicació</string>
-  <string name="in_app_notification_clear_local_cache_success">La memòria cau local s\'ha netejat.</string>
+  <string name="in_app_notification_clear_local_cache_success">La memòria cau local s\'ha netejat correctament.</string>
   <string name="in_app_notification_destination_screen_not_found">No s\'ha trobat la pantalla de destinació.</string>
   <string name="in_app_notification_create_document_success">S\'ha creat el document.</string>
   <!-- endregion -->
@@ -156,10 +156,11 @@
   <string name="notification_channel_transfer_description">Canal de notificacions per a emmagatzematge al núvol, càrrega i descàrrega</string>
   <string name="notification_channel_warning_title">Advertència</string>
   <string name="notification_channel_warning_description">Canal per a advertiments que requereixen una acció de l\'usuari</string>
-  <string name="notification_permission_rationale_title_backup">Manteniu-vos informat sobre l\'estat de la vostra còpia de seguretat</string>
-  <string name="notification_permission_rationale_description_backup">Rebeu notificacions sobre el progrés i l\'estat de les vostres còpies de seguretat.</string>
+  <string name="notification_permission_rationale_title_backup">Manteniu-vos informat sobre l\'estat de la còpia de seguretat</string>
+  <string name="notification_permission_rationale_description_backup">Rebeu notificacions sobre el progrés i l\'estat de les còpies de seguretat.</string>
   <string name="notification_permission_rationale_action_accept">Activa les notificacions</string>
   <string name="notification_permission_rationale_action_reject">Ara no</string>
+  <string name="notification_content_title_transferring">Transferència de dades</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecciona tots els elements a la llista</string>
   <string name="content_description_selected_options">Mostra més opcions per als fitxers i/o carpetes seleccionades</string>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Mendekripsi</string>
+  <string name="title_files">Berkas</string>
+  <string name="title_shared">Dibagikan</string>
+  <string name="title_my_files">Berkas saya</string>
+  <string name="title_offline_available">Tersedia secara offline</string>
+  <string name="title_empty_my_files">Tambahkan berkas pertama Anda</string>
+  <string name="title_empty_folder">Mari isi folder ini</string>
+  <string name="title_empty_folder_read_only">Folder kosong</string>
+  <string name="title_empty_shared">Ikuti apa-apa saja yang terjadi</string>
+  <string name="title_empty_offline_available">Tidak ada konten offline yang tersedia</string>
+  <string name="title_empty_trash">Sampah kosong</string>
+  <string name="title_empty_trash_action">Kosongkan sampah</string>
+  <string name="title_files_confirm_deletion">Hapus secara permanen?</string>
+  <string name="title_default_home_screen_tab">Pilih tab layar beranda bawaan</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Aplikasi</string>
+  <string name="description_signing_out">Mengeluarkan Anda dari akun…</string>
+  <string name="settings_about_links_acknowledgments_title">Ucapan terima kasih</string>
+  <string name="settings_about_links_privacy_policy_title">Kebijakan privasi</string>
+  <string name="settings_about_links_terms_of_service_title">Ketentuan layanan</string>
+  <string name="common_error_no_browser_available">Kami tidak dapat membuka tautan ini karena Anda sepertinya tidak memiliki browser yang terinstal</string>
+  <string name="move_to">Pindahkan ke</string>
+  <string name="move_file_confirm_action">Pindahkan</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">Anda tidak dapat memindahkan folder ke dalam dirinya sendiri</string>
+  <string name="folder_option_import_file">Unggah berkas</string>
+  <string name="folder_option_create_folder">Buat folder</string>
+  <string name="folder_option_take_a_photo">Ambil foto baru</string>
+  <string name="folder_option_create_document">Buat dokumen</string>
+  <string name="settings_theme_system_default">Bawaan sistem</string>
+  <string name="settings_theme_dark">Gelap</string>
+  <string name="settings_theme_light">Terang</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Unggah ke %1$s</string>
+  <string name="upload_title">Unggah</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">Hanya berkas yang dapat diunggah ke %1$s</string>
+  <string name="in_app_notification_importing_file_already_exists">Berkas dengan nama yang sama telah ada. Cobalah untuk membersihkan cache aplikasi</string>
+  <string name="in_app_notification_clear_local_cache_success">Cache lokal berhasil dihapus</string>
+  <string name="in_app_notification_destination_screen_not_found">Layar tujuan tidak ditemukan</string>
+  <string name="in_app_notification_create_document_success">Dokumen dibuat</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Ruang penyimpanan penuh</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Mengunggah berkas ke %1$s</string>
+  <string name="notification_content_title_upload_complete">Unggahan selesai</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="other">Mengunggah %1$d berkas</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="other">%1$d berkas diunggah</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="other">Unggahan %1$d berkas dibatalkan</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="other">%1$d berkas gagal diunggah</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Mencadangkan foto ke %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="other">%1$s item tersisa</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Pencadangan selesai</string>
+  <string name="notification_content_text_backup_uncompleted">Pencadangan selesai dengan masalah</string>
+  <string name="notification_content_text_backup_failed">Pencadangan gagal</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Ruang penyimpanan Proton penuh</string>
+  <string name="notification_content_text_backup_failed_local_storage">Ruang penyimpanan lokal penuh</string>
+  <string name="notification_content_text_backup_failed_permission">Izin tidak ada</string>
+  <string name="notification_content_text_backup_failed_connectivity">Tidak ada koneksi internet</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Menunggu Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Backup tidak diizinkan</string>
+  <string name="notification_content_text_backup_paused_disabled">Pencadangan dinonaktifkan</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Pencadangan tidak dapat berlangsung di belakang layar</string>
+  <string name="notification_content_text_backup_preparing">Mempersiapkan pencadangan</string>
+  <string name="notification_content_title_download_complete">Unduhan selesai</string>
+  <string name="notification_content_title_forced_sign_out">Silakan masuk</string>
+  <string name="notification_content_text_forced_sign_out">Maaf mengganggu! Kami mengalami masalah dengan sinkronisasi — silakan masuk lagi dan semuanya akan berjalan dengan lancar.</string>
+  <string name="notification_content_title_no_space_left_on_device">Tidak ada ruang tersisa pada perangkat</string>
+  <string name="notification_content_text_no_space_left_on_device">Aplikasi mungkin tidak akan dapat berfungsi sebagaimana mestinya.</string>
+  <string name="notification_channel_group_name_application">Aplikasi</string>
+  <string name="notification_channel_background_title">Latar Belakang</string>
+  <string name="notification_channel_background_description">Saluran untuk tindakan latar belakang seperti pencadangan</string>
+  <string name="notification_channel_transfer_title">Transfer</string>
+  <string name="notification_channel_transfer_description">Saluran notifikasi penyimpanan cloud, pengunggahan, dan pengunduhan</string>
+  <string name="notification_channel_warning_title">Peringatan</string>
+  <string name="notification_channel_warning_description">Saluran untuk peringatan yang membutuhkan tindakan pengguna</string>
+  <string name="notification_permission_rationale_title_backup">Tetap terkini pada status pencadangan Anda</string>
+  <string name="notification_permission_rationale_description_backup">Terima notifikasi tentang proses dan status pencadangan Anda.</string>
+  <string name="notification_permission_rationale_action_accept">Aktifkan notifikasi</string>
+  <string name="notification_permission_rationale_action_reject">Tidak sekarang</string>
+  <string name="notification_content_title_transferring">Mentransfer data</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Pilih semua item dalam daftar</string>
+  <string name="content_description_selected_options">Tampilkan lebih banyak pilihan untuk berkas dan/atau folder yang dipilih</string>
+  <string name="content_description_files_upload_upload_file">Unggah berkas</string>
+  <string name="description_empty_my_files">Ketuk tombol yang ada pada layar untuk mulai menambahkan berkas.</string>
+  <string name="description_empty_folder_read_only">Tidak ada apa-apa di sini</string>
+  <string name="description_empty_shared">Seluruh berkas yang ditautkan akan muncul pada layar ini, sehingga Anda dapat melacak dan mengelola apa-apa saja yang dibagikan dengan mudah.</string>
+  <string name="description_empty_trash">Seluruh item yang telah dibuang akan tersimpan di sini hingga Anda membuangnya secara permanen atau memulihkannya kembali.</string>
+  <string name="description_empty_offline_available">Buat agar berkas penting Anda selalu tersedia bahkan ketika Anda tidak sedang terhubung ke internet sekalipun.</string>
+  <string name="description_no_drive_scope">Pengguna tidak memiliki cakupan drive.</string>
+  <string name="description_file_download_failed">Unggahan gagal. Periksa koneksi internet Anda dan coba lagi.</string>
+  <string name="description_file_decryption_failed">Berkas tidak dapat didekripsi</string>
+  <string name="description_file_verify_signature_failed">Tanda tangan berkas tidak dapat diverifikasi</string>
+  <string name="description_files_stop_sharing">Tindakan ini akan menghapus tautan dan membuat berkas atau folder Anda tidak lagi dapat diakses melalui tautan yang bersangkutan.</string>
+  <string name="description_files_stop_sharing_action_success">Tautan ke berkas Anda telah dihapus.</string>
+  <string name="description_files_stop_sharing_action_error">Terdapat kesalahan pada saat menghapus tautan ke berkas Anda.</string>
+  <string name="description_files_stop_all_sharing">Tindakan ini akan menghapus tautan dan menganulir akses bagi semua.</string>
+  <string name="description_files_stop_all_sharing_action_success">Berbagi ke file Anda telah dihapus.</string>
+  <string name="description_files_stop_all_sharing_action_error">Terjadi kesalahan saat menghapus berbagi file Anda.</string>
+  <string name="ignore_file_signature_action">Tetap lihat</string>
+  <string name="action_empty_files_add_files">Unggah</string>
+  <string name="error_could_not_send_file">Terdapat kesalahan pada saat mencoba mengirim berkas</string>
+  <string name="error_could_not_load_folder_content">Terdapat kesalahan pada saat mencoba memuat konten folder</string>
+  <string name="error_main_share_locked">Berkas Anda tidak lagi dapat diakses karena kata sandi yang ada telah diatur ulang. Unggah kembali kunci enkripsi lama untuk dapat kembali mengakses berkas Anda.</string>
+  <string name="error_share_locked">Pembagian terkunci.</string>
+  <string name="error_main_share_not_found">Partisi share utama tidak ditemukan.</string>
+  <string name="error_share_not_found">Pembagian tidak ditemukan.</string>
+  <string name="error_creating_photo_share_not_allowed">Pencadangan foto sementara dinonaktifkan.</string>
+  <string name="error_creating_share_not_allowed">Pembuatan tautan berbagi untuk sementara dinonaktifkan.</string>
+  <string name="operation_open_document">buka dokumen</string>
+  <string name="operation_create_document">buat dokumen</string>
+  <string name="operation_take_picture">ambil gambar</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Dapatkan ruang penyimpanan gratis %1$s</string>
+  <string name="get_more_free_storage_description">Selesaikan langkah-langkah berikut dalam 30 hari pertama Anda untuk memperoleh ruang penyimpanan yang ditingkatkan secara gratis.</string>
+  <string name="get_more_free_storage_action_upload_title">Unggah berkas ATAU aktifkan pencadangan foto</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Seluruh berkas Anda akan dienkripsi.</string>
+  <string name="get_more_free_storage_action_link_title">Buat tautan berbagi</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Pilih berkas atau folder mana pun. Setelahnya, buka menu pengaturan dan tekan %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Bagikan berkas</string>
+  <string name="get_more_free_storage_action_share_subtitle">Proses ini mudah dan aman.</string>
+  <string name="get_more_free_storage_action_recovery_title">Tentukan metode pemulihan</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Masuk ke %1$s, lalu tuju Pengaturan -&gt; Pemulihan.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Dokumen tak berjudul %1$s</string>
+</resources>

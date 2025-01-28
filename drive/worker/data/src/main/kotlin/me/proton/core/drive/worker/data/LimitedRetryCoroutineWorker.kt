@@ -49,7 +49,7 @@ abstract class LimitedRetryCoroutineWorker(
                 is Result.Retry -> if (canRetry()){
                     result
                 } else {
-                    CoreLogger.d(logTag, "Max retries reached, giving up")
+                    CoreLogger.i(logTag, "Max retries reached, giving up")
                     done()
                     Result.failure()
                 }
@@ -66,7 +66,7 @@ abstract class LimitedRetryCoroutineWorker(
 
     abstract suspend fun doLimitedRetryWork(): Result
 
-    suspend fun canRetry(): Boolean = canRun(userId, id.toString()).getOrNull() ?: true
+    suspend fun canRetry(): Boolean = canRun(userId, id.toString()).getOrNull(logTag) ?: true
 
     private fun isLimitOverreached() = canRun(runAttemptCount - 1).getOrNull(logTag) != true
 

@@ -19,7 +19,7 @@
 package me.proton.core.drive.messagequeue.data.storage
 
 import android.util.Base64
-import me.proton.core.data.room.BuildConfig
+import me.proton.core.drive.messagequeue.data.BuildConfig
 import me.proton.core.drive.messagequeue.data.MessageQueueImpl
 import me.proton.core.drive.messagequeue.domain.entity.UserAwareSerializable
 import me.proton.core.drive.messagequeue.data.storage.db.MessageQueueDatabase

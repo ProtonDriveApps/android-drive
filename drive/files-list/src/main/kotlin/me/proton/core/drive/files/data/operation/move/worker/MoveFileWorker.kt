@@ -101,7 +101,7 @@ class MoveFileWorker @AssistedInject constructor(
                     }
                     .onFailure { error ->
                         if (!error.handledFileAlreadyExists()) {
-                            CoreLogger.d(LogTag.MOVE, error, "An error occurred while moving the file")
+                            CoreLogger.w(LogTag.MOVE, error, "An error occurred while moving the file")
                             broadcastMessages(
                                 userId = userId,
                                 message = applicationContext.getString(I18N.string.file_operation_error_occurred_moving_file),

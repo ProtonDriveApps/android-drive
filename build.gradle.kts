@@ -32,6 +32,7 @@ buildscript {
         classpath(libs.gradle.plugin.hilt.android)
         classpath(libs.gradle.plugin.jaCoCo)
         classpath(libs.gradle.plugin.kotlin.serialization)
+        classpath(libs.gradle.plugin.compose.compiler)
         //classpath("androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.AndroidX.navigation}")
 
         // NOTE: Do not place your application dependencies here; they belong

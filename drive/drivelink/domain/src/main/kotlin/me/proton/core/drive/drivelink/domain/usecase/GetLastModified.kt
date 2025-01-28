@@ -19,6 +19,7 @@ package me.proton.core.drive.drivelink.domain.usecase
 
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.formatter.DateTimeFormatter
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
@@ -35,9 +36,13 @@ class GetLastModified @Inject constructor(
         val xAttrString = driveLink.cryptoXAttr.value ?: return driveLink.lastModified
         xAttrString.toXAttr().onSuccess { xAttr ->
             return dateTimeFormatter.parseFromIso8601String(iso8601 = xAttr.common.modificationTime)
-                .getOrNull() ?: driveLink.lastModified
+                .getOrNull(
+                    LogTag.ENCRYPTION,
+                    "There was an error parsing modification time of drive link: ${driveLink.id.id.logId()}"
+                )
+                ?: driveLink.lastModified
         }.onFailure { error ->
-            CoreLogger.d(
+            CoreLogger.w(
                 LogTag.ENCRYPTION,
                 error,
                 "There was an error parsing xAttr of drive link: ${driveLink.id.id.logId()}"

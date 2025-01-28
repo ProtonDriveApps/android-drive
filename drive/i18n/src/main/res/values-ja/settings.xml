@@ -21,7 +21,7 @@
   <string name="settings_section_security">セキュリティ</string>
   <string name="settings_section_about">詳細</string>
   <string name="settings_section_statistics">使用統計</string>
-  <string name="settings_auto_lock">アプリを自動的にロックする</string>
+  <string name="settings_auto_lock">アプリの自動ロック</string>
   <string name="settings_auto_lock_durations_immediately">すぐに</string>
   <plurals name="settings_auto_lock_durations_seconds">
     <item quantity="other">%1$d 秒後</item>

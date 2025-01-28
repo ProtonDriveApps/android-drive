@@ -19,6 +19,8 @@
 package me.proton.core.drive.eventmanager.usecase
 
 import kotlinx.coroutines.flow.first
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.LogTag.EVENTS
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinks
@@ -70,6 +72,6 @@ class HandleOnDeleteEvent @Inject constructor(
     private fun<T> Result<T>.getOrNullOrThrowIf(shouldThrow: Boolean): T? = if (shouldThrow) {
         getOrThrow()
     } else {
-        getOrNull()
+        getOrNull(EVENTS, "Error handling on delete event")
     }
 }

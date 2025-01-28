@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import me.proton.core.account.domain.entity.Account
-import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.account.domain.entity.isDisabled
 import me.proton.core.account.domain.entity.isReady
 import me.proton.core.account.domain.entity.isStepNeeded
@@ -38,6 +37,7 @@ import me.proton.core.accountmanager.domain.getPrimaryAccount
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountCreateAddressFailed
 import me.proton.core.accountmanager.presentation.onAccountCreateAddressNeeded
+import me.proton.core.accountmanager.presentation.onAccountDeviceSecretNeeded
 import me.proton.core.accountmanager.presentation.onAccountDisabled
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeFailed
 import me.proton.core.accountmanager.presentation.onAccountTwoPassModeNeeded
@@ -46,14 +46,12 @@ import me.proton.core.accountmanager.presentation.onUserAddressKeyCheckFailed
 import me.proton.core.accountmanager.presentation.onUserKeyCheckFailed
 import me.proton.core.auth.presentation.AuthOrchestrator
 import me.proton.core.auth.presentation.onAddAccountResult
-import me.proton.core.domain.entity.Product
 import me.proton.core.domain.entity.UserId
 import me.proton.core.usersettings.presentation.UserSettingsOrchestrator
 import javax.inject.Inject
 
 @HiltViewModel
 class AccountViewModel @Inject constructor(
-    private val requiredAccountType: AccountType,
     private val accountManager: AccountManager,
     private val authOrchestrator: AuthOrchestrator,
     private val userSettingsOrchestrator: UserSettingsOrchestrator,
@@ -88,6 +86,7 @@ class AccountViewModel @Inject constructor(
                 .onSessionSecondFactorNeeded { startSecondFactorWorkflow(it) }
                 .onAccountTwoPassModeNeeded { startTwoPassModeWorkflow(it) }
                 .onAccountCreateAddressNeeded { startChooseAddressWorkflow(it) }
+                .onAccountDeviceSecretNeeded { startDeviceSecretWorkflow(it) }
                 .onAccountTwoPassModeFailed { accountManager.disableAccount(it.userId) }
                 .onAccountCreateAddressFailed { accountManager.disableAccount(it.userId) }
                 .onAccountDisabled { accountManager.removeAccount(it.userId) }
@@ -103,11 +102,7 @@ class AccountViewModel @Inject constructor(
     }
 
     fun startAddAccount() {
-        authOrchestrator.startAddAccountWorkflow(
-            requiredAccountType = requiredAccountType,
-            creatableAccountType = requiredAccountType,
-            product = Product.Drive
-        )
+        authOrchestrator.startAddAccountWorkflow()
     }
 
     fun startPasswordManagement(userId: UserId) {

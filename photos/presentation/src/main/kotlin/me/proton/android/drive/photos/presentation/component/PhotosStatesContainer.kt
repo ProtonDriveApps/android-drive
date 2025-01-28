@@ -135,6 +135,7 @@ class ViewStatePreviewParameterProvider : CollectionPreviewParameterProvider<Pho
         PhotosStatusViewState.Failed(listOf(BackupError.Permissions())),
         PhotosStatusViewState.Failed(listOf(BackupError.Connectivity())),
         PhotosStatusViewState.Failed(listOf(BackupError.WifiConnectivity())),
+        PhotosStatusViewState.Failed(listOf(BackupError.Connectivity())),
         PhotosStatusViewState.Failed(listOf(BackupError.PhotosUploadNotAllowed())),
         PhotosStatusViewState.Failed(listOf(BackupError.BackgroundRestrictions())),
         PhotosStatusViewState.Preparing(0.1F),

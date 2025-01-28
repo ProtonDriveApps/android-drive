@@ -22,7 +22,7 @@
   <string name="title_files">Arquivos</string>
   <string name="title_shared">Compartilhado</string>
   <string name="title_my_files">Meus arquivos</string>
-  <string name="title_offline_available">Disponíveis offline</string>
+  <string name="title_offline_available">Disponíveis off-line</string>
   <string name="title_empty_my_files">Vá em frente, adicione seu primeiro arquivo</string>
   <string name="title_empty_folder">Vamos encher esta pasta</string>
   <string name="title_empty_folder_read_only">Pasta vazia</string>
@@ -156,10 +156,11 @@
   <string name="notification_channel_transfer_description">Canal para armazenamento em nuvem, notificações de envio e dowload</string>
   <string name="notification_channel_warning_title">Alerta</string>
   <string name="notification_channel_warning_description">Canal para avisos que requerem a ação do usuário</string>
-  <string name="notification_permission_rationale_title_backup">Mantenha-se atualizado sobre o status do backup</string>
+  <string name="notification_permission_rationale_title_backup">Receba atualizações sobre o status do backup</string>
   <string name="notification_permission_rationale_description_backup">Receba notificações sobre o andamento e o status de seus backups.</string>
   <string name="notification_permission_rationale_action_accept">Ativar notificações</string>
   <string name="notification_permission_rationale_action_reject">Agora não</string>
+  <string name="notification_content_title_transferring">Transferindo dados</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecionar todos os itens na lista</string>
   <string name="content_description_selected_options">Mostrar mais opções para a seleção de arquivos e/ou pastas</string>
@@ -168,7 +169,7 @@
   <string name="description_empty_folder_read_only">Não há nada para ver aqui</string>
   <string name="description_empty_shared">Arquivos lincados podem aparecer aqui então você pode facilmente rastrear e gerenciar o que está sendo compartilhado</string>
   <string name="description_empty_trash">Aqui é onde arquivos jogados no lixo permanecem até que você delete ou recupere-os.</string>
-  <string name="description_empty_offline_available">Torne arquivos essenciais sempre disponíveis mesmo quando sua internet não está.</string>
+  <string name="description_empty_offline_available">Faça com que arquivos essenciais estejam sempre disponíveis mesmo quando sua internet não estiver.</string>
   <string name="description_no_drive_scope">O usuário está sem permissão de acesso.</string>
   <string name="description_file_download_failed">Erro no download. Verifique a conexão de rede e tente novamente.</string>
   <string name="description_file_decryption_failed">Não foi possível descriptografar o arquivo</string>
@@ -177,7 +178,7 @@
   <string name="description_files_stop_sharing_action_success">O link do seu arquivo foi excluído.</string>
   <string name="description_files_stop_sharing_action_error">Ocorreu um erro durante a exclusão do link do seu arquivo.</string>
   <string name="description_files_stop_all_sharing">Isso excluirá o link e removerá o acesso para todos.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">O compartilhamento do seu arquivo foi excluído.</string>
   <string name="description_files_stop_all_sharing_action_error">Ocorreu um erro durante a exclusão do compartilhamento do seu arquivo.</string>
   <string name="ignore_file_signature_action">Visualizar mesmo assim</string>
   <string name="action_empty_files_add_files">Enviar</string>

@@ -44,7 +44,7 @@ class DecryptAndVerifyText @Inject constructor() {
             key.decryptAndVerifyText(text, verifyKeyRing)
         }.also { decryptedText ->
             if (decryptedText.status != VerificationStatus.Success) {
-                CoreLogger.d(
+                CoreLogger.w(
                     tag = LogTag.ENCRYPTION,
                     e = VerificationException(
                         message = "Verification status ${decryptedText.status.name} ($verificationFailedContext)"

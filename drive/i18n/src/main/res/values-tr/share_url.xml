@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Bağlantı ile paylaş</string>
   <string name="shared_with_me_title">Benimle paylaşılan</string>
   <string name="shared_by_me_title">Benim paylaştıklarım</string>
-  <string name="shared_with_me_empty_description">Başkalarıyla paylaştığınız dosyalar ve klasörler burada görüntülenir</string>
+  <string name="shared_empty_title">Henüz bir şey paylaşılmamış</string>
+  <string name="shared_with_me_empty_description">Sizinle paylaşılan dosyalar ve klasörler burada görüntülenir</string>
   <string name="shared_by_me_empty_description">Uçtan uca şifreleme ile dosya ve klasörlerinizi güvenle paylaşın</string>
 </resources>

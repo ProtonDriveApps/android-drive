@@ -54,7 +54,7 @@
         Examples:
             "Your Camera folder is backed up automatically."
     -->
-  <string name="settings_photos_backup_folders_description">Резервное копирование папки %1$s выполняется автоматически. Выберите дополнительные папки для резервного копирования, и фотографии из них появятся на вкладке \"Фото\".</string>
+  <string name="settings_photos_backup_folders_description">Резервное копирование папки %1$s выполняется автоматически. Выберите дополнительные папки для резервного копирования. Фотографии из них появятся на вкладке \"Фото\".</string>
   <string name="settings_photos_backup_folders_not_found">Папка не найдена</string>
   <string name="settings_photos_backup_folders_confirm_stop_sync_title">Остановить резервное копирование папки?</string>
   <!--

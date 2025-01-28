@@ -29,7 +29,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag.TRASH
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.share.domain.entity.ShareId
@@ -64,6 +67,8 @@ class TrashManagerImpl @Inject constructor(
                     workId = workId,
                 )
             )
+        }.onFailure { error ->
+            error.log(TRASH, "Cannot insert work")
         }
 
     override suspend fun restore(userId: UserId, shareId: ShareId, linkIds: List<LinkId>) =
@@ -75,6 +80,8 @@ class TrashManagerImpl @Inject constructor(
                     workId = workId,
                 )
             )
+        }.onFailure { error ->
+            error.log(TRASH, "Cannot insert work")
         }
 
     override suspend fun delete(userId: UserId, shareId: ShareId, linkIds: List<LinkId>) =
@@ -86,6 +93,8 @@ class TrashManagerImpl @Inject constructor(
                     workId = workId,
                 )
             )
+        }.onFailure { error ->
+            error.log(TRASH, "Cannot insert work")
         }
 
     @Suppress("EnqueueWork")

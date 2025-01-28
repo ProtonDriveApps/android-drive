@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">Εφαρμογή</string>
+  <string name="common_more">Περισσότερα</string>
+  <string name="common_mime_type">Τύπος MIME</string>
+  <string name="common_name">Όνομα</string>
+  <string name="common_no">Όχι</string>
+  <string name="common_share">Κοινοποίηση</string>
+  <string name="common_shared">Διαμοιρασμένα</string>
+  <string name="common_size">Μέγεθος</string>
+  <string name="common_type">Τύπος</string>
+  <string name="common_yes">Ναι</string>
+  <string name="common_download">Λήψη</string>
+  <string name="common_downloading">Γίνεται Λήψη</string>
+  <string name="common_link">Σύνδεσμος</string>
+  <string name="common_password">Κωδικός</string>
+  <string name="common_retry">Δοκιμάστε ξανά</string>
+  <string name="common_settings">Ρυθμίσεις</string>
+  <string name="common_trash">Διαγραμμένα</string>
+  <string name="common_uploading">Ανέβασμα</string>
+  <string name="common_on">Ενεργό</string>
+  <string name="common_off">Ανενεργό</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">Εντάξει</string>
+  <string name="common_close_action">Κλείσιμο</string>
+  <string name="common_retry_action">Δοκιμάστε ξανά</string>
+  <string name="common_undo_action">Αναίρεση</string>
+  <string name="common_rename_action">Μετονομασία</string>
+  <string name="common_send_action">Αποστολή</string>
+  <string name="common_create_action">Δημιουργία</string>
+  <string name="common_cancel_action">Ακύρωση</string>
+  <string name="common_cancel_all_action">Ακύρωση όλων</string>
+  <string name="common_got_it_action">Το κατάλαβα</string>
+  <string name="common_next_action">Επόμενο</string>
+  <string name="common_save_action">Αποθήκευση</string>
+  <string name="common_discard_action">Απόρριψη</string>
+  <string name="common_skip_action">Παράλειψη</string>
+  <string name="common_delete_permanently_action">Οριστική διαγραφή</string>
+  <string name="common_make_available_offline_action">Διαθέσιμα εκτός σύνδεσης</string>
+  <string name="common_remove_from_offline_available_action">Διατίθεται προς κατάργηση από εκτός σύνδεσης</string>
+  <string name="common_get_link_action">Λάβετε σύνδεσμο</string>
+  <string name="common_manage_link_action">Διαχείριση συνδέσμου</string>
+  <string name="common_manage_access_action">Διαχείριση πρόσβασης</string>
+  <string name="common_copy_link_action">Αντιγραφή συνδέσμου</string>
+  <string name="common_stop_sharing_action">Διακοπή κοινής χρήσης</string>
+  <string name="common_open_in_browser_action">Άνοιγμα στο πρόγραμμα περιήγησης</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">Ήχος</string>
+  <string name="common_type_calendar">μορφή iCalendar</string>
+  <string name="common_type_doc">Έγγραφο</string>
+  <string name="common_type_image">Εικόνα</string>
+  <string name="common_type_keynote">Αρχείο</string>
+  <string name="common_type_numbers">Αρχείο</string>
+  <string name="common_type_pages">Αρχείο</string>
+  <string name="common_type_pdf">Έγγραφο PDF</string>
+  <string name="common_type_ppt">Παρουσίαση</string>
+  <string name="common_type_proton_doc">Έγγραφο Proton</string>
+  <string name="common_type_text">Κείμενο</string>
+  <string name="common_type_trustedkey">Αξιόπιστο κλειδί</string>
+  <string name="common_type_unknown">Δυαδικό</string>
+  <string name="common_type_video">Βίντεο</string>
+  <string name="common_type_xls">Υπολογιστικό φύλλο</string>
+  <string name="common_type_xml">Αρχείο XML</string>
+  <string name="common_type_zip">Αρχειοθετημένα</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">Το όνομα δεν πρέπει να είναι κενό</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">Το όνομα δεν πρέπει να έχει πάνω από %1$d χαρακτήρες</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">Το όνομα δεν μπορεί να περιλαμβάνει αόρατους χαρακτήρες, \"%1$s\" ή \"%2$s\"</string>
+  <string name="common_error_name_periods">Το όνομα δεν μπορεί να είναι \".\" ή \"..\"</string>
+  <string name="common_error_no_internet">Δεν υπάρχει σύνδεση στο Διαδίκτυο</string>
+  <string name="common_error_http_5xx">Παρουσιάστηκε σφάλμα διακομιστή</string>
+  <string name="common_error_internal">Παρουσιάστηκε εσωτερικό σφάλμα</string>
+  <string name="common_error_crypto">Η κρυπτογράφηση ή η αποκρυπτογράφηση απέτυχε</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">Η κρυπτογράφηση ή η αποκρυπτογράφηση απέτυχε: %1$s</string>
+  <string name="common_error_io">Η λειτουργία εισόδου ή εξόδου απέτυχε</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">Η λειτουργία εισόδου ή εξόδου απέτυχε: %1$s</string>
+  <string name="common_error_security">Παρουσιάστηκε σφάλμα ασφαλείας</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">Παρουσιάστηκε σφάλμα ασφαλείας: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s έχει ληφθεί</string>
+  <string name="common_sign_out">Αποσύνδεση</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="one">%1$d επιλεγμένο</item>
+    <item quantity="other">%1$d επιλεγμένα</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s αντιγράφηκε στο πρόχειρο</string>
+  <string name="common_in_app_notification_download_started">Η λήψη ξεκίνησε</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">Η λήψη του %1$s ολοκληρώθηκε</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="one">Η λήψη %1$d αρχείου ολοκληρώθηκε</item>
+    <item quantity="other">Η λήψη %1$d αρχείων ολοκληρώθηκε</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">Η λήψη του %1$s απέτυχε</string>
+  <string name="common_in_app_notification_download_failed">Η λήψη απέτυχε</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">Το σύστημα δεν μπόρεσε να βρει καμία εφαρμογή που θα μπορούσε να %1$s</string>
+  <!-- endregion -->
+</resources>

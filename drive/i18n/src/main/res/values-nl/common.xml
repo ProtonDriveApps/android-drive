@@ -44,7 +44,7 @@
   <string name="common_close_action">Sluiten</string>
   <string name="common_retry_action">Opnieuw proberen</string>
   <string name="common_undo_action">Ongedaan maken</string>
-  <string name="common_rename_action">Hernoem</string>
+  <string name="common_rename_action">Hernoemen</string>
   <string name="common_send_action">Verzenden</string>
   <string name="common_create_action">Aanmaken</string>
   <string name="common_cancel_action">Annuleren</string>

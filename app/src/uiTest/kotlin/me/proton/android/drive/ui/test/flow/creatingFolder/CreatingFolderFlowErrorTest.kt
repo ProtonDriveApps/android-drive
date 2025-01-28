@@ -61,17 +61,22 @@ class CreatingFolderFlowErrorTest(
             arrayOf(
                 "folder1",
                 BackendRobot.nameAlreadyExist,
-                "alreadyExists"
+                "Existing folder"
             ),
             arrayOf(
                 ".",
                 StringUtils.stringFromResource(I18N.string.common_error_name_periods),
-                "forbiddenChar"
+                "Name with periods"
             ),
             arrayOf(
                 getRandomString(256),
                 StringUtils.stringFromResource(I18N.string.common_error_name_too_long, 255),
-                "tooLongFilename"
+                "Very long name"
+            ),
+            arrayOf(
+                "folder1/",
+                StringUtils.stringFromResource(I18N.string.common_error_name_with_forbidden_characters, "/", "\\"),
+                "Name with forbidden characters"
             ),
         )
     }

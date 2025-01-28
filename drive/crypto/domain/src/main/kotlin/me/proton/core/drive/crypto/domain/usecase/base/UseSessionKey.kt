@@ -47,7 +47,7 @@ class UseSessionKey @Inject constructor(
             coroutineContext = coroutineContext,
         ) { sessionKey, verified ->
             if (!verified) {
-                CoreLogger.d(LogTag.ENCRYPTION, "Verification of session key failed")
+                CoreLogger.w(LogTag.ENCRYPTION, "Verification of session key failed")
                 if (checkSignature) {
                     throw VerificationException("Verification of session key failed")
                 }

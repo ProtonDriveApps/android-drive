@@ -165,6 +165,7 @@
   <string name="notification_permission_rationale_description_backup">Primiți notificări despre progresul și starea copiilor de rezervă.</string>
   <string name="notification_permission_rationale_action_accept">Activare notificări</string>
   <string name="notification_permission_rationale_action_reject">Nu acum</string>
+  <string name="notification_content_title_transferring">Se transferă datele</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selectare toate din listă</string>
   <string name="content_description_selected_options">Afișare mai multe opțiuni pentru fișierele și/sau folderele selectate.</string>

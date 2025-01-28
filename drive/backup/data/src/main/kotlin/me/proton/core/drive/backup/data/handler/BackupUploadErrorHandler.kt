@@ -96,7 +96,7 @@ class BackupUploadErrorHandler @Inject constructor(
 
     private suspend fun onFileNotFoundException(uploadFileLink: UploadFileLink) {
         uploadFileLink.uriString?.let { uriString ->
-            CoreLogger.d(BACKUP, "Deleting file not found: $uriString")
+            CoreLogger.i(BACKUP, "Deleting file not found: $uriString")
             val folderId = uploadFileLink.parentLinkId
             deleteFile(folderId, uriString).onSuccess {
                 backupManager.updateNotification(folderId)

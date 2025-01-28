@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">Aplikasi</string>
+  <string name="common_more">Lainnya</string>
+  <string name="common_mime_type">Jenis MIME</string>
+  <string name="common_name">Nama</string>
+  <string name="common_no">Tidak</string>
+  <string name="common_share">Bagikan</string>
+  <string name="common_shared">Dibagikan</string>
+  <string name="common_size">Ukuran</string>
+  <string name="common_type">Jenis</string>
+  <string name="common_yes">Ya</string>
+  <string name="common_download">Unduh</string>
+  <string name="common_downloading">Mengunduh</string>
+  <string name="common_link">Tautan</string>
+  <string name="common_password">Kata sandi</string>
+  <string name="common_retry">Coba lagi</string>
+  <string name="common_settings">Pengaturan</string>
+  <string name="common_trash">Sampah</string>
+  <string name="common_uploading">Mengunggah</string>
+  <string name="common_on">Aktif</string>
+  <string name="common_off">Nonaktif</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">OK</string>
+  <string name="common_close_action">Tutup</string>
+  <string name="common_retry_action">Coba lagi</string>
+  <string name="common_undo_action">Urungkan</string>
+  <string name="common_rename_action">Ubah nama</string>
+  <string name="common_send_action">Kirim</string>
+  <string name="common_create_action">Buat</string>
+  <string name="common_cancel_action">Batalkan</string>
+  <string name="common_cancel_all_action">Batalkan semua</string>
+  <string name="common_got_it_action">Mengerti</string>
+  <string name="common_next_action">Berikutnya</string>
+  <string name="common_save_action">Simpan</string>
+  <string name="common_discard_action">Buang</string>
+  <string name="common_skip_action">Lewati</string>
+  <string name="common_delete_permanently_action">Hapus secara permanen</string>
+  <string name="common_make_available_offline_action">Buat agar tersedia secara offline</string>
+  <string name="common_remove_from_offline_available_action">Hapus dari daftar item yang tersedia secara offline</string>
+  <string name="common_get_link_action">Dapatkan tautan</string>
+  <string name="common_manage_link_action">Kelola tautan</string>
+  <string name="common_manage_access_action">Kelola akses</string>
+  <string name="common_copy_link_action">Salin tautan</string>
+  <string name="common_stop_sharing_action">Berhenti berbagi</string>
+  <string name="common_open_in_browser_action">Buka di browser</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">Audio</string>
+  <string name="common_type_calendar">Format iCalendar</string>
+  <string name="common_type_doc">Dokumen</string>
+  <string name="common_type_image">Gambar</string>
+  <string name="common_type_keynote">Berkas Keynote</string>
+  <string name="common_type_numbers">Berkas Numbers</string>
+  <string name="common_type_pages">Berkas Pages</string>
+  <string name="common_type_pdf">Dokumen PDF</string>
+  <string name="common_type_ppt">Presentasi</string>
+  <string name="common_type_proton_doc">Dokumen Proton</string>
+  <string name="common_type_text">Teks</string>
+  <string name="common_type_trustedkey">Kunci terpercaya</string>
+  <string name="common_type_unknown">Biner</string>
+  <string name="common_type_video">Video</string>
+  <string name="common_type_xls">Spreadsheet</string>
+  <string name="common_type_xml">Berkas XML</string>
+  <string name="common_type_zip">Arsip</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">Nama tidak boleh kosong</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">Nama tidak boleh melebihi %1$d karakter</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">Nama tidak boleh mengandung karakter yang tidak terlihat, \"%1$s\", atau \"%2$s\"</string>
+  <string name="common_error_name_periods">Nama tidak boleh diisi dengan \".\" atau \"..\"</string>
+  <string name="common_error_no_internet">Tidak ada koneksi internet</string>
+  <string name="common_error_http_5xx">Terdapat kesalahan pada server</string>
+  <string name="common_error_internal">Terdapat kesalahan internal</string>
+  <string name="common_error_crypto">Enkripsi atau dekripsi gagal</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">Enkripsi atau dekripsi gagal: %1$s</string>
+  <string name="common_error_io">Operasi input atau output gagal</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">Operasi input atau output gagal: %1$s</string>
+  <string name="common_error_security">Terdapat kesalahan keamanan</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">Terdapat kesalahan keamanan: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s diunduh</string>
+  <string name="common_sign_out">Keluar</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="other">%1$d dipilih</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s disalin ke papan klip</string>
+  <string name="common_in_app_notification_download_started">Unduhan dimulai</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s berhasil diunduh</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="other">%1$d berkas berhasil diunduh</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">%1$s gagal diunduh</string>
+  <string name="common_in_app_notification_download_failed">Unduhan gagal</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">Sistem tidak dapat menemukan aplikasi yang dapat %1$s</string>
+  <!-- endregion -->
+</resources>

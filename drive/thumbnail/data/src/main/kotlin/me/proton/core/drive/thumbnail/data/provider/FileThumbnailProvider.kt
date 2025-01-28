@@ -68,19 +68,19 @@ abstract class FileThumbnailProvider(
             }?.takeIf { bytes ->
                 bytes.isNotEmpty().also { isNotEmpty ->
                     if (!isNotEmpty) {
-                        CoreLogger.d(UPLOAD, "Thumbnail is empty for: $uriString")
+                        CoreLogger.i(UPLOAD, "Thumbnail is empty for: $uriString")
                     }
                 }
             }
         } catch (e: OutOfMemoryError) {
-            CoreLogger.d(LogTag.THUMBNAIL, e, "Create file thumbnail failed")
+            CoreLogger.w(LogTag.THUMBNAIL, e, "Create file thumbnail failed")
             System.gc()
             null
         } catch (e: IllegalArgumentException) {
-            CoreLogger.d(LogTag.THUMBNAIL, e, "Create file thumbnail failed")
+            CoreLogger.w(LogTag.THUMBNAIL, e, "Create file thumbnail failed")
             null
         } catch (e: IOException) {
-            CoreLogger.d(LogTag.THUMBNAIL, e, "Create file thumbnail failed")
+            CoreLogger.w(LogTag.THUMBNAIL, e, "Create file thumbnail failed")
             null
         } finally {
             tmpFile?.delete()

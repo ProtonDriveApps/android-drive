@@ -30,6 +30,8 @@ driveModule(
     serialization = true,
     workManager = true,
 ) {
+    api(project(":drive:announce-event:domain"))
     api(project(":drive:base:data"))
+    api(project(":drive:notification:domain"))
     api(project(":drive:worker:domain"))
 }

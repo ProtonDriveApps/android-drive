@@ -17,7 +17,7 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="settings_app_lock">App Slot</string>
+  <string name="settings_app_lock">Appvergrendeling</string>
   <string name="settings_section_security">Beveiliging</string>
   <string name="settings_section_about">Over</string>
   <string name="settings_section_statistics">Gebruiksstatistieken</string>
@@ -40,13 +40,13 @@
     <item quantity="other">Na %1$d dagen</item>
   </plurals>
   <string name="settings_section_backup">Back-up</string>
-  <string name="settings_photos_backup_folders_title">Uploaden van</string>
+  <string name="settings_photos_backup_folders_title">Uploaden vanaf</string>
   <!--
         Variable %1$s is the default folder name (Camera)
         Examples:
             "Your Camera folder is backed up automatically."
     -->
-  <string name="settings_photos_backup_folders_description">Uw %1$s map is automatisch geback-upt. Selecteer aanvullende mappen om te back-uppen en de aanwezige foto\'s zullen in de foto\'s tab verschijnen.</string>
+  <string name="settings_photos_backup_folders_description">Uw %1$s map wordt automatisch geback-upt. Selecteer extra mappen om een back-up te maken en hun foto\'s worden weergegeven op het tabblad Foto\'s.</string>
   <string name="settings_photos_backup_folders_not_found">Map niet gevonden</string>
   <string name="settings_photos_backup_folders_confirm_stop_sync_title">Annuleer back-up van map?</string>
   <!--

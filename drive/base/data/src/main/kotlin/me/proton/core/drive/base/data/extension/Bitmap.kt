@@ -32,7 +32,7 @@ fun Bitmap.compress(maxSize: Bytes): ByteArray? {
                 stream.toByteArray().takeIf { bytes -> bytes.size <= maxSize.value.toInt() }
                     ?.let { bytes -> return bytes }
             } else {
-                CoreLogger.d(THUMBNAIL, "Compression failed, quality: $quality")
+                CoreLogger.i(THUMBNAIL, "Compression failed, quality: $quality")
                 CoreLogger.d(THUMBNAIL, "Source: $width $height $byteCount")
             }
         }

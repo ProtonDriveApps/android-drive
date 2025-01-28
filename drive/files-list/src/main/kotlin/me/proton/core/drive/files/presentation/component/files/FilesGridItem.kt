@@ -41,7 +41,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -234,7 +234,7 @@ private fun GridItemMoreButton(
                     .testTag(FilesTestTag.moreButton)
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(bounded = false, radius = DefaultIconSize / 2),
+                        indication = ripple(bounded = false, radius = DefaultIconSize / 2),
                         role = Role.Button,
                     ) { onMoreOptionsClick(link) }
                     .size(DefaultButtonMinHeight)

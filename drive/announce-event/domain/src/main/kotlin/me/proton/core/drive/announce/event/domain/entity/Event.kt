@@ -126,12 +126,12 @@ sealed class Event {
         override val occurredAt: TimestampMs = TimestampMs()
     }
 
-    object ForcedSignOut : Event() {
+    data object ForcedSignOut : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs()
     }
 
-    object NoSpaceLeftOnDevice : Event() {
+    data object NoSpaceLeftOnDevice : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs()
     }
@@ -225,6 +225,11 @@ sealed class Event {
     data class SignatureVerificationFailed(
         val usedPublicKeys: List<PublicKey>,
     ) : Event() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs()
+    }
+
+    data object TransferData : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs()
     }

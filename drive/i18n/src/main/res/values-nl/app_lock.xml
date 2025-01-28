@@ -23,7 +23,7 @@
   <string name="app_lock_biometric_subtitle_confirmation_enable">Bevestig met uw apparaatvergrendeling om ontgrendelen in te schakelen</string>
   <string name="app_lock_biometric_subtitle_confirmation_disable">Bevestig met uw apparaatvergrendeling om ontgrendelen uit te schakelen</string>
   <string name="app_lock_option_never_set">Schakel biometrie of apparaatvergrendeling in</string>
-  <string name="app_lock_option_none">Ontgrendeld blijven</string>
+  <string name="app_lock_option_none">Ontgrendeld houden</string>
   <string name="app_lock_option_system">Biometrie of apparaatvergrendeling</string>
   <string name="app_lock_system_dialog_title">Schakel biometrische toegang in</string>
   <string name="app_lock_system_dialog_description">Stel biometrie of toegang tot apparaatvergrendeling in op dit apparaat.</string>

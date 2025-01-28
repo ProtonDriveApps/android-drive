@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Αποκρυπτογράφηση</string>
+  <string name="title_files">Αρχεία</string>
+  <string name="title_shared">Κοινοποιημένα</string>
+  <string name="title_my_files">Τα Αρχεία μου</string>
+  <string name="title_offline_available">Διαθέσιμα εκτός σύνδεσης</string>
+  <string name="title_empty_my_files">Προχωρήστε, προσθέστε το πρώτο σας αρχείο</string>
+  <string name="title_empty_folder">Ας γεμίσουμε αυτόν τον φάκελο</string>
+  <string name="title_empty_folder_read_only">Άδειος φάκελος</string>
+  <string name="title_empty_shared">Μείνε ενήμερος για το τι συμβαίνει</string>
+  <string name="title_empty_offline_available">Τίποτα διαθέσιμο εκτός σύνδεσης</string>
+  <string name="title_empty_trash">Τα Διαγραμμένα είναι άδεια</string>
+  <string name="title_empty_trash_action">Άδειασμα Διαγραμμένων</string>
+  <string name="title_files_confirm_deletion">Μόνιμη διαγραφή;</string>
+  <string name="title_default_home_screen_tab">Επιλογή προεπιλεγμένης καρτέλας αρχικής οθόνης</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Εφαρμογή</string>
+  <string name="description_signing_out">Γίνεται αποσύνδεση…</string>
+  <string name="settings_about_links_acknowledgments_title">Ευχαριστίες</string>
+  <string name="settings_about_links_privacy_policy_title">Πολιτική απορρήτου</string>
+  <string name="settings_about_links_terms_of_service_title">Όροι χρήσης</string>
+  <string name="common_error_no_browser_available">Δεν μπορέσαμε να ανοίξουμε τον σύνδεσμο καθώς δε φαίνεται να έχετε εγκατεστημένο κάποιο πρόγραμμα περιήγησης</string>
+  <string name="move_to">Μεταφορά σε</string>
+  <string name="move_file_confirm_action">Μεταφορά</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">Δεν μπορείτε να μεταφέρετε έναν φάκελο μέσα στον ίδιο</string>
+  <string name="folder_option_import_file">Ανέβασε ένα αρχείο</string>
+  <string name="folder_option_create_folder">Δημιούργησε ένα φάκελο</string>
+  <string name="folder_option_take_a_photo">Βγάλε μία νέα φωτογραφία</string>
+  <string name="folder_option_create_document">Δημιουργία εγγράφου</string>
+  <string name="settings_theme_system_default">Προεπιλογή συστήματος</string>
+  <string name="settings_theme_dark">Σκοτεινό</string>
+  <string name="settings_theme_light">Φωτεινό</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Ανέβασε σε %1$s</string>
+  <string name="upload_title">Ανέβασε</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">Μόνο αρχεία μπορούν να ανεβούν σε%1$s</string>
+  <string name="in_app_notification_importing_file_already_exists">Αρχείο με το ίδιο όνομα υπάρχει ήδη, δοκιμάστε να διαγράψετε την προσωρινή μνήμη της εφαρμογής</string>
+  <string name="in_app_notification_clear_local_cache_success">Η τοπική προσωρινή μνήμη διαγράφηκε με επιτυχία</string>
+  <string name="in_app_notification_destination_screen_not_found">Η οθόνη προορισμού δεν βρέθηκε</string>
+  <string name="in_app_notification_create_document_success">Το έγγραφο δημιουργήθηκε</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">Γεμάτος χώρος αποθήκευσης</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Ανεβάστε αρχεία σε %1$s</string>
+  <string name="notification_content_title_upload_complete">Το ανέβασμα ολοκληρώθηκε</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">Ανέβασμα %1$d αρχείου</item>
+    <item quantity="other">Ανέβασμα %1$d αρχείων</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d αρχείο ανέβηκε</item>
+    <item quantity="other">%1$d αρχεία ανέβηκαν</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d αρχείο ακυρώθηκε</item>
+    <item quantity="other">%1$d αρχεία ακυρώθηκαν</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">%1$d αρχείο απέτυχε</item>
+    <item quantity="other">%1$d αρχεία απέτυχαν</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Δημιουργία αντιγράφων ασφαλείας φωτογραφιών στο %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">%1$s στοιχείο απομένει</item>
+    <item quantity="other">%1$s στοιχεία απομένουν</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Το αντίγραφο ασφαλείας ολοκληρώθηκε</string>
+  <string name="notification_content_text_backup_uncompleted">Η δημιουργία αντιγράφων ασφαλείας ολοκληρώθηκε με προβλήματα</string>
+  <string name="notification_content_text_backup_failed">Αποτυχία δημιουργίας αντιγράφου ασφαλείας</string>
+  <string name="notification_content_text_backup_failed_drive_storage">Ο αποθηκευτικός χώρος Proton είναι πλήρης</string>
+  <string name="notification_content_text_backup_failed_local_storage">Ο τοπικός αποθηκευτικός χώρος είναι πλήρης</string>
+  <string name="notification_content_text_backup_failed_permission">Λείπουν τα δικαιώματα</string>
+  <string name="notification_content_text_backup_failed_connectivity">Δεν υπάρχει σύνδεση στο Διαδίκτυο</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Αναμονή για Wi-Fi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Δεν επιτρέπεται η δημιουργία αντιγράφων ασφαλείας</string>
+  <string name="notification_content_text_backup_paused_disabled">Η δημιουργία αντιγράφων ασφαλείας ήταν απενεργοποιημένη</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">Δεν είναι δυνατή η εκτέλεση της δημιουργίας αντιγράφων ασφαλείας στο παρασκήνιο</string>
+  <string name="notification_content_text_backup_preparing">Προετοιμασία δημιουργίας αντιγράφων ασφαλείας</string>
+  <string name="notification_content_title_download_complete">Η λήψη ολοκληρώθηκε</string>
+  <string name="notification_content_title_forced_sign_out">Παρακαλούμε συνδεθείτε</string>
+  <string name="notification_content_text_forced_sign_out">Συγνώμη για τη διακοπή! Αντιμετωπίσαμε πρόβλημα με το συγχρονισμό - συνδεθείτε ξανά και θα λειτουργήσουν όλα ομαλά.</string>
+  <string name="notification_content_title_no_space_left_on_device">Δεν υπάρχει ελεύθερος χώρος στη συσκευή</string>
+  <string name="notification_content_text_no_space_left_on_device">Η εφαρμογή ενδέχεται να μη λειτουργεί σωστά.</string>
+  <string name="notification_channel_group_name_application">Εφαρμογή</string>
+  <string name="notification_channel_background_title">Παρασκήνιο</string>
+  <string name="notification_channel_background_description">Κανάλι για λειτουργίες παρασκηνίου, όπως δημιουργία αντιγράφων ασφαλείας</string>
+  <string name="notification_channel_transfer_title">Μεταφορά</string>
+  <string name="notification_channel_transfer_description">Κανάλι για cloud χώρο αποθήκευσης, ανέβασμα και λήψη ειδοποιήσεων</string>
+  <string name="notification_channel_warning_title">Προειδοποίηση</string>
+  <string name="notification_channel_warning_description">Κανάλι για προειδοποιήσεις που χρειάζονται ενέργεια από το χρήστη</string>
+  <string name="notification_permission_rationale_title_backup">Μείνετε ενημερωμένοι σχετικά με την κατάσταση δημιουργίας αντιγράφων ασφαλείας</string>
+  <string name="notification_permission_rationale_description_backup">Λάβετε ειδοποιήσεις σχετικά με την πρόοδο και την κατάσταση των αντιγράφων ασφαλείας σας.</string>
+  <string name="notification_permission_rationale_action_accept">Ενεργοποίηση ειδοποιήσεων</string>
+  <string name="notification_permission_rationale_action_reject">Όχι τώρα</string>
+  <string name="notification_content_title_transferring">Μεταφορά δεδομένων</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Επιλογή όλων των στοιχείων στη λίστα</string>
+  <string name="content_description_selected_options">Εμφάνιση περισσότερων επιλογών για επιλεγμένα αρχεία ή/και φακέλους</string>
+  <string name="content_description_files_upload_upload_file">Ανέβασε ένα αρχείο</string>
+  <string name="description_empty_my_files">Πατήστε το κουμπί για να αρχίσετε να προσθέτετε αρχεία.</string>
+  <string name="description_empty_folder_read_only">Δεν υπάρχει τίποτα να δείτε εδώ</string>
+  <string name="description_empty_shared">Τα συνδεδεμένα αρχεία εμφανίζονται εδώ, ώστε να μπορείτε εύκολα να παρακολουθείτε και να διαχειρίζεστε τα ήδη διαμοιρασμένα.</string>
+  <string name="description_empty_trash">Εδώ παραμένουν τα απορριφθέντα στοιχεία μέχρι να τα διαγράψετε ή να τα επαναφέρετε.</string>
+  <string name="description_empty_offline_available">Κάντε τα απαραίτητα αρχεία πάντα διαθέσιμα ακόμα και όταν το δίκτυό σας δεν είναι διαθέσιμο.</string>
+  <string name="description_no_drive_scope">Ο χρήστης δεν έχει πρόσβαση στη λειτουργία cloud αποθηκευτικού χώρου.</string>
+  <string name="description_file_download_failed">Η λήψη απέτυχε. Ελέγξτε τη σύνδεση δικτύου και δοκιμάστε ξανά.</string>
+  <string name="description_file_decryption_failed">Δεν ήταν δυνατή η αποκρυπτογράφηση του αρχείου</string>
+  <string name="description_file_verify_signature_failed">Δεν ήταν δυνατή η επαλήθευση της υπογραφής του αρχείου</string>
+  <string name="description_files_stop_sharing">Αυτό θα διαγράψει τον σύνδεσμο και θα καταργήσει την πρόσβαση στο αρχείο ή στο φάκελό σας για οποιονδήποτε έχει τον σύνδεσμο.</string>
+  <string name="description_files_stop_sharing_action_success">Ο σύνδεσμος προς το αρχείο σας έχει διαγραφεί.</string>
+  <string name="description_files_stop_sharing_action_error">Παρουσιάστηκε σφάλμα κατά τη διαγραφή του συνδέσμου προς το αρχείο σας.</string>
+  <string name="description_files_stop_all_sharing">Αυτό θα διαγράψει τον σύνδεσμο και θα καταργήσει την πρόσβαση για όλους.</string>
+  <string name="description_files_stop_all_sharing_action_success">Η κοινή χρήση στο αρχείο σας έχει διαγραφεί.</string>
+  <string name="description_files_stop_all_sharing_action_error">Παρουσιάστηκε σφάλμα κατά τη διαγραφή της κοινής χρήσης στο αρχείο σας.</string>
+  <string name="ignore_file_signature_action">Προβολή όπως και να έχει</string>
+  <string name="action_empty_files_add_files">Ανέβασε</string>
+  <string name="error_could_not_send_file">Παρουσιάστηκε σφάλμα κατά την προσπάθεια αποστολής του αρχείου</string>
+  <string name="error_could_not_load_folder_content">Παρουσιάστηκε σφάλμα κατά την προσπάθεια ανεβάσματος του περιεχομένου του φακέλου</string>
+  <string name="error_main_share_locked">Τα αρχεία σας δεν είναι πλέον προσβάσιμα, λόγω μιας επαναφοράς του κωδικού πρόσβασης. Για επανάκτηση πρόσβασης, ανεβάστε ξανά το παλιό κλειδί κρυπτογράφησης.</string>
+  <string name="error_share_locked">Η κοινή χρήση είναι κλειδωμένη.</string>
+  <string name="error_main_share_not_found">Η κύρια κοινοποίηση δεν βρέθηκε.</string>
+  <string name="error_share_not_found">Η κοινή χρήση δεν βρέθηκε</string>
+  <string name="error_creating_photo_share_not_allowed">Η δημιουργία αντιγράφων ασφαλείας φωτογραφιών είναι προσωρινά απενεργοποιημένη.</string>
+  <string name="error_creating_share_not_allowed">Η δημιουργία κοινόχρηστου στοιχείου είναι προσωρινά απενεργοποιημένη.</string>
+  <string name="operation_open_document">άνοιξε ένα έγγραφο</string>
+  <string name="operation_create_document">δημιούργησε ένα έγγραφο</string>
+  <string name="operation_take_picture">βγάλτε φωτογραφία</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Ξεκλειδώστε %1$s δωρεάν αποθηκευτικού χώρου</string>
+  <string name="get_more_free_storage_description">Ολοκληρώστε αυτά τα βήματα τις πρώτες 30 ημέρες για μια δωρεάν αναβάθμιση χώρου αποθήκευσης.</string>
+  <string name="get_more_free_storage_action_upload_title">Ανεβάστε ένα αρχείο Ή ενεργοποιήστε τη δημιουργία αντιγράφων ασφαλείας φωτογραφιών</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Όλα τα αρχεία σας θα κρυπτογραφηθούν.</string>
+  <string name="get_more_free_storage_action_link_title">Δημιούργησε ένα σύνδεσμο διαμοιρασμού</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Επιλέξτε οποιοδήποτε αρχείο ή φάκελο. Ανοίξτε το μενού επιλογών και πατήστε %1$s.</string>
+  <string name="get_more_free_storage_action_share_title">Κοινοποίηση αρχείου</string>
+  <string name="get_more_free_storage_action_share_subtitle">Είναι εύκολο και ασφαλές.</string>
+  <string name="get_more_free_storage_action_recovery_title">Ορίστε μια μέθοδο ανάκτησης</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Συνδεθείτε στο %1$s και, στη συνέχεια, μεταβείτε στις Ρυθμίσεις -&gt; Ανάκτηση.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Έγγραφο χωρίς τίτλο %1$s</string>
+</resources>

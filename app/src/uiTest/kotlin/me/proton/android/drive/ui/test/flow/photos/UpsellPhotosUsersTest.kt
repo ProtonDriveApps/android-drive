@@ -67,7 +67,7 @@ class UpsellPhotosUsersTest : PhotosBaseTest() {
             }
             .clickGetStorage()
             .verify {
-                SubscriptionRobot.verifyAtLeastOnePlanIsShown()
+                SubscriptionRobot.currentPlanIsDisplayed()
             }
     }
 

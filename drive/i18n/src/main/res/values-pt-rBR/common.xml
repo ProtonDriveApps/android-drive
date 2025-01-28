@@ -55,7 +55,7 @@
   <string name="common_discard_action">Descartar</string>
   <string name="common_skip_action">Pular</string>
   <string name="common_delete_permanently_action">Excluir permanentemente</string>
-  <string name="common_make_available_offline_action">Disponibilizar offline</string>
+  <string name="common_make_available_offline_action">Disponibilizar off-line</string>
   <string name="common_remove_from_offline_available_action">Remover do modo disponibilizar off-line</string>
   <string name="common_get_link_action">Obter link</string>
   <string name="common_manage_link_action">Gerenciar link</string>
@@ -74,7 +74,7 @@
   <string name="common_type_pages">Arquivo Pages</string>
   <string name="common_type_pdf">Documento PDF</string>
   <string name="common_type_ppt">Apresentação</string>
-  <string name="common_type_proton_doc">Documento da Proton</string>
+  <string name="common_type_proton_doc">Documento Proton</string>
   <string name="common_type_text">Texto</string>
   <string name="common_type_trustedkey">Chave de confiança</string>
   <string name="common_type_unknown">Binário</string>

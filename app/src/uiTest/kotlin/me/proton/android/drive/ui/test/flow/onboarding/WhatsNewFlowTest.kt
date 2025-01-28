@@ -26,6 +26,7 @@ import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ANDROID_WHATS_NEW
 import me.proton.core.test.rule.annotation.PrepareUser
+import org.junit.Ignore
 import org.junit.Test
 
 @HiltAndroidTest
@@ -35,6 +36,7 @@ class WhatsNewFlowTest : BaseTest() {
     @Test
     @FeatureFlag(DRIVE_ANDROID_WHATS_NEW, ENABLED)
     @PrepareUser(loginBefore = true)
+    @Ignore("PROTON_DOCS was limited to 2024, enable the test for a new whats new")
     fun whatsNewShouldShow() {
         WhatsNewRobot
             .verify {

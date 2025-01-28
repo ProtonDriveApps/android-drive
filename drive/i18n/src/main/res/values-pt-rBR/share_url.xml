@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Compartilhar via link</string>
   <string name="shared_with_me_title">Compartilhado comigo</string>
   <string name="shared_by_me_title">Compartilhado por mim</string>
-  <string name="shared_with_me_empty_description">Arquivos e pastas que você compartilha com outras pessoas aparecerão aqui</string>
+  <string name="shared_empty_title">Nada compartilhado ainda</string>
+  <string name="shared_with_me_empty_description">Arquivos e pastas compartilhados com você aparecerão aqui</string>
   <string name="shared_by_me_empty_description">Compartilhe com segurança seus arquivos e pastas com criptografia de ponta a ponta</string>
 </resources>

@@ -30,6 +30,12 @@ interface GrowlerRobot {
             quantity,
         )
     )
+    private fun renameSuccessGrowler(newName: String) = node.withText(
+        StringUtils.stringFromResource(
+            I18N.string.link_rename_successful,
+            newName
+        )
+    )
 
     private fun deletePermanentlySuccessGrowler(quantity: Int) = node.withText(
         StringUtils.pluralStringFromResource(
@@ -53,6 +59,9 @@ interface GrowlerRobot {
 
     fun <T : Robot> dismissMoveToTrashSuccessGrowler(quantity: Int, goesTo: T) =
         moveToTrashSuccessGrowler(quantity).clickTo(goesTo)
+
+    fun <T : Robot> dismissRenameSuccessGrowler(newName: String, goesTo: T) =
+        renameSuccessGrowler(newName).clickTo(goesTo)
 
 
     fun <T : Robot> dismissDeleteSuccessGrowler(quantity: Int, goesTo: T) =

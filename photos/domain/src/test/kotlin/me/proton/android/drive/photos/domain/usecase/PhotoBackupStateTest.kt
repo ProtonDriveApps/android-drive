@@ -319,5 +319,9 @@ class PhotoBackupStateTest {
             // do nothing
         }
 
+        override suspend fun cancelForegroundWork(userId: UserId) {
+            // do nothing
+        }
+
     }
 }

@@ -43,7 +43,7 @@ class StartBackupAfterErrorResolved @Inject constructor(
                     error.type == type
                 }
                 if (hasErrorType) {
-                    CoreLogger.d(BACKUP, "Restarting backup after $type")
+                    CoreLogger.i(BACKUP, "Restarting backup after $type")
                     deleteAllBackupError(folderId, type).getOrThrow()
                     startBackup(folderId)
                 } else {

@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Condividi via link</string>
   <string name="shared_with_me_title">Condiviso con me</string>
   <string name="shared_by_me_title">Condiviso da me</string>
-  <string name="shared_with_me_empty_description">I file e le cartelle che condividi con altri vengono visualizzati qui</string>
+  <string name="shared_empty_title">Niente di condiviso ancora</string>
+  <string name="shared_with_me_empty_description">I file e le cartelle condivisi con te verranno visualizzati qui</string>
   <string name="shared_by_me_empty_description">Condividi in modo sicuro documenti e cartelle con la crittografia end-to-end</string>
 </resources>

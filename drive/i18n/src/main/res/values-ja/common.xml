@@ -84,7 +84,7 @@
   <string name="common_type_zip">アーカイブ</string>
   <!-- endregion -->
   <!-- region Common file and folder name validation errors -->
-  <string name="common_error_name_is_blank">名前を入力してください</string>
+  <string name="common_error_name_is_blank">名前は空白にできません</string>
   <!--
         Variable %1$d is a number
         Example:
@@ -101,8 +101,8 @@
   <string name="common_error_name_periods">名前に「.」や「..」は使用できません。</string>
   <string name="common_error_no_internet">インターネット接続なし</string>
   <string name="common_error_http_5xx">サーバーエラーが発生しました</string>
-  <string name="common_error_internal">内部エラーが発生した</string>
-  <string name="common_error_crypto">暗号化または復号化に失敗した</string>
+  <string name="common_error_internal">内部エラーが発生しました</string>
+  <string name="common_error_crypto">暗号化または復号化に失敗しました</string>
   <!--
         Variable %1$s is the non-null message from Crypto exception
         Example:

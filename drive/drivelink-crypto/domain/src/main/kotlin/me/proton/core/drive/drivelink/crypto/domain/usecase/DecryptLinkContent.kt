@@ -18,9 +18,11 @@
 package me.proton.core.drive.drivelink.crypto.domain.usecase
 
 import me.proton.core.crypto.common.pgp.DecryptedFile
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.LogTag.DOWNLOAD
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.file.DecryptAndVerifyFiles
 import me.proton.core.drive.crypto.domain.usecase.file.VerifyManifestSignature
@@ -35,8 +37,8 @@ import me.proton.core.drive.key.domain.usecase.GetVerificationKeys
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadBlocks
+import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadState
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailBlock
-import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
 import java.util.UUID
 import javax.inject.Inject
@@ -51,6 +53,7 @@ class DecryptLinkContent @Inject constructor(
     private val getNodeKey: GetNodeKey,
     private val getVerificationKeys: GetVerificationKeys,
     private val getDownloadBlocks: GetDownloadBlocks,
+    private val getDownloadState: GetDownloadState,
 ) {
     suspend operator fun invoke(
         driveLink: DriveLink.File,
@@ -58,7 +61,11 @@ class DecryptLinkContent @Inject constructor(
         checkSignature: Boolean,
     ): Result<File> = coRunCatching {
         val link = getLink(driveLink.id).toResult().getOrThrow()
-        val downloadState = requireIsInstance<DownloadState.Downloaded>(driveLink.downloadState)
+        val downloadState = requireIsInstance<DownloadState.Downloaded>(
+            getDownloadState(driveLink.id).toResult().getOrThrow()
+        ) {
+            "File ${driveLink.id.id.logId()} is not downloaded"
+        }
         val encryptedFileBlocks = getDownloadBlocks(link).getOrThrow().also { blocks ->
             blocks.requireSortedAscending()
         }
@@ -82,9 +89,7 @@ class DecryptLinkContent @Inject constructor(
             manifestSignature = requireNotNull(downloadState.manifestSignature) {
                 "Download state manifest signature is null"
             },
-        ).onFailure { error ->
-            CoreLogger.d(LogTag.DOWNLOAD, error, "Verification of manifest signature failed")
-        }.getOrNull() ?: false
+        ).getOrNull(DOWNLOAD, "Verification of manifest signature failed") ?: false
         decryptAndVerifyFiles(
             contentKey = contentKey,
             decryptSignatureKey = fileKey,

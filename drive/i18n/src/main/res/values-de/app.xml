@@ -64,7 +64,7 @@
   <string name="in_app_notification_upload_files_only">Nur Dateien können zu %1$s hochgeladen werden.</string>
   <string name="in_app_notification_importing_file_already_exists">Eine Datei mit demselben Namen existiert bereits. Versuche, den App-Cache zu löschen.</string>
   <string name="in_app_notification_clear_local_cache_success">Lokaler Cache wurde erfolgreich geleert</string>
-  <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
+  <string name="in_app_notification_destination_screen_not_found">Zielbildschirm nicht gefunden</string>
   <string name="in_app_notification_create_document_success">Dokument erstellt</string>
   <!-- endregion -->
   <!-- region Notification -->
@@ -156,10 +156,11 @@
   <string name="notification_channel_transfer_description">Kanal für Cloud-Speicher, Upload- und Download-Benachrichtigungen.</string>
   <string name="notification_channel_warning_title">Warnung</string>
   <string name="notification_channel_warning_description">Kanal für Warnungen, die ein Eingreifen des Benutzers erfordern.</string>
-  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
-  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
+  <string name="notification_permission_rationale_title_backup">Bleibe über den Status deiner Sicherung auf dem Laufenden</string>
+  <string name="notification_permission_rationale_description_backup">Erhalte Benachrichtigungen über den Fortschritt und den Status deiner Sicherung.</string>
   <string name="notification_permission_rationale_action_accept">Benachrichtigungen aktivieren</string>
   <string name="notification_permission_rationale_action_reject">Jetzt nicht</string>
+  <string name="notification_content_title_transferring">Datenübertragung</string>
   <!-- endregion -->
   <string name="content_description_select_all">Alle Elemente in der Liste auswählen</string>
   <string name="content_description_selected_options">Mehr Optionen für die ausgewählten Dateien und/oder Ordner anzeigen</string>

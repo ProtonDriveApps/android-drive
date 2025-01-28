@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.onSuccess
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.coroutines.timeLimitedScope
@@ -85,6 +86,7 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.CreateShareInvitationsResult
 import me.proton.core.drive.share.user.domain.entity.ShareUserInvitation
 import me.proton.core.drive.share.user.domain.entity.ShareUsersInvitation
+import me.proton.core.drive.share.user.domain.entity.containsOnlyWarnings
 import me.proton.core.drive.share.user.domain.entity.toError
 import me.proton.core.drive.share.user.domain.usecase.InviteMembers
 import me.proton.core.util.kotlin.CoreLogger
@@ -408,7 +410,14 @@ class SharedDriveInvitationsViewModel @Inject constructor(
                     type = BroadcastMessage.Type.ERROR
                 )
             }.onSuccess { result ->
-                result.toError("Cannot send some invitations")?.log(SHARING)
+                result.toError("Cannot send some invitations")?.log(
+                    tag = SHARING,
+                    level = if (result.containsOnlyWarnings()) {
+                        LoggerLevel.WARNING
+                    } else {
+                        LoggerLevel.ERROR
+                    },
+                )
                 broadcastResult(result, onComplete)
             }
         }

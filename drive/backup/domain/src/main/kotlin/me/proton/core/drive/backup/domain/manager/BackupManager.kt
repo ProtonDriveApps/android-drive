@@ -44,4 +44,5 @@ interface BackupManager {
 
     suspend fun updateNotification(folderId: FolderId)
 
+    suspend fun cancelForegroundWork(userId: UserId)
 }

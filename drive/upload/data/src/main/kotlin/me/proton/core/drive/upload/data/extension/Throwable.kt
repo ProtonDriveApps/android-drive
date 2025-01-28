@@ -24,6 +24,7 @@ import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.data.extension.isErrno
 import me.proton.core.drive.base.data.extension.isRetryable
+import me.proton.core.drive.cryptobase.domain.exception.VerificationException
 import me.proton.core.drive.observability.domain.metrics.UploadErrorsTotal
 import me.proton.core.drive.upload.domain.exception.InconsistencyException
 import me.proton.core.network.domain.ApiException
@@ -53,7 +54,6 @@ internal fun Throwable.toEventUploadReason(): Event.Upload.Reason = when (this) 
         hasProtonErrorCode(ProtonApiCode.EXCEEDED_QUOTA) -> Event.Upload.Reason.ERROR_DRIVE_STORAGE
         else -> Event.Upload.Reason.ERROR_OTHER
     }
-
     else -> if (isErrno(OsConstants.ENOSPC)) {
         Event.Upload.Reason.ERROR_LOCAL_STORAGE
     } else {
@@ -70,7 +70,7 @@ fun Throwable.toUploadErrorType(): UploadErrorsTotal.Type = when(this) {
         isHttpError(500..599) -> UploadErrorsTotal.Type.http_5xx
         else -> UploadErrorsTotal.Type.unknown
     }
-    is VerifierException -> UploadErrorsTotal.Type.integrity_error
+    is VerifierException, is VerificationException -> UploadErrorsTotal.Type.integrity_error
     else -> UploadErrorsTotal.Type.unknown
 }
 

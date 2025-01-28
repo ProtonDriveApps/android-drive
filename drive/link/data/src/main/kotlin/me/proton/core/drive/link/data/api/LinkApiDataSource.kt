@@ -68,7 +68,9 @@ class LinkApiDataSource(private val apiProvider: ApiProvider) {
                     originalHash = moveInfo.previousHash,
                     parentLinkId = moveInfo.parentLinkId,
                     nodePassphrase = moveInfo.nodePassphrase,
+                    nodePassphraseSignature = moveInfo.nodePassphraseSignature,
                     nameSignatureEmail = moveInfo.nameSignatureEmail,
+                    signatureEmail = moveInfo.signatureEmail,
                 )
             )
         }.valueOrThrow

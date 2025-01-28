@@ -60,7 +60,7 @@ class VerifyFileSignature @Inject constructor(
             else -> VerificationStatus.Failure
         }.also { status ->
             if (status.failed) {
-                CoreLogger.d(
+                CoreLogger.w(
                     tag = LogTag.ENCRYPTION,
                     e = VerificationException("Verification status ${status.name}"),
                     message = "Verification of file failed"

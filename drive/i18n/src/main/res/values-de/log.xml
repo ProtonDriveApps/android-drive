@@ -33,7 +33,7 @@
   <string name="log_origin_logger">Logger</string>
   <string name="log_origin_screen">Bildschirm</string>
   <string name="log_origin_application_state">Anwendungsstatus</string>
-  <string name="log_origin_workers">Workers</string>
+  <string name="log_origin_workers">Arbeitsprozesse</string>
   <string name="log_origin_backup">Sicherung</string>
   <string name="log_origin_user">Benutzer</string>
   <string name="log_origin_device">Gerät</string>

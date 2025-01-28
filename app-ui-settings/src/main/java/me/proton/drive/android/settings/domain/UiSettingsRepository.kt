@@ -68,4 +68,21 @@ interface UiSettingsRepository {
      * Update timestamp when whats new was shown
      */
     suspend fun updateWhatsNewShown(key: WhatsNewKey, timestamp: TimestampS)
+
+    /**
+     * Retrieves setting if rating booster screen has been shown to the user
+     */
+    suspend fun hasShownRatingBooster(): Boolean
+
+    /**
+     * Update timestamp when rating booster was shown
+     */
+    suspend fun updateRatingBoosterShown(timestamp: TimestampS)
+
+    /**
+     * Retrieves setting if any overlay screen has been shown to the user
+     */
+    suspend fun hasShownOverlay(): Boolean
+
+
 }

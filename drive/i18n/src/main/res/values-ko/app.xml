@@ -27,7 +27,7 @@
   <string name="title_empty_folder">이 폴더를 채워봅시다</string>
   <string name="title_empty_folder_read_only">빈 폴더</string>
   <string name="title_empty_shared">새로운 소식 알아보기</string>
-  <string name="title_empty_offline_available">오프라인 사용 불가능</string>
+  <string name="title_empty_offline_available">오프라인 사용 가능 항목 없음</string>
   <string name="title_empty_trash">휴지통이 비어있음</string>
   <string name="title_empty_trash_action">휴지통 비우기</string>
   <string name="title_files_confirm_deletion">영구적으로 삭제하시겠습니까?</string>
@@ -155,6 +155,7 @@
   <string name="notification_permission_rationale_description_backup">백업에 대한 진행 상황 및 상태에 대한 알림을 수신받으세요.</string>
   <string name="notification_permission_rationale_action_accept">알림 사용</string>
   <string name="notification_permission_rationale_action_reject">나중에</string>
+  <string name="notification_content_title_transferring">데이터 이전 중</string>
   <!-- endregion -->
   <string name="content_description_select_all">목록의 모든 항목 선택</string>
   <string name="content_description_selected_options">선택한 파일 또는 폴더에 대한 추가 옵션 표시</string>
@@ -172,7 +173,7 @@
   <string name="description_files_stop_sharing_action_success">파일의 링크가 삭제되었습니다.</string>
   <string name="description_files_stop_sharing_action_error">파일의 링크를 삭제하는데 오류가 발생했습니다.</string>
   <string name="description_files_stop_all_sharing">이것으로 링크를 삭제하고 모두의 접근 권한을 없애게 됩니다.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">파일의 공유가 삭제되었습니다.</string>
   <string name="description_files_stop_all_sharing_action_error">파일의 공유를 삭제하던 중 오류가 발생했습니다.</string>
   <string name="ignore_file_signature_action">보기</string>
   <string name="action_empty_files_add_files">업로드</string>

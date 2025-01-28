@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Forhåndsvisning av filinnhold</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Vis flere alternativer for filen</string>
   <string name="preview_downloading_state">Laster ned…</string>
   <string name="preview_processing_state">Behandler…</string>
   <string name="preview_empty">Ingenting å forhåndsvise...</string>

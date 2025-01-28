@@ -53,7 +53,7 @@
   <string name="common_permission_owner">Propietari</string>
   <string name="common_permission_admin">Administrador</string>
   <string name="common_permission_editor">Editor</string>
-  <string name="common_permission_viewer">Visualitzador</string>
+  <string name="common_permission_viewer">Lector</string>
   <string name="common_permission_unknown">Desconegut</string>
   <!--
         Variable %1$s is an email

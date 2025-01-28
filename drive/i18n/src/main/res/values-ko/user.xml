@@ -19,7 +19,7 @@
 <resources>
   <string name="storage_drive_usage">Drive 사용량</string>
   <string name="storage_total_usage">총 사용량</string>
-  <string name="storage_details_format"><![CDATA[%1$s 중 %2$s 사용됨]]></string>
+  <string name="storage_details_format"><![CDATA[%2$s 중 %1$s 사용됨]]></string>
   <!--
         Variable %1$s is percentage of available storage
         Examples:

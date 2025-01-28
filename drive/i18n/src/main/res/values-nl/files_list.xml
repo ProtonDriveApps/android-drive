@@ -43,7 +43,7 @@
             "Modified Dec 22, 2021"
     -->
   <string name="title_modified_with_date">Gewijzigd: %1$s</string>
-  <string name="files_restore_from_trash_action">Herstel</string>
+  <string name="files_restore_from_trash_action">Herstellen</string>
   <string name="files_send_to_trash_action">Naar prullenbak verplaatsen</string>
   <string name="files_remove_me_action">Verwijder mij</string>
   <string name="files_move_file_action">Verplaatsen</string>

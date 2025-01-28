@@ -46,12 +46,16 @@ fun Project.driveModule(
     socialTest: Boolean = false,
     kapt: Boolean = hilt || room || socialTest,
     showkase: Boolean = false,
+    buildConfig: Boolean = false,
     dependencies: DependencyHandler.() -> Unit = {},
 ) {
     val catalog = extensions.getByType<VersionCatalogsExtension>().named("libs")
     apply(plugin = "kotlin-android")
     if (kapt) {
         apply(plugin = "kotlin-kapt")
+    }
+    if (compose) {
+        apply(plugin = "org.jetbrains.kotlin.plugin.compose")
     }
     if (hilt) {
         apply(plugin = "dagger.hilt.android.plugin")
@@ -96,6 +100,7 @@ fun Project.driveModule(
 
         buildFeatures {
             this.compose = compose
+            this.buildConfig = buildConfig
         }
 
         (this as ExtensionAware).extensions.configure<KotlinJvmOptions>("kotlinOptions") {
@@ -125,6 +130,7 @@ fun Project.driveModule(
         }
         buildFeatures {
             this.compose = compose
+            this.buildConfig = buildConfig
         }
 
         (this as ExtensionAware).extensions.configure<KotlinJvmOptions>("kotlinOptions") {
@@ -161,12 +167,6 @@ fun Project.driveModule(
         compileOptions {
             sourceCompatibility = JavaVersion.VERSION_17
             targetCompatibility = JavaVersion.VERSION_17
-        }
-
-        if (compose) {
-            composeOptions {
-                kotlinCompilerExtensionVersion = catalog.findVersion("androidx.compose.compiler").get().requiredVersion
-            }
         }
 
         packagingOptions {

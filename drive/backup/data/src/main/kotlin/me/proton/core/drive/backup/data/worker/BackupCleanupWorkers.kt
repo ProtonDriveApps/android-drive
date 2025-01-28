@@ -20,7 +20,9 @@ package me.proton.core.drive.backup.data.worker
 
 import androidx.work.OneTimeWorkRequest
 import me.proton.core.drive.backup.domain.usecase.GetFolderFromFile
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.upload.data.worker.CleanupWorkers
@@ -48,16 +50,18 @@ class BackupCleanupWorkers @Inject constructor(
         return if (uriString == null) {
             emptyList()
         } else {
-            getFolderFromFile(userId, uriString).getOrNull()?.let { backupFolder ->
-                listOf(
-                    BackupScheduleUploadFolderWorker.getWorkRequest(
-                        backupFolder = backupFolder,
-                        delay = 60.seconds,
-                    ),
-                    BackupNotificationWorker.getWorkRequest(backupFolder.folderId),
-                    BackupClearFileWorker.getWorkRequest(backupFolder, uriString),
-                )
-            }.orEmpty()
+            getFolderFromFile(userId, uriString)
+                .getOrNull(BACKUP, "Cannot get folder from file: $uriString")
+                ?.let { backupFolder ->
+                    listOf(
+                        BackupScheduleUploadFolderWorker.getWorkRequest(
+                            backupFolder = backupFolder,
+                            delay = 60.seconds,
+                        ),
+                        BackupNotificationWorker.getWorkRequest(backupFolder.folderId),
+                        BackupClearFileWorker.getWorkRequest(backupFolder, uriString),
+                    )
+                }.orEmpty()
         }
     }
 }

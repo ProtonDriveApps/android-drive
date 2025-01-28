@@ -29,6 +29,7 @@ import coil.fetch.SourceResult
 import coil.request.Options
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
 import me.proton.core.drive.thumbnail.presentation.coil.fetch.ThumbnailFetcher
 import me.proton.core.util.kotlin.CoreLogger
@@ -52,7 +53,7 @@ class ThumbnailDecoder(
                 isSampled = false
             )
         }.onFailure { error ->
-            CoreLogger.d(LogTag.THUMBNAIL, error, "Unable to decrypt thumbnail fileId: ${metadata.fileId}")
+            CoreLogger.w(LogTag.THUMBNAIL, error, "Unable to decrypt thumbnail fileId: ${metadata.fileId.id.logId()}")
         }.getOrThrow()
     }
 

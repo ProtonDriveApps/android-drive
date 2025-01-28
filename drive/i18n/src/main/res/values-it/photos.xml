@@ -77,7 +77,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Usa la rete mobile</string>
   <string name="photos_error_local_storage">Spazio di archiviazione del dispositivo pieno</string>
   <string name="photos_error_local_storage_description">Per continuare il backup, devi liberare spazio di archiviazione sul tuo dispositivo.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Imposta l\'utilizzo della batteria su \"Senza restrizioni\" per consentire l\'attività dell\'app in background</string>
   <string name="photos_error_background_restrictions_description">Per effettuare il backup in background senza interruzioni, regola le impostazioni della batteria o apri frequentemente l\'app.</string>
   <string name="photos_error_background_restrictions_action">Impostazioni</string>
   <string name="photos_empty_title">Nessun backup</string>

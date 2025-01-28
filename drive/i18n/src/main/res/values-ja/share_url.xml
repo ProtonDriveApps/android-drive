@@ -47,8 +47,8 @@
   <string name="shared_link_action_copy_link">リンクをコピー</string>
   <string name="shared_link_action_copy_password">パスワードをコピー</string>
   <string name="shared_link_action_share_link">共有リンク</string>
-  <string name="shared_link_dialog_title_discard_changes">変更を破棄？</string>
-  <string name="shared_link_dialog_description">保存されていない変更はすべて失なわれます。</string>
+  <string name="shared_link_dialog_title_discard_changes">変更を破棄しますか？</string>
+  <string name="shared_link_dialog_description">保存されていない変更はすべて失われます。</string>
   <string name="shared_link_hint_expiration_date_field">有効期限なし</string>
   <string name="shared_link_message_update_share_url">共有設定が更新されました</string>
   <string name="shared_link_error_message_update_share_url">共有設定の更新に失敗しました</string>
@@ -68,8 +68,9 @@
   <string name="shared_link_error_message_expiration_date_too_late">有効期限は %1$d 日を超えてはいけません</string>
   <string name="shared_link_error_legacy_link">これは古いリンクで、管理はサポートされていません。このリンクの共有を中止し、新しいリンクを取得することをお勧めします。</string>
   <string name="title_share_via_link">リンクで共有</string>
-  <string name="shared_with_me_title">私と共有しました</string>
-  <string name="shared_by_me_title">自分が共有済み</string>
-  <string name="shared_with_me_empty_description">あなたが他の人に共有したファイルやフォルダはここに表示されます</string>
+  <string name="shared_with_me_title">私と共有中</string>
+  <string name="shared_by_me_title">私が共有中</string>
+  <string name="shared_empty_title">まだ共有されたものはありません</string>
+  <string name="shared_with_me_empty_description">あなたと共有されたファイルやフォルダはここに表示されます</string>
   <string name="shared_by_me_empty_description">エンドツーエンド暗号化でファイルとフォルダを安全に共有</string>
 </resources>

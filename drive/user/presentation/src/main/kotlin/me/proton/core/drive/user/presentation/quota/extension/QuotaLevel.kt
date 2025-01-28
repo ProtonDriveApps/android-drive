@@ -49,8 +49,11 @@ private val QuotaLevel.level: QuotaViewState.Level
         QuotaLevel.ERROR -> QuotaViewState.Level.ERROR
     }
 
-private val iconResId: Int
-    get() = CorePresentation.drawable.ic_proton_cloud
+private val QuotaLevel.iconResId: Int
+    get() = when(this) {
+        QuotaLevel.ERROR -> CorePresentation.drawable.ic_proton_exclamation_circle_filled
+        else -> CorePresentation.drawable.ic_proton_cloud
+    }
 
 private fun QuotaLevel.title(context: Context): AnnotatedString = if (this == QuotaLevel.ERROR) {
     AnnotatedString(

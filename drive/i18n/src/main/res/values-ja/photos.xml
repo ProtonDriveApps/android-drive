@@ -72,14 +72,14 @@
     -->
   <string name="photos_error_missing_permissions_description">継続的かつ自動バックアップを行うには、設定で %1$s によるすべての写真へのアクセスを許可してください。</string>
   <string name="photos_error_waiting_connectivity">インターネット接続なし</string>
-  <string name="photos_error_waiting_wifi_connectivity">Wi-Fi待ち</string>
+  <string name="photos_error_waiting_wifi_connectivity">Wi-Fiを待機中</string>
   <string name="photos_error_waiting_wifi_connectivity_action">モバイル通信を使用</string>
   <string name="photos_error_local_storage">デバイスストレージがいっぱいです</string>
   <string name="photos_error_local_storage_description">バックアップを続行するには、デバイスのストレージを解放する必要があります。</string>
   <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">一貫したバックグラウンド バックアップを行うには、バッテリー設定を調整するか、アプリを頻繁に開きます。</string>
   <string name="photos_error_background_restrictions_action">設定</string>
-  <string name="photos_empty_title">バックアップはまだない</string>
+  <string name="photos_empty_title">まだバックアップがありません</string>
   <string name="photos_empty_description">あなたのデバイスに写真やビデオがあれば、すぐにここに表示されます。</string>
   <string name="photos_backup_title">写真のバックアップ</string>
   <string name="photos_backup_option_mobile_data">モバイルデータを使用して写真をバックアップする</string>

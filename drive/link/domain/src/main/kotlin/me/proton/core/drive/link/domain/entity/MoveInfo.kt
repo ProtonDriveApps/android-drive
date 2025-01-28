@@ -24,4 +24,6 @@ data class MoveInfo(
     val parentLinkId: String,
     val nodePassphrase: String,
     val nameSignatureEmail: String,
+    val nodePassphraseSignature: String? = null,
+    val signatureEmail: String? = null,
 )

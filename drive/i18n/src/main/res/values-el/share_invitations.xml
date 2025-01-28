@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the link name
+        Example:
+            "Share Document"
+    -->
+  <string name="title_share_via_invitations">Κοινοποίηση %1$s</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons added"
+    -->
+  <plurals name="share_via_invitations_person_added">
+    <item quantity="one">Προστέθηκε 1 άτομο</item>
+    <item quantity="other">%1$d άτομα προστέθηκαν</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons cannot be invited"
+    -->
+  <plurals name="share_via_invitations_person_added_error">
+    <item quantity="one">1 άτομο δεν μπορεί να προσκληθεί</item>
+    <item quantity="other">%1$d άτομα δεν μπορούν να προσκληθούν</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "Sharing with 2 persons"
+    -->
+  <plurals name="share_via_invitations_sharing_with">
+    <item quantity="one">Κοινοποιήθηκε με 1 άτομο</item>
+    <item quantity="other">Κοινοποιήθηκε με %1$d άτομα</item>
+  </plurals>
+  <string name="common_permission_owner">Ιδιοκτήτης</string>
+  <string name="common_permission_admin">Διαχειριστής</string>
+  <string name="common_permission_editor">Επεξεργαστής</string>
+  <string name="common_permission_viewer">Θεατής</string>
+  <string name="common_permission_unknown">Άγνωστος</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Pending)"
+    -->
+  <string name="share_via_invitations_external_invitation_pending">%1$s (Σε εκκρεμότητα)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Αποδέχτηκε)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Άγνωστο)</string>
+  <string name="share_via_invitations_add_people_hint">Προσθήκη ατόμων</string>
+  <string name="share_via_invitations_copy_invite_link_action">Αντιγραφή συνδέσμου πρόσκλησης</string>
+  <string name="share_via_invitations_remove_access_action">Αφαίρεση πρόσβασης</string>
+  <string name="share_via_invitations_stop_sharing_description">Διαγραφή συνδέσμου και κατάργηση πρόσβασης για όλους</string>
+  <string name="share_via_invitations_resend_invite_action">Επανάληψη αποστολής πρόσκλησης</string>
+  <string name="share_via_invitations_resend_invite_success">Η πρόσκληση στάλθηκε εκ νέου</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="one">%1$d μέλος</item>
+    <item quantity="other">%1$d μέλη</item>
+  </plurals>
+  <string name="share_via_invitations_message_placeholder">Προσθέστε ένα μήνυμα</string>
+  <string name="share_via_invitations_send_message_and_name_label">Συμπερίληψη μηνύματος και ονόματος αρχείου σε μήνυμα ηλεκτρονικού ταχυδρομείου πρόσκλησης</string>
+</resources>

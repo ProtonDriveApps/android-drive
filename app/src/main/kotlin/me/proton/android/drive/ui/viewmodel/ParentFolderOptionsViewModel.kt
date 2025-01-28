@@ -212,7 +212,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
             updatePhotoUri(photoFile)
             getUriForFile(photoFile)
                 .onFailure { throwable ->
-                    CoreLogger.d(VIEW_MODEL, throwable, "Failed to get Uri for a file")
+                    CoreLogger.w(VIEW_MODEL, throwable, "Failed to get Uri for a file")
                 }
                 .onSuccess { uri ->
                     viewModelScope.launch {

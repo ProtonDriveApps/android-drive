@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="content_description_file_preview">Pratinjau konten berkas</string>
+  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="preview_downloading_state">Mengunduh…</string>
+  <string name="preview_processing_state">Memproses…</string>
+  <string name="preview_empty">Tidak ada hal apa pun untuk dipratinjau…</string>
+  <string name="title_not_found">Tidak ditemukan</string>
+  <string name="proton_docs_insert_image_header_title">Sisipkan gambar</string>
+  <string name="proton_docs_option_select_file">Pilih berkas</string>
+  <string name="proton_docs_unsupported_file_type">Saat ini hanya mendukung penyisipan gambar saja</string>
+  <string name="proton_docs_load_error">Pemuatan dokumen gagal</string>
+</resources>

@@ -65,6 +65,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.domain.entity.Attributes
 import me.proton.core.drive.base.domain.entity.CryptoProperty
+import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
@@ -111,6 +112,7 @@ import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
+import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVO
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.startsWith
@@ -245,7 +247,7 @@ class PreviewViewModel @Inject constructor(
                     title = link.name,
                     isTitleEncrypted = link.isNameEncrypted,
                     category = category,
-                    contentState = contentStates[link.id] ?: flowOf(ContentState.Decrypting),
+                    contentState = contentStates[link.id] ?: flowOf(ContentState.Decrypting(link.photoThumbnailSource)),
                 )
             },
             currentIndex = currentIndex.value,
@@ -363,6 +365,7 @@ class PreviewViewModel @Inject constructor(
     }
 
     private fun getContentState(
+        driveLink: DriveLink.File,
         getFileState: GetFile.State,
         renderFailed: Pair<Throwable, Any>? = null,
         fallback: Map<Any, Any?> = emptyMap(),
@@ -380,7 +383,11 @@ class PreviewViewModel @Inject constructor(
                 ),
                 messageResId = 0,
             )
-        } ?: getFileState.toContentState(this, uri)
+        } ?: getFileState.toContentState(
+            viewModel = this,
+            source = uri,
+            photoThumbnailSource = driveLink.photoThumbnailSource,
+        )
     }
 
     fun getUri(fileId: FileId) = getDocumentUri(userId, fileId)
@@ -424,7 +431,7 @@ class PreviewViewModel @Inject constructor(
                         getFile(this, trigger.verifySignature),
                         renderFailed,
                     ) { fileState, renderFailed ->
-                        getContentState(fileState, renderFailed, previewFallbackSources)
+                        getContentState(this, fileState, renderFailed, previewFallbackSources)
                     }
                 }
             }
@@ -460,6 +467,13 @@ class PreviewViewModel @Inject constructor(
             )
         }
     }
+
+    private val DriveLink.File.photoThumbnailSource: ThumbnailVO? get() =
+        takeIf { mimeType.toFileTypeCategory() == FileTypeCategory.Image }
+            ?.let {
+                getThumbnailId(ThumbnailType.PHOTO)?.let { thumbnailVO(ThumbnailType.PHOTO) } ?:
+                    getThumbnailId(ThumbnailType.DEFAULT)?.let { thumbnailVO(ThumbnailType.DEFAULT) }
+            }
 
     private fun openInBrowser() {
         driveLinks.value.orEmpty().firstOrNull { driveLink -> driveLink.id == fileId }
@@ -498,11 +512,11 @@ class PreviewViewModel @Inject constructor(
 }
 
 
-fun GetFile.State.toContentState(viewModel: PreviewViewModel, source: Any): ContentState {
+fun GetFile.State.toContentState(viewModel: PreviewViewModel, source: Any, photoThumbnailSource: ThumbnailVO? = null): ContentState {
     return when (this) {
-        is GetFile.State.Downloading -> ContentState.Downloading(progress)
-        GetFile.State.Decrypting -> ContentState.Decrypting
-        is GetFile.State.Ready -> ContentState.Available(source)
+        is GetFile.State.Downloading -> ContentState.Downloading(progress, photoThumbnailSource)
+        GetFile.State.Decrypting -> ContentState.Decrypting(photoThumbnailSource)
+        is GetFile.State.Ready -> ContentState.Available(source, photoThumbnailSource)
         GetFile.State.Error.NoConnection,
         is GetFile.State.Error.Downloading -> ContentState.Error.Retryable(
             messageResId = I18N.string.description_file_download_failed,

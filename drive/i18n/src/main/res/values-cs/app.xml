@@ -170,6 +170,7 @@
   <string name="notification_permission_rationale_description_backup">Dostávejte upozornění o průběhu a stavu zálohování.</string>
   <string name="notification_permission_rationale_action_accept">Povolit upozornění</string>
   <string name="notification_permission_rationale_action_reject">Nyní ne</string>
+  <string name="notification_content_title_transferring">Přenos dat</string>
   <!-- endregion -->
   <string name="content_description_select_all">Vybrat všechny položky v seznamu</string>
   <string name="content_description_selected_options">Zobrazit více možností pro vybrané soubory a/nebo složky</string>
@@ -187,7 +188,7 @@
   <string name="description_files_stop_sharing_action_success">Odkaz na váš soubor byl odstraněn.</string>
   <string name="description_files_stop_sharing_action_error">Při odstraňování odkazu na váš soubor došlo k chybě.</string>
   <string name="description_files_stop_all_sharing">Toto smaže odkaz a odebere všem přístup.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sdílení vašeho souboru bylo zrušeno.</string>
   <string name="description_files_stop_all_sharing_action_error">Došlo k chybě při rušení sdílení vašeho souboru.</string>
   <string name="ignore_file_signature_action">Přesto zobrazit</string>
   <string name="action_empty_files_add_files">Nahrát</string>

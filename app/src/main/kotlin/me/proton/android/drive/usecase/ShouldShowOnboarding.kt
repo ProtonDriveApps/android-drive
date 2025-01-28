@@ -18,13 +18,9 @@
 
 package me.proton.android.drive.usecase
 
-import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.usecase.HasBusinessPlan
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidNewOnboarding
-import me.proton.core.drive.feature.flag.domain.extension.on
-import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,7 +28,6 @@ import javax.inject.Singleton
 class ShouldShowOnboarding @Inject constructor(
     private val isFirstAppUsage: IsFirstAppUsage,
     private val wasOnboardingShown: WasOnboardingShown,
-    private val getFeatureFlagFlow: GetFeatureFlagFlow,
     private val hasBusinessPlan: HasBusinessPlan,
 ) {
 
@@ -41,10 +36,7 @@ class ShouldShowOnboarding @Inject constructor(
             isFirstAppUsage() -> false
             wasOnboardingShown().getOrThrow() -> false
             hasBusinessPlan(userId).getOrThrow() -> false
-            else -> getFeatureFlagFlow(
-                featureFlagId = driveAndroidNewOnboarding(userId),
-                emitNotFoundInitially = false,
-            ).first().on
+            else -> true
         }
     }
 }

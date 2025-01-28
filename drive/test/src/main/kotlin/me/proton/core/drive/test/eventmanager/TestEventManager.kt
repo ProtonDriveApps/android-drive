@@ -57,6 +57,10 @@ class TestEventManager(override val config: EventManagerConfig) : EventManager {
         TODO("Not yet implemented")
     }
 
+    override suspend fun resume() {
+        TODO("Not yet implemented")
+    }
+
     override fun subscribe(eventListener: EventListener<*, *>) {
         TODO("Not yet implemented")
     }

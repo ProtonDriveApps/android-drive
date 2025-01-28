@@ -52,7 +52,7 @@
   </plurals>
   <string name="common_permission_owner">Ägare</string>
   <string name="common_permission_admin">Admin</string>
-  <string name="common_permission_editor">Redaktör</string>
+  <string name="common_permission_editor">Redigerare</string>
   <string name="common_permission_viewer">Läsare</string>
   <string name="common_permission_unknown">Okänd</string>
   <!--

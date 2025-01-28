@@ -107,7 +107,7 @@ class MigrateKeyPacket @Inject constructor(
                     unreadableShareIds = result.filter { (_, value) -> value == null }.keys.toList()
                 )
             ).getOrThrow()
-            CoreLogger.d(SHARING, "${migrated.count()} shares migrated")
+            CoreLogger.i(SHARING, "${migrated.count()} shares migrated")
         }
     }
 }

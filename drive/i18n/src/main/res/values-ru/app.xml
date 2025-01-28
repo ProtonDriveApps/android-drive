@@ -27,7 +27,7 @@
   <string name="title_empty_folder">Давайте заполним эту папку</string>
   <string name="title_empty_folder_read_only">Пустая папка</string>
   <string name="title_empty_shared">Следить за актуальной информацией</string>
-  <string name="title_empty_offline_available">Недоступно офлайн</string>
+  <string name="title_empty_offline_available">Офлайн ничего не доступно</string>
   <string name="title_empty_trash">Корзина пуста</string>
   <string name="title_empty_trash_action">Очистить корзину</string>
   <string name="title_files_confirm_deletion">Удалить безвозвратно?</string>
@@ -170,6 +170,7 @@
   <string name="notification_permission_rationale_description_backup">Получайте уведомления о ходе и состоянии резервного копирования.</string>
   <string name="notification_permission_rationale_action_accept">Включите уведомления</string>
   <string name="notification_permission_rationale_action_reject">Не сейчас</string>
+  <string name="notification_content_title_transferring">Transferring data</string>
   <!-- endregion -->
   <string name="content_description_select_all">Выбрать все элементы в списке</string>
   <string name="content_description_selected_options">Показать дополнительные опции для выбранных файлов и/или папок</string>
@@ -187,7 +188,7 @@
   <string name="description_files_stop_sharing_action_success">Ссылка на ваш файл удалена.</string>
   <string name="description_files_stop_sharing_action_error">Произошла ошибка при удалении ссылки на ваш файл.</string>
   <string name="description_files_stop_all_sharing">Это удалит ссылку и удалит доступ для всех.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Общий доступ к файлам отключён.</string>
   <string name="description_files_stop_all_sharing_action_error">Произошла ошибка при удалении ссылки на ваш файл.</string>
   <string name="ignore_file_signature_action">Посмотреть в любом случае</string>
   <string name="action_empty_files_add_files">Загрузить</string>
@@ -197,7 +198,7 @@
   <string name="error_share_locked">Общий доступ заблокирован.</string>
   <string name="error_main_share_not_found">Основной ресурс не найден.</string>
   <string name="error_share_not_found">Ссылка общего доступа не найдена.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Резервное копирование фотографий временно отключено.</string>
   <string name="error_creating_share_not_allowed">Создание общего доступа временно отключено.</string>
   <string name="operation_open_document">открыть документ</string>
   <string name="operation_create_document">создать документ</string>

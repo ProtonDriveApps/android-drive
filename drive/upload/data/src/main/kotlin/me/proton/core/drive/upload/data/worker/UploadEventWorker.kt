@@ -60,8 +60,10 @@ import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksCount
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinksWithUriByPriority
+import me.proton.core.drive.notification.domain.entity.NotificationId
 import me.proton.core.drive.upload.domain.usecase.AnnounceUploadEvent
 import me.proton.core.drive.upload.domain.usecase.GetUploadProgress
+import me.proton.core.drive.worker.data.usecase.TransferDataNotifier
 import me.proton.core.util.kotlin.CoreLogger
 import kotlin.time.Duration.Companion.seconds
 
@@ -77,13 +79,16 @@ class UploadEventWorker @AssistedInject constructor(
     private val getUploadFileLinksCount: GetUploadFileLinksCount,
     private val getUploadFileLinksWithUriByPriority: GetUploadFileLinksWithUriByPriority,
     private val configurationProvider: ConfigurationProvider,
-    private val notifier: Notifier,
+    private val transferDataNotifier: TransferDataNotifier,
 ) : CoroutineWorker(appContext, workerParams) {
-
-    interface Notifier : (UserId, Event.Upload) -> Pair<Int, Notification>
 
     private val userId =
         UserId(requireNotNull(inputData.getString(WorkerKeys.KEY_USER_ID)) { "User id is required" })
+
+    private val transferDataNotification: Pair<NotificationId, Notification> = transferDataNotifier(
+        userId = userId,
+        event = Event.TransferData,
+    )
 
     override suspend fun doWork(): Result = supervisorScope {
         CoreLogger.d(
@@ -123,6 +128,8 @@ class UploadEventWorker @AssistedInject constructor(
         } catch (e: CancellationException) {
             CoreLogger.d(LogTag.NOTIFICATION, e, e.message.orEmpty())
             cancel(e)
+        } finally {
+            transferDataNotifier.dismissNotification(transferDataNotification.first)
         }
         CoreLogger.d(LogTag.NOTIFICATION, "Upload notification event worker finished")
         Result.success()
@@ -160,22 +167,16 @@ class UploadEventWorker @AssistedInject constructor(
         return createForegroundInfo()
     }
 
-    private fun createForegroundInfo(): ForegroundInfo {
-        val (id, notification) = notifier(
-            userId,
-            Event.Upload(
-                state = Event.Upload.UploadState.NEW_UPLOAD,
-                uploadFileLinkId = -1,
-                percentage = Percentage(0),
-                shouldShow = false,
+    private fun createForegroundInfo(): ForegroundInfo =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ForegroundInfo(
+                transferDataNotification.first.id,
+                transferDataNotification.second,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
             )
-        )
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ForegroundInfo(id, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
         } else {
-            ForegroundInfo(id, notification)
+            ForegroundInfo(transferDataNotification.first.id, transferDataNotification.second)
         }
-    }
 
     companion object {
 

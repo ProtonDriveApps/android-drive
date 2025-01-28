@@ -49,7 +49,7 @@ class GetUploadFileName @Inject constructor(
     ).fold(
         onSuccess = { validatedName -> validatedName },
         onFailure = { error ->
-            CoreLogger.d(UPLOAD, error, "Invalid name will be replaced by random UUID")
+            CoreLogger.w(UPLOAD, error, "Invalid name will be replaced by random UUID")
             UUID.randomUUID().toString()
         })
 }

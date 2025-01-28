@@ -35,7 +35,7 @@
     <item quantity="one">%1$d файл запампоўваецца ў: %2$s</item>
     <item quantity="few">%1$d файлы запампоўваюцца ў: %2$s</item>
     <item quantity="many">%1$d файлаў запампоўваюцца ў: %2$s</item>
-    <item quantity="other">%1$d файлы запампоўваюцца ў: %2$s</item>
+    <item quantity="other">%1$d файлаў запампоўваюцца ў: %2$s</item>
   </plurals>
   <string name="files_upload_preparing">Падрыхтоўка да запампоўвання. Гэта можа заняць некаторы час.</string>
   <!--
@@ -54,7 +54,7 @@
     <item quantity="one">%1$d элемент</item>
     <item quantity="few">%1$d элементы</item>
     <item quantity="many">%1$d элементаў</item>
-    <item quantity="other">%1$d элементы</item>
+    <item quantity="other">%1$d элементаў</item>
   </plurals>
   <string name="files_upload_verification_failed">Збой запампоўвання: даныя не прайшлі праверку</string>
 </resources>

@@ -28,6 +28,9 @@ import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
@@ -48,17 +52,62 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.size.Size
 import coil.size.SizeResolver
+import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
+import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.isNightMode
+import me.proton.core.drive.base.presentation.component.Deferred
 import me.proton.core.drive.base.presentation.extension.conditional
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
+import me.proton.core.drive.thumbnail.presentation.extension.cacheKey
 import me.proton.core.drive.i18n.R as I18N
+
+@Composable
+fun ImagePreviewWithThumbnail(
+    source: Any?,
+    thumbnailSource: Any?,
+    transformationState: TransformationState,
+    isFullScreen: Boolean,
+    onRenderFailed: (Throwable, Any) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (thumbnailSource != null) {
+            ImagePreview(
+                source = thumbnailSource,
+                transformationState = transformationState,
+                isFullScreen = isFullScreen,
+                onRenderFailed = onRenderFailed,
+                modifier = modifier,
+            )
+            Deferred {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .padding(all = DefaultSpacing)
+                        .size(DefaultIconSize)
+                        .align(Alignment.BottomStart),
+                    strokeWidth = 1.dp,
+                )
+            }
+        }
+        if (source is Uri) {
+            ImagePreview(
+                source = source,
+                transformationState = transformationState,
+                isFullScreen = isFullScreen,
+                onRenderFailed = onRenderFailed,
+                modifier = modifier,
+            )
+        }
+    }
+}
 
 @Composable
 fun ImagePreview(
@@ -78,11 +127,12 @@ fun ImagePreview(
     val cacheKey = remember(source) {
         when (source) {
             is Uri -> source.path
-            is ThumbnailVO -> "${source.revisionId}_${source.thumbnailId.type}"
+            is ThumbnailVO -> source.cacheKey
             else -> error("Unhandled cache key for source type $source")
         }
     }
     var size by remember { mutableStateOf(IntSize.Zero) }
+    var isSourceReady by remember { mutableStateOf(false) }
     val painter: Painter
     if (size == IntSize.Zero) {
         painter = EmptyPainter
@@ -102,6 +152,7 @@ fun ImagePreview(
                 .data(source)
                 .memoryCacheKey(cacheKey)
                 .size(sizeResolver)
+                .listener(onSuccess = { _, _ -> isSourceReady = true })
                 .build()
         }
         painter = rememberAsyncImagePainter(request)
@@ -115,10 +166,14 @@ fun ImagePreview(
     }
     ImagePreview(
         modifier = modifier
-            .background(backgroundColor)
-            .conditional(source !is Uri) {
-                fillMaxSize()
+            .conditional(isSourceReady) {
+                alpha(1f)
             }
+            .conditional(!isSourceReady) {
+                alpha(0f)
+            }
+            .background(backgroundColor)
+            .fillMaxSize()
             .onSizeChanged {
                 size = it
             },

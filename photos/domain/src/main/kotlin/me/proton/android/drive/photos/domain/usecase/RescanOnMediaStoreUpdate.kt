@@ -37,7 +37,7 @@ class RescanOnMediaStoreUpdate @Inject constructor(
         val last = mediaStoreVersionRepository.getLastVersion(userId)
         val current = mediaStoreVersionRepository.getCurrentVersion()
         if (last != null && current != null && last != current) {
-            CoreLogger.d(BACKUP, "Rescan all folders after media store updates: $last, $current")
+            CoreLogger.i(BACKUP, "Rescan all folders after media store updates: $last, $current")
             getAllFolders(userId)
                 .getOrThrow()
                 .map { backupFolder -> backupFolder.folderId }

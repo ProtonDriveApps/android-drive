@@ -37,5 +37,5 @@
   <string name="log_origin_backup">バックアップ</string>
   <string name="log_origin_user">ユーザー</string>
   <string name="log_origin_device">デバイス</string>
-  <string name="log_origin_crypto">Crypto</string>
+  <string name="log_origin_crypto">暗号通貨</string>
 </resources>

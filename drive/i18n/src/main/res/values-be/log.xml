@@ -37,5 +37,5 @@
   <string name="log_origin_backup">Рэзервовае капіяванне</string>
   <string name="log_origin_user">Карыстальнік</string>
   <string name="log_origin_device">Прылада</string>
-  <string name="log_origin_crypto">Crypto</string>
+  <string name="log_origin_crypto">Крыпта</string>
 </resources>

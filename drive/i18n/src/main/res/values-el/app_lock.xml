@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">Η εφαρμογή είναι κλειδωμένη</string>
+  <string name="app_lock_biometric_subtitle_app_locked">Ξεκλειδώστε χρησιμοποιώντας το κλείδωμα της συσκευής σας</string>
+  <string name="app_lock_biometric_title_confirmation">Επιβεβαίωση</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">Για να ενεργοποιήσετε το ξεκλείδωμα, επιβεβαιώστε με το κλείδωμα της συσκευής σας</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">Για να απενεργοποιήσετε το ξεκλείδωμα, επιβεβαιώστε με το κλείδωμα της συσκευής σας</string>
+  <string name="app_lock_option_never_set">Ενεργοποίηση βιομετρικών στοιχείων ή κλειδώματος συσκευής</string>
+  <string name="app_lock_option_none">Κρατήστε ξεκλείδωτο</string>
+  <string name="app_lock_option_system">Βιομετρικά στοιχεία ή κλείδωμα συσκευής</string>
+  <string name="app_lock_system_dialog_title">Ενεργοποιήστε την πρόσβαση μέσω βιομετρικών στοιχείων</string>
+  <string name="app_lock_system_dialog_description">Ρυθμίστε τα βιομετρικά στοιχεία ή την πρόσβαση κλειδώματος συσκευής σε αυτήν τη συσκευή.</string>
+  <string name="app_lock_system_dialog_settings_button">Ρυθμίσεις</string>
+  <string name="app_lock_system_not_available">Τα βιομετρικά στοιχεία ή το κλείδωμα συσκευής δεν είναι διαθέσιμα στη συσκευή σας</string>
+  <string name="app_lock_enabled">Η πρόσβαση μέσω βιομετρικών στοιχείων ή κλείδωμα της συσκευής έχει ενεργοποιηθεί</string>
+  <string name="app_lock_disabled">Το κλείδωμα της εφαρμογής έχει απενεργοποιηθεί</string>
+  <string name="app_lock_access_title">Επιλέξτε πώς να κλειδώνετε την εφαρμογή</string>
+  <string name="app_lock_unlock_the_app">Ξεκλειδώστε την εφαρμογή</string>
+</resources>

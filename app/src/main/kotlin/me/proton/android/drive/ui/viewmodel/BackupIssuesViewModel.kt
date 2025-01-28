@@ -70,6 +70,7 @@ class BackupIssuesViewModel @Inject constructor(
                 backupFile.uriString.toUri()
             })
         }.catch { error ->
+            error.log(BACKUP, "Cannot get all failed files")
             broadcastMessages(
                 userId = userId,
                 message = error.getDefaultMessage(

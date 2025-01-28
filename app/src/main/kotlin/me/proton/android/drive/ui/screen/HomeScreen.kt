@@ -70,6 +70,7 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawer
 import me.proton.core.drive.sorting.domain.entity.Sorting
+import me.proton.drive.android.settings.domain.entity.UserOverlay
 import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 
 @Composable
@@ -101,6 +102,7 @@ fun HomeScreen(
     navigateToGetMoreFreeStorage: () -> Unit,
     navigateToOnboarding: () -> Unit,
     navigateToWhatsNew: (WhatsNewKey) -> Unit,
+    navigateToRatingBooster: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -117,6 +119,26 @@ fun HomeScreen(
         }
     }
     val viewState by homeViewModel.viewState.collectAsStateWithLifecycle(initialValue = null)
+    val viewEvent = remember(homeViewModel) {
+        homeViewModel.viewEvent(
+            navigateToSigningOut = navigateToSigningOut,
+            navigateToTrash = navigateToTrash,
+            navigateToTab = { route ->
+                homeNavController.navigate(route) {
+                    popUpTo(Screen.Photos.route) { inclusive = route == Screen.Photos(userId) }
+                    launchSingleTop = true
+                }
+            },
+            navigateToOffline = navigateToOffline,
+            navigateToSettings = navigateToSettings,
+            navigateToBugReport = navigateToBugReport,
+            navigateToSubscription = navigateToSubscription,
+            navigateToGetMoreFreeStorage = navigateToGetMoreFreeStorage,
+            navigateToOnboarding = navigateToOnboarding,
+            navigateToWhatsNew = navigateToWhatsNew,
+            navigateToRatingBooster = navigateToRatingBooster,
+        )
+    }
     viewState?.let { currentViewState ->
         Home(
             homeNavController = homeNavController,
@@ -137,34 +159,14 @@ fun HomeScreen(
             navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
             arguments = arguments,
             viewState = currentViewState,
-            viewEvent = homeViewModel.viewEvent(
-                navigateToSigningOut = navigateToSigningOut,
-                navigateToTrash = navigateToTrash,
-                navigateToTab = { route ->
-                    homeNavController.navigate(route) {
-                        popUpTo(Screen.Photos.route) { inclusive = route == Screen.Photos(userId) }
-                        launchSingleTop = true
-                    }
-                },
-                navigateToOffline = navigateToOffline,
-                navigateToSettings = navigateToSettings,
-                navigateToBugReport = navigateToBugReport,
-                navigateToSubscription = navigateToSubscription,
-                navigateToGetMoreFreeStorage = navigateToGetMoreFreeStorage,
-            ),
+            viewEvent = viewEvent,
             modifier = modifier
                 .navigationBarsPadding()
                 .testTag(HomeScreenTestTag.screen),
         )
     } ?: DeferredCircularProgressIndicator(modifier)
     LaunchedEffect(Unit) {
-        if (homeViewModel.shouldShowOnboarding()) {
-            navigateToOnboarding()
-        } else {
-            homeViewModel.getWhatsNew()?.let { key ->
-                navigateToWhatsNew(key)
-            }
-        }
+        viewEvent.onFirstLaunch()
     }
 }
 

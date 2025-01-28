@@ -49,8 +49,7 @@ abstract class BaseTest : AbstractBaseTest() {
         },
         afterHilt = {
             MainInitializer.init(it.targetContext)
-            setOnboardingDisplayStateAfterLogin()
-            setWhatsNewDisplayStateAfterLogin()
+            setOverlaysDisplayStateAfterLogin()
         },
         logoutBefore = true
     )

@@ -30,7 +30,6 @@ import me.proton.core.accountmanager.domain.SessionManager
 import me.proton.core.auth.domain.usecase.PostLoginAccountSetup
 import me.proton.core.auth.presentation.DefaultHelpOptionHandler
 import me.proton.core.auth.presentation.HelpOptionHandler
-import me.proton.core.auth.presentation.ui.LoginActivity
 import me.proton.core.user.domain.UserManager
 import javax.inject.Singleton
 
@@ -45,10 +44,6 @@ object AuthModule {
         userManager: UserManager,
         sessionManager: SessionManager
     ): PostLoginAccountSetup.UserCheck = DriveUserCheck(context, sessionManager, accountManager, userManager)
-
-    @Provides
-    @Singleton
-    fun provideLoginBlockingHelp(): LoginActivity.BlockingHelp? = null
 
     @Provides
     @Singleton

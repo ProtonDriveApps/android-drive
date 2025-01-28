@@ -42,7 +42,7 @@
         Examples:
             "Your Camera folder is backed up automatically."
     -->
-  <string name="settings_photos_backup_folders_description">당신의 %1$s 폴더는 자동으로 백업되었습니다. 백업할 다른 폴더를 추가로 선택하면 사진 탭에 그 사진들이 나타날 것입니다.</string>
+  <string name="settings_photos_backup_folders_description">%1$s 폴더가 자동으로 백업되었습니다. 백업할 다른 폴더를 추가로 선택하면 사진 탭에 해당 사진들이 나타납니다.</string>
   <string name="settings_photos_backup_folders_not_found">폴더를 찾을 수 없었습니다</string>
   <string name="settings_photos_backup_folders_confirm_stop_sync_title">폴더의 백업을 중지합니까?</string>
   <!--

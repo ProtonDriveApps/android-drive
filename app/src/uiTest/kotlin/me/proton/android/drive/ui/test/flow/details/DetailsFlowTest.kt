@@ -242,7 +242,7 @@ class DetailsFlowTest : BaseTest() {
         isShared = targetContext.getString(I18N.string.common_yes),
         type = targetContext.getType("image/jpeg"),
         mimeType = "image/jpeg",
-        size = 16177.bytes.asHumanReadableString(targetContext),
+        size = 16231.bytes.asHumanReadableString(targetContext),
     )
 
     private fun Context.getType(mimeType: String): String =

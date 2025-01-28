@@ -142,7 +142,7 @@ class UpdateRevision @Inject constructor(
                     ?: lastModified?.toTimestampS()
                     ?: TimestampS().also { currentTime ->
                         with(LogTag.UploadTag) {
-                            CoreLogger.d(
+                            CoreLogger.i(
                                 id.logTag(),
                                 "No capture time or last modified for $uriString, using current time:$currentTime"
                             )

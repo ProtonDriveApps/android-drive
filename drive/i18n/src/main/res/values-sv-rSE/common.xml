@@ -24,7 +24,7 @@
   <string name="common_name">Namn</string>
   <string name="common_no">Nej</string>
   <string name="common_share">Dela</string>
-  <string name="common_shared">Delad</string>
+  <string name="common_shared">Delat</string>
   <string name="common_size">Storlek</string>
   <string name="common_type">Typ</string>
   <string name="common_yes">Ja</string>
@@ -55,7 +55,7 @@
   <string name="common_discard_action">Kasta</string>
   <string name="common_skip_action">Hoppa över</string>
   <string name="common_delete_permanently_action">Ta bort permanent</string>
-  <string name="common_make_available_offline_action">Gör tillgängliga offline</string>
+  <string name="common_make_available_offline_action">Gör tillgänglig offline</string>
   <string name="common_remove_from_offline_available_action">Ta bort från tillgänglighet från offline</string>
   <string name="common_get_link_action">Få länk</string>
   <string name="common_manage_link_action">Hantera länk</string>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">Foto</string>
+  <string name="photos_permissions_title">Enkripsi dan cadangkan foto dan video Anda</string>
+  <string name="photos_permissions_section_1_title">Lindungi kenangan Anda</string>
+  <string name="photos_permissions_section_1_description">Foto Anda terenkripsi secara end-to-end, yang memastikan privasi yang menyeluruh.</string>
+  <string name="photos_permissions_section_2_title">Pencadangan otomatis</string>
+  <string name="photos_permissions_section_2_description">Foto dicadangkan secara berkala melalui Wi-Fi dalam kualitas aslinya.</string>
+  <string name="photos_permissions_action">Aktifkan pencadangan</string>
+  <string name="photos_permission_rational_img_text">Izinkan akses</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s memerlukan akses penuh ke foto Anda</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">Hal ini diperlukan untuk memastikan seluruh foto Anda tercadangkan dengan baik dan tersedia pada seluruh perangkat Anda.\n%1$s sangat menghargai privasi Anda dan hanya akan mengakses foto Anda untuk keperluan sinkronisasi dan pencadangan.</string>
+  <string name="photos_permission_rational_confirm_action">Pengaturan</string>
+  <string name="photos_permission_rational_dismiss_action">Tidak sekarang</string>
+  <string name="photos_empty_loading_label_encrypted">Terenkripsi end-to-end</string>
+  <string name="photos_empty_loading_label_progress">Pencadangan sedang berlangsung.\nProses ini dapat memakan waktu sejenak</string>
+  <string name="photos_separator_current_month">Bulan ini</string>
+  <string name="photos_encrypted_footer">Terenkripsi end-to-end</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="other">Mencadangkan item dari %2$d folder: %1$s</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">Tidak ada folder %1$s yang ditemukan untuk pencadangan</string>
+  <string name="photos_error_backup_disabled">Pencadangan dinonaktifkan.</string>
+  <string name="photos_error_backup_disabled_action">Aktifkan</string>
+  <string name="photos_error_backup_missing_folder">Folder cadangan tidak ditemukan</string>
+  <string name="photos_error_backup_failed">Pencadangan gagal.</string>
+  <string name="photos_error_backup_temporarily_disabled">Pencadangan untuk sementara dinonaktifkan.</string>
+  <string name="photos_error_missing_permissions">Terdapat perizinan yang belum ditentukan.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">Untuk pencadangan yang otomatis dan berkelanjutan, berikan %1$s izin akses ke Semua Foto di pengaturan.</string>
+  <string name="photos_error_waiting_connectivity">Tidak ada koneksi internet</string>
+  <string name="photos_error_waiting_wifi_connectivity">Menunggu Wi-Fi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Gunakan data seluler</string>
+  <string name="photos_error_local_storage">Penyimpanan perangkat penuh</string>
+  <string name="photos_error_local_storage_description">Untuk melanjutkan pencadangan, Anda perlu membebaskan ruang penyimpanan di perangkat Anda.</string>
+  <string name="photos_error_background_restrictions">Atur penggunaan baterai ke \'Tak terbatas\' untuk menjalankan aplikasi di latar belakang</string>
+  <string name="photos_error_background_restrictions_description">Untuk pencadangan latar yang konsisten, sesuaikan pengaturan baterai atau buka aplikasi secara rutin.</string>
+  <string name="photos_error_background_restrictions_action">Pengaturan</string>
+  <string name="photos_empty_title">Belum ada cadangan</string>
+  <string name="photos_empty_description">Saat Anda memiliki foto atau video di perangkat Anda, mereka akan muncul di sini.</string>
+  <string name="photos_backup_title">Pencadangan foto</string>
+  <string name="photos_backup_option_mobile_data">Gunakan data seluler untuk mencadangkan foto</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Nonaktifkan optimisasi baterai</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Memungkinkan pencadangan yang berlangsung tanpa gangguan pada saat aplikasi berjalan di latar belakang.</string>
+  <string name="photos_backup_in_app_notification_turned_on">Pencadangan foto diaktifkan</string>
+  <string name="photos_backup_in_app_notification_turned_off">Pencadangan foto dinonaktifkan</string>
+  <string name="photos_backup_state_completed">Pencadangan selesai</string>
+  <string name="photos_backup_state_uncompleted">Pencadangan selesai dengan masalah</string>
+  <string name="photos_backup_state_uncompleted_action">Selesaikan</string>
+  <string name="photos_backup_state_preparing">Mempersiapkan pencadangan</string>
+  <string name="photos_backup_state_encrypting">Mengenkripsi…</string>
+  <string name="photos_backup_state_uploading">Mencadangkan…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="other">%1$s item tersisa</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="other">%1$s item disimpan</item>
+  </plurals>
+  <string name="photos_upsell_title">Jangan pernah kehabisan ruang penyimpanan</string>
+  <string name="photos_upsell_description">Tingkatkan sekarang juga dan jadikan seluruh kenangan Anda aman dan terenkripsi.</string>
+  <string name="photos_upsell_dismiss_action">Tidak sekarang</string>
+</resources>

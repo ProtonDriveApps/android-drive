@@ -41,9 +41,16 @@ class AppUiSettingsDataStore @Inject constructor(
         )
     }
 
+    var ratingBooster by Delegate(
+        dataStore = appContext.dataStore,
+        key = longPreferencesKey(RATING_BOOSTER),
+        default = 0L
+    )
+
     companion object {
         const val APP_SETTINGS_PREFERENCES = "app_settings_prefs"
         const val ONBOARDING_SHOWN = "onboarding_shown"
         const val WHATS_NEW_SHOWN = "whats_new_shown_"
+        const val RATING_BOOSTER = "rating_booster"
     }
 }

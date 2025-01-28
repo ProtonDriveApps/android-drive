@@ -37,5 +37,5 @@
   <string name="log_origin_backup">მარქაფი</string>
   <string name="log_origin_user">მომხმარებელი</string>
   <string name="log_origin_device">მოწყობილობა</string>
-  <string name="log_origin_crypto">Crypto</string>
+  <string name="log_origin_crypto">კრიპტო</string>
 </resources>

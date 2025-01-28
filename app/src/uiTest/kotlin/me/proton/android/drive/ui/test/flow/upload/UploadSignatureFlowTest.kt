@@ -25,7 +25,6 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
 import androidx.test.espresso.intent.rule.IntentsRule
 import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.initializer.MainInitializer
 import me.proton.android.drive.ui.MainActivity
 import me.proton.android.drive.ui.extension.createFusionComposeRule
@@ -47,7 +46,6 @@ import me.proton.core.test.rule.ProtonRule
 import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.core.test.rule.annotation.mapToUser
 import me.proton.core.test.rule.extension.protonRule
-import me.proton.test.fusion.FusionConfig.targetContext
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -72,8 +70,7 @@ class UploadSignatureFlowTest : AbstractBaseTest() {
         },
         afterHilt = {
             MainInitializer.init(it.targetContext)
-            setOnboardingDisplayStateAfterLogin()
-            setWhatsNewDisplayStateAfterLogin()
+            setOverlaysDisplayStateAfterLogin()
         },
         logoutBefore = true
     )

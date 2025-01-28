@@ -48,7 +48,7 @@ class VideoThumbnailProvider @Inject constructor(
                     null
                 )
             } catch (e: IOException) {
-                CoreLogger.d(LogTag.THUMBNAIL, e, "Create video thumbnail failed")
+                CoreLogger.w(LogTag.THUMBNAIL, e, "Create video thumbnail failed")
                 null
             }
         } else {

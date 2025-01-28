@@ -75,4 +75,8 @@ class StubbedBackupManager @Inject constructor(
     override suspend fun updateNotification(folderId: FolderId) {
         // do nothing
     }
+
+    override suspend fun cancelForegroundWork(userId: UserId) {
+        // do nothing
+    }
 }

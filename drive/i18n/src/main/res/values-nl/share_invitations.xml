@@ -22,7 +22,7 @@
         Example:
             "Share Document"
     -->
-  <string name="title_share_via_invitations">Deel %1$s</string>
+  <string name="title_share_via_invitations">%1$s delen</string>
   <!--
         Variable %1$d is a number
         Examples:

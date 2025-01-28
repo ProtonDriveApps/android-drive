@@ -34,6 +34,7 @@ annotation class Scenario(
     val value: Int = 0,
     val isPhotos: Boolean = false,
     val isDevice: Boolean = false,
+    val isAnonymous: Boolean = false,
     val sharedWithUserTag: String = "",
     val quota: Quota = Quota()
 )
@@ -66,6 +67,7 @@ val Scenario.annotationTestData: AnnotationTestData<Scenario>
                         data.value,
                         isDevice,
                         isPhotos,
+                        isAnonymous,
                         sharingUser?.mapToUser()
                     )
                 }

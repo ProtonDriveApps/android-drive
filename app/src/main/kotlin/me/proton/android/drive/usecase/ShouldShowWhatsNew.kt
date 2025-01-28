@@ -31,13 +31,12 @@ import javax.inject.Singleton
 
 @Singleton
 class ShouldShowWhatsNew @Inject constructor(
-    private val wasOnboardingShown: WasOnboardingShown,
     private val wasWhatsNewShown: WasWhatsNewShown,
     private val getFeatureFlagFlow: GetFeatureFlagFlow,
 ) {
 
     suspend operator fun invoke(userId: UserId): Result<WhatsNewKey?> = coRunCatching {
-        if (wasOnboardingShown().getOrThrow() && getFeatureFlagFlow(
+        if (getFeatureFlagFlow(
                 featureFlagId = driveAndroidWhatsNew(userId),
                 emitNotFoundInitially = false,
             ).first().on

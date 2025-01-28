@@ -52,9 +52,9 @@
     -->
   <plurals name="share_via_invitations_sharing_with">
     <item quantity="one">Общий доступ с 1 пользователем</item>
-    <item quantity="few">Делимся с %1$d людьми</item>
-    <item quantity="many">Делимся с %1$d людьми</item>
-    <item quantity="other">Делимся с %1$d людьми</item>
+    <item quantity="few">Общий доступ с %1$d пользователями</item>
+    <item quantity="many">Общий доступ с %1$d пользователями</item>
+    <item quantity="other">Общий доступ с %1$d пользователями</item>
   </plurals>
   <string name="common_permission_owner">Владелец</string>
   <string name="common_permission_admin">Администратор</string>

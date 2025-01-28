@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="file_operation_error_occurred_moving_file">Terdapat kesalahan pada saat memindahkan berkas</string>
+  <string name="file_operation_moving_file_successful">Berkas berhasil dipindahkan</string>
+  <string name="file_operation_moving_folder_successful">Folder berhasil dipindahkan</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="other">%1$d item berhasil dipindahkan.</item>
+  </plurals>
+  <string name="file_operation_error_file_already_exists_at_destination">Item dengan nama ini telah ada pada folder tujuan</string>
+  <string name="folder_options_header_title">Pada \"%1$s\"</string>
+  <string name="folder_options_header_title_encrypted">Di</string>
+  <string name="files_toggle_layout_to_list_content_description">Tampilan baris</string>
+  <string name="files_toggle_layout_to_grid_content_description">Tampilan kisi</string>
+  <!--
+        Variable %1$s is a time indicator which is formatted based on the user's locale
+        Examples:
+            "Modified 10:46"
+            "Modified Feb 28"
+            "Modified Dec 22, 2021"
+    -->
+  <string name="title_modified_with_date">Diubah %1$s</string>
+  <string name="files_restore_from_trash_action">Pulihkan</string>
+  <string name="files_send_to_trash_action">Pindahkan ke sampah</string>
+  <string name="files_remove_me_action">Keluarkan saya</string>
+  <string name="files_move_file_action">Pindahkan</string>
+  <!--
+        Variable %1$s is a file/folder's name
+        Examples:
+            "'My folder' will be deleted permanently. You cannot undo this action."
+            "'My file.jpg' will be deleted permanently. You cannot undo this action."
+    -->
+  <string name="files_confirm_deletion_message_format">\'%1$s\' akan dihapus secara permanen. Tindakan ini tidak dapat diurungkan.</string>
+  <string name="files_confirm_empty_trash_title">Kosongkan sampah?</string>
+  <string name="files_confirm_empty_trash_message">Seluruh item pada sampah akan dihapus secara permanen. Tindakan ini tidak dapat diurungkan.</string>
+  <string name="files_confirm_empty_trash_confirm_action">Kosongkan sampah</string>
+  <string name="files_display_file_info_action">Rincian berkas</string>
+  <string name="files_display_folder_info_action">Rincian folder</string>
+</resources>

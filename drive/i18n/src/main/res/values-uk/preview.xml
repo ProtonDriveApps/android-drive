@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Попередній перегляд вмісту файлу</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Показати більше опцій для файлу</string>
   <string name="preview_downloading_state">Завантаження…</string>
   <string name="preview_processing_state">Обробка…</string>
   <string name="preview_empty">Нічого не має для перегляду…</string>

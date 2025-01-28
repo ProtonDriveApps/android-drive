@@ -27,5 +27,5 @@
   <string name="file_info_title_file">Подробиці файлу</string>
   <string name="file_info_captured_on">Знято на</string>
   <string name="file_info_permissions">Дозволи</string>
-  <string name="file_info_uploaded_by_anonymous">Anonymous</string>
+  <string name="file_info_uploaded_by_anonymous">Анонімно</string>
 </resources>

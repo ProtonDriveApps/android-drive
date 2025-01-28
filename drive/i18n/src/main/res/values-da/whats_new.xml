@@ -17,7 +17,7 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="whats_new_title">What\'s new</string>
-  <string name="whats_new_docs_title">Proton Docs on Mobile</string>
-  <string name="whats_new_docs_description">Tap plus to create or collaborate on end-to-end encrypted documents on the go.</string>
+  <string name="whats_new_title">Nyheder</string>
+  <string name="whats_new_docs_title">Proton Docs på mobil</string>
+  <string name="whats_new_docs_description">Tryk på plus for at oprette eller samarbejde om end-to-end-krypterede dokumenter på farten.</string>
 </resources>

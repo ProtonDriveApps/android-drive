@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Del via link</string>
   <string name="shared_with_me_title">Delt med mig</string>
   <string name="shared_by_me_title">Delt af mig</string>
-  <string name="shared_with_me_empty_description">Filer og mapper, som du deler med andre, vises her</string>
+  <string name="shared_empty_title">Intet delt endnu</string>
+  <string name="shared_with_me_empty_description">Filer og mapper, der er delt med dig, vises her</string>
   <string name="shared_by_me_empty_description">Del dine filer og mapper sikkert med end-to-end-kryptering</string>
 </resources>

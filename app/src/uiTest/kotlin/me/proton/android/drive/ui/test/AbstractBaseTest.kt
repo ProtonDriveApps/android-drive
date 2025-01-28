@@ -28,7 +28,6 @@ import io.mockk.every
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import me.proton.android.drive.extension.debug
 import me.proton.android.drive.ui.robot.Robot
 import me.proton.android.drive.ui.rules.DriveTestDataRule
 import me.proton.android.drive.ui.rules.QuarkRule
@@ -38,7 +37,6 @@ import me.proton.core.accountrecovery.domain.IsAccountRecoveryResetEnabled
 import me.proton.core.auth.presentation.testing.ProtonTestEntryPoint
 import me.proton.core.configuration.ContentResolverConfigManager
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.notification.domain.usecase.IsNotificationsEnabled
 import me.proton.core.test.rule.di.TestEnvironmentConfigModule.provideEnvironmentConfiguration
 import me.proton.test.fusion.FusionConfig
@@ -63,19 +61,18 @@ abstract class AbstractBaseTest {
 
     internal open val shouldShowOnboardingAfterLogin get() = false
     internal open val shouldShowWhatsNewAfterLogin get() = false
+    internal open val shouldShowRatingBoosterAfterLogin get() = false
 
-    internal fun setOnboardingDisplayStateAfterLogin() {
-        if (!shouldShowOnboardingAfterLogin) {
-            CoroutineScope(Dispatchers.Main).launch {
+    internal fun setOverlaysDisplayStateAfterLogin() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (!shouldShowOnboardingAfterLogin) {
                 Companion.uiTestHelper.doNotShowOnboardingAfterLogin()
             }
-        }
-    }
-
-    internal fun setWhatsNewDisplayStateAfterLogin() {
-        if (!shouldShowWhatsNewAfterLogin) {
-            CoroutineScope(Dispatchers.Main).launch {
+            if (!shouldShowWhatsNewAfterLogin) {
                 Companion.uiTestHelper.doNotShowWhatsNewAfterLogin()
+            }
+            if (!shouldShowRatingBoosterAfterLogin) {
+                Companion.uiTestHelper.doNotShowRatingBoosterAfterLogin()
             }
         }
     }

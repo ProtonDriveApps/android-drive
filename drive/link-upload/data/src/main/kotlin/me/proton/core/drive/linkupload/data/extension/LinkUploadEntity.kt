@@ -18,7 +18,6 @@
 package me.proton.core.drive.linkupload.data.extension
 
 import kotlinx.serialization.SerializationException
-import me.proton.core.data.room.BuildConfig
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.CameraExifTags
 import me.proton.core.drive.base.domain.entity.Location
@@ -28,6 +27,7 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.log.LogTag.UploadTag.logTag
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.linkupload.data.BuildConfig
 import me.proton.core.drive.linkupload.data.db.entity.LinkUploadEntity
 import me.proton.core.drive.linkupload.domain.entity.UploadDigests
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink

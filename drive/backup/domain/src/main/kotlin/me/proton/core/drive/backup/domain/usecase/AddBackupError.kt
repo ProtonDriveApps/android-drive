@@ -30,7 +30,7 @@ class AddBackupError @Inject constructor(
     private val repository: BackupErrorRepository,
 ) {
     suspend operator fun invoke(folderId: FolderId, error: BackupError) = coRunCatching {
-        CoreLogger.d(BACKUP, "Adding error: $error")
+        CoreLogger.i(BACKUP, "Adding error: $error")
         repository.insertError(folderId, error)
     }
 }

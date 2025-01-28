@@ -202,6 +202,14 @@
             android:name=".receiver.NotificationBroadcastReceiver"
             android:exported="false"/>
 
+        <receiver
+            android:name=".receiver.BatteryLowBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BATTERY_LOW" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="asset_statements"
             android:resource="@string/asset_statements" />

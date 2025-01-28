@@ -70,7 +70,7 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
             .onFailure { error -> error.log(logTag) }
             .getOrNull()?.let { verified ->
                 if (verified) {
-                    CoreLogger.d(logTag, "File is successfully downloaded")
+                    CoreLogger.i(logTag, "File is successfully downloaded")
                     Result.success()
                 } else {
                     if (retryable) {
@@ -85,7 +85,7 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
                             )
                         )
                     }
-                    CoreLogger.d(logTag, "Verification failed, retryable = $retryable")
+                    CoreLogger.w(logTag, "Verification failed, retryable = $retryable")
                     Result.failure()
                 }
             } ?: Result.failure()

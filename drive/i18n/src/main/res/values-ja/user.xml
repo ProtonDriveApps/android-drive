@@ -33,6 +33,6 @@
     -->
   <string name="storage_quotas_full_title">%1$s ストレージのスペースを解放するか、中断のないバックアップのプランをアップグレードしてください。</string>
   <string name="storage_quotas_get_storage_action">ストレージを増やす</string>
-  <string name="user_select_other_account_content_description">別のアカウントを選択する</string>
+  <string name="user_select_other_account_content_description">別のアカウントを選択</string>
   <string name="description_remove_account">サインアウトされこのアカウントに関連付けられているすべてのデータがこのデバイスから削除されます。</string>
 </resources>

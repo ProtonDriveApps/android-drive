@@ -27,5 +27,5 @@
   <string name="file_info_title_file">Szczegóły pliku</string>
   <string name="file_info_captured_on">Przesłane z</string>
   <string name="file_info_permissions">Uprawnienia</string>
-  <string name="file_info_uploaded_by_anonymous">Anonymous</string>
+  <string name="file_info_uploaded_by_anonymous">Anonimowy użytkownik</string>
 </resources>

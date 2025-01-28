@@ -35,8 +35,9 @@ class CreateUserNotificationId @Inject constructor() {
         is Event.Download -> event.createNotificationId(userId).copy(
             tag = "${event.tag}_${event.downloadId}"
         )
+
         // Foreground service in worker do not use tag
-        is Event.Upload -> TaglessNotificationId.UPLOAD.createTaglessNotificationId(
+        is Event.TransferData -> TaglessNotificationId.UPLOAD.createTaglessNotificationId(
             userId
         )
 

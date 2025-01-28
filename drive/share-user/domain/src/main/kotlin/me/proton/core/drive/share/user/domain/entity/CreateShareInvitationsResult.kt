@@ -18,6 +18,9 @@
 
 package me.proton.core.drive.share.user.domain.entity
 
+import me.proton.core.drive.base.domain.api.ProtonApiCode
+import me.proton.core.network.domain.isApiProtonError
+
 data class CreateShareInvitationsResult(
     val failures: Map<ShareUserInvitation, Throwable?>,
     val successes: Map<ShareUserInvitation, ShareUser>,
@@ -30,4 +33,14 @@ fun CreateShareInvitationsResult.toError(message: String): Throwable? =
                 addSuppressed(error)
             }
         }
+    }
+
+fun CreateShareInvitationsResult.containsOnlyWarnings(): Boolean =
+    failures.values.filterNotNull().all { error ->
+        error.isApiProtonError(
+            ProtonApiCode.KEY_GET_ADDRESS_MISSING,
+            ProtonApiCode.KEY_GET_INVALID_KT,
+            ProtonApiCode.KEY_GET_INPUT_INVALID,
+            ProtonApiCode.KEY_GET_DOMAIN_EXTERNAL,
+        )
     }

@@ -37,5 +37,5 @@
   <string name="log_origin_backup">Záloha</string>
   <string name="log_origin_user">Používateľ</string>
   <string name="log_origin_device">Zariadenie</string>
-  <string name="log_origin_crypto">Crypto</string>
+  <string name="log_origin_crypto">Krypto</string>
 </resources>

@@ -37,7 +37,7 @@ class RetryBackup @Inject constructor(
     private val resetFilesAttempts: ResetFilesAttempts,
 ) {
     suspend operator fun invoke(folderId: FolderId) = coRunCatching {
-        CoreLogger.d(LogTag.BACKUP, "Retry")
+        CoreLogger.i(LogTag.BACKUP, "Retry")
         getFeatureFlag(FeatureFlagId.drivePhotosUploadDisabled(folderId.userId)) {
             getErrors(folderId).first().any { error ->
                 error.type == BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED

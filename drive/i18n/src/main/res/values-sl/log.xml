@@ -32,8 +32,8 @@
   <string name="log_origin_throwable">Izjema</string>
   <string name="log_origin_logger">Zapisovalnik</string>
   <string name="log_origin_screen">Zaslon</string>
-  <string name="log_origin_application_state">Application State</string>
-  <string name="log_origin_workers">Workers</string>
+  <string name="log_origin_application_state">Stanje aplikacije</string>
+  <string name="log_origin_workers">Delovni procesi</string>
   <string name="log_origin_backup">Varnostna kopija</string>
   <string name="log_origin_user">Uporabnik</string>
   <string name="log_origin_device">Naprava</string>

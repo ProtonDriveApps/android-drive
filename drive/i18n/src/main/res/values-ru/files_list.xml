@@ -44,7 +44,7 @@
             "Modified Feb 28"
             "Modified Dec 22, 2021"
     -->
-  <string name="title_modified_with_date">изменено %1$s</string>
+  <string name="title_modified_with_date">Изменено %1$s</string>
   <string name="files_restore_from_trash_action">Восстановить</string>
   <string name="files_send_to_trash_action">Переместить в корзину</string>
   <string name="files_remove_me_action">Удалите меня</string>

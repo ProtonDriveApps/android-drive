@@ -160,6 +160,7 @@
   <string name="notification_permission_rationale_description_backup">გაფრთხილებების მიღება თქვენი მარქაფების მიმდინარეობისა და სტატუსის შესახებ.</string>
   <string name="notification_permission_rationale_action_accept">გაფრთხილებების ჩართვა</string>
   <string name="notification_permission_rationale_action_reject">არა ახლა</string>
+  <string name="notification_content_title_transferring">მონაცემების გადაცემა</string>
   <!-- endregion -->
   <string name="content_description_select_all">სიაში ყველა ელემენტის მონიშვნა</string>
   <string name="content_description_selected_options">მონიშნული ფაილების ან/და საქაღალდეებისთვის მეტი პარამეტრის ჩვენება</string>
@@ -177,7 +178,7 @@
   <string name="description_files_stop_sharing_action_success">ბმული თქვენს ფაილამდე წაიშალა.</string>
   <string name="description_files_stop_sharing_action_error">შეცდომა თქვენს ფაილამდე ბმულის წაშლისას.</string>
   <string name="description_files_stop_all_sharing">ეს წაშლის ბმულს და წვდომებს ყველასთვის.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">თქვენი ფაილი აღარ ზიარდება.</string>
   <string name="description_files_stop_all_sharing_action_error">შეცდომა თქვენს ფაილის გაზიარების წაშლისას.</string>
   <string name="ignore_file_signature_action">მაინც ნახვა</string>
   <string name="action_empty_files_add_files">ატვირთვა</string>

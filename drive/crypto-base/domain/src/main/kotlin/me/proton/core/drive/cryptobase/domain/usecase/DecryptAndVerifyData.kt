@@ -57,7 +57,7 @@ class DecryptAndVerifyData @Inject constructor(
             ).also { decryptedData ->
                 if (decryptedData.status.failed) {
                     announceEvent(Event.SignatureVerificationFailed(verifyKeyRing.keys))
-                    CoreLogger.d(
+                    CoreLogger.w(
                         tag = LogTag.ENCRYPTION,
                         e = VerificationException(
                             message = "Verification status ${decryptedData.status.name} ($verificationFailedContext)"

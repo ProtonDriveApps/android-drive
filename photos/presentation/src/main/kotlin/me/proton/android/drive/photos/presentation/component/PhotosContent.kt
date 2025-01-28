@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.photos.presentation.component
 
+import android.content.Context
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -50,12 +51,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
+import coil.ImageLoader
+import coil.compose.LocalImageLoader
+import coil.request.ImageRequest
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.placeholder
 import com.google.accompanist.placeholder.shimmer
@@ -78,12 +83,14 @@ import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
+import me.proton.core.drive.base.presentation.component.CircleSelection
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.getThumbnailId
+import me.proton.core.drive.drivelink.domain.extension.isSharedByLinkOrWithUsers
+import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.file.base.domain.extension.mediaDuration
 import me.proton.core.drive.file.base.domain.extension.toXAttr
-import me.proton.core.drive.base.presentation.component.CircleSelection
-import me.proton.core.drive.drivelink.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.link.domain.entity.FileId
@@ -91,10 +98,11 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.SharingDetails
-import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
+import me.proton.core.drive.thumbnail.presentation.extension.cacheKey
+import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVO
 import me.proton.core.drive.user.presentation.quota.component.StorageBanner
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.presentation.R
@@ -352,7 +360,11 @@ private fun MediaItem(
             )
             .background(ProtonTheme.colors.backgroundSecondary)
     ) {
-
+        val localContext = LocalContext.current
+        val imageLoader = LocalImageLoader.current
+        LaunchedEffect(localContext) {
+            link.preCachePhotoThumbnail(localContext, imageLoader)
+        }
         val painterWrapper = link.thumbnailPainter()
         Image(
             modifier = Modifier
@@ -529,6 +541,24 @@ private fun PhotoIcon(
             tint = ProtonTheme.colors.shade0,
         )
     }
+}
+
+private fun DriveLink.preCachePhotoThumbnail(context: Context, imageLoader: ImageLoader) {
+    (this as? DriveLink.File)
+        ?.takeIf { it.mimeType.toFileTypeCategory() == FileTypeCategory.Image }
+        ?.let { photoDriveLink ->
+            photoDriveLink.getThumbnailId(ThumbnailType.PHOTO)?.let {
+                photoDriveLink.thumbnailVO(ThumbnailType.PHOTO)
+            }
+        }
+        ?.let { source ->
+            imageLoader.enqueue(
+                ImageRequest.Builder(context)
+                    .data(source)
+                    .memoryCacheKey(source.cacheKey)
+                    .build()
+            )
+        }
 }
 
 private val iconSize = 12.dp

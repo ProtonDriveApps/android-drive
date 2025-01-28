@@ -45,7 +45,7 @@
   <string name="folder_option_import_file">Naloži datoteko</string>
   <string name="folder_option_create_folder">Ustvari mapo</string>
   <string name="folder_option_take_a_photo">Posnemi novo fotografijo</string>
-  <string name="folder_option_create_document">Ustvarite dokument.</string>
+  <string name="folder_option_create_document">Ustvari dokument</string>
   <string name="settings_theme_system_default">Sistemsko privzeto</string>
   <string name="settings_theme_dark">Temna</string>
   <string name="settings_theme_light">Svetla</string>
@@ -65,7 +65,7 @@
   <string name="in_app_notification_importing_file_already_exists">Datoteka z istim imenom že obstaja, poskusite počistiti predpomnilnik aplikacije</string>
   <string name="in_app_notification_clear_local_cache_success">Lokalni predpomnilnik je bil uspešno počiščen</string>
   <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
-  <string name="in_app_notification_create_document_success">Document created</string>
+  <string name="in_app_notification_create_document_success">Dokument ustvarjen</string>
   <!-- endregion -->
   <!-- region Notification -->
   <string name="notification_content_title_storage_full">Shramba polna</string>
@@ -170,6 +170,7 @@
   <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
   <string name="notification_permission_rationale_action_accept">Omogoči obvestila</string>
   <string name="notification_permission_rationale_action_reject">Ne zdaj</string>
+  <string name="notification_content_title_transferring">Transferring data</string>
   <!-- endregion -->
   <string name="content_description_select_all">Izberite vse predmete na seznamu</string>
   <string name="content_description_selected_options">Pokaži več možnosti za izbrane datoteke in/ali mape</string>

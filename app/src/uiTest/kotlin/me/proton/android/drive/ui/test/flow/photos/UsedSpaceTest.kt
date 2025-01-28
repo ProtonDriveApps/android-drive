@@ -24,6 +24,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.UninstallModules
 import dagger.hilt.components.SingletonComponent
+import me.proton.android.drive.extension.debug
 import me.proton.android.drive.photos.data.di.PhotosConfigurationModule
 import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
 import me.proton.android.drive.provider.PhotosConnectedDefaultConfigurationProvider
@@ -31,17 +32,23 @@ import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.annotation.Quota
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.PhotosBaseTest
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Before
 import org.junit.Test
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @HiltAndroidTest
 @UninstallModules(PhotosConfigurationModule::class)
 class UsedSpaceTest : PhotosBaseTest() {
 
+    @Inject
+    lateinit var configurationProvider: ConfigurationProvider
+
     @Before
     fun prepare() {
+        configurationProvider.debug.photosUpsellPhotoCount = Int.MAX_VALUE
         dcimCameraFolder.copyFileFromAssets("boat.jpg")
 
         PhotosTabRobot
@@ -69,7 +76,7 @@ class UsedSpaceTest : PhotosBaseTest() {
                 assertStorageFull(50)
             }
             .clickGetMoreStorage()
-            .verifyAtLeastOnePlanIsShown()
+            .currentPlanIsDisplayed()
     }
 
     @Test

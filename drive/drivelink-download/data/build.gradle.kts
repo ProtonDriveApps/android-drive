@@ -28,6 +28,7 @@ driveModule(
     hilt = true,
     room = true,
     workManager = true,
+    buildConfig = true,
 ) {
     api(project(":drive:drivelink-download:domain"))
 

@@ -33,8 +33,10 @@ object ProtonApiCode {
     const val EXCEEDED_QUOTA = 200002
     const val TOO_MANY_CHILDREN = 200300
     const val ENCRYPTION_VERIFICATION_FAILED = 200501
+    const val KEY_GET_INPUT_INVALID = 33101;
     const val KEY_GET_ADDRESS_MISSING = 33102
     const val KEY_GET_DOMAIN_EXTERNAL = 33103
+    const val KEY_GET_INVALID_KT = 33104;
 
     val Long.isSuccessful: Boolean get() = this == SUCCESS
 }

@@ -59,7 +59,7 @@ class BackupFileWatcherWorker @AssistedInject constructor(
     private val userId = UserId(requireNotNull(inputData.getString(WorkerKeys.KEY_USER_ID)))
 
     override suspend fun doWork(): Result {
-        CoreLogger.d(
+        CoreLogger.i(
             BACKUP,
             "BackupFileWatcherWorker triggered by ${triggeredContentUris.size} files"
         )
@@ -136,7 +136,7 @@ class BackupFileWatcherWorker @AssistedInject constructor(
                     uploadPriority = UploadFileLink.RECENT_BACKUP_PRIORITY,
                     allBuckets = bucketUpdates.any { bucketUpdate -> bucketUpdate == null },
                 ).onFailure { error ->
-                    CoreLogger.d(BACKUP, error, "Cannot sync buckets")
+                    CoreLogger.w(BACKUP, error, "Cannot sync buckets")
                 }.onSuccess { backupFolders ->
                     CoreLogger.d(BACKUP, "Synced ${backupFolders.size} buckets")
                 }

@@ -28,6 +28,7 @@ driveModule(
     i18n = true,
     hilt = true,
     showkase = true,
+    buildConfig = true,
 ) {
     api(project(":drive:base:domain"))
     api(libs.androidx.activity.compose)

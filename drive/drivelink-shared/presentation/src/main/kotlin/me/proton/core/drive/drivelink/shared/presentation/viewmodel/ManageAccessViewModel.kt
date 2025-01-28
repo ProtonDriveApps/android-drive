@@ -66,9 +66,6 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.LoadingViewS
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ManageAccessViewState
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserType
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
-import me.proton.core.drive.entitlement.domain.entity.Entitlement
-import me.proton.core.drive.entitlement.domain.extension.on
-import me.proton.core.drive.entitlement.domain.usecase.GetEntitlement
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
@@ -100,7 +97,6 @@ class ManageAccessViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val copyToClipboard: CopyToClipboard,
     getFeatureFlagFlow: GetFeatureFlagFlow,
-    getEntitlement: GetEntitlement,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
     @ApplicationContext private val appContext: Context,
@@ -177,8 +173,6 @@ class ManageAccessViewModel @Inject constructor(
         }
     }.stateIn(viewModelScope, SharingStarted.Eagerly, LoadingViewState.Initial)
 
-    private val entitlement = getEntitlement(userId, Entitlement.Key.PublicCollaboration).mapSuccessValueOrNull()
-
     private val shareUsers = getShareUsers(linkId).transformLatest { dataResult ->
         dataResult.onSuccess { list ->
             emit(list)
@@ -223,12 +217,11 @@ class ManageAccessViewModel @Inject constructor(
         driveLink.filterNotNull(),
         sharedDriveLink.filterSuccessOrError().mapSuccessValueOrNull(),
         sharedLoadingViewState,
-        entitlement,
         shareUsers,
         killSwitch,
         drivePublicShareEditModeFeatureFlag,
         drivePublicShareEditModeKillSwitch,
-    ) { driveLink, sharedDriveLink, sharedLoadingViewState, entitlement, shareUsers,
+    ) { driveLink, sharedDriveLink, sharedLoadingViewState, shareUsers,
         killSwitch, drivePublicShareEditModeFeatureFlag, drivePublicShareEditModeKillSwitch ->
         val publicUrl = sharedDriveLink?.publicUrl?.value
         ManageAccessViewState(
@@ -249,8 +242,7 @@ class ManageAccessViewModel @Inject constructor(
             isLinkNameEncrypted = driveLink.isNameEncrypted,
             canEditMembers = (driveLink.sharePermissions == null || driveLink.sharePermissions?.isAdmin == true)
                     && killSwitch.state != ENABLED,
-            canEditLink = drivePublicShareEditModeKillSwitch.off
-                    && drivePublicShareEditModeFeatureFlag.on && entitlement.on,
+            canEditLink = drivePublicShareEditModeKillSwitch.off && drivePublicShareEditModeFeatureFlag.on,
             loadingViewState = sharedLoadingViewState,
             shareUsers = shareUsers.toViewState()
         )

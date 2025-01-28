@@ -27,6 +27,7 @@ android {
 driveModule(
     hilt = true,
     room = true,
+    buildConfig = true,
 ) {
     api(project(":drive:link:data"))
     api(project(":drive:link-upload:domain"))

@@ -110,7 +110,7 @@ class UploadCleanupWorker @AssistedInject constructor(
                 UploadThrottleWorker.getWorkRequest(userId)
             ).await()
         }.onFailure { error ->
-            error.log(uploadFileLink.logTag(), "Cannot enqueue UploadSuccessCleanupWorker")
+            error.log(uploadFileLink.logTag(), "Cannot enqueue UploadThrottleWorker")
         }
         try {
             announceUploadEvent(

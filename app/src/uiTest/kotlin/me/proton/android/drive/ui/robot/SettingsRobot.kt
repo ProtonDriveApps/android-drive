@@ -52,6 +52,10 @@ object SettingsRobot : NavigationBarRobot {
     fun localCacheClearedSuccessfullyWasShown() = messageNotificationLocalCacheClearedSuccessfully
         .await { assertIsDisplayed() }
 
+    fun dismissLocalCacheClearedSuccessfulGrowler() = apply {
+        messageNotificationLocalCacheClearedSuccessfully.click()
+    }
+
     fun assertUserLogIsNotDisplayed() {
         settingsList.scrollTo(appVersion)
         showLog.assertIsNotDisplayed()

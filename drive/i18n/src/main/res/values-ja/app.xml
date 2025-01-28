@@ -26,7 +26,7 @@
   <string name="title_empty_my_files">どうぞ、あなたの最初のファイルを追加してください。</string>
   <string name="title_empty_folder">このフォルダを埋めてみましょう</string>
   <string name="title_empty_folder_read_only">フォルダは空</string>
-  <string name="title_empty_shared">追跡する</string>
+  <string name="title_empty_shared">そこに何があるかを追跡します。</string>
   <string name="title_empty_offline_available">オフラインで利用可能なものはありません。</string>
   <string name="title_empty_trash">ごみ箱は空です</string>
   <string name="title_empty_trash_action">ごみ箱を空にする</string>
@@ -68,7 +68,7 @@
   <string name="in_app_notification_create_document_success">ドキュメントが作成されました</string>
   <!-- endregion -->
   <!-- region Notification -->
-  <string name="notification_content_title_storage_full">ストレージの空き容量がありません</string>
+  <string name="notification_content_title_storage_full">ストレージがいっぱいです</string>
   <!--
         Variable %1$s is an application name
         Example:
@@ -144,7 +144,7 @@
   <string name="notification_content_text_forced_sign_out">申し訳ありません！同期中に問題が発生しました。- もう一度ログインしてください。すべてがスムーズに実行されます。</string>
   <string name="notification_content_title_no_space_left_on_device">デバイスに空き容量がありません</string>
   <string name="notification_content_text_no_space_left_on_device">アプリが適切に動いていないようです。</string>
-  <string name="notification_channel_group_name_application">アプリケーション</string>
+  <string name="notification_channel_group_name_application">アプリ</string>
   <string name="notification_channel_background_title">バックグラウンド</string>
   <string name="notification_channel_background_description">バックアップのようなバックグラウンド操作のためのチャンネル</string>
   <string name="notification_channel_transfer_title">転送</string>
@@ -155,6 +155,7 @@
   <string name="notification_permission_rationale_description_backup">バックアップの状態と進行度についての通知を受け取る</string>
   <string name="notification_permission_rationale_action_accept">通知を有効化</string>
   <string name="notification_permission_rationale_action_reject">あとで</string>
+  <string name="notification_content_title_transferring">データ転送中</string>
   <!-- endregion -->
   <string name="content_description_select_all">リスト内のすべての項目を選択します</string>
   <string name="content_description_selected_options">選択したファイルやフォルダーのその他のオプションを表示します</string>
@@ -174,7 +175,7 @@
   <string name="description_files_stop_all_sharing">これによりリンクは削除され、全員のアクセスは削除されます。</string>
   <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">ファイルの共有を削除する際にエラーが発生しました。</string>
-  <string name="ignore_file_signature_action">いずれにせよ</string>
+  <string name="ignore_file_signature_action">とにかく表示</string>
   <string name="action_empty_files_add_files">アップロード</string>
   <string name="error_could_not_send_file">ファイルを送信しようとしたときにエラーが発生しました</string>
   <string name="error_could_not_load_folder_content">フォルダーのコンテンツをロードしようとしたときにエラーが発生しました</string>
@@ -205,7 +206,7 @@
     -->
   <string name="get_more_free_storage_action_link_subtitle">任意のファイルまたはフォルダーを選択します。 オプション メニューを開き、%1$s を押します。</string>
   <string name="get_more_free_storage_action_share_title">ファイルを共有</string>
-  <string name="get_more_free_storage_action_share_subtitle">簡単に使用でき安全で.</string>
+  <string name="get_more_free_storage_action_share_subtitle">簡単で安全です。</string>
   <string name="get_more_free_storage_action_recovery_title">回復手段を設定</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link

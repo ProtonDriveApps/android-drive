@@ -31,7 +31,7 @@
   </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">その名前のアイテムは宛先フォルダーに既に存在します</string>
   <string name="folder_options_header_title">「%1$s」内</string>
-  <string name="folder_options_header_title_encrypted">In</string>
+  <string name="folder_options_header_title_encrypted">に</string>
   <string name="files_toggle_layout_to_list_content_description">リストのレイアウト</string>
   <string name="files_toggle_layout_to_grid_content_description">グリッド表示</string>
   <!--

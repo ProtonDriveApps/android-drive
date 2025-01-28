@@ -30,6 +30,7 @@ import me.proton.core.drive.linkupload.domain.usecase.UpdateDateTime
 import me.proton.core.drive.linkupload.domain.usecase.UpdateDuration
 import me.proton.core.drive.linkupload.domain.usecase.UpdateLocation
 import me.proton.core.drive.linkupload.domain.usecase.UpdateMediaResolution
+import me.proton.core.drive.upload.domain.resolver.UriResolver
 import javax.inject.Inject
 
 class UpdateUploadFileAttributes @Inject constructor(
@@ -39,12 +40,14 @@ class UpdateUploadFileAttributes @Inject constructor(
     private val updateLocation: UpdateLocation,
     private val updateCameraExifTags: UpdateCameraExifTags,
     private val getFileAttributes: GetFileAttributes,
+    private val uriResolver: UriResolver,
 ) {
     suspend operator fun invoke(
         uploadFileLink: UploadFileLink,
     ): Result<Unit> = coRunCatching {
         val uploadFileLinkId = uploadFileLink.id
         uploadFileLink.uriString?.let { uriString ->
+            checkFileExists(uriString)
             getFileAttributes(uriString, uploadFileLink.mimeType)?.let { fileAttributes ->
                 fileAttributes.cameraExifTags?.let { cameraExifTags ->
                     updateCameraExifTags(uploadFileLinkId, cameraExifTags).getOrThrow()
@@ -63,5 +66,9 @@ class UpdateUploadFileAttributes @Inject constructor(
                 }
             }
         }
+    }
+
+    private suspend fun checkFileExists(uriString: String) {
+        uriResolver.useInputStream(uriString) {}
     }
 }

@@ -170,6 +170,7 @@
   <string name="notification_permission_rationale_description_backup">Otrzymuj powiadomienia o postępach i statusie kopii zapasowych.</string>
   <string name="notification_permission_rationale_action_accept">Włącz powiadomienia</string>
   <string name="notification_permission_rationale_action_reject">Nie teraz</string>
+  <string name="notification_content_title_transferring">Przenoszenie danych</string>
   <!-- endregion -->
   <string name="content_description_select_all">Zaznacz wszystkie elementy z listy</string>
   <string name="content_description_selected_options">Pokaż więcej opcji dla zaznaczonych plików i folderów</string>
@@ -183,7 +184,7 @@
   <string name="description_file_download_failed">Pobieranie nie powiodło się. Sprawdź połączenie sieciowe i spróbuj ponownie.</string>
   <string name="description_file_decryption_failed">Nie można odszyfrować pliku</string>
   <string name="description_file_verify_signature_failed">Podpis pliku nie może zostać zweryfikowany</string>
-  <string name="description_files_stop_sharing">Spowoduje to usunięcie linku i dostępu do pliku lub folderu dla każdego, kto posiada link.</string>
+  <string name="description_files_stop_sharing">Spowoduje to usunięcie linku i dostępu do pliku lub folderu dla każdego, kto ma link.</string>
   <string name="description_files_stop_sharing_action_success">Link do pliku został usunięty.</string>
   <string name="description_files_stop_sharing_action_error">Wystąpił błąd podczas usuwania linku do pliku.</string>
   <string name="description_files_stop_all_sharing">Spowoduje to usunięcie linku i dostępu do elementu.</string>

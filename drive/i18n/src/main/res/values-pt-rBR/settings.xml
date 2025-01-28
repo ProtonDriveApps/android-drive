@@ -46,7 +46,7 @@
         Examples:
             "Your Camera folder is backed up automatically."
     -->
-  <string name="settings_photos_backup_folders_description">O backup da sua pasta %1$s é feito automaticamente. Selecione pastas adicionais para fazer backup e suas fotos aparecerão na guia Fotos.</string>
+  <string name="settings_photos_backup_folders_description">O backup da sua pasta %1$s é feito automaticamente. Selecione mais pastas para fazer backup e suas fotos aparecerão na guia Fotos.</string>
   <string name="settings_photos_backup_folders_not_found">A pasta não foi encontrada</string>
   <string name="settings_photos_backup_folders_confirm_stop_sync_title">Parar de fazer backup da pasta?</string>
   <!--

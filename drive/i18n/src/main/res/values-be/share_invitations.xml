@@ -78,7 +78,7 @@
         Examples:
             "user@mail.com (Unknown)"
     -->
-  <string name="share_via_invitations_external_invitation_unknown">%1$s (невядома)</string>
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (невядомы)</string>
   <string name="share_via_invitations_add_people_hint">Дадаць карыстальнікаў</string>
   <string name="share_via_invitations_copy_invite_link_action">Скапіяваць запрашальную спасылку</string>
   <string name="share_via_invitations_remove_access_action">Выдаліць доступ</string>

@@ -37,5 +37,5 @@
   <string name="log_origin_backup">Sikkerhetskopier</string>
   <string name="log_origin_user">Bruker</string>
   <string name="log_origin_device">Enhet</string>
-  <string name="log_origin_crypto">Crypto</string>
+  <string name="log_origin_crypto">Krypto</string>
 </resources>

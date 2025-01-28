@@ -98,7 +98,7 @@
     <item quantity="one">%1$d файл запампаваны</item>
     <item quantity="few">%1$d файлы запампаваны</item>
     <item quantity="many">%1$d файлаў запампаваны</item>
-    <item quantity="other">%1$d файлы запампаваны</item>
+    <item quantity="other">%1$d файлаў запампаваны</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have been cancelled
@@ -110,7 +110,7 @@
     <item quantity="one">%1$d файл скасаваны</item>
     <item quantity="few">%1$d файлы скасаваны</item>
     <item quantity="many">%1$d файлаў скасаваны</item>
-    <item quantity="other">%1$d файлы скасаваны</item>
+    <item quantity="other">%1$d файлаў скасаваны</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have fail to upload
@@ -170,6 +170,7 @@
   <string name="notification_permission_rationale_description_backup">Атрымлівайце апавяшчэнні аб выкананні і статусе вашых рэзервовых копій.</string>
   <string name="notification_permission_rationale_action_accept">Уключыць апавяшчэнні</string>
   <string name="notification_permission_rationale_action_reject">Не зараз</string>
+  <string name="notification_content_title_transferring">Перадача даных</string>
   <!-- endregion -->
   <string name="content_description_select_all">Выбраць усе элементы ў спісе</string>
   <string name="content_description_selected_options">Паказаць больш параметраў для выбраных файлаў і/або папак</string>
@@ -187,12 +188,12 @@
   <string name="description_files_stop_sharing_action_success">Спасылка на ваш файл была выдалена.</string>
   <string name="description_files_stop_sharing_action_error">Адбылася памылка падчас выдалення спасылкі на ваш файл.</string>
   <string name="description_files_stop_all_sharing">Гэта дзеянне прывядзе да выдалення спасылкі і доступу для кожнага ўдзельніка.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Ваш файл больш не абагульваецца.</string>
   <string name="description_files_stop_all_sharing_action_error">Адбылася памылка падчас выдалення абагульвання вашага файла.</string>
   <string name="ignore_file_signature_action">Усё роўна паглядзець</string>
   <string name="action_empty_files_add_files">Запампаваць</string>
-  <string name="error_could_not_send_file">Падчас спробы адправіць файл адбылася памылка</string>
-  <string name="error_could_not_load_folder_content">Падчас спробы загрузкі змесціва папкі адбылася памылка</string>
+  <string name="error_could_not_send_file">Адбылася памылка падчас спробы адправіць файл</string>
+  <string name="error_could_not_load_folder_content">Адбылася памылка падчас спробы загрузкі змесціва папкі</string>
   <string name="error_main_share_locked">Вашы файлы больш недаступны па прычыне скідання пароля. Для аднаўлення доступу, паўторна запампуйце стары ключ шыфравання.</string>
   <string name="error_share_locked">Абагульванне заблакіравана.</string>
   <string name="error_main_share_not_found">Не атрымалася знайсці асноўны раздзел.</string>

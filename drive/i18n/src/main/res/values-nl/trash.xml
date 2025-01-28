@@ -23,8 +23,8 @@
             "5 items sent to trash"
     -->
   <plurals name="trash_operation_successful_format">
-    <item quantity="one">1 item naar de prullenbak gestuurd</item>
-    <item quantity="other">%1$d items naar de prullenbak gestuurd</item>
+    <item quantity="one">1 item naar de prullenbak verplaatst</item>
+    <item quantity="other">%1$d items naar de prullenbak verplaatst</item>
   </plurals>
   <!--
         Variable %1$d is a number

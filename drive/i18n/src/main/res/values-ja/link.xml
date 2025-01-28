@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="files_upload_stage_waiting">アップロード待ち</string>
-  <string name="files_upload_stage_encrypting">暗号化</string>
+  <string name="files_upload_stage_encrypting">暗号化中</string>
   <string name="files_upload_stage_uploading">アップロード</string>
   <!--
         Variable %1$s is a string representation of a percentage

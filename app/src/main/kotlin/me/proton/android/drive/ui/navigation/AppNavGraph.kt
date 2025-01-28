@@ -160,6 +160,7 @@ fun AppNavGraph(
     navigateToSecurityKeys: () -> Unit,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
+    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) {
     val navController = rememberAnimatedNavController(keyStoreCrypto)
@@ -223,6 +224,7 @@ fun AppNavGraph(
                 navigateToSecurityKeys = navigateToSecurityKeys,
                 navigateToBugReport = navigateToBugReport,
                 navigateToSubscription = navigateToSubscription,
+                navigateToRatingBooster = navigateToRatingBooster,
                 onDrawerStateChanged = onDrawerStateChanged,
             )
         }
@@ -243,6 +245,7 @@ fun AppNavGraph(
     navigateToSecurityKeys: () -> Unit,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
+    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) {
     DriveNavHost(
@@ -263,6 +266,7 @@ fun AppNavGraph(
             defaultStartDestination = defaultStartDestination,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
+            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addHomeFiles(
@@ -271,6 +275,7 @@ fun AppNavGraph(
             deepLinkBaseUrl = deepLinkBaseUrl,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
+            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addHomePhotos(
@@ -279,6 +284,7 @@ fun AppNavGraph(
             deepLinkBaseUrl = deepLinkBaseUrl,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
+            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addHomeComputers(
@@ -287,6 +293,7 @@ fun AppNavGraph(
             deepLinkBaseUrl = deepLinkBaseUrl,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
+            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addHomeSharedTabs(
@@ -295,6 +302,7 @@ fun AppNavGraph(
             deepLinkBaseUrl = deepLinkBaseUrl,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
+            navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
         addPhotosIssues(navController)
@@ -783,6 +791,7 @@ internal fun NavGraphBuilder.addHome(
     defaultStartDestination: String,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
+    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
     arguments: List<NamedNavArgument> = listOf(
         navArgument(Screen.Home.USER_ID) {
@@ -891,6 +900,8 @@ internal fun NavGraphBuilder.addHome(
                 Screen.WhatsNew(userId, key)
             )
         },
+
+        navigateToRatingBooster = navigateToRatingBooster,
         navigateToNotificationPermissionRationale = {
             navController.navigate(
                 Screen.NotificationPermissionRationale(
@@ -912,6 +923,7 @@ fun NavGraphBuilder.addHome(
     defaultStartDestination: String,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
+    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -921,6 +933,7 @@ fun NavGraphBuilder.addHome(
     defaultStartDestination = defaultStartDestination,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
+    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged= onDrawerStateChanged,
     arguments = listOf(
         navArgument(Screen.Home.USER_ID) {
@@ -941,6 +954,7 @@ fun NavGraphBuilder.addHomeFiles(
     deepLinkBaseUrl: String,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
+    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -950,6 +964,7 @@ fun NavGraphBuilder.addHomeFiles(
     defaultStartDestination = Screen.Files.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
+    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged= onDrawerStateChanged,
     arguments = listOf(
         navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
@@ -974,6 +989,7 @@ fun NavGraphBuilder.addHomePhotos(
     deepLinkBaseUrl: String,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
+    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -983,6 +999,7 @@ fun NavGraphBuilder.addHomePhotos(
     defaultStartDestination = Screen.Photos.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
+    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged = onDrawerStateChanged
 )
 
@@ -994,6 +1011,7 @@ fun NavGraphBuilder.addHomeComputers(
     deepLinkBaseUrl: String,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
+    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -1003,6 +1021,7 @@ fun NavGraphBuilder.addHomeComputers(
     defaultStartDestination = Screen.Computers.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
+    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged = onDrawerStateChanged
 )
 
@@ -1014,6 +1033,7 @@ fun NavGraphBuilder.addHomeSharedTabs(
     deepLinkBaseUrl: String,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
+    navigateToRatingBooster: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) = addHome(
     navController = navController,
@@ -1023,6 +1043,7 @@ fun NavGraphBuilder.addHomeSharedTabs(
     defaultStartDestination = Screen.SharedTabs.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
+    navigateToRatingBooster = navigateToRatingBooster,
     onDrawerStateChanged = onDrawerStateChanged
 )
 

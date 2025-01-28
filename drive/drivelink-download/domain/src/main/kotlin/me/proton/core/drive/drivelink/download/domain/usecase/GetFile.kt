@@ -72,14 +72,15 @@ class GetFile @Inject constructor(
             return@flow
         }
         CoreLogger.d(LogTag.GET_FILE, "Cache file for ${driveLink.id.id.logId()} doesn't exists")
-        verifyDownloadedState(driveLink)
+        val verifiedDriveLink = verifyDownloadedState(driveLink)
             .onFailure { error ->
                 CoreLogger.d(LogTag.GET_FILE, error, "Downloaded state verification failed")
-            }
-        val downloadedDriveLink: DriveLink.File = if (!driveLink.isDownloaded(getDownloadBlocks(driveLink.id).getOrThrow())) {
+            }.getOrThrow()
+        val blocks = getDownloadBlocks(driveLink.id).getOrThrow()
+        val downloadedDriveLink: DriveLink.File = if (!verifiedDriveLink.isDownloaded(blocks)) {
             CoreLogger.d(LogTag.GET_FILE, "File ${driveLink.id.id.logId()} is not downloaded yet, let's download it!")
             if (!retryable && !isConnectedToNetwork()) {
-                CoreLogger.d(LogTag.GET_FILE, "Download ${driveLink.id.id.logId()} failed as it is not retryable and there is no network connection")
+                CoreLogger.w(LogTag.GET_FILE, "Download ${driveLink.id.id.logId()} failed as it is not retryable and there is no network connection")
                 return@flow emit(State.Error.NoConnection)
             }
             download(driveLink, retryable)
@@ -89,19 +90,19 @@ class GetFile @Inject constructor(
                 if (e is CancellationException) {
                     throw e
                 }
-                CoreLogger.d(LogTag.GET_FILE, e, "There was an error while downloading ${driveLink.id.id.logId()}")
+                CoreLogger.w(LogTag.GET_FILE, e, "There was an error while downloading ${driveLink.id.id.logId()}")
                 return@flow emit(State.Error.Downloading(e))
             }
         } else driveLink
-        CoreLogger.d(LogTag.GET_FILE, "File ${driveLink.id.id.logId()} is downloaded!")
+        CoreLogger.i(LogTag.GET_FILE, "File ${driveLink.id.id.logId()} is downloaded!")
         emit(State.Decrypting)
 
         CoreLogger.d(LogTag.GET_FILE, "Decrypting file ${driveLink.id.id.logId()}")
         decryptLinkContent(downloadedDriveLink, targetFile, checkSignature).onSuccess { file ->
-            CoreLogger.d(LogTag.GET_FILE, "File ${driveLink.id.id.logId()} was successfully decrypted!")
+            CoreLogger.i(LogTag.GET_FILE, "File ${driveLink.id.id.logId()} was successfully decrypted!")
             emit(State.Ready(Uri.fromFile(file), driveLink.id))
         }.onFailure { error ->
-            CoreLogger.d(LogTag.GET_FILE, error,"There was an error decrypting file ${driveLink.id.id.logId()}")
+            CoreLogger.e(LogTag.GET_FILE, error,"There was an error decrypting file ${driveLink.id.id.logId()}")
             when (error) {
                 is VerificationException -> emit(State.Error.VerifyingSignature(error))
                 else -> emit(State.Error.Decrypting(error))

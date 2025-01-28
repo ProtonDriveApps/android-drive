@@ -81,6 +81,7 @@ import me.proton.android.drive.ui.viewmodel.BugReportViewModel
 import me.proton.android.drive.ui.viewmodel.PlansViewModel
 import me.proton.android.drive.usecase.GetDefaultEnabledDynamicHomeTab
 import me.proton.android.drive.usecase.ProcessIntent
+import me.proton.android.drive.usecase.ShowRatingBooster
 import me.proton.core.compose.component.ProtonSnackbarHost
 import me.proton.core.compose.component.ProtonSnackbarHostState
 import me.proton.core.compose.component.ProtonSnackbarType
@@ -117,6 +118,7 @@ class MainActivity : FragmentActivity() {
     @Inject lateinit var deeplinkManager: DeeplinkManager
     @Inject lateinit var activityLauncher: ActivityLauncher
     @Inject lateinit var announceEvent: AnnounceEvent
+    @Inject lateinit var showRatingBooster: ShowRatingBooster
 
     lateinit var configurationProvider: ConfigurationProvider
     private val accountViewModel: AccountViewModel by viewModels()
@@ -176,6 +178,7 @@ class MainActivity : FragmentActivity() {
                         navigateToSecurityKeys = { SecurityKeysActivity.start(this@MainActivity) },
                         navigateToBugReport = bugReportViewModel::sendBugReport,
                         navigateToSubscription = plansViewModel::showCurrentPlans,
+                        navigateToRatingBooster = { showRatingBooster(this@MainActivity) },
                     ) { isOpen ->
                         isDrawerOpen = isOpen
                     }

@@ -160,6 +160,7 @@
   <string name="notification_permission_rationale_description_backup">Saat ilmoituksia varmuuskopioidesi edistymisestä ja tilasta.</string>
   <string name="notification_permission_rationale_action_accept">Ota ilmoitukset käyttöön</string>
   <string name="notification_permission_rationale_action_reject">Ei nyt</string>
+  <string name="notification_content_title_transferring">Siirretään tietoja</string>
   <!-- endregion -->
   <string name="content_description_select_all">Valitse listan kaikki kohteet</string>
   <string name="content_description_selected_options">Näytä lisää valintoja valituille tiedostoille ja/tai kansioille</string>

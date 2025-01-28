@@ -19,6 +19,7 @@
 package me.proton.core.drive.eventmanager.usecase
 
 import kotlinx.coroutines.flow.first
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
@@ -54,16 +55,20 @@ class OnUpdateContentEvent @Inject constructor(
             insertOrUpdateLinks(linksWithParentInCache)
             download(
                 linksWithParentInCache.mapNotNull { link ->
-                    getFirstMarkedOfflineLink(link.id)?.let { getDriveLink(it.id).toResult().getOrNull() }
+                    getFirstMarkedOfflineLink(link.id)?.let {
+                        getDriveLink(it.id).toResult()
+                            .getOrNull(LogTag.EVENTS, "Cannot get drive link ${it.id.id.logId()}")
+                    }
                 }
             )
         }
     }
 
     private suspend fun Link.deleteLocalContent() =
-        getDriveLink(id).toResult().onSuccess { driveLink ->
-            if (driveLink is DriveLink.File) {
-                deleteLocalContent(driveLink)
+        getDriveLink(id).toResult()
+            .getOrNull(LogTag.EVENTS, "Cannot get drive link ${id.id.logId()}")?.let { driveLink ->
+                if (driveLink is DriveLink.File) {
+                    deleteLocalContent(driveLink)
+                }
             }
-        }
 }

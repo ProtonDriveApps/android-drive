@@ -23,6 +23,8 @@ import android.content.ClipboardManager
 import android.content.Context
 import androidx.core.app.NotificationManagerCompat
 import androidx.work.WorkManager
+import com.google.android.play.core.review.ReviewManager
+import com.google.android.play.core.review.ReviewManagerFactory
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -47,9 +49,11 @@ import me.proton.android.drive.stats.StatsEventHandler
 import me.proton.android.drive.telemetry.TelemetryEventHandler
 import me.proton.android.drive.usecase.GetDocumentsProviderRootsImpl
 import me.proton.android.drive.usecase.DriveUrlBuilderImpl
-import me.proton.android.drive.usecase.notification.UploadNotificationEventWorkerNotifier
+import me.proton.android.drive.usecase.notification.TransferDataNotificationEventWorkerNotifier
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.accountmanager.domain.AccountManager
+import me.proton.core.compose.theme.AppTheme
+import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.configuration.EnvironmentConfiguration
 import me.proton.core.domain.entity.AppStore
 import me.proton.core.domain.entity.Product
@@ -65,12 +69,18 @@ import me.proton.core.drive.key.domain.handler.PublicKeyEventHandler
 import me.proton.core.drive.log.domain.handler.LogEventHandler
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
 import me.proton.core.drive.upload.data.worker.UploadEventWorker
+import me.proton.core.drive.worker.data.usecase.TransferDataNotifier
 import me.proton.drive.android.settings.data.datastore.AppUiSettingsDataStore
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object ApplicationModule {
+
+    @Provides
+    fun provideAppTheme() = AppTheme { content ->
+        ProtonTheme { content() }
+    }
 
     @Provides
     @Singleton
@@ -175,6 +185,10 @@ object ApplicationModule {
         log: LogEventHandler,
         publicKeyEventHandler: PublicKeyEventHandler,
     ) = setOf(notification, telemetry, photos, stats, log, publicKeyEventHandler)
+
+    @Provides
+    @Singleton
+    fun provideReviewManager(@ApplicationContext context: Context): ReviewManager = ReviewManagerFactory.create(context)
 }
 
 @Module
@@ -200,7 +214,9 @@ abstract class ApplicationBindsModule {
     abstract fun bindsBridgeFindDuplicatesRepository(impl: BridgeFindDuplicatesRepository): FindDuplicatesRepository
 
     @Binds
-    abstract fun bindsUploadNotificationEventWorkerNotifier(impl: UploadNotificationEventWorkerNotifier): UploadEventWorker.Notifier
+    abstract fun bindsTransferDataNotificationEventWorkerNotifier(
+        impl: TransferDataNotificationEventWorkerNotifier
+    ): TransferDataNotifier
 
     @Binds
     abstract fun bindsDriveUrlBuilder(impl: DriveUrlBuilderImpl): DriveUrlBuilder

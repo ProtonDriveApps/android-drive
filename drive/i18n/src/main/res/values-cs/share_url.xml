@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Sdílet přes odkaz</string>
   <string name="shared_with_me_title">Sdíleno se mnou</string>
   <string name="shared_by_me_title">Sdíleno mnou</string>
-  <string name="shared_with_me_empty_description">Zde se zobrazí soubory a složky, které sdílíte s ostatními</string>
+  <string name="shared_empty_title">Zatím není nic sdíleno</string>
+  <string name="shared_with_me_empty_description">Zde se zobrazí soubory a složky, které jsou s vámi sdíleny</string>
   <string name="shared_by_me_empty_description">Bezpečně sdílejte vaše soubory a složky pomocí koncového šifrování</string>
 </resources>

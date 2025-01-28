@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="settings_app_lock">Κλείδωμα Εφαρμογής</string>
+  <string name="settings_section_security">Ασφάλεια</string>
+  <string name="settings_section_about">Σχετικά</string>
+  <string name="settings_section_statistics">Στατιστικά χρήσης</string>
+  <string name="settings_auto_lock">Κλείδωσε την εφαρμογή αυτόματα</string>
+  <string name="settings_auto_lock_durations_immediately">Άμεσα</string>
+  <plurals name="settings_auto_lock_durations_seconds">
+    <item quantity="one">Μετά από %1$d δευτερόλεπτο</item>
+    <item quantity="other">Μετά από %1$d δευτερόλεπτα</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_minutes">
+    <item quantity="one">Μετά από %1$d λεπτό</item>
+    <item quantity="other">Μετά από %1$d λεπτά</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_hours">
+    <item quantity="one">Μετά από %1$d ώρα</item>
+    <item quantity="other">Μετά από %1$d ώρες</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_days">
+    <item quantity="one">Μετά από %1$d μέρα</item>
+    <item quantity="other">Μετά από %1$d μέρες</item>
+  </plurals>
+  <string name="settings_section_backup">Αντίγραφο Ασφαλείας</string>
+  <string name="settings_photos_backup_folders_title">Ανέβασμα από</string>
+  <!--
+        Variable %1$s is the default folder name (Camera)
+        Examples:
+            "Your Camera folder is backed up automatically."
+    -->
+  <string name="settings_photos_backup_folders_description">Δημιουργείται αυτόματα αντίγραφο ασφαλείας του %1$s φακέλου σας. Επιλέξτε πρόσθετους φακέλους για δημιουργία αντιγράφων ασφαλείας και οι φωτογραφίες τους θα εμφανιστούν στην καρτέλα Φωτογραφίες.</string>
+  <string name="settings_photos_backup_folders_not_found">Ο φάκελος δεν βρέθηκε</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_title">Διακοπή δημιουργίας αντιγράφων ασφαλείας φακέλου;</string>
+  <!--
+        Variable %1$s is the folder name
+        Examples:
+            "Camera will no longer be backing up to the cloud."
+    -->
+  <string name="settings_photos_backup_folders_confirm_stop_sync_description">%1$s δε θα δημιουργεί πλέον αντίγραφα ασφαλείας στο cloud. Οι φωτογραφίες για τις οποίες έχουν ήδη δημιουργηθεί αντίγραφα ασφαλείας δε θα διαγραφούν.</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">Διακοπή δημιουργίας αντιγράφου ασφαλείας</string>
+  <plurals name="settings_photos_backup_folders_description_photos">
+    <item quantity="one">%1$d φωτογραφία</item>
+    <item quantity="other">%1$d φωτογραφίες</item>
+  </plurals>
+  <plurals name="settings_photos_backup_folders_description_videos">
+    <item quantity="one">%1$d βίντεο</item>
+    <item quantity="other">%1$d βίντεο</item>
+  </plurals>
+  <!--
+        Variable %1$s is an entry in a list
+        Examples:
+            "Privacy Policy (opens in a browser)"
+    -->
+  <string name="settings_external_link_format">%1$s (ανοίγει σε πρόγραμμα περιήγησης)</string>
+  <string name="settings_section_appearance_settings">Εμφάνιση</string>
+  <string name="settings_theme_entry">Θέμα</string>
+  <string name="settings_home_tab">Προεπιλεγμένη αρχική καρτέλα</string>
+  <string name="settings_section_system">Σύστημα</string>
+  <string name="settings_clear_local_cache_entry">Καθαρισμός τοπικής προσωρινής μνήμης</string>
+  <string name="settings_show_log">Εμφάνιση αρχείου καταγραφής</string>
+</resources>

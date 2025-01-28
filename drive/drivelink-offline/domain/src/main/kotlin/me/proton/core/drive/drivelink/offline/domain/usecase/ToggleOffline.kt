@@ -42,7 +42,7 @@ class ToggleOffline @Inject constructor(
         } else {
             val isAnyAncestorMarkedAsOffline = isAnyAncestorMarkedAsOffline(driveLink.id)
                 .onFailure { error ->
-                    CoreLogger.d(
+                    CoreLogger.w(
                         tag = LogTag.DEFAULT,
                         e = error,
                         message = "Failed getting isAnyAncestorMarkedAsOffline",

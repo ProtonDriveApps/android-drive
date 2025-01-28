@@ -42,7 +42,7 @@
             "Modified Feb 28"
             "Modified Dec 22, 2021"
     -->
-  <string name="title_modified_with_date">Modificação: %1$s</string>
+  <string name="title_modified_with_date">Modificado: %1$s</string>
   <string name="files_restore_from_trash_action">Restaurar</string>
   <string name="files_send_to_trash_action">Mover para a lixeira</string>
   <string name="files_remove_me_action">Remover</string>
@@ -55,7 +55,7 @@
     -->
   <string name="files_confirm_deletion_message_format">\'%1$s\' será permanentemente excluído. Você não pode desfazer esta ação.</string>
   <string name="files_confirm_empty_trash_title">Esvaziar lixeira?</string>
-  <string name="files_confirm_empty_trash_message">Os itens da lixeira serão apagados permanentemente. Você não poderá desfazer esta ação.</string>
+  <string name="files_confirm_empty_trash_message">Os itens da lixeira serão apagados permanentemente. Esta ação não poderá ser desfeita.</string>
   <string name="files_confirm_empty_trash_confirm_action">Esvaziar lixeira</string>
   <string name="files_display_file_info_action">Detalhes do arquivo</string>
   <string name="files_display_folder_info_action">Detalhes da pasta</string>

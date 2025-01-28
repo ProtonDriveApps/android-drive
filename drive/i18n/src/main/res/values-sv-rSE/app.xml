@@ -20,9 +20,9 @@
   <!-- region Titles -->
   <string name="title_decrypting">Dekrypterar</string>
   <string name="title_files">Filer</string>
-  <string name="title_shared">Delad</string>
+  <string name="title_shared">Delat</string>
   <string name="title_my_files">Mina filer</string>
-  <string name="title_offline_available">Tillgänglig offline</string>
+  <string name="title_offline_available">Tillgängligt offline</string>
   <string name="title_empty_my_files">Fortsätt, lägg till din första fil</string>
   <string name="title_empty_folder">Börja fylla denna mapp</string>
   <string name="title_empty_folder_read_only">Tom mapp</string>
@@ -156,10 +156,11 @@
   <string name="notification_channel_transfer_description">Kanal för molnlagring, uppladdning och nedladdningsaviseringar</string>
   <string name="notification_channel_warning_title">Varning</string>
   <string name="notification_channel_warning_description">Kanal för varningar som kräver användarens åtgärder</string>
-  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
-  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
+  <string name="notification_permission_rationale_title_backup">Håll dig uppdaterad på din säkerhetskopieringsstatus</string>
+  <string name="notification_permission_rationale_description_backup">Ta emot aviseringar om förloppet och statusen för dina säkerhetskopieringar.</string>
   <string name="notification_permission_rationale_action_accept">Aktivera aviseringar</string>
   <string name="notification_permission_rationale_action_reject">Inte nu</string>
+  <string name="notification_content_title_transferring">Överför data</string>
   <!-- endregion -->
   <string name="content_description_select_all">Välj alla objekt i listan</string>
   <string name="content_description_selected_options">Visa fler alternativ för valda filer och/eller mappar</string>
@@ -177,7 +178,7 @@
   <string name="description_files_stop_sharing_action_success">Länken till din fil har tagits bort.</string>
   <string name="description_files_stop_sharing_action_error">Det uppstod ett fel när länken till din fil skulle tas bort.</string>
   <string name="description_files_stop_all_sharing">Detta kommer ta bort länk och ta bort åtkomst för alla.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Delning till din fil har tagits bort.</string>
   <string name="description_files_stop_all_sharing_action_error">Det uppstod ett fel när delning till din fil skulle tas bort.</string>
   <string name="ignore_file_signature_action">Visa ändå</string>
   <string name="action_empty_files_add_files">Ladda upp</string>

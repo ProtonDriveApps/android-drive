@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Partajare prin legătură web</string>
   <string name="shared_with_me_title">Partajate cu mine</string>
   <string name="shared_by_me_title">Partajate de mine</string>
-  <string name="shared_with_me_empty_description">Fișierele și folderele pe care le partajați celorlalți vor apărea aici.</string>
+  <string name="shared_empty_title">Încă nimic partajat</string>
+  <string name="shared_with_me_empty_description">Fișierele și folderele partajate de alții vor apărea aici.</string>
   <string name="shared_by_me_empty_description">Partajați în siguranță fișiere și foldere cu criptare bilaterală.</string>
 </resources>

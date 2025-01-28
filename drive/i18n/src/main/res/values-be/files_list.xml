@@ -17,7 +17,7 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="file_operation_error_occurred_moving_file">Падчас перамяшчэння файла адбылася памылка</string>
+  <string name="file_operation_error_occurred_moving_file">Адбылася памылка падчас перамяшчэння файла</string>
   <string name="file_operation_moving_file_successful">Файл паспяхова перамешчаны</string>
   <string name="file_operation_moving_folder_successful">Папка паспяхова перамешчана</string>
   <!--

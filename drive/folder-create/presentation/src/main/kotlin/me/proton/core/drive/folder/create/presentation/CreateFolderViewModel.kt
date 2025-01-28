@@ -122,6 +122,7 @@ class CreateFolderViewModel @Inject constructor(
             Empty -> context.getString(I18N.string.folder_create_error_name_is_blank)
             is ExceedsMaxLength -> context.getString(I18N.string.folder_create_error_name_too_long, this.maxLength)
             ForbiddenCharacters -> context.getString(I18N.string.folder_create_error_name_with_forbidden_characters)
+                .format("/", "\\")
             Periods -> context.getString(I18N.string.folder_create_error_name_periods)
             else -> logDefaultMessage(
                 context = context,

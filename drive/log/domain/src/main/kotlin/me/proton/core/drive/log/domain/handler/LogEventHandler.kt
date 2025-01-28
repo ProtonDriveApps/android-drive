@@ -60,5 +60,6 @@ class LogEventHandler @Inject constructor(
         is Event.ForcedSignOut -> toLog(userId)
         is Event.NoSpaceLeftOnDevice -> toLog(userId)
         is Event.SignatureVerificationFailed -> toLog(userId)
+        is Event.TransferData -> toLog(userId)
     }
 }

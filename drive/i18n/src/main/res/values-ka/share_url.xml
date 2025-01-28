@@ -70,6 +70,7 @@
   <string name="title_share_via_link">ბმულით გაზიარება</string>
   <string name="shared_with_me_title">ჩემთან გაზიარებული</string>
   <string name="shared_by_me_title">ჩემი გაზიარებული</string>
-  <string name="shared_with_me_empty_description">ფაილები და საქარალდეები, რომლებსაც სხვებს გაუზიარებთ, აქ გამოჩნდება</string>
+  <string name="shared_empty_title">ჯერ გაზიარებული არაფერია</string>
+  <string name="shared_with_me_empty_description">ფაილები და საქაღალდეები, რომლებსაც თქვენ გაგიზიარებენ, აქ გამოჩნდება</string>
   <string name="shared_by_me_empty_description">გააზიარეთ დაცულად თქვენი ფაილები და საქაღალდეები გამჭოლი დაშიფვრით</string>
 </resources>

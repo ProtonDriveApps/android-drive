@@ -29,6 +29,7 @@ driveModule(
     compose = true,
     i18n = true,
     showkase = true,
+    buildConfig = true,
 ) {
     api(project(":photos:domain"))
     api(project(":photos:data"))
@@ -41,5 +42,5 @@ driveModule(
     implementation(libs.accompanist.permissions)
     implementation(libs.accompanist.placeholderMaterial)
     implementation(libs.coil.compose)
-    implementation("io.coil-kt:coil-video:${libs.versions.coil.get()}")
+    implementation(libs.coil.video)
 }

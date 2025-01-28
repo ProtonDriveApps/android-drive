@@ -97,5 +97,5 @@
     <item quantity="other">%1$d članov</item>
   </plurals>
   <string name="share_via_invitations_message_placeholder">Dodaj sporočilo</string>
-  <string name="share_via_invitations_send_message_and_name_label">Include message and file name in invite email</string>
+  <string name="share_via_invitations_send_message_and_name_label">Vključi sporočilo in ime datoteke v vabilo</string>
 </resources>

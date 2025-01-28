@@ -37,5 +37,5 @@
   <string name="log_origin_backup">Varmuuskopio</string>
   <string name="log_origin_user">Käyttäjä</string>
   <string name="log_origin_device">Laite</string>
-  <string name="log_origin_crypto">Crypto</string>
+  <string name="log_origin_crypto">Krypto</string>
 </resources>

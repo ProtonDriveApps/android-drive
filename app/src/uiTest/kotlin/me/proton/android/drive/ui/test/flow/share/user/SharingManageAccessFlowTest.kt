@@ -72,7 +72,7 @@ class SharingManageAccessFlowTest : BaseTest() {
             FeatureFlag(DRIVE_DYNAMIC_ENTITLEMENT_CONFIGURATION, ENABLED)
         ]
     )
-    @PrepareUser(loginBefore = true, subscriptionData = TestSubscriptionData(Plan.DriveProfessional))
+    @PrepareUser(loginBefore = true)
     @Scenario(forTag = "main", value = 2)
     fun shareFolderAsEditor() {
         val folder = "folder1"
@@ -94,10 +94,7 @@ class SharingManageAccessFlowTest : BaseTest() {
             FeatureFlag(DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED, ENABLED)
         ]
     )
-    @PrepareUser(
-        loginBefore = true,
-        subscriptionData = TestSubscriptionData(Plan.DriveProfessional)
-    )
+    @PrepareUser(loginBefore = true)
     @Scenario(forTag = "main", value = 2)
     fun shareFolderAsEditorKillSwitch() {
         val folder = "folder1"

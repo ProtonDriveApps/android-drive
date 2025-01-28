@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
@@ -48,13 +49,14 @@ class OnResetAllEvent @Inject constructor(
     operator fun invoke(shareId: ShareId) {
         coroutineScope.launch {
             CoreLogger.d(LogTag.EVENTS, "onResetAll: shareId ${shareId.id.logId()}")
-            getShare(shareId, flowOf(false)).toResult().onSuccess { share ->
-                if (share.isMain) {
-                    signOutUser(shareId.userId)
-                } else {
-                    deleteShare(shareId, locallyOnly = true)
+            getShare(shareId, flowOf(false)).toResult()
+                .getOrNull(LogTag.EVENTS, "Cannot get share")?.let { share ->
+                    if (share.isMain) {
+                        signOutUser(shareId.userId)
+                    } else {
+                        deleteShare(shareId, locallyOnly = true)
+                    }
                 }
-            }
         }
     }
 

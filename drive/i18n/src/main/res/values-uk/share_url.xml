@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Спільний доступ за посиланням</string>
   <string name="shared_with_me_title">Поширено для мене</string>
   <string name="shared_by_me_title">Поширено мною</string>
-  <string name="shared_with_me_empty_description">Тут з\'являтимуться файли й теки, до яких ви надаєте спільний доступ</string>
+  <string name="shared_empty_title">Поки що нічим не поділилися</string>
+  <string name="shared_with_me_empty_description">Тут з\'являться файли та теки, до яких надано спільний доступ</string>
   <string name="shared_by_me_empty_description">Безпечно надавайте спільний доступ до файлів і тек завдяки наскрізному шифруванню</string>
 </resources>

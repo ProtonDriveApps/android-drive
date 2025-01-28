@@ -51,11 +51,8 @@ class UploadLoadTest(
     fun setUp() {
         AddAccountRobot
             .uiElementsDisplayed()
-        val clickSignIn = AddAccountRobot
             .clickSignIn()
-        clickSignIn.fillUsername("tester@proton.ch")
-        clickSignIn.fillPassword("a")
-        clickSignIn.login()
+            .login("tester@proton.ch", "a")
     }
 
     @Test

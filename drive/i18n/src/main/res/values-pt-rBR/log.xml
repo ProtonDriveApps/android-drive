@@ -37,5 +37,5 @@
   <string name="log_origin_backup">Backup</string>
   <string name="log_origin_user">Usuário</string>
   <string name="log_origin_device">Dispositivo</string>
-  <string name="log_origin_crypto">Crypto</string>
+  <string name="log_origin_crypto">Criptomoeda</string>
 </resources>

@@ -24,6 +24,7 @@ import me.proton.core.drive.crypto.domain.usecase.HmacSha256
 import me.proton.core.drive.cryptobase.domain.usecase.ChangeMessage
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.extension.nodePassphrase
+import me.proton.core.drive.key.domain.extension.nodePassphraseSignature
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetNodeHashKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
@@ -80,7 +81,17 @@ class CreateMoveInfo @Inject constructor(
             hash = hmacSha256(newParentFolderHashKey, decryptedLinkName).getOrThrow(),// calculate with new parent,
             previousHash = link.hash,
             parentLinkId = newParentFolder.id.id,
+            signatureEmail = if (link.signatureAddress.isEmpty()) {
+                signatureAddress
+            } else {
+                null
+            },
             nodePassphrase = newLinkKey.nodePassphrase,
+            nodePassphraseSignature = if (link.signatureAddress.isEmpty() || link.nameSignatureEmail.isNullOrEmpty()) {
+                newLinkKey.nodePassphraseSignature
+            } else {
+                null
+            },
             nameSignatureEmail = signatureAddress,
         )
     }

@@ -35,12 +35,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import me.proton.android.drive.extension.deepLinkBaseUrl
+import me.proton.android.drive.extension.log
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.receiver.NotificationBroadcastReceiver.Companion.EXTRA_NOTIFICATION_ID
 import me.proton.android.drive.ui.MainActivity
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.navigation.UriWithFileName
 import me.proton.android.drive.ui.viewmodel.AccountViewModel
+import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.drivelink.upload.domain.usecase.ValidateUploadLimit
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
@@ -113,7 +115,8 @@ class ProcessIntent @Inject constructor(
             getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)?.let {
                 val uris = it.validate()
                 val userId = accountViewModel.primaryAccount.filterNotNull().first().userId
-                validateUploadLimit(userId, uris.size)
+                val size = uris.size
+                validateUploadLimit(userId, size)
                     .onSuccess {
                         actionSend(
                             deepLinkIntent = deepLinkIntent,
@@ -123,6 +126,8 @@ class ProcessIntent @Inject constructor(
                                 UriWithFileName(uri.toString(), getUploadFileName(uri.toString()))
                             }
                         }
+                    }.onFailure { error ->
+                        error.log(UPLOAD, "Validation upload failed: $size")
                     }
             }
         }
@@ -171,7 +176,7 @@ class ProcessIntent @Inject constructor(
                 ),
                 type = BroadcastMessage.Type.INFO,
             )
-        } ?: CoreLogger.d(DriveLogTag.UI, "Timeout expired while waiting for primary account ready")
+        } ?: CoreLogger.w(DriveLogTag.UI, "Timeout expired while waiting for primary account ready")
     }
 
     companion object {

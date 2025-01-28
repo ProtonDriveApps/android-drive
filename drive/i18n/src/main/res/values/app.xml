@@ -171,6 +171,7 @@
     <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
     <string name="notification_permission_rationale_action_accept">Enable notifications</string>
     <string name="notification_permission_rationale_action_reject">Not now</string>
+    <string name="notification_content_title_transferring">Transferring data</string>
     <!-- endregion -->
     <string name="content_description_select_all">Select all items in the list</string>
     <string name="content_description_selected_options">Show more options for selected files and/or folders</string>

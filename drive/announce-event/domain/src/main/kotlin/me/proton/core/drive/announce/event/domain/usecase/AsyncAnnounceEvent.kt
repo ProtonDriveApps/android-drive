@@ -73,7 +73,7 @@ class AsyncAnnounceEvent @Inject constructor(
                 coRunCatching {
                     handler.onEvents(userId, events)
                 }.onFailure { error ->
-                    CoreLogger.d(
+                    CoreLogger.w(
                         LogTag.ANNOUNCE_EVENT,
                         error,
                         "Error during broadcast of events to $handler"

@@ -51,8 +51,8 @@
     <item quantity="other">%d элементаў незваротна выдалены</item>
   </plurals>
   <string name="trash_empty_operation_successful">Сметніца ачышчана</string>
-  <string name="trash_error_occurred_sending_to_trash">Падчас спробы адправіць ваш файл(-ы) у сметніцу адбылася памылка</string>
-  <string name="trash_error_occurred_restoring_from_trash">Падчас спробы аднавіць ваш файл(-ы) адбылася памылка</string>
-  <string name="trash_error_occurred_deleting_from_trash">Падчас спробы выдаліць файл(-ы) адбылася памылка</string>
-  <string name="trash_error_occurred_emptying_trash">Падчас спробы ачысціць сметніцу адбылася памылка</string>
+  <string name="trash_error_occurred_sending_to_trash">Адбылася памылка падчас спробы адправіць ваш файл(ы) у сметніцу</string>
+  <string name="trash_error_occurred_restoring_from_trash">Адбылася памылка падчас спробы аднавіць ваш файл(ы)</string>
+  <string name="trash_error_occurred_deleting_from_trash">Адбылася памылка падчас спробы выдаліць файл(ы)</string>
+  <string name="trash_error_occurred_emptying_trash">Адбылася памылка падчас спробы ачысціць сметніцу</string>
 </resources>

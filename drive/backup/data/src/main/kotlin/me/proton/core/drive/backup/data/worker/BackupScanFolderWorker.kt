@@ -80,7 +80,7 @@ class BackupScanFolderWorker @AssistedInject constructor(
         }.onSuccess { files ->
             val min = files.minByOrNull { file -> file.date }?.date
             val max = files.maxByOrNull { file -> file.date }?.date
-            CoreLogger.d(
+            CoreLogger.i(
                 BACKUP,
                 """
                     Scan found ${files.size} files for folder:

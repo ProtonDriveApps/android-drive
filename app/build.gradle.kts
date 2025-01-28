@@ -52,6 +52,7 @@ driveModule(
     compose = true,
     workManager = true,
     serialization = true,
+    buildConfig = true,
 ) {
     implementation(files("../../proton-libs/gopenpgp/gopenpgp.aar"))
     implementation(project(":app-lock"))
@@ -68,6 +69,7 @@ driveModule(
     implementation(libs.androidx.navigation.compose)
     implementation(libs.bundles.accompanist)
     implementation(libs.bundles.core)
+    implementation(libs.google.play.review)
     implementation(libs.material)
     implementation(libs.okhttp)
     implementation(libs.plumber)

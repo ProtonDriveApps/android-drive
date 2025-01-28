@@ -24,8 +24,10 @@ import me.proton.core.drive.base.data.api.Dto.HASH
 import me.proton.core.drive.base.data.api.Dto.NAME
 import me.proton.core.drive.base.data.api.Dto.NAME_SIGNATURE_EMAIL
 import me.proton.core.drive.base.data.api.Dto.NODE_PASSPHRASE
+import me.proton.core.drive.base.data.api.Dto.NODE_PASSPHRASE_SIGNATURE
 import me.proton.core.drive.base.data.api.Dto.ORIGINAL_HASH
 import me.proton.core.drive.base.data.api.Dto.PARENT_LINK_ID
+import me.proton.core.drive.base.data.api.Dto.SIGNATURE_EMAIL
 
 @Serializable
 data class MoveLinkRequest(
@@ -41,4 +43,8 @@ data class MoveLinkRequest(
     val nodePassphrase: String,
     @SerialName(NAME_SIGNATURE_EMAIL)
     val nameSignatureEmail: String,
+    @SerialName(NODE_PASSPHRASE_SIGNATURE)
+    val nodePassphraseSignature: String? = null,
+    @SerialName(SIGNATURE_EMAIL)
+    val signatureEmail: String? = null,
 )

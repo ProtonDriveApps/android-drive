@@ -19,7 +19,7 @@
 <resources>
   <string name="onboarding_action_skip">Agora não</string>
   <string name="onboarding_title">Automaticamente salva e criptografa suas fotos e vídeos</string>
-  <string name="onboarding_description_part_one">Manter suas memórias seguras com</string>
+  <string name="onboarding_description_part_one">Mantenha suas memórias seguras com</string>
   <string name="onboarding_description_part_two">armazenamento criptografado de ponta a ponta</string>
   <string name="onboarding_description_free">gratuito</string>
   <string name="onboarding_action_primary">Ative os envios da câmera</string>

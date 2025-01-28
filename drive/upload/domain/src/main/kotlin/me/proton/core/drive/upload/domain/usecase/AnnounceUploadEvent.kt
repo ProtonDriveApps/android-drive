@@ -22,8 +22,10 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag.EVENTS
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class AnnounceUploadEvent @Inject constructor(
@@ -49,6 +51,9 @@ class AnnounceUploadEvent @Inject constructor(
             .toResult()
             .onSuccess { uploadFileLink ->
                 invoke(uploadFileLink, uploadEvent)
+            }
+            .onFailure { error ->
+                CoreLogger.w(EVENTS, error, "Cannot get upload file link $uploadFileLinkId")
             }
     }
 }

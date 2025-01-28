@@ -27,11 +27,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.drive.base.domain.extension.mapCatching
+import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptDriveLinks
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -64,6 +66,8 @@ class SharedDriveLinks @Inject constructor(
                 .transform { result ->
                     result.onSuccess { driveLinks ->
                         emit(driveLinks)
+                    }.onFailure { error ->
+                        CoreLogger.w(PHOTO, error, "Cannot decrypt drive links")
                     }
                 }
                 .map { driveLinks ->

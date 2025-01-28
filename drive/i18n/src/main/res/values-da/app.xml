@@ -160,6 +160,7 @@
   <string name="notification_permission_rationale_description_backup">Modtag notifikationer om fremskridt og status for dine sikkerhedskopieringer.</string>
   <string name="notification_permission_rationale_action_accept">Aktivér notifikationer</string>
   <string name="notification_permission_rationale_action_reject">Ikke nu</string>
+  <string name="notification_content_title_transferring">Overfører data</string>
   <!-- endregion -->
   <string name="content_description_select_all">Vælg alle elementer på listen</string>
   <string name="content_description_selected_options">Vis flere muligheder for valgte filer og/eller mapper</string>
@@ -200,7 +201,7 @@
     -->
   <string name="get_more_free_storage_title">Lås op for %1$s gratis lagerplads</string>
   <string name="get_more_free_storage_description">Udfør disse trin i løbet af de første 30 dage for at få en gratis pladsopgradering.</string>
-  <string name="get_more_free_storage_action_upload_title">Upload en fil ELLER aktivér fotobackup</string>
+  <string name="get_more_free_storage_action_upload_title">Upload en fil ELLER aktivér sikkerhedskopiering af fotos</string>
   <string name="get_more_free_storage_action_upload_subtitle">Alle dine filer vil blive krypteret.</string>
   <string name="get_more_free_storage_action_link_title">Opret et delingslink</string>
   <!--

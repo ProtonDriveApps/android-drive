@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Dela via länk</string>
   <string name="shared_with_me_title">Delat med mig</string>
   <string name="shared_by_me_title">Delat av mig</string>
-  <string name="shared_with_me_empty_description">Filer och mappar som du delar med andra kommer visas här</string>
+  <string name="shared_empty_title">Inget delat än</string>
+  <string name="shared_with_me_empty_description">Filer och mappar som delas med dig kommer att visas här</string>
   <string name="shared_by_me_empty_description">Dela dina filer och mappar säkert med end-to-end-kryptering</string>
 </resources>

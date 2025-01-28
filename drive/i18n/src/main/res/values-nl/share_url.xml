@@ -42,7 +42,7 @@
   <string name="shared_link_settings">Link-instellingen</string>
   <string name="shared_link_options">Link-opties</string>
   <string name="shared_link_privacy_settings">Privacyinstellingen</string>
-  <string name="shared_link_password_protection">Wachtwoord beveiliging</string>
+  <string name="shared_link_password_protection">Wachtwoordbeveiliging</string>
   <string name="shared_link_expiration_date">Verloopdatum</string>
   <string name="shared_link_action_copy_link">Koppeling kopiëren</string>
   <string name="shared_link_action_copy_password">Wachtwoord kopiëren</string>
@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Deel via koppeling</string>
   <string name="shared_with_me_title">Gedeeld met mij</string>
   <string name="shared_by_me_title">Gedeeld door mij</string>
-  <string name="shared_with_me_empty_description">Bestanden en mappen die u met anderen deelt verschijnen hier</string>
+  <string name="shared_empty_title">Nog niets gedeeld</string>
+  <string name="shared_with_me_empty_description">Bestanden en mappen die gedeeld werden zullen hier verschijnen</string>
   <string name="shared_by_me_empty_description">Deel uw bestanden en mappen veilig met end-to-end versleuteling</string>
 </resources>

@@ -155,6 +155,7 @@
   <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
   <string name="notification_permission_rationale_action_accept">Enable notifications</string>
   <string name="notification_permission_rationale_action_reject">Not now</string>
+  <string name="notification_content_title_transferring">Transferring data</string>
   <!-- endregion -->
   <string name="content_description_select_all">顯示清單中所有的項目</string>
   <string name="content_description_selected_options">顯示所選檔案及/或資料夾的更多選項</string>

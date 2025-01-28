@@ -48,7 +48,7 @@
   <string name="shared_link_action_copy_password">Скопировать пароль</string>
   <string name="shared_link_action_share_link">Поделиться ссылкой</string>
   <string name="shared_link_dialog_title_discard_changes">Сбросить изменения?</string>
-  <string name="shared_link_dialog_description">Вы потеряете все несохраненные изменения.</string>
+  <string name="shared_link_dialog_description">Вы потеряете все несохранённые изменения.</string>
   <string name="shared_link_hint_expiration_date_field">Нет срока действия</string>
   <string name="shared_link_message_update_share_url">Настройки общего доступа обновлены</string>
   <string name="shared_link_error_message_update_share_url">Сбой обновления настроек общего доступа</string>
@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Поделиться по ссылке</string>
   <string name="shared_with_me_title">Доступные мне</string>
   <string name="shared_by_me_title">Доступные от меня</string>
-  <string name="shared_with_me_empty_description">Файлы и папки, которые вы делитесь с другими, будут отображаться здесь</string>
+  <string name="shared_empty_title">Nothing shared yet</string>
+  <string name="shared_with_me_empty_description">Files and folders that are shared with you will appear here</string>
   <string name="shared_by_me_empty_description">Безопасно делитесь своими файлами и папками с помощью сквозного шифрования</string>
 </resources>

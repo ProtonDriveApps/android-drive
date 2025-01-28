@@ -26,6 +26,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.extension.uniqueScanWorkName
 import me.proton.core.drive.backup.data.worker.BackupCheckDuplicatesWorker
 import me.proton.core.drive.backup.data.worker.BackupCleanRevisionsWorker
+import me.proton.core.drive.backup.data.worker.BackupEnabledWorker
 import me.proton.core.drive.backup.data.worker.BackupFileWatcherWorker
 import me.proton.core.drive.backup.data.worker.BackupFindDuplicatesWorker
 import me.proton.core.drive.backup.data.worker.BackupNotificationWorker
@@ -40,6 +41,7 @@ import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.GetAllFolders
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.extension.onDisabledOrNotFound
 import me.proton.core.drive.feature.flag.domain.extension.onEnabled
@@ -65,10 +67,11 @@ class BackupManagerImpl @Inject constructor(
             featureFlag
                 .onDisabledOrNotFound {
                     CoreLogger.d(BACKUP, "start")
+                    startForegroundWork(folderId.userId)
                     syncAllFolders(folderId)
                 }
                 .onEnabled {
-                    CoreLogger.d(BACKUP, "Backup is disabled by DrivePhotosUploadDisabled feature flag")
+                    CoreLogger.i(BACKUP, "Backup is disabled by DrivePhotosUploadDisabled feature flag")
                     addBackupError(
                         folderId = folderId,
                         error = BackupError(
@@ -81,7 +84,7 @@ class BackupManagerImpl @Inject constructor(
     }
 
     override suspend fun stop(folderId: FolderId) {
-        CoreLogger.d(BACKUP, "stop")
+        CoreLogger.i(BACKUP, "Stopping backup for ${folderId.id.logId()}")
         getAllFolders(folderId).getOrNull()?.forEach { backupFolder ->
             uploadWorkManager.cancelAllByFolder(backupFolder.folderId.userId, backupFolder.folderId)
         }
@@ -91,14 +94,14 @@ class BackupManagerImpl @Inject constructor(
     }
 
     override suspend fun cancelSync(backupFolder: BackupFolder) {
-        CoreLogger.d(BACKUP, "Canceling sync: ${backupFolder.bucketId}")
+        CoreLogger.i(BACKUP, "Canceling sync: ${backupFolder.bucketId}")
         workManager.cancelUniqueWork(
             backupFolder.uniqueScanWorkName()
         ).await()
     }
 
     override fun sync(backupFolder: BackupFolder, uploadPriority: Long) {
-        CoreLogger.d(BACKUP, "Sync bucket: ${backupFolder.bucketId}")
+        CoreLogger.i(BACKUP, "Sync bucket: ${backupFolder.bucketId}")
         workManager
             .beginUniqueWork(
                 backupFolder.uniqueScanWorkName(),
@@ -157,6 +160,18 @@ class BackupManagerImpl @Inject constructor(
     override suspend fun updateNotification(folderId: FolderId) {
         workManager.enqueue(
             BackupNotificationWorker.getWorkRequest(folderId)
+        ).await()
+    }
+
+    override suspend fun cancelForegroundWork(userId: UserId) {
+        workManager.cancelUniqueWork(BackupEnabledWorker.getUniqueWorkName(userId))
+    }
+
+    private suspend fun startForegroundWork(userId: UserId) {
+        workManager.enqueueUniqueWork(
+            BackupEnabledWorker.getUniqueWorkName(userId),
+            ExistingWorkPolicy.KEEP,
+            BackupEnabledWorker.getWorkRequest(userId),
         ).await()
     }
 

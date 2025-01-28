@@ -145,8 +145,8 @@
   <string name="notification_content_text_backup_paused_background_restrictions">Sikkerhetskopiering kan ikke kjøres i bakgrunnen</string>
   <string name="notification_content_text_backup_preparing">Forbereder sikkerhetskopiering</string>
   <string name="notification_content_title_download_complete">Nedlasting fullført</string>
-  <string name="notification_content_title_forced_sign_out">Vennligst logg på</string>
-  <string name="notification_content_text_forced_sign_out">Beklager å avbryte! Vi hadde et problem med synkronisering - vennligst logg på igjen og vi får alt til å gå på skinner.</string>
+  <string name="notification_content_title_forced_sign_out">Logg på</string>
+  <string name="notification_content_text_forced_sign_out">Beklager å avbryte! Vi hadde et problem med synkronisering - logg på igjen og vi får alt til å gå på skinner.</string>
   <string name="notification_content_title_no_space_left_on_device">Ingen plass igjen på enheten</string>
   <string name="notification_content_text_no_space_left_on_device">Programmet fungerer kanskje ikke som det skal.</string>
   <string name="notification_channel_group_name_application">Applikasjon</string>
@@ -160,6 +160,7 @@
   <string name="notification_permission_rationale_description_backup">Motta varsler om fremdriften og statusen til sikkerhetskopiene dine.</string>
   <string name="notification_permission_rationale_action_accept">Aktiver varslinger</string>
   <string name="notification_permission_rationale_action_reject">Ikke nå</string>
+  <string name="notification_content_title_transferring">Overfører data</string>
   <!-- endregion -->
   <string name="content_description_select_all">Velg alle elementer i listen</string>
   <string name="content_description_selected_options">Vis flere alternativer for valgte filer og/eller mapper</string>
@@ -177,7 +178,7 @@
   <string name="description_files_stop_sharing_action_success">Koblingen til filen din er slettet.</string>
   <string name="description_files_stop_sharing_action_error">Det oppstod en feil ved sletting av koblingen til filen din.</string>
   <string name="description_files_stop_all_sharing">Dette vil slette koblingen og fjerne tilgangen for alle.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Deling til filen din er slettet.</string>
   <string name="description_files_stop_all_sharing_action_error">Det oppstod en feil ved sletting av delingen til filen din.</string>
   <string name="ignore_file_signature_action">Vis uansett</string>
   <string name="action_empty_files_add_files">Last opp</string>

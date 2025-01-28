@@ -48,6 +48,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -116,7 +117,7 @@ fun Preview(
         }
     }
     val userScrollEnabled = remember { mutableStateOf(true) }
-    val isFullScreen by rememberFlowWithLifecycle(viewState.isFullscreen).collectAsState(false)
+    val isFullScreen by viewState.isFullscreen.collectAsState(false)
 
     onPageChanged?.let {
         LaunchedEffect(pagerState) {
@@ -126,7 +127,7 @@ fun Preview(
         }
     }
 
-    var topBarHeight by remember { mutableStateOf(0) }
+    var topBarHeight by remember { mutableIntStateOf(0) }
     val topBarHeightAnimated by animateIntAsState(
         if (isFullScreen) {
             0
@@ -209,31 +210,57 @@ fun PreviewContent(
     isFocused: Boolean,
     userScrollEnabled: MutableState<Boolean>,
 ) {
-    val contentState by rememberFlowWithLifecycle(item.contentState).collectAsState(
-        ContentState.Downloading(null)
-    )
-    @Suppress("UnnecessaryVariable")
+    val contentState by item.contentState.collectAsState(ContentState.Downloading(null))
     when (val contentStateLocal = contentState) {
         is ContentState.Downloading,
-        ContentState.Decrypting -> Deferred {
-            PreviewDownloadingAndDecrypting(
-                modifier = Modifier.padding(top = topBarHeight),
-                state = contentStateLocal,
-                fileTypeCategory = item.category,
-            )
+        is ContentState.Decrypting,
+        is ContentState.Available -> {
+            val (photoSource, thumbnailSource) = when (contentStateLocal) {
+                is ContentState.Downloading -> null to contentStateLocal.thumbnail
+                is ContentState.Decrypting -> null to contentStateLocal.thumbnail
+                is ContentState.Available -> contentStateLocal.source to contentStateLocal.thumbnailSource
+                else -> error("Unhandled state $contentStateLocal")
+            }
+            if (thumbnailSource != null) {
+                PreviewContent(
+                    source = photoSource ?: thumbnailSource,
+                    thumbnailSource = thumbnailSource,
+                    item.title,
+                    host,
+                    appVersionHeader,
+                    item.category.toComposable(),
+                    isFullScreen,
+                    viewEvent,
+                    topBarHeight,
+                    isFocused,
+                    userScrollEnabled,
+                )
+            } else {
+                if (contentStateLocal is ContentState.Available) {
+                    PreviewContent(
+                        source = contentStateLocal.source,
+                        thumbnailSource = contentStateLocal.thumbnailSource,
+                        title = item.title,
+                        host = host,
+                        appVersionHeader = appVersionHeader,
+                        previewComposable = item.category.toComposable(),
+                        isFullScreen = isFullScreen,
+                        viewEvent = viewEvent,
+                        topBarHeight = topBarHeight,
+                        isFocused = isFocused,
+                        userScrollEnabled = userScrollEnabled,
+                    )
+                } else {
+                    Deferred {
+                        PreviewDownloadingAndDecrypting(
+                            modifier = Modifier.padding(top = topBarHeight),
+                            state = contentStateLocal,
+                            fileTypeCategory = item.category,
+                        )
+                    }
+                }
+            }
         }
-        is ContentState.Available -> PreviewContentAvailable(
-            contentStateLocal,
-            item.title,
-            host,
-            appVersionHeader,
-            item.category.toComposable(),
-            isFullScreen,
-            viewEvent,
-            topBarHeight,
-            isFocused,
-            userScrollEnabled
-        )
         ContentState.NotFound -> PreviewNotFound()
         is ContentState.Error -> {
             when (contentStateLocal) {
@@ -284,8 +311,9 @@ fun PreviewDownloadingAndDecrypting(
 
 @Composable
 @Suppress("LongParameterList")
-fun PreviewContentAvailable(
-    contentState: ContentState.Available,
+fun PreviewContent(
+    source: Any,
+    thumbnailSource: Any?,
     title: String,
     host: String,
     appVersionHeader: String,
@@ -295,9 +323,9 @@ fun PreviewContentAvailable(
     topBarHeight: Dp,
     isFocused: Boolean,
     userScrollEnabled: MutableState<Boolean>,
+    modifier: Modifier = Modifier,
     transformationState : TransformationState = rememberTransformationState(),
     onDoubleTap : () -> Unit = { transformationState.scale = 2F },
-    modifier: Modifier = Modifier,
 ) {
     val dragEnable = transformationState.hasScale()
 
@@ -329,9 +357,10 @@ fun PreviewContentAvailable(
         }
 
     when (previewComposable) {
-        PreviewComposable.Image -> ImagePreview(
+        PreviewComposable.Image -> ImagePreviewWithThumbnail(
             modifier = pointerInputModifier,
-            source = contentState.source,
+            source = source,
+            thumbnailSource = thumbnailSource,
             transformationState = transformationState,
             isFullScreen = isFullScreen,
             onRenderFailed = viewEvent.onRenderFailed,
@@ -339,25 +368,25 @@ fun PreviewContentAvailable(
         PreviewComposable.Sound,
         PreviewComposable.Video -> MediaPreview(
             modifier = pointerInputModifier.testTag(PreviewComponentTestTag.mediaPreview),
-            uri = requireIsInstance(contentState.source),
+            uri = requireIsInstance(source),
             isFullScreen = isFullScreen,
             play = isFocused,
             mediaControllerVisibility = viewEvent.mediaControllerVisibility
         )
         PreviewComposable.Pdf -> PdfPreview(
-            uri = requireIsInstance(contentState.source),
+            uri = requireIsInstance(source),
             modifier = pointerInputModifier.padding(top = topBarHeight),
             transformationState = transformationState,
             onRenderFailed = viewEvent.onRenderFailed,
         )
         PreviewComposable.Text -> TextPreview(
-            uri = requireIsInstance(contentState.source),
+            uri = requireIsInstance(source),
             modifier = pointerInputModifier.padding(top = topBarHeight),
             onRenderFailed = viewEvent.onRenderFailed,
         )
-        PreviewComposable.ProtonDoc -> when (contentState.source) {
+        PreviewComposable.ProtonDoc -> when (source) {
             is String -> ProtonDocumentPreview(
-                uriString = requireIsInstance(contentState.source),
+                uriString = requireIsInstance(source),
                 title = title,
                 host = host,
                 appVersionHeader = appVersionHeader,

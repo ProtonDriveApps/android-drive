@@ -23,6 +23,7 @@ import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.ui.annotation.SmokeTest
+import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
@@ -111,6 +112,35 @@ class PreviewFlowTest : BaseTest() {
             .clickOnFile(file)
             .verify {
                 nodeWithTextDisplayed("This is an anonymous file")
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 1)
+    fun previewTextFileAfterClearingCache() {
+        val file = "example.txt"
+        PhotosTabRobot
+            .clickFilesTab()
+            .verify { robotDisplayed() }
+            .clickOnFolder(parent)
+            .scrollToItemWithName(file)
+            .clickOnFile(file)
+            .verify {
+                nodeWithTextDisplayed("Hello World !")
+            }
+            .clickBack(FilesTabRobot)
+            .clickBack(FilesTabRobot)
+            .clickSidebarButton()
+            .clickSettings()
+            .clickToClearLocalCache()
+            .dismissLocalCacheClearedSuccessfulGrowler()
+            .clickBack(FilesTabRobot)
+            .clickOnFolder(parent)
+            .scrollToItemWithName(file)
+            .clickOnFile(file)
+            .verify {
+                nodeWithTextDisplayed("Hello World !")
             }
     }
 }

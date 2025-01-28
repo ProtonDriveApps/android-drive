@@ -21,6 +21,7 @@ package me.proton.core.drive.log.data.interceptor
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AsyncAnnounceEvent
+import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.MiB
@@ -30,6 +31,7 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody
+import java.io.IOException
 import java.util.Locale
 
 class LogInterceptor : Interceptor {
@@ -41,9 +43,14 @@ class LogInterceptor : Interceptor {
         val requestOccurredAt = TimestampMs()
         val response = runCatching { chain.proceed(request) }
             .onFailure { error ->
+                val level = when {
+                    error is IOException && error.message == ERROR_MESSAGE_CANCELED -> LoggerLevel.DEBUG
+                    else -> null
+                }
                 error.log(
                     tag = LogTag.LOG,
                     message = "Proceed(${request.method.uppercase(Locale.US)} ${request.url.encodedPath}) failed",
+                    level = level,
                 )
             }
             .getOrThrow()
@@ -104,5 +111,6 @@ class LogInterceptor : Interceptor {
     companion object {
         private val MAX_BYTE_COUNT = 1.MiB
         private const val JSON_CONTENT_TYPE = "application/json"
+        private const val ERROR_MESSAGE_CANCELED = "Canceled"
     }
 }

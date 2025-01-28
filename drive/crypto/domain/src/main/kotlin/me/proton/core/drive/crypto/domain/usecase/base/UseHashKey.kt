@@ -54,7 +54,7 @@ class UseHashKey @Inject constructor(
             coroutineContext = coroutineContext,
         ) { hashKey ->
             if (hashKey.status != VerificationStatus.Success) {
-                CoreLogger.d(LogTag.ENCRYPTION, "Verification of node hash key failed")
+                CoreLogger.w(LogTag.ENCRYPTION, "Verification of node hash key failed")
                 if (checkSignature) {
                     throw VerificationException("Verification of node hash key failed")
                 }

@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.ui.navigation.HomeTab
 import me.proton.android.drive.ui.navigation.Screen
@@ -42,8 +43,7 @@ import me.proton.android.drive.ui.viewevent.HomeViewEvent
 import me.proton.android.drive.ui.viewstate.HomeViewState
 import me.proton.android.drive.usecase.CanGetMoreFreeStorage
 import me.proton.android.drive.usecase.GetDynamicHomeTabsFlow
-import me.proton.android.drive.usecase.ShouldShowOnboarding
-import me.proton.android.drive.usecase.ShouldShowWhatsNew
+import me.proton.android.drive.usecase.ShouldShowOverlay
 import me.proton.core.domain.entity.SessionUserId
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -57,6 +57,7 @@ import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.User
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.android.settings.domain.entity.DynamicHomeTab
+import me.proton.drive.android.settings.domain.entity.UserOverlay
 import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
@@ -70,8 +71,7 @@ class HomeViewModel @Inject constructor(
     private val canGetMoreFreeStorage: CanGetMoreFreeStorage,
     getDynamicHomeTabsFlow: GetDynamicHomeTabsFlow,
     private val broadcastMessages: BroadcastMessages,
-    private val shouldShowOnboarding: ShouldShowOnboarding,
-    private val shouldShowWhatsNew: ShouldShowWhatsNew,
+    private val shouldShowOverlay: ShouldShowOverlay,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private var navigateToTab: ((route: String) -> Unit)? = null
 
@@ -118,8 +118,21 @@ class HomeViewModel @Inject constructor(
         navigateToBugReport: () -> Unit,
         navigateToSubscription: () -> Unit,
         navigateToGetMoreFreeStorage: () -> Unit,
+        navigateToOnboarding: () -> Unit,
+        navigateToWhatsNew: (WhatsNewKey) -> Unit,
+        navigateToRatingBooster: () -> Unit,
     ): HomeViewEvent = object : HomeViewEvent {
         override val onTab = { tab: NavigationTab -> navigateToTab(tab.screen(userId)) }
+        override val onFirstLaunch: () -> Unit = {
+            viewModelScope.launch {
+                when (val overlay = shouldShowOverlay()) {
+                    UserOverlay.Onboarding -> navigateToOnboarding()
+                    is UserOverlay.WhatsNew -> navigateToWhatsNew(overlay.key)
+                    UserOverlay.RatingBooster -> navigateToRatingBooster()
+                    null -> {}
+                }
+            }
+        }
         override val navigationDrawerViewEvent: NavigationDrawerViewEvent =
             object : NavigationDrawerViewEvent {
                 override val onMyFiles = { navigateToTab(Screen.Files(userId)) }
@@ -135,11 +148,9 @@ class HomeViewModel @Inject constructor(
         this.navigateToTab = navigateToTab
     }
 
-    suspend fun shouldShowOnboarding(): Boolean =
-        shouldShowOnboarding(userId).getOrNull(VIEW_MODEL, "Should show onboarding failed") ?: false
-
-    suspend fun getWhatsNew(): WhatsNewKey? =
-        shouldShowWhatsNew(userId).getOrNull(VIEW_MODEL, "Should show whats new failed")
+    suspend fun shouldShowOverlay(): UserOverlay? =
+        shouldShowOverlay(userId).getOrNull(VIEW_MODEL, "Should show overlay failed")
+            ?.also { overlay -> CoreLogger.i(VIEW_MODEL, "Showing overlay: $overlay") }
 
     private val NavigationTab.screen: HomeTab
         get() = tabs.value.firstNotNullOf { (screen, value) -> screen.takeIf { value == this } }
@@ -173,7 +184,7 @@ class HomeViewModel @Inject constructor(
     private fun handleInvalidDestination(destinationRoute: String, tabs: Map<out HomeTab, NavigationTab>) {
         val routes = tabs.values.map { navigationTab -> navigationTab.screen.route }
         if (destinationRoute !in routes) {
-            CoreLogger.d(VIEW_MODEL, "Invalid destination route: $destinationRoute")
+            CoreLogger.w(VIEW_MODEL, "Invalid destination route: $destinationRoute")
             navigateToTab?.invoke(tabs.values.first().screen(userId))
             broadcastMessages(
                 userId = userId,

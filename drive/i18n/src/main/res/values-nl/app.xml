@@ -160,6 +160,7 @@
   <string name="notification_permission_rationale_description_backup">Ontvang meldingen over de voortgang en status van uw back-ups.</string>
   <string name="notification_permission_rationale_action_accept">Meldingen inschakelen</string>
   <string name="notification_permission_rationale_action_reject">Niet nu</string>
+  <string name="notification_content_title_transferring">Gegevens overdragen</string>
   <!-- endregion -->
   <string name="content_description_select_all">Selecteer alle items in de lijst</string>
   <string name="content_description_selected_options">Toon meer opties voor geselecteerde bestanden en/of mappen</string>
@@ -177,7 +178,7 @@
   <string name="description_files_stop_sharing_action_success">De link naar uw bestand is verwijderd.</string>
   <string name="description_files_stop_sharing_action_error">Er is een fout opgetreden bij het verwijderen van de link naar uw bestand.</string>
   <string name="description_files_stop_all_sharing">Hiermee wordt de link verwijderd en iedereen toegang ontnomen.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Delen naar uw bestand is verwijderd.</string>
   <string name="description_files_stop_all_sharing_action_error">Er is een fout opgetreden tijdens het verwijderen van het delen van uw bestand.</string>
   <string name="ignore_file_signature_action">Toch bekijken</string>
   <string name="action_empty_files_add_files">Uploaden</string>

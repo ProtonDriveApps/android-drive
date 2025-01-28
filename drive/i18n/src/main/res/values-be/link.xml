@@ -24,7 +24,7 @@
         Variable %1$s is a string representation of a percentage
         Example: "23% uploaded"
     -->
-  <string name="files_upload_stage_uploading_with_progress">Запампавана %1$s</string>
+  <string name="files_upload_stage_uploading_with_progress">%1$s запампавана</string>
   <string name="files_upload_content_description_cancel_upload">Скасаваць запампоўванне файла</string>
   <string name="files_upload_failure_storage_full_title">Сховішча запоўнена</string>
   <string name="files_upload_failure_storage_full_description">У вашым уліковым запісе скончылася месца для захоўвання. Вызваліце месца або палепшыце да тарыфнага плана з большым памерам сховішча.</string>

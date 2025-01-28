@@ -86,6 +86,72 @@ class MoveFileFlowSuccessTest : BaseTest() {
 
     @Test
     @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 9)
+    fun moveAnonymousFileToAnonymousFolder() {
+        val file = "anonymous-file"
+        val fileRenamed = "$file-moved"
+        val folder = "anonymous-folder"
+        PhotosTabRobot
+            .clickFilesTab()
+            .scrollToItemWithName(file)
+            .clickMoreOnItem(file)
+            .clickRename()
+            .typeName(fileRenamed)
+            .clickRename(FilesTabRobot)
+            .verify {
+                dismissRenameSuccessGrowler(fileRenamed, FilesTabRobot)
+            }
+            .clickMoreOnItem(fileRenamed)
+            .clickMove()
+            .scrollToItemWithName(folder)
+            .clickOnFolderToMove(folder)
+            .clickMoveToFolder(folder)
+            .verify {
+                nodeWithTextDisplayed(I18N.string.file_operation_moving_file_successful)
+                robotDisplayed()
+            }
+            .scrollToItemWithName(folder)
+            .clickOnFolder(folder)
+            .verify {
+                itemIsDisplayed(fileRenamed)
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 9)
+    fun moveAnonymousFileToUserFolder() {
+        val file = "anonymous-file"
+        val fileRenamed = "$file-moved"
+        val folder = "folder"
+        PhotosTabRobot
+            .clickFilesTab()
+            .scrollToItemWithName(file)
+            .clickMoreOnItem(file)
+            .clickRename()
+            .typeName(fileRenamed)
+            .clickRename(FilesTabRobot)
+            .verify {
+                dismissRenameSuccessGrowler(fileRenamed, FilesTabRobot)
+            }
+            .clickMoreOnItem(fileRenamed)
+            .clickMove()
+            .scrollToItemWithName(folder)
+            .clickOnFolderToMove(folder)
+            .clickMoveToFolder(folder)
+            .verify {
+                nodeWithTextDisplayed(I18N.string.file_operation_moving_file_successful)
+                robotDisplayed()
+            }
+            .scrollToItemWithName(folder)
+            .clickOnFolder(folder)
+            .verify {
+                itemIsDisplayed(fileRenamed)
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
     @Scenario(forTag = "main", value = 4)
     fun moveFileFromRootFolderToAnotherFolder() {
         val file = "shared.jpg"

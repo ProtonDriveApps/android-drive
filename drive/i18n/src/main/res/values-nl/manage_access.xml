@@ -20,8 +20,8 @@
   <string name="title_manage_access">Toegang beheren</string>
   <string name="manage_access_share_with">Deel met</string>
   <string name="manage_access_share_with_anyone">Delen met iemand</string>
-  <string name="manage_access_link_settings_action">Link instellingen</string>
-  <string name="manage_access_link_description_public">Eender wie met deze link</string>
+  <string name="manage_access_link_settings_action">Linkinstellingen</string>
+  <string name="manage_access_link_description_public">Iedereen met deze link</string>
   <string name="manage_access_link_description_password_protected">Eender wie met deze link en dit wachtwoord</string>
   <string name="manage_access_link_default_permission">Kan bekijken</string>
   <string name="manage_access_link_editor_permission">Kan bewerken</string>

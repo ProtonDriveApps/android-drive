@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Jaa linkkinä</string>
   <string name="shared_with_me_title">Jaettu minulle</string>
   <string name="shared_by_me_title">Minun jakamani</string>
-  <string name="shared_with_me_empty_description">Muiden kanssa jakamasi tiedostot ja kansiot näkyvät tässä</string>
+  <string name="shared_empty_title">Mitään ei ole vielä jaettu</string>
+  <string name="shared_with_me_empty_description">Kanssasi jaetut tiedostot ja kansiot näkyvät tässä</string>
   <string name="shared_by_me_empty_description">Jaa tiedostot ja kansiot turvallisesti päästä päähän -salauksella</string>
 </resources>

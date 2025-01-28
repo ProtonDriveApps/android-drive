@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="log_title">Αρχείο καταγραφής</string>
+  <string name="log_export_successfully_completed">Το αρχείο καταγραφής αποθηκεύτηκε.</string>
+  <string name="log_level">Επίπεδο</string>
+  <string name="log_category">Κατηγορία</string>
+  <string name="content_description_save_log_file">Αποθήκευση αρχείου καταγραφής</string>
+  <string name="content_description_more_log_options">Περισσότερες επιλογές καταγραφής</string>
+  <string name="log_level_normal">Κανονική</string>
+  <string name="log_level_warning">Προειδοποίηση</string>
+  <string name="log_level_error">Σφάλμα</string>
+  <string name="log_origin_upload">Ανέβασμα</string>
+  <string name="log_origin_download">Λήψη</string>
+  <string name="log_origin_network">API</string>
+  <string name="log_origin_throwable">Εξαίρεση</string>
+  <string name="log_origin_logger">Καταγραφέας</string>
+  <string name="log_origin_screen">Οθόνη</string>
+  <string name="log_origin_application_state">Κατάσταση Eφαρμογής</string>
+  <string name="log_origin_workers">Εργάτες</string>
+  <string name="log_origin_backup">Αντίγραφο Ασφαλείας</string>
+  <string name="log_origin_user">Χρήστης</string>
+  <string name="log_origin_device">Συσκευή</string>
+  <string name="log_origin_crypto">Κρυπτονομίσματα</string>
+</resources>

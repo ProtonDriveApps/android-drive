@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="navigation_item_subscription">Abonnement</string>
-  <string name="navigation_item_bug_report">Meld een fout</string>
+  <string name="navigation_item_bug_report">Een fout melden</string>
   <string name="navigation_more_section_header">Meer</string>
   <string name="navigation_storage_section_header">Opslag</string>
   <string name="navigation_item_get_free_storage">Krijg tot 5 GB gratis</string>

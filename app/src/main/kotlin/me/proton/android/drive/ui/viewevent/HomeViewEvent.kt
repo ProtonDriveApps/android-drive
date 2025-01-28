@@ -23,5 +23,6 @@ import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEv
 
 interface HomeViewEvent {
     val onTab: (NavigationTab) -> Unit
+    val onFirstLaunch: () -> Unit
     val navigationDrawerViewEvent: NavigationDrawerViewEvent
 }

@@ -168,7 +168,7 @@ class PhotosViewModel @Inject constructor(
     private val _photosEffect = MutableSharedFlow<PhotosEffect>()
     private val photosEffectShowUpsell = showUpsell(userId).transformLatest { show ->
         if (show) {
-            CoreLogger.d(PHOTO, "photosEffectShowUpsell")
+            CoreLogger.i(PHOTO, "Showing photo upsell")
             emit(PhotosEffect.ShowUpsell)
         }
     }

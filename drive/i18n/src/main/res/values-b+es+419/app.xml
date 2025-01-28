@@ -160,6 +160,7 @@
   <string name="notification_permission_rationale_description_backup">Reciba notificaciones sobre el progreso y estado de sus copias de seguridad.</string>
   <string name="notification_permission_rationale_action_accept">Activar las notificaciones</string>
   <string name="notification_permission_rationale_action_reject">Ahora no</string>
+  <string name="notification_content_title_transferring">Transferencia de datos</string>
   <!-- endregion -->
   <string name="content_description_select_all">Seleccionar todos los elementos en la lista</string>
   <string name="content_description_selected_options">Mostrar más opciones para los archivos o carpetas seleccionados</string>

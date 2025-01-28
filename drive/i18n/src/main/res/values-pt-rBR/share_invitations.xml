@@ -60,7 +60,7 @@
         Examples:
             "user@mail.com (Pending)"
     -->
-  <string name="share_via_invitations_external_invitation_pending">%1$s (Pedente)</string>
+  <string name="share_via_invitations_external_invitation_pending">%1$s (Pendente)</string>
   <!--
         Variable %1$s is an email
         Examples:

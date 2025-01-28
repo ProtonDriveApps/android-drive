@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Comparteix amb un enllaç</string>
   <string name="shared_with_me_title">Compartit amb mi</string>
   <string name="shared_by_me_title">Compartit per mi</string>
-  <string name="shared_with_me_empty_description">Aquí apareixeran fitxers i carpetes que compartiu amb altres persones</string>
+  <string name="shared_empty_title">Encara no s\'ha compartit res</string>
+  <string name="shared_with_me_empty_description">Els fitxers i les carpetes compartits amb vosaltres apareixeran aquí.</string>
   <string name="shared_by_me_empty_description">Compartiu de manera segura els vostres fitxers i carpetes amb un xifratge d\'extrem a extrem</string>
 </resources>

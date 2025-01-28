@@ -20,6 +20,8 @@ package me.proton.core.drive.drivelink.offline.domain.usecase
 
 import kotlinx.coroutines.flow.first
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag.DOWNLOAD
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinks
@@ -29,6 +31,7 @@ import me.proton.core.drive.file.base.domain.usecase.MoveToCache
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkoffline.domain.usecase.GetFirstMarkedOfflineLink
+import me.proton.core.util.kotlin.CoreLogger
 import me.proton.core.util.kotlin.takeIfNotEmpty
 import javax.inject.Inject
 
@@ -54,6 +57,8 @@ class UpdateOfflineContent @Inject constructor(
             if (firstMarkedOfflineLink != null) {
                 getDriveLink(firstMarkedOfflineLink.id).toResult().onSuccess { parent ->
                     download(parent)
+                }.onFailure { error ->
+                    CoreLogger.w(DOWNLOAD, error, "Cannot get drive link for ${firstMarkedOfflineLink.id.id.logId()}")
                 }
             } else if (driveLink is DriveLink.File) {
                 cancelDownload(driveLink)

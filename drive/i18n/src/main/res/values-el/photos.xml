@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">Φωτογραφίες</string>
+  <string name="photos_permissions_title">Κρυπτογράφηση και δημιουργία αντιγράφων ασφαλείας των φωτογραφιών και των βίντεό σας</string>
+  <string name="photos_permissions_section_1_title">Προστατέψτε τις αναμνήσεις σας</string>
+  <string name="photos_permissions_section_1_description">Οι φωτογραφίες σας είναι κρυπτογραφημένες από άκρο σε άκρο, διασφαλίζοντας απόλυτο απόρρητο.</string>
+  <string name="photos_permissions_section_2_title">Αυτόματη δημιουργία αντιγράφων ασφαλείας</string>
+  <string name="photos_permissions_section_2_description">Οι φωτογραφίες δημιουργούνται τακτικά αντίγραφα ασφαλείας μέσω WiFi στην αρχική τους ποιότητα.</string>
+  <string name="photos_permissions_action">Ενεργοποίηση αντιγράφων ασφαλείας</string>
+  <string name="photos_permission_rational_img_text">Άδεια πρόσβασης</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">Το %1$s χρειάζεται πλήρη πρόσβαση στις φωτογραφίες σας</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">Αυτό είναι απαραίτητο για να διασφαλιστεί ότι δημιουργούνται αντίγραφα ασφαλείας όλων των φωτογραφιών σας και είναι διαθέσιμες σε όλες τις συσκευές σας.\nTo %1$s λαμβάνει σοβαρά υπόψη το απόρρητό σας και θα έχει πρόσβαση στις φωτογραφίες σας μόνο για σκοπούς συγχρονισμού και δημιουργίας αντιγράφων ασφαλείας.</string>
+  <string name="photos_permission_rational_confirm_action">Ρυθμίσεις</string>
+  <string name="photos_permission_rational_dismiss_action">Όχι τώρα</string>
+  <string name="photos_empty_loading_label_encrypted">Κρυπτογραφημένο από άκρο σε άκρο (διατερματικά)</string>
+  <string name="photos_empty_loading_label_progress">Η δημιουργία αντιγράφων ασφαλείας βρίσκεται σε εξέλιξη.\nΜπορεί να χρειαστεί λίγος χρόνος</string>
+  <string name="photos_separator_current_month">Αυτό το μήνα</string>
+  <string name="photos_encrypted_footer">Κρυπτογραφημένο από άκρο σε άκρο (διατερματικά)</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="one">Δημιουργία αντιγράφων ασφαλείας στοιχείων από %2$d φάκελο: %1$s</item>
+    <item quantity="other">Δημιουργία αντιγράφων ασφαλείας στοιχείων από %2$d φακέλους: %1$s</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">Δεν βρέθηκε φάκελος %1$s για δημιουργία αντιγράφων ασφαλείας</string>
+  <string name="photos_error_backup_disabled">Η δημιουργία αντιγράφων ασφαλείας είναι απενεργοποιημένη.</string>
+  <string name="photos_error_backup_disabled_action">Ενεργοποίηση</string>
+  <string name="photos_error_backup_missing_folder">Ο φάκελος αντιγράφων ασφαλείας δεν βρέθηκε</string>
+  <string name="photos_error_backup_failed">Αποτυχία δημιουργίας αντιγράφου ασφαλείας.</string>
+  <string name="photos_error_backup_temporarily_disabled">Η δημιουργία αντιγράφων ασφαλείας είναι προσωρινά απενεργοποιημένη.</string>
+  <string name="photos_error_missing_permissions">Ελλειπή δικαιώματα.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">Για συνεχή και αυτόματα αντίγραφα ασφαλείας, επιτρέψτε στο %1$s την πρόσβαση σε όλες τις φωτογραφίες στις ρυθμίσεις.</string>
+  <string name="photos_error_waiting_connectivity">Δεν υπάρχει σύνδεση στο Διαδίκτυο</string>
+  <string name="photos_error_waiting_wifi_connectivity">Αναμονή για Wi-Fi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Χρήση κινητού δικτύου</string>
+  <string name="photos_error_local_storage">Ο χώρος αποθήκευσης της συσκευής είναι γεμάτος</string>
+  <string name="photos_error_local_storage_description">Για να συνεχίσετε τη δημιουργία αντίγραφου ασφαλείας, πρέπει να ελευθερώσετε χώρο αποθήκευσης στη συσκευή σας.</string>
+  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions_description">Για συνεπή αντίγραφα ασφαλείας στο παρασκήνιο, προσαρμόστε τις ρυθμίσεις μπαταρίας ή ανοίξτε συχνά την εφαρμογή.</string>
+  <string name="photos_error_background_restrictions_action">Ρυθμίσεις</string>
+  <string name="photos_empty_title">Δεν υπάρχουν αντίγραφα ασφαλείας ακόμη</string>
+  <string name="photos_empty_description">Μόλις έχετε φωτογραφίες ή βίντεο στη συσκευή σας, θα εμφανιστούν εδώ.</string>
+  <string name="photos_backup_title">Αντίγραφα ασφαλείας φωτογραφιών</string>
+  <string name="photos_backup_option_mobile_data">Χρήση δεδομένων κινητής τηλεφωνίας για δημιουργία αντιγράφων ασφαλείας φωτογραφιών</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Απενεργοποίηση βελτιστοποίησης μπαταρίας</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Επιτρέπει την αδιάλειπτη δημιουργία αντιγράφων ασφαλείας όταν η εφαρμογή εκτελείται στο παρασκήνιο.</string>
+  <string name="photos_backup_in_app_notification_turned_on">Η δημιουργία αντιγράφων ασφαλείας φωτογραφιών είναι ενεργοποιημένη</string>
+  <string name="photos_backup_in_app_notification_turned_off">Η δημιουργία αντιγράφων ασφαλείας φωτογραφιών είναι απενεργοποιημένη</string>
+  <string name="photos_backup_state_completed">Το αντίγραφο ασφαλείας ολοκληρώθηκε</string>
+  <string name="photos_backup_state_uncompleted">Η δημιουργία αντιγράφων ασφαλείας ολοκληρώθηκε με προβλήματα</string>
+  <string name="photos_backup_state_uncompleted_action">Επίλυση</string>
+  <string name="photos_backup_state_preparing">Προετοιμασία δημιουργίας αντιγράφων ασφαλείας</string>
+  <string name="photos_backup_state_encrypting">Κρυπτογράφηση…</string>
+  <string name="photos_backup_state_uploading">Γίνεται δημιουργία αντίγραφου ασφαλείας…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="one">%1$s στοιχείο απομένει</item>
+    <item quantity="other">%1$s στοιχεία απομένουν</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="one">%1$s στοιχείο αποθηκεύτηκε</item>
+    <item quantity="other">%1$s στοιχεία αποθηκεύτηκαν</item>
+  </plurals>
+  <string name="photos_upsell_title">Μην ξεμείνετε ποτέ από αποθηκευτικό χώρο</string>
+  <string name="photos_upsell_description">Αναβαθμίστε τώρα και διατηρήστε όλες τις αναμνήσεις σας κρυπτογραφημένες και ασφαλείς.</string>
+  <string name="photos_upsell_dismiss_action">Όχι τώρα</string>
+</resources>

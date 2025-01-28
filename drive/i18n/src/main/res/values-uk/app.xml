@@ -170,6 +170,7 @@
   <string name="notification_permission_rationale_description_backup">Отримуйте сповіщення про прогрес і стан резервних копій.</string>
   <string name="notification_permission_rationale_action_accept">Увімкнути сповіщення</string>
   <string name="notification_permission_rationale_action_reject">Не зараз</string>
+  <string name="notification_content_title_transferring">Передача даних</string>
   <!-- endregion -->
   <string name="content_description_select_all">Вибрати усі елементи у цьому списку</string>
   <string name="content_description_selected_options">Показати більше опцій для вибраних файлів і/або тек</string>
@@ -187,7 +188,7 @@
   <string name="description_files_stop_sharing_action_success">Посилання на ваш файл було видалено.</string>
   <string name="description_files_stop_sharing_action_error">Сталася помилка під час видалення посилання на ваш файл.</string>
   <string name="description_files_stop_all_sharing">Ця дія видалить посилання і скасує доступ для всіх.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Спільний доступ для вашого файлу скасовано.</string>
   <string name="description_files_stop_all_sharing_action_error">Під час скасування спільного доступу до вашого файлу виникла помилка.</string>
   <string name="ignore_file_signature_action">Усе одно переглянути</string>
   <string name="action_empty_files_add_files">Вивантажити</string>

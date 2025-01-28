@@ -70,6 +70,7 @@
   <string name="title_share_via_link">Абагуліць праз спасылку</string>
   <string name="shared_with_me_title">Абагулена са мной</string>
   <string name="shared_by_me_title">Абагулена мной</string>
-  <string name="shared_with_me_empty_description">Тут з\'явяцца файлы і папкі, якія вы абагулілі з іншымі</string>
+  <string name="shared_empty_title">Пакуль нічога не абагулена</string>
+  <string name="shared_with_me_empty_description">Тут будуць з\'яўляцца файлы і папкі, якія абагулены з вамі</string>
   <string name="shared_by_me_empty_description">Бяспечна абагульвайце свае файлы і папкі з дапамогай скразнога шыфравання</string>
 </resources>

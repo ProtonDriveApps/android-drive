@@ -75,6 +75,8 @@ abstract class UploadCoroutineWorker(
     protected val uploadFileLinkId: Long = inputData.getLong(KEY_UPLOAD_FILE_LINK_ID, -1L)
     override val logTag: String get() = logTag()
 
+    private var isCancelled: Boolean? = null
+
     override suspend fun doLimitedRetryWork(): Result {
         var uploadFileLink: UploadFileLink? = null
         return try {
@@ -108,11 +110,13 @@ abstract class UploadCoroutineWorker(
                 is IOException,
                 is CryptoException,
                 -> {
+                    val reason = e.getCause().toEventUploadReason()
                     workManager.enqueue(
                         UploadCleanupWorker.getWorkRequest(
-                            userId,
-                            uploadFileLinkId,
-                            reason = e.getCause().toEventUploadReason()
+                            userId = userId,
+                            uploadFileLinkId = uploadFileLinkId,
+                            reason = reason,
+                            isCancelled = isCancelled ?: false
                         )
                     )
                     uploadFileLink.broadcastMessages(e)
@@ -225,6 +229,10 @@ abstract class UploadCoroutineWorker(
             uploadTags = listOf(uploadFileLinkId.uniqueUploadWorkName),
             uriString = requireNotNull(uploadFileLink.uriString),
         )
+    }
+
+    protected fun setUploadAsCancelled() {
+        isCancelled = true
     }
 
     abstract suspend fun doLimitedRetryUploadWork(uploadFileLink: UploadFileLink): Result

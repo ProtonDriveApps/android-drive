@@ -131,7 +131,7 @@
             "50% downloaded"
             "100% downloaded"
     -->
-  <string name="common_percent_downloaded">Спампавана %1$s</string>
+  <string name="common_percent_downloaded">%1$s спампавана</string>
   <string name="common_sign_out">Выйсці</string>
   <!--
         Variable %1$d is a quantity of files or folders that have been selected
@@ -169,7 +169,7 @@
     <item quantity="one">%1$d файл паспяхова спампаваны</item>
     <item quantity="few">%1$d файлы паспяхова спампаваны</item>
     <item quantity="many">%1$d файлаў паспяхова спампаваны</item>
-    <item quantity="other">%1$d файлы паспяхова спампаваны</item>
+    <item quantity="other">%1$d файлаў паспяхова спампаваны</item>
   </plurals>
   <!--
         Variable %1$s is a file name

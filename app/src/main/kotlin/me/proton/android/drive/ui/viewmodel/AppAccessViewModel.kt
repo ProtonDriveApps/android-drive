@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.getDefaultMessage
+import me.proton.android.drive.extension.log
 import me.proton.android.drive.lock.data.extension.onNotAvailable
 import me.proton.android.drive.lock.data.extension.onReady
 import me.proton.android.drive.lock.data.extension.onSetupRequired
@@ -39,6 +40,7 @@ import me.proton.android.drive.lock.domain.usecase.GetLockState
 import me.proton.android.drive.ui.viewevent.AppAccessViewEvent
 import me.proton.android.drive.ui.viewstate.AccessOption
 import me.proton.android.drive.ui.viewstate.AppAccessViewState
+import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
@@ -94,6 +96,7 @@ class AppAccessViewModel @Inject constructor(
         if (appLockManager.isEnabled().not()) return@launch
         disableAppLock()
             .onFailure { error ->
+                error.log(VIEW_MODEL, "Cannot disable app lock")
                 broadcastMessages(
                     userId = userId,
                     message = error.getDefaultMessage(appContext, true),
@@ -114,6 +117,7 @@ class AppAccessViewModel @Inject constructor(
         if (appLockManager.isEnabled()) return@launch
         enableAppLock(lockType = AppLockType.SYSTEM)
             .onFailure { error ->
+                error.log(VIEW_MODEL, "Cannot enable app lock")
                 broadcastMessages(
                     userId = userId,
                     message = error.getDefaultMessage(appContext, true),

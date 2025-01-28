@@ -25,9 +25,9 @@ import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 
 sealed class ContentState {
     object NotFound : ContentState()
-    data class Downloading(val progress: Flow<Percentage>?) : ContentState()
-    object Decrypting : ContentState()
-    data class Available(val source: Any) : ContentState()
+    data class Downloading(val progress: Flow<Percentage>?, val thumbnail: ThumbnailVO? = null) : ContentState()
+    data class Decrypting(val thumbnail: ThumbnailVO? = null) : ContentState()
+    data class Available(val source: Any, val thumbnailSource: Any? = null) : ContentState()
     sealed class Error : ContentState() {
         data class Retryable(val messageResId: Int, val actionResId: Int, val action: () -> Unit) : Error()
         data class NonRetryable(val message: String?, val messageResId: Int) : Error()

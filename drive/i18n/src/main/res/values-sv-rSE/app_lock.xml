@@ -22,10 +22,10 @@
   <string name="app_lock_biometric_title_confirmation">Bekräftelse</string>
   <string name="app_lock_biometric_subtitle_confirmation_enable">För att aktivera upplåsning, bekräfta med ditt enhetslås</string>
   <string name="app_lock_biometric_subtitle_confirmation_disable">För att inaktivera upplåsning, bekräfta med ditt enhetslås</string>
-  <string name="app_lock_option_never_set">Aktivera biometrisk eller enhetslås</string>
+  <string name="app_lock_option_never_set">Aktivera biometri eller enhetslås</string>
   <string name="app_lock_option_none">Håll olåst</string>
   <string name="app_lock_option_system">Biometri eller enhetslås</string>
-  <string name="app_lock_system_dialog_title">Slå på biometrisk åtkomst</string>
+  <string name="app_lock_system_dialog_title">Aktivera biometrisk åtkomst</string>
   <string name="app_lock_system_dialog_description">Ställ in biometri eller enhetslåsåtkomst på denna enhet.</string>
   <string name="app_lock_system_dialog_settings_button">Inställningar</string>
   <string name="app_lock_system_not_available">Biometri eller enhetslås är inte tillgängligt på din enhet</string>
