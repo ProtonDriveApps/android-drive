@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Pratinjau konten berkas</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Tampilkan lebih banyak pilihan untuk berkas</string>
   <string name="preview_downloading_state">Mengunduh…</string>
   <string name="preview_processing_state">Memproses…</string>
   <string name="preview_empty">Tidak ada hal apa pun untuk dipratinjau…</string>

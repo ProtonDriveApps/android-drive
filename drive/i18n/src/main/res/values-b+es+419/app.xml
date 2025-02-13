@@ -37,7 +37,7 @@
   <string name="description_signing_out">Cerrando sesión…</string>
   <string name="settings_about_links_acknowledgments_title">Agradecimientos</string>
   <string name="settings_about_links_privacy_policy_title">Política de privacidad</string>
-  <string name="settings_about_links_terms_of_service_title">Términos de uso</string>
+  <string name="settings_about_links_terms_of_service_title">Términos de servicio</string>
   <string name="common_error_no_browser_available">No pudimos abrir el enlace porque no parece tener un navegador instalado</string>
   <string name="move_to">Mover a</string>
   <string name="move_file_confirm_action">Mover</string>
@@ -46,7 +46,7 @@
   <string name="folder_option_create_folder">Crear carpeta</string>
   <string name="folder_option_take_a_photo">Tomar foto nueva</string>
   <string name="folder_option_create_document">Crear un documento</string>
-  <string name="settings_theme_system_default">Del sistema</string>
+  <string name="settings_theme_system_default">Valor predeterminado del sistema</string>
   <string name="settings_theme_dark">Oscuro</string>
   <string name="settings_theme_light">Claro</string>
   <!--
@@ -169,7 +169,7 @@
   <string name="description_empty_folder_read_only">No hay datos que ver aquí.</string>
   <string name="description_empty_shared">Los archivos enlazados aparecen aquí para que pueda rastrearlos y gestionar los elementos compartidos.</string>
   <string name="description_empty_trash">Aquí es donde permanecen los elementos borrados hasta que los elimine o restaure.</string>
-  <string name="description_empty_offline_available">Haga que los archivos esenciales estén siempre disponibles, incluso cuando la red no lo esté.</string>
+  <string name="description_empty_offline_available">Haga que los archivos más importantes estén siempre disponibles, incluso cuando la red no lo esté.</string>
   <string name="description_no_drive_scope">El usuario no tiene permiso de acceso.</string>
   <string name="description_file_download_failed">Error de descarga. Verifique la conexión de red e intente nuevamente.</string>
   <string name="description_file_decryption_failed">No se pudo descifrar el archivo</string>
@@ -178,7 +178,7 @@
   <string name="description_files_stop_sharing_action_success">El enlace al archivo fue eliminado.</string>
   <string name="description_files_stop_sharing_action_error">Hubo un error al eliminar el enlace al archivo.</string>
   <string name="description_files_stop_all_sharing">Esto eliminará el enlace y borrará el acceso para todos.</string>
-  <string name="description_files_stop_all_sharing_action_success">Se eliminó el acceso compartido al archivo.</string>
+  <string name="description_files_stop_all_sharing_action_success">Se eliminó el uso compartido del archivo.</string>
   <string name="description_files_stop_all_sharing_action_error">Ocurrió un error al eliminar el acceso compartido al archivo.</string>
   <string name="ignore_file_signature_action">Ver de todos modos</string>
   <string name="action_empty_files_add_files">Cargar</string>

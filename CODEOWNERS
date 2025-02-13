@@ -1,0 +1,12 @@
+# ownership: loose
+*	@rbac/android/drive 
+/.idea/	@rbac/android/drive 
+/app-lock/	@rbac/android/drive 
+/app-ui-settings/	@rbac/android/drive 
+/app/	@rbac/android/drive 
+/buildSrc/	@rbac/android/drive 
+/drive/	@rbac/android/drive 
+/gradle/	@rbac/android/drive 
+/photos/	@rbac/android/drive 
+/screenshot-tests/	@rbac/android/drive 
+/verifier/	@rbac/android/drive 

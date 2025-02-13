@@ -31,6 +31,6 @@
   <string name="app_lock_system_not_available">El bloqueo biométrico o del dispositivo no está disponible en el dispositivo</string>
   <string name="app_lock_enabled">Bloqueo biométrico o del dispositivo activado</string>
   <string name="app_lock_disabled">El bloqueo de la aplicación ha sido desactivado</string>
-  <string name="app_lock_access_title">Elija cómo desbloquear la aplicación</string>
+  <string name="app_lock_access_title">Elija cómo bloquear la aplicación</string>
   <string name="app_lock_unlock_the_app">Desbloquear la aplicación</string>
 </resources>

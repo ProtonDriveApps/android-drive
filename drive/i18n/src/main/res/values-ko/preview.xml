@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">파일 내용 미리보기</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">파일에 더 많은 옵션 표시</string>
   <string name="preview_downloading_state">다운로드 중...</string>
   <string name="preview_processing_state">처리 중...</string>
   <string name="preview_empty">미리 볼 내용 없음...</string>

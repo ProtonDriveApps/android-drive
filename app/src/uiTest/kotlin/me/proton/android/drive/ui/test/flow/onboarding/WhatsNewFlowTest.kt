@@ -36,7 +36,6 @@ class WhatsNewFlowTest : BaseTest() {
     @Test
     @FeatureFlag(DRIVE_ANDROID_WHATS_NEW, ENABLED)
     @PrepareUser(loginBefore = true)
-    @Ignore("PROTON_DOCS was limited to 2024, enable the test for a new whats new")
     fun whatsNewShouldShow() {
         WhatsNewRobot
             .verify {

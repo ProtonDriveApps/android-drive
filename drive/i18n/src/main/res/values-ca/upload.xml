@@ -41,7 +41,7 @@
         Example:
             "Uploads are currently limited to 250 files at a time. Try again with fewer files."
     -->
-  <string name="files_upload_limit_reached">Actualment, les pujades són limitades a %1$d fitxers a la vegada. Proveu de nou amb menys fitxers.</string>
+  <string name="files_upload_limit_reached">Actualment, les pujades són limitades a %1$d fitxers alhora. Proveu de nou amb menys fitxers.</string>
   <!--
         Variable %1$d is a quantity of items that are being used
         Example:

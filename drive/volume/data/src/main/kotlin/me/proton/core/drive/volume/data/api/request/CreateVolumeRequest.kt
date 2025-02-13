@@ -20,6 +20,7 @@ package me.proton.core.drive.volume.data.api.request
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.data.api.Dto.ADDRESS_ID
+import me.proton.core.drive.base.data.api.Dto.ADDRESS_KEY_ID
 import me.proton.core.drive.base.data.api.Dto.FOLDER_HASH_KEY
 import me.proton.core.drive.base.data.api.Dto.FOLDER_KEY
 import me.proton.core.drive.base.data.api.Dto.FOLDER_NAME
@@ -36,10 +37,6 @@ import me.proton.core.drive.base.data.api.Dto.VOLUME_NAME
 data class CreateVolumeRequest(
     @SerialName(ADDRESS_ID)
     val addressId: String,
-    @SerialName(VOLUME_NAME)
-    val volumeName: String,
-    @SerialName(SHARE_NAME)
-    val shareName: String,
     @SerialName(SHARE_KEY)
     val shareKey: String,
     @SerialName(SHARE_PASSPHRASE)
@@ -56,6 +53,6 @@ data class CreateVolumeRequest(
     val folderPassphraseSignature: String,
     @SerialName(FOLDER_HASH_KEY)
     val folderHashKey: String,
-    @SerialName(VOLUME_MAX_SPACE)
-    val volumeMaxSpace: Long? = null,
+    @SerialName(ADDRESS_KEY_ID)
+    val addressKeyId: String,
 )

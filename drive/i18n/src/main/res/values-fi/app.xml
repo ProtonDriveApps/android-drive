@@ -178,7 +178,7 @@
   <string name="description_files_stop_sharing_action_success">Linkki tiedostoosi on poistettiin.</string>
   <string name="description_files_stop_sharing_action_error">Virhe poistrettaessa tiedostosi linkkiä.</string>
   <string name="description_files_stop_all_sharing">Tämä poistaa linkin ja käyttöoikeuden kaikilta.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Virhe poistettaessa tiedostojakoa.</string>
   <string name="ignore_file_signature_action">Näytä silti</string>
   <string name="action_empty_files_add_files">Tallenna</string>

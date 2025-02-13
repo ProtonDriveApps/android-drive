@@ -69,6 +69,7 @@ fun SharedTabsScreen(
     navigateToFiles: (FolderId, String?) -> Unit,
     navigateToPreview: (FileId) -> Unit,
     navigateToFileOrFolderOptions: (LinkId) -> Unit,
+    navigateToUserInvitation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<SharedTabsViewModel>()
@@ -94,6 +95,7 @@ fun SharedTabsScreen(
         navigateToFiles = navigateToFiles,
         navigateToPreview = navigateToPreview,
         navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+        navigateToUserInvitation = navigateToUserInvitation,
     )
 }
 
@@ -105,6 +107,7 @@ fun SharedTabs(
     navigateToFiles: (FolderId, String?) -> Unit,
     navigateToPreview: (FileId) -> Unit,
     navigateToFileOrFolderOptions: (LinkId) -> Unit,
+    navigateToUserInvitation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -134,6 +137,7 @@ fun SharedTabs(
                 navigateToFiles = navigateToFiles,
                 navigateToPreview = navigateToPreview,
                 navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+                navigateToUserInvitation = navigateToUserInvitation,
             )
             SharedTab.Type.SHARED_BY_ME -> SharedByMeScreen(
                 homeScaffoldState = homeScaffoldState,

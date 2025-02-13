@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Zmień nazwę pliku</string>
   <string name="link_rename_title_folder">Zmień nazwę folderu</string>
+  <string name="link_rename_title_album">Rename an album</string>
   <string name="link_rename_successful">Nazwa \"%1$s\" została zmieniona</string>
   <string name="link_rename_error_link_not_found">Zmiana nazwy nie powiodła, ponieważ nie można znaleźć pliku lub folderu</string>
   <string name="link_rename_error_general">Zmiana nazwy nie powiodła się</string>

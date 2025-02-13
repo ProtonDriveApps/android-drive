@@ -22,6 +22,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.arch.DataResult
@@ -35,6 +36,7 @@ import me.proton.core.drive.crypto.domain.usecase.photo.CreatePhotoInfo
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.extension.onDisabledOrNotFound
 import me.proton.core.drive.feature.flag.domain.extension.onEnabled
+import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.feature.flag.domain.usecase.WithFeatureFlag
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import me.proton.core.drive.share.domain.entity.Share
@@ -43,6 +45,8 @@ import me.proton.core.drive.share.domain.exception.ShareException
 import me.proton.core.drive.share.domain.usecase.GetAddressId
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.share.domain.usecase.GetShares
+import me.proton.core.drive.volume.crypto.domain.usecase.GetOrCreateVolume
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.hasProtonErrorCode
@@ -59,17 +63,25 @@ class CreatePhotoShare @Inject constructor(
     private val getPhotoShare: GetPhotoShare,
     private val withFeatureFlag: WithFeatureFlag,
     private val getAddressId: GetAddressId,
+    private val albumsFeatureFlag: AlbumsFeatureFlag,
+    private val getOrCreateVolume: GetOrCreateVolume,
 ) {
     operator fun invoke(userId: UserId): Flow<DataResult<Share>> =
         getOrCreateMainShare(userId)
             .distinctUntilChanged()
             .transformSuccess { result ->
-                emitAll(
-                    invoke(
-                        userId = userId,
-                        volumeId = result.value.volumeId,
+                if (albumsFeatureFlag(userId).first()) {
+                    emitAll(
+                        getOrCreatePhotoShare(userId)
                     )
-                )
+                } else {
+                    emitAll(
+                        invoke(
+                            userId = userId,
+                            volumeId = result.value.volumeId,
+                        )
+                    )
+                }
             }
 
     operator fun invoke(userId: UserId, volumeId: VolumeId): Flow<DataResult<Share>> = flow {
@@ -117,4 +129,11 @@ class CreatePhotoShare @Inject constructor(
             }
         }
     )
+
+    private fun getOrCreatePhotoShare(
+        userId: UserId,
+    ): Flow<DataResult<Share>> = getOrCreateVolume(userId, Volume.Type.PHOTO)
+        .transformSuccess { result ->
+            emitAll(getShare(ShareId(userId, result.value.shareId)))
+        }
 }

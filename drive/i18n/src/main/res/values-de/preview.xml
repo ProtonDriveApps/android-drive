@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Vorschau des Dateiinhalts</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Mehr Optionen für die Datei anzeigen</string>
   <string name="preview_downloading_state">Lade herunter…</string>
   <string name="preview_processing_state">Verarbeite…</string>
   <string name="preview_empty">Keine Vorschau verfügbar…</string>

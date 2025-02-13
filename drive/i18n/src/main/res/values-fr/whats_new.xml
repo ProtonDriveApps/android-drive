@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">Nouveautés</string>
-  <string name="whats_new_docs_title">Proton Docs sur mobile</string>
-  <string name="whats_new_docs_description">Appuyez sur Plus pour créer ou collaborer sur des documents chiffrés de bout en bout où que vous soyez.</string>
 </resources>

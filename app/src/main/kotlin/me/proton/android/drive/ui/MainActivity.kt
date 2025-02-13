@@ -95,7 +95,6 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.thumbnail.presentation.coil.ThumbnailEnabled
 import me.proton.core.notification.presentation.deeplink.DeeplinkManager
 import me.proton.core.notification.presentation.deeplink.onActivityCreate
-import me.proton.core.usersettings.presentation.compose.view.SecurityKeysActivity
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.android.settings.domain.entity.ThemeStyle
 import me.proton.drive.android.settings.domain.usecase.GetHomeTab
@@ -175,7 +174,7 @@ class MainActivity : FragmentActivity() {
                         exitApp = { finish() },
                         navigateToPasswordManagement = accountViewModel::startPasswordManagement,
                         navigateToRecoveryEmail = accountViewModel::startUpdateRecoveryEmail,
-                        navigateToSecurityKeys = { SecurityKeysActivity.start(this@MainActivity) },
+                        navigateToSecurityKeys = accountViewModel::startSecurityKeys,
                         navigateToBugReport = bugReportViewModel::sendBugReport,
                         navigateToSubscription = plansViewModel::showCurrentPlans,
                         navigateToRatingBooster = { showRatingBooster(this@MainActivity) },

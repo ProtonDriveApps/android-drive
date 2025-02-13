@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Přejmenovat soubor</string>
   <string name="link_rename_title_folder">Přejmenovat složku</string>
+  <string name="link_rename_title_album">Přejmenovat album</string>
   <string name="link_rename_successful">\"%1$s\" úspěšně přejmenován</string>
   <string name="link_rename_error_link_not_found">Přejmenování selhalo, protože soubor nebo složka nebyla nalezena</string>
   <string name="link_rename_error_general">Přejmenování selhalo z neznámého důvodu</string>

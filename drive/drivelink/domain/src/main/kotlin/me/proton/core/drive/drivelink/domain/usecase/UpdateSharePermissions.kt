@@ -49,6 +49,7 @@ class UpdateSharePermissions @Inject constructor(
         when (link) {
             is DriveLink.Folder -> link.copy(sharePermissions = sharePermissions)
             is DriveLink.File -> link.copy(sharePermissions = sharePermissions)
+            is DriveLink.Album -> link.copy(sharePermissions = sharePermissions)
         }
     } ?: driveLink
 

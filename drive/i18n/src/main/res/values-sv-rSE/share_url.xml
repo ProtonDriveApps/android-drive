@@ -73,4 +73,27 @@
   <string name="shared_empty_title">Inget delat än</string>
   <string name="shared_with_me_empty_description">Filer och mappar som delas med dig kommer att visas här</string>
   <string name="shared_by_me_empty_description">Dela dina filer och mappar säkert med end-to-end-kryptering</string>
+  <string name="shared_by_me_invitation_banner_title">Väntande delade objekt</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">%1$d objekt delat med dig</item>
+    <item quantity="other">%1$d objekt delade med dig</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">Väntande delade objekt (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Inga väntande delade objekt</string>
+  <string name="shared_user_invitations_description_empty">Alla nya inbjudningar kommer vara här</string>
+  <string name="shared_user_invitations_accept_button">Acceptera</string>
+  <string name="shared_user_invitations_decline_button">Avböj</string>
+  <string name="shared_user_invitations_accept_success">Delat objekt accepterat</string>
+  <string name="shared_user_invitations_decline_success">Delat objekt avböjt</string>
 </resources>

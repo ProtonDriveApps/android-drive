@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">Co nowego</string>
-  <string name="whats_new_docs_title">Proton Docs na telefonie</string>
-  <string name="whats_new_docs_description">Kliknij plus, aby tworzyć lub współpracować nad dokumentami szyfrowanymi end-to-end.</string>
 </resources>

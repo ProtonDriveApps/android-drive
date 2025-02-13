@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">새로운 소식</string>
-  <string name="whats_new_docs_title">Proton Docs 모바일 버전</string>
-  <string name="whats_new_docs_description">이동 중에도 종단간 암호화된 문서를 생성하고 협동하려면 플러스 버튼을 탭하세요.</string>
 </resources>

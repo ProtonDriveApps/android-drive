@@ -21,10 +21,12 @@ package me.proton.core.drive.photo.data.db
 import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
 import me.proton.core.data.room.db.migration.DatabaseMigration
+import me.proton.core.drive.photo.data.db.dao.AlbumListingDao
 import me.proton.core.drive.photo.data.db.dao.PhotoListingDao
 
 interface PhotoDatabase : Database {
     val photoListingDao: PhotoListingDao
+    val albumListingDao: AlbumListingDao
 
     companion object {
         val MIGRATION_0 = object : DatabaseMigration {
@@ -71,6 +73,61 @@ interface PhotoDatabase : Database {
                     """
                     CREATE INDEX IF NOT EXISTS `index_PhotoListingEntity_user_id_volume_id_share_id` ON
                     `PhotoListingEntity` (`user_id`, `volume_id`, `share_id`)
+                    """.trimIndent()
+                )
+            }
+        }
+        val MIGRATION_1 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `AlbumListingEntity` (
+                    `user_id` TEXT NOT NULL,
+                    `volume_id` TEXT NOT NULL,
+                    `share_id` TEXT NOT NULL,
+                    `id` TEXT NOT NULL,
+                    `locked` INTEGER NOT NULL,
+                    `count` INTEGER NOT NULL,
+                    `last_activity_time` INTEGER NOT NULL,
+                    `link_id` TEXT,
+                    `is_shared` INTEGER NOT NULL,
+                    PRIMARY KEY(`user_id`, `volume_id`, `share_id`, `id`),
+                    FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                    ON UPDATE NO ACTION ON DELETE CASCADE,
+                    FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`)
+                    ON UPDATE NO ACTION ON DELETE CASCADE )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumListingEntity_user_id` ON `AlbumListingEntity` (`user_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumListingEntity_volume_id` ON `AlbumListingEntity` (`volume_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumListingEntity_share_id` ON `AlbumListingEntity` (`share_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumListingEntity_id` ON `AlbumListingEntity` (`id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumListingEntity_user_id_volume_id` ON
+                    `AlbumListingEntity` (`user_id`, `volume_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumListingEntity_user_id_volume_id_share_id` ON
+                    `AlbumListingEntity` (`user_id`, `volume_id`, `share_id`)
                     """.trimIndent()
                 )
             }

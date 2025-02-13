@@ -60,6 +60,7 @@ class DownloadWorkManagerImpl @Inject constructor(
                 when (driveLink) {
                     is DriveLink.Folder -> FolderDownloadWorker.getWorkRequest(driveLink)
                     is DriveLink.File -> FileDownloadWorker.getWorkRequest(driveLink, retryable)
+                    is DriveLink.Album -> error("TODO")
                 }
             )
         } else {

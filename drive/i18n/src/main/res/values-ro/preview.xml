@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Examinare conținut fișier</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Afișare mai multe opțiuni pentru un fișier</string>
   <string name="preview_downloading_state">Se descarcă…</string>
   <string name="preview_processing_state">Se procesează…</string>
   <string name="preview_empty">Nimic de examinat…</string>

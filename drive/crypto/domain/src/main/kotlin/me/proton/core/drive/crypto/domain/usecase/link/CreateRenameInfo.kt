@@ -49,8 +49,13 @@ class CreateRenameInfo @Inject constructor(
         link: Link,
         name: String,
         mimeType: String,
+        shouldValidateName: Boolean = true,
     ): Result<RenameInfo> = coRunCatching {
-        val linkName = validateLinkName(name).getOrThrow()
+        val linkName = if (shouldValidateName) {
+            validateLinkName(name).getOrThrow()
+        } else {
+            name
+        }
         val parentFolderKey = getNodeKey(parentFolder).getOrThrow()
         val parentFolderHashKey = getNodeHashKey(parentFolder, parentFolderKey).getOrThrow()
         val signatureAddress = getSignatureAddress(link.shareId).getOrThrow()

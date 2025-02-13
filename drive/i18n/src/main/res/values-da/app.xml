@@ -178,7 +178,7 @@
   <string name="description_files_stop_sharing_action_success">Linket til din fil er blevet slettet.</string>
   <string name="description_files_stop_sharing_action_error">Der opstod en fejl under sletningen af linket til din fil.</string>
   <string name="description_files_stop_all_sharing">Dette vil slette linket og fjerne adgangen for alle.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Deling til din fil er blevet slettet.</string>
   <string name="description_files_stop_all_sharing_action_error">Der opstod en fejl under sletning af deling af din fil.</string>
   <string name="ignore_file_signature_action">Vis alligevel</string>
   <string name="action_empty_files_add_files">Upload</string>

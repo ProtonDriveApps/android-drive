@@ -19,7 +19,6 @@
 package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.drive.backup.domain.entity.BackupFolder
-import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -28,14 +27,14 @@ import javax.inject.Inject
 
 class EnableBackupForFolder @Inject constructor(
     private val addFolder: AddFolder,
-    private val backupManager: BackupManager,
+    private val syncFolders: SyncFolders,
 ) {
     suspend operator fun invoke(backupFolder: BackupFolder) = coRunCatching {
         CoreLogger.d(LogTag.BACKUP, "Adding folder: ${backupFolder.bucketId}")
         addFolder(backupFolder).getOrThrow()
-        backupManager.sync(
+        syncFolders(
             backupFolder = backupFolder,
             uploadPriority = UploadFileLink.BACKUP_PRIORITY
-        )
+        ).getOrThrow()
     }
 }

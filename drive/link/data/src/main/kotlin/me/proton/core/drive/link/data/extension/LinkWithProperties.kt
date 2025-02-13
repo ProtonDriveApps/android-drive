@@ -22,9 +22,11 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.link.data.api.entity.LinkDto
+import me.proton.core.drive.link.data.db.entity.LinkAlbumPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkWithProperties
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
@@ -58,7 +60,7 @@ fun LinkWithProperties.toLink(): Link = when (properties) {
         nodeKey = link.nodeKey,
         nodePassphrase = link.nodePassphrase,
         nodePassphraseSignature = link.nodePassphraseSignature,
-        signatureAddress = link.signatureAddress,
+        signatureEmail = link.signatureAddress,
         creationTime = TimestampS(link.creationTime),
         trashedTime = link.trashedTime?.let { trashedTime -> TimestampS(trashedTime) },
         shareUrlExpirationTime = link.shareUrlExpirationTime?.let { shareUrlExpirationTime ->
@@ -96,7 +98,7 @@ fun LinkWithProperties.toLink(): Link = when (properties) {
         nodeKey = link.nodeKey,
         nodePassphrase = link.nodePassphrase,
         nodePassphraseSignature = link.nodePassphraseSignature,
-        signatureAddress = link.signatureAddress,
+        signatureEmail = link.signatureAddress,
         creationTime = TimestampS(link.creationTime),
         trashedTime = link.trashedTime?.let { trashedTime -> TimestampS(trashedTime) },
         shareUrlExpirationTime = link.shareUrlExpirationTime?.let { shareUrlExpirationTime ->
@@ -104,6 +106,43 @@ fun LinkWithProperties.toLink(): Link = when (properties) {
         },
         xAttr = link.xAttr,
         sharingDetails = link.sharingDetails(),
+    )
+    is LinkAlbumPropertiesEntity -> Link.Album(
+        id = AlbumId(ShareId(link.userId, link.shareId), link.id),
+        parentId = link.parentId?.let { parentId -> FolderId(ShareId(link.userId, link.shareId), parentId) },
+        name = link.name,
+        size = Bytes(link.size),
+        lastModified = TimestampS(link.lastModified),
+        mimeType = link.mimeType,
+        isShared = link.isShared,
+        key = link.nodeKey,
+        passphrase = link.nodePassphrase,
+        passphraseSignature = link.nodePassphraseSignature,
+        numberOfAccesses = link.numberOfAccesses,
+        uploadedBy = link.signatureAddress,
+        nodeHashKey = properties.nodeHashKey,
+        isFavorite = false,
+        attributes = Attributes(link.attributes),
+        permissions = Permissions(link.permissions),
+        state = link.state.toState(),
+        nameSignatureEmail = link.nameSignatureEmail,
+        hash = link.hash,
+        expirationTime = link.expirationTime?.let { expirationTime -> TimestampS(expirationTime) },
+        nodeKey = link.nodeKey,
+        nodePassphrase = link.nodePassphrase,
+        nodePassphraseSignature = link.nodePassphraseSignature,
+        signatureEmail = link.signatureAddress,
+        creationTime = TimestampS(link.creationTime),
+        trashedTime = link.trashedTime?.let { trashedTime -> TimestampS(trashedTime) },
+        shareUrlExpirationTime = link.shareUrlExpirationTime?.let { shareUrlExpirationTime ->
+            TimestampS(shareUrlExpirationTime)
+        },
+        xAttr = link.xAttr,
+        sharingDetails = link.sharingDetails(),
+        isLocked = properties.locked,
+        lastActivityTime = TimestampS(properties.lastActivityTime),
+        photoCount = properties.photoCount,
+        coverLinkId = properties.coverLinkId?.let { FileId(ShareId(link.userId, link.shareId), it) },
     )
 }
 

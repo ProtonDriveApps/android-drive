@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Nimeä tiedosto uudelleen</string>
   <string name="link_rename_title_folder">Nimeä kansio uudelleen</string>
+  <string name="link_rename_title_album">Rename an album</string>
   <string name="link_rename_successful">\"%1$s\" nimettiin uudelleen</string>
   <string name="link_rename_error_link_not_found">Uudelleennimeäminen epäonnistui, koska tiedostoa tai kansiota ei enää löydy</string>
   <string name="link_rename_error_general">Uudelleennimeäminen epäonnistui tuntemattomasta syystä</string>

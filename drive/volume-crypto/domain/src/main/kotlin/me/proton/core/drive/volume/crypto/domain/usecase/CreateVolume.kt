@@ -33,8 +33,8 @@ class CreateVolume @Inject constructor(
     private val createVolumeInfo: CreateVolumeInfo,
     private val getSignatureAddress: GetSignatureAddress,
 ) {
-    operator fun invoke(userId: UserId): Flow<DataResult<Volume>> = flow {
-        createVolumeInfo(userId, getSignatureAddress(userId)).onFailure { error ->
+    operator fun invoke(userId: UserId, type: Volume.Type): Flow<DataResult<Volume>> = flow {
+        createVolumeInfo(userId, getSignatureAddress(userId), type).onFailure { error ->
             emit(DataResult.Error.Local(null, error))
         }.onSuccess { volumeInfo ->
             emitAll(volumeRepository.createVolume(userId, volumeInfo))

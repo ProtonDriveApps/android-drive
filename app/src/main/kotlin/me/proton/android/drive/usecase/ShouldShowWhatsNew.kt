@@ -42,7 +42,7 @@ class ShouldShowWhatsNew @Inject constructor(
             ).first().on
         ) {
             when {
-                canShow(WhatsNewKey.PROTON_DOCS) -> WhatsNewKey.PROTON_DOCS
+                canShow(WhatsNewKey.PUBLIC_SHARING) -> WhatsNewKey.PUBLIC_SHARING
                 else -> null
             }
         } else {

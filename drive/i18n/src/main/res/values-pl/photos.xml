@@ -79,7 +79,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Użyj danych komórkowych</string>
   <string name="photos_error_local_storage">Magazyn lokalny jest pełny</string>
   <string name="photos_error_local_storage_description">Zwolnij magazyn lokalny, aby utworzyć kopię zapasową.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">Aby tworzyć regularne kopie zapasowe w tle, dostosuj wykorzystanie baterii przez aplikacje lub często otwieraj aplikację.</string>
   <string name="photos_error_background_restrictions_action">Ustawienia</string>
   <string name="photos_empty_title">Brak kopii zapasowych</string>
@@ -87,10 +87,10 @@
   <string name="photos_backup_title">Kopia zapasowa zdjęć</string>
   <string name="photos_backup_option_mobile_data">Użyj danych komórkowych do tworzenia kopii zapasowej zdjęć</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Wyłącz optymalizację baterii</string>
-  <string name="photos_backup_option_ignoring_battery_optimizations_description">Zezwala na nieprzerwane tworzenie kopii zapasowych, gdy aplikacja działa w tle.</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Umożliwia nieprzerwane tworzenie kopii zapasowych, gdy aplikacja działa w tle.</string>
   <string name="photos_backup_in_app_notification_turned_on">Kopia zapasowa zdjęć jest włączona</string>
   <string name="photos_backup_in_app_notification_turned_off">Kopia zapasowa zdjęć jest wyłączona</string>
-  <string name="photos_backup_state_completed">Kopia zapasowa została zakończona</string>
+  <string name="photos_backup_state_completed">Tworzenie kopii zapasowej zakończone</string>
   <string name="photos_backup_state_uncompleted">Kopia zapasowa została częściowo zakończona</string>
   <string name="photos_backup_state_uncompleted_action">Rozwiąż</string>
   <string name="photos_backup_state_preparing">Przygotowywanie kopii zapasowej</string>

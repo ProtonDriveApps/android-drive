@@ -25,6 +25,7 @@ import me.proton.core.drive.cryptobase.domain.usecase.UnlockKey
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.key.domain.usecase.GetVerificationKeys
+import me.proton.core.drive.link.domain.entity.Album
 import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.core.drive.link.domain.entity.File
 import me.proton.core.drive.link.domain.entity.Folder
@@ -40,11 +41,14 @@ class DecryptLinkXAttr @Inject constructor(
     private val getPublicKeyRing: GetPublicKeyRing,
     private val unlockKey: UnlockKey,
 ) {
-    suspend operator fun invoke(link: BaseLink): Result<DecryptedText> = getLinkKey(link.id).mapCatching { decryptKey ->
+    suspend operator fun invoke(
+        link: BaseLink,
+    ): Result<DecryptedText> = getLinkKey(link.id).mapCatching { decryptKey ->
         val signatureAddress = when (link) {
             is File -> link.uploadedBy
-            is Folder -> link.signatureAddress
-            else -> throw IllegalStateException("Link must be either file or folder and it was not")
+            is Folder -> link.signatureEmail
+            is Album -> link.signatureEmail
+            else -> error("Link must be either file, folder or album and it was not")
         }
         val verificationKeys = getVerificationKeys(link.id, signatureAddress).getOrThrow().keyHolder
         unlockKey(decryptKey.keyHolder) { unlockedKey ->

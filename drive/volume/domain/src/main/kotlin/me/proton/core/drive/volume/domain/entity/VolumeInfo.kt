@@ -19,22 +19,46 @@ package me.proton.core.drive.volume.domain.entity
 
 import me.proton.core.user.domain.entity.AddressId
 
-data class VolumeInfo(
-    val addressId: AddressId,
-    val volumeName: String = DEFAULT_VOLUME_NAME,
-    val shareName: String = DEFAULT_SHARE_NAME,
-    val shareKey: String,
-    val sharePassphrase: String,
-    val sharePassphraseSignature: String,
-    val folderName: String,
-    val folderKey: String,
-    val folderPassphrase: String,
-    val folderPassphraseSignature: String,
-    val folderHashKey: String,
-) {
+sealed interface VolumeInfo {
+    val addressId: AddressId
+    val shareKey: String
+    val sharePassphrase: String
+    val sharePassphraseSignature: String
+    val folderName: String
+    val folderKey: String
+    val folderPassphrase: String
+    val folderPassphraseSignature: String
+    val folderHashKey: String
+    val addressKeyId: String
+
+    data class Regular(
+        override val addressId: AddressId,
+        override val shareKey: String,
+        override val sharePassphrase: String,
+        override val sharePassphraseSignature: String,
+        override val addressKeyId: String,
+        override val folderName: String,
+        override val folderKey: String,
+        override val folderPassphrase: String,
+        override val folderPassphraseSignature: String,
+        override val folderHashKey: String,
+    ) : VolumeInfo
+
+    data class Photo(
+        override val addressId: AddressId,
+        override val shareKey: String,
+        override val sharePassphrase: String,
+        override val sharePassphraseSignature: String,
+        override val addressKeyId: String,
+        override val folderName: String,
+        override val folderKey: String,
+        override val folderPassphrase: String,
+        override val folderPassphraseSignature: String,
+        override val folderHashKey: String,
+    ) : VolumeInfo
+
     companion object {
-        private const val DEFAULT_VOLUME_NAME = "MainVolume"
-        private const val DEFAULT_SHARE_NAME = "MainShare"
         const val DEFAULT_ROOT_FOLDER_NAME = "root"
+        const val DEFAULT_PHOTOS_ROOT_FOLDER_NAME = "PhotosRoot"
     }
 }

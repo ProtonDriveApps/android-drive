@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">ფაილის შემცველობის გადახედვა</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">ფაილისთვის მეტი პარამეტრის ჩვენება</string>
   <string name="preview_downloading_state">გადმოწერა…</string>
   <string name="preview_processing_state">დამუშავება…</string>
   <string name="preview_empty">გადასახედი არაფერია…</string>

@@ -77,7 +77,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Χρήση κινητού δικτύου</string>
   <string name="photos_error_local_storage">Ο χώρος αποθήκευσης της συσκευής είναι γεμάτος</string>
   <string name="photos_error_local_storage_description">Για να συνεχίσετε τη δημιουργία αντίγραφου ασφαλείας, πρέπει να ελευθερώσετε χώρο αποθήκευσης στη συσκευή σας.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Ρυθμίστε την μπαταρία σε \"Χωρίς περιορισμό\" για τη δραστηριότητα εφαρμογών στο παρασκήνιο</string>
   <string name="photos_error_background_restrictions_description">Για συνεπή αντίγραφα ασφαλείας στο παρασκήνιο, προσαρμόστε τις ρυθμίσεις μπαταρίας ή ανοίξτε συχνά την εφαρμογή.</string>
   <string name="photos_error_background_restrictions_action">Ρυθμίσεις</string>
   <string name="photos_empty_title">Δεν υπάρχουν αντίγραφα ασφαλείας ακόμη</string>

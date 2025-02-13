@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Dosya içeriği ön izlemesi</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Bir dosya için daha fazla seçenek görüntüle</string>
   <string name="preview_downloading_state">İndiriliyor…</string>
   <string name="preview_processing_state">İşleniyor…</string>
   <string name="preview_empty">Ön izlenebilecek bir şey yok…</string>

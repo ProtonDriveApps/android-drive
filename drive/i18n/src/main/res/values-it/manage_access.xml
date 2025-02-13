@@ -17,12 +17,12 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="title_manage_access">Gestisci l\'accesso</string>
+  <string name="title_manage_access">Gestisci accesso</string>
   <string name="manage_access_share_with">Condividi con</string>
   <string name="manage_access_share_with_anyone">Condividi con chiunque</string>
   <string name="manage_access_link_settings_action">Impostazioni del link</string>
   <string name="manage_access_link_description_public">Chiunque con questo link</string>
   <string name="manage_access_link_description_password_protected">Chiunque con il link e la password</string>
-  <string name="manage_access_link_default_permission">Può visualizzare</string>
+  <string name="manage_access_link_default_permission">Visualizzatore</string>
   <string name="manage_access_link_editor_permission">Può modificare</string>
 </resources>

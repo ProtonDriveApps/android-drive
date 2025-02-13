@@ -73,4 +73,27 @@
   <string name="shared_empty_title">Mitään ei ole vielä jaettu</string>
   <string name="shared_with_me_empty_description">Kanssasi jaetut tiedostot ja kansiot näkyvät tässä</string>
   <string name="shared_by_me_empty_description">Jaa tiedostot ja kansiot turvallisesti päästä päähän -salauksella</string>
+  <string name="shared_by_me_invitation_banner_title">Pending shared items</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">%1$d item shared with you</item>
+    <item quantity="other">%1$d items shared with you</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">Pending shared items (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">No pending shared items</string>
+  <string name="shared_user_invitations_description_empty">All new invitation will be here</string>
+  <string name="shared_user_invitations_accept_button">Accept</string>
+  <string name="shared_user_invitations_decline_button">Decline</string>
+  <string name="shared_user_invitations_accept_success">Shared item accepted</string>
+  <string name="shared_user_invitations_decline_success">Shared item declined</string>
 </resources>

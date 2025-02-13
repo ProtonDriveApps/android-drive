@@ -22,19 +22,21 @@ import android.system.OsConstants
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.base.domain.api.ProtonApiCode.EXCEEDED_QUOTA
 import me.proton.core.drive.base.data.extension.isErrno
+import me.proton.core.drive.base.domain.api.ProtonApiCode.PHOTO_MIGRATION
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.hasProtonErrorCode
 
-fun Throwable.toBackupError(): BackupError = when (this) {
+fun Throwable.toBackupError(retryable: Boolean = true): BackupError = when (this) {
     is SecurityException -> BackupError.Permissions()
     is ApiException -> when {
         hasProtonErrorCode(EXCEEDED_QUOTA) -> BackupError.DriveStorage()
-        else -> BackupError.Other()
+        hasProtonErrorCode(PHOTO_MIGRATION) -> BackupError.Migration()
+        else -> BackupError.Other(retryable)
     }
 
     else -> if (isErrno(OsConstants.ENOSPC)) {
         BackupError.LocalStorage()
     } else {
-        BackupError.Other()
+        BackupError.Other(retryable)
     }
 }

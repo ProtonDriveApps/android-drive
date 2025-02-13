@@ -595,7 +595,7 @@ fun MediaItemPreview() {
             nodeKey = "",
             nodePassphrase = "",
             nodePassphraseSignature = "",
-            signatureAddress = "",
+            signatureEmail = "",
             creationTime = TimestampS(0),
             trashedTime = null,
             shareUrlExpirationTime = null,

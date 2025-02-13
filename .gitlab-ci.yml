@@ -402,6 +402,13 @@ test:firebase:e2e:details:
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.details"
 
+test:firebase:e2e:document:
+  extends: .app-firebase-tests
+  rules:
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:document/'
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.document"
+
 test:firebase:e2e:move:
   extends: .app-firebase-tests
   resource_group: "shard-3-$CI_COMMIT_SHORT_SHA"
@@ -457,6 +464,26 @@ test:firebase:e2e:settings:
   variables:
     TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.settings"
     DEVICE_CONFIG: "quickTest-3"
+
+test:firebase:e2e:share-link:
+  extends: .app-firebase-tests
+  resource_group: "shard-4-$CI_COMMIT_SHORT_SHA"
+  rules:
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:share-link/'
+    - !reference [.app-firebase-tests, rules]
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.share.link"
+    DEVICE_CONFIG: "quickTest-2"
+
+test:firebase:e2e:share-list:
+  extends: .app-firebase-tests
+  resource_group: "shard-4-$CI_COMMIT_SHORT_SHA"
+  rules:
+    - if: '$CI_MERGE_REQUEST_LABELS =~ /scope:share-list/'
+    - !reference [.app-firebase-tests, rules]
+  variables:
+    TEST_TARGETS: "package me.proton.android.drive.ui.test.flow.share.list"
+    DEVICE_CONFIG: "quickTest-2"
 
 test:firebase:e2e:share-user:
   extends: .app-firebase-tests

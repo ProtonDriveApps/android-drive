@@ -4,7 +4,6 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.db.test.mainShareId
 import me.proton.core.drive.db.test.myFiles
-import me.proton.core.drive.db.test.standardShareByMe
 import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.test.DriveRule

@@ -24,5 +24,6 @@
     <item name="empty_trash_daynight" type="drawable" format="reference">@drawable/empty_trash_dark</item>
     <item name="empty_offline_daynight" type="drawable" format="reference">@drawable/empty_offline_dark</item>
     <item name="img_upsell_drive_daynight" type="drawable" format="reference">@drawable/img_upsell_drive_dark</item>
+    <item name="img_update_required_daynight" type="drawable" format="reference">@drawable/img_update_required_dark</item>
 </resources>
 

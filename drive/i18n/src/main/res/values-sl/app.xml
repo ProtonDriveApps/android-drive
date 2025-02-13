@@ -188,7 +188,7 @@
   <string name="description_files_stop_sharing_action_success">Povezava do vaše datoteke je bila izbrisana.</string>
   <string name="description_files_stop_sharing_action_error">Pri brisanju povezave do vaše datoteke je prišlo do napake.</string>
   <string name="description_files_stop_all_sharing">S tem boste izbrisali povezavo in onemogočili dostop za vse.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Med brisanjem skupne rabe vaše datoteke je prišlo do napake.</string>
   <string name="ignore_file_signature_action">Vseeno si oglejte</string>
   <string name="action_empty_files_add_files">Naloži</string>

@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">Mitä uutta</string>
-  <string name="whats_new_docs_title">Proton Docs mobiililaitteilla</string>
-  <string name="whats_new_docs_description">Napauta plus-painiketta luodaksesi tai yhteiskäyttääksesi päästä päähän -salattuja dokumentteja liikkeellä ollessasi.</string>
 </resources>

@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">Vad som är nytt</string>
-  <string name="whats_new_docs_title">Proton Docs på mobil</string>
-  <string name="whats_new_docs_description">Tryck på plus för att skapa eller samarbeta med end-to-end-krypterade dokument när du är på språng.</string>
 </resources>

@@ -170,6 +170,7 @@ fun FileOrFolderOptions(
                     .testTag(FileFolderOptionsDialogTestTag.folderOptions),
             )
         }
+        is DriveLink.Album -> error("TODO")// AlbumOptions
     }
 }
 

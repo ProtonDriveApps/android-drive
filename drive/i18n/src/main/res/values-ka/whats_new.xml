@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">სიახლეები</string>
-  <string name="whats_new_docs_title">Proton Docs მობილურზე</string>
-  <string name="whats_new_docs_description">დაატყაპუნეთ პლუსზე, რომ შექმნათ ან მონაწილეობა მიიღოთ რეალურ დროში დოკუმენტების გამჭოლად დაშიფვრაში.</string>
 </resources>

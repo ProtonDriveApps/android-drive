@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Eine Datei umbenennen</string>
   <string name="link_rename_title_folder">Einen Ordner umbenennen</string>
+  <string name="link_rename_title_album">Album umbenennen</string>
   <string name="link_rename_successful">\"%1$s\" erfolgreich umbenannt</string>
   <string name="link_rename_error_link_not_found">Umbenennen fehlgeschlagen, da die Datei oder der Ordner nicht mehr gefunden werden konnte.</string>
   <string name="link_rename_error_general">Umbenennen aus unbekanntem Grund fehlgeschlagen.</string>

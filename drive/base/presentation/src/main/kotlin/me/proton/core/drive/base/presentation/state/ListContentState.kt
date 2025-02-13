@@ -41,5 +41,8 @@ sealed class ListContentState {
         val message: String,
         @StringRes val actionResId: Int? = null,
         override val isRefreshing: Boolean = false,
+        @StringRes val titleId: Int? = null,
+        @StringRes val descriptionResId: Int? = null,
+        @DrawableRes val imageResId: Int? = null,
     ) : ListContentState()
 }

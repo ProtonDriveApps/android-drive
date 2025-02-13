@@ -24,11 +24,12 @@ import androidx.room.Index
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
-import me.proton.core.drive.base.data.db.Column.CREATION_TIME
+import me.proton.core.drive.base.data.db.Column.CREATE_TIME
 import me.proton.core.drive.base.data.db.Column.ID
-import me.proton.core.drive.base.data.db.Column.MAX_SPACE
+import me.proton.core.drive.base.data.db.Column.LINK_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
 import me.proton.core.drive.base.data.db.Column.STATE
+import me.proton.core.drive.base.data.db.Column.TYPE
 import me.proton.core.drive.base.data.db.Column.USED_SPACE
 import me.proton.core.drive.base.data.db.Column.USER_ID
 
@@ -46,6 +47,7 @@ import me.proton.core.drive.base.data.db.Column.USER_ID
         Index(value = [USER_ID]),
         Index(value = [SHARE_ID]),
         Index(value = [ID]),
+        Index(value = [TYPE]),
     ]
 )
 data class VolumeEntity(
@@ -55,12 +57,14 @@ data class VolumeEntity(
     val userId: UserId,
     @ColumnInfo(name = SHARE_ID)
     val shareId: String,
-    @ColumnInfo(name = CREATION_TIME)
-    val creationTime: Long,
-    @ColumnInfo(name = MAX_SPACE)
-    val maxSpace: Long?,
+    @ColumnInfo(name = LINK_ID)
+    val linkId: String,
+    @ColumnInfo(name = CREATE_TIME)
+    val createTime: Long,
     @ColumnInfo(name = USED_SPACE)
     val usedSpace: Long,
     @ColumnInfo(name = STATE)
-    val state: Long
+    val state: Long,
+    @ColumnInfo(name = TYPE)
+    val type: Long,
 )

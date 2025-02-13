@@ -19,12 +19,12 @@ package me.proton.core.drive.volume.data.api.entity
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import me.proton.core.drive.base.data.api.Dto.ID
 import me.proton.core.drive.base.data.api.Dto.LINK_ID
+import me.proton.core.drive.base.data.api.Dto.SHARE_ID
 
 @Serializable
 data class VolumeShare(
-    @SerialName(ID)
+    @SerialName(SHARE_ID)
     val id: String,
     @SerialName(LINK_ID)
     val linkId: String,

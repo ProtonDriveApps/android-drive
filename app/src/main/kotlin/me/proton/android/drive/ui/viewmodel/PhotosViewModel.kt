@@ -98,6 +98,7 @@ import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPagedPhotoListingsList
+import me.proton.core.drive.drivelink.photo.domain.usecase.GetPhotoCount
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
 import me.proton.core.drive.link.domain.entity.FileId
@@ -108,7 +109,6 @@ import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink.Companion.RECENT_BACKUP_PRIORITY
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
-import me.proton.core.drive.photo.domain.usecase.GetPhotoCount
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.user.domain.entity.UserMessage
 import me.proton.core.drive.user.domain.usecase.CancelUserMessage

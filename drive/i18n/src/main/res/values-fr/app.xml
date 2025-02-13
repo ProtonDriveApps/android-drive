@@ -18,14 +18,14 @@
   -->
 <resources>
   <!-- region Titles -->
-  <string name="title_decrypting">Déchiffrement en cours</string>
+  <string name="title_decrypting">Déchiffrement</string>
   <string name="title_files">Fichiers</string>
   <string name="title_shared">Partagé</string>
   <string name="title_my_files">Mes fichiers</string>
   <string name="title_offline_available">Disponible hors ligne</string>
-  <string name="title_empty_my_files">Ajoutez votre premier fichier.</string>
+  <string name="title_empty_my_files">Ajoutez votre premier fichier</string>
   <string name="title_empty_folder">Remplissons ce dossier</string>
-  <string name="title_empty_folder_read_only">Le dossier est vide.</string>
+  <string name="title_empty_folder_read_only">Dossier vide</string>
   <string name="title_empty_shared">Suivez ce qui se passe</string>
   <string name="title_empty_offline_available">Rien n\'est disponible hors ligne</string>
   <string name="title_empty_trash">Le dossier Corbeille est vide.</string>
@@ -34,19 +34,19 @@
   <string name="title_default_home_screen_tab">Choisir l\'onglet de l\'écran d\'accueil par défaut</string>
   <!-- endregion -->
   <string name="menu_item_header_title_app">Application</string>
-  <string name="description_signing_out">Déconnexion en cours</string>
+  <string name="description_signing_out">Déconnexion en cours…</string>
   <string name="settings_about_links_acknowledgments_title">Références</string>
   <string name="settings_about_links_privacy_policy_title">Politique de confidentialité</string>
   <string name="settings_about_links_terms_of_service_title">Conditions d\'utilisation</string>
   <string name="common_error_no_browser_available">Le lien ne peut pas être ouvert, il semble qu\'aucun navigateur ne soit installé.</string>
-  <string name="move_to">Déplacer</string>
+  <string name="move_to">Déplacer vers</string>
   <string name="move_file_confirm_action">Déplacer</string>
   <string name="move_file_error_cannot_move_folder_into_itself">Un dossier ne peut être déplacé que dans un autre dossier.</string>
   <string name="folder_option_import_file">Importer un fichier</string>
   <string name="folder_option_create_folder">Créer un dossier</string>
   <string name="folder_option_take_a_photo">Prendre une nouvelle photo</string>
   <string name="folder_option_create_document">Créer un document</string>
-  <string name="settings_theme_system_default">Identique au système</string>
+  <string name="settings_theme_system_default">Thème par défaut</string>
   <string name="settings_theme_dark">Sombre</string>
   <string name="settings_theme_light">Clair</string>
   <!--
@@ -132,8 +132,8 @@
     <item quantity="one">Il reste %1$s élément.</item>
     <item quantity="other">Il reste %1$s éléments.</item>
   </plurals>
-  <string name="notification_content_text_backup_complete">La sauvegarde est terminée.</string>
-  <string name="notification_content_text_backup_uncompleted">La sauvegarde est terminée, avec des erreurs.</string>
+  <string name="notification_content_text_backup_complete">Sauvegarde terminée</string>
+  <string name="notification_content_text_backup_uncompleted">Sauvegarde terminée, avec des erreurs</string>
   <string name="notification_content_text_backup_failed">La sauvegarde n\'a pas abouti.</string>
   <string name="notification_content_text_backup_failed_drive_storage">L\'espace de stockage de Proton est plein.</string>
   <string name="notification_content_text_backup_failed_local_storage">L\'espace de stockage local est plein.</string>

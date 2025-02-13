@@ -169,10 +169,10 @@
   <string name="description_file_download_failed">다운로드에 실패했습니다. 네트워크 연결을 확인하고 다시 시도해주세요.</string>
   <string name="description_file_decryption_failed">파일 복호화 실패</string>
   <string name="description_file_verify_signature_failed">파일의 서명을 확인할 수 없었습니다</string>
-  <string name="description_files_stop_sharing">이것으로 링크를 삭제하고 링크가 있는 모두의 접근 권한을 없애게 됩니다.</string>
+  <string name="description_files_stop_sharing">이 작업은 링크를 삭제하고 모든 사용자의 접근 권한을 없애게 됩니다.</string>
   <string name="description_files_stop_sharing_action_success">파일의 링크가 삭제되었습니다.</string>
   <string name="description_files_stop_sharing_action_error">파일의 링크를 삭제하는데 오류가 발생했습니다.</string>
-  <string name="description_files_stop_all_sharing">이것으로 링크를 삭제하고 모두의 접근 권한을 없애게 됩니다.</string>
+  <string name="description_files_stop_all_sharing">이 작업은 링크를 삭제하고 모든 사용자의 접근 권한을 없애게 됩니다.</string>
   <string name="description_files_stop_all_sharing_action_success">파일의 공유가 삭제되었습니다.</string>
   <string name="description_files_stop_all_sharing_action_error">파일의 공유를 삭제하던 중 오류가 발생했습니다.</string>
   <string name="ignore_file_signature_action">보기</string>

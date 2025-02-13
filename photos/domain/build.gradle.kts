@@ -33,6 +33,7 @@ driveModule(
     api(project(":drive:backup:domain"))
     api(project(":drive:base:domain"))
     api(project(":drive:drivelink-list:domain"))
+    api(project(":drive:drivelink-photo:domain"))
     api(project(":drive:drivelink-selection:domain"))
     api(project(":drive:share-crypto:domain"))
     api(project(":drive:stats:domain"))

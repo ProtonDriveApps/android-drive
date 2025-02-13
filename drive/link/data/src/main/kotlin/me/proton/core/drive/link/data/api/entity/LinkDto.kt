@@ -20,6 +20,7 @@ package me.proton.core.drive.link.data.api.entity
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.data.api.Dto.ACTIVE_URLS
+import me.proton.core.drive.base.data.api.Dto.ALBUM_PROPERTIES
 import me.proton.core.drive.base.data.api.Dto.ATTRIBUTES
 import me.proton.core.drive.base.data.api.Dto.CREATE_TIME
 import me.proton.core.drive.base.data.api.Dto.EXPIRATION_TIME
@@ -103,6 +104,8 @@ data class LinkDto(
     val fileProperties: LinkFilePropertiesDto?,
     @SerialName(FOLDER_PROPERTIES)
     val folderProperties: LinkFolderPropertiesDto?,
+    @SerialName(ALBUM_PROPERTIES)
+    val albumProperties: LinkAlbumPropertiesDto? = null,
     @SerialName(X_ATTR)
     val xAttr: String? = null,
     @SerialName(SHARING_DETAILS)

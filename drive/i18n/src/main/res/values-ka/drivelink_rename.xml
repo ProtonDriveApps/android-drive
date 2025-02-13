@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">ფაილის სახელის გადარქმევა</string>
   <string name="link_rename_title_folder">საქაღალდის სახელის გადარქმევა</string>
+  <string name="link_rename_title_album">ალბომის სახელის გადარქმევა</string>
   <string name="link_rename_successful">\"%1$s-ს სახელი წარმატებით გადაერქვა</string>
   <string name="link_rename_error_link_not_found">სახელის გადარქმევა შეუძლებელია, რადგან ფაილის ან საქაღალდის აღმოჩენა უკვე შეუძლებელია</string>
   <string name="link_rename_error_general">სახელის გადარქმევა შეუძლებელია უცნობი მიზეზის გამო</string>

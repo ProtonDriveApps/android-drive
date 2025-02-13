@@ -29,6 +29,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapLatest
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.link.data.db.entity.LinkAlbumPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
@@ -64,7 +65,7 @@ interface LinkDao {
 
     @Query(
         """
-            SELECT LinkEntity.*, LinkFilePropertiesEntity.*, LinkFolderPropertiesEntity.* 
+            SELECT LinkEntity.*, LinkFilePropertiesEntity.*, LinkFolderPropertiesEntity.*, LinkAlbumPropertiesEntity.*
             FROM $LINK_WITH_PROPERTIES_ENTITY 
                 JOIN ShareEntity 
                 ON LinkEntity.user_id = ShareEntity.user_id AND
@@ -118,6 +119,18 @@ interface LinkDao {
         insertOrIgnore(*linkFolderPropertiesEntities)
     }
 
+    @Update
+    suspend fun update(vararg linkAlbumPropertiesEntities: LinkAlbumPropertiesEntity): Int
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertOrIgnore(vararg linkAlbumPropertiesEntities: LinkAlbumPropertiesEntity)
+
+    @Transaction
+    suspend fun insertOrUpdate(vararg linkAlbumPropertiesEntities: LinkAlbumPropertiesEntity) {
+        update(*linkAlbumPropertiesEntities)
+        insertOrIgnore(*linkAlbumPropertiesEntities)
+    }
+
     fun getLinkWithPropertiesFlow(userId: UserId, shareId: String, linkId: String): Flow<LinkWithProperties?> =
         getFlow(userId, shareId, linkId)
             .distinctUntilChanged()
@@ -147,6 +160,11 @@ interface LinkDao {
                 linkFolderProperties.properties as? LinkFolderPropertiesEntity
             }.toTypedArray()
         )
+        insertOrUpdate(
+            *linksWithProperties.mapNotNull { linkAlbumProperties ->
+                linkAlbumProperties.properties as? LinkAlbumPropertiesEntity
+            }.toTypedArray()
+        )
     }
 
     suspend fun delete(vararg linksWithProperties: LinkWithProperties) =
@@ -162,6 +180,9 @@ interface LinkDao {
             LEFT JOIN LinkFolderPropertiesEntity ON
                 LinkEntity.share_id = LinkFolderPropertiesEntity.folder_share_id AND
                 LinkEntity.id = LinkFolderPropertiesEntity.folder_link_id
+            LEFT JOIN LinkAlbumPropertiesEntity ON
+                LinkEntity.share_id = LinkAlbumPropertiesEntity.album_share_id AND
+                LinkEntity.id = LinkAlbumPropertiesEntity.album_link_id
         """
         const val LINK_WITH_PROPERTIES_ENTITY = "LinkEntity $PROPERTIES_ENTITIES_JOIN_STATEMENT"
     }

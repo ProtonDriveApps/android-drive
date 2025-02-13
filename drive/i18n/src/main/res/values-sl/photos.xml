@@ -79,7 +79,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Uporabi mobilne podatke</string>
   <string name="photos_error_local_storage">Pomnilnik naprave je poln</string>
   <string name="photos_error_local_storage_description">Če želite nadaljevati varnostno kopiranje, morate sprostiti prostor za shranjevanje v napravi.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">Za dosledno varnostno kopiranje v ozadju prilagodite nastavitve baterije ali pogosto odprite aplikacijo.</string>
   <string name="photos_error_background_restrictions_action">Nastavitve</string>
   <string name="photos_empty_title">Ni še varnostnih kopij</string>

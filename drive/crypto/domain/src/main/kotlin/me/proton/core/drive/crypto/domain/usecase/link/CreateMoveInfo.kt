@@ -81,13 +81,13 @@ class CreateMoveInfo @Inject constructor(
             hash = hmacSha256(newParentFolderHashKey, decryptedLinkName).getOrThrow(),// calculate with new parent,
             previousHash = link.hash,
             parentLinkId = newParentFolder.id.id,
-            signatureEmail = if (link.signatureAddress.isEmpty()) {
+            signatureEmail = if (link.signatureEmail.isEmpty()) {
                 signatureAddress
             } else {
                 null
             },
             nodePassphrase = newLinkKey.nodePassphrase,
-            nodePassphraseSignature = if (link.signatureAddress.isEmpty() || link.nameSignatureEmail.isNullOrEmpty()) {
+            nodePassphraseSignature = if (link.signatureEmail.isEmpty() || link.nameSignatureEmail.isNullOrEmpty()) {
                 newLinkKey.nodePassphraseSignature
             } else {
                 null

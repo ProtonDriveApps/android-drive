@@ -35,16 +35,20 @@ class GetOldestActiveVolume @Inject constructor(
     private val getVolumes: GetVolumes,
     private val getVolume: GetVolume,
 ) {
-    operator fun invoke(userId: UserId): Flow<DataResult<Volume>> =
-        getVolumes(userId).transformSuccessToOldestActiveVolume(userId)
+    operator fun invoke(userId: UserId, type: Volume.Type): Flow<DataResult<Volume>> =
+        getVolumes(userId).transformSuccessToOldestActiveVolume(userId, type)
 
     private fun Flow<DataResult<List<Volume>>>.transformSuccessToOldestActiveVolume(
         userId: UserId,
+        type: Volume.Type,
     ): Flow<DataResult<Volume>> =
         transformSuccess { (_, volumes) ->
-            val activeVolumes = volumes.filter { volume -> volume.isActive }.takeIfNotEmpty()
+            val activeVolumes = volumes
+                .filter { volume -> volume.type == type }
+                .filter { volume -> volume.isActive }
+                .takeIfNotEmpty()
                 ?: return@transformSuccess emitNotFound()
-            val volume = activeVolumes.minBy { volume -> volume.creationTime.value }
+            val volume = activeVolumes.minBy { volume -> volume.createTime.value }
             emitAll(getVolume(userId, volume.id))
         }
 

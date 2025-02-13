@@ -73,6 +73,7 @@ class BackupUploadErrorHandler @Inject constructor(
                     BackupErrorType.LOCAL_STORAGE,
                     BackupErrorType.DRIVE_STORAGE,
                     BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED,
+                    BackupErrorType.MIGRATION,
                     -> {
                         BackupStopException("Backup must stop: ${backupError.type}", throwable)
                             .log(BACKUP, "Stopping backup")

@@ -46,8 +46,8 @@
         Examples:
             "Your Camera folder is backed up automatically."
     -->
-  <string name="settings_photos_backup_folders_description">Se realiza una copia de seguridad de la carpeta %1$s automáticamente. Selecciona carpetas adicionales para realizar una copia de seguridad y tus imágenes aparecerán en la pestaña Imágenes.</string>
-  <string name="settings_photos_backup_folders_not_found">No se ha encontrado la carpeta.</string>
+  <string name="settings_photos_backup_folders_description">Se realiza una copia de seguridad de la carpeta %1$s automáticamente. Selecciona carpetas adicionales para realizar una copia de seguridad y sus fotos aparecerán en la pestaña Fotos.</string>
+  <string name="settings_photos_backup_folders_not_found">No se ha encontrado la carpeta</string>
   <string name="settings_photos_backup_folders_confirm_stop_sync_title">¿Dejar de hacer copias de seguridad de la carpeta?</string>
   <!--
         Variable %1$s is the folder name
@@ -75,5 +75,5 @@
   <string name="settings_home_tab">Pestaña de inicio por defecto</string>
   <string name="settings_section_system">Sistema</string>
   <string name="settings_clear_local_cache_entry">Borrar caché local</string>
-  <string name="settings_show_log">Mostrar el registro</string>
+  <string name="settings_show_log">Mostrar registro</string>
 </resources>

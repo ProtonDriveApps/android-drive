@@ -18,6 +18,7 @@
 package me.proton.core.drive.drivelink.download.data.extension
 
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 
@@ -25,10 +26,14 @@ internal val DriveLink.uniqueWorkName: String
     get() = when (this) {
         is DriveLink.File -> "${volumeId}.$activeRevisionId"
         is DriveLink.Folder -> uniqueFolderWorkName(id)
+        is DriveLink.Album -> uniqueAlbumWorkName(id)
     }
 
 internal fun uniqueFolderWorkName(folderId: FolderId) =
     "${folderId.shareId.id}.${folderId.id}"
+
+internal fun uniqueAlbumWorkName(albumId: AlbumId) =
+    "${albumId.shareId.id}.${albumId.id}"
 
 internal val DriveLink.isNotDownloading: Boolean
     get() = downloadState != DownloadState.Downloading

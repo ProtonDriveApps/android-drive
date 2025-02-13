@@ -18,6 +18,7 @@
 
 package me.proton.core.drive.volume.domain.usecase
 
+import me.proton.core.drive.db.test.mainRootId
 import me.proton.core.drive.db.test.mainShareId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.volume.data.api.entity.VolumeDto
@@ -26,12 +27,12 @@ import me.proton.core.drive.volume.data.api.entity.VolumeShare
 @Suppress("TestFunctionName")
 internal fun NullableVolumeDto(
     id: String = volumeId.id,
-    volumeShare: VolumeShare = VolumeShare(mainShareId.id, "main-root-id"),
+    volumeShare: VolumeShare = VolumeShare(mainShareId.id, mainRootId.id),
 ) = VolumeDto(
     id = id,
-    creationTime = 0,
-    maxSpace = 0,
+    createTime = 0,
     usedSpace = 0,
     state = 1,
-    share = volumeShare
+    share = volumeShare,
+    type = VolumeDto.TYPE_REGULAR,
 )

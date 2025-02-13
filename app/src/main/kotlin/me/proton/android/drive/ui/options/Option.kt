@@ -313,8 +313,8 @@ sealed class Option(
 }
 
 sealed class ApplicableQuantity(open val quantity: Long) {
-    object Single : ApplicableQuantity(1L)
-    object All : ApplicableQuantity(Long.MAX_VALUE)
+    data object Single : ApplicableQuantity(1L)
+    data object All : ApplicableQuantity(Long.MAX_VALUE)
 }
 
 enum class ApplicableTo {
@@ -322,7 +322,8 @@ enum class ApplicableTo {
     FILE_PHOTO,
     FILE_DEVICE,
     FILE_PROTON_CLOUD,
-    FOLDER;
+    FOLDER,
+    ALBUM;
 
     companion object {
         val ANY_FILE: Set<ApplicableTo> get() = setOf(FILE_MAIN, FILE_PHOTO, FILE_DEVICE, FILE_PROTON_CLOUD)
@@ -359,6 +360,7 @@ fun DriveLink.isApplicableTo(applicableTo: Set<ApplicableTo>): Boolean = when (t
         else -> applicableTo.any { it in setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE) }
     }
     is DriveLink.Folder -> applicableTo.contains(ApplicableTo.FOLDER)
+    is DriveLink.Album -> applicableTo.contains(ApplicableTo.ALBUM)
 }
 
 fun Set<Option>.filter(driveLink: DriveLink) =

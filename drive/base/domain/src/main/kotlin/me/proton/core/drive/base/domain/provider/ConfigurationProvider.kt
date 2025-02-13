@@ -109,7 +109,7 @@ interface ConfigurationProvider {
     val minimumOrganizationFetchInterval: Duration get() = 1.days
     val observeWorkManagerInterval: Duration get() = 1.minutes
     val cacheInternalStorageLimit: Bytes get() = 512.MiB
-    val drivePublicShareEditMode: Boolean get() = false // implement entitlements PublicCollaboration
+    val albumsFeatureFlag: Boolean get() = false
 
     data class Thumbnail(
         val maxWidth: Int,

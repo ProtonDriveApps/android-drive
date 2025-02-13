@@ -50,12 +50,15 @@ object PhotosTabRobot :
     NavigationBarRobot {
     private val enableBackupButton
         get() = allNodes.withText(I18N.string.photos_permissions_action).onFirst()
+    private val enableErrorBackupButton
+        get() = node.withText(I18N.string.photos_error_backup_disabled_action)
 
     private val backupCompleted get() = node.withText(I18N.string.photos_backup_state_completed)
     private val backupPreparing get() = node.withText(I18N.string.photos_backup_state_preparing)
     private val backupFailed get() = node.withText(I18N.string.photos_error_backup_failed)
     private val noBackupsYet get() = node.withText(I18N.string.photos_empty_title)
     private val missingFolder get() = node.withText(I18N.string.photos_error_backup_missing_folder)
+    private val updateRequired get() = node.withText(I18N.string.photos_error_backup_migration_title)
     private val noConnectivityBanner get() = node.withText(I18N.string.photos_error_waiting_wifi_connectivity)
     private val getMoreStorageButton get() = node.withText(I18N.string.storage_quotas_get_storage_action)
     private val storageFullTitle get() =
@@ -80,6 +83,7 @@ object PhotosTabRobot :
         .withLayoutType(LayoutType.Grid)
 
     fun enableBackup() = enableBackupButton.clickTo(PhotosTabRobot)
+    fun enableBackupWhenDisabled() = enableErrorBackupButton.clickTo(PhotosTabRobot)
     fun clickOnMore() = missingFolder.clickTo(PhotosBackupRobot)
 
     fun clickGetMoreStorage() = SubscriptionRobot.apply { getMoreStorageButton.click() }
@@ -107,6 +111,14 @@ object PhotosTabRobot :
 
     fun assertMissingFolderDisplayed() {
         missingFolder.await { assertIsDisplayed() }
+    }
+
+    fun assertMigrationInProgressDisplayed() {
+        assertUpdateRequired()
+    }
+
+    fun assertUpdateRequired() {
+        updateRequired.await { assertIsDisplayed() }
     }
 
     fun assertPhotoCountEquals(count: Int) {

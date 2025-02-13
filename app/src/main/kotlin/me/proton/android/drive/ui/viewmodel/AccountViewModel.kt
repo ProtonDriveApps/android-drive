@@ -113,6 +113,10 @@ class AccountViewModel @Inject constructor(
         userSettingsOrchestrator.startUpdateRecoveryEmailWorkflow(userId)
     }
 
+    fun startSecurityKeys(userId: UserId) {
+        userSettingsOrchestrator.startSecurityKeysWorkflow(userId)
+    }
+
     sealed class State {
         object PrimaryNeeded : State()
         object AccountReady : State()

@@ -73,4 +73,27 @@
   <string name="shared_empty_title">Τίποτα δεν έχει κοινοποιηθεί ακόμα</string>
   <string name="shared_with_me_empty_description">Τα αρχεία και οι φάκελοι που έχουν μοιραστεί μαζί σας θα εμφανίζονται εδώ</string>
   <string name="shared_by_me_empty_description">Μοιραστείτε με ασφάλεια τα αρχεία και τους φακέλους σας με διατερματική κρυπτογράφηση</string>
+  <string name="shared_by_me_invitation_banner_title">Κοινοποιημένα στοιχεία που εκκρεμούν</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">%1$d στοιχείο κοινοποιημένο σε εσάς</item>
+    <item quantity="other">%1$d στοιχεία κοινοποιημένα σε εσάς</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">Κοινόχρηστα στοιχεία σε εκκρεμότητα (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Δεν εκκρεμούν κοινόχρηστα στοιχεία</string>
+  <string name="shared_user_invitations_description_empty">Όλες οι νέες προσκλήσεις θα βρίσκονται εδώ</string>
+  <string name="shared_user_invitations_accept_button">Αποδοχή</string>
+  <string name="shared_user_invitations_decline_button">Απόρριψη</string>
+  <string name="shared_user_invitations_accept_success">Έγινε αποδοχή κοινόχρηστου στοιχείου</string>
+  <string name="shared_user_invitations_decline_success">Έγινε απόρριψη κοινόχρηστου στοιχείου</string>
 </resources>

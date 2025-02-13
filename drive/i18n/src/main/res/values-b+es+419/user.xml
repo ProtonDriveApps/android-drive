@@ -19,7 +19,7 @@
 <resources>
   <string name="storage_drive_usage">Uso de Drive</string>
   <string name="storage_total_usage">Uso total</string>
-  <string name="storage_details_format"><![CDATA[%1$s de %2$s usado]]></string>
+  <string name="storage_details_format"><![CDATA[%1$s de %2$s usados]]></string>
   <!--
         Variable %1$s is percentage of available storage
         Examples:
@@ -34,5 +34,5 @@
   <string name="storage_quotas_full_title">Libere espacio en el almacenamiento de %1$s o mejore el plan para realizar copias de seguridad sin interrupciones.</string>
   <string name="storage_quotas_get_storage_action">Obtener más almacenamiento</string>
   <string name="user_select_other_account_content_description">Seleccione otra cuenta</string>
-  <string name="description_remove_account">Se cerrará la sesión y todos los datos asociados a esta cuenta se borrarán de este dispositivo.</string>
+  <string name="description_remove_account">Se cerrará la sesión y todos los datos asociados a esta cuenta se eliminarán de este dispositivo.</string>
 </resources>

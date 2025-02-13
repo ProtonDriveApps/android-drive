@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Byt namn på en fil</string>
   <string name="link_rename_title_folder">Byt namn på en mapp</string>
+  <string name="link_rename_title_album">Byt namn på ett album</string>
   <string name="link_rename_successful">“%1$s“ namnändrades utan problem</string>
   <string name="link_rename_error_link_not_found">Misslyckades att byta namn eftersom fil eller mapp inte kan hittas längre</string>
   <string name="link_rename_error_general">Misslyckades att byta namn av okänd anledning</string>

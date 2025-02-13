@@ -28,4 +28,5 @@ fun DriveLink.onClick(
 ) = when (this) {
     is DriveLink.Folder -> navigateToFolder(id, if (isNameEncrypted) null else name)
     is DriveLink.File -> navigateToPreview(id)
+    is DriveLink.Album -> error("TODO") // navigateToAlbum?
 }

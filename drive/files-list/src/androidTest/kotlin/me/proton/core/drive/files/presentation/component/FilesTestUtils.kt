@@ -59,7 +59,7 @@ val BASE_FILE_LINK = Link.File(
     nodeKey = "",
     nodePassphrase = "",
     nodePassphraseSignature = "",
-    signatureAddress = "",
+    signatureEmail = "",
     creationTime = TimestampS(0),
     trashedTime = null,
     shareUrlExpirationTime = null,
@@ -91,7 +91,7 @@ val BASE_FOLDER_LINK = Link.Folder(
     nodeKey = "",
     nodePassphrase = "",
     nodePassphraseSignature = "",
-    signatureAddress = "",
+    signatureEmail = "",
     creationTime = TimestampS(0),
     trashedTime = null,
     shareUrlExpirationTime = null,
@@ -113,6 +113,18 @@ fun Link.toDriveLink() = when (this) {
         shareUser = null,
     )
     is Link.Folder -> DriveLink.Folder(
+        link = this,
+        volumeId = VolumeId("VOLUME_ID"),
+        isMarkedAsOffline = false,
+        isAnyAncestorMarkedAsOffline = false,
+        downloadState = null,
+        trashState = null,
+        cryptoName = CryptoProperty.Decrypted(name, VerificationStatus.Success),
+        shareInvitationCount = null,
+        shareMemberCount = null,
+        shareUser = null,
+    )
+    is Link.Album -> DriveLink.Album(
         link = this,
         volumeId = VolumeId("VOLUME_ID"),
         isMarkedAsOffline = false,

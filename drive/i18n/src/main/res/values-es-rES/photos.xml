@@ -83,12 +83,12 @@
   <string name="photos_empty_title">Todavía no hay copias de seguridad.</string>
   <string name="photos_empty_description">En cuanto tengas fotos o vídeos en tu dispositivo, aparecerán aquí.</string>
   <string name="photos_backup_title">Copia de seguridad de fotos</string>
-  <string name="photos_backup_option_mobile_data">Usa los datos móviles para hacer copias de seguridad de las fotos.</string>
+  <string name="photos_backup_option_mobile_data">Usar datos móviles para hacer copias de seguridad de las fotos</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Desactivar la optimización de la batería</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Permite realizar copias de seguridad ininterrumpidas cuando la aplicación se ejecuta en segundo plano.</string>
   <string name="photos_backup_in_app_notification_turned_on">La copia de seguridad de las fotos está activada.</string>
   <string name="photos_backup_in_app_notification_turned_off">La copia de seguridad de las fotos está desactivada.</string>
-  <string name="photos_backup_state_completed">Se ha finalizado la copia de seguridad.</string>
+  <string name="photos_backup_state_completed">Copia de seguridad completada</string>
   <string name="photos_backup_state_uncompleted">La copia de seguridad se ha terminado con problemas.</string>
   <string name="photos_backup_state_uncompleted_action">Solucionar</string>
   <string name="photos_backup_state_preparing">Preparando a hacer una copia de seguridad</string>

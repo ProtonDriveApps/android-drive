@@ -36,8 +36,8 @@
   <string name="common_settings">Ustawienia</string>
   <string name="common_trash">Kosz</string>
   <string name="common_uploading">Przesyłanie</string>
-  <string name="common_on">Włączone</string>
-  <string name="common_off">Wyłączone</string>
+  <string name="common_on">Wł.</string>
+  <string name="common_off">Wył.</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -49,7 +49,7 @@
   <string name="common_create_action">Utwórz</string>
   <string name="common_cancel_action">Anuluj</string>
   <string name="common_cancel_all_action">Anuluj wszystko</string>
-  <string name="common_got_it_action">Ok</string>
+  <string name="common_got_it_action">OK</string>
   <string name="common_next_action">Dalej</string>
   <string name="common_save_action">Zapisz</string>
   <string name="common_discard_action">Odrzuć</string>
@@ -97,8 +97,8 @@
         Example:
             "Name cannot include invisible characters, "/" or "\"
     -->
-  <string name="common_error_name_with_forbidden_characters">Nazwa nie może zawierać niewidocznych znaków, \"%1$s\" lub \"%2$s\"</string>
-  <string name="common_error_name_periods">Nazwą nie może być \".\" lub \"..\"</string>
+  <string name="common_error_name_with_forbidden_characters">Nazwa nie może zawierać niewidocznych znaków, „%1$s” lub „%2$s”</string>
+  <string name="common_error_name_periods">Nazwą nie może być „.” lub „..”</string>
   <string name="common_error_no_internet">Brak połączenia z Internetem</string>
   <string name="common_error_http_5xx">Wystąpił błąd serwera</string>
   <string name="common_error_internal">Wystąpił błąd wewnętrzny</string>

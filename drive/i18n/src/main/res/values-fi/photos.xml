@@ -77,7 +77,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Käytä mobiiliverkkoa</string>
   <string name="photos_error_local_storage">Laitteen tallennustila on täynnä</string>
   <string name="photos_error_local_storage_description">Varmuuskopioinnin jatkamiseksi sinun on vapautettava tallennustilaa laitteeltasi.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">Taustavarmuuskopioinnin jatkuvan toiminnan varmistamiseksi, säädä akkuvirran kulutusasetuksia tai avaa sovellus säännöllisesti.</string>
   <string name="photos_error_background_restrictions_action">Asetukset</string>
   <string name="photos_empty_title">Varmuuskopioita ei vielä ole.</string>

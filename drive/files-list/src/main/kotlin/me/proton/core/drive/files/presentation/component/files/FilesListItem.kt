@@ -30,10 +30,8 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -76,6 +74,7 @@ import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
 import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.base.presentation.component.CircleSelection
 import me.proton.core.drive.base.presentation.component.EncryptedItem
+import me.proton.core.drive.base.presentation.component.LetterBadge
 import me.proton.core.drive.base.presentation.component.LinearProgressIndicator
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
@@ -255,20 +254,7 @@ fun ListItemIcon(
             contentDescription = null,
         )
         if (member != null) {
-            Box(
-                modifier = Modifier
-                    .offset(x = ExtraSmallSpacing)
-                    .align(Alignment.BottomEnd)
-                    .size(MediumSpacing)
-                    .clip(CircleShape)
-                    .background(ProtonTheme.colors.shade40),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = member.inviter.firstCodePointAsStringOrNull?.uppercase() ?: "?",
-                    style = ProtonTheme.typography.captionNorm,
-                )
-            }
+            LetterBadge(member.inviter)
         }
     }
 }
@@ -410,6 +396,7 @@ fun RowScope.DetailsDescription(
         text = when (link) {
             is DriveLink.Folder -> link.detailsDescription()
             is DriveLink.File -> link.detailsDescription(progress)
+            is DriveLink.Album -> link.detailsDescription()
         },
         style = ProtonTheme.typography.captionWeak,
         maxLines = 1,
@@ -419,6 +406,11 @@ fun RowScope.DetailsDescription(
 
 @Composable
 fun DriveLink.Folder.detailsDescription(): String =
+    shareUser?.takeUnless { it.permissions.isAdmin }?.description
+        ?: stringResource(I18N.string.title_modified_with_date, lastModifiedRelative(LocalContext.current))
+
+@Composable
+fun DriveLink.Album.detailsDescription(): String =
     shareUser?.takeUnless { it.permissions.isAdmin }?.description
         ?: stringResource(I18N.string.title_modified_with_date, lastModifiedRelative(LocalContext.current))
 

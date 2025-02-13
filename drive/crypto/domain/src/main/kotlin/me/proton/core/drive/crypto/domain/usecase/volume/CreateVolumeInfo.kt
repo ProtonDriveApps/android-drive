@@ -28,8 +28,11 @@ import me.proton.core.drive.key.domain.extension.nodePassphrase
 import me.proton.core.drive.key.domain.extension.nodePassphraseSignature
 import me.proton.core.drive.key.domain.usecase.GenerateNodeKey
 import me.proton.core.drive.key.domain.usecase.GenerateShareKey
+import me.proton.core.drive.key.domain.usecase.GetAddressKeyId
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeInfo
+import me.proton.core.drive.volume.domain.entity.VolumeInfo.Companion.DEFAULT_PHOTOS_ROOT_FOLDER_NAME
 import me.proton.core.drive.volume.domain.entity.VolumeInfo.Companion.DEFAULT_ROOT_FOLDER_NAME
 import javax.inject.Inject
 
@@ -40,25 +43,50 @@ class CreateVolumeInfo @Inject constructor(
     private val generateHashKey: GenerateHashKey,
     private val encryptText: EncryptText,
     private val getAddressKeys: GetAddressKeys,
+    private val getAddressKeyId: GetAddressKeyId,
 ) {
-    suspend operator fun invoke(userId: UserId, signatureAddress: String): Result<VolumeInfo> =
+    suspend operator fun invoke(
+        userId: UserId,
+        signatureAddress: String,
+        type: Volume.Type,
+    ): Result<VolumeInfo> =
         generateShareAndFolderKey(userId, signatureAddress).mapCatching { (shareKey, folderKey) ->
             val addressId = getAddressId(userId)
-            VolumeInfo(
-                addressId = addressId,
-                shareKey = shareKey.nodeKey,
-                sharePassphrase = shareKey.nodePassphrase,
-                sharePassphraseSignature = shareKey.nodePassphraseSignature,
-                folderName = encryptText(
-                    encryptKey = shareKey.keyHolder,
-                    text = DEFAULT_ROOT_FOLDER_NAME,
-                    signKey = getAddressKeys(userId, addressId).keyHolder
-                ).getOrThrow(),
-                folderKey = folderKey.nodeKey,
-                folderPassphrase = folderKey.nodePassphrase,
-                folderPassphraseSignature = folderKey.nodePassphraseSignature,
-                folderHashKey = generateHashKey(folderKey.keyHolder).getOrThrow()
-            )
+            val addressKeyId = getAddressKeyId(userId, addressId).getOrThrow().id
+            when (type) {
+                Volume.Type.PHOTO -> VolumeInfo.Photo(
+                    addressId = addressId,
+                    shareKey = shareKey.nodeKey,
+                    sharePassphrase = shareKey.nodePassphrase,
+                    sharePassphraseSignature = shareKey.nodePassphraseSignature,
+                    folderName = encryptText(
+                        encryptKey = shareKey.keyHolder,
+                        text = DEFAULT_PHOTOS_ROOT_FOLDER_NAME,
+                        signKey = getAddressKeys(userId, addressId).keyHolder
+                    ).getOrThrow(),
+                    folderKey = folderKey.nodeKey,
+                    folderPassphrase = folderKey.nodePassphrase,
+                    folderPassphraseSignature = folderKey.nodePassphraseSignature,
+                    folderHashKey = generateHashKey(folderKey.keyHolder).getOrThrow(),
+                    addressKeyId = addressKeyId,
+                )
+                else -> VolumeInfo.Regular(
+                    addressId = addressId,
+                    shareKey = shareKey.nodeKey,
+                    sharePassphrase = shareKey.nodePassphrase,
+                    sharePassphraseSignature = shareKey.nodePassphraseSignature,
+                    folderName = encryptText(
+                        encryptKey = shareKey.keyHolder,
+                        text = DEFAULT_ROOT_FOLDER_NAME,
+                        signKey = getAddressKeys(userId, addressId).keyHolder
+                    ).getOrThrow(),
+                    folderKey = folderKey.nodeKey,
+                    folderPassphrase = folderKey.nodePassphrase,
+                    folderPassphraseSignature = folderKey.nodePassphraseSignature,
+                    folderHashKey = generateHashKey(folderKey.keyHolder).getOrThrow(),
+                    addressKeyId = addressKeyId,
+                )
+            }
         }
 
     private suspend fun generateShareAndFolderKey(userId: UserId, signatureAddress: String): Result<Pair<Key.Node, Key.Node>> =

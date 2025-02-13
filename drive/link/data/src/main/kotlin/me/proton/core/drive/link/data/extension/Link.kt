@@ -19,6 +19,7 @@
 package me.proton.core.drive.link.data.extension
 
 import me.proton.core.drive.link.data.api.entity.LinkDto
+import me.proton.core.drive.link.data.db.entity.LinkAlbumPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
@@ -45,7 +46,7 @@ fun Link.toLinkWithProperties() = LinkWithProperties(
         nodeKey = nodeKey,
         nodePassphrase = nodePassphrase,
         nodePassphraseSignature = nodePassphraseSignature,
-        signatureAddress = signatureAddress,
+        signatureAddress = signatureEmail,
         creationTime = creationTime.value,
         lastModified = lastModified.value,
         trashedTime = trashedTime?.value,
@@ -77,6 +78,16 @@ fun Link.toLinkWithProperties() = LinkWithProperties(
             shareId = id.shareId.id,
             linkId = id.id,
             nodeHashKey = nodeHashKey,
+        )
+        is Link.Album -> LinkAlbumPropertiesEntity(
+            userId = id.userId,
+            shareId = id.shareId.id,
+            linkId = id.id,
+            nodeHashKey = nodeHashKey,
+            lastActivityTime = lastActivityTime.value,
+            locked = isLocked,
+            photoCount = photoCount,
+            coverLinkId = coverLinkId?.id,
         )
     }
 )

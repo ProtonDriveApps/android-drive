@@ -36,18 +36,18 @@ class GetOrCreateVolume @Inject constructor(
     private val volumeRepository: VolumeRepository,
 ) {
     @ExperimentalCoroutinesApi
-    operator fun invoke(userId: UserId): Flow<DataResult<Volume>> =
+    operator fun invoke(userId: UserId, type: Volume.Type): Flow<DataResult<Volume>> =
         getVolumes(userId).transformSuccess { (_, volumes) ->
             val activeVolumes = volumes.filter { volume ->
-                volume.isActive.also { isActive ->
+                volume.type == type && volume.isActive.also { isActive ->
                     if (!isActive) volumeRepository.removeVolume(userId, volume.id)
                 }
             }
             if (activeVolumes.isEmpty()) {
-                emitAll(createVolume(userId))
+                emitAll(createVolume(userId, type))
             } else {
                 emit(activeVolumes
-                    .minByOrNull { volume -> volume.creationTime.value }
+                    .minByOrNull { volume -> volume.createTime.value }
                     .asSuccessOrNullAsError()
                 )
             }

@@ -23,7 +23,7 @@
   <string name="title_shared">Udostępnione</string>
   <string name="title_my_files">Moje pliki</string>
   <string name="title_offline_available">Dostęp offline</string>
-  <string name="title_empty_my_files">Naprzód, dodaj pierwszy plik</string>
+  <string name="title_empty_my_files">Śmiało, dodaj pierwszy plik</string>
   <string name="title_empty_folder">Wypełnij ten folder</string>
   <string name="title_empty_folder_read_only">Folder jest pusty</string>
   <string name="title_empty_shared">Sprawdzaj, co się dzieje</string>
@@ -62,7 +62,7 @@
             "Only files can be uploaded to Proton Drive"
     -->
   <string name="in_app_notification_upload_files_only">Do %1$s możesz przesłać tylko pliki</string>
-  <string name="in_app_notification_importing_file_already_exists">Plik o tej nazwie już istnieje. Wyczyść pamięć podręczną aplikacji</string>
+  <string name="in_app_notification_importing_file_already_exists">Plik o tej nazwie już istnieje. Spróbuj wyczyścić pamięć podręczną aplikacji</string>
   <string name="in_app_notification_clear_local_cache_success">Pamięć podręczna została wyczyszczona</string>
   <string name="in_app_notification_destination_screen_not_found">Ekran docelowy nie został znaleziony</string>
   <string name="in_app_notification_create_document_success">Dokument został utworzony</string>
@@ -142,8 +142,8 @@
     <item quantity="many">Pozostało %1$s elementów</item>
     <item quantity="other">Pozostało %1$s elementów</item>
   </plurals>
-  <string name="notification_content_text_backup_complete">Kopia zapasowa została zakończona</string>
-  <string name="notification_content_text_backup_uncompleted">Kopia zapasowa została częściowo zakończona</string>
+  <string name="notification_content_text_backup_complete">Tworzenie kopii zapasowej zakończone</string>
+  <string name="notification_content_text_backup_uncompleted">Tworzenie kopii zapasowej częściowo zakończone</string>
   <string name="notification_content_text_backup_failed">Tworzenie kopii zapasowej nie powiodło się</string>
   <string name="notification_content_text_backup_failed_drive_storage">Przestrzeń dyskowa Proton jest pełna</string>
   <string name="notification_content_text_backup_failed_local_storage">Magazyn lokalny jest pełny</string>
@@ -153,15 +153,15 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Kopia zapasowa nie jest dozwolona</string>
   <string name="notification_content_text_backup_paused_disabled">Kopia zapasowa została wyłączona</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Kopia zapasowa nie może zostać uruchomiona w tle</string>
-  <string name="notification_content_text_backup_preparing">Przygotowywanie kopii zapasowej</string>
+  <string name="notification_content_text_backup_preparing">Przygotowywanie do tworzenia kopii zapasowej</string>
   <string name="notification_content_title_download_complete">Pobieranie zostało zakończone</string>
   <string name="notification_content_title_forced_sign_out">Zaloguj się</string>
   <string name="notification_content_text_forced_sign_out">Przepraszamy za kłopot! Mieliśmy problem z synchronizacją. Zaloguj się ponownie, a wszystko będzie działało sprawnie.</string>
   <string name="notification_content_title_no_space_left_on_device">Brak miejsca na urządzeniu</string>
-  <string name="notification_content_text_no_space_left_on_device">Aplikacja może nie działać prawidłowo.</string>
+  <string name="notification_content_text_no_space_left_on_device">Aplikacja może nie działać poprawnie.</string>
   <string name="notification_channel_group_name_application">Aplikacja</string>
   <string name="notification_channel_background_title">Aktywność w tle</string>
-  <string name="notification_channel_background_description">Kanał dla aktywności w tle jak kopia zapasowa</string>
+  <string name="notification_channel_background_description">Kanał dla aktywności w tle, takich jak kopia zapasowa</string>
   <string name="notification_channel_transfer_title">Lista transferów</string>
   <string name="notification_channel_transfer_description">Kanał dla przestrzeni dyskowej i powiadomień transferów</string>
   <string name="notification_channel_warning_title">Ostrzeżenie</string>
@@ -175,7 +175,7 @@
   <string name="content_description_select_all">Zaznacz wszystkie elementy z listy</string>
   <string name="content_description_selected_options">Pokaż więcej opcji dla zaznaczonych plików i folderów</string>
   <string name="content_description_files_upload_upload_file">Prześlij plik</string>
-  <string name="description_empty_my_files">Kliknij przycisk, aby dodać pliki.</string>
+  <string name="description_empty_my_files">Dotknij przycisku, aby dodać pliki.</string>
   <string name="description_empty_folder_read_only">Niczego tutaj nie ma</string>
   <string name="description_empty_shared">Linki do plików będą dostępne tutaj, aby łatwo zarządzać tym, co udostępniasz.</string>
   <string name="description_empty_trash">To miejsce, w którym usunięte elementy pozostają do czasu ich trwałego usunięcia lub przywrócenia.</string>
@@ -188,7 +188,7 @@
   <string name="description_files_stop_sharing_action_success">Link do pliku został usunięty.</string>
   <string name="description_files_stop_sharing_action_error">Wystąpił błąd podczas usuwania linku do pliku.</string>
   <string name="description_files_stop_all_sharing">Spowoduje to usunięcie linku i dostępu do elementu.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Wystąpił błąd podczas usuwania linku do pliku.</string>
   <string name="ignore_file_signature_action">Pokaż pomimo tego</string>
   <string name="action_empty_files_add_files">Prześlij</string>
@@ -210,7 +210,7 @@
             "Unlock 5 GB of secure storage"
     -->
   <string name="get_more_free_storage_title">Odblokuj %1$s darmowej przestrzeni dyskowej</string>
-  <string name="get_more_free_storage_description">Wykonaj te kroki w pierwszych 30 dniach, aby otrzymać darmową przestrzeń dyskową.</string>
+  <string name="get_more_free_storage_description">Wykonaj te czynności w pierwszych 30 dniach, aby otrzymać darmową przestrzeń dyskową.</string>
   <string name="get_more_free_storage_action_upload_title">Prześlij pliki lub włącz kopię zapasową zdjęć</string>
   <string name="get_more_free_storage_action_upload_subtitle">Wszystkie pliki zostaną zaszyfrowane.</string>
   <string name="get_more_free_storage_action_link_title">Utwórz link</string>

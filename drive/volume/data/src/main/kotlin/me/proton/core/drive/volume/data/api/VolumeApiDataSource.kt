@@ -19,6 +19,7 @@ package me.proton.core.drive.volume.data.api
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.volume.data.api.entity.VolumeDto
+import me.proton.core.drive.volume.data.api.request.CreatePhotoVolumeRequest
 import me.proton.core.drive.volume.data.api.request.CreateVolumeRequest
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.network.data.ApiProvider
@@ -72,4 +73,12 @@ class VolumeApiDataSource(private val apiProvider: ApiProvider) {
     ) = apiProvider.get<VolumeApi>(userId).invoke {
         emptyTrash(volumeId.id)
     }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun createPhotoVolume(
+        userId: UserId,
+        request: CreatePhotoVolumeRequest,
+    ) = apiProvider.get<VolumeApi>(userId).invoke {
+        createPhotoVolume(request)
+    }.valueOrThrow.volumeDto
 }

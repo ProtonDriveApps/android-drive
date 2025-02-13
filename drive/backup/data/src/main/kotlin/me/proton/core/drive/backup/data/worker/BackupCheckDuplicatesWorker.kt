@@ -38,6 +38,7 @@ import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.CheckDuplicates
+import me.proton.core.drive.backup.domain.usecase.HandleBackupError
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
@@ -51,7 +52,7 @@ class BackupCheckDuplicatesWorker @AssistedInject constructor(
     @Assisted context: Context,
     @Assisted workerParams: WorkerParameters,
     private val checkDuplicates: CheckDuplicates,
-    private val addBackupError: AddBackupError,
+    private val handleBackupError: HandleBackupError,
 ) : CoroutineWorker(context, workerParams) {
 
 
@@ -66,7 +67,7 @@ class BackupCheckDuplicatesWorker @AssistedInject constructor(
             .onSuccess { folderId ->
                 checkDuplicates(BackupFolder(bucketId, folderId)).onFailure { error ->
                     error.log(LogTag.BACKUP, "Cannot check duplicates")
-                    addBackupError(folderId, error.toBackupError())
+                    handleBackupError(folderId, error.toBackupError())
                     return Result.failure()
                 }
             }

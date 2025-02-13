@@ -18,6 +18,7 @@
 package me.proton.core.drive.volume.data.api
 
 import me.proton.core.drive.base.data.api.response.CodeResponse
+import me.proton.core.drive.volume.data.api.request.CreatePhotoVolumeRequest
 import me.proton.core.drive.volume.data.api.request.CreateVolumeRequest
 import me.proton.core.drive.volume.data.api.response.GetShareTrashesResponse
 import me.proton.core.drive.volume.data.api.response.GetShareUrlsResponse
@@ -59,4 +60,7 @@ interface VolumeApi : BaseRetrofitApi {
     suspend fun emptyTrash(
         @Path("volumeId") volumeId: String
     ): CodeResponse
+
+    @POST("drive/photos/volumes")
+    suspend fun createPhotoVolume(@Body request: CreatePhotoVolumeRequest): GetVolumeResponse
 }

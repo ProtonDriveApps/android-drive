@@ -62,7 +62,7 @@ class DecryptLinkName @Inject constructor(
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ): Result<DecryptedText> = coRunCatching(coroutineContext) {
         val link = getLink(linkId).toResult().getOrThrow()
-        val email = link.nameSignatureEmail ?: link.signatureAddress
+        val email = link.nameSignatureEmail ?: link.signatureEmail
         val verificationKeys = getVerificationKeys(
             link = link,
             email = email,

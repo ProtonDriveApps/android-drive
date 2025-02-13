@@ -178,7 +178,7 @@
   <string name="description_files_stop_sharing_action_success">Der Link zu deiner Datei wurde gelöscht.</string>
   <string name="description_files_stop_sharing_action_error">Beim Löschen des Links zu deiner Datei ist ein Fehler aufgetreten.</string>
   <string name="description_files_stop_all_sharing">Diese Aktion löscht den Link und der Zugang für alle Benutzer wird widerrufen.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Teilen deiner Datei wurde gelöscht.</string>
   <string name="description_files_stop_all_sharing_action_error">Beim Löschen des Links zu deiner Datei ist ein Fehler aufgetreten.</string>
   <string name="ignore_file_signature_action">Trotzdem anzeigen</string>
   <string name="action_empty_files_add_files">Hochladen</string>

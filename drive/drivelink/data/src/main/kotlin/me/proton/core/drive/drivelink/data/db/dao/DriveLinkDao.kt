@@ -104,9 +104,10 @@ interface DriveLinkDao : LinkDao {
         const val DRIVE_LINK_SELECT = """
             ShareEntity.${Column.VOLUME_ID} AS ${BASE_PREFIX}_${Column.VOLUME_ID},
             ShareEntity.${Column.USER_ID} AS ${BASE_PREFIX}_${Column.USER_ID},
-            LinkEntity.*, 
-            LinkFilePropertiesEntity.*, 
-            LinkFolderPropertiesEntity.*, 
+            LinkEntity.*,
+            LinkFilePropertiesEntity.*,
+            LinkFolderPropertiesEntity.*,
+            LinkAlbumPropertiesEntity.*,
             LinkOfflineEntity.${Column.USER_ID} AS ${OFFLINE_PREFIX}_${Column.USER_ID},
             LinkOfflineEntity.${Column.SHARE_ID} AS ${OFFLINE_PREFIX}_${Column.SHARE_ID},
             LinkOfflineEntity.${Column.LINK_ID} AS ${OFFLINE_PREFIX}_${Column.LINK_ID},

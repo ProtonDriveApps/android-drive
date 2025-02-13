@@ -36,7 +36,7 @@
   <string name="common_settings">Ajustes</string>
   <string name="common_trash">Papelera</string>
   <string name="common_uploading">Cargando</string>
-  <string name="common_on">On</string>
+  <string name="common_on">Activado</string>
   <string name="common_off">Off</string>
   <!-- endregion -->
   <!-- region Common actions -->
@@ -44,7 +44,7 @@
   <string name="common_close_action">Cerrar</string>
   <string name="common_retry_action">Reintentar</string>
   <string name="common_undo_action">Deshacer</string>
-  <string name="common_rename_action">Renombrar</string>
+  <string name="common_rename_action">Cambiar nombre</string>
   <string name="common_send_action">Enviar</string>
   <string name="common_create_action">Crear</string>
   <string name="common_cancel_action">Cancelar</string>
@@ -56,7 +56,7 @@
   <string name="common_skip_action">Omitir</string>
   <string name="common_delete_permanently_action">Eliminar permanentemente</string>
   <string name="common_make_available_offline_action">Hacer disponible sin conexión</string>
-  <string name="common_remove_from_offline_available_action">Borrar del modo disponible sin conexión</string>
+  <string name="common_remove_from_offline_available_action">Eliminar del modo disponible sin conexión</string>
   <string name="common_get_link_action">Obtener enlace</string>
   <string name="common_manage_link_action">Gestionar enlace</string>
   <string name="common_manage_access_action">Gestionar acceso</string>

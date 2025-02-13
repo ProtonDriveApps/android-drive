@@ -33,6 +33,7 @@ import me.proton.core.drive.base.domain.extension.asSuccessOrNullAsError
 import me.proton.core.drive.base.domain.repository.fetcher
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.repository.DriveLinkRepository
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -91,9 +92,24 @@ class GetDriveLink @Inject constructor(
             DataResult.Success(source, link)
         } else {
             if (source == ResponseSource.Local) {
-                DataResult.Error.Local("FileId $folderId was not a folder", null)
+                DataResult.Error.Local("FolderId $folderId was not a folder", null)
             } else {
-                DataResult.Error.Remote("FileId $folderId was not a folder", null)
+                DataResult.Error.Remote("FolderId $folderId was not a folder", null)
+            }
+        }
+    }
+
+    operator fun invoke(
+        albumId: AlbumId,
+        refresh: Flow<Boolean> = hasLink(albumId).map { hasLink -> !hasLink },
+    ): Flow<DataResult<DriveLink.Album>> = invoke(albumId as LinkId, refresh).mapSuccess { (source, link) ->
+        if (link is DriveLink.Album) {
+            DataResult.Success(source, link)
+        } else {
+            if (source == ResponseSource.Local) {
+                DataResult.Error.Local("AlbumId $albumId was not an album", null)
+            } else {
+                DataResult.Error.Remote("AlbumId $albumId was not an album", null)
             }
         }
     }

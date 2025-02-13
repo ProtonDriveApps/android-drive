@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Ubah nama berkas</string>
   <string name="link_rename_title_folder">Ubah nama folder</string>
+  <string name="link_rename_title_album">Ubah nama album</string>
   <string name="link_rename_successful">Nama \"%1$s\" berhasil diubah</string>
   <string name="link_rename_error_link_not_found">Perubahan nama gagal karena berkas atau folder sudah tidak lagi dapat ditemukan</string>
   <string name="link_rename_error_general">Perubahan nama gagal karena alasan yang tidak diketahui</string>

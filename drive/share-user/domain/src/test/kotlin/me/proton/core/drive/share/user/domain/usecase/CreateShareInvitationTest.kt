@@ -14,7 +14,6 @@ import me.proton.core.drive.db.test.standardShareId
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.volume
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.share.user.domain.entity.ShareUserInvitation
 import me.proton.core.drive.test.DriveRule
 import me.proton.core.drive.test.api.createExternalInvitation
 import me.proton.core.drive.test.api.createInvitation

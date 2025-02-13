@@ -21,7 +21,7 @@
   <string name="manage_access_share_with">Udostępnij</string>
   <string name="manage_access_share_with_anyone">Udostępnij komukolwiek</string>
   <string name="manage_access_link_settings_action">Ustawienia linku</string>
-  <string name="manage_access_link_description_public">Każdy z linkiem</string>
+  <string name="manage_access_link_description_public">Każda osoba mająca link</string>
   <string name="manage_access_link_description_password_protected">Każdy z linkiem i hasłem</string>
   <string name="manage_access_link_default_permission">Odczyt</string>
   <string name="manage_access_link_editor_permission">Edycja</string>

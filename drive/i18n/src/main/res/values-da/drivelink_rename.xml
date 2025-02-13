@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Omdøb en fil</string>
   <string name="link_rename_title_folder">Omdøb en mappe</string>
+  <string name="link_rename_title_album">Omdøb et album</string>
   <string name="link_rename_successful">\"%1$s\" omdøbt med succes</string>
   <string name="link_rename_error_link_not_found">Omdøbning fejlede da filen eller mappen ikke findes mere</string>
   <string name="link_rename_error_general">Omdøbning fejlede af ukendt årsag</string>

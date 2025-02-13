@@ -90,6 +90,7 @@ sealed class Event {
             UNCOMPLETED,
             PAUSE_BACKGROUND_RESTRICTIONS,
             PREPARING,
+            FAILED_DUE_PHOTO_SHARE_MIGRATION,
         }
     }
 
@@ -114,6 +115,11 @@ sealed class Event {
     }
 
     data class BackupCompleted(val folderId: FolderId) : Event() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs()
+    }
+
+    data class BackupSync(val folderId: FolderId, val bucketId: Int) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs()
     }

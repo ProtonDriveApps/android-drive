@@ -27,4 +27,5 @@ enum class BackupErrorType {
     DRIVE_STORAGE,
     PHOTOS_UPLOAD_NOT_ALLOWED,
     BACKGROUND_RESTRICTIONS,
+    MIGRATION,
 }

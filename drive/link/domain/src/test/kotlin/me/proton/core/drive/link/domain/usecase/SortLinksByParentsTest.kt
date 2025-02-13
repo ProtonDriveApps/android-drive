@@ -207,7 +207,7 @@ class SortLinksByParentsTest {
     }
 
     private fun link(linkId: String, parent: String? = null, shareId: String = "SHARE_1") =
-        mockk<Link>(name = shareId + "_" + linkId).apply {
+        mockk<Link.File>(name = shareId + "_" + linkId).apply {
             every { id } returns FileId(ShareId(userId, shareId), linkId)
             every { parentId } returns parent?.let { FolderId(ShareId(userId, shareId), parent) }
         }

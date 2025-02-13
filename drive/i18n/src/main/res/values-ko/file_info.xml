@@ -22,7 +22,7 @@
   <string name="file_info_last_modified_entry">수정됨</string>
   <string name="file_info_number_of_accesses_entry"># 중 다운로드</string>
   <string name="file_info_share_url_expiration_time">링크 만료 시간</string>
-  <string name="file_info_share_url_no_expiration_time">안함</string>
+  <string name="file_info_share_url_no_expiration_time">안 함</string>
   <string name="file_info_title_folder">폴더 세부 정보</string>
   <string name="file_info_title_file">파일 세부 정보</string>
   <string name="file_info_captured_on">캡처됨:</string>

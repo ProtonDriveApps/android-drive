@@ -73,4 +73,28 @@
   <string name="shared_empty_title">Încă nimic partajat</string>
   <string name="shared_with_me_empty_description">Fișierele și folderele partajate de alții vor apărea aici.</string>
   <string name="shared_by_me_empty_description">Partajați în siguranță fișiere și foldere cu criptare bilaterală.</string>
+  <string name="shared_by_me_invitation_banner_title">Articole partajate în așteptare</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">Vi s-a partajat %1$d articol</item>
+    <item quantity="few">Vi s-au partajat %1$d articole</item>
+    <item quantity="other">Vi s-au partajat %1$d de articole</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">Articole partajate în așteptare (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Nicio partajare în așteptare</string>
+  <string name="shared_user_invitations_description_empty">Toate invitațiile noi vor fi aici.</string>
+  <string name="shared_user_invitations_accept_button">Acceptare</string>
+  <string name="shared_user_invitations_decline_button">Respingere</string>
+  <string name="shared_user_invitations_accept_success">Articolul partajat a fost acceptat.</string>
+  <string name="shared_user_invitations_decline_success">Articolul partajat a fost respins.</string>
 </resources>

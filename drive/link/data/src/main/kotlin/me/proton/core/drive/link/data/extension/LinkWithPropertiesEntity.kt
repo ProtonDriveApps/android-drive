@@ -23,5 +23,6 @@ import me.proton.core.drive.link.data.db.entity.LinkWithPropertiesEntity
 fun LinkWithPropertiesEntity.toLinkWithProperties() = when {
     folderProperties != null -> LinkWithProperties(link, folderProperties)
     fileProperties != null -> LinkWithProperties(link, fileProperties)
-    else -> throw IllegalStateException("Either file or folder properties are required")
+    albumProperties != null -> LinkWithProperties(link, albumProperties)
+    else -> error("Either file, folder or album properties are required")
 }

@@ -27,6 +27,7 @@ import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.eventmanager.domain.EventManagerConfig
 import me.proton.core.eventmanager.domain.EventManagerProvider
 import javax.inject.Inject
+import kotlin.time.Duration
 
 class UpdateEventActionImpl @Inject constructor(
     private val eventManagerProvider: EventManagerProvider,
@@ -40,7 +41,10 @@ class UpdateEventActionImpl @Inject constructor(
                 EventManagerConfig.Drive.Volume(
                     userId = shareId.userId,
                     volumeId = volumeId.id,
-                    minimumFetchInterval = getMinimumFetchInterval(shareId.userId, volumeId).getOrThrow(),
+                    minimumFetchInterval = getMinimumFetchInterval(
+                        userId = shareId.userId,
+                        volumeId = volumeId,
+                    ).getOrNull() ?: Duration.ZERO,
                 )
             ).suspend(block)
         }
@@ -50,7 +54,10 @@ class UpdateEventActionImpl @Inject constructor(
             EventManagerConfig.Drive.Volume(
                 userId = userId,
                 volumeId = volumeId.id,
-                minimumFetchInterval = getMinimumFetchInterval(userId, volumeId).getOrThrow(),
+                minimumFetchInterval = getMinimumFetchInterval(
+                    userId = userId,
+                    volumeId = volumeId,
+                ).getOrNull() ?: Duration.ZERO,
             )
         ).suspend(block)
 }

@@ -32,6 +32,7 @@ fun DriveLink.updateLastModified(lastModified: TimestampS) = link.let { link ->
     when (link) {
         is Link.File -> link.copy(lastModified = lastModified)
         is Link.Folder -> link.copy(lastModified = lastModified)
+        is Link.Album -> link.copy(lastModified = lastModified)
     }
 }
 

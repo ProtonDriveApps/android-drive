@@ -29,14 +29,14 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.backup.data.extension.toBackupError
 import me.proton.core.drive.backup.data.manager.BackupManagerImpl
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.backup.data.worker.WorkerKeys.KEY_USER_ID
-import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupFolder
-import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.FindDuplicates
+import me.proton.core.drive.backup.domain.usecase.HandleBackupError
 import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
@@ -54,7 +54,7 @@ class BackupFindDuplicatesWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val findDuplicates: FindDuplicates,
     private val configurationProvider: ConfigurationProvider,
-    private val addBackupError: AddBackupError,
+    private val handleBackupError: HandleBackupError,
 ) : CoroutineWorker(context, workerParams) {
 
     private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
@@ -85,7 +85,7 @@ class BackupFindDuplicatesWorker @AssistedInject constructor(
                     tag = BACKUP,
                     message = "Cannot find duplicates for: ${folderId.id} retryable $retryable, max retries reached $canRetry"
                 )
-                addBackupError(folderId, BackupError.Other(retryable))
+                handleBackupError(folderId, error.toBackupError(retryable))
                 Result.failure()
             }
         }

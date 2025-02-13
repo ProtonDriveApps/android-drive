@@ -32,7 +32,7 @@ class LinkNodeTest {
 
     private val shareId = ShareId(UserId("USER_ID"),"MainShare")
     private val links = (1..10).map { index ->
-        mockk<Link>().apply {
+        mockk<Link.File>().apply {
             every { this@apply.id } returns FileId(shareId, index.toString())
         }
     }

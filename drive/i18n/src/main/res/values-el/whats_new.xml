@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">Τι νέο υπάρχει</string>
-  <string name="whats_new_docs_title">Proton Docs στο Κινητό</string>
-  <string name="whats_new_docs_description">Πατήστε συν για να δημιουργήσετε ή να συνεργαστείτε σε κρυπτογραφημένα έγγραφα από άκρο σε άκρο εν κινήσει.</string>
 </resources>

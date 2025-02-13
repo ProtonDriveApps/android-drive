@@ -78,7 +78,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Folosire date mobile</string>
   <string name="photos_error_local_storage">Spațiu de stocare dispozitiv plin.</string>
   <string name="photos_error_local_storage_description">Pentru a continua conservarea trebuie să eliberați spațiu pe dispozitiv.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Setați utilizarea bateriei la „Fără restricții” pentru activitatea din fundal a aplicației.</string>
   <string name="photos_error_background_restrictions_description">Pentru conservări consistente în fundal, ajustați setarea bateriei sau deschideți frecvent aplicația.</string>
   <string name="photos_error_background_restrictions_action">Setări</string>
   <string name="photos_empty_title">Nu există conservări</string>

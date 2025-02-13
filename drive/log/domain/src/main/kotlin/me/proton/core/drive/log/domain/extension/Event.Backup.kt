@@ -64,3 +64,11 @@ internal fun Event.BackupCompleted.toLog(userId: UserId): Log = Log(
     creationTime = occurredAt,
     origin = Log.Origin.EVENT_BACKUP,
 )
+
+
+internal fun Event.BackupSync.toLog(userId: UserId): Log = Log(
+    userId = userId,
+    message = "Backup[${folderId.id.logId()}] sync $bucketId",
+    creationTime = occurredAt,
+    origin = Log.Origin.EVENT_BACKUP,
+)

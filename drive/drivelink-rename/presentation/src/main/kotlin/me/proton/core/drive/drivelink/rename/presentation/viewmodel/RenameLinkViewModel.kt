@@ -39,10 +39,11 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.rename.domain.usecase.RenameLink
 import me.proton.core.drive.drivelink.rename.presentation.RenameEffect
-import me.proton.core.drive.i18n.R
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class RenameLinkViewModel @Inject constructor(
@@ -63,8 +64,9 @@ class RenameLinkViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     override val titleResId: Int get() = when (linkId) {
-        is FileId -> R.string.link_rename_title_file
-        is FolderId -> R.string.link_rename_title_folder
+        is FileId -> I18N.string.link_rename_title_file
+        is FolderId -> I18N.string.link_rename_title_folder
+        is AlbumId -> I18N.string.link_rename_title_album
     }
 
     private val DataResult<DriveLink>.name get() =
@@ -88,7 +90,7 @@ class RenameLinkViewModel @Inject constructor(
                 broadcastMessages(
                     userId = userId,
                     message = appContext.getString(
-                        R.string.link_rename_successful,
+                        I18N.string.link_rename_successful,
                         name.ellipsizeMiddle(MAX_DISPLAY_FILENAME_LENGTH)
                     )
                 )

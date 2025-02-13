@@ -76,5 +76,37 @@ interface LinkDatabase : Database {
                 )
             }
         }
+
+        val MIGRATION_2 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        CREATE TABLE IF NOT EXISTS `LinkAlbumPropertiesEntity` (
+                        `album_user_id` TEXT NOT NULL,
+                        `album_share_id` TEXT NOT NULL,
+                        `album_link_id` TEXT NOT NULL,
+                        `album_node_hash_key` TEXT NOT NULL,
+                        `locked` INTEGER NOT NULL,
+                        `last_activity_time` INTEGER NOT NULL,
+                        `count` INTEGER NOT NULL,
+                        `cover_link_id` TEXT,
+
+                        PRIMARY KEY(`album_user_id`, `album_share_id`, `album_link_id`),
+                        FOREIGN KEY(`album_user_id`, `album_share_id`, `album_link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        CREATE INDEX IF NOT EXISTS `index_LinkAlbumPropertiesEntity_album_share_id` ON `LinkAlbumPropertiesEntity` (`album_share_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                        CREATE INDEX IF NOT EXISTS `index_LinkAlbumPropertiesEntity_album_link_id` ON `LinkAlbumPropertiesEntity` (`album_link_id`)
+                    """.trimIndent()
+                )
+            }
+        }
     }
 }

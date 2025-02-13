@@ -27,8 +27,8 @@
             "9 items successfully moved."
     -->
   <plurals name="file_operation_moving_multiple_successful">
-    <item quantity="one">%1$d item movido com sucesso.</item>
-    <item quantity="other">%1$d itens movidos com sucesso.</item>
+    <item quantity="one">%1$d item movido</item>
+    <item quantity="other">%1$d itens movidos</item>
   </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Um item com esse nome já existe na pasta de destino.</string>
   <string name="folder_options_header_title">Em \"%1$s\"</string>

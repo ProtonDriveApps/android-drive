@@ -51,7 +51,7 @@
   <string name="shared_link_dialog_description">U zult alle wijzigingen kwijtraken.</string>
   <string name="shared_link_hint_expiration_date_field">Geen verloopdatum</string>
   <string name="shared_link_message_update_share_url">Instellingen voor delen bijgewerkt</string>
-  <string name="shared_link_error_message_update_share_url">Updaten van instellingen voor delen is mislukt</string>
+  <string name="shared_link_error_message_update_share_url">Bijwerken van instellingen voor delen is mislukt</string>
   <!--
         Variable %1$d is max number of characters for password
         Example:
@@ -73,4 +73,27 @@
   <string name="shared_empty_title">Nog niets gedeeld</string>
   <string name="shared_with_me_empty_description">Bestanden en mappen die gedeeld werden zullen hier verschijnen</string>
   <string name="shared_by_me_empty_description">Deel uw bestanden en mappen veilig met end-to-end versleuteling</string>
+  <string name="shared_by_me_invitation_banner_title">Gedeelde items in behandeling</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">%1$d item met u gedeeld</item>
+    <item quantity="other">%1$d items met u gedeeld</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">Gedeelde items in behandeling (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Geen gedeelde items in behandeling</string>
+  <string name="shared_user_invitations_description_empty">Alle nieuwe uitnodigingen kunt u hier vinden</string>
+  <string name="shared_user_invitations_accept_button">Accepteren</string>
+  <string name="shared_user_invitations_decline_button">Afwijzen</string>
+  <string name="shared_user_invitations_accept_success">Gedeeld item geaccepteerd</string>
+  <string name="shared_user_invitations_decline_success">Gedeelde item afgewezen</string>
 </resources>

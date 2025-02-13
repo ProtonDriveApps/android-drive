@@ -25,5 +25,7 @@ data class LinkWithPropertiesEntity(
     @Embedded
     val folderProperties: LinkFolderPropertiesEntity? = null,
     @Embedded
-    val fileProperties: LinkFilePropertiesEntity? = null
+    val fileProperties: LinkFilePropertiesEntity? = null,
+    @Embedded
+    val albumProperties: LinkAlbumPropertiesEntity? = null,
 )

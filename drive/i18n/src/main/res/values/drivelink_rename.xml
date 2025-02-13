@@ -21,6 +21,7 @@
     <string name="link_rename_dismiss_button">@string/common_cancel_action</string>
     <string name="link_rename_title_file">Rename a file</string>
     <string name="link_rename_title_folder">Rename a folder</string>
+    <string name="link_rename_title_album">Rename an album</string>
     <string name="link_rename_successful">\"%1$s\" renamed successfully</string>
     <string name="link_rename_error_name_is_blank">@string/common_error_name_is_blank</string>
     <string name="link_rename_error_name_too_long">@string/common_error_name_too_long</string>

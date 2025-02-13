@@ -18,7 +18,10 @@
 
 package me.proton.core.drive.volume.crypto.domain.usecase
 
+import me.proton.core.drive.db.test.mainRootId
 import me.proton.core.drive.db.test.mainShareId
+import me.proton.core.drive.db.test.photoRootId
+import me.proton.core.drive.db.test.photoShareId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.volume.data.api.entity.VolumeDto
 import me.proton.core.drive.volume.data.api.entity.VolumeShare
@@ -26,13 +29,27 @@ import me.proton.core.drive.volume.data.api.entity.VolumeShare
 @Suppress("TestFunctionName")
 internal fun NullableVolumeDto(
     id: String = volumeId.id,
-    volumeShare: VolumeShare = VolumeShare(mainShareId.id, "main-root-id"),
+    volumeShare: VolumeShare = VolumeShare(mainShareId.id, mainRootId.id),
     state: Long = 1,
 ) = VolumeDto(
     id = id,
-    creationTime = 0,
-    maxSpace = 0,
+    createTime = 0,
     usedSpace = 0,
     state = state,
-    share = volumeShare
+    share = volumeShare,
+    type = VolumeDto.TYPE_REGULAR,
+)
+
+@Suppress("TestFunctionName")
+internal fun NullablePhotoVolumeDto(
+    id: String = volumeId.id,
+    volumeShare: VolumeShare = VolumeShare(photoShareId.id, photoRootId.id),
+    state: Long = 1,
+) = VolumeDto(
+    id = id,
+    createTime = 0,
+    usedSpace = 0,
+    state = state,
+    share = volumeShare,
+    type = VolumeDto.TYPE_PHOTO,
 )

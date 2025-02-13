@@ -18,23 +18,20 @@
 
 package me.proton.android.drive.photos.data.repository
 
-import kotlinx.coroutines.flow.first
 import me.proton.android.drive.photos.data.extension.toBackupDuplicate
-import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.backup.domain.repository.FindDuplicatesRepository
 import me.proton.core.drive.base.domain.entity.ClientUid
-import me.proton.core.drive.base.domain.extension.filterSuccessOrError
-import me.proton.core.drive.base.domain.log.logId
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
-import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
+import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import javax.inject.Inject
 
 class PhotoFindDuplicatesRepository @Inject constructor(
-    private val getOldestActiveVolume: GetOldestActiveVolume,
     private val photoRepository: PhotoRepository,
+    private val getPhotoShare: GetPhotoShare,
 ) : FindDuplicatesRepository {
 
     override suspend fun findDuplicates(
@@ -42,12 +39,10 @@ class PhotoFindDuplicatesRepository @Inject constructor(
         nameHashes: List<String>,
         clientUids: List<ClientUid>,
     ): List<BackupDuplicate> {
-        val volume = getOldestActiveVolume(folderId.userId)
-            .filterSuccessOrError().mapSuccessValueOrNull().first()
-        requireNotNull(volume) { "Cannot find volume for folder: ${folderId.id.logId()}" }
+        val photoShare = getPhotoShare(folderId.userId).toResult().getOrThrow()
         return photoRepository.findDuplicates(
             userId = folderId.userId,
-            volumeId = volume.id,
+            volumeId = photoShare.volumeId,
             parentId = folderId,
             nameHashes = nameHashes,
             clientUids = emptyList(),

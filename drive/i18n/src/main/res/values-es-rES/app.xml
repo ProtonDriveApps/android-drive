@@ -28,7 +28,7 @@
   <string name="title_empty_folder_read_only">La carpeta está vacía.</string>
   <string name="title_empty_shared">Mantente al tanto de lo que ocurre.</string>
   <string name="title_empty_offline_available">Nada disponible sin conexión</string>
-  <string name="title_empty_trash">La papelera está vacía.</string>
+  <string name="title_empty_trash">La papelera está vacía</string>
   <string name="title_empty_trash_action">Vaciar la papelera</string>
   <string name="title_files_confirm_deletion">¿Eliminar permanentemente?</string>
   <string name="title_default_home_screen_tab">Elegir la pestaña de la pantalla de inicio por defecto</string>
@@ -46,7 +46,7 @@
   <string name="folder_option_create_folder">Crear una carpeta</string>
   <string name="folder_option_take_a_photo">Tomar una nueva foto</string>
   <string name="folder_option_create_document">Crear un documento</string>
-  <string name="settings_theme_system_default">Del sistema</string>
+  <string name="settings_theme_system_default">Valor por defecto del sistema</string>
   <string name="settings_theme_dark">Oscuro</string>
   <string name="settings_theme_light">Claro</string>
   <!--
@@ -132,7 +132,7 @@
     <item quantity="one">Queda %1$s elemento.</item>
     <item quantity="other">Quedan %1$s elementos.</item>
   </plurals>
-  <string name="notification_content_text_backup_complete">Se ha finalizado la copia de seguridad.</string>
+  <string name="notification_content_text_backup_complete">Copia de seguridad completada</string>
   <string name="notification_content_text_backup_uncompleted">La copia de seguridad se ha completado con problemas.</string>
   <string name="notification_content_text_backup_failed">Error de copia de seguridad</string>
   <string name="notification_content_text_backup_failed_drive_storage">El almacenamiento de Proton está lleno.</string>
@@ -168,8 +168,8 @@
   <string name="description_empty_my_files">Pulsa el botón para comenzar a añadir archivos.</string>
   <string name="description_empty_folder_read_only">No hay datos que ver aquí.</string>
   <string name="description_empty_shared">Los archivos enlazados aparecen aquí para que puedas rastrearlos y gestionar los elementos compartidos.</string>
-  <string name="description_empty_trash">Aquí es donde permanecen los elementos borrados hasta que los elimines o restaures.</string>
-  <string name="description_empty_offline_available">Haz que los archivos esenciales estén siempre disponibles, incluso cuando tu red no lo esté.</string>
+  <string name="description_empty_trash">Aquí es donde permanecen los elementos enviados a la papelera hasta que los elimines o restaures.</string>
+  <string name="description_empty_offline_available">Haz que los archivos más importantes estén siempre disponibles, incluso cuando tu red no lo esté.</string>
   <string name="description_no_drive_scope">El usuario no tiene permiso de acceso.</string>
   <string name="description_file_download_failed">Error de descarga. Verifica la conexión de red e intenta de nuevo.</string>
   <string name="description_file_decryption_failed">No se ha podio descifrar el archivo.</string>
@@ -177,7 +177,7 @@
   <string name="description_files_stop_sharing">Esto eliminará el enlace y borrará el acceso a tu archivo o carpeta para cualquier persona que tenga el enlace.</string>
   <string name="description_files_stop_sharing_action_success">El enlace a tu archivo ha sido eliminado.</string>
   <string name="description_files_stop_sharing_action_error">Se ha producido un error al eliminar el enlace a tu archivo.</string>
-  <string name="description_files_stop_all_sharing">Esto eliminará el enlace y borrará el acceso para todos.</string>
+  <string name="description_files_stop_all_sharing">Esto eliminará el enlace y el acceso para todos.</string>
   <string name="description_files_stop_all_sharing_action_success">Se ha eliminado el acceso compartido al archivo.</string>
   <string name="description_files_stop_all_sharing_action_error">Se ha producido un error al eliminar el acceso compartido al archivo.</string>
   <string name="ignore_file_signature_action">Ver de todos modos</string>

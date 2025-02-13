@@ -73,4 +73,27 @@
   <string name="shared_empty_title">ჯერ გაზიარებული არაფერია</string>
   <string name="shared_with_me_empty_description">ფაილები და საქაღალდეები, რომლებსაც თქვენ გაგიზიარებენ, აქ გამოჩნდება</string>
   <string name="shared_by_me_empty_description">გააზიარეთ დაცულად თქვენი ფაილები და საქაღალდეები გამჭოლი დაშიფვრით</string>
+  <string name="shared_by_me_invitation_banner_title">დარჩენილი გაზიარებული ელემენტები</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">თქვენთან გაზიარებულია %1$d ელემენტი</item>
+    <item quantity="other">თქვენთან გაზიარებულია %1$d ელემენტი</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">დარჩენილი გაზიარებული ელემენტები (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">დარჩენილი გაზიარებული ელემენტების გარეშე</string>
+  <string name="shared_user_invitations_description_empty">ყველა ახალი მოსაწვევი აქ გამოჩნდება</string>
+  <string name="shared_user_invitations_accept_button">დასტური</string>
+  <string name="shared_user_invitations_decline_button">უარყოფა</string>
+  <string name="shared_user_invitations_accept_success">გაზიარებული ელემენტი დადასტურებულია</string>
+  <string name="shared_user_invitations_decline_success">გაზიარებული ელემენტი უარყოფილია</string>
 </resources>

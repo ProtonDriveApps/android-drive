@@ -134,6 +134,7 @@ class FolderDownloadWorker @AssistedInject constructor(
                     }
             }
             workContinuation = when (currentDescendant) {
+                is Link.Album -> error("TODO")
                 is Link.Folder -> {
                     // Since it's a folder, we assume all its children have already been taken care of
                     // so we mark it as downloaded (this task will follow after all the node inside have

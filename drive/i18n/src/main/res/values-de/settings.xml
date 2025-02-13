@@ -46,7 +46,7 @@
         Examples:
             "Your Camera folder is backed up automatically."
     -->
-  <string name="settings_photos_backup_folders_description">Dein Ordner %1$s wird automatisch gesichert. Wähle zusätzliche Ordner aus, um sie zu sichern, und ihre Fotos werden im Tab \"Fotos\" angezeigt.</string>
+  <string name="settings_photos_backup_folders_description">Dein Ordner %1$s wird automatisch gesichert. Wähle zusätzliche Ordner aus, um sie zu sichern, und die zugehörigen Fotos werden im Tab „Fotos“ angezeigt.</string>
   <string name="settings_photos_backup_folders_not_found">Ordner wurde nicht gefunden</string>
   <string name="settings_photos_backup_folders_confirm_stop_sync_title">Sichern des Ordners stoppen?</string>
   <!--
@@ -72,7 +72,7 @@
   <string name="settings_external_link_format">%1$s (wird im Browser geöffnet)</string>
   <string name="settings_section_appearance_settings">Aussehen</string>
   <string name="settings_theme_entry">Farbschema</string>
-  <string name="settings_home_tab">Standard-Startseite</string>
+  <string name="settings_home_tab">Standard-Registerkarte (Start)</string>
   <string name="settings_section_system">System</string>
   <string name="settings_clear_local_cache_entry">Lokalen Zwischenspeicher leeren</string>
   <string name="settings_show_log">Protokoll anzeigen</string>

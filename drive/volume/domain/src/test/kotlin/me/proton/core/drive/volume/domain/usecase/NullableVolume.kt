@@ -20,6 +20,7 @@ package me.proton.core.drive.volume.domain.usecase
 
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.db.test.mainRootId
 import me.proton.core.drive.db.test.mainShareId
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -29,8 +30,9 @@ import me.proton.core.drive.volume.domain.entity.VolumeId
 internal fun NullableVolume(id: VolumeId) = Volume(
     id = id,
     shareId = mainShareId.id,
-    maxSpace = 0.bytes,
+    linkId = mainRootId.id,
     usedSpace = 0.bytes,
     state = 1,
-    creationTime = TimestampS(0)
+    createTime = TimestampS(0),
+    type = Volume.Type.REGULAR,
 )

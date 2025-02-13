@@ -24,13 +24,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.log.DriveLogTag
+import me.proton.android.drive.log.DriveLogTag.UI_TEST
 import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager
 import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager.Connectivity.NONE
 import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager.Connectivity.UNMETERED
+import me.proton.core.drive.base.domain.api.ProtonApiCode.PHOTO_MIGRATION
+import me.proton.core.network.data.ProtonErrorException
+import me.proton.core.network.domain.ApiResult
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.test.fusion.FusionConfig
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import org.junit.rules.ExternalResource
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -46,7 +51,7 @@ object NetworkSimulator: ExternalResource() {
         get() = Interceptor {
             if (responseDelay > 0.milliseconds) {
                 CoreLogger.d(
-                    DriveLogTag.UI_TEST,
+                    UI_TEST,
                     "Delaying response by ${responseDelay.inWholeMilliseconds}ms"
                 )
                 runBlocking {
@@ -63,9 +68,39 @@ object NetworkSimulator: ExternalResource() {
             it.proceed(it.request())
         }
 
-    private val interceptors = mutableListOf(testNetworkInterceptor)
+    private val photosMigrationInterceptor
+        get() = Interceptor { chain ->
+            if (enabledPhotosMigration) {
+                if (chain.request().url.toString().contains("photo")) {
+                    CoreLogger.d(UI_TEST, "Throw migration error for photo request")
+
+                    throw ProtonErrorException(
+                        response = Response.Builder()
+                            .code(422)
+                            .message("Migration in progress")
+                            .request(chain.request())
+                            .protocol(chain.connection()?.protocol() ?: okhttp3.Protocol.HTTP_1_1)
+                            .build(),
+                        protonData = ApiResult.Error.ProtonData(
+                            code = PHOTO_MIGRATION,
+                            error = "Migration in progress",
+                        )
+                    )
+                } else {
+                    chain.proceed(chain.request())
+                }
+            } else {
+                chain.proceed(chain.request())
+            }
+        }
+
+    private val interceptors = mutableListOf(
+        testNetworkInterceptor,
+        photosMigrationInterceptor,
+    )
     private var isNetworkTimeout: Boolean = false
     private var responseDelay: Duration = 0.milliseconds
+    private var enabledPhotosMigration: Boolean = false
 
     val client: OkHttpClient = OkHttpClient
         .Builder()
@@ -100,6 +135,10 @@ object NetworkSimulator: ExternalResource() {
 
     fun setNetworkTimeout(isNetworkTimeout: Boolean) = apply {
         NetworkSimulator.isNetworkTimeout = isNetworkTimeout
+    }
+
+    fun enabledPhotosMigration() {
+        enabledPhotosMigration = true
     }
 
     private fun setConnectivity(connectivity: BackupConnectivityManager.Connectivity) = apply {

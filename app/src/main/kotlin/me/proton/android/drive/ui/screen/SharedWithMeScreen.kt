@@ -18,19 +18,24 @@
 
 package me.proton.android.drive.ui.screen
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import me.proton.android.drive.ui.effect.HandleHomeEffect
 import me.proton.android.drive.ui.viewmodel.SharedWithMeViewModel
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.drivelink.shared.presentation.component.Shared
+import me.proton.core.drive.drivelink.shared.presentation.component.UserInvitationBanner
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -41,10 +46,14 @@ fun SharedWithMeScreen(
     navigateToFiles: (FolderId, String?) -> Unit,
     navigateToPreview: (FileId) -> Unit,
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToUserInvitation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val viewModel = hiltViewModel<SharedWithMeViewModel>()
     val viewState by viewModel.viewState.collectAsStateWithLifecycle(initialValue = viewModel.initialViewState)
+    val userInvitationViewState by viewModel.userInvitationBannerViewState.collectAsStateWithLifecycle(
+        initialValue = null
+    )
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val viewEvent = remember(lifecycle) {
         viewModel.viewEvent(
@@ -65,6 +74,17 @@ fun SharedWithMeScreen(
         driveLinksFlow = viewModel.driveLinksMap,
         modifier = modifier
             .testTag(SharedWithMeTestTag.content),
+        headerContent = {
+            Box(Modifier.defaultMinSize(minHeight = 1.dp)) {
+                // minHeight: always draw to have the header visible in the lazy list
+                userInvitationViewState?.let { viewState ->
+                    UserInvitationBanner(
+                        description = viewState.description,
+                        onClick = navigateToUserInvitation,
+                    )
+                }
+            }
+        }
     )
 }
 

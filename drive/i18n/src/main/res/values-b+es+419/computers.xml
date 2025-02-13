@@ -22,11 +22,11 @@
   <string name="computers_type_mac_os">MacOS</string>
   <string name="computers_type_linux">Linux</string>
   <string name="computers_type_unknown">Desconocido</string>
-  <string name="computers_empty_title">No hay computadoras sincronizadas</string>
+  <string name="computers_empty_title">No hay computadoras en proceso de sincronización</string>
   <string name="computers_empty_description">Obtenga la aplicación de escritorio\npara sincronizar carpetas</string>
   <string name="computers_synced_folders_empty_title">No hay carpetas sincronizadas</string>
   <string name="computers_synced_folders_empty_description">Las carpetas sincronizadas se\nmostrarán aquí</string>
-  <string name="computers_synced_folders_no_folder">La computadora se ha borrado.</string>
+  <string name="computers_synced_folders_no_folder">La computadora se eliminó</string>
   <string name="computers_rename_title">Renombrar computadora</string>
   <string name="computers_rename_success">Computadora renombrada</string>
   <!--

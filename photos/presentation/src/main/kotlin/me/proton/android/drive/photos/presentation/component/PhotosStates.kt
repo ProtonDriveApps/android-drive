@@ -320,8 +320,8 @@ fun LocalStorageState(
 @Composable
 private fun ErrorDetails(
     text: String,
-    action: Int,
     modifier: Modifier = Modifier,
+    action: Int? = null,
     onClick: (() -> Unit)? = null,
 ) {
     Column(
@@ -336,12 +336,14 @@ private fun ErrorDetails(
             text = text,
             style = ProtonTheme.typography.defaultSmallNorm,
         )
-        Text(
-            modifier = Modifier.align(Alignment.End),
-            text = stringResource(id = action),
-            style = ProtonTheme.typography.defaultSmallStrongUnspecified,
-            color = ProtonTheme.colors.interactionNorm,
-        )
+        if (action != null) {
+            Text(
+                modifier = Modifier.align(Alignment.End),
+                text = stringResource(id = action),
+                style = ProtonTheme.typography.defaultSmallStrongUnspecified,
+                color = ProtonTheme.colors.interactionNorm,
+            )
+        }
     }
 }
 
@@ -388,6 +390,32 @@ fun BackupFailedState(
         action = I18N.string.photos_error_backup_failed_action,
         onClick = onRetry
     )
+}
+
+@Composable
+fun BackupMigrationState(
+    modifier: Modifier = Modifier,
+) {
+    BackupCard(modifier = modifier) {
+        Column {
+            BackupStateCard(
+                modifier = Modifier,
+                icon = CorePresentation.drawable.ic_proton_exclamation_circle,
+                tint = ProtonTheme.colors.notificationError,
+                text = I18N.string.photos_error_backup_migration_title,
+            )
+            Divider(
+                color = ProtonTheme.colors.separatorNorm,
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+            )
+            ErrorDetails(
+                text = stringResource(I18N.string.photos_error_backup_migration_description,),
+                action = null,
+            )
+        }
+    }
 }
 
 @Composable
@@ -747,6 +775,16 @@ fun BackupTemporarilyDisabledStatePreview() {
     ProtonTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupTemporarilyDisabledState(onRetry = { })
+        }
+    }
+}
+
+@Preview
+@Composable
+fun BackupMigrationStatePreview() {
+    ProtonTheme {
+        Surface(color = ProtonTheme.colors.backgroundNorm) {
+            BackupMigrationState()
         }
     }
 }

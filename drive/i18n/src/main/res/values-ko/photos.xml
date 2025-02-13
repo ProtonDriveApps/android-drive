@@ -76,7 +76,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">셀룰러 사용</string>
   <string name="photos_error_local_storage">기기 저장 공간 가득 참</string>
   <string name="photos_error_local_storage_description">백업을 계속하기 위해, 기기에 여유 공간을 만들어야 합니다.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">앱이 백그라운드에서 동작하도록 배터리를 \'제한 없음\'으로 설정해주세요</string>
   <string name="photos_error_background_restrictions_description">절전 설정을 조절하거나 앱을 자주 실행하셔야 지속적인 백그라운드 백업이 가능합니다.</string>
   <string name="photos_error_background_restrictions_action">설정</string>
   <string name="photos_empty_title">백업 목록이 아직 없습니다.</string>

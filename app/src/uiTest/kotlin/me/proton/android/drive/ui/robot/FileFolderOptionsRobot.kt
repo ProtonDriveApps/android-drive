@@ -29,6 +29,7 @@ object FileFolderOptionsRobot : Robot {
     private val moveToTrashButton get() = node.withText(I18N.string.files_send_to_trash_action)
     private val restoreFromTrashButton get() = node.withText(I18N.string.files_restore_from_trash_action)
     private val makeAvailableOfflineButton get() = node.withText(I18N.string.common_make_available_offline_action)
+    private val openInBrowserButton get() = node.withText(I18N.string.common_open_in_browser_action)
     private val removeAvailableOfflineButton get() = node
         .withText(I18N.string.common_remove_from_offline_available_action)
     private val manageLinkButton get() = node.withText(I18N.string.common_manage_link_action)
@@ -90,6 +91,8 @@ object FileFolderOptionsRobot : Robot {
     fun <T : Robot> clickMakeAvailableOffline(goesTo: T) = goesTo.apply {
         makeAvailableOfflineButton.scrollTo().click()
     }
+
+    fun clickOpenInBrowserButton() = openInBrowserButton.scrollTo().clickTo(FilesTabRobot)
 
     override fun robotDisplayed() {
         fileFolderOptionsScreen.await { assertIsDisplayed() }

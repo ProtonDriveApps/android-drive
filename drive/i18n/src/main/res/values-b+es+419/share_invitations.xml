@@ -75,8 +75,8 @@
   <string name="share_via_invitations_external_invitation_unknown">%1$s (desconocida)</string>
   <string name="share_via_invitations_add_people_hint">Añadir personas</string>
   <string name="share_via_invitations_copy_invite_link_action">Copiar enlace de invitación</string>
-  <string name="share_via_invitations_remove_access_action">Borrar acceso</string>
-  <string name="share_via_invitations_stop_sharing_description">Elimina el enlace y borra el acceso para todos</string>
+  <string name="share_via_invitations_remove_access_action">Eliminar el acceso</string>
+  <string name="share_via_invitations_stop_sharing_description">Elimine el enlace y el acceso para todos</string>
   <string name="share_via_invitations_resend_invite_action">Reenviar la invitación</string>
   <string name="share_via_invitations_resend_invite_success">Invitación reenviada</string>
   <!--

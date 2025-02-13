@@ -32,7 +32,6 @@ object ShareUserRobot : NavigationBarRobot, Robot {
         .hasAncestor(node.withTag(SharedDriveInvitationsTestTags.emailField))
     private val sendButton get() = node.withContentDescription(I18N.string.common_send_action)
     private val viewerPermissionButton get() = node.withText(I18N.string.common_permission_viewer)
-    private val sendMessageAndNameLabel get() = node.withText(I18N.string.share_via_invitations_send_message_and_name_label)
     private val messageTextField get() = node.isSetText()
         .hasAncestor(node.withTag(SharedDriveInvitationsTestTags.messageField))
     private val editorPermissionButton get() = node.withText(I18N.string.common_permission_editor)
@@ -44,8 +43,6 @@ object ShareUserRobot : NavigationBarRobot, Robot {
     fun <T : Robot> clickClose(goesTo: T): T = closeButton.clickTo(goesTo)
 
     fun clickOnViewerPermission() = viewerPermissionButton.clickTo(this)
-
-    fun clickOnSendMessageAndName() = sendMessageAndNameLabel.scrollTo().clickTo(this)
 
     fun typeMessage(text: String) = apply {
         messageTextField.typeText(text)

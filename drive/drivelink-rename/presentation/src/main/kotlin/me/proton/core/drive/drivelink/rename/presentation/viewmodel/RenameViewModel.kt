@@ -29,7 +29,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.extension.logDefaultMessage
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.presentation.extension.require
@@ -39,6 +38,7 @@ import me.proton.core.drive.drivelink.rename.presentation.RenameViewEvent
 import me.proton.core.drive.drivelink.rename.presentation.RenameViewState
 import me.proton.core.drive.drivelink.rename.presentation.selection.NameWithSelection
 import me.proton.core.drive.drivelink.rename.presentation.selection.Selection
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.Empty
@@ -54,14 +54,14 @@ abstract class RenameViewModel(
     protected val savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     protected val shareId = ShareId(userId, savedStateHandle.require(KEY_SHARE_ID))
-    protected val fileId: String? = savedStateHandle.get(KEY_FILE_ID)
-    protected val linkId = if (fileId != null) {
-        FileId(shareId, fileId)
-    } else {
-        FolderId(
-            shareId = shareId,
-            id = savedStateHandle.require(KEY_FOLDER_ID),
-        )
+    protected val linkId = when {
+        savedStateHandle.get<String?>(KEY_FILE_ID) != null ->
+            FileId(shareId, savedStateHandle.require(KEY_FILE_ID))
+        savedStateHandle.get<String?>(KEY_FOLDER_ID) != null ->
+            FolderId(shareId, savedStateHandle.require(KEY_FOLDER_ID))
+        savedStateHandle.get<String?>(KEY_ALBUM_ID) != null ->
+            AlbumId(shareId, savedStateHandle.require(KEY_ALBUM_ID))
+        else -> error("File, folder or album id is required")
     }
     protected val _renameEffect = MutableSharedFlow<RenameEffect>()
     private val isRenaming = MutableStateFlow(false)
@@ -151,6 +151,7 @@ abstract class RenameViewModel(
         const val KEY_SHARE_ID = "shareId"
         const val KEY_FILE_ID = "fileId"
         const val KEY_FOLDER_ID = "folderId"
+        const val KEY_ALBUM_ID = "albumId"
         const val KEY_FILENAME = "key.filename"
         const val MAX_DISPLAY_FILENAME_LENGTH = 50
     }

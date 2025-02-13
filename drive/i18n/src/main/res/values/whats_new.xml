@@ -18,7 +18,7 @@
 
 <resources>
     <string name="whats_new_title">What\'s new</string>
-    <string name="whats_new_docs_title">Proton Docs on Mobile</string>
-    <string name="whats_new_docs_description">Tap plus to create or collaborate on end-to-end encrypted documents on the go.</string>
-    <string name="whats_new_docs_action">@string/common_got_it_action</string>
+    <string name="whats_new_public_sharing_title">Share with anyone</string>
+    <string name="whats_new_public_sharing_description">Create shareable links to collaborate on folders and files — no Proton account required</string>
+    <string name="whats_new_public_sharing_action">@string/common_got_it_action</string>
 </resources>

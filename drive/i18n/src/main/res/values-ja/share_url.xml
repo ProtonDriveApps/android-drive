@@ -73,4 +73,26 @@
   <string name="shared_empty_title">まだ共有されたものはありません</string>
   <string name="shared_with_me_empty_description">あなたと共有されたファイルやフォルダはここに表示されます</string>
   <string name="shared_by_me_empty_description">エンドツーエンド暗号化でファイルとフォルダを安全に共有</string>
+  <string name="shared_by_me_invitation_banner_title">保留中の共有アイテム</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="other">%1$d 個のアイテムがあなたと共有されています</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">保留中の共有アイテム (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">保留中の共有アイテムはありません</string>
+  <string name="shared_user_invitations_description_empty">新しい招待状はすべてここに出てきます</string>
+  <string name="shared_user_invitations_accept_button">承認</string>
+  <string name="shared_user_invitations_decline_button">拒否</string>
+  <string name="shared_user_invitations_accept_success">共有アイテムを受け入れました</string>
+  <string name="shared_user_invitations_decline_success">共有アイテムを拒否しました</string>
 </resources>

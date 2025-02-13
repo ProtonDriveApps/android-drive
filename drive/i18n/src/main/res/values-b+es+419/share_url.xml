@@ -40,7 +40,7 @@
     -->
   <string name="shared_link_accessibility_description_password_protected">Solo las personas con el enlace y la contraseña pueden acceder a %1$s</string>
   <string name="shared_link_settings">Ajustes del enlace</string>
-  <string name="shared_link_options">Opciones del enlace</string>
+  <string name="shared_link_options">Opciones de enlace</string>
   <string name="shared_link_privacy_settings">Ajustes de privacidad</string>
   <string name="shared_link_password_protection">Protección por contraseña</string>
   <string name="shared_link_expiration_date">Fecha de expiración</string>
@@ -73,4 +73,27 @@
   <string name="shared_empty_title">No se ha compartido nada todavía.</string>
   <string name="shared_with_me_empty_description">Los archivos y carpetas compartidos con usted aparecerán aquí.</string>
   <string name="shared_by_me_empty_description">Comparta archivos y carpetas de forma segura con cifrado de extremo a extremo.</string>
+  <string name="shared_by_me_invitation_banner_title">Elementos compartidos pendientes</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">%1$d elemento compartido con usted</item>
+    <item quantity="other">%1$d elementos compartidos con usted</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">Elementos compartidos pendientes (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Ningún elemento compartido pendiente</string>
+  <string name="shared_user_invitations_description_empty">Todas las nuevas invitaciones aparecerán aquí.</string>
+  <string name="shared_user_invitations_accept_button">Aceptar</string>
+  <string name="shared_user_invitations_decline_button">Rechazar</string>
+  <string name="shared_user_invitations_accept_success">Se aceptó el elemento compartido.</string>
+  <string name="shared_user_invitations_decline_success">Se rechazó el elemento compartido.</string>
 </resources>

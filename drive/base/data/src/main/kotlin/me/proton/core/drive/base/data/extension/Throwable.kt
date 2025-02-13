@@ -58,7 +58,10 @@ fun Throwable.getDefaultMessage(
         is UnsupportedOperationException -> getDefaultMessage(context)
         is IOException -> getDefaultMessage(context)
         is SecurityException -> getDefaultMessage(context)
-        is RuntimeException -> getDefaultMessage(context)
+        is RuntimeException -> {
+            cause?.getDefaultMessage(context, useExceptionMessage)
+                ?: getDefaultMessage(context)
+        }
         else -> unhandled
     }
 }

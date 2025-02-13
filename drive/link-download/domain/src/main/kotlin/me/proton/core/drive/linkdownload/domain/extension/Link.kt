@@ -23,4 +23,5 @@ internal val Link.revisionId: String
     get() = when (this) {
         is Link.File -> activeRevisionId
         is Link.Folder -> ""
+        is Link.Album -> ""
     }

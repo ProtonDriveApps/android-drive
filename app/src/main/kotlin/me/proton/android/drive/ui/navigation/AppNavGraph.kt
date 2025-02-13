@@ -114,6 +114,7 @@ import me.proton.android.drive.ui.screen.SettingsScreen
 import me.proton.android.drive.ui.screen.SigningOutScreen
 import me.proton.android.drive.ui.screen.TrashScreen
 import me.proton.android.drive.ui.screen.UploadToScreen
+import me.proton.android.drive.ui.screen.UserInvitationScreen
 import me.proton.android.drive.ui.viewmodel.ConfirmStopSyncFolderDialogViewModel
 import me.proton.android.drive.ui.viewmodel.PreviewViewModel
 import me.proton.core.account.domain.entity.Account
@@ -157,7 +158,7 @@ fun AppNavGraph(
     exitApp: () -> Unit,
     navigateToPasswordManagement: (UserId) -> Unit,
     navigateToRecoveryEmail: (UserId) -> Unit,
-    navigateToSecurityKeys: () -> Unit,
+    navigateToSecurityKeys: (UserId) -> Unit,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
@@ -242,7 +243,7 @@ fun AppNavGraph(
     exitApp: () -> Unit,
     navigateToPasswordManagement: (UserId) -> Unit,
     navigateToRecoveryEmail: (UserId) -> Unit,
-    navigateToSecurityKeys: () -> Unit,
+    navigateToSecurityKeys: (UserId) -> Unit,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
@@ -340,6 +341,7 @@ fun AppNavGraph(
         addInvitationOptions(navController)
         addExternalInvitationOptions(navController)
         addMemberOptions(navController)
+        addUserInvitation(navController)
         addShareLinkPermissions(navController)
         addDiscardShareViaInvitationsChanges(navController)
         addShareViaLink(navController)
@@ -662,6 +664,22 @@ fun NavGraphBuilder.addMemberOptions(
     )
 }
 
+fun NavGraphBuilder.addUserInvitation(
+    navController : NavHostController,
+) = composable(
+    route = Screen.UserInvitation.route,
+    arguments = listOf(
+        navArgument(Screen.UserInvitation.USER_ID) { type = NavType.StringType },
+    ),
+) {
+    UserInvitationScreen (onBack = {
+        navController.popBackStack(
+            route = Screen.UserInvitation.route,
+            inclusive = true,
+        )
+    })
+}
+
 fun NavGraphBuilder.addShareLinkPermissions(
     navController: NavHostController,
 ) = modalBottomSheet(
@@ -909,6 +927,9 @@ internal fun NavGraphBuilder.addHome(
                     rationaleContext = NotificationPermissionRationaleViewModel.RationaleContext.BACKUP,
                 )
             )
+        },
+        navigateToUserInvitation = {
+            navController.navigate(Screen.UserInvitation(userId))
         },
         modifier = Modifier.fillMaxSize(),
     )
@@ -1334,7 +1355,7 @@ fun NavGraphBuilder.addAccountSettings(
     navController: NavHostController,
     navigateToPasswordManagement: (UserId) -> Unit,
     navigateToRecoveryEmail: (UserId) -> Unit,
-    navigateToSecurityKeys: () -> Unit
+    navigateToSecurityKeys: (UserId) -> Unit
 ) = composable(
     route = Screen.Settings.AccountSettings.route,
     enterTransition = defaultEnterSlideTransition { true },
@@ -1349,7 +1370,7 @@ fun NavGraphBuilder.addAccountSettings(
     AccountSettingsScreen(
         navigateToPasswordManagement = { navigateToPasswordManagement(userId) },
         navigateToRecoveryEmail = { navigateToRecoveryEmail(userId) },
-        navigateToSecurityKeys = navigateToSecurityKeys,
+        navigateToSecurityKeys = { navigateToSecurityKeys(userId) },
         navigateBack = {
             navController.popBackStack(
                 route = Screen.Settings.AccountSettings.route,

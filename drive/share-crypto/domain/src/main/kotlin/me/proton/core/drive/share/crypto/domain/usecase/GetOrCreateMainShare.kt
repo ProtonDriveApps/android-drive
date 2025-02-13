@@ -30,6 +30,7 @@ import me.proton.core.drive.share.domain.exception.ShareException
 import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.volume.crypto.domain.usecase.GetOrCreateVolume
+import me.proton.core.drive.volume.domain.entity.Volume
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -58,7 +59,7 @@ class GetOrCreateMainShare @Inject constructor(
 
     private fun getOrCreateMainShare(
         userId: UserId,
-    ): Flow<DataResult<Share>> = getOrCreateVolume(userId)
+    ): Flow<DataResult<Share>> = getOrCreateVolume(userId, Volume.Type.REGULAR)
         .transformSuccess { result ->
             emitAll(getShare(ShareId(userId, result.value.shareId)))
         }

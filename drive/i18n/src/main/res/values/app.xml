@@ -155,6 +155,7 @@
     <string name="notification_content_text_backup_paused_disabled">Backup was disabled</string>
     <string name="notification_content_text_backup_paused_background_restrictions">Backup cannot run in background</string>
     <string name="notification_content_text_backup_preparing">Preparing to back up</string>
+    <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
     <string name="notification_content_title_download_complete">Download complete</string>
     <string name="notification_content_title_forced_sign_out">Please log in</string>
     <string name="notification_content_text_forced_sign_out">Sorry to interrupt! We had an issue with syncing - please log in again and we\'ll have everything running smoothly.</string>

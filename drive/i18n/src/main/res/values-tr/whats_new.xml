@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">Yenilikler</string>
-  <string name="whats_new_docs_title">Mobil aygıtlarda Proton Docs</string>
-  <string name="whats_new_docs_description">Hareket ederken uçtan uca şifrelenmiş belgeler oluşturmak veya bunlar üzerinde işbirliği yapmak için artı üzerine dokunun.</string>
 </resources>

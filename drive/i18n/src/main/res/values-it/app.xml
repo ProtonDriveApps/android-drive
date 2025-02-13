@@ -27,9 +27,9 @@
   <string name="title_empty_folder">Riempiamo questa cartella</string>
   <string name="title_empty_folder_read_only">La cartella è vuota</string>
   <string name="title_empty_shared">Tieni traccia di cosa succede</string>
-  <string name="title_empty_offline_available">Niente disponibile offline</string>
+  <string name="title_empty_offline_available">Nessun file disponibile offline</string>
   <string name="title_empty_trash">Il cestino è vuoto</string>
-  <string name="title_empty_trash_action">Svuota il cestino</string>
+  <string name="title_empty_trash_action">Svuota cestino</string>
   <string name="title_files_confirm_deletion">Eliminare definitivamente?</string>
   <string name="title_default_home_screen_tab">Scegli la scheda predefinita per la schermata iniziale</string>
   <!-- endregion -->
@@ -168,7 +168,7 @@
   <string name="description_empty_my_files">Tocca il pulsante per iniziare ad aggiungere file.</string>
   <string name="description_empty_folder_read_only">Non c\'è niente da vedere qui</string>
   <string name="description_empty_shared">I file collegati appaiono qui così puoi facilmente monitorare e gestire cosa è condiviso.</string>
-  <string name="description_empty_trash">Qui è dove gli elementi cestinati rimangono fino a quando non li elimini o ripristini.</string>
+  <string name="description_empty_trash">Qui rimangono gli elementi eliminati finché non li elimini o li ripristini.</string>
   <string name="description_empty_offline_available">Rendi file essenziali sempre disponibili anche quando la tua rete non lo è.</string>
   <string name="description_no_drive_scope">All\'utente manca l\'accesso al drive.</string>
   <string name="description_file_download_failed">Download non riuscito. Controlla la connessione a internet e riprova.</string>

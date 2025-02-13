@@ -34,8 +34,8 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
-import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.FindDuplicates
+import me.proton.core.drive.backup.domain.usecase.HandleBackupError
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
@@ -81,7 +81,7 @@ class BackupFindDuplicatesWorkerTest {
     lateinit var configurationProvider: ConfigurationProvider
 
     @Inject
-    lateinit var addBackupError: AddBackupError
+    lateinit var handleBackupError: HandleBackupError
     private lateinit var backupFolder: BackupFolder
     private lateinit var backupFiles: List<BackupFile>
 
@@ -187,7 +187,7 @@ class BackupFindDuplicatesWorkerTest {
                     workerParams = workerParameters,
                     findDuplicates = findDuplicates,
                     configurationProvider = configurationProvider,
-                    addBackupError = addBackupError,
+                    handleBackupError = handleBackupError,
                 )
 
             })

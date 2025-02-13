@@ -39,6 +39,11 @@ class UpdateShareUserDisplayName @Inject constructor(
                 shareUser = driveLink.shareUser.updateDisplayName(driveLink.userId)
             )
         }
+        is DriveLink.Album -> {
+            driveLink.copy(
+                shareUser = driveLink.shareUser.updateDisplayName(driveLink.userId)
+            )
+        }
     }
 
     private suspend fun ShareUser?.updateDisplayName(userId: UserId): ShareUser? = when (this) {

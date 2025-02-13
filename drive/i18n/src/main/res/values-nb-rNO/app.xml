@@ -25,7 +25,7 @@
   <string name="title_offline_available">Tilgjengelig frakoblet</string>
   <string name="title_empty_my_files">Kjør på, legg til din første fil</string>
   <string name="title_empty_folder">La oss fylle denne mappen</string>
-  <string name="title_empty_folder_read_only">Tøm mappe</string>
+  <string name="title_empty_folder_read_only">Tom mappe</string>
   <string name="title_empty_shared">Hold oversikt over hva som skjer</string>
   <string name="title_empty_offline_available">Ingenting er tilgjengelig i frakoblet modus</string>
   <string name="title_empty_trash">Papirkurven er tom</string>
@@ -199,7 +199,7 @@
         Example:
             "Unlock 5 GB of secure storage"
     -->
-  <string name="get_more_free_storage_title">Lås opp %1$s med gratis lagring</string>
+  <string name="get_more_free_storage_title">Lås opp %1$s med gratis lagringsplass</string>
   <string name="get_more_free_storage_description">Fullfør disse trinnene i løpet av de første 30 dagene for en gratis lagringsoppgradering.</string>
   <string name="get_more_free_storage_action_upload_title">Last opp en fil ELLER aktiver sikkerhetskopiering av bilder</string>
   <string name="get_more_free_storage_action_upload_subtitle">Alle filene dine blir kryptert.</string>

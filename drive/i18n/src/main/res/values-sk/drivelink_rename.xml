@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Premenovať súbor</string>
   <string name="link_rename_title_folder">Premenovať priečinok</string>
+  <string name="link_rename_title_album">Premenovať album</string>
   <string name="link_rename_successful">„%1$s“ úspešne premenované</string>
   <string name="link_rename_error_link_not_found">Premenovanie zlyhalo, pretože súbor alebo priečinok nebol nájdený</string>
   <string name="link_rename_error_general">Premenovanie zlyhalo z neznámeho dôvodu</string>

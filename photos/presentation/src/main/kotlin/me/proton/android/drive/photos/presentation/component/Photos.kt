@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.PhotosViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.PhotosViewState
+import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.base.presentation.effect.HandleListEffect
 import me.proton.core.drive.base.presentation.effect.ListEffect
@@ -93,12 +94,24 @@ fun Photos(
             }
             .onLoading { PhotosLoading(modifier.testTag(PhotosTestTag.loading)) }
             .onError { state ->
-                PhotosError(
-                    message = state.message,
-                    actionResId = state.actionResId,
-                    modifier = modifier,
-                    onAction = viewEvent.onErrorAction,
-                )
+                val titleId = state.titleId
+                val imageResId = state.imageResId
+                if (imageResId != null && titleId != null) {
+                    ListEmpty(
+                        imageResId = imageResId,
+                        titleResId = titleId,
+                        descriptionResId = state.descriptionResId,
+                        actionResId = null,
+                        onAction = {},
+                    )
+                } else {
+                    PhotosError(
+                        message = state.message,
+                        actionResId = state.actionResId,
+                        modifier = modifier,
+                        onAction = viewEvent.onErrorAction,
+                    )
+                }
             }
             .onContent {
                 PhotosContent(

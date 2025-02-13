@@ -72,6 +72,7 @@ fun HomeNavGraph(
     navigateToBackupSettings: () -> Unit,
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
+    navigateToUserInvitation: () -> Unit,
 ) = DriveNavHost(
     navController = homeNavController,
     startDestination = startDestination
@@ -129,6 +130,7 @@ fun HomeNavGraph(
             navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.FILES)
         },
         navigateToParentFolderOptions = navigateToParentFolderOptions,
+        navigateToUserInvitation = navigateToUserInvitation,
     )
 }
 
@@ -410,6 +412,7 @@ fun NavGraphBuilder.addSharedTabs(
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
     navigateToMultipleFileOrFolderOptions: (SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
+    navigateToUserInvitation: () -> Unit,
 ) = composable(
     route = Screen.SharedTabs.route,
     enterTransition = defaultEnterSlideTransition {
@@ -484,6 +487,7 @@ fun NavGraphBuilder.addSharedTabs(
                 },
                 navigateToPreview = navigateToSinglePreview,
                 navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+                navigateToUserInvitation = navigateToUserInvitation,
             )
         }
     } ?: let {

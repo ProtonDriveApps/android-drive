@@ -761,7 +761,7 @@ class PhotoContentProvider(
                 nodeKey = "",
                 nodePassphrase = "",
                 nodePassphraseSignature = "",
-                signatureAddress = "",
+                signatureEmail = "",
                 creationTime = TimestampS(),
                 trashedTime = null,
                 hasThumbnail = false,

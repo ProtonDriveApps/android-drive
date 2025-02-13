@@ -30,12 +30,14 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
+import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_ALBUM_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FILE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_VOLUME_ID
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadCleanup
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -60,6 +62,9 @@ class DownloadCleanupWorker @AssistedInject constructor(
             }
             inputData.getString(KEY_FOLDER_ID)?.let { folderId ->
                 return FolderId(shareId, folderId)
+            }
+            inputData.getString(KEY_ALBUM_ID)?.let { albumId ->
+                return AlbumId(shareId, albumId)
             }
             throw IllegalStateException("File or folder ID is required")
         }
@@ -97,6 +102,7 @@ class DownloadCleanupWorker @AssistedInject constructor(
                             when (linkId) {
                                 is FileId -> KEY_FILE_ID
                                 is FolderId -> KEY_FOLDER_ID
+                                is AlbumId -> KEY_ALBUM_ID
                             },
                             linkId.id
                         )

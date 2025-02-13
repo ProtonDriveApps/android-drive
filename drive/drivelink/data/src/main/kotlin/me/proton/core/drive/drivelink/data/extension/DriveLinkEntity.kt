@@ -74,4 +74,15 @@ fun Link.toEncryptedDriveLink(
         shareMemberCount = shareMemberCount,
         shareUser = shareUser,
     )
+    is Link.Album -> DriveLink.Album(
+        link = this,
+        volumeId = volumeId,
+        isMarkedAsOffline = isMarkedAsOffline,
+        isAnyAncestorMarkedAsOffline = false,
+        downloadState = downloadState,
+        trashState = trashState,
+        shareInvitationCount = shareInvitationCount,
+        shareMemberCount = shareMemberCount,
+        shareUser = shareUser,
+    )
 }

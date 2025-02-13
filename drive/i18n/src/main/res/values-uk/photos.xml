@@ -79,7 +79,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Використовувати мобільні дані</string>
   <string name="photos_error_local_storage">Сховище пристрою заповнене</string>
   <string name="photos_error_local_storage_description">Щоб надалі виконувати резервне копіювання, необхідно звільнити місце у сховищі вашого пристрою.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">Для безперебійного резервного копіювання змініть налаштування акумулятора або частіше відкривайте програму.</string>
   <string name="photos_error_background_restrictions_action">Налаштування</string>
   <string name="photos_empty_title">Ще немає резервних копій</string>

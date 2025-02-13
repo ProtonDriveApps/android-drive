@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Redenumire fișier</string>
   <string name="link_rename_title_folder">Redenumire folder</string>
+  <string name="link_rename_title_album">Redenumire album</string>
   <string name="link_rename_successful">„%1$s” a fost redenumit cu succes.</string>
   <string name="link_rename_error_link_not_found">Redenumirea a eșuat deoarece fișierul sau folderul nu mai poate fi găsit.</string>
   <string name="link_rename_error_general">Redenumire eșuată din motiv necunoscut.</string>

@@ -30,7 +30,7 @@ import kotlin.time.Duration.Companion.seconds
 
 class SyncStaleFolders(
     private val getAllFolders: GetAllFolders,
-    private val backupManager: BackupManager,
+    private val syncFolders: SyncFolders,
     private val configurationProvider: ConfigurationProvider,
     private val clock: () -> TimestampS,
 ) {
@@ -38,9 +38,9 @@ class SyncStaleFolders(
     @Inject
     constructor(
         getAllFolders: GetAllFolders,
-        backupManager: BackupManager,
+        syncFolders: SyncFolders,
         configurationProvider: ConfigurationProvider,
-    ) : this(getAllFolders, backupManager, configurationProvider, ::TimestampS)
+    ) : this(getAllFolders, syncFolders, configurationProvider, ::TimestampS)
 
     private val stale = { backupFolder: BackupFolder ->
         backupFolder.syncTime?.let { syncTime ->
@@ -57,9 +57,9 @@ class SyncStaleFolders(
         getAllFolders(userId).sync(uploadPriority)
     }
 
-    private fun Result<List<BackupFolder>>.sync(
+    private suspend fun Result<List<BackupFolder>>.sync(
         uploadPriority: Long,
     ) = getOrThrow().filter(stale).onEach { backupFolder ->
-        backupManager.sync(backupFolder, uploadPriority)
+        syncFolders(backupFolder, uploadPriority)
     }
 }

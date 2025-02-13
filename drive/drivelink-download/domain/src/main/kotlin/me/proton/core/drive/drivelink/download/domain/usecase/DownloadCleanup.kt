@@ -55,6 +55,7 @@ class DownloadCleanup @Inject constructor(
             when (link) {
                 is Link.Folder -> folderCleanup(volumeId, link, includingDescendants)
                 is Link.File -> fileCleanup(volumeId, link)
+                is Link.Album -> error("TODO")
             }
         }
     }

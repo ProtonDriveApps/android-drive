@@ -19,7 +19,8 @@
 <resources>
   <string name="link_rename_title_file">Gi en fil nytt navn</string>
   <string name="link_rename_title_folder">Gi nytt navn til mappe</string>
-  <string name="link_rename_successful">%1$s har fått nytt navn</string>
+  <string name="link_rename_title_album">Gi nytt navn til et album</string>
+  <string name="link_rename_successful">\"%1$s\" har fått nytt navn</string>
   <string name="link_rename_error_link_not_found">Nytt navn mislyktes fordi fil eller mappe finnes ikke lenger.</string>
   <string name="link_rename_error_general">Nytt navn mislyktes av en ukjent årsak</string>
 </resources>

@@ -104,6 +104,7 @@ fun HomeScreen(
     navigateToWhatsNew: (WhatsNewKey) -> Unit,
     navigateToRatingBooster: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
+    navigateToUserInvitation: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     setLocalSnackbarPadding(BottomNavigationHeight)
@@ -157,6 +158,7 @@ fun HomeScreen(
             navigateToBackupSettings = navigateToBackupSettings,
             navigateToComputerOptions = navigateToComputerOptions,
             navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
+            navigateToUserInvitation = navigateToUserInvitation,
             arguments = arguments,
             viewState = currentViewState,
             viewEvent = viewEvent,
@@ -195,6 +197,7 @@ internal fun Home(
     navigateToBackupSettings: () -> Unit,
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
+    navigateToUserInvitation: () -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
     val isDrawerOpen = with(homeScaffoldState.scaffoldState.drawerState) {
@@ -290,6 +293,7 @@ internal fun Home(
                     navigateToBackupSettings,
                     navigateToComputerOptions,
                     navigateToNotificationPermissionRationale,
+                    navigateToUserInvitation,
                 )
             }
         }

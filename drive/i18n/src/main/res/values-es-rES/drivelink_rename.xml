@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Renombrar un archivo</string>
   <string name="link_rename_title_folder">Renombrar una carpeta</string>
+  <string name="link_rename_title_album">Cambiar el nombre de un álbum</string>
   <string name="link_rename_successful">\"%1$s\" renombrado</string>
   <string name="link_rename_error_link_not_found">Error al renombrar porque ya no se encuentra el archivo o la carpeta</string>
   <string name="link_rename_error_general">Error al renombrar por motivo desconocido</string>

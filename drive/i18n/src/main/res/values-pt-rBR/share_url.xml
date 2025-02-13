@@ -73,4 +73,27 @@
   <string name="shared_empty_title">Nada compartilhado ainda</string>
   <string name="shared_with_me_empty_description">Arquivos e pastas compartilhados com você aparecerão aqui</string>
   <string name="shared_by_me_empty_description">Compartilhe com segurança seus arquivos e pastas com criptografia de ponta a ponta</string>
+  <string name="shared_by_me_invitation_banner_title">Itens compartilhados pendentes</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">%1$d item compartilhado com você</item>
+    <item quantity="other">%1$d itens compartilhados com você</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">Itens compartilhados pendentes (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">No pending shared items</string>
+  <string name="shared_user_invitations_description_empty">All new invitation will be here</string>
+  <string name="shared_user_invitations_accept_button">Aceitar</string>
+  <string name="shared_user_invitations_decline_button">Negar</string>
+  <string name="shared_user_invitations_accept_success">Item compartilhado aceitado</string>
+  <string name="shared_user_invitations_decline_success">Item compartilhado recusado</string>
 </resources>

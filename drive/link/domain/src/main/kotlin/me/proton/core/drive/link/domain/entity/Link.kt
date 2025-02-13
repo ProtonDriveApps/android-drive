@@ -38,6 +38,8 @@ sealed class LinkId {
 data class FileId(override val shareId: ShareId, override val id: String) : LinkId()
 @Serializable
 data class FolderId(override val shareId: ShareId, override val id: String) : LinkId()
+@Serializable
+data class AlbumId(override val shareId: ShareId, override val id: String) : LinkId()
 
 interface BaseLink {
     val id: LinkId
@@ -64,7 +66,16 @@ interface File : BaseLink {
 
 interface Folder : BaseLink {
     override val id: FolderId
-    val signatureAddress: String
+    val signatureEmail: String
+}
+
+interface Album : BaseLink {
+    override val id: AlbumId
+    val signatureEmail: String
+    val isLocked: Boolean
+    val coverLinkId: FileId?
+    val lastActivityTime: TimestampS
+    val photoCount: Long
 }
 
 sealed class Link : BaseLink {
@@ -80,7 +91,7 @@ sealed class Link : BaseLink {
     abstract val nodeKey: String
     abstract val nodePassphrase: String
     abstract val nodePassphraseSignature: String
-    abstract val signatureAddress: String
+    abstract val signatureEmail: String
     abstract val creationTime: TimestampS
     abstract val trashedTime: TimestampS?
     abstract val sharingDetails: SharingDetails?
@@ -109,7 +120,7 @@ sealed class Link : BaseLink {
         override val nodeKey: String,
         override val nodePassphrase: String,
         override val nodePassphraseSignature: String,
-        override val signatureAddress: String,
+        override val signatureEmail: String,
         override val creationTime: TimestampS,
         override val trashedTime: TimestampS?,
         override val hasThumbnail: Boolean,
@@ -151,13 +162,49 @@ sealed class Link : BaseLink {
         override val nodeKey: String,
         override val nodePassphrase: String,
         override val nodePassphraseSignature: String,
-        override val signatureAddress: String,
+        override val signatureEmail: String,
         override val creationTime: TimestampS,
         override val trashedTime: TimestampS?,
         override val xAttr: String?,
         override val sharingDetails: SharingDetails?,
         val nodeHashKey: String,
     ) : Link(), me.proton.core.drive.link.domain.entity.Folder
+
+    data class Album(
+        override val id: AlbumId,
+        override val parentId: FolderId?,
+        override val name: String,
+        override val size: Bytes,
+        override val lastModified: TimestampS,
+        override val mimeType: String,
+        override val isShared: Boolean,
+        override val key: String,
+        override val passphrase: String,
+        override val passphraseSignature: String,
+        override val numberOfAccesses: Long,
+        override val shareUrlExpirationTime: TimestampS?,
+        override val uploadedBy: String,
+        override val isFavorite: Boolean,
+        override val attributes: Attributes,
+        override val permissions: Permissions,
+        override val state: State,
+        override val nameSignatureEmail: String?,
+        override val hash: String,
+        override val expirationTime: TimestampS?,
+        override val nodeKey: String,
+        override val nodePassphrase: String,
+        override val nodePassphraseSignature: String,
+        override val signatureEmail: String,
+        override val creationTime: TimestampS,
+        override val trashedTime: TimestampS?,
+        override val xAttr: String?,
+        override val sharingDetails: SharingDetails?,
+        val nodeHashKey: String,
+        override val isLocked: Boolean,
+        override val lastActivityTime: TimestampS,
+        override val photoCount: Long,
+        override val coverLinkId: FileId? = null,
+    ) : Link(), me.proton.core.drive.link.domain.entity.Album
 
     enum class State {
         DRAFT, ACTIVE, TRASHED, DELETED, RESTORING

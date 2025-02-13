@@ -61,7 +61,9 @@ class ShowUpsellTest {
     @Test
     fun `Given free user and backup disabled when show upsell should returns false`() = runTest {
         driveRule.db.user {
-            volume {}
+            volume {
+                photoShare {}
+            }
         }
 
         assertFalse(showUpsell(userId).first())

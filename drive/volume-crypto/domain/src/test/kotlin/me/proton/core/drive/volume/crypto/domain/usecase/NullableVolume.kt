@@ -20,7 +20,10 @@ package me.proton.core.drive.volume.crypto.domain.usecase
 
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.db.test.mainRootId
 import me.proton.core.drive.db.test.mainShareId
+import me.proton.core.drive.db.test.photoRootId
+import me.proton.core.drive.db.test.photoShareId
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
@@ -29,12 +32,28 @@ import me.proton.core.drive.volume.domain.entity.VolumeId
 internal fun NullableVolume(
     id: VolumeId,
     state: Long = 1,
-    creationTime: TimestampS = TimestampS(0),
+    createTime: TimestampS = TimestampS(0),
 ) = Volume(
     id = id,
     shareId = mainShareId.id,
-    maxSpace = 0.bytes,
+    linkId = mainRootId.id,
     usedSpace = 0.bytes,
     state = state,
-    creationTime = creationTime
+    createTime = createTime,
+    type = Volume.Type.REGULAR,
+)
+
+@Suppress("TestFunctionName")
+internal fun NullablePhotoVolume(
+    id: VolumeId,
+    state: Long = 1,
+    createTime: TimestampS = TimestampS(0),
+) = Volume(
+    id = id,
+    shareId = photoShareId.id,
+    linkId = photoRootId.id,
+    usedSpace = 0.bytes,
+    state = state,
+    createTime = createTime,
+    type = Volume.Type.PHOTO,
 )

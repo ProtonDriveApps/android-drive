@@ -19,11 +19,20 @@
 package me.proton.android.drive.ui.robot
 
 import me.proton.android.drive.ui.screen.SharedWithMeTestTag
+import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
 
 object SharedWithMeRobot : LinksRobot {
     override val filesContent get() = node.withTag(SharedWithMeTestTag.content)
+
+    fun clickUserInvitation(count: Int) = node.withText(
+        StringUtils.pluralStringFromResource(
+            I18N.plurals.shared_by_me_invitation_banner_description,
+            count,
+            count
+        )
+    ).clickTo(UserInvitationRobot)
 
     fun assertEmpty() {
         node.withText(I18N.string.shared_with_me_empty_title).await { assertIsDisplayed() }

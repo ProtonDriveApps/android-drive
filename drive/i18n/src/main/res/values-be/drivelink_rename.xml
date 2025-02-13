@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Перайменаваць файл</string>
   <string name="link_rename_title_folder">Перайменаваць папку</string>
+  <string name="link_rename_title_album">Rename an album</string>
   <string name="link_rename_successful">\"%1$s\" паспяхова перайменаваны</string>
   <string name="link_rename_error_link_not_found">Не ўдалося перайменаваць, бо немагчыма знайсці файл або папку</string>
   <string name="link_rename_error_general">Не ўдалося перайменаваць па невядомай прычыне</string>

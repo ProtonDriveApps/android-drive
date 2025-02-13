@@ -25,6 +25,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.toDataResult
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -49,6 +50,15 @@ class GetDecryptedDriveLink @Inject constructor(
         failOnDecryptionError: Boolean = true,
     ): Flow<DataResult<DriveLink.File>> =
         getDriveLink(fileId = fileId)
+            .mapSuccess { (_, driveLink) ->
+                decryptDriveLink(driveLink, failOnDecryptionError).toDataResult()
+            }
+
+    operator fun invoke(
+        albumId: AlbumId,
+        failOnDecryptionError: Boolean = true,
+    ): Flow<DataResult<DriveLink.Album>> =
+        getDriveLink(albumId = albumId)
             .mapSuccess { (_, driveLink) ->
                 decryptDriveLink(driveLink, failOnDecryptionError).toDataResult()
             }

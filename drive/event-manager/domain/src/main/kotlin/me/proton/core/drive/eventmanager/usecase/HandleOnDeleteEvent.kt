@@ -61,6 +61,7 @@ class HandleOnDeleteEvent @Inject constructor(
                             invoke(children.ids, stopOnFailure).getOrNullOrThrowIf(stopOnFailure)
                         }
                         .getOrNullOrThrowIf(stopOnFailure)
+                    is DriveLink.Album -> error("TODO")
                 }
             }
         deleteLocalVolumes(linkIds).getOrNullOrThrowIf(stopOnFailure)

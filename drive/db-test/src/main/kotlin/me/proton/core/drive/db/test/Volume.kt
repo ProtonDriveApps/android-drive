@@ -22,6 +22,7 @@ package me.proton.core.drive.db.test
 import me.proton.android.drive.db.DriveDatabase
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.data.api.entity.VolumeDto
 import me.proton.core.drive.volume.data.db.VolumeEntity
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.user.data.entity.UserEntity
@@ -34,6 +35,7 @@ data class VolumeContext(
 ) : BaseContext()
 
 val volumeId = VolumeId("volume-id")
+val photoVolumeId = VolumeId("photo-volume-id")
 val mainShareId = ShareId(userId, "main-share-id")
 
 suspend fun UserContext.volume(
@@ -52,14 +54,46 @@ suspend fun <T> UserContext.volume(
     return VolumeContext(db, user, account, volume).block()
 }
 
+suspend fun <T> UserContext.photoVolume(
+    volume: VolumeEntity = NullablePhotoVolumeEntity(
+        id = photoVolumeId.id,
+    ),
+    block: suspend VolumeContext.() -> T,
+): T {
+    db.volumeDao.insertOrUpdate(volume)
+    return VolumeContext(db, user, account, volume).block()
+}
+
 @Suppress("FunctionName")
-fun NullableVolumeEntity(id: String = volumeId.id, state: Long = 1, creationTime: Long = 0) =
+fun NullableVolumeEntity(
+    id: String = volumeId.id,
+    state: Long = 1,
+    createTime: Long = 0,
+) =
     VolumeEntity(
         id = id,
         userId = userId,
         shareId = mainShareId.id,
-        creationTime = creationTime,
-        maxSpace = 0,
+        linkId = mainRootId.id,
+        createTime = createTime,
         usedSpace = 0,
         state = state,
+        type = VolumeDto.TYPE_REGULAR,
+    )
+
+@Suppress("FunctionName")
+fun NullablePhotoVolumeEntity(
+    id: String = photoVolumeId.id,
+    state: Long = 1,
+    createTime: Long = 0,
+) =
+    VolumeEntity(
+        id = id,
+        userId = userId,
+        shareId = photoShareId.id,
+        linkId = photoRootId.id,
+        createTime = createTime,
+        usedSpace = 0,
+        state = state,
+        type = VolumeDto.TYPE_PHOTO,
     )

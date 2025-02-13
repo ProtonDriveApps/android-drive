@@ -27,7 +27,7 @@
   <string name="computers_synced_folders_empty_title">Nessuna cartella sincronizzata</string>
   <string name="computers_synced_folders_empty_description">Le cartelle sincronizzate dal computer\nappariranno qui</string>
   <string name="computers_synced_folders_no_folder">Computer rimosso</string>
-  <string name="computers_rename_title">Rinomina il computer</string>
+  <string name="computers_rename_title">Rinomina computer</string>
   <string name="computers_rename_success">Computer rinominato</string>
   <!--
         Variable %1$s is a computer name

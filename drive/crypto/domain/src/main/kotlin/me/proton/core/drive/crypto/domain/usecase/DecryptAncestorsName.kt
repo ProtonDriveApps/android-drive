@@ -51,6 +51,7 @@ class DecryptAncestorsName @Inject constructor(
                     when (link) {
                         is Link.Folder -> link.copy(name = decryptedName.text)
                         is Link.File -> link.copy(name = decryptedName.text)
+                        is Link.Album -> link.copy(name = decryptedName.text)
                     }
                 } else {
                     link

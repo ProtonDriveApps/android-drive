@@ -25,7 +25,7 @@
   <string name="computers_empty_title">Brak zsynchronizowanych urządzeń</string>
   <string name="computers_empty_description">Pobierz aplikację desktopową,\naby synchronizować foldery</string>
   <string name="computers_synced_folders_empty_title">Brak zsynchronizowanych folderów</string>
-  <string name="computers_synced_folders_empty_description">Tutaj pojawią się foldery zsynchronizowane z urządzeniem</string>
+  <string name="computers_synced_folders_empty_description">Tutaj pojawią się foldery zsynchronizowane\nz urządzeniem</string>
   <string name="computers_synced_folders_no_folder">Urządzenie zostało usunięte</string>
   <string name="computers_rename_title">Zmień nazwę urządzenia</string>
   <string name="computers_rename_success">Nazwa urządzenia została zmieniona</string>

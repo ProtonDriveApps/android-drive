@@ -77,7 +77,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Mobilfunkdaten nutzen</string>
   <string name="photos_error_local_storage">Gerätespeicherplatz voll</string>
   <string name="photos_error_local_storage_description">Um die Sicherung fortzusetzen, musst du Speicherplatz auf deinem Gerät freigeben.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Setze die Akkunutzung für die Hintergrundaktivität von Anwendungen auf \"uneingeschränkt\".</string>
   <string name="photos_error_background_restrictions_description">Passe die Einstellungen der Akkunutzung an oder öffne die App häufig, um konsistente Backups im Hintergrund durchzuführen.</string>
   <string name="photos_error_background_restrictions_action">Einstellungen</string>
   <string name="photos_empty_title">Noch keine Sicherungen</string>

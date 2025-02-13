@@ -30,22 +30,33 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
+import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
+import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.drivelink.shared.domain.usecase.GetPagedSharedWithMeLinkIds
 import me.proton.core.drive.drivelink.shared.domain.usecase.SharedDriveLinks
 import me.proton.core.drive.drivelink.shared.presentation.entity.SharedItem
+import me.proton.core.drive.drivelink.shared.presentation.viewstate.UserInvitationBannerViewState
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveMobileSharingInvitationsAcceptReject
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
+import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 import me.proton.core.drive.share.user.domain.usecase.GetAllSharedWithMeIds
+import me.proton.core.drive.share.user.domain.usecase.GetUserInvitationCountFlow
 import javax.inject.Inject
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
@@ -59,6 +70,7 @@ class SharedWithMeViewModel @Inject constructor(
     getPagedSharedWithMeLinkIds: GetPagedSharedWithMeLinkIds,
     getFeatureFlagFlow: GetFeatureFlagFlow,
     private val getAllSharedWithMeIds: GetAllSharedWithMeIds,
+    getUserInvitationCountFlow: GetUserInvitationCountFlow,
 ) : CommonSharedViewModel(
     savedStateHandle = savedStateHandle,
     appContext = appContext,
@@ -82,24 +94,46 @@ class SharedWithMeViewModel @Inject constructor(
         descriptionResId = I18N.string.shared_with_me_empty_description,
         actionResId = null,
     )
+
     @OptIn(ExperimentalCoroutinesApi::class)
-    override val driveLinks: Flow<PagingData<SharedItem>> = killSwitch.transformLatest { featureFlag ->
-        if (featureFlag.state == ENABLED) {
-            emit(PagingData.empty())
-        } else {
-            emitAll(
-                getPagedSharedWithMeLinkIds(userId)
-                    .map { pagingData ->
-                        pagingData.map { sharedLinkId ->
-                            SharedItem.Listing(
-                                linkId = sharedLinkId.linkId,
-                            ) as SharedItem
-                        }
-                    }.cachedIn(viewModelScope)
-            )
+    override val driveLinks: Flow<PagingData<SharedItem>> =
+        killSwitch.transformLatest { featureFlag ->
+            if (featureFlag.state == ENABLED) {
+                emit(PagingData.empty())
+            } else {
+                emitAll(
+                    getPagedSharedWithMeLinkIds(userId)
+                        .map { pagingData ->
+                            pagingData.map { sharedLinkId ->
+                                SharedItem.Listing(
+                                    linkId = sharedLinkId.linkId,
+                                ) as SharedItem
+                            }
+                        }.cachedIn(viewModelScope)
+                )
+            }
         }
-    }
 
     override suspend fun getAllIds(): Result<List<SharedLinkId>> = getAllSharedWithMeIds(userId)
+
+    val userInvitationBannerViewState =
+        getFeatureFlagFlow(driveMobileSharingInvitationsAcceptReject(userId)).transform { featureFlag ->
+            if (featureFlag.on) {
+                emitAll(getUserInvitationCountFlow(userId, refresh = flowOf(true))
+                    .filterSuccessOrError()
+                    .mapSuccessValueOrNull()
+                    .filterNotNull()
+                    .filter { count -> count > 0 }
+                    .map { count ->
+                        UserInvitationBannerViewState(
+                            appContext.quantityString(
+                                I18N.plurals.shared_by_me_invitation_banner_description,
+                                count
+                            )
+                        )
+                    }
+                )
+            }
+        }
 
 }

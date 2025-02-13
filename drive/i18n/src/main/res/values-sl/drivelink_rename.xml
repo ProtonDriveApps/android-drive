@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Preimenuj datoteko</string>
   <string name="link_rename_title_folder">Preimenuj mapo</string>
+  <string name="link_rename_title_album">Rename an album</string>
   <string name="link_rename_successful">»%1$s« je uspešno preimenovan</string>
   <string name="link_rename_error_link_not_found">Preimenovanje ni uspelo, ker datoteke ali mape ni več mogoče najti</string>
   <string name="link_rename_error_general">Preimenovanje ni uspelo iz neznanega razloga</string>

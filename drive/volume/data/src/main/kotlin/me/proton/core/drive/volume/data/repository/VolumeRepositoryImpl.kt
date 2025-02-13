@@ -30,6 +30,7 @@ import me.proton.core.drive.volume.data.api.VolumeApiDataSource
 import me.proton.core.drive.volume.data.db.VolumeDao
 import me.proton.core.drive.volume.data.db.VolumeEntity
 import me.proton.core.drive.volume.data.extension.asVolume
+import me.proton.core.drive.volume.data.extension.toCreatePhotoVolumeRequest
 import me.proton.core.drive.volume.data.extension.toCreateVolumeRequest
 import me.proton.core.drive.volume.data.extension.toVolumeEntity
 import me.proton.core.drive.volume.domain.entity.Volume
@@ -76,7 +77,17 @@ class VolumeRepositoryImpl @Inject constructor(
         emit(DataResult.Processing(ResponseSource.Remote))
         emit(
             runCatchingApiException {
-                with(api.createVolume(userId, volumeInfo.toCreateVolumeRequest()).toVolumeEntity(userId)) {
+                val volumeDto = when (volumeInfo) {
+                    is VolumeInfo.Regular -> api.createVolume(
+                        userId,
+                        volumeInfo.toCreateVolumeRequest(),
+                    )
+                    is VolumeInfo.Photo -> api.createPhotoVolume(
+                        userId,
+                        volumeInfo.toCreatePhotoVolumeRequest(),
+                    )
+                }
+                with(volumeDto.toVolumeEntity(userId)) {
                     db.insertOrUpdate(this)
                     asVolume
                 }

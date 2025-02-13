@@ -57,7 +57,7 @@
     -->
   <string name="files_confirm_deletion_message_format">Element \'%1$s\' zostanie trwale usunięty. Tej akcji nie można cofnąć.</string>
   <string name="files_confirm_empty_trash_title">Opróżnić Kosz?</string>
-  <string name="files_confirm_empty_trash_message">Elementy w Koszu zostaną trwale usunięte. Tej akcji nie można cofnąć.</string>
+  <string name="files_confirm_empty_trash_message">Elementy w Koszu zostaną trwale usunięte. Tego działania nie można cofnąć.</string>
   <string name="files_confirm_empty_trash_confirm_action">Opróżnij Kosz</string>
   <string name="files_display_file_info_action">Szczegóły pliku</string>
   <string name="files_display_folder_info_action">Szczegóły folderu</string>

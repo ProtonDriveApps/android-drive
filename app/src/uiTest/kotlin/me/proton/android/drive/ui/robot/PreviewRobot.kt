@@ -43,6 +43,7 @@ object PreviewRobot : NavigationBarRobot {
     private val preview get() = allNodes.withTag(ImagePreviewComponentTestTag.image).onFirst()
     private val pager get() = node.withTag(PreviewComponentTestTag.pager)
     private val mediaPreview get() = node.withTag(PreviewComponentTestTag.mediaPreview)
+    private val openInBrowserButton get() = node.withText(I18N.string.common_open_in_browser_action)
 
     fun clickOnContextualButton() = contextualButton.clickTo(FileFolderOptionsRobot)
 
@@ -71,6 +72,8 @@ object PreviewRobot : NavigationBarRobot {
     fun scrollTo(index: Int) = apply {
         pager.scrollTo(index)
     }
+
+    fun clickOpenInBrowserButton() = openInBrowserButton.scrollTo().clickTo(FilesTabRobot)
 
     override fun robotDisplayed() {
         previewScreen.await { assertIsDisplayed() }

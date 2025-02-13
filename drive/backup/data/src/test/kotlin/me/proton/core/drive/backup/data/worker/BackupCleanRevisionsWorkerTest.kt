@@ -31,8 +31,8 @@ import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.repository.BackupDuplicateRepository
 import me.proton.core.drive.backup.domain.repository.BackupErrorRepository
-import me.proton.core.drive.backup.domain.usecase.AddBackupError
 import me.proton.core.drive.backup.domain.usecase.CleanRevisions
+import me.proton.core.drive.backup.domain.usecase.HandleBackupError
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.folder.domain.repository.FolderRepository
@@ -65,7 +65,7 @@ class BackupCleanRevisionsWorkerTest {
     lateinit var configurationProvider: ConfigurationProvider
 
     @Inject
-    lateinit var addBackupError: AddBackupError
+    lateinit var handleBackupError: HandleBackupError
 
     @Inject
     lateinit var backupDuplicateRepository: BackupDuplicateRepository
@@ -167,7 +167,7 @@ class BackupCleanRevisionsWorkerTest {
                     workerParams = workerParameters,
                     cleanRevisions = cleanRevisions,
                     configurationProvider = configurationProvider,
-                    addBackupError = addBackupError,
+                    handleBackupError = handleBackupError,
                 )
             })
             .setInputData(

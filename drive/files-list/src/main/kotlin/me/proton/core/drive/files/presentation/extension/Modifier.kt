@@ -55,12 +55,14 @@ object DriveLinkSemanticsProperties {
 
 enum class ItemType {
     Folder,
-    File;
+    File,
+    Album;
 
     companion object {
         fun fromDriveLink(link: DriveLink): ItemType = when (link) {
             is DriveLink.Folder -> Folder
             is DriveLink.File -> File
+            is DriveLink.Album -> Album
         }
     }
 }

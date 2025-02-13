@@ -20,6 +20,7 @@ package me.proton.core.drive.drivelink.shared.presentation.component
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -67,6 +68,7 @@ fun Shared(
     listEffect: Flow<ListEffect>,
     driveLinksFlow: Flow<Map<String, DriveLink>>,
     modifier: Modifier = Modifier,
+    headerContent: @Composable () -> Unit = {},
 ) {
     val items = sharedItems.collectAsLazyPagingItems()
     LaunchedEffect(items) {
@@ -89,10 +91,14 @@ fun Shared(
                 modifier = modifier,
                 onAction = {},
                 onRefresh = viewEvent.onRefresh,
+                headerContent = headerContent,
             )
         }
         .onLoading {
-            SharedLoading(modifier = modifier)
+            SharedLoading(
+                modifier = modifier,
+                headerContent = headerContent,
+            )
         }
         .onError { state ->
             SharedError(
@@ -103,6 +109,7 @@ fun Shared(
                 modifier = modifier,
                 onAction = viewEvent.onErrorAction,
                 onRefresh = viewEvent.onRefresh,
+                headerContent = headerContent,
             )
         }
         .onContent {
@@ -116,6 +123,7 @@ fun Shared(
                 onScroll = viewEvent.onScroll,
                 onRefresh = viewEvent.onRefresh,
                 onMoreOptions = viewEvent.onMoreOptions,
+                headerContent = headerContent,
             )
         }
 }
@@ -131,6 +139,7 @@ private fun SharedContent(
     onScroll: (Set<LinkId>) -> Unit,
     onRefresh: () -> Unit,
     onMoreOptions: (DriveLink) -> Unit,
+    headerContent: @Composable () -> Unit = {},
 ) {
     ProtonPullToRefresh(
         isPullToRefreshEnabled = isRefreshEnabled,
@@ -144,6 +153,7 @@ private fun SharedContent(
             onDriveLink = onDriveLink,
             onScroll = onScroll,
             onMoreOptions = onMoreOptions,
+            headerContent = headerContent
         )
     }
 }
@@ -156,6 +166,7 @@ private fun SharedContent(
     onDriveLink: (DriveLink) -> Unit,
     onScroll: (Set<LinkId>) -> Unit,
     onMoreOptions: (DriveLink) -> Unit,
+    headerContent: @Composable () -> Unit = {},
 ) {
     val state = items.rememberLazyListState()
     val driveLinksMap by driveLinksFlow.collectAsStateWithLifecycle(initialValue = emptyMap())
@@ -180,11 +191,14 @@ private fun SharedContent(
         modifier = modifier
             .fillMaxSize()
     ) {
+        item {
+            headerContent()
+        }
         items(
             count = items.itemCount,
             key = items.itemKey { sharedItem ->
                 when (sharedItem) {
-                    is SharedItem.Listing -> sharedItem.linkId.id
+                    is SharedItem.Listing -> sharedItem.linkId.shareId.id + sharedItem.linkId.id
                 }
             },
         ) { index ->
@@ -257,30 +271,38 @@ private fun SharedEmpty(
     modifier: Modifier = Modifier,
     onAction: () -> Unit,
     onRefresh: () -> Unit,
+    headerContent: @Composable () -> Unit,
 ) {
     ProtonPullToRefresh(
         isPullToRefreshEnabled = isRefreshEnabled,
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
     ) {
-        ListEmpty(
-            imageResId = imageResId,
-            titleResId = titleResInt,
-            descriptionResId = descriptionResId,
-            actionResId = actionResId,
-            modifier = modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            onAction = onAction,
-        )
+        Column {
+            headerContent()
+            ListEmpty(
+                imageResId = imageResId,
+                titleResId = titleResInt,
+                descriptionResId = descriptionResId,
+                actionResId = actionResId,
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                onAction = onAction,
+            )
+        }
     }
 }
 
 @Composable
 private fun SharedLoading(
     modifier: Modifier = Modifier,
+    headerContent: @Composable () -> Unit = {},
 ) {
-    ListLoading(modifier = modifier.fillMaxSize())
+    Column {
+        headerContent()
+        ListLoading(modifier = modifier.fillMaxSize())
+    }
 }
 
 @Composable
@@ -292,20 +314,24 @@ private fun SharedError(
     modifier: Modifier = Modifier,
     onAction: () -> Unit,
     onRefresh: () -> Unit,
+    headerContent: @Composable () -> Unit = {},
 ) {
     ProtonPullToRefresh(
         isPullToRefreshEnabled = isRefreshEnabled,
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
     ) {
-        ListError(
-            message = message,
-            actionResId = actionResId,
-            modifier = modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
-            onAction = onAction,
-        )
+        Column {
+            headerContent()
+            ListError(
+                message = message,
+                actionResId = actionResId,
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                onAction = onAction,
+            )
+        }
     }
 }
 

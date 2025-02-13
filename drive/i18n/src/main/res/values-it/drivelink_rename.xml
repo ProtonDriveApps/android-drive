@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Rinomina un file</string>
   <string name="link_rename_title_folder">Rinomina una cartella</string>
+  <string name="link_rename_title_album">Rinomina un album</string>
   <string name="link_rename_successful">\"%1$s\" rinominato</string>
   <string name="link_rename_error_link_not_found">Rinomina non riuscita perché non è più possibile trovare il file o la cartella</string>
   <string name="link_rename_error_general">Rinomina non riuscita per motivi sconosciuti</string>

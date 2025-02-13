@@ -23,7 +23,7 @@
   <string name="app_lock_biometric_subtitle_confirmation_enable">Conferma l\'abilitazione del blocco</string>
   <string name="app_lock_biometric_subtitle_confirmation_disable">Conferma la disabilitazione del blocco</string>
   <string name="app_lock_option_never_set">Abilita la biometria o il blocco del dispositivo</string>
-  <string name="app_lock_option_none">Nessuno</string>
+  <string name="app_lock_option_none">Nessun blocco</string>
   <string name="app_lock_option_system">Biometria o blocco del dispositivo</string>
   <string name="app_lock_system_dialog_title">Abilita l\'accesso con la biometria</string>
   <string name="app_lock_system_dialog_description">Configura la biometria o il blocco del dispositivo</string>
@@ -31,6 +31,6 @@
   <string name="app_lock_system_not_available">Blocco con la biometria o con il blocco del dispositivo non supportato</string>
   <string name="app_lock_enabled">Blocco con la biometria o con il blocco del dispositivo abilitato</string>
   <string name="app_lock_disabled">Blocco dell\'applicazione disabilitato</string>
-  <string name="app_lock_access_title">Blocco automatico</string>
+  <string name="app_lock_access_title">Scegli come bloccare l\'app</string>
   <string name="app_lock_unlock_the_app">Sblocca</string>
 </resources>

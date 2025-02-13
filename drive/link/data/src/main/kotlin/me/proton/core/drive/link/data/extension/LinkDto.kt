@@ -58,7 +58,13 @@ fun LinkDto.toLinkWithProperties(shareId: ShareId): LinkWithProperties {
     val linkEntity = toLinkEntity(shareId)
     val folderProperties = this.folderProperties
     val fileProperties = this.fileProperties
+    val albumProperties = this.albumProperties
     return when {
+        albumProperties != null ->
+            LinkWithProperties(
+                linkEntity,
+                albumProperties.toLinkAlbumPropertiesEntity(linkEntity.userId, linkEntity.shareId, linkEntity.id)
+            )
         folderProperties != null ->
             LinkWithProperties(
                 linkEntity,
@@ -69,6 +75,6 @@ fun LinkDto.toLinkWithProperties(shareId: ShareId): LinkWithProperties {
                 linkEntity,
                 fileProperties.toLinkFilePropertiesEntity(linkEntity.userId, linkEntity.shareId, linkEntity.id)
             )
-        else -> throw IllegalStateException("Link should have either file or folder properties")
+        else -> error("Link should have either file, folder or album properties")
     }
 }

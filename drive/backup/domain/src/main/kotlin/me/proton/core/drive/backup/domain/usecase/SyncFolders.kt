@@ -19,27 +19,39 @@
 package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.announce.event.domain.entity.Event
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BucketUpdate
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.util.kotlin.filterNotNullValues
-import me.proton.core.util.kotlin.filterNullValues
 import javax.inject.Inject
 
 class SyncFolders @Inject constructor(
     private val getAllFolders: GetAllFolders,
     private val backupManager: BackupManager,
+    private val announceEvent: AnnounceEvent,
 ) {
+    suspend operator fun invoke(backupFolder: BackupFolder, uploadPriority: Long) = coRunCatching {
+        backupManager.sync(backupFolder, uploadPriority)
+        announceEvent(backupFolder.folderId.userId, Event.BackupSync(
+            folderId = backupFolder.folderId,
+            bucketId = backupFolder.bucketId,
+        ))
+    }
+
     suspend operator fun invoke(folderId: FolderId, uploadPriority: Long) = coRunCatching {
         getAllFolders(folderId).getOrThrow().onEach { backupFolder ->
-            backupManager.sync(backupFolder, uploadPriority)
+            invoke(backupFolder, uploadPriority)
         }
     }
 
     suspend operator fun invoke(userId: UserId, uploadPriority: Long) = coRunCatching {
         getAllFolders(userId).getOrThrow().onEach { backupFolder ->
-            backupManager.sync(backupFolder, uploadPriority)
+            invoke(backupFolder, uploadPriority)
         }
     }
 
@@ -71,7 +83,7 @@ class SyncFolders @Inject constructor(
                     backupFolder
                 }
             }.onEach { backupFolder ->
-                backupManager.sync(backupFolder, uploadPriority)
+                invoke(backupFolder, uploadPriority)
             }
     }
 }

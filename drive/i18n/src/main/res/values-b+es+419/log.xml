@@ -30,7 +30,7 @@
   <string name="log_origin_download">Descarga</string>
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Excepción</string>
-  <string name="log_origin_logger">Registrador</string>
+  <string name="log_origin_logger">Creador de registros</string>
   <string name="log_origin_screen">Pantalla</string>
   <string name="log_origin_application_state">Estado de aplicación</string>
   <string name="log_origin_workers">Empleados</string>

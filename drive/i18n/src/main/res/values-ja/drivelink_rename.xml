@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">ファイル名の変更</string>
   <string name="link_rename_title_folder">フォルダー名の変更</string>
+  <string name="link_rename_title_album">アルバム名を変更</string>
   <string name="link_rename_successful">「%1$s」に名前を変更しました</string>
   <string name="link_rename_error_link_not_found">ファイルまたはフォルダーが見つからないため、名前の変更に失敗しました</string>
   <string name="link_rename_error_general">不明な理由により名前変更に失敗しました</string>

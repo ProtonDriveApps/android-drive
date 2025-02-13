@@ -88,7 +88,7 @@
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Permet une sauvegarde ininterrompue quand l\'application fonctionne en arrière-plan.</string>
   <string name="photos_backup_in_app_notification_turned_on">La sauvegarde des photos est activée.</string>
   <string name="photos_backup_in_app_notification_turned_off">La sauvegarde des photos est désactivée.</string>
-  <string name="photos_backup_state_completed">La sauvegarde est terminée.</string>
+  <string name="photos_backup_state_completed">Sauvegarde terminée</string>
   <string name="photos_backup_state_uncompleted">La sauvegarde est terminée, avec des erreurs.</string>
   <string name="photos_backup_state_uncompleted_action">Résoudre</string>
   <string name="photos_backup_state_preparing">Préparation de la sauvegarde</string>

@@ -23,7 +23,7 @@
   <string name="log_category">Kategoria</string>
   <string name="content_description_save_log_file">Zapisz plik logów</string>
   <string name="content_description_more_log_options">Więcej opcji logów</string>
-  <string name="log_level_normal">Normalne</string>
+  <string name="log_level_normal">Zwykłe</string>
   <string name="log_level_warning">Ostrzeżenie</string>
   <string name="log_level_error">Błąd</string>
   <string name="log_origin_upload">Wysyłanie</string>

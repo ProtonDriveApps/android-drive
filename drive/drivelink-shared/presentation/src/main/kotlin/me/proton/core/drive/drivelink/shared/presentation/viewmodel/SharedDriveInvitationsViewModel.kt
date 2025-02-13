@@ -139,7 +139,7 @@ class SharedDriveInvitationsViewModel @Inject constructor(
     private val permissions = MutableStateFlow(Permissions.editor)
 
     private val message = MutableStateFlow("")
-    private val sendMessageAndName = MutableStateFlow(false)
+    private val sendMessageAndName = MutableStateFlow(true)
 
     private val suggestedContacts = MutableStateFlow(emptyList<SuggestionItem>())
     private val suggestedLabels = MutableStateFlow(emptyList<SuggestionItem>())

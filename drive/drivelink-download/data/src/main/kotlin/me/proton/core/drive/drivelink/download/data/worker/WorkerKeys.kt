@@ -32,4 +32,5 @@ object WorkerKeys {
     const val KEY_IS_DOWNLOAD_FINISHED = "key.isDownloadFinished"
     const val KEY_FILE_TAGS = "key.fileTags"
     const val KEY_ROOT_FOLDER_ID = "key.rootFolderId"
+    const val KEY_ALBUM_ID = "key.albumId"
 }

@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">Čo je nové</string>
-  <string name="whats_new_docs_title">Proton Docs v mobile</string>
-  <string name="whats_new_docs_description">Klepnutím na plus môžete vytvárať alebo spolupracovať na end-to-end šifrovaných dokumentoch na cestách.</string>
 </resources>

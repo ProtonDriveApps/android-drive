@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Predogled vsebine datoteke</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Show more options for a file</string>
   <string name="preview_downloading_state">Prenašanje …</string>
   <string name="preview_processing_state">V obdelavi …</string>
   <string name="preview_empty">Ničesar za predogled …</string>

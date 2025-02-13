@@ -41,8 +41,8 @@
             "5 items deleted permanently"
     -->
   <plurals name="trash_delete_operation_successful_format">
-    <item quantity="one">1 elemento eliminado permanentemente</item>
-    <item quantity="other">%d elementos eliminados permanentemente</item>
+    <item quantity="one">1 elemento eliminado de forma permanente</item>
+    <item quantity="other">%d elementos eliminados de forma permanente</item>
   </plurals>
   <string name="trash_empty_operation_successful">Papelera vaciada</string>
   <string name="trash_error_occurred_sending_to_trash">Ocurrió un error al intentar enviar uno o más de los archivos a la papelera</string>

@@ -19,10 +19,10 @@ package me.proton.core.drive.volume.data.api.entity
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import me.proton.core.drive.base.data.api.Dto.CREATION_TIME
-import me.proton.core.drive.base.data.api.Dto.MAX_SPACE
+import me.proton.core.drive.base.data.api.Dto.CREATE_TIME
 import me.proton.core.drive.base.data.api.Dto.SHARE
 import me.proton.core.drive.base.data.api.Dto.STATE
+import me.proton.core.drive.base.data.api.Dto.TYPE
 import me.proton.core.drive.base.data.api.Dto.USED_SPACE
 import me.proton.core.drive.base.data.api.Dto.VOLUME_ID
 
@@ -30,14 +30,19 @@ import me.proton.core.drive.base.data.api.Dto.VOLUME_ID
 data class VolumeDto(
     @SerialName(VOLUME_ID)
     val id: String,
-    @SerialName(CREATION_TIME)
-    val creationTime: Long?,
-    @SerialName(MAX_SPACE)
-    val maxSpace: Long?,
+    @SerialName(CREATE_TIME)
+    val createTime: Long?,
     @SerialName(USED_SPACE)
     val usedSpace: Long,
     @SerialName(STATE)
     val state: Long,
     @SerialName(SHARE)
-    val share: VolumeShare? = null,
-)
+    val share: VolumeShare,
+    @SerialName(TYPE)
+    val type: Long,
+) {
+    companion object {
+        const val TYPE_REGULAR = 1L
+        const val TYPE_PHOTO = 2L
+    }
+}

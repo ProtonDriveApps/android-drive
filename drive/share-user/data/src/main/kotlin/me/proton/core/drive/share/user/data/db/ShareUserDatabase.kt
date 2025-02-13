@@ -26,8 +26,12 @@ import me.proton.core.drive.share.user.data.db.dao.ShareInvitationDao
 import me.proton.core.drive.share.user.data.db.dao.ShareMemberDao
 import me.proton.core.drive.share.user.data.db.dao.SharedByMeListingDao
 import me.proton.core.drive.share.user.data.db.dao.SharedWithMeListingDao
+import me.proton.core.drive.share.user.data.db.dao.UserInvitationDetailsDao
+import me.proton.core.drive.share.user.data.db.dao.UserInvitationIdDao
 
 interface ShareUserDatabase : Database {
+    val userInvitationIdDao: UserInvitationIdDao
+    val userInvitationDetailsDao: UserInvitationDetailsDao
     val shareInvitationDao: ShareInvitationDao
     val shareExternalInvitationDao: ShareExternalInvitationDao
     val shareMemberDao: ShareMemberDao
@@ -273,6 +277,58 @@ interface ShareUserDatabase : Database {
                 database.execSQL(
                     """
                     CREATE INDEX IF NOT EXISTS `index_ShareExternalInvitationEntity_id` ON `ShareExternalInvitationEntity` (`id`)
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_6 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `UserInvitationIdEntity` (
+                    `id` TEXT NOT NULL, 
+                    `user_id` TEXT NOT NULL, 
+                    `volume_id` TEXT NOT NULL, 
+                    `share_id` TEXT NOT NULL, 
+                    PRIMARY KEY(`user_id`, `volume_id`, `share_id`, `id`), 
+                    FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) 
+                    ON UPDATE NO ACTION ON DELETE CASCADE 
+                    )
+                """.trimIndent())
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_UserInvitationIdEntity_user_id` ON `UserInvitationIdEntity` (`user_id`)
+                    """.trimIndent()
+                )
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `UserInvitationDetailsEntity` (
+                    `user_id` TEXT NOT NULL, 
+                    `volume_id` TEXT NOT NULL, 
+                    `share_id` TEXT NOT NULL, 
+                    `id` TEXT NOT NULL, 
+                    `inviter_email` TEXT NOT NULL, 
+                    `invitee_email` TEXT NOT NULL, 
+                    `permissions` INTEGER NOT NULL, 
+                    `key_packet` TEXT NOT NULL, 
+                    `key_packet_signature` TEXT NOT NULL, 
+                    `create_time` INTEGER NOT NULL, 
+                    `passphrase` TEXT NOT NULL, 
+                    `share_key` TEXT NOT NULL, 
+                    `creator_email` TEXT NOT NULL, 
+                    `type` INTEGER NOT NULL, 
+                    `link_id` TEXT NOT NULL, 
+                    `name` TEXT NOT NULL, 
+                    `mime_type` TEXT, 
+                    PRIMARY KEY(`user_id`, `volume_id`, `share_id`, `id`), 
+                    FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) 
+                    ON UPDATE NO ACTION ON DELETE CASCADE ,
+                    FOREIGN KEY(`user_id`, `volume_id`, `share_id`, `id`) REFERENCES `UserInvitationIdEntity`(`user_id`, `volume_id`, `share_id`, `id`) 
+                    ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                """.trimIndent())
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_UserInvitationDetailsEntity_user_id` ON `UserInvitationDetailsEntity` (`user_id`)
                     """.trimIndent()
                 )
             }

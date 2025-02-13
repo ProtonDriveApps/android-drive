@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.photo.domain.usecase.GetPhotoCount
+import me.proton.core.drive.drivelink.photo.domain.usecase.GetPhotoCount
 import me.proton.core.drive.user.domain.entity.UserMessage
 import me.proton.core.drive.user.domain.extension.hasSubscriptionWithMoreStorage
 import me.proton.core.drive.user.domain.usecase.HasCanceledUserMessages

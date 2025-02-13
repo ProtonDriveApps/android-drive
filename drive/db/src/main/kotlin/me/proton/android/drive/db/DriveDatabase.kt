@@ -77,6 +77,7 @@ import me.proton.core.drive.folder.data.db.FolderMetadataEntity
 import me.proton.core.drive.key.data.db.PublicAddressKeyDatabase
 import me.proton.core.drive.key.data.db.entity.StalePublicAddressKeyEntity
 import me.proton.core.drive.link.data.db.LinkDatabase
+import me.proton.core.drive.link.data.db.entity.LinkAlbumPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
@@ -111,6 +112,7 @@ import me.proton.core.drive.notification.data.db.entity.NotificationEventEntity
 import me.proton.core.drive.notification.data.db.entity.TaglessNotificationEventEntity
 import me.proton.core.drive.observability.data.db.entity.CounterEntity
 import me.proton.core.drive.photo.data.db.PhotoDatabase
+import me.proton.core.drive.photo.data.db.entity.AlbumListingEntity
 import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
 import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.share.data.db.ShareEntity
@@ -121,6 +123,8 @@ import me.proton.core.drive.share.user.data.db.entity.ShareInvitationEntity
 import me.proton.core.drive.share.user.data.db.entity.ShareMemberEntity
 import me.proton.core.drive.share.user.data.db.entity.SharedByMeListingEntity
 import me.proton.core.drive.share.user.data.db.entity.SharedWithMeListingEntity
+import me.proton.core.drive.share.user.data.db.entity.UserInvitationDetailsEntity
+import me.proton.core.drive.share.user.data.db.entity.UserInvitationIdEntity
 import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
 import me.proton.core.drive.shareurl.base.data.db.entity.ShareUrlEntity
 import me.proton.core.drive.sorting.data.db.SortingDatabase
@@ -238,9 +242,12 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         ShareInvitationEntity::class,
         ShareMemberEntity::class,
         ShareMembershipEntity::class,
+        UserInvitationDetailsEntity::class,
+        UserInvitationIdEntity::class,
         LinkEntity::class,
         LinkFilePropertiesEntity::class,
         LinkFolderPropertiesEntity::class,
+        LinkAlbumPropertiesEntity::class,
         LinkOfflineEntity::class,
         LinkDownloadStateEntity::class,
         DownloadBlockEntity::class,
@@ -286,6 +293,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         // Photos
         PhotoListingEntity::class,
         PhotoListingRemoteKeyEntity::class,
+        AlbumListingEntity::class,
         // FeatureFlag
         DriveFeatureFlagRefreshEntity::class,
         MediaStoreVersionEntity::class,
@@ -404,7 +412,7 @@ abstract class DriveDatabase :
     DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 73
+        const val VERSION = 77
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -479,6 +487,10 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_70_71,
             DriveDatabaseMigrations.MIGRATION_71_72,
             DriveDatabaseMigrations.MIGRATION_72_73,
+            DriveDatabaseMigrations.MIGRATION_73_74,
+            DriveDatabaseMigrations.MIGRATION_74_75,
+            DriveDatabaseMigrations.MIGRATION_75_76,
+            DriveDatabaseMigrations.MIGRATION_76_77,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

@@ -87,8 +87,30 @@ sealed class DriveLink : BaseLink {
     ) : DriveLink(), me.proton.core.drive.link.domain.entity.Folder by link {
         override val name: String
             get() = displayName ?: cryptoName.value
-        override val signatureAddress: String
-            get() = link.signatureAddress
+        override val signatureEmail: String
+            get() = link.signatureEmail
+        override val nameHash: String
+            get() = link.hash
+    }
+
+    data class Album(
+        override val link: Link.Album,
+        override val volumeId: VolumeId,
+        override val isMarkedAsOffline: Boolean,
+        override val isAnyAncestorMarkedAsOffline: Boolean,
+        override val downloadState: DownloadState?,
+        override val trashState: TrashState?,
+        override val shareInvitationCount: Int?,
+        override val shareMemberCount: Int?,
+        override val cryptoName: CryptoProperty<String> = CryptoProperty.Encrypted(link.name),
+        override val cryptoXAttr: CryptoProperty<String?> = CryptoProperty.Encrypted(link.xAttr),
+        override val shareUser: ShareUser?,
+        override val sharePermissions: Permissions? = null,
+    ) : DriveLink(), me.proton.core.drive.link.domain.entity.Album by link {
+        override val name: String
+            get() = cryptoName.value
+        override val signatureEmail: String
+            get() = link.signatureEmail
         override val nameHash: String
             get() = link.hash
     }

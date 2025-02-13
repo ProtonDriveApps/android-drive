@@ -47,7 +47,7 @@ interface LinkAncestorDao : LinkDao {
                     LinkEntity.share_id = ancestors.share_id AND
                     LinkEntity.user_id = ancestors.user_id
             )
-            SELECT LinkEntity.*, LinkFilePropertiesEntity.*, LinkFolderPropertiesEntity.* 
+            SELECT LinkEntity.*, LinkFilePropertiesEntity.*, LinkFolderPropertiesEntity.*, LinkAlbumPropertiesEntity.*
             FROM ancestors INNER JOIN LinkEntity ON
                 ancestors.link_id = LinkEntity.id AND ancestors.share_id = LinkEntity.share_id AND
                 ancestors.user_id = LinkEntity.user_id

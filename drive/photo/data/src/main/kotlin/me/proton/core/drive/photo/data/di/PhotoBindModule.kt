@@ -22,7 +22,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.drive.photo.data.repository.AlbumRepositoryImpl
 import me.proton.core.drive.photo.data.repository.PhotoRepositoryImpl
+import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import javax.inject.Singleton
 
@@ -32,5 +34,9 @@ interface PhotoBindModule {
 
     @Binds
     @Singleton
-    fun bindsRepositoryImpl(impl: PhotoRepositoryImpl): PhotoRepository
+    fun bindsPhotoRepositoryImpl(impl: PhotoRepositoryImpl): PhotoRepository
+
+    @Binds
+    @Singleton
+    fun bindsAlbumRepositoryImpl(impl: AlbumRepositoryImpl): AlbumRepository
 }

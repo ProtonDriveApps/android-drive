@@ -49,6 +49,10 @@ fun onLoadState(
     flow
         //.debounce(500L)
         .onEach { (loadState, itemCount) ->
+            val append = loadState.append
+            if (append is LoadState.Error) {
+                append.error.getDefaultMessage(appContext, useExceptionMessage).let(onError)
+            }
             listContentState.processRefreshState(
                 appContext = appContext,
                 useExceptionMessage = useExceptionMessage,

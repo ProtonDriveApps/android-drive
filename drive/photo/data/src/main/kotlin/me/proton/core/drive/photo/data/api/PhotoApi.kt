@@ -18,15 +18,21 @@
 
 package me.proton.core.drive.photo.data.api
 
+import me.proton.core.drive.base.data.api.response.CodeResponse
+import me.proton.core.drive.photo.data.api.request.CreateAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreatePhotoRequest
 import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
+import me.proton.core.drive.photo.data.api.request.UpdateAlbumRequest
+import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
 import me.proton.core.drive.photo.data.api.response.CreatePhotoResponse
 import me.proton.core.drive.photo.data.api.response.FindDuplicatesResponse
+import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse
 import me.proton.core.drive.photo.data.api.response.GetPhotoListingResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -51,4 +57,23 @@ interface PhotoApi : BaseRetrofitApi {
         @Path("enc_volumeID") volumeId: String,
         @Body request: FindDuplicatesRequest
     ): FindDuplicatesResponse
+
+    @POST("drive/photos/volumes/{volumeID}/albums")
+    suspend fun createAlbum(
+        @Path("volumeID") volumeId: String,
+        @Body request: CreateAlbumRequest,
+    ): CreateAlbumResponse
+
+    @PUT("drive/photos/volumes/{volumeID}/albums/{linkID}")
+    suspend fun updateAlbum(
+        @Path("volumeID") volumeId: String,
+        @Path("linkID") linkId: String,
+        @Body request: UpdateAlbumRequest,
+    ): CodeResponse
+
+    @GET("drive/photos/volumes/{volumeID}/albums")
+    suspend fun getAlbumListings(
+        @Path("volumeID") volumeId: String,
+        @Query("AnchorID") anchorId: String? = null,
+    ): GetAlbumListingsResponse
 }

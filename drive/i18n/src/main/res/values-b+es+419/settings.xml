@@ -70,10 +70,10 @@
             "Privacy Policy (opens in a browser)"
     -->
   <string name="settings_external_link_format">%1$s (se abre en un navegador)</string>
-  <string name="settings_section_appearance_settings">Apariencia</string>
+  <string name="settings_section_appearance_settings">Aspecto</string>
   <string name="settings_theme_entry">Tema</string>
-  <string name="settings_home_tab">Pestaña de inicio por defecto</string>
+  <string name="settings_home_tab">Pestaña de inicio predeterminada</string>
   <string name="settings_section_system">Sistema</string>
   <string name="settings_clear_local_cache_entry">Borrar caché local</string>
-  <string name="settings_show_log">Mostrar el registro</string>
+  <string name="settings_show_log">Mostrar registro</string>
 </resources>

@@ -21,6 +21,7 @@ package me.proton.android.drive.photos.domain.usecase
 import kotlinx.coroutines.test.runTest
 import me.proton.android.drive.photos.domain.manager.StubbedBackupManager
 import me.proton.android.drive.photos.domain.repository.StubbedMediaStoreVersionRepository
+import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.backup.data.repository.BackupFolderRepositoryImpl
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.usecase.AddFolder
@@ -71,6 +72,7 @@ class RescanOnMediaStoreUpdateTest {
             syncFolders = SyncFolders(
                 getAllFolders = GetAllFolders(folderRepository),
                 backupManager = backupManager,
+                announceEvent = AnnounceEvent(emptySet()),
             )
         )
         rescanOnMediaStoreUpdate = RescanOnMediaStoreUpdate(

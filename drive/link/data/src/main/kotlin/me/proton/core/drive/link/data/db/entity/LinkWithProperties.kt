@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.link.data.db.entity
 
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -32,5 +33,6 @@ data class LinkWithProperties(
         get() = when (properties) {
             is LinkFilePropertiesEntity -> FileId(ShareId(link.userId, link.shareId), link.id)
             is LinkFolderPropertiesEntity -> FolderId(ShareId(link.userId, link.shareId), link.id)
+            is LinkAlbumPropertiesEntity -> AlbumId(ShareId(link.userId, link.shareId), link.id)
         }
 }

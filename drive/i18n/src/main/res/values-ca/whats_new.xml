@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">Novetats</string>
-  <string name="whats_new_docs_title">Proton Docs per a mòbils</string>
-  <string name="whats_new_docs_description">Toqueu el signe més per crear o col·laborar en documents xifrats d\'extrem a extrem des de qualsevol lloc.</string>
 </resources>

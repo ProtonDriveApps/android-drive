@@ -77,7 +77,7 @@
   <string name="common_type_proton_doc">Proton-dokument</string>
   <string name="common_type_text">Tekst</string>
   <string name="common_type_trustedkey">Klarert nøkkel</string>
-  <string name="common_type_unknown">Binært</string>
+  <string name="common_type_unknown">Binær</string>
   <string name="common_type_video">Video</string>
   <string name="common_type_xls">Regneark</string>
   <string name="common_type_xml">XML-fil</string>

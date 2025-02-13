@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Bir dosyayı yeniden adlandır</string>
   <string name="link_rename_title_folder">Bir klasörü yeniden adlandır</string>
+  <string name="link_rename_title_album">Bir albümü yeniden adlandır</string>
   <string name="link_rename_successful">\"%1$s\" yeniden adlandırıldı</string>
   <string name="link_rename_error_link_not_found">Dosya ya da klasör bulunamadığından yeniden adlandırılamadı</string>
   <string name="link_rename_error_general">Bilinmeyen bir nedenle yeniden adlandırılamadı</string>

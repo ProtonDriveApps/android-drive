@@ -33,7 +33,7 @@ class BuildNodeHashKey @Inject constructor(
         coRunCatching {
             NodeHashKey(
                 decryptKey = folderKey,
-                legacyVerifyKey = getAddressKeys(folder.shareId.userId, folder.signatureAddress),
+                legacyVerifyKey = getAddressKeys(folder.shareId.userId, folder.signatureEmail),
                 encryptedHashKey = folder.nodeHashKey
             )
         }

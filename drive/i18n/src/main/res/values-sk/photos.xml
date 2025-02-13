@@ -79,7 +79,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Použiť mobilné dáta</string>
   <string name="photos_error_local_storage">Úložisko zariadenia je plné</string>
   <string name="photos_error_local_storage_description">Ak chcete pokračovať v zálohovaní, musíte uvoľniť úložisko v zariadení.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Nastavte batériu na \"neobmedzené\" pre aktivitu aplikácie na pozadí</string>
   <string name="photos_error_background_restrictions_description">Pre trvalé zálohovanie na pozadí upravte nastavenia batérie alebo často otvárajte aplikáciu.</string>
   <string name="photos_error_background_restrictions_action">Nastavenia</string>
   <string name="photos_empty_title">Zatiaľ bez zálohovania</string>

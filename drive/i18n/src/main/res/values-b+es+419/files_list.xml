@@ -45,7 +45,7 @@
   <string name="title_modified_with_date">Modificado: %1$s</string>
   <string name="files_restore_from_trash_action">Restaurar</string>
   <string name="files_send_to_trash_action">Mover a la papelera</string>
-  <string name="files_remove_me_action">Borrarme</string>
+  <string name="files_remove_me_action">Eliminarme</string>
   <string name="files_move_file_action">Mover</string>
   <!--
         Variable %1$s is a file/folder's name
@@ -55,7 +55,7 @@
     -->
   <string name="files_confirm_deletion_message_format">\'%1$s\' será eliminado permanentemente. No puede deshacer esta acción.</string>
   <string name="files_confirm_empty_trash_title">¿Vaciar papelera?</string>
-  <string name="files_confirm_empty_trash_message">Los elementos en la papelera serán eliminados permanentemente. No puede deshacer esta acción.</string>
+  <string name="files_confirm_empty_trash_message">Los elementos en la papelera se elimnarán de forma permanente. Esta acción no se puede deshacer.</string>
   <string name="files_confirm_empty_trash_confirm_action">Vaciar papelera</string>
   <string name="files_display_file_info_action">Detalles del archivo</string>
   <string name="files_display_folder_info_action">Detalles de la carpeta</string>

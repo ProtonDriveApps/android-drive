@@ -73,4 +73,26 @@
   <string name="shared_empty_title">아직 아무것도 공유하지 않음</string>
   <string name="shared_with_me_empty_description">내게 공유된 파일들과 폴더들은 여기에 표시됩니다</string>
   <string name="shared_by_me_empty_description">종단간 암호화를 통해 파일과 폴더를 안전하게 공유하세요</string>
+  <string name="shared_by_me_invitation_banner_title">공유된 항목 대기 중</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="other">%1$d개의 항목이 나와 공유됨</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">공유된 항목 대기 중 (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">대기중인 공유된 항목 없음</string>
+  <string name="shared_user_invitations_description_empty">모든 새 초대가 여기 표시됩니다</string>
+  <string name="shared_user_invitations_accept_button">수락</string>
+  <string name="shared_user_invitations_decline_button">거절</string>
+  <string name="shared_user_invitations_accept_success">공유된 항목 수락됨</string>
+  <string name="shared_user_invitations_decline_success">공유된 항목 거절됨</string>
 </resources>

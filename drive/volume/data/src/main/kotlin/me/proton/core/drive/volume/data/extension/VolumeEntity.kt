@@ -19,6 +19,7 @@ package me.proton.core.drive.volume.data.extension
 
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.volume.data.api.entity.VolumeDto
 import me.proton.core.drive.volume.data.db.VolumeEntity
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -27,8 +28,15 @@ val VolumeEntity.asVolume
     get() = Volume(
         id = VolumeId(id),
         shareId = shareId,
-        maxSpace = Bytes(maxSpace ?:0),
+        linkId = linkId,
         usedSpace = Bytes(usedSpace),
         state = state,
-        creationTime = TimestampS(creationTime)
+        createTime = TimestampS(createTime),
+        type = type.toVolumeType(),
     )
+
+fun Long.toVolumeType() = when (this) {
+    VolumeDto.TYPE_REGULAR -> Volume.Type.REGULAR
+    VolumeDto.TYPE_PHOTO -> Volume.Type.PHOTO
+    else -> Volume.Type.UNKNOWN
+}

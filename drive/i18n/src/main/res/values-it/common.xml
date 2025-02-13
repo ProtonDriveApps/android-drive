@@ -52,16 +52,16 @@
   <string name="common_got_it_action">Ho capito</string>
   <string name="common_next_action">Avanti</string>
   <string name="common_save_action">Salva</string>
-  <string name="common_discard_action">Scarta</string>
+  <string name="common_discard_action">Rimuovi</string>
   <string name="common_skip_action">Salta</string>
   <string name="common_delete_permanently_action">Elimina definitivamente</string>
   <string name="common_make_available_offline_action">Rendi disponibile offline</string>
   <string name="common_remove_from_offline_available_action">Rimuovi dai file disponibili offline</string>
   <string name="common_get_link_action">Ottieni il link</string>
   <string name="common_manage_link_action">Gestisci il link</string>
-  <string name="common_manage_access_action">Gestisci l\'accesso</string>
+  <string name="common_manage_access_action">Gestisci accesso</string>
   <string name="common_copy_link_action">Copia il link</string>
-  <string name="common_stop_sharing_action">Interrompi la condivisione</string>
+  <string name="common_stop_sharing_action">Interrompi condivisione</string>
   <string name="common_open_in_browser_action">Apri nel browser</string>
   <!-- endregion -->
   <!-- region Common file types -->

@@ -31,11 +31,11 @@
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">例外</string>
   <string name="log_origin_logger">記錄程式</string>
-  <string name="log_origin_screen">Screen</string>
-  <string name="log_origin_application_state">Application State</string>
-  <string name="log_origin_workers">Workers</string>
-  <string name="log_origin_backup">Backup</string>
-  <string name="log_origin_user">User</string>
-  <string name="log_origin_device">Device</string>
-  <string name="log_origin_crypto">Crypto</string>
+  <string name="log_origin_screen">螢幕</string>
+  <string name="log_origin_application_state">應用程式狀態 :</string>
+  <string name="log_origin_workers">工作人員</string>
+  <string name="log_origin_backup">備份</string>
+  <string name="log_origin_user">使用者</string>
+  <string name="log_origin_device">設備</string>
+  <string name="log_origin_crypto">加密貨幣</string>
 </resources>

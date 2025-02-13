@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Μετονομασία αρχείου</string>
   <string name="link_rename_title_folder">Μετονομάστε έναν φάκελο</string>
+  <string name="link_rename_title_album">Μετονομάστε ένα άλμπουμ</string>
   <string name="link_rename_successful">Επιτυχής μετονομασία σε \"%1$s\"</string>
   <string name="link_rename_error_link_not_found">Η μετονομασία απέτυχε επειδή δεν είναι πλέον δυνατή η εύρεση του αρχείου ή του φακέλου</string>
   <string name="link_rename_error_general">Η μετονομασία απέτυχε για άγνωστο λόγο</string>

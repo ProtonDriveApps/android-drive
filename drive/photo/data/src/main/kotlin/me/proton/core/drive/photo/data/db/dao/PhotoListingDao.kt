@@ -77,8 +77,8 @@ abstract class PhotoListingDao : BaseDao<PhotoListingEntity>() {
     ): Flow<List<PhotoListingEntity>>
 
     @Query("DELETE FROM PhotoListingEntity WHERE user_id = :userId AND share_id = :shareId AND id in (:linkIds)")
-    abstract fun delete(userId: UserId, shareId: String, linkIds: List<String>)
+    abstract suspend fun delete(userId: UserId, shareId: String, linkIds: List<String>)
 
     @Query("DELETE FROM PhotoListingEntity WHERE user_id = :userId AND volume_id = :volumeId")
-    abstract fun deleteAll(userId: UserId, volumeId: String)
+    abstract suspend fun deleteAll(userId: UserId, volumeId: String)
 }

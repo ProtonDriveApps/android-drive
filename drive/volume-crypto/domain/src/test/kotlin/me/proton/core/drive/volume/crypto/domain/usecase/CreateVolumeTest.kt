@@ -19,7 +19,6 @@
 package me.proton.core.drive.volume.crypto.domain.usecase
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.drive.base.domain.api.ProtonApiCode
@@ -33,15 +32,15 @@ import me.proton.core.drive.test.api.jsonResponse
 import me.proton.core.drive.test.api.post
 import me.proton.core.drive.test.api.routing
 import me.proton.core.drive.volume.data.api.response.GetVolumeResponse
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class CreateVolumeTest {
@@ -53,7 +52,7 @@ class CreateVolumeTest {
     lateinit var createVolume: CreateVolume
 
     @Test
-    fun `happy path`() = runTest {
+    fun `happy path for creating regular volume`() = runTest {
         driveRule.db.user {
             withKey()
         }
@@ -69,10 +68,35 @@ class CreateVolumeTest {
             }
         }
 
-        val volume = createVolume(userId).resultValueOrThrow()
+        val volume = createVolume(userId, Volume.Type.REGULAR).resultValueOrThrow()
 
         assertEquals(
             NullableVolume(VolumeId("volume-id")),
+            volume
+        )
+    }
+
+    @Test
+    fun `happy path for creating photo volume`() = runTest {
+        driveRule.db.user {
+            withKey()
+        }
+
+        driveRule.server.routing {
+            post("/drive/photos/volumes") {
+                jsonResponse {
+                    GetVolumeResponse(
+                        code = ProtonApiCode.SUCCESS,
+                        volumeDto = NullablePhotoVolumeDto(id = "volume-id")
+                    )
+                }
+            }
+        }
+
+        val volume = createVolume(userId, Volume.Type.PHOTO).resultValueOrThrow()
+
+        assertEquals(
+            NullablePhotoVolume(VolumeId("volume-id")),
             volume
         )
     }
@@ -83,7 +107,7 @@ class CreateVolumeTest {
             withKey(addressKey = NullableAddressKeyEntity(active = false))
         }
 
-        createVolume(userId).resultValueOrThrow()
+        createVolume(userId, Volume.Type.REGULAR).resultValueOrThrow()
     }
 
 }

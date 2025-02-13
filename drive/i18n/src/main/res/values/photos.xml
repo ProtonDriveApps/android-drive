@@ -66,6 +66,8 @@
     <string name="photos_error_backup_missing_folder_action" translatable="false">@string/common_more</string>
     <string name="photos_error_backup_failed">Backup failed.</string>
     <string name="photos_error_backup_temporarily_disabled">Backup is temporarily disabled.</string>
+    <string name="photos_error_backup_migration_title">Update Required</string>
+    <string name="photos_error_backup_migration_description">To use photos features, please update your app to the latest version.</string>
     <string name="photos_error_backup_failed_action" translatable="false">@string/common_retry</string>
     <string name="photos_error_missing_permissions">Missing permissions.</string>
     <!--

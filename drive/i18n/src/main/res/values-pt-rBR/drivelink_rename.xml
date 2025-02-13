@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Renomear um arquivo</string>
   <string name="link_rename_title_folder">Renomear uma pasta</string>
+  <string name="link_rename_title_album">Renomear um álbum</string>
   <string name="link_rename_successful">\"%1$s\" renomeado</string>
   <string name="link_rename_error_link_not_found">Não foi possível mudar o nome porque o arquivo ou pasta não foi encontrado</string>
   <string name="link_rename_error_general">Erro ao mudar o nome por motivo desconhecido</string>

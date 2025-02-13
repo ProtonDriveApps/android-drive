@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Renommer un fichier</string>
   <string name="link_rename_title_folder">Renommer un dossier</string>
+  <string name="link_rename_title_album">Modifier le nom d\'un album</string>
   <string name="link_rename_successful">« %1$s » a été renommé.</string>
   <string name="link_rename_error_link_not_found">Le changement de nom n\'a pas abouti, le fichier ou le dossier est introuvable.</string>
   <string name="link_rename_error_general">Le changement de nom n\'a pas abouti pour une raison inconnue.</string>

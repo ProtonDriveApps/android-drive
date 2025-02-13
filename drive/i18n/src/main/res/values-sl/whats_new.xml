@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">Novosti</string>
-  <string name="whats_new_docs_title">Proton Docs on Mobile</string>
-  <string name="whats_new_docs_description">Tap plus to create or collaborate on end-to-end encrypted documents on the go.</string>
 </resources>

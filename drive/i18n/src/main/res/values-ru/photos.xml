@@ -79,7 +79,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Использовать мобильную сеть</string>
   <string name="photos_error_local_storage">Память устройства переполнена</string>
   <string name="photos_error_local_storage_description">Чтобы продолжить резервное копирование, необходимо освободить место на устройстве.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">Чтобы резервное копирование происходило постоянно в фоновом режиме, измените настройки батареи или часто открывайте приложение.</string>
   <string name="photos_error_background_restrictions_action">Настройки</string>
   <string name="photos_empty_title">Резервных копий пока нет</string>

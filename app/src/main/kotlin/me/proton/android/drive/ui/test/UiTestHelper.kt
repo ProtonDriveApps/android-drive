@@ -37,7 +37,7 @@ class UiTestHelper @Inject constructor(
     }
 
     suspend fun doNotShowWhatsNewAfterLogin() {
-        appUiSettingsDataStore.WhatsNew(WhatsNewKey.PROTON_DOCS.name).shown = 1L
+        appUiSettingsDataStore.WhatsNew(WhatsNewKey.PUBLIC_SHARING.name).shown = 1L
     }
 
     suspend fun doNotShowRatingBoosterAfterLogin() {

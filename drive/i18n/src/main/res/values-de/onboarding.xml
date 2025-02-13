@@ -18,9 +18,9 @@
   -->
 <resources>
   <string name="onboarding_action_skip">Jetzt nicht</string>
-  <string name="onboarding_title">Automatically save and encrypt your photos and videos</string>
-  <string name="onboarding_description_part_one">Keep your memories safe with</string>
-  <string name="onboarding_description_part_two">end-to-end encrypted storage</string>
+  <string name="onboarding_title">Speichere und verschlüssele deine Fotos und Videos automatisch</string>
+  <string name="onboarding_description_part_one">Bewahre deine Erinnerungen sicher auf mit</string>
+  <string name="onboarding_description_part_two">Ende-zu-Ende-verschlüsselter Speicher</string>
   <string name="onboarding_description_free">kostenlos</string>
   <string name="onboarding_action_primary">Kamera-Uploads aktivieren</string>
   <string name="onboarding_action_secondary">Weitere Uploadoptionen</string>

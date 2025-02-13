@@ -73,4 +73,29 @@
   <string name="shared_empty_title">Zatím není nic sdíleno</string>
   <string name="shared_with_me_empty_description">Zde se zobrazí soubory a složky, které jsou s vámi sdíleny</string>
   <string name="shared_by_me_empty_description">Bezpečně sdílejte vaše soubory a složky pomocí koncového šifrování</string>
+  <string name="shared_by_me_invitation_banner_title">Nevyřízené sdílené položky</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">%1$d položka sdílena s vámi</item>
+    <item quantity="few">%1$d položky sdílené s vámi</item>
+    <item quantity="many">%1$d položek sdíleno s vámi</item>
+    <item quantity="other">%1$d položek sdíleno s vámi</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">Nevyřízené sdílené položky (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Žádné nevyřízené sdílené položky</string>
+  <string name="shared_user_invitations_description_empty">Všechny nové pozvánky budou zde</string>
+  <string name="shared_user_invitations_accept_button">Přijmout</string>
+  <string name="shared_user_invitations_decline_button">Odmítnout</string>
+  <string name="shared_user_invitations_accept_success">Sdílená položka přijata</string>
+  <string name="shared_user_invitations_decline_success">Sdílená položka odmítnuta</string>
 </resources>

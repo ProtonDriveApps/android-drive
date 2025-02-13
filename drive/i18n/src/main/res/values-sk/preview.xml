@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Náhľad obsahu súboru</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Zobraziť viac možností pre súbor</string>
   <string name="preview_downloading_state">Sťahovanie…</string>
   <string name="preview_processing_state">Spracovávanie…</string>
   <string name="preview_empty">Nič k nahliadnutiu…</string>

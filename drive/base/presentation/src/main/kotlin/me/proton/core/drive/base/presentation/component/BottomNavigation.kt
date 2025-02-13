@@ -18,6 +18,7 @@
 package me.proton.core.drive.base.presentation.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Divider
@@ -30,11 +31,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 
 data class NavigationTab(
     val iconResId: Int,
     val titleResId: Int,
+    val notificationDotVisible: Boolean = false
 )
 
 @Composable
@@ -53,10 +56,16 @@ fun BottomNavigation(
                 val isSelected = selectedTab == tab
                 BottomNavigationItem(
                     icon = {
-                        Icon(
-                            painter = painterResource(id = tab.iconResId),
-                            contentDescription = stringResource(id = tab.titleResId)
-                        )
+                        BoxWithNotificationDot(
+                            modifier = Modifier.padding(horizontal = ProtonDimens.SmallSpacing),
+                            notificationDotVisible = tab.notificationDotVisible,
+                            horizontalOffset = ProtonDimens.SmallSpacing,
+                        ) {
+                            Icon(
+                                painter = painterResource(id = tab.iconResId),
+                                contentDescription = stringResource(id = tab.titleResId)
+                            )
+                        }
                     },
                     label = {
                         Text(

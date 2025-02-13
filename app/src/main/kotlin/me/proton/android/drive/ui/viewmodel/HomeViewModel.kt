@@ -30,11 +30,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.ui.navigation.HomeTab
@@ -44,15 +47,22 @@ import me.proton.android.drive.ui.viewstate.HomeViewState
 import me.proton.android.drive.usecase.CanGetMoreFreeStorage
 import me.proton.android.drive.usecase.GetDynamicHomeTabsFlow
 import me.proton.android.drive.usecase.ShouldShowOverlay
+import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.entity.SessionUserId
+import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.component.NavigationTab
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveMobileSharingInvitationsAcceptReject
+import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEvent
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewState
+import me.proton.core.drive.share.user.domain.usecase.GetUserInvitationCountFlow
+import me.proton.core.drive.share.user.domain.usecase.HasUserInvitationFlow
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.User
 import me.proton.core.util.kotlin.CoreLogger
@@ -70,24 +80,38 @@ class HomeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val canGetMoreFreeStorage: CanGetMoreFreeStorage,
     getDynamicHomeTabsFlow: GetDynamicHomeTabsFlow,
+    hasUserInvitationFlow: HasUserInvitationFlow,
+    getFeatureFlagFlow: GetFeatureFlagFlow,
     private val broadcastMessages: BroadcastMessages,
     private val shouldShowOverlay: ShouldShowOverlay,
-) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
+) : ViewModel(), NotificationDotViewModel, UserViewModel by UserViewModel(savedStateHandle) {
     private var navigateToTab: ((route: String) -> Unit)? = null
 
-    private val tabs: StateFlow<Map<out HomeTab, NavigationTab>> = getDynamicHomeTabsFlow(userId)
-        .map { dynamicHomeTabs ->
-            dynamicHomeTabs
-                .filter { dynamicHomeTab -> dynamicHomeTab.isEnabled }
-                .sortedBy { dynamicHomeTab -> dynamicHomeTab.order }
-                .map { dynamicHomeTab ->
-                    dynamicHomeTab.screen to NavigationTab(
-                        iconResId = dynamicHomeTab.iconResId,
-                        titleResId = dynamicHomeTab.titleResId,
-                    )
-                }
-                .associateBy({ tab -> tab.first }, { tab -> tab.second })
+    override val notificationDotRequested = getFeatureFlagFlow(
+        driveMobileSharingInvitationsAcceptReject(userId),
+    ).transform { featureFlag ->
+        if (featureFlag.on) {
+            emitAll(hasUserInvitationFlow(userId))
         }
+    }.stateIn(viewModelScope, SharingStarted.Lazily, false)
+
+    val tabs: StateFlow<Map<out HomeTab, NavigationTab>> = combine(
+        getDynamicHomeTabsFlow(userId),
+        notificationDotRequested,
+    ) { dynamicHomeTabs, notificationDotRequested ->
+        dynamicHomeTabs
+            .filter { dynamicHomeTab -> dynamicHomeTab.isEnabled }
+            .sortedBy { dynamicHomeTab -> dynamicHomeTab.order }
+            .map { dynamicHomeTab ->
+                dynamicHomeTab.screen to NavigationTab(
+                    iconResId = dynamicHomeTab.iconResId,
+                    titleResId = dynamicHomeTab.titleResId,
+                    notificationDotVisible = dynamicHomeTab.screen is Screen.SharedTabs
+                            && notificationDotRequested,
+                )
+            }
+            .associateBy({ tab -> tab.first }, { tab -> tab.second })
+    }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyMap())
 
     private val currentDestination = MutableStateFlow<String?>(null)
@@ -155,13 +179,14 @@ class HomeViewModel @Inject constructor(
     private val NavigationTab.screen: HomeTab
         get() = tabs.value.firstNotNullOf { (screen, value) -> screen.takeIf { value == this } }
 
-    private val DynamicHomeTab.screen: HomeTab get() = when (route) {
-        Screen.Files.route -> Screen.Files
-        Screen.Photos.route -> Screen.Photos
-        Screen.Computers.route -> Screen.Computers
-        Screen.SharedTabs.route -> Screen.SharedTabs
-        else -> error("Unhandled tab item route: $route")
-    }
+    private val DynamicHomeTab.screen: HomeTab
+        get() = when (route) {
+            Screen.Files.route -> Screen.Files
+            Screen.Photos.route -> Screen.Photos
+            Screen.Computers.route -> Screen.Computers
+            Screen.SharedTabs.route -> Screen.SharedTabs
+            else -> error("Unhandled tab item route: $route")
+        }
 
     private fun getViewState(
         user: User?,
@@ -181,7 +206,10 @@ class HomeViewModel @Inject constructor(
             )
         )
 
-    private fun handleInvalidDestination(destinationRoute: String, tabs: Map<out HomeTab, NavigationTab>) {
+    private fun handleInvalidDestination(
+        destinationRoute: String,
+        tabs: Map<out HomeTab, NavigationTab>
+    ) {
         val routes = tabs.values.map { navigationTab -> navigationTab.screen.route }
         if (destinationRoute !in routes) {
             CoreLogger.w(VIEW_MODEL, "Invalid destination route: $destinationRoute")

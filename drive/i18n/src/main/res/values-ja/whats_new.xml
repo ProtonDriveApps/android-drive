@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">最新情報</string>
-  <string name="whats_new_docs_title">モバイルのProton文書</string>
-  <string name="whats_new_docs_description">外出先からエンドツーエンド暗号化文書を作成したり、共同編集するためにプラスをタップ</string>
 </resources>

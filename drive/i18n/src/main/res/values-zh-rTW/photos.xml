@@ -76,7 +76,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">使用行動數據</string>
   <string name="photos_error_local_storage">裝置儲存空間已滿</string>
   <string name="photos_error_local_storage_description">要繼續備份，您必須釋放裝置上的儲存空間。</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">為使背景備份連貫，請調整電量設定或經常開啟應用程式。</string>
   <string name="photos_error_background_restrictions_action">設定</string>
   <string name="photos_empty_title">尚無備份</string>

@@ -20,10 +20,11 @@ package me.proton.android.drive.photos.data.repository
 
 import io.mockk.coEvery
 import io.mockk.mockk
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.base.domain.api.ProtonApiCode
+import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
@@ -35,11 +36,8 @@ import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
 import me.proton.core.drive.photo.data.api.response.DuplicateDto
 import me.proton.core.drive.photo.data.api.response.FindDuplicatesResponse
 import me.proton.core.drive.photo.data.repository.PhotoRepositoryImpl
-import me.proton.core.drive.volume.data.api.VolumeApiDataSource
-import me.proton.core.drive.volume.data.repository.VolumeRepositoryImpl
-import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
-import me.proton.core.drive.volume.domain.usecase.GetVolume
-import me.proton.core.drive.volume.domain.usecase.GetVolumes
+import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
+import me.proton.core.drive.share.domain.entity.Share
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -48,7 +46,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 
 
-@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
 class PhotoFindDuplicatesRepositoryTest {
 
@@ -56,8 +53,9 @@ class PhotoFindDuplicatesRepositoryTest {
     val database = DriveDatabaseRule()
     private lateinit var folderId: FolderId
 
-    private val volumeApiDataSource = mockk<VolumeApiDataSource>()
     private val photoApiDataSource = mockk<PhotoApiDataSource>()
+    private val getPhotoShare = mockk<GetPhotoShare>()
+    private val photoShare = mockk<Share>()
 
     private lateinit var photoFindDuplicatesRepository: PhotoFindDuplicatesRepository
 
@@ -65,13 +63,12 @@ class PhotoFindDuplicatesRepositoryTest {
     fun setUp() = runTest {
         folderId = database.myFiles { }
 
-        val volumeRepository = VolumeRepositoryImpl(
-            volumeApiDataSource,
-            database.db.volumeDao
-        )
+        coEvery { getPhotoShare(any()) } returns flowOf(photoShare.asSuccess)
+        coEvery { photoShare.volumeId } returns volumeId
+
         photoFindDuplicatesRepository = PhotoFindDuplicatesRepository(
-            GetOldestActiveVolume(GetVolumes(volumeRepository), GetVolume(volumeRepository)),
-            PhotoRepositoryImpl(photoApiDataSource, database.db)
+            PhotoRepositoryImpl(photoApiDataSource, database.db),
+            getPhotoShare,
         )
     }
 

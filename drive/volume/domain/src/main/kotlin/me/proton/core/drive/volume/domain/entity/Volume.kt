@@ -25,11 +25,18 @@ data class VolumeId(val id: String)
 data class Volume(
     val id: VolumeId,
     val shareId: String,
-    val maxSpace: Bytes,
+    val linkId:  String,
     val usedSpace: Bytes,
     val state: Long,
-    val creationTime: TimestampS,
-)
+    val createTime: TimestampS,
+    val type: Type,
+) {
+    enum class Type {
+        UNKNOWN,
+        REGULAR,
+        PHOTO,
+    }
+}
 
 val Volume.isActive: Boolean
     get() = state == 1L

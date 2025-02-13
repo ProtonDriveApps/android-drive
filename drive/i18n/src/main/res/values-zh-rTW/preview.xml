@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">預覽檔案內容</string>
-  <string name="content_description_more_options">Show more options for the file</string>
+  <string name="content_description_more_options">Show more options for a file</string>
   <string name="preview_downloading_state">正在下載……</string>
   <string name="preview_processing_state">正在處理……</string>
   <string name="preview_empty">無可預覽的項目……</string>

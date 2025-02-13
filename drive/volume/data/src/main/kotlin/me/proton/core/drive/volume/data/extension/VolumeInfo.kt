@@ -17,14 +17,13 @@
  */
 package me.proton.core.drive.volume.data.extension
 
+import me.proton.core.drive.volume.data.api.request.CreatePhotoVolumeRequest
 import me.proton.core.drive.volume.data.api.request.CreateVolumeRequest
 import me.proton.core.drive.volume.domain.entity.VolumeInfo
 
 fun VolumeInfo.toCreateVolumeRequest() =
     CreateVolumeRequest(
         addressId = addressId.id,
-        volumeName = volumeName,
-        shareName = shareName,
         shareKey = shareKey,
         sharePassphrase = sharePassphrase,
         sharePassphraseSignature = sharePassphraseSignature,
@@ -33,4 +32,23 @@ fun VolumeInfo.toCreateVolumeRequest() =
         folderPassphrase = folderPassphrase,
         folderPassphraseSignature = folderPassphraseSignature,
         folderHashKey = folderHashKey,
+        addressKeyId = addressKeyId,
+    )
+
+fun VolumeInfo.toCreatePhotoVolumeRequest() =
+    CreatePhotoVolumeRequest(
+        share = CreatePhotoVolumeRequest.Share(
+            addressId = addressId.id,
+            key = shareKey,
+            passphrase = sharePassphrase,
+            passphraseSignature = sharePassphraseSignature,
+            addressKeyId = addressKeyId,
+        ),
+        link = CreatePhotoVolumeRequest.Link(
+            name = folderName,
+            nodeKey = folderKey,
+            nodePassphrase = folderPassphrase,
+            nodePassphraseSignature = folderPassphraseSignature,
+            nodeHashKey = folderHashKey,
+        ),
     )

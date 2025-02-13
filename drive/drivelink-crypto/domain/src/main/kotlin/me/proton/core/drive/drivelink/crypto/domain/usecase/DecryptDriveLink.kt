@@ -60,6 +60,12 @@ class DecryptDriveLink @Inject constructor(
     ): Result<DriveLink.File> =
         decrypt(file, failOnError)
 
+    suspend operator fun invoke(
+        album: DriveLink.Album,
+        failOnError: Boolean = true,
+    ): Result<DriveLink.Album> =
+        decrypt(album, failOnError)
+
     suspend operator fun invoke(driveLink: DriveLink, failOnError: Boolean = true): Result<DriveLink> =
         decrypt(driveLink, failOnError)
 
@@ -101,7 +107,10 @@ class DecryptDriveLink @Inject constructor(
                 is DriveLink.Folder -> copy(
                     cryptoName = CryptoProperty.Decrypted(decryptedName.text, decryptedName.status)
                 ) as T
-                else -> throw IllegalStateException("This should not happen")
+                is DriveLink.Album -> copy(
+                    cryptoName = CryptoProperty.Decrypted(decryptedName.text, decryptedName.status)
+                ) as T
+                else -> error("This should not happen")
             }
         } ?: this
     }
@@ -130,7 +139,13 @@ class DecryptDriveLink @Inject constructor(
                     )
                     folder.copy(link = updateLastModified(getLastModified(folder)) as Link.Folder) as T
                 }
-                else -> throw IllegalStateException("This should not happen")
+                is DriveLink.Album -> {
+                    val album = copy(
+                        cryptoXAttr = CryptoProperty.Decrypted(decryptedXAttr.text, decryptedXAttr.status)
+                    )
+                    album.copy(link = updateLastModified(getLastModified(album)) as Link.Album) as T
+                }
+                else -> error("This should not happen")
             }
         } ?: this
     }

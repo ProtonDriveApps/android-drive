@@ -173,7 +173,7 @@
   <string name="description_files_stop_sharing_action_success">您檔案的連結已被刪除。</string>
   <string name="description_files_stop_sharing_action_error">刪除檔案連結時出現錯誤</string>
   <string name="description_files_stop_all_sharing">這將會刪除連結並移除所有人的存取權.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">您檔案的連結已被刪除。</string>
   <string name="description_files_stop_all_sharing_action_error">刪除檔案分享時發生錯誤。</string>
   <string name="ignore_file_signature_action">仍要閱覽</string>
   <string name="action_empty_files_add_files">上傳</string>

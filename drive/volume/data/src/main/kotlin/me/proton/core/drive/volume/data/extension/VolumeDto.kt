@@ -25,9 +25,10 @@ fun VolumeDto.toVolumeEntity(userId: UserId) =
     VolumeEntity(
         id = id,
         userId = userId,
-        shareId = share?.id ?: "",
-        creationTime = creationTime ?: 0,
-        maxSpace = maxSpace,
+        shareId = share.id,
+        linkId = share.linkId,
+        createTime = createTime ?: 0,
         usedSpace = usedSpace,
-        state = state
+        state = state,
+        type = type,
     )

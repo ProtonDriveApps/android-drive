@@ -18,6 +18,4 @@
   -->
 <resources>
   <string name="whats_new_title">Apa-apa saja yang baru</string>
-  <string name="whats_new_docs_title">Proton Docs pada Perangkat Seluler</string>
-  <string name="whats_new_docs_description">Ketuk tombol plus untuk membuat atau berkolaborasi pada dokumen yang terenkripsi secara end-to-end dari mana saja.</string>
 </resources>

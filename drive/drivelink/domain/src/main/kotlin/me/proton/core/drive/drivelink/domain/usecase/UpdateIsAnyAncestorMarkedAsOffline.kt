@@ -36,6 +36,9 @@ class UpdateIsAnyAncestorMarkedAsOffline @Inject constructor(
                 is DriveLink.Folder -> driveLink.copy(
                     isAnyAncestorMarkedAsOffline = parentsMarkedOffline[driveLink.parentId] == true
                 )
+                is DriveLink.Album -> driveLink.copy(
+                    isAnyAncestorMarkedAsOffline = parentsMarkedOffline[driveLink.parentId] == true
+                )
             }
         }
     }

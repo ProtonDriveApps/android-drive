@@ -84,7 +84,7 @@
   <string name="photos_empty_description">Appena avrai foto o video sul tuo dispositivo, questi appariranno qui.</string>
   <string name="photos_backup_title">Backup delle foto</string>
   <string name="photos_backup_option_mobile_data">Usa la rete mobile per effettuare il backup delle foto</string>
-  <string name="photos_backup_option_ignoring_battery_optimizations">Disabilita l\'ottimizzazione della batteria</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Disabilita ottimizzazione batteria</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Consente il backup senza interruzioni quando l\'app è in esecuzione in background.</string>
   <string name="photos_backup_in_app_notification_turned_on">Backup delle foto abilitato</string>
   <string name="photos_backup_in_app_notification_turned_off">Backup delle foto abilitato</string>

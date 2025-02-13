@@ -45,6 +45,7 @@ import me.proton.core.drive.drivelink.rename.presentation.viewmodel.RenameViewMo
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.LinkSettingsViewModel
 import me.proton.core.drive.drivelink.shared.presentation.viewmodel.SharedDriveLinkViewModel
 import me.proton.core.drive.folder.create.presentation.CreateFolderViewModel
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -198,13 +199,14 @@ sealed class Screen(val route: String) {
                 operator fun invoke(userId: UserId) = "delete/${userId.id}/trash"
             }
 
-            data object Rename : Screen("rename/{userId}/shares/{shareId}/files?fileId={fileId}&folderId={folderId}") {
+            data object Rename : Screen("rename/{userId}/shares/{shareId}/files?fileId={fileId}&folderId={folderId}&albumId={albumId}") {
                 operator fun invoke(
                     userId: UserId,
                     linkId: LinkId,
                 ) = when (linkId) {
                     is FileId -> "rename/${userId.id}/shares/${linkId.shareId.id}/files?fileId=${linkId.id}"
                     is FolderId -> "rename/${userId.id}/shares/${linkId.shareId.id}/files?folderId=${linkId.id}"
+                    is AlbumId -> "rename/${userId.id}/shares/${linkId.shareId.id}/files?albumId=${linkId.id}"
                 }
 
                 const val FILE_ID = RenameViewModel.KEY_FILE_ID
@@ -551,6 +553,14 @@ sealed class Screen(val route: String) {
         const val SHARE_ID = ShareMemberOptionsViewModel.KEY_SHARE_ID
         const val LINK_ID = ShareMemberOptionsViewModel.KEY_LINK_ID
         const val MEMBER_ID = ShareMemberOptionsViewModel.KEY_MEMBER_ID
+    }
+
+    data object UserInvitation : Screen("shareViaInvitations/{userId}/invitations") {
+        operator fun invoke(
+            userId: UserId,
+        ) = "shareViaInvitations/${userId.id}/invitations"
+
+        const val USER_ID = Screen.USER_ID
     }
 
     data object ShareLinkPermissions : Screen("shareViaLink/{userId}/shares/{shareId}/linkId/{linkId}/permissions") {

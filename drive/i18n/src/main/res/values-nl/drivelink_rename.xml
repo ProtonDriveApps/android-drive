@@ -19,6 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Hernoem een bestand</string>
   <string name="link_rename_title_folder">Een map hernoemen</string>
+  <string name="link_rename_title_album">Album hernoemen</string>
   <string name="link_rename_successful">\"%1$s\" hernoemd</string>
   <string name="link_rename_error_link_not_found">Hernoemen mislukt omdat bestand of map niet meer kan worden gevonden</string>
   <string name="link_rename_error_general">Hernoemen mislukt om onbekende reden</string>

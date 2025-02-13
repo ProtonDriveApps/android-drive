@@ -20,8 +20,10 @@ package me.proton.core.drive.photo.data.api
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.photo.data.api.request.CreateAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreatePhotoRequest
 import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
+import me.proton.core.drive.photo.data.api.request.UpdateAlbumRequest
 import me.proton.core.drive.sorting.data.extension.toDtoDesc
 import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -67,4 +69,35 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
             .invoke {
                 findDuplicates(volumeId.id, request)
             }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun createAlbum(userId: UserId, volumeId: VolumeId, request: CreateAlbumRequest) =
+        apiProvider
+            .get<PhotoApi>(userId)
+            .invoke {
+                createAlbum(volumeId.id, request)
+            }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun updateAlbum(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: String,
+        request: UpdateAlbumRequest,
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            updateAlbum(volumeId.id, albumId, request)
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun getAlbumListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        anchorId: String? = null,
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            getAlbumListings(volumeId.id, anchorId)
+        }.valueOrThrow
 }

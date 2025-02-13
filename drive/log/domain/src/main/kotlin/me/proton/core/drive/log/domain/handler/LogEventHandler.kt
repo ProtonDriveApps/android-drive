@@ -56,6 +56,7 @@ class LogEventHandler @Inject constructor(
         is Event.BackupEnabled -> toLog(userId)
         is Event.BackupStarted -> toLog(userId)
         is Event.BackupStopped -> toLog(userId)
+        is Event.BackupSync -> toLog(userId)
         is Event.StorageFull -> toLog(userId)
         is Event.ForcedSignOut -> toLog(userId)
         is Event.NoSpaceLeftOnDevice -> toLog(userId)

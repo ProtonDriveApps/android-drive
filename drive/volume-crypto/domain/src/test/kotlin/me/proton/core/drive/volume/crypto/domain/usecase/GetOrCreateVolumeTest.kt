@@ -24,6 +24,7 @@ import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.resultValueOrThrow
+import me.proton.core.drive.db.test.NullablePhotoVolumeEntity
 import me.proton.core.drive.db.test.NullableVolumeEntity
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.userId
@@ -37,6 +38,7 @@ import me.proton.core.drive.test.api.post
 import me.proton.core.drive.test.api.routing
 import me.proton.core.drive.volume.data.api.response.GetVolumeResponse
 import me.proton.core.drive.volume.data.api.response.GetVolumesResponse
+import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -54,23 +56,44 @@ class GetOrCreateVolumeTest {
     var driveRule = DriveRule(this)
 
     @Inject
-    lateinit var createOrCreateVolume: GetOrCreateVolume
+    lateinit var getOrCreateVolume: GetOrCreateVolume
 
 
     @Test
-    fun `get oldest volume from cache`() = runTest {
+    fun `get oldest regular volume from cache`() = runTest {
         driveRule.db.user {
             withKey()
-            volume(NullableVolumeEntity(id = "oldest-active-volume", creationTime = 1))
-            volume(NullableVolumeEntity(id = "newest-active-volume", creationTime = 2))
+            volume(NullableVolumeEntity(id = "oldest-active-volume", createTime = 1))
+            volume(NullableVolumeEntity(id = "newest-active-volume", createTime = 2))
         }
 
-        val volume = createOrCreateVolume(userId).resultValueOrThrow()
+        val volume = getOrCreateVolume(userId, Volume.Type.REGULAR).resultValueOrThrow()
 
         assertEquals(
             NullableVolume(
                 id = VolumeId("oldest-active-volume"),
-                creationTime = TimestampS(1),
+                createTime = TimestampS(1),
+            ),
+            volume,
+        )
+    }
+
+    @Test
+    fun `get oldest photo volume from cache`() = runTest {
+        driveRule.db.user {
+            withKey()
+            volume(NullableVolumeEntity(id = "oldest-active-regular-volume", createTime = 1))
+            volume(NullablePhotoVolumeEntity(id = "oldest-active-photo-volume", createTime = 2))
+            volume(NullableVolumeEntity(id = "newest-active-regular-volume", createTime = 3))
+            volume(NullablePhotoVolumeEntity(id = "newest-active-photo-volume", createTime = 4))
+        }
+
+        val volume = getOrCreateVolume(userId, Volume.Type.PHOTO).resultValueOrThrow()
+
+        assertEquals(
+            NullablePhotoVolume(
+                id = VolumeId("oldest-active-photo-volume"),
+                createTime = TimestampS(2),
             ),
             volume,
         )
@@ -86,13 +109,16 @@ class GetOrCreateVolumeTest {
                 jsonResponse {
                     GetVolumesResponse(
                         code = ProtonApiCode.SUCCESS,
-                        volumeDtos = listOf(NullableVolumeDto(id = "volume-id"))
+                        volumeDtos = listOf(
+                            NullableVolumeDto(id = "volume-id"),
+                            NullablePhotoVolumeDto(id = "photo-volume-id"),
+                        )
                     )
                 }
             }
         }
 
-        val volume = createOrCreateVolume(userId).resultValueOrThrow()
+        val volume = getOrCreateVolume(userId, Volume.Type.REGULAR).resultValueOrThrow()
 
         assertEquals(
             NullableVolume(volumeId),
@@ -101,7 +127,7 @@ class GetOrCreateVolumeTest {
     }
 
     @Test
-    fun `create a volume if none exists`() = runTest {
+    fun `create a regular volume if none exists`() = runTest {
         driveRule.db.user {
             withKey()
         }
@@ -125,10 +151,43 @@ class GetOrCreateVolumeTest {
             }
         }
 
-        val volume = createOrCreateVolume(userId).resultValueOrThrow()
+        val volume = getOrCreateVolume(userId, Volume.Type.REGULAR).resultValueOrThrow()
 
         assertEquals(
             NullableVolume(VolumeId("volume-id")),
+            volume
+        )
+    }
+
+    @Test
+    fun `create a photo volume if none exists`() = runTest {
+        driveRule.db.user {
+            withKey()
+        }
+
+        driveRule.server.routing {
+            get("/drive/volumes") {
+                jsonResponse {
+                    GetVolumesResponse(
+                        code = ProtonApiCode.SUCCESS,
+                        volumeDtos = emptyList()
+                    )
+                }
+            }
+            post("/drive/photos/volumes") {
+                jsonResponse {
+                    GetVolumeResponse(
+                        code = ProtonApiCode.SUCCESS,
+                        volumeDto = NullablePhotoVolumeDto(id = "photo-volume-id")
+                    )
+                }
+            }
+        }
+
+        val volume = getOrCreateVolume(userId, Volume.Type.PHOTO).resultValueOrThrow()
+
+        assertEquals(
+            NullablePhotoVolume(VolumeId("photo-volume-id")),
             volume
         )
     }
@@ -163,12 +222,11 @@ class GetOrCreateVolumeTest {
             }
         }
 
-        val volume = createOrCreateVolume(userId).resultValueOrThrow()
+        val volume = getOrCreateVolume(userId, Volume.Type.REGULAR).resultValueOrThrow()
 
         assertEquals(
             NullableVolume(VolumeId("active-volume-id")),
             volume
         )
     }
-
 }

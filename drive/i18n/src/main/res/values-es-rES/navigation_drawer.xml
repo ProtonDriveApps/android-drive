@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="navigation_item_subscription">Suscripción</string>
-  <string name="navigation_item_bug_report">Reportar un error</string>
+  <string name="navigation_item_bug_report">Notificar un error</string>
   <string name="navigation_more_section_header">Más</string>
   <string name="navigation_storage_section_header">Almacenamiento</string>
   <string name="navigation_item_get_free_storage">Obtén hasta 5 GB gratis</string>

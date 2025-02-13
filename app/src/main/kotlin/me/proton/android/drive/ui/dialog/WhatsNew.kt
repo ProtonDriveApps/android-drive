@@ -180,10 +180,10 @@ private fun WhatsNewPreview() {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             WhatsNew(
                 viewState = WhatsNewViewState(
-                    title = stringResource(id = I18N.string.whats_new_docs_title),
-                    description = stringResource(id = I18N.string.whats_new_docs_description),
-                    action = stringResource(id = I18N.string.whats_new_docs_action),
-                    image = BasePresentation.drawable.img_whats_new_proton_docs
+                    title = "Title",
+                    description = "Very very long description that can go on two lines",
+                    action = "Action",
+                    image = BasePresentation.drawable.img_onboarding
                 ),
                 viewEvent = object : WhatsNewViewEvent {}
             )

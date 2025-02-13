@@ -19,27 +19,15 @@
 package me.proton.core.drive.photo.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapLatest
-import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
 import javax.inject.Inject
 
 class GetPhotoCount @Inject constructor(
-    private val getOldestActiveVolume: GetOldestActiveVolume,
     private val repository: PhotoRepository,
 ) {
-    operator fun invoke(userId: UserId): Flow<Int> = getOldestActiveVolume(userId)
-        .filterSuccessOrError()
-        .mapSuccessValueOrNull()
-        .filterNotNull()
-        .flatMapLatest { volume -> invoke(userId, volume.id) }
 
     operator fun invoke(userId: UserId, volumeId: VolumeId): Flow<Int> =
         repository.getPhotoListingCount(userId, volumeId)
-
 }

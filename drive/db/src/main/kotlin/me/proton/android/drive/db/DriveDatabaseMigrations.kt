@@ -45,6 +45,7 @@ import me.proton.core.drive.share.user.data.db.ShareUserDatabase
 import me.proton.core.drive.shareurl.base.data.db.ShareUrlDatabase
 import me.proton.core.drive.stats.data.db.StatsDatabase
 import me.proton.core.drive.user.data.db.UserMessageDatabase
+import me.proton.core.drive.volume.data.db.VolumeDatabase
 import me.proton.core.eventmanager.data.db.EventMetadataDatabase
 import me.proton.core.featureflag.data.db.FeatureFlagDatabase
 import me.proton.core.humanverification.data.db.HumanVerificationDatabase
@@ -473,6 +474,30 @@ object DriveDatabaseMigrations {
     val MIGRATION_72_73 = object : Migration(72, 73) {
         override fun migrate(db: SupportSQLiteDatabase) {
             EntitlementDatabase.MIGRATION_0.migrate(db)
+        }
+    }
+
+    val MIGRATION_73_74 = object : Migration(73, 74) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            VolumeDatabase.MIGRATION_0.migrate(db)
+        }
+    }
+
+    val MIGRATION_74_75 = object : Migration(74, 75) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            PhotoDatabase.MIGRATION_1.migrate(db)
+        }
+    }
+
+    val MIGRATION_75_76 = object : Migration(75, 76) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            ShareUserDatabase.MIGRATION_6.migrate(db)
+        }
+    }
+
+    val MIGRATION_76_77 = object : Migration(76, 77) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            LinkDatabase.MIGRATION_2.migrate(db)
         }
     }
 }
