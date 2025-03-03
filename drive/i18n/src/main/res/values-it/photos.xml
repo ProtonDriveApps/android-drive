@@ -65,6 +65,8 @@
   <string name="photos_error_backup_missing_folder">Cartella del backup non trovata</string>
   <string name="photos_error_backup_failed">Backup non riuscito</string>
   <string name="photos_error_backup_temporarily_disabled">Backup temporaneamente disabilitato</string>
+  <string name="photos_error_backup_migration_title">Aggiornamento necessario</string>
+  <string name="photos_error_backup_migration_description">Per utilizzare le funzionalità delle foto, aggiorna l\'app alla versione più recente.</string>
   <string name="photos_error_missing_permissions">Autorizzazioni mancanti</string>
   <!--
         Variable %1$s is an application name

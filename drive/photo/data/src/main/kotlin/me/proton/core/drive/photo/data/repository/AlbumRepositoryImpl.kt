@@ -21,18 +21,25 @@ package me.proton.core.drive.photo.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.SaveAction
+import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.repository.BaseRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.data.api.PhotoApiDataSource
+import me.proton.core.drive.photo.data.api.entity.AlbumPhotoListingDto
 import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.photo.data.db.entity.AlbumListingEntity
 import me.proton.core.drive.photo.data.extension.toAlbumListing
 import me.proton.core.drive.photo.data.extension.toAlbumListingEntity
+import me.proton.core.drive.photo.data.extension.toAlbumPhotoListing
+import me.proton.core.drive.photo.data.extension.toAlbumPhotoListingEntity
 import me.proton.core.drive.photo.data.extension.toCreateAlbumRequest
 import me.proton.core.drive.photo.data.extension.toUpdateAlbumRequest
 import me.proton.core.drive.photo.domain.entity.AlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumListing
+import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.photo.domain.entity.UpdateAlbumInfo
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.share.domain.entity.ShareId
@@ -43,6 +50,7 @@ import javax.inject.Inject
 class AlbumRepositoryImpl @Inject constructor(
     private val api: PhotoApiDataSource,
     private val db: PhotoDatabase,
+    private val baseRepository: BaseRepository,
 ) : AlbumRepository {
 
     override suspend fun createAlbum(userId: UserId, volumeId: VolumeId, albumInfo: AlbumInfo) =
@@ -81,11 +89,28 @@ class AlbumRepositoryImpl @Inject constructor(
                 break
             }
         }
+        /* TODO: this is not yet ready on BE
+        anchorId = null
+        while (true) {
+            val response = api.getAlbumSharedWithMeListings(userId, anchorId)
+            albumListingEntities.addAll(
+                response.albums.map { albumListingsDto ->
+                    albumListingsDto.toAlbumListingEntity(shareId)
+                }
+            )
+            if (response.more && response.anchorId != null) {
+                anchorId = response.anchorId
+            } else {
+                break
+            }
+        }
+        */
         db.inTransaction {
-            db.albumListingDao.deleteAll(userId, volumeId.id)
+            db.albumListingDao.deleteAll(userId)
             db.albumListingDao.insertOrIgnore(
                 *albumListingEntities.toTypedArray()
             )
+            baseRepository.setLastFetch(userId, getAlbumListingsUrl(volumeId), TimestampMs())
         }
         return albumListingEntities.map { albumListingEntity -> albumListingEntity.toAlbumListing() }
     }
@@ -126,4 +151,136 @@ class AlbumRepositoryImpl @Inject constructor(
                 entities.map { albumListingEntity -> albumListingEntity.toAlbumListing() }
             }
         }
+
+    override suspend fun fetchAlbumPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        anchorId: String?,
+        sortingBy: PhotoListing.Album.SortBy,
+        sortingDirection: Direction,
+    ): Pair<List<PhotoListing.Album>, SaveAction> =
+        fetchAlbumPhotoListingDtos(
+            userId = userId,
+            volumeId = volumeId,
+            albumId = albumId,
+            anchorId = anchorId,
+            sortingBy = sortingBy,
+            sortingDirection = sortingDirection,
+        ).map { photoListingDto ->
+            photoListingDto.toAlbumPhotoListing(albumId.shareId, albumId)
+        }.let { albumPhotoListings ->
+            albumPhotoListings to SaveAction {
+                db.albumPhotoListingDao.insertOrUpdate(
+                    *albumPhotoListings.map { albumPhotoListing ->
+                        albumPhotoListing.toAlbumPhotoListingEntity(volumeId)
+                    }.toTypedArray()
+                )
+            }
+        }
+
+    override suspend fun fetchAndStoreAlbumPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        shareId: ShareId,
+        albumId: AlbumId,
+        anchorId: String?,
+        sortingBy: PhotoListing.Album.SortBy,
+        sortingDirection: Direction,
+    ): List<PhotoListing.Album> {
+        val albumPhotoListingDtos = fetchAlbumPhotoListingDtos(
+            userId = userId,
+            volumeId = volumeId,
+            albumId = albumId,
+            anchorId = anchorId,
+            sortingBy = sortingBy,
+            sortingDirection = sortingDirection,
+        )
+        db.albumPhotoListingDao.insertOrUpdate(
+            *albumPhotoListingDtos.map { albumPhotoListingDto ->
+                albumPhotoListingDto.toAlbumPhotoListingEntity(volumeId, shareId, albumId)
+            }.toTypedArray()
+        )
+        return albumPhotoListingDtos.map { albumPhotoListingDto ->
+            albumPhotoListingDto.toAlbumPhotoListing(shareId, albumId)
+        }
+    }
+
+    override suspend fun getAlbumPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        fromIndex: Int,
+        count: Int,
+        sortingBy: PhotoListing.Album.SortBy,
+        sortingDirection: Direction
+    ): List<PhotoListing.Album> =
+        db.albumPhotoListingDao.getAlbumPhotoListings(
+            userId = userId,
+            volumeId = volumeId.id,
+            albumId = albumId.id,
+            sortingBy = sortingBy,
+            direction = sortingDirection,
+            limit = count,
+            offset = fromIndex,
+        ).map { albumPhotoListingEntity -> albumPhotoListingEntity.toAlbumPhotoListing() }
+
+    override fun getAlbumPhotoListingsFlow(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        fromIndex: Int,
+        count: Int,
+        sortingBy: PhotoListing.Album.SortBy,
+        sortingDirection: Direction
+    ): Flow<Result<List<PhotoListing.Album>>> =
+        db.albumPhotoListingDao.getAlbumPhotoListingsFlow(
+            userId = userId,
+            volumeId = volumeId.id,
+            albumId = albumId.id,
+            sortingBy = sortingBy,
+            direction = sortingDirection,
+            limit = count,
+            offset = fromIndex,
+        ).map { entities ->
+            coRunCatching {
+                entities.map { albumPhotoListingEntity ->
+                    albumPhotoListingEntity.toAlbumPhotoListing()
+                }
+            }
+        }
+
+    override suspend fun deleteAllAlbumPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId
+    ) = db.albumPhotoListingDao.deleteAll(userId, volumeId.id, albumId.id)
+
+    override suspend fun insertOrIgnoreAlbumPhotoListing(
+        volumeId: VolumeId,
+        photoListings: List<PhotoListing.Album>,
+    ) {
+        db.albumPhotoListingDao.insertOrIgnore(
+            *photoListings.map { photoListing ->
+                photoListing.toAlbumPhotoListingEntity(volumeId)
+            }.toTypedArray()
+        )
+    }
+
+    private suspend fun fetchAlbumPhotoListingDtos(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        anchorId: String?,
+        sortingBy: PhotoListing.Album.SortBy,
+        sortingDirection: Direction,
+    ): List<AlbumPhotoListingDto> =
+        api.getAlbumPhotoListings(
+            userId = userId,
+            volumeId = volumeId,
+            albumId = albumId.id,
+            anchorId = anchorId,
+            sortingBy = sortingBy,
+            sortingDirection = sortingDirection,
+        )
 }

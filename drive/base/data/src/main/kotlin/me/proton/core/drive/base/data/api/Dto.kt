@@ -23,6 +23,7 @@ package me.proton.core.drive.base.data.api
 object Dto {
     const val ACTIVE_REVISION = "ActiveRevision"
     const val ACTIVE_URLS = "ActiveUrls"
+    const val ADDED_TIME = "AddedTime"
     const val ADDRESS_ID = "AddressID"
     const val ADDRESS_KEY_ID = "AddressKeyID"
     const val ALBUM = "Album"
@@ -95,6 +96,7 @@ object Dto {
     const val INVITER = "Inviter"
     const val INVITER_ADDRESS_ID = "InviterAddressID"
     const val INVITER_EMAIL = "InviterEmail"
+    const val IS_CHILD_OF_ALBUM = "IsChildOfAlbum"
     const val ITEM_NAME = "ItemName"
     const val KEY = "Key"
     const val KEY_PACKET = "KeyPacket"

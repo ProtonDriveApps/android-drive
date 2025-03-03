@@ -41,7 +41,7 @@ suspend fun DriveDatabase.photo(
 
 suspend fun VolumeContext.photoShare(
     block: suspend FolderContext.() -> Unit,
-) : FolderId = share(
+): FolderId = share(
     shareEntity = NullableShareEntity(
         id = photoShareId.id,
         linkId = photoRootId.id,

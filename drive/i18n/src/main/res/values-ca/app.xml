@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_paused_disabled">S\'ha desactivat la còpia de seguretat.</string>
   <string name="notification_content_text_backup_paused_background_restrictions">La còpia de seguretat no es pot executar en segon pla</string>
   <string name="notification_content_text_backup_preparing">S\'està preparant per a fer una còpia de seguretat</string>
+  <string name="notification_content_text_backup_failed_migration">La migració està en curs. Actualitzeu l\'aplicació.</string>
   <string name="notification_content_title_download_complete">Descàrrega completa</string>
   <string name="notification_content_title_forced_sign_out">Inicia la sessió</string>
   <string name="notification_content_text_forced_sign_out">Hi ha hagut un problema amb la sincronització. Torneu a iniciar la sessió i tot funcionarà sense problemes.</string>
@@ -178,7 +179,7 @@
   <string name="description_files_stop_sharing_action_success">S\'ha esborrat l\'enllaç al fitxer.</string>
   <string name="description_files_stop_sharing_action_error">S\'ha produït un error en esborrar l\'enllaç al fitxer.</string>
   <string name="description_files_stop_all_sharing">Això esborrarà l\'enllaç i eliminarà l\'accés per a tothom.</string>
-  <string name="description_files_stop_all_sharing_action_success">S\'ha eliminat l\'accés compartit al fitxer.</string>
+  <string name="description_files_stop_all_sharing_action_success">S\'ha suprimit l\'ús compartit al vostre fitxer.</string>
   <string name="description_files_stop_all_sharing_action_error">S\'ha produït un error en suprimir la compartició al fitxer.</string>
   <string name="ignore_file_signature_action">Veure de totes maneres</string>
   <string name="action_empty_files_add_files">Carrega</string>

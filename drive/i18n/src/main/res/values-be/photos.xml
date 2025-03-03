@@ -67,6 +67,8 @@
   <string name="photos_error_backup_missing_folder">Папка рэзервовага капіявання не знойдзена</string>
   <string name="photos_error_backup_failed">Збой рэзервовага капіявання.</string>
   <string name="photos_error_backup_temporarily_disabled">Стварэнне рэзервовай копіі часова адключана.</string>
+  <string name="photos_error_backup_migration_title">Патрабуецца абнаўленне</string>
+  <string name="photos_error_backup_migration_description">Абнавіце сваю праграму да апошняй версіі, каб карыстацца функцыямі фатаграфій.</string>
   <string name="photos_error_missing_permissions">Дазволы адсутнічаюць.</string>
   <!--
         Variable %1$s is an application name
@@ -79,7 +81,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Выкарыстоўваюць мабільную сетку</string>
   <string name="photos_error_local_storage">Сховішча прылады запоўнена</string>
   <string name="photos_error_local_storage_description">Для працягу рэзервовага капіявання неабходна вызваліць месца ў сховішчы вашай прылады.</string>
-  <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Задайце статус выкарыстання для акумулятара \"Неабмежавана\" для тых праграм, якія працуюць у фоне</string>
   <string name="photos_error_background_restrictions_description">Для пастаяннага рэзервовага капіявання, вам неабходна змяніць налады акумулятара або перыядычна адкрываць праграму.</string>
   <string name="photos_error_background_restrictions_action">Налады</string>
   <string name="photos_empty_title">Пакуль рэзервовыя копіі адсутнічаюць</string>

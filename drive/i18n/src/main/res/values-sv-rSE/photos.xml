@@ -65,6 +65,8 @@
   <string name="photos_error_backup_missing_folder">Säkerhetskopieringsmapp hittades inte</string>
   <string name="photos_error_backup_failed">Säkerhetskopiering misslyckades.</string>
   <string name="photos_error_backup_temporarily_disabled">Säkerhetskopiering är tillfälligt inaktiverat.</string>
+  <string name="photos_error_backup_migration_title">Uppdatering krävs</string>
+  <string name="photos_error_backup_migration_description">För att använda fotofunktioner, uppdatera din app till den senaste versionen.</string>
   <string name="photos_error_missing_permissions">Saknar behörigheter.</string>
   <!--
         Variable %1$s is an application name
@@ -77,7 +79,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Använd mobilt nätverk</string>
   <string name="photos_error_local_storage">Enhetens lagringsutrymme fullt</string>
   <string name="photos_error_local_storage_description">För att fortsätta säkerhetskopieringen måste du frigöra lagringsutrymme på din enhet.</string>
-  <string name="photos_error_background_restrictions">Ställ in batterianvändning på ”Obegränsat” för appaktivitet i bakgrunden</string>
+  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">För konsekventa säkerhetskopieringar i bakgrunden, justera batteriinställningarna eller öppna appen ofta.</string>
   <string name="photos_error_background_restrictions_action">Inställningar</string>
   <string name="photos_empty_title">Inga säkerhetskopior än</string>

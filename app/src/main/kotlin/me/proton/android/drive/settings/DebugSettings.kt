@@ -138,7 +138,7 @@ class DebugSettings(
         key = prefsPhotosUpsellPhotoCount,
         default = buildConfig.photosUpsellPhotoCount,
     )
-    override val albumsFeatureFlag: Boolean = true
+    override var albumsFeatureFlag: Boolean = true
 
     fun reset(coroutineScope: CoroutineScope) {
         coroutineScope.launch {

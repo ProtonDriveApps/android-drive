@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_paused_disabled">Η δημιουργία αντιγράφων ασφαλείας ήταν απενεργοποιημένη</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Δεν είναι δυνατή η εκτέλεση της δημιουργίας αντιγράφων ασφαλείας στο παρασκήνιο</string>
   <string name="notification_content_text_backup_preparing">Προετοιμασία δημιουργίας αντιγράφων ασφαλείας</string>
+  <string name="notification_content_text_backup_failed_migration">Μετεγκατάσταση σε εξέλιξη, ενημερώστε την εφαρμογή σας</string>
   <string name="notification_content_title_download_complete">Η λήψη ολοκληρώθηκε</string>
   <string name="notification_content_title_forced_sign_out">Παρακαλούμε συνδεθείτε</string>
   <string name="notification_content_text_forced_sign_out">Συγνώμη για τη διακοπή! Αντιμετωπίσαμε πρόβλημα με το συγχρονισμό - συνδεθείτε ξανά και θα λειτουργήσουν όλα ομαλά.</string>

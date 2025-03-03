@@ -139,6 +139,7 @@
   <string name="notification_content_text_backup_paused_disabled">已關閉備份</string>
   <string name="notification_content_text_backup_paused_background_restrictions">備份無法於背景運作</string>
   <string name="notification_content_text_backup_preparing">正在準備備份</string>
+  <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
   <string name="notification_content_title_download_complete">下載完成</string>
   <string name="notification_content_title_forced_sign_out">請登入</string>
   <string name="notification_content_text_forced_sign_out">抱歉打斷您！出現了同步問題，請重新登入，才能流暢運作。</string>
@@ -173,7 +174,7 @@
   <string name="description_files_stop_sharing_action_success">您檔案的連結已被刪除。</string>
   <string name="description_files_stop_sharing_action_error">刪除檔案連結時出現錯誤</string>
   <string name="description_files_stop_all_sharing">這將會刪除連結並移除所有人的存取權.</string>
-  <string name="description_files_stop_all_sharing_action_success">您檔案的連結已被刪除。</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">刪除檔案分享時發生錯誤。</string>
   <string name="ignore_file_signature_action">仍要閱覽</string>
   <string name="action_empty_files_add_files">上傳</string>

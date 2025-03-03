@@ -20,7 +20,7 @@
   <string name="file_info_uploaded_by_entry">上傳者</string>
   <string name="file_info_location_entry">位置</string>
   <string name="file_info_last_modified_entry">已修改</string>
-  <string name="file_info_number_of_accesses_entry">下載次數</string>
+  <string name="file_info_number_of_accesses_entry">下載#次數</string>
   <string name="file_info_share_url_expiration_time">連結到期時間</string>
   <string name="file_info_share_url_no_expiration_time">永不</string>
   <string name="file_info_title_folder">資料夾詳細資訊</string>

@@ -139,6 +139,7 @@
   <string name="notification_content_text_backup_paused_disabled">Pencadangan dinonaktifkan</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Pencadangan tidak dapat berlangsung di belakang layar</string>
   <string name="notification_content_text_backup_preparing">Mempersiapkan pencadangan</string>
+  <string name="notification_content_text_backup_failed_migration">Migrasi sedang berlangsung, perbarui aplikasi Anda</string>
   <string name="notification_content_title_download_complete">Unduhan selesai</string>
   <string name="notification_content_title_forced_sign_out">Silakan masuk</string>
   <string name="notification_content_text_forced_sign_out">Maaf mengganggu! Kami mengalami masalah dengan sinkronisasi — silakan masuk lagi dan semuanya akan berjalan dengan lancar.</string>
@@ -173,7 +174,7 @@
   <string name="description_files_stop_sharing_action_success">Tautan ke berkas Anda telah dihapus.</string>
   <string name="description_files_stop_sharing_action_error">Terdapat kesalahan pada saat menghapus tautan ke berkas Anda.</string>
   <string name="description_files_stop_all_sharing">Tindakan ini akan menghapus tautan dan menganulir akses bagi semua.</string>
-  <string name="description_files_stop_all_sharing_action_success">Berbagi ke file Anda telah dihapus.</string>
+  <string name="description_files_stop_all_sharing_action_success">Pembagian berkas Anda telah dihapus.</string>
   <string name="description_files_stop_all_sharing_action_error">Terjadi kesalahan saat menghapus berbagi file Anda.</string>
   <string name="ignore_file_signature_action">Tetap lihat</string>
   <string name="action_empty_files_add_files">Unggah</string>

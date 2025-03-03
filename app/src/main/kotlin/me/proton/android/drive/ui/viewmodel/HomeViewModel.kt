@@ -183,6 +183,7 @@ class HomeViewModel @Inject constructor(
         get() = when (route) {
             Screen.Files.route -> Screen.Files
             Screen.Photos.route -> Screen.Photos
+            Screen.PhotosAndAlbums.route -> Screen.PhotosAndAlbums
             Screen.Computers.route -> Screen.Computers
             Screen.SharedTabs.route -> Screen.SharedTabs
             else -> error("Unhandled tab item route: $route")

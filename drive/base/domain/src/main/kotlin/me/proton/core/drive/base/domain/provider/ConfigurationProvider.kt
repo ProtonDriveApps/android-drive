@@ -110,6 +110,7 @@ interface ConfigurationProvider {
     val observeWorkManagerInterval: Duration get() = 1.minutes
     val cacheInternalStorageLimit: Bytes get() = 512.MiB
     val albumsFeatureFlag: Boolean get() = false
+    val minimumAlbumListingFetchInterval: Duration get() = 5.days
 
     data class Thumbnail(
         val maxWidth: Int,

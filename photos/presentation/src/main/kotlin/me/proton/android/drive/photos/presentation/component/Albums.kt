@@ -1,0 +1,466 @@
+/*
+ * Copyright (c) 2025 Proton AG.
+ * This file is part of Proton Drive.
+ *
+ * Proton Drive is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Proton Drive is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Proton Drive.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package me.proton.android.drive.photos.presentation.component
+
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.animation.Crossfade
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.Flow
+import me.proton.android.drive.photos.presentation.R
+import me.proton.android.drive.photos.presentation.extension.thumbnailPainter
+import me.proton.android.drive.photos.presentation.state.AlbumsItem
+import me.proton.android.drive.photos.presentation.viewevent.AlbumsViewEvent
+import me.proton.android.drive.photos.presentation.viewstate.AlbumsViewState
+import me.proton.core.compose.theme.ProtonDimens
+import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.crypto.common.pgp.VerificationStatus
+import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.Attributes
+import me.proton.core.drive.base.domain.entity.CryptoProperty
+import me.proton.core.drive.base.domain.entity.Permissions
+import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.base.presentation.component.Deferred
+import me.proton.core.drive.base.presentation.component.EncryptedItem
+import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
+import me.proton.core.drive.base.presentation.component.list.ListEmpty
+import me.proton.core.drive.base.presentation.component.list.ListError
+import me.proton.core.drive.base.presentation.extension.onContent
+import me.proton.core.drive.base.presentation.extension.onEmpty
+import me.proton.core.drive.base.presentation.extension.onError
+import me.proton.core.drive.base.presentation.extension.onLoading
+import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.presentation.R as CorePresentation
+
+@Composable
+fun Albums(
+    viewState: AlbumsViewState,
+    viewEvent: AlbumsViewEvent,
+    items: Flow<List<AlbumsItem>>,
+    modifier: Modifier = Modifier,
+) {
+    val albumItems by items.collectAsStateWithLifecycle(
+        initialValue = emptyList()
+    )
+    viewState.listContentState
+        .onLoading {
+            AlbumsLoading(modifier)
+        }
+        .onEmpty {
+            AlbumsEmpty(modifier)
+        }
+        .onError { error ->
+            AlbumsError(
+                message = error.message,
+                actionResId = error.actionResId,
+                modifier = modifier,
+                onAction = viewEvent.onErrorAction,
+            )
+        }
+        .onContent {
+            AlbumsContent(
+                items = albumItems,
+                isRefreshEnabled = viewState.isRefreshEnabled,
+                isRefreshing = viewState.listContentState.isRefreshing,
+                modifier = modifier,
+                onRefresh = viewEvent.onRefresh,
+                onScroll = viewEvent.onScroll,
+                onClick = viewEvent.onDriveLinkAlbum,
+            )
+        }
+}
+
+@Composable
+fun AlbumsLoading(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        Deferred {
+            CircularProgressIndicator()
+        }
+    }
+}
+
+@Composable
+fun AlbumsEmpty(
+    modifier: Modifier = Modifier,
+    @DrawableRes imageResId: Int = R.drawable.empty_photos_daynight,
+    @StringRes titleResId: Int = I18N.string.photos_empty_title,
+    @StringRes descriptionResId: Int? = I18N.string.photos_empty_description,
+) {
+    ListEmpty(
+        imageResId = imageResId,
+        titleResId = titleResId,
+        descriptionResId = descriptionResId,
+        actionResId = null,
+        modifier = modifier,
+        onAction = {},
+    )
+}
+
+@Composable
+fun AlbumsError(
+    message: String,
+    @StringRes actionResId: Int?,
+    modifier: Modifier = Modifier,
+    onAction: () -> Unit,
+) {
+    ListError(
+        message = message,
+        actionResId = actionResId,
+        modifier = modifier,
+        onAction = onAction,
+    )
+}
+
+@Composable
+fun AlbumsContent(
+    items: List<AlbumsItem>,
+    isRefreshEnabled: Boolean,
+    isRefreshing: Boolean,
+    modifier: Modifier = Modifier,
+    onScroll: (Set<LinkId>) -> Unit,
+    onRefresh: () -> Unit,
+    onClick: (DriveLink.Album) -> Unit,
+) {
+    ProtonPullToRefresh(
+        isPullToRefreshEnabled = isRefreshEnabled,
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+    ) {
+        AlbumsContent(
+            items = items,
+            modifier = modifier,
+            onScroll = onScroll,
+            onClick = onClick,
+        )
+    }
+}
+
+@Composable
+fun AlbumsContent(
+    items: List<AlbumsItem>,
+    modifier: Modifier = Modifier,
+    onScroll: (Set<LinkId>) -> Unit,
+    onClick: (DriveLink.Album) -> Unit,
+) {
+    val gridState = rememberLazyGridState()
+    val firstVisibleItemIndex by remember(gridState) { derivedStateOf { gridState.firstVisibleItemIndex } }
+    LaunchedEffect(firstVisibleItemIndex, items) {
+        onScroll(
+            items
+                .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }
+                ?.let { list ->
+                    val sizeRange = IntRange(0, list.size - 1)
+                    val fromIndex = (firstVisibleItemIndex - 10).coerceIn(sizeRange)
+                    val toIndex = (firstVisibleItemIndex + 20).coerceIn(sizeRange)
+                    list.subList(fromIndex, toIndex + 1)
+                        .filterIsInstance<AlbumsItem.Listing>()
+                        .flatMap { albumListing ->
+                            listOfNotNull(albumListing.id, albumListing.album?.coverLinkId)
+                        }
+                        .toSet()
+                } ?: emptySet(),
+        )
+    }
+    LazyVerticalGrid(
+        modifier = modifier.fillMaxSize(),
+        columns = PhotosGridCells(minSize = minCoverSize, minCount = 2),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        state = gridState,
+    ) {
+        items(
+            count = items.size,
+            key = { index ->
+                when (val albumItem = items[index]) {
+                    is AlbumsItem.Listing -> albumItem.id.id
+                }
+            },
+            span = { _ ->
+                GridItemSpan(1)
+            },
+        ) { index ->
+            AlbumItem(
+                albumsItem = items[index],
+                onClick = onClick,
+            )
+        }
+    }
+}
+
+@Composable
+fun AlbumItem(
+    albumsItem: AlbumsItem,
+    modifier: Modifier = Modifier,
+    onClick: (DriveLink.Album) -> Unit,
+) {
+    when (albumsItem) {
+        is AlbumsItem.Listing -> albumsItem.album?.let { album ->
+            AlbumItem(
+                album = album,
+                cover = albumsItem.coverLink,
+                modifier = modifier,
+                onClick = onClick,
+            )
+        } ?: AlbumItem(
+            albumName = "",
+            isAlbumNameEncrypted = true,
+            albumPhotoCount = albumsItem.photoCount,
+            modifier = modifier,
+            coverDriveLink = albumsItem.coverLink,
+        )
+    }
+}
+
+@Composable
+fun AlbumItem(
+    album: DriveLink.Album,
+    cover: DriveLink.File?,
+    modifier: Modifier = Modifier,
+    onClick: (DriveLink.Album) -> Unit,
+) {
+    AlbumItem(
+        albumName = album.name,
+        isAlbumNameEncrypted = album.cryptoName is CryptoProperty.Encrypted,
+        albumPhotoCount = album.photoCount,
+        modifier = modifier
+            .clickable(onClick = { onClick(album) }),
+        coverDriveLink = cover,
+    )
+}
+
+@Composable
+fun AlbumItem(
+    albumName: String,
+    isAlbumNameEncrypted: Boolean,
+    albumPhotoCount: Long,
+    modifier: Modifier = Modifier,
+    coverDriveLink: DriveLink.File? = null,
+) {
+    val even = albumPhotoCount % 2 == 0L
+    val rotation = if (even) 1f else -1f
+    Column(
+      modifier = modifier
+          .padding(
+              top = ProtonDimens.ExtraSmallSpacing,
+              bottom = ProtonDimens.DefaultSpacing,
+              start = ProtonDimens.DefaultSpacing,
+              end = ProtonDimens.DefaultSpacing,
+          )
+          .fillMaxWidth()
+    ) {
+        AlbumItemCard(
+            coverDriveLink = coverDriveLink,
+            rotation = rotation,
+        )
+        Spacer(modifier = Modifier.height(ProtonDimens.SmallSpacing))
+        Column(
+            modifier = Modifier.padding(ProtonDimens.ExtraSmallSpacing)
+        ) {
+            Crossfade(
+                targetState = isAlbumNameEncrypted,
+                modifier = Modifier,
+            ) { isEncrypted ->
+                if (isEncrypted) {
+                    EncryptedItem()
+                } else {
+                    Text(
+                        text = albumName,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2,
+                        color = ProtonTheme.colors.textNorm,
+                        style = ProtonTheme.typography.body2Medium,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(ProtonDimens.ExtraSmallSpacing))
+            Text(
+                text = "$albumPhotoCount",
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                color = ProtonTheme.colors.textWeak,
+                style = ProtonTheme.typography.captionRegular,
+            )
+        }
+    }
+}
+
+@Composable
+fun AlbumItemCard(
+    coverDriveLink: DriveLink.File?,
+    modifier: Modifier = Modifier,
+    rotation: Float = 0f,
+) {
+    Card(
+        shape = RoundedCornerShape(ProtonDimens.LargeCornerRadius),
+        border = BorderStroke(3.dp, Color.White),
+        elevation = ProtonDimens.SmallSpacing,
+        backgroundColor = ProtonTheme.colors.backgroundSecondary,
+        contentColor = ProtonTheme.colors.textNorm,
+        modifier = modifier
+            .aspectRatio(1f)
+            .sizeIn(minHeight = minCoverSize, minWidth = minCoverSize)
+            .rotate(rotation)
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Crossfade(
+                targetState = coverDriveLink == null,
+                modifier = modifier,
+            ) { showPlaceholder ->
+                if (showPlaceholder) {
+                    Icon(
+                        painter = painterResource(CorePresentation.drawable.ic_proton_image),
+                        contentDescription = null,
+                        modifier = Modifier.sizeIn(minHeight = 64.dp, minWidth = 64.dp)
+                    )
+                } else {
+                    coverDriveLink?.let { link ->
+                        val painterWrapper = link.thumbnailPainter()
+                        Image(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            painter = painterWrapper.painter,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+internal val minCoverSize: Dp = 150.dp
+
+@Preview
+@Composable
+private fun PreviewAlbumsEmpty() {
+    ProtonTheme {
+        AlbumsEmpty()
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewAlbumItem() {
+    ProtonTheme {
+        AlbumItem(
+            album = DriveLink.Album(
+                link = Link.Album(
+                    id = AlbumId(ShareId(UserId("user-id"), "share-id"), "album-id"),
+                    parentId = null,
+                    name = "encrypted_album_name",
+                    size = 0.bytes,
+                    lastModified = TimestampS(0),
+                    mimeType = "Album",
+                    isShared = false,
+                    key = "",
+                    passphrase = "",
+                    passphraseSignature = "",
+                    numberOfAccesses = 0,
+                    shareUrlExpirationTime = null,
+                    uploadedBy = "",
+                    isFavorite = false,
+                    attributes = Attributes(0),
+                    permissions = Permissions(0),
+                    state = Link.State.ACTIVE,
+                    nameSignatureEmail = null,
+                    hash = "",
+                    expirationTime = null,
+                    nodeKey = "",
+                    nodePassphrase = "",
+                    nodePassphraseSignature = "",
+                    signatureEmail = "",
+                    creationTime = TimestampS(0),
+                    trashedTime = null,
+                    xAttr = null,
+                    sharingDetails = null,
+                    nodeHashKey = "",
+                    isLocked = false,
+                    lastActivityTime = TimestampS(0),
+                    photoCount = 42,
+                    coverLinkId = null,
+                ),
+                volumeId = VolumeId("volume-id"),
+                isMarkedAsOffline = false,
+                isAnyAncestorMarkedAsOffline = false,
+                downloadState = null,
+                trashState = null,
+                shareInvitationCount = null,
+                shareMemberCount = null,
+                cryptoName = CryptoProperty.Decrypted("My album", VerificationStatus.Success),
+                cryptoXAttr = CryptoProperty.Decrypted("", VerificationStatus.Success),
+                shareUser = null,
+                sharePermissions = null,
+            ),
+            cover = null,
+            onClick = {},
+        )
+    }
+}

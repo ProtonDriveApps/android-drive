@@ -65,6 +65,8 @@
   <string name="photos_error_backup_missing_folder">Yedek klasörü bulunamadı</string>
   <string name="photos_error_backup_failed">Yedekleme tamamlanamadı.</string>
   <string name="photos_error_backup_temporarily_disabled">Yedekleme geçici olarak kullanım dışı bırakıldı.</string>
+  <string name="photos_error_backup_migration_title">Güncelleme gerekli</string>
+  <string name="photos_error_backup_migration_description">Fotoğraf özelliklerini kullanabilmek için, uygulamanızı son sürüme güncelleyin.</string>
   <string name="photos_error_missing_permissions">İzinler eksik.</string>
   <!--
         Variable %1$s is an application name

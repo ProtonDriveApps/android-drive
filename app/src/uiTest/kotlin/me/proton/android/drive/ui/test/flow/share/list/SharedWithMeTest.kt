@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.test.flow.share.list
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.Scenario
+import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SharedTabRobot
 import me.proton.android.drive.ui.robot.SharedWithMeRobot
@@ -29,6 +30,7 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
+import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.test.fusion.FusionConfig
 import org.junit.Test
@@ -61,6 +63,34 @@ class SharedWithMeTest : BaseTest() {
             .clickOnFolder(folder)
             .verify {
                 nodeWithTextDisplayed(fileInFolder)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
+    fun renameFileInSharedFolder() {
+        val folder = "ReadWriteFolder"
+        val fileInFolder = "EditableFile.txt"
+        val newItemName = "RenamedEditableFile.txt"
+        PhotosTabRobot
+            .navigateToSharedWithMeTab()
+            .scrollToItemWithName(folder)
+            .clickOnFolder(folder)
+            .clickMoreOnItem(fileInFolder)
+            .clickRename()
+            .clearName()
+            .typeName(newItemName)
+            .clickRename(FilesTabRobot)
+            .verify {
+                nodeWithTextDisplayed(
+                    StringUtils.stringFromResource(
+                        I18N.string.link_rename_successful,
+                        newItemName
+                    )
+                )
+                itemIsDisplayed(newItemName)
             }
     }
 

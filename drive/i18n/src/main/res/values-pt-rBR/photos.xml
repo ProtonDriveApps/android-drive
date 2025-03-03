@@ -65,6 +65,8 @@
   <string name="photos_error_backup_missing_folder">A pasta de backup não foi encontrada</string>
   <string name="photos_error_backup_failed">Falha no Backup.</string>
   <string name="photos_error_backup_temporarily_disabled">O backup está temporariamente desativado.</string>
+  <string name="photos_error_backup_migration_title">Atualização necessária</string>
+  <string name="photos_error_backup_migration_description">Para usar os recursos de fotos, atualize seu aplicativo para a última versão.</string>
   <string name="photos_error_missing_permissions">Faltam permissões.</string>
   <!--
         Variable %1$s is an application name

@@ -90,8 +90,8 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">Itens compartilhados pendentes (%1$d)</string>
-  <string name="shared_user_invitations_title_empty">No pending shared items</string>
-  <string name="shared_user_invitations_description_empty">All new invitation will be here</string>
+  <string name="shared_user_invitations_title_empty">Sem itens compartilhados pendentes</string>
+  <string name="shared_user_invitations_description_empty">Todos os novos convites aparecerão aqui.</string>
   <string name="shared_user_invitations_accept_button">Aceitar</string>
   <string name="shared_user_invitations_decline_button">Negar</string>
   <string name="shared_user_invitations_accept_success">Item compartilhado aceitado</string>

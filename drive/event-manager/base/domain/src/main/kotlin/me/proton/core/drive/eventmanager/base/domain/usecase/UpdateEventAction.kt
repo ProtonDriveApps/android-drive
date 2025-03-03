@@ -24,7 +24,16 @@ import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface UpdateEventAction {
 
-    suspend operator fun <T> invoke(shareId: ShareId, block: suspend () -> T): T
+    suspend operator fun <T> invoke(
+        shareId: ShareId,
+        overrideMinimumFetchInterval: Boolean = true,
+        block: suspend () -> T
+    ): T
 
-    suspend operator fun <T> invoke(userId: UserId, volumeId: VolumeId, block: suspend () -> T): T
+    suspend operator fun <T> invoke(
+        userId: UserId,
+        volumeId: VolumeId,
+        overrideMinimumFetchInterval: Boolean = true,
+        block: suspend () -> T
+    ): T
 }

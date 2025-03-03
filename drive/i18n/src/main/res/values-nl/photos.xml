@@ -65,6 +65,8 @@
   <string name="photos_error_backup_missing_folder">Back-up map niet gevonden</string>
   <string name="photos_error_backup_failed">Back-up mislukt.</string>
   <string name="photos_error_backup_temporarily_disabled">Back-up is tijdelijk onbeschikbaar.</string>
+  <string name="photos_error_backup_migration_title">Update vereist</string>
+  <string name="photos_error_backup_migration_description">Werk uw app bij naar de nieuwste versie om foto\'s te gebruiken.</string>
   <string name="photos_error_missing_permissions">Ontbrekende machtigingen.</string>
   <!--
         Variable %1$s is an application name
@@ -77,7 +79,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Mobiel gebruiken</string>
   <string name="photos_error_local_storage">Apparaatopslag vol</string>
   <string name="photos_error_local_storage_description">Om verder te gaan met de back-up moet u opslag vrijmaken op uw toestel.</string>
-  <string name="photos_error_background_restrictions">Zet batterij gebruik op \'Onbeperkt\' voor achtergrond-app activiteit</string>
+  <string name="photos_error_background_restrictions">Stel batterijgebruik in op \'Onbeperkt\' voor achtergrondactiviteit van de app</string>
   <string name="photos_error_background_restrictions_description">Voor back-ups, consistente achtergronden, pas de batterijinstellingen aan of open de app regelmatig.</string>
   <string name="photos_error_background_restrictions_action">Instellingen</string>
   <string name="photos_empty_title">Nog geen back-ups</string>

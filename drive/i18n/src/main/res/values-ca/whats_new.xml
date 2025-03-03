@@ -18,4 +18,6 @@
   -->
 <resources>
   <string name="whats_new_title">Novetats</string>
+  <string name="whats_new_public_sharing_title">Comparteix amb tothom</string>
+  <string name="whats_new_public_sharing_description">Creeu enllaços compartibles per a col·laborar en carpetes i fitxers: no cal cap compte de Proton</string>
 </resources>

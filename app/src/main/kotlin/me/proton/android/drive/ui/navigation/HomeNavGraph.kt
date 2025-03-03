@@ -38,6 +38,7 @@ import me.proton.android.drive.ui.navigation.internal.DriveNavHost
 import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.screen.ComputersScreen
 import me.proton.android.drive.ui.screen.FilesScreen
+import me.proton.android.drive.ui.screen.PhotosAndAlbumsScreen
 import me.proton.android.drive.ui.screen.PhotosScreen
 import me.proton.android.drive.ui.screen.SharedTabsScreen
 import me.proton.android.drive.ui.screen.SyncedFoldersScreen
@@ -89,6 +90,23 @@ fun HomeNavGraph(
         navigateToParentFolderOptions,
     )
     addPhotos(
+        homeNavController,
+        deepLinkBaseUrl,
+        arguments,
+        homeScaffoldState,
+        navigateToPhotosPermissionRationale,
+        navigateToPhotosPreview = { fileId -> navigateToPreview(fileId, PagerType.PHOTO, OptionsFilter.PHOTOS) },
+        navigateToPhotosOptions = { fileId -> navigateToFileOrFolderOptions(fileId, OptionsFilter.PHOTOS) },
+        navigateToMultiplePhotosOptions = { selectionId ->
+            navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.PHOTOS)
+        },
+        navigateToSubscription = navigateToSubscription,
+        navigateToPhotosIssues = navigateToPhotosIssues,
+        navigateToPhotosUpsell = navigateToPhotosUpsell,
+        navigateToBackupSettings = navigateToBackupSettings,
+        navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
+    )
+    addPhotosAndAlbums(
         homeNavController,
         deepLinkBaseUrl,
         arguments,
@@ -256,6 +274,44 @@ fun NavGraphBuilder.addPhotos(
             ShareId(userId, shareId)
         }
         navController.navigate(Screen.Photos(userId, shareId)) {
+            popUpTo(navController.graph.findStartDestination().id) {
+                inclusive = true
+            }
+        }
+    }
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addPhotosAndAlbums(
+    navController: NavHostController,
+    deepLinkBaseUrl: String,
+    arguments: Bundle,
+    homeScaffoldState: HomeScaffoldState,
+    navigateToPhotosPermissionRationale: () -> Unit,
+    navigateToPhotosPreview: (fileId: FileId) -> Unit,
+    navigateToPhotosOptions: (fileId: FileId) -> Unit,
+    navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
+    navigateToSubscription: () -> Unit,
+    navigateToPhotosIssues: (FolderId) -> Unit,
+    navigateToPhotosUpsell: () -> Unit,
+    navigateToBackupSettings: () -> Unit,
+    navigateToNotificationPermissionRationale: () -> Unit,
+) = composable(
+    route = Screen.PhotosAndAlbums.route,
+    arguments = listOf(
+        navArgument(Screen.PhotosAndAlbums.USER_ID) { type = NavType.StringType },
+    ),
+    deepLinks = listOf(
+        navDeepLink { uriPattern = Screen.PhotosAndAlbums.deepLink(deepLinkBaseUrl) }
+    )
+) { navBackStackEntry ->
+    navBackStackEntry.get<String>(Screen.Photos.USER_ID)?.let { _ ->
+        PhotosAndAlbumsScreen(
+            homeScaffoldState = homeScaffoldState,
+        )
+    } ?: let {
+        val userId = UserId(requireNotNull(arguments.getString(Screen.PhotosAndAlbums.USER_ID)))
+        navController.navigate(Screen.PhotosAndAlbums(userId)) {
             popUpTo(navController.graph.findStartDestination().id) {
                 inclusive = true
             }

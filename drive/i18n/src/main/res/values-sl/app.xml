@@ -154,6 +154,7 @@
   <string name="notification_content_text_backup_paused_disabled">Varnostno kopiranje je bilo onemogočeno</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Varnostno kopiranje ne more delovati v ozadju</string>
   <string name="notification_content_text_backup_preparing">Preparing to back up</string>
+  <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
   <string name="notification_content_title_download_complete">Prenos končan</string>
   <string name="notification_content_title_forced_sign_out">Prosimo prijavite se</string>
   <string name="notification_content_text_forced_sign_out">Oprostite, ker motim! Imeli smo težave s sinhronizacijo - prosimo, prijavite se znova in vse bo potekalo gladko.</string>
@@ -188,7 +189,7 @@
   <string name="description_files_stop_sharing_action_success">Povezava do vaše datoteke je bila izbrisana.</string>
   <string name="description_files_stop_sharing_action_error">Pri brisanju povezave do vaše datoteke je prišlo do napake.</string>
   <string name="description_files_stop_all_sharing">S tem boste izbrisali povezavo in onemogočili dostop za vse.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Med brisanjem skupne rabe vaše datoteke je prišlo do napake.</string>
   <string name="ignore_file_signature_action">Vseeno si oglejte</string>
   <string name="action_empty_files_add_files">Naloži</string>

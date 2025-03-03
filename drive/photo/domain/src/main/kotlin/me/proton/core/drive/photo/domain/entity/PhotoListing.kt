@@ -19,12 +19,36 @@
 package me.proton.core.drive.photo.domain.entity
 
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.LinkId
 
-data class PhotoListing(
-    val linkId: LinkId,
-    val captureTime: TimestampS,
-    val nameHash: String?,
-    val contentHash: String?,
-    val mainPhotoLinkId: String?,
-)
+
+sealed interface PhotoListing {
+    val linkId: LinkId
+    val captureTime: TimestampS
+    val nameHash: String?
+    val contentHash: String?
+
+    data class Volume(
+        override val linkId: LinkId,
+        override val captureTime: TimestampS,
+        override val nameHash: String?,
+        override val contentHash: String?,
+    ) : PhotoListing
+
+    data class Album(
+        override val linkId: LinkId,
+        override val captureTime: TimestampS,
+        override val nameHash: String?,
+        override val contentHash: String?,
+        val albumId: AlbumId,
+        val addedTime: TimestampS,
+        val isChildOfAlbum: Boolean,
+    ) : PhotoListing {
+
+        enum class SortBy {
+            CAPTURED,
+            ADDED,
+        }
+    }
+}

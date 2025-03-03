@@ -154,6 +154,7 @@
   <string name="notification_content_text_backup_paused_disabled">Резервное копирование было отключено</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Резервное копирование не может выполняться в фоновом режиме</string>
   <string name="notification_content_text_backup_preparing">Подготовка к созданию резервной копии</string>
+  <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
   <string name="notification_content_title_download_complete">Скачивание завершено</string>
   <string name="notification_content_title_forced_sign_out">Войдите</string>
   <string name="notification_content_text_forced_sign_out">Извините за неудобства! Произошла ошибка при синхронизации — пожалуйста, войдите снова, и всё будет работать как надо.</string>
@@ -188,7 +189,7 @@
   <string name="description_files_stop_sharing_action_success">Ссылка на ваш файл удалена.</string>
   <string name="description_files_stop_sharing_action_error">Произошла ошибка при удалении ссылки на ваш файл.</string>
   <string name="description_files_stop_all_sharing">Это удалит ссылку и удалит доступ для всех.</string>
-  <string name="description_files_stop_all_sharing_action_success">Общий доступ к файлам отключён.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Произошла ошибка при удалении ссылки на ваш файл.</string>
   <string name="ignore_file_signature_action">Посмотреть в любом случае</string>
   <string name="action_empty_files_add_files">Загрузить</string>

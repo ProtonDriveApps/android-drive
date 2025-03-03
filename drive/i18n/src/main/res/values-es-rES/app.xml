@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_paused_disabled">Se ha desactivado la copia de seguridad.</string>
   <string name="notification_content_text_backup_paused_background_restrictions">La copia de seguridad no puede ejecutarse en segundo plano.</string>
   <string name="notification_content_text_backup_preparing">Preparando a hacer una copia de seguridad</string>
+  <string name="notification_content_text_backup_failed_migration">Migración en progreso. Actualiza tu aplicación.</string>
   <string name="notification_content_title_download_complete">Descarga completada</string>
   <string name="notification_content_title_forced_sign_out">Inicia sesión</string>
   <string name="notification_content_text_forced_sign_out">Lamentamos la interrupción. Hemos tenido un problema con la sincronización. Inicia sesión de nuevo y todo funcionará sin problemas.</string>

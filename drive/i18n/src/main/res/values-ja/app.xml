@@ -139,6 +139,7 @@
   <string name="notification_content_text_backup_paused_disabled">バックアップが無効になりました</string>
   <string name="notification_content_text_backup_paused_background_restrictions">バックアップはバックグラウンドで実行できません</string>
   <string name="notification_content_text_backup_preparing">バックアップを準備中</string>
+  <string name="notification_content_text_backup_failed_migration">移行中です。アプリを更新してください</string>
   <string name="notification_content_title_download_complete">ダウンロード完了</string>
   <string name="notification_content_title_forced_sign_out">ログインしてください</string>
   <string name="notification_content_text_forced_sign_out">申し訳ありません！同期中に問題が発生しました。- もう一度ログインしてください。すべてがスムーズに実行されます。</string>
@@ -173,7 +174,7 @@
   <string name="description_files_stop_sharing_action_success">あなたのファイルへのリンクは削除されました。</string>
   <string name="description_files_stop_sharing_action_error">あなたのファイルへのリンクを削除する際にエラーが発生しました。</string>
   <string name="description_files_stop_all_sharing">これによりリンクは削除され、全員のアクセスは削除されます。</string>
-  <string name="description_files_stop_all_sharing_action_success">ファイルの共有を削除しました。</string>
+  <string name="description_files_stop_all_sharing_action_success">ファイルの共有が削除されました。</string>
   <string name="description_files_stop_all_sharing_action_error">ファイルの共有を削除する際にエラーが発生しました。</string>
   <string name="ignore_file_signature_action">とにかく表示</string>
   <string name="action_empty_files_add_files">アップロード</string>

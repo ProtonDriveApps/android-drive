@@ -154,6 +154,7 @@
   <string name="notification_content_text_backup_paused_disabled">Резервне копіювання було вимкнено</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Резервне копіювання не може працювати на задньому плані</string>
   <string name="notification_content_text_backup_preparing">Підготовка до резервного копіювання</string>
+  <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
   <string name="notification_content_title_download_complete">Звантаження завершено</string>
   <string name="notification_content_title_forced_sign_out">Увійдіть</string>
   <string name="notification_content_text_forced_sign_out">Перепрошуємо, що перериваємо! У нас виникла проблема з синхронізацією. Увійдіть ще раз, і все працюватиме без збоїв.</string>
@@ -188,7 +189,7 @@
   <string name="description_files_stop_sharing_action_success">Посилання на ваш файл було видалено.</string>
   <string name="description_files_stop_sharing_action_error">Сталася помилка під час видалення посилання на ваш файл.</string>
   <string name="description_files_stop_all_sharing">Ця дія видалить посилання і скасує доступ для всіх.</string>
-  <string name="description_files_stop_all_sharing_action_success">Спільний доступ для вашого файлу скасовано.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Під час скасування спільного доступу до вашого файлу виникла помилка.</string>
   <string name="ignore_file_signature_action">Усе одно переглянути</string>
   <string name="action_empty_files_add_files">Вивантажити</string>

@@ -18,7 +18,9 @@
 package me.proton.core.drive.base.data.db
 
 object Column {
+    const val ADDED_TIME = "added_time"
     const val ADDRESS_ID = "address_id"
+    const val ALBUM_ID = "album_id"
     const val ANCHOR_ID = "anchor_id"
     const val ATTEMPTS = "attempts"
     const val ATTRIBUTES = "attributes"
@@ -56,6 +58,7 @@ object Column {
     const val INDEX = "index"
     const val INVITEE_EMAIL = "invitee_email"
     const val INVITER_EMAIL = "inviter_email"
+    const val IS_CHILD_OF_ALBUM = "is_child_of_album"
     const val IS_SHARED = "is_shared"
     const val KEY = "key"
     const val KEY_PACKET = "key_packet"

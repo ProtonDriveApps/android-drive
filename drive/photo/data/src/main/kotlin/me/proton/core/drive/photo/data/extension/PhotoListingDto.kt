@@ -27,12 +27,11 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 fun PhotoListingDto.toPhotoListing(shareId: ShareId) =
-    PhotoListing(
+    PhotoListing.Volume(
         linkId = FileId(shareId, linkId),
         captureTime = TimestampS(captureTime),
         nameHash = hash,
         contentHash = contentHash,
-        mainPhotoLinkId = mainPhotoLinkId,
     )
 
 fun PhotoListingDto.toPhotoListingEntity(volumeId: VolumeId, shareId: ShareId) =
@@ -44,5 +43,5 @@ fun PhotoListingDto.toPhotoListingEntity(volumeId: VolumeId, shareId: ShareId) =
         captureTime = captureTime,
         hash = hash,
         contentHash = contentHash,
-        mainPhotoLinkId = mainPhotoLinkId,
+        mainPhotoLinkId = null,
     )

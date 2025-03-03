@@ -64,6 +64,8 @@
   <string name="photos_error_backup_missing_folder">バックアップフォルダーが見つかりませんでした</string>
   <string name="photos_error_backup_failed">バックアップに失敗しました。</string>
   <string name="photos_error_backup_temporarily_disabled">バックアップは一時的に無効にされています。</string>
+  <string name="photos_error_backup_migration_title">アップデートが必要です</string>
+  <string name="photos_error_backup_migration_description">写真機能を使用するには、アプリを最新バージョンにアップデートしてください。</string>
   <string name="photos_error_missing_permissions">権限がありません。</string>
   <!--
         Variable %1$s is an application name

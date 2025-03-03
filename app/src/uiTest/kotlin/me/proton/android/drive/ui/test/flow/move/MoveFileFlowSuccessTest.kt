@@ -181,6 +181,9 @@ class MoveFileFlowSuccessTest : BaseTest() {
             .clickFilesTab()
             .scrollToItemWithName(file1)
             .longClickOnItem(file1)
+            .verify {
+                assertFilesSelected(1)
+            }
             .scrollToItemWithName(file2)
             .clickOnItem(file2, LayoutType.List, ItemType.File, FilesTabRobot)
             .verify {

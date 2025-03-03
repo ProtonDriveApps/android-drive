@@ -154,6 +154,7 @@
   <string name="notification_content_text_backup_paused_disabled">Zálohovanie bolo vypnuté</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Zálohovanie nemôže prebiehať na pozadí</string>
   <string name="notification_content_text_backup_preparing">Príprava na zálohovanie</string>
+  <string name="notification_content_text_backup_failed_migration">Prebieha migrácia, aktualizujte svoju aplikáciu</string>
   <string name="notification_content_title_download_complete">Sťahovanie dokončené</string>
   <string name="notification_content_title_forced_sign_out">Prihláste sa, prosím</string>
   <string name="notification_content_text_forced_sign_out">Ospravedlňujeme sa za vyrušenie! Nastal problém so synchronizáciou - prosím prihláste sa znova a všetko bude fungovať bez problémov.</string>

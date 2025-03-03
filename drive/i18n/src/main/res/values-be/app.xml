@@ -154,6 +154,7 @@
   <string name="notification_content_text_backup_paused_disabled">Рэзервовае капіяванне было адключана</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Рэзервовае капіяванне не можа выконвацца ў фоне</string>
   <string name="notification_content_text_backup_preparing">Падрыхтоўка да рэзервовай копіі</string>
+  <string name="notification_content_text_backup_failed_migration">Адбываецца перанос. Абнаўленне праграмы</string>
   <string name="notification_content_title_download_complete">Спампоўванне завершана</string>
   <string name="notification_content_title_forced_sign_out">Увайдзіце</string>
   <string name="notification_content_text_forced_sign_out">Прабачце за нязручнасці! Адбылася праблема з сінхранізацыяй. Увайдзіце яшчэ раз і працэс адновіцца ў звычайным рэжыме.</string>

@@ -65,6 +65,8 @@
   <string name="photos_error_backup_missing_folder">მარქაფის საქაღალდე ვერ ვიპოვე</string>
   <string name="photos_error_backup_failed">მარქაფი ჩავარდა</string>
   <string name="photos_error_backup_temporarily_disabled">მარქაფი დროებით გამორთულია.</string>
+  <string name="photos_error_backup_migration_title">აუცილებელია განახლება</string>
+  <string name="photos_error_backup_migration_description">სურათების ფუნქციების გამოსაყენებლად განაახლეთ თქვენი აპი ბოლო ვერსიამდე.</string>
   <string name="photos_error_missing_permissions">არასამარისი წვდომები.</string>
   <!--
         Variable %1$s is an application name
@@ -77,7 +79,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">ფიჭური ქსელის გამოყენება</string>
   <string name="photos_error_local_storage">მოწყობილობის საცავი სავსეა</string>
   <string name="photos_error_local_storage_description">მარქაფის გასაგრძელებლად თქვენს მოწყობილობაზე ადგილი უნდა გაათავისუფლოთ.</string>
-  <string name="photos_error_background_restrictions">დააყენეთ ელემენტის გამოყენება \'შეუზღუდავზე\' ფონური აპის აქტივობისთვის</string>
+  <string name="photos_error_background_restrictions">დააყენეთ ელემენტი \'შეუზღუდავზე\' ფონური აპის აქტივობისთვის</string>
   <string name="photos_error_background_restrictions_description">მდგრადი ფონური მარქაფებისთვის გაასწორეთ ელემენტის პარამეტრები, ან აპი ხშირად გახსენით.</string>
   <string name="photos_error_background_restrictions_action">მორგება</string>
   <string name="photos_empty_title">მარქაფების გარეშე</string>

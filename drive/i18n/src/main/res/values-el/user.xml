@@ -31,7 +31,7 @@
         Examples:
             "Free up space on your Proton Drive storage or upgrade your plan for uninterrupted backup."
     -->
-  <string name="storage_quotas_full_title">Ελευθερώστε χώρο στον χώρο αποθήκευσης %1$s σας ή αναβαθμίστε το πρόγραμμά σας για αδιάλειπτη δημιουργία αντιγράφων ασφαλείας.</string>
+  <string name="storage_quotas_full_title">Ελευθερώστε χώρο στον χώρο αποθήκευσης %1$s σας ή αναβαθμίστε το πλάνο σας για αδιάλειπτη δημιουργία αντιγράφων ασφαλείας.</string>
   <string name="storage_quotas_get_storage_action">Αποκτήστε περισσότερο χώρο αποθήκευσης</string>
   <string name="user_select_other_account_content_description">Επιλογή άλλου λογαριασμού</string>
   <string name="description_remove_account">Θα αποσυνδεθείτε και όλα τα δεδομένα που σχετίζονται με αυτόν τον λογαριασμό θα διαγραφούν από αυτήν τη συσκευή.</string>

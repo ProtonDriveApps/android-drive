@@ -67,6 +67,8 @@
   <string name="photos_error_backup_missing_folder">Složka k zálohování nebyla nalezena.</string>
   <string name="photos_error_backup_failed">Zálohování selhalo.</string>
   <string name="photos_error_backup_temporarily_disabled">Zálohování je dočasně vypnuto.</string>
+  <string name="photos_error_backup_migration_title">Je vyžadována aktualizace</string>
+  <string name="photos_error_backup_migration_description">Chcete-li používat funkce fotek, aktualizujte aplikaci na nejnovější verzi.</string>
   <string name="photos_error_missing_permissions">Chybějící oprávnění.</string>
   <!--
         Variable %1$s is an application name
@@ -79,7 +81,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Použít mobilní data</string>
   <string name="photos_error_local_storage">Úložiště zařízení je plné</string>
   <string name="photos_error_local_storage_description">Chcete-li pokračovat v zálohování, musíte uvolnit místo na úložišti vašeho zařízení.</string>
-  <string name="photos_error_background_restrictions">Nastavte využití baterie na \'Neomezeno\' u aplikací na pozadí</string>
+  <string name="photos_error_background_restrictions">Nastavte využití baterie na \'Neomezeno\' kvůli aktivitě aplikací na pozadí</string>
   <string name="photos_error_background_restrictions_description">Pro bezproblémové zálohování na pozadí upravte nastavení baterie, nebo mějte aplikaci často otevřenou.</string>
   <string name="photos_error_background_restrictions_action">Nastavení</string>
   <string name="photos_empty_title">Zatím žádné zálohy</string>

@@ -32,8 +32,6 @@ data class PhotoListingDto(
     val linkId: String,
     @SerialName(CAPTURE_TIME)
     val captureTime: Long,
-    @SerialName(MAIN_PHOTO_LINK_ID)
-    val mainPhotoLinkId: String? = null,
     @SerialName(HASH)
     val hash: String? = null,
     @SerialName(CONTENT_HASH)

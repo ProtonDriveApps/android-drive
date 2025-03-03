@@ -66,6 +66,8 @@
   <string name="photos_error_backup_missing_folder">Folderul de conservare nu a fost găsit.</string>
   <string name="photos_error_backup_failed">Conservarea a eșuat.</string>
   <string name="photos_error_backup_temporarily_disabled">Conservarea este momentan dezactivată.</string>
+  <string name="photos_error_backup_migration_title">Actualizare necesară</string>
+  <string name="photos_error_backup_migration_description">Pentru a utiliza funcția pentru fotografii, actualizați aplicația la cea mai recentă versiune.</string>
   <string name="photos_error_missing_permissions">Lipsesc permisiunile.</string>
   <!--
         Variable %1$s is an application name

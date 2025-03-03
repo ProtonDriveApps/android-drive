@@ -18,4 +18,6 @@
   -->
 <resources>
   <string name="whats_new_title">Nouveautés</string>
+  <string name="whats_new_public_sharing_title">Partager avec tout le monde</string>
+  <string name="whats_new_public_sharing_description">Créez des liens partageables pour collaborer sur des dossiers et des fichiers — aucun compte Proton requis</string>
 </resources>

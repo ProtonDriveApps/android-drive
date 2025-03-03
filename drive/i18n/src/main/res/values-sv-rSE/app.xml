@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_paused_disabled">Säkerhetskopiering var inaktiverat</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Säkerhetskopiering kan inte köras i bakgrunden</string>
   <string name="notification_content_text_backup_preparing">Förbereder att säkerhetskopiera</string>
+  <string name="notification_content_text_backup_failed_migration">Migrering pågår, uppdatera din applikation</string>
   <string name="notification_content_title_download_complete">Nedladdning slutförd</string>
   <string name="notification_content_title_forced_sign_out">Logga in</string>
   <string name="notification_content_text_forced_sign_out">Ursäkta att vi avbryter! Vi hade ett problem med synkronisering - logga in igen så kommer allt att fungera som det ska.</string>
@@ -178,7 +179,7 @@
   <string name="description_files_stop_sharing_action_success">Länken till din fil har tagits bort.</string>
   <string name="description_files_stop_sharing_action_error">Det uppstod ett fel när länken till din fil skulle tas bort.</string>
   <string name="description_files_stop_all_sharing">Detta kommer ta bort länk och ta bort åtkomst för alla.</string>
-  <string name="description_files_stop_all_sharing_action_success">Delning till din fil har tagits bort.</string>
+  <string name="description_files_stop_all_sharing_action_success">Delning av din fil har tagits bort.</string>
   <string name="description_files_stop_all_sharing_action_error">Det uppstod ett fel när delning till din fil skulle tas bort.</string>
   <string name="ignore_file_signature_action">Visa ändå</string>
   <string name="action_empty_files_add_files">Ladda upp</string>

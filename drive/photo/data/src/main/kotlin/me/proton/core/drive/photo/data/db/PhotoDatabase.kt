@@ -22,11 +22,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
 import me.proton.core.data.room.db.migration.DatabaseMigration
 import me.proton.core.drive.photo.data.db.dao.AlbumListingDao
+import me.proton.core.drive.photo.data.db.dao.AlbumPhotoListingDao
 import me.proton.core.drive.photo.data.db.dao.PhotoListingDao
 
 interface PhotoDatabase : Database {
     val photoListingDao: PhotoListingDao
     val albumListingDao: AlbumListingDao
+    val albumPhotoListingDao: AlbumPhotoListingDao
 
     companion object {
         val MIGRATION_0 = object : DatabaseMigration {
@@ -128,6 +130,72 @@ interface PhotoDatabase : Database {
                     """
                     CREATE INDEX IF NOT EXISTS `index_AlbumListingEntity_user_id_volume_id_share_id` ON
                     `AlbumListingEntity` (`user_id`, `volume_id`, `share_id`)
+                    """.trimIndent()
+                )
+            }
+        }
+        val MIGRATION_2 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `AlbumPhotoListingEntity` (
+                    `user_id` TEXT NOT NULL,
+                    `volume_id` TEXT NOT NULL,
+                    `share_id` TEXT NOT NULL,
+                    `album_id` TEXT NOT NULL,
+                    `id` TEXT NOT NULL,
+                    `capture_time` INTEGER NOT NULL,
+                    `added_time` INTEGER NOT NULL,
+                    `is_child_of_album` INTEGER NOT NULL,
+                    `hash` TEXT,
+                    `content_hash` TEXT,
+                    PRIMARY KEY(`user_id`, `volume_id`, `share_id`, `album_id`, `id`),
+                    FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                    ON UPDATE NO ACTION ON DELETE CASCADE,
+                    FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`)
+                    ON UPDATE NO ACTION ON DELETE CASCADE )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingEntity_user_id` ON
+                    `AlbumPhotoListingEntity` (`user_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingEntity_volume_id` ON
+                    `AlbumPhotoListingEntity` (`volume_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingEntity_share_id`
+                    ON `AlbumPhotoListingEntity` (`share_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingEntity_album_id`
+                    ON `AlbumPhotoListingEntity` (`album_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingEntity_id`
+                    ON `AlbumPhotoListingEntity` (`id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingEntity_user_id_volume_id` ON
+                    `AlbumPhotoListingEntity` (`user_id`, `volume_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AlbumPhotoListingEntity_user_id_volume_id_share_id` ON
+                    `AlbumPhotoListingEntity` (`user_id`, `volume_id`, `share_id`, `album_id`)
                     """.trimIndent()
                 )
             }

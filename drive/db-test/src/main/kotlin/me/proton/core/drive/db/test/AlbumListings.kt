@@ -18,10 +18,43 @@
 
 package me.proton.core.drive.db.test
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.photo.data.db.entity.AlbumListingEntity
+import me.proton.core.drive.photo.data.db.entity.AlbumPhotoListingEntity
 
 suspend fun FolderContext.albumListings(
     vararg albumListings: AlbumListingEntity,
 ) {
     db.albumListingDao.insertOrUpdate(*albumListings)
 }
+
+suspend fun AlbumContext.albumPhotoListings(
+    vararg albumPhotoListings: AlbumPhotoListingEntity,
+) {
+    db.albumPhotoListingDao.insertOrUpdate(*albumPhotoListings)
+}
+
+@Suppress("TestFunctionName")
+fun AlbumContext.NullableAlbumPhotoListingEntity(
+    linkId: String,
+    userId: UserId = this.user.userId,
+    volumeId: String = this.volume.id,
+    shareId: String = this.share.id,
+    albumId: String = this.link.id,
+    captureTime: Long = 0L,
+    addedTime: Long = 0L,
+    isChildOfAlbum: Boolean = false,
+    hash: String? = null,
+    contentHash: String? = null,
+) = AlbumPhotoListingEntity(
+    userId = userId,
+    volumeId = volumeId,
+    shareId = shareId,
+    albumId = albumId,
+    linkId = linkId,
+    captureTime = captureTime,
+    addedTime = addedTime,
+    isChildOfAlbum = isChildOfAlbum,
+    hash = hash,
+    contentHash = contentHash,
+)

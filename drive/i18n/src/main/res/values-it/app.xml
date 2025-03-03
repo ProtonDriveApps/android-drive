@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_paused_disabled">Il backup è stato disabilitato</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Il backup non può essere effettuato in background</string>
   <string name="notification_content_text_backup_preparing">Preparazione del backup in corso</string>
+  <string name="notification_content_text_backup_failed_migration">Migrazione in corso, aggiorna la tua applicazione</string>
   <string name="notification_content_title_download_complete">Download completato</string>
   <string name="notification_content_title_forced_sign_out">Effettua l\'accesso</string>
   <string name="notification_content_text_forced_sign_out">Scusa l\'interruzione! Abbiamo avuto un problema con la sincronizzazione. Effettua nuovamente l\'accesso e faremo andare tutto liscio.</string>

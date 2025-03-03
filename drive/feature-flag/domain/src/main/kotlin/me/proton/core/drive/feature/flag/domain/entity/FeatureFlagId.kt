@@ -34,7 +34,6 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         const val DRIVE_PUBLIC_SHARE_EDIT_MODE = "DrivePublicShareEditMode"
         const val DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED = "DrivePublicShareEditModeDisabled"
         const val DRIVE_DYNAMIC_ENTITLEMENT_CONFIGURATION = "DriveDynamicEntitlementConfiguration"
-        const val DRIVE_RATING_BOOSTER = "DriveRatingBooster"
         const val DRIVE_MOBILE_SHARING_INVITATIONS_ACCEPT_REJECT = "DriveMobileSharingInvitationsAcceptReject"
         const val RATING_ANDROID_DRIVE = "RatingAndroidDrive"
         const val DRIVE_ALBUMS = "DriveAlbums"
@@ -54,7 +53,6 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         fun drivePublicShareEditMode(userId: UserId) = FeatureFlagId(userId, DRIVE_PUBLIC_SHARE_EDIT_MODE)
         fun drivePublicShareEditModeDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED)
         fun driveDynamicEntitlementConfiguration(userId: UserId) = FeatureFlagId(userId, DRIVE_DYNAMIC_ENTITLEMENT_CONFIGURATION)
-        fun driveRatingBooster(userId: UserId) = FeatureFlagId(userId, DRIVE_RATING_BOOSTER)
         fun driveMobileSharingInvitationsAcceptReject(userId: UserId) = FeatureFlagId(userId, DRIVE_MOBILE_SHARING_INVITATIONS_ACCEPT_REJECT)
         fun ratingAndroidDrive(userId: UserId) = FeatureFlagId(userId, RATING_ANDROID_DRIVE)
         fun driveAlbums(userId: UserId) = FeatureFlagId(userId, DRIVE_ALBUMS)

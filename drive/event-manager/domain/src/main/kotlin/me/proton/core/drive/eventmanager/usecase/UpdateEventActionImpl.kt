@@ -26,6 +26,8 @@ import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.eventmanager.domain.EventManagerConfig
 import me.proton.core.eventmanager.domain.EventManagerProvider
+import me.proton.core.eventmanager.domain.entity.State
+import me.proton.core.eventmanager.domain.repository.EventMetadataRepository
 import javax.inject.Inject
 import kotlin.time.Duration
 
@@ -33,31 +35,47 @@ class UpdateEventActionImpl @Inject constructor(
     private val eventManagerProvider: EventManagerProvider,
     private val getShare: GetShare,
     private val getMinimumFetchInterval: GetMinimumFetchInterval,
+    private val eventMetadataRepository: EventMetadataRepository,
 ) : UpdateEventAction {
 
-    override suspend fun <T> invoke(shareId: ShareId, block: suspend () -> T): T =
-        getShare(shareId).toResult().getOrThrow().volumeId.let { volumeId ->
-            eventManagerProvider.get(
-                EventManagerConfig.Drive.Volume(
-                    userId = shareId.userId,
-                    volumeId = volumeId.id,
-                    minimumFetchInterval = getMinimumFetchInterval(
-                        userId = shareId.userId,
-                        volumeId = volumeId,
-                    ).getOrNull() ?: Duration.ZERO,
-                )
-            ).suspend(block)
-        }
+    override suspend fun <T> invoke(
+        shareId: ShareId,
+        overrideMinimumFetchInterval: Boolean,
+        block: suspend () -> T,
+    ): T = getShare(shareId).toResult().getOrThrow().volumeId.let { volumeId ->
+        invoke(
+            userId = shareId.userId,
+            volumeId = volumeId,
+            overrideMinimumFetchInterval = overrideMinimumFetchInterval,
+            block = block,
+        )
+    }
 
-    override suspend fun <T> invoke(userId: UserId, volumeId: VolumeId, block: suspend () -> T): T =
-        eventManagerProvider.get(
-            EventManagerConfig.Drive.Volume(
+    override suspend fun <T> invoke(
+        userId: UserId,
+        volumeId: VolumeId,
+        overrideMinimumFetchInterval: Boolean,
+        block: suspend () -> T,
+    ): T {
+        val config = EventManagerConfig.Drive.Volume(
+            userId = userId,
+            volumeId = volumeId.id,
+            minimumFetchInterval = getMinimumFetchInterval(
                 userId = userId,
-                volumeId = volumeId.id,
-                minimumFetchInterval = getMinimumFetchInterval(
-                    userId = userId,
-                    volumeId = volumeId,
-                ).getOrNull() ?: Duration.ZERO,
-            )
-        ).suspend(block)
+                volumeId = volumeId,
+            ).getOrNull() ?: Duration.ZERO,
+        )
+        if (overrideMinimumFetchInterval) {
+            resetMetadataFetchAt(config)
+        }
+        return eventManagerProvider.get(config).suspend(block)
+    }
+
+    private suspend fun resetMetadataFetchAt(config: EventManagerConfig.Drive.Volume) {
+        eventMetadataRepository.get(config)
+            .firstOrNull { it.state != State.Completed }
+            ?.let { metadata ->
+                eventMetadataRepository.updateMetadata(metadata.copy(fetchedAt = null))
+            }
+    }
 }

@@ -152,6 +152,7 @@ fun AppNavGraph(
     clearBackstackTrigger: SharedFlow<Unit>,
     deepLinkIntent: SharedFlow<Intent>,
     defaultStartDestination: String?,
+    photosRoute: String?,
     locked: Flow<Boolean>,
     primaryAccount: Flow<Account?>,
     announceEvent: AnnounceEvent,
@@ -219,6 +220,7 @@ fun AppNavGraph(
                 homeNavController = homeNavController,
                 deepLinkBaseUrl = deepLinkBaseUrl,
                 defaultStartDestination = defaultStartDestination,
+                photosRoute = photosRoute,
                 exitApp = exitApp,
                 navigateToPasswordManagement = navigateToPasswordManagement,
                 navigateToRecoveryEmail= navigateToRecoveryEmail,
@@ -240,6 +242,7 @@ fun AppNavGraph(
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
     defaultStartDestination: String,
+    photosRoute: String?,
     exitApp: () -> Unit,
     navigateToPasswordManagement: (UserId) -> Unit,
     navigateToRecoveryEmail: (UserId) -> Unit,
@@ -265,6 +268,7 @@ fun AppNavGraph(
             homeNavController = homeNavController,
             deepLinkBaseUrl = deepLinkBaseUrl,
             defaultStartDestination = defaultStartDestination,
+            photosRoute = photosRoute,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
             navigateToRatingBooster = navigateToRatingBooster,
@@ -274,6 +278,7 @@ fun AppNavGraph(
             navController = navController,
             homeNavController = homeNavController,
             deepLinkBaseUrl = deepLinkBaseUrl,
+            photosRoute = photosRoute,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
             navigateToRatingBooster = navigateToRatingBooster,
@@ -288,10 +293,20 @@ fun AppNavGraph(
             navigateToRatingBooster = navigateToRatingBooster,
             onDrawerStateChanged = onDrawerStateChanged,
         )
+        addHomePhotosAndAlbums(
+            navController = navController,
+            homeNavController = homeNavController,
+            deepLinkBaseUrl = deepLinkBaseUrl,
+            navigateToBugReport = navigateToBugReport,
+            navigateToSubscription = navigateToSubscription,
+            navigateToRatingBooster = navigateToRatingBooster,
+            onDrawerStateChanged = onDrawerStateChanged,
+        )
         addHomeComputers(
             navController = navController,
             homeNavController = homeNavController,
             deepLinkBaseUrl = deepLinkBaseUrl,
+            photosRoute = photosRoute,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
             navigateToRatingBooster = navigateToRatingBooster,
@@ -301,6 +316,7 @@ fun AppNavGraph(
             navController = navController,
             homeNavController = homeNavController,
             deepLinkBaseUrl = deepLinkBaseUrl,
+            photosRoute = photosRoute,
             navigateToBugReport = navigateToBugReport,
             navigateToSubscription = navigateToSubscription,
             navigateToRatingBooster = navigateToRatingBooster,
@@ -807,6 +823,7 @@ internal fun NavGraphBuilder.addHome(
     deepLinkBaseUrl: String,
     route: String,
     defaultStartDestination: String,
+    photosRoute: String?,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
@@ -823,7 +840,7 @@ internal fun NavGraphBuilder.addHome(
     val userId = UserId(navBackStackEntry.require(Screen.Files.USER_ID))
     val startDestination = when (navBackStackEntry.get<String>(Screen.Home.TAB)) {
         Screen.Home.TAB_FILES -> Screen.Files.route
-        Screen.Home.TAB_PHOTOS -> Screen.Photos.route
+        Screen.Home.TAB_PHOTOS -> photosRoute ?: Screen.Photos.route
         Screen.Home.TAB_COMPUTERS -> Screen.Computers.route
         Screen.Home.TAB_SHARED_TABS -> Screen.SharedTabs.route
         else -> defaultStartDestination
@@ -942,6 +959,7 @@ fun NavGraphBuilder.addHome(
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
     defaultStartDestination: String,
+    photosRoute: String?,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
@@ -952,6 +970,7 @@ fun NavGraphBuilder.addHome(
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Home.route,
     defaultStartDestination = defaultStartDestination,
+    photosRoute = photosRoute,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     navigateToRatingBooster = navigateToRatingBooster,
@@ -973,6 +992,7 @@ fun NavGraphBuilder.addHomeFiles(
     navController: NavHostController,
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
+    photosRoute: String?,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
@@ -983,6 +1003,7 @@ fun NavGraphBuilder.addHomeFiles(
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Files.route,
     defaultStartDestination = Screen.Files.route,
+    photosRoute = photosRoute,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     navigateToRatingBooster = navigateToRatingBooster,
@@ -1018,6 +1039,30 @@ fun NavGraphBuilder.addHomePhotos(
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Photos.route,
     defaultStartDestination = Screen.Photos.route,
+    photosRoute = Screen.Photos.route,
+    navigateToBugReport = navigateToBugReport,
+    navigateToSubscription = navigateToSubscription,
+    navigateToRatingBooster = navigateToRatingBooster,
+    onDrawerStateChanged = onDrawerStateChanged
+)
+
+@ExperimentalAnimationApi
+@ExperimentalCoroutinesApi
+fun NavGraphBuilder.addHomePhotosAndAlbums(
+    navController: NavHostController,
+    homeNavController: NavHostController,
+    deepLinkBaseUrl: String,
+    navigateToBugReport: () -> Unit,
+    navigateToSubscription: () -> Unit,
+    navigateToRatingBooster: () -> Unit,
+    onDrawerStateChanged: (Boolean) -> Unit,
+) = addHome(
+    navController = navController,
+    homeNavController = homeNavController,
+    deepLinkBaseUrl = deepLinkBaseUrl,
+    route = Screen.PhotosAndAlbums.route,
+    defaultStartDestination = Screen.PhotosAndAlbums.route,
+    photosRoute = Screen.PhotosAndAlbums.route,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     navigateToRatingBooster = navigateToRatingBooster,
@@ -1030,6 +1075,7 @@ fun NavGraphBuilder.addHomeComputers(
     navController: NavHostController,
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
+    photosRoute: String?,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
@@ -1040,6 +1086,7 @@ fun NavGraphBuilder.addHomeComputers(
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.Computers.route,
     defaultStartDestination = Screen.Computers.route,
+    photosRoute = photosRoute,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     navigateToRatingBooster = navigateToRatingBooster,
@@ -1052,6 +1099,7 @@ fun NavGraphBuilder.addHomeSharedTabs(
     navController: NavHostController,
     homeNavController: NavHostController,
     deepLinkBaseUrl: String,
+    photosRoute: String?,
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
@@ -1062,6 +1110,7 @@ fun NavGraphBuilder.addHomeSharedTabs(
     deepLinkBaseUrl = deepLinkBaseUrl,
     route = Screen.SharedTabs.route,
     defaultStartDestination = Screen.SharedTabs.route,
+    photosRoute = photosRoute,
     navigateToBugReport = navigateToBugReport,
     navigateToSubscription = navigateToSubscription,
     navigateToRatingBooster = navigateToRatingBooster,

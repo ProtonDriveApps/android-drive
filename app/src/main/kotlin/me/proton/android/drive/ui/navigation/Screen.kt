@@ -55,6 +55,7 @@ import me.proton.core.drive.notification.presentation.viewmodel.NotificationPerm
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.By
 import me.proton.core.drive.sorting.domain.entity.Direction
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 
 sealed class Screen(val route: String) {
@@ -314,13 +315,20 @@ sealed class Screen(val route: String) {
 
         operator fun invoke(userId: UserId, shareId: ShareId?) = "home/${userId.id}/photos/${shareId?.id}"
 
-        object Upsell : Screen("home/{userId}/photos/upsell"){
+        data object Upsell : Screen("home/{userId}/photos/upsell"){
             operator fun invoke(userId: UserId) = "home/${userId.id}/photos/upsell"
         }
 
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = "shareId"
     }
+    data object PhotosAndAlbums : Screen("home/{userId}/photos_albums"), HomeTab {
+
+        override fun invoke(userId: UserId) = "home/${userId.id}/photos_albums"
+
+        const val USER_ID = Screen.USER_ID
+    }
+
     data object BackupIssues : Screen("backup/issues/{userId}/shares/{shareId}/folder/{folderId}") {
 
         fun invoke(folderId: FolderId) = "backup/issues/${folderId.shareId.userId.id}/shares/${folderId.shareId.id}/folder/${folderId.id}"

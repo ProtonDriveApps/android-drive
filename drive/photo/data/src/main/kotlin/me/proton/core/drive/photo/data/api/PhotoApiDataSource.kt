@@ -24,6 +24,8 @@ import me.proton.core.drive.photo.data.api.request.CreateAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreatePhotoRequest
 import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
 import me.proton.core.drive.photo.data.api.request.UpdateAlbumRequest
+import me.proton.core.drive.photo.data.extension.toDtoSort
+import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.sorting.data.extension.toDtoDesc
 import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -100,4 +102,36 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
         .invoke {
             getAlbumListings(volumeId.id, anchorId)
         }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun getAlbumSharedWithMeListings(
+        userId: UserId,
+        anchorId: String? = null,
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            getAlbumSharedWithMeListings(anchorId)
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun getAlbumPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: String,
+        anchorId: String?,
+        sortingBy: PhotoListing.Album.SortBy,
+        sortingDirection: Direction,
+
+    ) =
+        apiProvider
+            .get<PhotoApi>(userId)
+            .invoke {
+                getAlbumPhotoListings(
+                    volumeId = volumeId.id,
+                    linkId = albumId,
+                    anchorId = anchorId,
+                    sort = sortingBy.toDtoSort(),
+                    descending = sortingDirection.toDtoDesc(),
+                )
+            }.valueOrThrow.photos
 }

@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_paused_disabled">Backup foi desativado</string>
   <string name="notification_content_text_backup_paused_background_restrictions">O backup não pode ser executado em segundo plano</string>
   <string name="notification_content_text_backup_preparing">Preparando para fazer backup</string>
+  <string name="notification_content_text_backup_failed_migration">Migração em curso. Atualize suo aplicativo.</string>
   <string name="notification_content_title_download_complete">Download concluído</string>
   <string name="notification_content_title_forced_sign_out">Inicie sessão</string>
   <string name="notification_content_text_forced_sign_out">Desculpe interromper! Nós tivemos um problema com a sincronização - inicie a sessão novamente e teremos tudo funcionando perfeitamente.</string>

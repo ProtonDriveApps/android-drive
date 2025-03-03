@@ -27,6 +27,7 @@ import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
 import me.proton.core.drive.photo.data.api.response.CreatePhotoResponse
 import me.proton.core.drive.photo.data.api.response.FindDuplicatesResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse
+import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.drive.photo.data.api.response.GetPhotoListingResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
@@ -76,4 +77,18 @@ interface PhotoApi : BaseRetrofitApi {
         @Path("volumeID") volumeId: String,
         @Query("AnchorID") anchorId: String? = null,
     ): GetAlbumListingsResponse
+
+    @GET("drive/photos/albums/shared-with-me")
+    suspend fun getAlbumSharedWithMeListings(
+        @Query("AnchorID") anchorId: String? = null,
+    ): GetAlbumListingsResponse
+
+    @GET("drive/photos/volumes/{volumeID}/albums/{linkID}/children")
+    suspend fun getAlbumPhotoListings(
+        @Path("volumeID") volumeId: String,
+        @Path("linkID") linkId: String,
+        @Query("AnchorID") anchorId: String?,
+        @Query("Sort") sort: String?,
+        @Query("Desc") descending: Int?,
+    ): GetAlbumPhotoListingResponse
 }

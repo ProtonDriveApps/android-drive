@@ -25,10 +25,9 @@ import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.share.domain.entity.ShareId
 
 fun PhotoListingEntity.toPhotoListing() =
-    PhotoListing(
+    PhotoListing.Volume(
         linkId = FileId(ShareId(userId, shareId), linkId),
         captureTime = TimestampS(captureTime),
         nameHash = hash,
         contentHash = contentHash,
-        mainPhotoLinkId = mainPhotoLinkId,
     )

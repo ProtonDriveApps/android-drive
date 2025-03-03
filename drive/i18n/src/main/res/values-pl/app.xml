@@ -154,6 +154,7 @@
   <string name="notification_content_text_backup_paused_disabled">Kopia zapasowa została wyłączona</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Kopia zapasowa nie może zostać uruchomiona w tle</string>
   <string name="notification_content_text_backup_preparing">Przygotowywanie do tworzenia kopii zapasowej</string>
+  <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
   <string name="notification_content_title_download_complete">Pobieranie zostało zakończone</string>
   <string name="notification_content_title_forced_sign_out">Zaloguj się</string>
   <string name="notification_content_text_forced_sign_out">Przepraszamy za kłopot! Mieliśmy problem z synchronizacją. Zaloguj się ponownie, a wszystko będzie działało sprawnie.</string>
@@ -188,7 +189,7 @@
   <string name="description_files_stop_sharing_action_success">Link do pliku został usunięty.</string>
   <string name="description_files_stop_sharing_action_error">Wystąpił błąd podczas usuwania linku do pliku.</string>
   <string name="description_files_stop_all_sharing">Spowoduje to usunięcie linku i dostępu do elementu.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing to your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Wystąpił błąd podczas usuwania linku do pliku.</string>
   <string name="ignore_file_signature_action">Pokaż pomimo tego</string>
   <string name="action_empty_files_add_files">Prześlij</string>

@@ -25,7 +25,11 @@ import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.api.response.CodeResponse
 import me.proton.core.drive.base.domain.api.ProtonApiCode
+import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.db.test.NullableAlbumPhotoListingEntity
+import me.proton.core.drive.db.test.album
 import me.proton.core.drive.db.test.albumListings
+import me.proton.core.drive.db.test.albumPhotoListings
 import me.proton.core.drive.db.test.photoShare
 import me.proton.core.drive.db.test.photoShareId
 import me.proton.core.drive.db.test.photoVolume
@@ -34,12 +38,17 @@ import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.photo.data.api.entity.AlbumPhotoListingDto
 import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse.AlbumListingsDto
+import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.drive.photo.data.db.entity.AlbumListingEntity
+import me.proton.core.drive.photo.data.db.entity.AlbumPhotoListingEntity
 import me.proton.core.drive.photo.domain.entity.AlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumListing
+import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.photo.domain.entity.UpdateAlbumInfo
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.sorting.domain.entity.Direction
@@ -305,32 +314,17 @@ class AlbumRepositoryTest {
                         anchorId = null,
                         more = false,
                         albums = listOf(
-                            AlbumListingsDto(
+                            NullableAlbumListingsDto(
                                 linkId = "album-3",
-                                volumeId = photoVolumeId.id,
-                                shareId = photoShareId.id,
-                                locked = false,
-                                coverLinkId = null,
                                 lastActivityTime = 10,
-                                photoCount = 0L,
                             ),
-                            AlbumListingsDto(
+                            NullableAlbumListingsDto(
                                 linkId = "album-4",
-                                volumeId = photoVolumeId.id,
-                                shareId = photoShareId.id,
-                                locked = false,
-                                coverLinkId = null,
                                 lastActivityTime = 15,
-                                photoCount = 0L,
                             ),
-                            AlbumListingsDto(
+                            NullableAlbumListingsDto(
                                 linkId = "album-5",
-                                volumeId = photoVolumeId.id,
-                                shareId = photoShareId.id,
-                                locked = false,
-                                coverLinkId = null,
                                 lastActivityTime = 20,
-                                photoCount = 0L,
                             ),
                         )
                     )
@@ -352,6 +346,254 @@ class AlbumRepositoryTest {
         )
 
         assertEquals(listOf("album-5", "album-4", "album-3"), albumListings.map { it.albumId.id })
+    }
+
+    @Test
+    fun `fetch album photo listings from BE`() = runTest {
+        driveRule.server.routing {
+            get("/drive/photos/volumes/{volumeID}/albums/{linkID}/children") {
+                jsonResponse {
+                    GetAlbumPhotoListingResponse(
+                        code = ProtonApiCode.SUCCESS,
+                        photos = listOf(
+                            NullableAlbumPhotoListingDto(
+                                linkId = "link-2",
+                                captureTime = 2,
+                                addedTime = 2,
+                            ),
+                            NullableAlbumPhotoListingDto(
+                                linkId = "link-1",
+                                captureTime = 1,
+                                addedTime = 1,
+                            ),
+                        )
+                    )
+                }
+            }
+        }
+        val (albumListings, _) = albumRepository.fetchAlbumPhotoListings(
+            userId = userId,
+            volumeId = volumeId,
+            albumId = AlbumId(photoShareId, "album-id"),
+            anchorId = null,
+            sortingBy = PhotoListing.Album.SortBy.ADDED,
+            sortingDirection = Direction.DESCENDING,
+        )
+        assertEquals(listOf("link-2", "link-1"), albumListings.map { albumPhotoListing -> albumPhotoListing.linkId.id })
+    }
+
+    @Test
+    fun `fetch and store inserts album photo listings from BE into database`() = runTest {
+        driveRule.db.user {
+            photoVolume {
+                photoShare {}
+            }
+        }
+        driveRule.server.routing {
+            get("/drive/photos/volumes/{volumeID}/albums/{linkID}/children") {
+                jsonResponse {
+                    GetAlbumPhotoListingResponse(
+                        code = ProtonApiCode.SUCCESS,
+                        photos = listOf(
+                            NullableAlbumPhotoListingDto(
+                                linkId = "link-2",
+                                captureTime = 2,
+                                addedTime = 2,
+                            ),
+                            NullableAlbumPhotoListingDto(
+                                linkId = "link-1",
+                                captureTime = 1,
+                                addedTime = 1,
+                            ),
+                        )
+                    )
+                }
+            }
+        }
+        albumRepository.fetchAndStoreAlbumPhotoListings(
+            userId = userId,
+            volumeId = photoVolumeId,
+            shareId = photoShareId,
+            albumId = AlbumId(photoShareId, "album-id"),
+            anchorId = null,
+            sortingBy = PhotoListing.Album.SortBy.ADDED,
+            sortingDirection = Direction.DESCENDING,
+        )
+        val albumPhotoListingEntities = driveRule.db.albumPhotoListingDao.getAlbumPhotoListings(
+            userId = userId,
+            volumeId = photoVolumeId.id,
+            albumId = "album-id",
+            sortingBy = PhotoListing.Album.SortBy.ADDED,
+            direction = Direction.ASCENDING,
+            limit = 500,
+            offset = 0,
+        )
+
+        assertEquals(listOf("link-1", "link-2"),albumPhotoListingEntities.map { it.linkId } )
+    }
+
+    @Test
+    fun `getting album photo listings with ascending sorting on capture time`() = runTest {
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    album(id = "album-id") {
+                        albumPhotoListings(
+                            NullableAlbumPhotoListingEntity(linkId = "photo-1", captureTime = 1),
+                            NullableAlbumPhotoListingEntity(linkId = "photo-2", captureTime = 3),
+                            NullableAlbumPhotoListingEntity(linkId = "photo-3", captureTime = 2),
+                        )
+                    }
+                }
+            }
+        }
+        val albumPhotoListings = albumRepository.getAlbumPhotoListings(
+            userId = userId,
+            volumeId = photoVolumeId,
+            albumId = AlbumId(photoShareId, "album-id"),
+            fromIndex = 0,
+            count = 500,
+            sortingBy = PhotoListing.Album.SortBy.CAPTURED,
+            sortingDirection = Direction.ASCENDING,
+        )
+
+        assertEquals(
+            listOf("photo-1", "photo-3", "photo-2"),
+            albumPhotoListings.map { albumPhotoListing -> albumPhotoListing.linkId.id }
+        )
+    }
+
+    @Test
+    fun `getting album photo listings with descending sorting on added time`() = runTest {
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    album(id = "album-1") {
+                        albumPhotoListings(
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-1", captureTime = 1),
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-2", captureTime = 3),
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-3", captureTime = 2),
+                        )
+                    }
+                    album(id = "album-2") {
+                        albumPhotoListings(
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-1", addedTime = 3),
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-2", addedTime = 1),
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-3", addedTime = 4),
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-4", addedTime = 2),
+                        )
+                    }
+                }
+            }
+        }
+        val albumPhotoListings = albumRepository.getAlbumPhotoListingsFlow(
+            userId = userId,
+            volumeId = photoVolumeId,
+            albumId = AlbumId(photoShareId, "album-2"),
+            fromIndex = 0,
+            count = 500,
+            sortingBy = PhotoListing.Album.SortBy.ADDED,
+            sortingDirection = Direction.DESCENDING,
+        ).first().getOrThrow()
+
+        assertEquals(
+            listOf("album-2-photo-3", "album-2-photo-1", "album-2-photo-4", "album-2-photo-2"),
+            albumPhotoListings.map { albumPhotoListing -> albumPhotoListing.linkId.id }
+        )
+    }
+
+    @Test
+    fun `delete all album photo listings for specific album`() = runTest {
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    album(id = "album-1") {
+                        albumPhotoListings(
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-1", captureTime = 1),
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-2", captureTime = 3),
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-3", captureTime = 2),
+                        )
+                    }
+                    album(id = "album-2") {
+                        albumPhotoListings(
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-1", addedTime = 3),
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-2", addedTime = 1),
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-3", addedTime = 4),
+                            NullableAlbumPhotoListingEntity(linkId = "${this.link.id}-photo-4", addedTime = 2),
+                        )
+                    }
+                }
+            }
+        }
+        albumRepository.deleteAllAlbumPhotoListings(
+            userId = userId,
+            volumeId = photoVolumeId,
+            albumId = AlbumId(photoShareId, "album-2")
+        )
+        val albumPhotoListings = driveRule.db.albumPhotoListingDao.getAlbumPhotoListings(
+            userId = userId,
+            volumeId = photoVolumeId.id,
+            albumId = "album-2",
+            sortingBy = PhotoListing.Album.SortBy.ADDED,
+            direction = Direction.DESCENDING,
+            limit = 500,
+            offset = 0,
+        )
+
+        assertEquals(emptyList<AlbumPhotoListingEntity>(), albumPhotoListings)
+    }
+
+    @Test
+    fun `insert only album photo listings which are not already in db`() = runTest {
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    album(id = "album-id") {
+                        albumPhotoListings(
+                            NullableAlbumPhotoListingEntity(linkId = "photo-1"),
+                            NullableAlbumPhotoListingEntity(linkId = "photo-2"),
+                            NullableAlbumPhotoListingEntity(linkId = "photo-3"),
+                        )
+                    }
+                }
+            }
+        }
+        albumRepository.insertOrIgnoreAlbumPhotoListing(
+            volumeId = photoVolumeId,
+            photoListings = listOf(
+                PhotoListing.Album(
+                    linkId = FileId(photoShareId, "photo-3"),
+                    captureTime = TimestampS(0L),
+                    nameHash = null,
+                    contentHash = null,
+                    albumId = AlbumId(photoShareId, "album-id"),
+                    addedTime = TimestampS(0L),
+                    isChildOfAlbum = false,
+                ),
+                PhotoListing.Album(
+                    linkId = FileId(photoShareId, "photo-4"),
+                    captureTime = TimestampS(0L),
+                    nameHash = null,
+                    contentHash = null,
+                    albumId = AlbumId(photoShareId, "album-id"),
+                    addedTime = TimestampS(0L),
+                    isChildOfAlbum = false,
+                ),
+            )
+        )
+        val albumPhotoListings = driveRule.db.albumPhotoListingDao.getAlbumPhotoListings(
+            userId = userId,
+            volumeId = photoVolumeId.id,
+            albumId = "album-id",
+            sortingBy = PhotoListing.Album.SortBy.ADDED,
+            direction = Direction.DESCENDING,
+            limit = 500,
+            offset = 0,
+        )
+        assertEquals(
+            listOf("photo-1", "photo-2", "photo-3", "photo-4"),
+            albumPhotoListings.map { entity -> entity.linkId }
+        )
     }
 }
 
@@ -399,4 +641,40 @@ internal fun NullableAlbumInfo(
     signatureEmail = signatureEmail,
     xAttr = xAttr,
     isLocked = isLocked,
+)
+
+@Suppress("TestFunctionName")
+internal fun NullableAlbumListingsDto(
+    linkId: String,
+    volumeId: String = photoVolumeId.id,
+    shareId: String = photoShareId.id,
+    locked: Boolean = false,
+    coverLinkId: String? = null,
+    lastActivityTime: Long = 0L,
+    photoCount: Long = 0L,
+) = AlbumListingsDto(
+    linkId = linkId,
+    volumeId = volumeId,
+    shareId = shareId,
+    locked = locked,
+    coverLinkId = coverLinkId,
+    lastActivityTime = lastActivityTime,
+    photoCount = photoCount,
+)
+
+@Suppress("TestFunctionName")
+internal fun  NullableAlbumPhotoListingDto(
+    linkId: String,
+    captureTime: Long = 0L,
+    hash: String? = null,
+    contentHash: String? = null,
+    addedTime: Long = 0L,
+    isChildOfAlbum: Boolean = false,
+) =  AlbumPhotoListingDto(
+    linkId = linkId,
+    captureTime = captureTime,
+    hash = hash,
+    contentHash = contentHash,
+    addedTime = addedTime,
+    isChildOfAlbum = isChildOfAlbum,
 )

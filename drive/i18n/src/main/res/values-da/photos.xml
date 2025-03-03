@@ -65,6 +65,8 @@
   <string name="photos_error_backup_missing_folder">Sikkerhedskopimappen blev ikke fundet</string>
   <string name="photos_error_backup_failed">Sikkerhedskopiering mislykkedes.</string>
   <string name="photos_error_backup_temporarily_disabled">Sikkerhedskopiering er midlertidigt deaktiveret.</string>
+  <string name="photos_error_backup_migration_title">Update Required</string>
+  <string name="photos_error_backup_migration_description">To use photos features, please update your app to the latest version.</string>
   <string name="photos_error_missing_permissions">Manglende tilladelser.</string>
   <!--
         Variable %1$s is an application name
@@ -77,7 +79,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Brug mobilnettet</string>
   <string name="photos_error_local_storage">Enhedens lager er fyldt</string>
   <string name="photos_error_local_storage_description">For at fortsætte sikkerhedskopieringen skal du frigøre lagerplads på din enhed.</string>
-  <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">Hvis du vil have løbende sikkerhedskopiering i baggrunden, skal du justere batteriindstillingerne eller åbne appen ofte.</string>
   <string name="photos_error_background_restrictions_action">Indstillinger</string>
   <string name="photos_empty_title">Ingen sikkerhedskopier endnu</string>

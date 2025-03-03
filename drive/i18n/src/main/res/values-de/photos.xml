@@ -65,6 +65,8 @@
   <string name="photos_error_backup_missing_folder">Ordner für die Sicherung wurde nicht gefunden.</string>
   <string name="photos_error_backup_failed">Sicherung fehlgeschlagen.</string>
   <string name="photos_error_backup_temporarily_disabled">Die Sicherung ist vorübergehend deaktiviert.</string>
+  <string name="photos_error_backup_migration_title">Aktualisierung erforderlich</string>
+  <string name="photos_error_backup_migration_description">Um die Fotofunktionen nutzen zu können, aktualisiere bitte deine App auf die neueste Version.</string>
   <string name="photos_error_missing_permissions">Fehlende Berechtigungen.</string>
   <!--
         Variable %1$s is an application name

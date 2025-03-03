@@ -43,4 +43,6 @@ driveModule(
     implementation(libs.accompanist.placeholderMaterial)
     implementation(libs.coil.compose)
     implementation(libs.coil.video)
+    implementation(libs.core.presentation)
+    implementation(libs.core.presentation.compose)
 }

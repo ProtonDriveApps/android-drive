@@ -65,6 +65,8 @@
   <string name="photos_error_backup_missing_folder">La carpeta de la copia de seguridad no se ha encontrado.</string>
   <string name="photos_error_backup_failed">Error de copia de seguridad</string>
   <string name="photos_error_backup_temporarily_disabled">La copia de seguridad está temporalmente desactivada.</string>
+  <string name="photos_error_backup_migration_title">Actualización necesaria</string>
+  <string name="photos_error_backup_migration_description">Para usar funciones de fotos, actualiza tu aplicación a la última versión.</string>
   <string name="photos_error_missing_permissions">Faltan permisos.</string>
   <!--
         Variable %1$s is an application name

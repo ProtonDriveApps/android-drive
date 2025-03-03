@@ -144,6 +144,7 @@
   <string name="notification_content_text_backup_paused_disabled">Sikkerhedskopiering blev deaktiveret</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Sikkerhedskopiering kan ikke køre i baggrunden</string>
   <string name="notification_content_text_backup_preparing">Klargøring til sikkerhedskopiering</string>
+  <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
   <string name="notification_content_title_download_complete">Download fuldført</string>
   <string name="notification_content_title_forced_sign_out">Log ind</string>
   <string name="notification_content_text_forced_sign_out">Beklager afbrydelsen! Vi havde et problem med synkroniseringen - log venligst ind igen, så skal vi nok få det hele til at køre som smurt.</string>
@@ -178,7 +179,7 @@
   <string name="description_files_stop_sharing_action_success">Linket til din fil er blevet slettet.</string>
   <string name="description_files_stop_sharing_action_error">Der opstod en fejl under sletningen af linket til din fil.</string>
   <string name="description_files_stop_all_sharing">Dette vil slette linket og fjerne adgangen for alle.</string>
-  <string name="description_files_stop_all_sharing_action_success">Deling til din fil er blevet slettet.</string>
+  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
   <string name="description_files_stop_all_sharing_action_error">Der opstod en fejl under sletning af deling af din fil.</string>
   <string name="ignore_file_signature_action">Vis alligevel</string>
   <string name="action_empty_files_add_files">Upload</string>

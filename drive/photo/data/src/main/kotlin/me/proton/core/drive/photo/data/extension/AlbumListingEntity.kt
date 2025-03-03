@@ -24,9 +24,11 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.photo.data.db.entity.AlbumListingEntity
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 
 fun AlbumListingEntity.toAlbumListing() =
     AlbumListing(
+        volumeId = VolumeId(volumeId),
         albumId = AlbumId(ShareId(userId, shareId), albumId),
         isLocked = locked,
         photoCount = photoCount,

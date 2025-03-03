@@ -59,12 +59,11 @@ class InsertOrDeletePhotoListings @Inject constructor(
     }
 
     private fun Link.File.toPhotoListing(): PhotoListing? = photoCaptureTime?.let { captureTime ->
-        PhotoListing(
+        PhotoListing.Volume(
             linkId = id,
             captureTime = captureTime,
             nameHash = hash,
             contentHash = photoContentHash,
-            mainPhotoLinkId = mainPhotoLinkId,
         )
     }
 }

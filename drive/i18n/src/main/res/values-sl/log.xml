@@ -37,5 +37,5 @@
   <string name="log_origin_backup">Varnostna kopija</string>
   <string name="log_origin_user">Uporabnik</string>
   <string name="log_origin_device">Naprava</string>
-  <string name="log_origin_crypto">Kripto</string>
+  <string name="log_origin_crypto">Kripto valuta</string>
 </resources>

@@ -74,6 +74,7 @@ import me.proton.android.drive.lock.domain.manager.AppLockManager
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.provider.ActivityLauncher
 import me.proton.android.drive.ui.navigation.AppNavGraph
+import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.provider.LocalSnackbarPadding
 import me.proton.android.drive.ui.provider.ProvideLocalSnackbarPadding
 import me.proton.android.drive.ui.viewmodel.AccountViewModel
@@ -90,6 +91,7 @@ import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.ListenToBroadcastMessages
+import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.messagequeue.domain.ActionProvider
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.thumbnail.presentation.coil.ThumbnailEnabled
@@ -118,6 +120,7 @@ class MainActivity : FragmentActivity() {
     @Inject lateinit var activityLauncher: ActivityLauncher
     @Inject lateinit var announceEvent: AnnounceEvent
     @Inject lateinit var showRatingBooster: ShowRatingBooster
+    @Inject lateinit var albumsFeatureFlag: AlbumsFeatureFlag
 
     lateinit var configurationProvider: ConfigurationProvider
     private val accountViewModel: AccountViewModel by viewModels()
@@ -154,6 +157,7 @@ class MainActivity : FragmentActivity() {
             val snackbarHostState = remember { ProtonSnackbarHostState() }
             val isDarkTheme by isDarkTheme()
             val startDestination by defaultStartDestination()
+            val photosRoute by photosRoute()
             SystemBarColorLaunchedEffect(isDrawerOpen, isDarkTheme)
             NotificationsLaunchedEffect(snackbarHostState)
             Content(isDarkTheme) {
@@ -168,6 +172,7 @@ class MainActivity : FragmentActivity() {
                         clearBackstackTrigger = clearBackstackTrigger,
                         deepLinkIntent = deepLinkIntent,
                         defaultStartDestination = startDestination,
+                        photosRoute = photosRoute,
                         locked = appLockManager.locked,
                         primaryAccount = accountViewModel.primaryAccount,
                         announceEvent = announceEvent,
@@ -228,6 +233,23 @@ class MainActivity : FragmentActivity() {
                     getDefaultEnabledDynamicHomeTab(account.userId)
                         .map { dynamicHomeTab ->
                             dynamicHomeTab.route
+                        }
+                } ?: flowOf(null)
+            }
+        }.collectAsState(initial = null)
+
+    @Composable
+    private fun photosRoute(): State<String?> =
+        remember {
+            accountViewModel.primaryAccount.flatMapLatest { account ->
+                account?.let {
+                    albumsFeatureFlag(account.userId)
+                        .map { enabled ->
+                            if (enabled) {
+                                Screen.PhotosAndAlbums.route
+                            } else {
+                                Screen.Photos.route
+                            }
                         }
                 } ?: flowOf(null)
             }

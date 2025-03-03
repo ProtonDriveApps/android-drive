@@ -22,9 +22,11 @@ import me.proton.android.drive.db.DriveDatabase
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.data.api.entity.LinkDto
+import me.proton.core.drive.link.data.db.entity.LinkAlbumPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
@@ -53,6 +55,16 @@ data class FileContext(
     val link: LinkEntity,
     val parent: LinkEntity,
     val revisionId: String,
+) : BaseContext()
+
+data class AlbumContext(
+    val db: DriveDatabase,
+    val user: UserEntity,
+    val account: AccountEntity,
+    val volume: VolumeEntity,
+    val share: ShareEntity,
+    val link: LinkEntity,
+    val parent: LinkEntity,
 ) : BaseContext()
 
 suspend fun ShareContext.folder(
@@ -163,6 +175,46 @@ suspend fun FolderContext.file(
         )
     }
     FileContext(db, user, account, volume, share, link, this.link, properties.activeRevisionId).block()
+}
+
+suspend fun FolderContext.album(
+    id: String,
+    block: suspend AlbumContext.() -> Unit,
+): AlbumId {
+    album(
+        link = NullableLinkEntity(id = id, parentId= this.link.id, type = 3L),
+        properties = LinkAlbumPropertiesEntity(
+            userId = user.userId,
+            shareId = share.id,
+            linkId = id,
+            nodeHashKey = "node-hash-key-$id",
+            locked = false,
+            lastActivityTime = 0L,
+            photoCount = 0L,
+            coverLinkId = null,
+        ),
+        block = block,
+    )
+    return AlbumId(ShareId(user.userId, share.id), id)
+}
+
+suspend fun FolderContext.album(
+    link: LinkEntity,
+    properties: LinkAlbumPropertiesEntity = LinkAlbumPropertiesEntity(
+        userId = user.userId,
+        shareId = share.id,
+        linkId = link.id,
+        nodeHashKey = "node-hash-key-${link.id}",
+        locked = false,
+        lastActivityTime = 0L,
+        photoCount = 0L,
+        coverLinkId = null,
+    ),
+    block: suspend AlbumContext.() -> Unit,
+) {
+    db.driveLinkDao.insertOrUpdate(link)
+    db.driveLinkDao.insertOrUpdate(properties)
+    AlbumContext(db, user, account, volume,share, link, this.link).block()
 }
 
 @Suppress("FunctionName")

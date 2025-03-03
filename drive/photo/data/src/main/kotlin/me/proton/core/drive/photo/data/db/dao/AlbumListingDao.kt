@@ -50,6 +50,9 @@ abstract class AlbumListingDao : BaseDao<AlbumListingEntity>() {
     @Query("DELETE FROM AlbumListingEntity WHERE user_id = :userId AND volume_id = :volumeId")
     abstract suspend fun deleteAll(userId: UserId, volumeId: String)
 
+    @Query("DELETE FROM AlbumListingEntity WHERE user_id = :userId")
+    abstract suspend fun deleteAll(userId: UserId)
+
     companion object {
         const val ALBUM_LISTING = """
             SELECT * FROM AlbumListingEntity

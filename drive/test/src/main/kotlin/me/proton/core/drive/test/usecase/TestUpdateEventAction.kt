@@ -33,12 +33,14 @@ class TestUpdateEventAction @Inject constructor() : UpdateEventAction {
     private val lock = Mutex()
     override suspend fun <T> invoke(
         shareId: ShareId,
+        overrideMinimumFetchInterval: Boolean,
         block: suspend () -> T,
     ): T = lock.withLock { block() }
 
     override suspend fun <T> invoke(
         userId: UserId,
         volumeId: VolumeId,
+        overrideMinimumFetchInterval: Boolean,
         block: suspend () -> T,
     ): T = lock.withLock { block() }
 }

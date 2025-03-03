@@ -20,9 +20,11 @@ package me.proton.core.drive.photo.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.photo.domain.entity.AlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumListing
+import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.photo.domain.entity.UpdateAlbumInfo
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Direction
@@ -61,4 +63,52 @@ interface AlbumRepository {
         count: Int,
         sortingDirection: Direction = Direction.DESCENDING,
     ): Flow<Result<List<AlbumListing>>>
+
+    suspend fun fetchAlbumPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        anchorId: String?,
+        sortingBy: PhotoListing.Album.SortBy,
+        sortingDirection: Direction = Direction.DESCENDING,
+    ): Pair<List<PhotoListing.Album>, SaveAction>
+
+    suspend fun fetchAndStoreAlbumPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        shareId: ShareId,
+        albumId: AlbumId,
+        anchorId: String?,
+        sortingBy: PhotoListing.Album.SortBy,
+        sortingDirection: Direction = Direction.DESCENDING,
+    ): List<PhotoListing.Album>
+
+    suspend fun getAlbumPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        fromIndex: Int,
+        count: Int,
+        sortingBy: PhotoListing.Album.SortBy,
+        sortingDirection: Direction = Direction.DESCENDING,
+    ): List<PhotoListing.Album>
+
+    fun getAlbumPhotoListingsFlow(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        fromIndex: Int,
+        count: Int,
+        sortingBy: PhotoListing.Album.SortBy,
+        sortingDirection: Direction = Direction.DESCENDING,
+    ): Flow<Result<List<PhotoListing.Album>>>
+
+    suspend fun deleteAllAlbumPhotoListings(userId: UserId, volumeId: VolumeId, albumId: AlbumId)
+
+    suspend fun insertOrIgnoreAlbumPhotoListing(
+        volumeId: VolumeId,
+        photoListings: List<PhotoListing.Album>,
+    )
+
+    fun getAlbumListingsUrl(volumeId: VolumeId) = "drive/photos/volumes/${volumeId.id}/albums"
 }

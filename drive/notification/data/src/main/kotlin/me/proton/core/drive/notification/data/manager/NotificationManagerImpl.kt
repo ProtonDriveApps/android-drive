@@ -77,7 +77,7 @@ class NotificationManagerImpl @Inject constructor(
         channels.forEach { channel ->
             deleteNotificationChannel(channel.id)
         }
-        notificationManagerCompat.deleteNotificationChannelGroup(userId.id)
+        deleteNotificationChannelGroup(userId)
     }
 
     override fun createAppChannels(name: String, channels: List<Channel.App>) {
@@ -103,6 +103,22 @@ class NotificationManagerImpl @Inject constructor(
                 throwable.log(
                     tag = LogTag.NOTIFICATION,
                     message = "Failed removing notification channel $channelId",
+                    level = WARNING,
+                )
+            }
+        }
+        .getOrThrow()
+
+    private fun deleteNotificationChannelGroup(userId: UserId) = runCatching {
+        notificationManagerCompat.deleteNotificationChannelGroup(userId.id)
+    }
+        .recoverCatching { throwable ->
+            if (throwable !is SecurityException) {
+                throw throwable
+            } else {
+                throwable.log(
+                    tag = LogTag.NOTIFICATION,
+                    message = "Failed removing notification channel group",
                     level = WARNING,
                 )
             }

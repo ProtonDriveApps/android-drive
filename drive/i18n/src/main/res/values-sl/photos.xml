@@ -67,6 +67,8 @@
   <string name="photos_error_backup_missing_folder">Varnostna mapa ni bila najdena</string>
   <string name="photos_error_backup_failed">Varnostna kopija ni uspela.</string>
   <string name="photos_error_backup_temporarily_disabled">Varnostno kopiranje je onemogočeno.</string>
+  <string name="photos_error_backup_migration_title">Update Required</string>
+  <string name="photos_error_backup_migration_description">To use photos features, please update your app to the latest version.</string>
   <string name="photos_error_missing_permissions">Manjkajoča dovoljenja</string>
   <!--
         Variable %1$s is an application name
@@ -79,7 +81,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Uporabi mobilne podatke</string>
   <string name="photos_error_local_storage">Pomnilnik naprave je poln</string>
   <string name="photos_error_local_storage_description">Če želite nadaljevati varnostno kopiranje, morate sprostiti prostor za shranjevanje v napravi.</string>
-  <string name="photos_error_background_restrictions">Set battery to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
   <string name="photos_error_background_restrictions_description">Za dosledno varnostno kopiranje v ozadju prilagodite nastavitve baterije ali pogosto odprite aplikacijo.</string>
   <string name="photos_error_background_restrictions_action">Nastavitve</string>
   <string name="photos_empty_title">Ni še varnostnih kopij</string>

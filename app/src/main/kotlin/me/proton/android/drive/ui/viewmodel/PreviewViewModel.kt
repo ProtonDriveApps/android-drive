@@ -772,7 +772,7 @@ class PhotoContentProvider(
                 contentKeyPacketSignature = null,
                 photoCaptureTime = captureTime,
                 photoContentHash = contentHash,
-                mainPhotoLinkId = mainPhotoLinkId,
+                mainPhotoLinkId = null,
             ),
             volumeId = photoShare.volumeId,
             isMarkedAsOffline = false,

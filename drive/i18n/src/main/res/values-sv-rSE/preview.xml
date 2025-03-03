@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Förhandsgranskning av filinnehåll</string>
-  <string name="content_description_more_options">Visa fler alternativ för filen</string>
+  <string name="content_description_more_options">Visa fler alternativ för en fil</string>
   <string name="preview_downloading_state">Laddar ner…</string>
   <string name="preview_processing_state">Bearbetar…</string>
   <string name="preview_empty">Inget att förhandsgranska…</string>

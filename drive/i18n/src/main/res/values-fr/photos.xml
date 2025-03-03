@@ -65,6 +65,8 @@
   <string name="photos_error_backup_missing_folder">Le dossier de la sauvegarde est introuvable.</string>
   <string name="photos_error_backup_failed">La sauvegarde n\'a pas abouti.</string>
   <string name="photos_error_backup_temporarily_disabled">La sauvegarde est temporairement désactivée.</string>
+  <string name="photos_error_backup_migration_title">Mise à jour nécessaire</string>
+  <string name="photos_error_backup_migration_description">Pour utiliser les fonctionnalités de photos, veuillez mettre à jour votre application vers la dernière version.</string>
   <string name="photos_error_missing_permissions">Des autorisations sont nécessaires.</string>
   <!--
         Variable %1$s is an application name
