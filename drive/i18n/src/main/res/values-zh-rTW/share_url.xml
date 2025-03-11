@@ -90,7 +90,7 @@
     -->
   <string name="shared_user_invitations_title">Pending shared items (%1$d)</string>
   <string name="shared_user_invitations_title_empty">No pending shared items</string>
-  <string name="shared_user_invitations_description_empty">All new invitation will be here</string>
+  <string name="shared_user_invitations_description_empty">All new invitations will be here</string>
   <string name="shared_user_invitations_accept_button">Accept</string>
   <string name="shared_user_invitations_decline_button">Decline</string>
   <string name="shared_user_invitations_accept_success">Shared item accepted</string>

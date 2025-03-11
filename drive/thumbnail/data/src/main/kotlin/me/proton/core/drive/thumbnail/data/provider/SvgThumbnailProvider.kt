@@ -26,8 +26,10 @@ import coil.decode.SvgDecoder
 import coil.request.Options
 import coil.size.Size
 import dagger.hilt.android.qualifiers.ApplicationContext
-import me.proton.core.drive.base.data.extension.compress
+import me.proton.core.drive.base.data.usecase.CompressBitmap
 import me.proton.core.drive.base.domain.entity.Bytes
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import okio.buffer
 import okio.source
@@ -35,6 +37,7 @@ import javax.inject.Inject
 
 class SvgThumbnailProvider @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val compressBitmap: CompressBitmap,
 ) : CreateThumbnail.Provider {
 
     private val options = Options(
@@ -62,7 +65,13 @@ class SvgThumbnailProvider @Inject constructor(
                     options = options.copy(size = Size(maxWidth, maxHeight))
                 )
                 val result = decoder.decode()
-                (result.drawable as? BitmapDrawable)?.bitmap?.compress(maxSize)
+                (result.drawable as? BitmapDrawable)?.bitmap?.let { bitmap ->
+                    compressBitmap(bitmap, maxSize)
+                        .getOrNull(LogTag.THUMBNAIL, "Compressing bitmap failed")
+                        .also {
+                            bitmap.recycle()
+                        }
+                }
             }
         } catch (e: OutOfMemoryError) {
             System.gc()

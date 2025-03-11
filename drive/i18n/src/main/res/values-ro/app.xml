@@ -171,6 +171,7 @@
   <string name="content_description_select_all">Selectare toate din listă</string>
   <string name="content_description_selected_options">Afișare mai multe opțiuni pentru fișierele și/sau folderele selectate.</string>
   <string name="content_description_files_upload_upload_file">Încărcați un fișier</string>
+  <string name="content_description_albums_new">Creare album</string>
   <string name="description_empty_my_files">Apăsați butonul pe a începe adăugarea fișierelor.</string>
   <string name="description_empty_folder_read_only">Nu e nimic de văzut aici</string>
   <string name="description_empty_shared">Fișierele partajate apar aici ca să puteți să urmăriți și gestiona ce este partajat.</string>

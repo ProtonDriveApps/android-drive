@@ -33,6 +33,7 @@ class RetryBackup @Inject constructor(
     private val startBackup: StartBackup,
     private val getErrors: GetErrors,
     private val getFeatureFlag: GetFeatureFlag,
+    private val checkMissingFolders: CheckMissingFolders,
     private val deleteAllRetryableBackupError: DeleteAllRetryableBackupError,
     private val resetFilesAttempts: ResetFilesAttempts,
 ) {
@@ -43,6 +44,7 @@ class RetryBackup @Inject constructor(
                 error.type == BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED
             }
         }
+        checkMissingFolders(folderId).getOrThrow()
         deleteAllRetryableBackupError(folderId).getOrThrow()
         resetFilesAttempts(folderId).getOrThrow()
         startBackup(folderId)

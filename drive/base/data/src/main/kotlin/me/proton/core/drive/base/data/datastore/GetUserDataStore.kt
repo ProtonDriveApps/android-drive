@@ -23,6 +23,7 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import me.proton.core.domain.entity.UserId
@@ -54,6 +55,7 @@ class GetUserDataStore @Inject constructor(
         private const val KEY_MIGRATION_KEY_PACKET_LAST_UPDATE = "migration_key_packet_last_update"
         private const val KEY_CREATE_DOCUMENT_ACITON_INVOKED = "create_document_action_invoked"
         private const val KEY_NOTIFICATION_PERMISSION_RATIONALE_REJECTED = "notification_permission_rationale_rejected"
+        private const val KEY_NEW_ALBUM_NAME = "new_album_name"
     }
 
     data object Keys {
@@ -62,5 +64,6 @@ class GetUserDataStore @Inject constructor(
         val notificationPermissionRationaleRejected get() = booleanPreferencesKey(
             KEY_NOTIFICATION_PERMISSION_RATIONALE_REJECTED
         )
+        val newAlbumName get() = stringPreferencesKey(KEY_NEW_ALBUM_NAME)
     }
 }

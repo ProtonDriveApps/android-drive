@@ -111,6 +111,7 @@ interface ConfigurationProvider {
     val cacheInternalStorageLimit: Bytes get() = 512.MiB
     val albumsFeatureFlag: Boolean get() = false
     val minimumAlbumListingFetchInterval: Duration get() = 5.days
+    val addToAlbumMaxApiDataSize: Int get() = 10
 
     data class Thumbnail(
         val maxWidth: Int,

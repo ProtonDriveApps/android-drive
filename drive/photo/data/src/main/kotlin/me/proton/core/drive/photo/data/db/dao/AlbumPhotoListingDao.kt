@@ -30,6 +30,23 @@ import me.proton.core.drive.sorting.domain.entity.Direction
 @Dao
 abstract class AlbumPhotoListingDao : BaseDao<AlbumPhotoListingEntity>() {
 
+    @Query(
+        """
+            SELECT COUNT(*) FROM (
+                SELECT * FROM AlbumPhotoListingEntity
+                WHERE
+                    user_id = :userId AND
+                    volume_id = :volumeId AND
+                    album_id = :albumId
+            )
+        """
+    )
+    abstract fun getAlbumPhotoListingCount(
+        userId: UserId,
+        volumeId: String,
+        albumId: String,
+    ): Flow<Int>
+
     @Query(ALBUM_PHOTO_LISTING)
     abstract suspend fun getAlbumPhotoListings(
         userId: UserId,

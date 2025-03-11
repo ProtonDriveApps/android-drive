@@ -38,6 +38,7 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         const val RATING_ANDROID_DRIVE = "RatingAndroidDrive"
         const val DRIVE_ALBUMS = "DriveAlbums"
         const val DRIVE_ALBUMS_DISABLED = "DriveAlbumsDisabled"
+        const val DRIVE_THUMBNAIL_WEBP = "DriveThumbnailWebP"
 
         internal var developments : List<String> = listOf(
         )
@@ -57,5 +58,6 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         fun ratingAndroidDrive(userId: UserId) = FeatureFlagId(userId, RATING_ANDROID_DRIVE)
         fun driveAlbums(userId: UserId) = FeatureFlagId(userId, DRIVE_ALBUMS)
         fun driveAlbumsDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_ALBUMS_DISABLED)
+        fun driveThumbnailWebP(userId: UserId) = FeatureFlagId(userId, DRIVE_THUMBNAIL_WEBP)
     }
 }

@@ -73,7 +73,7 @@
   <string name="shared_empty_title">Intet delt endnu</string>
   <string name="shared_with_me_empty_description">Filer og mapper, der er delt med dig, vises her</string>
   <string name="shared_by_me_empty_description">Del dine filer og mapper sikkert med end-to-end-kryptering</string>
-  <string name="shared_by_me_invitation_banner_title">Pending shared items</string>
+  <string name="shared_by_me_invitation_banner_title">Afventende delte elementer</string>
   <!--
         Variable %1$d is a quantity of item shared
         Example:
@@ -81,19 +81,19 @@
             "3 items shared with you"
     -->
   <plurals name="shared_by_me_invitation_banner_description">
-    <item quantity="one">%1$d item shared with you</item>
-    <item quantity="other">%1$d items shared with you</item>
+    <item quantity="one">%1$d element delt med dig</item>
+    <item quantity="other">%1$d elementer delt med dig</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of item shared
         Example:
             "Pending shared items (1)"
     -->
-  <string name="shared_user_invitations_title">Pending shared items (%1$d)</string>
-  <string name="shared_user_invitations_title_empty">No pending shared items</string>
-  <string name="shared_user_invitations_description_empty">All new invitation will be here</string>
-  <string name="shared_user_invitations_accept_button">Accept</string>
-  <string name="shared_user_invitations_decline_button">Decline</string>
-  <string name="shared_user_invitations_accept_success">Shared item accepted</string>
-  <string name="shared_user_invitations_decline_success">Shared item declined</string>
+  <string name="shared_user_invitations_title">Afventende delte elementer (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Ingen afventende delte elementer</string>
+  <string name="shared_user_invitations_description_empty">Alle nye invitationer vil være her</string>
+  <string name="shared_user_invitations_accept_button">Accepter</string>
+  <string name="shared_user_invitations_decline_button">Afvis</string>
+  <string name="shared_user_invitations_accept_success">Delt element accepteret</string>
+  <string name="shared_user_invitations_decline_success">Delt element afvist</string>
 </resources>

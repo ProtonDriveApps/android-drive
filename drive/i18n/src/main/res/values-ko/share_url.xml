@@ -90,7 +90,7 @@
     -->
   <string name="shared_user_invitations_title">공유된 항목 대기 중 (%1$d)</string>
   <string name="shared_user_invitations_title_empty">대기중인 공유된 항목 없음</string>
-  <string name="shared_user_invitations_description_empty">모든 새 초대가 여기 표시됩니다</string>
+  <string name="shared_user_invitations_description_empty">새로운 초대가 여기 나타납니다.</string>
   <string name="shared_user_invitations_accept_button">수락</string>
   <string name="shared_user_invitations_decline_button">거절</string>
   <string name="shared_user_invitations_accept_success">공유된 항목 수락됨</string>

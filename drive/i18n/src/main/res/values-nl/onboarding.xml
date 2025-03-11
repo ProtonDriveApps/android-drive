@@ -24,5 +24,4 @@
   <string name="onboarding_description_free">gratis</string>
   <string name="onboarding_action_primary">Camera-uploads inschakelen</string>
   <string name="onboarding_action_secondary">Meer uploadopties</string>
-  <string name="onboarding_action_done">Klaar</string>
 </resources>

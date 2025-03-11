@@ -37,4 +37,5 @@ data class PhotosViewState(
     val selected: Flow<Set<LinkId>> = emptyFlow(),
     val isRefreshEnabled: Boolean = true,
     val notificationDotVisible: Boolean = false,
+    val inMultiselect: Boolean = false,
 )

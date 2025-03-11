@@ -39,8 +39,8 @@
             "Only the people with the link and the password can access this folder"
     -->
   <string name="shared_link_accessibility_description_password_protected">Vain henkilöt, joilla on linkki ja salasana, voivat avata %1$sn</string>
-  <string name="shared_link_settings">Linkkiasetukset</string>
-  <string name="shared_link_options">Linkkivalinnat</string>
+  <string name="shared_link_settings">Linkin asetukset</string>
+  <string name="shared_link_options">Linkin valinnat</string>
   <string name="shared_link_privacy_settings">Yksityisyysasetukset</string>
   <string name="shared_link_password_protection">Salasanasuojaus</string>
   <string name="shared_link_expiration_date">Voimassaolo päättyy</string>
@@ -73,7 +73,7 @@
   <string name="shared_empty_title">Mitään ei ole vielä jaettu</string>
   <string name="shared_with_me_empty_description">Kanssasi jaetut tiedostot ja kansiot näkyvät tässä</string>
   <string name="shared_by_me_empty_description">Jaa tiedostot ja kansiot turvallisesti päästä päähän -salauksella</string>
-  <string name="shared_by_me_invitation_banner_title">Odottavat jaetut kohteet</string>
+  <string name="shared_by_me_invitation_banner_title">Odottavat jaot</string>
   <!--
         Variable %1$d is a quantity of item shared
         Example:
@@ -89,11 +89,11 @@
         Example:
             "Pending shared items (1)"
     -->
-  <string name="shared_user_invitations_title">Odottavat jaetut kohteet (%1$d)</string>
-  <string name="shared_user_invitations_title_empty">Ei odottavia jaettuja kohteita</string>
-  <string name="shared_user_invitations_description_empty">All new invitation will be here</string>
+  <string name="shared_user_invitations_title">Odottavat jaot (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Odottavia jakoja ei ole</string>
+  <string name="shared_user_invitations_description_empty">All new invitations will be here</string>
   <string name="shared_user_invitations_accept_button">Hyväksy</string>
   <string name="shared_user_invitations_decline_button">Kieltäydy</string>
-  <string name="shared_user_invitations_accept_success">Jaettu kohde hyväksyttiin</string>
-  <string name="shared_user_invitations_decline_success">Jaetusta kohteesta kieltäydyttiin</string>
+  <string name="shared_user_invitations_accept_success">Jako hyväksyttiin</string>
+  <string name="shared_user_invitations_decline_success">Jaosta kieltäydyttiin</string>
 </resources>

@@ -20,6 +20,7 @@ package me.proton.android.drive.photos.presentation.viewevent
 
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.photo.domain.entity.AlbumListing
 
 interface AlbumsViewEvent {
     val onRefresh: () -> Unit get() = {}
@@ -27,4 +28,6 @@ interface AlbumsViewEvent {
     val onErrorAction: () -> Unit get() = {}
     val onTopAppBarNavigation: () -> Unit get() = {}
     val onDriveLinkAlbum: (DriveLink.Album) -> Unit get() = {}
+    val onCreateNewAlbum: () -> Unit get() = {}
+    val onFilterSelected: (AlbumListing.Filter) -> Unit get() = {}
 }

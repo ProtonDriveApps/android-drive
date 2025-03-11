@@ -85,7 +85,7 @@
   <string name="photos_empty_title">Todavía no hay copias de seguridad.</string>
   <string name="photos_empty_description">Tan pronto tenga fotos o videos en el dispositivo, aparecerán aquí.</string>
   <string name="photos_backup_title">Copia de seguridad de fotos</string>
-  <string name="photos_backup_option_mobile_data">Usar datos móviles para hacer copias de seguridad de las fotos</string>
+  <string name="photos_backup_option_mobile_data">Use los datos móviles para hacer copias de seguridad de las fotos.</string>
   <string name="photos_backup_option_ignoring_battery_optimizations">Desactivar optimización de la batería</string>
   <string name="photos_backup_option_ignoring_battery_optimizations_description">Permite realizar copias de seguridad ininterrumpidas cuando la aplicación se ejecuta en segundo plano.</string>
   <string name="photos_backup_in_app_notification_turned_on">La copia de seguridad de fotos está activa</string>

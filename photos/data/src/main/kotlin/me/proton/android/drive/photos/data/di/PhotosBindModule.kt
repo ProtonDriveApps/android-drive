@@ -23,8 +23,10 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.photos.data.repository.MediaStoreVersionRepositoryImpl
+import me.proton.android.drive.photos.data.repository.AlbumInfoRepositoryImpl
 import me.proton.android.drive.photos.data.usecase.EnablePhotosBackupImpl
 import me.proton.android.drive.photos.domain.repository.MediaStoreVersionRepository
+import me.proton.android.drive.photos.domain.repository.AlbumInfoRepository
 import me.proton.android.drive.photos.domain.usecase.EnablePhotosBackup
 import javax.inject.Singleton
 
@@ -39,4 +41,8 @@ interface PhotosBindModule {
     @Binds
     @Singleton
     fun bindsMediaStoreVersionRepository(impl: MediaStoreVersionRepositoryImpl): MediaStoreVersionRepository
+
+    @Binds
+    @Singleton
+    fun bindsAlbumInfoRepository(impl: AlbumInfoRepositoryImpl): AlbumInfoRepository
 }

@@ -161,6 +161,7 @@
   <string name="content_description_select_all">목록의 모든 항목 선택</string>
   <string name="content_description_selected_options">선택한 파일 또는 폴더에 대한 추가 옵션 표시</string>
   <string name="content_description_files_upload_upload_file">파일 업로드</string>
+  <string name="content_description_albums_new">새로운 앨범 생성</string>
   <string name="description_empty_my_files">파일을 추가하려면 버튼을 탭하세요.</string>
   <string name="description_empty_folder_read_only">이곳엔 아무것도 없습니다.</string>
   <string name="description_empty_shared">링크로 공유한 파일이 여기에 표시되므로 공유된 항목을 쉽게 확인 및 관리할 수 있습니다.</string>

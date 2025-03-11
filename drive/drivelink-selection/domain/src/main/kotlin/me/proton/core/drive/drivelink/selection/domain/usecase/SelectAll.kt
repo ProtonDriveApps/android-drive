@@ -17,6 +17,8 @@
  */
 package me.proton.core.drive.drivelink.selection.domain.usecase
 
+import kotlinx.coroutines.flow.map
+import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.repository.DriveLinkRepository
 import me.proton.core.drive.drivelink.selection.domain.repository.DriveLinkSelectionRepository
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -30,17 +32,23 @@ class SelectAll @Inject constructor(
     private val driveLinkRepository: DriveLinkRepository,
 ) {
 
-    suspend operator fun invoke(parentId: FolderId, selectionId: SelectionId?) = driveLinkSelectionRepository.selectAll(
+    suspend operator fun invoke(
+        parentId: FolderId,
+        selectionId: SelectionId?,
+        driveLinkFilter: (DriveLink) -> Boolean = { true },
+    ) = driveLinkSelectionRepository.selectAll(
         parentId = parentId,
         selectionId = selectionId,
         getDriveLinks = { fromIndex, count ->
-            driveLinkRepository.getDriveLinks(parentId, fromIndex, count)
+            driveLinkRepository.getDriveLinks(parentId, fromIndex, count).map { driveLinks ->
+                driveLinks.filter(driveLinkFilter)
+            }
         },
         selectLinks = { id, linkIds ->
             id?.let {
                 selectLinks(id, linkIds)
                 Result.success(id)
             } ?: selectLinks(linkIds)
-        }
+        },
     )
 }

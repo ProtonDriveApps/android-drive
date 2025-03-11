@@ -53,6 +53,7 @@ object PhotosTabRobot :
     private val enableErrorBackupButton
         get() = node.withText(I18N.string.photos_error_backup_disabled_action)
 
+    private val albumTitle get() = node.withText(I18N.string.albums_title)
     private val backupCompleted get() = node.withText(I18N.string.photos_backup_state_completed)
     private val backupPreparing get() = node.withText(I18N.string.photos_backup_state_preparing)
     private val backupFailed get() = node.withText(I18N.string.photos_error_backup_failed)
@@ -82,6 +83,7 @@ object PhotosTabRobot :
         .withItemType(ItemType.File)
         .withLayoutType(LayoutType.Grid)
 
+    fun clickOnAlbumTab() = albumTitle.clickTo(AlbumTabRobot)
     fun enableBackup() = enableBackupButton.clickTo(PhotosTabRobot)
     fun enableBackupWhenDisabled() = enableErrorBackupButton.clickTo(PhotosTabRobot)
     fun clickOnMore() = missingFolder.clickTo(PhotosBackupRobot)

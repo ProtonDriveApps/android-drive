@@ -24,6 +24,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.viewstate.TagViewState
+import me.proton.core.drive.photo.domain.entity.AlbumListing
 
 @Immutable
 data class AlbumsViewState(
@@ -31,4 +33,11 @@ data class AlbumsViewState(
     val listContentState: ListContentState,
     val isRefreshEnabled: Boolean,
     @DrawableRes val navigationIconResId: Int,
+    val filters: List<AlbumsFilter> = emptyList()
+)
+
+@Immutable
+data class AlbumsFilter(
+    val filter: AlbumListing.Filter,
+    val tagViewState: TagViewState,
 )

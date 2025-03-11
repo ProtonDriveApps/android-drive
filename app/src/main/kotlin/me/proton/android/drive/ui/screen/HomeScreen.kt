@@ -64,6 +64,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.BottomNavigation
 import me.proton.core.drive.base.presentation.component.ModalBottomSheet
 import me.proton.core.drive.device.domain.entity.DeviceId
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -105,6 +106,8 @@ fun HomeScreen(
     navigateToRatingBooster: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
     navigateToUserInvitation: () -> Unit,
+    navigateToCreateNewAlbum: () -> Unit,
+    navigateToAlbum: (AlbumId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     setLocalSnackbarPadding(BottomNavigationHeight)
@@ -159,6 +162,8 @@ fun HomeScreen(
             navigateToComputerOptions = navigateToComputerOptions,
             navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
             navigateToUserInvitation = navigateToUserInvitation,
+            navigateToCreateNewAlbum = navigateToCreateNewAlbum,
+            navigateToAlbum = navigateToAlbum,
             arguments = arguments,
             viewState = currentViewState,
             viewEvent = viewEvent,
@@ -198,6 +203,8 @@ internal fun Home(
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
     navigateToUserInvitation: () -> Unit,
+    navigateToCreateNewAlbum: () -> Unit,
+    navigateToAlbum: (AlbumId) -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
     val isDrawerOpen = with(homeScaffoldState.scaffoldState.drawerState) {
@@ -294,6 +301,8 @@ internal fun Home(
                     navigateToComputerOptions,
                     navigateToNotificationPermissionRationale,
                     navigateToUserInvitation,
+                    navigateToCreateNewAlbum,
+                    navigateToAlbum,
                 )
             }
         }

@@ -70,6 +70,7 @@ import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
+import me.proton.core.drive.backup.domain.usecase.CheckMissingFolders
 import me.proton.core.drive.backup.domain.usecase.GetBackupState
 import me.proton.core.drive.backup.domain.usecase.GetDisabledBackupState
 import me.proton.core.drive.backup.domain.usecase.RetryBackup
@@ -147,11 +148,14 @@ class PhotosViewModel @Inject constructor(
     private val photoDriveLinks: PhotoDriveLinks,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
     private val syncFolders: SyncFolders,
+    private val checkMissingFolders: CheckMissingFolders,
     private val cancelUserMessage: CancelUserMessage,
     shouldUpgradeStorage: ShouldUpgradeStorage,
 ) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
+
+    override val driveLinkFilter = { driveLink: DriveLink -> driveLink !is DriveLink.Album }
 
     private var viewEvent: PhotosViewEvent? = null
     private var fetchingJob: Job? = null
@@ -188,6 +192,7 @@ class PhotosViewModel @Inject constructor(
         backupStatusViewState = null,
         selected = selected,
         isRefreshEnabled = selected.value.isEmpty(),
+        inMultiselect = false
     )
     private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
     val driveLink: StateFlow<DriveLink.Folder?> = retryTrigger.transformLatest {
@@ -340,6 +345,7 @@ class PhotosViewModel @Inject constructor(
                 CorePresentation.drawable.ic_proton_cross
             },
             notificationDotVisible = showHamburgerMenuIcon && notificationDotRequested,
+            inMultiselect = selected.isNotEmpty(),
             listContentState = listContentState,
             showEmptyList = backupState.isBackupEnabled || backupState.hasDefaultFolder == false ,
             showPhotosStateIndicator = showPhotosStateIndicator,
@@ -568,10 +574,12 @@ class PhotosViewModel @Inject constructor(
     private fun onRefresh() {
         viewModelScope.launch {
             parentFolderId.value?.let { folderId ->
-                syncFolders(folderId, RECENT_BACKUP_PRIORITY)
-                    .onFailure { error ->
-                        error.log(VIEW_MODEL, "Failed sync folder on manual refresh")
-                    }
+                checkMissingFolders(folderId).onFailure { error ->
+                    error.log(VIEW_MODEL, "Failed check missing folders")
+                }
+                syncFolders(folderId, RECENT_BACKUP_PRIORITY).onFailure { error ->
+                    error.log(VIEW_MODEL, "Failed sync folder on manual refresh")
+                }
             }
             _listEffect.emit(ListEffect.REFRESH)
         }

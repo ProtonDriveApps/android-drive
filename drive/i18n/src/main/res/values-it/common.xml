@@ -63,6 +63,7 @@
   <string name="common_copy_link_action">Copia il link</string>
   <string name="common_stop_sharing_action">Interrompi condivisione</string>
   <string name="common_open_in_browser_action">Apri nel browser</string>
+  <string name="common_done_action">Fatto</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

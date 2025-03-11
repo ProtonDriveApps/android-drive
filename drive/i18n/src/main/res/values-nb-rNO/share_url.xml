@@ -91,7 +91,7 @@
     -->
   <string name="shared_user_invitations_title">Ventende delte elementer (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Ingen ventende delte elementer</string>
-  <string name="shared_user_invitations_description_empty">Alle nye invitasjoner vil vises her.</string>
+  <string name="shared_user_invitations_description_empty">Alle nye invitasjoner vil være her</string>
   <string name="shared_user_invitations_accept_button">Aksepter</string>
   <string name="shared_user_invitations_decline_button">Avslå</string>
   <string name="shared_user_invitations_accept_success">Delt element akseptert</string>

@@ -18,17 +18,18 @@
 package me.proton.core.drive.base.data.extension
 
 import android.graphics.Bitmap
+import android.graphics.Bitmap.CompressFormat
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.log.LogTag.THUMBNAIL
 import me.proton.core.util.kotlin.CoreLogger
 import java.io.ByteArrayOutputStream
 
 @Suppress("MagicNumber")
-fun Bitmap.compress(maxSize: Bytes): ByteArray? {
+internal fun Bitmap.compress(maxSize: Bytes, format: CompressFormat): ByteArray? {
     ByteArrayOutputStream().use { stream ->
         listOf(95, 90, 85, 80, 70, 60, 50, 40, 30, 20, 15, 10, 5, 0).forEach { quality ->
             stream.reset()
-            if (compress(Bitmap.CompressFormat.JPEG, quality, stream)) {
+            if (compress(format, quality, stream)) {
                 stream.toByteArray().takeIf { bytes -> bytes.size <= maxSize.value.toInt() }
                     ?.let { bytes -> return bytes }
             } else {

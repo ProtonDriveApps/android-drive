@@ -46,7 +46,7 @@ class OnFilesDriveLinkError @Inject constructor(
 ) {
     suspend operator fun invoke(
         userId: UserId,
-        previous: DataResult<DriveLink.Folder>?,
+        previous: DataResult<DriveLink>?,
         error: DataResult.Error,
         contentState: MutableStateFlow<ListContentState>,
         shareType: Share.Type = Share.Type.MAIN,
@@ -58,7 +58,7 @@ class OnFilesDriveLinkError @Inject constructor(
     }
 
     private fun DataResult.Error.isTransient(
-        previous: DataResult<DriveLink.Folder>?,
+        previous: DataResult<DriveLink>?,
         shareType: Share.Type,
     ): Boolean =
         (previous != null && previous !is DataResult.Error) ||

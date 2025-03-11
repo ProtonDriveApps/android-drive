@@ -20,11 +20,14 @@ package me.proton.core.drive.photo.data.api
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.photo.data.api.request.AddToAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreateAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreatePhotoRequest
 import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
 import me.proton.core.drive.photo.data.api.request.UpdateAlbumRequest
+import me.proton.core.drive.photo.data.extension.toAlbumData
 import me.proton.core.drive.photo.data.extension.toDtoSort
+import me.proton.core.drive.photo.domain.entity.AddToAlbumInfo
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.sorting.data.extension.toDtoDesc
 import me.proton.core.drive.sorting.domain.entity.Direction
@@ -122,16 +125,33 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
         sortingBy: PhotoListing.Album.SortBy,
         sortingDirection: Direction,
 
-    ) =
-        apiProvider
-            .get<PhotoApi>(userId)
-            .invoke {
-                getAlbumPhotoListings(
-                    volumeId = volumeId.id,
-                    linkId = albumId,
-                    anchorId = anchorId,
-                    sort = sortingBy.toDtoSort(),
-                    descending = sortingDirection.toDtoDesc(),
-                )
-            }.valueOrThrow.photos
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            getAlbumPhotoListings(
+                volumeId = volumeId.id,
+                linkId = albumId,
+                anchorId = anchorId,
+                sort = sortingBy.toDtoSort(),
+                descending = sortingDirection.toDtoDesc(),
+            )
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun addToAlbum(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: String,
+        addToAlbumInfos: List<AddToAlbumInfo>,
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            addToAlbum(
+                volumeId = volumeId.id,
+                albumId = albumId,
+                request = AddToAlbumRequest(
+                    albumData = addToAlbumInfos.toAlbumData(),
+                ),
+            )
+        }
 }

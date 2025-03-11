@@ -166,6 +166,7 @@
   <string name="content_description_select_all">Välj alla objekt i listan</string>
   <string name="content_description_selected_options">Visa fler alternativ för valda filer och/eller mappar</string>
   <string name="content_description_files_upload_upload_file">Ladda upp en fil</string>
+  <string name="content_description_albums_new">Skapa nytt album</string>
   <string name="description_empty_my_files">Tryck på knappen för att börja lägga till filer.</string>
   <string name="description_empty_folder_read_only">Det finns inget att se här</string>
   <string name="description_empty_shared">Länkade filer visas här så att du enkelt kan spåra och hantera vad som delas.</string>

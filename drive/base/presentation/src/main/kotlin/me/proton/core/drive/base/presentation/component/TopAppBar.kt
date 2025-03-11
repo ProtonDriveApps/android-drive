@@ -85,6 +85,7 @@ fun TopAppBar(
     title: @Composable (Modifier) -> Unit,
     modifier: Modifier = Modifier,
     backgroundColor: Color = ProtonTheme.colors.backgroundNorm,
+    contentColor: Color = ProtonTheme.colors.textNorm,
     notificationDotVisible: Boolean = false,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
@@ -102,7 +103,7 @@ fun TopAppBar(
         },
         actions = actions,
         backgroundColor = backgroundColor,
-        contentColor = ProtonTheme.colors.textNorm,
+        contentColor = contentColor,
         elevation = 0.dp
     )
 }

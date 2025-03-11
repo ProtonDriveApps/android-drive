@@ -20,9 +20,8 @@
   <string name="onboarding_action_skip">Ara no</string>
   <string name="onboarding_title">Deseu i xifreu automàticament les vostres fotos i vídeos</string>
   <string name="onboarding_description_part_one">Mantingui fora de perill els seus records amb</string>
-  <string name="onboarding_description_part_two">un emmagatzematge xifrat d\'extrem a extrem</string>
+  <string name="onboarding_description_part_two">emmagatzematge xifrat d\'extrem a extrem</string>
   <string name="onboarding_description_free">gratuït</string>
   <string name="onboarding_action_primary">Activa les carreges des de la càmera</string>
   <string name="onboarding_action_secondary">Més opcions de càrrega</string>
-  <string name="onboarding_action_done">Fet</string>
 </resources>

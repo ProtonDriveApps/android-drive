@@ -96,6 +96,9 @@ interface LinksRobot : PullToRefreshRobot, Robot {
     fun clickOnFile(name: String, layoutType: LayoutType = LayoutType.List) =
         clickOnItem(name, layoutType, ItemType.File, PreviewRobot)
 
+    fun clickOnAlbum(name: String, layoutType: LayoutType = LayoutType.Grid) =
+        clickOnItem(name, layoutType, ItemType.Album, AlbumRobot)
+
     fun <T : Robot> clickOnUndo(after: Duration = 0.seconds, goesTo: T): T = runBlocking {
         delay(after)
         node.withText(I18N.string.common_undo_action).clickTo(goesTo)

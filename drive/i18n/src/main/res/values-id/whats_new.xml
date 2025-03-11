@@ -17,7 +17,7 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="whats_new_title">Apa-apa saja yang baru</string>
-  <string name="whats_new_public_sharing_title">Share with anyone</string>
-  <string name="whats_new_public_sharing_description">Create shareable links to collaborate on folders and files — no Proton account required</string>
+  <string name="whats_new_title">Apa saja yang baru</string>
+  <string name="whats_new_public_sharing_title">Bagikan dengan siapa saja</string>
+  <string name="whats_new_public_sharing_description">Buat tautan berbagi untuk mengkolaborasikan folder dan berkas — tanpa perlu akun Proton</string>
 </resources>

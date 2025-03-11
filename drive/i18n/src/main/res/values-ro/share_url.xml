@@ -92,7 +92,7 @@
     -->
   <string name="shared_user_invitations_title">Articole partajate în așteptare (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Nicio partajare în așteptare</string>
-  <string name="shared_user_invitations_description_empty">Toate invitațiile noi vor fi aici.</string>
+  <string name="shared_user_invitations_description_empty">Toate noile invitații vor fi aici</string>
   <string name="shared_user_invitations_accept_button">Acceptare</string>
   <string name="shared_user_invitations_decline_button">Respingere</string>
   <string name="shared_user_invitations_accept_success">Articolul partajat a fost acceptat.</string>

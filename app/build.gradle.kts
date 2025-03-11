@@ -168,6 +168,10 @@ android {
         testInstrumentationRunner = "me.proton.android.drive.ui.HiltTestRunner"
         testInstrumentationRunnerArguments["clearPackageData"] = "true"
         testInstrumentationRunnerArguments["proxyToken"] = proxyToken
+        val androidConfig = System.getenv("ANDROID_CONFIG")
+        if (androidConfig != null) {
+            testInstrumentationRunnerArguments["androidConfig"] = androidConfig
+        }
     }
     flavorDimensions.add("default")
     productFlavors {

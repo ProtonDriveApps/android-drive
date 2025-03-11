@@ -63,6 +63,7 @@
   <string name="common_copy_link_action">Kopírovať odkaz</string>
   <string name="common_stop_sharing_action">Ukončiť zdieľanie</string>
   <string name="common_open_in_browser_action">Otvoriť v prehliadači</string>
+  <string name="common_done_action">Hotovo</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

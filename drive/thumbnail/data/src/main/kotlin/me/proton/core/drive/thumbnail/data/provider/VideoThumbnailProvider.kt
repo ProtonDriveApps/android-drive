@@ -23,6 +23,7 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Size
 import dagger.hilt.android.qualifiers.ApplicationContext
+import me.proton.core.drive.base.data.usecase.CompressBitmap
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.util.kotlin.CoreLogger
@@ -30,13 +31,14 @@ import java.io.File
 import java.io.IOException
 import javax.inject.Inject
 
-@Suppress("BlockingMethodInNonBlockingContext")
 class VideoThumbnailProvider @Inject constructor(
     @ApplicationContext private val context: Context,
+    compressBitmap: CompressBitmap,
 ) : FileThumbnailProvider(
     context = context,
     category = FileTypeCategory.Video,
     prefix = "video_thumbnail_",
+    compressBitmap = compressBitmap,
 ) {
 
     override fun fileToBitmap(file: File, size: Size) =

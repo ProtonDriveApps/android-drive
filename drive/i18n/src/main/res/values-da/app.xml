@@ -144,7 +144,7 @@
   <string name="notification_content_text_backup_paused_disabled">Sikkerhedskopiering blev deaktiveret</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Sikkerhedskopiering kan ikke køre i baggrunden</string>
   <string name="notification_content_text_backup_preparing">Klargøring til sikkerhedskopiering</string>
-  <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
+  <string name="notification_content_text_backup_failed_migration">Migration i gang, opdater din applikation</string>
   <string name="notification_content_title_download_complete">Download fuldført</string>
   <string name="notification_content_title_forced_sign_out">Log ind</string>
   <string name="notification_content_text_forced_sign_out">Beklager afbrydelsen! Vi havde et problem med synkroniseringen - log venligst ind igen, så skal vi nok få det hele til at køre som smurt.</string>
@@ -166,6 +166,7 @@
   <string name="content_description_select_all">Vælg alle elementer på listen</string>
   <string name="content_description_selected_options">Vis flere muligheder for valgte filer og/eller mapper</string>
   <string name="content_description_files_upload_upload_file">Upload en fil</string>
+  <string name="content_description_albums_new">Opret nyt album</string>
   <string name="description_empty_my_files">Tryk på knappen for at tilføje filer.</string>
   <string name="description_empty_folder_read_only">Der er intet at se her</string>
   <string name="description_empty_shared">Linkede filer vises her, så du nemt kan spore og administrere, hvad der er delt.</string>
@@ -179,7 +180,7 @@
   <string name="description_files_stop_sharing_action_success">Linket til din fil er blevet slettet.</string>
   <string name="description_files_stop_sharing_action_error">Der opstod en fejl under sletningen af linket til din fil.</string>
   <string name="description_files_stop_all_sharing">Dette vil slette linket og fjerne adgangen for alle.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Deling af din fil er blevet slettet.</string>
   <string name="description_files_stop_all_sharing_action_error">Der opstod en fejl under sletning af deling af din fil.</string>
   <string name="ignore_file_signature_action">Vis alligevel</string>
   <string name="action_empty_files_add_files">Upload</string>

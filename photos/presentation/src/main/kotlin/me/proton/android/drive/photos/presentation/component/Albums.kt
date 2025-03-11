@@ -83,6 +83,8 @@ import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.files.presentation.extension.LayoutType
+import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -101,32 +103,36 @@ fun Albums(
     val albumItems by items.collectAsStateWithLifecycle(
         initialValue = emptyList()
     )
-    viewState.listContentState
-        .onLoading {
-            AlbumsLoading(modifier)
-        }
-        .onEmpty {
-            AlbumsEmpty(modifier)
-        }
-        .onError { error ->
-            AlbumsError(
-                message = error.message,
-                actionResId = error.actionResId,
-                modifier = modifier,
-                onAction = viewEvent.onErrorAction,
-            )
-        }
-        .onContent {
-            AlbumsContent(
-                items = albumItems,
-                isRefreshEnabled = viewState.isRefreshEnabled,
-                isRefreshing = viewState.listContentState.isRefreshing,
-                modifier = modifier,
-                onRefresh = viewEvent.onRefresh,
-                onScroll = viewEvent.onScroll,
-                onClick = viewEvent.onDriveLinkAlbum,
-            )
-        }
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(ProtonDimens.DefaultSpacing),
+    ) {
+        AlbumsFilter(viewState.filters, viewEvent.onFilterSelected)
+        viewState.listContentState
+            .onLoading {
+                AlbumsLoading()
+            }
+            .onEmpty {
+                AlbumsEmpty( )
+            }
+            .onError { error ->
+                AlbumsError(
+                    message = error.message,
+                    actionResId = error.actionResId,
+                    onAction = viewEvent.onErrorAction,
+                )
+            }
+            .onContent {
+                AlbumsContent(
+                    items = albumItems,
+                    isRefreshEnabled = viewState.isRefreshEnabled,
+                    isRefreshing = viewState.listContentState.isRefreshing,
+                    onRefresh = viewEvent.onRefresh,
+                    onScroll = viewEvent.onScroll,
+                    onClick = viewEvent.onDriveLinkAlbum,
+                )
+            }
+    }
 }
 
 @Composable
@@ -287,6 +293,7 @@ fun AlbumItem(
         isAlbumNameEncrypted = album.cryptoName is CryptoProperty.Encrypted,
         albumPhotoCount = album.photoCount,
         modifier = modifier
+            .driveLinkSemantics(album, LayoutType.Grid)
             .clickable(onClick = { onClick(album) }),
         coverDriveLink = cover,
     )
@@ -303,14 +310,14 @@ fun AlbumItem(
     val even = albumPhotoCount % 2 == 0L
     val rotation = if (even) 1f else -1f
     Column(
-      modifier = modifier
-          .padding(
-              top = ProtonDimens.ExtraSmallSpacing,
-              bottom = ProtonDimens.DefaultSpacing,
-              start = ProtonDimens.DefaultSpacing,
-              end = ProtonDimens.DefaultSpacing,
-          )
-          .fillMaxWidth()
+        modifier = modifier
+            .padding(
+                top = ProtonDimens.ExtraSmallSpacing,
+                bottom = ProtonDimens.DefaultSpacing,
+                start = ProtonDimens.DefaultSpacing,
+                end = ProtonDimens.DefaultSpacing,
+            )
+            .fillMaxWidth()
     ) {
         AlbumItemCard(
             coverDriveLink = coverDriveLink,

@@ -31,13 +31,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.proton.core.drive.base.data.extension.logDefaultMessage
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.presentation.entity.NameWithSelection
+import me.proton.core.drive.base.presentation.entity.Selection
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.rename.presentation.RenameEffect
 import me.proton.core.drive.drivelink.rename.presentation.RenameViewEvent
 import me.proton.core.drive.drivelink.rename.presentation.RenameViewState
-import me.proton.core.drive.drivelink.rename.presentation.selection.NameWithSelection
-import me.proton.core.drive.drivelink.rename.presentation.selection.Selection
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId

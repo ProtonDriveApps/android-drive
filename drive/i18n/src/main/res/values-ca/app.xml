@@ -166,6 +166,7 @@
   <string name="content_description_select_all">Selecciona tots els elements a la llista</string>
   <string name="content_description_selected_options">Mostra més opcions per als fitxers i/o carpetes seleccionades</string>
   <string name="content_description_files_upload_upload_file">Carrega un fitxer</string>
+  <string name="content_description_albums_new">Crea un àlbum</string>
   <string name="description_empty_my_files">Toqueu el botó per a començar a afegir fitxers.</string>
   <string name="description_empty_folder_read_only">Aquí no hi ha res a veure</string>
   <string name="description_empty_shared">Els fitxers enllaçats apareixen aquí perquè pugueu fer-ne un seguiment i gestionar fàcilment els elements compartits.</string>

@@ -64,8 +64,8 @@
   <string name="photos_error_backup_missing_folder">Folder cadangan tidak ditemukan</string>
   <string name="photos_error_backup_failed">Pencadangan gagal.</string>
   <string name="photos_error_backup_temporarily_disabled">Pencadangan untuk sementara dinonaktifkan.</string>
-  <string name="photos_error_backup_migration_title">Update Required</string>
-  <string name="photos_error_backup_migration_description">To use photos features, please update your app to the latest version.</string>
+  <string name="photos_error_backup_migration_title">Pembaruan Dibutuhkan</string>
+  <string name="photos_error_backup_migration_description">Untuk menggunakan fitur foto, silakan perbarui aplikasi Anda ke versi terbaru.</string>
   <string name="photos_error_missing_permissions">Terdapat perizinan yang belum ditentukan.</string>
   <!--
         Variable %1$s is an application name

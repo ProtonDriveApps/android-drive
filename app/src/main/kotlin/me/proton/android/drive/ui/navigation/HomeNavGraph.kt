@@ -45,6 +45,7 @@ import me.proton.android.drive.ui.screen.SyncedFoldersScreen
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.device.domain.entity.DeviceId
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -74,6 +75,8 @@ fun HomeNavGraph(
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
     navigateToUserInvitation: () -> Unit,
+    navigateToCreateNewAlbum: () -> Unit,
+    navigateToAlbum: (AlbumId) -> Unit,
 ) = DriveNavHost(
     navController = homeNavController,
     startDestination = startDestination
@@ -122,6 +125,8 @@ fun HomeNavGraph(
         navigateToPhotosUpsell = navigateToPhotosUpsell,
         navigateToBackupSettings = navigateToBackupSettings,
         navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
+        navigateToCreateNewAlbum = navigateToCreateNewAlbum,
+        navigateToAlbum = navigateToAlbum,
     )
     addComputers(
         homeNavController,
@@ -296,6 +301,8 @@ fun NavGraphBuilder.addPhotosAndAlbums(
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
+    navigateToCreateNewAlbum: () -> Unit,
+    navigateToAlbum: (AlbumId) -> Unit,
 ) = composable(
     route = Screen.PhotosAndAlbums.route,
     arguments = listOf(
@@ -308,6 +315,17 @@ fun NavGraphBuilder.addPhotosAndAlbums(
     navBackStackEntry.get<String>(Screen.Photos.USER_ID)?.let { _ ->
         PhotosAndAlbumsScreen(
             homeScaffoldState = homeScaffoldState,
+            navigateToPhotosPermissionRationale = navigateToPhotosPermissionRationale,
+            navigateToPhotosPreview = navigateToPhotosPreview,
+            navigateToPhotosOptions = navigateToPhotosOptions,
+            navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
+            navigateToSubscription = navigateToSubscription,
+            navigateToPhotosIssues = navigateToPhotosIssues,
+            navigateToPhotosUpsell = navigateToPhotosUpsell,
+            navigateToBackupSettings = navigateToBackupSettings,
+            navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
+            navigateToCreateNewAlbum = navigateToCreateNewAlbum,
+            navigateToAlbum = navigateToAlbum,
         )
     } ?: let {
         val userId = UserId(requireNotNull(arguments.getString(Screen.PhotosAndAlbums.USER_ID)))

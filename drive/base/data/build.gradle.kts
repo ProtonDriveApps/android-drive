@@ -30,6 +30,7 @@ driveModule(
     i18n = true,
 ) {
     api(project(":drive:base:domain"))
+    api(project(":drive:feature-flag:domain"))
     api(libs.core.account.data)
     api(libs.core.data)
     api(libs.core.network.data)

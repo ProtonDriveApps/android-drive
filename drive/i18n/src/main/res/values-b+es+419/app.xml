@@ -22,18 +22,18 @@
   <string name="title_files">Archivos</string>
   <string name="title_shared">Compartido</string>
   <string name="title_my_files">Mis archivos</string>
-  <string name="title_offline_available">Disponible sin conexión</string>
-  <string name="title_empty_my_files">Adelante, añada el primer archivo</string>
+  <string name="title_offline_available">Disponibles sin conexión</string>
+  <string name="title_empty_my_files">Adelante, añada su primer archivo</string>
   <string name="title_empty_folder">Llenemos esta carpeta</string>
-  <string name="title_empty_folder_read_only">La carpeta está vacía.</string>
-  <string name="title_empty_shared">Mantenga el rastro de lo que ocurre.</string>
+  <string name="title_empty_folder_read_only">Carpeta vacía</string>
+  <string name="title_empty_shared">Manténgase al tanto de lo que ocurre</string>
   <string name="title_empty_offline_available">Nada disponible sin conexión</string>
   <string name="title_empty_trash">La papelera está vacía</string>
   <string name="title_empty_trash_action">Vaciar papelera</string>
   <string name="title_files_confirm_deletion">¿Eliminar permanentemente?</string>
-  <string name="title_default_home_screen_tab">Elegir la pestaña de la pantalla de inicio por defecto</string>
+  <string name="title_default_home_screen_tab">Elegir la pestaña de la pantalla de inicio de forma predeterminada</string>
   <!-- endregion -->
-  <string name="menu_item_header_title_app">App</string>
+  <string name="menu_item_header_title_app">Aplicación</string>
   <string name="description_signing_out">Cerrando sesión…</string>
   <string name="settings_about_links_acknowledgments_title">Agradecimientos</string>
   <string name="settings_about_links_privacy_policy_title">Política de privacidad</string>
@@ -44,9 +44,9 @@
   <string name="move_file_error_cannot_move_folder_into_itself">No puede mover una carpeta dentro de sí misma</string>
   <string name="folder_option_import_file">Cargar un archivo</string>
   <string name="folder_option_create_folder">Crear carpeta</string>
-  <string name="folder_option_take_a_photo">Tomar foto nueva</string>
-  <string name="folder_option_create_document">Crear un documento</string>
-  <string name="settings_theme_system_default">Valor predeterminado del sistema</string>
+  <string name="folder_option_take_a_photo">Tomar una nueva foto</string>
+  <string name="folder_option_create_document">Crear documento</string>
+  <string name="settings_theme_system_default">Predeterminado del sistema</string>
   <string name="settings_theme_dark">Oscuro</string>
   <string name="settings_theme_light">Claro</string>
   <!--
@@ -61,10 +61,10 @@
         Example:
             "Only files can be uploaded to Proton Drive"
     -->
-  <string name="in_app_notification_upload_files_only">Solo archivos pueden cargarse en %1$s</string>
+  <string name="in_app_notification_upload_files_only">Solo pueden cargarse archivos en %1$s</string>
   <string name="in_app_notification_importing_file_already_exists">Ya existe un archivo con ese nombre, intente borrar la caché de la aplicación</string>
-  <string name="in_app_notification_clear_local_cache_success">Caché local borrada</string>
-  <string name="in_app_notification_destination_screen_not_found">No se encontró la pantalla de destino.</string>
+  <string name="in_app_notification_clear_local_cache_success">Caché local borrada correctamente</string>
+  <string name="in_app_notification_destination_screen_not_found">Pantalla de destino no encontrada</string>
   <string name="in_app_notification_create_document_success">Documento creado</string>
   <!-- endregion -->
   <!-- region Notification -->
@@ -133,17 +133,17 @@
     <item quantity="other">Quedan %1$s elementos</item>
   </plurals>
   <string name="notification_content_text_backup_complete">Copia de seguridad finalizada</string>
-  <string name="notification_content_text_backup_uncompleted">La copia de seguridad se terminó con problemas.</string>
-  <string name="notification_content_text_backup_failed">Error de copia de seguridad</string>
+  <string name="notification_content_text_backup_uncompleted">La copia de seguridad finalizada con problemas</string>
+  <string name="notification_content_text_backup_failed">Error al hacer la copia de seguridad</string>
   <string name="notification_content_text_backup_failed_drive_storage">El almacenamiento de Proton está lleno</string>
   <string name="notification_content_text_backup_failed_local_storage">El almacenamiento local está lleno</string>
   <string name="notification_content_text_backup_failed_permission">Faltan los permisos</string>
   <string name="notification_content_text_backup_failed_connectivity">No hay conexión a internet</string>
-  <string name="notification_content_text_backup_failed_wifi_connectivity">Esperando una conexión Wi-Fi</string>
-  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">La copia de seguridad no está permitida</string>
-  <string name="notification_content_text_backup_paused_disabled">La copia de seguridad fue desactivada</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Esperando una conexión WiFi</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">No se permite hacer copias de seguridad</string>
+  <string name="notification_content_text_backup_paused_disabled">Las copias de seguridad están desactivadas</string>
   <string name="notification_content_text_backup_paused_background_restrictions">La copia de seguridad no puede ejecutarse en segundo plano</string>
-  <string name="notification_content_text_backup_preparing">Preparando el respaldo</string>
+  <string name="notification_content_text_backup_preparing">Preparando para hacer copia de seguridad</string>
   <string name="notification_content_text_backup_failed_migration">Migración en progreso. Actualice su aplicación.</string>
   <string name="notification_content_title_download_complete">Descarga completada</string>
   <string name="notification_content_title_forced_sign_out">Inicie sesión</string>
@@ -166,6 +166,7 @@
   <string name="content_description_select_all">Seleccionar todos los elementos en la lista</string>
   <string name="content_description_selected_options">Mostrar más opciones para los archivos o carpetas seleccionados</string>
   <string name="content_description_files_upload_upload_file">Cargar un archivo</string>
+  <string name="content_description_albums_new">Crear un álbum</string>
   <string name="description_empty_my_files">Pulse el botón para comenzar a añadir archivos.</string>
   <string name="description_empty_folder_read_only">No hay datos que ver aquí.</string>
   <string name="description_empty_shared">Los archivos enlazados aparecen aquí para que pueda rastrearlos y gestionar los elementos compartidos.</string>

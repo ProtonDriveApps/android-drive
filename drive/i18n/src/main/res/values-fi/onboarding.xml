@@ -24,5 +24,4 @@
   <string name="onboarding_description_free">free</string>
   <string name="onboarding_action_primary">Ota lähetykset kamerasta käyttöön</string>
   <string name="onboarding_action_secondary">Lisää lähetysvaihtoehtoja</string>
-  <string name="onboarding_action_done">Valmis</string>
 </resources>

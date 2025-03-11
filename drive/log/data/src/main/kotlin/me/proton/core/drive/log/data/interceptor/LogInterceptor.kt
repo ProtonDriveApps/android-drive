@@ -31,7 +31,6 @@ import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody
-import java.io.IOException
 import java.util.Locale
 
 class LogInterceptor : Interceptor {
@@ -43,14 +42,10 @@ class LogInterceptor : Interceptor {
         val requestOccurredAt = TimestampMs()
         val response = runCatching { chain.proceed(request) }
             .onFailure { error ->
-                val level = when {
-                    error is IOException && error.message == ERROR_MESSAGE_CANCELED -> LoggerLevel.DEBUG
-                    else -> null
-                }
                 error.log(
                     tag = LogTag.LOG,
                     message = "Proceed(${request.method.uppercase(Locale.US)} ${request.url.encodedPath}) failed",
-                    level = level,
+                    level = LoggerLevel.DEBUG,
                 )
             }
             .getOrThrow()

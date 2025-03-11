@@ -67,8 +67,8 @@
   <string name="photos_error_backup_missing_folder">Folder kopii zapasowej nie został znaleziony</string>
   <string name="photos_error_backup_failed">Tworzenie kopii zapasowej nie powiodło się.</string>
   <string name="photos_error_backup_temporarily_disabled">Tworzenie kopii zapasowej jest tymczasowo wyłączone.</string>
-  <string name="photos_error_backup_migration_title">Update Required</string>
-  <string name="photos_error_backup_migration_description">To use photos features, please update your app to the latest version.</string>
+  <string name="photos_error_backup_migration_title">Aktualizacja jest wymagana</string>
+  <string name="photos_error_backup_migration_description">Aby korzystać z funkcji zdjęć, zaktualizuj aplikację do najnowszej wersji.</string>
   <string name="photos_error_missing_permissions">Brak uprawnień.</string>
   <!--
         Variable %1$s is an application name
@@ -81,7 +81,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Użyj danych komórkowych</string>
   <string name="photos_error_local_storage">Magazyn lokalny jest pełny</string>
   <string name="photos_error_local_storage_description">Zwolnij magazyn lokalny, aby utworzyć kopię zapasową.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Ustaw wykorzystanie baterii przez aplikację na \'Bez ograniczeń\', aby umożliwić działanie aplikacji w tle.</string>
   <string name="photos_error_background_restrictions_description">Aby tworzyć regularne kopie zapasowe w tle, dostosuj wykorzystanie baterii przez aplikacje lub często otwieraj aplikację.</string>
   <string name="photos_error_background_restrictions_action">Ustawienia</string>
   <string name="photos_empty_title">Brak kopii zapasowych</string>

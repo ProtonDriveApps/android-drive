@@ -63,6 +63,7 @@
   <string name="common_copy_link_action">リンクをコピー</string>
   <string name="common_stop_sharing_action">共有を停止</string>
   <string name="common_open_in_browser_action">ブラウザで開く</string>
+  <string name="common_done_action">完了</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">音声</string>

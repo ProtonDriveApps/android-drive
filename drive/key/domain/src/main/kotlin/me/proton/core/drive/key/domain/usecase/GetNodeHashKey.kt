@@ -29,4 +29,10 @@ class GetNodeHashKey @Inject constructor(
 
     suspend operator fun invoke(folder: Link.Folder) =
         buildNodeHashKey(folder)
+
+    suspend operator fun invoke(album: Link.Album, albumKey: Key.Node) =
+        buildNodeHashKey(album, albumKey)
+
+    suspend operator fun invoke(album: Link.Album) =
+        buildNodeHashKey(album)
 }

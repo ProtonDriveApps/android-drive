@@ -28,18 +28,20 @@ import androidx.annotation.VisibleForTesting
 import androidx.core.graphics.applyCanvas
 import androidx.exifinterface.media.ExifInterface
 import dagger.hilt.android.qualifiers.ApplicationContext
-import me.proton.core.drive.base.data.extension.compress
+import me.proton.core.drive.base.data.usecase.CompressBitmap
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import javax.inject.Inject
 import kotlin.math.ceil
 import kotlin.math.roundToInt
 
-@Suppress("BlockingMethodInNonBlockingContext")
 class ImageThumbnailProvider @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val compressBitmap: CompressBitmap,
 ) : CreateThumbnail.Provider {
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
 
@@ -69,8 +71,12 @@ class ImageThumbnailProvider @Inject constructor(
                         val (rotation, isFlipped) = uri.getRotation(outMimeType)
                         inSampleSize = calculateInSampleSize(maxWidth, maxHeight, rotation)
                         val bitmap = BitmapFactory.decodeFileDescriptor(fd, null, this)?.rotate(rotation, isFlipped)
-                        bitmap?.compress(maxSize)?.also {
-                            bitmap.recycle()
+                        bitmap?.let {
+                            compressBitmap(bitmap, maxSize)
+                                .getOrNull(LogTag.THUMBNAIL, "Compressing bitmap failed")
+                                .also {
+                                    bitmap.recycle()
+                                }
                         }
                     } ?: return null
                 }

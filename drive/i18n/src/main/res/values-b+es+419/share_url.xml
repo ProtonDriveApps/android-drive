@@ -91,7 +91,7 @@
     -->
   <string name="shared_user_invitations_title">Elementos compartidos pendientes (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Ningún elemento compartido pendiente</string>
-  <string name="shared_user_invitations_description_empty">Todas las nuevas invitaciones aparecerán aquí.</string>
+  <string name="shared_user_invitations_description_empty">Todas las invitaciones nuevas aparecerán aquí</string>
   <string name="shared_user_invitations_accept_button">Aceptar</string>
   <string name="shared_user_invitations_decline_button">Rechazar</string>
   <string name="shared_user_invitations_accept_success">Se aceptó el elemento compartido.</string>

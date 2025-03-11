@@ -29,6 +29,7 @@ import me.proton.core.drive.link.domain.extension.ids
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.link.domain.usecase.InsertOrUpdateLinks
 import me.proton.core.drive.linktrash.domain.usecase.SetOrRemoveTrashState
+import me.proton.core.drive.photo.domain.usecase.InsertOrDeleteAlbumListings
 import me.proton.core.drive.photo.domain.usecase.InsertOrDeletePhotoListings
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
@@ -39,6 +40,7 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
     private val updateOfflineContent: UpdateOfflineContent,
     private val getLink: GetLink,
     private val insertOrDeletePhotoListings: InsertOrDeletePhotoListings,
+    private val insertOrDeleteAlbumListings: InsertOrDeleteAlbumListings,
 ) {
 
     suspend operator fun invoke(vos: List<LinkEventVO>) {
@@ -51,6 +53,7 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
                     setOrRemoveTrashState(volumeId, links)
                     updateOfflineContent(modifiedStateOrParentLinks.ids)
                     insertOrDeletePhotoListings(volumeId, links.filterIsInstance<Link.File>())
+                    insertOrDeleteAlbumListings(volumeId, links.filterIsInstance<Link.Album>())
                 }
         }
     }

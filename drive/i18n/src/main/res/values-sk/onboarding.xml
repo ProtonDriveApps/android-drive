@@ -24,5 +24,4 @@
   <string name="onboarding_description_free">zdarma</string>
   <string name="onboarding_action_primary">Zapnúť nahrávanie z fotoaparátu</string>
   <string name="onboarding_action_secondary">Viac možností nahrávania</string>
-  <string name="onboarding_action_done">Hotovo</string>
 </resources>

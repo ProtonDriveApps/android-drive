@@ -20,7 +20,9 @@ package me.proton.core.drive.photo.data.api.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.proton.core.drive.base.data.api.Dto.ANCHOR_ID
 import me.proton.core.drive.base.data.api.Dto.CODE
+import me.proton.core.drive.base.data.api.Dto.MORE
 import me.proton.core.drive.base.data.api.Dto.PHOTOS
 import me.proton.core.drive.photo.data.api.entity.AlbumPhotoListingDto
 
@@ -29,5 +31,9 @@ data class GetAlbumPhotoListingResponse(
     @SerialName(CODE)
     val code: Long,
     @SerialName(PHOTOS)
-    val photos: List<AlbumPhotoListingDto>
+    val photos: List<AlbumPhotoListingDto>,
+    @SerialName(ANCHOR_ID)
+    val anchorId: String? = null,
+    @SerialName(MORE)
+    val hasMore: Boolean,
 )

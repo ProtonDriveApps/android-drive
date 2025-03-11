@@ -97,8 +97,10 @@ import me.proton.android.drive.ui.navigation.internal.modalBottomSheet
 import me.proton.android.drive.ui.navigation.internal.rememberAnimatedNavController
 import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.screen.AccountSettingsScreen
+import me.proton.android.drive.ui.screen.AlbumScreen
 import me.proton.android.drive.ui.screen.AppAccessScreen
 import me.proton.android.drive.ui.screen.BackupIssuesScreen
+import me.proton.android.drive.ui.screen.CreateNewAlbumScreen
 import me.proton.android.drive.ui.screen.DefaultHomeTabScreen
 import me.proton.android.drive.ui.screen.FileInfoScreen
 import me.proton.android.drive.ui.screen.GetMoreFreeStorageScreen
@@ -378,6 +380,8 @@ fun AppNavGraph(
         addOnboarding(navController)
         addWhatsNew(navController)
         addNotificationPermissionRationale(navController)
+        addCreateNewAlbum(navController)
+        addAlbum(navController)
     }
 }
 
@@ -947,6 +951,12 @@ internal fun NavGraphBuilder.addHome(
         },
         navigateToUserInvitation = {
             navController.navigate(Screen.UserInvitation(userId))
+        },
+        navigateToCreateNewAlbum = {
+            navController.navigate(Screen.PhotosAndAlbums.CreateNewAlbum(userId))
+        },
+        navigateToAlbum = { albumId ->
+            navController.navigate(Screen.Album(albumId))
         },
         modifier = Modifier.fillMaxSize(),
     )
@@ -2133,6 +2143,50 @@ fun NavGraphBuilder.addNotificationPermissionRationale(
             message = "NotificationPermissionRationale invoked on API level ${Build.VERSION.SDK_INT}",
         )
     }
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addCreateNewAlbum(navController: NavHostController) = composable(
+    route = Screen.PhotosAndAlbums.CreateNewAlbum.route,
+    enterTransition = defaultEnterSlideTransition { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition { true },
+    arguments = listOf(
+        navArgument(Screen.Log.USER_ID) { type = NavType.StringType },
+    ),
+) {
+    CreateNewAlbumScreen(
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.PhotosAndAlbums.CreateNewAlbum.route,
+                inclusive = true,
+            )
+        }
+    )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addAlbum(navController: NavHostController) = composable(
+    route = Screen.Album.route,
+    enterTransition = defaultEnterSlideTransition { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition { true },
+    arguments = listOf(
+        navArgument(Screen.Album.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.Album.SHARE_ID) { type = NavType.StringType },
+        navArgument(Screen.Album.ALBUM_ID) { type = NavType.StringType },
+    ),
+) {
+    AlbumScreen(
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.Album.route,
+                inclusive = true,
+            )
+        }
+    )
 }
 
 private suspend fun CoroutineScope.announceScreen(

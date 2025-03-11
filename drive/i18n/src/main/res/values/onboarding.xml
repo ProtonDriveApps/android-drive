@@ -25,6 +25,6 @@
     <string name="onboarding_description_free">free</string>
     <string name="onboarding_action_primary">Turn on camera uploads</string>
     <string name="onboarding_action_secondary">More upload options</string>
-    <string name="onboarding_action_done">Done</string>
+    <string name="onboarding_action_done">@string/common_done_action</string>
 
 </resources>

@@ -23,7 +23,6 @@ import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.api.response.CodeResponse
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.NullableAlbumPhotoListingEntity
@@ -41,11 +40,12 @@ import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.photo.data.api.entity.AlbumPhotoListingDto
 import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
-import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse.AlbumListingsDto
 import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.drive.photo.data.db.entity.AlbumListingEntity
 import me.proton.core.drive.photo.data.db.entity.AlbumPhotoListingEntity
+import me.proton.core.drive.photo.data.extension.toAlbumListing
+import me.proton.core.drive.photo.domain.entity.AddToAlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.photo.domain.entity.PhotoListing
@@ -53,11 +53,14 @@ import me.proton.core.drive.photo.domain.entity.UpdateAlbumInfo
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.drive.test.DriveRule
-import me.proton.core.drive.test.api.get
+import me.proton.core.drive.test.api.addPhotosToAlbum
+import me.proton.core.drive.test.api.addPhotosToAlbumFailure
+import me.proton.core.drive.test.api.createAlbum
+import me.proton.core.drive.test.api.getAlbumListings
+import me.proton.core.drive.test.api.getAlbumPhotoListings
 import me.proton.core.drive.test.api.jsonResponse
-import me.proton.core.drive.test.api.post
-import me.proton.core.drive.test.api.put
-import me.proton.core.drive.test.api.routing
+import me.proton.core.drive.test.api.updateAlbumName
+import me.proton.core.drive.test.api.updateAlbumNameFailure
 import me.proton.core.network.data.protonApi.ProtonErrorData
 import me.proton.core.network.domain.ApiException
 import org.junit.Rule
@@ -76,19 +79,14 @@ class AlbumRepositoryTest {
 
     @Test
     fun `successful creation of album`() = runTest {
-        driveRule.server.routing {
-            post("/drive/photos/volumes/{volumeID}/albums") {
-                jsonResponse {
-                    CreateAlbumResponse(
-                        code = ProtonApiCode.SUCCESS,
-                        album = CreateAlbumResponse.AlbumDto(
-                            link = CreateAlbumResponse.LinkDto(
-                                linkId = "album-id",
-                            )
-                        )
+        driveRule.server.run {
+            createAlbum(
+                albumDto = CreateAlbumResponse.AlbumDto(
+                    link = CreateAlbumResponse.LinkDto(
+                        linkId = "album-id",
                     )
-                }
-            }
+                )
+            )
         }
 
         val albumId = albumRepository.createAlbum(userId, photoVolumeId, NullableAlbumInfo())
@@ -98,8 +96,8 @@ class AlbumRepositoryTest {
 
     @Test(expected = ApiException::class)
     fun `creating album on a regular volume fails`() = runTest {
-        driveRule.server.routing {
-            post("/drive/photos/volumes/{volumeID}/albums") {
+        driveRule.server.run {
+            createAlbum {
                 jsonResponse(status = 422) {
                     ProtonErrorData(
                         code = ProtonApiCode.NOT_EXISTS,
@@ -114,14 +112,8 @@ class AlbumRepositoryTest {
 
     @Test
     fun `successful album name update`() = runTest {
-        driveRule.server.routing {
-            put("/drive/photos/volumes/{volumeID}/albums/{linkID}") {
-                jsonResponse {
-                    CodeResponse(
-                        code = ProtonApiCode.SUCCESS.toInt(),
-                    )
-                }
-            }
+        driveRule.server.run {
+            updateAlbumName()
         }
 
         albumRepository.updateAlbum(
@@ -135,15 +127,11 @@ class AlbumRepositoryTest {
 
     @Test(expected = ApiException::class)
     fun `updating album without sufficient permissions fails`() = runTest {
-        driveRule.server.routing {
-            put("/drive/photos/volumes/{volumeID}/albums/{linkID}") {
-                jsonResponse(status = 422) {
-                    ProtonErrorData(
-                        code = ProtonApiCode.NOT_ALLOWED,
-                        error = "Insufficient permissions",
-                    )
-                }
-            }
+        driveRule.server.run {
+            updateAlbumNameFailure(
+                protonCode = ProtonApiCode.NOT_ALLOWED,
+                error = "Insufficient permissions",
+            )
         }
 
         albumRepository.updateAlbum(
@@ -306,30 +294,23 @@ class AlbumRepositoryTest {
                 }
             }
         }
-        driveRule.server.routing {
-            get("/drive/photos/volumes/{volumeID}/albums") {
-                jsonResponse {
-                    GetAlbumListingsResponse(
-                        code = ProtonApiCode.SUCCESS,
-                        anchorId = null,
-                        more = false,
-                        albums = listOf(
-                            NullableAlbumListingsDto(
-                                linkId = "album-3",
-                                lastActivityTime = 10,
-                            ),
-                            NullableAlbumListingsDto(
-                                linkId = "album-4",
-                                lastActivityTime = 15,
-                            ),
-                            NullableAlbumListingsDto(
-                                linkId = "album-5",
-                                lastActivityTime = 20,
-                            ),
-                        )
-                    )
-                }
-            }
+        driveRule.server.run {
+            getAlbumListings(
+                listOf(
+                    NullableAlbumListingsDto(
+                        linkId = "album-3",
+                        lastActivityTime = 10,
+                    ),
+                    NullableAlbumListingsDto(
+                        linkId = "album-4",
+                        lastActivityTime = 15,
+                    ),
+                    NullableAlbumListingsDto(
+                        linkId = "album-5",
+                        lastActivityTime = 20,
+                    ),
+                )
+            )
         }
 
         albumRepository.fetchAndStoreAllAlbumListings(
@@ -349,27 +330,54 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    fun `fetch album photo listings from BE`() = runTest {
-        driveRule.server.routing {
-            get("/drive/photos/volumes/{volumeID}/albums/{linkID}/children") {
-                jsonResponse {
-                    GetAlbumPhotoListingResponse(
-                        code = ProtonApiCode.SUCCESS,
-                        photos = listOf(
-                            NullableAlbumPhotoListingDto(
-                                linkId = "link-2",
-                                captureTime = 2,
-                                addedTime = 2,
-                            ),
-                            NullableAlbumPhotoListingDto(
-                                linkId = "link-1",
-                                captureTime = 1,
-                                addedTime = 1,
-                            ),
-                        )
+    fun `insert only album listings which are not already in db`() = runTest {
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    albumListings(
+                        NullableAlbumListingEntity(albumId = "album-1"),
+                        NullableAlbumListingEntity(albumId = "album-2"),
+                        NullableAlbumListingEntity(albumId = "album-3"),
                     )
                 }
             }
+        }
+        albumRepository.insertOrIgnoreAlbumListings(
+            albumListings = listOf(
+                NullableAlbumListingEntity(albumId = "album-3").toAlbumListing(),
+                NullableAlbumListingEntity(albumId = "album-4").toAlbumListing(),
+            )
+        )
+        val albumListings = driveRule.db.albumListingDao.getAlbumListings(
+            userId = userId,
+            volumeId = photoVolumeId.id,
+            direction = Direction.DESCENDING,
+            limit = 500,
+            offset = 0,
+        )
+        assertEquals(
+            listOf("album-1", "album-2", "album-3", "album-4"),
+            albumListings.map { entity -> entity.albumId }
+        )
+    }
+
+    @Test
+    fun `fetch album photo listings from BE`() = runTest {
+        driveRule.server.run {
+            getAlbumPhotoListings(
+                listOf(
+                    NullableAlbumPhotoListingDto(
+                        linkId = "link-2",
+                        captureTime = 2,
+                        addedTime = 2,
+                    ),
+                    NullableAlbumPhotoListingDto(
+                        linkId = "link-1",
+                        captureTime = 1,
+                        addedTime = 1,
+                    ),
+                )
+            )
         }
         val (albumListings, _) = albumRepository.fetchAlbumPhotoListings(
             userId = userId,
@@ -379,7 +387,10 @@ class AlbumRepositoryTest {
             sortingBy = PhotoListing.Album.SortBy.ADDED,
             sortingDirection = Direction.DESCENDING,
         )
-        assertEquals(listOf("link-2", "link-1"), albumListings.map { albumPhotoListing -> albumPhotoListing.linkId.id })
+        assertEquals(
+            listOf("link-2", "link-1"),
+            albumListings.list.map { albumPhotoListing -> albumPhotoListing.linkId.id },
+        )
     }
 
     @Test
@@ -389,26 +400,21 @@ class AlbumRepositoryTest {
                 photoShare {}
             }
         }
-        driveRule.server.routing {
-            get("/drive/photos/volumes/{volumeID}/albums/{linkID}/children") {
-                jsonResponse {
-                    GetAlbumPhotoListingResponse(
-                        code = ProtonApiCode.SUCCESS,
-                        photos = listOf(
-                            NullableAlbumPhotoListingDto(
-                                linkId = "link-2",
-                                captureTime = 2,
-                                addedTime = 2,
-                            ),
-                            NullableAlbumPhotoListingDto(
-                                linkId = "link-1",
-                                captureTime = 1,
-                                addedTime = 1,
-                            ),
-                        )
-                    )
-                }
-            }
+        driveRule.server.run {
+            getAlbumPhotoListings(
+                listOf(
+                    NullableAlbumPhotoListingDto(
+                        linkId = "link-2",
+                        captureTime = 2,
+                        addedTime = 2,
+                    ),
+                    NullableAlbumPhotoListingDto(
+                        linkId = "link-1",
+                        captureTime = 1,
+                        addedTime = 1,
+                    ),
+                )
+            )
         }
         albumRepository.fetchAndStoreAlbumPhotoListings(
             userId = userId,
@@ -595,6 +601,45 @@ class AlbumRepositoryTest {
             albumPhotoListings.map { entity -> entity.linkId }
         )
     }
+
+    @Test
+    fun `successful addition of photos into album`() = runTest {
+        driveRule.server.run {
+            addPhotosToAlbum(listOf("photo-1", "photo-2"))
+        }
+
+        albumRepository.addToAlbum(
+            volumeId = photoVolumeId,
+            albumId = AlbumId(photoShareId, "album-id"),
+            addToAlbumInfos = listOf(
+                NullableAddToAlbumInfo(linkId = "photo-1"),
+                NullableAddToAlbumInfo(linkId = "photo-2"),
+            ),
+        )
+    }
+
+    @Test(expected = ApiException::class)
+    fun `adding photos to album which has already reach the max number of children fails`() = runTest {
+        driveRule.server.run {
+            addPhotosToAlbumFailure(
+                failures = listOf(
+                    Triple(
+                        "photo-id",
+                        ProtonApiCode.TOO_MANY_CHILDREN,
+                        "Maximum number of album children reached",
+                    )
+                )
+            )
+        }
+
+        albumRepository.addToAlbum(
+            volumeId = photoVolumeId,
+            albumId = AlbumId(photoShareId, "album-id"),
+            addToAlbumInfos = listOf(
+                NullableAddToAlbumInfo(linkId = "photo-id",)
+            ),
+        )
+    }
 }
 
 @Suppress("TestFunctionName")
@@ -677,4 +722,25 @@ internal fun  NullableAlbumPhotoListingDto(
     contentHash = contentHash,
     addedTime = addedTime,
     isChildOfAlbum = isChildOfAlbum,
+)
+
+@Suppress("TestFunctionName")
+internal fun  NullableAddToAlbumInfo(
+    linkId: String,
+    name: String = "",
+    hash: String = "",
+    nameSignatureEmail: String = "",
+    nodePassphrase: String = "",
+    nodePassphraseSignature: String? = null,
+    signatureEmail: String? = null,
+    contentHash: String = "",
+) =  AddToAlbumInfo(
+    linkId = linkId,
+    name = name,
+    hash = hash,
+    nameSignatureEmail = nameSignatureEmail,
+    nodePassphrase = nodePassphrase,
+    nodePassphraseSignature = nodePassphraseSignature,
+    signatureEmail = signatureEmail,
+    contentHash = contentHash,
 )

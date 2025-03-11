@@ -55,8 +55,13 @@ class CreateFolderInfo @Inject constructor(
     suspend operator fun invoke(
         parentFolder: Link.Folder,
         name: String,
+        shouldValidateName: Boolean = true,
     ): Result<Pair<String, FolderInfo>> = coRunCatching {
-        val folderName = validateLinkName(name).getOrThrow()
+        val folderName = if (shouldValidateName) {
+            validateLinkName(name).getOrThrow()
+        } else {
+            name
+        }
         val parentFolderKey = getNodeKey(parentFolder).getOrThrow()
         val parentFolderHashKey = getNodeHashKey(parentFolder, parentFolderKey).getOrThrow()
         val userId = parentFolder.id.userId

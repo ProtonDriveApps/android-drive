@@ -46,6 +46,7 @@ driveModule(
     api(libs.core.presentation.compose)
 
     implementation(project(":drive:base:data"))
+    implementation(libs.bundles.accompanist)
     implementation(libs.retrofit)
 }
 

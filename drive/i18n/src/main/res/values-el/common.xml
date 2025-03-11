@@ -63,6 +63,7 @@
   <string name="common_copy_link_action">Αντιγραφή συνδέσμου</string>
   <string name="common_stop_sharing_action">Διακοπή κοινής χρήσης</string>
   <string name="common_open_in_browser_action">Άνοιγμα στο πρόγραμμα περιήγησης</string>
+  <string name="common_done_action">Έτοιμο</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ήχος</string>

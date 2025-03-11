@@ -19,5 +19,5 @@
 <resources>
   <string name="whats_new_title">Новыя функцыі</string>
   <string name="whats_new_public_sharing_title">Абагуліць з усімі</string>
-  <string name="whats_new_public_sharing_description">Create shareable links to collaborate on folders and files — no Proton account required</string>
+  <string name="whats_new_public_sharing_description">Стварайце абагуленыя спасылкі для сумеснай працы над папкамі. Без неабходнасці рэгістрацыі ў Proton</string>
 </resources>

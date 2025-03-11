@@ -27,10 +27,13 @@ android {
 driveModule(
     hilt = true,
     i18n = true,
+    socialTest = true,
 ) {
     api(project(":photos:domain"))
     api(project(":drive:backup:data"))
     api(project(":drive:base:data"))
     api(project(":drive:telemetry:domain"))
+    implementation(libs.androidx.dataStore.core)
+    implementation(libs.androidx.dataStore.preferences)
     testImplementation(project(":drive:db-test"))
 }

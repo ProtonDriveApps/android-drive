@@ -22,8 +22,10 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.photo.domain.entity.AddToAlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumListing
+import me.proton.core.drive.photo.domain.entity.AlbumPhotoListingList
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.photo.domain.entity.UpdateAlbumInfo
 import me.proton.core.drive.share.domain.entity.ShareId
@@ -64,6 +66,12 @@ interface AlbumRepository {
         sortingDirection: Direction = Direction.DESCENDING,
     ): Flow<Result<List<AlbumListing>>>
 
+    suspend fun insertOrIgnoreAlbumListings(
+        albumListings: List<AlbumListing>,
+    )
+
+    suspend fun delete(albumIds: List<AlbumId>)
+
     suspend fun fetchAlbumPhotoListings(
         userId: UserId,
         volumeId: VolumeId,
@@ -71,7 +79,7 @@ interface AlbumRepository {
         anchorId: String?,
         sortingBy: PhotoListing.Album.SortBy,
         sortingDirection: Direction = Direction.DESCENDING,
-    ): Pair<List<PhotoListing.Album>, SaveAction>
+    ): Pair<AlbumPhotoListingList, SaveAction>
 
     suspend fun fetchAndStoreAlbumPhotoListings(
         userId: UserId,
@@ -103,6 +111,12 @@ interface AlbumRepository {
         sortingDirection: Direction = Direction.DESCENDING,
     ): Flow<Result<List<PhotoListing.Album>>>
 
+    fun getAlbumPhotoListingCount(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+    ): Flow<Int>
+
     suspend fun deleteAllAlbumPhotoListings(userId: UserId, volumeId: VolumeId, albumId: AlbumId)
 
     suspend fun insertOrIgnoreAlbumPhotoListing(
@@ -111,4 +125,10 @@ interface AlbumRepository {
     )
 
     fun getAlbumListingsUrl(volumeId: VolumeId) = "drive/photos/volumes/${volumeId.id}/albums"
+
+    suspend fun addToAlbum(
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        addToAlbumInfos: List<AddToAlbumInfo>,
+    )
 }

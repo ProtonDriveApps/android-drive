@@ -166,6 +166,7 @@
   <string name="content_description_select_all">Επιλογή όλων των στοιχείων στη λίστα</string>
   <string name="content_description_selected_options">Εμφάνιση περισσότερων επιλογών για επιλεγμένα αρχεία ή/και φακέλους</string>
   <string name="content_description_files_upload_upload_file">Ανέβασε ένα αρχείο</string>
+  <string name="content_description_albums_new">Δημιουργήστε νέο άλμπουμ</string>
   <string name="description_empty_my_files">Πατήστε το κουμπί για να αρχίσετε να προσθέτετε αρχεία.</string>
   <string name="description_empty_folder_read_only">Δεν υπάρχει τίποτα να δείτε εδώ</string>
   <string name="description_empty_shared">Τα συνδεδεμένα αρχεία εμφανίζονται εδώ, ώστε να μπορείτε εύκολα να παρακολουθείτε και να διαχειρίζεστε τα ήδη διαμοιρασμένα.</string>

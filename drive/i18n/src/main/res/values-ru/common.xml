@@ -63,6 +63,7 @@
   <string name="common_copy_link_action">Копировать ссылку</string>
   <string name="common_stop_sharing_action">Прекратить доступ</string>
   <string name="common_open_in_browser_action">Открыть в браузере</string>
+  <string name="common_done_action">Done</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аудио</string>

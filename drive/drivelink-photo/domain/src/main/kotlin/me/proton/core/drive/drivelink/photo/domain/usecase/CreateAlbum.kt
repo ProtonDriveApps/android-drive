@@ -23,6 +23,7 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.folder.CreateFolderInfo
 import me.proton.core.drive.drivelink.photo.domain.extension.toAlbumInfo
+import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.extension.rootFolderId
 import me.proton.core.drive.link.domain.usecase.GetLink
@@ -35,6 +36,7 @@ class CreateAlbum @Inject constructor(
     private val getPhotoShare: GetPhotoShare,
     private val getLink: GetLink,
     private val albumRepository: AlbumRepository,
+    private val updateEventAction: UpdateEventAction,
 ) {
     suspend operator fun invoke(
         userId: UserId,
@@ -43,14 +45,20 @@ class CreateAlbum @Inject constructor(
     ): Result<AlbumId> = coRunCatching {
         val photoShare = getPhotoShare(userId).toResult().getOrThrow()
         val photoShareRootLink = getLink(photoShare.rootFolderId).toResult().getOrThrow()
-        val (_, folderInfo) = createFolderInfo(photoShareRootLink, albumName).getOrThrow()
-        AlbumId(
-            shareId = photoShare.id,
-            id = albumRepository.createAlbum(
-                userId = userId,
-                volumeId = photoShare.volumeId,
-                albumInfo = folderInfo.toAlbumInfo(isLocked),
+        val (_, folderInfo) = createFolderInfo(
+            parentFolder = photoShareRootLink,
+            name = albumName,
+            shouldValidateName = false,
+        ).getOrThrow()
+        updateEventAction(userId, photoShare.volumeId) {
+            AlbumId(
+                shareId = photoShare.id,
+                id = albumRepository.createAlbum(
+                    userId = userId,
+                    volumeId = photoShare.volumeId,
+                    albumInfo = folderInfo.toAlbumInfo(isLocked),
+                )
             )
-        )
+        }
     }
 }

@@ -166,6 +166,7 @@
   <string name="content_description_select_all">Listedeki tüm ögeleri seç</string>
   <string name="content_description_selected_options">Seçilmiş dosya ve/veya klasörler için diğer seçenekleri görüntüle</string>
   <string name="content_description_files_upload_upload_file">Bir dosya yükleyin</string>
+  <string name="content_description_albums_new">Yeni albüm oluştur</string>
   <string name="description_empty_my_files">Dosyalar eklemeye başlamak için düğmeye dokunun.</string>
   <string name="description_empty_folder_read_only">Burada görecek bir şey yok</string>
   <string name="description_empty_shared">Bağlantılı dosyalar burada görüntülenir. Böylece paylaşımları kolayca izleyip yönetebilirsiniz.</string>

@@ -28,8 +28,8 @@ import me.proton.android.drive.extension.debug
 import me.proton.android.drive.photos.data.di.PhotosConfigurationModule
 import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
 import me.proton.android.drive.provider.PhotosConnectedDefaultConfigurationProvider
-import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.annotation.FeatureFlag
+import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SettingsRobot
@@ -374,6 +374,25 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
                 assertPhotoDisplayed("0_0.jpg")
                 assertPhotoCountEquals(2)
             }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
+    fun deletedSyncedFolder() {
+        dcimCameraFolder.copyFileFromAssets("boat.jpg")
+
+        PhotosTabRobot
+            .enableBackup()
+            .verify {
+                assertBackupCompleteDisplayed()
+            }
+
+        dcimCameraFolder.deleteFile("boat.jpg")
+
+        PhotosTabRobot.verify {
+            assertMissingFolderDisplayed()
+        }
     }
 
     @Module

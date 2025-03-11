@@ -53,6 +53,7 @@ class UsedSpaceTest : PhotosBaseTest() {
 
         PhotosTabRobot
             .enableBackup()
+            .dismissBackupSetupGrowler("Camera")
     }
 
     @Test

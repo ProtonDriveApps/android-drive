@@ -161,6 +161,7 @@
   <string name="content_description_select_all">Pilih semua item dalam daftar</string>
   <string name="content_description_selected_options">Tampilkan lebih banyak pilihan untuk berkas dan/atau folder yang dipilih</string>
   <string name="content_description_files_upload_upload_file">Unggah berkas</string>
+  <string name="content_description_albums_new">Buat album baru</string>
   <string name="description_empty_my_files">Ketuk tombol yang ada pada layar untuk mulai menambahkan berkas.</string>
   <string name="description_empty_folder_read_only">Tidak ada apa-apa di sini</string>
   <string name="description_empty_shared">Seluruh berkas yang ditautkan akan muncul pada layar ini, sehingga Anda dapat melacak dan mengelola apa-apa saja yang dibagikan dengan mudah.</string>

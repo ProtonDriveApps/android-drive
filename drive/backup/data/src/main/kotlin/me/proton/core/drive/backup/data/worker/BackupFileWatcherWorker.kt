@@ -37,6 +37,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.repository.ContextScanFilesRepository
 import me.proton.core.drive.backup.data.repository.ContextScanFilesRepository.ScanResult
 import me.proton.core.drive.backup.domain.entity.BucketUpdate
+import me.proton.core.drive.backup.domain.usecase.CheckMissingFolders
 import me.proton.core.drive.backup.domain.usecase.RescanAllFolders
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.log
@@ -52,6 +53,7 @@ class BackupFileWatcherWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val syncFolders: SyncFolders,
     private val rescanAllFolders: RescanAllFolders,
+    private val checkMissingFolders: CheckMissingFolders,
     private val workManager: WorkManager,
     private val contextScanFilesRepository: ContextScanFilesRepository,
 ) : CoroutineWorker(context, workerParams) {
@@ -113,6 +115,9 @@ class BackupFileWatcherWorker @AssistedInject constructor(
                     BACKUP,
                     "BackupFileWatcherWorker will do nothing to prevent empty sync"
                 )
+                checkMissingFolders(userId).onFailure { error ->
+                    error.log(BACKUP, "Cannot check missing folders")
+                }
             } else {
                 CoreLogger.d(BACKUP, "BackupFileWatcherWorker found $foundCount files")
                 val bucketUpdates = founds.map { found ->

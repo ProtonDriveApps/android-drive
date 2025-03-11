@@ -50,7 +50,7 @@ import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.OutlinedTextFieldWithError
-import me.proton.core.drive.drivelink.rename.presentation.selection.Selection
+import me.proton.core.drive.base.presentation.entity.Selection
 import me.proton.core.drive.drivelink.rename.presentation.viewmodel.RenameLinkViewModel
 import me.proton.core.drive.drivelink.rename.presentation.viewmodel.RenameViewModel
 import me.proton.core.drive.i18n.R as I18N

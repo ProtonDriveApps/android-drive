@@ -176,6 +176,7 @@
   <string name="content_description_select_all">Vybrať všetky položky v zozname</string>
   <string name="content_description_selected_options">Zobraziť viac možností pre vybrané súbory a/alebo priečinky</string>
   <string name="content_description_files_upload_upload_file">Nahrať súbor</string>
+  <string name="content_description_albums_new">Vytvoriť nový album</string>
   <string name="description_empty_my_files">Kliknutím na tlačidlo začnete pridávať súbory.</string>
   <string name="description_empty_folder_read_only">Nie je tu nič k videniu</string>
   <string name="description_empty_shared">Tu sa zobrazujú odkazované súbory, takže môžete ľahko sledovať a spravovať, čo zdieľate.</string>

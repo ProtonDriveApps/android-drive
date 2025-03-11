@@ -176,6 +176,7 @@
   <string name="content_description_select_all">Вибрати усі елементи у цьому списку</string>
   <string name="content_description_selected_options">Показати більше опцій для вибраних файлів і/або тек</string>
   <string name="content_description_files_upload_upload_file">Вивантажити файл</string>
+  <string name="content_description_albums_new">Create new album</string>
   <string name="description_empty_my_files">Торкніться кнопки, щоб розпочати додавання файлів.</string>
   <string name="description_empty_folder_read_only">Тут нічого немає</string>
   <string name="description_empty_shared">Тут з\'являються пов\'язані файли, щоб ви могли легко відстежувати та керувати спільним доступом.</string>

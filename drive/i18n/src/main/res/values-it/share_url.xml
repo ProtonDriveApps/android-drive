@@ -91,7 +91,7 @@
     -->
   <string name="shared_user_invitations_title">Elementi condivisi in sospeso (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Nessun elemento condiviso in sospeso</string>
-  <string name="shared_user_invitations_description_empty">Tutti i nuovi inviti saranno qui</string>
+  <string name="shared_user_invitations_description_empty">Tutti i nuovi inviti saranno qui.</string>
   <string name="shared_user_invitations_accept_button">Accetta</string>
   <string name="shared_user_invitations_decline_button">Rifiuta</string>
   <string name="shared_user_invitations_accept_success">Elemento condiviso accettato</string>

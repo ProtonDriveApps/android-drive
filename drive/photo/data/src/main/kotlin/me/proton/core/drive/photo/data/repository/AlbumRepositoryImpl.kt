@@ -23,12 +23,13 @@ import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.repository.BaseRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.data.api.PhotoApiDataSource
-import me.proton.core.drive.photo.data.api.entity.AlbumPhotoListingDto
+import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.photo.data.db.entity.AlbumListingEntity
 import me.proton.core.drive.photo.data.extension.toAlbumListing
@@ -37,8 +38,10 @@ import me.proton.core.drive.photo.data.extension.toAlbumPhotoListing
 import me.proton.core.drive.photo.data.extension.toAlbumPhotoListingEntity
 import me.proton.core.drive.photo.data.extension.toCreateAlbumRequest
 import me.proton.core.drive.photo.data.extension.toUpdateAlbumRequest
+import me.proton.core.drive.photo.domain.entity.AddToAlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumListing
+import me.proton.core.drive.photo.domain.entity.AlbumPhotoListingList
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.photo.domain.entity.UpdateAlbumInfo
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
@@ -51,6 +54,7 @@ class AlbumRepositoryImpl @Inject constructor(
     private val api: PhotoApiDataSource,
     private val db: PhotoDatabase,
     private val baseRepository: BaseRepository,
+    private val configurationProvider: ConfigurationProvider,
 ) : AlbumRepository {
 
     override suspend fun createAlbum(userId: UserId, volumeId: VolumeId, albumInfo: AlbumInfo) =
@@ -152,6 +156,26 @@ class AlbumRepositoryImpl @Inject constructor(
             }
         }
 
+    override suspend fun insertOrIgnoreAlbumListings(
+        albumListings: List<AlbumListing>
+    ) {
+        db.albumListingDao.insertOrIgnore(
+            *albumListings.map { albumListing ->
+                albumListing.toAlbumListingEntity()
+            }.toTypedArray()
+        )
+    }
+
+    override suspend fun delete(albumIds: List<AlbumId>) {
+        db.inTransaction {
+            albumIds
+                .groupBy({ albumId -> albumId.shareId }) { albumId -> albumId.id }
+                .forEach { (shareId, albumIds) ->
+                    db.albumListingDao.delete(shareId.userId, shareId.id, albumIds)
+                }
+        }
+    }
+
     override suspend fun fetchAlbumPhotoListings(
         userId: UserId,
         volumeId: VolumeId,
@@ -159,7 +183,7 @@ class AlbumRepositoryImpl @Inject constructor(
         anchorId: String?,
         sortingBy: PhotoListing.Album.SortBy,
         sortingDirection: Direction,
-    ): Pair<List<PhotoListing.Album>, SaveAction> =
+    ): Pair<AlbumPhotoListingList, SaveAction> =
         fetchAlbumPhotoListingDtos(
             userId = userId,
             volumeId = volumeId,
@@ -167,10 +191,15 @@ class AlbumRepositoryImpl @Inject constructor(
             anchorId = anchorId,
             sortingBy = sortingBy,
             sortingDirection = sortingDirection,
-        ).map { photoListingDto ->
-            photoListingDto.toAlbumPhotoListing(albumId.shareId, albumId)
-        }.let { albumPhotoListings ->
-            albumPhotoListings to SaveAction {
+        ).let { response ->
+            val albumPhotoListings = response.photos.map { albumPhotoListingDto ->
+                albumPhotoListingDto.toAlbumPhotoListing(albumId.shareId, albumId)
+            }
+            AlbumPhotoListingList(
+                list = albumPhotoListings,
+                anchorId = response.anchorId,
+                hasMore = response.hasMore,
+            ) to SaveAction {
                 db.albumPhotoListingDao.insertOrUpdate(
                     *albumPhotoListings.map { albumPhotoListing ->
                         albumPhotoListing.toAlbumPhotoListingEntity(volumeId)
@@ -195,7 +224,7 @@ class AlbumRepositoryImpl @Inject constructor(
             anchorId = anchorId,
             sortingBy = sortingBy,
             sortingDirection = sortingDirection,
-        )
+        ).photos
         db.albumPhotoListingDao.insertOrUpdate(
             *albumPhotoListingDtos.map { albumPhotoListingDto ->
                 albumPhotoListingDto.toAlbumPhotoListingEntity(volumeId, shareId, albumId)
@@ -250,6 +279,13 @@ class AlbumRepositoryImpl @Inject constructor(
             }
         }
 
+    override fun getAlbumPhotoListingCount(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+    ): Flow<Int> =
+        db.albumPhotoListingDao.getAlbumPhotoListingCount(userId, volumeId.id, albumId.id)
+
     override suspend fun deleteAllAlbumPhotoListings(
         userId: UserId,
         volumeId: VolumeId,
@@ -267,6 +303,21 @@ class AlbumRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun addToAlbum(
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        addToAlbumInfos: List<AddToAlbumInfo>,
+    ) {
+        addToAlbumInfos.chunked(configurationProvider.addToAlbumMaxApiDataSize).forEach { chunk ->
+            api.addToAlbum(
+                userId = albumId.userId,
+                volumeId = volumeId,
+                albumId = albumId.id,
+                addToAlbumInfos = chunk,
+            ).valueOrThrow
+        }
+    }
+
     private suspend fun fetchAlbumPhotoListingDtos(
         userId: UserId,
         volumeId: VolumeId,
@@ -274,7 +325,7 @@ class AlbumRepositoryImpl @Inject constructor(
         anchorId: String?,
         sortingBy: PhotoListing.Album.SortBy,
         sortingDirection: Direction,
-    ): List<AlbumPhotoListingDto> =
+    ): GetAlbumPhotoListingResponse =
         api.getAlbumPhotoListings(
             userId = userId,
             volumeId = volumeId,

@@ -43,6 +43,15 @@ fun DriveLink.File.thumbnailVO(type: ThumbnailType = ThumbnailType.DEFAULT) = Th
     thumbnailId = thumbnailIds.first { thumbnailId -> thumbnailId.type == type }
 )
 
+fun DriveLink.File.photoThumbnailVO() = ThumbnailVO(
+    volumeId = volumeId,
+    fileId = id,
+    revisionId = activeRevisionId,
+    thumbnailId = thumbnailIds.firstOrNull { thumbnailId ->
+        thumbnailId.type == ThumbnailType.PHOTO
+    } ?: thumbnailIds.first { thumbnailId -> thumbnailId.type == ThumbnailType.DEFAULT }
+)
+
 @Composable
 fun DriveLink.thumbnailPainter(radius: Dp = 0.dp) = ThumbnailPainterWrapper(
     painter = when {

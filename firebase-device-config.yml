@@ -24,4 +24,8 @@ tier-1: # no english as it is the default for other targets
     - model: MediumPhone.arm
       version: 33
       locale: de
+cross-client: # only one device
+  device:
+    - model: MediumPhone.arm
+      version: 33
 

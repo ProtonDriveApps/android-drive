@@ -24,5 +24,4 @@
   <string name="onboarding_description_free">kostenlos</string>
   <string name="onboarding_action_primary">Kamera-Uploads aktivieren</string>
   <string name="onboarding_action_secondary">Weitere Uploadoptionen</string>
-  <string name="onboarding_action_done">Fertig</string>
 </resources>

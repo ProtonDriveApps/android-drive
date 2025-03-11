@@ -27,9 +27,12 @@ import androidx.compose.ui.Modifier
 import me.proton.core.compose.theme.ProtonDimens
 
 @Composable
-fun PhotosBanners(content: @Composable ColumnScope.() -> Unit) {
+fun PhotosBanners(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     Column(
-        modifier = Modifier.padding(
+        modifier = modifier.padding(
             start = ProtonDimens.DefaultSpacing,
             end = ProtonDimens.DefaultSpacing,
             bottom = ProtonDimens.SmallSpacing,

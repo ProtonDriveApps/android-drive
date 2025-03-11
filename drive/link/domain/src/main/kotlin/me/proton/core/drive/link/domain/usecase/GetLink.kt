@@ -25,6 +25,7 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.arch.mapSuccess
 import me.proton.core.drive.base.domain.repository.fetcher
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
@@ -63,6 +64,21 @@ class GetLink @Inject constructor(
                 DataResult.Error.Local("FolderId $folderId was not a folder", null)
             } else {
                 DataResult.Error.Remote("FolderId $folderId was not a folder", null)
+            }
+        }
+    }
+
+    operator fun invoke(
+        albumId: AlbumId,
+        refresh: Flow<Boolean> = hasLink(albumId).map { hasLink -> !hasLink },
+    ): Flow<DataResult<Link.Album>> = invoke(albumId as LinkId, refresh).mapSuccess { (source, link) ->
+        if (link is Link.Album) {
+            DataResult.Success(source, link)
+        } else {
+            if (source == ResponseSource.Local) {
+                DataResult.Error.Local("AlbumId $albumId was not an album", null)
+            } else {
+                DataResult.Error.Remote("AlbumId $albumId was not an album", null)
             }
         }
     }

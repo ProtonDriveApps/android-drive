@@ -57,6 +57,9 @@ open class SelectionViewModel(
     private val selectAll: SelectAll,
     private val getSelectedDriveLinks: GetSelectedDriveLinks,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
+
+    protected open val driveLinkFilter: (DriveLink) -> Boolean = { true }
+
     protected val selectionId = MutableStateFlow(
         savedStateHandle.get<String?>(KEY_SELECTION_ID)?.let { SelectionId(it) }
     )
@@ -76,7 +79,11 @@ open class SelectionViewModel(
         contentDescriptionResId = I18N.string.content_description_select_all,
         onAction = {
             viewModelScope.launch {
-                selectAll(parentFolderId.filterNotNull().first(), selectionId.value)
+                selectAll(
+                    parentId = parentFolderId.filterNotNull().first(),
+                    selectionId = selectionId.value,
+                    driveLinkFilter = driveLinkFilter,
+                )
             }
         }
     )

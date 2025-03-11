@@ -24,19 +24,21 @@ import android.graphics.pdf.PdfRenderer
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import dagger.hilt.android.qualifiers.ApplicationContext
-import me.proton.core.drive.base.data.extension.compress
+import me.proton.core.drive.base.data.usecase.CompressBitmap
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
 class PdfThumbnailProvider @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val compressBitmap: CompressBitmap,
 ) : CreateThumbnail.Provider {
 
-    @Suppress("BlockingMethodInNonBlockingContext")
     override suspend fun getThumbnail(
         uriString: String,
         mimeType: String,
@@ -61,9 +63,11 @@ class PdfThumbnailProvider @Inject constructor(
                     )
                     bitmap.eraseColor(Color.WHITE)
                     page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
-                    bitmap.compress(maxSize).also {
-                        bitmap.recycle()
-                    }
+                    compressBitmap(bitmap, maxSize)
+                        .getOrNull(LogTag.THUMBNAIL, "Compressing bitmap failed")
+                        .also {
+                            bitmap.recycle()
+                        }
                 }
             }
         } catch (e: OutOfMemoryError) {

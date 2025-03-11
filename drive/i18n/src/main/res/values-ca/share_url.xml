@@ -66,12 +66,12 @@
             "Expiration date must not be after more then 90 days"
     -->
   <string name="shared_link_error_message_expiration_date_too_late">La data de caducitat no pot ser de més de %1$d dies</string>
-  <string name="shared_link_error_legacy_link">Aquest enllaç és antic i la seva gestió no està suportada. Es recomana que deixeu de compartir-lo i n\'obteniu un de nou.</string>
+  <string name="shared_link_error_legacy_link">Aquest enllaç és antic i ja no se n\'admet la gestió. Es recomana que deixeu de compartir-lo i n\'obteniu un de nou.</string>
   <string name="title_share_via_link">Comparteix amb un enllaç</string>
   <string name="shared_with_me_title">Compartit amb mi</string>
   <string name="shared_by_me_title">Compartit per mi</string>
   <string name="shared_empty_title">Encara no s\'ha compartit res</string>
-  <string name="shared_with_me_empty_description">Els fitxers i les carpetes que us han compartit apareixeran aquí.</string>
+  <string name="shared_with_me_empty_description">Els fitxers i les carpetes compartides amb vós apareixeran aquí.</string>
   <string name="shared_by_me_empty_description">Compartiu de manera segura els vostres fitxers i carpetes amb un xifratge d\'extrem a extrem</string>
   <string name="shared_by_me_invitation_banner_title">Elements compartits pendents</string>
   <!--

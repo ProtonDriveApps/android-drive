@@ -24,5 +24,4 @@
   <string name="onboarding_description_free">ücretsiz</string>
   <string name="onboarding_action_primary">Kamera yüklemelerini aç</string>
   <string name="onboarding_action_secondary">Diğer yükleme seçenekleri</string>
-  <string name="onboarding_action_done">Tamam</string>
 </resources>

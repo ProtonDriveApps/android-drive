@@ -17,7 +17,7 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="file_info_uploaded_by_entry">Przesłany przez</string>
+  <string name="file_info_uploaded_by_entry">Przesłano przez</string>
   <string name="file_info_location_entry">Lokalizacja</string>
   <string name="file_info_last_modified_entry">Zmodyfikowano</string>
   <string name="file_info_number_of_accesses_entry">Liczba pobrań</string>

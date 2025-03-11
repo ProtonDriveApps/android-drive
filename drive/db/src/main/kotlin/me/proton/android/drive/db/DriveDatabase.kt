@@ -63,6 +63,7 @@ import me.proton.core.drive.drivelink.offline.data.db.DriveLinkOfflineDatabase
 import me.proton.core.drive.drivelink.paged.data.db.DriveLinkPagedDatabase
 import me.proton.core.drive.drivelink.paged.data.db.entity.DriveLinkRemoteKeyEntity
 import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
+import me.proton.core.drive.drivelink.photo.data.db.entity.AlbumPhotoListingRemoteKeyEntity
 import me.proton.core.drive.drivelink.photo.data.db.entity.PhotoListingRemoteKeyEntity
 import me.proton.core.drive.drivelink.selection.data.db.DriveLinkSelectionDatabase
 import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
@@ -296,6 +297,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         PhotoListingRemoteKeyEntity::class,
         AlbumPhotoListingEntity::class,
         AlbumListingEntity::class,
+        AlbumPhotoListingRemoteKeyEntity::class,
         // FeatureFlag
         DriveFeatureFlagRefreshEntity::class,
         MediaStoreVersionEntity::class,
@@ -414,7 +416,7 @@ abstract class DriveDatabase :
     DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 78
+        const val VERSION = 79
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -494,6 +496,7 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_75_76,
             DriveDatabaseMigrations.MIGRATION_76_77,
             DriveDatabaseMigrations.MIGRATION_77_78,
+            DriveDatabaseMigrations.MIGRATION_78_79,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

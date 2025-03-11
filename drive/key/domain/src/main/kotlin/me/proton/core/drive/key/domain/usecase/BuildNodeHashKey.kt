@@ -17,11 +17,12 @@
  */
 package me.proton.core.drive.key.domain.usecase
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.entity.NodeHashKey
 import me.proton.core.drive.link.domain.entity.Link
-import me.proton.core.drive.link.domain.extension.shareId
+import me.proton.core.drive.link.domain.extension.userId
 import javax.inject.Inject
 
 class BuildNodeHashKey @Inject constructor(
@@ -29,19 +30,54 @@ class BuildNodeHashKey @Inject constructor(
     private val getAddressKeys: GetAddressKeys,
 ){
 
-    suspend operator fun invoke(folder: Link.Folder, folderKey: Key.Node): Result<NodeHashKey> =
-        coRunCatching {
-            NodeHashKey(
-                decryptKey = folderKey,
-                legacyVerifyKey = getAddressKeys(folder.shareId.userId, folder.signatureEmail),
-                encryptedHashKey = folder.nodeHashKey
-            )
-        }
+    suspend operator fun invoke(
+        folder: Link.Folder,
+        folderKey: Key.Node
+    ): Result<NodeHashKey> = nodeHashKey(
+        userId = folder.userId,
+        key = folderKey,
+        nodeHashKey = folder.nodeHashKey,
+        signatureEmail = folder.signatureEmail,
+    )
 
-    suspend operator fun invoke(folder: Link.Folder) = coRunCatching {
+    suspend operator fun invoke(
+        folder: Link.Folder,
+    ) = coRunCatching {
         invoke(
             folder = folder,
             folderKey = getNodeKey(folder).getOrThrow(),
         ).getOrThrow()
+    }
+
+    suspend operator fun invoke(
+        album: Link.Album,
+        albumKey: Key.Node,
+    ): Result<NodeHashKey> = nodeHashKey(
+        userId = album.userId,
+        key = albumKey,
+        nodeHashKey = album.nodeHashKey,
+        signatureEmail = album.signatureEmail,
+    )
+
+    suspend operator fun invoke(
+        album: Link.Album,
+    ) = coRunCatching {
+        invoke(
+            album = album,
+            albumKey = getNodeKey(album).getOrThrow(),
+        ).getOrThrow()
+    }
+
+    private suspend fun nodeHashKey(
+        userId: UserId,
+        key: Key.Node,
+        nodeHashKey: String,
+        signatureEmail: String,
+    ) = coRunCatching {
+        NodeHashKey(
+            decryptKey = key,
+            legacyVerifyKey = getAddressKeys(userId, signatureEmail),
+            encryptedHashKey = nodeHashKey,
+        )
     }
 }

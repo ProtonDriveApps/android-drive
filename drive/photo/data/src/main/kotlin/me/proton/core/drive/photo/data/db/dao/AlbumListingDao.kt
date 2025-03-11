@@ -47,6 +47,9 @@ abstract class AlbumListingDao : BaseDao<AlbumListingEntity>() {
         offset: Int,
     ): Flow<List<AlbumListingEntity>>
 
+    @Query("DELETE FROM AlbumListingEntity WHERE user_id = :userId AND share_id = :shareId AND id in (:linkIds)")
+    abstract suspend fun delete(userId: UserId, shareId: String, linkIds: List<String>)
+
     @Query("DELETE FROM AlbumListingEntity WHERE user_id = :userId AND volume_id = :volumeId")
     abstract suspend fun deleteAll(userId: UserId, volumeId: String)
 

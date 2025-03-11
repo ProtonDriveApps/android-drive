@@ -27,6 +27,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.proton.android.drive.ui.options.OptionsFilter
+import me.proton.android.drive.ui.viewmodel.AlbumViewModel
 import me.proton.android.drive.ui.viewmodel.ComputerOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ConfirmStopAllSharingDialogViewModel
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
@@ -315,18 +316,31 @@ sealed class Screen(val route: String) {
 
         operator fun invoke(userId: UserId, shareId: ShareId?) = "home/${userId.id}/photos/${shareId?.id}"
 
-        data object Upsell : Screen("home/{userId}/photos/upsell"){
+        data object Upsell : Screen("home/{userId}/photos/upsell") {
             operator fun invoke(userId: UserId) = "home/${userId.id}/photos/upsell"
         }
 
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = "shareId"
     }
-    data object PhotosAndAlbums : Screen("home/{userId}/photos_albums"), HomeTab {
+    data object PhotosAndAlbums : Screen("home/{userId}/photos"), HomeTab {
 
-        override fun invoke(userId: UserId) = "home/${userId.id}/photos_albums"
+        override fun invoke(userId: UserId) = "home/${userId.id}/photos"
+
+        data object CreateNewAlbum : Screen("home/{userId}/photos/new_album") {
+            operator fun invoke(userId: UserId) = "home/${userId.id}/photos/new_album"
+        }
 
         const val USER_ID = Screen.USER_ID
+    }
+
+    data object Album : Screen("photos/{userId}/shares/{shareId}/album/{albumId}") {
+
+        operator fun invoke(albumId: AlbumId) = "photos/${albumId.userId.id}/shares/${albumId.shareId.id}/album/${albumId.id}"
+
+        const val USER_ID = Screen.USER_ID
+        const val SHARE_ID = AlbumViewModel.SHARE_ID
+        const val ALBUM_ID = AlbumViewModel.ALBUM_ID
     }
 
     data object BackupIssues : Screen("backup/issues/{userId}/shares/{shareId}/folder/{folderId}") {

@@ -19,10 +19,12 @@
 package me.proton.core.drive.photo.data.api
 
 import me.proton.core.drive.base.data.api.response.CodeResponse
+import me.proton.core.drive.photo.data.api.request.AddToAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreateAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreatePhotoRequest
 import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
 import me.proton.core.drive.photo.data.api.request.UpdateAlbumRequest
+import me.proton.core.drive.photo.data.api.response.AddToAlbumResponse
 import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
 import me.proton.core.drive.photo.data.api.response.CreatePhotoResponse
 import me.proton.core.drive.photo.data.api.response.FindDuplicatesResponse
@@ -91,4 +93,11 @@ interface PhotoApi : BaseRetrofitApi {
         @Query("Sort") sort: String?,
         @Query("Desc") descending: Int?,
     ): GetAlbumPhotoListingResponse
+
+    @POST("drive/photos/volumes/{volumeID}/albums/{linkID}/add-multiple")
+    suspend fun addToAlbum(
+        @Path("volumeID") volumeId: String,
+        @Path("linkID") albumId: String,
+        @Body request: AddToAlbumRequest,
+    ): AddToAlbumResponse
 }
