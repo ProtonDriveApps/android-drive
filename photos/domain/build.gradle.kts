@@ -35,6 +35,7 @@ driveModule(
     api(project(":drive:drivelink-list:domain"))
     api(project(":drive:drivelink-photo:domain"))
     api(project(":drive:drivelink-selection:domain"))
+    api(project(":drive:files:domain"))
     api(project(":drive:share-crypto:domain"))
     api(project(":drive:stats:domain"))
     testImplementation(project(":photos:data"))

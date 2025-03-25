@@ -34,6 +34,12 @@ class BackupPermissionsManagerImpl @Inject constructor(
     @ApplicationContext private val appContext: Context,
 ) : BackupPermissionsManager {
     override val requiredBackupPermissions: List<String> = when {
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> listOf(
+            Manifest.permission.READ_MEDIA_IMAGES,
+            Manifest.permission.READ_MEDIA_VIDEO,
+            Manifest.permission.ACCESS_MEDIA_LOCATION,
+            Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED,
+        )
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> listOf(
             Manifest.permission.READ_MEDIA_IMAGES,
             Manifest.permission.READ_MEDIA_VIDEO,
@@ -70,9 +76,17 @@ class BackupPermissionsManagerImpl @Inject constructor(
             }
             .all { permission -> permission == PERMISSION_GRANTED }
         return if (allPermissionsGranted) {
-            BackupPermissions.Granted
+            BackupPermissions.Granted()
+        } else if (hasPartialPermissions()) {
+            BackupPermissions.Granted(partial = true)
         } else {
             BackupPermissions.Denied(false)
         }
     }
+
+    private fun hasPartialPermissions() = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+                && ContextCompat.checkSelfPermission(
+        appContext,
+        Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+    ) == PERMISSION_GRANTED)
 }

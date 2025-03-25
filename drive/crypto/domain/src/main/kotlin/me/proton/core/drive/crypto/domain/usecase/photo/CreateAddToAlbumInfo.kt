@@ -19,14 +19,11 @@
 package me.proton.core.drive.crypto.domain.usecase.photo
 
 import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.DecryptLinkName
-import me.proton.core.drive.crypto.domain.usecase.DecryptLinkXAttr
 import me.proton.core.drive.crypto.domain.usecase.HmacSha256
 import me.proton.core.drive.crypto.domain.usecase.file.GetContentHash
 import me.proton.core.drive.cryptobase.domain.usecase.ChangeMessage
-import me.proton.core.drive.file.base.domain.extension.toXAttr
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.extension.nodePassphrase
 import me.proton.core.drive.key.domain.extension.nodePassphraseSignature
@@ -51,24 +48,21 @@ class CreateAddToAlbumInfo @Inject constructor(
     private val getAddressKeys: GetAddressKeys,
     private val getSignatureAddress: GetSignatureAddress,
     private val decryptLinkName: DecryptLinkName,
-    private val decryptLinkXAttr: DecryptLinkXAttr,
     private val changeMessage: ChangeMessage,
     private val hmacSha256: HmacSha256,
     private val moveNodeKey: MoveNodeKey,
-    private val configurationProvider: ConfigurationProvider,
     private val getContentHash: GetContentHash,
 ) {
 
     suspend operator fun invoke(
         photoId: FileId,
         albumId: AlbumId,
+        contentDigest: String,
     ): Result<AddToAlbumInfo> = coRunCatching {
         val album = getLink(albumId).toResult().getOrThrow()
         val albumKey = getNodeKey(album).getOrThrow()
         val photo = getLink(photoId).toResult().getOrThrow()
         val decryptedPhotoName = decryptLinkName(photo).getOrThrow().text
-        val decryptedPhotoXAttr = decryptLinkXAttr(photo).getOrThrow().text.toXAttr().getOrThrow()
-        val digests = requireNotNull(decryptedPhotoXAttr.common.digests)
         val currentParentFolder = getLink(photo.requireParentId()).toResult().getOrThrow()
         val currentParentFolderKey = getNodeKey(currentParentFolder).getOrThrow()
         val albumHashKey = getNodeHashKey(album, albumKey).getOrThrow()
@@ -102,11 +96,7 @@ class CreateAddToAlbumInfo @Inject constructor(
             } else {
                 null
             },
-            contentHash = requireNotNull(digests[configurationProvider.contentDigestAlgorithm]) {
-                "${configurationProvider.contentDigestAlgorithm} cannot be found in digests: ${digests.keys}"
-            }.let { contentDigest ->
-                getContentHash(albumHashKey, contentDigest).getOrThrow()
-            },
+            contentHash = getContentHash(albumHashKey, contentDigest).getOrThrow(),
         )
     }
 }

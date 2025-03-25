@@ -20,16 +20,10 @@ package me.proton.android.drive.ui.viewmodel
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import me.proton.android.drive.ui.effect.HomeEffect
-import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.viewevent.PhotosAndAlbumsViewEvent
 import me.proton.android.drive.ui.viewstate.PhotosAndAlbumsViewState
 import me.proton.android.drive.ui.viewstate.PhotosAndAlbumsViewState.Tab

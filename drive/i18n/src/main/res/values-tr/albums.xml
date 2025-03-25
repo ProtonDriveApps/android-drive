@@ -20,4 +20,15 @@
   <string name="albums_title">Albümler</string>
   <string name="albums_new_album_name_hint">Albüm adı</string>
   <string name="albums_new_album_created_successfully">Albüm oluşturuldu</string>
+  <string name="albums_filter_my_albums">Albümlerim</string>
+  <!--
+        Variable %1$s is a number of photos in the album
+        Example:
+            "1 item"
+            "345 items"
+    -->
+  <plurals name="albums_photo_count">
+    <item quantity="one">%1$s öge</item>
+    <item quantity="other">%1$s öge</item>
+  </plurals>
 </resources>

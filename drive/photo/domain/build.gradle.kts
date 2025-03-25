@@ -28,6 +28,7 @@ driveModule(
     hilt = true,
 ) {
     api(project(":drive:base:domain"))
+    api(project(":drive:event-manager:base:domain"))
     api(project(":drive:feature-flag:domain"))
     api(project(":drive:link:domain"))
     api(project(":drive:sorting:domain"))

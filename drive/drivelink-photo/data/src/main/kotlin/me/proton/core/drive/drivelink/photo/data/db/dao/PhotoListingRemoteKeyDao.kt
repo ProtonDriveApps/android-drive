@@ -55,7 +55,7 @@ abstract class PhotoListingRemoteKeyDao : BaseDao<PhotoListingRemoteKeyEntity>()
         WHERE
             `key` = :key AND 
             volume_id = :volumeId
-        ORDER BY capture_time ASC
+        ORDER BY capture_time ASC, `id` DESC
         LIMIT 1
     """
     )

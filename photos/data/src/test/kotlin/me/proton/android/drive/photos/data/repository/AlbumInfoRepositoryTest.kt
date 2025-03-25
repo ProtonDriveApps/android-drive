@@ -23,13 +23,27 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.flow.emptyFlow
+import junit.framework.TestCase.assertNull
 import kotlinx.coroutines.test.runTest
-import me.proton.android.drive.photos.domain.entity.NewAlbumInfo
+import me.proton.android.drive.photos.data.extension.toAddToAlbumEntity
+import me.proton.android.drive.photos.data.extension.toPhotoListing
 import me.proton.android.drive.photos.domain.repository.AlbumInfoRepository
 import me.proton.core.drive.base.data.datastore.GetUserDataStore
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.provider.StorageLocationProvider
+import me.proton.core.drive.db.test.NullableLinkEntity
+import me.proton.core.drive.db.test.album
+import me.proton.core.drive.db.test.file
+import me.proton.core.drive.db.test.photoRootId
+import me.proton.core.drive.db.test.photoShare
+import me.proton.core.drive.db.test.photoShareId
+import me.proton.core.drive.db.test.photoVolume
+import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
+import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.test.DriveRule
 import org.junit.Before
 import org.junit.Rule
@@ -61,20 +75,14 @@ class AlbumInfoRepositoryTest {
     @Test
     fun empty() = runTest {
         // When
-        val newAlbumInfo = albumInfoRepository.getInfo(userId)
+        val albumName = albumInfoRepository.getName(userId)
 
         // Then
-        assertEquals(
-            NewAlbumInfo(
-                name = null,
-                items = emptyFlow(),
-            ),
-            newAlbumInfo,
-        )
+        assertNull(albumName)
     }
 
     @Test
-    fun `if new album name has been set NewAlbumInfo should contain it`() = runTest {
+    fun `if new album name has been set getName should return it`() = runTest {
         // Given
         val myAlbum = "My album"
         getUserDataStore(userId).edit { preferences ->
@@ -82,20 +90,17 @@ class AlbumInfoRepositoryTest {
         }
 
         // When
-        val newAlbumInfo = albumInfoRepository.getInfo(userId)
+        val albumName = albumInfoRepository.getName(userId)
 
         // Then
         assertEquals(
-            NewAlbumInfo(
-                name = myAlbum,
-                items = emptyFlow(),
-            ),
-            newAlbumInfo,
+            myAlbum,
+            albumName,
         )
     }
 
     @Test
-    fun `if new album name has been updated NewAlbumInfo should contain it`() = runTest {
+    fun `if new album name has been updated getName should return it`() = runTest {
         // Given
         val myAlbum = "My album"
         val newAlbumName = "New album name"
@@ -105,15 +110,227 @@ class AlbumInfoRepositoryTest {
 
         // When
         albumInfoRepository.updateName(userId, newAlbumName)
-        val newAlbumInfo = albumInfoRepository.getInfo(userId)
+        val albumName = albumInfoRepository.getName(userId)
 
         // Then
         assertEquals(
-            NewAlbumInfo(
-                name = newAlbumName,
-                items = emptyFlow(),
+            newAlbumName,
+            albumName,
+        )
+    }
+
+    @Test
+    fun `add volume photo listings into new album`() = runTest {
+        // Given
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    file("photo-id-1")
+                    file("photo-id-2")
+                }
+            }
+        }
+        val volumePhotoListings = listOf(
+            NullableVolumePhotoListing(
+                photoId = "photo-id-1",
+                captureTime = TimestampS(1),
             ),
-            newAlbumInfo,
+            NullableVolumePhotoListing(
+                photoId = "photo-id-2",
+                captureTime = TimestampS(2),
+            ),
+        )
+
+        // When
+        albumInfoRepository.addPhotoListings(photoListings = volumePhotoListings.toTypedArray())
+
+        val photoListings = driveRule
+            .db
+            .addToAlbumDao
+            .getPhotoListings(userId, 500, 0)
+            .map { addToAlbumEntity -> addToAlbumEntity.toPhotoListing() }
+
+        // Then
+        assertEquals(
+            listOf("photo-id-2", "photo-id-1"),
+            photoListings.map { photoListing -> photoListing.linkId.id },
+        )
+    }
+
+    @Test
+    fun `add album photo listings into new album`() = runTest {
+        // Given
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    file("photo-id-1")
+                    file("photo-id-2")
+                    album("album-id") {}
+                }
+            }
+        }
+        val albumPhotoListings = listOf(
+            NullableAlbumPhotoListing(
+                albumId = "album-id",
+                photoId = "photo-id-1",
+                captureTime = TimestampS(100),
+            ),
+            NullableAlbumPhotoListing(
+                albumId = "album-id",
+                photoId = "photo-id-2",
+                captureTime = TimestampS(10),
+            ),
+        )
+
+        // When
+        albumInfoRepository.addPhotoListings(photoListings = albumPhotoListings.toTypedArray())
+
+        val photoListings = driveRule
+            .db
+            .addToAlbumDao
+            .getPhotoListings(userId, 500, 0)
+            .map { addToAlbumEntity -> addToAlbumEntity.toPhotoListing() }
+
+        // Then
+        assertEquals(
+            listOf("photo-id-1", "photo-id-2"),
+            photoListings.map { photoListing -> photoListing.linkId.id },
+        )
+    }
+
+    @Test
+    fun `remove volume photo listings from new album`() = runTest {
+        // Given
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    file("photo-id-1")
+                    file("photo-id-2")
+                }
+            }
+        }
+        val volumePhotoListings = listOf(
+            NullableVolumePhotoListing(
+                photoId = "photo-id-1",
+                captureTime = TimestampS(1),
+            ),
+            NullableVolumePhotoListing(
+                photoId = "photo-id-2",
+                captureTime = TimestampS(2),
+            ),
+        )
+        driveRule.db.addToAlbumDao.insertOrIgnore(
+            *volumePhotoListings
+                .map { photoListing -> photoListing.toAddToAlbumEntity(null) }
+                .toTypedArray()
+        )
+
+        // When
+        albumInfoRepository.removePhotoListings(photoListings = volumePhotoListings.toTypedArray())
+        val photoListings = driveRule
+            .db
+            .addToAlbumDao
+            .getPhotoListings(userId, 500, 0)
+            .map { addToAlbumEntity -> addToAlbumEntity.toPhotoListing() }
+
+        // Then
+        assertEquals(
+            emptyList<PhotoListing.Volume>(),
+            photoListings
+        )
+    }
+
+    @Test
+    fun `remove album photo listings from new album`() = runTest {
+        // Given
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    file("photo-id-1")
+                    file("photo-id-2")
+                    album("album-id") {}
+                }
+            }
+        }
+        val albumPhotoListings = listOf(
+            NullableAlbumPhotoListing(
+                albumId = "album-id",
+                photoId = "photo-id-1",
+                captureTime = TimestampS(100),
+            ),
+            NullableAlbumPhotoListing(
+                albumId = "album-id",
+                photoId = "photo-id-2",
+                captureTime = TimestampS(10),
+            ),
+        )
+        driveRule.db.addToAlbumDao.insertOrIgnore(
+            *albumPhotoListings
+                .map { photoListing -> photoListing.toAddToAlbumEntity(null) }
+                .toTypedArray()
+        )
+
+        // When
+        albumInfoRepository.removePhotoListings(photoListings = albumPhotoListings.toTypedArray())
+
+        val photoListings = driveRule
+            .db
+            .addToAlbumDao
+            .getPhotoListings(userId,500, 0)
+            .map { addToAlbumEntity -> addToAlbumEntity.toPhotoListing() }
+
+        // Then
+        assertEquals(
+            emptyList<PhotoListing.Album>(),
+            photoListings,
+        )
+    }
+
+    @Test
+    fun `get photo listings returns all photo listings`() = runTest {
+        // Given
+        driveRule.db.user {
+            photoVolume {
+                photoShare {}
+            }
+        }
+        val (links, linkProperties) = (1..10000).map { index ->
+            val linkId = "photo-id-$index"
+            NullableLinkEntity(
+                userId,
+                photoShareId.id,
+                "photo-id-$index",
+                photoRootId.id,
+                2L,
+                "",
+            ) to LinkFilePropertiesEntity(
+                userId = userId,
+                shareId = photoShareId.id,
+                linkId = linkId,
+                activeRevisionId = "revision-$linkId",
+                hasThumbnail = false,
+                contentKeyPacket = "",
+                contentKeyPacketSignature = null,
+                activeRevisionSignatureAddress = null,
+            )
+        }.unzip()
+        driveRule.db.linkDao.insertOrIgnore(*links.toTypedArray())
+        driveRule.db.linkDao.insertOrIgnore(*linkProperties.toTypedArray())
+        val addToAlbumEntities = (1..10000).map { index ->
+            NullableVolumePhotoListing(
+                photoId = "photo-id-$index",
+                captureTime = TimestampS(index.toLong()),
+            ).toAddToAlbumEntity(null)
+        }
+        driveRule.db.addToAlbumDao.insertOrIgnore(*addToAlbumEntities.toTypedArray())
+
+        // When
+        val photoListings = albumInfoRepository.getPhotoListings(userId)
+
+        // Then
+        assertEquals(
+            10000,
+            photoListings.size,
         )
     }
 
@@ -124,18 +341,70 @@ class AlbumInfoRepositoryTest {
         getUserDataStore(userId).edit { preferences ->
             preferences[GetUserDataStore.Keys.newAlbumName] = myAlbum
         }
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    file("photo-id-1")
+                    file("photo-id-2")
+                }
+            }
+        }
+        val volumePhotoListings = listOf(
+            NullableVolumePhotoListing(
+                photoId = "photo-id-1",
+                captureTime = TimestampS(1),
+            ),
+            NullableVolumePhotoListing(
+                photoId = "photo-id-2",
+                captureTime = TimestampS(2),
+            ),
+        )
+        driveRule.db.addToAlbumDao.insertOrIgnore(
+            *volumePhotoListings
+                .map { photoListing -> photoListing.toAddToAlbumEntity(null) }
+                .toTypedArray()
+        )
 
         // When
         albumInfoRepository.clear(userId)
-        val newAlbumInfo = albumInfoRepository.getInfo(userId)
+        val albumName = albumInfoRepository.getName(userId)
+        val photoListings = albumInfoRepository.getPhotoListings(userId)
 
         // Then
+        assertNull(albumName)
         assertEquals(
-            NewAlbumInfo(
-                name = null,
-                items = emptyFlow(),
-            ),
-            newAlbumInfo,
+            emptyList<PhotoListing>(),
+            photoListings,
         )
     }
 }
+
+private fun NullableVolumePhotoListing(
+    photoId: String,
+    captureTime: TimestampS = TimestampS(),
+    nameHash: String? = null,
+    contentHash: String? = null,
+): PhotoListing.Volume = PhotoListing.Volume(
+    linkId = FileId(photoShareId, photoId),
+    captureTime = captureTime,
+    nameHash = nameHash,
+    contentHash = contentHash,
+)
+
+private fun NullableAlbumPhotoListing(
+    albumId: String,
+    photoId: String,
+    captureTime: TimestampS = TimestampS(),
+    addedTime: TimestampS = TimestampS(),
+    isChildOfAlbum: Boolean = false,
+    nameHash: String? = null,
+    contentHash: String? = null,
+): PhotoListing.Album = PhotoListing.Album(
+    linkId = FileId(photoShareId, photoId),
+    captureTime = captureTime,
+    nameHash = nameHash,
+    contentHash = contentHash,
+    albumId = AlbumId(photoShareId, albumId),
+    addedTime = addedTime,
+    isChildOfAlbum = isChildOfAlbum,
+)

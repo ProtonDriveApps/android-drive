@@ -25,6 +25,9 @@ import me.proton.test.fusion.FusionConfig.targetContext
 
 object AlbumRobot : LinksRobot, NavigationBarRobot {
     private val albumScreen get() = node.withTag(AlbumScreenTestTag.screen)
+    private val moreButton get() = node.withContentDescription(I18N.string.common_more)
+
+    fun clickOnMoreButton() = moreButton.clickTo(AlbumOptionsRobot)
 
     fun assertAlbumNameIsDisplayed(name: String) = node.withText(name)
         .await { assertIsDisplayed() }

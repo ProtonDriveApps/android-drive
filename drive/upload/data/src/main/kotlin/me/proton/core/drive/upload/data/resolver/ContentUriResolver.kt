@@ -30,6 +30,7 @@ import me.proton.core.drive.base.domain.extension.extensionOrEmpty
 import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.base.domain.provider.MimeTypeProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.upload.data.extension.bucketDisplayName
 import me.proton.core.drive.upload.data.extension.lastModified
 import me.proton.core.drive.upload.data.extension.log
 import me.proton.core.drive.upload.data.extension.name
@@ -83,6 +84,16 @@ class ContentUriResolver(
         query(uri, null, null, null, null)?.use { cursor ->
             takeIf { cursor.moveToFirst() }?.let {
                 cursor.lastModified
+            }
+        }
+    }
+
+    override suspend fun getParentName(
+        uriString: String,
+    ): String? = withContentResolver(uriString) { uri ->
+        query(uri, null, null, null, null)?.use { cursor ->
+            takeIf { cursor.moveToFirst() }?.let {
+                cursor.bucketDisplayName
             }
         }
     }

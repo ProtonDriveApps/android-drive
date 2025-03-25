@@ -92,7 +92,7 @@ class GetBackupStateTest {
     @Before
     fun setUp() = runTest {
         folderId = driveRule.db.myFiles {}
-        permissionsManager.onPermissionChanged(BackupPermissions.Granted)
+        permissionsManager.onPermissionChanged(BackupPermissions.Granted())
 
         backupState = getBackupState(folderId)
         bucketRepository.bucketEntries = listOf(BucketEntry(0, "Camera"))

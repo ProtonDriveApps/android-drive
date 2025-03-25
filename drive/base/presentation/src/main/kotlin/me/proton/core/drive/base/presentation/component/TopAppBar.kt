@@ -108,7 +108,7 @@ fun TopAppBar(
     )
 }
 @Composable
-private fun Title(
+fun Title(
     title: String,
     isTitleEncrypted: Boolean,
     modifier: Modifier = Modifier,

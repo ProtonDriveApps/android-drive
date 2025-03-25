@@ -18,6 +18,8 @@
 
 package me.proton.core.drive.test.resolver
 
+import android.net.Uri
+import androidx.core.net.toFile
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.bytes
@@ -44,6 +46,10 @@ class TestUriResolver @Inject constructor() : UriResolver {
     override suspend fun getMimeType(uriString: String): String = "application/octet-stream"
 
     override suspend fun getLastModified(uriString: String): TimestampMs = TimestampMs()
+
+    override suspend fun getParentName(
+        uriString: String,
+    ): String = requireNotNull(Uri.parse(uriString).toFile().parentFile).name
 
     override suspend fun getUriInfo(uriString: String): UriResolver.UriInfo = UriResolver.UriInfo(
         name = getName(uriString),

@@ -70,7 +70,7 @@ interface AlbumRepository {
         albumListings: List<AlbumListing>,
     )
 
-    suspend fun delete(albumIds: List<AlbumId>)
+    suspend fun deleteAlbumListings(albumIds: List<AlbumId>)
 
     suspend fun fetchAlbumPhotoListings(
         userId: UserId,
@@ -130,5 +130,11 @@ interface AlbumRepository {
         volumeId: VolumeId,
         albumId: AlbumId,
         addToAlbumInfos: List<AddToAlbumInfo>,
+    )
+
+    suspend fun deleteAlbum(
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        deleteAlbumPhotos: Boolean,
     )
 }

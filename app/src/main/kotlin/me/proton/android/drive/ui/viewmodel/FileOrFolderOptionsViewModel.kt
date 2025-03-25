@@ -63,7 +63,7 @@ import me.proton.core.drive.drivelink.shared.domain.extension.sharingDetails
 import me.proton.core.drive.drivelink.trash.domain.usecase.ToggleTrashState
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveDocsDisabled
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDevelopment
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
@@ -115,8 +115,8 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     private val sharingDevelopment = getFeatureFlagFlow(driveSharingDevelopment(userId))
         .stateIn(viewModelScope, Eagerly, FeatureFlag(driveSharingDevelopment(userId), NOT_FOUND))
 
-    private val docsKillSwitch = getFeatureFlagFlow(FeatureFlagId.driveDocsDisabled(userId))
-        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveSharingDevelopment(userId), NOT_FOUND))
+    private val docsKillSwitch = getFeatureFlagFlow(driveDocsDisabled(userId))
+        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveDocsDisabled(userId), NOT_FOUND))
 
     fun <T : DriveLink> entries(
         runAction: (suspend () -> Unit) -> Unit,
@@ -125,10 +125,8 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         navigateToRename: (linkId: LinkId) -> Unit,
         navigateToDelete: (linkId: LinkId) -> Unit,
         navigateToSendFile: (fileId: FileId) -> Unit,
-        navigateToStopSharing: (linkId: LinkId) -> Unit,
         navigateToManageAccess: (linkId: LinkId) -> Unit,
         navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
-        navigateToShareViaLink: (linkId: LinkId) -> Unit,
         dismiss: () -> Unit,
         showCreateDocumentPicker: (String, () -> Unit) -> Unit = { _, _ -> },
     ): Flow<List<FileOptionEntry<T>>> = combine(

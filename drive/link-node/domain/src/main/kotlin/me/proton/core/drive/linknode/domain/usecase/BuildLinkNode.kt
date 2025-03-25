@@ -23,6 +23,7 @@ import me.proton.core.drive.base.domain.extension.asSuccessOrNullAsError
 import me.proton.core.drive.base.domain.extension.firstSuccessOrError
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.equalsAsLinkId
 import me.proton.core.drive.linknode.domain.entity.LinkNode
 import javax.inject.Inject
 
@@ -38,10 +39,12 @@ class BuildLinkNode @Inject constructor(
             }
             .firstSuccessOrError()
 
-    private fun List<Link>?.transformToLinkNode(): LinkNode? = this?.fold(null as? LinkNode?) { parent, link ->
-        require(link.parentId == parent?.link?.id) { "Invalid ancestor" }
-        LinkNode(parent, null, link).also { child ->
-            parent?.child = child
+    private fun List<Link>?.transformToLinkNode(): LinkNode? =
+        this?.fold(null as? LinkNode?) { parent, link ->
+            // In this case FolderId and AlbumId are equal.
+            require(link.parentId.equalsAsLinkId(parent?.link?.id)) { "Invalid ancestor" }
+            LinkNode(parent, null, link).also { child ->
+                parent?.child = child
+            }
         }
-    }
 }

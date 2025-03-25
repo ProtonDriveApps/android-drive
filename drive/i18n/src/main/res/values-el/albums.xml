@@ -20,4 +20,15 @@
   <string name="albums_title">Άλμπουμ</string>
   <string name="albums_new_album_name_hint">Όνομα άλμπουμ</string>
   <string name="albums_new_album_created_successfully">Το άλμπουμ δημιουργήθηκε</string>
+  <string name="albums_filter_my_albums">Τα άλμπουμ μου</string>
+  <!--
+        Variable %1$s is a number of photos in the album
+        Example:
+            "1 item"
+            "345 items"
+    -->
+  <plurals name="albums_photo_count">
+    <item quantity="one">%1$s στοιχείο</item>
+    <item quantity="other">%1$s στοιχεία</item>
+  </plurals>
 </resources>

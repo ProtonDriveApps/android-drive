@@ -21,7 +21,7 @@ package me.proton.android.drive.ui.test.flow.album
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
-import me.proton.android.drive.ui.robot.AlbumTabRobot
+import me.proton.android.drive.ui.robot.AlbumRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.utils.getRandomString
@@ -42,13 +42,13 @@ class CreatingAlbumFlowTest : BaseTest() {
         val randomAlbumName = getRandomString()
 
         PhotosTabRobot
-            .clickOnAlbumTab()
+            .clickOnAlbumsTab()
             .clickPlusButton()
             .typeName(randomAlbumName)
-            .clickOnDone(AlbumTabRobot)
+            .clickOnDone(AlbumRobot)
             .verify { 
                 robotDisplayed()
-                assertAlbumIsDisplayed(randomAlbumName)
+                assertAlbumNameIsDisplayed(randomAlbumName)
             }
     }
 
@@ -61,13 +61,43 @@ class CreatingAlbumFlowTest : BaseTest() {
         val albumName = "album-for-photos"
 
         PhotosTabRobot
-            .clickOnAlbumTab()
+            .clickOnAlbumsTab()
             .clickPlusButton()
             .typeName(albumName)
-            .clickOnDone(AlbumTabRobot)
+            .clickOnDone(AlbumRobot)
             .verify {
                 robotDisplayed()
-                assertAlbumIsDisplayed(albumName, 0)
+                assertAlbumNameIsDisplayed(albumName)
+                assertItemsInAlbum(0)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun createAnAlbumWithPhotos() {
+        val albumName = "new-album"
+
+        PhotosTabRobot
+            .longClickOnPhoto("activeTaggedFileInStream-2.jpg")
+            .longClickOnPhoto("activeVideoFileInStream-1.jpg")
+            .clickMultipleOptions()
+            .clickOnCreateAlbum()
+            .typeName(albumName)
+            .clickOnRemoveFirstPhoto()
+            .clickOnDone(AlbumRobot)
+            .verify {
+                robotDisplayed()
+                assertAlbumNameIsDisplayed(albumName)
+                assertItemsInAlbum(1)
+            }
+            .clickBack(PhotosTabRobot)
+            .clickOnAlbumsTab()
+            .verify {
+                robotDisplayed()
+                assertAlbumIsDisplayed(albumName, 1)
             }
     }
 }

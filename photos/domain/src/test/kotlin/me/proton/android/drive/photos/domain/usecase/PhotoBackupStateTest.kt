@@ -111,7 +111,7 @@ class PhotoBackupStateTest {
         val fileRepository = BackupFileRepositoryImpl(database.db)
 
         val pm = mockk<BackupPermissionsManager>()
-        every { pm.getBackupPermissions(true) } returns BackupPermissions.Granted
+        every { pm.getBackupPermissions(true) } returns BackupPermissions.Granted()
 
         val getPhotosDriveLink = mockk<GetPhotosDriveLink>()
         every { getPhotosDriveLink(userId) } returns database.db.driveLinkDao.getLinkWithPropertiesFlow(
@@ -207,7 +207,7 @@ class PhotoBackupStateTest {
     @Test
     fun `running photos status`() = runTest {
         enablePhotosBackup(folderId).getOrThrow()
-        permissionsManager.onPermissionChanged(BackupPermissions.Granted)
+        permissionsManager.onPermissionChanged(BackupPermissions.Granted())
 
         assertEquals(
             BackupState(
@@ -232,7 +232,7 @@ class PhotoBackupStateTest {
     @Test
     fun `disabled photos status`() = runTest {
         enablePhotosBackup(folderId).getOrThrow()
-        permissionsManager.onPermissionChanged(BackupPermissions.Granted)
+        permissionsManager.onPermissionChanged(BackupPermissions.Granted())
         disablePhotosBackup(folderId).getOrThrow()
 
         assertEquals(

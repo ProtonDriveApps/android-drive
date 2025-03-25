@@ -30,10 +30,12 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.photos.presentation.component.Album
 import me.proton.android.drive.ui.viewmodel.AlbumViewModel
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
+import me.proton.core.drive.link.domain.entity.AlbumId
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun AlbumScreen(
+    navigateToAlbumOptions: (AlbumId) -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -41,7 +43,10 @@ fun AlbumScreen(
     val viewState = viewModel.viewState.collectAsStateWithLifecycle(initialValue = null)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val viewEvent = remember(lifecycle) {
-        viewModel.viewEvent(navigateBack)
+        viewModel.viewEvent(
+            navigateToAlbumOptions = navigateToAlbumOptions,
+            navigateBack = navigateBack,
+        )
     }
     val photoItems = viewModel.driveLinks.collectAsLazyPagingItems()
     val listEffect = rememberFlowWithLifecycle(flow = viewModel.listEffect)

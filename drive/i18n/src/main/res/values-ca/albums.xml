@@ -20,4 +20,15 @@
   <string name="albums_title">Àlbums</string>
   <string name="albums_new_album_name_hint">Nom de l\'àlbum</string>
   <string name="albums_new_album_created_successfully">S\'ha creat l\'àlbum.</string>
+  <string name="albums_filter_my_albums">Els meus àlbums</string>
+  <!--
+        Variable %1$s is a number of photos in the album
+        Example:
+            "1 item"
+            "345 items"
+    -->
+  <plurals name="albums_photo_count">
+    <item quantity="one">%1$s element</item>
+    <item quantity="other">%1$s elements</item>
+  </plurals>
 </resources>

@@ -23,8 +23,22 @@ import me.proton.core.drive.i18n.R as I18N
 
 object TrashRobot : Robot, LinksRobot, NavigationBarRobot, GrowlerRobot {
     private val trashScreen get() = node.withText(I18N.string.common_trash)
+    private val optionsButton get() = node.withContentDescription(I18N.string.trash_more_options)
+    private val emptyTrashButton get() = node.withText(I18N.string.title_empty_trash_action)
+    private val confirmEmptyTrashButton get() = node.withText(I18N.string.files_confirm_empty_trash_confirm_action)
 
     override fun robotDisplayed() {
         trashScreen.await { assertIsDisplayed() }
+    }
+    fun openMoreOptions() = apply {
+        optionsButton.click()
+        emptyTrashButton.await { assertIsDisplayed() }
+    }
+    fun clickEmptyTrash() = apply {
+        emptyTrashButton.click()
+        confirmEmptyTrashButton.await { assertIsDisplayed() }
+    }
+    fun confirmEmptyTrash() = apply {
+        confirmEmptyTrashButton.click()
     }
 }

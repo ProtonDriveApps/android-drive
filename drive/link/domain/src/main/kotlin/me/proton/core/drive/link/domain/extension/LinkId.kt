@@ -21,3 +21,10 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.LinkId
 
 val LinkId.userId: UserId get() = shareId.userId
+
+fun LinkId?.equalsAsLinkId(other: LinkId?): Boolean =
+    if (this == null) {
+        other == null
+    } else {
+        shareId == other?.shareId && id == other.id
+    }

@@ -22,11 +22,13 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
 import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.CAPTURE_TIME
 import me.proton.core.drive.base.data.db.Column.ID
+import me.proton.core.drive.base.data.db.Column.INDEX
 import me.proton.core.drive.base.data.db.Column.KEY
 import me.proton.core.drive.base.data.db.Column.LINK_ID
 import me.proton.core.drive.base.data.db.Column.NEXT_KEY
@@ -37,7 +39,6 @@ import me.proton.core.drive.base.data.db.Column.VOLUME_ID
 import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
 
 @Entity(
-    primaryKeys = [KEY, USER_ID, VOLUME_ID, SHARE_ID, LINK_ID],
     foreignKeys = [
         ForeignKey(
             entity = AccountEntity::class,
@@ -54,9 +55,13 @@ import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
     ],
     indices = [
         Index(value = [KEY]),
+        Index(value = [KEY, USER_ID, VOLUME_ID, SHARE_ID, LINK_ID], unique = true),
     ],
 )
 data class PhotoListingRemoteKeyEntity(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = ID)
+    val id: Long = 0,
     @ColumnInfo(name = KEY)
     val key: String,
     @ColumnInfo(name = USER_ID)

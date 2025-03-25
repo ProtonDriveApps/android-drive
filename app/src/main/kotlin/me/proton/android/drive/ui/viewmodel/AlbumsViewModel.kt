@@ -25,7 +25,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,7 +44,6 @@ import me.proton.android.drive.photos.presentation.state.AlbumsItem
 import me.proton.android.drive.photos.presentation.viewevent.AlbumsViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.AlbumsFilter
 import me.proton.android.drive.photos.presentation.viewstate.AlbumsViewState
-import me.proton.core.drive.base.presentation.viewstate.TagViewState
 import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
@@ -63,6 +61,7 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.base.presentation.viewstate.TagViewState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
 import me.proton.core.drive.drivelink.photo.domain.usecase.FetchAndStoreAllAlbumListings
@@ -76,7 +75,6 @@ import me.proton.core.drive.photo.domain.extension.filterBy
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
@@ -306,7 +304,6 @@ class AlbumsViewModel @Inject constructor(
         if (driveLinkIds.isNotEmpty()) {
             fetchingJob?.cancel()
             fetchingJob = viewModelScope.launch {
-                delay(300.milliseconds)
                 photoDriveLinks.load(driveLinkIds)
             }
         }

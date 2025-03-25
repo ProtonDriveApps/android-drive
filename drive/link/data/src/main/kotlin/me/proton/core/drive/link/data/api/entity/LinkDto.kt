@@ -85,7 +85,7 @@ data class LinkDto(
     @SerialName(NODE_PASSPHRASE_SIGNATURE)
     val nodePassphraseSignature: String,
     @SerialName(SIGNATURE_ADDRESS)
-    val signatureAddress: String,
+    val signatureAddress: String?,
     @SerialName(CREATE_TIME)
     val creationTime: Long,
     @SerialName(MODIFY_TIME)

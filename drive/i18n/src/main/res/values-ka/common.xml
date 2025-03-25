@@ -38,6 +38,7 @@
   <string name="common_uploading">ატვირთვა</string>
   <string name="common_on">ჩართ</string>
   <string name="common_off">გამორთული</string>
+  <string name="common_all">ყველა</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">დიახ</string>
@@ -64,6 +65,7 @@
   <string name="common_stop_sharing_action">გაზიარების შეწყვეტა</string>
   <string name="common_open_in_browser_action">ბრაუზერში გახსნა</string>
   <string name="common_done_action">მზადაა</string>
+  <string name="common_create_album_action">ალბომის შექმნა</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">აუდიო</string>

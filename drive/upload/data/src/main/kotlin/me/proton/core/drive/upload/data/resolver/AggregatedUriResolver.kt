@@ -44,6 +44,9 @@ class AggregatedUriResolver @Inject constructor(
     override suspend fun getLastModified(uriString: String): TimestampMs? =
         uriResolvers.forScheme(uriString).getLastModified(uriString)
 
+    override suspend fun getParentName(uriString: String): String? =
+        uriResolvers.forScheme(uriString).getParentName(uriString)
+
     override suspend fun getUriInfo(uriString: String): UriResolver.UriInfo? =
         uriResolvers.forScheme(uriString).getUriInfo(uriString)
 

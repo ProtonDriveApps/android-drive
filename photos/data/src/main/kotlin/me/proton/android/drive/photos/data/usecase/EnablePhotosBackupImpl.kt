@@ -49,7 +49,7 @@ class EnablePhotosBackupImpl @Inject constructor(
 
     override suspend operator fun invoke(folderId: FolderId): Result<PhotoBackupState> = coRunCatching {
         when (permissionsManager.getBackupPermissions(refresh = true)) {
-            BackupPermissions.Granted -> enableBackup(folderId)
+            is BackupPermissions.Granted -> enableBackup(folderId)
             else -> throw SecurityException(appContext.getString(I18N.string.photos_error_missing_permissions))
         }
     }

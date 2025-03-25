@@ -27,22 +27,25 @@ import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.drivelink.domain.extension.isPhoto
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.files.presentation.entry.CreateAlbumEntry
+import me.proton.core.drive.files.presentation.entry.DeleteAlbumEntry
 import me.proton.core.drive.files.presentation.entry.DeletePermanentlyEntry
 import me.proton.core.drive.files.presentation.entry.DownloadEntry
-import me.proton.core.drive.files.presentation.entry.DownloadFileEntity
+import me.proton.core.drive.files.presentation.entry.DownloadFileEntry
 import me.proton.core.drive.files.presentation.entry.FileInfoEntry
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
-import me.proton.core.drive.files.presentation.entry.ManageAccessEntity
+import me.proton.core.drive.files.presentation.entry.ManageAccessEntry
 import me.proton.core.drive.files.presentation.entry.MoveEntry
 import me.proton.core.drive.files.presentation.entry.MoveFileEntry
-import me.proton.core.drive.files.presentation.entry.OpenInBrowserProtonDocsEntity
+import me.proton.core.drive.files.presentation.entry.OpenInBrowserProtonDocsEntry
 import me.proton.core.drive.files.presentation.entry.RemoveMeEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
-import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntity
+import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
 import me.proton.core.drive.files.presentation.entry.ToggleTrashEntry
 import me.proton.core.drive.files.presentation.entry.TrashEntry
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -105,6 +108,19 @@ sealed class Option(
         }
     }
 
+    data object DeleteAlbum : Option(
+        ApplicableQuantity.All,
+        setOf(ApplicableTo.ALBUM),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            navigateToDelete: (albumId: AlbumId) -> Unit,
+        ) = DeleteAlbumEntry { driveLink ->
+                runAction { navigateToDelete(driveLink.id) }
+            }
+    }
+
     data object Download : Option(
         ApplicableQuantity.All,
         ApplicableTo.ANY_DOWNLOADABLE_FILE,
@@ -112,7 +128,7 @@ sealed class Option(
     ) {
         fun build(
             showCreateDocumentPicker: (String) -> Unit,
-        ) = DownloadFileEntity { driveLink ->
+        ) = DownloadFileEntry { driveLink ->
             showCreateDocumentPicker(driveLink.name)
         }
 
@@ -159,7 +175,7 @@ sealed class Option(
 
     data object OfflineToggle : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_DOWNLOADABLE_FILE,
+        setOf(ApplicableTo.FOLDER, ApplicableTo.ALBUM) + ApplicableTo.ANY_DOWNLOADABLE_FILE,
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -180,7 +196,7 @@ sealed class Option(
         fun build(
             runAction: RunAction,
             openInBrowser: suspend (DriveLink.File) -> Unit,
-        ) = OpenInBrowserProtonDocsEntity { driveLink ->
+        ) = OpenInBrowserProtonDocsEntry { driveLink ->
             runAction {
                 openInBrowser(driveLink)
             }
@@ -204,7 +220,13 @@ sealed class Option(
 
     data object Rename : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FILE_MAIN, ApplicableTo.FILE_DEVICE, ApplicableTo.FILE_PROTON_CLOUD, ApplicableTo.FOLDER),
+        setOf(
+            ApplicableTo.FILE_MAIN,
+            ApplicableTo.FILE_DEVICE,
+            ApplicableTo.FILE_PROTON_CLOUD,
+            ApplicableTo.FOLDER,
+            ApplicableTo.ALBUM,
+        ),
         setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
@@ -287,27 +309,40 @@ sealed class Option(
 
     data object ManageAccess : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
+        setOf(ApplicableTo.FOLDER, ApplicableTo.ALBUM) + ApplicableTo.ANY_FILE,
         setOf(State.NOT_TRASHED) + State.ANY_SHARED
     ) {
         fun build(
             runAction: RunAction,
             navigateToManageAccess: (LinkId) -> Unit,
-        ) = ManageAccessEntity { driveLink ->
+        ) = ManageAccessEntry { driveLink ->
             runAction { navigateToManageAccess(driveLink.id) }
         }
     }
 
     data object ShareViaInvitations : Option(
         ApplicableQuantity.Single,
-        setOf(ApplicableTo.FOLDER) + ApplicableTo.ANY_FILE,
+        setOf(ApplicableTo.FOLDER, ApplicableTo.ALBUM) + ApplicableTo.ANY_FILE,
         setOf(State.NOT_TRASHED) + State.ANY_SHARED
     ) {
         fun build(
             runAction: RunAction,
             navigateToShareViaInvitations: (LinkId) -> Unit,
-        ) = ShareViaInvitationsEntity { driveLink ->
+        ) = ShareViaInvitationsEntry { driveLink ->
             runAction { navigateToShareViaInvitations(driveLink.id) }
+        }
+    }
+
+    data object CreateAlbum : Option(
+        ApplicableQuantity.All,
+        setOf(ApplicableTo.FILE_PHOTO),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED
+    ) {
+        fun build(
+            runAction: RunAction,
+            createAlbum: () -> Unit,
+        ) = CreateAlbumEntry {
+            runAction { createAlbum() }
         }
     }
 }
@@ -376,6 +411,7 @@ private val photosOptions = listOf(
     Option.Download,
     Option.Info,
     Option.Trash,
+    Option.CreateAlbum,
 )
 
 fun Iterable<Option>.filter(optionsFilter: OptionsFilter) =
@@ -414,6 +450,7 @@ fun Iterable<Option>.filterPermissions(
 ) = filter { option ->
     when (option) {
         Option.CreateDocument -> permissions.canWrite
+        Option.CreateAlbum -> permissions.canWrite
         Option.CreateFolder -> permissions.canWrite
         Option.DeletePermanently -> permissions.canWrite
         Option.Download -> permissions.canRead
@@ -429,6 +466,7 @@ fun Iterable<Option>.filterPermissions(
         Option.Trash -> permissions.isAdmin
         Option.UploadFile -> permissions.canWrite
         Option.RemoveMe -> permissions.canRead
+        Option.DeleteAlbum -> permissions.isAdmin
     }
 }
 
@@ -436,6 +474,16 @@ fun Iterable<Option>.filterProtonDocs(killSwitch: FeatureFlag) = filter { option
     when (option) {
         Option.CreateDocument -> killSwitch.off
         Option.OpenInBrowser -> killSwitch.off
+        else -> true
+    }
+}
+
+fun Iterable<Option>.filterAlbums(
+    featureFlagOn: Boolean,
+    killSwitch: FeatureFlag,
+) = filter { option ->
+    when (option) {
+        Option.CreateAlbum -> featureFlagOn && killSwitch.off
         else -> true
     }
 }

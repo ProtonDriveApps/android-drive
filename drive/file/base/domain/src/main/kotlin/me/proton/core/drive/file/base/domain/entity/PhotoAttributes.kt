@@ -19,10 +19,12 @@
 package me.proton.core.drive.file.base.domain.entity
 
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.link.domain.PhotoTag
 
 data class PhotoAttributes(
     val captureTime: TimestampS,
     val contentHash: String,
     val mainPhotoLinkId: String? = null,
     val exif: String? = null,
+    val tags: Set<PhotoTag> = emptySet(),
 )

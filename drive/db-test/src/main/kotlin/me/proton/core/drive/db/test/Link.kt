@@ -248,7 +248,7 @@ private fun FolderContext.NullableLinkEntity(
 )
 
 @Suppress("FunctionName")
-private fun NullableLinkEntity(
+fun NullableLinkEntity(
     userId: UserId,
     shareId: String,
     id: String,

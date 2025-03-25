@@ -22,13 +22,20 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.ElementsIntoSet
 import dagger.multibindings.IntoMap
 import dagger.multibindings.StringKey
+import me.proton.android.drive.photos.data.provider.FileNameTagsProvider
+import me.proton.android.drive.photos.data.provider.MimetypeTagsProvider
+import me.proton.android.drive.photos.data.provider.ParentNameTagsProvider
 import me.proton.android.drive.photos.domain.handler.DrivePhotosUploadDisabledFeatureFlagHandler
 import me.proton.core.drive.backup.domain.usecase.StopBackup
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PHOTOS_UPLOAD_DISABLED
 import me.proton.core.drive.feature.flag.domain.handler.FeatureFlagHandler
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
+import me.proton.android.drive.photos.data.provider.XmpTagsProvider
+import me.proton.core.drive.upload.domain.provider.TagsProvider
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -42,4 +49,20 @@ object PhotosModule {
         stopBackup: StopBackup,
     ): FeatureFlagHandler =
         DrivePhotosUploadDisabledFeatureFlagHandler(getPhotoShare, stopBackup)
+
+    @Provides
+    @Singleton
+    @ElementsIntoSet
+    @JvmSuppressWildcards
+    fun provideTagsProvider(
+        fileName: FileNameTagsProvider,
+        mimetype: MimetypeTagsProvider,
+        parentName: ParentNameTagsProvider,
+        xmp: XmpTagsProvider,
+    ): Set<TagsProvider> = setOf(
+        fileName,
+        mimetype,
+        parentName,
+        xmp,
+    )
 }

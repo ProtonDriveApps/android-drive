@@ -59,6 +59,10 @@ class FileUriResolver(
         uri(uriString).lastModified
     }.getOrNull()
 
+    override suspend fun getParentName(uriString: String): String? = coRunCatching(coroutineContext) {
+        uri(uriString).file?.parentFile?.name
+    }.getOrNull()
+
     override suspend fun getUriInfo(uriString: String): UriResolver.UriInfo? = coRunCatching(coroutineContext) {
         uri(uriString)?.let { uri ->
             UriResolver.UriInfo(

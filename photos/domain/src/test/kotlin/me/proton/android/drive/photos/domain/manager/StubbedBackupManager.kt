@@ -19,7 +19,6 @@
 package me.proton.android.drive.photos.domain.manager
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupFolder

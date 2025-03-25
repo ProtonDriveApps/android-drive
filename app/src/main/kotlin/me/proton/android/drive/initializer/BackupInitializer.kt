@@ -79,7 +79,7 @@ class BackupInitializer : Initializer<Unit> {
                     }
 
                     backupPermissionsManager.backupPermissions.mapWithPrevious { previous, permissions ->
-                        previous is BackupPermissions.Denied && permissions == BackupPermissions.Granted
+                        previous is BackupPermissions.Denied && permissions is BackupPermissions.Granted
                     }.filter { acquirePermissions ->
                         acquirePermissions
                     }.onEach {

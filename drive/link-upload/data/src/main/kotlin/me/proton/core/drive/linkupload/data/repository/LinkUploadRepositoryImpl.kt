@@ -32,12 +32,14 @@ import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.iterator
 import me.proton.core.drive.base.domain.function.pagedList
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.link.domain.PhotoTag
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
-import me.proton.core.drive.linkupload.data.db.entity.RawBlockEntity
+import me.proton.core.drive.linkupload.data.db.entity.UploadTagEntity
 import me.proton.core.drive.linkupload.data.extension.toLinkUploadEntity
+import me.proton.core.drive.linkupload.data.extension.toPhotoTag
 import me.proton.core.drive.linkupload.data.extension.toRawBlock
 import me.proton.core.drive.linkupload.data.extension.toRawBlockEntity
 import me.proton.core.drive.linkupload.data.extension.toUploadBlock
@@ -173,6 +175,11 @@ class LinkUploadRepositoryImpl @Inject constructor(
         userId: UserId, uploadStates: Set<UploadState>
     ): Bytes = db.linkUploadDao.getUploadSumSize(userId, uploadStates)?.bytes ?: 0.bytes
 
+    override suspend fun getUploadFileLinkPhotoTags(uploadFileLinkId: Long): Set<PhotoTag> =
+        db.uploadTagDao.get(uploadFileLinkId).mapNotNull { entity ->
+            entity.toPhotoTag()
+        }.toSet()
+
     override suspend fun updateUploadFileLink(uploadFileLink: UploadFileLink) =
         db.linkUploadDao.insertOrUpdate(uploadFileLink.toLinkUploadEntity())
 
@@ -272,6 +279,16 @@ class LinkUploadRepositoryImpl @Inject constructor(
             orientation = cameraExifTags.orientation,
             subjectArea = cameraExifTags.subjectArea,
         )
+
+    override suspend fun updateUploadFileLinkPhotoTags(
+        uploadFileLinkId: Long,
+        tags: Set<PhotoTag>,
+    ) = db.inTransaction {
+        db.uploadTagDao.deleteAll(uploadFileLinkId)
+        db.uploadTagDao.insertOrUpdate(*tags.map { tag ->
+            UploadTagEntity(uploadFileLinkId, tag.value)
+        }.toTypedArray())
+    }
 
     override suspend fun removeUploadFileLink(uploadFileLinkId: Long) =
         db.linkUploadDao.delete(uploadFileLinkId)

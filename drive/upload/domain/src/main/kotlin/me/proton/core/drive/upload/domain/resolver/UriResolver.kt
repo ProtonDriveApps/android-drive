@@ -29,6 +29,7 @@ interface UriResolver {
     suspend fun getMimeType(uriString: String): String?
     suspend fun getLastModified(uriString: String): TimestampMs?
     suspend fun getUriInfo(uriString: String): UriInfo?
+    suspend fun getParentName(uriString: String): String?
 
     data class UriInfo(
         val name: String?,

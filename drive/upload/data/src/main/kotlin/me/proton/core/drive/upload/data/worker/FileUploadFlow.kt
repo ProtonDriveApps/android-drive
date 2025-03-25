@@ -57,6 +57,12 @@ internal sealed class FileUploadFlow {
                     tags = uploadTags,
                 )
             ).then(
+                ExtractTagsWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    tags = uploadTags,
+                )
+            ).then(
                 EncryptBlocksWorker.getWorkRequest(
                     userId = userId,
                     uploadFileLinkId = uploadFileLinkId,
@@ -136,7 +142,12 @@ internal sealed class FileUploadFlow {
                     uriString = uriString,
                     tags = uploadTags,
                 )
-
+            ).then(
+                ExtractTagsWorker.getWorkRequest(
+                    userId = userId,
+                    uploadFileLinkId = uploadFileLinkId,
+                    tags = uploadTags,
+                )
             ).then(
                 EncryptBlocksWorker.getWorkRequest(
                     userId = userId,

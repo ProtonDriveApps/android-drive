@@ -38,6 +38,7 @@
   <string name="common_uploading">Tallennetaan</string>
   <string name="common_on">Käytössä</string>
   <string name="common_off">Ei käytössä</string>
+  <string name="common_all">All</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -64,6 +65,7 @@
   <string name="common_stop_sharing_action">Lopeta jakaminen</string>
   <string name="common_open_in_browser_action">Avaa selaimessa</string>
   <string name="common_done_action">Done</string>
+  <string name="common_create_album_action">Create album</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ääni</string>

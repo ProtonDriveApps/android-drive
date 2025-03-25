@@ -44,10 +44,10 @@ class BackupPermissionsManagerTest {
     fun `given permission granted when get permissions status then should be granted`() = runTest {
         val permissionsFlow = permissionsManager.backupPermissions
 
-        permissionsManager.onPermissionChanged(BackupPermissions.Granted)
+        permissionsManager.onPermissionChanged(BackupPermissions.Granted())
 
         assertEquals(
-            BackupPermissions.Granted,
+            BackupPermissions.Granted(),
             permissionsFlow.first(),
         )
     }

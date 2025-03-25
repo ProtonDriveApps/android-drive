@@ -37,7 +37,7 @@ import me.proton.core.drive.i18n.R as I18N
 
 
 @Composable
-internal fun DriveLink.thumbnailPainter(
+fun DriveLink.thumbnailPainter(
     usePhotoThumbnailVO: Boolean = false,
 ) = ThumbnailPainterWrapper(
     painter = when {
@@ -65,4 +65,8 @@ fun DriveLink.Album.details(appContext: Context, useCreationTime: Boolean = true
             this@details.photoCount.toInt(),
         )
     )
+    if (this@details.link.sharingDetails != null) {
+        append(" \u2022 ")
+        append(appContext.getString(I18N.string.common_shared))
+    }
 }

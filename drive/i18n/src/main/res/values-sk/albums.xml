@@ -20,4 +20,17 @@
   <string name="albums_title">Albumy</string>
   <string name="albums_new_album_name_hint">Názov albumu</string>
   <string name="albums_new_album_created_successfully">Album vytvorený</string>
+  <string name="albums_filter_my_albums">Moje albumy</string>
+  <!--
+        Variable %1$s is a number of photos in the album
+        Example:
+            "1 item"
+            "345 items"
+    -->
+  <plurals name="albums_photo_count">
+    <item quantity="one">%1$s položka</item>
+    <item quantity="few">%1$s položky</item>
+    <item quantity="many">%1$s položiek</item>
+    <item quantity="other">%1$s položiek</item>
+  </plurals>
 </resources>

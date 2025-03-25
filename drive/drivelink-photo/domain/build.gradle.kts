@@ -24,6 +24,7 @@ android {
 }
 
 driveModule(hilt = true) {
+    api(project(":drive:documentsprovider:domain"))
     api(project(":drive:drivelink:domain"))
     api(project(":drive:drivelink-crypto:domain"))
     api(project(":drive:photo:domain"))

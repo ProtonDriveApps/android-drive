@@ -38,6 +38,7 @@
   <string name="common_uploading">Enviando</string>
   <string name="common_on">Ativado</string>
   <string name="common_off">Desativado</string>
+  <string name="common_all">Todos</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -64,6 +65,7 @@
   <string name="common_stop_sharing_action">Parar compartilhamento</string>
   <string name="common_open_in_browser_action">Abrir no navegador</string>
   <string name="common_done_action">Concluído</string>
+  <string name="common_create_album_action">Criar álbum</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Áudio</string>

@@ -24,14 +24,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
 import me.proton.core.compose.component.bottomsheet.RunAction
-import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.base.presentation.component.rememberCreateDocumentLauncher
 import me.proton.core.drive.base.presentation.extension.launchWithNotFound
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -41,7 +41,6 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.notification.presentation.component.NotificationPermission
-import me.proton.core.drive.notification.presentation.viewmodel.NotificationPermissionRationaleViewModel
 
 @Composable
 fun FileOrFolderOptions(
@@ -51,16 +50,14 @@ fun FileOrFolderOptions(
     navigateToRename: (linkId: LinkId) -> Unit,
     navigateToDelete: (linkId: LinkId) -> Unit,
     navigateToSendFile: (fileId: FileId) -> Unit,
-    navigateToStopSharing: (linkId: LinkId) -> Unit,
     navigateToManageAccess: (linkId: LinkId) -> Unit,
     navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
-    navigateToShareViaLink: (linkId: LinkId) -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<FileOrFolderOptionsViewModel>()
-    val driveLink by rememberFlowWithLifecycle(viewModel.driveLink).collectAsState(initial = null)
+    val driveLink by viewModel.driveLink.collectAsStateWithLifecycle(initialValue = null)
     val link = driveLink ?: return
     FileOrFolderOptions(
         driveLink = link,
@@ -71,10 +68,8 @@ fun FileOrFolderOptions(
         navigateToRename = navigateToRename,
         navigateToDelete = navigateToDelete,
         navigateToSendFile = navigateToSendFile,
-        navigateToStopSharing = navigateToStopSharing,
         navigateToManageAccess = navigateToManageAccess,
         navigateToShareViaInvitations = navigateToShareViaInvitations,
-        navigateToShareViaLink = navigateToShareViaLink,
         dismiss = dismiss,
         modifier = modifier
             .navigationBarsPadding()
@@ -96,10 +91,8 @@ fun FileOrFolderOptions(
     navigateToRename: (linkId: LinkId) -> Unit,
     navigateToDelete: (linkId: LinkId) -> Unit,
     navigateToSendFile: (fileId: FileId) -> Unit,
-    navigateToStopSharing: (linkId: LinkId) -> Unit,
     navigateToManageAccess: (linkId: LinkId) -> Unit,
     navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
-    navigateToShareViaLink: (linkId: LinkId) -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -122,10 +115,8 @@ fun FileOrFolderOptions(
                     navigateToRename = navigateToRename,
                     navigateToDelete = navigateToDelete,
                     navigateToSendFile = navigateToSendFile,
-                    navigateToStopSharing = navigateToStopSharing,
                     navigateToManageAccess = navigateToManageAccess,
                     navigateToShareViaInvitations = navigateToShareViaInvitations,
-                    navigateToShareViaLink = navigateToShareViaLink,
                     dismiss = dismiss,
                     showCreateDocumentPicker = { filename, onNotFound ->
                         createDocumentLauncher.launchWithNotFound(filename, onNotFound)
@@ -152,10 +143,8 @@ fun FileOrFolderOptions(
                     navigateToRename = navigateToRename,
                     navigateToDelete = navigateToDelete,
                     navigateToSendFile = navigateToSendFile,
-                    navigateToStopSharing = navigateToStopSharing,
                     navigateToManageAccess = navigateToManageAccess,
                     navigateToShareViaInvitations = navigateToShareViaInvitations,
-                    navigateToShareViaLink = navigateToShareViaLink,
                     dismiss = dismiss,
                 ).flowWithLifecycle(
                     lifecycle = lifecycle,

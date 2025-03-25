@@ -34,4 +34,5 @@ driveModule(
     api(project(":drive:share-url:base:domain"))
     testImplementation(project(":drive:db-test"))
     testImplementation(project(":drive:link:data"))
+    testImplementation(project(":drive:link:domain"))
 }

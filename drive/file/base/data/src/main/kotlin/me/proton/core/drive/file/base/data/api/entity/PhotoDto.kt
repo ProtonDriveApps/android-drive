@@ -24,6 +24,7 @@ import me.proton.core.drive.base.data.api.Dto.CAPTURE_TIME
 import me.proton.core.drive.base.data.api.Dto.CONTENT_HASH
 import me.proton.core.drive.base.data.api.Dto.EXIF
 import me.proton.core.drive.base.data.api.Dto.MAIN_PHOTO_LINK_ID
+import me.proton.core.drive.base.data.api.Dto.TAGS
 
 @Serializable
 data class PhotoDto(
@@ -35,4 +36,6 @@ data class PhotoDto(
     val exif: String? = null,
     @SerialName(CONTENT_HASH)
     val contentHash: String,
+    @SerialName(TAGS)
+    val tags: List<Long>,
 )

@@ -33,7 +33,7 @@ driveModule(
     api(project(":drive:contact:domain"))
     api(project(":drive:contact:presentation"))
     api(project(":drive:entitlement"))
-    api(project(":drive:files-list"))
+    api(project(":drive:files:presentation"))
     api(project(":drive:drivelink-shared:domain"))
     api(project(":drive:label:domain"))
     api(project(":drive:share-user:domain"))

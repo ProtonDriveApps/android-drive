@@ -34,7 +34,7 @@ android-tools = "1.1.5"
 # Coil
 coil = "2.4.0"
 # Core
-core = "30.3.1"
+core = "30.4.4"
 core-test-quark = "14.1.0"
 # Dagger
 dagger = "2.49"

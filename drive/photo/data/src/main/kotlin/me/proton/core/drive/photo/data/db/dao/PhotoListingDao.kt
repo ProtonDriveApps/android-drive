@@ -36,42 +36,56 @@ abstract class PhotoListingDao : BaseDao<PhotoListingEntity>() {
     )
     abstract fun getPhotoListingCount(userId: UserId, volumeId: String): Flow<Int>
 
-    @Query(
-        """
-            SELECT * FROM PhotoListingEntity
-            WHERE
-                user_id = :userId AND
-                volume_id = :volumeId
-            ORDER BY
-                CASE WHEN :direction = 'ASCENDING' THEN capture_time END ASC,
-                CASE WHEN :direction = 'DESCENDING' THEN capture_time END DESC
-            LIMIT :limit OFFSET :offset
-        """
-    )
-    abstract suspend fun getPhotoListings(
+    suspend fun getPhotoListings(
         userId: UserId,
         volumeId: String,
         direction: Direction,
         limit: Int,
         offset: Int,
+    ): List<PhotoListingEntity> = when(direction) {
+        Direction.ASCENDING -> getPhotoListingsAsc(userId, volumeId, limit, offset)
+        Direction.DESCENDING -> getPhotoListingsDesc(userId, volumeId, limit, offset)
+    }
+
+    @Query(PHOTO_LISTING_ASC)
+    abstract suspend fun getPhotoListingsAsc(
+        userId: UserId,
+        volumeId: String,
+        limit: Int,
+        offset: Int,
     ): List<PhotoListingEntity>
 
-    @Query(
-        """
-            SELECT * FROM PhotoListingEntity
-            WHERE
-                user_id = :userId AND
-                volume_id = :volumeId
-            ORDER BY
-                CASE WHEN :direction = 'ASCENDING' THEN capture_time END ASC,
-                CASE WHEN :direction = 'DESCENDING' THEN capture_time END DESC
-            LIMIT :limit OFFSET :offset
-        """
-    )
-    abstract fun getPhotoListingsFlow(
+    @Query(PHOTO_LISTING_DESC)
+    abstract suspend fun getPhotoListingsDesc(
+        userId: UserId,
+        volumeId: String,
+        limit: Int,
+        offset: Int,
+    ): List<PhotoListingEntity>
+
+    fun getPhotoListingsFlow(
         userId: UserId,
         volumeId: String,
         direction: Direction,
+        limit: Int,
+        offset: Int,
+    ): Flow<List<PhotoListingEntity>> = when (direction) {
+        Direction.ASCENDING -> getPhotoListingsAscFlow(userId, volumeId, limit, offset)
+        Direction.DESCENDING -> getPhotoListingsDescFlow(userId, volumeId, limit, offset)
+    }
+
+    @Query(PHOTO_LISTING_ASC)
+    abstract fun getPhotoListingsAscFlow(
+        userId: UserId,
+        volumeId: String,
+        limit: Int,
+        offset: Int,
+    ): Flow<List<PhotoListingEntity>>
+
+    @Query(PHOTO_LISTING_DESC)
+    abstract fun getPhotoListingsDescFlow(
+        userId: UserId,
+        volumeId: String,
         limit: Int,
         offset: Int,
     ): Flow<List<PhotoListingEntity>>
@@ -81,4 +95,23 @@ abstract class PhotoListingDao : BaseDao<PhotoListingEntity>() {
 
     @Query("DELETE FROM PhotoListingEntity WHERE user_id = :userId AND volume_id = :volumeId")
     abstract suspend fun deleteAll(userId: UserId, volumeId: String)
+
+    private companion object{
+        const val PHOTO_LISTING_ASC = """
+            SELECT * FROM PhotoListingEntity
+            WHERE
+                user_id = :userId AND
+                volume_id = :volumeId
+            ORDER BY capture_time ASC, id ASC
+            LIMIT :limit OFFSET :offset
+        """
+        const val PHOTO_LISTING_DESC = """
+            SELECT * FROM PhotoListingEntity
+            WHERE
+                user_id = :userId AND
+                volume_id = :volumeId
+            ORDER BY capture_time DESC, id DESC
+            LIMIT :limit OFFSET :offset
+        """
+    }
 }

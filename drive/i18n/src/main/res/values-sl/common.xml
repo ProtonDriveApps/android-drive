@@ -38,6 +38,7 @@
   <string name="common_uploading">Nalaganje</string>
   <string name="common_on">Vklopljeno</string>
   <string name="common_off">Izklopljeno</string>
+  <string name="common_all">All</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">V redu</string>
@@ -64,6 +65,7 @@
   <string name="common_stop_sharing_action">Ustavi skupno rabo</string>
   <string name="common_open_in_browser_action">Odpri v brskalniku</string>
   <string name="common_done_action">Done</string>
+  <string name="common_create_album_action">Create album</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Zvok</string>

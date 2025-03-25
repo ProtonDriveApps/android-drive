@@ -209,7 +209,7 @@
   <string name="get_more_free_storage_action_link_subtitle">選取任何檔案或資料夾。開啟選項選單並按 %1$s。</string>
   <string name="get_more_free_storage_action_share_title">分享個檔案</string>
   <string name="get_more_free_storage_action_share_subtitle">既簡單又安全。</string>
-  <string name="get_more_free_storage_action_recovery_title">設定備援方法</string>
+  <string name="get_more_free_storage_action_recovery_title">設定復原方式</string>
   <!--
         Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
         Example:

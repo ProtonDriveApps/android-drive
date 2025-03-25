@@ -27,6 +27,7 @@ import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.file.base.domain.extension.getThumbnailId
 import me.proton.core.drive.file.base.domain.extension.getThumbnailIds
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.photo.domain.entity.PhotoListing
 
 fun DriveLink.updateLastModified(lastModified: TimestampS) = link.let { link ->
     when (link) {
@@ -61,3 +62,14 @@ val DriveLink.isShareMember: Boolean
 val DriveLink.isShareReadOnly: Boolean get() = sharePermissions?.let { sharePermissions ->
     sharePermissions.canRead && !sharePermissions.canWrite
 } ?: false
+
+fun DriveLink.File.toVolumePhotoListing(): PhotoListing.Volume =
+    requireNotNull(photoCaptureTime) { "Photo drive link is required" }
+        .let { captureTime ->
+            PhotoListing.Volume(
+                linkId = id,
+                captureTime = captureTime,
+                nameHash = nameHash,
+                contentHash = link.photoContentHash,
+            )
+        }

@@ -38,6 +38,7 @@
   <string name="common_uploading">正在上傳</string>
   <string name="common_on">開啟</string>
   <string name="common_off">關閉</string>
+  <string name="common_all">All</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">好</string>
@@ -64,6 +65,7 @@
   <string name="common_stop_sharing_action">停止分享</string>
   <string name="common_open_in_browser_action">在瀏覽器中開啟</string>
   <string name="common_done_action">Done</string>
+  <string name="common_create_album_action">Create album</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">音訊</string>
