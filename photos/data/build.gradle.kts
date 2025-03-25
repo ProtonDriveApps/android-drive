@@ -35,5 +35,6 @@ driveModule(
     api(project(":drive:telemetry:domain"))
     implementation(libs.androidx.dataStore.core)
     implementation(libs.androidx.dataStore.preferences)
+    implementation(libs.androidx.exif)
     testImplementation(project(":drive:db-test"))
 }

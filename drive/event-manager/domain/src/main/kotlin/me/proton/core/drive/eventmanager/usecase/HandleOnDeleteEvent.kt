@@ -27,9 +27,11 @@ import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinks
 import me.proton.core.drive.drivelink.download.domain.usecase.CancelDownload
 import me.proton.core.drive.drivelink.offline.domain.usecase.DeleteLocalContent
 import me.proton.core.drive.folder.domain.usecase.GetAllFolderChildren
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.ids
 import me.proton.core.drive.link.domain.usecase.DeleteLinks
+import me.proton.core.drive.photo.domain.usecase.DeleteAlbumListings
 import me.proton.core.drive.photo.domain.usecase.DeletePhotoListings
 import me.proton.core.drive.share.crypto.domain.usecase.DeleteLocalShares
 import me.proton.core.drive.volume.crypto.domain.usecase.DeleteLocalVolumes
@@ -45,6 +47,7 @@ class HandleOnDeleteEvent @Inject constructor(
     private val deleteLocalShares: DeleteLocalShares,
     private val deletePhotoListings: DeletePhotoListings,
     private val deleteLocalVolumes: DeleteLocalVolumes,
+    private val deleteAlbumListings: DeleteAlbumListings,
 ) {
 
     suspend operator fun invoke(linkIds: List<LinkId>, stopOnFailure: Boolean = false): Result<Unit> = coRunCatching {
@@ -61,13 +64,14 @@ class HandleOnDeleteEvent @Inject constructor(
                             invoke(children.ids, stopOnFailure).getOrNullOrThrowIf(stopOnFailure)
                         }
                         .getOrNullOrThrowIf(stopOnFailure)
-                    is DriveLink.Album -> error("TODO")
+                    is DriveLink.Album -> Unit//error("TODO")
                 }
             }
         deleteLocalVolumes(linkIds).getOrNullOrThrowIf(stopOnFailure)
         deleteLocalShares(linkIds).getOrNullOrThrowIf(stopOnFailure)
         deleteLinks(linkIds).getOrNullOrThrowIf(stopOnFailure)
         deletePhotoListings(linkIds).getOrNullOrThrowIf(stopOnFailure)
+        deleteAlbumListings(linkIds.filterIsInstance<AlbumId>()).getOrNullOrThrowIf(stopOnFailure)
     }
 
     private fun<T> Result<T>.getOrNullOrThrowIf(shouldThrow: Boolean): T? = if (shouldThrow) {

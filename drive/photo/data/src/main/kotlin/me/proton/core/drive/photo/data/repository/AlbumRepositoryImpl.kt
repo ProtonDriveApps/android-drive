@@ -166,7 +166,7 @@ class AlbumRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun delete(albumIds: List<AlbumId>) {
+    override suspend fun deleteAlbumListings(albumIds: List<AlbumId>) {
         db.inTransaction {
             albumIds
                 .groupBy({ albumId -> albumId.shareId }) { albumId -> albumId.id }
@@ -316,6 +316,19 @@ class AlbumRepositoryImpl @Inject constructor(
                 addToAlbumInfos = chunk,
             ).valueOrThrow
         }
+    }
+
+    override suspend fun deleteAlbum(
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        deleteAlbumPhotos: Boolean
+    ) {
+        api.deleteAlbum(
+            userId = albumId.userId,
+            volumeId = volumeId,
+            albumId = albumId.id,
+            deleteAlbumPhotos = deleteAlbumPhotos,
+        )
     }
 
     private suspend fun fetchAlbumPhotoListingDtos(

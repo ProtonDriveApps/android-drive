@@ -38,6 +38,7 @@
   <string name="common_uploading">업로드 중</string>
   <string name="common_on">켬</string>
   <string name="common_off">끔</string>
+  <string name="common_all">전체</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">확인</string>
@@ -64,6 +65,7 @@
   <string name="common_stop_sharing_action">공유 중지</string>
   <string name="common_open_in_browser_action">브라우저에서 열기</string>
   <string name="common_done_action">완료</string>
+  <string name="common_create_album_action">앨범 생성</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">오디오</string>

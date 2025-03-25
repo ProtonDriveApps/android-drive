@@ -19,6 +19,6 @@
 package me.proton.core.drive.backup.domain.entity
 
 sealed interface BackupPermissions {
-    object Granted : BackupPermissions
+    data class Granted(val partial: Boolean = false) : BackupPermissions
     data class Denied(val shouldShowRationale: Boolean) : BackupPermissions
 }

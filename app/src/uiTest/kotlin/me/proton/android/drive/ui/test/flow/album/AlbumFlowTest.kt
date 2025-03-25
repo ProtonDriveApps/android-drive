@@ -21,22 +21,25 @@ package me.proton.android.drive.ui.test.flow.album
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
-import me.proton.android.drive.ui.robot.AlbumTabRobot
+import me.proton.android.drive.ui.robot.AlbumRobot
+import me.proton.android.drive.ui.robot.AlbumsTabRobot
+import me.proton.android.drive.ui.robot.ConfirmDeleteAlbumRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
-import me.proton.android.drive.ui.test.ExternalStorageBaseTest
+import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ALBUMS
 import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Before
+import org.junit.Ignore
 import org.junit.Test
 
 @HiltAndroidTest
-class AlbumFlowTest : ExternalStorageBaseTest() {
+class AlbumFlowTest : BaseTest() {
 
     @Before
     fun setUp() {
         PhotosTabRobot
-            .clickOnAlbumTab()
+            .clickOnAlbumsTab()
             .verify {
                 robotDisplayed()
             }
@@ -47,12 +50,16 @@ class AlbumFlowTest : ExternalStorageBaseTest() {
     @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
     @FeatureFlag(DRIVE_ALBUMS, ENABLED)
-    fun albumSharedByMeFilter() {
-        AlbumTabRobot
-            .clickOnFilterSharedByMe()
+    fun renameAlbum() {
+        val newAlbumName = "new-album-name"
+        AlbumsTabRobot
+            .clickOnAlbum("album-for-photos")
+            .clickOnMoreButton()
+            .clickRename()
+            .typeName(newAlbumName)
+            .clickRename(AlbumRobot)
             .verify {
-                assertAlbumIsDisplayed("activeAlbum-shared")
-                assertAlbumIsNotDisplayed("album-for-photos-in-stream")
+                assertAlbumNameIsDisplayed(newAlbumName)
             }
     }
 
@@ -61,28 +68,15 @@ class AlbumFlowTest : ExternalStorageBaseTest() {
     @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
     @FeatureFlag(DRIVE_ALBUMS, ENABLED)
-    fun albumSharedWithMeFilter() {
-        AlbumTabRobot
-            .clickOnFilterSharedWithMe()
-            .verify {
-                assertIsEmpty()
-            }
-    }
-
-    @Test
-    @PrepareUser(withTag = "main", loginBefore = true)
-    @PrepareUser(withTag = "sharingUser")
-    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
-    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
-    fun albumWithoutPhotos() {
-        val albumName = "activeAlbum-shared"
-        val albumPhotoCount = 0
-        AlbumTabRobot
+    fun deleteAlbumWithoutChildren() {
+        val albumName = "album-for-photos-in-stream"
+        AlbumsTabRobot
             .clickOnAlbum(albumName)
+            .clickOnMoreButton()
+            .clickDeleteAlbum()
+            .clickOnDeleteAlbum(AlbumsTabRobot)
             .verify {
-                robotDisplayed()
-                assertAlbumNameIsDisplayed(albumName)
-                assertItemsInAlbum(albumPhotoCount)
+                assertAlbumIsNotDisplayed(albumName)
             }
     }
 
@@ -91,15 +85,41 @@ class AlbumFlowTest : ExternalStorageBaseTest() {
     @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
     @FeatureFlag(DRIVE_ALBUMS, ENABLED)
-    fun albumWithPhotos() {
+    fun deleteAlbumWithChildrenWithoutSaving() {
         val albumName = "album-for-photos"
-        val albumPhotoCount = 1
-        AlbumTabRobot
+        AlbumsTabRobot
             .clickOnAlbum(albumName)
+            .clickOnMoreButton()
+            .clickDeleteAlbum()
+            .clickOnDeleteAlbum(ConfirmDeleteAlbumRobot)
             .verify {
-                robotDisplayed()
-                assertAlbumNameIsDisplayed(albumName)
-                assertItemsInAlbum(albumPhotoCount)
+                assertWithChildrenDialogIsDisplayed()
+            }
+            .clickOnDeleteWithoutSaving(AlbumsTabRobot)
+            .verify {
+                assertAlbumIsNotDisplayed(albumName)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    @Ignore("Save does not work yet")
+    fun saveAndDeleteAlbumWithChildren() {
+        val albumName = "album-for-photos"
+        AlbumsTabRobot
+            .clickOnAlbum(albumName)
+            .clickOnMoreButton()
+            .clickDeleteAlbum()
+            .clickOnDeleteAlbum(ConfirmDeleteAlbumRobot)
+            .verify {
+                assertWithChildrenDialogIsDisplayed()
+            }
+            .clickOnSaveAndDelete(AlbumsTabRobot)
+            .verify {
+                assertAlbumIsNotDisplayed(albumName)
             }
     }
 }

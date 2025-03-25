@@ -36,11 +36,13 @@ import me.proton.core.drive.file.base.domain.usecase.UpdateRevision
 import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.usecase.BuildNodeKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
+import me.proton.core.drive.link.domain.PhotoTag
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.extension.isThumbnail
 import me.proton.core.drive.linkupload.domain.extension.requireFileId
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
+import me.proton.core.drive.linkupload.domain.usecase.GetPhotoTags
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.usecase.GetShare
@@ -62,6 +64,7 @@ class UpdateRevision @Inject constructor(
     private val getNodeKey: GetNodeKey,
     private val getContentHash: GetContentHash,
     private val getShare: GetShare,
+    private val getPhotoTags: GetPhotoTags,
     private val verifyManifestSignaturePrimary: VerifyManifestSignaturePrimary,
     private val configurationProvider: ConfigurationProvider,
 ) {
@@ -121,6 +124,7 @@ class UpdateRevision @Inject constructor(
                         uploadFileLink = this,
                         share = getShare(shareId, flowOf(false)).toResult().getOrThrow(),
                         folderKey = folderKey,
+                        tags = getPhotoTags(id).getOrThrow(),
                     ),
                 ).getOrThrow()
                 uploadFileLink
@@ -135,6 +139,7 @@ class UpdateRevision @Inject constructor(
         uploadFileLink: UploadFileLink,
         share: Share,
         folderKey: Key.Node,
+        tags: Set<PhotoTag> = emptySet()
     ): PhotoAttributes? = takeIf { share.type == Share.Type.PHOTO }?.let {
         with(uploadFileLink) {
             PhotoAttributes(
@@ -153,6 +158,7 @@ class UpdateRevision @Inject constructor(
                 }.let { contentDigest ->
                     getContentHash(parentLinkId, folderKey, contentDigest).getOrThrow()
                 },
+                tags = tags,
             )
         }
     }

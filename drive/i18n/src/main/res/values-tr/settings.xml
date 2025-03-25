@@ -72,7 +72,7 @@
   <string name="settings_external_link_format">%1$s (tarayıcıda açılır)</string>
   <string name="settings_section_appearance_settings">Görünüm</string>
   <string name="settings_theme_entry">Tema</string>
-  <string name="settings_home_tab">Varsayılan giriş sekmesi</string>
+  <string name="settings_home_tab">Varsayılan açılış sekmesi</string>
   <string name="settings_section_system">Sistem</string>
   <string name="settings_clear_local_cache_entry">Yerel ön belleği temizle</string>
   <string name="settings_show_log">Günlüğü görüntüle</string>

@@ -22,7 +22,8 @@ import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.TypeConverters
-import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
+import me.proton.android.drive.photos.data.db.PhotosDatabase
+import me.proton.android.drive.photos.data.db.entity.AddToAlbumEntity
 import me.proton.android.drive.photos.data.db.entity.MediaStoreVersionEntity
 import me.proton.core.account.data.db.AccountConverters
 import me.proton.core.account.data.db.AccountDatabase
@@ -101,6 +102,7 @@ import me.proton.core.drive.linkupload.data.db.entity.RawBlockEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBlockEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkUriStringEntity
+import me.proton.core.drive.linkupload.data.db.entity.UploadTagEntity
 import me.proton.core.drive.log.data.db.LogDatabase
 import me.proton.core.drive.log.data.db.entity.LogEntity
 import me.proton.core.drive.log.data.db.entity.LogLevelEntity
@@ -269,6 +271,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         UploadBlockEntity::class,
         UploadBulkEntity::class,
         UploadBulkUriStringEntity::class,
+        UploadTagEntity::class,
         FolderMetadataEntity::class,
         TrashMetadataEntity::class,
         RawBlockEntity::class,
@@ -298,9 +301,10 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         AlbumPhotoListingEntity::class,
         AlbumListingEntity::class,
         AlbumPhotoListingRemoteKeyEntity::class,
+        MediaStoreVersionEntity::class,
+        AddToAlbumEntity::class,
         // FeatureFlag
         DriveFeatureFlagRefreshEntity::class,
-        MediaStoreVersionEntity::class,
         // Device
         DeviceEntity::class,
         // Base
@@ -406,7 +410,7 @@ abstract class DriveDatabase :
     PhotoDatabase,
     DriveLinkPhotoDatabase,
     DriveFeatureFlagDatabase,
-    MediaStoreVersionDatabase,
+    PhotosDatabase,
     DeviceDatabase,
     DriveBaseDatabase,
     LogDatabase,
@@ -416,7 +420,7 @@ abstract class DriveDatabase :
     DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 79
+        const val VERSION = 82
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -497,6 +501,9 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_76_77,
             DriveDatabaseMigrations.MIGRATION_77_78,
             DriveDatabaseMigrations.MIGRATION_78_79,
+            DriveDatabaseMigrations.MIGRATION_79_80,
+            DriveDatabaseMigrations.MIGRATION_80_81,
+            DriveDatabaseMigrations.MIGRATION_81_82,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

@@ -20,10 +20,17 @@ package me.proton.android.drive.photos.presentation.state
 
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
 
 sealed interface PhotosItem {
-    data class Separator(val value: String) : PhotosItem
+    data class Separator(
+        val value: String,
+    ) : PhotosItem
 
-    data class PhotoListing(val id: LinkId, val captureTime: TimestampS, val link: DriveLink?) : PhotosItem
+    data class PhotoListing(
+        val id: FileId,
+        val captureTime: TimestampS,
+        val link: DriveLink.File?,
+    ) : PhotosItem
 }

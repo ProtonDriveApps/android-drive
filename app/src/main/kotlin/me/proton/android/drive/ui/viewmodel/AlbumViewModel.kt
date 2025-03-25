@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
@@ -56,7 +57,9 @@ import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.base.presentation.state.ListContentAppendingState
 import me.proton.core.drive.base.presentation.state.ListContentState
@@ -77,6 +80,7 @@ import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
 @ExperimentalCoroutinesApi
@@ -99,6 +103,14 @@ class AlbumViewModel @Inject constructor(
     private val _listEffect = MutableSharedFlow<ListEffect>()
     val listEffect: Flow<ListEffect>
         get() = _listEffect.asSharedFlow()
+    private var viewEvent: AlbumViewEvent? = null
+    private val albumOptionsAction = Action(
+        iconResId = CorePresentation.drawable.ic_proton_three_dots_vertical,
+        contentDescriptionResId = I18N.string.common_more,
+        notificationDotVisible = false,
+        onAction = { viewEvent?.onAlbumOptions?.invoke() },
+    )
+    private val topBarActions: MutableStateFlow<Set<Action>> = MutableStateFlow(setOf(albumOptionsAction))
     private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
     val driveLink: StateFlow<DriveLink.Album?> = retryTrigger.transformLatest {
         emitAll(
@@ -107,13 +119,21 @@ class AlbumViewModel @Inject constructor(
                 .mapWithPrevious { previous, result ->
                     result
                         .onSuccess { driveLink ->
-                            CoreLogger.d(VIEW_MODEL, "drive link onSuccess")
+                            CoreLogger.d(VIEW_MODEL, "drive link (${driveLink.id.id.logId()}) onSuccess")
                             driveLink.coverLinkId?.let { coverLinkId ->
                                 photoDriveLinks.load(setOf(coverLinkId))
                             }
                             return@mapWithPrevious driveLink
                         }
                         .onFailure { error ->
+                            CoreLogger.d(VIEW_MODEL, "drive link (${albumId.id.logId()}) onFailure")
+                            error.cause?.let { throwable ->
+                                CoreLogger.d(VIEW_MODEL, throwable, "drive link (${albumId.id.logId()}) onFailure")
+                                if (throwable is NoSuchElementException) {
+                                    viewEvent?.onBackPressed?.invoke()
+                                    return@onFailure
+                                }
+                            }
                             onFilesDriveLinkError(
                                 userId = userId,
                                 previous = previous,
@@ -138,6 +158,7 @@ class AlbumViewModel @Inject constructor(
             coverLinkId = album.coverLinkId,
             listContentState = contentState,
             isRefreshEnabled = contentState !is ListContentState.Loading,
+            topBarActions = topBarActions,
         )
     }
 
@@ -167,6 +188,7 @@ class AlbumViewModel @Inject constructor(
             }.cachedIn(viewModelScope)
 
     fun viewEvent(
+        navigateToAlbumOptions: (AlbumId) -> Unit,
         navigateBack: () -> Unit,
     ) : AlbumViewEvent = object : AlbumViewEvent {
         override val onBackPressed = { navigateBack() }
@@ -190,13 +212,21 @@ class AlbumViewModel @Inject constructor(
         override val onScroll = this@AlbumViewModel::onScroll
         override val onErrorAction = { retry() }
         override val onRefresh = this@AlbumViewModel::onRefresh
+        override val onAlbumOptions = {
+            viewModelScope.launch {
+                navigateToAlbumOptions(driveLink.filterNotNull().first().id)
+            }
+            Unit
+        }
+    }.also { viewEvent ->
+        this.viewEvent = viewEvent
     }
 
     private fun onScroll(driveLinkIds: Set<LinkId>) {
         if (driveLinkIds.isNotEmpty()) {
             fetchingJob?.cancel()
             fetchingJob = viewModelScope.launch {
-                delay(300.milliseconds)
+                delay(100.milliseconds)
                 photoDriveLinks.load(
                     (driveLinkIds + driveLink.value?.coverLinkId)
                         .filterNotNull()

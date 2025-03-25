@@ -32,6 +32,7 @@ object ProtonApiCode {
     const val INSUFFICIENT_QUOTA = 200001
     const val EXCEEDED_QUOTA = 200002
     const val TOO_MANY_CHILDREN = 200300
+    const val RESULTS_IN_DATA_LOSS = 200302
     const val PHOTO_MIGRATION = 201100
     const val ENCRYPTION_VERIFICATION_FAILED = 200501
     const val KEY_GET_INPUT_INVALID = 33101;

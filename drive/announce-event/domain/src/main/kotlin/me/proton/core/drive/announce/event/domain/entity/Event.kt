@@ -21,6 +21,7 @@ import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.key.domain.entity.key.PublicKey
 import java.util.UUID
@@ -238,6 +239,23 @@ sealed class Event {
     data object TransferData : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs()
+    }
+
+    sealed class Album : Event() {
+
+        data class Created(
+            val albumId: AlbumId,
+        ) : Album() {
+            override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_${albumId.id}"
+            override val occurredAt: TimestampMs = TimestampMs()
+        }
+
+        data class CreationFailed(
+            val error: kotlin.Throwable,
+        ) : Album() {
+            override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+            override val occurredAt: TimestampMs = TimestampMs()
+        }
     }
 
     companion object {

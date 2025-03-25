@@ -22,8 +22,16 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.CombinedLoadStates
+import androidx.paging.cachedIn
+import androidx.paging.map
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,8 +42,12 @@ import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.getDefaultMessage
 import me.proton.android.drive.extension.log
 import me.proton.android.drive.photos.domain.usecase.ClearNewAlbum
-import me.proton.android.drive.photos.domain.usecase.GetNewAlbumInfo
+import me.proton.android.drive.photos.domain.usecase.CreateNewAlbum
+import me.proton.android.drive.photos.domain.usecase.GetNewAlbumName
+import me.proton.android.drive.photos.domain.usecase.GetPagedAddToAlbumPhotoListings
+import me.proton.android.drive.photos.domain.usecase.RemoveFromAlbumInfo
 import me.proton.android.drive.photos.domain.usecase.UpdateAlbumName
+import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.CreateNewAlbumViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.CreateNewAlbumViewState
 import me.proton.core.drive.base.domain.extension.flowOf
@@ -44,32 +56,42 @@ import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.drivelink.photo.domain.usecase.CreateAlbum
+import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.toVolumePhotoListing
+import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
+import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 import me.proton.core.drive.i18n.R as I18N
 
 @HiltViewModel
 class CreateNewAlbumViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val appContext: Context,
-    private val createAlbum: CreateAlbum,
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
     private val updateAlbumName: UpdateAlbumName,
     private val clearNewAlbum: ClearNewAlbum,
-    private val getNewAlbumInfo: GetNewAlbumInfo,
+    private val getNewAlbumName: GetNewAlbumName,
+    private val getPagedAddToAlbumPhotoListings: GetPagedAddToAlbumPhotoListings,
+    private val photoDriveLinks: PhotoDriveLinks,
+    private val createNewAlbum: CreateNewAlbum,
+    private val removeFromAlbumInfo: RemoveFromAlbumInfo,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val isCreationInProgress = MutableStateFlow(false)
     private val currentAlbumName = MutableStateFlow<String?>(null)
     private val initialAlbumName = flowOf {
-        getNewAlbumInfo(userId)
+        getNewAlbumName(userId)
             .getOrNull(VIEW_MODEL, "Get new album info failed")
-            ?.name ?: ""
+            ?: ""
     }
+    private var fetchingJob: Job? = null
     private val isDoneEnabled = currentAlbumName.map {
         it.isNullOrEmpty().not()
     }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
+    val driveLinksMap: Flow<Map<LinkId, DriveLink>> = photoDriveLinks.getDriveLinksMapFlow(userId)
 
     val initialViewState = CreateNewAlbumViewState(
         isDoneEnabled = true,
@@ -92,22 +114,38 @@ class CreateNewAlbumViewModel @Inject constructor(
         )
     }
 
+    val photos = getPagedAddToAlbumPhotoListings(userId)
+        .map { pagingData ->
+            pagingData.map { photoListing ->
+                PhotosItem.PhotoListing(
+                    id = photoListing.linkId,
+                    captureTime = photoListing.captureTime,
+                    link = null,
+                )
+            }
+        }
+        .cachedIn(viewModelScope)
+
     fun viewEvent(
         navigateBack: () -> Unit,
+        navigateToAlbum: (AlbumId) -> Unit,
     ): CreateNewAlbumViewEvent = object : CreateNewAlbumViewEvent {
-        override val onBackPressed = { onBackPressed(navigateBack) }
-        override val onDone = { onCreateAlbum(navigateBack) }
+        override val onBackPressed = { navigateBack() }
+        override val onDone = { onCreateAlbum(navigateToAlbum) }
         override val onNameChanged = ::onChanged
+        override val onLoadState = { _: CombinedLoadStates, _: Int -> }
+        override val onScroll = this@CreateNewAlbumViewModel::onScroll
+        override val onRemove = this@CreateNewAlbumViewModel::onRemove
     }
 
-    private fun onCreateAlbum(navigateBack: () -> Unit) {
+    private fun onCreateAlbum(navigateToAlbum: (AlbumId) -> Unit) {
         viewModelScope.launch {
             currentAlbumName.value?.let { albumName ->
                 isCreationInProgress.value = true
-                createAlbum(userId = userId, albumName = albumName, isLocked = false)
+                createNewAlbum(userId = userId, isLocked = false)
                     .onFailure { error ->
                         isCreationInProgress.value = false
-                        error.log(VIEW_MODEL, "Creating album failed")
+                        error.log(VIEW_MODEL, "Creating new album failed")
                         broadcastMessages(
                             userId = userId,
                             message = error.getDefaultMessage(
@@ -118,7 +156,6 @@ class CreateNewAlbumViewModel @Inject constructor(
                         )
                     }
                     .onSuccess { albumId ->
-                        // add photos to album
                         isCreationInProgress.value = false
                         broadcastMessages(
                             userId = userId,
@@ -129,7 +166,7 @@ class CreateNewAlbumViewModel @Inject constructor(
                             .onFailure { error ->
                                 error.log(VIEW_MODEL, "Clear new album failed")
                             }
-                        navigateBack() //TODO: navigate to album screen once available
+                        navigateToAlbum(albumId)
                     }
             }
         }
@@ -145,13 +182,32 @@ class CreateNewAlbumViewModel @Inject constructor(
         }
     }
 
-    private fun onBackPressed(navigateBack: () -> Unit) {
+    private fun onScroll(driveLinkIds: Set<LinkId>) {
+        if (driveLinkIds.isNotEmpty()) {
+            fetchingJob?.cancel()
+            fetchingJob = viewModelScope.launch {
+                delay(100.milliseconds)
+                photoDriveLinks.load(driveLinkIds)
+            }
+        }
+    }
+
+    private fun onRemove(driveLink: DriveLink.File) {
         viewModelScope.launch {
+            removeFromAlbumInfo(setOf(driveLink.toVolumePhotoListing()))
+                .onFailure { error ->
+                    error.log(VIEW_MODEL, "Remove from album info failed")
+                }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        CoroutineScope(Dispatchers.Main).launch {
             clearNewAlbum(userId)
                 .onFailure { error ->
                     error.log(VIEW_MODEL, "Clear new album failed")
                 }
-            navigateBack()
         }
     }
 }

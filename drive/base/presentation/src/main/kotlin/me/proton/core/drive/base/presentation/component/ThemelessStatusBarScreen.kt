@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.base.presentation.component
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.Color

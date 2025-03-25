@@ -22,7 +22,7 @@ import android.content.Context
 import android.os.Build
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
-import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
+import me.proton.android.drive.photos.data.db.PhotosDatabase
 import me.proton.android.drive.photos.data.db.entity.MediaStoreVersionEntity
 import me.proton.android.drive.photos.domain.repository.MediaStoreVersionRepository
 import me.proton.core.domain.entity.UserId
@@ -30,7 +30,7 @@ import javax.inject.Inject
 
 class MediaStoreVersionRepositoryImpl @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val database: MediaStoreVersionDatabase,
+    private val database: PhotosDatabase,
 ) : MediaStoreVersionRepository {
     override suspend fun getLastVersion(userId: UserId): String? =
         database.mediaStoreVersionDao.get(userId, volumeName)?.version

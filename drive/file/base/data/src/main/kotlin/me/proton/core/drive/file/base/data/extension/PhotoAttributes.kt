@@ -27,4 +27,5 @@ fun PhotoAttributes.toPhotoDto() =
         mainPhotoLinkId = mainPhotoLinkId,
         exif = exif,
         contentHash = contentHash,
+        tags = tags.map { tag -> tag.value },
     )

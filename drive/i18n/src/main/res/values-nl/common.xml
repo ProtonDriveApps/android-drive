@@ -38,6 +38,7 @@
   <string name="common_uploading">Uploaden</string>
   <string name="common_on">Aan</string>
   <string name="common_off">Uit</string>
+  <string name="common_all">Alle</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">Oké</string>
@@ -64,6 +65,7 @@
   <string name="common_stop_sharing_action">Delen stoppen</string>
   <string name="common_open_in_browser_action">Openen in de browser</string>
   <string name="common_done_action">Klaar</string>
+  <string name="common_create_album_action">Creëer album</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

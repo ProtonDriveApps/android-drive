@@ -27,4 +27,5 @@ interface AlbumViewEvent {
     val onScroll: (Set<LinkId>) -> Unit get() = { _ -> }
     val onErrorAction: () -> Unit get() = {}
     val onRefresh: () -> Unit get() = {}
+    val onAlbumOptions: () -> Unit get() = {}
 }

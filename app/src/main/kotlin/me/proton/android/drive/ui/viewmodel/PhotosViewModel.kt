@@ -440,7 +440,7 @@ class PhotosViewModel @Inject constructor(
 
     private fun onPermissionsChanged(backupPermissions: BackupPermissions) {
         viewModelScope.launch {
-            if (backupPermissions == BackupPermissions.Granted) {
+            if (backupPermissions is BackupPermissions.Granted) {
                 val previousPhotosPermissions = backupPermissionsManager.backupPermissions.first()
                 if (previousPhotosPermissions is BackupPermissions.Denied) {
                     enablePhotosBackup()

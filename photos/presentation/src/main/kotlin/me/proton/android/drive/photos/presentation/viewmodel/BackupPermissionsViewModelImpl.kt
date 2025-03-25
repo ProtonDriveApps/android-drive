@@ -85,7 +85,7 @@ class BackupPermissionsViewModelImpl @Inject constructor(
         success = onSuccess
         this.folderId = folderId
         when (val backupPermissions = backupPermissionsManager.getBackupPermissions()) {
-            BackupPermissions.Granted -> toggleBackup()
+            is BackupPermissions.Granted -> toggleBackup()
             is BackupPermissions.Denied -> if (backupPermissions.shouldShowRationale) {
                 navigateToPhotosPermissionRationale?.invoke()
             } else {

@@ -27,11 +27,11 @@
   <string name="title_empty_folder">Bu klasörü dolduralım</string>
   <string name="title_empty_folder_read_only">Boş klasör</string>
   <string name="title_empty_shared">Olan biteni izleyin</string>
-  <string name="title_empty_offline_available">Çevrim dışı olarak kullanılabilecek bir şey yok</string>
+  <string name="title_empty_offline_available">Çevrim dışı kullanılabilir bir şey yok</string>
   <string name="title_empty_trash">Çöp kutusu boş</string>
   <string name="title_empty_trash_action">Çöp kutusunu boşalt</string>
   <string name="title_files_confirm_deletion">Kalıcı olarak silinsin mi?</string>
-  <string name="title_default_home_screen_tab">Varsayılan giriş sekmesini seçin</string>
+  <string name="title_default_home_screen_tab">Varsayılan açılış sekmesini seçin</string>
   <!-- endregion -->
   <string name="menu_item_header_title_app">Uygulama</string>
   <string name="description_signing_out">Oturum kapatılıyor…</string>
@@ -171,7 +171,7 @@
   <string name="description_empty_folder_read_only">Burada görecek bir şey yok</string>
   <string name="description_empty_shared">Bağlantılı dosyalar burada görüntülenir. Böylece paylaşımları kolayca izleyip yönetebilirsiniz.</string>
   <string name="description_empty_trash">Çöp kutusuna atılmış ögeler. Bu ögeler siz silene ya da geri yükleyene kadar burada kalır.</string>
-  <string name="description_empty_offline_available">Ağ bağlantınız olmadığında bile temel dosyalara her zaman erişin.</string>
+  <string name="description_empty_offline_available">Önemli dosyalara ağ bağlantınız olmasa da her zaman erişin.</string>
   <string name="description_no_drive_scope">Kullanıcının sürücü kapsamı eksik.</string>
   <string name="description_file_download_failed">İndirilemedi. Ağ bağlantısını denetleyip yeniden deneyin.</string>
   <string name="description_file_decryption_failed">Dosyanın şifresi çözülemedi</string>

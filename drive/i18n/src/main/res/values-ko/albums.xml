@@ -20,4 +20,14 @@
   <string name="albums_title">앨범</string>
   <string name="albums_new_album_name_hint">앨범 이름</string>
   <string name="albums_new_album_created_successfully">앨범이 생성되었습니다.</string>
+  <string name="albums_filter_my_albums">나의 앨범</string>
+  <!--
+        Variable %1$s is a number of photos in the album
+        Example:
+            "1 item"
+            "345 items"
+    -->
+  <plurals name="albums_photo_count">
+    <item quantity="other">%1$s개 항목</item>
+  </plurals>
 </resources>

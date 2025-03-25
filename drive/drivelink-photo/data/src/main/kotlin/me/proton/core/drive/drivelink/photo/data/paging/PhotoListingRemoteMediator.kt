@@ -74,7 +74,7 @@ class PhotoListingRemoteMediator @Inject constructor(
             val nextPageKey = if (endOfPaginationReached) {
                 null
             } else {
-                photoListings.minByOrNull { it.captureTime }?.linkId?.id
+                photoListings.lastOrNull()?.linkId?.id
             }
             CoreLogger.d(LogTag.PAGING, "pageKey ($pageKey) nextPageKey ($nextPageKey)")
             val remoteKeys = photoListings.map { photoListing ->

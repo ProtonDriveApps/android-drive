@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -64,12 +65,14 @@ import me.proton.android.drive.photos.presentation.viewevent.AlbumViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.AlbumViewState
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.component.Deferred
 import me.proton.core.drive.base.presentation.component.ExpandableLazyVerticalGrid
 import me.proton.core.drive.base.presentation.component.IllustratedMessage
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.base.presentation.component.ThemelessStatusBarScreen
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.base.presentation.component.TopBarActions
 import me.proton.core.drive.base.presentation.component.defaultMinMaxGridHeight
 import me.proton.core.drive.base.presentation.component.list.ListError
 import me.proton.core.drive.base.presentation.component.rememberExpandableLazyVerticalGridState
@@ -140,6 +143,7 @@ fun Album(
         driveLinksMap = driveLinksMap,
         state = state,
         listContentState = viewState.listContentState,
+        actionFlow = viewState.topBarActions,
         onBack = viewEvent.onBackPressed,
         onScroll = viewEvent.onScroll,
         onErrorAction = viewEvent.onErrorAction,
@@ -156,6 +160,7 @@ fun Album(
     driveLinksMap: Map<LinkId, DriveLink>,
     state: MutableState<ExpandableLazyVerticalGrid.State>,
     listContentState: ListContentState,
+    actionFlow: Flow<Set<Action>>,
     onBack: () -> Unit,
     onScroll: (Set<LinkId>) -> Unit,
     onErrorAction: () -> Unit,
@@ -186,6 +191,7 @@ fun Album(
         state = state,
         listContentState = listContentState,
         gridState = gridState,
+        actionFlow = actionFlow,
         onBack = onBack,
         onErrorAction = onErrorAction,
         modifier = modifier,
@@ -202,6 +208,7 @@ fun Album(
     state: MutableState<ExpandableLazyVerticalGrid.State>,
     listContentState: ListContentState,
     gridState: LazyGridState,
+    actionFlow: Flow<Set<Action>>,
     onBack: () -> Unit,
     onErrorAction: () -> Unit,
     modifier: Modifier = Modifier,
@@ -236,6 +243,7 @@ fun Album(
                 coverLink = coverLinkId?.let { driveLinksMap[coverLinkId] },
                 topComposableHeight = topComposableHeight,
                 onBack = onBack,
+                actions = { TopBarActions(actionFlow = actionFlow) }
             )
         },
         modifier = modifier
@@ -322,6 +330,7 @@ fun BoxScope.AlbumTopBar(
     topComposableHeight: Dp,
     modifier: Modifier = Modifier,
     onBack: () -> Unit,
+    actions: @Composable RowScope.() -> Unit,
 ) {
     ThemelessStatusBarScreen(useDarkIcons = false)
     Box(
@@ -350,6 +359,7 @@ fun BoxScope.AlbumTopBar(
             backgroundColor = Color.Transparent,
             contentColor = Color.White,
             modifier = Modifier.statusBarsPadding(),
+            actions = actions,
         )
     }
 }

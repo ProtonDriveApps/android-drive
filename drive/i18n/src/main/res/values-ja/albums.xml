@@ -20,4 +20,14 @@
   <string name="albums_title">アルバム</string>
   <string name="albums_new_album_name_hint">アルバム名</string>
   <string name="albums_new_album_created_successfully">アルバムを作成しました</string>
+  <string name="albums_filter_my_albums">私のアルバム</string>
+  <!--
+        Variable %1$s is a number of photos in the album
+        Example:
+            "1 item"
+            "345 items"
+    -->
+  <plurals name="albums_photo_count">
+    <item quantity="other">%1$s 個のアイテム</item>
+  </plurals>
 </resources>

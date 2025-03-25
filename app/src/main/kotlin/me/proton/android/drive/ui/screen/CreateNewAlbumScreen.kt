@@ -34,8 +34,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.CombinedLoadStates
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 import me.proton.android.drive.photos.presentation.component.CreateNewAlbum
+import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.CreateNewAlbumViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.CreateNewAlbumViewState
 import me.proton.android.drive.ui.viewmodel.CreateNewAlbumViewModel
@@ -45,12 +52,16 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmallNorm
 import me.proton.core.compose.theme.interactionNorm
 import me.proton.core.drive.base.presentation.component.TopAppBar
+import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 fun CreateNewAlbumScreen(
     navigateBack: () -> Unit,
+    navigateToAlbum: (AlbumId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<CreateNewAlbumViewModel>()
@@ -61,11 +72,15 @@ fun CreateNewAlbumScreen(
     val viewEvent = remember(lifecycle) {
         viewModel.viewEvent(
             navigateBack = navigateBack,
+            navigateToAlbum = navigateToAlbum,
         )
     }
+    val items = viewModel.photos.collectAsLazyPagingItems()
     CreateNewAlbumScreen(
         viewState = viewState,
         viewEvent = viewEvent,
+        items = items,
+        driveLinksFlow = viewModel.driveLinksMap,
         modifier = modifier,
     )
 }
@@ -74,6 +89,8 @@ fun CreateNewAlbumScreen(
 fun CreateNewAlbumScreen(
     viewState: CreateNewAlbumViewState,
     viewEvent: CreateNewAlbumViewEvent,
+    items: LazyPagingItems<PhotosItem.PhotoListing>,
+    driveLinksFlow: Flow<Map<LinkId, DriveLink>>,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -86,6 +103,8 @@ fun CreateNewAlbumScreen(
         CreateNewAlbum(
             viewState = viewState,
             viewEvent = viewEvent,
+            items = items,
+            driveLinksFlow = driveLinksFlow,
         )
     }
 }
@@ -137,7 +156,11 @@ private fun CreateNewAlbumScreenPreview() {
                 name = emptyFlow(),
                 hint = stringResource(I18N.string.albums_new_album_name_hint),
             ),
-            viewEvent = object : CreateNewAlbumViewEvent {},
+            viewEvent = object : CreateNewAlbumViewEvent {
+                override val onLoadState: (CombinedLoadStates, Int) -> Unit = { _, _ -> }
+            },
+            items = flowOf(PagingData.empty<PhotosItem.PhotoListing>()).collectAsLazyPagingItems(),
+            driveLinksFlow = emptyFlow()
         )
     }
 }

@@ -66,6 +66,10 @@ interface LinksRobot : PullToRefreshRobot, Robot {
         selectedOptionsButton
             .clickTo(FileFolderOptionsRobot)
 
+    fun clickMultipleOptions() =
+        selectedOptionsButton
+            .clickTo(MultipleFileFolderOptionsRobot)
+
     fun <T : Robot> clickOnItem(
         name: String,
         layoutType: LayoutType,
@@ -128,10 +132,12 @@ interface LinksRobot : PullToRefreshRobot, Robot {
             }
     }
 
-    fun itemIsNotDisplayed(name: String) {
-        linkWithName(name)
-            .await {
-                doesNotExist()
-            }
+    fun itemIsNotDisplayed(vararg names: String) {
+        names.forEach { name ->
+            linkWithName(name)
+                .await {
+                    doesNotExist()
+                }
+        }
     }
 }

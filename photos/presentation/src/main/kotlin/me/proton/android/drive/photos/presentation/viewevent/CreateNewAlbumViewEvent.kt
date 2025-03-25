@@ -18,8 +18,15 @@
 
 package me.proton.android.drive.photos.presentation.viewevent
 
+import androidx.paging.CombinedLoadStates
+import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.link.domain.entity.LinkId
+
 interface CreateNewAlbumViewEvent {
     val onBackPressed: () -> Unit get() = {}
     val onDone: () -> Unit get() = {}
     val onNameChanged: (String) -> Unit get() = { _ -> }
+    val onLoadState: (CombinedLoadStates, Int) -> Unit
+    val onScroll: (Set<LinkId>) -> Unit get() = { _ -> }
+    val onRemove: (DriveLink.File) -> Unit get() = { _ -> }
 }

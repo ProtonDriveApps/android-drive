@@ -18,6 +18,8 @@
 
 package me.proton.android.drive.ui.robot
 
+import me.proton.android.drive.photos.presentation.component.CreateNewAlbumTestTag
+import me.proton.test.fusion.Fusion
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
 
@@ -30,6 +32,12 @@ object CreateAlbumTabRobot : Robot {
     private val doneButton get() = node.withText(I18N.string.common_done_action)
 
     fun typeName(text: String) = apply { newAlbumHint.typeText(text) }
+
+    fun clickOnRemoveFirstPhoto() =
+        Fusion.allNodes
+            .withTag(CreateNewAlbumTestTag.removePhotoButton)
+            .onFirst()
+            .clickTo(CreateAlbumTabRobot)
 
     fun <T : Robot> clickOnDone(goesTo: T) = doneButton.clickTo(goesTo)
 

@@ -19,23 +19,28 @@
 package me.proton.android.drive.photos.data.repository
 
 import androidx.datastore.preferences.core.edit
-import kotlinx.coroutines.flow.emptyFlow
-import me.proton.android.drive.photos.domain.entity.NewAlbumInfo
+import me.proton.android.drive.photos.data.db.PhotosDatabase
+import me.proton.android.drive.photos.data.db.entity.AddToAlbumEntity
+import me.proton.android.drive.photos.data.extension.toAddToAlbumEntity
+import me.proton.android.drive.photos.data.extension.toPhotoListing
 import me.proton.android.drive.photos.domain.repository.AlbumInfoRepository
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.datastore.GetUserDataStore
 import me.proton.core.drive.base.data.extension.get
-import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.base.domain.function.pagedList
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.photo.domain.entity.PhotoListing
 import javax.inject.Inject
 
 class AlbumInfoRepositoryImpl @Inject constructor(
     private val getUserDataStore: GetUserDataStore,
+    private val db: PhotosDatabase,
+    private val configurationProvider: ConfigurationProvider,
 ) : AlbumInfoRepository {
 
-    override suspend fun getInfo(userId: UserId): NewAlbumInfo = NewAlbumInfo(
-        name = getUserDataStore(userId).get(GetUserDataStore.Keys.newAlbumName),
-        items = emptyFlow(),
-    )
+    override suspend fun getName(userId: UserId): String? =
+        getUserDataStore(userId).get(GetUserDataStore.Keys.newAlbumName)
 
     override suspend fun updateName(userId: UserId, name: String) {
         getUserDataStore(userId).edit { preferences ->
@@ -43,17 +48,55 @@ class AlbumInfoRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun addFileId(vararg fileId: FileId) {
-        TODO("Not yet implemented")
+    override suspend fun addPhotoListings(albumId: AlbumId?, vararg photoListings: PhotoListing) =
+        db.addToAlbumDao.insertOrIgnore(
+            *photoListings.map { photoListing ->
+                photoListing.toAddToAlbumEntity(albumId)
+            }.toTypedArray()
+        )
+
+    override suspend fun removePhotoListings(albumId: AlbumId?, vararg photoListings: PhotoListing) {
+        db.inTransaction {
+            photoListings
+                .groupBy({ photoListing -> photoListing.linkId.shareId }) { photoListing -> photoListing.linkId.id }
+                .forEach { (shareId, ids) ->
+                    db.addToAlbumDao.delete(shareId.userId, shareId.id, ids.toSet())
+                }
+        }
     }
 
-    override suspend fun removeFileId(vararg fileId: FileId) {
-        TODO("Not yet implemented")
+    override suspend fun getPhotoListings(userId: UserId, albumId: AlbumId?): List<PhotoListing> {
+        val block: suspend (fromIndex: Int, count: Int) -> List<AddToAlbumEntity> =
+            albumId?.let {
+                { fromIndex, count ->
+                    db.addToAlbumDao.getPhotoListings(
+                        userId = userId,
+                        albumId = albumId.id,
+                        offset = fromIndex,
+                        limit = count,
+                    )
+                }
+            } ?: let {
+                { fromIndex, count ->
+                    db.addToAlbumDao.getPhotoListings(
+                        userId = userId,
+                        offset = fromIndex,
+                        limit = count,
+                    )
+                }
+            }
+        return pagedList(
+            pageSize = configurationProvider.dbPageSize,
+        ) { fromIndex, count ->
+            block(fromIndex, count)
+                .map { addToAlbumEntity -> addToAlbumEntity.toPhotoListing() }
+        }
     }
 
     override suspend fun clear(userId: UserId) {
         getUserDataStore(userId).edit { preferences ->
             preferences.remove(GetUserDataStore.Keys.newAlbumName)
         }
+        db.addToAlbumDao.deleteAll(userId)
     }
 }

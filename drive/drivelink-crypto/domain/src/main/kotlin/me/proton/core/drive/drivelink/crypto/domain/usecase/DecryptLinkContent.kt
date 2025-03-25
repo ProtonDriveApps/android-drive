@@ -79,9 +79,7 @@ class DecryptLinkContent @Inject constructor(
         }
         val contentKey = getContentKey(link).getOrThrow()
         val fileKey = getNodeKey(link).getOrThrow()
-        val signatureAddress = requireNotNull(downloadState.signatureAddress) {
-            "Download state signature address is null"
-        }
+        val signatureAddress = downloadState.signatureAddress.orEmpty()
         val manifestSignatureVerified = verifyManifestSignature(
             link = link,
             signatureAddress = signatureAddress,

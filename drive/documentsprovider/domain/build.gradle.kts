@@ -34,8 +34,8 @@ driveModule(
     api(project(":drive:drivelink-upload:domain"))
     api(project(":drive:share:domain"))
 
-    implementation(project(":drive:files-list"))
+    implementation(project(":drive:files:domain"))
     implementation(project(":drive:folder-create"))
-    implementation(libs.core.accountManager)
-    implementation(libs.core.account)
+    implementation(libs.core.accountManager.domain)
+    implementation(libs.core.account.domain)
 }

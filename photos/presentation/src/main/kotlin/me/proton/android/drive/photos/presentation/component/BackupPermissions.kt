@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -45,8 +46,10 @@ fun BackupPermissions(
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         viewEvent.onPermissionsChanged(
             if (permissionsState.allPermissionsGranted) {
-                BackupPermissions.Granted
-            } else {
+                BackupPermissions.Granted()
+            } else if (permissionsState.permissions.any { it.status.isGranted }) {
+                BackupPermissions.Granted(partial = true)
+            }else {
                 BackupPermissions.Denied(permissionsState.shouldShowRationale)
             }
         )

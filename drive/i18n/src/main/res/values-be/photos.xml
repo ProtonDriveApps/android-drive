@@ -39,7 +39,7 @@
     -->
   <string name="photos_permission_rational_description">Гэта неабходна, каб пераканацца ў тым, што была зроблена рэзервовая копія ўсіх вашых фатаграфій і цяпер яны даступны паміж усімі вашымі прыладамі.\n%1$s сур\'ёзна ставіцца да вашай прыватнасці і запытвае доступ да фатаграфій толькі з мэтай іх сінхранізацыі і рэзервовага капіявання.</string>
   <string name="photos_permission_rational_confirm_action">Налады</string>
-  <string name="photos_permission_rational_dismiss_action">Не зараз</string>
+  <string name="photos_permission_rational_dismiss_action">Не цяпер</string>
   <string name="photos_empty_loading_label_encrypted">Зашыфравана скразным метадам</string>
   <string name="photos_empty_loading_label_progress">Адбываецца стварэнне рэзервовай копіі.\nГэта можа заняць некаторы час</string>
   <string name="photos_separator_current_month">У гэтым месяцы</string>
@@ -124,5 +124,5 @@
   </plurals>
   <string name="photos_upsell_title">У вас ніколі не скончыцца месца ў сховішчы</string>
   <string name="photos_upsell_description">Палепшыце цяпер, каб захоўваць усе свае ўспаміны ў зашыфраваным і бяспечным выглядзе.</string>
-  <string name="photos_upsell_dismiss_action">Не зараз</string>
+  <string name="photos_upsell_dismiss_action">Не цяпер</string>
 </resources>

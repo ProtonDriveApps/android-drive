@@ -80,4 +80,114 @@ class DeletePermanentlyTests : BaseTest() {
                 itemIsNotDisplayed(photo)
             }
     }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4, isPhotos = true, isDevice = true)
+    fun emptyTrashDeleteAllItems() {
+        val itemsInTrash = arrayOf(
+            "emptyTrashedFolder",
+            "trashedFolderWithChildren",
+            "trashedFile.json",
+            "trashedFileInDevice",
+            ImageName.Trashed1.fileName,
+            ImageName.Trashed2.fileName
+        )
+
+        PhotosTabRobot
+            .openSidebarBySwipe()
+            .clickTrash()
+            .verify {
+                robotDisplayed()
+            }
+            .openMoreOptions()
+            .clickEmptyTrash()
+            .confirmEmptyTrash()
+            .verify {
+                itemIsNotDisplayed(*itemsInTrash)
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isPhotos = true)
+    fun deleteChildAndParent() {
+        val folder = "folder1"
+        val file = "file2"
+
+        PhotosTabRobot.waitUntilLoaded()
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickOnFolder(folder)
+            .clickMoreOnItem(file)
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
+            .verify {
+                itemIsNotDisplayed(file)
+            }
+            .clickBack(FilesTabRobot)
+            .clickMoreOnItem(folder)
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
+            .verify {
+                itemIsNotDisplayed(folder)
+            }
+            .openSidebarBySwipe()
+            .clickTrash()
+            .verify {
+                itemIsDisplayed(folder)
+                itemIsDisplayed(file)
+            }
+            .clickMoreOnItem(folder)
+            .clickDeletePermanently()
+            .confirmDelete()
+            .dismissDeleteSuccessGrowler(1, TrashRobot)
+            .verify {
+                itemIsNotDisplayed(folder, file)
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isPhotos = true)
+    fun deleteFileAndFolder() {
+        val folder = "folder1"
+        val file = "image.jpg"
+
+        PhotosTabRobot.waitUntilLoaded()
+        PhotosTabRobot
+            .clickFilesTab()
+            .clickMoreOnItem(file)
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
+            .verify {
+                itemIsNotDisplayed(file)
+            }
+            .clickMoreOnItem(folder)
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
+            .verify {
+                itemIsNotDisplayed(folder)
+            }
+            .openSidebarBySwipe()
+            .clickTrash()
+            .verify {
+                itemIsDisplayed(folder)
+                itemIsDisplayed(file)
+            }
+            .clickMoreOnItem(folder)
+            .clickDeletePermanently()
+            .confirmDelete()
+            .dismissDeleteSuccessGrowler(1, TrashRobot)
+            .verify {
+                itemIsNotDisplayed(folder)
+            }
+            .clickMoreOnItem(file)
+            .clickDeletePermanently()
+            .confirmDelete()
+            .dismissDeleteSuccessGrowler(1, TrashRobot)
+            .verify {
+                itemIsNotDisplayed(file)
+            }
+    }
 }

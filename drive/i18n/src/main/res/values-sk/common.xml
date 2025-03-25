@@ -38,6 +38,7 @@
   <string name="common_uploading">Nahrávanie</string>
   <string name="common_on">Zap.</string>
   <string name="common_off">Vyp.</string>
+  <string name="common_all">Všetko</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -64,6 +65,7 @@
   <string name="common_stop_sharing_action">Ukončiť zdieľanie</string>
   <string name="common_open_in_browser_action">Otvoriť v prehliadači</string>
   <string name="common_done_action">Hotovo</string>
+  <string name="common_create_album_action">Vytvoriť album</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

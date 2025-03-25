@@ -33,6 +33,7 @@ import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.drive.photo.data.api.response.GetPhotoListingResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -100,4 +101,11 @@ interface PhotoApi : BaseRetrofitApi {
         @Path("linkID") albumId: String,
         @Body request: AddToAlbumRequest,
     ): AddToAlbumResponse
+
+    @DELETE("drive/photos/volumes/{volumeID}/albums/{linkID}")
+    suspend fun deleteAlbum(
+        @Path("volumeID") volumeId: String,
+        @Path("linkID") albumId: String,
+        @Query("DeleteAlbumPhotos") deleteAlbumPhotos: Int,
+    ): CodeResponse
 }

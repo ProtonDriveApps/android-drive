@@ -18,6 +18,9 @@
 
 package me.proton.android.drive.photos.presentation.viewstate
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.link.domain.entity.FileId
 
@@ -27,4 +30,5 @@ data class AlbumViewState(
     val listContentState: ListContentState,
     val coverLinkId: FileId? = null,
     val isRefreshEnabled: Boolean = false,
+    val topBarActions: Flow<Set<Action>> = emptyFlow(),
 )

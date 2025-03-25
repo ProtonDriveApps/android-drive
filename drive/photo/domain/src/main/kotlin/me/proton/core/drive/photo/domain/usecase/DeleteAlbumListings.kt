@@ -28,6 +28,6 @@ class DeleteAlbumListings @Inject constructor(
 ) {
 
     suspend operator fun invoke(albumIds: List<AlbumId>): Result<Unit> = coRunCatching {
-        albumRepository.delete(albumIds)
+        albumRepository.deleteAlbumListings(albumIds)
     }
 }

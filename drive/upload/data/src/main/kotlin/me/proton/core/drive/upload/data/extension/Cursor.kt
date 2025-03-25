@@ -22,6 +22,7 @@ import android.database.Cursor
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import androidx.core.database.getStringOrNull
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
@@ -52,4 +53,16 @@ val Cursor.lastModified: TimestampMs? get() {
         null
     }
         ?.takeIf { lastModified -> lastModified.value >= 0 }
+}
+
+
+val Cursor.bucketDisplayName: String? get() {
+    val bucketDisplayName =
+        getColumnIndex(MediaStore.MediaColumns.BUCKET_DISPLAY_NAME)
+
+    return if (bucketDisplayName != -1) {
+        getStringOrNull(bucketDisplayName)
+    } else {
+        null
+    }
 }

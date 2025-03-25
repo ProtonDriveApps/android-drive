@@ -26,7 +26,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.proton.android.drive.db.DriveDatabase
-import me.proton.android.drive.photos.data.db.MediaStoreVersionDatabase
+import me.proton.android.drive.photos.data.db.PhotosDatabase
 import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.auth.data.db.AuthDatabase
 import me.proton.core.challenge.data.db.ChallengeDatabase
@@ -251,7 +251,7 @@ abstract class DriveDatabaseBindsModule {
     abstract fun provideDriveFeatureFlagDatabase(appDatabase: DriveDatabase): DriveFeatureFlagDatabase
 
     @Binds
-    abstract fun provideMediaStoreVersionDatabase(appDatabase: DriveDatabase): MediaStoreVersionDatabase
+    abstract fun providePhotosDatabase(appDatabase: DriveDatabase): PhotosDatabase
 
     @Binds
     abstract fun provideDeviceDatabase(appDatabase: DriveDatabase): DeviceDatabase

@@ -27,8 +27,10 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.proton.android.drive.ui.options.OptionsFilter
+import me.proton.android.drive.ui.viewmodel.AlbumOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.AlbumViewModel
 import me.proton.android.drive.ui.viewmodel.ComputerOptionsViewModel
+import me.proton.android.drive.ui.viewmodel.ConfirmDeleteAlbumDialogViewModel
 import me.proton.android.drive.ui.viewmodel.ConfirmStopAllSharingDialogViewModel
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.MoveToFolderViewModel
@@ -167,6 +169,18 @@ sealed class Screen(val route: String) {
         operator fun invoke(
             userId: UserId,
         ) = "options/protonDocsInsertImage/${userId.id}/"
+    }
+
+    data object AlbumOptions : Screen(
+        "options/album/{userId}/shares/{shareId}/albumId={albumId}"
+    ) {
+        operator fun invoke(
+            userId: UserId,
+            albumId: AlbumId,
+        ) = "options/album/${userId.id}/shares/${albumId.shareId.id}/albumId=${albumId.id}"
+
+        const val SHARE_ID = AlbumOptionsViewModel.KEY_SHARE_ID
+        const val ALBUM_ID = AlbumOptionsViewModel.KEY_ALBUM_ID
     }
 
     data object Info : Screen("info/{userId}/shares/{shareId}/files?linkId={linkId}") {
@@ -334,9 +348,19 @@ sealed class Screen(val route: String) {
         const val USER_ID = Screen.USER_ID
     }
 
-    data object Album : Screen("photos/{userId}/shares/{shareId}/album/{albumId}") {
+    data object Album : Screen("photos/{userId}/shares/{shareId}/albums/{albumId}") {
 
-        operator fun invoke(albumId: AlbumId) = "photos/${albumId.userId.id}/shares/${albumId.shareId.id}/album/${albumId.id}"
+        operator fun invoke(albumId: AlbumId) = "photos/${albumId.userId.id}/shares/${albumId.shareId.id}/albums/${albumId.id}"
+
+        object Dialogs {
+            data object ConfirmDeleteAlbum : Screen("delete/photos/{userId}/shares/{shareId}/albums/{albumId}/confirm") {
+                operator fun invoke(albumId: LinkId) =
+                    "delete/photos/${albumId.userId.id}/shares/${albumId.shareId.id}/albums/${albumId.id}/confirm"
+
+                const val SHARE_ID = ConfirmDeleteAlbumDialogViewModel.SHARE_ID
+                const val ALBUM_ID = ConfirmDeleteAlbumDialogViewModel.ALBUM_ID
+            }
+        }
 
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = AlbumViewModel.SHARE_ID

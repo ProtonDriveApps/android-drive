@@ -17,7 +17,18 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="albums_title">Albums</string>
-  <string name="albums_new_album_name_hint">Album name</string>
-  <string name="albums_new_album_created_successfully">Album created</string>
+  <string name="albums_title">Albummer</string>
+  <string name="albums_new_album_name_hint">Albumnavn</string>
+  <string name="albums_new_album_created_successfully">Album oprettet</string>
+  <string name="albums_filter_my_albums">Mine albummer</string>
+  <!--
+        Variable %1$s is a number of photos in the album
+        Example:
+            "1 item"
+            "345 items"
+    -->
+  <plurals name="albums_photo_count">
+    <item quantity="one">%1$s element</item>
+    <item quantity="other">%1$s elementer</item>
+  </plurals>
 </resources>

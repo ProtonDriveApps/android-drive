@@ -18,15 +18,16 @@
 
 package me.proton.android.drive.photos.domain.repository
 
-import me.proton.android.drive.photos.domain.entity.NewAlbumInfo
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.photo.domain.entity.PhotoListing
 
 interface AlbumInfoRepository {
 
-    suspend fun getInfo(userId: UserId): NewAlbumInfo
+    suspend fun getName(userId: UserId): String?
     suspend fun updateName(userId: UserId, name: String)
-    suspend fun addFileId(vararg fileId: FileId)
-    suspend fun removeFileId(vararg fileId: FileId)
+    suspend fun addPhotoListings(albumId: AlbumId? = null, vararg photoListings: PhotoListing)
+    suspend fun removePhotoListings(albumId: AlbumId? = null, vararg photoListings: PhotoListing)
+    suspend fun getPhotoListings(userId: UserId, albumId: AlbumId? = null): List<PhotoListing>
     suspend fun clear(userId: UserId)
 }

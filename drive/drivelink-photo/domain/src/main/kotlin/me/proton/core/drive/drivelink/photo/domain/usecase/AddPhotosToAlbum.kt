@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.photo.CreateAddToAlbumInfo
+import me.proton.core.drive.documentsprovider.domain.usecase.GetContentDigest
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinks
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
@@ -34,6 +35,7 @@ class AddPhotosToAlbum @Inject constructor(
     private val createAddToAlbumInfo: CreateAddToAlbumInfo,
     private val getDriveLinks: GetDriveLinks,
     private val configurationProvider: ConfigurationProvider,
+    private val getContentDigest: GetContentDigest,
 ) {
 
     suspend operator fun invoke(
@@ -67,7 +69,8 @@ class AddPhotosToAlbum @Inject constructor(
         addToAlbumInfos = photoIds.map { photoId ->
             createAddToAlbumInfo(
                 photoId = photoId,
-                albumId = albumId
+                albumId = albumId,
+                contentDigest = getContentDigest(photoId).getOrThrow(),
             ).getOrThrow()
         },
     )

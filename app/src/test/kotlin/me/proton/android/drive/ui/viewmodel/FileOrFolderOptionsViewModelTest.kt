@@ -48,15 +48,15 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
-import me.proton.core.drive.files.presentation.entry.DownloadFileEntity
+import me.proton.core.drive.files.presentation.entry.DownloadFileEntry
 import me.proton.core.drive.files.presentation.entry.FileInfoEntry
-import me.proton.core.drive.files.presentation.entry.ManageAccessEntity
+import me.proton.core.drive.files.presentation.entry.ManageAccessEntry
 import me.proton.core.drive.files.presentation.entry.MoveFileEntry
-import me.proton.core.drive.files.presentation.entry.OpenInBrowserProtonDocsEntity
+import me.proton.core.drive.files.presentation.entry.OpenInBrowserProtonDocsEntry
 import me.proton.core.drive.files.presentation.entry.RemoveMeEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
-import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntity
+import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
 import me.proton.core.drive.files.presentation.entry.ToggleTrashEntry
 import me.proton.core.drive.link.domain.entity.FileId
@@ -118,10 +118,10 @@ class FileOrFolderOptionsViewModelTest {
         assertEquals(
             listOf(
                 ToggleOfflineEntry::class,
-                ShareViaInvitationsEntity::class,
-                ManageAccessEntity::class,
+                ShareViaInvitationsEntry::class,
+                ManageAccessEntry::class,
                 SendFileEntry::class,
-                DownloadFileEntity::class,
+                DownloadFileEntry::class,
                 MoveFileEntry::class,
                 RenameFileEntry::class,
                 FileInfoEntry::class,
@@ -149,10 +149,10 @@ class FileOrFolderOptionsViewModelTest {
         assertEquals(
             listOf(
                 ToggleOfflineEntry::class,
-                ShareViaInvitationsEntity::class,
-                ManageAccessEntity::class,
+                ShareViaInvitationsEntry::class,
+                ManageAccessEntry::class,
                 SendFileEntry::class,
-                DownloadFileEntity::class,
+                DownloadFileEntry::class,
                 FileInfoEntry::class,
             ),
             entries.map { it.javaClass.kotlin }
@@ -171,10 +171,10 @@ class FileOrFolderOptionsViewModelTest {
         assertEquals(
             listOf(
                 ToggleOfflineEntry::class,
-                ShareViaInvitationsEntity::class,
-                ManageAccessEntity::class,
+                ShareViaInvitationsEntry::class,
+                ManageAccessEntry::class,
                 SendFileEntry::class,
-                DownloadFileEntity::class,
+                DownloadFileEntry::class,
                 MoveFileEntry::class,
                 RenameFileEntry::class,
                 FileInfoEntry::class,
@@ -199,10 +199,10 @@ class FileOrFolderOptionsViewModelTest {
         assertEquals(
             listOf(
                 ToggleOfflineEntry::class,
-                ShareViaInvitationsEntity::class,
-                ManageAccessEntity::class,
+                ShareViaInvitationsEntry::class,
+                ManageAccessEntry::class,
                 SendFileEntry::class,
-                DownloadFileEntity::class,
+                DownloadFileEntry::class,
                 MoveFileEntry::class,
                 RenameFileEntry::class,
                 FileInfoEntry::class,
@@ -234,7 +234,7 @@ class FileOrFolderOptionsViewModelTest {
             listOf(
                 ToggleOfflineEntry::class,
                 SendFileEntry::class,
-                DownloadFileEntity::class,
+                DownloadFileEntry::class,
                 MoveFileEntry::class,
                 RenameFileEntry::class,
                 FileInfoEntry::class,
@@ -266,7 +266,7 @@ class FileOrFolderOptionsViewModelTest {
             listOf(
                 ToggleOfflineEntry::class,
                 SendFileEntry::class,
-                DownloadFileEntity::class,
+                DownloadFileEntry::class,
                 FileInfoEntry::class,
                 RemoveMeEntry::class,
             ),
@@ -284,10 +284,10 @@ class FileOrFolderOptionsViewModelTest {
 
         // Then
         Assert.assertTrue(entries.any { it is ToggleOfflineEntry })
-        Assert.assertTrue(entries.any { it is ShareViaInvitationsEntity })
-        Assert.assertTrue(entries.any { it is ManageAccessEntity })
+        Assert.assertTrue(entries.any { it is ShareViaInvitationsEntry })
+        Assert.assertTrue(entries.any { it is ManageAccessEntry })
         Assert.assertTrue(entries.any { it is SendFileEntry })
-        Assert.assertTrue(entries.any { it is DownloadFileEntity })
+        Assert.assertTrue(entries.any { it is DownloadFileEntry })
         Assert.assertFalse(entries.any { it is MoveFileEntry })
         Assert.assertFalse(entries.any { it is RenameFileEntry })
         Assert.assertTrue(entries.any { it is FileInfoEntry })
@@ -311,11 +311,11 @@ class FileOrFolderOptionsViewModelTest {
         // Then
         assertEquals(
             listOf(
-                ShareViaInvitationsEntity::class,
-                ManageAccessEntity::class,
+                ShareViaInvitationsEntry::class,
+                ManageAccessEntry::class,
                 MoveFileEntry::class,
                 RenameFileEntry::class,
-                OpenInBrowserProtonDocsEntity::class,
+                OpenInBrowserProtonDocsEntry::class,
                 FileInfoEntry::class,
                 ToggleTrashEntry::class,
             ),
@@ -331,8 +331,6 @@ class FileOrFolderOptionsViewModelTest {
             navigateToRename = { _: LinkId -> },
             navigateToDelete = { _: LinkId -> },
             navigateToSendFile = { _: FileId -> },
-            navigateToStopSharing = { _: LinkId -> },
-            navigateToShareViaLink = { _: LinkId -> },
             navigateToManageAccess = { _: LinkId -> },
             navigateToShareViaInvitations = { _: LinkId -> },
             dismiss = {},

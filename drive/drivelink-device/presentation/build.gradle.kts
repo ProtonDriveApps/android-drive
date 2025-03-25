@@ -32,7 +32,7 @@ driveModule(
     api(project(":drive:base:presentation"))
     api(project(":drive:drivelink-device:domain"))
     api(project(":drive:drivelink-rename:presentation"))
-    api(project(":drive:files-list"))
+    api(project(":drive:files:presentation"))
     api(libs.core.presentation.compose)
     implementation(project(":drive:base:data"))
 }

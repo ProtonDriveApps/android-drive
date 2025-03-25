@@ -35,7 +35,7 @@ driveModule(
     api(project(":photos:data"))
     api(project(":drive:backup:domain"))
     implementation(project(":drive:base:presentation"))
-    implementation(project(":drive:files-list"))
+    implementation(project(":drive:files:presentation"))
     implementation(project(":drive:notification:presentation"))
     implementation(project(":drive:thumbnail:presentation"))
     implementation(project(":drive:user:presentation"))

@@ -187,7 +187,9 @@ private fun UploadState.title(progress: Percentage? = null): String = when (this
     UploadState.IDLE,
     UploadState.CREATING_NEW_FILE -> stringResource(id = I18N.string.files_upload_stage_waiting)
     UploadState.SPLITTING_URI_TO_BLOCKS,
-    UploadState.ENCRYPTING_BLOCKS -> stringResource(id = I18N.string.files_upload_stage_encrypting)
+    UploadState.EXTRACTING_TAGS,
+    UploadState.ENCRYPTING_BLOCKS,
+         -> stringResource(id = I18N.string.files_upload_stage_encrypting)
     UploadState.GETTING_UPLOAD_LINKS -> stringResource(id = I18N.string.files_upload_stage_uploading)
     UploadState.UPLOADING_BLOCKS -> progress?.let {
         stringResource(

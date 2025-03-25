@@ -25,6 +25,7 @@ import me.proton.core.drive.base.domain.entity.Location
 import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.link.domain.PhotoTag
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.linkupload.domain.entity.RawBlock
@@ -90,6 +91,8 @@ interface LinkUploadRepository {
 
     suspend fun getUploadFileLinksSize(userId: UserId, uploadStates: Set<UploadState>): Bytes
 
+    suspend fun getUploadFileLinkPhotoTags(uploadFileLinkId: Long): Set<PhotoTag>
+
     suspend fun updateUploadFileLink(uploadFileLink: UploadFileLink)
 
     suspend fun updateUploadFileLinkUploadState(uploadFileLinkId: Long, uploadState: UploadState)
@@ -133,6 +136,8 @@ interface LinkUploadRepository {
     suspend fun updateUploadFileLinkLocation(uploadFileLinkId: Long, location: Location)
 
     suspend fun updateUploadFileLinkCameraExifTags(uploadFileLinkId: Long, cameraExifTags: CameraExifTags)
+
+    suspend fun updateUploadFileLinkPhotoTags(uploadFileLinkId: Long, tags: Set<PhotoTag>)
 
     suspend fun removeUploadFileLink(uploadFileLinkId: Long)
 

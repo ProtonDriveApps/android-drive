@@ -64,6 +64,7 @@ class CreateUploadFileTest {
         override suspend fun getSize(uriString: String) = error("Should not call uri resolver")
         override suspend fun getMimeType(uriString: String) = error("Should not call uri resolver")
         override suspend fun getLastModified(uriString: String) = error("Should not call uri resolver")
+        override suspend fun getParentName(uriString: String) = error("Should not call uri resolver")
         override suspend fun getUriInfo(uriString: String) = error("Should not call uri resolver")
     }
 

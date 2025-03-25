@@ -86,6 +86,7 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
+import me.proton.core.drive.base.presentation.component.Title
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable

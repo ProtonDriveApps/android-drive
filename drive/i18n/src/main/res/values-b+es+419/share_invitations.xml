@@ -29,8 +29,8 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">1 persona añadida</item>
-    <item quantity="other">%1$d personas añadidas</item>
+    <item quantity="one">1 persona agregada</item>
+    <item quantity="other">%1$d personas agregadas</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -73,7 +73,7 @@
             "user@mail.com (Unknown)"
     -->
   <string name="share_via_invitations_external_invitation_unknown">%1$s (desconocida)</string>
-  <string name="share_via_invitations_add_people_hint">Añadir personas</string>
+  <string name="share_via_invitations_add_people_hint">Agregar personas</string>
   <string name="share_via_invitations_copy_invite_link_action">Copiar enlace de invitación</string>
   <string name="share_via_invitations_remove_access_action">Eliminar el acceso</string>
   <string name="share_via_invitations_stop_sharing_description">Elimine el enlace y el acceso para todos</string>
@@ -88,6 +88,6 @@
     <item quantity="one">%1$d miembro</item>
     <item quantity="other">%1$d miembros</item>
   </plurals>
-  <string name="share_via_invitations_message_placeholder">Añadir un mensaje</string>
+  <string name="share_via_invitations_message_placeholder">Agregar un mensaje</string>
   <string name="share_via_invitations_send_message_and_name_label">Incluir el mensaje y nombre del archivo en el correo de invitación</string>
 </resources>

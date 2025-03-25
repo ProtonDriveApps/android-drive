@@ -34,4 +34,13 @@
         <item quantity="one">%1$s item</item>
         <item quantity="other">%1$s items</item>
     </plurals>
+    <string name="albums_delete_album_action">Delete album</string>
+    <string name="albums_delete_album_dialog_title">Delete album?</string>
+    <string name="albums_delete_album_dialog_description">This will only delete the album. Your photos will remain in your timeline. This action cannot be undone.</string>
+    <string name="albums_delete_album_dialog_description_with_children">Some photos in this album are not saved to your timeline. Deleting this album will permanently delete those photos.\nWould you like to save them before removing?</string>
+    <string name="albums_delete_album_dialog_cancel_action">@string/common_cancel_action</string>
+    <string name="albums_delete_album_dialog_delete_album_action">@string/albums_delete_album_action</string>
+    <string name="albums_delete_album_dialog_delete_without_saving_action">Delete without saving</string>
+    <string name="albums_delete_album_dialog_save_and_delete_action">Save photos and delete</string>
+
 </resources>

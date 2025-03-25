@@ -22,11 +22,16 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import me.proton.android.drive.ui.viewmodel.MultipleFileOrFolderOptionsViewModel
 import me.proton.core.compose.component.bottomsheet.RunAction
-import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.files.presentation.component.common.MultipleOptions
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
@@ -35,21 +40,36 @@ import me.proton.core.drive.link.selection.domain.entity.SelectionId
 fun MultipleFileOrFolderOptions(
     runAction: RunAction,
     navigateToMove: (selectionId: SelectionId, folderId: FolderId?) -> Unit,
+    navigateToCreateNewAlbum: () -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<MultipleFileOrFolderOptionsViewModel>()
-    val driveLinks by rememberFlowWithLifecycle(viewModel.selectedDriveLinks).collectAsState(initial = null)
+    val driveLinks by viewModel.selectedDriveLinks.collectAsStateWithLifecycle(initialValue = null)
     val selectedDriveLinks = driveLinks ?: return
-    MultipleOptions(
-        count = selectedDriveLinks.size,
-        entries = viewModel.entries(
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val entries by remember(viewModel, lifecycle) {
+        viewModel.entries(
             driveLinks = selectedDriveLinks,
             runAction = runAction,
             navigateToMove = navigateToMove,
-            dismiss = dismiss
-        ),
+            navigateToCreateNewAlbum = navigateToCreateNewAlbum,
+            dismiss = dismiss,
+        ).flowWithLifecycle(
+            lifecycle = lifecycle,
+            minActiveState = Lifecycle.State.STARTED
+        )
+    }.collectAsState(initial = null)
+    val multipleEntries = entries ?: return
+    MultipleOptions(
+        count = selectedDriveLinks.size,
+        entries = multipleEntries,
         modifier = modifier
+            .testTag(MultipleFileFolderOptionsDialogTestTag.fileOrFolderOptions)
             .navigationBarsPadding(),
     )
+}
+
+object MultipleFileFolderOptionsDialogTestTag {
+    const val fileOrFolderOptions = "file or folder options context menu"
 }

@@ -38,6 +38,7 @@
   <string name="common_uploading">Laddar upp</string>
   <string name="common_on">På</string>
   <string name="common_off">Av</string>
+  <string name="common_all">Alla</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -64,6 +65,7 @@
   <string name="common_stop_sharing_action">Sluta dela</string>
   <string name="common_open_in_browser_action">Öppna i webbläsare</string>
   <string name="common_done_action">Klar</string>
+  <string name="common_create_album_action">Skapa album</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ljud</string>

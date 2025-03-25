@@ -38,6 +38,7 @@
   <string name="common_uploading">Yükleniyor</string>
   <string name="common_on">Açık</string>
   <string name="common_off">Kapalı</string>
+  <string name="common_all">Tümü</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">Tamam</string>
@@ -55,8 +56,8 @@
   <string name="common_discard_action">Yok say</string>
   <string name="common_skip_action">Atla</string>
   <string name="common_delete_permanently_action">Kalıcı olarak sil</string>
-  <string name="common_make_available_offline_action">Çevrim dışı kullanılabilir yap</string>
-  <string name="common_remove_from_offline_available_action">Çevrim dışı kullanılabilenlerden kaldır</string>
+  <string name="common_make_available_offline_action">Çevrim dışı kullanılabilsin</string>
+  <string name="common_remove_from_offline_available_action">Çevrim dışı kullanılamasın</string>
   <string name="common_get_link_action">Bağlantıyı al</string>
   <string name="common_manage_link_action">Bağlantıyı yönet</string>
   <string name="common_manage_access_action">Erişim yönetimi</string>
@@ -64,6 +65,7 @@
   <string name="common_stop_sharing_action">Paylaşımdan kaldır</string>
   <string name="common_open_in_browser_action">Tarayıcıda aç</string>
   <string name="common_done_action">Tamam</string>
+  <string name="common_create_album_action">Albüm oluştur</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ses</string>

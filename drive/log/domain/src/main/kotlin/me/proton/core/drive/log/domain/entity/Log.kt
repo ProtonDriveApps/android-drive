@@ -49,5 +49,6 @@ data class Log(
         EVENT_USER,
         EVENT_DEVICE,
         EVENT_CRYPTO,
+        //EVENT_PHOTOS,
     }
 }

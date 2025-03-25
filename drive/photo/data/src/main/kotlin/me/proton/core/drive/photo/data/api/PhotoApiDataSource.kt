@@ -34,6 +34,7 @@ import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiException
+import me.proton.core.util.kotlin.toInt
 
 @Suppress("LongParameterList")
 class PhotoApiDataSource(private val apiProvider: ApiProvider) {
@@ -154,4 +155,20 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
                 ),
             )
         }
+
+    @Throws(ApiException::class)
+    suspend fun deleteAlbum(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: String,
+        deleteAlbumPhotos: Boolean,
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            deleteAlbum(
+                volumeId = volumeId.id,
+                albumId = albumId,
+                deleteAlbumPhotos = deleteAlbumPhotos.toInt(),
+            )
+        }.valueOrThrow
 }
