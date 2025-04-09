@@ -19,10 +19,10 @@
 package me.proton.core.drive.files.domain.operation
 
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 
 interface FileOperationManager {
 
-    suspend fun changeParent(userId: UserId, linkIds: List<LinkId>, folderId: FolderId, allowUndo: Boolean)
+    suspend fun changeParent(userId: UserId, linkIds: List<LinkId>, parentId: ParentId, allowUndo: Boolean)
 }

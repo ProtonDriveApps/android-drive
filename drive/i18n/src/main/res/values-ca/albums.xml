@@ -31,4 +31,22 @@
     <item quantity="one">%1$s element</item>
     <item quantity="other">%1$s elements</item>
   </plurals>
+  <string name="albums_delete_album_action">Elimina l\'àlbum</string>
+  <string name="albums_delete_album_dialog_title">Voleu eliminar l\'àlbum?</string>
+  <string name="albums_delete_album_dialog_description">Això només eliminarà l\'àlbum. Les vostres fotos romandran a la vostra cronologia. Aquesta acció no es pot desfer.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Algunes fotos d\'aquest àlbum no es desen a la vostra cronologia. Si suprimiu aquest àlbum, aquestes fotos se suprimiran permanentment.\nVoleu desar-les abans de suprimir-les?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Elimina sense desar</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Desa les fotos i suprimeix</string>
+  <string name="albums_add_zero_to_album_button">Afegeix a l\'àlbum</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Afegeix %1$d a l\'àlbum</item>
+    <item quantity="other">Afegeix %1$d a l\'àlbum</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Estableix com a portada de l\'àlbum</string>
 </resources>

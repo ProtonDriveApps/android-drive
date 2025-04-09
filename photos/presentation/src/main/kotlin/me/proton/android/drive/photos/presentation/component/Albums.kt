@@ -50,8 +50,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -59,7 +59,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.Flow
-import me.proton.android.drive.photos.presentation.R
+import me.proton.android.drive.photos.presentation.extension.details
+import me.proton.android.drive.photos.presentation.extension.isSelected
 import me.proton.android.drive.photos.presentation.extension.thumbnailPainter
 import me.proton.android.drive.photos.presentation.state.AlbumsItem
 import me.proton.android.drive.photos.presentation.viewevent.AlbumsViewEvent
@@ -88,10 +89,12 @@ import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.android.drive.photos.presentation.R as PhotosPresentation
+import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
-import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 fun Albums(
@@ -107,13 +110,19 @@ fun Albums(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(ProtonDimens.DefaultSpacing),
     ) {
-        AlbumsFilter(viewState.filters, viewEvent.onFilterSelected)
+        if (albumItems.isNotEmpty() || !viewState.filters.isSelected(AlbumListing.Filter.ALL)) {
+            AlbumsFilter(viewState.filters, viewEvent.onFilterSelected)
+        }
         viewState.listContentState
             .onLoading {
                 AlbumsLoading()
             }
-            .onEmpty {
-                AlbumsEmpty( )
+            .onEmpty { state ->
+                AlbumsEmpty(
+                    imageResId = state.imageResId,
+                    titleResId = state.titleId,
+                    descriptionResId = state.descriptionResId,
+                )
             }
             .onError { error ->
                 AlbumsError(
@@ -152,7 +161,7 @@ fun AlbumsLoading(
 @Composable
 fun AlbumsEmpty(
     modifier: Modifier = Modifier,
-    @DrawableRes imageResId: Int = R.drawable.empty_photos_daynight,
+    @DrawableRes imageResId: Int = PhotosPresentation.drawable.empty_photos_daynight,
     @StringRes titleResId: Int = I18N.string.photos_empty_title,
     @StringRes descriptionResId: Int? = I18N.string.photos_empty_description,
 ) {
@@ -273,6 +282,7 @@ fun AlbumItem(
             )
         } ?: AlbumItem(
             albumName = "",
+            albumDetails = "",
             isAlbumNameEncrypted = true,
             albumPhotoCount = albumsItem.photoCount,
             modifier = modifier,
@@ -288,8 +298,10 @@ fun AlbumItem(
     modifier: Modifier = Modifier,
     onClick: (DriveLink.Album) -> Unit,
 ) {
+    val localContext = LocalContext.current
     AlbumItem(
         albumName = album.name,
+        albumDetails = album.details(appContext = localContext, useCreationTime = false),
         isAlbumNameEncrypted = album.cryptoName is CryptoProperty.Encrypted,
         albumPhotoCount = album.photoCount,
         modifier = modifier
@@ -302,6 +314,7 @@ fun AlbumItem(
 @Composable
 fun AlbumItem(
     albumName: String,
+    albumDetails: String,
     isAlbumNameEncrypted: Boolean,
     albumPhotoCount: Long,
     modifier: Modifier = Modifier,
@@ -344,8 +357,9 @@ fun AlbumItem(
                 }
             }
             Spacer(modifier = Modifier.height(ProtonDimens.ExtraSmallSpacing))
+
             Text(
-                text = "$albumPhotoCount",
+                text = albumDetails,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 color = ProtonTheme.colors.textWeak,
@@ -361,9 +375,14 @@ fun AlbumItemCard(
     modifier: Modifier = Modifier,
     rotation: Float = 0f,
 ) {
+    val borderColor = if (ProtonTheme.colors.isDark) {
+        ProtonTheme.colors.shade15
+    } else {
+        ProtonTheme.colors.shade0
+    }
     Card(
         shape = RoundedCornerShape(ProtonDimens.LargeCornerRadius),
-        border = BorderStroke(3.dp, Color.White),
+        border = BorderStroke(3.dp, borderColor),
         elevation = ProtonDimens.SmallSpacing,
         backgroundColor = ProtonTheme.colors.backgroundSecondary,
         contentColor = ProtonTheme.colors.textNorm,
@@ -382,9 +401,9 @@ fun AlbumItemCard(
             ) { showPlaceholder ->
                 if (showPlaceholder) {
                     Icon(
-                        painter = painterResource(CorePresentation.drawable.ic_proton_image),
+                        painter = painterResource(BasePresentation.drawable.ic_proton_images),
                         contentDescription = null,
-                        modifier = Modifier.sizeIn(minHeight = 64.dp, minWidth = 64.dp)
+                        tint = ProtonTheme.colors.iconHint,
                     )
                 } else {
                     coverDriveLink?.let { link ->
@@ -433,7 +452,6 @@ private fun PreviewAlbumItem() {
                     numberOfAccesses = 0,
                     shareUrlExpirationTime = null,
                     uploadedBy = "",
-                    isFavorite = false,
                     attributes = Attributes(0),
                     permissions = Permissions(0),
                     state = Link.State.ACTIVE,

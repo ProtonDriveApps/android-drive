@@ -21,9 +21,9 @@ package me.proton.core.drive.trash.domain.repository
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
@@ -37,7 +37,7 @@ interface DriveTrashRepository {
     ): Result<Pair<List<Link>, SaveAction>>
 
     suspend fun sendToTrash(
-        folderId: FolderId,
+        parentId: ParentId,
         links: List<LinkId>,
     ): Map<LinkId, DataResult<Unit>>
 

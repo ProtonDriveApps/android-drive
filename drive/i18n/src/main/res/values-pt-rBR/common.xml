@@ -39,6 +39,7 @@
   <string name="common_on">Ativado</string>
   <string name="common_off">Desativado</string>
   <string name="common_all">Todos</string>
+  <string name="common_unknown">Desconhecido</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -66,6 +67,8 @@
   <string name="common_open_in_browser_action">Abrir no navegador</string>
   <string name="common_done_action">Concluído</string>
   <string name="common_create_album_action">Criar álbum</string>
+  <string name="common_set_as_album_cover_action">Definir como capa do álbum</string>
+  <string name="common_add_action">Adicionar</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Áudio</string>
@@ -144,7 +147,7 @@
     -->
   <plurals name="common_selected">
     <item quantity="one">%1$d selecionado</item>
-    <item quantity="other">%1$d selecionados</item>
+    <item quantity="other">%1$d selecionado</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

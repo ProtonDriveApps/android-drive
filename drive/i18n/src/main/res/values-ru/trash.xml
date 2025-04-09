@@ -25,8 +25,8 @@
   <plurals name="trash_operation_successful_format">
     <item quantity="one">1 элемент перемещён в корзину</item>
     <item quantity="few">%1$d элемента перемещены в корзину</item>
-    <item quantity="many">%1$d элементов перемещено в корзину</item>
-    <item quantity="other">%1$d элементов перемещено в корзину</item>
+    <item quantity="many">%1$d элементов перемещены в корзину</item>
+    <item quantity="other">%1$d элементов перемещены в корзину</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -36,8 +36,8 @@
   <plurals name="trash_restore_operation_successful_format">
     <item quantity="one">1 элемент восстановлен</item>
     <item quantity="few">%d элемента восстановлены</item>
-    <item quantity="many">%d элементов восстановлено</item>
-    <item quantity="other">%d элементов восстановлено</item>
+    <item quantity="many">%d элементов восстановлены</item>
+    <item quantity="other">%d элементов восстановлены</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -47,8 +47,8 @@
   <plurals name="trash_delete_operation_successful_format">
     <item quantity="one">1 элемент удалён безвозвратно</item>
     <item quantity="few">%d элемента удалены безвозвратно</item>
-    <item quantity="many">%d элементов удалено безвозвратно</item>
-    <item quantity="other">%d элементов удалено безвозвратно</item>
+    <item quantity="many">%d элементов удалены безвозвратно</item>
+    <item quantity="other">%d элементов удалены безвозвратно</item>
   </plurals>
   <string name="trash_empty_operation_successful">Корзина очищена</string>
   <string name="trash_error_occurred_sending_to_trash">Произошла ошибка при попытке переместить файл(ы) в корзину</string>

@@ -38,7 +38,9 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
@@ -47,6 +49,7 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmall
+import me.proton.core.compose.theme.headlineSmallNorm
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag.navigationButton
 
@@ -87,6 +90,7 @@ fun TopAppBar(
     backgroundColor: Color = ProtonTheme.colors.backgroundNorm,
     contentColor: Color = ProtonTheme.colors.textNorm,
     notificationDotVisible: Boolean = false,
+    elevation: Dp = 0.dp,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     TopAppBar(
@@ -104,7 +108,7 @@ fun TopAppBar(
         actions = actions,
         backgroundColor = backgroundColor,
         contentColor = contentColor,
-        elevation = 0.dp
+        elevation = elevation,
     )
 }
 @Composable
@@ -112,13 +116,14 @@ fun Title(
     title: String,
     isTitleEncrypted: Boolean,
     modifier: Modifier = Modifier,
+    style: TextStyle = ProtonTheme.typography.headlineSmallNorm,
 ) {
     if (isTitleEncrypted) {
         EncryptedItem(modifier = modifier.height(LARGE_HEIGHT))
     } else {
         Text(
             text = title,
-            style = ProtonTheme.typography.headlineSmall,
+            style = style,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = modifier,
@@ -182,11 +187,13 @@ fun ActionButton(
 @Composable
 fun TopBarActions(
     actionFlow: Flow<Set<Action>>,
+    iconTintColor: Color = IconTintColor,
 ) {
     val actions by rememberFlowWithLifecycle(flow = actionFlow).collectAsState(initial = emptySet())
     actions.forEach { action ->
         ActionButton(
             icon = action.iconResId,
+            iconTintColor = iconTintColor,
             contentDescription = action.contentDescriptionResId,
             notificationDotVisible = action.notificationDotVisible,
             onClick = action.onAction

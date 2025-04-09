@@ -31,4 +31,22 @@
     <item quantity="one">%1$s item</item>
     <item quantity="other">%1$s items</item>
   </plurals>
+  <string name="albums_delete_album_action">Album verwijderen</string>
+  <string name="albums_delete_album_dialog_title">Album verwijderen?</string>
+  <string name="albums_delete_album_dialog_description">Dit verwijdert alleen het album. Uw foto\'s blijven in uw tijdlijn. Deze actie kan niet ongedaan worden gemaakt.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Sommige foto\'s in dit album zijn niet opgeslagen op uw tijdlijn. Dit album verwijderen zal deze foto\'s permanent verwijderen.\nwilt u deze opslaan voordat u ze verwijdert?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Verwijder zonder op te slaan</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Foto\'s opslaan en verwijderen</string>
+  <string name="albums_add_zero_to_album_button">Voeg toe aan album</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">%1$d toevoegen aan album</item>
+    <item quantity="other">%1$d toevoegen aan album</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Instellen als albumomslag</string>
 </resources>

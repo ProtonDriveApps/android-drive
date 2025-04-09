@@ -39,6 +39,7 @@
   <string name="common_on">オン</string>
   <string name="common_off">オフ</string>
   <string name="common_all">すべて</string>
+  <string name="common_unknown">不明</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -66,6 +67,8 @@
   <string name="common_open_in_browser_action">ブラウザで開く</string>
   <string name="common_done_action">完了</string>
   <string name="common_create_album_action">アルバムを作成</string>
+  <string name="common_set_as_album_cover_action">Set as album cover</string>
+  <string name="common_add_action">追加</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">音声</string>
@@ -143,7 +146,7 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="other">%1$d 個が選択されました</item>
+    <item quantity="other">%1$d個が選択済み</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

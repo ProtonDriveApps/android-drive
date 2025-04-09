@@ -138,7 +138,7 @@
   <string name="notification_content_text_backup_failed_drive_storage">Proton lagringsutrymme är fullt</string>
   <string name="notification_content_text_backup_failed_local_storage">Lokalt lagringsutrymme är fullt</string>
   <string name="notification_content_text_backup_failed_permission">Behörigheter saknas</string>
-  <string name="notification_content_text_backup_failed_connectivity">Ingen Internetanslutning</string>
+  <string name="notification_content_text_backup_failed_connectivity">Ingen internetanslutning</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">Väntar på Wi-Fi</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Säkerhetskopiering är inte tillåtet</string>
   <string name="notification_content_text_backup_paused_disabled">Säkerhetskopiering var inaktiverat</string>

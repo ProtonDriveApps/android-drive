@@ -17,10 +17,10 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="albums_title">Albums</string>
-  <string name="albums_new_album_name_hint">Album name</string>
-  <string name="albums_new_album_created_successfully">Album created</string>
-  <string name="albums_filter_my_albums">My albums</string>
+  <string name="albums_title">相簿</string>
+  <string name="albums_new_album_name_hint">相簿名稱</string>
+  <string name="albums_new_album_created_successfully">已建立相簿</string>
+  <string name="albums_filter_my_albums">我的相簿</string>
   <!--
         Variable %1$s is a number of photos in the album
         Example:
@@ -28,6 +28,23 @@
             "345 items"
     -->
   <plurals name="albums_photo_count">
-    <item quantity="other">%1$s items</item>
+    <item quantity="other">%1$s 項目</item>
   </plurals>
+  <string name="albums_delete_album_action">刪除相簿</string>
+  <string name="albums_delete_album_dialog_title">刪除相簿？</string>
+  <string name="albums_delete_album_dialog_description">這僅會刪除相簿。您的照片將會保留在您的時間軸上。此動作無法復原。</string>
+  <string name="albums_delete_album_dialog_description_with_children">此相簿中的某些照片未儲存至您的時間軸。刪除此相簿將永久刪除這些照片。\n您想要在移除前儲存它們嗎？</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">不儲存直接刪除</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">儲存照片並刪除</string>
+  <string name="albums_add_zero_to_album_button">Add to album</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="other">Add %1$d to album</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Set as album cover</string>
 </resources>

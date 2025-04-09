@@ -25,9 +25,9 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.data.api.extension.associateResults
 import me.proton.core.drive.link.data.api.response.LinkResponses
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import me.proton.core.drive.link.domain.usecase.InsertOrUpdateLinks
 import me.proton.core.drive.link.domain.usecase.SortLinksByParents
@@ -55,11 +55,11 @@ class DriveTrashRepositoryImpl @Inject constructor(
 ) : DriveTrashRepository {
 
     override suspend fun sendToTrash(
-        folderId: FolderId,
+        parentId: ParentId,
         links: List<LinkId>,
     ) = associateResults(links) {
         links.batchBy(configurationProvider.apiPageSize) { batch ->
-            apiDataSource.sendToTrash(folderId, batch.map { link -> link.id })
+            apiDataSource.sendToTrash(parentId, batch.map { link -> link.id })
         }
     }
 

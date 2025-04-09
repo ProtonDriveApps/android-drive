@@ -146,7 +146,7 @@ class FilesViewModel @Inject constructor(
                     result
                         .onSuccess { driveLink ->
                             CoreLogger.d(VIEW_MODEL, "drive link onSuccess")
-                            parentFolderId.value = driveLink.id
+                            parentId.value = driveLink.id
                             return@mapWithPrevious driveLink
                         }
                         .onFailure { error ->
@@ -363,7 +363,10 @@ class FilesViewModel @Inject constructor(
         override val onAppendErrorAction = { retry() }
         override val onMoreOptions = { driveLink: DriveLink -> navigateToFileOrFolderOptions(driveLink.id) }
         override val onSelectedOptions = {
-            onSelectedOptions(navigateToFileOrFolderOptions, navigateToMultipleFileOrFolderOptions)
+            onSelectedOptions(
+                { linkId: LinkId, _ -> navigateToFileOrFolderOptions(linkId) },
+                { selectionId: SelectionId, _ -> navigateToMultipleFileOrFolderOptions(selectionId) },
+            )
         }
         override val onParentFolderOptions = { onParentFolderOptions(navigateToParentFolderOptions) }
         override val onCancelUpload = { uploadFileLink: UploadFileLink -> onCancelUpload(uploadFileLink) }

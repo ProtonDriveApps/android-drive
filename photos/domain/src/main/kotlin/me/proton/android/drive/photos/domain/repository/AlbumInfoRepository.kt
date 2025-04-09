@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.photos.domain.repository
 
+import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.photo.domain.entity.PhotoListing
@@ -28,6 +29,8 @@ interface AlbumInfoRepository {
     suspend fun updateName(userId: UserId, name: String)
     suspend fun addPhotoListings(albumId: AlbumId? = null, vararg photoListings: PhotoListing)
     suspend fun removePhotoListings(albumId: AlbumId? = null, vararg photoListings: PhotoListing)
+    suspend fun removeAllPhotoListings(userId: UserId, albumId: AlbumId? = null)
     suspend fun getPhotoListings(userId: UserId, albumId: AlbumId? = null): List<PhotoListing>
     suspend fun clear(userId: UserId)
+    fun getPhotoListingsCount(userId: UserId, albumId: AlbumId?): Flow<Int>
 }

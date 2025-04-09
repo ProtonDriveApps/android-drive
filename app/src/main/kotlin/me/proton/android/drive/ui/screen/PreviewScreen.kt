@@ -46,13 +46,14 @@ import me.proton.core.drive.base.presentation.component.ModalBottomSheet
 import me.proton.core.drive.files.preview.presentation.component.Preview
 import me.proton.core.drive.files.preview.presentation.component.PreviewEmpty
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewContentState
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.LinkId
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun PreviewScreen(
     navigateBack: () -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToFileOrFolderOptions: (LinkId, AlbumId?) -> Unit,
     navigateToProtonDocsInsertImageOptions: () -> Unit,
 ) = PreviewScreen(
     viewModel = hiltViewModel(),
@@ -67,7 +68,7 @@ fun PreviewScreen(
 fun PreviewScreen(
     viewModel: PreviewViewModel,
     navigateBack: () -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToFileOrFolderOptions: (LinkId, AlbumId?) -> Unit,
     navigateToProtonDocsInsertImageOptions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

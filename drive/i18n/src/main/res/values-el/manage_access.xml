@@ -19,7 +19,7 @@
 <resources>
   <string name="title_manage_access">Διαχείριση Πρόσβασης</string>
   <string name="manage_access_share_with">Κοινοποίηση με</string>
-  <string name="manage_access_share_with_anyone">Κοινοποίηση με οποιονδήποτε</string>
+  <string name="manage_access_share_with_anyone">Κοινή χρήση με οποιονδήποτε</string>
   <string name="manage_access_link_settings_action">Ρυθμίσεις σύνδεσης</string>
   <string name="manage_access_link_description_public">Οποιοσδήποτε έχει το σύνδεσμο</string>
   <string name="manage_access_link_description_password_protected">Οποιοσδήποτε έχει το σύνδεσμο και κωδικό πρόσβασης</string>

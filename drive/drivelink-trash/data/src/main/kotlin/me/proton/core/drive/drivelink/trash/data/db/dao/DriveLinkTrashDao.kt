@@ -30,30 +30,31 @@ import me.proton.core.drive.linktrash.data.db.dao.LinkTrashDao
 @Dao
 interface DriveLinkTrashDao : DriveLinkDao {
 
-    //TODO: Once LinkEntity gets volumeId, WHERE clause should check for volumeId also
     @Transaction
     @Query("""
         SELECT ${DriveLinkDao.DRIVE_LINK_SELECT} FROM ${DriveLinkDao.DRIVE_LINK_ENTITY}
         WHERE
             LinkEntity.user_id = :userId AND
+            ShareEntity.volume_id = :volumeId AND
             ${LinkTrashDao.TRASHED_CONDITION}
         LIMIT :limit OFFSET :offset
     """)
     fun getTrashLinks(
         userId: UserId,
+        volumeId: String,
         limit: Int,
         offset: Int,
     ): Flow<List<DriveLinkEntity>>
 
-    //TODO: Once LinkEntity gets volumeId, WHERE clause should check for volumeId also
     @Transaction
     @Query("""
         SELECT COUNT(*) FROM (
             SELECT ${DriveLinkDao.DRIVE_LINK_SELECT} FROM ${DriveLinkDao.DRIVE_LINK_ENTITY}
             WHERE
                 LinkEntity.user_id = :userId AND
+                ShareEntity.volume_id = :volumeId AND
                 ${LinkTrashDao.TRASHED_CONDITION}
         )
     """)
-    fun getTrashedLinksCount(userId: UserId): Flow<Int>
+    fun getTrashedLinksCount(userId: UserId, volumeId: String): Flow<Int>
 }

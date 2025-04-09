@@ -21,14 +21,14 @@ package me.proton.core.drive.trash.domain
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface TrashManager {
 
-    suspend fun trash(userId: UserId, folderId: FolderId, linkIds: List<LinkId>): DataResult<String>
+    suspend fun trash(userId: UserId, parentId: ParentId, linkIds: List<LinkId>): DataResult<String>
 
     suspend fun restore(userId: UserId, shareId: ShareId, linkIds: List<LinkId>): DataResult<String>
 

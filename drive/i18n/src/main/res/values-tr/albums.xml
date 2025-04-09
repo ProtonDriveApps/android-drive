@@ -31,4 +31,22 @@
     <item quantity="one">%1$s öge</item>
     <item quantity="other">%1$s öge</item>
   </plurals>
+  <string name="albums_delete_album_action">Albümü sil</string>
+  <string name="albums_delete_album_dialog_title">Albüm silinsin mi?</string>
+  <string name="albums_delete_album_dialog_description">Bu işlem yalnızca albümü siler. Fotoğraflarınız zaman akışınızda kalır. Bu işlem geri alınamaz.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Bu albümdeki bazı fotoğraflar zaman akışınıza kaydedilmez. Bu albüm silindiğinde bu fotoğraflar kalıcı olarak silinecek\nSilmeden önce bunları kaydetmek ister misiniz?.</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Kaydetmeden sil</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Fotoğrafları kaydet ve sil</string>
+  <string name="albums_add_zero_to_album_button">Albüme ekle</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">%1$d fotoğrafı albüme ekle.</item>
+    <item quantity="other">%1$d fotoğrafı albüme ekle.</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Albüm kapağı olarak ayarlandı</string>
 </resources>

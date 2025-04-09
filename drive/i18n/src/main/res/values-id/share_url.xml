@@ -67,7 +67,7 @@
     -->
   <string name="shared_link_error_message_expiration_date_too_late">Tanggal kedaluwarsa tidak boleh melebihi %1$d hari</string>
   <string name="shared_link_error_legacy_link">Tautan ini merupakan tautan lama yang sudah tidak lagi dapat dikelola. Kami menyarankan Anda untuk tidak lagi membagikan tautan ini dan membuat tautan baru sebagai gantinya.</string>
-  <string name="title_share_via_link">Bagikan via tautan</string>
+  <string name="title_share_via_link">Bagikan melalui tautan</string>
   <string name="shared_with_me_title">Dibagikan dengan saya</string>
   <string name="shared_by_me_title">Dibagikan oleh saya</string>
   <string name="shared_empty_title">Belum ada hal apa pun yang dibagikan</string>

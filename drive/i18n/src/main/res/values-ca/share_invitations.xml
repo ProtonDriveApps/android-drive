@@ -38,7 +38,7 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">No es pot invitar 1 persona.</item>
+    <item quantity="one">No es pot convidar 1 persona.</item>
     <item quantity="other">No es pot invitar %1$d persones.</item>
   </plurals>
   <!--

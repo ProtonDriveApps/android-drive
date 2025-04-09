@@ -104,9 +104,9 @@
             "12 345 items left"
     -->
   <plurals name="photos_backup_state_uploading_items_left">
-    <item quantity="one">A rămas %1$s element</item>
-    <item quantity="few">Au rămas %1$s articole</item>
-    <item quantity="other">Au rămas %1$s de articole</item>
+    <item quantity="one">Articole rămase: %1$s</item>
+    <item quantity="few">Articole rămase: %1$s</item>
+    <item quantity="other">Articole rămase: %1$s</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos saved
@@ -115,9 +115,9 @@
             "12 345 item saved"
     -->
   <plurals name="photos_backup_state_completed_items_saved">
-    <item quantity="one">S-a salvat %1$s articol.</item>
-    <item quantity="few">S-au salvat %1$s articole.</item>
-    <item quantity="other">S-au salvat %1$s de articole.</item>
+    <item quantity="one">Articole salvate: %1$s</item>
+    <item quantity="few">Articole salvate: %1$s</item>
+    <item quantity="other">Articole salvate: %1$s</item>
   </plurals>
   <string name="photos_upsell_title">Nu rămâneți niciodată fără spațiu de stocare</string>
   <string name="photos_upsell_description">Modificați planul acum și păstrați-vă toate amintirile criptate și în siguranță.</string>

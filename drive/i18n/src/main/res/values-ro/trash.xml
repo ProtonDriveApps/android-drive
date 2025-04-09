@@ -23,9 +23,9 @@
             "5 items sent to trash"
     -->
   <plurals name="trash_operation_successful_format">
-    <item quantity="one">Un articol a fost trimis în gunoi.</item>
-    <item quantity="few">%1$d articole au fost trimise în gunoi.</item>
-    <item quantity="other">%1$d de articole au fost trimise în gunoi.</item>
+    <item quantity="one">Articole trimise în gunoi: 1</item>
+    <item quantity="few">Articole trimise în gunoi: %1$d</item>
+    <item quantity="other">Articole trimise în gunoi: %1$d</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -33,9 +33,9 @@
             "5 items restored"
     -->
   <plurals name="trash_restore_operation_successful_format">
-    <item quantity="one">Un articol a fost restaurat.</item>
-    <item quantity="few">%d articole au fost restaurate.</item>
-    <item quantity="other">%d de articole au fost restaurate.</item>
+    <item quantity="one">Articole restaurate: 1</item>
+    <item quantity="few">Articole restaurate: %d</item>
+    <item quantity="other">Articole restaurate: %d</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -43,9 +43,9 @@
             "5 items deleted permanently"
     -->
   <plurals name="trash_delete_operation_successful_format">
-    <item quantity="one">Un articol a fost șters permanent.</item>
-    <item quantity="few">%d articole au fost șterse permanent.</item>
-    <item quantity="other">%d de articole au fost șterse permanent.</item>
+    <item quantity="one">Articole șterse permanent: 1</item>
+    <item quantity="few">Articole șterse permanent: %d</item>
+    <item quantity="other">Articole șterse permanent: %d</item>
   </plurals>
   <string name="trash_empty_operation_successful">Gunoiul s-a golit.</string>
   <string name="trash_error_occurred_sending_to_trash">A apărut o eroare în timp ce s-a încercat trimiterea la gunoi.</string>

@@ -221,7 +221,6 @@ fun PreviewFileInfoContent() {
             passphraseSignature = "signature",
             contentKeyPacket = "contentKeyPacket",
             contentKeyPacketSignature = null,
-            isFavorite = false,
             attributes = Attributes(0),
             permissions = Permissions(0),
             state = Link.State.ACTIVE,

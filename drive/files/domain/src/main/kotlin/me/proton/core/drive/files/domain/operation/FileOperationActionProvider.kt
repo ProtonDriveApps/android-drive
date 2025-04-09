@@ -38,17 +38,17 @@ class FileOperationActionProvider @Inject constructor(
 
     private fun MoveFileExtra.provideAction(): ActionProvider.Action? = if (exception != null) {
         ActionProvider.Action(I18N.string.files_operation_retry_action) {
-            moveFile(userId, links.map { pair -> pair.second }, folderId)
+            moveFile(userId, links.map { pair -> pair.second }, parentId)
         }
     } else if (allowUndo) {
         ActionProvider.Action(I18N.string.files_operation_undo_action) {
-            val folderChildren = links.groupBy { pair -> pair.first }
-            folderChildren.keys.forEach { originalFolderId ->
-                originalFolderId?.let {
+            val children = links.groupBy { pair -> pair.first }
+            children.keys.forEach { originalParentId ->
+                originalParentId?.let {
                     moveFile(
                         userId = userId,
-                        linkIds = folderChildren[originalFolderId]!!.map { pair -> pair.second },
-                        folderId = originalFolderId,
+                        linkIds = children[originalParentId]!!.map { pair -> pair.second },
+                        parentId = originalParentId,
                         allowUndo = false,
                     )
                 }

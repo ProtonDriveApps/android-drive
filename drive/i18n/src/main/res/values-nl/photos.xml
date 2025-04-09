@@ -103,7 +103,7 @@
             "12 345 items left"
     -->
   <plurals name="photos_backup_state_uploading_items_left">
-    <item quantity="one">%1$s items over</item>
+    <item quantity="one">%1$s item over</item>
     <item quantity="other">%1$s items over</item>
   </plurals>
   <!--

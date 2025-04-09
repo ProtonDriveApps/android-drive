@@ -26,6 +26,7 @@ import me.proton.core.drive.link.data.db.entity.LinkAlbumPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
+import me.proton.core.drive.link.data.db.entity.LinkTagEntity
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -130,6 +131,7 @@ suspend fun FolderContext.folder(
 suspend fun FolderContext.file(
     id: String,
     sharingDetailsShareId: String? = null,
+    tags: List<Long> = emptyList(),
     block: suspend FileContext.() -> Unit = {},
 ): FileId {
     file(
@@ -139,6 +141,7 @@ suspend fun FolderContext.file(
             type = 2L,
             sharingDetailsShareId = sharingDetailsShareId,
         ),
+        tags = tags,
         block = block,
     )
     return FileId(ShareId(user.userId, share.id), id)
@@ -156,6 +159,7 @@ suspend fun FolderContext.file(
         contentKeyPacketSignature = null,
         activeRevisionSignatureAddress = null,
     ),
+    tags: List<Long> = emptyList(),
     block: suspend FileContext.() -> Unit = {},
 ) {
     db.driveLinkDao.insertOrUpdate(link)
@@ -174,6 +178,9 @@ suspend fun FolderContext.file(
             )
         )
     }
+    db.driveLinkDao.insertTags(*tags.map { tag ->
+        LinkTagEntity(userId, share.id, link.id, tag)
+    }.toTypedArray())
     FileContext(db, user, account, volume, share, link, this.link, properties.activeRevisionId).block()
 }
 

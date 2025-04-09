@@ -22,6 +22,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -66,9 +67,10 @@ import me.proton.android.drive.photos.presentation.viewstate.CreateNewAlbumViewS
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.textNorm
+import me.proton.core.drive.base.presentation.component.ProtonIconTextButton
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.presentation.R
+import me.proton.core.presentation.R as CorePresentation
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -96,11 +98,14 @@ fun CreateNewAlbum(
             hint = viewState.hint,
             items = items,
             driveLinksMap = driveLinksMap,
-            isEnabled = viewState.isAlbumNameEnabled,
+            isNameEnabled = viewState.isAlbumNameEnabled,
+            isAddEnabled = viewState.isAddEnabled,
+            isRemoveEnabled = viewState.isRemoveEnabled,
             modifier = modifier,
             onScroll = viewEvent.onScroll,
             onRemove = viewEvent.onRemove,
             onValueChanged = viewEvent.onNameChanged,
+            onAdd = viewEvent.onAdd,
         )
     }
 }
@@ -110,12 +115,15 @@ fun CreateNewAlbum(
     name: String,
     items: LazyPagingItems<PhotosItem.PhotoListing>,
     driveLinksMap: Map<LinkId, DriveLink>,
-    isEnabled: Boolean,
+    isNameEnabled: Boolean,
+    isAddEnabled: Boolean,
+    isRemoveEnabled: Boolean,
     modifier: Modifier = Modifier,
     hint: String? = null,
     onScroll: (Set<LinkId>) -> Unit,
     onRemove: (DriveLink.File) -> Unit,
     onValueChanged: (String) -> Unit,
+    onAdd: () -> Unit,
 ) {
     val state = remember(name) {
         mutableStateOf(
@@ -130,16 +138,26 @@ fun CreateNewAlbum(
         AlbumName(
             textFieldValue = state.value,
             hint = hint,
-            isEnabled = isEnabled,
+            isEnabled = isNameEnabled,
         ) { textField ->
             if (textField.text != state.value.text) {
                 onValueChanged(textField.text)
             }
             state.value = textField
         }
+        Actions(
+            modifier = Modifier
+                .padding(
+                    vertical = ProtonDimens.MediumSpacing,
+                    horizontal = ProtonDimens.DefaultSpacing,
+                ),
+            onAdd = onAdd,
+            addEnabled = isAddEnabled,
+        )
         PhotosToAddToAlbum(
             items = items,
             driveLinksMap = driveLinksMap,
+            isRemoveEnabled = isRemoveEnabled,
             onScroll = onScroll,
             onRemove = onRemove,
             modifier = Modifier.fillMaxSize(),
@@ -179,9 +197,28 @@ fun AlbumName(
 }
 
 @Composable
+fun Actions(
+    onAdd: () -> Unit,
+    modifier: Modifier = Modifier,
+    addEnabled: Boolean = true,
+) {
+    Row(
+        modifier = modifier
+    ) {
+        ProtonIconTextButton(
+            iconPainter = painterResource(CorePresentation.drawable.ic_proton_plus_circle_filled),
+            title = stringResource(I18N.string.common_add_action),
+            enabled = addEnabled,
+            onClick = onAdd,
+        )
+    }
+}
+
+@Composable
 fun PhotosToAddToAlbum(
     items: LazyPagingItems<PhotosItem.PhotoListing>,
     driveLinksMap: Map<LinkId, DriveLink>,
+    isRemoveEnabled: Boolean,
     onScroll: (Set<LinkId>) -> Unit,
     onRemove: (DriveLink.File) -> Unit,
     modifier: Modifier = Modifier,
@@ -221,6 +258,7 @@ fun PhotosToAddToAlbum(
                     index = index,
                     isSelected = false,
                     inMultiselect = false,
+                    isRemoveEnabled = isRemoveEnabled,
                     onClick = {},
                     onLongClick = {},
                     onRemove = onRemove,
@@ -236,6 +274,7 @@ fun AddToAlbumItem(
     index: Int,
     isSelected: Boolean,
     inMultiselect: Boolean,
+    isRemoveEnabled: Boolean,
     onClick: (DriveLink) -> Unit,
     onLongClick: (DriveLink) -> Unit,
     onRemove: (DriveLink.File) -> Unit,
@@ -264,6 +303,7 @@ fun AddToAlbumItem(
                     .background(Color.Transparent)
                     .align(Alignment.TopEnd),
                 onClick = { onRemove(driveLink) },
+                enabled = isRemoveEnabled,
             ) {
                 RemoveIcon()
             }
@@ -289,7 +329,7 @@ fun RemoveIcon(
                 .align(Alignment.Center)
         )
         Icon(
-            painter = painterResource(id = R.drawable.ic_proton_cross_circle_filled),
+            painter = painterResource(id = CorePresentation.drawable.ic_proton_cross_circle_filled),
             contentDescription = null,
             tint = ProtonTheme.colors.interactionNorm,
             modifier = Modifier

@@ -23,8 +23,9 @@ import me.proton.core.drive.photo.data.api.request.AddToAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreateAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreatePhotoRequest
 import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
+import me.proton.core.drive.photo.data.api.request.RemoveFromAlbumRequest
 import me.proton.core.drive.photo.data.api.request.UpdateAlbumRequest
-import me.proton.core.drive.photo.data.api.response.AddToAlbumResponse
+import me.proton.core.drive.photo.data.api.response.AddToRemoveFromAlbumResponse
 import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
 import me.proton.core.drive.photo.data.api.response.CreatePhotoResponse
 import me.proton.core.drive.photo.data.api.response.FindDuplicatesResponse
@@ -100,7 +101,14 @@ interface PhotoApi : BaseRetrofitApi {
         @Path("volumeID") volumeId: String,
         @Path("linkID") albumId: String,
         @Body request: AddToAlbumRequest,
-    ): AddToAlbumResponse
+    ): AddToRemoveFromAlbumResponse
+
+    @POST("drive/photos/volumes/{volumeID}/albums/{linkID}/remove-multiple")
+    suspend fun removeFromAlbum(
+        @Path("volumeID") volumeId: String,
+        @Path("linkID") albumId: String,
+        @Body request: RemoveFromAlbumRequest,
+    ): AddToRemoveFromAlbumResponse
 
     @DELETE("drive/photos/volumes/{volumeID}/albums/{linkID}")
     suspend fun deleteAlbum(

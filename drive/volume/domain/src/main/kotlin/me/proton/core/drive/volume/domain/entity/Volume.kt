@@ -17,9 +17,11 @@
  */
 package me.proton.core.drive.volume.domain.entity
 
+import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampS
 
+@Serializable
 data class VolumeId(val id: String)
 
 data class Volume(

@@ -144,7 +144,7 @@
   <string name="notification_content_text_backup_paused_disabled">Varmuuskopiointi poistettiin käytöstä</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Varmuuskopiointia ei voida suorittaa taustalla</string>
   <string name="notification_content_text_backup_preparing">Valmistellaan varmuuskopiointia</string>
-  <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
+  <string name="notification_content_text_backup_failed_migration">Migraatio käynnissä, päivitä sovellus</string>
   <string name="notification_content_title_download_complete">Lataus on valmis</string>
   <string name="notification_content_title_forced_sign_out">Kirjaudu sisään</string>
   <string name="notification_content_text_forced_sign_out">Pahoittelut keskeytyksestä! Synkronoitaessa kohdattiin ongelma - kirjaudu sisään uudelleen, niin kaikki sujuu taas hyvin.</string>
@@ -180,7 +180,7 @@
   <string name="description_files_stop_sharing_action_success">Linkki tiedostoosi on poistettiin.</string>
   <string name="description_files_stop_sharing_action_error">Virhe poistrettaessa tiedostosi linkkiä.</string>
   <string name="description_files_stop_all_sharing">Tämä poistaa linkin ja käyttöoikeuden kaikilta.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Tiedostosi jakaminen on poistettu.</string>
   <string name="description_files_stop_all_sharing_action_error">Virhe poistettaessa tiedostojakoa.</string>
   <string name="ignore_file_signature_action">Näytä silti</string>
   <string name="action_empty_files_add_files">Tallenna</string>

@@ -31,4 +31,22 @@
     <item quantity="one">%1$s ელემენტი</item>
     <item quantity="other">%1$s ელემენტი</item>
   </plurals>
+  <string name="albums_delete_album_action">Delete album</string>
+  <string name="albums_delete_album_dialog_title">Delete album?</string>
+  <string name="albums_delete_album_dialog_description">This will only delete the album. Your photos will remain in your timeline. This action cannot be undone.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Some photos in this album are not saved to your timeline. Deleting this album will permanently delete those photos.\nWould you like to save them before removing?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Delete without saving</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Save photos and delete</string>
+  <string name="albums_add_zero_to_album_button">Add to album</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Add %1$d to album</item>
+    <item quantity="other">Add %1$d to album</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Set as album cover</string>
 </resources>

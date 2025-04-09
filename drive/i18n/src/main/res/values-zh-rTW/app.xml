@@ -139,7 +139,7 @@
   <string name="notification_content_text_backup_paused_disabled">已關閉備份</string>
   <string name="notification_content_text_backup_paused_background_restrictions">備份無法於背景運作</string>
   <string name="notification_content_text_backup_preparing">正在準備備份</string>
-  <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
+  <string name="notification_content_text_backup_failed_migration">遷移中，請更新您的應用程式</string>
   <string name="notification_content_title_download_complete">下載完成</string>
   <string name="notification_content_title_forced_sign_out">請登入</string>
   <string name="notification_content_text_forced_sign_out">抱歉打斷您！出現了同步問題，請重新登入，才能流暢運作。</string>
@@ -152,16 +152,16 @@
   <string name="notification_channel_transfer_description">雲端儲存、上傳與下載通知的管道</string>
   <string name="notification_channel_warning_title">警告</string>
   <string name="notification_channel_warning_description">需要使用者動作的警告管道</string>
-  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
-  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
-  <string name="notification_permission_rationale_action_accept">Enable notifications</string>
-  <string name="notification_permission_rationale_action_reject">Not now</string>
-  <string name="notification_content_title_transferring">Transferring data</string>
+  <string name="notification_permission_rationale_title_backup">隨時更新您的備份狀態</string>
+  <string name="notification_permission_rationale_description_backup">接收關於您備份的進度與狀態的通知。</string>
+  <string name="notification_permission_rationale_action_accept">啟用通知</string>
+  <string name="notification_permission_rationale_action_reject">現在不要</string>
+  <string name="notification_content_title_transferring">正在傳輸資料</string>
   <!-- endregion -->
   <string name="content_description_select_all">顯示清單中所有的項目</string>
   <string name="content_description_selected_options">顯示所選檔案及/或資料夾的更多選項</string>
   <string name="content_description_files_upload_upload_file">上傳檔案</string>
-  <string name="content_description_albums_new">Create new album</string>
+  <string name="content_description_albums_new">建立新相簿</string>
   <string name="description_empty_my_files">點擊按鈕，開始新增檔案</string>
   <string name="description_empty_folder_read_only">這裡什麼都沒有。</string>
   <string name="description_empty_shared">連結的檔案會出現在此處，因此您可以輕鬆地追蹤與管理分享的內容。</string>
@@ -175,7 +175,7 @@
   <string name="description_files_stop_sharing_action_success">您檔案的連結已被刪除。</string>
   <string name="description_files_stop_sharing_action_error">刪除檔案連結時出現錯誤</string>
   <string name="description_files_stop_all_sharing">這將會刪除連結並移除所有人的存取權.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">您檔案的分享已被刪除。</string>
   <string name="description_files_stop_all_sharing_action_error">刪除檔案分享時發生錯誤。</string>
   <string name="ignore_file_signature_action">仍要閱覽</string>
   <string name="action_empty_files_add_files">上傳</string>

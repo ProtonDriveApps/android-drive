@@ -51,8 +51,12 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
+import me.proton.android.drive.photos.domain.usecase.AddToAlbumInfo
 import me.proton.android.drive.photos.domain.usecase.EnablePhotosBackup
+import me.proton.android.drive.photos.domain.usecase.GetAddToAlbumPhotoListings
+import me.proton.android.drive.photos.domain.usecase.GetPhotoListingCount
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
+import me.proton.android.drive.photos.domain.usecase.RemoveFromAlbumInfo
 import me.proton.android.drive.photos.domain.usecase.ShowUpsell
 import me.proton.android.drive.photos.presentation.R
 import me.proton.android.drive.photos.presentation.state.PhotosItem
@@ -144,6 +148,10 @@ class PhotosViewModel @Inject constructor(
     selectAll: SelectAll,
     selectLinks: SelectLinks,
     deselectLinks: DeselectLinks,
+    addToAlbumInfo: AddToAlbumInfo,
+    removeFromAlbumInfo: RemoveFromAlbumInfo,
+    getAddToAlbumPhotoListings: GetAddToAlbumPhotoListings,
+    getPhotoListingCount: GetPhotoListingCount,
     val backupPermissionsViewModel: BackupPermissionsViewModel,
     private val photoDriveLinks: PhotoDriveLinks,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
@@ -151,7 +159,17 @@ class PhotosViewModel @Inject constructor(
     private val checkMissingFolders: CheckMissingFolders,
     private val cancelUserMessage: CancelUserMessage,
     shouldUpgradeStorage: ShouldUpgradeStorage,
-) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
+) : PhotosPickerAndSelectionViewModel(
+        savedStateHandle = savedStateHandle,
+        selectLinks = selectLinks,
+        deselectLinks = deselectLinks,
+        selectAll = selectAll,
+        getSelectedDriveLinks = getSelectedDriveLinks,
+        addToAlbumInfo = addToAlbumInfo,
+        removeFromAlbumInfo = removeFromAlbumInfo,
+        getAddToAlbumPhotoListings = getAddToAlbumPhotoListings,
+        getPhotoListingCount = getPhotoListingCount,
+    ),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
 
@@ -203,7 +221,7 @@ class PhotosViewModel @Inject constructor(
                     result
                         .onSuccess { driveLink ->
                             CoreLogger.d(VIEW_MODEL, "drive link onSuccess")
-                            parentFolderId.value = driveLink.id
+                            parentId.value = driveLink.id
                             return@mapWithPrevious driveLink
                         }
                         .onFailure { error ->
@@ -224,10 +242,10 @@ class PhotosViewModel @Inject constructor(
     val driveLinksMap: Flow<Map<LinkId, DriveLink>> = photoDriveLinks.getDriveLinksMapFlow(userId)
 
     val driveLinks: Flow<PagingData<PhotosItem>> =
-        parentFolderId
+        parentId
             .filterNotNull()
             .distinctUntilChanged()
-            .transformLatest { folderId ->
+            .transformLatest { _ ->
                 emitAll(
                     getPagedPhotoListingsList(userId)
                         .map { pagingData ->
@@ -295,11 +313,11 @@ class PhotosViewModel @Inject constructor(
         dayNight = R.drawable.empty_photos_daynight,
     )
 
-    private val backupState = parentFolderId.flatMapLatest { folderId ->
-        if (folderId == null) {
+    private val backupState = parentId.flatMapLatest { parentId ->
+        if (parentId == null || parentId !is FolderId) {
             getDisabledBackupState()
         } else {
-            getBackupState(folderId = folderId)
+            getBackupState(folderId = parentId)
         }
     }
 
@@ -345,11 +363,11 @@ class PhotosViewModel @Inject constructor(
                 CorePresentation.drawable.ic_proton_cross
             },
             notificationDotVisible = showHamburgerMenuIcon && notificationDotRequested,
-            inMultiselect = selected.isNotEmpty(),
+            inMultiselect = selected.isNotEmpty() || inPickerMode,
             listContentState = listContentState,
             showEmptyList = backupState.isBackupEnabled || backupState.hasDefaultFolder == false ,
-            showPhotosStateIndicator = showPhotosStateIndicator,
-            showPhotosStateBanner = showPhotosStateBanner,
+            showPhotosStateIndicator = showPhotosStateIndicator && !inPickerMode,
+            showPhotosStateBanner = showPhotosStateBanner && !inPickerMode,
             backupStatusViewState = backupStatusFormatter.toViewState(
                 backupState = backupState,
                 count = count.takeIf { configurationProvider.photosSavedCounter },
@@ -407,8 +425,12 @@ class PhotosViewModel @Inject constructor(
         }
         override val onRefresh = this@PhotosViewModel::onRefresh
         override val onErrorAction = this@PhotosViewModel::onErrorAction
-        override val onSelectedOptions =
-            { onSelectedOptions(navigateToPhotosOptions, navigateToMultiplePhotosOptions) }
+        override val onSelectedOptions = {
+            onSelectedOptions(
+                { linkId: FileId, _ -> navigateToPhotosOptions(linkId) },
+                { selectionId: SelectionId, _ -> navigateToMultiplePhotosOptions(selectionId) },
+            )
+        }
         override val onSelectDriveLink = { driveLink: DriveLink -> onSelectDriveLink(driveLink) }
         override val onDeselectDriveLink =
             { driveLink: DriveLink -> onDeselectDriveLink(driveLink) }
@@ -429,7 +451,7 @@ class PhotosViewModel @Inject constructor(
             dismissBackgroundRestrictions()
         }
         override val onResolve: () -> Unit = {
-            parentFolderId.value?.let { folderId ->
+            (parentId.value as? FolderId)?.let { folderId ->
                 navigateToPhotosIssues(folderId)
             }
         }
@@ -451,11 +473,10 @@ class PhotosViewModel @Inject constructor(
     }
 
     private fun onEnable() {
-        parentFolderId.value?.let { folderId ->
+        (parentId.value as? FolderId)?.let { folderId ->
             backupPermissionsViewModel.toggleBackup(folderId) { state ->
                 onPhotoBackupState(state)
             }
-
         }
     }
 
@@ -475,7 +496,7 @@ class PhotosViewModel @Inject constructor(
     }
 
     private suspend fun enablePhotosBackup() {
-        parentFolderId.value?.let { folderId ->
+        (parentId.value as? FolderId)?.let { folderId ->
             enablePhotosBackup(folderId).onSuccess { state ->
                 onPhotoBackupState(state)
             }.onFailure { error ->
@@ -523,7 +544,7 @@ class PhotosViewModel @Inject constructor(
 
     private fun onRetry() {
         viewModelScope.launch {
-            parentFolderId.value?.let { folderId ->
+            (parentId.value as? FolderId)?.let { folderId ->
                 retryBackup(folderId).onFailure { error ->
                     error.log(BACKUP, "Cannot retry on backup")
                     broadcastMessages(
@@ -573,7 +594,7 @@ class PhotosViewModel @Inject constructor(
 
     private fun onRefresh() {
         viewModelScope.launch {
-            parentFolderId.value?.let { folderId ->
+            (parentId.value as? FolderId)?.let { folderId ->
                 checkMissingFolders(folderId).onFailure { error ->
                     error.log(VIEW_MODEL, "Failed check missing folders")
                 }

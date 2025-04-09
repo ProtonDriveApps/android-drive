@@ -20,8 +20,7 @@ package me.proton.core.drive.trash.domain.usecase
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.share.domain.usecase.GetMainShare
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.trash.domain.TrashManager
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
@@ -29,18 +28,8 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 class EmptyTrash @Inject constructor(
     private val trashManager: TrashManager,
-    private val getMainShare: GetMainShare,
 ) {
-    @Deprecated(
-        message = "This method is deprecated because finding proper share is ambiguous with multiple active volumes",
-        replaceWith = ReplaceWith("EmptyTrash(userId: UserId, volumeId: VolumeId)")
-    )
-    suspend operator fun invoke(userId: UserId) {
-        val mainShare = getMainShare(userId).toResult().getOrThrow()
-        invoke(userId, mainShare.volumeId)
-    }
-
-    suspend operator fun invoke(userId: UserId, volumeId: VolumeId) {
+    suspend operator fun invoke(userId: UserId, volumeId: VolumeId) = coRunCatching {
         trashManager.emptyTrash(userId, volumeId)
     }
 }

@@ -39,6 +39,7 @@
   <string name="common_on">Уключана</string>
   <string name="common_off">Выключана</string>
   <string name="common_all">Усе</string>
+  <string name="common_unknown">Невядома</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -66,6 +67,8 @@
   <string name="common_open_in_browser_action">Адкрыць у браўзеры</string>
   <string name="common_done_action">Гатова</string>
   <string name="common_create_album_action">Стварыць альбом</string>
+  <string name="common_set_as_album_cover_action">Задаць у якасці вокладкі альбома</string>
+  <string name="common_add_action">Дадаць</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аўдыя</string>
@@ -143,10 +146,10 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d выбраны</item>
-    <item quantity="few">%1$d выбрана</item>
-    <item quantity="many">%1$d выбрана</item>
-    <item quantity="other">%1$d выбрана</item>
+    <item quantity="one">Выбрана: %1$d</item>
+    <item quantity="few">Выбрана: %1$d</item>
+    <item quantity="many">Выбрана: %1$d</item>
+    <item quantity="other">Выбрана: %1$d</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

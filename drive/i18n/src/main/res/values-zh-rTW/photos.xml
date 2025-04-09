@@ -64,8 +64,8 @@
   <string name="photos_error_backup_missing_folder">找不到備份資料夾</string>
   <string name="photos_error_backup_failed">備份失敗</string>
   <string name="photos_error_backup_temporarily_disabled">備份已暫時停用。</string>
-  <string name="photos_error_backup_migration_title">Update Required</string>
-  <string name="photos_error_backup_migration_description">To use photos features, please update your app to the latest version.</string>
+  <string name="photos_error_backup_migration_title">需要更新</string>
+  <string name="photos_error_backup_migration_description">要使用照片功能，請更新您的應用程式至最新版本。</string>
   <string name="photos_error_missing_permissions">缺少權限。</string>
   <!--
         Variable %1$s is an application name
@@ -78,7 +78,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">使用行動數據</string>
   <string name="photos_error_local_storage">裝置儲存空間已滿</string>
   <string name="photos_error_local_storage_description">要繼續備份，您必須釋放裝置上的儲存空間。</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">設定背景應用程式活動的電池用量為「無限制」</string>
   <string name="photos_error_background_restrictions_description">為使背景備份連貫，請調整電量設定或經常開啟應用程式。</string>
   <string name="photos_error_background_restrictions_action">設定</string>
   <string name="photos_empty_title">尚無備份</string>

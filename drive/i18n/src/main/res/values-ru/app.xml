@@ -34,7 +34,7 @@
   <string name="title_default_home_screen_tab">Выберите вкладку домашнего экрана по умолчанию</string>
   <!-- endregion -->
   <string name="menu_item_header_title_app">Приложение</string>
-  <string name="description_signing_out">Выход...</string>
+  <string name="description_signing_out">Выход…</string>
   <string name="settings_about_links_acknowledgments_title">Благодарности</string>
   <string name="settings_about_links_privacy_policy_title">Политика конфиденциальности</string>
   <string name="settings_about_links_terms_of_service_title">Условия использования</string>
@@ -122,7 +122,7 @@
     <item quantity="one">Сбой с %1$d файлом</item>
     <item quantity="few">Сбой с %1$d файлами</item>
     <item quantity="many">Сбой с %1$d файлами</item>
-    <item quantity="other">Сбой с %1$d файлами</item>
+    <item quantity="other">Сбой с %1$d файлов</item>
   </plurals>
   <!--
         Variable %1$s is an application name
@@ -171,7 +171,7 @@
   <string name="notification_permission_rationale_description_backup">Получайте уведомления о ходе и состоянии резервного копирования.</string>
   <string name="notification_permission_rationale_action_accept">Включите уведомления</string>
   <string name="notification_permission_rationale_action_reject">Не сейчас</string>
-  <string name="notification_content_title_transferring">Transferring data</string>
+  <string name="notification_content_title_transferring">Передача данных</string>
   <!-- endregion -->
   <string name="content_description_select_all">Выбрать все элементы в списке</string>
   <string name="content_description_selected_options">Показать дополнительные опции для выбранных файлов и/или папок</string>
@@ -191,7 +191,7 @@
   <string name="description_files_stop_sharing_action_error">Произошла ошибка при удалении ссылки на ваш файл.</string>
   <string name="description_files_stop_all_sharing">Это удалит ссылку и удалит доступ для всех.</string>
   <string name="description_files_stop_all_sharing_action_success">Общий доступ к вашим файлам был отключен.</string>
-  <string name="description_files_stop_all_sharing_action_error">Произошла ошибка при удалении ссылки на ваш файл.</string>
+  <string name="description_files_stop_all_sharing_action_error">При удалении общего доступа к вашему файлу произошла ошибка.</string>
   <string name="ignore_file_signature_action">Посмотреть в любом случае</string>
   <string name="action_empty_files_add_files">Загрузить</string>
   <string name="error_could_not_send_file">Произошла ошибка при отправке файла</string>

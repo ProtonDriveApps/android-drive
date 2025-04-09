@@ -27,13 +27,13 @@
     <item quantity="other">%1$d 秒後</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_minutes">
-    <item quantity="other">%1$d 分後</item>
+    <item quantity="other">%1$d分後</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_hours">
-    <item quantity="other">%1$d 時間後</item>
+    <item quantity="other">%1$d時間後</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_days">
-    <item quantity="other">%1$d 日後</item>
+    <item quantity="other">%1$d日後</item>
   </plurals>
   <string name="settings_section_backup">バックアップ</string>
   <string name="settings_photos_backup_folders_title">アップロード元</string>

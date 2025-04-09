@@ -99,18 +99,23 @@ import me.proton.core.drive.files.preview.presentation.component.state.ContentSt
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewContentState
 import me.proton.core.drive.files.preview.presentation.component.state.PreviewViewState
 import me.proton.core.drive.files.preview.presentation.component.toComposable
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.isProtonDocument
+import me.proton.core.drive.link.domain.extension.requireFolderId
 import me.proton.core.drive.link.domain.extension.rootFolderId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.photo.domain.entity.PhotoListing
+import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetShare
+import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVO
@@ -140,11 +145,20 @@ class PreviewViewModel @Inject constructor(
     getDriveLinksCount: GetDriveLinksCount,
     getSorting: GetSorting,
     getPhotoShare: GetPhotoShare,
+    getShare: GetShare,
     photoRepository: PhotoRepository,
+    albumRepository: AlbumRepository,
     sortDriveLinks: SortDriveLinks,
     val savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
+    private val albumId =
+        savedStateHandle.get<String>(Screen.PagerPreview.ALBUM_ID)?.let { albumIdString ->
+            AlbumId(
+                shareId = ShareId(userId, savedStateHandle.require(Screen.PagerPreview.ALBUM_SHARE_ID)),
+                id = albumIdString,
+            )
+        }
     private val trigger = MutableSharedFlow<Trigger>(1).apply {
         val shareId = savedStateHandle.require<String>(Screen.PagerPreview.SHARE_ID)
         val fileId = savedStateHandle.require<String>(Screen.PagerPreview.FILE_ID)
@@ -195,6 +209,15 @@ class PreviewViewModel @Inject constructor(
                 getDecryptedDriveLink = getDecryptedDriveLink,
                 getPhotoShare = getPhotoShare,
                 photoRepository = photoRepository,
+                configurationProvider = configurationProvider,
+                coroutineScope = viewModelScope,
+            )
+            PagerType.ALBUM -> AlbumContentProvider(
+                userId = userId,
+                albumId = requireNotNull(albumId) {"Missing albumId"} ,
+                getDecryptedDriveLink = getDecryptedDriveLink,
+                getShare = getShare,
+                albumRepository = albumRepository,
                 configurationProvider = configurationProvider,
                 coroutineScope = viewModelScope,
             )
@@ -261,11 +284,11 @@ class PreviewViewModel @Inject constructor(
 
     fun viewEvent(
         navigateBack: () -> Unit,
-        navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+        navigateToFileOrFolderOptions: (LinkId, AlbumId?) -> Unit,
         navigateToProtonDocsInsertImageOptions: () -> Unit,
     ): PreviewViewEvent = object : PreviewViewEvent {
         override val onTopAppBarNavigation = { navigateBack() }
-        override val onMoreOptions = { navigateToFileOrFolderOptions(fileId) }
+        override val onMoreOptions = { navigateToFileOrFolderOptions(fileId, albumId) }
         override val onSingleTap = { toggleFullscreen() }
         override val onRenderFailed = { throwable: Throwable, source: Any -> renderFailed.value = throwable to source }
         override val mediaControllerVisibility = { visible: Boolean ->
@@ -559,7 +582,7 @@ class FolderContentProvider(
         getDriveLink(fileId)
             .transformSuccess { (_, driveLink) ->
                 emitAll(
-                    getDriveLink(userId, folderId = driveLink.parentId)
+                    getDriveLink(userId, folderId = driveLink.requireFolderId())
                 )
             }
             .mapSuccessValueOrNull()
@@ -734,55 +757,113 @@ class PhotoContentProvider(
             }
         }
     }
-
-    private fun PhotoListing.placeholderDriveLink(photoShare: Share): DriveLink.File =
-        DriveLink.File(
-            link = Link.File(
-                id = linkId as FileId,
-                parentId = photoShare.rootFolderId,
-                name = "",
-                size = 0.bytes,
-                lastModified = TimestampS(),
-                mimeType = "",
-                isShared = false,
-                key = "",
-                passphrase = "",
-                passphraseSignature = "",
-                numberOfAccesses = 0,
-                shareUrlExpirationTime = null,
-                uploadedBy = "",
-                isFavorite = false,
-                attributes = Attributes(0),
-                permissions = Permissions(),
-                state = Link.State.ACTIVE,
-                nameSignatureEmail = null,
-                hash = nameHash.orEmpty(),
-                expirationTime = null,
-                nodeKey = "",
-                nodePassphrase = "",
-                nodePassphraseSignature = "",
-                signatureEmail = "",
-                creationTime = TimestampS(),
-                trashedTime = null,
-                hasThumbnail = false,
-                activeRevisionId = "",
-                xAttr = null,
-                sharingDetails = null,
-                contentKeyPacket = "",
-                contentKeyPacketSignature = null,
-                photoCaptureTime = captureTime,
-                photoContentHash = contentHash,
-                mainPhotoLinkId = null,
-            ),
-            volumeId = photoShare.volumeId,
-            isMarkedAsOffline = false,
-            isAnyAncestorMarkedAsOffline = false,
-            downloadState = null,
-            trashState = null,
-            cryptoName = CryptoProperty.Encrypted(""),
-            cryptoXAttr = CryptoProperty.Encrypted(""),
-            shareInvitationCount = null,
-            shareMemberCount = null,
-            shareUser = null,
-        )
 }
+
+class AlbumContentProvider(
+    private val getDecryptedDriveLink: GetDecryptedDriveLink,
+    getShare: GetShare,
+    albumRepository: AlbumRepository,
+    userId: UserId,
+    configurationProvider: ConfigurationProvider,
+    coroutineScope: CoroutineScope,
+    albumId: AlbumId,
+) : PreviewContentProvider {
+
+    private val photoShare: StateFlow<Share?> = getShare(albumId.shareId)
+        .filterSuccessOrError()
+        .mapSuccessValueOrNull()
+        .stateIn(coroutineScope, SharingStarted.Eagerly, null)
+
+    private val albumPhotoListings: StateFlow<List<PhotoListing>> = photoShare
+        .filterNotNull()
+        .distinctUntilChanged()
+        .transform { photoShare ->
+            emitAll(
+                albumRepository.getAlbumPhotoListingCount(userId, photoShare.volumeId, albumId)
+                    .distinctUntilChanged()
+                    .transformLatest {
+                        emit(
+                            pagedList(
+                                pageSize = configurationProvider.dbPageSize,
+                            ) { fromIndex, count ->
+                                albumRepository.getAlbumPhotoListings(
+                                    userId = userId,
+                                    volumeId = photoShare.volumeId,
+                                    albumId = albumId,
+                                    fromIndex = fromIndex,
+                                    count = count,
+                                    sortingBy = PhotoListing.Album.SortBy.CAPTURED,
+                                    sortingDirection = Direction.DESCENDING
+                                )
+                            }
+                        )
+                    }
+            )
+        }
+        .stateIn(coroutineScope, SharingStarted.Eagerly, emptyList())
+
+    override fun getDriveLinks(fileId: FileId): Flow<List<DriveLink.File>> = combine(
+        photoShare.filterNotNull(),
+        getDecryptedDriveLink(fileId).filterSuccessOrError().mapSuccessValueOrNull(),
+        albumPhotoListings,
+    ) { photoShare, driveLink, albumPhotoListings ->
+        albumPhotoListings.map { albumPhotoListing ->
+            if (albumPhotoListing.linkId == driveLink?.id) {
+                driveLink
+            } else {
+                albumPhotoListing.placeholderDriveLink(photoShare)
+            }
+        }
+    }
+}
+
+private fun PhotoListing.placeholderDriveLink(
+    photoShare: Share,
+): DriveLink.File = DriveLink.File(
+    link = Link.File(
+        id = linkId as FileId,
+        parentId = photoShare.rootFolderId,
+        name = "",
+        size = 0.bytes,
+        lastModified = TimestampS(),
+        mimeType = "",
+        isShared = false,
+        key = "",
+        passphrase = "",
+        passphraseSignature = "",
+        numberOfAccesses = 0,
+        shareUrlExpirationTime = null,
+        uploadedBy = "",
+        attributes = Attributes(0),
+        permissions = Permissions(),
+        state = Link.State.ACTIVE,
+        nameSignatureEmail = null,
+        hash = nameHash.orEmpty(),
+        expirationTime = null,
+        nodeKey = "",
+        nodePassphrase = "",
+        nodePassphraseSignature = "",
+        signatureEmail = "",
+        creationTime = TimestampS(),
+        trashedTime = null,
+        hasThumbnail = false,
+        activeRevisionId = "",
+        xAttr = null,
+        sharingDetails = null,
+        contentKeyPacket = "",
+        contentKeyPacketSignature = null,
+        photoCaptureTime = captureTime,
+        photoContentHash = contentHash,
+        mainPhotoLinkId = null,
+    ),
+    volumeId = photoShare.volumeId,
+    isMarkedAsOffline = false,
+    isAnyAncestorMarkedAsOffline = false,
+    downloadState = null,
+    trashState = null,
+    cryptoName = CryptoProperty.Encrypted(""),
+    cryptoXAttr = CryptoProperty.Encrypted(""),
+    shareInvitationCount = null,
+    shareMemberCount = null,
+    shareUser = null,
+)

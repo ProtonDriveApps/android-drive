@@ -188,7 +188,7 @@ class MoveToFolderViewModel @Inject constructor(
     }
 
     private fun confirmMove(navigateBack: () -> Unit) = viewModelScope.launch {
-        val folder = parentLink.value
+        val folder = parentLink.value as? DriveLink.Folder
         if (folder != null) {
             if (folder.id != parentId) {
                 moveFile(userId, driveLinksToMove.value.map { driveLink -> driveLink.id }, folder.id)

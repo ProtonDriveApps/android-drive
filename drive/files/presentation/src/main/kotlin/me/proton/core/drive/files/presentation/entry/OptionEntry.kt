@@ -53,3 +53,10 @@ class CreateAlbumEntry(
     override val icon: Int = CorePresentation.drawable.ic_proton_plus
     override val label: Int = I18N.string.common_create_album_action
 }
+
+class RemoveFromAlbumEntry(
+    override val onClick: (Unit) -> Unit,
+) : OptionEntry<Unit> {
+    override val icon: Int = CorePresentation.drawable.ic_proton_minus_circle
+    override val label: Int = I18N.string.common_remove_from_album_action
+}

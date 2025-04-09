@@ -20,7 +20,9 @@ package me.proton.core.drive.trash.data.manager.worker
 
 object WorkerKeys {
     const val KEY_USER_ID = "key.userId"
+    const val KEY_VOLUME_ID = "key.volumeId"
     const val KEY_SHARE_ID = "key.shareId"
     const val KEY_FOLDER_ID = "key.folderId"
+    const val KEY_ALBUM_ID = "key.albumId"
     const val KEY_WORK_ID = "key.workId"
 }

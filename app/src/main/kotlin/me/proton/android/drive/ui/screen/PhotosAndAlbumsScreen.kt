@@ -77,6 +77,7 @@ import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmallNorm
 import me.proton.core.compose.theme.headlineSmallUnspecified
+import me.proton.core.drive.base.presentation.component.RepeatOnLifecycleLaunchedEffect
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.component.TopBarActions
 import me.proton.core.drive.base.presentation.effect.ListEffect
@@ -137,7 +138,7 @@ fun PhotosAndAlbumsScreen(
                 defaultTitle = defaultTitle,
             )
 
-            Tab.ALBUMS -> AlbumTab(
+            Tab.ALBUMS -> AlbumsTab(
                 homeScaffoldState = homeScaffoldState,
                 navigateToCreateNewAlbum = navigateToCreateNewAlbum,
                 navigateToAlbum = navigateToAlbum,
@@ -148,7 +149,7 @@ fun PhotosAndAlbumsScreen(
 }
 
 @Composable
-private fun AlbumTab(
+fun AlbumsTab(
     homeScaffoldState: HomeScaffoldState,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
@@ -193,7 +194,7 @@ private fun AlbumTab(
 }
 
 @Composable
-private fun PhotosTab(
+fun PhotosTab(
     homeScaffoldState: HomeScaffoldState,
     modifier: Modifier = Modifier,
     navigateToPhotosPermissionRationale: () -> Unit,
@@ -239,6 +240,9 @@ private fun PhotosTab(
         }.launchIn(this)
     }
 
+    RepeatOnLifecycleLaunchedEffect {
+        viewModel.initializeSelectionInPickerMode()
+    }
     PhotosTab(
         homeScaffoldState = homeScaffoldState,
         viewState = viewState,
@@ -320,7 +324,7 @@ private fun PhotosTab(
 
 
 @Composable
-private fun Tabs(
+fun Tabs(
     viewState: PhotosAndAlbumsViewState,
     viewEvent: PhotosAndAlbumsViewEvent,
     modifier: Modifier = Modifier,

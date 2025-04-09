@@ -36,11 +36,12 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.eventmanager.usecase.HandleOnDeleteEvent
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.trash.data.manager.worker.EmptyTrashSuccessWorker
 import me.proton.core.drive.trash.data.manager.worker.EmptyTrashWorker
@@ -64,7 +65,7 @@ class StubbedTrashManager @Inject constructor(
     private val linkRepository: LinkRepository,
     private val handleOnDeleteEvent: HandleOnDeleteEvent,
     private val getShare: GetShare,
-    private val getVolume: GetVolume,
+    private val getMainShare: GetMainShare,
 ) : TrashManager {
     private val context by lazy { ApplicationProvider.getApplicationContext<Context>() }
 
@@ -72,7 +73,7 @@ class StubbedTrashManager @Inject constructor(
 
     override suspend fun trash(
         userId: UserId,
-        folderId: FolderId,
+        parentId: ParentId,
         linkIds: List<LinkId>,
     ): DataResult<String> = linkTrashRepository.insertWork(linkIds).onSuccess { workId ->
         TestListenableWorkerBuilder<TrashFileNodesWorker>(context)
@@ -95,7 +96,7 @@ class StubbedTrashManager @Inject constructor(
 
             })
             .setInputData(
-                TrashFileNodesWorker.workDataOf(userId, folderId, workId)
+                TrashFileNodesWorker.workDataOf(userId, parentId, workId)
             )
             .build()
             .doWork()
@@ -167,8 +168,6 @@ class StubbedTrashManager @Inject constructor(
         volumeId: VolumeId,
     ) {
         emptyTrashState.value = true
-        val volume = getVolume(userId, volumeId).toResult().getOrThrow()
-        val share = getShare(ShareId(userId, volume.shareId)).toResult().getOrThrow()
         val result = TestListenableWorkerBuilder<EmptyTrashWorker>(context)
             .setWorkerFactory(object : WorkerFactory() {
                 override fun createWorker(
@@ -181,12 +180,12 @@ class StubbedTrashManager @Inject constructor(
                     driveTrashRepository = driveTrashRepository,
                     broadcastMessages = broadcastMessages,
                     updateEventAction = updateEventAction,
-                    getShare = getShare,
+                    getMainShare = getMainShare,
                 )
 
             })
             .setInputData(
-                EmptyTrashWorker.workDataOf(userId, share.id)
+                EmptyTrashWorker.workDataOf(userId, volumeId)
             )
             .build()
             .doWork()

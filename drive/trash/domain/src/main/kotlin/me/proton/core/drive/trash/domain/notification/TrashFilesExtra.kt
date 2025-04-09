@@ -21,11 +21,12 @@ package me.proton.core.drive.trash.domain.notification
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import java.io.Serializable
 
 data class TrashFilesExtra(
     val userId: UserId,
-    val folderId: FolderId,
+    val parentId: ParentId,
     val links: List<LinkId>,
     val exception: Exception? = null,
 ) : Serializable

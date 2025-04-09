@@ -43,7 +43,7 @@
     <item quantity="one">1 oseba ne more biti povabljena</item>
     <item quantity="two">%1$d osebi ne moreta biti povabljeni</item>
     <item quantity="few">%1$d osebe ne morejo biti povabljene</item>
-    <item quantity="other">%1$d oseb ne morejo biti povabljenih</item>
+    <item quantity="other">%1$d oseb ne more biti povabljenih</item>
   </plurals>
   <!--
         Variable %1$d is a number

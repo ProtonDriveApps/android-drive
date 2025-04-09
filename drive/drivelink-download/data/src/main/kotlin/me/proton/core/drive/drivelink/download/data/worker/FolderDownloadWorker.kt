@@ -123,12 +123,12 @@ class FolderDownloadWorker @AssistedInject constructor(
         while (mutableDescendants.isNotEmpty()) {
             // We peek at the first node in the list
             val currentDescendant = mutableDescendants.first()
-            val parentId = currentDescendant.parentId
+            val folderId = currentDescendant.parentId as? FolderId
             // If descendants list does not contain any child of parent folder, we can mark parent folder as downloaded
-            if (mutableDescendants.none { link -> link.parentId == parentId }) {
+            if (mutableDescendants.none { link -> link.parentId == folderId }) {
                 mutableDescendants
                     .filterIsInstance<Link.Folder>()
-                    .find { link -> link.id == parentId}
+                    .find { link -> link.id == folderId}
                     ?.let { parent ->
                         workContinuation = workContinuation.then(parent.setAsDownloaded(userId, folder.id))
                     }
@@ -147,7 +147,7 @@ class FolderDownloadWorker @AssistedInject constructor(
                     // folder to treat them at the same time and we create a task to download each file
                     // We also remove them from the list of unhandled children
                     mutableDescendants
-                        .filter { link -> link.parentId == parentId && link is Link.File }
+                        .filter { link -> link.parentId == folderId && link is Link.File }
                         .also { siblings -> mutableDescendants.removeAll(siblings) }
                         .fold(workContinuation) { continuation, link ->
                             continuation.then((link as Link.File).setAsToDownload(userId, folderTag))
@@ -190,7 +190,10 @@ class FolderDownloadWorker @AssistedInject constructor(
             fileId = id,
             revisionId = activeRevisionId,
             isRetryable = true,
-            fileTags = listOfNotNull(folderTag, parentId?.let { uniqueFolderWorkName(it) }),
+            fileTags = listOfNotNull(
+                folderTag,
+                (parentId as? FolderId)?.let { uniqueFolderWorkName(it) },
+            ),
         )
 
     companion object {

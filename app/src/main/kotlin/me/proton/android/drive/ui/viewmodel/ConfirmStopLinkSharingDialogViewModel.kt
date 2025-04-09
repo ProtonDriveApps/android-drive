@@ -26,9 +26,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.viewevent.ConfirmStopSharingViewEvent
@@ -38,7 +36,7 @@ import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.drivelink.shared.domain.usecase.DeleteShareUrl
+import me.proton.core.drive.drivelink.shared.domain.usecase.DeleteShareUrlAndShare
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
@@ -52,7 +50,7 @@ import me.proton.core.drive.i18n.R as I18N
 @Suppress("StaticFieldLeak")
 class ConfirmStopLinkSharingDialogViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val deleteShareUrl: DeleteShareUrl,
+    private val deleteShareUrlAndShare: DeleteShareUrlAndShare,
     private val broadcastMessages: BroadcastMessages,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
@@ -78,16 +76,16 @@ class ConfirmStopLinkSharingDialogViewModel @Inject constructor(
     fun viewEvent(confirm: () -> Unit) = object : ConfirmStopSharingViewEvent {
         override val onConfirm = {
             viewModelScope.launch {
-                deleteShareUrl(confirm)
+                stopSharing(confirm)
             }
             Unit
         }
     }
 
-    private suspend fun deleteShareUrl(confirm: () -> Unit) {
+    private suspend fun stopSharing(confirm: () -> Unit) {
         isLoading.emit(true)
         errorMessage.emit(null)
-        val result = deleteShareUrl(linkId)
+        val result = deleteShareUrlAndShare(linkId)
         isLoading.emit(false)
         result.onSuccess {
             broadcastMessages(

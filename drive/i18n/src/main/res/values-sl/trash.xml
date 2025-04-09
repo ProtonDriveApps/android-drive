@@ -24,9 +24,9 @@
     -->
   <plurals name="trash_operation_successful_format">
     <item quantity="one">Predmet poslan v smetnjak</item>
-    <item quantity="two">%1$d predmeta poslana v smetnjak</item>
-    <item quantity="few">%1$d predmeti poslani v smetnjak</item>
-    <item quantity="other">%1$d predmetov poslanih v smetnjak</item>
+    <item quantity="two">%1$d items sent to trash</item>
+    <item quantity="few">%1$d items sent to trash</item>
+    <item quantity="other">%1$d items sent to trash</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -35,9 +35,9 @@
     -->
   <plurals name="trash_restore_operation_successful_format">
     <item quantity="one">1 predmet je bil obnovljen.</item>
-    <item quantity="two">%d obnovljena predmeta</item>
-    <item quantity="few">%d obnovljeni predmeti</item>
-    <item quantity="other">%d obnovljenih predmetov</item>
+    <item quantity="two">%d items restored</item>
+    <item quantity="few">%d items restored</item>
+    <item quantity="other">%d items restored</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -46,9 +46,9 @@
     -->
   <plurals name="trash_delete_operation_successful_format">
     <item quantity="one">1 predmet trajno izbrisan</item>
-    <item quantity="two">%d predmeta trajno izbrisana</item>
-    <item quantity="few">%d predmeti trajno izbrisani</item>
-    <item quantity="other">%d predmetov trajno izbrisanih</item>
+    <item quantity="two">%d items deleted permanently</item>
+    <item quantity="few">%d items deleted permanently</item>
+    <item quantity="other">%d items deleted permanently</item>
   </plurals>
   <string name="trash_empty_operation_successful">Smetnjak je prazen</string>
   <string name="trash_error_occurred_sending_to_trash">Pri poskusu pošiljanja vaše datoteke v smetnjak je prišlo do napake</string>

@@ -18,9 +18,9 @@
   -->
 <resources>
   <string name="albums_title">Albums</string>
-  <string name="albums_new_album_name_hint">Album name</string>
+  <string name="albums_new_album_name_hint">Ime albuma</string>
   <string name="albums_new_album_created_successfully">Album created</string>
-  <string name="albums_filter_my_albums">My albums</string>
+  <string name="albums_filter_my_albums">Moji albumi</string>
   <!--
         Variable %1$s is a number of photos in the album
         Example:
@@ -28,9 +28,29 @@
             "345 items"
     -->
   <plurals name="albums_photo_count">
-    <item quantity="one">%1$s item</item>
-    <item quantity="two">%1$s items</item>
-    <item quantity="few">%1$s items</item>
-    <item quantity="other">%1$s items</item>
+    <item quantity="one">%1$s predmet</item>
+    <item quantity="two">%1$s predmeta</item>
+    <item quantity="few">%1$s predmeti</item>
+    <item quantity="other">%1$s predmetov</item>
   </plurals>
+  <string name="albums_delete_album_action">Delete album</string>
+  <string name="albums_delete_album_dialog_title">Delete album?</string>
+  <string name="albums_delete_album_dialog_description">This will only delete the album. Your photos will remain in your timeline. This action cannot be undone.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Some photos in this album are not saved to your timeline. Deleting this album will permanently delete those photos.\nWould you like to save them before removing?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Delete without saving</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Save photos and delete</string>
+  <string name="albums_add_zero_to_album_button">Add to album</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Add %1$d to album</item>
+    <item quantity="two">Add %1$d to album</item>
+    <item quantity="few">Add %1$d to album</item>
+    <item quantity="other">Add %1$d to album</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Set as album cover</string>
 </resources>

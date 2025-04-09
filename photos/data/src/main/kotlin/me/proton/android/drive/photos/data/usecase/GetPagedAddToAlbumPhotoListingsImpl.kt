@@ -51,6 +51,7 @@ class GetPagedAddToAlbumPhotoListingsImpl @Inject constructor(
                 if (albumId != null) {
                     db.addToAlbumDao.getAddToAlbumPhotosPagingSource(
                         userId = userId,
+                        albumShareId = albumId.shareId.id,
                         albumId = albumId.id,
                     )
                 } else {

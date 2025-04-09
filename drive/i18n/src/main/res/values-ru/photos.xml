@@ -66,7 +66,7 @@
   <string name="photos_error_backup_disabled_action">Включить</string>
   <string name="photos_error_backup_missing_folder">Папка резервной копии не найдена</string>
   <string name="photos_error_backup_failed">Резервное копирование не удалось</string>
-  <string name="photos_error_backup_temporarily_disabled">Backup is temporarily disabled.</string>
+  <string name="photos_error_backup_temporarily_disabled">Резервное копирование временно отключено.</string>
   <string name="photos_error_backup_migration_title">Требуется обновление</string>
   <string name="photos_error_backup_migration_description">Чтобы использовать функции фотографий, обновите свое приложение до последней версии.</string>
   <string name="photos_error_missing_permissions">Отсутствуют разрешения.</string>
@@ -119,7 +119,7 @@
   <plurals name="photos_backup_state_completed_items_saved">
     <item quantity="one">%1$s элемент сохранён</item>
     <item quantity="few">%1$s элемента сохранены</item>
-    <item quantity="many">%1$s элементов сохранено</item>
+    <item quantity="many">%1$s элементов сохранены</item>
     <item quantity="other">%1$s элементов сохранено</item>
   </plurals>
   <string name="photos_upsell_title">Никогда не заполнять хранилище полностью</string>

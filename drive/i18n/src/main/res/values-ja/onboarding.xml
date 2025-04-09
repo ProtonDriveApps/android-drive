@@ -17,7 +17,7 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">あとで</string>
+  <string name="onboarding_action_skip">今はしない</string>
   <string name="onboarding_title">写真とビデオは自動的に保存され暗号化</string>
   <string name="onboarding_description_part_one">で思い出を安全に保管</string>
   <string name="onboarding_description_part_two">エンドツーエンド暗号化ストレージ</string>

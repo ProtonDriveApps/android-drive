@@ -27,11 +27,14 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.repository.BaseRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.data.api.PhotoApiDataSource
+import me.proton.core.drive.photo.data.api.response.AddToRemoveFromAlbumResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.photo.data.db.entity.AlbumListingEntity
+import me.proton.core.drive.photo.data.extension.toAddToRemoveFromAlbumResult
 import me.proton.core.drive.photo.data.extension.toAlbumListing
 import me.proton.core.drive.photo.data.extension.toAlbumListingEntity
 import me.proton.core.drive.photo.data.extension.toAlbumPhotoListing
@@ -39,6 +42,7 @@ import me.proton.core.drive.photo.data.extension.toAlbumPhotoListingEntity
 import me.proton.core.drive.photo.data.extension.toCreateAlbumRequest
 import me.proton.core.drive.photo.data.extension.toUpdateAlbumRequest
 import me.proton.core.drive.photo.domain.entity.AddToAlbumInfo
+import me.proton.core.drive.photo.domain.entity.AddToRemoveFromAlbumResult
 import me.proton.core.drive.photo.domain.entity.AlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.photo.domain.entity.AlbumPhotoListingList
@@ -93,7 +97,6 @@ class AlbumRepositoryImpl @Inject constructor(
                 break
             }
         }
-        /* TODO: this is not yet ready on BE
         anchorId = null
         while (true) {
             val response = api.getAlbumSharedWithMeListings(userId, anchorId)
@@ -108,7 +111,6 @@ class AlbumRepositoryImpl @Inject constructor(
                 break
             }
         }
-        */
         db.inTransaction {
             db.albumListingDao.deleteAll(userId)
             db.albumListingDao.insertOrIgnore(
@@ -307,21 +309,42 @@ class AlbumRepositoryImpl @Inject constructor(
         volumeId: VolumeId,
         albumId: AlbumId,
         addToAlbumInfos: List<AddToAlbumInfo>,
-    ) {
-        addToAlbumInfos.chunked(configurationProvider.addToAlbumMaxApiDataSize).forEach { chunk ->
-            api.addToAlbum(
+    ): AddToRemoveFromAlbumResult {
+        val responses: MutableList<AddToRemoveFromAlbumResponse.Responses> = mutableListOf()
+        addToAlbumInfos.chunked(configurationProvider.addToRemoveFromAlbumMaxApiDataSize).forEach { chunk ->
+            val response = api.addToAlbum(
                 userId = albumId.userId,
                 volumeId = volumeId,
                 albumId = albumId.id,
                 addToAlbumInfos = chunk,
             ).valueOrThrow
+            responses.addAll(response.responses)
         }
+        return responses.toAddToRemoveFromAlbumResult()
+    }
+
+    override suspend fun removeFromAlbum(
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        linkIds: List<FileId>
+    ): AddToRemoveFromAlbumResult {
+        val responses: MutableList<AddToRemoveFromAlbumResponse.Responses> = mutableListOf()
+        linkIds.chunked(configurationProvider.addToRemoveFromAlbumMaxApiDataSize).forEach { chunk ->
+            val response = api.removeFromAlbum(
+                userId = albumId.userId,
+                volumeId = volumeId,
+                albumId = albumId.id,
+                linkIds = linkIds.map { linkId -> linkId.id },
+            ).valueOrThrow
+            responses.addAll(response.responses)
+        }
+        return responses.toAddToRemoveFromAlbumResult()
     }
 
     override suspend fun deleteAlbum(
         volumeId: VolumeId,
         albumId: AlbumId,
-        deleteAlbumPhotos: Boolean
+        deleteAlbumPhotos: Boolean,
     ) {
         api.deleteAlbum(
             userId = albumId.userId,

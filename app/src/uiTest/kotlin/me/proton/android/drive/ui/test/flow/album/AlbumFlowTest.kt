@@ -25,13 +25,17 @@ import me.proton.android.drive.ui.robot.AlbumRobot
 import me.proton.android.drive.ui.robot.AlbumsTabRobot
 import me.proton.android.drive.ui.robot.ConfirmDeleteAlbumRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
+import me.proton.android.drive.ui.robot.PickerAlbumRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ALBUMS
+import me.proton.core.drive.files.presentation.extension.ItemType
+import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
+import me.proton.core.drive.i18n.R as I18N
 
 @HiltAndroidTest
 class AlbumFlowTest : BaseTest() {
@@ -120,6 +124,85 @@ class AlbumFlowTest : BaseTest() {
             .clickOnSaveAndDelete(AlbumsTabRobot)
             .verify {
                 assertAlbumIsNotDisplayed(albumName)
+            }
+    }
+    
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun setAsAlbumCover() {
+        val albumName = "album-for-photos"
+        val image = "activeTaggedFileInAlbum-3.jpg"
+        AlbumsTabRobot
+            .clickOnAlbum(albumName)
+            .clickOnPhoto(image)
+            .clickOnContextualButton()
+            .clickSetAsAlbumCover()
+            .verify {
+                nodeWithTextDisplayed(I18N.string.albums_set_album_as_cover_success)
+            }
+            .clickBack(AlbumRobot)
+            .verify {
+                assertCoverAlbum(image)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun addPhotosIntoAlbum() {
+        val albumName = "album-for-photos-uploaded-by-other-user"
+        val pickedAlbumName = "album-for-photos-in-stream"
+        val photoInStream = "activeTaggedFileInStream-2.jpg"
+        val photoInAlbum = "activeFileInStreamAndAlbum.jpg"
+        AlbumsTabRobot
+            .clickOnAlbum(albumName)
+            .clickOnAdd()
+            .clickOnPhoto(photoInStream)
+            .verify {
+                assertTotalPhotosToAddToAlbum(1)
+            }
+            .clickOnAlbumsTab()
+            .clickOnAlbum(pickedAlbumName, PickerAlbumRobot)
+            .clickOnPhoto(photoInAlbum)
+            .verify {
+                assertTotalPhotosToAddToAlbum(2)
+            }
+            .clickOnAddToAlbum(AlbumRobot)
+            .verify {
+                assertAlbumNameIsDisplayed(albumName)
+                assertItemsInAlbum(3)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun removePhotosFromAlbum() {
+        val albumName = "album-for-photos"
+        val photo1 = "activeFileInAlbum.jpg"
+        val photo2 = "activeTaggedFileInAlbum-3.jpg"
+        val photo3 = "activeTaggedFileInAlbum-2.jpg"
+        AlbumsTabRobot
+            .clickOnAlbum(albumName)
+            .longClickOnItem(photo1)
+            .clickOptions()
+            .clickRemoveFromAlbum()
+            .verify {
+                assertItemsInAlbum(4)
+            }
+            .longClickOnItem(photo2)
+            .clickOnItem(photo3, LayoutType.Grid, ItemType.File, AlbumRobot)
+            .clickMultipleOptions()
+            .clickRemoveFromAlbum()
+            .verify {
+                assertItemsInAlbum(2)
             }
     }
 }

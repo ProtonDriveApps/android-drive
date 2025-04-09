@@ -31,4 +31,22 @@
     <item quantity="one">%1$s item</item>
     <item quantity="other">%1$s itens</item>
   </plurals>
+  <string name="albums_delete_album_action">Excluir álbum</string>
+  <string name="albums_delete_album_dialog_title">Excluir álbum?</string>
+  <string name="albums_delete_album_dialog_description">Isso excluirá apenas o álbum. Suas fotos permanecerão na sua cronologia Esta ação não pode ser desfeita.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Algumas fotos neste álbum não são salvas na sua cronologia. Excluir este álbum excluirá permanentemente essas fotos. \nVocê gostaria de salvá-los antes de removê-los?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Excluir sem salvar</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Salvar fotos e excluir</string>
+  <string name="albums_add_zero_to_album_button">Adicionar ao álbum</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Adicionar %1$d ao álbum</item>
+    <item quantity="other">Adicionar %1$d ao álbum</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Definir como capa do álbum</string>
 </resources>

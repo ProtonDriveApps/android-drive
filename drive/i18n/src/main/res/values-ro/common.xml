@@ -39,6 +39,7 @@
   <string name="common_on">Pornită</string>
   <string name="common_off">Oprită</string>
   <string name="common_all">Toate</string>
+  <string name="common_unknown">Necunoscută</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -66,6 +67,8 @@
   <string name="common_open_in_browser_action">Deschidere în navigator web</string>
   <string name="common_done_action">Gata</string>
   <string name="common_create_album_action">Creare album</string>
+  <string name="common_set_as_album_cover_action">Setare ca și copertă de album</string>
+  <string name="common_add_action">Adăugare</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>
@@ -143,9 +146,9 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d selectat</item>
-    <item quantity="few">%1$d selectate</item>
-    <item quantity="other">%1$d selectate</item>
+    <item quantity="one">Selectate: %1$d</item>
+    <item quantity="few">Selectate: %1$d</item>
+    <item quantity="other">Selectate: %1$d</item>
   </plurals>
   <!-- region In-app notification -->
   <!--
@@ -168,9 +171,9 @@
             "17 files successfully downloaded"
     -->
   <plurals name="common_in_app_notification_files_download_complete">
-    <item quantity="one">%1$d fișier s-a descărcat cu succes.</item>
-    <item quantity="few">%1$d fișiere s-au descărcat cu succes.</item>
-    <item quantity="other">%1$d de fișiere s-au descărcat cu succes.</item>
+    <item quantity="one">Fișiere descărcate: %1$d</item>
+    <item quantity="few">Fișiere descărcate: %1$d</item>
+    <item quantity="other">Fișiere descărcate: %1$d</item>
   </plurals>
   <!--
         Variable %1$s is a file name

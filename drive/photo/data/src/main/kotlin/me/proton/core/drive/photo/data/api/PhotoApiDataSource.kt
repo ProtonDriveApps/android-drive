@@ -24,6 +24,7 @@ import me.proton.core.drive.photo.data.api.request.AddToAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreateAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreatePhotoRequest
 import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
+import me.proton.core.drive.photo.data.api.request.RemoveFromAlbumRequest
 import me.proton.core.drive.photo.data.api.request.UpdateAlbumRequest
 import me.proton.core.drive.photo.data.extension.toAlbumData
 import me.proton.core.drive.photo.data.extension.toDtoSort
@@ -152,6 +153,24 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
                 albumId = albumId,
                 request = AddToAlbumRequest(
                     albumData = addToAlbumInfos.toAlbumData(),
+                ),
+            )
+        }
+
+    @Throws(ApiException::class)
+    suspend fun removeFromAlbum(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: String,
+        linkIds: List<String>,
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            removeFromAlbum(
+                volumeId = volumeId.id,
+                albumId = albumId,
+                request = RemoveFromAlbumRequest(
+                    linkIds = linkIds,
                 ),
             )
         }

@@ -192,11 +192,11 @@ fun MultiselectOverlay(
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.BottomEnd,
+        contentAlignment = Alignment.TopStart,
     ) {
         Box(
             modifier = Modifier
-                .size(ProtonDimens.DefaultButtonMinHeight),
+                .size(ProtonDimens.LargeSpacing),
             contentAlignment = Alignment.Center,
         ) {
             CircleSelection(
@@ -380,7 +380,6 @@ fun MediaItemPreview() {
             passphraseSignature = "signature",
             contentKeyPacket = "contentKeyPacket",
             contentKeyPacketSignature = null,
-            isFavorite = false,
             attributes = Attributes(0),
             permissions = Permissions(0),
             state = Link.State.ACTIVE,

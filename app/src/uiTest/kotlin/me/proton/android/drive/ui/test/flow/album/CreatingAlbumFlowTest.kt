@@ -22,7 +22,10 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.AlbumRobot
+import me.proton.android.drive.ui.robot.CreateAlbumTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
+import me.proton.android.drive.ui.robot.PickerAlbumRobot
+import me.proton.android.drive.ui.robot.PickerPhotosAndAlbumsRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.utils.getRandomString
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
@@ -98,6 +101,47 @@ class CreatingAlbumFlowTest : BaseTest() {
             .verify {
                 robotDisplayed()
                 assertAlbumIsDisplayed(albumName, 1)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun inEmptyAlbumAddPhotosThenCreate() {
+        val albumName = "new-album"
+        val album = "album-for-photos-in-stream"
+        val photo1 = "activeTaggedFileInStream-2.jpg"
+        val photo2 = "activeFileInStreamAndAlbum.jpg"
+        PhotosTabRobot
+            .clickOnAlbumsTab()
+            .clickPlusButton()
+            .typeName(albumName)
+            .clickOnAdd()
+            .verify {
+                assertTotalPhotosToAddToAlbum(0)
+            }
+            .clickOnPhoto(photo1)
+            .clickOnAlbumsTab()
+            .clickOnAlbum(album, PickerAlbumRobot)
+            .clickOnPhoto(photo2)
+            .verify {
+                assertTotalPhotosToAddToAlbum(2)
+            }
+            .clickOnReset(PickerAlbumRobot)
+            .verify {
+                assertTotalPhotosToAddToAlbum(0)
+            }
+            .clickOnPhoto(photo2)
+            .clickBack(PickerPhotosAndAlbumsRobot)
+            .clickOnPhotosTab()
+            .clickOnPhoto(photo1)
+            .clickOnAddToAlbum(CreateAlbumTabRobot)
+            .clickOnDone(AlbumRobot)
+            .verify {
+                assertAlbumNameIsDisplayed(albumName)
+                assertItemsInAlbum(2)
             }
     }
 }

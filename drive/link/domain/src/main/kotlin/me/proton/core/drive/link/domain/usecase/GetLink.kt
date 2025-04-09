@@ -30,6 +30,7 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import javax.inject.Inject
 
@@ -81,6 +82,14 @@ class GetLink @Inject constructor(
                 DataResult.Error.Remote("AlbumId $albumId was not an album", null)
             }
         }
+    }
+
+    operator fun invoke(
+        parentId: ParentId,
+        refresh: Flow<Boolean> = hasLink(parentId).map { hasLink -> !hasLink },
+    ) = when (parentId) {
+        is FolderId -> invoke(parentId, refresh)
+        is AlbumId -> invoke(parentId, refresh)
     }
 
     operator fun invoke(

@@ -31,4 +31,22 @@
     <item quantity="one">%1$s Eintrag</item>
     <item quantity="other">%1$s Einträge</item>
   </plurals>
+  <string name="albums_delete_album_action">Album löschen</string>
+  <string name="albums_delete_album_dialog_title">Album löschen?</string>
+  <string name="albums_delete_album_dialog_description">Dadurch wird nur das Album gelöscht. Deine Fotos bleiben in deiner Zeitleiste. Diese Aktion kann nicht rückgängig gemacht werden.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Einige Fotos in diesem Album sind nicht in deiner Zeitleiste gespeichert. Wenn du dieses Album löschst, werden diese Fotos dauerhaft gelöscht.\nMöchtest du sie vor dem Entfernen speichern?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Löschen ohne Speichern</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Fotos speichern und löschen</string>
+  <string name="albums_add_zero_to_album_button">Zum Album hinzufügen</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">%1$d zu Album hinzufügen</item>
+    <item quantity="other">%1$d zu Album hinzufügen</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Als Albumcover festgelegt</string>
 </resources>

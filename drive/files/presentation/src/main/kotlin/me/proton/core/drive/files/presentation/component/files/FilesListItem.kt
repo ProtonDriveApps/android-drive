@@ -61,16 +61,13 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultCornerRadius
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
-import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.compose.theme.captionNorm
 import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.default
 import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.Percentage
-import me.proton.core.drive.base.domain.extension.firstCodePointAsStringOrNull
 import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.base.presentation.component.CircleSelection
 import me.proton.core.drive.base.presentation.component.EncryptedItem
@@ -84,6 +81,7 @@ import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.files.presentation.component.FilesTestTag
 import me.proton.core.drive.link.domain.entity.Folder
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.domain.entity.SharingDetails
 import me.proton.core.drive.link.domain.extension.isProtonCloudFile
 import me.proton.core.drive.link.domain.extension.userId
@@ -651,7 +649,7 @@ fun PreviewDownloadedAndFavoriteListItem() {
                     isMarkedAsOffline = true,
                     downloadState = DownloadState.Downloaded(),
                     link = PREVIEW_LINK.copy(
-                        isFavorite = true,
+                        tags = listOf(PhotoTag.Favorites),
                     )
                 ),
                 onClick = {},
@@ -679,7 +677,7 @@ fun PreviewDwnldAndFavShrdListItem() {
                             ShareId(PREVIEW_LINK.userId, ""),
                             shareUrlId = ShareUrlId(ShareId(PREVIEW_LINK.userId, ""), "")
                         ),
-                        isFavorite = true,
+                        tags = listOf(PhotoTag.Favorites),
                     )
                 ),
                 onClick = {},

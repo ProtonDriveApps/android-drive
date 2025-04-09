@@ -46,9 +46,9 @@ class PreviewPhotosFlowTest : BaseTest() {
     @SmokeTest
     fun previewPhotoTest() {
 
-        val firstImage = ImageName.Main
-        val secondImage = ImageName.Now
-        val thirdImage = ImageName.Yesterday
+        val firstImage = ImageName.Yesterday
+        val secondImage = ImageName.LastWeek
+        val thirdImage = ImageName.LastMonth
 
         PhotosTabRobot
             .clickOnPhoto(firstImage)
@@ -64,6 +64,7 @@ class PreviewPhotosFlowTest : BaseTest() {
                 assertPreviewIsDisplayed(thirdImage.fileName)
             }
             .clickBack(PhotosTabRobot)
+            .scrollToPhoto(thirdImage)
             .clickOnPhoto(thirdImage)
             .verify {
                 assertPreviewIsDisplayed(thirdImage.fileName)

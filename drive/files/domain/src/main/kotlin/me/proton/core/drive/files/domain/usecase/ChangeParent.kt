@@ -19,8 +19,8 @@ package me.proton.core.drive.files.domain.usecase
 
 import me.proton.core.drive.crypto.domain.usecase.link.CreateMoveInfo
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import javax.inject.Inject
 
@@ -31,7 +31,7 @@ class ChangeParent @Inject constructor(
 ) {
     suspend operator fun invoke(
         linkId: LinkId,
-        folderId: FolderId,
+        folderId: ParentId,
     ): Result<Unit> = runCatching {
         updateEventAction(
             shareId = linkId.shareId,

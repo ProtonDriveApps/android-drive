@@ -28,6 +28,7 @@ sealed interface LinkPropertiesEntity
 data class LinkWithProperties(
     val link: LinkEntity,
     val properties: LinkPropertiesEntity,
+    val tags: List<Long> = emptyList(),
 ) {
     val linkId: LinkId
         get() = when (properties) {

@@ -26,6 +26,7 @@ import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.ALBUM_ID
+import me.proton.core.drive.base.data.db.Column.ALBUM_SHARE_ID
 import me.proton.core.drive.base.data.db.Column.CAPTURE_TIME
 import me.proton.core.drive.base.data.db.Column.CONTENT_HASH
 import me.proton.core.drive.base.data.db.Column.HASH
@@ -60,14 +61,16 @@ import me.proton.core.drive.share.data.db.ShareEntity
         ForeignKey(
             entity = LinkEntity::class,
             parentColumns = [USER_ID, SHARE_ID, ID],
-            childColumns = [USER_ID, SHARE_ID, ALBUM_ID],
+            childColumns = [USER_ID, ALBUM_SHARE_ID, ALBUM_ID],
             onDelete = ForeignKey.CASCADE
         ),
     ],
     indices = [
         Index(value = [USER_ID]),
         Index(value = [ALBUM_ID]),
-        Index(value = [USER_ID, SHARE_ID, LINK_ID, ALBUM_ID], unique = true),
+        Index(value = [USER_ID, ALBUM_ID]),
+        Index(value = [USER_ID, ALBUM_SHARE_ID, ALBUM_ID]),
+        Index(value = [USER_ID, SHARE_ID, LINK_ID, ALBUM_SHARE_ID, ALBUM_ID], unique = true),
     ],
 )
 data class AddToAlbumEntity(
@@ -77,6 +80,8 @@ data class AddToAlbumEntity(
     val shareId: String,
     @ColumnInfo(name = LINK_ID)
     val linkId: String,
+    @ColumnInfo(name = ALBUM_SHARE_ID)
+    val albumShareId: String? = null,
     @ColumnInfo(name = ALBUM_ID)
     val albumId: String? = null,
     @ColumnInfo(name = CAPTURE_TIME)

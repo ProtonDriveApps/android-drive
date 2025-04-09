@@ -33,4 +33,24 @@
     <item quantity="many">%1$s položiek</item>
     <item quantity="other">%1$s položiek</item>
   </plurals>
+  <string name="albums_delete_album_action">Vymazať album</string>
+  <string name="albums_delete_album_dialog_title">Vymazať album?</string>
+  <string name="albums_delete_album_dialog_description">Týmto sa odstráni iba album. Vaše fotografie zostanú na časovej osi. Túto akciu nemožno vrátiť späť.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Niektoré fotografie v tomto albume nie sú uložené na časovej osi. Vymazaním tohto albumu sa tieto fotografie natrvalo odstránia.\nChcete ich pred odstránením uložiť?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Vymazať bez uloženia</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Uložiť fotografie a vymazať</string>
+  <string name="albums_add_zero_to_album_button">Pridať do albumu</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Pridať do %1$d albumu</item>
+    <item quantity="few">Pridať do %1$d albumov</item>
+    <item quantity="many">Pridať do %1$d albumov</item>
+    <item quantity="other">Pridať do %1$d albumov</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Nastaviť ako obal albumu</string>
 </resources>

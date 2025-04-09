@@ -29,6 +29,8 @@ import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
+import me.proton.core.drive.link.domain.extension.userId
 import javax.inject.Inject
 
 class GetDecryptedDriveLink @Inject constructor(
@@ -62,6 +64,22 @@ class GetDecryptedDriveLink @Inject constructor(
             .mapSuccess { (_, driveLink) ->
                 decryptDriveLink(driveLink, failOnDecryptionError).toDataResult()
             }
+
+    operator fun invoke(
+        parentId: ParentId,
+        failOnDecryptionError: Boolean = true,
+    ) = when (parentId) {
+        is FolderId -> invoke(parentId.userId, parentId, failOnDecryptionError)
+        is AlbumId -> invoke(parentId, failOnDecryptionError)
+    }
+
+    operator fun invoke(
+        userId: UserId,
+        parentId: ParentId?,
+        failOnDecryptionError: Boolean = true,
+    ) = parentId?.let {
+        invoke(parentId, failOnDecryptionError)
+    } ?: invoke(userId, null, failOnDecryptionError)
 
     operator fun invoke(
         linkId: LinkId,

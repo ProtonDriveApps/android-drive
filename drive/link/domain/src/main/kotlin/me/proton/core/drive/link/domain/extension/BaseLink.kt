@@ -22,9 +22,11 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.Timestamp
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.share.domain.entity.ShareId
 
 val List<BaseLink>.ids: List<LinkId> get() = map { link -> link.id }
@@ -33,7 +35,11 @@ val BaseLink.shareId: ShareId get() = id.shareId
 
 val BaseLink.userId: UserId get() = shareId.userId
 
-fun BaseLink.requireParentId(): FolderId = requireNotNull(parentId)
+fun BaseLink.requireParentId(): ParentId = requireNotNull(parentId)
+
+fun BaseLink.requireFolderId(): FolderId = requireNotNull(parentId as? FolderId)
+
+fun BaseLink.requireAlbumId(): AlbumId = requireNotNull(parentId as? AlbumId)
 
 val BaseLink.isSharedUrlExpired get() = shareUrlExpirationTime?.let { expirationTime ->
     expirationTime < Timestamp.now

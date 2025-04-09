@@ -17,11 +17,11 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="onboarding_action_skip">Not now</string>
-  <string name="onboarding_title">Automatically save and encrypt your photos and videos</string>
-  <string name="onboarding_description_part_one">Keep your memories safe with</string>
+  <string name="onboarding_action_skip">現在不要</string>
+  <string name="onboarding_title">自動儲存與加密您的照片與影片</string>
+  <string name="onboarding_description_part_one">使用以下產品保護您的美好回憶</string>
   <string name="onboarding_description_part_two">端對端加密儲存</string>
   <string name="onboarding_description_free">免費</string>
-  <string name="onboarding_action_primary">Turn on camera uploads</string>
-  <string name="onboarding_action_secondary">More upload options</string>
+  <string name="onboarding_action_primary">開啟相機上傳</string>
+  <string name="onboarding_action_secondary">更多上傳選項</string>
 </resources>

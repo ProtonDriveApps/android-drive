@@ -29,9 +29,9 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">o persoană adăugată</item>
-    <item quantity="few">%1$d persoane adăugate</item>
-    <item quantity="other">%1$d de persoane adăugate</item>
+    <item quantity="one">Persoane adăugate: 1</item>
+    <item quantity="few">Persoane adăugate: %1$d</item>
+    <item quantity="other">Persoane adăugate: %1$d</item>
   </plurals>
   <!--
         Variable %1$d is a number

@@ -36,7 +36,7 @@
   <plurals name="trash_restore_operation_successful_format">
     <item quantity="one">1 элемент адноўлены</item>
     <item quantity="few">%d элементы адноўлены</item>
-    <item quantity="many">%d элементаў адноўлена</item>
+    <item quantity="many">%d элементаў адноўлены</item>
     <item quantity="other">%d элементаў адноўлены</item>
   </plurals>
   <!--

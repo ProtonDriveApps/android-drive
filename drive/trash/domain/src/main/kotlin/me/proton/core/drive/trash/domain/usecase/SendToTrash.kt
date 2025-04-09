@@ -22,8 +22,8 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.link.domain.entity.BaseLink
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.share.domain.usecase.GetShare
@@ -45,24 +45,25 @@ class SendToTrash @Inject constructor(
         }
     }
 
-    suspend operator fun invoke(userId: UserId, folderId: FolderId, linkIds: List<LinkId>) {
-        getShare(folderId.shareId).toResult().getOrNull()?.let { share ->
+    suspend operator fun invoke(userId: UserId, parentId: ParentId, linkIds: List<LinkId>) {
+        getShare(parentId.shareId).toResult().getOrNull()?.let { share ->
             trashRepository.insertOrUpdateTrashState(share.volumeId, linkIds, TrashState.TRASHING)
-            trashManager.trash(userId, folderId, linkIds).onFailure {
+            trashManager.trash(userId, parentId, linkIds).onFailure {
                 trashRepository.removeTrashState(linkIds)
             }
         }
     }
 
     private inline fun List<BaseLink>.applyGroupedByShareAndParentFolder(
-        block: (parentId: FolderId, nodes: List<BaseLink>) -> Unit,
+        block: (parentId: ParentId, nodes: List<BaseLink>) -> Unit,
     ) {
         groupBy { link -> link.id.shareId }
             .forEach { (_, links) ->
-                links.groupBy { link -> link.parentId }
-                    .forEach { (folderId, links) ->
-                        if (folderId != null) {
-                            block(folderId, links)
+                links
+                    .groupBy { link -> link.parentId }
+                    .forEach { (parentId, links) ->
+                        if (parentId != null) {
+                            block(parentId, links)
                         }
                     }
             }

@@ -20,6 +20,7 @@ package me.proton.core.drive.link.data.repository
 
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.file
 import me.proton.core.drive.db.test.folder
@@ -34,7 +35,9 @@ import me.proton.core.drive.db.test.volume
 import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.domain.usecase.SortLinksByParents
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -106,6 +109,37 @@ class LinkRepositoryImplTest {
                 FileId(photoShareId, "link-id"),
             ), linkIds
         )
+    }
+
+    @Test
+    fun `no tags`() = runTest {
+        database.db.user {
+            volume {
+                photoShare {
+                    file("link-id", tags = emptyList())
+                }
+            }
+        }
+
+        val link = repository.getLinkFlow(FileId(photoShareId, "link-id")).toResult().getOrThrow() as Link.File
+
+        assertEquals(emptyList<PhotoTag>(), link.tags)
+    }
+
+    @Test
+    fun `many tags`() = runTest {
+        val tags: List<PhotoTag> = listOf(PhotoTag.Screenshots, PhotoTag.Videos, PhotoTag.LivePhotos)
+        database.db.user {
+            volume {
+                photoShare {
+                    file("link-id", tags = tags.map { tag -> tag.value })
+                }
+            }
+        }
+
+        val link = repository.getLinkFlow(FileId(photoShareId, "link-id")).toResult().getOrThrow() as Link.File
+
+        assertEquals(tags, link.tags)
     }
 
 }

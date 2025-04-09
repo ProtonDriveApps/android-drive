@@ -150,6 +150,8 @@ object Dto {
     const val PENDING_HASHES = "PendingHashes"
     const val PERMISSIONS = "Permissions"
     const val PHOTO = "Photo"
+    const val PHOTO_DATA = "PhotoData"
+    const val PHOTO_PROPERTIES = "PhotoProperties"
     const val PHOTOS = "Photos"
     const val PHOTO_COUNT = "PhotoCount"
     const val PUBLIC_URL = "PublicUrl"

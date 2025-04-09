@@ -29,4 +29,5 @@ interface CreateNewAlbumViewEvent {
     val onLoadState: (CombinedLoadStates, Int) -> Unit
     val onScroll: (Set<LinkId>) -> Unit get() = { _ -> }
     val onRemove: (DriveLink.File) -> Unit get() = { _ -> }
+    val onAdd: () -> Unit get() = {}
 }

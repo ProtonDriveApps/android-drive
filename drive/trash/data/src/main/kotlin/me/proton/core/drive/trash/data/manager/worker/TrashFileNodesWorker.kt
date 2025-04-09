@@ -29,10 +29,10 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
+import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.TRASH
 import me.proton.core.drive.base.domain.log.logId
@@ -40,9 +40,11 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.eventmanager.usecase.HandleOnDeleteEvent
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.extension.ids
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import me.proton.core.drive.linktrash.domain.entity.TrashState
@@ -50,6 +52,7 @@ import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetShare
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_ALBUM_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_USER_ID
@@ -74,12 +77,12 @@ class TrashFileNodesWorker @AssistedInject constructor(
 
     private val userId = UserId(inputData.getString(KEY_USER_ID) ?: "")
     private val shareId = ShareId(userId, inputData.getString(KEY_SHARE_ID) ?: "")
-    private val folderId = FolderId(shareId, inputData.getString(KEY_FOLDER_ID) ?: "")
+    private val parentId = getParentId()
     override val workId = inputData.getString(KEY_WORK_ID) ?: ""
 
     override suspend fun executeCall(links: List<Link>): Map<LinkId, DataResult<Unit>> =
         updateEventAction(shareId) {
-            driveTrashRepository.sendToTrash(folderId, links.ids)
+            driveTrashRepository.sendToTrash(parentId, links.ids)
         }
 
     override suspend fun handleSuccesses(linkIds: List<LinkId>) {
@@ -94,7 +97,7 @@ class TrashFileNodesWorker @AssistedInject constructor(
                 linkIds.size,
             ),
             type = BroadcastMessage.Type.SUCCESS,
-            extra = TrashFilesExtra(userId, folderId, linkIds)
+            extra = TrashFilesExtra(userId, parentId, linkIds)
         )
     }
 
@@ -105,7 +108,7 @@ class TrashFileNodesWorker @AssistedInject constructor(
             userId = userId,
             message = message ?: applicationContext.getString(I18N.string.trash_error_occurred_sending_to_trash),
             type = BroadcastMessage.Type.ERROR,
-            extra = TrashFilesExtra(userId, folderId, linkIds, exception ?: RuntimeException(message))
+            extra = TrashFilesExtra(userId, parentId, linkIds, exception ?: RuntimeException(message))
         )
         handleNotExists(linkIds)
     }
@@ -128,16 +131,27 @@ class TrashFileNodesWorker @AssistedInject constructor(
         }
     }
 
+    private fun getParentId(): ParentId =
+        inputData.getString(KEY_FOLDER_ID)
+            ?.let { folderId ->
+                FolderId(shareId, folderId)
+            }
+            ?: inputData.getString(KEY_ALBUM_ID)
+                ?.let { albumId ->
+                    AlbumId(shareId, albumId)
+                }
+            ?: error("Parent not found")
+
     companion object {
 
         fun getWorkRequest(
             userId: UserId,
-            folderId: FolderId,
+            parentId: ParentId,
             workId: String,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest = OneTimeWorkRequest.Builder(TrashFileNodesWorker::class.java)
             .setInputData(
-                workDataOf(userId, folderId, workId)
+                workDataOf(userId, parentId, workId)
             )
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
@@ -149,12 +163,17 @@ class TrashFileNodesWorker @AssistedInject constructor(
 
         fun workDataOf(
             userId: UserId,
-            folderId: FolderId,
+            parentId: ParentId,
             workId: String,
         ) = Data.Builder()
             .putString(KEY_USER_ID, userId.id)
-            .putString(KEY_SHARE_ID, folderId.shareId.id)
-            .putString(KEY_FOLDER_ID, folderId.id)
+            .putString(KEY_SHARE_ID, parentId.shareId.id)
+            .apply {
+                when (parentId) {
+                    is FolderId -> putString(KEY_FOLDER_ID, parentId.id)
+                    is AlbumId -> putString(KEY_ALBUM_ID, parentId.id)
+                }
+            }
             .putString(KEY_WORK_ID, workId)
             .build()
     }

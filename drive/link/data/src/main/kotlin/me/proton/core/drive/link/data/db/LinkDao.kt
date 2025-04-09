@@ -33,9 +33,12 @@ import me.proton.core.drive.link.data.db.entity.LinkAlbumPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
+import me.proton.core.drive.link.data.db.entity.LinkTagEntity
 import me.proton.core.drive.link.data.db.entity.LinkWithProperties
 import me.proton.core.drive.link.data.db.entity.LinkWithPropertiesEntity
 import me.proton.core.drive.link.data.extension.toLinkWithProperties
+import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.userId
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Dao
@@ -167,6 +170,22 @@ interface LinkDao {
         )
     }
 
+    suspend fun insertTags(linkId: LinkId, tags: List<Long>) {
+        insertTags(
+            *tags.map { tag -> LinkTagEntity(linkId.userId, linkId.shareId.id, linkId.id, tag) }.toTypedArray()
+        )
+    }
+
+    suspend fun deleteTags(linkId: LinkId, tags: List<Long>) {
+        deleteTags(
+            *tags.map { tag -> LinkTagEntity(linkId.userId, linkId.shareId.id, linkId.id, tag) }.toTypedArray()
+        )
+    }
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertTags(vararg entity: LinkTagEntity)
+    @Delete
+    suspend fun deleteTags(vararg entity: LinkTagEntity)
+
     suspend fun delete(vararg linksWithProperties: LinkWithProperties) =
         delete(
             *linksWithProperties.map { linkWithProperties -> linkWithProperties.link }.toTypedArray()
@@ -183,6 +202,9 @@ interface LinkDao {
             LEFT JOIN LinkAlbumPropertiesEntity ON
                 LinkEntity.share_id = LinkAlbumPropertiesEntity.album_share_id AND
                 LinkEntity.id = LinkAlbumPropertiesEntity.album_link_id
+            LEFT JOIN (SELECT tag_share_id, tag_link_id, GROUP_CONCAT(tag, ',') AS tags_data FROM LinkTagEntity) LinkTagsData ON
+                LinkEntity.share_id = LinkTagsData.tag_share_id AND
+                LinkEntity.id = LinkTagsData.tag_link_id
         """
         const val LINK_WITH_PROPERTIES_ENTITY = "LinkEntity $PROPERTIES_ENTITIES_JOIN_STATEMENT"
     }

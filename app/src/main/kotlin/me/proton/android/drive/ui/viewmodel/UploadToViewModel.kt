@@ -139,7 +139,7 @@ class UploadToViewModel @Inject constructor(
     }
 
     private fun upload(navigateToStorageFull: () -> Unit, exitApp: () -> Unit) = viewModelScope.launch {
-        parentLink.value?.let { folder ->
+        (parentLink.value as? DriveLink.Folder)?.let { folder ->
             val copiedUris = mutableListOf<String>()
             coRunCatching {
                 val job = launch {

@@ -35,7 +35,7 @@
     -->
   <plurals name="trash_restore_operation_successful_format">
     <item quantity="one">Element został przywrócony</item>
-    <item quantity="few">%d elementy zostały przywrócone</item>
+    <item quantity="few">%d elementy został przywróconych</item>
     <item quantity="many">%d elementów zostało przywróconych</item>
     <item quantity="other">%d elementów zostało przywróconych</item>
   </plurals>

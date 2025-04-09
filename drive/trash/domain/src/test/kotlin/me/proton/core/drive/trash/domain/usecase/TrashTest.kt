@@ -101,28 +101,14 @@ class TrashTest {
     }
 
     @Test
-    fun `emptyTrash with volumeId`() = runTest {
+    fun emptyTrash() = runTest {
         driveRule.server.run {
             trash()
             trashMultiple()
         }
         sendToTrash(userId, listOf(getFile(fileId1).getOrThrow()))
 
-        emptyTrash(userId, volumeId)
-
-        assertTrashStateOf(fileId1, TrashState.DELETED)
-    }
-
-    @Test
-    @Suppress("DEPRECATION")
-    fun `emptyTrash without volumeId`() = runTest {
-        driveRule.server.run {
-            trash()
-            trashMultiple()
-        }
-        sendToTrash(userId, listOf(getFile(fileId1).getOrThrow()))
-
-        emptyTrash(userId)
+        emptyTrash(userId, volumeId).getOrThrow()
 
         assertTrashStateOf(fileId1, TrashState.DELETED)
     }

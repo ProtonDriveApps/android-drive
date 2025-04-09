@@ -27,9 +27,9 @@
             "9 items successfully moved."
     -->
   <plurals name="file_operation_moving_multiple_successful">
-    <item quantity="one">S-a mutat %1$d articol.</item>
-    <item quantity="few">S-a mutat %1$d articole.</item>
-    <item quantity="other">S-a mutat %1$d de articole.</item>
+    <item quantity="one">Articole mutate: %1$d</item>
+    <item quantity="few">Articole mutate: %1$d</item>
+    <item quantity="other">Articole mutate: %1$d</item>
   </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">Un element cu acest nume există deja în folderul destinație.</string>
   <string name="folder_options_header_title">În „%1$s”</string>

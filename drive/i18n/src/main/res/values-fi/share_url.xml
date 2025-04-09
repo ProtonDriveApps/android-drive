@@ -91,7 +91,7 @@
     -->
   <string name="shared_user_invitations_title">Odottavat jaot (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Odottavia jakoja ei ole</string>
-  <string name="shared_user_invitations_description_empty">All new invitations will be here</string>
+  <string name="shared_user_invitations_description_empty">Kaikki uudet kutsut tulevat tänne</string>
   <string name="shared_user_invitations_accept_button">Hyväksy</string>
   <string name="shared_user_invitations_decline_button">Kieltäydy</string>
   <string name="shared_user_invitations_accept_success">Jako hyväksyttiin</string>

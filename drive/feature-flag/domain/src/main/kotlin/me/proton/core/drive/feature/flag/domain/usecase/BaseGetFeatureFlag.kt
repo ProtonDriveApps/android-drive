@@ -30,7 +30,7 @@ open class BaseGetFeatureFlag(
     private val configurationProvider: ConfigurationProvider,
 ) {
 
-    protected val refreshAfterDuration: FeatureFlagCachePolicy = { featureFlagId ->
+    val refreshAfterDuration: FeatureFlagCachePolicy = { featureFlagId ->
         featureFlagRepository
             .getLastRefreshTimestamp(featureFlagId.userId)
             .isOlderThen(configurationProvider.featureFlagFreshDuration)

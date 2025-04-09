@@ -38,7 +38,8 @@
   <string name="common_uploading">Nalaganje</string>
   <string name="common_on">Vklopljeno</string>
   <string name="common_off">Izklopljeno</string>
-  <string name="common_all">All</string>
+  <string name="common_all">Vse</string>
+  <string name="common_unknown">Unknown</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">V redu</string>
@@ -64,8 +65,10 @@
   <string name="common_copy_link_action">Kopiraj povezavo</string>
   <string name="common_stop_sharing_action">Ustavi skupno rabo</string>
   <string name="common_open_in_browser_action">Odpri v brskalniku</string>
-  <string name="common_done_action">Done</string>
-  <string name="common_create_album_action">Create album</string>
+  <string name="common_done_action">Končano</string>
+  <string name="common_create_album_action">Ustvari album</string>
+  <string name="common_set_as_album_cover_action">Set as album cover</string>
+  <string name="common_add_action">Add</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Zvok</string>
@@ -143,7 +146,7 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d izbran</item>
+    <item quantity="one">%1$d izbrani</item>
     <item quantity="two">%1$d izbrana</item>
     <item quantity="few">%1$d izbrani</item>
     <item quantity="other">%1$d izbranih</item>

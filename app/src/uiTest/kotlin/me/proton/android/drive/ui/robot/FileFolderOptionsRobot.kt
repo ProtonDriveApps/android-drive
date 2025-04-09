@@ -33,6 +33,7 @@ object FileFolderOptionsRobot : Robot {
     private val removeAvailableOfflineButton get() = node
         .withText(I18N.string.common_remove_from_offline_available_action)
     private val manageLinkButton get() = node.withText(I18N.string.common_manage_link_action)
+    private val setAsAlbumCoverButton get() = node.withText(I18N.string.common_set_as_album_cover_action)
     private val shareButton get() = node.withText(I18N.string.common_share)
     private val manageAccessButton get() = node.withText(I18N.string.common_manage_access_action)
     private val removeMeButton get() = node.withText(I18N.string.files_remove_me_action)
@@ -42,6 +43,7 @@ object FileFolderOptionsRobot : Robot {
     private val stopSharingButton get() = node.withText(I18N.string.common_stop_sharing_action)
     private val deletePermanentlyButton get() = node.withText(I18N.string.common_delete_permanently_action)
     private val deleteConfirm get() = node.withText(I18N.string.title_files_confirm_deletion)
+    private val removeFromAlbum get() = node.withText(I18N.string.common_remove_from_album_action)
 
     fun clickMove() = MoveToFolderRobot.apply {
         moveButton.scrollTo().click()
@@ -51,6 +53,12 @@ object FileFolderOptionsRobot : Robot {
     }
     fun clickManageLink() = ShareRobot.apply {
         manageLinkButton.scrollTo().click()
+    }
+    fun clickSetAsAlbumCover() = ShareRobot.apply {
+        setAsAlbumCoverButton.scrollTo().click()
+    }
+    fun clickRemoveFromAlbum() = AlbumRobot.apply {
+        removeFromAlbum.scrollTo().click()
     }
     fun clickShare() = ShareUserRobot.apply {
         shareButton.scrollTo().click()

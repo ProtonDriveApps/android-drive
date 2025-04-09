@@ -24,7 +24,7 @@
         Variable %1$s is a string representation of a percentage
         Example: "23% uploaded"
     -->
-  <string name="files_upload_stage_uploading_with_progress">%1$s ανεβάστηκε</string>
+  <string name="files_upload_stage_uploading_with_progress">%1$s έχουν ανεβεί</string>
   <string name="files_upload_content_description_cancel_upload">Ακύρωση ανεβάσματος φακέλου</string>
   <string name="files_upload_failure_storage_full_title">Γεμάτος χώρος αποθήκευσης</string>
   <string name="files_upload_failure_storage_full_description">Ο αποθηκευτικός χώρος του λογαριασμού σας έχει εξαντληθεί. Ελευθερώστε χώρο ή κάντε αναβάθμιση στο πλάνο σας με περισσότερο χώρο αποθήκευσης.</string>

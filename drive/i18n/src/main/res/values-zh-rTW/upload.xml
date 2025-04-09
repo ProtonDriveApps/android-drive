@@ -48,7 +48,7 @@
             "33 items"
     -->
   <plurals name="number_of_items">
-    <item quantity="other">%1$d 個項目</item>
+    <item quantity="other">%1$d 項目</item>
   </plurals>
   <string name="files_upload_verification_failed">上傳失敗：資料驗證失敗</string>
 </resources>

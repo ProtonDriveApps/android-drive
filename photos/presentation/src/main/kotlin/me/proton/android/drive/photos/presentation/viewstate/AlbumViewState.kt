@@ -18,11 +18,13 @@
 
 package me.proton.android.drive.photos.presentation.viewstate
 
+import androidx.annotation.DrawableRes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.LinkId
 
 data class AlbumViewState(
     val name: String,
@@ -31,4 +33,9 @@ data class AlbumViewState(
     val coverLinkId: FileId? = null,
     val isRefreshEnabled: Boolean = false,
     val topBarActions: Flow<Set<Action>> = emptyFlow(),
+    val selected: Flow<Set<LinkId>> = emptyFlow(),
+    val inMultiselect: Boolean = false,
+    val showActions: Boolean = true,
+    @DrawableRes val navigationIconResId: Int? = null,
+    val title: String? = null,
 )

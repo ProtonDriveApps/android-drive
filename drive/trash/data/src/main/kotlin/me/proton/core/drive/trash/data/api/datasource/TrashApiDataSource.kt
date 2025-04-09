@@ -18,7 +18,7 @@
 
 package me.proton.core.drive.trash.data.api.datasource
 
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.trash.data.api.DriveTrashApi
@@ -33,10 +33,10 @@ class TrashApiDataSource @Inject constructor(
 
     @Throws(ApiException::class)
     suspend fun sendToTrash(
-        folderId: FolderId,
+        parentId: ParentId,
         linkIds: List<String>,
-    ) = apiProvider.get<DriveTrashApi>(folderId.userId).invoke {
-        sendToTrash(folderId.shareId.id, folderId.id, LinkIDsRequest(linkIds))
+    ) = apiProvider.get<DriveTrashApi>(parentId.userId).invoke {
+        sendToTrash(parentId.shareId.id, parentId.id, LinkIDsRequest(linkIds))
     }.valueOrThrow
 
     @Throws(ApiException::class)

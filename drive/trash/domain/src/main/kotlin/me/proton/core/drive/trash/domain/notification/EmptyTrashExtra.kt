@@ -19,12 +19,12 @@
 package me.proton.core.drive.trash.domain.notification
 
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.io.Serializable
 import java.lang.Exception
 
 data class EmptyTrashExtra(
     val userId: UserId,
-    val shareId: ShareId,
+    val volumeId: VolumeId,
     val exception: Exception? = null
 ) : Serializable

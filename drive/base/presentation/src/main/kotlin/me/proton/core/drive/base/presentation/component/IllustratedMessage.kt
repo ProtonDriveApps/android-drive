@@ -48,6 +48,23 @@ fun IllustratedMessage(
     modifier: Modifier = Modifier,
     @StringRes descriptionResId: Int? = null,
 ) {
+    IllustratedMessage(
+        imageContent = {
+            Image(painter = painterResource(id = imageResId), contentDescription = null)
+        },
+        titleResId = titleResId,
+        modifier = modifier,
+        descriptionResId = descriptionResId,
+    )
+}
+
+@Composable
+fun IllustratedMessage(
+    imageContent: @Composable () -> Unit,
+    @StringRes titleResId: Int,
+    modifier: Modifier = Modifier,
+    @StringRes descriptionResId: Int? = null,
+) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
@@ -55,7 +72,7 @@ fun IllustratedMessage(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Image(painter = painterResource(id = imageResId), contentDescription = null)
+            imageContent()
             Text(
                 text = stringResource(id = titleResId),
                 style = ProtonTheme.typography.headlineNorm.copy(textAlign = TextAlign.Center),

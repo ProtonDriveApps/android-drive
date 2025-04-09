@@ -28,7 +28,7 @@
   <string name="log_level_error">შეცდომა</string>
   <string name="log_origin_upload">ატვირთვა</string>
   <string name="log_origin_download">გადმოწერა</string>
-  <string name="log_origin_network">API</string>
+  <string name="log_origin_network">აპლიკაციის პროგრამირების ინტერფეისი</string>
   <string name="log_origin_throwable">გამონაკლისი</string>
   <string name="log_origin_logger">რეგისტრატორი</string>
   <string name="log_origin_screen">ეკრანი</string>

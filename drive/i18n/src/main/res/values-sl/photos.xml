@@ -120,7 +120,7 @@
     <item quantity="one">%1$s shranjen predmet</item>
     <item quantity="two">%1$s shranjena predmeta</item>
     <item quantity="few">%1$s shranjeni predmeti</item>
-    <item quantity="other">%1$s shranjeni predmeti</item>
+    <item quantity="other">%1$s shranjenih predmetov</item>
   </plurals>
   <string name="photos_upsell_title">Naj vam nikoli ne zmanjka prostora</string>
   <string name="photos_upsell_description">Nadgradite in ohranite vse vaše spomine varno šifrirane</string>

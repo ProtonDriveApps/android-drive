@@ -33,4 +33,24 @@
     <item quantity="many">%1$s položek</item>
     <item quantity="other">%1$s položek</item>
   </plurals>
+  <string name="albums_delete_album_action">Smazat album</string>
+  <string name="albums_delete_album_dialog_title">Smazat album?</string>
+  <string name="albums_delete_album_dialog_description">Tím se smaže pouze album. Vaše fotky zůstanou na časové ose. Tuto akci nelze vzít zpět.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Některé fotky v tomto albu se neukládají na časovou osu. Smazáním tohoto alba budou tyto fotky trvale smazány.\nChtěli byste je před odebráním uložit?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Smazat bez uložení</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Uložit fotky a smazat</string>
+  <string name="albums_add_zero_to_album_button">Přidat do alba</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Přidat %1$d do alba</item>
+    <item quantity="few">Přidat %1$d do alba</item>
+    <item quantity="many">Přidat %1$d do alba</item>
+    <item quantity="other">Přidat %1$d do alba</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Nastaveno jako obálka alba</string>
 </resources>

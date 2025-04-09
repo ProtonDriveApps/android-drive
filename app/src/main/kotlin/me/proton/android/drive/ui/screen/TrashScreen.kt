@@ -19,11 +19,15 @@
 package me.proton.android.drive.ui.screen
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
@@ -54,22 +59,23 @@ import me.proton.core.compose.theme.defaultSmallStrong
 import me.proton.core.drive.base.presentation.component.ActionButton
 import me.proton.core.drive.base.presentation.component.ModalBottomSheet
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
+import me.proton.core.drive.base.presentation.component.ProtonTab
 import me.proton.core.drive.base.presentation.component.TopAppBarHeight
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
 import me.proton.core.drive.files.presentation.component.Files
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.sorting.domain.entity.Sorting
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.exhaustive
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 @ExperimentalCoroutinesApi
-@OptIn(ExperimentalMaterialApi::class)
 fun TrashScreen(
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    navigateToEmptyTrash: () -> Unit,
+    navigateToEmptyTrash: (VolumeId) -> Unit,
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
     navigateToSortingDialog: (Sorting) -> Unit,
 ) {
@@ -95,10 +101,10 @@ fun TrashScreen(
                         type = ProtonSnackbarType.ERROR,
                         message = effect.message
                     )
-                    TrashEffect.MoreOptions -> {
+                    is TrashEffect.MoreOptions -> {
                         modalBottomSheetContentState.sheetContent.value = { runAction ->
                             TrashMoreOptions {
-                                runAction { navigateToEmptyTrash() }
+                                runAction { navigateToEmptyTrash(effect.volumeId) }
                             }
                         }
                         modalBottomSheetContentState.sheetState.show()
@@ -112,7 +118,7 @@ fun TrashScreen(
         sheetContent = modalBottomSheetContentState.sheetContent.value,
         viewState = remember { ModalBottomSheetViewState() },
     ) {
-        Box(
+        Column(
             modifier = modifier.systemBarsPadding()
         ) {
             ProtonPullToRefresh(
@@ -125,6 +131,28 @@ fun TrashScreen(
                     driveLinks = DriveLinksFlow.PagingList(viewModel.driveLinks, viewModel.listEffect),
                     viewState = viewState,
                     viewEvent = viewEvent,
+                    tabs = {
+                        if (viewState.volumesEntries.isNotEmpty()) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
+                            ) {
+                                viewState.volumesEntries.forEach { entry ->
+                                    ProtonTab(
+                                        titleResId = entry.title,
+                                        isSelected = entry.isSelected,
+                                        onTab = { viewEvent.onTab(entry) }
+                                    )
+                                }
+                            }
+                            Divider(
+                                color = ProtonTheme.colors.separatorNorm,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(1.dp),
+                            )
+                        }
+                    }
                 ) {
                     Crossfade(trashIconState) { trashIconState ->
                         when (trashIconState) {

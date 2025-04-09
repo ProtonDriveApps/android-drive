@@ -22,7 +22,7 @@
   <string name="log_level">Уровень</string>
   <string name="log_category">Категория</string>
   <string name="content_description_save_log_file">Сохранить файл журнала</string>
-  <string name="content_description_more_log_options">Больше вариантов просмотра журнала</string>
+  <string name="content_description_more_log_options">Больше вариантов журнала</string>
   <string name="log_level_normal">Обычный</string>
   <string name="log_level_warning">Предупреждение</string>
   <string name="log_level_error">Ошибка</string>

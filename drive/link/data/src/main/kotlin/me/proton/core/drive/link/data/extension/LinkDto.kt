@@ -72,8 +72,9 @@ fun LinkDto.toLinkWithProperties(shareId: ShareId): LinkWithProperties {
             )
         fileProperties != null ->
             LinkWithProperties(
-                linkEntity,
-                fileProperties.toLinkFilePropertiesEntity(linkEntity.userId, linkEntity.shareId, linkEntity.id)
+                link = linkEntity,
+                properties = fileProperties.toLinkFilePropertiesEntity(linkEntity.userId, linkEntity.shareId, linkEntity.id),
+                tags = photoProperties?.tags.orEmpty()
             )
         else -> error("Link should have either file, folder or album properties")
     }

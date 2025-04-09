@@ -30,16 +30,16 @@
     <item quantity="other">Po %1$d sekundah</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_minutes">
-    <item quantity="one">Po %1$d minuti</item>
-    <item quantity="two">Po %1$d minutah</item>
-    <item quantity="few">Po %1$d minutah</item>
-    <item quantity="other">Po %1$d minutah</item>
+    <item quantity="one">Čez %1$d minuto</item>
+    <item quantity="two">Čez %1$d minute</item>
+    <item quantity="few">Čez %1$d minute</item>
+    <item quantity="other">Čez %1$d minut</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_hours">
-    <item quantity="one">Po %1$d uri</item>
-    <item quantity="two">Po %1$d urah</item>
-    <item quantity="few">Po %1$d urah</item>
-    <item quantity="other">Po %1$d urah</item>
+    <item quantity="one">Čez %1$d uro</item>
+    <item quantity="two">Čez %1$d uri</item>
+    <item quantity="few">Čez %1$d ure</item>
+    <item quantity="other">Čez %1$d ur</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_days">
     <item quantity="one">Po %1$d dnevu</item>
@@ -67,13 +67,13 @@
   <plurals name="settings_photos_backup_folders_description_photos">
     <item quantity="one">%1$d fotografija</item>
     <item quantity="two">%1$d fotografiji</item>
-    <item quantity="few">%1$d fotografij</item>
+    <item quantity="few">%1$d fotografije</item>
     <item quantity="other">%1$d fotografij</item>
   </plurals>
   <plurals name="settings_photos_backup_folders_description_videos">
     <item quantity="one">%1$d videoposnetek</item>
     <item quantity="two">%1$d videoposnetka</item>
-    <item quantity="few">%1$d videoposnetkov</item>
+    <item quantity="few">%1$d videoposnetki</item>
     <item quantity="other">%1$d videoposnetkov</item>
   </plurals>
   <!--

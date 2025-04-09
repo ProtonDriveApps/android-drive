@@ -30,6 +30,7 @@ import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.share.domain.entity.ShareId
 
 fun LinkWithProperties.toLink(): Link = when (properties) {
@@ -50,7 +51,6 @@ fun LinkWithProperties.toLink(): Link = when (properties) {
         activeRevisionId = properties.activeRevisionId,
         contentKeyPacket = properties.contentKeyPacket,
         contentKeyPacketSignature = properties.contentKeyPacketSignature,
-        isFavorite = false,
         attributes = Attributes(link.attributes),
         permissions = Permissions(link.permissions),
         state = link.state.toState(),
@@ -73,6 +73,9 @@ fun LinkWithProperties.toLink(): Link = when (properties) {
         mainPhotoLinkId = properties.mainPhotoLinkId,
         defaultThumbnailId = properties.defaultThumbnailId,
         photoThumbnailId = properties.photoThumbnailId,
+        tags = tags.mapNotNull { value ->
+            PhotoTag.entries.firstOrNull { photoTag -> photoTag.value == value }
+        },
     )
     is LinkFolderPropertiesEntity -> Link.Folder(
         id = FolderId(ShareId(link.userId, link.shareId), link.id),
@@ -88,7 +91,6 @@ fun LinkWithProperties.toLink(): Link = when (properties) {
         numberOfAccesses = link.numberOfAccesses,
         uploadedBy = link.signatureAddress,
         nodeHashKey = properties.nodeHashKey,
-        isFavorite = false,
         attributes = Attributes(link.attributes),
         permissions = Permissions(link.permissions),
         state = link.state.toState(),
@@ -121,7 +123,6 @@ fun LinkWithProperties.toLink(): Link = when (properties) {
         numberOfAccesses = link.numberOfAccesses,
         uploadedBy = link.signatureAddress,
         nodeHashKey = properties.nodeHashKey,
-        isFavorite = false,
         attributes = Attributes(link.attributes),
         permissions = Permissions(link.permissions),
         state = link.state.toState(),

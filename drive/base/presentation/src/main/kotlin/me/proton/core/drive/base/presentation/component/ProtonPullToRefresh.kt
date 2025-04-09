@@ -19,6 +19,7 @@
 package me.proton.core.drive.base.presentation.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -39,7 +40,7 @@ fun ProtonPullToRefresh(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     topPadding: Dp = 0.dp,
-    content: @Composable () -> Unit
+    content: @Composable BoxScope.() -> Unit
 ) {
     val pullRefreshState = rememberPullRefreshState(refreshing = isRefreshing, onRefresh = onRefresh)
     Box(

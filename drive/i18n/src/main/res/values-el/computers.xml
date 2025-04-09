@@ -24,7 +24,7 @@
   <string name="computers_type_unknown">Άγνωστο</string>
   <string name="computers_empty_title">Δε συγχρονίζεται κανένας υπολογιστής</string>
   <string name="computers_empty_description">Λάβετε την Εφαρμογή για Υπολογιστές\nγια να συγχρονίσετε φακέλους</string>
-  <string name="computers_synced_folders_empty_title">Δεν υπάρχουν συγχρονισμένοι φάκελοι</string>
+  <string name="computers_synced_folders_empty_title">Δεν υπάρχουν φάκελοι σε συγχρονισμό</string>
   <string name="computers_synced_folders_empty_description">Οι φάκελοι που συγχρονίζετε από τον υπολογιστή θα\nεμφανίζονται εδώ</string>
   <string name="computers_synced_folders_no_folder">Ο υπολογιστής έχει καταργηθεί</string>
   <string name="computers_rename_title">Μετονομασία υπολογιστή</string>

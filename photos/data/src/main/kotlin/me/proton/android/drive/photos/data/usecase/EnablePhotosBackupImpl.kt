@@ -48,18 +48,28 @@ class EnablePhotosBackupImpl @Inject constructor(
 ) : EnablePhotosBackup {
 
     override suspend operator fun invoke(folderId: FolderId): Result<PhotoBackupState> = coRunCatching {
-        when (permissionsManager.getBackupPermissions(refresh = true)) {
-            is BackupPermissions.Granted -> enableBackup(folderId)
+        when (val permissions = permissionsManager.getBackupPermissions(refresh = true)) {
+            is BackupPermissions.Granted -> enableBackup(
+                folderId = folderId,
+                allFolders = permissions.partial,
+            )
             else -> throw SecurityException(appContext.getString(I18N.string.photos_error_missing_permissions))
         }
     }
 
     private suspend fun enableBackup(
         folderId: FolderId,
+        allFolders: Boolean = false
     ): PhotoBackupState = if (backupManager.isEnabled(folderId).first().not()) {
         val folderName = configurationProvider.backupDefaultBucketName
-        val folderNames = configurationProvider.backupAdditionalBucketNames
-        setupPhotosBackup(folderId, listOf(folderName) + folderNames).getOrThrow().let { results ->
+        val folderFilter: (String) -> Boolean = if (allFolders) {
+            { _ -> true }
+        } else {
+            val folderNames = configurationProvider.backupAdditionalBucketNames
+            val names = listOf(folderName) + folderNames
+            { name -> name in names }
+        }
+        setupPhotosBackup(folderId, folderFilter).getOrThrow().let { results ->
             if (results.isEmpty()) {
                 PhotoBackupState.NoFolder(folderName)
             } else {

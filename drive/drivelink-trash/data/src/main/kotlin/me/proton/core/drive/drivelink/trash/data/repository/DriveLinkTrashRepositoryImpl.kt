@@ -38,10 +38,10 @@ class DriveLinkTrashRepositoryImpl @Inject constructor(
         fromIndex: Int,
         count: Int,
     ): Flow<List<DriveLink>> =
-        db.driveLinkTrashDao.getTrashLinks(userId, count, fromIndex).map { entities ->
+        db.driveLinkTrashDao.getTrashLinks(userId, volumeId.id, count, fromIndex).map { entities ->
             entities.toDriveLinks()
         }
 
     override fun getTrashDriveLinksCount(userId: UserId, volumeId: VolumeId): Flow<Int> =
-        db.driveLinkTrashDao.getTrashedLinksCount(userId)
+        db.driveLinkTrashDao.getTrashedLinksCount(userId, volumeId.id)
 }

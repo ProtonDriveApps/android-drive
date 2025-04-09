@@ -54,6 +54,7 @@ class DeleteSharedLinkManageAccessFlowTest : BaseTest() {
                 robotDisplayed()
             }
             .clickBack(FilesTabRobot)
+            .scrollToItemWithName(file)
             .verify { itemIsDisplayed(file, isSharedByLink = false) }
     }
 }

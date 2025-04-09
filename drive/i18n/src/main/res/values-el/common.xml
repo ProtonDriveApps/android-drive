@@ -39,6 +39,7 @@
   <string name="common_on">Ενεργό</string>
   <string name="common_off">Ανενεργό</string>
   <string name="common_all">Όλα</string>
+  <string name="common_unknown">Άγνωστο</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">Εντάξει</string>
@@ -66,6 +67,8 @@
   <string name="common_open_in_browser_action">Άνοιγμα στο πρόγραμμα περιήγησης</string>
   <string name="common_done_action">Έτοιμο</string>
   <string name="common_create_album_action">Δημιουργία άλμπουμ</string>
+  <string name="common_set_as_album_cover_action">Ορισμός ως εξώφυλλο άλμπουμ</string>
+  <string name="common_add_action">Προσθήκη</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ήχος</string>
@@ -134,7 +137,7 @@
             "50% downloaded"
             "100% downloaded"
     -->
-  <string name="common_percent_downloaded">%1$s έχει ληφθεί</string>
+  <string name="common_percent_downloaded">%1$s έχουν ληφθεί</string>
   <string name="common_sign_out">Αποσύνδεση</string>
   <!--
         Variable %1$d is a quantity of files or folders that have been selected
@@ -143,8 +146,8 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d επιλεγμένο</item>
-    <item quantity="other">%1$d επιλεγμένα</item>
+    <item quantity="one">%1$d επιλεγμένο/α</item>
+    <item quantity="other">%1$d επιλεγμένο/α</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

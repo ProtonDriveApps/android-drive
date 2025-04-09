@@ -22,7 +22,9 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.photo.domain.entity.AddToAlbumInfo
+import me.proton.core.drive.photo.domain.entity.AddToRemoveFromAlbumResult
 import me.proton.core.drive.photo.domain.entity.AlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.photo.domain.entity.AlbumPhotoListingList
@@ -130,7 +132,13 @@ interface AlbumRepository {
         volumeId: VolumeId,
         albumId: AlbumId,
         addToAlbumInfos: List<AddToAlbumInfo>,
-    )
+    ): AddToRemoveFromAlbumResult
+
+    suspend fun removeFromAlbum(
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        linkIds: List<FileId>,
+    ): AddToRemoveFromAlbumResult
 
     suspend fun deleteAlbum(
         volumeId: VolumeId,

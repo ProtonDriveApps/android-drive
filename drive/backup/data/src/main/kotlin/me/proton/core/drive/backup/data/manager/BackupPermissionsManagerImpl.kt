@@ -58,12 +58,12 @@ class BackupPermissionsManagerImpl @Inject constructor(
     private val _permissions = MutableStateFlow(checkForBackupPermissions())
     override val backupPermissions: Flow<BackupPermissions> = _permissions
 
-    override fun getBackupPermissions(refresh: Boolean): BackupPermissions =
+    override fun getBackupPermissions(refresh: Boolean): BackupPermissions {
         if (refresh) {
-            checkForBackupPermissions()
-        } else {
-            _permissions.value
+            _permissions.value = checkForBackupPermissions()
         }
+        return _permissions.value
+    }
 
     override fun onPermissionChanged(permissions: BackupPermissions) {
         _permissions.value = permissions

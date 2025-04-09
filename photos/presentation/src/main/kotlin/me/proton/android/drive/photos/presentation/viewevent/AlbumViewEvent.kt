@@ -19,6 +19,7 @@
 package me.proton.android.drive.photos.presentation.viewevent
 
 import androidx.paging.CombinedLoadStates
+import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.LinkId
 
 interface AlbumViewEvent {
@@ -28,4 +29,10 @@ interface AlbumViewEvent {
     val onErrorAction: () -> Unit get() = {}
     val onRefresh: () -> Unit get() = {}
     val onAlbumOptions: () -> Unit get() = {}
+    val onDriveLink: (DriveLink) -> Unit get() = {}
+    val onSelectDriveLink: (DriveLink) -> Unit get() = {}
+    val onAddToAlbum: () -> Unit get() = {}
+    val onSelectedOptions: () -> Unit get() = {}
+    val onBack: () -> Unit get() = {}
+    val onTopAppBarNavigation: () -> Unit get() = {}
 }

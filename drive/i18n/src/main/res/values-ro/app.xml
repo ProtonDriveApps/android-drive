@@ -116,9 +116,9 @@
             "3 files failed"
     -->
   <plurals name="notification_content_text_upload_failed">
-    <item quantity="one">%1$d fișier a eșuat.</item>
-    <item quantity="few">%1$d fișiere au eșuat.</item>
-    <item quantity="other">%1$d de fișiere au eșuat.</item>
+    <item quantity="one">Fișiere eșuate: %1$d</item>
+    <item quantity="few">Fișiere eșuate: %1$d</item>
+    <item quantity="other">Fișiere eșuate: %1$d</item>
   </plurals>
   <!--
         Variable %1$s is an application name
@@ -133,9 +133,9 @@
         "12 345 items left"
     -->
   <plurals name="notification_content_text_backup_in_progress">
-    <item quantity="one">A rămas %1$s element</item>
-    <item quantity="few">Au rămas %1$s articole</item>
-    <item quantity="other">Au rămas %1$s de articole</item>
+    <item quantity="one">Articole rămase: %1$s</item>
+    <item quantity="few">Articole rămase: %1$s</item>
+    <item quantity="other">Articole rămase: %1$s</item>
   </plurals>
   <string name="notification_content_text_backup_complete">Conservare finalizată.</string>
   <string name="notification_content_text_backup_uncompleted">Conservare finalizată cu probleme.</string>

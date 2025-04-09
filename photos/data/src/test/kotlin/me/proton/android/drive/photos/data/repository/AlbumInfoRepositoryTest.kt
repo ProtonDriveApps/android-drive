@@ -24,6 +24,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import me.proton.android.drive.photos.data.extension.toAddToAlbumEntity
 import me.proton.android.drive.photos.data.extension.toPhotoListing
@@ -79,6 +80,45 @@ class AlbumInfoRepositoryTest {
 
         // Then
         assertNull(albumName)
+    }
+
+    @Test
+    fun emptyAddToAlbumCount() = runTest {
+        // When
+        val count = albumInfoRepository.getPhotoListingsCount(userId, null).first()
+
+        // Then
+        assertEquals(0, count)
+    }
+
+    @Test
+    fun nonEmptyAddToAlbumCount() = runTest {
+        // Given
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    file("photo-id-1")
+                    file("photo-id-2")
+                }
+            }
+        }
+        val volumePhotoListings = listOf(
+            NullableVolumePhotoListing(
+                photoId = "photo-id-1",
+                captureTime = TimestampS(1),
+            ),
+            NullableVolumePhotoListing(
+                photoId = "photo-id-2",
+                captureTime = TimestampS(2),
+            ),
+        )
+        albumInfoRepository.addPhotoListings(photoListings = volumePhotoListings.toTypedArray())
+
+        // When
+        val count = albumInfoRepository.getPhotoListingsCount(userId, null).first()
+
+        // Then
+        assertEquals(2, count)
     }
 
     @Test
@@ -283,6 +323,52 @@ class AlbumInfoRepositoryTest {
         assertEquals(
             emptyList<PhotoListing.Album>(),
             photoListings,
+        )
+    }
+
+    @Test
+    fun `remove all album photo listings from new album`() = runTest {
+        // Given
+        driveRule.db.user {
+            photoVolume {
+                photoShare {
+                    file("photo-id-1")
+                    file("photo-id-2")
+                    album("album-id") {}
+                }
+            }
+        }
+        val albumPhotoListings = listOf(
+            NullableAlbumPhotoListing(
+                albumId = "album-id",
+                photoId = "photo-id-1",
+                captureTime = TimestampS(100),
+            ),
+            NullableAlbumPhotoListing(
+                albumId = "album-id",
+                photoId = "photo-id-2",
+                captureTime = TimestampS(10),
+            ),
+        )
+        driveRule.db.addToAlbumDao.insertOrIgnore(
+            *albumPhotoListings
+                .map { photoListing -> photoListing.toAddToAlbumEntity(null) }
+                .toTypedArray()
+        )
+
+        // When
+        albumInfoRepository.removeAllPhotoListings(userId)
+
+        val photoListingsCount = driveRule
+            .db
+            .addToAlbumDao
+            .getPhotoListingsCount(userId)
+            .first()
+
+        // Then
+        assertEquals(
+            0,
+            photoListingsCount,
         )
     }
 

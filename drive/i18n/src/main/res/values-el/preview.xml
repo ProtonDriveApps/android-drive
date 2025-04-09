@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="content_description_file_preview">Προεπισκόπηση του περιεχομένου του αρχείου</string>
-  <string name="content_description_more_options">Εμφάνιση περισσότερων επιλογών για το αρχείο</string>
+  <string name="content_description_more_options">Εμφάνιση περισσότερων επιλογών για ένα αρχείο</string>
   <string name="preview_downloading_state">Γίνεται λήψη…</string>
   <string name="preview_processing_state">Γίνεται επεξεργασία…</string>
   <string name="preview_empty">Δεν υπάρχει κάτι για προεπισκόπηση…</string>

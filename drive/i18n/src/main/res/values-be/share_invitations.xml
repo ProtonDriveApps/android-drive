@@ -30,9 +30,9 @@
     -->
   <plurals name="share_via_invitations_person_added">
     <item quantity="one">Дададзена 1 асоба</item>
-    <item quantity="few">Дададзена %1$d асобы</item>
-    <item quantity="many">Дададзена %1$d асоб</item>
-    <item quantity="other">Дададзена %1$d асоб</item>
+    <item quantity="few">Дададзены %1$d асобы</item>
+    <item quantity="many">Дададзены %1$d асоб</item>
+    <item quantity="other">Дададзены %1$d асоб</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -78,7 +78,7 @@
         Examples:
             "user@mail.com (Unknown)"
     -->
-  <string name="share_via_invitations_external_invitation_unknown">%1$s (невядомы)</string>
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (невядома)</string>
   <string name="share_via_invitations_add_people_hint">Дадаць карыстальнікаў</string>
   <string name="share_via_invitations_copy_invite_link_action">Скапіяваць запрашальную спасылку</string>
   <string name="share_via_invitations_remove_access_action">Выдаліць доступ</string>

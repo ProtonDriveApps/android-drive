@@ -77,6 +77,7 @@ import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
+import me.proton.core.drive.base.presentation.R as BasePresentation
 
 @HiltViewModel
 class AlbumsViewModel @Inject constructor(
@@ -198,7 +199,11 @@ class AlbumsViewModel @Inject constructor(
 
                 is DataResult.Success -> emit(result.value).also {
                     if (result.value.isEmpty()) {
-                        listContentState.value = ListContentState.Empty(0, 0)
+                        listContentState.value = ListContentState.Empty(
+                            imageResId = BasePresentation.drawable.empty_albums,
+                            titleId = I18N.string.albums_empty_albums_list_screen_title,
+                            descriptionResId = I18N.string.albums_empty_albums_list_screen_description,
+                        )
                     } else {
                         listContentState.value = ListContentState.Content()
                     }

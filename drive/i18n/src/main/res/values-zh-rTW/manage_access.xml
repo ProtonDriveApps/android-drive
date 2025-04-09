@@ -24,5 +24,5 @@
   <string name="manage_access_link_description_public">任何有此連結的人</string>
   <string name="manage_access_link_description_password_protected">任何有連結與密碼的人</string>
   <string name="manage_access_link_default_permission">可以檢視</string>
-  <string name="manage_access_link_editor_permission">Can edit</string>
+  <string name="manage_access_link_editor_permission">可編輯</string>
 </resources>

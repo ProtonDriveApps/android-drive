@@ -17,7 +17,9 @@
  */
 package me.proton.core.drive.link.data.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Embedded
+import me.proton.core.drive.base.data.db.Column.TAGS_DATA
 
 data class LinkWithPropertiesEntity(
     @Embedded
@@ -28,4 +30,6 @@ data class LinkWithPropertiesEntity(
     val fileProperties: LinkFilePropertiesEntity? = null,
     @Embedded
     val albumProperties: LinkAlbumPropertiesEntity? = null,
+    @ColumnInfo(name = TAGS_DATA)
+    val tagsData: String? = null,
 )

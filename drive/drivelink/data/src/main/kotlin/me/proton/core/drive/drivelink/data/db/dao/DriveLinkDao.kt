@@ -108,6 +108,7 @@ interface DriveLinkDao : LinkDao {
             LinkFilePropertiesEntity.*,
             LinkFolderPropertiesEntity.*,
             LinkAlbumPropertiesEntity.*,
+            LinkTagsData.*,
             LinkOfflineEntity.${Column.USER_ID} AS ${OFFLINE_PREFIX}_${Column.USER_ID},
             LinkOfflineEntity.${Column.SHARE_ID} AS ${OFFLINE_PREFIX}_${Column.SHARE_ID},
             LinkOfflineEntity.${Column.LINK_ID} AS ${OFFLINE_PREFIX}_${Column.LINK_ID},

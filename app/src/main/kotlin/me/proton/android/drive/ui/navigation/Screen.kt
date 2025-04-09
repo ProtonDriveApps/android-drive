@@ -26,7 +26,6 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.viewmodel.AlbumOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.AlbumViewModel
 import me.proton.android.drive.ui.viewmodel.ComputerOptionsViewModel
@@ -36,6 +35,8 @@ import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.MoveToFolderViewModel
 import me.proton.android.drive.ui.viewmodel.MultipleFileOrFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ParentFolderOptionsViewModel
+import me.proton.android.drive.ui.viewmodel.PhotosPickerAndSelectionViewModel
+import me.proton.android.drive.ui.viewmodel.PickerPhotosAndAlbumsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareInvitationOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareMemberOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.UploadToViewModel
@@ -113,30 +114,42 @@ sealed class Screen(val route: String) {
     }
 
     data object FileOrFolderOptions : Screen(
-        "options/link/{userId}/shares/{shareId}/linkId={linkId}?optionsFilter={optionsFilter}"
+        "options/link/{userId}/shares/{shareId}/linkId={linkId}?albumShareId={albumShareId}&albumId={albumId}"
     ) {
         operator fun invoke(
             userId: UserId,
             linkId: LinkId,
-            optionsFilter: OptionsFilter = OptionsFilter.FILES,
-        ) = "options/link/${userId.id}/shares/${linkId.shareId.id}/linkId=${linkId.id}?optionsFilter=${optionsFilter.type}"
+            albumId: AlbumId? = null
+        ) = buildString {
+            append("options/link/${userId.id}/shares/${linkId.shareId.id}/linkId=${linkId.id}")
+            if (albumId != null) {
+                append("?albumShareId=${albumId.shareId.id}&albumId=${albumId.id}")
+            }
+        }
 
         const val SHARE_ID = FileOrFolderOptionsViewModel.KEY_SHARE_ID
         const val LINK_ID = FileOrFolderOptionsViewModel.KEY_LINK_ID
-        const val OPTIONS_FILTER = FileOrFolderOptionsViewModel.OPTIONS_FILTER
+        const val ALBUM_ID = FileOrFolderOptionsViewModel.KEY_ALBUM_ID
+        const val KEY_ALBUM_SHARE_ID = FileOrFolderOptionsViewModel.KEY_ALBUM_SHARE_ID
     }
 
     data object MultipleFileOrFolderOptions : Screen(
-        "options/multiple/{userId}/selectionId={selectionId}?optionsFilter={optionsFilter}"
+        "options/multiple/{userId}/selectionId={selectionId}?albumShareId={albumShareId}&albumId={albumId}"
     ) {
         operator fun invoke(
             userId: UserId,
             selectionId: SelectionId,
-            optionsFilter: OptionsFilter = OptionsFilter.FILES,
-        ) = "options/multiple/${userId.id}/selectionId=${selectionId.id}?optionsFilter=${optionsFilter.type}"
+            albumId: AlbumId? = null,
+        ) = buildString {
+            append("options/multiple/${userId.id}/selectionId=${selectionId.id}")
+            if (albumId != null) {
+                append("?albumShareId=${albumId.shareId.id}&albumId=${albumId.id}")
+            }
+        }
 
         const val SELECTION_ID = MultipleFileOrFolderOptionsViewModel.KEY_SELECTION_ID
-        const val OPTIONS_FILTER = MultipleFileOrFolderOptionsViewModel.OPTIONS_FILTER
+        const val ALBUM_SHARE_ID = MultipleFileOrFolderOptionsViewModel.KEY_ALBUM_SHARE_ID
+        const val ALBUM_ID = MultipleFileOrFolderOptionsViewModel.KEY_ALBUM_ID
     }
 
     data object ParentFolderOptions : Screen(
@@ -211,8 +224,11 @@ sealed class Screen(val route: String) {
                 const val SHARE_ID = "shareId"
             }
 
-            data object ConfirmEmptyTrash : Screen("delete/{userId}/trash") {
-                operator fun invoke(userId: UserId) = "delete/${userId.id}/trash"
+            data object ConfirmEmptyTrash : Screen("delete/{userId}/trash?volumeId={volumeId}") {
+                operator fun invoke(
+                    userId: UserId,
+                    volumeId: VolumeId,
+                ) = "delete/${userId.id}/trash?volumeId=${volumeId.id}"
             }
 
             data object Rename : Screen("rename/{userId}/shares/{shareId}/files?fileId={fileId}&folderId={folderId}&albumId={albumId}") {
@@ -279,6 +295,7 @@ sealed class Screen(val route: String) {
 
         const val USER_ID = Screen.USER_ID
         const val FOLDER_ID = "folderId"
+        const val VOLUME_ID = "volumeId"
         const val SHARE_ID = "shareId"
         const val FOLDER_NAME = "folderName"
     }
@@ -367,12 +384,35 @@ sealed class Screen(val route: String) {
         const val ALBUM_ID = AlbumViewModel.ALBUM_ID
     }
 
+    object Picker {
+        data object PhotosAndAlbums : Screen("picker/{userId}/photos/destination?inPickerMode={inPickerMode}&destinationShareId={destinationShareId}&destinationAlbumId={destinationAlbumId}") {
+            operator fun invoke(userId: UserId) = "picker/${userId.id}/photos/destination?inPickerMode=true"
+
+            operator fun invoke(destinationAlbumId: AlbumId) =
+                "picker/${destinationAlbumId.userId.id}/photos/destination?inPickerMode=true&destinationShareId=${destinationAlbumId.shareId.id}&destinationAlbumId=${destinationAlbumId.id}"
+        }
+
+        data object Album : Screen("picker/{userId}/shares/{shareId}/albums/{albumId}/destination?inPickerMode={inPickerMode}&destinationShareId={destinationShareId}&destinationAlbumId={destinationAlbumId}") {
+            operator fun invoke(albumId: AlbumId) = "picker/${albumId.userId.id}/shares/${albumId.shareId.id}/albums/${albumId.id}/destination?inPickerMode=true"
+
+            operator fun invoke(albumId: AlbumId, destinationAlbumId: AlbumId) =
+                "picker/${albumId.userId.id}/shares/${albumId.shareId.id}/albums/${albumId.id}/destination?inPickerMode=true&destinationShareId=${destinationAlbumId.shareId.id}&destinationAlbumId=${destinationAlbumId.id}"
+        }
+
+        const val USER_ID = Screen.USER_ID
+        const val IN_PICKER_MODE = PhotosPickerAndSelectionViewModel.IN_PICKER_MODE
+        const val SHARE_ID = AlbumViewModel.SHARE_ID
+        const val ALBUM_ID = AlbumViewModel.ALBUM_ID
+        const val DESTINATION_SHARE_ID = PickerPhotosAndAlbumsViewModel.DESTINATION_SHARE_ID
+        const val DESTINATION_ALBUM_ID = PickerPhotosAndAlbumsViewModel.DESTINATION_ALBUM_ID
+    }
+
     data object BackupIssues : Screen("backup/issues/{userId}/shares/{shareId}/folder/{folderId}") {
 
         fun invoke(folderId: FolderId) = "backup/issues/${folderId.shareId.userId.id}/shares/${folderId.shareId.id}/folder/${folderId.id}"
 
         object Dialogs {
-            object ConfirmSkipIssues : Screen("backup/issues/{userId}/shares/{shareId}/folder/{folderId}/confirm_skip?confirmPopUpRoute={confirmPopUpRoute}&confirmPopUpRouteInclusive={confirmPopUpRouteInclusive}"){
+            data object ConfirmSkipIssues : Screen("backup/issues/{userId}/shares/{shareId}/folder/{folderId}/confirm_skip?confirmPopUpRoute={confirmPopUpRoute}&confirmPopUpRouteInclusive={confirmPopUpRouteInclusive}"){
                 operator fun invoke(
                     folderId: FolderId,
                     confirmPopUpRoute: String,
@@ -422,20 +462,25 @@ sealed class Screen(val route: String) {
             filesBrowsableBuildRoute("offline", userId, folderId, folderName)
     }
 
-    data object PagerPreview : Screen("pager/{pagerType}/preview/{userId}/shares/{shareId}/files/{fileId}?optionsFilter={optionsFilter}") {
+    data object PagerPreview : Screen("pager/{pagerType}/preview/{userId}/shares/{shareId}/files/{fileId}?albumShareId={albumShareId}&albumId={albumId}") {
         operator fun invoke(
             pagerType: PagerType,
             userId: UserId,
             fileId: FileId,
-            optionsFilter: OptionsFilter = OptionsFilter.FILES
-        ) =
-            "pager/${pagerType.type}/preview/${userId.id}/shares/${fileId.shareId.id}/files/${fileId.id}?optionsFilter=${optionsFilter.type}"
+        ) = "pager/${pagerType.type}/preview/${userId.id}/shares/${fileId.shareId.id}/files/${fileId.id}"
+        operator fun invoke(
+            pagerType: PagerType,
+            userId: UserId,
+            fileId: FileId,
+            albumId: AlbumId,
+        ) = "pager/${pagerType.type}/preview/${userId.id}/shares/${fileId.shareId.id}/files/${fileId.id}?albumShareId=${albumId.shareId.id}&albumId=${albumId.id}"
 
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = "shareId"
         const val FILE_ID = "fileId"
+        const val ALBUM_SHARE_ID = "albumShareId"
+        const val ALBUM_ID = "albumId"
         const val PAGER_TYPE = "pagerType"
-        const val OPTIONS_FILTER = FileOrFolderOptions.OPTIONS_FILTER
     }
 
     data object Settings : Screen("settings/{userId}") {
@@ -752,7 +797,11 @@ fun NavHostController.navigate(screen: Screen, builder: NavOptionsBuilder.() -> 
 }
 
 enum class PagerType(val type: String) {
-    FOLDER("folder"), OFFLINE("offline"), SINGLE("single"), PHOTO("photo")
+    FOLDER("folder"),
+    OFFLINE("offline"),
+    SINGLE("single"),
+    PHOTO("photo"),
+    ALBUM("album"),
 }
 
 interface HomeTab {

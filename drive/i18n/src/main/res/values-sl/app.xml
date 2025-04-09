@@ -84,9 +84,9 @@
     -->
   <plurals name="notification_content_text_upload_uploading">
     <item quantity="one">Nalaganje %1$d datoteke</item>
-    <item quantity="two">Nalagam %1$d datoteki</item>
+    <item quantity="two">Nalaganje %1$d datotek</item>
     <item quantity="few">Nalaganje %1$d datotek</item>
-    <item quantity="other">Nalaganje %1$d datoteke</item>
+    <item quantity="other">Nalaganje %1$d datotek</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have been uploaded
@@ -98,7 +98,7 @@
     <item quantity="one">Naložena je %1$d datoteka</item>
     <item quantity="two">Naloženi sta %1$d datoteki</item>
     <item quantity="few">Naložene so %1$d datoteke</item>
-    <item quantity="other">Naložene so %1$d datoteke</item>
+    <item quantity="other">Naloženih je %1$d datotek</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have been cancelled
@@ -107,10 +107,10 @@
             "3 files cancelled"
     -->
   <plurals name="notification_content_text_upload_cancelled">
-    <item quantity="one">%1$d datoteka preklicana</item>
+    <item quantity="one">%1$d datoteka je preklicana</item>
     <item quantity="two">%1$d datoteki sta preklicani</item>
     <item quantity="few">%1$d datoteke so preklicane</item>
-    <item quantity="other">%1$d datoteke so preklicane</item>
+    <item quantity="other">%1$d datotek je preklicanih</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have fail to upload
@@ -122,7 +122,7 @@
     <item quantity="one">%1$d datoteka ni uspela</item>
     <item quantity="two">%1$d datoteki nista uspeli</item>
     <item quantity="few">%1$d datoteke niso uspele</item>
-    <item quantity="other">%1$d datoteke niso uspele</item>
+    <item quantity="other">%1$d datotek ni uspelih</item>
   </plurals>
   <!--
         Variable %1$s is an application name

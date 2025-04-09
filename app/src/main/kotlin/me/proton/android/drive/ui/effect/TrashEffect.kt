@@ -18,7 +18,9 @@
 
 package me.proton.android.drive.ui.effect
 
+import me.proton.core.drive.volume.domain.entity.VolumeId
+
 sealed class TrashEffect {
     data class ShowSnackbar(val message: String) : TrashEffect()
-    object MoreOptions : TrashEffect()
+    data class MoreOptions(val volumeId: VolumeId) : TrashEffect()
 }

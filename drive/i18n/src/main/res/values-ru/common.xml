@@ -24,7 +24,7 @@
   <string name="common_name">Название</string>
   <string name="common_no">Нет</string>
   <string name="common_share">Поделиться</string>
-  <string name="common_shared">В общем доступе</string>
+  <string name="common_shared">Общие</string>
   <string name="common_size">Размер</string>
   <string name="common_type">Тип</string>
   <string name="common_yes">Да</string>
@@ -39,9 +39,10 @@
   <string name="common_on">Включено</string>
   <string name="common_off">Отключено</string>
   <string name="common_all">Все</string>
+  <string name="common_unknown">Unknown</string>
   <!-- endregion -->
   <!-- region Common actions -->
-  <string name="common_ok_action">OK</string>
+  <string name="common_ok_action">Да</string>
   <string name="common_close_action">Закрыть</string>
   <string name="common_retry_action">Повторить попытку</string>
   <string name="common_undo_action">Отменить</string>
@@ -65,7 +66,9 @@
   <string name="common_stop_sharing_action">Прекратить доступ</string>
   <string name="common_open_in_browser_action">Открыть в браузере</string>
   <string name="common_done_action">Готово</string>
-  <string name="common_create_album_action">Create album</string>
+  <string name="common_create_album_action">Создать альбом</string>
+  <string name="common_set_as_album_cover_action">Set as album cover</string>
+  <string name="common_add_action">Add</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аудио</string>
@@ -144,7 +147,7 @@
     -->
   <plurals name="common_selected">
     <item quantity="one">%1$d выбран</item>
-    <item quantity="few">%1$d выбрано</item>
+    <item quantity="few">%1$d выбраны</item>
     <item quantity="many">%1$d выбрано</item>
     <item quantity="other">%1$d выбрано</item>
   </plurals>

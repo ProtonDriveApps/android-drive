@@ -62,6 +62,7 @@ import me.proton.core.presentation.R as CorePresentation
 fun CreateNewAlbumScreen(
     navigateBack: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
+    navigateToPicker: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<CreateNewAlbumViewModel>()
@@ -73,6 +74,7 @@ fun CreateNewAlbumScreen(
         viewModel.viewEvent(
             navigateBack = navigateBack,
             navigateToAlbum = navigateToAlbum,
+            navigateToPicker = navigateToPicker,
         )
     }
     val items = viewModel.photos.collectAsLazyPagingItems()
@@ -153,6 +155,7 @@ private fun CreateNewAlbumScreenPreview() {
                 isCreationInProgress = true,
                 isAlbumNameEnabled = true,
                 isAddEnabled = true,
+                isRemoveEnabled = true,
                 name = emptyFlow(),
                 hint = stringResource(I18N.string.albums_new_album_name_hint),
             ),

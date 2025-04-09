@@ -24,8 +24,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.files.data.operation.move.worker.MoveFileWorker
 import me.proton.core.drive.files.domain.operation.FileOperationManager
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -39,7 +39,7 @@ class FileOperationManagerImpl @Inject constructor(
 
     private val String.uniqueMoveWorkName: String get() = "moving=$this"
 
-    override suspend fun changeParent(userId: UserId, linkIds: List<LinkId>, folderId: FolderId, allowUndo: Boolean) {
+    override suspend fun changeParent(userId: UserId, linkIds: List<LinkId>, parentId: ParentId, allowUndo: Boolean) {
         val selectionId = selectLinks(linkIds).getOrThrow()
         workManager.enqueueUniqueWork(
             selectionId.id.uniqueMoveWorkName,
@@ -47,7 +47,7 @@ class FileOperationManagerImpl @Inject constructor(
             MoveFileWorker.getWorkRequest(
                 userId = userId,
                 selectionId = selectionId,
-                folderId = folderId,
+                parentId = parentId,
                 allowUndo = allowUndo,
             )
         )

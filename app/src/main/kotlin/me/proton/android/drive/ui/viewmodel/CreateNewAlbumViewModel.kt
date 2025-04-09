@@ -84,6 +84,7 @@ class CreateNewAlbumViewModel @Inject constructor(
     private val currentAlbumName = MutableStateFlow<String?>(null)
     private val initialAlbumName = flowOf {
         getNewAlbumName(userId)
+            .onSuccess { albumName -> currentAlbumName.value = albumName }
             .getOrNull(VIEW_MODEL, "Get new album info failed")
             ?: ""
     }
@@ -97,6 +98,7 @@ class CreateNewAlbumViewModel @Inject constructor(
         isDoneEnabled = true,
         isAlbumNameEnabled = true,
         isAddEnabled = true,
+        isRemoveEnabled = true,
         isCreationInProgress = isCreationInProgress.value,
         name = initialAlbumName,
         hint = appContext.getString(I18N.string.albums_new_album_name_hint),
@@ -107,10 +109,11 @@ class CreateNewAlbumViewModel @Inject constructor(
         isCreationInProgress,
     ) { isEnabled, isInProgress ->
         initialViewState.copy(
-            isDoneEnabled = isEnabled,
+            isDoneEnabled = isEnabled && !isInProgress,
             isCreationInProgress = isInProgress,
             isAlbumNameEnabled = !isInProgress,
             isAddEnabled = !isInProgress,
+            isRemoveEnabled = !isInProgress,
         )
     }
 
@@ -129,6 +132,7 @@ class CreateNewAlbumViewModel @Inject constructor(
     fun viewEvent(
         navigateBack: () -> Unit,
         navigateToAlbum: (AlbumId) -> Unit,
+        navigateToPicker: () -> Unit,
     ): CreateNewAlbumViewEvent = object : CreateNewAlbumViewEvent {
         override val onBackPressed = { navigateBack() }
         override val onDone = { onCreateAlbum(navigateToAlbum) }
@@ -136,6 +140,7 @@ class CreateNewAlbumViewModel @Inject constructor(
         override val onLoadState = { _: CombinedLoadStates, _: Int -> }
         override val onScroll = this@CreateNewAlbumViewModel::onScroll
         override val onRemove = this@CreateNewAlbumViewModel::onRemove
+        override val onAdd = { navigateToPicker() }
     }
 
     private fun onCreateAlbum(navigateToAlbum: (AlbumId) -> Unit) {

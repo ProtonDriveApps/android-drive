@@ -19,7 +19,7 @@
 <resources>
   <string name="computers_title">Ordinateurs</string>
   <string name="computers_type_windows">Windows</string>
-  <string name="computers_type_mac_os">MacOS</string>
+  <string name="computers_type_mac_os">macOS</string>
   <string name="computers_type_linux">Linux</string>
   <string name="computers_type_unknown">Inconnu</string>
   <string name="computers_empty_title">Il n\'y a aucun ordinateur synchronisé.</string>

@@ -39,6 +39,7 @@ import me.proton.core.drive.base.data.api.Dto.NODE_PASSPHRASE_SIGNATURE
 import me.proton.core.drive.base.data.api.Dto.NUMBER_OF_ACCESSES
 import me.proton.core.drive.base.data.api.Dto.PARENT_LINK_ID
 import me.proton.core.drive.base.data.api.Dto.PERMISSIONS
+import me.proton.core.drive.base.data.api.Dto.PHOTO_PROPERTIES
 import me.proton.core.drive.base.data.api.Dto.SHARED
 import me.proton.core.drive.base.data.api.Dto.SHARE_ID
 import me.proton.core.drive.base.data.api.Dto.SHARE_URL
@@ -106,6 +107,8 @@ data class LinkDto(
     val folderProperties: LinkFolderPropertiesDto?,
     @SerialName(ALBUM_PROPERTIES)
     val albumProperties: LinkAlbumPropertiesDto? = null,
+    @SerialName(PHOTO_PROPERTIES)
+    val photoProperties: LinkPhotoPropertiesDto? = null,
     @SerialName(X_ATTR)
     val xAttr: String? = null,
     @SerialName(SHARING_DETAILS)

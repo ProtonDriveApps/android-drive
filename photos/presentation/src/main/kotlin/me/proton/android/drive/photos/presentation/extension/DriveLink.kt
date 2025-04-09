@@ -18,6 +18,7 @@
 package me.proton.android.drive.photos.presentation.extension
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -25,6 +26,7 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Scale
 import coil.size.Size
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.R
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
@@ -53,19 +55,33 @@ fun DriveLink.thumbnailPainter(
     }
 )
 
-fun DriveLink.Album.details(appContext: Context, useCreationTime: Boolean = true): String = buildString {
-    if (useCreationTime) {
-        append(this@details.link.creationTime.asHumanReadableString())
+fun DriveLink.Album.details(appContext: Context, useCreationTime: Boolean = true): String =
+    albumDetails(
+        appContext = appContext,
+        photoCount = photoCount,
+        isShared = link.sharingDetails != null,
+        creationTime = link.creationTime.takeIf { useCreationTime },
+    )
+
+@VisibleForTesting
+fun albumDetails(
+    appContext: Context,
+    photoCount: Long,
+    isShared: Boolean,
+    creationTime: TimestampS? = null,
+) = buildString {
+    if (creationTime != null) {
+        append(creationTime.asHumanReadableString())
         append(" \u2022 ")
     }
     append(
         appContext.resources.getQuantityString(
             I18N.plurals.albums_photo_count,
-            this@details.photoCount.toInt(),
-            this@details.photoCount.toInt(),
+            photoCount.toInt(),
+            photoCount.toInt(),
         )
     )
-    if (this@details.link.sharingDetails != null) {
+    if (isShared) {
         append(" \u2022 ")
         append(appContext.getString(I18N.string.common_shared))
     }

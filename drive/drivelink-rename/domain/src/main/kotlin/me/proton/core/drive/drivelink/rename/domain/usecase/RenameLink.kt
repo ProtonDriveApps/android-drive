@@ -70,9 +70,11 @@ class RenameLink @Inject constructor(
         linkName: String,
     ): Result<Unit> = coRunCatching {
         val link = getLink(linkId).toResult().getOrThrow()
-        val parentFolderId = requireNotNull(link.parentId) { "Parent folder must not be null" }
-        val parentFolder = getLink(parentFolderId).toResult().getOrThrow()
-        invoke(parentFolder, link, linkName).getOrThrow()
+        val parentId = requireNotNull(link.parentId) { "Parent must not be null" }
+        when (val parent = getLink(parentId).toResult().getOrThrow()) {
+            is Link.Folder -> invoke(parent, link, linkName).getOrThrow()
+            else -> error("Album should not be renamed through this endpoint")
+        }
     }
 
     suspend operator fun invoke(

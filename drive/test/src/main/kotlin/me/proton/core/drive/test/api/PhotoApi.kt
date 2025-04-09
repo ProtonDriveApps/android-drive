@@ -21,7 +21,7 @@ package me.proton.core.drive.test.api
 import me.proton.core.drive.base.data.api.response.CodeResponse
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.photo.data.api.entity.AlbumPhotoListingDto
-import me.proton.core.drive.photo.data.api.response.AddToAlbumResponse
+import me.proton.core.drive.photo.data.api.response.AddToRemoveFromAlbumResponse
 import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
@@ -88,6 +88,25 @@ fun MockWebServer.getAlbumListings(
     }
 }
 
+fun MockWebServer.getAlbumSharedWithMeListings(block: RequestContext.() -> MockResponse) = routing {
+    get("/drive/photos/albums/shared-with-me", block)
+}
+
+fun MockWebServer.getAlbumSharedWithMeListings(
+    albumListingsDto: List<GetAlbumListingsResponse.AlbumListingsDto>,
+) {
+    getAlbumSharedWithMeListings {
+        jsonResponse {
+            GetAlbumListingsResponse(
+                code = ProtonApiCode.SUCCESS,
+                anchorId = null,
+                more = false,
+                albums = albumListingsDto,
+            )
+        }
+    }
+}
+
 fun MockWebServer.getAlbumPhotoListings(block: RequestContext.() -> MockResponse) = routing {
     get("/drive/photos/volumes/{volumeID}/albums/{linkID}/children", block)
 }
@@ -112,15 +131,15 @@ fun MockWebServer.addPhotosToAlbum(block: RequestContext.() -> MockResponse) = r
 fun MockWebServer.addPhotosToAlbum(photoIds: List<String>) {
     addPhotosToAlbum {
         jsonResponse {
-            AddToAlbumResponse(
+            AddToRemoveFromAlbumResponse(
                 code = ProtonApiCode.SUCCESS,
                 responses = photoIds.map { photoId ->
-                    AddToAlbumResponse.Responses(
+                    AddToRemoveFromAlbumResponse.Responses(
                         linkId = photoId,
-                        response = AddToAlbumResponse.Response(
+                        response = AddToRemoveFromAlbumResponse.Response(
                             code = ProtonApiCode.SUCCESS,
                             error = null,
-                            details = AddToAlbumResponse.Details(
+                            details = AddToRemoveFromAlbumResponse.Details(
                                 newLinkId = photoId,
                             )
                         )
@@ -137,12 +156,12 @@ fun MockWebServer.addPhotosToAlbumFailure(
 ) {
     addPhotosToAlbum {
         jsonResponse(status = httpCode) {
-            AddToAlbumResponse(
+            AddToRemoveFromAlbumResponse(
                 code = 1001,
                 responses = failures.map { (photoId, protonCode, error) ->
-                    AddToAlbumResponse.Responses(
+                    AddToRemoveFromAlbumResponse.Responses(
                         linkId = photoId,
-                        response = AddToAlbumResponse.Response(
+                        response = AddToRemoveFromAlbumResponse.Response(
                             code = protonCode.toLong(),
                             error = error,
                             details = null,

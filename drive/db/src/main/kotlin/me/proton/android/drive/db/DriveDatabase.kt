@@ -83,6 +83,7 @@ import me.proton.core.drive.link.data.db.entity.LinkAlbumPropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkEntity
 import me.proton.core.drive.link.data.db.entity.LinkFilePropertiesEntity
 import me.proton.core.drive.link.data.db.entity.LinkFolderPropertiesEntity
+import me.proton.core.drive.link.data.db.entity.LinkTagEntity
 import me.proton.core.drive.link.selection.data.db.LinkSelectionConverters
 import me.proton.core.drive.link.selection.data.db.LinkSelectionDatabase
 import me.proton.core.drive.link.selection.data.db.entity.LinkSelectionEntity
@@ -252,6 +253,7 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         LinkFilePropertiesEntity::class,
         LinkFolderPropertiesEntity::class,
         LinkAlbumPropertiesEntity::class,
+        LinkTagEntity::class,
         LinkOfflineEntity::class,
         LinkDownloadStateEntity::class,
         DownloadBlockEntity::class,
@@ -420,7 +422,7 @@ abstract class DriveDatabase :
     DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 82
+        const val VERSION = 84
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -504,6 +506,8 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_79_80,
             DriveDatabaseMigrations.MIGRATION_80_81,
             DriveDatabaseMigrations.MIGRATION_81_82,
+            DriveDatabaseMigrations.MIGRATION_82_83,
+            DriveDatabaseMigrations.MIGRATION_83_84,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

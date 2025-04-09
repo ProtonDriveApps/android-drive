@@ -70,6 +70,7 @@ enum class ItemType {
 enum class LayoutType {
     List,
     Grid,
+    Cover,
 }
 
 enum class SemanticsDownloadState {

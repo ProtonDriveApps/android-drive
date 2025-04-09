@@ -24,7 +24,7 @@
     -->
   <plurals name="trash_operation_successful_format">
     <item quantity="one">1 položka presunutá do koša</item>
-    <item quantity="few">%1$d položky presunuté do koša</item>
+    <item quantity="few">%1$d položiek presunutých do koša</item>
     <item quantity="many">%1$d položiek presunutých do koša</item>
     <item quantity="other">%1$d položiek presunutých do koša</item>
   </plurals>
@@ -35,7 +35,7 @@
     -->
   <plurals name="trash_restore_operation_successful_format">
     <item quantity="one">1 položka obnovená</item>
-    <item quantity="few">%d položky obnovené</item>
+    <item quantity="few">%d položiek obnovených</item>
     <item quantity="many">%d položiek obnovených</item>
     <item quantity="other">%d položiek obnovených</item>
   </plurals>
@@ -46,8 +46,8 @@
     -->
   <plurals name="trash_delete_operation_successful_format">
     <item quantity="one">1 položka trvalo zmazaná</item>
-    <item quantity="few">%d položky trvalo zmazané</item>
-    <item quantity="many">%d položiek trvalo zmazaných</item>
+    <item quantity="few">%d položiek natrvalo vymazaných</item>
+    <item quantity="many">%d položiek natrvalo vymazaných</item>
     <item quantity="other">%d položiek natrvalo vymazaných</item>
   </plurals>
   <string name="trash_empty_operation_successful">Kôš vyprázdnený</string>

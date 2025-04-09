@@ -38,7 +38,8 @@
   <string name="common_uploading">Вивантаження</string>
   <string name="common_on">Увімк</string>
   <string name="common_off">Вимк</string>
-  <string name="common_all">All</string>
+  <string name="common_all">Всі</string>
+  <string name="common_unknown">Unknown</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -64,8 +65,10 @@
   <string name="common_copy_link_action">Копіювати посилання</string>
   <string name="common_stop_sharing_action">Закрити доступ</string>
   <string name="common_open_in_browser_action">Відкрити в браузері</string>
-  <string name="common_done_action">Done</string>
+  <string name="common_done_action">Готово</string>
   <string name="common_create_album_action">Create album</string>
+  <string name="common_set_as_album_cover_action">Set as album cover</string>
+  <string name="common_add_action">Add</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аудіо</string>
@@ -143,10 +146,10 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d вибрано</item>
-    <item quantity="few">%1$d вибрано</item>
-    <item quantity="many">%1$d вибрано</item>
-    <item quantity="other">%1$d вибрано</item>
+    <item quantity="one">%1$d обраний</item>
+    <item quantity="few">%1$d обрані</item>
+    <item quantity="many">%1$d обраних</item>
+    <item quantity="other">%1$d обраних</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

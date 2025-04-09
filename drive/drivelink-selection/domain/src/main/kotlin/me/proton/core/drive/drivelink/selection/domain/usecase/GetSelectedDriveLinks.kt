@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.selection.domain.repository.DriveLinkSelectionRepository
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import javax.inject.Inject
@@ -34,7 +34,7 @@ class GetSelectedDriveLinks @Inject constructor(
     operator fun invoke(selectionId: SelectionId): Flow<List<DriveLink>> =
         repository.getSelectedDriveLinks(selectionId)
 
-    operator fun invoke(selectionId: SelectionId, parentId: FolderId): Flow<List<DriveLink>> =
+    operator fun invoke(selectionId: SelectionId, parentId: ParentId): Flow<List<DriveLink>> =
         repository
             .getSelectedDriveLinks(selectionId)
             .map { driveLinks ->

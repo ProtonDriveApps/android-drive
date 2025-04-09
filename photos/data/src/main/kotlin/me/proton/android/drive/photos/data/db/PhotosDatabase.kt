@@ -86,5 +86,62 @@ interface PhotosDatabase : Database {
                 )
             }
         }
+        val MIGRATION_2 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    DROP TABLE IF EXISTS `AddToAlbumEntity`
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE TABLE IF NOT EXISTS `AddToAlbumEntity` (
+                    `user_id` TEXT NOT NULL,
+                    `share_id` TEXT NOT NULL,
+                    `link_id` TEXT NOT NULL,
+                    `album_share_id` TEXT,
+                    `album_id` TEXT,
+                    `capture_time` INTEGER NOT NULL,
+                    `hash` TEXT,
+                    `content_hash` TEXT,
+                    PRIMARY KEY(`user_id`, `share_id`, `link_id`),
+                    FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`)
+                    ON UPDATE NO ACTION ON DELETE CASCADE
+                    FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`)
+                    ON UPDATE NO ACTION ON DELETE CASCADE
+                    FOREIGN KEY(`user_id`, `share_id`, `link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`)
+                    ON UPDATE NO ACTION ON DELETE CASCADE
+                    FOREIGN KEY(`user_id`, `album_share_id`, `album_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`)
+                    ON UPDATE NO ACTION ON DELETE CASCADE
+                    )
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AddToAlbumEntity_user_id` ON `AddToAlbumEntity` (`user_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AddToAlbumEntity_album_id` ON `AddToAlbumEntity` (`album_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AddToAlbumEntity_user_id_album_id` ON `AddToAlbumEntity` (`user_id`, `album_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE INDEX IF NOT EXISTS `index_AddToAlbumEntity_user_id_album_share_id_album_id` ON `AddToAlbumEntity` (`user_id`, `album_share_id`, `album_id`)
+                    """.trimIndent()
+                )
+                database.execSQL(
+                    """
+                    CREATE UNIQUE INDEX IF NOT EXISTS `index_AddToAlbumEntity_user_id_share_id_link_id_album_share_id_album_id` ON `AddToAlbumEntity` (`user_id`, `share_id`, `link_id`, `album_share_id`, `album_id`)
+                    """.trimIndent()
+                )
+            }
+        }
     }
 }

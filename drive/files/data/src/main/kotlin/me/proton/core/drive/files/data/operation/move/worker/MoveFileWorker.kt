@@ -36,9 +36,9 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.supervisorScope
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.extension.resultValueOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -46,9 +46,10 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.files.domain.operation.notification.MoveFileExtra
 import me.proton.core.drive.files.domain.usecase.ChangeParent
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
@@ -73,16 +74,14 @@ class MoveFileWorker @AssistedInject constructor(
 
     private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
     private val selectionId = SelectionId(requireNotNull(inputData.getString(KEY_SELECTION_ID)))
-    private val moveToFolderId = FolderId(
-        ShareId(userId, requireNotNull(inputData.getString(KEY_MOVE_TO_SHARE_ID))),
-        requireNotNull(inputData.getString(KEY_MOVE_TO_FOLDER_ID)),
-    )
+    private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_MOVE_TO_SHARE_ID)))
+    private val moveToParentId = getMoveToParentId()
     private val allowUndo = inputData.getBoolean(KEY_ALLOW_UNDO, true)
 
     override suspend fun doWork(): Result = supervisorScope {
         val driveLinks = getSelectedDriveLinks(selectionId).first()
-        val folder = getLink(moveToFolderId).resultValueOrNull()
-        if (driveLinks.isEmpty() || folder == null) {
+        val parentId = getLink(moveToParentId).resultValueOrNull()?.id
+        if (driveLinks.isEmpty() || parentId == null || parentId !is ParentId) {
             broadcastMessages(
                 userId = userId,
                 message = applicationContext.getString(I18N.string.file_operation_error_occurred_moving_file),
@@ -94,7 +93,7 @@ class MoveFileWorker @AssistedInject constructor(
         val succeeded: MutableList<DriveLink> = Collections.synchronizedList(arrayListOf())
         val deferred = driveLinks.map { driveLink ->
             async {
-                changeParent(driveLink.id, folder.id)
+                changeParent(driveLink.id, parentId)
                     .onSuccess {
                         succeeded.add(driveLink)
                     }
@@ -108,7 +107,7 @@ class MoveFileWorker @AssistedInject constructor(
                                 extra = MoveFileExtra(
                                     userId = userId,
                                     links = listOf(driveLink.parentId to driveLink.id),
-                                    folderId = moveToFolderId,
+                                    parentId = moveToParentId,
                                     allowUndo = allowUndo,
                                     exception = error,
                                 )
@@ -126,7 +125,7 @@ class MoveFileWorker @AssistedInject constructor(
                     extra = MoveFileExtra(
                         userId = userId,
                         links = succeeded.map { driveLink -> driveLink.parentId to driveLink.id },
-                        folderId = moveToFolderId,
+                        parentId = moveToParentId,
                         allowUndo = allowUndo,
                     )
                 )
@@ -170,18 +169,30 @@ class MoveFileWorker @AssistedInject constructor(
             }
         } ?: false
 
+    private fun getMoveToParentId(): ParentId =
+        inputData.getString(KEY_MOVE_TO_FOLDER_ID)
+            ?.let { folderId ->
+                FolderId(shareId, folderId)
+            }
+            ?: inputData.getString(KEY_MOVE_TO_ALBUM_ID)
+                ?.let { albumId ->
+                    AlbumId(shareId, albumId)
+                }
+            ?: error("Parent not found")
+
     companion object {
 
         private const val KEY_USER_ID = "KEY_USER_ID"
         private const val KEY_SELECTION_ID = "KEY_SELECTION_ID"
         private const val KEY_MOVE_TO_FOLDER_ID = "KEY_MOVE_TO_FOLDER_ID"
+        private const val KEY_MOVE_TO_ALBUM_ID = "KEY_MOVE_TO_ALBUM_ID"
         private const val KEY_MOVE_TO_SHARE_ID = "KEY_MOVE_TO_SHARE_ID"
         private const val KEY_ALLOW_UNDO = "KEY_ALLOW_UNDO"
 
         fun getWorkRequest(
             userId: UserId,
             selectionId: SelectionId,
-            folderId: LinkId,
+            parentId: ParentId,
             allowUndo: Boolean,
             tags: Collection<String> = emptyList(),
         ): OneTimeWorkRequest = OneTimeWorkRequest.Builder(MoveFileWorker::class.java)
@@ -189,8 +200,17 @@ class MoveFileWorker @AssistedInject constructor(
                 Data.Builder()
                     .putString(KEY_USER_ID, userId.id)
                     .putString(KEY_SELECTION_ID, selectionId.id)
-                    .putString(KEY_MOVE_TO_FOLDER_ID, folderId.id)
-                    .putString(KEY_MOVE_TO_SHARE_ID, folderId.shareId.id)
+                    .apply {
+                        putString(
+                            when (parentId) {
+                                is FolderId -> KEY_MOVE_TO_FOLDER_ID
+                                is AlbumId -> KEY_MOVE_TO_ALBUM_ID
+                            },
+                            parentId.id,
+                        )
+
+                    }
+                    .putString(KEY_MOVE_TO_SHARE_ID, parentId.shareId.id)
                     .putBoolean(KEY_ALLOW_UNDO, allowUndo)
                     .build()
             )

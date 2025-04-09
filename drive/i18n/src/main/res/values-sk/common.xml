@@ -39,6 +39,7 @@
   <string name="common_on">Zap.</string>
   <string name="common_off">Vyp.</string>
   <string name="common_all">Všetko</string>
+  <string name="common_unknown">Neznáme</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -66,6 +67,8 @@
   <string name="common_open_in_browser_action">Otvoriť v prehliadači</string>
   <string name="common_done_action">Hotovo</string>
   <string name="common_create_album_action">Vytvoriť album</string>
+  <string name="common_set_as_album_cover_action">Nastaviť ako obal albumu</string>
+  <string name="common_add_action">Pridať</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>
@@ -143,10 +146,10 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d vybraný</item>
-    <item quantity="few">%1$d vybrané</item>
-    <item quantity="many">%1$d vybraných</item>
-    <item quantity="other">%1$d vybraných</item>
+    <item quantity="one">vybrané: %1$d</item>
+    <item quantity="few">vybrané: %1$d</item>
+    <item quantity="many">vybrané: %1$d</item>
+    <item quantity="other">vybrané: %1$d</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

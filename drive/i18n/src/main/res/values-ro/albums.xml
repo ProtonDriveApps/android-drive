@@ -32,4 +32,23 @@
     <item quantity="few">%1$s articole</item>
     <item quantity="other">%1$s de articole</item>
   </plurals>
+  <string name="albums_delete_album_action">Ștergere album</string>
+  <string name="albums_delete_album_dialog_title">Ștergeți albumul?</string>
+  <string name="albums_delete_album_dialog_description">Se va șterge doar albumul. Fotografiile vor rămâne în cronologie. Această acțiune nu poate fi anulată.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Unele fotografii din acest album nu sunt salvate în cronologi. Ștergerea acestui album va șterge definitiv acele fotografii.\nDoriți să le salvați înainte de a le elimina?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Ștergere fără salvare</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Salvare și ștergere fotografii</string>
+  <string name="albums_add_zero_to_album_button">Adăugare în album</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Adăugare %1$d în album</item>
+    <item quantity="few">Adăugare %1$d în album</item>
+    <item quantity="other">Adăugare %1$d în album</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Setată ca și copertă de album</string>
 </resources>

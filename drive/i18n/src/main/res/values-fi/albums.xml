@@ -20,7 +20,7 @@
   <string name="albums_title">Albumit</string>
   <string name="albums_new_album_name_hint">Albumin nimi</string>
   <string name="albums_new_album_created_successfully">Albumi luotiin</string>
-  <string name="albums_filter_my_albums">My albums</string>
+  <string name="albums_filter_my_albums">Omat albumit</string>
   <!--
         Variable %1$s is a number of photos in the album
         Example:
@@ -28,7 +28,25 @@
             "345 items"
     -->
   <plurals name="albums_photo_count">
-    <item quantity="one">%1$s item</item>
-    <item quantity="other">%1$s items</item>
+    <item quantity="one">%1$s kohde</item>
+    <item quantity="other">%1$s kohteen</item>
   </plurals>
+  <string name="albums_delete_album_action">Poista albumi</string>
+  <string name="albums_delete_album_dialog_title">Poista albumi?</string>
+  <string name="albums_delete_album_dialog_description">Tämä poistaa vain albumin. Kuvasi pysyvät aikajanalla. Tätä toimintoa ei voi peruuttaa.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Joitain kuvia tässä albumissa ei ole tallennettu aikajanallesi. Poistamalla tämän albumin poistat pysyvästi kyseiset kuvat. \nHaluatko tallentaa ne ennen poistamista?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Poista ilman tallentamista</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Tallenna kuvat ja poista</string>
+  <string name="albums_add_zero_to_album_button">Lisää albumiin</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Lisää %1$d albumiin</item>
+    <item quantity="other">Lisää %1$d albumiin</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Aseta albumin kanneksi</string>
 </resources>

@@ -49,8 +49,8 @@
             "33 items"
     -->
   <plurals name="number_of_items">
-    <item quantity="one">%1$d élément</item>
-    <item quantity="other">%1$d éléments</item>
+    <item quantity="one">%1$d élément</item>
+    <item quantity="other">%1$d éléments</item>
   </plurals>
   <string name="files_upload_verification_failed">L\'importation n\'a pas abouti : les données n\'ont pas pu être vérifiées.</string>
 </resources>

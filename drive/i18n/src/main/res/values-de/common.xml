@@ -39,6 +39,7 @@
   <string name="common_on">Ein</string>
   <string name="common_off">Aus</string>
   <string name="common_all">Alle</string>
+  <string name="common_unknown">Unbekannt</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -66,6 +67,8 @@
   <string name="common_open_in_browser_action">Im Browser öffnen</string>
   <string name="common_done_action">Fertig</string>
   <string name="common_create_album_action">Album erstellen</string>
+  <string name="common_set_as_album_cover_action">Als Albumcover festlegen</string>
+  <string name="common_add_action">Hinzufügen</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

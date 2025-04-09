@@ -36,12 +36,12 @@ class SetupPhotosBackup @Inject constructor(
 
     suspend operator fun invoke(
         folderId: FolderId,
-        folderNames: List<String>,
+        folderFilter: (String) -> Boolean,
     ) = coRunCatching {
         setupPhotosConfigurationBackup(folderId).getOrThrow()
         val bucketEntries = bucketRepository.getAll()
         bucketEntries.filter { entry ->
-            entry.bucketName in folderNames
+            entry.bucketName?.let { name -> folderFilter(name) } ?: false
         }.map { entry ->
             BackupFolder(
                 bucketId = entry.bucketId,
@@ -53,7 +53,7 @@ class SetupPhotosBackup @Inject constructor(
             SetupPhotosBackupResult(backupFolder, requireNotNull(folderName))
         }.also { defaultBucketEntries ->
             if (defaultBucketEntries.isEmpty()) {
-                CoreLogger.w(BACKUP, "No bucket with name: $folderNames in $bucketEntries")
+                CoreLogger.w(BACKUP, "No bucket enabled for: $bucketEntries")
             } else {
                 CoreLogger.i(BACKUP, "Setup photo backup for ${defaultBucketEntries.size} buckets")
             }

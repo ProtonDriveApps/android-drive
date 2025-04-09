@@ -39,6 +39,7 @@
   <string name="common_on">Til</string>
   <string name="common_off">Fra</string>
   <string name="common_all">Alle</string>
+  <string name="common_unknown">Unknown</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">Ok</string>
@@ -64,8 +65,10 @@
   <string name="common_copy_link_action">Kopiér link</string>
   <string name="common_stop_sharing_action">Stop deling</string>
   <string name="common_open_in_browser_action">Åbn i browser</string>
-  <string name="common_done_action">Færdig</string>
-  <string name="common_create_album_action">Create album</string>
+  <string name="common_done_action">Udført</string>
+  <string name="common_create_album_action">Opret album</string>
+  <string name="common_set_as_album_cover_action">Set as album cover</string>
+  <string name="common_add_action">Add</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Lyd</string>
@@ -143,7 +146,7 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d valgt</item>
+    <item quantity="one">%1$d valgte</item>
     <item quantity="other">%1$d valgte</item>
   </plurals>
   <!-- region In-app notification -->

@@ -73,7 +73,7 @@
   <string name="shared_empty_title">Поки що нічим не поділилися</string>
   <string name="shared_with_me_empty_description">Тут з\'являться файли та теки, до яких надано спільний доступ</string>
   <string name="shared_by_me_empty_description">Безпечно надавайте спільний доступ до файлів і тек завдяки наскрізному шифруванню</string>
-  <string name="shared_by_me_invitation_banner_title">Pending shared items</string>
+  <string name="shared_by_me_invitation_banner_title">Очікування елементів, якими поділилися</string>
   <!--
         Variable %1$d is a quantity of item shared
         Example:
@@ -94,8 +94,8 @@
   <string name="shared_user_invitations_title">Pending shared items (%1$d)</string>
   <string name="shared_user_invitations_title_empty">No pending shared items</string>
   <string name="shared_user_invitations_description_empty">All new invitations will be here</string>
-  <string name="shared_user_invitations_accept_button">Accept</string>
-  <string name="shared_user_invitations_decline_button">Decline</string>
+  <string name="shared_user_invitations_accept_button">Схвалити</string>
+  <string name="shared_user_invitations_decline_button">Відхилити</string>
   <string name="shared_user_invitations_accept_success">Shared item accepted</string>
   <string name="shared_user_invitations_decline_success">Shared item declined</string>
 </resources>

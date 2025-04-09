@@ -27,6 +27,7 @@ fun PhotoListing.toAddToAlbumEntity(albumId: AlbumId?) = AddToAlbumEntity(
     userId = linkId.userId,
     shareId = linkId.shareId.id,
     linkId = linkId.id,
+    albumShareId = albumId?.shareId?.id,
     albumId = albumId?.id,
     captureTime = captureTime.value,
     hash = nameHash,

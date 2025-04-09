@@ -21,6 +21,7 @@ package me.proton.core.drive.files.presentation.event
 import androidx.paging.CombinedLoadStates
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.files.presentation.state.VolumeEntry
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 
 interface FilesViewEvent {
@@ -39,4 +40,5 @@ interface FilesViewEvent {
     val onSelectDriveLink: (DriveLink) -> Unit get() = {}
     val onDeselectDriveLink: (DriveLink) -> Unit get() = {}
     val onBack: () -> Unit get() = {}
+    val onTab: (VolumeEntry) -> Unit get() = {}
 }

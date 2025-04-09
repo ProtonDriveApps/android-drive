@@ -253,3 +253,21 @@ class OpenInBrowserProtonDocsEntry(
     @Composable
     override fun getLabel(): String = stringResource(id = I18N.string.common_open_in_browser_action)
 }
+
+class SetAsAlbumCoverEntry(
+    override val onClick: (DriveLink.File) -> Unit,
+) : FileOptionEntry.SimpleEntry<DriveLink.File> {
+    override val icon: Int = CorePresentation.drawable.ic_proton_window_image
+
+    @Composable
+    override fun getLabel(): String = stringResource(id = I18N.string.common_set_as_album_cover_action)
+}
+
+class RemoveFromAlbumFileEntry(
+    override val onClick: (DriveLink.File) -> Unit,
+) : FileOptionEntry.SimpleEntry<DriveLink.File> {
+    override val icon: Int = CorePresentation.drawable.ic_proton_minus_circle
+
+    @Composable
+    override fun getLabel(): String = stringResource(id = I18N.string.common_remove_from_album_action)
+}

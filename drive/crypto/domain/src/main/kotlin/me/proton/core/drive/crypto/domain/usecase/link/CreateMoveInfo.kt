@@ -29,9 +29,10 @@ import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetNodeHashKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
 import me.proton.core.drive.key.domain.usecase.MoveNodeKey
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.MoveInfo
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.extension.requireParentId
 import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.link.domain.extension.userId
@@ -52,35 +53,39 @@ class CreateMoveInfo @Inject constructor(
 ) {
     suspend operator fun invoke(
         linkId: LinkId,
-        newParentId: FolderId,
+        newParentId: ParentId,
     ): Result<MoveInfo> = coRunCatching {
         val link = getLink(linkId).toResult().getOrThrow()
         val decryptedLinkName = decryptLinkName(link).getOrThrow().text
-        val currentParentFolder = getLink(link.requireParentId()).toResult().getOrThrow()
-        val currentParentFolderKey = getNodeKey(currentParentFolder).getOrThrow()
-        val newParentFolder = getLink(newParentId).toResult().getOrThrow()
-        val newParentFolderKey = getNodeKey(newParentFolder).getOrThrow()
-        val newParentFolderHashKey = getNodeHashKey(newParentFolder, newParentFolderKey).getOrThrow()
+        val currentParent = getLink(link.requireParentId()).toResult().getOrThrow()
+        val currentParentKey = getNodeKey(currentParent).getOrThrow()
+        val newParent = getLink(newParentId).toResult().getOrThrow()
+        val newParentKey = getNodeKey(newParent).getOrThrow()
+        val newParentHashKey = when(newParent) {
+            is Link.Album -> getNodeHashKey(newParent, newParentKey).getOrThrow()
+            is Link.Folder -> getNodeHashKey(newParent, newParentKey).getOrThrow()
+            else -> error("Either folder of album can be parent")
+        }
         val userId = linkId.userId
         val signatureAddress = getSignatureAddress(link.shareId).getOrThrow()
         val newLinkKey = moveNodeKey(
             userId = userId,
             key = getNodeKey(linkId).getOrThrow(),
-            oldParentKey = currentParentFolderKey,
-            newParentKey = newParentFolderKey,
+            oldParentKey = currentParentKey,
+            newParentKey = newParentKey,
             signatureAddress = signatureAddress,
         ).getOrThrow()
         MoveInfo(
             name = changeMessage(
                 oldMessage = link.name,
-                oldMessageDecryptionKey = currentParentFolderKey.keyHolder,
+                oldMessageDecryptionKey = currentParentKey.keyHolder,
                 newMessage = decryptedLinkName,
-                newMessageEncryptionKey = newParentFolderKey.keyHolder,
+                newMessageEncryptionKey = newParentKey.keyHolder,
                 signKey = getAddressKeys(userId, signatureAddress).keyHolder,
             ).getOrThrow(),
-            hash = hmacSha256(newParentFolderHashKey, decryptedLinkName).getOrThrow(),// calculate with new parent,
+            hash = hmacSha256(newParentHashKey, decryptedLinkName).getOrThrow(),// calculate with new parent,
             previousHash = link.hash,
-            parentLinkId = newParentFolder.id.id,
+            parentLinkId = newParent.id.id,
             signatureEmail = if (link.signatureEmail.isEmpty()) {
                 signatureAddress
             } else {

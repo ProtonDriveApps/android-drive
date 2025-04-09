@@ -35,7 +35,7 @@
     <item quantity="one">%1$d datoteka se nalaga v: %2$s</item>
     <item quantity="two">%1$d datoteki se nalagata v: %2$s</item>
     <item quantity="few">%1$d datoteke se nalagajo v: %2$s</item>
-    <item quantity="other">%1$d datoteke se nalagajo v: %2$s</item>
+    <item quantity="other">%1$d datotek se nalaga v: %2$s</item>
   </plurals>
   <string name="files_upload_preparing">Priprava nalaganja. To lahko traja nekaj časa.</string>
   <!--
@@ -53,7 +53,7 @@
   <plurals name="number_of_items">
     <item quantity="one">%1$d predmet</item>
     <item quantity="two">%1$d predmeta</item>
-    <item quantity="few">%1$d predmetov</item>
+    <item quantity="few">%1$d predmeti</item>
     <item quantity="other">%1$d predmetov</item>
   </plurals>
   <string name="files_upload_verification_failed">Nalaganje ni uspelo: preverjanje podatkov ni uspelo</string>

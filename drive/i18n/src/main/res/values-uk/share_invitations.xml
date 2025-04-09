@@ -60,7 +60,7 @@
   <string name="common_permission_admin">Адміністратор</string>
   <string name="common_permission_editor">Редактор</string>
   <string name="common_permission_viewer">Переглядач</string>
-  <string name="common_permission_unknown">Невідомий тип файлу</string>
+  <string name="common_permission_unknown">Невідомо</string>
   <!--
         Variable %1$s is an email
         Examples:

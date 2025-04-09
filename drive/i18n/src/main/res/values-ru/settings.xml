@@ -33,19 +33,19 @@
     <item quantity="one">Через %1$d минуту</item>
     <item quantity="few">Через %1$d минуты</item>
     <item quantity="many">Через %1$d минут</item>
-    <item quantity="other">Через %1$d минуты</item>
+    <item quantity="other">Через %1$d минут</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_hours">
     <item quantity="one">Через %1$d час</item>
     <item quantity="few">Через %1$d часа</item>
     <item quantity="many">Через %1$d часов</item>
-    <item quantity="other">Через %1$d часа</item>
+    <item quantity="other">Через %1$d часов</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_days">
     <item quantity="one">Через %1$d день</item>
     <item quantity="few">Через %1$d дня</item>
     <item quantity="many">Через %1$d дней</item>
-    <item quantity="other">Через %1$d дня</item>
+    <item quantity="other">Через %1$d дней</item>
   </plurals>
   <string name="settings_section_backup">Резервное копирование</string>
   <string name="settings_photos_backup_folders_title">Загрузить из</string>

@@ -49,7 +49,7 @@
             "33 items"
     -->
   <plurals name="number_of_items">
-    <item quantity="one">%1$d kohde</item>
+    <item quantity="one">%1$d kohdetta</item>
     <item quantity="other">%1$d kohdetta</item>
   </plurals>
   <string name="files_upload_verification_failed">Tallennus epäonnistui: tietojen vahvistus epäonnistui</string>

@@ -37,5 +37,5 @@
   <string name="log_origin_backup">Αντίγραφο Ασφαλείας</string>
   <string name="log_origin_user">Χρήστης</string>
   <string name="log_origin_device">Συσκευή</string>
-  <string name="log_origin_crypto">Κρυπτονομίσματα</string>
+  <string name="log_origin_crypto">Κρυπτο</string>
 </resources>

@@ -32,9 +32,12 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import me.proton.android.drive.extension.getDefaultMessage
+import me.proton.android.drive.photos.domain.usecase.RemovePhotosFromAlbum
+import me.proton.android.drive.photos.presentation.extension.processRemove
 import me.proton.android.drive.ui.options.Option
-import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.options.filter
+import me.proton.android.drive.ui.options.filterAlbums
 import me.proton.android.drive.ui.options.filterPermissions
 import me.proton.android.drive.ui.options.filterProtonDocs
 import me.proton.android.drive.ui.options.filterRoot
@@ -59,14 +62,18 @@ import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLin
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isShareMember
 import me.proton.core.drive.drivelink.offline.domain.usecase.ToggleOffline
+import me.proton.core.drive.drivelink.photo.domain.usecase.UpdateAlbumCover
 import me.proton.core.drive.drivelink.shared.domain.extension.sharingDetails
 import me.proton.core.drive.drivelink.trash.domain.usecase.ToggleTrashState
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsDisabled
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveDocsDisabled
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDevelopment
+import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -84,6 +91,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getDriveLink: GetDecryptedDriveLink,
     getFeatureFlagFlow: GetFeatureFlagFlow,
+    albumsFeatureFlag: AlbumsFeatureFlag,
     private val toggleOffline: ToggleOffline,
     private val toggleTrashState: ToggleTrashState,
     private val exportTo: ExportTo,
@@ -92,12 +100,20 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
     private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
+    private val updateAlbumCover: UpdateAlbumCover,
+    private val removePhotosFromAlbum: RemovePhotosFromAlbum,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private var dismiss: (() -> Unit)? = null
     private val linkId: LinkId = FileId(
         ShareId(userId, savedStateHandle.require(KEY_SHARE_ID)),
         savedStateHandle.require(KEY_LINK_ID)
     )
+    private val albumId: AlbumId? = savedStateHandle.get<String>(KEY_ALBUM_ID)?.let { albumId ->
+        AlbumId(
+            ShareId(userId, savedStateHandle.require(KEY_ALBUM_SHARE_ID)),
+            albumId
+        )
+    }
     val driveLink: Flow<DriveLink?> = getDriveLink(
         linkId = linkId,
         failOnDecryptionError = false,
@@ -110,13 +126,17 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             new
         }
         .stateIn(viewModelScope, Eagerly, null)
-    private val optionsFilter = savedStateHandle.require<OptionsFilter>(OPTIONS_FILTER)
 
     private val sharingDevelopment = getFeatureFlagFlow(driveSharingDevelopment(userId))
         .stateIn(viewModelScope, Eagerly, FeatureFlag(driveSharingDevelopment(userId), NOT_FOUND))
 
     private val docsKillSwitch = getFeatureFlagFlow(driveDocsDisabled(userId))
         .stateIn(viewModelScope, Eagerly, FeatureFlag(driveDocsDisabled(userId), NOT_FOUND))
+
+    private val albumsFeature = albumsFeatureFlag(userId)
+        .stateIn(viewModelScope, Eagerly, configurationProvider.albumsFeatureFlag)
+    private val albumsKillSwitch = getFeatureFlagFlow(driveAlbumsDisabled(userId))
+        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveAlbumsDisabled(userId), NOT_FOUND))
 
     fun <T : DriveLink> entries(
         runAction: (suspend () -> Unit) -> Unit,
@@ -133,10 +153,12 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         this.driveLink.filterNotNull(),
         sharingDevelopment,
         docsKillSwitch,
-    ) { driveLink, sharingDevelopment, protonDocsKillSwitch ->
+        albumsFeature,
+        albumsKillSwitch,
+    ) { driveLink, sharingDevelopment, protonDocsKillSwitch, albumsFeatureFlagOn, albumsKillSwitch ->
         options
             .filter(driveLink)
-            .filter(optionsFilter)
+            .filterAlbums(albumsFeatureFlagOn, albumsKillSwitch, albumId)
             .filterRoot(driveLink, sharingDevelopment)
             .filterShareMember(driveLink.isShareMember)
             .filterPermissions(driveLink.sharePermissions ?: Permissions.owner)
@@ -176,6 +198,16 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                             openProtonDocumentInBrowser(driveLink)
                         }
                     }
+                    is Option.SetAsAlbumCover -> option.build(runAction) { driveLink ->
+                        viewModelScope.launch {
+                            setAsAlbumCover(driveLink)
+                        }
+                    }
+                    is Option.RemoveFromAlbum -> option.build(runAction) { driveLink ->
+                        viewModelScope.launch {
+                            removePhotosFromAlbum(driveLink)
+                        }
+                    }
                     else -> throw IllegalStateException(
                         "Option ${option.javaClass.simpleName} is not found. Did you forget to add it?"
                     )
@@ -183,6 +215,61 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             }.also {
                 this.dismiss = dismiss
             }
+    }
+
+    private suspend fun removePhotosFromAlbum(
+        driveLink: DriveLink.File,
+    ) {
+        removePhotosFromAlbum(
+            albumId = requireNotNull(albumId),
+            fileIds = listOf(driveLink.id),
+        )
+            .onFailure { error ->
+                error.log(VIEW_MODEL, "Failed to remove file from album")
+                broadcastMessages(
+                    userId = userId,
+                    message = error.getDefaultMessage(
+                        appContext,
+                        configurationProvider.useExceptionMessage,
+                    ),
+                    type = BroadcastMessage.Type.ERROR,
+                )
+            }
+            .onSuccess { result ->
+                result.processRemove(appContext) { message, type ->
+                    broadcastMessages(
+                        userId = userId,
+                        message = message,
+                        type = type,
+                    )
+                }
+            }
+    }
+
+    private suspend fun setAsAlbumCover(
+        driveLink: DriveLink.File
+    ) {
+        updateAlbumCover(
+            volumeId = driveLink.volumeId,
+            albumId = requireNotNull(albumId),
+            newCoverFileId = driveLink.id
+        ).onFailure { error ->
+            error.log(LogTag.ALBUM, "Cannot update album cover: ${driveLink.id.id.logId()}")
+            broadcastMessages(
+                userId = userId,
+                message = error.getDefaultMessage(
+                    appContext,
+                    configurationProvider.useExceptionMessage
+                ),
+                type = BroadcastMessage.Type.ERROR
+            )
+        }.onSuccess {
+            broadcastMessages(
+                userId = userId,
+                message = appContext.getString(I18N.string.albums_set_album_as_cover_success),
+                type = BroadcastMessage.Type.INFO,
+            )
+        }
     }
 
     private suspend fun leaveShare(driveLink: DriveLink) {
@@ -224,9 +311,12 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     companion object {
         const val KEY_SHARE_ID = "shareId"
         const val KEY_LINK_ID = "linkId"
-        const val OPTIONS_FILTER = "optionsFilter"
+        const val KEY_ALBUM_ID = "albumId"
+        const val KEY_ALBUM_SHARE_ID = "albumShareId"
 
         private val options = setOf(
+            Option.SetAsAlbumCover,
+            Option.RemoveFromAlbum,
             Option.OfflineToggle,
             Option.ShareViaInvitations,
             Option.ManageAccess,

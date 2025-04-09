@@ -35,7 +35,6 @@ import me.proton.android.drive.ui.navigation.animation.defaultExitSlideTransitio
 import me.proton.android.drive.ui.navigation.animation.defaultPopEnterSlideTransition
 import me.proton.android.drive.ui.navigation.animation.defaultPopExitSlideTransition
 import me.proton.android.drive.ui.navigation.internal.DriveNavHost
-import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.screen.ComputersScreen
 import me.proton.android.drive.ui.screen.FilesScreen
 import me.proton.android.drive.ui.screen.PhotosAndAlbumsScreen
@@ -62,10 +61,10 @@ fun HomeNavGraph(
     arguments: Bundle,
     startDestination: String,
     homeScaffoldState: HomeScaffoldState,
-    navigateToPreview: (fileId: FileId, pagerType: PagerType, optionsFilter: OptionsFilter) -> Unit,
+    navigateToPreview: (fileId: FileId, pagerType: PagerType) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId, optionsFilter: OptionsFilter) -> Unit,
-    navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId, optionsFilter: OptionsFilter) -> Unit,
+    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     navigateToPhotosPermissionRationale: () -> Unit,
     navigateToSubscription: () -> Unit,
@@ -86,10 +85,10 @@ fun HomeNavGraph(
         deepLinkBaseUrl,
         arguments,
         homeScaffoldState,
-        { fileId -> navigateToPreview(fileId, PagerType.FOLDER, OptionsFilter.FILES) },
+        { fileId -> navigateToPreview(fileId, PagerType.FOLDER) },
         navigateToSorting,
-        { linkId -> navigateToFileOrFolderOptions(linkId, OptionsFilter.FILES) },
-        { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.FILES) },
+        { linkId -> navigateToFileOrFolderOptions(linkId) },
+        { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId) },
         navigateToParentFolderOptions,
     )
     addPhotos(
@@ -98,10 +97,10 @@ fun HomeNavGraph(
         arguments,
         homeScaffoldState,
         navigateToPhotosPermissionRationale,
-        navigateToPhotosPreview = { fileId -> navigateToPreview(fileId, PagerType.PHOTO, OptionsFilter.PHOTOS) },
-        navigateToPhotosOptions = { fileId -> navigateToFileOrFolderOptions(fileId, OptionsFilter.PHOTOS) },
+        navigateToPhotosPreview = { fileId -> navigateToPreview(fileId, PagerType.PHOTO) },
+        navigateToPhotosOptions = { fileId -> navigateToFileOrFolderOptions(fileId) },
         navigateToMultiplePhotosOptions = { selectionId ->
-            navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.PHOTOS)
+            navigateToMultipleFileOrFolderOptions(selectionId)
         },
         navigateToSubscription = navigateToSubscription,
         navigateToPhotosIssues = navigateToPhotosIssues,
@@ -115,10 +114,10 @@ fun HomeNavGraph(
         arguments,
         homeScaffoldState,
         navigateToPhotosPermissionRationale,
-        navigateToPhotosPreview = { fileId -> navigateToPreview(fileId, PagerType.PHOTO, OptionsFilter.PHOTOS) },
-        navigateToPhotosOptions = { fileId -> navigateToFileOrFolderOptions(fileId, OptionsFilter.PHOTOS) },
+        navigateToPhotosPreview = { fileId -> navigateToPreview(fileId, PagerType.PHOTO) },
+        navigateToPhotosOptions = { fileId -> navigateToFileOrFolderOptions(fileId) },
         navigateToMultiplePhotosOptions = { selectionId ->
-            navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.PHOTOS)
+            navigateToMultipleFileOrFolderOptions(selectionId)
         },
         navigateToSubscription = navigateToSubscription,
         navigateToPhotosIssues = navigateToPhotosIssues,
@@ -133,10 +132,10 @@ fun HomeNavGraph(
         deepLinkBaseUrl,
         arguments,
         homeScaffoldState,
-        { fileId -> navigateToPreview(fileId, PagerType.FOLDER, OptionsFilter.FILES) },
+        { fileId -> navigateToPreview(fileId, PagerType.FOLDER) },
         navigateToSorting,
-        { linkId -> navigateToFileOrFolderOptions(linkId, OptionsFilter.FILES) },
-        { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.FILES) },
+        { linkId -> navigateToFileOrFolderOptions(linkId) },
+        { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId) },
         navigateToParentFolderOptions,
         navigateToComputerOptions,
     )
@@ -145,12 +144,12 @@ fun HomeNavGraph(
         deepLinkBaseUrl = deepLinkBaseUrl,
         arguments = arguments,
         homeScaffoldState = homeScaffoldState,
-        navigateToFolderPreview = { fileId -> navigateToPreview(fileId, PagerType.FOLDER, OptionsFilter.FILES) },
-        navigateToSinglePreview = { fileId -> navigateToPreview(fileId, PagerType.SINGLE, OptionsFilter.FILES) },
+        navigateToFolderPreview = { fileId -> navigateToPreview(fileId, PagerType.FOLDER) },
+        navigateToSinglePreview = { fileId -> navigateToPreview(fileId, PagerType.SINGLE) },
         navigateToSorting = navigateToSorting,
-        navigateToFileOrFolderOptions = { linkId -> navigateToFileOrFolderOptions(linkId, OptionsFilter.FILES) },
+        navigateToFileOrFolderOptions = { linkId -> navigateToFileOrFolderOptions(linkId) },
         navigateToMultipleFileOrFolderOptions = { selectionId ->
-            navigateToMultipleFileOrFolderOptions(selectionId, OptionsFilter.FILES)
+            navigateToMultipleFileOrFolderOptions(selectionId)
         },
         navigateToParentFolderOptions = navigateToParentFolderOptions,
         navigateToUserInvitation = navigateToUserInvitation,

@@ -39,6 +39,7 @@
   <string name="common_on">På</string>
   <string name="common_off">Av</string>
   <string name="common_all">Alla</string>
+  <string name="common_unknown">Okänd</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -66,6 +67,8 @@
   <string name="common_open_in_browser_action">Öppna i webbläsare</string>
   <string name="common_done_action">Klar</string>
   <string name="common_create_album_action">Skapa album</string>
+  <string name="common_set_as_album_cover_action">Ställ in som albumomslag</string>
+  <string name="common_add_action">Lägg till</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ljud</string>
@@ -102,7 +105,7 @@
     -->
   <string name="common_error_name_with_forbidden_characters">Namn kan inte inkludera osynliga tecken, ”%1$s” eller ”%2$s”</string>
   <string name="common_error_name_periods">Namn kan inte vara “.“ eller “..“</string>
-  <string name="common_error_no_internet">Ingen Internetanslutning</string>
+  <string name="common_error_no_internet">Ingen internetanslutning</string>
   <string name="common_error_http_5xx">Serverfel uppstod</string>
   <string name="common_error_internal">Internt fel uppstod</string>
   <string name="common_error_crypto">Kryptering eller dekryptering misslyckades</string>

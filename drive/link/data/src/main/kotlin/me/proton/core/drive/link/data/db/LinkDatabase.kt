@@ -108,5 +108,26 @@ interface LinkDatabase : Database {
                 )
             }
         }
+
+        val MIGRATION_3 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                        CREATE TABLE IF NOT EXISTS `LinkTagEntity` (
+                        `tag_user_id` TEXT NOT NULL, 
+                        `tag_share_id` TEXT NOT NULL, 
+                        `tag_link_id` TEXT NOT NULL, 
+                        `tag` INTEGER NOT NULL, 
+                        PRIMARY KEY(`tag_user_id`, `tag_share_id`, `tag_link_id`, `tag`), 
+                        FOREIGN KEY(`tag_user_id`, `tag_share_id`, `tag_link_id`) REFERENCES `LinkEntity`(`user_id`, `share_id`, `id`) 
+                        ON UPDATE NO ACTION ON DELETE CASCADE 
+                        )
+                    """.trimIndent()
+                )
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_LinkTagEntity_tag_share_id_tag_link_id` ON `LinkTagEntity` (`tag_share_id`, `tag_link_id`)
+                """.trimIndent())
+            }
+        }
     }
 }

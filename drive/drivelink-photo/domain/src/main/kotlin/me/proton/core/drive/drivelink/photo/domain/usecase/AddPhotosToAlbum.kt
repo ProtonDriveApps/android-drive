@@ -26,6 +26,7 @@ import me.proton.core.drive.documentsprovider.domain.usecase.GetContentDigest
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinks
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.photo.domain.entity.AddToRemoveFromAlbumResult
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
@@ -42,20 +43,23 @@ class AddPhotosToAlbum @Inject constructor(
         volumeId: VolumeId,
         albumId: AlbumId,
         photoIds: List<FileId>,
-    ) = coRunCatching {
+    ): Result<AddToRemoveFromAlbumResult> = coRunCatching {
         val (volumePhotoIds, sharedWithMePhotoIds) = volumeAndSharedWithMeFileIds(
             volumeId = volumeId,
             photoIds = photoIds,
         )
-        addVolumePhotosToAlbum(
+        val addVolumePhotosToAlbumResult = addVolumePhotosToAlbum(
             volumeId = volumeId,
             albumId = albumId,
             photoIds = volumePhotoIds,
         )
-        addSharedWithMePhotosToAlbum(
+        val addSharedWithMePhotosToAlbumResult = addSharedWithMePhotosToAlbum(
             volumeId = volumeId,
             albumId = albumId,
             photoIds = sharedWithMePhotoIds,
+        )
+        AddToRemoveFromAlbumResult(
+            addVolumePhotosToAlbumResult.results + addSharedWithMePhotosToAlbumResult.results
         )
     }
 
@@ -79,10 +83,11 @@ class AddPhotosToAlbum @Inject constructor(
         volumeId: VolumeId,
         albumId: AlbumId,
         photoIds: List<FileId>,
-    ) {
+    ): AddToRemoveFromAlbumResult {
         if (photoIds.isNotEmpty()) {
             TODO("addSharedWithMePhotosToAlbum is not implemented yet")
         }
+        return AddToRemoveFromAlbumResult()
     }
 
     private suspend fun volumeAndSharedWithMeFileIds(

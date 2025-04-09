@@ -58,6 +58,7 @@ import me.proton.core.drive.test.api.addPhotosToAlbumFailure
 import me.proton.core.drive.test.api.createAlbum
 import me.proton.core.drive.test.api.getAlbumListings
 import me.proton.core.drive.test.api.getAlbumPhotoListings
+import me.proton.core.drive.test.api.getAlbumSharedWithMeListings
 import me.proton.core.drive.test.api.jsonResponse
 import me.proton.core.drive.test.api.updateAlbumName
 import me.proton.core.drive.test.api.updateAlbumNameFailure
@@ -310,6 +311,11 @@ class AlbumRepositoryTest {
                         lastActivityTime = 20,
                     ),
                 )
+            )
+        }
+        driveRule.server.run {
+            getAlbumSharedWithMeListings(
+                emptyList()
             )
         }
 

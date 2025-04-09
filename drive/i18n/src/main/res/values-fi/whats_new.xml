@@ -19,5 +19,5 @@
 <resources>
   <string name="whats_new_title">Mitä uutta</string>
   <string name="whats_new_public_sharing_title">Jaa kenelle tahansa</string>
-  <string name="whats_new_public_sharing_description">Create shareable links to collaborate on folders and files — no Proton account required</string>
+  <string name="whats_new_public_sharing_description">Luo jaettavia linkkejä tehdäksesi yhteistyötä kansioiden ja tiedostojen kanssa - Proton tiliä ei vaadita</string>
 </resources>

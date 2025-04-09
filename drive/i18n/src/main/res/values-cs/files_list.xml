@@ -28,7 +28,7 @@
     -->
   <plurals name="file_operation_moving_multiple_successful">
     <item quantity="one">%1$d položka úspěšně přesunuta.</item>
-    <item quantity="few">%1$d položek úspěšně přesunuto.</item>
+    <item quantity="few">%1$d položky úspěšně přesunuty.</item>
     <item quantity="many">%1$d položek úspěšně přesunuto.</item>
     <item quantity="other">%1$d položek úspěšně přesunuto.</item>
   </plurals>

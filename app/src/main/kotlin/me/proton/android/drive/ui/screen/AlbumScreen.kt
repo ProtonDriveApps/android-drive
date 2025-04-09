@@ -18,7 +18,9 @@
 
 package me.proton.android.drive.ui.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -30,12 +32,19 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.photos.presentation.component.Album
 import me.proton.android.drive.ui.viewmodel.AlbumViewModel
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
+import me.proton.core.drive.base.presentation.component.RepeatOnLifecycleLaunchedEffect
 import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.selection.domain.entity.SelectionId
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun AlbumScreen(
     navigateToAlbumOptions: (AlbumId) -> Unit,
+    navigateToPhotosOptions: (FileId, AlbumId?) -> Unit,
+    navigateToMultiplePhotosOptions: (selectionId: SelectionId, AlbumId?) -> Unit,
+    navigateToPreview: (FileId, AlbumId) -> Unit,
+    navigateToPicker: (AlbumId) -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -45,19 +54,32 @@ fun AlbumScreen(
     val viewEvent = remember(lifecycle) {
         viewModel.viewEvent(
             navigateToAlbumOptions = navigateToAlbumOptions,
+            navigateToPhotosOptions = navigateToPhotosOptions,
+            navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
+            navigateToPreview = navigateToPreview,
+            navigateToPicker = navigateToPicker,
             navigateBack = navigateBack,
+            lifecycle = lifecycle,
         )
     }
     val photoItems = viewModel.driveLinks.collectAsLazyPagingItems()
     val listEffect = rememberFlowWithLifecycle(flow = viewModel.listEffect)
 
     viewState.value?.let { viewState ->
+        val selectedPhotos by viewState.selected.collectAsStateWithLifecycle(initialValue = emptySet())
+        val inMultiselect = remember(selectedPhotos) { selectedPhotos.isNotEmpty() }
+
+        BackHandler(enabled = inMultiselect) { viewEvent.onBack() }
+        RepeatOnLifecycleLaunchedEffect {
+            viewModel.initializeSelectionInPickerMode()
+        }
         Album(
             viewState = viewState,
             viewEvent = viewEvent,
             items = photoItems,
             listEffect = listEffect,
             driveLinksFlow = viewModel.driveLinksMap,
+            selectedPhotos = selectedPhotos,
             isRefreshEnabled = viewState.isRefreshEnabled,
             isRefreshing = viewState.listContentState.isRefreshing,
             onRefresh = viewEvent.onRefresh,

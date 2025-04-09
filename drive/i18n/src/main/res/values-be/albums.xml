@@ -33,4 +33,24 @@
     <item quantity="many">%1$s элементаў</item>
     <item quantity="other">%1$s элементаў</item>
   </plurals>
+  <string name="albums_delete_album_action">Выдаліць альбом</string>
+  <string name="albums_delete_album_dialog_title">Выдаліць альбом?</string>
+  <string name="albums_delete_album_dialog_description">Будзе выдалены толькі альбом. Вашы фатаграфіі застануцца ў вашай шкале часу. Гэта дзеянне нельга будзе адрабіць.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Некаторыя фатаграфіі ў гэтым альбоме не захаваны ў вашай шкале часу. Выдаленне гэтага альбома прывядзе да незваротнага выдалення фатаграфій, якія знаходзяцца ў ім.\nЦі хочаце вы захаваць іх перад выдаленнем?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Выдаліць без захавання</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Захаваць фатаграфіі і выдаліць</string>
+  <string name="albums_add_zero_to_album_button">Дадаць у альбом</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Дадаць %1$d у альбом</item>
+    <item quantity="few">Дадаць %1$d у альбом</item>
+    <item quantity="many">Дадаць %1$d у альбом</item>
+    <item quantity="other">Дадаць %1$d у альбом</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Задаць у якасці вокладкі альбома</string>
 </resources>

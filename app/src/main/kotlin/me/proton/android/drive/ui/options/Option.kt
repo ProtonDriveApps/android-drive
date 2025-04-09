@@ -38,9 +38,12 @@ import me.proton.core.drive.files.presentation.entry.ManageAccessEntry
 import me.proton.core.drive.files.presentation.entry.MoveEntry
 import me.proton.core.drive.files.presentation.entry.MoveFileEntry
 import me.proton.core.drive.files.presentation.entry.OpenInBrowserProtonDocsEntry
+import me.proton.core.drive.files.presentation.entry.RemoveFromAlbumEntry
+import me.proton.core.drive.files.presentation.entry.RemoveFromAlbumFileEntry
 import me.proton.core.drive.files.presentation.entry.RemoveMeEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
+import me.proton.core.drive.files.presentation.entry.SetAsAlbumCoverEntry
 import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
 import me.proton.core.drive.files.presentation.entry.ToggleTrashEntry
@@ -162,7 +165,7 @@ sealed class Option(
             runAction: RunAction,
             navigateToMove: (linkId: LinkId, parentId: FolderId?) -> Unit,
         ) = MoveFileEntry { driveLink ->
-            runAction { navigateToMove(driveLink.id, driveLink.parentId) }
+            runAction { navigateToMove(driveLink.id, driveLink.parentId as? FolderId) }
         }
 
         fun build(
@@ -345,6 +348,43 @@ sealed class Option(
             runAction { createAlbum() }
         }
     }
+
+    data object SetAsAlbumCover : Option(
+        ApplicableQuantity.Single,
+        setOf(ApplicableTo.FILE_PHOTO),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED
+    ) {
+        fun build(
+            runAction: RunAction,
+            setAsAlbumCover: (DriveLink.File) -> Unit,
+        ) = SetAsAlbumCoverEntry { driveLink ->
+            runAction { setAsAlbumCover(driveLink) }
+        } as FileOptionEntry<DriveLink>
+    }
+
+    data object RemoveFromAlbum : Option(
+        ApplicableQuantity.All,
+        setOf(ApplicableTo.FILE_PHOTO),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED
+    ) {
+        fun build(
+            runAction: RunAction,
+            removeFromAlbum: (DriveLink.File) -> Unit,
+        ) = RemoveFromAlbumFileEntry { driveLink ->
+            runAction {
+                removeFromAlbum(driveLink)
+            }
+        } as FileOptionEntry<DriveLink>
+
+        fun build(
+            runAction: RunAction,
+            removeSelectedFromAlbum: () -> Unit,
+        ) = RemoveFromAlbumEntry {
+            runAction {
+                removeSelectedFromAlbum()
+            }
+        }
+    }
 }
 
 sealed class ApplicableQuantity(open val quantity: Long) {
@@ -403,23 +443,6 @@ fun Set<Option>.filter(driveLink: DriveLink) =
         option.applicableStates.containsAll(driveLink.toOptionState()) && driveLink.isApplicableTo(option.applicableTo)
     }
 
-private val photosOptions = listOf(
-    Option.OfflineToggle,
-    Option.ShareViaInvitations,
-    Option.ManageAccess,
-    Option.SendFile,
-    Option.Download,
-    Option.Info,
-    Option.Trash,
-    Option.CreateAlbum,
-)
-
-fun Iterable<Option>.filter(optionsFilter: OptionsFilter) =
-    when (optionsFilter) {
-        OptionsFilter.FILES -> this
-        OptionsFilter.PHOTOS -> filter { option -> option in photosOptions }
-    }
-
 fun Iterable<Option>.filterRoot(driveLink: DriveLink, featureFlag: FeatureFlag) = filter { option ->
     if (driveLink.parentId == null) {
         when (option) {
@@ -452,6 +475,7 @@ fun Iterable<Option>.filterPermissions(
         Option.CreateDocument -> permissions.canWrite
         Option.CreateAlbum -> permissions.canWrite
         Option.CreateFolder -> permissions.canWrite
+        Option.DeleteAlbum -> permissions.isAdmin
         Option.DeletePermanently -> permissions.canWrite
         Option.Download -> permissions.canRead
         Option.Info -> permissions.canRead
@@ -460,13 +484,14 @@ fun Iterable<Option>.filterPermissions(
         Option.OfflineToggle -> permissions.canRead
         Option.OpenInBrowser -> permissions.canRead
         Option.Rename -> permissions.canWrite
+        Option.RemoveFromAlbum -> permissions.isAdmin
+        Option.RemoveMe -> permissions.canRead
         Option.SendFile -> permissions.canRead
+        Option.SetAsAlbumCover -> permissions.isAdmin
         Option.ShareViaInvitations -> permissions.isAdmin
         Option.TakeAPhoto -> permissions.canWrite
         Option.Trash -> permissions.isAdmin
         Option.UploadFile -> permissions.canWrite
-        Option.RemoveMe -> permissions.canRead
-        Option.DeleteAlbum -> permissions.isAdmin
     }
 }
 
@@ -481,9 +506,13 @@ fun Iterable<Option>.filterProtonDocs(killSwitch: FeatureFlag) = filter { option
 fun Iterable<Option>.filterAlbums(
     featureFlagOn: Boolean,
     killSwitch: FeatureFlag,
+    albumId: AlbumId? = null,
 ) = filter { option ->
+    val featureEnabled = featureFlagOn && killSwitch.off
     when (option) {
-        Option.CreateAlbum -> featureFlagOn && killSwitch.off
+        Option.CreateAlbum -> featureEnabled
+        Option.RemoveFromAlbum -> featureEnabled && albumId != null
+        Option.SetAsAlbumCover -> featureEnabled && albumId != null
         else -> true
     }
 }

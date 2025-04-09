@@ -40,13 +40,14 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
 import me.proton.core.drive.i18n.R
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
-import me.proton.core.presentation.R as CorePresentation
 import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.presentation.R as CorePresentation
 
 @Suppress("TooManyFunctions")
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -59,17 +60,23 @@ open class SelectionViewModel(
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     protected open val driveLinkFilter: (DriveLink) -> Boolean = { true }
+    protected open val filterByParentId: Boolean = true
 
     protected val selectionId = MutableStateFlow(
         savedStateHandle.get<String?>(KEY_SELECTION_ID)?.let { SelectionId(it) }
     )
-    protected val parentFolderId = MutableStateFlow<FolderId?>(null)
+    protected val parentId = MutableStateFlow<ParentId?>(null)
     protected val selected: StateFlow<Set<LinkId>> = selectionId
         .filterNotNull()
         .transformLatest { id ->
-            val parentId = parentFolderId.filterNotNull().first()
+            val selectedDriveLinks = if (filterByParentId) {
+                val parentId = parentId.filterNotNull().first()
+                getSelectedDriveLinks(id, parentId)
+            } else {
+                getSelectedDriveLinks(id)
+            }
             emitAll(
-                getSelectedDriveLinks(id, parentId).map { driveLinks ->
+                selectedDriveLinks.map { driveLinks ->
                     driveLinks.map { driveLink -> driveLink.id }.toSet()
                 }
             )
@@ -80,7 +87,7 @@ open class SelectionViewModel(
         onAction = {
             viewModelScope.launch {
                 selectAll(
-                    parentId = parentFolderId.filterNotNull().first(),
+                    parentId = parentId.filterNotNull().first(),
                     selectionId = selectionId.value,
                     driveLinkFilter = driveLinkFilter,
                 )
@@ -103,7 +110,7 @@ open class SelectionViewModel(
         onAction = { onAction?.invoke() }
     )
 
-    protected fun onTopAppBarNavigation(nonSelectedBlock: () -> Unit): () -> Unit = {
+    protected open fun onTopAppBarNavigation(nonSelectedBlock: () -> Unit): () -> Unit = {
         Unit.also {
             if (selected.value.isNotEmpty()) {
                 selectionId.value?.let { viewModelScope.launch { deselectLinks(it) } }
@@ -113,7 +120,7 @@ open class SelectionViewModel(
         }
     }
 
-    protected fun onDriveLink(driveLink: DriveLink, nonSelectedBlock: () -> Unit) {
+    protected open fun onDriveLink(driveLink: DriveLink, nonSelectedBlock: () -> Unit) {
         if (selected.value.isNotEmpty()) {
             if (selected.value.contains(driveLink.id)) {
                 removeSelected(listOf(driveLink.id))
@@ -126,13 +133,14 @@ open class SelectionViewModel(
     }
 
     protected inline fun <reified T : LinkId> onSelectedOptions(
-        navigateToFileOrFolderOptions: (linkId: T) -> Unit,
-        navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
+        navigateToFileOrFolderOptions: (linkId: T, albumId: AlbumId?) -> Unit,
+        navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId, albumId: AlbumId?) -> Unit,
+        albumId: AlbumId? = null,
     ) {
         if (selected.value.size == 1) {
-            navigateToFileOrFolderOptions(selected.value.first() as T)
+            navigateToFileOrFolderOptions(selected.value.first() as T, albumId)
         } else {
-            selectionId.value?.let { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId) }
+            selectionId.value?.let { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId, albumId) }
         }
     }
 
@@ -142,7 +150,7 @@ open class SelectionViewModel(
 
     protected fun onBack() { removeAllSelected() }
 
-    private fun addSelected(linkIds: List<LinkId>) {
+    protected open fun addSelected(linkIds: List<LinkId>) {
         viewModelScope.launch {
             selectionId.value?.let { selectionId ->
                 selectLinks(selectionId, linkIds)
@@ -150,7 +158,7 @@ open class SelectionViewModel(
         }
     }
 
-    private fun removeSelected(linkIds: List<LinkId>) {
+    protected open fun removeSelected(linkIds: List<LinkId>) {
         viewModelScope.launch {
             selectionId.value?.let { selectionId ->
                 deselectLinks(selectionId, linkIds)
@@ -158,7 +166,7 @@ open class SelectionViewModel(
         }
     }
 
-    private fun removeAllSelected() {
+    protected fun removeAllSelected() {
         if (selected.value.isNotEmpty()) {
             viewModelScope.launch {
                 selectionId.value?.let { selectionId -> deselectLinks(selectionId) }

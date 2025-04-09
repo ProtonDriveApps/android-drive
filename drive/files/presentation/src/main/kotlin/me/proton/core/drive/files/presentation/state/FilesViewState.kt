@@ -52,6 +52,7 @@ data class FilesViewState(
     val topBarActions: Flow<Set<Action>> = emptyFlow(),
     val isDriveLinkMoreOptionsEnabled: Boolean = true,
     val notificationDotVisible: Boolean = false,
+    val volumesEntries: List<VolumeEntry> = emptyList(),
 ) {
 
     companion object {

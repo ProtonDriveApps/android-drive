@@ -43,6 +43,7 @@ import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
 import me.proton.core.drive.base.domain.extension.combine
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.onFailure
@@ -82,6 +83,7 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.usecase.GetShareUsers
+import me.proton.core.network.domain.hasProtonErrorCode
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
@@ -118,17 +120,19 @@ class ManageAccessViewModel @Inject constructor(
     private val sharedDriveLink = driveLink.filterNotNull().transformLatest { driveLink ->
         emitAll(getSharedDriveLink(driveLink))
     }.onEach { dataResult ->
-        dataResult.onFailure { error ->
-            if (error.cause !is NoSuchElementException) {
-                error.cause?.log(SHARING)
-                broadcastMessages(
-                    userId = userId,
-                    message = error.getDefaultMessage(
-                        appContext,
-                        configurationProvider.useExceptionMessage
-                    ),
-                    type = BroadcastMessage.Type.WARNING,
-                )
+        dataResult.onFailure { resultError ->
+            resultError.cause?.let { error ->
+                if (error !is NoSuchElementException && !error.hasProtonErrorCode(NOT_EXISTS)) {
+                    error.log(SHARING)
+                    broadcastMessages(
+                        userId = userId,
+                        message = error.getDefaultMessage(
+                            appContext,
+                            configurationProvider.useExceptionMessage
+                        ),
+                        type = BroadcastMessage.Type.WARNING,
+                    )
+                }
             }
         }
     }

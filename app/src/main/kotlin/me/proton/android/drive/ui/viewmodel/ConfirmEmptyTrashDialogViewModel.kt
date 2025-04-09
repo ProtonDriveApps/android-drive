@@ -25,8 +25,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.viewevent.ConfirmEmptyTrashViewEvent
+import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.log.LogTag.TRASH
+import me.proton.core.drive.base.domain.log.logId
+import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.trash.domain.usecase.EmptyTrash
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,13 +41,22 @@ class ConfirmEmptyTrashDialogViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
+    private val volumeId: VolumeId = VolumeId(savedStateHandle.require(VOLUME_ID))
+
     fun viewEvent(dismiss: () -> Unit) = object : ConfirmEmptyTrashViewEvent {
         override val onConfirm = {
             viewModelScope.launch {
-                emptyTrash(userId)
+                emptyTrash(userId, volumeId).onFailure { error ->
+                    error.log(TRASH, "Cannot empty trash volumeId: ${volumeId.id.logId()}")
+                }
                 dismiss()
             }
             Unit
         }
+    }
+
+
+    companion object {
+        const val VOLUME_ID = "volumeId"
     }
 }

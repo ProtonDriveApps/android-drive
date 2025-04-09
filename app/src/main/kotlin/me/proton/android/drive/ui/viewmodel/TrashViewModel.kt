@@ -33,28 +33,37 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.effect.TrashEffect
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.screen.EmptyTrashIconState
+import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
+import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.state.ListContentAppendingState
+import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.trash.domain.usecase.GetPagedTrashedDriveLinks
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
-import me.proton.core.drive.base.presentation.state.ListContentAppendingState
-import me.proton.core.drive.base.presentation.state.ListContentState
-import me.proton.core.drive.base.presentation.effect.ListEffect
-import me.proton.core.drive.base.presentation.viewmodel.onLoadState
+import me.proton.core.drive.files.presentation.state.VolumeEntry
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.core.drive.trash.domain.TrashManager
 import me.proton.core.drive.trash.domain.usecase.GetEmptyTrashState
+import me.proton.core.drive.volume.domain.entity.Volume
+import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.volume.domain.usecase.GetVolumes
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.usecase.GetLayoutType
 import me.proton.drive.android.settings.domain.usecase.ToggleLayoutType
@@ -75,7 +84,10 @@ class TrashViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val toggleLayoutType: ToggleLayoutType,
     private val configurationProvider: ConfigurationProvider,
+    getVolumes: GetVolumes,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
+
+    private val volumeIdFlow = MutableStateFlow<VolumeId?>(null)
 
     private val listContentState = MutableStateFlow<ListContentState>(ListContentState.Loading)
     private val listContentAppendingState = MutableStateFlow<ListContentAppendingState>(ListContentAppendingState.Idle)
@@ -96,24 +108,49 @@ class TrashViewModel @Inject constructor(
         listContentState,
         listContentAppendingState,
         layoutType,
-    ) { sorting, contentState, appendingState, layoutType ->
+        getVolumes(userId).mapSuccessValueOrNull(),
+    ) { sorting, contentState, appendingState, layoutType, volumes ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
             )
             else -> contentState
         }
+        if (volumeIdFlow.value == null) {
+            volumeIdFlow.emit(
+                volumes?.firstOrNull { volume -> volume.type == Volume.Type.REGULAR }?.id
+                    ?: volumes?.firstOrNull { volume -> volume.type == Volume.Type.PHOTO }?.id
+            )
+        }
         initialViewState.copy(
             sorting = sorting,
             listContentState = listContentState,
             listContentAppendingState = appendingState,
             isGrid = layoutType == LayoutType.GRID,
+            volumesEntries = volumes?.takeIf { it.size > 1 }
+                .orEmpty()
+                .sortedBy { volume -> volume.type }
+                .map { volume ->
+                    VolumeEntry(
+                        id = volume.id,
+                        title = when (volume.type) {
+                            Volume.Type.UNKNOWN -> I18N.string.common_unknown
+                            Volume.Type.REGULAR -> I18N.string.title_files
+                            Volume.Type.PHOTO -> I18N.string.photos_title
+                        },
+                        isSelected = volume.id == volumeIdFlow.value
+                    )
+                },
         )
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
-    val driveLinks: Flow<PagingData<DriveLink>> = getTrashedDriveLinks(userId).cachedIn(viewModelScope)
+    val driveLinks: Flow<PagingData<DriveLink>> = volumeIdFlow.filterNotNull().transformLatest { volumeId ->
+        emitAll(getTrashedDriveLinks(userId, volumeId))
+    }.cachedIn(viewModelScope)
     val listEffect: Flow<ListEffect> = _listEffect.asSharedFlow()
     val trashEffect: Flow<TrashEffect> = _trashEffect.asSharedFlow()
-    val emptyTrashState = combine(listContentState, getEmptyTrashState(userId)) { content, state ->
+    val emptyTrashState = combine(listContentState, volumeIdFlow.filterNotNull().transformLatest { volumeId ->
+        emitAll(getEmptyTrashState(userId, volumeId))
+    }) { content, state ->
         if (content !is ListContentState.Content) {
             EmptyTrashIconState.HIDDEN
         } else when (state) {
@@ -158,6 +195,10 @@ class TrashViewModel @Inject constructor(
         override val onAppendErrorAction = { retry() }
         override val onMoreOptions = { driveLink: DriveLink -> navigateToFileOrFolderOptions(driveLink.id) }
         override val onToggleLayout = this@TrashViewModel::onToggleLayout
+        override val onTab = { volumeEntry: VolumeEntry ->
+            volumeIdFlow.tryEmit(volumeEntry.id)
+            Unit
+        }
     }
 
     private fun retry() {
@@ -174,7 +215,9 @@ class TrashViewModel @Inject constructor(
 
     fun onMoreOptionsClicked() {
         viewModelScope.launch {
-            _trashEffect.emit(TrashEffect.MoreOptions)
+            volumeIdFlow.firstOrNull()?.let { volumeId ->
+                _trashEffect.emit(TrashEffect.MoreOptions(volumeId))
+            }
         }
     }
 

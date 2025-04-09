@@ -52,16 +52,36 @@ fun OptionsHeader(
     subtitle: String,
     modifier: Modifier = Modifier,
 ) {
+    OptionsHeader(
+        title = title,
+        isTitleEncrypted = isTitleEncrypted,
+        subtitle = subtitle,
+        modifier = modifier,
+    ) { contentModifier ->
+        Image(
+            painter = painter,
+            contentDescription = null,
+            modifier = contentModifier,
+        )
+    }
+}
+
+@Composable
+fun OptionsHeader(
+    title: String,
+    isTitleEncrypted: Boolean,
+    subtitle: String,
+    modifier: Modifier = Modifier,
+    imageContent: @Composable (Modifier) -> Unit,
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            modifier = Modifier
+        imageContent(
+            Modifier
                 .size(HeaderIconSize)
                 .clip(RoundedCornerShape(DefaultCornerRadius)),
-            painter = painter,
-            contentDescription = null
         )
         Column(
             modifier = Modifier

@@ -23,26 +23,18 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -52,16 +44,12 @@ import me.proton.android.drive.ui.viewmodel.SharedTabsViewModel
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.android.drive.ui.viewstate.SharedTab
 import me.proton.android.drive.ui.viewstate.SharedTabsViewState
-import me.proton.core.compose.component.ProtonButton
-import me.proton.core.compose.component.protonTextButtonColors
-import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
-import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.drive.base.presentation.component.ProtonTab
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.base.presentation.component.TopAppBar as BaseTopAppBar
-import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun SharedTabsScreen(
@@ -116,8 +104,8 @@ fun SharedTabs(
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             viewState.tabs.forEach { sharedTab ->
-                SharedTab(
-                    sharedTab = sharedTab,
+                ProtonTab(
+                    titleResId = sharedTab.titleResId,
                     isSelected = viewState.selectedTab == sharedTab,
                     onTab = { viewEvent.onTab(sharedTab) }
                 )
@@ -162,79 +150,4 @@ private fun TopAppBar(
         title = stringResource(id = titleResId),
         modifier = modifier,
     )
-}
-
-@Composable
-private fun SharedTab(
-    sharedTab: SharedTab,
-    isSelected: Boolean,
-    modifier: Modifier = Modifier,
-    onTab: (SharedTab) -> Unit,
-) {
-    val brandColor = ProtonTheme.colors.brandNorm
-    val dividerColor = remember(isSelected) { if (isSelected) brandColor else Color.Transparent }
-    ProtonButton(
-        modifier = modifier,
-        onClick = { onTab(sharedTab) },
-        contentPadding = PaddingValues(horizontal = SmallSpacing),
-        colors =  ButtonDefaults.protonTextButtonColors(false),
-        shape = RoundedCornerShape(0.dp),
-        border = null,
-        elevation = null,
-    ) {
-        Box(
-            modifier = Modifier
-                .height(DefaultButtonMinHeight),
-        ) {
-            Text(
-                text = stringResource(id = sharedTab.titleResId),
-                style = ProtonTheme.typography.body2Regular.copy(
-                    color = if (isSelected) brandColor else ProtonTheme.colors.textWeak
-                ),
-                modifier = Modifier
-                    .align(Alignment.Center),
-            )
-            Box(
-                modifier = Modifier
-                    .matchParentSize(),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
-                Divider(
-                    color = dividerColor,
-                    thickness = 4.dp,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(100.dp, 100.dp, 0.dp, 0.dp)),
-                )
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun PreviewSharedTab() {
-    ProtonTheme {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-        ) {
-            SharedTab(
-                sharedTab = SharedTab(
-                    SharedTab.Type.SHARED_WITH_ME,
-                    I18N.string.shared_with_me_title,
-                ),
-                isSelected = true,
-                onTab = { _ -> }
-            )
-            SharedTab(
-                sharedTab = SharedTab(
-                    SharedTab.Type.SHARED_BY_ME,
-                    I18N.string.shared_by_me_title,
-                ),
-                isSelected = false,
-                onTab = { _ -> }
-            )
-        }
-    }
 }

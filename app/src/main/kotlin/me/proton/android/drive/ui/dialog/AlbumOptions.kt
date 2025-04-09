@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.dialog
 
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,7 +36,7 @@ import androidx.lifecycle.flowWithLifecycle
 import me.proton.android.drive.photos.presentation.extension.details
 import me.proton.android.drive.ui.viewmodel.AlbumOptionsViewModel
 import me.proton.core.compose.component.bottomsheet.BottomSheetContent
-import me.proton.core.drive.base.presentation.R
+import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -45,6 +46,7 @@ import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.thumbnail.presentation.extension.thumbnailPainter
+import me.proton.core.drive.base.presentation.R as BasePresentation
 
 @Composable
 fun AlbumOptions(
@@ -132,18 +134,33 @@ fun AlbumOptionsHeader(
     modifier: Modifier = Modifier,
 ) {
     val coverPainter = coverLink?.thumbnailPainter()?.painter
-        ?: painterResource(id = R.drawable.img_whats_new_public_sharing) //TODO: once available put proper no-cover illustration
     val localContext = LocalContext.current
     val details = remember (localContext) {
         album.details(localContext, useCreationTime = false)
     }
-    OptionsHeader(
-        painter = coverPainter,
-        title = album.name,
-        isTitleEncrypted = album.isNameEncrypted,
-        subtitle = details,
-        modifier = modifier,
-    )
+    if (coverPainter != null) {
+        OptionsHeader(
+            painter = coverPainter,
+            title = album.name,
+            isTitleEncrypted = album.isNameEncrypted,
+            subtitle = details,
+            modifier = modifier,
+        )
+    } else {
+        OptionsHeader(
+            title = album.name,
+            isTitleEncrypted = album.isNameEncrypted,
+            subtitle = details,
+            modifier = modifier,
+        ) { contentModifier ->
+            Icon(
+                painter = painterResource(id = BasePresentation.drawable.ic_proton_images),
+                contentDescription = null,
+                tint = ProtonTheme.colors.iconNorm,
+                modifier = contentModifier,
+            )
+        }
+    }
 }
 
 object AlbumOptionsTestTag {

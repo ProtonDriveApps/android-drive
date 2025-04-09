@@ -19,6 +19,7 @@
 package me.proton.android.drive.photos.domain.usecase
 
 import me.proton.android.drive.photos.domain.repository.AlbumInfoRepository
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.photo.domain.entity.PhotoListing
@@ -39,6 +40,13 @@ class RemoveFromAlbumInfo @Inject constructor(
         photoListings: Set<PhotoListing>,
     ) = coRunCatching {
         removeFromAlbumInfo(albumId, photoListings)
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        albumId: AlbumId?,
+    ) = coRunCatching {
+        repository.removeAllPhotoListings(userId, albumId)
     }
 
     private suspend fun removeFromAlbumInfo(albumId: AlbumId?, photoListings: Set<PhotoListing>) =

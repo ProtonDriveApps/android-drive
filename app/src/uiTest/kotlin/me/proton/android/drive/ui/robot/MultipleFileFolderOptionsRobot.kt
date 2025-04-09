@@ -19,17 +19,21 @@
 package me.proton.android.drive.ui.robot
 
 import me.proton.android.drive.ui.dialog.MultipleFileFolderOptionsDialogTestTag
-import me.proton.core.drive.i18n.R
 import me.proton.test.fusion.Fusion.node
+import me.proton.core.drive.i18n.R as I18N
 
 object MultipleFileFolderOptionsRobot : Robot {
     private val multipleFileFolderOptionsScreen get() = node.withTag(
         MultipleFileFolderOptionsDialogTestTag.fileOrFolderOptions
     )
-    private val createAlbumButton get() = node.withText(R.string.common_create_album_action)
+    private val createAlbumButton get() = node.withText(I18N.string.common_create_album_action)
+    private val removeFromAlbum get() = node.withText(I18N.string.common_remove_from_album_action)
 
     fun clickOnCreateAlbum() = CreateAlbumTabRobot.apply {
         createAlbumButton.scrollTo().click()
+    }
+    fun clickRemoveFromAlbum() = AlbumRobot.apply {
+        removeFromAlbum.scrollTo().click()
     }
 
     override fun robotDisplayed() {

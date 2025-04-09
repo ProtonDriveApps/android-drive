@@ -31,4 +31,22 @@
     <item quantity="one">%1$s objekt</item>
     <item quantity="other">%1$s objekt</item>
   </plurals>
+  <string name="albums_delete_album_action">Ta bort album</string>
+  <string name="albums_delete_album_dialog_title">Ta bort album?</string>
+  <string name="albums_delete_album_dialog_description">Detta kommer endast ta bort albumet. Dina foton kommer finnas kvar på din tidslinje. Denna åtgärd kan inte ångras.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Några foton i detta album sparas inte på din tidslinje. Att ta bort detta album kommer ta bort dessa foton permanent.\nVill du spara dem innan du tar bort dem?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Ta bort utan att spara</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Spara foton och ta bort</string>
+  <string name="albums_add_zero_to_album_button">Lägg till i album</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Lägg till %1$d till album</item>
+    <item quantity="other">Lägg till %1$d till album</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Ställ in som albumomslag</string>
 </resources>

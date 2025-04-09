@@ -48,7 +48,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.android.drive.ui.navigation.HomeNavGraph
 import me.proton.android.drive.ui.navigation.PagerType
 import me.proton.android.drive.ui.navigation.Screen
-import me.proton.android.drive.ui.options.OptionsFilter
 import me.proton.android.drive.ui.provider.setLocalSnackbarPadding
 import me.proton.android.drive.ui.viewevent.HomeViewEvent
 import me.proton.android.drive.ui.viewmodel.HomeViewModel
@@ -71,7 +70,7 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawer
 import me.proton.core.drive.sorting.domain.entity.Sorting
-import me.proton.drive.android.settings.domain.entity.UserOverlay
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 
 @Composable
@@ -88,11 +87,11 @@ fun HomeScreen(
     navigateToSigningOut: () -> Unit,
     navigateToTrash: () -> Unit,
     navigateToOffline: () -> Unit,
-    navigateToPreview: (fileId: FileId, pagerType: PagerType, optionsFilter: OptionsFilter) -> Unit,
+    navigateToPreview: (fileId: FileId, pagerType: PagerType) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
     navigateToSettings: () -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId, optionsFilter: OptionsFilter) -> Unit,
-    navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId, optionsFilter: OptionsFilter) -> Unit,
+    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
@@ -186,10 +185,10 @@ internal fun Home(
     deepLinkBaseUrl: String,
     startDestination: String,
     onDrawerStateChanged: (Boolean) -> Unit,
-    navigateToPreview: (fileId: FileId, pagerType: PagerType, optionsFilter: OptionsFilter) -> Unit,
+    navigateToPreview: (fileId: FileId, pagerType: PagerType) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId, optionsFilter: OptionsFilter) -> Unit,
-    navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId, optionsFilter: OptionsFilter) -> Unit,
+    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     arguments: Bundle,
     viewState: HomeViewState,

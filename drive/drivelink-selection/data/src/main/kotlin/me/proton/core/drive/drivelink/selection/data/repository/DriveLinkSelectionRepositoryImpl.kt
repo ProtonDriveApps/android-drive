@@ -24,11 +24,11 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.drivelink.data.extension.toDriveLinks
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.selection.data.db.DriveLinkSelectionDatabase
-import javax.inject.Inject
 import me.proton.core.drive.drivelink.selection.domain.repository.DriveLinkSelectionRepository
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
+import javax.inject.Inject
 
 class DriveLinkSelectionRepositoryImpl @Inject constructor(
     private val db: DriveLinkSelectionDatabase,
@@ -41,7 +41,7 @@ class DriveLinkSelectionRepositoryImpl @Inject constructor(
         }
 
     override suspend fun selectAll(
-        parentId: FolderId,
+        parentId: ParentId,
         selectionId: SelectionId?,
         getDriveLinks: (fromIndex: Int, count: Int) -> Flow<List<DriveLink>>,
         selectLinks: suspend (SelectionId?, List<LinkId>) -> Result<SelectionId>,

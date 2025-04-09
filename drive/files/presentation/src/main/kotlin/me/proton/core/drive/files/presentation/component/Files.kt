@@ -20,6 +20,7 @@ package me.proton.core.drive.files.presentation.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -88,6 +89,7 @@ fun Files(
     getTransferProgress: (DriveLink) -> Flow<Percentage>? = { null },
     uploadingFileLinks: Flow<List<UploadFileLink>> = emptyFlow(),
     showTopAppBar: Boolean = true,
+    tabs: @Composable ColumnScope.() -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     val uploadFileLinkList by rememberFlowWithLifecycle(flow = uploadingFileLinks)
@@ -100,6 +102,7 @@ fun Files(
                 viewEvent = viewEvent,
                 actions = actions
             )
+            tabs()
         }
         if (viewState.isGrid) {
             lazyColumnItems.DisplayAsGrid(viewState, viewEvent, uploadFileLinkList, getTransferProgress)

@@ -30,4 +30,21 @@
   <plurals name="albums_photo_count">
     <item quantity="other">%1$s개 항목</item>
   </plurals>
+  <string name="albums_delete_album_action">앨범 삭제</string>
+  <string name="albums_delete_album_dialog_title">앨범을 삭제할까요?</string>
+  <string name="albums_delete_album_dialog_description">사진이 앨범에 한하여 삭제됩니다. 사진이 여전히 타임라인에 유지됩니다. 이 작업을 실행 취소할 수 없습니다.</string>
+  <string name="albums_delete_album_dialog_description_with_children">이 앨범 내의 일부 사진이 타임라인에 저장되지 않았습니다. 앨범에서 사진을 삭제하면 해당 사진 또한 영구적으로 삭제됩니다.\n삭제하기 전에 저장하시겠어요?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">저장하지 않고 삭제하기</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">사진 저장하고 삭제하기</string>
+  <string name="albums_add_zero_to_album_button">Add to album</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="other">Add %1$d to album</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Set as album cover</string>
 </resources>

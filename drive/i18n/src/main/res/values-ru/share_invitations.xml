@@ -30,9 +30,9 @@
     -->
   <plurals name="share_via_invitations_person_added">
     <item quantity="one">Добавлен 1 пользователь</item>
-    <item quantity="few">%1$d человек добавлено</item>
-    <item quantity="many">%1$d человек добавлено</item>
-    <item quantity="other">%1$d человек добавлено</item>
+    <item quantity="few">Добавлено %1$d пользователя</item>
+    <item quantity="many">Добавлено %1$d пользователей</item>
+    <item quantity="other">Добавлено %1$d пользователей</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -41,9 +41,9 @@
     -->
   <plurals name="share_via_invitations_person_added_error">
     <item quantity="one">1 пользователь не может быть приглашен</item>
-    <item quantity="few">%1$d пользователь не может быть приглашен</item>
-    <item quantity="many">%1$d пользователь не может быть приглашен</item>
-    <item quantity="other">%1$d пользователь не может быть приглашен</item>
+    <item quantity="few">%1$d пользователя не могут быть приглашены</item>
+    <item quantity="many">%1$d пользователей не могут быть приглашены</item>
+    <item quantity="other">%1$d пользователей не могут быть приглашены</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -60,7 +60,7 @@
   <string name="common_permission_admin">Администратор</string>
   <string name="common_permission_editor">Редактор</string>
   <string name="common_permission_viewer">Только просмотр</string>
-  <string name="common_permission_unknown">Неизвестный тип</string>
+  <string name="common_permission_unknown">Неизвестное</string>
   <!--
         Variable %1$s is an email
         Examples:
@@ -91,10 +91,10 @@
             "2 members"
     -->
   <plurals name="share_via_invitations_group_members">
-    <item quantity="one">%1$d член</item>
-    <item quantity="few">%1$d участников</item>
-    <item quantity="many">%1$d членов</item>
-    <item quantity="other">%1$d член</item>
+    <item quantity="one">%1$d участник</item>
+    <item quantity="few">%1$d участника</item>
+    <item quantity="many">%1$d участников</item>
+    <item quantity="other">%1$d участников</item>
   </plurals>
   <string name="share_via_invitations_message_placeholder">Добавить сообщение</string>
   <string name="share_via_invitations_send_message_and_name_label">Включите сообщение и имя файла в электронное письмо с приглашением</string>

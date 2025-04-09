@@ -38,7 +38,8 @@
   <string name="common_uploading">Przesyłanie</string>
   <string name="common_on">Wł.</string>
   <string name="common_off">Wył.</string>
-  <string name="common_all">All</string>
+  <string name="common_all">Wszystkie</string>
+  <string name="common_unknown">Unknown</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -65,7 +66,9 @@
   <string name="common_stop_sharing_action">Zatrzymaj udostępnianie</string>
   <string name="common_open_in_browser_action">Otwórz w przeglądarce</string>
   <string name="common_done_action">Gotowe</string>
-  <string name="common_create_album_action">Create album</string>
+  <string name="common_create_album_action">Utwórz album</string>
+  <string name="common_set_as_album_cover_action">Set as album cover</string>
+  <string name="common_add_action">Add</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Plik dźwiękowy</string>
@@ -143,10 +146,10 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d zaznaczony</item>
-    <item quantity="few">%1$d zaznaczone</item>
-    <item quantity="many">%1$d zaznaczonych</item>
-    <item quantity="other">%1$d zaznaczonych</item>
+    <item quantity="one">Zaznaczono: %1$d</item>
+    <item quantity="few">Zaznaczono: %1$d</item>
+    <item quantity="many">Zaznaczono: %1$d</item>
+    <item quantity="other">Zaznaczono: %1$d</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

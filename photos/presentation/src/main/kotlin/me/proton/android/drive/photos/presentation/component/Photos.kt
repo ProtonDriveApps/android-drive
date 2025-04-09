@@ -120,6 +120,7 @@ fun Photos(
                     viewState = viewState.backupStatusViewState,
                     showPhotosStateBanner = viewState.showPhotosStateBanner,
                     modifier = modifier.testTag(PhotosTestTag.content),
+                    inMultiselect = viewState.inMultiselect,
                     selectedPhotos = selectedPhotos,
                     onClick = viewEvent.onDriveLink,
                     onLongClick = viewEvent.onSelectDriveLink,

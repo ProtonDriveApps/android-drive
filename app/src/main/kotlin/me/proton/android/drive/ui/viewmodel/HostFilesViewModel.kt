@@ -39,16 +39,19 @@ import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
-import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
-import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
-import me.proton.core.drive.files.presentation.state.FilesViewState
+import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.base.presentation.state.ListContentAppendingState
 import me.proton.core.drive.base.presentation.state.ListContentState
-import me.proton.core.drive.base.presentation.effect.ListEffect
+import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.base.presentation.viewmodel.onLoadState
+import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
+import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
+import me.proton.core.drive.files.presentation.state.FilesViewState
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.ParentId
+import me.proton.core.drive.link.domain.extension.requireFolderId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
@@ -85,18 +88,18 @@ abstract class HostFilesViewModel(
         isClickEnabled = { driveLink -> driveLink is Folder },
         isTextEnabled = { driveLink -> FilesViewState.defaultIsTextEnabled(driveLink) && driveLink is Folder }
     )
-    protected val trigger = MutableSharedFlow<FolderId?>(replay = 1).apply { tryEmit(parentId) }
+    protected val trigger = MutableSharedFlow<ParentId?>(replay = 1).apply { tryEmit(parentId) }
     protected val parentLink = trigger
-        .transformLatest { folderId ->
+        .transformLatest { parentId ->
             listContentState.value = ListContentState.Loading
-            emitAll(getDriveLink(userId, folderId = folderId))
+            emitAll(getDriveLink(userId = userId, parentId = parentId))
         }
         .mapSuccessValueOrNull()
         .stateIn(viewModelScope, SharingStarted.Lazily, null)
     val driveLinks = parentLink
         .transformLatest { driveLink ->
             emit(PagingData.empty())
-            if (driveLink != null) {
+            if (driveLink != null && driveLink is Folder) {
                 emitAll(getPagedDriveLinks(folderId = driveLink.id))
             }
         }.cachedIn(viewModelScope)
@@ -155,7 +158,11 @@ abstract class HostFilesViewModel(
     open fun onCreateFolder(
         navigateToCreateFolder: (FolderId) -> Unit,
     ) {
-        parentLink.value?.let { folder -> navigateToCreateFolder(folder.id) }
+        parentLink.value?.let { parent ->
+            (parent as? DriveLink.Folder)?.let { folder ->
+                navigateToCreateFolder(folder.id)
+            }
+        }
     }
 
     private fun retry() {

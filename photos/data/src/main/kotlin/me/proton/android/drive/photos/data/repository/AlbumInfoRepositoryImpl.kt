@@ -19,6 +19,7 @@
 package me.proton.android.drive.photos.data.repository
 
 import androidx.datastore.preferences.core.edit
+import kotlinx.coroutines.flow.Flow
 import me.proton.android.drive.photos.data.db.PhotosDatabase
 import me.proton.android.drive.photos.data.db.entity.AddToAlbumEntity
 import me.proton.android.drive.photos.data.extension.toAddToAlbumEntity
@@ -48,6 +49,13 @@ class AlbumInfoRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getPhotoListingsCount(userId: UserId, albumId: AlbumId?): Flow<Int> =
+        if (albumId == null) {
+            db.addToAlbumDao.getPhotoListingsCount(userId)
+        } else {
+            db.addToAlbumDao.getPhotoListingsCount(userId, albumId.shareId.id, albumId.id)
+        }
+
     override suspend fun addPhotoListings(albumId: AlbumId?, vararg photoListings: PhotoListing) =
         db.addToAlbumDao.insertOrIgnore(
             *photoListings.map { photoListing ->
@@ -60,8 +68,30 @@ class AlbumInfoRepositoryImpl @Inject constructor(
             photoListings
                 .groupBy({ photoListing -> photoListing.linkId.shareId }) { photoListing -> photoListing.linkId.id }
                 .forEach { (shareId, ids) ->
-                    db.addToAlbumDao.delete(shareId.userId, shareId.id, ids.toSet())
+                    if (albumId == null) {
+                        db.addToAlbumDao.delete(
+                            userId = shareId.userId,
+                            shareId = shareId.id,
+                            linkIds = ids.toSet(),
+                        )
+                    } else {
+                        db.addToAlbumDao.delete(
+                            userId = shareId.userId,
+                            albumShareId = albumId.shareId.id,
+                            albumId = albumId.id,
+                            shareId = shareId.id,
+                            linkIds = ids.toSet(),
+                        )
+                    }
                 }
+        }
+    }
+
+    override suspend fun removeAllPhotoListings(userId: UserId, albumId: AlbumId?) {
+        if (albumId == null) {
+            db.addToAlbumDao.deleteAll(userId)
+        } else {
+            db.addToAlbumDao.deleteAll(userId, albumId.shareId.id, albumId.id)
         }
     }
 
@@ -71,6 +101,7 @@ class AlbumInfoRepositoryImpl @Inject constructor(
                 { fromIndex, count ->
                     db.addToAlbumDao.getPhotoListings(
                         userId = userId,
+                        albumShareId = albumId.shareId.id,
                         albumId = albumId.id,
                         offset = fromIndex,
                         limit = count,

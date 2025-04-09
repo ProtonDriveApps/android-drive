@@ -48,6 +48,8 @@ object PhotosTabRobot :
     HomeRobot,
     LinksRobot,
     NavigationBarRobot {
+
+    private val photosContent get() = node.withTag(PhotosTestTag.content)
     private val enableBackupButton
         get() = allNodes.withText(I18N.string.photos_permissions_action).onFirst()
     private val enableErrorBackupButton
@@ -91,6 +93,10 @@ object PhotosTabRobot :
     fun clickGetMoreStorage() = SubscriptionRobot.apply { getMoreStorageButton.click() }
 
     fun dismissQuotaBanner() = apply { closeQuotaBannerButton.click() }
+
+    fun scrollToPhoto(imageName: ImageName): PhotosTabRobot = apply {
+        photosContent.scrollTo(photoWithName(imageName.fileName))
+    }
 
     fun longClickOnPhoto(fileName: String) =
         photoWithName(fileName).longClickTo(this)

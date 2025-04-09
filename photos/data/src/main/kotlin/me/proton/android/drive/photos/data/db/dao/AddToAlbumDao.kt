@@ -21,12 +21,28 @@ package me.proton.android.drive.photos.data.db.dao
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 import me.proton.android.drive.photos.data.db.entity.AddToAlbumEntity
 import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 
 @Dao
 abstract class AddToAlbumDao : BaseDao<AddToAlbumEntity>() {
+
+    @Query("""
+        SELECT COUNT(*) FROM AddToAlbumEntity WHERE
+            user_id = :userId AND
+            album_id IS NULL
+    """)
+    abstract fun getPhotoListingsCount(userId: UserId): Flow<Int>
+
+    @Query("""
+        SELECT COUNT(*) FROM AddToAlbumEntity WHERE
+            user_id = :userId AND
+            album_share_id = :albumShareId AND
+            album_id = :albumId
+    """)
+    abstract fun getPhotoListingsCount(userId: UserId, albumShareId: String, albumId: String): Flow<Int>
 
     @Query("""
         SELECT * FROM AddToAlbumEntity WHERE
@@ -41,11 +57,13 @@ abstract class AddToAlbumDao : BaseDao<AddToAlbumEntity>() {
     @Query("""
         SELECT * FROM AddToAlbumEntity WHERE
             user_id = :userId AND
+            album_share_id = :albumShareId AND
             album_id = :albumId
         ORDER BY capture_time DESC
     """)
     abstract fun getAddToAlbumPhotosPagingSource(
         userId: UserId,
+        albumShareId: String,
         albumId: String,
     ): PagingSource<Int, AddToAlbumEntity>
 
@@ -65,12 +83,14 @@ abstract class AddToAlbumDao : BaseDao<AddToAlbumEntity>() {
     @Query("""
         SELECT * FROM AddToAlbumEntity WHERE
             user_id = :userId AND
+            album_share_id = :albumShareId AND
             album_id = :albumId
         ORDER BY capture_time DESC
         LIMIT :limit OFFSET :offset
     """)
     abstract suspend fun getPhotoListings(
         userId: UserId,
+        albumShareId: String,
         albumId: String,
         limit: Int,
         offset: Int,
@@ -88,7 +108,31 @@ abstract class AddToAlbumDao : BaseDao<AddToAlbumEntity>() {
     @Query("""
         DELETE FROM AddToAlbumEntity WHERE
             user_id = :userId AND
+            album_share_id = :albumShareId AND
+            album_id = :albumId AND
+            share_id = :shareId AND
+            link_id IN (:linkIds)
+    """)
+    abstract suspend fun delete(
+        userId: UserId,
+        albumShareId: String,
+        albumId: String,
+        shareId: String,
+        linkIds: Set<String>,
+    )
+
+    @Query("""
+        DELETE FROM AddToAlbumEntity WHERE
+            user_id = :userId AND
             album_id IS NULL
     """)
     abstract suspend fun deleteAll(userId: UserId)
+
+    @Query("""
+        DELETE FROM AddToAlbumEntity WHERE
+            user_id = :userId AND
+            album_share_id = :albumShareId AND
+            album_id = :albumId
+    """)
+    abstract suspend fun deleteAll(userId: UserId, albumShareId: String, albumId: String)
 }

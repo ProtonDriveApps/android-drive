@@ -26,7 +26,7 @@
   <string name="log_level_normal">Normaali</string>
   <string name="log_level_warning">Varoitus</string>
   <string name="log_level_error">Virhe</string>
-  <string name="log_origin_upload">Tallennus</string>
+  <string name="log_origin_upload">Tallenna</string>
   <string name="log_origin_download">Lataus</string>
   <string name="log_origin_network">API</string>
   <string name="log_origin_throwable">Poikkeus</string>
@@ -34,7 +34,7 @@
   <string name="log_origin_screen">Näyttö</string>
   <string name="log_origin_application_state">Sovelluksen tila</string>
   <string name="log_origin_workers">Työntekijät</string>
-  <string name="log_origin_backup">Varmuuskopio</string>
+  <string name="log_origin_backup">Varmuuskopiointi</string>
   <string name="log_origin_user">Käyttäjä</string>
   <string name="log_origin_device">Laite</string>
   <string name="log_origin_crypto">Krypto</string>

@@ -66,7 +66,7 @@
   <string name="photos_error_backup_failed">Varmuuskopiointi epäonnistui.</string>
   <string name="photos_error_backup_temporarily_disabled">Varmuuskopiointi on poistettu tilapäisesti käytöstä.</string>
   <string name="photos_error_backup_migration_title">Päivitys vaaditaan</string>
-  <string name="photos_error_backup_migration_description">To use photos features, please update your app to the latest version.</string>
+  <string name="photos_error_backup_migration_description">Käyttääksesi kuvien ominaisuuksia, päivitä sovelluksesi uusimpaan versioon.</string>
   <string name="photos_error_missing_permissions">Käyttöoikeuksia puuttuu.</string>
   <!--
         Variable %1$s is an application name
@@ -74,12 +74,12 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">Jatkuvia, automaattisia varmuuskopioita varten %1$slle on myönnettävä laitteen asetuksista \"Valokuvat ja videot\" -käyttöoikeus.</string>
-  <string name="photos_error_waiting_connectivity">Internet-yhteys puuttuu</string>
+  <string name="photos_error_waiting_connectivity">Internet-yhteyttä ei ole</string>
   <string name="photos_error_waiting_wifi_connectivity">Odotetaan Wi-Fi-yhteyttä</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Käytä mobiiliverkkoa</string>
   <string name="photos_error_local_storage">Laitteen tallennustila on täynnä</string>
   <string name="photos_error_local_storage_description">Varmuuskopioinnin jatkamiseksi sinun on vapautettava tallennustilaa laitteeltasi.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Aseta virrankäyttö \'Rajoittamattomaksi\' sovelluksen taustatoiminnalle</string>
   <string name="photos_error_background_restrictions_description">Taustavarmuuskopioinnin jatkuvan toiminnan varmistamiseksi, säädä akkuvirran kulutusasetuksia tai avaa sovellus säännöllisesti.</string>
   <string name="photos_error_background_restrictions_action">Asetukset</string>
   <string name="photos_empty_title">Varmuuskopioita ei vielä ole.</string>
@@ -91,7 +91,7 @@
   <string name="photos_backup_in_app_notification_turned_on">Kuvien varmuuskopiointi on käytössä</string>
   <string name="photos_backup_in_app_notification_turned_off">Kuvien varmuuskopiointi ei ole käytössä</string>
   <string name="photos_backup_state_completed">Varmuuskopiointi on suoritettu</string>
-  <string name="photos_backup_state_uncompleted">Varmuuskopioinnin suorituksessa oli joitakin ongelmia</string>
+  <string name="photos_backup_state_uncompleted">Varmuuskopiointi suoritettiin, mutta siinä oli ongelmia</string>
   <string name="photos_backup_state_uncompleted_action">Ratkaise</string>
   <string name="photos_backup_state_preparing">Valmistellaan varmuuskopiointia</string>
   <string name="photos_backup_state_encrypting">Salataan…</string>

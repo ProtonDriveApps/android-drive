@@ -18,6 +18,9 @@
 
 package me.proton.android.drive.ui.robot
 
+import me.proton.android.drive.photos.presentation.extension.albumDetails
+import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.targetContext
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
 
@@ -35,9 +38,8 @@ object AlbumsTabRobot :
     private val filterSharedByMe get() = node.withText(I18N.string.albums_filter_shared_by_me)
     private val filterSharedWithMe get() = node.withText(I18N.string.albums_filter_shared_with_me)
 
-    private val emptyTitle get() = node.withText(I18N.string.photos_empty_title)
-    private val emptyDescription get() = node.withText(I18N.string.photos_empty_description)
-
+    private val emptyTitle get() = node.withText(I18N.string.albums_empty_albums_list_screen_title)
+    private val emptyDescription get() = node.withText(I18N.string.albums_empty_albums_list_screen_description)
 
     private val plusButton get() = node.withContentDescription(I18N.string.content_description_albums_new)
 
@@ -64,9 +66,23 @@ object AlbumsTabRobot :
         node.withText(name).await { assertIsDisplayed() }
     }
 
-    fun assertAlbumIsDisplayed(name: String, size:Long) {
+    fun assertAlbumIsDisplayed(
+        name: String,
+        photoCount: Long,
+        isShared: Boolean = false,
+        creationTime: TimestampS? = null,
+    ) {
         node.withText(name)
-            .hasSibling(node.withText(size.toString()))
+            .hasSibling(
+                node.withText(
+                    albumDetails(
+                        appContext = targetContext,
+                        photoCount = photoCount,
+                        isShared = isShared,
+                        creationTime = creationTime,
+                    )
+                )
+            )
             .await { assertIsDisplayed() }
     }
 

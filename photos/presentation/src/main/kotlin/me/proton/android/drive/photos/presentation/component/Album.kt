@@ -18,6 +18,7 @@
 
 package me.proton.android.drive.photos.presentation.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -25,31 +26,40 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -65,12 +75,15 @@ import me.proton.android.drive.photos.presentation.viewevent.AlbumViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.AlbumViewState
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.compose.theme.headlineSmallUnspecified
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.component.Deferred
 import me.proton.core.drive.base.presentation.component.ExpandableLazyVerticalGrid
 import me.proton.core.drive.base.presentation.component.IllustratedMessage
+import me.proton.core.drive.base.presentation.component.ProtonIconTextButton
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.base.presentation.component.ThemelessStatusBarScreen
+import me.proton.core.drive.base.presentation.component.Title
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.component.TopBarActions
 import me.proton.core.drive.base.presentation.component.defaultMinMaxGridHeight
@@ -79,11 +92,17 @@ import me.proton.core.drive.base.presentation.component.rememberExpandableLazyVe
 import me.proton.core.drive.base.presentation.effect.HandleListEffect
 import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.base.presentation.extension.isLandscape
+import me.proton.core.drive.base.presentation.extension.onContent
+import me.proton.core.drive.base.presentation.extension.onEmpty
+import me.proton.core.drive.base.presentation.extension.onError
+import me.proton.core.drive.base.presentation.extension.onLoading
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.files.presentation.extension.LayoutType
+import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.base.presentation.R as BasePresentation
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -93,6 +112,7 @@ fun Album(
     items: LazyPagingItems<PhotosItem.PhotoListing>,
     listEffect: Flow<ListEffect>,
     driveLinksFlow: Flow<Map<LinkId, DriveLink>>,
+    selectedPhotos: Set<LinkId>,
     isRefreshEnabled: Boolean,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
@@ -110,6 +130,7 @@ fun Album(
             items = items,
             listEffect = listEffect,
             driveLinksFlow = driveLinksFlow,
+            selectedPhotos = selectedPhotos,
             state = state,
             modifier = modifier,
         )
@@ -123,6 +144,7 @@ fun Album(
     items: LazyPagingItems<PhotosItem.PhotoListing>,
     listEffect: Flow<ListEffect>,
     driveLinksFlow: Flow<Map<LinkId, DriveLink>>,
+    selectedPhotos: Set<LinkId>,
     state: MutableState<ExpandableLazyVerticalGrid.State>,
     modifier: Modifier = Modifier,
 ) {
@@ -138,15 +160,23 @@ fun Album(
     Album(
         name = viewState.name,
         details = viewState.details,
+        navigationIcon = viewState.navigationIconResId,
+        title = viewState.title,
         coverLinkId = viewState.coverLinkId,
         items = items,
         driveLinksMap = driveLinksMap,
+        selectedPhotos = selectedPhotos,
         state = state,
         listContentState = viewState.listContentState,
+        inMultiselect = viewState.inMultiselect,
+        showActions = viewState.showActions,
         actionFlow = viewState.topBarActions,
-        onBack = viewEvent.onBackPressed,
+        onTopAppBarNavigation = viewEvent.onTopAppBarNavigation,
         onScroll = viewEvent.onScroll,
         onErrorAction = viewEvent.onErrorAction,
+        onClick = viewEvent.onDriveLink,
+        onLongClick = viewEvent.onSelectDriveLink,
+        onAddToAlbum = viewEvent.onAddToAlbum,
         modifier = modifier,
     )
 }
@@ -155,15 +185,23 @@ fun Album(
 fun Album(
     name: String,
     details: String,
+    navigationIcon: Int?,
+    title: String?,
     coverLinkId: FileId?,
     items: LazyPagingItems<PhotosItem.PhotoListing>,
     driveLinksMap: Map<LinkId, DriveLink>,
+    selectedPhotos: Set<LinkId>,
     state: MutableState<ExpandableLazyVerticalGrid.State>,
     listContentState: ListContentState,
+    inMultiselect: Boolean,
+    showActions:Boolean,
     actionFlow: Flow<Set<Action>>,
-    onBack: () -> Unit,
+    onTopAppBarNavigation: () -> Unit,
     onScroll: (Set<LinkId>) -> Unit,
     onErrorAction: () -> Unit,
+    onClick: (DriveLink) -> Unit,
+    onLongClick: (DriveLink) -> Unit,
+    onAddToAlbum: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val gridState = items.rememberLazyGridState()
@@ -185,15 +223,23 @@ fun Album(
     Album(
         name = name,
         details = details,
+        navigationIcon = navigationIcon,
+        title = title,
         coverLinkId = coverLinkId,
         items = items,
         driveLinksMap = driveLinksMap,
+        selectedPhotos = selectedPhotos,
         state = state,
         listContentState = listContentState,
         gridState = gridState,
+        inMultiselect = inMultiselect,
+        showActions = showActions,
         actionFlow = actionFlow,
-        onBack = onBack,
+        onTopAppBarNavigation = onTopAppBarNavigation,
         onErrorAction = onErrorAction,
+        onClick = onClick,
+        onLongClick = onLongClick,
+        onAddToAlbum = onAddToAlbum,
         modifier = modifier,
     )
 }
@@ -202,15 +248,23 @@ fun Album(
 fun Album(
     name: String,
     details: String,
+    navigationIcon: Int?,
+    title: String?,
     coverLinkId: FileId?,
     items: LazyPagingItems<PhotosItem.PhotoListing>,
     driveLinksMap: Map<LinkId, DriveLink>,
+    selectedPhotos: Set<LinkId>,
     state: MutableState<ExpandableLazyVerticalGrid.State>,
     listContentState: ListContentState,
     gridState: LazyGridState,
+    inMultiselect: Boolean,
+    showActions:Boolean,
     actionFlow: Flow<Set<Action>>,
-    onBack: () -> Unit,
+    onTopAppBarNavigation: () -> Unit,
     onErrorAction: () -> Unit,
+    onClick: (DriveLink) -> Unit,
+    onLongClick: (DriveLink) -> Unit,
+    onAddToAlbum: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val (topComposableHeight, overlapThreshold) = if (isLandscape) {
@@ -222,6 +276,8 @@ fun Album(
         topComposableHeight = topComposableHeight,
         overlapThreshold = overlapThreshold,
     )
+    val density = LocalDensity.current
+    var gridHeaderHeight by remember { mutableStateOf(0.dp) }
     ExpandableLazyVerticalGrid(
         columns = PhotosGridCells(minSize = 128.dp, minCount = 3),
         minGridHeight = minGridHeight,
@@ -240,10 +296,12 @@ fun Album(
             .padding(all = ProtonDimens.SmallSpacing),
         topComposable = {
             AlbumTopBar(
+                navigationIcon = navigationIcon,
+                title = title,
                 coverLink = coverLinkId?.let { driveLinksMap[coverLinkId] },
                 topComposableHeight = topComposableHeight,
-                onBack = onBack,
-                actions = { TopBarActions(actionFlow = actionFlow) }
+                onTopAppBarNavigation = onTopAppBarNavigation,
+                actions = { TopBarActions(actionFlow = actionFlow, iconTintColor = Color.White) }
             )
         },
         modifier = modifier
@@ -252,23 +310,39 @@ fun Album(
         item(
             span = { GridItemSpan(maxLineSpan) },
         ) {
-            AlbumListHeader(
-                name = name,
-                details = details,
-                modifier = Modifier.padding(
-                    vertical = ProtonDimens.DefaultSpacing,
-                    horizontal = ProtonDimens.ExtraSmallSpacing,
+            Column(
+                modifier = Modifier
+                    .onGloballyPositioned { layoutCoordinates ->
+                        gridHeaderHeight = with(density) { layoutCoordinates.size.height.toDp() }
+                    }
+            ) {
+                AlbumListHeader(
+                    name = name,
+                    details = details,
+                    modifier = Modifier.padding(
+                        vertical = ProtonDimens.DefaultSpacing,
+                        horizontal = ProtonDimens.ExtraSmallSpacing,
+                    )
                 )
-            )
+                if (showActions) {
+                    AlbumActions(
+                        modifier = Modifier.padding(
+                            vertical = ProtonDimens.DefaultSpacing,
+                            horizontal = ProtonDimens.ExtraSmallSpacing,
+                        ),
+                        onAdd = onAddToAlbum,
+                    )
+                }
+            }
         }
-        when (listContentState) {
-            ListContentState.Loading -> let {
+        listContentState
+            .onLoading {
                 item(
                     span = { GridItemSpan(maxLineSpan) }
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
+                    AlbumGridBoxItem(
+                        minGridHeight = minGridHeight,
+                        gridHeaderHeight = gridHeaderHeight,
                     ) {
                         Deferred {
                             CircularProgressIndicator()
@@ -276,86 +350,121 @@ fun Album(
                     }
                 }
             }
-            is ListContentState.Empty -> let {
+            .onEmpty { state ->
                 item(
                     span = { GridItemSpan(maxLineSpan) }
                 ) {
-                    AlbumEmpty(
-                        imageResId = listContentState.imageResId,
-                        titleResId = listContentState.titleId,
-                        descriptionResId = listContentState.descriptionResId,
-                    )
+                    AlbumGridBoxItem(
+                        minGridHeight = minGridHeight,
+                        gridHeaderHeight = gridHeaderHeight,
+                    ) {
+                        AlbumEmpty(
+                            imageResId = state.imageResId,
+                            titleResId = state.titleId,
+                            descriptionResId = state.descriptionResId,
+                        )
+                    }
                 }
             }
-            is ListContentState.Error -> let {
+            .onError { state ->
                 item(
                     span = { GridItemSpan(maxLineSpan) }
                 ) {
-                    AlbumError(
-                        message = listContentState.message,
-                        actionResId = listContentState.actionResId,
-                        onAction = onErrorAction,
-
-                    )
+                    AlbumGridBoxItem(
+                        minGridHeight = minGridHeight,
+                        gridHeaderHeight = gridHeaderHeight,
+                        contentAlignment = Alignment.BottomCenter,
+                    ) {
+                        AlbumError(
+                            message = state.message,
+                            actionResId = state.actionResId,
+                            onAction = onErrorAction,
+                        )
+                    }
                 }
             }
-            is ListContentState.Content -> let {
+            .onContent {
                 items(
                     count = items.itemCount,
                     span = { GridItemSpan(1) },
                     key = items.itemKey { photoItem -> photoItem.id.id }
                 ) { index ->
                     items[index]?.let { item ->
-                        val selected = false//selectedPhotos.contains(item.id)
+                        val selected = selectedPhotos.contains(item.id)
                         MediaItem(
                             modifier = Modifier
                                 .clip(ProtonTheme.shapes.small),
                             link = driveLinksMap[item.id],
                             index = index,
                             isSelected = selected,
-                            inMultiselect = false,//selected || selectedPhotos.isNotEmpty(),
-                            onClick = {}, //onClick,
-                            onLongClick = {}, //onLongClick,
+                            inMultiselect = selected || selectedPhotos.isNotEmpty() || inMultiselect,
+                            onClick = onClick,
+                            onLongClick = onLongClick,
                         )
                     }
                 }
             }
-        }
     }
 }
 
 @Composable
 fun BoxScope.AlbumTopBar(
+    @DrawableRes navigationIcon: Int?,
+    title: String?,
     coverLink: DriveLink?,
     topComposableHeight: Dp,
     modifier: Modifier = Modifier,
-    onBack: () -> Unit,
+    onTopAppBarNavigation: () -> Unit,
     actions: @Composable RowScope.() -> Unit,
 ) {
     ThemelessStatusBarScreen(useDarkIcons = false)
+    val driveLinkSemanticsModifier = if (coverLink != null) {
+        Modifier.driveLinkSemantics(coverLink, LayoutType.Cover)
+    } else {
+        Modifier
+    }
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(topComposableHeight)
             .align(Alignment.TopCenter)
+            .then(driveLinkSemanticsModifier)
     ) {
         val coverPainter = coverLink?.thumbnailPainter(usePhotoThumbnailVO = true)?.painter
-            ?: painterResource(id = BasePresentation.drawable.img_whats_new_public_sharing) //TODO: once available put proper no-cover illustration
-        Image(
-            painter = coverPainter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
+        if (coverPainter != null) {
+            Image(
+                painter = coverPainter,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = ProtonTheme.colors.backgroundDeep)
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color.Black.copy(alpha = 0.25f))
         )
         TopAppBar(
-            navigationIcon = painterResource(CorePresentation.drawable.ic_arrow_back),
-            onNavigationIcon = onBack,
-            title = {},
+            navigationIcon = navigationIcon?.let { painterResource(navigationIcon) },
+            onNavigationIcon = onTopAppBarNavigation,
+            title = { modifier ->
+                title?.let {
+                    Title(
+                        title = title,
+                        isTitleEncrypted = false,
+                        style = ProtonTheme.typography.headlineSmallUnspecified.copy(
+                            color = Color.White
+                        ),
+                        modifier = modifier,
+                    )
+                }
+            },
             backgroundColor = Color.Transparent,
             contentColor = Color.White,
             modifier = Modifier.statusBarsPadding(),
@@ -410,6 +519,44 @@ fun AlbumDetails(
 }
 
 @Composable
+fun AlbumActions(
+    onAdd: () -> Unit,
+    modifier: Modifier = Modifier,
+    addEnabled: Boolean = true,
+) {
+    Row(
+        modifier = modifier
+    ) {
+        ProtonIconTextButton(
+            iconPainter = painterResource(CorePresentation.drawable.ic_proton_plus_circle_filled),
+            title = stringResource(I18N.string.common_add_action),
+            enabled = addEnabled,
+            onClick = onAdd,
+        )
+    }
+}
+
+@Composable
+fun AlbumGridBoxItem(
+    minGridHeight: Dp,
+    gridHeaderHeight: Dp,
+    modifier: Modifier = Modifier,
+    contentAlignment: Alignment = Alignment.Center,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    if (minGridHeight > 0.dp && gridHeaderHeight > 0.dp) {
+        Box(
+            modifier = modifier
+                .offset(y = (-24).dp)
+                .heightIn(min = minGridHeight - gridHeaderHeight),
+            contentAlignment = contentAlignment,
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
 fun AlbumEmpty(
     imageResId: Int,
     titleResId: Int,
@@ -417,10 +564,16 @@ fun AlbumEmpty(
     modifier: Modifier = Modifier,
 ) {
     IllustratedMessage(
-        imageResId = imageResId,
+        imageContent = {
+            Icon(
+                painter = painterResource(imageResId),
+                contentDescription = null,
+                tint = ProtonTheme.colors.iconWeak,
+            )
+        },
         titleResId = titleResId,
         descriptionResId = descriptionResId,
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
     )
 }
 

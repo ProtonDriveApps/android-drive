@@ -19,14 +19,14 @@
 package me.proton.core.drive.files.domain.operation.notification
 
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
 import java.io.Serializable
 
 data class MoveFileExtra(
     val userId: UserId,
-    val links: List<Pair<FolderId?, LinkId>>,
-    val folderId: FolderId,
+    val links: List<Pair<ParentId?, LinkId>>,
+    val parentId: ParentId,
     val allowUndo: Boolean,
     val exception: Throwable? = null,
 ) : Serializable

@@ -30,4 +30,21 @@
   <plurals name="albums_photo_count">
     <item quantity="other">%1$s 個のアイテム</item>
   </plurals>
+  <string name="albums_delete_album_action">アルバムを削除</string>
+  <string name="albums_delete_album_dialog_title">アルバムを削除しますか？</string>
+  <string name="albums_delete_album_dialog_description">これはアルバムのみを削除します。あなたの写真はタイムラインに残ります。この操作は元に戻せません。</string>
+  <string name="albums_delete_album_dialog_description_with_children">このアルバムの一部の写真はあなたのタイムラインに保存されません。このアルバムを削除するとそれらの写真は完全に削除されます。\n削除する前に保存しますか？</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">保存せずに削除</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">写真を保存して削除</string>
+  <string name="albums_add_zero_to_album_button">アルバムに追加</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="other">アルバムに %1$d を追加</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Set as album cover</string>
 </resources>

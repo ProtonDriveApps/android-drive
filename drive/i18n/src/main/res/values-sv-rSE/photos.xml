@@ -40,10 +40,10 @@
   <string name="photos_permission_rational_description">Detta är nödvändigt för att säkerställa att alla dina foton säkerhetskopieras och är tillgängliga på alla dina enheter.\n%1$s tar din integritet på allvar och kommer endast åt dina foton i syfte att synkronisera och säkerhetskopiera.</string>
   <string name="photos_permission_rational_confirm_action">Inställningar</string>
   <string name="photos_permission_rational_dismiss_action">Inte nu</string>
-  <string name="photos_empty_loading_label_encrypted">End-to-end-krypterat</string>
+  <string name="photos_empty_loading_label_encrypted">End-to-end-krypterad</string>
   <string name="photos_empty_loading_label_progress">Säkerhetskopiering pågår.\nDet kan ta ett tag</string>
   <string name="photos_separator_current_month">Denna månad</string>
-  <string name="photos_encrypted_footer">End-to-end-krypterat</string>
+  <string name="photos_encrypted_footer">End-to-end-krypterad</string>
   <!--
         Variable %1$s is a folder name, %2$s is a quantity of folders found
         Example:
@@ -74,12 +74,12 @@
             For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
     -->
   <string name="photos_error_missing_permissions_description">För kontinuerlig och automatisk säkerhetskopiering, tillåt %1$s åtkomst till alla foton i inställningarna.</string>
-  <string name="photos_error_waiting_connectivity">Ingen Internetanslutning</string>
+  <string name="photos_error_waiting_connectivity">Ingen internetanslutning</string>
   <string name="photos_error_waiting_wifi_connectivity">Väntar på Wi-Fi</string>
   <string name="photos_error_waiting_wifi_connectivity_action">Använd mobilt nätverk</string>
   <string name="photos_error_local_storage">Enhetens lagringsutrymme fullt</string>
   <string name="photos_error_local_storage_description">För att fortsätta säkerhetskopieringen måste du frigöra lagringsutrymme på din enhet.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Ställ in batterianvändning på ”Obegränsat” för appaktivitet i bakgrunden</string>
   <string name="photos_error_background_restrictions_description">För konsekventa säkerhetskopieringar i bakgrunden, justera batteriinställningarna eller öppna appen ofta.</string>
   <string name="photos_error_background_restrictions_action">Inställningar</string>
   <string name="photos_empty_title">Inga säkerhetskopior än</string>

@@ -36,12 +36,12 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
-import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.domain.usecase.GetShare
-import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_SHARE_ID
+import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_VOLUME_ID
 import me.proton.core.drive.trash.domain.notification.EmptyTrashExtra
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.util.concurrent.TimeUnit
 import me.proton.core.drive.i18n.R as I18N
 
@@ -50,19 +50,20 @@ class EmptyTrashWorker @AssistedInject constructor(
     private val driveTrashRepository: DriveTrashRepository,
     private val broadcastMessages: BroadcastMessages,
     private val updateEventAction: UpdateEventAction,
-    private val getShare: GetShare,
+    private val getMainShare: GetMainShare,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
 
     private val userId = UserId(inputData.getString(KEY_USER_ID) ?: "")
-    private val shareId = ShareId(userId, inputData.getString(KEY_SHARE_ID) ?: "")
+    private val volumeId = inputData.getString(KEY_VOLUME_ID)?.let(::VolumeId)
 
     @Suppress("TooGenericExceptionCaught")
     override suspend fun doWork(): Result {
         return try {
-            getShare(shareId).toResult().getOrNull()?.let {  share ->
-                updateEventAction(userId, share.volumeId) { driveTrashRepository.emptyTrash(userId, share.volumeId) }
+            val volumeId = volumeId ?: getMainShare(userId).toResult().getOrThrow().volumeId
+            updateEventAction(userId, volumeId) {
+                driveTrashRepository.emptyTrash(userId, volumeId)
             }
             Result.success()
         } catch (e: Exception) {
@@ -71,7 +72,7 @@ class EmptyTrashWorker @AssistedInject constructor(
                 userId = userId,
                 message = applicationContext.getString(I18N.string.trash_error_occurred_emptying_trash),
                 type = BroadcastMessage.Type.ERROR,
-                extra = EmptyTrashExtra(userId, shareId, e)
+                extra = volumeId?.let { EmptyTrashExtra(userId, volumeId, e) }
             )
             Result.failure()
         }
@@ -80,11 +81,11 @@ class EmptyTrashWorker @AssistedInject constructor(
     companion object {
         fun getWorkRequest(
             userId: UserId,
-            shareId: ShareId,
+            volumeId: VolumeId,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest = OneTimeWorkRequest.Builder(EmptyTrashWorker::class.java)
             .setInputData(
-                workDataOf(userId, shareId)
+                workDataOf(userId, volumeId)
             )
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
@@ -96,10 +97,10 @@ class EmptyTrashWorker @AssistedInject constructor(
 
         fun workDataOf(
             userId: UserId,
-            shareId: ShareId,
+            volumeId: VolumeId,
         ) = Data.Builder()
             .putString(KEY_USER_ID, userId.id)
-            .putString(KEY_SHARE_ID, shareId.id)
+            .putString(KEY_VOLUME_ID, volumeId.id)
             .build()
     }
 }

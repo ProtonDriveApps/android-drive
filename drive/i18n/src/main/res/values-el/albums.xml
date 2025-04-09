@@ -31,4 +31,22 @@
     <item quantity="one">%1$s στοιχείο</item>
     <item quantity="other">%1$s στοιχεία</item>
   </plurals>
+  <string name="albums_delete_album_action">Διαγραφή άλμπουμ</string>
+  <string name="albums_delete_album_dialog_title">Διαγραφή άλμπουμ;</string>
+  <string name="albums_delete_album_dialog_description">Αυτό απλώς θα διαγράψει το άλμπουμ. Οι φωτογραφίες σας θα παραμείνουν στο χρονολόγιό σας. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Ορισμένες φωτογραφίες σε αυτό το άλμπουμ δεν αποθηκεύονται στο χρονολόγιό σας. Η διαγραφή αυτού του άλμπουμ θα διαγράψει οριστικά αυτές τις φωτογραφίες.\nΘα θέλατε να τις αποθηκεύσετε πριν την αφαίρεση;</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Διαγραφή χωρίς αποθήκευση</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Αποθήκευση φωτογραφιών και διαγραφή</string>
+  <string name="albums_add_zero_to_album_button">Προσθήκη στο άλμπουμ</string>
+  <!--
+        Variable %1$s is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Προσθήκη %1$d στο άλμπουμ</item>
+    <item quantity="other">Προσθήκη %1$d στο άλμπουμ</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Ορίστηκε ως εξώφυλλο άλμπουμ</string>
 </resources>

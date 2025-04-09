@@ -39,6 +39,7 @@
   <string name="common_on">Aan</string>
   <string name="common_off">Uit</string>
   <string name="common_all">Alle</string>
+  <string name="common_unknown">Onbekend</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">Oké</string>
@@ -66,6 +67,8 @@
   <string name="common_open_in_browser_action">Openen in de browser</string>
   <string name="common_done_action">Klaar</string>
   <string name="common_create_album_action">Creëer album</string>
+  <string name="common_set_as_album_cover_action">Instellen als albumomslag</string>
+  <string name="common_add_action">Toevoegen</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

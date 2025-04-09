@@ -27,25 +27,25 @@
     <item quantity="one">Праз %1$d секунду</item>
     <item quantity="few">Праз %1$d секунды</item>
     <item quantity="many">Праз %1$d секунд</item>
-    <item quantity="other">Праз %1$d секунды</item>
+    <item quantity="other">Праз %1$d секунд</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_minutes">
     <item quantity="one">Праз %1$d хвіліну</item>
     <item quantity="few">Праз %1$d хвіліны</item>
     <item quantity="many">Праз %1$d хвілін</item>
-    <item quantity="other">Праз %1$d хвіліны</item>
+    <item quantity="other">Праз %1$d хвілін</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_hours">
     <item quantity="one">Праз %1$d гадзіну</item>
     <item quantity="few">Праз %1$d гадзіны</item>
     <item quantity="many">Праз %1$d гадзін</item>
-    <item quantity="other">Праз %1$d гадзіны</item>
+    <item quantity="other">Праз %1$d гадзін</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_days">
     <item quantity="one">Праз %1$d дзень</item>
     <item quantity="few">Праз %1$d дні</item>
     <item quantity="many">Праз %1$d дзён</item>
-    <item quantity="other">Праз %1$d дні</item>
+    <item quantity="other">Праз %1$d дзён</item>
   </plurals>
   <string name="settings_section_backup">Рэзервовае капіяванне</string>
   <string name="settings_photos_backup_folders_title">Запампаваць з</string>

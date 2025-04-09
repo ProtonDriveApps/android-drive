@@ -24,26 +24,23 @@ import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.share.domain.entity.ShareId
 
-sealed class LinkId {
-    abstract val shareId: ShareId
-    abstract val id: String
-
-    override fun equals(other: Any?): Boolean = when (other) {
-        is LinkId -> shareId == other.shareId && id == other.id
-        else -> false
-    }
+sealed interface LinkId {
+    val shareId: ShareId
+    val id: String
 }
 
+sealed interface ParentId : LinkId
+
 @Serializable
-data class FileId(override val shareId: ShareId, override val id: String) : LinkId()
+data class FileId(override val shareId: ShareId, override val id: String) : LinkId
 @Serializable
-data class FolderId(override val shareId: ShareId, override val id: String) : LinkId()
+data class FolderId(override val shareId: ShareId, override val id: String) : ParentId
 @Serializable
-data class AlbumId(override val shareId: ShareId, override val id: String) : LinkId()
+data class AlbumId(override val shareId: ShareId, override val id: String) : ParentId
 
 interface BaseLink {
     val id: LinkId
-    val parentId: FolderId?
+    val parentId: ParentId?
     val name: String
     val size: Bytes
     val lastModified: TimestampS
@@ -58,7 +55,7 @@ interface BaseLink {
 
 interface File : BaseLink {
     override val id: FileId
-    override val parentId: FolderId?
+    override val parentId: ParentId?
     val hasThumbnail: Boolean
     val activeRevisionId: String
     val photoCaptureTime: TimestampS?
@@ -98,7 +95,7 @@ sealed class Link : BaseLink {
 
     data class File(
         override val id: FileId,
-        override val parentId: FolderId?,
+        override val parentId: ParentId?,
         override val name: String,
         override val size: Bytes,
         override val lastModified: TimestampS,
@@ -110,7 +107,6 @@ sealed class Link : BaseLink {
         override val numberOfAccesses: Long,
         override val shareUrlExpirationTime: TimestampS?,
         override val uploadedBy: String,
-        override val isFavorite: Boolean,
         override val attributes: Attributes,
         override val permissions: Permissions,
         override val state: State,
@@ -136,11 +132,15 @@ sealed class Link : BaseLink {
         val defaultThumbnailContentHash: String? = null,
         val photoThumbnailId: String? = null,
         val photoThumbnailContentHash: String? = null,
-    ) : Link(), me.proton.core.drive.link.domain.entity.File
+        val tags: List<PhotoTag> = emptyList(),
+    ) : Link(), me.proton.core.drive.link.domain.entity.File {
+        override val isFavorite: Boolean
+            get() = PhotoTag.Favorites in tags
+    }
 
     data class Folder(
         override val id: FolderId,
-        override val parentId: FolderId?,
+        override val parentId: ParentId?,
         override val name: String,
         override val size: Bytes,
         override val lastModified: TimestampS,
@@ -152,7 +152,6 @@ sealed class Link : BaseLink {
         override val numberOfAccesses: Long,
         override val shareUrlExpirationTime: TimestampS?,
         override val uploadedBy: String,
-        override val isFavorite: Boolean,
         override val attributes: Attributes,
         override val permissions: Permissions,
         override val state: State,
@@ -168,11 +167,13 @@ sealed class Link : BaseLink {
         override val xAttr: String?,
         override val sharingDetails: SharingDetails?,
         val nodeHashKey: String,
-    ) : Link(), me.proton.core.drive.link.domain.entity.Folder
+    ) : Link(), me.proton.core.drive.link.domain.entity.Folder {
+        override val isFavorite: Boolean = false
+    }
 
     data class Album(
         override val id: AlbumId,
-        override val parentId: FolderId?,
+        override val parentId: ParentId?,
         override val name: String,
         override val size: Bytes,
         override val lastModified: TimestampS,
@@ -184,7 +185,6 @@ sealed class Link : BaseLink {
         override val numberOfAccesses: Long,
         override val shareUrlExpirationTime: TimestampS?,
         override val uploadedBy: String,
-        override val isFavorite: Boolean,
         override val attributes: Attributes,
         override val permissions: Permissions,
         override val state: State,
@@ -204,7 +204,9 @@ sealed class Link : BaseLink {
         override val lastActivityTime: TimestampS,
         override val photoCount: Long,
         override val coverLinkId: FileId? = null,
-    ) : Link(), me.proton.core.drive.link.domain.entity.Album
+    ) : Link(), me.proton.core.drive.link.domain.entity.Album {
+        override val isFavorite: Boolean = false
+    }
 
     enum class State {
         DRAFT, ACTIVE, TRASHED, DELETED, RESTORING

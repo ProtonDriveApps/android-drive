@@ -27,6 +27,7 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.db.test.file
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.userId
+import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.link.data.api.response.LinkResponse
 import me.proton.core.drive.link.domain.entity.FileId
@@ -121,7 +122,7 @@ class TrashExtraActionProviderTest {
             actionProvider.provideAction(
                 EmptyTrashExtra(
                     userId = userId,
-                    shareId = folderId.shareId,
+                    volumeId = volumeId,
                 )
             )
         )
@@ -133,7 +134,7 @@ class TrashExtraActionProviderTest {
             actionProvider.provideAction(
                 EmptyTrashExtra(
                     userId = userId,
-                    shareId = folderId.shareId,
+                    volumeId = volumeId,
                     exception = RuntimeException(),
                     
                 )
@@ -195,7 +196,7 @@ class TrashExtraActionProviderTest {
         actionProvider.provideAction(
             TrashFilesExtra(
                 userId = userId,
-                folderId = folderId,
+                parentId = folderId,
                 links = listOf(fileId),
             )
         )!!.invoke()
@@ -210,7 +211,7 @@ class TrashExtraActionProviderTest {
         actionProvider.provideAction(
             TrashFilesExtra(
                 userId = userId,
-                folderId = folderId,
+                parentId = folderId,
                 links = listOf(fileId),
                 exception = RuntimeException(),
             )
