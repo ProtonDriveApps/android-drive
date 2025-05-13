@@ -28,4 +28,25 @@
   <string name="files_upload_content_description_cancel_upload">Avbryt filuppladdning</string>
   <string name="files_upload_failure_storage_full_title">Lagringsutrymme fullt</string>
   <string name="files_upload_failure_storage_full_description">Ditt konto har slut på lagringsutrymme. Frigör utrymme eller uppgradera till ett paket med mer lagringsutrymme.</string>
+  <string name="files_operation_failed_all">Åtgärden misslyckades</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="one">%1$d misslyckades</item>
+    <item quantity="other">%1$d misslyckades</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="one">%1$d lyckades</item>
+    <item quantity="other">%1$d lyckades</item>
+  </plurals>
 </resources>

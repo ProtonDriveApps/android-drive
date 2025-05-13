@@ -61,7 +61,6 @@ import me.proton.android.drive.extension.isCurrentDestination
 import me.proton.android.drive.extension.log
 import me.proton.android.drive.extension.require
 import me.proton.android.drive.extension.requireArguments
-import me.proton.android.drive.extension.requireSerializable
 import me.proton.android.drive.extension.runFromRoute
 import me.proton.android.drive.lock.presentation.component.AppLock
 import me.proton.android.drive.log.DriveLogTag
@@ -72,6 +71,7 @@ import me.proton.android.drive.ui.dialog.ComputerOptions
 import me.proton.android.drive.ui.dialog.ConfirmDeleteAlbumDialog
 import me.proton.android.drive.ui.dialog.ConfirmDeletionDialog
 import me.proton.android.drive.ui.dialog.ConfirmEmptyTrashDialog
+import me.proton.android.drive.ui.dialog.ConfirmLeaveAlbumDialog
 import me.proton.android.drive.ui.dialog.ConfirmSkipIssuesDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopAllSharingDialog
 import me.proton.android.drive.ui.dialog.ConfirmStopLinkSharingDialog
@@ -81,12 +81,14 @@ import me.proton.android.drive.ui.dialog.LogOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
 import me.proton.android.drive.ui.dialog.Onboarding
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
+import me.proton.android.drive.ui.dialog.PhotosImportantUpdates
 import me.proton.android.drive.ui.dialog.ProtonDocsInsertImageOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
 import me.proton.android.drive.ui.dialog.ShareExternalInvitationOptions
 import me.proton.android.drive.ui.dialog.ShareInvitationOptions
 import me.proton.android.drive.ui.dialog.ShareLinkPermissions
 import me.proton.android.drive.ui.dialog.ShareMemberOptions
+import me.proton.android.drive.ui.dialog.ShareMultiplePhotosOptions
 import me.proton.android.drive.ui.dialog.SortingList
 import me.proton.android.drive.ui.dialog.SystemAccessDialog
 import me.proton.android.drive.ui.dialog.WhatsNew
@@ -103,6 +105,7 @@ import me.proton.android.drive.ui.screen.AppAccessScreen
 import me.proton.android.drive.ui.screen.BackupIssuesScreen
 import me.proton.android.drive.ui.screen.CreateNewAlbumScreen
 import me.proton.android.drive.ui.screen.DefaultHomeTabScreen
+import me.proton.android.drive.ui.screen.SubscriptionPromoScreen
 import me.proton.android.drive.ui.screen.FileInfoScreen
 import me.proton.android.drive.ui.screen.GetMoreFreeStorageScreen
 import me.proton.android.drive.ui.screen.HomeScreen
@@ -113,7 +116,7 @@ import me.proton.android.drive.ui.screen.OfflineScreen
 import me.proton.android.drive.ui.screen.PhotosBackupScreen
 import me.proton.android.drive.ui.screen.PhotosUpsellScreen
 import me.proton.android.drive.ui.screen.PickerAlbumScreen
-import me.proton.android.drive.ui.screen.PickerPhotosAndAlbumsScreen
+import me.proton.android.drive.ui.screen.PickerPhotosScreen
 import me.proton.android.drive.ui.screen.PreviewScreen
 import me.proton.android.drive.ui.screen.SettingsScreen
 import me.proton.android.drive.ui.screen.SigningOutScreen
@@ -169,6 +172,7 @@ fun AppNavGraph(
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
+    navigateToUpgradePlan: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) {
     val navController = rememberAnimatedNavController(keyStoreCrypto)
@@ -234,6 +238,7 @@ fun AppNavGraph(
                 navigateToBugReport = navigateToBugReport,
                 navigateToSubscription = navigateToSubscription,
                 navigateToRatingBooster = navigateToRatingBooster,
+                navigateToUpgradePlan = navigateToUpgradePlan,
                 onDrawerStateChanged = onDrawerStateChanged,
             )
         }
@@ -256,6 +261,7 @@ fun AppNavGraph(
     navigateToBugReport: () -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToRatingBooster: () -> Unit,
+    navigateToUpgradePlan: () -> Unit,
     onDrawerStateChanged: (Boolean) -> Unit,
 ) {
     DriveNavHost(
@@ -388,8 +394,12 @@ fun AppNavGraph(
         addAlbum(navController)
         addAlbumOptions(navController)
         addConfirmDeleteAlbumDialog(navController)
-        addPickerPhotosAndAlbums(navController)
+        addPickerPhotos(navController)
         addPickerAlbum(navController)
+        addSubscriptionPromoScreen(navigateToUpgradePlan)
+        addConfirmLeaveAlbumDialog(navController)
+        addShareMultiplePhotosOptions(navController)
+        addPhotosImportantUpdates(navController)
     }
 }
 
@@ -493,7 +503,11 @@ fun NavGraphBuilder.addFileOrFolderOptions(
             type = NavType.StringType
             nullable = true
         },
-        navArgument(Screen.FileOrFolderOptions.KEY_ALBUM_SHARE_ID) {
+        navArgument(Screen.FileOrFolderOptions.ALBUM_SHARE_ID) {
+            type = NavType.StringType
+            nullable = true
+        },
+        navArgument(Screen.FileOrFolderOptions.SELECTION_ID) {
             type = NavType.StringType
             nullable = true
         },
@@ -584,6 +598,11 @@ fun NavGraphBuilder.addMultipleFileOrFolderOptions(
         },
         navigateToCreateNewAlbum = {
             navController.navigate(Screen.PhotosAndAlbums.CreateNewAlbum(userId)) {
+                popUpTo(Screen.MultipleFileOrFolderOptions.route) { inclusive = true }
+            }
+        },
+        navigateToShareMultiplePhotosOptions = { selectionId ->
+            navController.navigate(Screen.ShareMultiplePhotosOptions(userId, selectionId)) {
                 popUpTo(Screen.MultipleFileOrFolderOptions.route) { inclusive = true }
             }
         },
@@ -701,6 +720,7 @@ fun NavGraphBuilder.addUserInvitation(
     route = Screen.UserInvitation.route,
     arguments = listOf(
         navArgument(Screen.UserInvitation.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.UserInvitation.ALBUMS_ONLY) { type = NavType.BoolType },
     ),
 ) {
     UserInvitationScreen (onBack = {
@@ -887,6 +907,9 @@ internal fun NavGraphBuilder.addHome(
         navigateToPreview = { fileId, pagerType ->
             navController.navigate(Screen.PagerPreview(pagerType, userId, fileId))
         },
+        navigateToPreviewWithTag = { fileId, pagerType, photoTag ->
+            navController.navigate(Screen.PagerPreview(pagerType, userId, fileId, photoTag))
+        },
         navigateToSorting = { sorting ->
             navController.navigate(
                 Screen.Sorting(userId, currentFolderId, sorting.by, sorting.direction)
@@ -895,9 +918,13 @@ internal fun NavGraphBuilder.addHome(
         navigateToSettings = {
             navController.navigate(Screen.Settings(userId))
         },
-        navigateToFileOrFolderOptions = { linkId ->
+        navigateToFileOrFolderOptions = { linkId, selectionId ->
             navController.navigate(
-                Screen.FileOrFolderOptions(userId, linkId)
+                Screen.FileOrFolderOptions(
+                    userId = userId,
+                    linkId = linkId,
+                    selectionId = selectionId,
+                )
             )
         },
         navigateToMultipleFileOrFolderOptions = { selectionId ->
@@ -961,14 +988,22 @@ internal fun NavGraphBuilder.addHome(
                 )
             )
         },
-        navigateToUserInvitation = {
-            navController.navigate(Screen.UserInvitation(userId))
+        navigateToUserInvitation = { albumsOnly ->
+            navController.navigate(Screen.UserInvitation(userId, albumsOnly))
         },
         navigateToCreateNewAlbum = {
             navController.navigate(Screen.PhotosAndAlbums.CreateNewAlbum(userId))
         },
         navigateToAlbum = { albumId ->
             navController.navigate(Screen.Album(albumId))
+        },
+        navigateToSubscriptionPromo = { key ->
+            navController.navigate(Screen.Promo.Subscription(userId, key))
+        },
+        navigateToPhotosImportantUpdates = {
+            navController.navigate(
+                Screen.Photos.ImportantUpdates(userId)
+            )
         },
         modifier = Modifier.fillMaxSize(),
     )
@@ -1323,6 +1358,11 @@ fun NavGraphBuilder.addOffline(navController: NavHostController) = composable(
                 Screen.PagerPreview(pagerType, userId, fileId)
             )
         },
+        navigateToAlbum = { albumId ->
+            navController.navigate(
+                Screen.Album(albumId)
+            )
+        },
         navigateBack = {
             navController.popBackStack(
                 route = Screen.OfflineFiles.route,
@@ -1360,6 +1400,10 @@ fun NavGraphBuilder.addPagerPreview(navController: NavHostController) = composab
             nullable = true
         },
         navArgument(Screen.PagerPreview.ALBUM_ID) {
+            type = NavType.StringType
+            nullable = true
+        },
+        navArgument(Screen.PagerPreview.PHOTO_TAG) {
             type = NavType.StringType
             nullable = true
         },
@@ -1949,6 +1993,22 @@ fun NavGraphBuilder.addPhotosUpsell(
     )
 }
 
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addSubscriptionPromoScreen(
+    navigateToSubscription: () -> Unit,
+) = modalBottomSheet(
+    route = Screen.Promo.Subscription.route,
+    arguments = listOf(
+        navArgument(Screen.Settings.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.Promo.Subscription.PROMO_KEY) { type = NavType.StringType },
+    ),
+) { _, runAction ->
+    SubscriptionPromoScreen(
+        runAction = runAction,
+        navigateToSubscription = navigateToSubscription,
+    )
+}
+
 fun NavGraphBuilder.addComputerOptions(
     navController: NavHostController,
 ) = modalBottomSheet(
@@ -2166,10 +2226,12 @@ fun NavGraphBuilder.addCreateNewAlbum(navController: NavHostController) = compos
     popEnterTransition = { EnterTransition.None },
     popExitTransition = defaultPopExitSlideTransition { true },
     arguments = listOf(
-        navArgument(Screen.Log.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.PhotosAndAlbums.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.PhotosAndAlbums.SHARED_ALBUM) { type = NavType.BoolType },
     ),
 ) { navBackStackEntry ->
     val userId = UserId(navBackStackEntry.require(Screen.PhotosAndAlbums.USER_ID))
+    val sharedAlbum: Boolean = navBackStackEntry.get(Screen.PhotosAndAlbums.SHARED_ALBUM) ?: false
     CreateNewAlbumScreen(
         navigateBack = {
             navController.popBackStack(
@@ -2179,11 +2241,16 @@ fun NavGraphBuilder.addCreateNewAlbum(navController: NavHostController) = compos
         },
         navigateToAlbum = { albumId: AlbumId ->
             navController.navigate(Screen.Album(albumId)) {
-                popUpTo(route = Screen.PhotosAndAlbums.CreateNewAlbum.route) { inclusive = true }
+                popUpTo(route = Screen.PhotosAndAlbums.CreateNewAlbum.route) {
+                    inclusive = true
+                }
+            }
+            if (sharedAlbum) {
+                navController.navigate(Screen.ShareViaInvitations(userId, albumId))
             }
         },
         navigateToPicker = {
-            navController.navigate(Screen.Picker.PhotosAndAlbums(userId = userId))
+            navController.navigate(Screen.Picker.Photos(userId = userId))
         },
     )
 }
@@ -2206,9 +2273,9 @@ fun NavGraphBuilder.addAlbum(navController: NavHostController) = composable(
         navigateToAlbumOptions = { albumId ->
             navController.navigate(Screen.AlbumOptions(userId, albumId))
         },
-        navigateToPhotosOptions = { linkId, albumId ->
+        navigateToPhotosOptions = { linkId, albumId, selectionId ->
             navController.navigate(
-                Screen.FileOrFolderOptions(userId, linkId, albumId)
+                Screen.FileOrFolderOptions(userId, linkId, albumId, selectionId)
             )
         },
         navigateToMultiplePhotosOptions = { selectionId, albumId ->
@@ -2225,7 +2292,13 @@ fun NavGraphBuilder.addAlbum(navController: NavHostController) = composable(
             ))
         },
         navigateToPicker = { albumId ->
-            navController.navigate(Screen.Picker.PhotosAndAlbums(destinationAlbumId = albumId))
+            navController.navigate(Screen.Picker.Photos(destinationAlbumId = albumId))
+        },
+        navigateToShareViaInvitations = { albumId ->
+            navController.navigate(Screen.ShareViaInvitations(userId, albumId))
+        },
+        navigateToManageAccess = { albumId ->
+            navController.navigate(Screen.ManageAccess(userId, albumId))
         },
         navigateBack = {
             navController.popBackStack(
@@ -2242,7 +2315,7 @@ fun NavGraphBuilder.addAlbumOptions(
     route = Screen.AlbumOptions.route,
     viewState = ModalBottomSheetViewState(dismissOnAction = false),
     arguments = listOf(
-        navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.USER_ID) { type = NavType.StringType },
         navArgument(Screen.AlbumOptions.SHARE_ID) { type = NavType.StringType },
         navArgument(Screen.AlbumOptions.ALBUM_ID) { type = NavType.StringType },
     ),
@@ -2270,6 +2343,11 @@ fun NavGraphBuilder.addAlbumOptions(
                 popUpTo(Screen.AlbumOptions.route) { inclusive = true }
             }
         },
+        navigateToLeave = { albumId ->
+            navController.navigate(Screen.Album.Dialogs.ConfirmLeaveAlbum(albumId)) {
+                popUpTo(Screen.AlbumOptions.route) { inclusive = true }
+            }
+        },
         dismiss = {
             navController.popBackStack(
                 route = Screen.AlbumOptions.route,
@@ -2283,7 +2361,7 @@ fun NavGraphBuilder.addAlbumOptions(
 fun NavGraphBuilder.addConfirmDeleteAlbumDialog(navController: NavHostController) = dialog(
     route = Screen.Album.Dialogs.ConfirmDeleteAlbum.route,
     arguments = listOf(
-        navArgument(Screen.Files.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.USER_ID) { type = NavType.StringType },
         navArgument(Screen.Album.Dialogs.ConfirmDeleteAlbum.ALBUM_ID) { type = NavType.StringType },
         navArgument(Screen.Album.Dialogs.ConfirmDeleteAlbum.SHARE_ID) { type = NavType.StringType },
     ),
@@ -2299,8 +2377,8 @@ fun NavGraphBuilder.addConfirmDeleteAlbumDialog(navController: NavHostController
 }
 
 @ExperimentalAnimationApi
-fun NavGraphBuilder.addPickerPhotosAndAlbums(navController: NavHostController) = composable(
-    route = Screen.Picker.PhotosAndAlbums.route,
+fun NavGraphBuilder.addPickerPhotos(navController: NavHostController) = composable(
+    route = Screen.Picker.Photos.route,
     enterTransition = defaultEnterSlideTransition { true },
     exitTransition = { ExitTransition.None },
     popEnterTransition = { EnterTransition.None },
@@ -2318,18 +2396,10 @@ fun NavGraphBuilder.addPickerPhotosAndAlbums(navController: NavHostController) =
         },
     ),
 ) {
-    PickerPhotosAndAlbumsScreen(
-        navigateToAlbum = { albumId, destinationAlbumId ->
-            val route = if (destinationAlbumId != null) {
-                Screen.Picker.Album(albumId, destinationAlbumId)
-            } else {
-                Screen.Picker.Album(albumId)
-            }
-            navController.navigate(route)
-        },
+    PickerPhotosScreen(
         navigateBack = {
             navController.popBackStack(
-                route = Screen.Picker.PhotosAndAlbums.route,
+                route = Screen.Picker.Photos.route,
                 inclusive = true,
             )
         }
@@ -2367,10 +2437,70 @@ fun NavGraphBuilder.addPickerAlbum(navController: NavHostController) = composabl
         },
         onAddToAlbumDone = {
             navController.popBackStack(
-                route = Screen.Picker.PhotosAndAlbums.route,
+                route = Screen.Picker.Photos.route,
                 inclusive = true,
             )
         },
+    )
+}
+
+@ExperimentalCoroutinesApi
+fun NavGraphBuilder.addConfirmLeaveAlbumDialog(navController: NavHostController) = dialog(
+    route = Screen.Album.Dialogs.ConfirmLeaveAlbum.route,
+    arguments = listOf(
+        navArgument(Screen.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.Album.Dialogs.ConfirmLeaveAlbum.ALBUM_ID) { type = NavType.StringType },
+        navArgument(Screen.Album.Dialogs.ConfirmLeaveAlbum.SHARE_ID) { type = NavType.StringType },
+    ),
+) {
+    ConfirmLeaveAlbumDialog(
+        onDismiss = {
+            navController.popBackStack(
+                route = Screen.Album.Dialogs.ConfirmLeaveAlbum.route,
+                inclusive = true,
+            )
+        }
+    )
+}
+
+fun NavGraphBuilder.addShareMultiplePhotosOptions(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.ShareMultiplePhotosOptions.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+    arguments = listOf(
+        navArgument(Screen.ShareMultiplePhotosOptions.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.ShareMultiplePhotosOptions.SELECTION_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry, runAction ->
+    val userId = UserId(navBackStackEntry.require(Screen.ShareMultiplePhotosOptions.USER_ID))
+    ShareMultiplePhotosOptions(
+        runAction = runAction,
+        navigateToCreateNewAlbum = {
+            navController.navigate(
+                Screen.PhotosAndAlbums.CreateNewAlbum(
+                    userId = userId,
+                    sharedAlbum = true,
+                )
+            )
+        },
+        navigateToAlbum = { albumId ->
+            navController.navigate(Screen.Album(albumId))
+        }
+    )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addPhotosImportantUpdates(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.Photos.ImportantUpdates.route,
+    arguments = listOf(
+        navArgument(Screen.Photos.USER_ID) { type = NavType.StringType },
+    ),
+) { _, runAction ->
+    PhotosImportantUpdates(
+        runAction = runAction,
     )
 }
 

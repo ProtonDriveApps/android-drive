@@ -41,7 +41,7 @@ fun MockWebServer.trashMultiple(
         LinkResponse(linkId, response = Response(ProtonApiCode.SUCCESS))
     },
 ) = routing {
-    post("/drive/shares/{enc_shareID}/folders/{enc_linkID}/trash_multiple") {
+    post("/drive/v2/volumes/{volumeID}/trash_multiple") {
         jsonResponse {
             LinkResponses(
                 code = ProtonApiCode.SUCCESS,
@@ -56,7 +56,7 @@ fun MockWebServer.restoreMultiple(
         LinkResponse(linkId, response = Response(ProtonApiCode.SUCCESS))
     },
 ) = routing {
-    put("/drive/shares/{enc_shareID}/trash/restore_multiple") {
+    put("/drive/v2/volumes/{volumeID}/trash/restore_multiple") {
         jsonResponse {
             LinkResponses(
                 code = ProtonApiCode.SUCCESS,
@@ -71,7 +71,7 @@ fun MockWebServer.deleteMultiple(
         LinkResponse(linkId, response = Response(ProtonApiCode.SUCCESS))
     },
 ) = routing {
-    post("/drive/shares/{enc_shareID}/trash/delete_multiple") {
+    post("/drive/v2/volumes/{volumeID}/trash/delete_multiple") {
         jsonResponse {
             LinkResponses(
                 code = ProtonApiCode.SUCCESS,

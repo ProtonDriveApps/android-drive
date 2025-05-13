@@ -24,5 +24,11 @@ import me.proton.core.network.domain.ApiResult
 
 fun ApiException.hasHttpCode(code: Int): Boolean =
     (error as? ApiResult.Error.Http)?.httpCode == code
+
 fun Throwable.hasHttpCode(code: Int): Boolean =
     (this as? ApiException)?.hasHttpCode(code) ?: false
+
+inline fun <T> Throwable.onProtonHttpException(block: (protonData: ApiResult.Error.ProtonData) -> T): T? =
+    ((this as? ApiException)?.error as? ApiResult.Error.Http)?.proton?.let { protonData ->
+        block(protonData)
+    }

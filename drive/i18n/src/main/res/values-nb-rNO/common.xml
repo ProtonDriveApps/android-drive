@@ -39,7 +39,7 @@
   <string name="common_on">På</string>
   <string name="common_off">Av</string>
   <string name="common_all">Alle</string>
-  <string name="common_unknown">Unknown</string>
+  <string name="common_unknown">Ukjent</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -67,8 +67,12 @@
   <string name="common_open_in_browser_action">Åpne i nettleser</string>
   <string name="common_done_action">Utført</string>
   <string name="common_create_album_action">Opprett album</string>
-  <string name="common_set_as_album_cover_action">Set as album cover</string>
-  <string name="common_add_action">Add</string>
+  <string name="common_set_as_album_cover_action">Angi som albumomslag</string>
+  <string name="common_add_action">Legg til</string>
+  <string name="common_remove_from_album_action">Fjern fra album</string>
+  <string name="common_leave_album_action">Forlat album</string>
+  <string name="common_start_action">Start</string>
+  <string name="common_save_all_action">Lagre alle</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Lyd</string>

@@ -46,6 +46,12 @@
   <string name="files_send_to_trash_action">휴지통으로 이동</string>
   <string name="files_remove_me_action">나를 제거하기</string>
   <string name="files_move_file_action">이동</string>
+  <string name="files_add_to_favorite_action">즐겨찾기에 추가</string>
+  <string name="files_remove_from_favorite_action">즐겨찾기에서 삭제</string>
+  <string name="files_add_to_favorite_action_success">성공적으로 즐겨찾기에 추가되었습니다</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">사진이 스트림에 복사되어 즐겨찾기에 표시되었습니다.</string>
+  <string name="files_remove_from_favorite_action_success">성공적으로 즐겨찾기에서 제거되었습니다</string>
+  <string name="files_save_shared_photo_action">공유된 사진 저장</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

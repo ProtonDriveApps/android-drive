@@ -46,6 +46,12 @@
   <string name="files_send_to_trash_action">ごみ箱へ移動</string>
   <string name="files_remove_me_action">自分自身を削除</string>
   <string name="files_move_file_action">移動</string>
+  <string name="files_add_to_favorite_action">お気に入りに追加</string>
+  <string name="files_remove_from_favorite_action">お気に入りから削除</string>
+  <string name="files_add_to_favorite_action_success">お気に入りに追加しました</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">写真はストリームにコピーされ、お気に入りとマークされました。</string>
+  <string name="files_remove_from_favorite_action_success">お気に入りから正常に削除されました</string>
+  <string name="files_save_shared_photo_action">共有された写真を保存</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

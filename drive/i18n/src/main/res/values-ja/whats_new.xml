@@ -18,6 +18,6 @@
   -->
 <resources>
   <string name="whats_new_title">最新情報</string>
-  <string name="whats_new_public_sharing_title">ほかの人に共有</string>
-  <string name="whats_new_public_sharing_description">フォルダやファイルで共同作業する共有可能なリンクを作成 — Protonアカウントは必要ありません</string>
+  <string name="whats_new_albums_title">写真アルバムが登場！</string>
+  <string name="whats_new_albums_description">Organize your memories with our new Albums feature. Filter by videos, favorites, and more—all with the same end-to-end encryption you trust.</string>
 </resources>

@@ -233,4 +233,45 @@
             "Untitled document 2025-11-28 12.34.56"
     -->
   <string name="new_document_name">Dokument uten tittel %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a price
+        Example:
+            "More storage for only $1.00"
+    -->
+  <string name="drive_lite_promo_title">Mer lagringsplass for bare %1$s</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Variable %2$s is a string representation of a storage size
+        Variable %3$s is a string representation of a price
+        Example:
+            "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
+    -->
+  <string name="drive_lite_promo_description">Når du trenger litt mer lagring, men ikke mye. Vi introduserer %1$s, med %2$s lagringsplass for bare %3$s i måneden.</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Example:
+            "Get Drive Lite"
+    -->
+  <string name="drive_lite_promo_action">Skaff deg %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a storage size
+        Variable %2$s is a string representation of a price
+        Example:
+            "Get 200GB for just $0.99"
+    -->
+  <string name="drive_plus_promo_title">Skaff deg %1$s for bare %2$s</string>
+  <!--
+        Variable %1$s is a string representation of a large number
+        Variable %2$s is a string representation of a price
+        Variable %3$s is a string representation of a price
+        Example:
+            "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
+    -->
+  <string name="drive_plus_promo_description">Det er nok sikker lagringsplass for over %1$s bilder med høy oppløsning. Få din første måned for %2$s, deretter %3$s per måned.</string>
+  <!--
+        Variable %1$s is the price of the plan
+        Example:
+            "Upgrade for $0.99"
+    -->
+  <string name="drive_plus_promo_action">Oppgrader for %1$s</string>
 </resources>

@@ -47,6 +47,12 @@
   <string name="files_send_to_trash_action">Mover para a lixeira</string>
   <string name="files_remove_me_action">Remover</string>
   <string name="files_move_file_action">Mover</string>
+  <string name="files_add_to_favorite_action">Adicionar aos favoritos</string>
+  <string name="files_remove_from_favorite_action">Remover dos favoritos</string>
+  <string name="files_add_to_favorite_action_success">Adicionado aos favoritos</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Foto foi copiada para a cronologia e marcada como favorita lá</string>
+  <string name="files_remove_from_favorite_action_success">Removido dos favoritos</string>
+  <string name="files_save_shared_photo_action">Salvar a foto compartilhada</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

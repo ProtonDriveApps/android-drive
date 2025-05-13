@@ -20,12 +20,12 @@ package me.proton.core.drive.trash.domain.notification
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.io.Serializable
 
 data class DeleteFilesExtra(
     val userId: UserId,
-    val shareId: ShareId,
+    val volumeId: VolumeId,
     val links: List<LinkId>,
     val exception: Exception? = null
 ) : Serializable

@@ -69,6 +69,10 @@
   <string name="common_create_album_action">Albüm oluştur</string>
   <string name="common_set_as_album_cover_action">Albüm kapağı olarak ayarla</string>
   <string name="common_add_action">Ekle</string>
+  <string name="common_remove_from_album_action">Albümden kaldır</string>
+  <string name="common_leave_album_action">Albümden ayrıl</string>
+  <string name="common_start_action">Başla</string>
+  <string name="common_save_all_action">Tümünü kaydet</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ses</string>

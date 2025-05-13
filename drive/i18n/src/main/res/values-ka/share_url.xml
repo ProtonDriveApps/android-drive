@@ -90,10 +90,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">დარჩენილი გაზიარებული ელემენტები (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
   <string name="shared_user_invitations_title_empty">დარჩენილი გაზიარებული ელემენტების გარეშე</string>
+  <string name="shared_user_album_invitations_title_empty">No pending shared albums</string>
   <string name="shared_user_invitations_description_empty">ყველა ახალი მოსაწვევი აქ გამოჩნდება</string>
   <string name="shared_user_invitations_accept_button">დასტური</string>
   <string name="shared_user_invitations_decline_button">უარყოფა</string>
   <string name="shared_user_invitations_accept_success">გაზიარებული ელემენტი დადასტურებულია</string>
   <string name="shared_user_invitations_decline_success">გაზიარებული ელემენტი უარყოფილია</string>
+  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
+  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
 </resources>

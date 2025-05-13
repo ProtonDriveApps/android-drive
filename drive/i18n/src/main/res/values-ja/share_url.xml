@@ -89,10 +89,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">保留中の共有アイテム (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">保留中の共有アルバム（%1$d）</string>
   <string name="shared_user_invitations_title_empty">保留中の共有アイテムはありません</string>
+  <string name="shared_user_album_invitations_title_empty">保留中の共有アルバムはありません</string>
   <string name="shared_user_invitations_description_empty">新しい招待状はすべてここに表示されます</string>
   <string name="shared_user_invitations_accept_button">承認</string>
   <string name="shared_user_invitations_decline_button">拒否</string>
   <string name="shared_user_invitations_accept_success">共有アイテムを受け入れました</string>
   <string name="shared_user_invitations_decline_success">共有アイテムを拒否しました</string>
+  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
+  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
 </resources>

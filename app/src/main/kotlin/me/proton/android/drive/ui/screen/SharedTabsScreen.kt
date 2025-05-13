@@ -46,6 +46,7 @@ import me.proton.android.drive.ui.viewstate.SharedTab
 import me.proton.android.drive.ui.viewstate.SharedTabsViewState
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.ProtonTab
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -56,8 +57,9 @@ fun SharedTabsScreen(
     homeScaffoldState: HomeScaffoldState,
     navigateToFiles: (FolderId, String?) -> Unit,
     navigateToPreview: (FileId) -> Unit,
+    navigateToAlbum: (AlbumId) -> Unit,
     navigateToFileOrFolderOptions: (LinkId) -> Unit,
-    navigateToUserInvitation: () -> Unit,
+    navigateToUserInvitation: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<SharedTabsViewModel>()
@@ -82,6 +84,7 @@ fun SharedTabsScreen(
         modifier = modifier.fillMaxSize(),
         navigateToFiles = navigateToFiles,
         navigateToPreview = navigateToPreview,
+        navigateToAlbum = navigateToAlbum,
         navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
         navigateToUserInvitation = navigateToUserInvitation,
     )
@@ -94,8 +97,9 @@ fun SharedTabs(
     viewEvent: SharedTabsViewEvent,
     navigateToFiles: (FolderId, String?) -> Unit,
     navigateToPreview: (FileId) -> Unit,
+    navigateToAlbum: (AlbumId) -> Unit,
     navigateToFileOrFolderOptions: (LinkId) -> Unit,
-    navigateToUserInvitation: () -> Unit,
+    navigateToUserInvitation: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -124,6 +128,7 @@ fun SharedTabs(
                 homeScaffoldState = homeScaffoldState,
                 navigateToFiles = navigateToFiles,
                 navigateToPreview = navigateToPreview,
+                navigateToAlbum = navigateToAlbum,
                 navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
                 navigateToUserInvitation = navigateToUserInvitation,
             )
@@ -131,6 +136,7 @@ fun SharedTabs(
                 homeScaffoldState = homeScaffoldState,
                 navigateToFiles = navigateToFiles,
                 navigateToPreview = navigateToPreview,
+                navigateToAlbum = navigateToAlbum,
                 navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
             )
         }

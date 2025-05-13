@@ -47,6 +47,12 @@
   <string name="files_send_to_trash_action">Déplacer dans le dossier Corbeille</string>
   <string name="files_remove_me_action">Me retirer</string>
   <string name="files_move_file_action">Déplacer</string>
+  <string name="files_add_to_favorite_action">Ajouter aux favoris</string>
+  <string name="files_remove_from_favorite_action">Retirer des favoris</string>
+  <string name="files_add_to_favorite_action_success">Ajouté aux favoris</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">La photo a été copiée dans le flux et marquée comme favorite.</string>
+  <string name="files_remove_from_favorite_action_success">Retiré des favoris</string>
+  <string name="files_save_shared_photo_action">Enregistrer la photo partagée</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

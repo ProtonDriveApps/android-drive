@@ -27,6 +27,7 @@ import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.extension.rootFolderId
 import me.proton.core.drive.link.domain.usecase.GetLink
+import me.proton.core.drive.link.domain.usecase.ValidateLinkNameSize
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import javax.inject.Inject
@@ -37,6 +38,7 @@ class CreateAlbum @Inject constructor(
     private val getLink: GetLink,
     private val albumRepository: AlbumRepository,
     private val updateEventAction: UpdateEventAction,
+    private val validateLinkNameSize: ValidateLinkNameSize,
 ) {
     suspend operator fun invoke(
         userId: UserId,
@@ -48,7 +50,7 @@ class CreateAlbum @Inject constructor(
         val (_, folderInfo) = createFolderInfo(
             parentFolder = photoShareRootLink,
             name = albumName,
-            shouldValidateName = false,
+            nameValidator = { validateLinkNameSize(albumName).getOrThrow() },
         ).getOrThrow()
         updateEventAction(userId, photoShare.volumeId) {
             AlbumId(

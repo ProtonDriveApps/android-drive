@@ -20,10 +20,12 @@ package me.proton.android.drive.ui.test.flow.onboarding
 
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.FeatureFlag
+import me.proton.android.drive.ui.annotation.FeatureFlags
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.WhatsNewRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ALBUMS
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ANDROID_WHATS_NEW
 import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
@@ -33,7 +35,12 @@ class WhatsNewFlowTest : BaseTest() {
     override val shouldShowWhatsNewAfterLogin get() = true
 
     @Test
-    @FeatureFlag(DRIVE_ANDROID_WHATS_NEW, ENABLED)
+    @FeatureFlags(
+        [
+            FeatureFlag(DRIVE_ANDROID_WHATS_NEW, ENABLED),
+            FeatureFlag(DRIVE_ALBUMS, ENABLED),
+        ]
+    )
     @PrepareUser(loginBefore = true)
     fun whatsNewShouldShow() {
         WhatsNewRobot

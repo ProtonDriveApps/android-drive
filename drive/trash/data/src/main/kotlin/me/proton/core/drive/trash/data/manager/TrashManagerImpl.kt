@@ -33,10 +33,7 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.TRASH
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
-import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.trash.data.manager.worker.EmptyTrashSuccessWorker
 import me.proton.core.drive.trash.data.manager.worker.EmptyTrashWorker
 import me.proton.core.drive.trash.data.manager.worker.PermanentlyDeleteFileNodesWorker
@@ -54,12 +51,12 @@ class TrashManagerImpl @Inject constructor(
     private val linkTrashRepository: LinkTrashRepository,
 ) : TrashManager {
 
-    override suspend fun trash(userId: UserId, parentId: ParentId, linkIds: List<LinkId>) =
+    override suspend fun trash(userId: UserId, volumeId: VolumeId, linkIds: List<LinkId>) =
         linkTrashRepository.insertWork(linkIds).onSuccess { workId ->
             workManager.enqueue(
                 TrashFileNodesWorker.getWorkRequest(
                     userId = userId,
-                    parentId = parentId,
+                    volumeId = volumeId,
                     workId = workId,
                 )
             )
@@ -67,12 +64,12 @@ class TrashManagerImpl @Inject constructor(
             error.log(TRASH, "Cannot insert work")
         }
 
-    override suspend fun restore(userId: UserId, shareId: ShareId, linkIds: List<LinkId>) =
+    override suspend fun restore(userId: UserId, volumeId: VolumeId, linkIds: List<LinkId>) =
         linkTrashRepository.insertWork(linkIds).onSuccess { workId ->
             workManager.enqueue(
                 RestoreFileNodesWorker.getWorkRequest(
                     userId = userId,
-                    shareId = shareId,
+                    volumeId = volumeId,
                     workId = workId,
                 )
             )
@@ -80,12 +77,12 @@ class TrashManagerImpl @Inject constructor(
             error.log(TRASH, "Cannot insert work")
         }
 
-    override suspend fun delete(userId: UserId, shareId: ShareId, linkIds: List<LinkId>) =
+    override suspend fun delete(userId: UserId, volumeId: VolumeId, linkIds: List<LinkId>) =
         linkTrashRepository.insertWork(linkIds).onSuccess { workId ->
             workManager.enqueue(
                 PermanentlyDeleteFileNodesWorker.getWorkRequest(
                     userId = userId,
-                    shareId = shareId,
+                    volumeId = volumeId,
                     workId = workId,
                 )
             )

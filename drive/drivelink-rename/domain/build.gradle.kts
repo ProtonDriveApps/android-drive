@@ -28,6 +28,8 @@ driveModule(
 ) {
     api(project(":drive:crypto:domain"))
     api(project(":drive:link:domain"))
+    api(project(":drive:share-crypto:domain"))
     implementation(project(":drive:event-manager:base:domain"))
+    implementation(project(":drive:photo:domain"))
     implementation(project(":drive:share:domain"))
 }

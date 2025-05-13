@@ -33,7 +33,7 @@ class GetAllSharedByMeIds @Inject constructor(
 
     suspend operator fun invoke(userId: UserId): Result<List<SharedLinkId>> = coRunCatching {
         pagedList(configurationProvider.dbPageSize) { index, count ->
-            repository.getSharedWithMeListing(
+            repository.getSharedByMeListing(
                 userId = userId,
                 index = index,
                 count = count,

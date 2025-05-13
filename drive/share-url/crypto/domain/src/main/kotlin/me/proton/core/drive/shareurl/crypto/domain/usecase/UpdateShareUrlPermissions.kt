@@ -18,12 +18,11 @@
 package me.proton.core.drive.shareurl.crypto.domain.usecase
 
 import me.proton.core.drive.base.domain.entity.Permissions
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
-import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrl
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
+import me.proton.core.drive.shareurl.base.domain.extension.userId
 import me.proton.core.drive.shareurl.base.domain.repository.ShareUrlRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
@@ -31,14 +30,13 @@ import javax.inject.Inject
 class UpdateShareUrlPermissions @Inject constructor(
     private val shareUrlRepository: ShareUrlRepository,
     private val updateEventAction: UpdateEventAction,
-    private val getMainShare: GetMainShare,
 ) {
     suspend operator fun invoke(
         volumeId: VolumeId,
         shareUrlId: ShareUrlId,
         permissions: Permissions,
     ): Result<ShareUrl> = coRunCatching {
-        updateEventAction(getMainShare(shareUrlId.shareId.userId).toResult().getOrThrow().id) {
+        updateEventAction(shareUrlId.userId, volumeId) {
             shareUrlRepository.updateShareUrlPermissions(
                 volumeId = volumeId,
                 shareUrlId = shareUrlId,

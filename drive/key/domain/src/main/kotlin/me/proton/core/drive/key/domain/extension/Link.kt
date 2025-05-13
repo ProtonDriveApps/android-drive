@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.key.domain.extension
 
+import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.key.domain.entity.key.NestedPrivateKey
 
@@ -25,3 +26,19 @@ internal val Link.keyId: String
 
 internal val Link.nestedPrivateKey
     get() = NestedPrivateKey.from(key, passphrase, passphraseSignature)
+
+fun Link.signatureEmail(
+    signatureAddress: String
+) = if (signatureEmail.isEmpty()) {
+    signatureAddress
+} else {
+    null
+}
+
+fun Link.nodePassphraseSignature(
+    nodeKey: Key.Node,
+) = if (signatureEmail.isEmpty() || nameSignatureEmail.isNullOrEmpty()) {
+    nodeKey.nodePassphraseSignature
+} else {
+    null
+}

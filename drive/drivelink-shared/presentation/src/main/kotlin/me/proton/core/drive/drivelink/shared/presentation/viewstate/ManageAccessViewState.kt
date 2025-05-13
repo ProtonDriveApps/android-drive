@@ -33,4 +33,5 @@ data class ManageAccessViewState(
     val canEditLink: Boolean,
     val loadingViewState: LoadingViewState,
     val shareUsers: List<ShareUserViewState> = emptyList(),
+    val showShareWithAnyone: Boolean = false,
 )

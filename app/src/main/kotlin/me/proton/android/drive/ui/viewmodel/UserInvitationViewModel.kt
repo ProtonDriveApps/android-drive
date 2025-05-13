@@ -70,6 +70,7 @@ class UserInvitationViewModel @Inject constructor(
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
+    private val albumsOnly: Boolean = savedStateHandle[ALBUMS_ONLY] ?: false
 
     private val emptyState = ListContentState.Empty(
         imageResId = getThemeDrawableId(
@@ -77,7 +78,11 @@ class UserInvitationViewModel @Inject constructor(
             dark = R.drawable.empty_shared_with_me_dark,
             dayNight = R.drawable.empty_shared_with_me_daynight,
         ),
-        titleId = I18N.string.shared_user_invitations_title_empty,
+        titleId = if (albumsOnly) {
+            I18N.string.shared_user_album_invitations_title_empty
+        } else {
+            I18N.string.shared_user_invitations_title_empty
+        },
         descriptionResId = I18N.string.shared_user_invitations_description_empty
     )
 
@@ -85,7 +90,7 @@ class UserInvitationViewModel @Inject constructor(
         MutableStateFlow(ListContentState.Loading)
 
     val userInvitations: StateFlow<List<UserInvitation>?> =
-        getDecryptedUserInvitationsFlow(userId).transform { result ->
+        getDecryptedUserInvitationsFlow(userId, albumsOnly).transform { result ->
             when (result) {
                 is DataResult.Processing -> listContentState.value = ListContentState.Loading
                 is DataResult.Error -> {
@@ -111,7 +116,13 @@ class UserInvitationViewModel @Inject constructor(
         }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     val initialViewState = UserInvitationViewState(
-        title = appContext.getString(I18N.string.shared_user_invitations_title).format(0),
+        title = appContext.getString(
+            if (albumsOnly) {
+                I18N.string.shared_user_album_invitations_title
+            } else {
+                I18N.string.shared_user_invitations_title
+            }
+        ).format(0),
         navigationIconResId = CorePresentation.drawable.ic_proton_arrow_back,
         listContentState = listContentState.value,
     )
@@ -121,8 +132,13 @@ class UserInvitationViewModel @Inject constructor(
         userInvitations,
     ) { state, userInvitations ->
             initialViewState.copy(
-                title = appContext.getString(I18N.string.shared_user_invitations_title)
-                    .format(userInvitations.orEmpty().size),
+                title = appContext.getString(
+                    if (albumsOnly) {
+                        I18N.string.shared_user_album_invitations_title
+                    } else {
+                        I18N.string.shared_user_invitations_title
+                    }
+                ).format(userInvitations.orEmpty().size),
                 listContentState = state,
             )
         }
@@ -151,7 +167,13 @@ class UserInvitationViewModel @Inject constructor(
                 }.onSuccess {
                     broadcastMessages(
                         userId,
-                        appContext.getString(I18N.string.shared_user_invitations_accept_success),
+                        appContext.getString(
+                            if (albumsOnly) {
+                                I18N.string.shared_user_album_invitations_accept_success
+                            } else {
+                                I18N.string.shared_user_invitations_accept_success
+                            }
+                        ),
                     )
                 }
         }
@@ -175,9 +197,19 @@ class UserInvitationViewModel @Inject constructor(
                 }.onSuccess {
                     broadcastMessages(
                         userId,
-                        appContext.getString(I18N.string.shared_user_invitations_decline_success),
+                        appContext.getString(
+                            if (albumsOnly) {
+                                I18N.string.shared_user_album_invitations_decline_success
+                            } else {
+                                I18N.string.shared_user_invitations_decline_success
+                            }
+                        ),
                     )
                 }
         }
+    }
+
+    companion object {
+        const val ALBUMS_ONLY = "albumsOnly"
     }
 }

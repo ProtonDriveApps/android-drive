@@ -26,10 +26,15 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import me.proton.android.drive.photos.domain.usecase.AddPhotosToStream
 import me.proton.android.drive.photos.domain.usecase.RemovePhotosFromAlbum
+import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel.Companion.KEY_ALBUM_ID
+import me.proton.android.drive.usecase.LeaveShare
 import me.proton.android.drive.usecase.NotifyActivityNotFound
 import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.crypto.common.pgp.VerificationStatus
+import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.ResponseSource
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Attributes
 import me.proton.core.drive.base.domain.entity.Bytes
@@ -37,18 +42,20 @@ import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.extension.asSuccess
+import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.documentsprovider.domain.usecase.ExportTo
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.offline.domain.usecase.ToggleOffline
+import me.proton.core.drive.drivelink.photo.domain.usecase.ToggleFavorite
 import me.proton.core.drive.drivelink.photo.domain.usecase.UpdateAlbumCover
 import me.proton.core.drive.drivelink.trash.domain.usecase.ToggleTrashState
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.DownloadFileEntry
 import me.proton.core.drive.files.presentation.entry.FileInfoEntry
@@ -61,6 +68,7 @@ import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
 import me.proton.core.drive.files.presentation.entry.SetAsAlbumCoverEntry
 import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntry
+import me.proton.core.drive.files.presentation.entry.ToggleFavoriteFileEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
 import me.proton.core.drive.files.presentation.entry.ToggleTrashEntry
 import me.proton.core.drive.link.domain.entity.FileId
@@ -68,12 +76,14 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.SharingDetails
+import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
-import me.proton.core.drive.share.user.domain.usecase.LeaveShare
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.volume.domain.entity.Volume
+import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
+import me.proton.core.drive.volume.domain.usecase.HasPhotoVolume
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -95,10 +105,19 @@ class FileOrFolderOptionsViewModelTest {
     private val openProtonDocumentInBrowser = mockk<OpenProtonDocumentInBrowser>()
     private val updateAlbumCover = mockk<UpdateAlbumCover>()
     private val removePhotosFromAlbum = mockk<RemovePhotosFromAlbum>()
+    private val deselectLinks = mockk<DeselectLinks>()
+    private val toggleFavorite = mockk<ToggleFavorite>()
+    private val getOldestActiveVolume = mockk<GetOldestActiveVolume>()
+    private val addPhotosToStream = mockk<AddPhotosToStream>()
+    private val hasPhotoVolume = mockk<HasPhotoVolume>()
 
     @Before
     fun before() {
-        coEvery { savedStateHandle.get<String>(any()) } returns "value"
+        coEvery { savedStateHandle.get<String>(any()) } answers {
+            val key: String = arg(0)
+            if (key == KEY_ALBUM_ID) null else "value"
+        }
+
         coEvery { getFeatureFlagFlow.invoke(any(), any(), any())} answers {
             val id: FeatureFlagId = arg(0)
             flowOf(FeatureFlag(id, State.NOT_FOUND))
@@ -107,6 +126,20 @@ class FileOrFolderOptionsViewModelTest {
             { false }
         }
         coEvery { configurationProvider.albumsFeatureFlag} returns true
+        coEvery { deselectLinks(any()) } returns Unit
+        coEvery { getOldestActiveVolume(any(), any()) } returns flowOf(DataResult.Success(
+            source = ResponseSource.Local,
+            value = Volume(
+                id = volumeId,
+                shareId = "",
+                linkId = "",
+                usedSpace = 0.bytes,
+                state = 0,
+                createTime = TimestampS(),
+                type = Volume.Type.PHOTO
+            )
+        ))
+        coEvery { hasPhotoVolume.invoke(any()) } returns flowOf(true)
     }
 
     @Test
@@ -198,7 +231,13 @@ class FileOrFolderOptionsViewModelTest {
         coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(fileDriveLink.asSuccess)
         coEvery { getFeatureFlagFlow.invoke(any())} answers {
             val id: FeatureFlagId = arg(0)
-            flowOf(FeatureFlag(id, State.ENABLED))
+            flowOf(
+                if (id == FeatureFlagId.driveAlbumsTempDisabledOnRelease(UserId("value"))) {
+                    FeatureFlag(id, State.NOT_FOUND)
+                } else {
+                    FeatureFlag(id, State.ENABLED)
+                }
+            )
         }
         // When
         val entries = fileOptionEntries()
@@ -283,9 +322,10 @@ class FileOrFolderOptionsViewModelTest {
     }
 
     @Test
-    fun `file options on photo share without album feature flag`() = runTest {
+    fun `file options on photo share without photo volume`() = runTest {
         // Given
         coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(photoDriveLink.asSuccess)
+        coEvery { hasPhotoVolume.invoke(any()) } returns flowOf(false)
 
         // When
         val entries = fileOptionEntries()
@@ -306,12 +346,13 @@ class FileOrFolderOptionsViewModelTest {
     }
 
     @Test
-    fun `file options on photo share with album feature flag`() = runTest {
+    fun `file options on photo share with photo volume`() = runTest {
         // Given
         coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(photoDriveLink.asSuccess)
         val featureFlagId = FeatureFlagId.driveAlbums(UserId("value"))
         coEvery { getFeatureFlagFlow(featureFlagId, any(), any()) } returns
                 flowOf( FeatureFlag(featureFlagId, State.ENABLED))
+        coEvery { savedStateHandle.get<String>(KEY_ALBUM_ID) } returns "album-id"
 
         // When
         val entries = fileOptionEntries()
@@ -322,12 +363,10 @@ class FileOrFolderOptionsViewModelTest {
                 SetAsAlbumCoverEntry::class,
                 RemoveFromAlbumFileEntry::class,
                 ToggleOfflineEntry::class,
-                ShareViaInvitationsEntry::class,
-                ManageAccessEntry::class,
+                ToggleFavoriteFileEntry::class,
                 SendFileEntry::class,
                 DownloadFileEntry::class,
                 FileInfoEntry::class,
-                ToggleTrashEntry::class,
             ),
             entries.map { it.javaClass.kotlin }
         )
@@ -384,13 +423,17 @@ class FileOrFolderOptionsViewModelTest {
         exportTo = exportTo,
         notifyActivityNotFound = notifyActivityNotFound,
         getFeatureFlagFlow = getFeatureFlagFlow,
-        albumsFeatureFlag = AlbumsFeatureFlag(getFeatureFlagFlow, configurationProvider),
         leaveShare = leaveShare,
         configurationProvider = configurationProvider,
         broadcastMessages = broadcastMessages,
         openProtonDocumentInBrowser = openProtonDocumentInBrowser,
         updateAlbumCover = updateAlbumCover,
         removePhotosFromAlbum = removePhotosFromAlbum,
+        deselectLinks = deselectLinks,
+        toggleFavorite = toggleFavorite,
+        getOldestActiveVolume = getOldestActiveVolume,
+        addPhotosToStream = addPhotosToStream,
+        hasPhotoVolume = hasPhotoVolume,
     )
 
     private val fileLink = Link.File(
@@ -435,7 +478,7 @@ class FileOrFolderOptionsViewModelTest {
 
     private val fileDriveLink = DriveLink.File(
         link = fileLink,
-        volumeId = VolumeId("VOLUME_ID"),
+        volumeId = volumeId,
         isMarkedAsOffline = true,
         isAnyAncestorMarkedAsOffline = false,
         downloadState = DownloadState.Downloaded(),

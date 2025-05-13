@@ -29,10 +29,10 @@ import me.proton.core.drive.share.user.domain.entity.UserInvitationId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 fun UserInvitationIdAndDetailsEntity.toUserInvitationId() = UserInvitation(
-    id = UserInvitationId(VolumeId(volumeId), ShareId(userId, shareId), id),
+    id = UserInvitationId(VolumeId(volumeId), ShareId(userId, shareId), id, shareTargetType?.toShareTargetType()),
     details = details?.run {
         UserInvitationDetails(
-            id = UserInvitationId(VolumeId(volumeId), ShareId(userId, shareId), id),
+            id = UserInvitationId(VolumeId(volumeId), ShareId(userId, shareId), id, shareTargetType?.toShareTargetType()),
             inviterEmail = inviterEmail,
             inviteeEmail = inviteeEmail,
             permissions = Permissions(permissions),

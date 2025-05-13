@@ -37,9 +37,18 @@
   <string name="albums_delete_album_dialog_description_with_children">Algunes fotos d\'aquest àlbum no es desen a la vostra cronologia. Si suprimiu aquest àlbum, aquestes fotos se suprimiran permanentment.\nVoleu desar-les abans de suprimir-les?</string>
   <string name="albums_delete_album_dialog_delete_without_saving_action">Elimina sense desar</string>
   <string name="albums_delete_album_dialog_save_and_delete_action">Desa les fotos i suprimeix</string>
+  <string name="albums_leave_album_dialog_title">Voleu deixar l\'àlbum?</string>
+  <!--
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">Esteu segur que voleu deixar l\'àlbum « %1$s »?\nPerdreu l\'accés a les fotos que encara no heu desat.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Deixa sense desar</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Desa les fotos i surt</string>
   <string name="albums_add_zero_to_album_button">Afegeix a l\'àlbum</string>
   <!--
-        Variable %1$s is a number of photos to add to album
+        Variable %1$d is a number of photos to add to album
         Example:
             "Add 1 to album"
             "Add 33 to album"
@@ -49,4 +58,107 @@
     <item quantity="other">Afegeix %1$d a l\'àlbum</item>
   </plurals>
   <string name="albums_set_album_as_cover_success">Estableix com a portada de l\'àlbum</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="one">S\'ha afegit %1$d element a l\'àlbum.</item>
+    <item quantity="other">S\'han afegit %1$d elements a l\'àlbum.</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="one">%1$d element ja existeix</item>
+    <item quantity="other">%1$d elements ja existeixen</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="one">Error amb %1$d element</item>
+    <item quantity="other">Error amb %1$d elements</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="one">S\'ha afegit %1$d element al vostre Drive</item>
+    <item quantity="other">S\'han afegit %1$d elements al vostre Drive</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="one">Ja existeix %1$d element</item>
+    <item quantity="other">Ja existeixen %1$d elements</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="one">Ha fallat %1$d element</item>
+    <item quantity="other">Han fallat %1$d elements</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="one">S\'ha eliminat %1$d element de l\'àlbum.</item>
+    <item quantity="other">S\'han eliminat %1$d elements de l\'àlbum.</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="one">Error amb %1$d element</item>
+    <item quantity="other">Error amb %1$d elements</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">Cap foto</string>
+  <string name="albums_empty_album_screen_description">Les fotos afegides per vosaltres o per altres membres apareixeran aquí</string>
+  <string name="albums_empty_albums_list_screen_title">Cap àlbum</string>
+  <string name="albums_empty_albums_list_screen_description">Els àlbums que creeu o uniu-vos-hi apareixeran aquí.</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Els àlbums que creeu apareixeran aquí.</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">No hi ha àlbums compartits.</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Els àlbums que heu compartit apareixeran aquí</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">No s\'ha compartit cap àlbum amb mi</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Els àlbums que han compartit amb vosaltres apareixeran aquí</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="one">S\'ha compartit %1$d àlbum amb vosaltres.</item>
+    <item quantity="other">S\'han compartit %1$d àlbums compartits amb vosaltres.</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">Comparteix mitjançant</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Afegeix a l\'àlbum compartit</string>
+  <string name="albums_share_multiple_photos_options_album_details">Àlbum compartit</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Nou àlbum compartit</string>
 </resources>

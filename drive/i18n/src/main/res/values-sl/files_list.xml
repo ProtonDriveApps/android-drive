@@ -49,6 +49,12 @@
   <string name="files_send_to_trash_action">Premakni v smetnjak</string>
   <string name="files_remove_me_action">Odstrani me</string>
   <string name="files_move_file_action">Premakni</string>
+  <string name="files_add_to_favorite_action">Dodaj med priljubljene</string>
+  <string name="files_remove_from_favorite_action">Odstrani iz priljubljenih</string>
+  <string name="files_add_to_favorite_action_success">Uspešno dodano med priljubljene</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Fotografija je bila kopirana na časovnico in tam označena kot priljubljena.</string>
+  <string name="files_remove_from_favorite_action_success">Uspešno odstranjeno iz priljubljenih</string>
+  <string name="files_save_shared_photo_action">Shrani deljeno fotografijo</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

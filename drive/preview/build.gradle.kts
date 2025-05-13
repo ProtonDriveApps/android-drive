@@ -25,6 +25,7 @@ android {
 }
 
 driveModule(
+    hilt = true,
     compose = true,
     i18n = true,
     kapt = true,

@@ -55,19 +55,28 @@ fun DriveLink.thumbnailPainter(
     }
 )
 
-fun DriveLink.Album.details(appContext: Context, useCreationTime: Boolean = true): String =
-    albumDetails(
+fun DriveLink.Album.details(
+    appContext: Context,
+    useCreationTime: Boolean = true,
+    showDisplayName: Boolean = false,
+): String {
+    return albumDetails(
         appContext = appContext,
         photoCount = photoCount,
         isShared = link.sharingDetails != null,
+        displayName = (shareUser?.displayName ?: shareUser?.email).takeIf {
+            showDisplayName && sharePermissions != null
+        },
         creationTime = link.creationTime.takeIf { useCreationTime },
     )
+}
 
 @VisibleForTesting
 fun albumDetails(
     appContext: Context,
     photoCount: Long,
     isShared: Boolean,
+    displayName: String? = null,
     creationTime: TimestampS? = null,
 ) = buildString {
     if (creationTime != null) {
@@ -83,6 +92,6 @@ fun albumDetails(
     )
     if (isShared) {
         append(" \u2022 ")
-        append(appContext.getString(I18N.string.common_shared))
+        append(displayName ?: appContext.getString(I18N.string.common_shared))
     }
 }

@@ -72,7 +72,6 @@ class GetAllAlbumListings @Inject constructor(
             emitAll(
                 albumRepository.getAlbumListingsFlow(
                     userId = userId,
-                    volumeId = volumeId,
                     fromIndex = 0,
                     count = configurationProvider.dbPageSize,
                     sortingDirection = sortingDirection,

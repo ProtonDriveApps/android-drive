@@ -47,6 +47,12 @@
   <string name="files_send_to_trash_action">Sposta nel cestino</string>
   <string name="files_remove_me_action">Rimuovimi</string>
   <string name="files_move_file_action">Sposta</string>
+  <string name="files_add_to_favorite_action">Aggiungi ai preferiti</string>
+  <string name="files_remove_from_favorite_action">Rimuovi dai preferiti</string>
+  <string name="files_add_to_favorite_action_success">Aggiunto ai preferiti</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">La foto è stata copiata nello stream ed è stata contrassegnata come preferita.</string>
+  <string name="files_remove_from_favorite_action_success">Rimosso dai preferiti</string>
+  <string name="files_save_shared_photo_action">Salva la foto condivisa</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

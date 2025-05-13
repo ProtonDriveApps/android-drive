@@ -70,6 +70,7 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserVie
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidAlbumsPublicShare
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.drivePublicShareEditMode
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.drivePublicShareEditModeDisabled
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
@@ -217,6 +218,14 @@ class ManageAccessViewModel @Inject constructor(
             initialValue = FeatureFlag(driveSharingDisabled(userId), NOT_FOUND)
         )
 
+    private val driveAndroidAlbumsPublicShareFeatureFlag =
+        getFeatureFlagFlow(driveAndroidAlbumsPublicShare(userId))
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = FeatureFlag(driveAndroidAlbumsPublicShare(userId), NOT_FOUND)
+            )
+
     val viewState: Flow<ManageAccessViewState> = combine(
         driveLink.filterNotNull(),
         sharedDriveLink.filterSuccessOrError().mapSuccessValueOrNull(),
@@ -225,8 +234,10 @@ class ManageAccessViewModel @Inject constructor(
         killSwitch,
         drivePublicShareEditModeFeatureFlag,
         drivePublicShareEditModeKillSwitch,
+        driveAndroidAlbumsPublicShareFeatureFlag,
     ) { driveLink, sharedDriveLink, sharedLoadingViewState, shareUsers,
-        killSwitch, drivePublicShareEditModeFeatureFlag, drivePublicShareEditModeKillSwitch ->
+        killSwitch, drivePublicShareEditModeFeatureFlag,
+        drivePublicShareEditModeKillSwitch, driveAndroidAlbumsPublicShareFeatureFlag ->
         val publicUrl = sharedDriveLink?.publicUrl?.value
         ManageAccessViewState(
             title = appContext.getString(I18N.string.title_manage_access),
@@ -248,7 +259,12 @@ class ManageAccessViewModel @Inject constructor(
                     && killSwitch.state != ENABLED,
             canEditLink = drivePublicShareEditModeKillSwitch.off && drivePublicShareEditModeFeatureFlag.on,
             loadingViewState = sharedLoadingViewState,
-            shareUsers = shareUsers.toViewState()
+            shareUsers = shareUsers.toViewState(),
+            showShareWithAnyone = if(driveLink is DriveLink.Album){
+                driveAndroidAlbumsPublicShareFeatureFlag.on
+            } else {
+                true
+            }
         )
     }
 

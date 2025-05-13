@@ -27,43 +27,74 @@ import javax.inject.Inject
 class InsertOrDeletePhotoListings @Inject constructor(
     private val insertOrIgnorePhotoListings: InsertOrIgnorePhotoListings,
     private val deletePhotoListings: DeletePhotoListings,
-){
+) {
 
-    suspend operator fun invoke(volumeId: VolumeId, links: List<Link.File>): Result<Unit> = coRunCatching {
+    suspend operator fun invoke(
+        volumeId: VolumeId,
+        links: List<Link.File>,
+    ): Result<Unit> = coRunCatching {
         links
-            .mapNotNull { link -> link.toPhotoListing()?.let { photoListing -> photoListing to link.state } }
+            .map { link -> link.toPhotoListing(links) to link.state }
             .insertOrIgnorePhotoListings(volumeId)
             .deletePhotoListings()
     }
 
-    private suspend fun List<Pair<PhotoListing, Link.State>>.insertOrIgnorePhotoListings(
+    private suspend fun List<Pair<List<PhotoListing>, Link.State>>.insertOrIgnorePhotoListings(
         volumeId: VolumeId,
-    ): List<Pair<PhotoListing, Link.State>> = this.also { photoListingsWithState ->
+    ): List<Pair<List<PhotoListing>, Link.State>> = this.also { photoListingsWithState ->
         photoListingsWithState
             .filter { (_, state) -> state == Link.State.ACTIVE }
             .map { (photoListing, _) -> photoListing }
+            .flatten()
             .let { photoListings ->
                 insertOrIgnorePhotoListings(volumeId, photoListings)
             }
     }
 
-    private suspend fun List<Pair<PhotoListing, Link.State>>.deletePhotoListings(
+    private suspend fun List<Pair<List<PhotoListing>, Link.State>>.deletePhotoListings(
 
-    ): List<Pair<PhotoListing, Link.State>> = this.also { photoListingsWithState ->
+    ): List<Pair<List<PhotoListing>, Link.State>> = this.also { photoListingsWithState ->
         photoListingsWithState
             .filter { (_, state) -> state != Link.State.ACTIVE }
-            .map { (photoListing, _) -> photoListing.linkId }
+            .map { (photoListing, _) -> photoListing }
+            .flatten()
+            .map { photoListing -> photoListing.linkId }
             .let { linkIds ->
                 deletePhotoListings(linkIds)
             }
     }
 
-    private fun Link.File.toPhotoListing(): PhotoListing? = photoCaptureTime?.let { captureTime ->
-        PhotoListing.Volume(
-            linkId = id,
-            captureTime = captureTime,
-            nameHash = hash,
-            contentHash = photoContentHash,
-        )
+    private fun Link.File.toPhotoListing(links: List<Link.File>): List<PhotoListing> {
+        val relatedPhotos = relatedPhotoIds.mapNotNull { relatedPhotoId ->
+            links.firstOrNull { link -> link.id == id }
+        }.mapNotNull { link ->
+            link.photoCaptureTime?.let { captureTime ->
+                PhotoListing.RelatedPhoto(
+                    linkId = link.id,
+                    captureTime = captureTime,
+                    nameHash = link.hash,
+                    contentHash = link.photoContentHash
+                )
+            }
+        }
+        return photoCaptureTime?.let { captureTime ->
+            (tags).map { tag ->
+                PhotoListing.Volume(
+                    linkId = id,
+                    captureTime = captureTime,
+                    nameHash = hash,
+                    contentHash = photoContentHash,
+                    tag = tag,
+                    relatedPhotos = relatedPhotos,
+                )
+            } + PhotoListing.Volume(
+                linkId = id,
+                captureTime = captureTime,
+                nameHash = hash,
+                contentHash = photoContentHash,
+                tag = null,
+                relatedPhotos = relatedPhotos,
+            )
+        }.orEmpty()
     }
 }

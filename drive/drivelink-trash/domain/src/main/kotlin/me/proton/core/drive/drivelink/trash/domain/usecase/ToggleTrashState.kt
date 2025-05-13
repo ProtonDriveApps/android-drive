@@ -19,7 +19,6 @@
 package me.proton.core.drive.drivelink.trash.domain.usecase
 
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.link.domain.extension.requireParentId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.trash.domain.usecase.RestoreFromTrash
 import me.proton.core.drive.trash.domain.usecase.SendToTrash
@@ -31,8 +30,8 @@ class ToggleTrashState @Inject constructor(
 ) {
 
     suspend operator fun invoke(driveLink: DriveLink) = if (driveLink.isTrashed) {
-        restoreFromTrash(driveLink.userId, driveLink.id)
+        restoreFromTrash(driveLink.userId, driveLink.volumeId, listOf(driveLink.id))
     } else {
-        sendToTrash(driveLink.userId, driveLink.requireParentId(), listOf(driveLink.id))
+        sendToTrash(driveLink.userId, driveLink.volumeId, listOf(driveLink.id))
     }
 }

@@ -20,12 +20,12 @@ package me.proton.core.drive.backup.domain.entity
 
 import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.ParentId
 
 data class BackupDuplicate(
     val id: Long = 0,
-    val parentId: FolderId,
+    val parentId: ParentId,
     val hash: String,
     val contentHash: String?,
     val linkId: FileId?,

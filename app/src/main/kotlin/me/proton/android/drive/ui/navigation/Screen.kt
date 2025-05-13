@@ -30,16 +30,21 @@ import me.proton.android.drive.ui.viewmodel.AlbumOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.AlbumViewModel
 import me.proton.android.drive.ui.viewmodel.ComputerOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ConfirmDeleteAlbumDialogViewModel
+import me.proton.android.drive.ui.viewmodel.ConfirmLeaveAlbumDialogViewModel
 import me.proton.android.drive.ui.viewmodel.ConfirmStopAllSharingDialogViewModel
+import me.proton.android.drive.ui.viewmodel.CreateNewAlbumViewModel
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.MoveToFolderViewModel
 import me.proton.android.drive.ui.viewmodel.MultipleFileOrFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ParentFolderOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.PhotosPickerAndSelectionViewModel
-import me.proton.android.drive.ui.viewmodel.PickerPhotosAndAlbumsViewModel
+import me.proton.android.drive.ui.viewmodel.PickerPhotosViewModel
 import me.proton.android.drive.ui.viewmodel.ShareInvitationOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.ShareMemberOptionsViewModel
+import me.proton.android.drive.ui.viewmodel.SubscriptionPromoViewModel
+import me.proton.android.drive.ui.viewmodel.ShareMultiplePhotosOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.UploadToViewModel
+import me.proton.android.drive.ui.viewmodel.UserInvitationViewModel
 import me.proton.android.drive.ui.viewmodel.WhatsNewViewModel
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
@@ -53,6 +58,7 @@ import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.notification.presentation.viewmodel.NotificationPermissionRationaleViewModel
@@ -114,23 +120,33 @@ sealed class Screen(val route: String) {
     }
 
     data object FileOrFolderOptions : Screen(
-        "options/link/{userId}/shares/{shareId}/linkId={linkId}?albumShareId={albumShareId}&albumId={albumId}"
+        "options/link/{userId}/shares/{shareId}/linkId={linkId}?albumShareId={albumShareId}&albumId={albumId}&selectionId={selectionId}"
     ) {
         operator fun invoke(
             userId: UserId,
             linkId: LinkId,
-            albumId: AlbumId? = null
+            albumId: AlbumId? = null,
+            selectionId: SelectionId? = null,
         ) = buildString {
             append("options/link/${userId.id}/shares/${linkId.shareId.id}/linkId=${linkId.id}")
             if (albumId != null) {
                 append("?albumShareId=${albumId.shareId.id}&albumId=${albumId.id}")
+            }
+            if (selectionId != null) {
+                if (albumId != null) {
+                    append("&")
+                } else {
+                    append("?")
+                }
+                append("selectionId=${selectionId.id}")
             }
         }
 
         const val SHARE_ID = FileOrFolderOptionsViewModel.KEY_SHARE_ID
         const val LINK_ID = FileOrFolderOptionsViewModel.KEY_LINK_ID
         const val ALBUM_ID = FileOrFolderOptionsViewModel.KEY_ALBUM_ID
-        const val KEY_ALBUM_SHARE_ID = FileOrFolderOptionsViewModel.KEY_ALBUM_SHARE_ID
+        const val ALBUM_SHARE_ID = FileOrFolderOptionsViewModel.KEY_ALBUM_SHARE_ID
+        const val SELECTION_ID = FileOrFolderOptionsViewModel.KEY_SELECTION_ID
     }
 
     data object MultipleFileOrFolderOptions : Screen(
@@ -194,6 +210,18 @@ sealed class Screen(val route: String) {
 
         const val SHARE_ID = AlbumOptionsViewModel.KEY_SHARE_ID
         const val ALBUM_ID = AlbumOptionsViewModel.KEY_ALBUM_ID
+    }
+
+    data object ShareMultiplePhotosOptions : Screen(
+        "options/multiple/sharePhotos/{userId}/selectionId={selectionId}"
+    ) {
+        operator fun invoke(
+            userId: UserId,
+            selectionId: SelectionId,
+        ) = "options/multiple/sharePhotos/${userId.id}/selectionId=${selectionId.id}"
+
+        const val USER_ID = Screen.USER_ID
+        const val SELECTION_ID = ShareMultiplePhotosOptionsViewModel.SELECTION_ID
     }
 
     data object Info : Screen("info/{userId}/shares/{shareId}/files?linkId={linkId}") {
@@ -351,6 +379,10 @@ sealed class Screen(val route: String) {
             operator fun invoke(userId: UserId) = "home/${userId.id}/photos/upsell"
         }
 
+        data object ImportantUpdates : Screen("home/{userId}/photos/importantUpdates") {
+            operator fun invoke(userId: UserId) = "home/${userId.id}/photos/importantUpdates"
+        }
+
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = "shareId"
     }
@@ -358,11 +390,15 @@ sealed class Screen(val route: String) {
 
         override fun invoke(userId: UserId) = "home/${userId.id}/photos"
 
-        data object CreateNewAlbum : Screen("home/{userId}/photos/new_album") {
-            operator fun invoke(userId: UserId) = "home/${userId.id}/photos/new_album"
+        data object CreateNewAlbum : Screen("home/{userId}/photos/new_album?sharedAlbum={sharedAlbum}") {
+            operator fun invoke(
+                userId: UserId,
+                sharedAlbum: Boolean = false,
+            ) = "home/${userId.id}/photos/new_album?sharedAlbum=${sharedAlbum}"
         }
 
         const val USER_ID = Screen.USER_ID
+        const val SHARED_ALBUM = CreateNewAlbumViewModel.SHARED_ALBUM
     }
 
     data object Album : Screen("photos/{userId}/shares/{shareId}/albums/{albumId}") {
@@ -371,11 +407,19 @@ sealed class Screen(val route: String) {
 
         object Dialogs {
             data object ConfirmDeleteAlbum : Screen("delete/photos/{userId}/shares/{shareId}/albums/{albumId}/confirm") {
-                operator fun invoke(albumId: LinkId) =
+                operator fun invoke(albumId: AlbumId) =
                     "delete/photos/${albumId.userId.id}/shares/${albumId.shareId.id}/albums/${albumId.id}/confirm"
 
                 const val SHARE_ID = ConfirmDeleteAlbumDialogViewModel.SHARE_ID
                 const val ALBUM_ID = ConfirmDeleteAlbumDialogViewModel.ALBUM_ID
+            }
+
+            data object ConfirmLeaveAlbum : Screen("leave/photos/{userId}/shares/{shareId}/albums/{albumId}/confirm") {
+                operator fun invoke(albumId: AlbumId) =
+                    "leave/photos/${albumId.userId.id}/shares/${albumId.shareId.id}/albums/${albumId.id}/confirm"
+
+                const val SHARE_ID = ConfirmLeaveAlbumDialogViewModel.SHARE_ID
+                const val ALBUM_ID = ConfirmLeaveAlbumDialogViewModel.ALBUM_ID
             }
         }
 
@@ -385,7 +429,7 @@ sealed class Screen(val route: String) {
     }
 
     object Picker {
-        data object PhotosAndAlbums : Screen("picker/{userId}/photos/destination?inPickerMode={inPickerMode}&destinationShareId={destinationShareId}&destinationAlbumId={destinationAlbumId}") {
+        data object Photos : Screen("picker/{userId}/photos/destination?inPickerMode={inPickerMode}&destinationShareId={destinationShareId}&destinationAlbumId={destinationAlbumId}") {
             operator fun invoke(userId: UserId) = "picker/${userId.id}/photos/destination?inPickerMode=true"
 
             operator fun invoke(destinationAlbumId: AlbumId) =
@@ -403,8 +447,8 @@ sealed class Screen(val route: String) {
         const val IN_PICKER_MODE = PhotosPickerAndSelectionViewModel.IN_PICKER_MODE
         const val SHARE_ID = AlbumViewModel.SHARE_ID
         const val ALBUM_ID = AlbumViewModel.ALBUM_ID
-        const val DESTINATION_SHARE_ID = PickerPhotosAndAlbumsViewModel.DESTINATION_SHARE_ID
-        const val DESTINATION_ALBUM_ID = PickerPhotosAndAlbumsViewModel.DESTINATION_ALBUM_ID
+        const val DESTINATION_SHARE_ID = PickerPhotosViewModel.DESTINATION_SHARE_ID
+        const val DESTINATION_ALBUM_ID = PickerPhotosViewModel.DESTINATION_ALBUM_ID
     }
 
     data object BackupIssues : Screen("backup/issues/{userId}/shares/{shareId}/folder/{folderId}") {
@@ -462,12 +506,18 @@ sealed class Screen(val route: String) {
             filesBrowsableBuildRoute("offline", userId, folderId, folderName)
     }
 
-    data object PagerPreview : Screen("pager/{pagerType}/preview/{userId}/shares/{shareId}/files/{fileId}?albumShareId={albumShareId}&albumId={albumId}") {
+    data object PagerPreview : Screen("pager/{pagerType}/preview/{userId}/shares/{shareId}/files/{fileId}?photoTag={photoTag}&albumShareId={albumShareId}&albumId={albumId}") {
         operator fun invoke(
             pagerType: PagerType,
             userId: UserId,
             fileId: FileId,
         ) = "pager/${pagerType.type}/preview/${userId.id}/shares/${fileId.shareId.id}/files/${fileId.id}"
+        operator fun invoke(
+            pagerType: PagerType,
+            userId: UserId,
+            fileId: FileId,
+            photoTag: PhotoTag,
+        ) = "pager/${pagerType.type}/preview/${userId.id}/shares/${fileId.shareId.id}/files/${fileId.id}?photoTag=${photoTag.value}"
         operator fun invoke(
             pagerType: PagerType,
             userId: UserId,
@@ -480,6 +530,7 @@ sealed class Screen(val route: String) {
         const val FILE_ID = "fileId"
         const val ALBUM_SHARE_ID = "albumShareId"
         const val ALBUM_ID = "albumId"
+        const val PHOTO_TAG = "photoTag"
         const val PAGER_TYPE = "pagerType"
     }
 
@@ -646,12 +697,14 @@ sealed class Screen(val route: String) {
         const val MEMBER_ID = ShareMemberOptionsViewModel.KEY_MEMBER_ID
     }
 
-    data object UserInvitation : Screen("shareViaInvitations/{userId}/invitations") {
+    data object UserInvitation : Screen("shareViaInvitations/{userId}/invitations?albumsOnly={albumsOnly}") {
         operator fun invoke(
             userId: UserId,
-        ) = "shareViaInvitations/${userId.id}/invitations"
+            albumsOnly: Boolean = false,
+        ) = "shareViaInvitations/${userId.id}/invitations?albumsOnly=$albumsOnly"
 
         const val USER_ID = Screen.USER_ID
+        const val ALBUMS_ONLY = UserInvitationViewModel.ALBUMS_ONLY
     }
 
     data object ShareLinkPermissions : Screen("shareViaLink/{userId}/shares/{shareId}/linkId/{linkId}/permissions") {
@@ -787,6 +840,12 @@ sealed class Screen(val route: String) {
                     }
                 }
             }
+    }
+    data object Promo {
+        data object Subscription : Screen("home/{userId}/promo/subscription?key={key}"){
+            operator fun invoke(userId: UserId, key: String) = "home/${userId.id}/promo/subscription?key=$key"
+            const val PROMO_KEY = SubscriptionPromoViewModel.PROMO_KEY
+        }
     }
 }
 

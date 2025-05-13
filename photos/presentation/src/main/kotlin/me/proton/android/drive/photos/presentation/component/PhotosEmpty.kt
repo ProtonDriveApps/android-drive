@@ -45,6 +45,8 @@ fun PhotosEmpty(
     state: ListContentState.Empty,
     viewState: PhotosStatusViewState,
     showPhotosStateBanner: Boolean,
+    showPhotoShareMigrationNeededBanner: Boolean,
+    showStorageBanner: Boolean,
     modifier: Modifier = Modifier,
     onEnable: () -> Unit,
     onPermissions: () -> Unit,
@@ -55,6 +57,7 @@ fun PhotosEmpty(
     onChangeNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
+    onStartPhotoShareMigration: () -> Unit,
 ) {
     Box(modifier = modifier) {
         if (viewState is PhotosStatusViewState.Preparing
@@ -71,6 +74,10 @@ fun PhotosEmpty(
             )
         }
         PhotosBanners(modifier = Modifier.align(Alignment.BottomCenter)) {
+            PhotoShareMigrationNeededState(
+                isVisible = showPhotoShareMigrationNeededBanner,
+                onStart = onStartPhotoShareMigration,
+            )
             PhotosStatesContainer(
                 viewState = viewState,
                 showPhotosStateBanner = showPhotosStateBanner,
@@ -83,7 +90,10 @@ fun PhotosEmpty(
                 onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
                 onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
             )
-            StorageBanner(onGetStorage = onGetStorage)
+            StorageBanner(
+                isVisible = showStorageBanner,
+                onGetStorage = onGetStorage,
+            )
         }
     }
 }
@@ -142,6 +152,8 @@ private fun PhotosEmptyPreview() {
             actionResId = null,
         ),
         showPhotosStateBanner = true,
+        showPhotoShareMigrationNeededBanner = false,
+        showStorageBanner = false,
         viewState = PhotosStatusViewState.InProgress(0F, "12 345 items left"),
         onEnable = {},
         onPermissions = {},
@@ -152,6 +164,7 @@ private fun PhotosEmptyPreview() {
         onChangeNetwork = {},
         onIgnoreBackgroundRestrictions = {},
         onDismissBackgroundRestrictions = {},
+        onStartPhotoShareMigration = {},
     )
 }
 

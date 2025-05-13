@@ -23,11 +23,14 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.photo.domain.entity.PhotoDuplicate
 import me.proton.core.drive.photo.domain.entity.PhotoInfo
-import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.photo.domain.entity.PhotoListing
+import me.proton.core.drive.photo.domain.entity.RelatedPhoto
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -37,7 +40,11 @@ interface PhotoRepository {
 
     suspend fun createPhotoShareWithRootLink(userId: UserId, photoInfo: PhotoInfo): Pair<String, String>
 
-    fun getPhotoListingCount(userId: UserId, volumeId: VolumeId): Flow<Int>
+    fun getPhotoListingCount(
+        userId: UserId,
+        volumeId: VolumeId,
+        tag: PhotoTag? = null,
+    ): Flow<Int>
 
     suspend fun fetchPhotoListings(
         userId: UserId,
@@ -47,6 +54,7 @@ interface PhotoRepository {
         previousPageLastLinkId: String? = null,
         minimumCaptureTime: TimestampS = TimestampS(0),
         sortingDirection: Direction = Direction.DESCENDING,
+        tag: PhotoTag? = null,
     ): Pair<List<PhotoListing>, SaveAction>
 
     suspend fun fetchAndStorePhotoListings(
@@ -57,6 +65,7 @@ interface PhotoRepository {
         previousPageLastLinkId: String? = null,
         minimumCaptureTime: TimestampS = TimestampS(0),
         sortingDirection: Direction = Direction.DESCENDING,
+        tag: PhotoTag? = null,
     ): List<PhotoListing>
 
     suspend fun getPhotoListings(
@@ -65,12 +74,13 @@ interface PhotoRepository {
         fromIndex: Int,
         count: Int,
         sortingDirection: Direction = Direction.DESCENDING,
+        tag: PhotoTag? = null,
     ): List<PhotoListing>
 
     suspend fun findDuplicates(
         userId: UserId,
         volumeId: VolumeId,
-        parentId: FolderId,
+        parentId: ParentId,
         nameHashes: List<String>,
         clientUids: List<ClientUid>,
     ): List<PhotoDuplicate>
@@ -81,11 +91,23 @@ interface PhotoRepository {
         fromIndex: Int,
         count: Int,
         sortingDirection: Direction = Direction.DESCENDING,
+        tag: PhotoTag? = null,
     ): Flow<Result<List<PhotoListing>>>
 
     suspend fun delete(linkIds: List<LinkId>)
 
-    suspend fun deleteAll(userId: UserId, volumeId: VolumeId)
+    suspend fun deleteAll(
+        userId: UserId,
+        volumeId: VolumeId,
+        tag: PhotoTag? = null,
+    )
 
     suspend fun insertOrIgnore(volumeId: VolumeId, photoListings: List<PhotoListing>)
+
+    suspend fun getRelatedPhotos(
+        volumeId: VolumeId,
+        mainFileId: FileId,
+        fromIndex: Int,
+        count: Int,
+    ): List<RelatedPhoto>
 }

@@ -20,15 +20,15 @@ package me.proton.core.drive.drivelink.photo.data.db
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
-import me.proton.core.data.room.db.extension.addTableColumn
 import me.proton.core.data.room.db.extension.dropTable
 import me.proton.core.data.room.db.migration.DatabaseMigration
-import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.drivelink.photo.data.db.dao.AlbumPhotoListingRemoteKeyDao
 import me.proton.core.drive.drivelink.photo.data.db.dao.PhotoListingRemoteKeyDao
+import me.proton.core.drive.drivelink.photo.data.db.dao.TaggedPhotoListingRemoteKeyDao
 
 interface DriveLinkPhotoDatabase : Database {
     val photoListingRemoteKeyDao: PhotoListingRemoteKeyDao
+    val taggedPhotoListingRemoteKeyDao: TaggedPhotoListingRemoteKeyDao
     val albumPhotoListingRemoteKeyDao: AlbumPhotoListingRemoteKeyDao
 
     companion object {
@@ -125,6 +125,35 @@ interface DriveLinkPhotoDatabase : Database {
                 database.execSQL("""
                     CREATE UNIQUE INDEX IF NOT EXISTS `index_PhotoListingRemoteKeyEntity_key_user_id_volume_id_share_id_link_id` 
                     ON `PhotoListingRemoteKeyEntity` (`key`, `user_id`, `volume_id`, `share_id`, `link_id`)
+                """.trimIndent())
+            }
+        }
+
+        val MIGRATION_3 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `TaggedPhotoListingRemoteKeyEntity` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+                    `key` TEXT NOT NULL, 
+                    `user_id` TEXT NOT NULL, 
+                    `volume_id` TEXT NOT NULL, 
+                    `share_id` TEXT NOT NULL, 
+                    `tag` INTEGER NOT NULL, 
+                    `link_id` TEXT NOT NULL, 
+                    `capture_time` INTEGER NOT NULL, 
+                    `previous_key` TEXT, 
+                    `next_key` TEXT, 
+                    FOREIGN KEY(`user_id`) REFERENCES `AccountEntity`(`userId`) ON UPDATE NO ACTION ON DELETE CASCADE , 
+                    FOREIGN KEY(`user_id`, `volume_id`, `share_id`, `tag`, `link_id`) 
+                    REFERENCES `TaggedPhotoListingEntity`(`user_id`, `volume_id`, `share_id`, `tag`, `id`) 
+                    ON UPDATE NO ACTION ON DELETE CASCADE )
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_TaggedPhotoListingRemoteKeyEntity_key` ON `TaggedPhotoListingRemoteKeyEntity` (`key`)
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE UNIQUE INDEX IF NOT EXISTS `index_TaggedPhotoListingRemoteKeyEntity_key_user_id_volume_id_share_id_tag_link_id` 
+                    ON `TaggedPhotoListingRemoteKeyEntity` (`key`, `user_id`, `volume_id`, `share_id`, `tag`, `link_id`)
                 """.trimIndent())
             }
         }

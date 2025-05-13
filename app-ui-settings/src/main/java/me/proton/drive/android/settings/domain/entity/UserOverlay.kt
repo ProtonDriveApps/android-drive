@@ -21,5 +21,6 @@ package me.proton.drive.android.settings.domain.entity
 sealed interface UserOverlay {
     data object Onboarding : UserOverlay
     data class WhatsNew(val key: WhatsNewKey) : UserOverlay
+    data class Subcription(val key: String) : UserOverlay
     data object RatingBooster : UserOverlay
 }

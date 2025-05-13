@@ -18,38 +18,22 @@
 
 package me.proton.android.drive.ui.screen
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import me.proton.android.drive.photos.presentation.viewevent.PhotosUpsellViewEvent
+import me.proton.android.drive.ui.component.PromoContainer
 import me.proton.android.drive.ui.viewmodel.PhotosUpsellViewModel
-import me.proton.core.compose.component.ProtonSolidButton
-import me.proton.core.compose.component.ProtonTextButton
-import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
-import me.proton.core.drive.base.presentation.component.IllustratedMessage
 import me.proton.core.drive.base.presentation.component.RunAction
-import me.proton.core.drive.base.presentation.extension.conditional
-import me.proton.core.drive.base.presentation.extension.isLandscape
-import me.proton.core.drive.base.presentation.extension.isPortrait
-import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.drive.base.presentation.R as BasePresentation
 
 @Composable
 fun PhotosUpsellScreen(
@@ -70,61 +54,33 @@ fun PhotosUpsellScreen(
         }
     }
     PhotosUpsell(
-        viewEvent = viewEvent,
-        modifier = modifier
-            .systemBarsPadding(),
+        modifier = modifier,
+        onMoreStorage = { viewEvent.onMoreStorage() },
+        onCancel = { viewEvent.onCancel() },
     )
 }
 
 @Composable
-fun PhotosUpsell(
-    viewEvent: PhotosUpsellViewEvent,
-    modifier: Modifier = Modifier,
+private fun PhotosUpsell(
+    modifier: Modifier,
+    onMoreStorage: () -> Unit,
+    onCancel: () -> Unit
 ) {
-    Column(
-        modifier = modifier.padding(horizontal = ProtonDimens.DefaultSpacing),
-        verticalArrangement = Arrangement.spacedBy(ProtonDimens.DefaultSpacing),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        IllustratedMessage(
-            imageResId = getThemeDrawableId(
-                light = BasePresentation.drawable.img_upsell_drive_light,
-                dark = BasePresentation.drawable.img_upsell_drive_dark,
-                dayNight = BasePresentation.drawable.img_upsell_drive_daynight,
-            ),
-            titleResId = I18N.string.photos_upsell_title,
-            descriptionResId = I18N.string.photos_upsell_description,
-        )
-        val buttonModifier = Modifier
-            .conditional(isPortrait) {
-                fillMaxWidth()
-            }
-            .conditional(isLandscape) {
-                widthIn(min = ButtonMinWidth)
-            }
-            .heightIn(min = ProtonDimens.ListItemHeight)
-        ProtonSolidButton(
-            onClick = { viewEvent.onMoreStorage() },
-            modifier = buttonModifier,
-        ) {
-            Text(
-                text = stringResource(id = I18N.string.photos_upsell_get_storage_action),
-                modifier = Modifier.padding(horizontal = ProtonDimens.DefaultSpacing)
-            )
-        }
-        ProtonTextButton(
-            onClick = { viewEvent.onCancel() },
-            modifier = buttonModifier
-        ) {
-            Text(
-                text = stringResource(id = I18N.string.photos_upsell_dismiss_action),
-                modifier = Modifier.padding(horizontal = ProtonDimens.DefaultSpacing)
-            )
-        }
-    }
+    PromoContainer(
+        modifier = modifier.systemBarsPadding(),
+        titleResId = I18N.string.photos_upsell_title,
+        descriptionResId = I18N.string.photos_upsell_description,
+        imageResId = getThemeDrawableId(
+            light = BasePresentation.drawable.img_upsell_drive_light,
+            dark = BasePresentation.drawable.img_upsell_drive_dark,
+            dayNight = BasePresentation.drawable.img_upsell_drive_daynight,
+        ),
+        actionText = stringResource(id = I18N.string.photos_upsell_get_storage_action),
+        dismissActionText = stringResource(id = I18N.string.photos_upsell_dismiss_action),
+        onAction = { onMoreStorage() },
+        onCancel = { onCancel() },
+    )
 }
-
-private val ButtonMinWidth = 300.dp
 
 @Preview
 @Preview(widthDp = 600, heightDp = 360)
@@ -132,8 +88,9 @@ private val ButtonMinWidth = 300.dp
 private fun PhotosUpsellPreview() {
     ProtonTheme {
         PhotosUpsell(
-            viewEvent = object : PhotosUpsellViewEvent {},
             modifier = Modifier.fillMaxSize(),
+            onMoreStorage = {},
+            onCancel = {},
         )
     }
 }

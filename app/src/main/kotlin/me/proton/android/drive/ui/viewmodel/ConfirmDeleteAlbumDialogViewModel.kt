@@ -42,18 +42,26 @@ import me.proton.android.drive.photos.presentation.viewstate.ConfirmDeleteAlbumD
 import me.proton.android.drive.photos.presentation.viewstate.ConfirmDeleteAlbumViewState
 import me.proton.android.drive.photos.presentation.viewstate.ConfirmDeleteAlbumWithChildrenViewState
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.base.data.extension.detailsOrNull
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.photo.data.api.response.DeleteAlbumErrorResponseDetails
 import me.proton.core.drive.photo.domain.usecase.DeleteAlbum
+import me.proton.core.drive.photo.domain.usecase.GetAllAlbumDirectChildren
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.network.domain.ApiResult
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 
@@ -66,11 +74,13 @@ class ConfirmDeleteAlbumDialogViewModel @Inject constructor(
     private val saveChildrenAndDeleteAlbum: SaveChildrenAndDeleteAlbum,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
+    private val getAllAlbumDirectChildren: GetAllAlbumDirectChildren,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val albumId = AlbumId(
         ShareId(userId, requireNotNull(savedStateHandle[SHARE_ID])),
         requireNotNull(savedStateHandle[ALBUM_ID])
     )
+    private val albumDirectChildren: MutableSet<FileId> = mutableSetOf()
     private val driveLink: StateFlow<DriveLink.Album?> = getDriveLink(albumId)
         .mapSuccessValueOrNull()
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
@@ -147,9 +157,10 @@ class ConfirmDeleteAlbumDialogViewModel @Inject constructor(
             )
                 .onFailure { error ->
                     isOperationInProgress.value = false
-                    error.onProtonHttpException { protonCode: Int ->
-                        if (protonCode == ProtonApiCode.RESULTS_IN_DATA_LOSS) {
+                    error.onProtonHttpException { protonData ->
+                        if (protonData.code == ProtonApiCode.RESULTS_IN_DATA_LOSS) {
                             // store linkIds once available
+                            collectAlbumDirectChildren(album.shareId, protonData)
                             showDialog.value = ConfirmDeleteAlbumDialogViewState.Dialog.WITH_CHILDREN
                         }
                         else {
@@ -204,9 +215,25 @@ class ConfirmDeleteAlbumDialogViewModel @Inject constructor(
     private fun onConfirmSaveAndDeleteAlbum() {
         viewModelScope.launch {
             isSavingOperationInProgress.value = true
+            val album = driveLink.filterNotNull().first()
+            val children = getAllAlbumDirectChildren(album.volumeId)
+                .onFailure { error ->
+                    isSavingOperationInProgress.value = false
+                    error.log(VIEW_MODEL, "Failed to get album direct children")
+                    broadcastMessages(
+                        userId = userId,
+                        message = error.getDefaultMessage(
+                            appContext,
+                            configurationProvider.useExceptionMessage,
+                        ),
+                        type = BroadcastMessage.Type.ERROR,
+                    )
+                    return@launch
+                }
+                .getOrThrow()
             saveChildrenAndDeleteAlbum(
                 albumId = albumId,
-                children = emptyList(),//TODO get list of Id's
+                children = children,
             )
                 .onFailure { error ->
                     isSavingOperationInProgress.value = false
@@ -225,6 +252,35 @@ class ConfirmDeleteAlbumDialogViewModel @Inject constructor(
                     dismiss?.invoke()
                 }
         }
+    }
+
+    private fun collectAlbumDirectChildren(
+        albumShareId: ShareId,
+        protonData: ApiResult.Error.ProtonData,
+    ) {
+        albumDirectChildren.clear()
+
+        val errorDetails = protonData.detailsOrNull<DeleteAlbumErrorResponseDetails>() ?: return
+        if (!errorDetails.more) {
+            albumDirectChildren.addAll(
+                errorDetails.childLinkIds.map { childPhotoId -> FileId(albumShareId, childPhotoId) }
+            )
+        }
+    }
+
+    private suspend fun getAllAlbumDirectChildren(volumeId: VolumeId): Result<Set<FileId>> = coRunCatching {
+        if (albumDirectChildren.isEmpty()) {
+            getAllAlbumDirectChildren(
+                volumeId = volumeId,
+                albumId = albumId,
+                includeTrashedChildren = true,
+            )
+                .onSuccess { children ->
+                    albumDirectChildren.addAll(children)
+                }
+                .getOrThrow()
+        }
+        albumDirectChildren
     }
 
     companion object {

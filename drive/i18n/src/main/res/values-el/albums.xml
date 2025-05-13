@@ -37,9 +37,18 @@
   <string name="albums_delete_album_dialog_description_with_children">Ορισμένες φωτογραφίες σε αυτό το άλμπουμ δεν αποθηκεύονται στο χρονολόγιό σας. Η διαγραφή αυτού του άλμπουμ θα διαγράψει οριστικά αυτές τις φωτογραφίες.\nΘα θέλατε να τις αποθηκεύσετε πριν την αφαίρεση;</string>
   <string name="albums_delete_album_dialog_delete_without_saving_action">Διαγραφή χωρίς αποθήκευση</string>
   <string name="albums_delete_album_dialog_save_and_delete_action">Αποθήκευση φωτογραφιών και διαγραφή</string>
+  <string name="albums_leave_album_dialog_title">Αποχώρηση από το άλμπουμ;</string>
+  <!--
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">Είστε βέβαιοι ότι θέλετε να αποχωρήσετε από το άλμπουμ «%1$s»;\nΘα χάσετε την πρόσβαση στις φωτογραφίες που δεν έχετε ήδη αποθηκεύσει.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Αποχώρηση χωρίς αποθήκευση</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Αποθήκευση φωτογραφιών και αποχώρηση</string>
   <string name="albums_add_zero_to_album_button">Προσθήκη στο άλμπουμ</string>
   <!--
-        Variable %1$s is a number of photos to add to album
+        Variable %1$d is a number of photos to add to album
         Example:
             "Add 1 to album"
             "Add 33 to album"
@@ -49,4 +58,107 @@
     <item quantity="other">Προσθήκη %1$d στο άλμπουμ</item>
   </plurals>
   <string name="albums_set_album_as_cover_success">Ορίστηκε ως εξώφυλλο άλμπουμ</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="one">%1$d στοιχείο προστέθηκε στο άλμπουμ</item>
+    <item quantity="other">%1$d στοιχεία προστέθηκαν στο άλμπουμ</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="one">%1$d στοιχείο υπάρχει ήδη</item>
+    <item quantity="other">%1$d στοιχεία υπάρχουν ήδη</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="one">%1$d στοιχείο απέτυχε</item>
+    <item quantity="other">%1$d στοιχεία απέτυχαν</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="one">%1$d στοιχείο προστέθηκε στο Drive σας</item>
+    <item quantity="other">%1$d στοιχεία προστέθηκαν στο Drive σας</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="one">%1$d στοιχείο υπάρχει ήδη</item>
+    <item quantity="other">%1$d στοιχεία υπάρχουν ήδη</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="one">%1$d στοιχείο απέτυχε</item>
+    <item quantity="other">%1$d στοιχεία απέτυχαν</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="one">%1$d στοιχείο καταργήθηκε από το άλμπουμ</item>
+    <item quantity="other">%1$d στοιχεία καταργήθηκαν από το άλμπουμ</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="one">%1$d στοιχείο απέτυχε</item>
+    <item quantity="other">%1$d στοιχεία απέτυχαν</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">Καμία φωτογραφία</string>
+  <string name="albums_empty_album_screen_description">Οι φωτογραφίες που προστέθηκαν από εσάς ή άλλα μέλη θα εμφανίζονται εδώ</string>
+  <string name="albums_empty_albums_list_screen_title">Κανένα άλμπουμ</string>
+  <string name="albums_empty_albums_list_screen_description">Τα άλμπουμ που δημιουργείτε η συμμετέχετε θα εμφανίζονται εδώ</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Τα άλμπουμ που δημιουργείτε θα εμφανίζονται εδώ</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Χωρίς κοινόχρηστα άλμπουμ</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Τα άλμπουμ που έχετε κοινοποιήσει θα εμφανίζονται εδώ</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Χωρίς άλμπουμ κοινοποιημένα σε μένα</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Τα άλμπουμ που έχουν τεθεί σε κοινή χρήση με εσάς θα εμφανίζονται εδώ</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="one">%1$d άλμπουμ κοινοποιημένο σε σας</item>
+    <item quantity="other">%1$d άλμπουμ κοινοποιημένα σε σας</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">Κοινοποίηση μέσω</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Προσθήκη στο κοινοποιημένο άλμπουμ</string>
+  <string name="albums_share_multiple_photos_options_album_details">Κοινοποιημένο άλμπουμ</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Νέο κοινοποιημένο άλμπουμ</string>
 </resources>

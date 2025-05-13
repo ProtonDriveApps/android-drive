@@ -28,5 +28,8 @@ enum class PhotoTag(val value: Long) {
     Portraits(6),
     Bursts(7),
     Panoramas(8),
-    Raw(9)
+    Raw(9);
+    companion object {
+        fun fromLong(value: Long): PhotoTag? = entries.firstOrNull { entry -> entry.value == value }
+    }
 }

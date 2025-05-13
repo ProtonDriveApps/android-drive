@@ -36,9 +36,18 @@ class PhotoListingRemoteMediatorFactoryImpl @Inject constructor(
     override fun create(
         volumeId: VolumeId,
         pagedListKey: String,
+        tagged: Boolean,
         remotePhotoListings: suspend (pageKey: String?, pageSize: Int) -> Result<PhotoListingsPage>,
         deleteAllLocalPhotoListings: suspend () -> Result<Unit>,
-    ): RemoteMediator<Int, PhotoListing> =
+    ): RemoteMediator<Int, PhotoListing> = if(tagged) {
+        TaggedPhotoListingRemoteMediator(
+            volumeId = volumeId,
+            pagedListKey = pagedListKey,
+            database = database,
+            remotePhotoListings = remotePhotoListings,
+            deleteAllLocalPhotoListings = deleteAllLocalPhotoListings,
+        )
+    } else {
         PhotoListingRemoteMediator(
             volumeId = volumeId,
             pagedListKey = pagedListKey,
@@ -46,4 +55,5 @@ class PhotoListingRemoteMediatorFactoryImpl @Inject constructor(
             remotePhotoListings = remotePhotoListings,
             deleteAllLocalPhotoListings = deleteAllLocalPhotoListings,
         )
+    }
 }

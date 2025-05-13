@@ -26,22 +26,26 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.db.test.NullableAlbumPhotoListingEntity
+import me.proton.core.drive.db.test.NullablePhotoVolumeEntity
+import me.proton.core.drive.db.test.NullableShareEntity
 import me.proton.core.drive.db.test.album
 import me.proton.core.drive.db.test.albumListings
 import me.proton.core.drive.db.test.albumPhotoListings
+import me.proton.core.drive.db.test.folder
 import me.proton.core.drive.db.test.photoShare
 import me.proton.core.drive.db.test.photoShareId
 import me.proton.core.drive.db.test.photoVolume
 import me.proton.core.drive.db.test.photoVolumeId
+import me.proton.core.drive.db.test.share
 import me.proton.core.drive.db.test.user
 import me.proton.core.drive.db.test.userId
 import me.proton.core.drive.db.test.volumeId
+import me.proton.core.drive.db.test.withKey
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.photo.data.api.entity.AlbumPhotoListingDto
 import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse.AlbumListingsDto
-import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.drive.photo.data.db.entity.AlbumListingEntity
 import me.proton.core.drive.photo.data.db.entity.AlbumPhotoListingEntity
 import me.proton.core.drive.photo.data.extension.toAlbumListing
@@ -169,7 +173,6 @@ class AlbumRepositoryTest {
 
         val albumListings = albumRepository.getAlbumListings(
             userId = userId,
-            volumeId = photoVolumeId,
             fromIndex = 0,
             count = 500,
         )
@@ -202,7 +205,6 @@ class AlbumRepositoryTest {
 
         val albumListings = albumRepository.getAlbumListingsFlow(
             userId = userId,
-            volumeId = photoVolumeId,
             fromIndex = 0,
             count = 500,
         ).first().getOrThrow()
@@ -231,17 +233,40 @@ class AlbumRepositoryTest {
                     )
                 }
             }
+            photoVolume(
+                volume = NullablePhotoVolumeEntity(
+                    id = "volume-1"
+                )
+            ) {
+                share(
+                    shareEntity = NullableShareEntity(
+                        id = "share-1",
+                        linkId = "share-1-root-link",
+                    )
+                ) {
+                    withKey()
+                    folder(id = share.linkId) {
+                        albumListings(
+                            NullableAlbumListingEntity(
+                                volumeId = "volume-1",
+                                shareId = "share-1",
+                                albumId = "album-1-volume-1",
+                                lastActivityTime = 18,
+                            ),
+                        )
+                    }
+                }
+            }
         }
 
         val albumListings = albumRepository.getAlbumListings(
             userId = userId,
-            volumeId = photoVolumeId,
             sortingDirection = Direction.ASCENDING,
             fromIndex = 0,
             count = 500,
         )
 
-        assertEquals(listOf("album-2", "album-3", "album-1"), albumListings.map { it.albumId.id })
+        assertEquals(listOf("album-2", "album-3", "album-1-volume-1", "album-1"), albumListings.map { it.albumId.id })
     }
 
     @Test
@@ -269,7 +294,6 @@ class AlbumRepositoryTest {
         )
         val albumListings = albumRepository.getAlbumListings(
             userId = userId,
-            volumeId = photoVolumeId,
             fromIndex = 0,
             count = 500,
         )
@@ -327,7 +351,6 @@ class AlbumRepositoryTest {
 
         val albumListings = albumRepository.getAlbumListings(
             userId = userId,
-            volumeId = photoVolumeId,
             fromIndex = 0,
             count = 500,
         )
@@ -348,7 +371,7 @@ class AlbumRepositoryTest {
                 }
             }
         }
-        albumRepository.insertOrIgnoreAlbumListings(
+        albumRepository.insertOrUpdateAlbumListings(
             albumListings = listOf(
                 NullableAlbumListingEntity(albumId = "album-3").toAlbumListing(),
                 NullableAlbumListingEntity(albumId = "album-4").toAlbumListing(),
@@ -356,7 +379,6 @@ class AlbumRepositoryTest {
         )
         val albumListings = driveRule.db.albumListingDao.getAlbumListings(
             userId = userId,
-            volumeId = photoVolumeId.id,
             direction = Direction.DESCENDING,
             limit = 500,
             offset = 0,
@@ -562,9 +584,9 @@ class AlbumRepositoryTest {
                 photoShare {
                     album(id = "album-id") {
                         albumPhotoListings(
-                            NullableAlbumPhotoListingEntity(linkId = "photo-1"),
-                            NullableAlbumPhotoListingEntity(linkId = "photo-2"),
-                            NullableAlbumPhotoListingEntity(linkId = "photo-3"),
+                            NullableAlbumPhotoListingEntity(linkId = "photo-1", addedTime = 1),
+                            NullableAlbumPhotoListingEntity(linkId = "photo-2", addedTime = 2),
+                            NullableAlbumPhotoListingEntity(linkId = "photo-3", addedTime = 3),
                         )
                     }
                 }
@@ -579,7 +601,7 @@ class AlbumRepositoryTest {
                     nameHash = null,
                     contentHash = null,
                     albumId = AlbumId(photoShareId, "album-id"),
-                    addedTime = TimestampS(0L),
+                    addedTime = TimestampS(4L),
                     isChildOfAlbum = false,
                 ),
                 PhotoListing.Album(
@@ -588,7 +610,7 @@ class AlbumRepositoryTest {
                     nameHash = null,
                     contentHash = null,
                     albumId = AlbumId(photoShareId, "album-id"),
-                    addedTime = TimestampS(0L),
+                    addedTime = TimestampS(4L),
                     isChildOfAlbum = false,
                 ),
             )
@@ -603,7 +625,7 @@ class AlbumRepositoryTest {
             offset = 0,
         )
         assertEquals(
-            listOf("photo-1", "photo-2", "photo-3", "photo-4"),
+            listOf("photo-4", "photo-3", "photo-2", "photo-1"),
             albumPhotoListings.map { entity -> entity.linkId }
         )
     }

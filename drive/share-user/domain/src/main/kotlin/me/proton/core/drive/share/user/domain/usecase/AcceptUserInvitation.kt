@@ -19,14 +19,23 @@
 package me.proton.core.drive.share.user.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.toDataResult
 import me.proton.core.drive.base.domain.repository.fetcher
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
+import me.proton.core.drive.photo.domain.repository.AlbumRepository
+import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.UserInvitationId
 import me.proton.core.drive.share.user.domain.repository.UserInvitationRepository
+import me.proton.core.drive.volume.domain.entity.Volume
+import me.proton.core.drive.volume.domain.usecase.GetActiveVolumes
 import javax.inject.Inject
 
 class AcceptUserInvitation @Inject constructor(
@@ -34,6 +43,8 @@ class AcceptUserInvitation @Inject constructor(
     private val fetchSharedWithMe: FetchSharedWithMe,
     private val getSessionKeySignature: GetSessionKeySignature,
     private val updateEventAction: UpdateEventAction,
+    private val albumRepository: AlbumRepository,
+    private val getActiveVolumes: GetActiveVolumes,
 ) {
     operator fun invoke(
         invitationId: UserInvitationId,
@@ -51,10 +62,27 @@ class AcceptUserInvitation @Inject constructor(
                             sessionKeySignature = sessionKeySignature,
                         )
                         fetchSharedWithMe(userId, null).getOrThrow()
+                        getPhotoVolume(userId)?.let { photoVolume ->
+                            albumRepository.fetchAndStoreAllAlbumListings(
+                                userId = userId,
+                                volumeId = photoVolume.id,
+                                shareId = ShareId(userId, photoVolume.shareId),
+                            )
+                        }
                         Unit
                     }.toDataResult()
                 )
             }
         }
     }
+
+    private suspend fun getPhotoVolume(userId: UserId): Volume? =
+        getActiveVolumes(userId)
+            .filterSuccessOrError()
+            .mapSuccessValueOrNull()
+            .map { activeVolumes ->
+                activeVolumes
+                    ?.firstOrNull { volume -> volume.type == Volume.Type.PHOTO }
+            }
+            .firstOrNull()
 }

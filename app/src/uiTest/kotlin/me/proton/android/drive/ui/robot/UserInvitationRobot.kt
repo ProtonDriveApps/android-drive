@@ -40,16 +40,29 @@ object UserInvitationRobot : Robot, NavigationBarRobot {
         .hasDescendant(node.withText(name))
     ).clickTo(UserInvitationRobot)
 
-    fun assertAcceptSucceed() = node.withText(
+    fun dismissAcceptSucceed() = node.withText(
         I18N.string.shared_user_invitations_accept_success
-    ).await { assertIsDisplayed() }
+    ).clickTo(UserInvitationRobot)
 
-    fun assertDeclineSucceed() = node.withText(
+    fun dismissAcceptAlbumSucceed() = node.withText(
+        I18N.string.shared_user_album_invitations_accept_success
+    ).clickTo(UserInvitationRobot)
+
+    fun dismissDeclineSucceed() = node.withText(
         I18N.string.shared_user_invitations_decline_success
-    ).await { assertIsDisplayed() }
+    ).clickTo(UserInvitationRobot)
+
+    fun dismissDeclineAlbumSucceed() = node.withText(
+        I18N.string.shared_user_album_invitations_decline_success
+    ).clickTo(UserInvitationRobot)
 
     fun assertEmpty() {
         node.withText(I18N.string.shared_user_invitations_title_empty).await { assertIsDisplayed() }
+        node.withText(I18N.string.shared_user_invitations_description_empty).await { assertIsDisplayed() }
+    }
+
+    fun assertAlbumEmpty() {
+        node.withText(I18N.string.shared_user_album_invitations_title_empty).await { assertIsDisplayed() }
         node.withText(I18N.string.shared_user_invitations_description_empty).await { assertIsDisplayed() }
     }
 

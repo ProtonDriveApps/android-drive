@@ -34,11 +34,16 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         const val DRIVE_PUBLIC_SHARE_EDIT_MODE = "DrivePublicShareEditMode"
         const val DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED = "DrivePublicShareEditModeDisabled"
         const val DRIVE_DYNAMIC_ENTITLEMENT_CONFIGURATION = "DriveDynamicEntitlementConfiguration"
-        const val DRIVE_MOBILE_SHARING_INVITATIONS_ACCEPT_REJECT = "DriveMobileSharingInvitationsAcceptReject"
         const val RATING_ANDROID_DRIVE = "RatingAndroidDrive"
         const val DRIVE_ALBUMS = "DriveAlbums"
         const val DRIVE_ALBUMS_DISABLED = "DriveAlbumsDisabled"
         const val DRIVE_THUMBNAIL_WEBP = "DriveThumbnailWebP"
+        const val DRIVE_PLUS_PLAN_INTRO = "DrivePlusPlanIntro"
+        const val DRIVE_ONE_DOLLAR_PLAN_UPSELL = "DriveOneDollarPlanUpsell"
+        const val DRIVE_COPY = "DriveCopy"
+        const val DRIVE_ALBUMS_TEMP_DISABLED_ON_RELEASE = "DriveAlbumsTempDisabledOnRelease"
+        const val DRIVE_ANDROID_ALBUMS_PUBLIC_SHARE = "DriveAndroidAlbumsPublicShare"
+        const val DRIVE_ALBUMS_NEW_VOLUMES = "DriveAlbumsNewVolumes"
 
         internal var developments : List<String> = listOf(
         )
@@ -54,10 +59,15 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         fun drivePublicShareEditMode(userId: UserId) = FeatureFlagId(userId, DRIVE_PUBLIC_SHARE_EDIT_MODE)
         fun drivePublicShareEditModeDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED)
         fun driveDynamicEntitlementConfiguration(userId: UserId) = FeatureFlagId(userId, DRIVE_DYNAMIC_ENTITLEMENT_CONFIGURATION)
-        fun driveMobileSharingInvitationsAcceptReject(userId: UserId) = FeatureFlagId(userId, DRIVE_MOBILE_SHARING_INVITATIONS_ACCEPT_REJECT)
         fun ratingAndroidDrive(userId: UserId) = FeatureFlagId(userId, RATING_ANDROID_DRIVE)
         fun driveAlbums(userId: UserId) = FeatureFlagId(userId, DRIVE_ALBUMS)
         fun driveAlbumsDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_ALBUMS_DISABLED)
         fun driveThumbnailWebP(userId: UserId) = FeatureFlagId(userId, DRIVE_THUMBNAIL_WEBP)
+        fun drivePlusPlanIntro(userId: UserId) = FeatureFlagId(userId, DRIVE_PLUS_PLAN_INTRO)
+        fun driveOneDollarPlanUpsell(userId: UserId) = FeatureFlagId(userId, DRIVE_ONE_DOLLAR_PLAN_UPSELL)
+        fun driveCopy(userId: UserId) = FeatureFlagId(userId, DRIVE_COPY)
+        fun driveAlbumsTempDisabledOnRelease(userId: UserId) = FeatureFlagId(userId, DRIVE_ALBUMS_TEMP_DISABLED_ON_RELEASE)
+        fun driveAndroidAlbumsPublicShare(userId: UserId) = FeatureFlagId(userId, DRIVE_ANDROID_ALBUMS_PUBLIC_SHARE)
+        fun driveAlbumsNewVolumes(userId: UserId) = FeatureFlagId(userId, DRIVE_ALBUMS_NEW_VOLUMES)
     }
 }

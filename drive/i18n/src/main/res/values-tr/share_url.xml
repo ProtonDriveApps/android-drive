@@ -90,10 +90,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">Bekleyen paylaşılmış ögeler (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Bekleyen paylaşılmış albümler (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Bekleyen bir paylaşılmış öge yok</string>
+  <string name="shared_user_album_invitations_title_empty">Bekleyen bir paylaşılmış albüm yok</string>
   <string name="shared_user_invitations_description_empty">Tüm yeni davetler burada görüntülenecek</string>
   <string name="shared_user_invitations_accept_button">Kabul et</string>
   <string name="shared_user_invitations_decline_button">Reddet</string>
   <string name="shared_user_invitations_accept_success">Paylaşılan öge kabul edildi</string>
   <string name="shared_user_invitations_decline_success">Paylaşılan öge reddedildi</string>
+  <string name="shared_user_album_invitations_accept_success">Davet kabul edildi</string>
+  <string name="shared_user_album_invitations_decline_success">Davet reddedildi</string>
 </resources>

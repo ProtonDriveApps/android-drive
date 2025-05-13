@@ -233,4 +233,45 @@
             "Untitled document 2025-11-28 12.34.56"
     -->
   <string name="new_document_name">Unbenanntes Dokument %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a price
+        Example:
+            "More storage for only $1.00"
+    -->
+  <string name="drive_lite_promo_title">Mehr Speicher für nur %1$s</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Variable %2$s is a string representation of a storage size
+        Variable %3$s is a string representation of a price
+        Example:
+            "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
+    -->
+  <string name="drive_lite_promo_description">Wenn du etwas mehr Speicher benötigst, aber nicht viel: Wir präsentieren %1$s mit %2$s Speicher für nur %3$s im Monat.</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Example:
+            "Get Drive Lite"
+    -->
+  <string name="drive_lite_promo_action">Hol dir %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a storage size
+        Variable %2$s is a string representation of a price
+        Example:
+            "Get 200GB for just $0.99"
+    -->
+  <string name="drive_plus_promo_title">Hol dir %1$s für nur %2$s</string>
+  <!--
+        Variable %1$s is a string representation of a large number
+        Variable %2$s is a string representation of a price
+        Variable %3$s is a string representation of a price
+        Example:
+            "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
+    -->
+  <string name="drive_plus_promo_description">Das ist genug sicherer Speicher für über %1$s hochauflösende Fotos. Hol dir deinen ersten Monat für %2$s, dann %3$s/Monat.</string>
+  <!--
+        Variable %1$s is the price of the plan
+        Example:
+            "Upgrade for $0.99"
+    -->
+  <string name="drive_plus_promo_action">Upgrade für %1$s</string>
 </resources>

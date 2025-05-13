@@ -54,6 +54,12 @@
     <string name="files_move_file_action">Move</string>
     <string name="files_rename_file_action">@string/common_rename_action</string>
     <string name="files_send_file_action">@string/common_send_action</string>
+    <string name="files_add_to_favorite_action">Add to favorites</string>
+    <string name="files_remove_from_favorite_action">Remove from favorites</string>
+    <string name="files_add_to_favorite_action_success">Added to favorites successfully</string>
+    <string name="files_add_to_favorite_from_foreign_volume_action_success">Photo was copied to stream and marked favorite there</string>
+    <string name="files_remove_from_favorite_action_success">Removed from favorites successfully</string>
+    <string name="files_save_shared_photo_action">Save shared photo</string>
     <!--
         Variable %1$s is a file/folder's name
         Examples:

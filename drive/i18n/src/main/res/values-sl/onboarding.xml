@@ -18,10 +18,10 @@
   -->
 <resources>
   <string name="onboarding_action_skip">Ne zdaj</string>
-  <string name="onboarding_title">Automatically save and encrypt your photos and videos</string>
-  <string name="onboarding_description_part_one">Keep your memories safe with</string>
-  <string name="onboarding_description_part_two">end-to-end encrypted storage</string>
+  <string name="onboarding_title">Samodejno shrani in šifriraj svoje fotografije in videoposnetke</string>
+  <string name="onboarding_description_part_one">Ohranite svoje spomine na varnem z</string>
+  <string name="onboarding_description_part_two">shramba s šifriranjem od konca do konca</string>
   <string name="onboarding_description_free">brezplačno</string>
-  <string name="onboarding_action_primary">Turn on camera uploads</string>
+  <string name="onboarding_action_primary">Vklopi nalaganje v fotoaparat</string>
   <string name="onboarding_action_secondary">More upload options</string>
 </resources>

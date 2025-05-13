@@ -39,7 +39,7 @@
   <string name="common_on">켬</string>
   <string name="common_off">끔</string>
   <string name="common_all">전체</string>
-  <string name="common_unknown">Unknown</string>
+  <string name="common_unknown">알 수 없음</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">확인</string>
@@ -67,8 +67,12 @@
   <string name="common_open_in_browser_action">브라우저에서 열기</string>
   <string name="common_done_action">완료</string>
   <string name="common_create_album_action">앨범 생성</string>
-  <string name="common_set_as_album_cover_action">Set as album cover</string>
-  <string name="common_add_action">Add</string>
+  <string name="common_set_as_album_cover_action">앨범 커버로 설정</string>
+  <string name="common_add_action">추가</string>
+  <string name="common_remove_from_album_action">앨범에서 나가기</string>
+  <string name="common_leave_album_action">앨범에서 나가기</string>
+  <string name="common_start_action">시작하기</string>
+  <string name="common_save_all_action">모두 저장</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">오디오</string>

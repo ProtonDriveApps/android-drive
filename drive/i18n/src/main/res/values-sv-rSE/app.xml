@@ -233,4 +233,45 @@
             "Untitled document 2025-11-28 12.34.56"
     -->
   <string name="new_document_name">Dokument utan rubrik %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a price
+        Example:
+            "More storage for only $1.00"
+    -->
+  <string name="drive_lite_promo_title">Mer lagringsutrymme för endast %1$s</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Variable %2$s is a string representation of a storage size
+        Variable %3$s is a string representation of a price
+        Example:
+            "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
+    -->
+  <string name="drive_lite_promo_description">När du behöver lite mer lagringsutrymme, men inte mycket. Vi presenterar %1$s, med %2$s lagringsutrymme för endast %3$s per månad.</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Example:
+            "Get Drive Lite"
+    -->
+  <string name="drive_lite_promo_action">Skaffa %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a storage size
+        Variable %2$s is a string representation of a price
+        Example:
+            "Get 200GB for just $0.99"
+    -->
+  <string name="drive_plus_promo_title">Skaffa %1$s för endast %2$s</string>
+  <!--
+        Variable %1$s is a string representation of a large number
+        Variable %2$s is a string representation of a price
+        Variable %3$s is a string representation of a price
+        Example:
+            "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
+    -->
+  <string name="drive_plus_promo_description">Det är tillräckligt med säkert lagringsutrymme för över %1$s högupplösta bilder. Få din första månad för %2$s, sedan %3$s/månad.</string>
+  <!--
+        Variable %1$s is the price of the plan
+        Example:
+            "Upgrade for $0.99"
+    -->
+  <string name="drive_plus_promo_action">Uppgradera för %1$s</string>
 </resources>

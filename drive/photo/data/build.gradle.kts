@@ -35,4 +35,6 @@ driveModule(
     implementation(project(":drive:link:data"))
     implementation(project(":drive:share:data"))
     implementation(project(":drive:sorting:data"))
+    implementation(libs.androidx.dataStore.core)
+    implementation(libs.androidx.dataStore.preferences)
 }

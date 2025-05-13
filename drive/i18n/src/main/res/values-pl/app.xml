@@ -29,7 +29,7 @@
   <string name="title_empty_shared">Sprawdzaj, co się dzieje</string>
   <string name="title_empty_offline_available">Nie masz nic dostępnego w trybie offline</string>
   <string name="title_empty_trash">Kosz jest pusty</string>
-  <string name="title_empty_trash_action">Opróżnij Kosz</string>
+  <string name="title_empty_trash_action">Opróżnij kosz</string>
   <string name="title_files_confirm_deletion">Usunąć trwale?</string>
   <string name="title_default_home_screen_tab">Wybierz domyślną kartę główną</string>
   <!-- endregion -->
@@ -243,4 +243,45 @@
             "Untitled document 2025-11-28 12.34.56"
     -->
   <string name="new_document_name">Dokument bez nazwy %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a price
+        Example:
+            "More storage for only $1.00"
+    -->
+  <string name="drive_lite_promo_title">Więcej przestrzeni dyskowej za %1$s</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Variable %2$s is a string representation of a storage size
+        Variable %3$s is a string representation of a price
+        Example:
+            "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
+    -->
+  <string name="drive_lite_promo_description">Kiedy potrzebujesz trochę więcej miejsca, ale nie dużo. Przedstawiamy plan %1$s, oferujący %2$s przestrzeni dyskowej za %3$s miesięcznie.</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Example:
+            "Get Drive Lite"
+    -->
+  <string name="drive_lite_promo_action">Wybierz plan %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a storage size
+        Variable %2$s is a string representation of a price
+        Example:
+            "Get 200GB for just $0.99"
+    -->
+  <string name="drive_plus_promo_title">Uzyskaj %1$s za %2$s</string>
+  <!--
+        Variable %1$s is a string representation of a large number
+        Variable %2$s is a string representation of a price
+        Variable %3$s is a string representation of a price
+        Example:
+            "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
+    -->
+  <string name="drive_plus_promo_description">To wystarczająca przestrzeń dyskowa dla ponad %1$s zdjęć w wysokiej rozdzielczości. Pierwszy miesiąc za %2$s, następnie %3$s miesięcznie.</string>
+  <!--
+        Variable %1$s is the price of the plan
+        Example:
+            "Upgrade for $0.99"
+    -->
+  <string name="drive_plus_promo_action">Ulepsz za %1$s</string>
 </resources>

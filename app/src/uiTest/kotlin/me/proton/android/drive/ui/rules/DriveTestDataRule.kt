@@ -5,6 +5,8 @@ import me.proton.android.drive.repository.TestFeatureFlagRepositoryImpl
 import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.annotation.annotationTestData
 import me.proton.android.drive.ui.extension.getFeatureFlagAnnotations
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ONE_DOLLAR_PLAN_UPSELL
 import me.proton.core.test.rule.annotation.AnnotationTestData
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
@@ -30,14 +32,21 @@ class DriveTestDataRule : TestWatcher() {
             }
 
             val featureFlagAnnotations = description.getFeatureFlagAnnotations()
-            featureFlagAnnotations.map { featureFlagAnnotation ->
-                TestFeatureFlagRepositoryImpl.flags[featureFlagAnnotation.id] =
-                    featureFlagAnnotation.state
+            (defaultFlags + featureFlagAnnotations.map { featureFlagAnnotation ->
+                featureFlagAnnotation.id to featureFlagAnnotation.state
+            }).onEach { (key, value) ->
+                TestFeatureFlagRepositoryImpl.flags[key] = value
             }
         }
     }
 
     override fun finished(description: Description) {
         TestFeatureFlagRepositoryImpl.flags.clear()
+    }
+
+    private companion object {
+        val defaultFlags = mapOf(
+            DRIVE_ONE_DOLLAR_PLAN_UPSELL to NOT_FOUND
+        )
     }
 }

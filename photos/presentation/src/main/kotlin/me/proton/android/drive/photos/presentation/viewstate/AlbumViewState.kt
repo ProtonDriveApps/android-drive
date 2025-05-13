@@ -23,11 +23,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
 
 data class AlbumViewState(
     val name: String,
+    val isNameEncrypted: Boolean,
     val details: String,
     val listContentState: ListContentState,
     val coverLinkId: FileId? = null,
@@ -38,4 +40,12 @@ data class AlbumViewState(
     val showActions: Boolean = true,
     @DrawableRes val navigationIconResId: Int? = null,
     val title: String? = null,
+    val showAddAction: Boolean = true,
+    val addActionEnabled: Boolean = true,
+    val showSaveAllAction: Boolean = true,
+    val saveAllActionEnabled: Boolean = true,
+    val saveAllActionLoading: Boolean = false,
+    val showShareAction: Boolean = true,
+    val shareActionEnabled: Boolean = true,
+    val shareUsers: List<ShareUserViewState> = emptyList(),
 )

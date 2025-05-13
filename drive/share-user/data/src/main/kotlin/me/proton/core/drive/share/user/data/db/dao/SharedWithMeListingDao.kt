@@ -32,12 +32,15 @@ abstract class SharedWithMeListingDao : BaseDao<SharedWithMeListingEntity>() {
         """
             SELECT * FROM SharedWithMeListingEntity
             WHERE
-                user_id = :userId
+                user_id = :userId AND
+                type IN (:types) OR (:includeNullType AND type IS NULL)
             LIMIT :limit OFFSET :offset
         """
     )
     abstract suspend fun getSharedWithMeListing(
         userId: UserId,
+        types: Set<Long>,
+        includeNullType: Boolean,
         limit: Int,
         offset: Int,
     ): List<SharedWithMeListingEntity>
@@ -46,10 +49,15 @@ abstract class SharedWithMeListingDao : BaseDao<SharedWithMeListingEntity>() {
         """
             SELECT * FROM SharedWithMeListingEntity
             WHERE
-                user_id = :userId
+                user_id = :userId AND
+                type IN (:types) OR (:includeNullType AND type IS NULL)
         """
     )
-    abstract fun getSharedWithMeListingPagingSource(userId: UserId): PagingSource<Int, SharedWithMeListingEntity>
+    abstract fun getSharedWithMeListingPagingSource(
+        userId: UserId,
+        types: Set<Long>,
+        includeNullType: Boolean,
+    ): PagingSource<Int, SharedWithMeListingEntity>
 
     @Query(
         """

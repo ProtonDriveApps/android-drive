@@ -22,9 +22,14 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.domain.entity.CheckAvailableHashes
 import me.proton.core.drive.link.domain.entity.CheckAvailableHashesInfo
+import me.proton.core.drive.link.domain.entity.CopyInfo
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.LinksResult
 import me.proton.core.drive.link.domain.entity.MoveInfo
+import me.proton.core.drive.link.domain.entity.MoveMultipleInfo
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.entity.RenameInfo
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -85,6 +90,18 @@ interface LinkRepository {
 
     suspend fun moveLink(linkId: LinkId, moveInfo: MoveInfo): Result<Unit>
 
+    suspend fun moveMultipleLinks(
+        userId: UserId,
+        volumeId: VolumeId,
+        moveMultipleInfo: MoveMultipleInfo,
+    ): LinksResult
+
+    suspend fun transferMultipleLinks(
+        userId: UserId,
+        volumeId: VolumeId,
+        moveMultipleInfo: MoveMultipleInfo,
+    ): LinksResult
+
     suspend fun renameLink(
         linkId: LinkId,
         renameInfo: RenameInfo,
@@ -97,4 +114,11 @@ interface LinkRepository {
     suspend fun getCachedLinks(userId: UserId, shareId: String, linkIds: Set<String>): Set<Link>
 
     suspend fun findLinkIds(userId: UserId, volumeId: VolumeId, linkId: String): List<LinkId>
+
+    suspend fun copyFile(
+        volumeId: VolumeId,
+        fileId: FileId,
+        targetParentId: ParentId,
+        copyInfo: CopyInfo,
+    ): LinkId
 }

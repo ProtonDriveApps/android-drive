@@ -20,10 +20,13 @@ package me.proton.core.drive.link.data.api.entity
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import me.proton.core.drive.base.data.api.Dto.ALBUMS
 import me.proton.core.drive.base.data.api.Dto.TAGS
 
 @Serializable
 data class LinkPhotoPropertiesDto(
     @SerialName(TAGS)
     val tags: List<Long> = emptyList(),
+    @SerialName(ALBUMS)
+    val albums: List<LinkAlbumInfoDto> = emptyList(),
 )

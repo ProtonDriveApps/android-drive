@@ -67,7 +67,7 @@ class DeeplinkFlowTest : BaseTest() {
     fun homePhotos() {
         val id = protonRule.testDataRule.mainTestUser!!.id
         LauncherRobot.deeplinkTo(
-            Screen.Photos(UserId(id)),
+            Screen.PhotosAndAlbums(UserId(id)),
             PhotosTabRobot
         )
             .verify { robotDisplayed() }

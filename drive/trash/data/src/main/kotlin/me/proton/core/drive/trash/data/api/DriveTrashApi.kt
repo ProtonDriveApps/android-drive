@@ -28,22 +28,21 @@ import retrofit2.http.Path
 
 interface DriveTrashApi : BaseRetrofitApi {
 
-    @POST("drive/shares/{enc_shareID}/folders/{enc_linkID}/trash_multiple")
+    @POST("drive/v2/volumes/{volumeID}/trash_multiple")
     suspend fun sendToTrash(
-        @Path("enc_shareID") shareId: String,
-        @Path("enc_linkID") folderId: String,
+        @Path("volumeID") volumeId: String,
         @Body request: LinkIDsRequest,
     ): LinkResponses
 
-    @PUT("drive/shares/{enc_shareID}/trash/restore_multiple")
+    @PUT("drive/v2/volumes/{volumeID}/trash/restore_multiple")
     suspend fun restoreFromTrash(
-        @Path("enc_shareID") shareId: String,
+        @Path("volumeID") shareId: String,
         @Body request: LinkIDsRequest,
     ): LinkResponses
 
-    @POST("drive/shares/{enc_shareID}/trash/delete_multiple")
+    @POST("drive/v2/volumes/{volumeID}/trash/delete_multiple")
     suspend fun deleteItemsFromTrash(
-        @Path("enc_shareID") shareId: String,
+        @Path("volumeID") shareId: String,
         @Body request: LinkIDsRequest,
     ): LinkResponses
 }

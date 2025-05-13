@@ -18,6 +18,6 @@
   -->
 <resources>
   <string name="whats_new_title">Cosa c\'è di nuovo</string>
-  <string name="whats_new_public_sharing_title">Condividi con chiunque</string>
-  <string name="whats_new_public_sharing_description">Crea un link condivisibile per collaborare su cartelle e file — L\'account Proton non è richiesto</string>
+  <string name="whats_new_albums_title">Gli album fotografici sono qui!</string>
+  <string name="whats_new_albums_description">Organizza i tuoi ricordi con la nostra nuova funzionalità Album. Filtra per video, preferiti e altro ancora, il tutto con la stessa crittografia end-to-end di cui ti fidi.</string>
 </resources>

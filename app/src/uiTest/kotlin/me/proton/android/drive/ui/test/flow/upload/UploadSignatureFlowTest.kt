@@ -28,14 +28,17 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.initializer.MainInitializer
 import me.proton.android.drive.ui.MainActivity
 import me.proton.android.drive.ui.extension.createFusionComposeRule
+import me.proton.android.drive.ui.extension.mainUserId
 import me.proton.android.drive.ui.extension.respondWithFile
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SharedByMeRobot
 import me.proton.android.drive.ui.rules.ExternalFilesRule
+import me.proton.android.drive.ui.rules.OverlayRule
 import me.proton.android.drive.ui.rules.SlowTestRule
 import me.proton.android.drive.ui.test.AbstractBaseTest
 import me.proton.android.drive.utils.getRandomString
 import me.proton.android.drive.utils.replaceEmailPrefix
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.i18n.R
 import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.core.test.quark.data.User
@@ -63,17 +66,19 @@ class UploadSignatureFlowTest : AbstractBaseTest() {
         annotationTestData = driveTestDataRule.scenarioAnnotationTestData,
         additionalRules = linkedSetOf(
             IntentsRule(),
-            SlowTestRule()
+            SlowTestRule(),
+            OverlayRule(this),
         ),
         beforeHilt = {
             configureFusion()
         },
         afterHilt = {
             MainInitializer.init(it.targetContext)
-            setOverlaysDisplayStateAfterLogin()
         },
         logoutBefore = true
     )
+
+    override val mainUserId: UserId get() = protonRule.mainUserId
 
     @get:Rule(order = 2)
     val ruleChain: RuleChain = RuleChain

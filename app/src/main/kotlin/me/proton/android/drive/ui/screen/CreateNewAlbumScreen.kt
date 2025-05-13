@@ -46,6 +46,7 @@ import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.CreateNewAlbumViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.CreateNewAlbumViewState
 import me.proton.android.drive.ui.viewmodel.CreateNewAlbumViewModel
+import me.proton.core.compose.activity.KeepScreenOn
 import me.proton.core.compose.component.ProtonTextButton
 import me.proton.core.compose.component.protonTextButtonColors
 import me.proton.core.compose.theme.ProtonTheme
@@ -95,6 +96,9 @@ fun CreateNewAlbumScreen(
     driveLinksFlow: Flow<Map<LinkId, DriveLink>>,
     modifier: Modifier = Modifier,
 ) {
+    if (viewState.isCreationInProgress) {
+        KeepScreenOn()
+    }
     Column(
         modifier = modifier,
     ) {
@@ -136,7 +140,7 @@ fun TopAppBar(
                 )
             ) {
                 Text(
-                    text = stringResource(id = I18N.string.common_done_action),
+                    text = stringResource(id = viewState.doneButtonLabelResId),
                     style = ProtonTheme.typography.headlineSmallNorm,
                     color = ProtonTheme.colors.interactionNorm(viewState.isDoneEnabled),
                 )
@@ -156,6 +160,7 @@ private fun CreateNewAlbumScreenPreview() {
                 isAlbumNameEnabled = true,
                 isAddEnabled = true,
                 isRemoveEnabled = true,
+                doneButtonLabelResId = I18N.string.common_done_action,
                 name = emptyFlow(),
                 hint = stringResource(I18N.string.albums_new_album_name_hint),
             ),

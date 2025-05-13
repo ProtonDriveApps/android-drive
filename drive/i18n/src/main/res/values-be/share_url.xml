@@ -92,10 +92,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">Чаканне абагуленых элементаў (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Чаканне абагуленых альбомаў (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Элементы ў стадыі чакання адсутнічаюць</string>
+  <string name="shared_user_album_invitations_title_empty">Няма альбомаў, якія чакаюць абагульвання</string>
   <string name="shared_user_invitations_description_empty">Усе новыя запрашэнні будуць знаходзіцца тут</string>
   <string name="shared_user_invitations_accept_button">Прыняць</string>
   <string name="shared_user_invitations_decline_button">Адхіліць</string>
   <string name="shared_user_invitations_accept_success">Абагулены элемент прыняты</string>
   <string name="shared_user_invitations_decline_success">Абагулены элемент адхілены</string>
+  <string name="shared_user_album_invitations_accept_success">Запрашэнне прынята</string>
+  <string name="shared_user_album_invitations_decline_success">Запрашэнне адхілена</string>
 </resources>

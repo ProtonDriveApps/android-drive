@@ -18,7 +18,9 @@
 package me.proton.core.drive.drivelink.download.domain.usecase
 
 import kotlinx.coroutines.flow.flowOf
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.file.base.domain.usecase.MoveToCache
 import me.proton.core.drive.folder.domain.usecase.GetDescendants
@@ -28,6 +30,7 @@ import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.linkdownload.domain.usecase.RemoveDownloadState
 import me.proton.core.drive.linkoffline.domain.usecase.IsLinkOrAnyAncestorMarkedAsOffline
+import me.proton.core.drive.photo.domain.usecase.GetAllAlbumDirectChildren
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
@@ -37,6 +40,7 @@ class DownloadCleanup @Inject constructor(
     private val moveToCache: MoveToCache,
     private val removeDownloadState: RemoveDownloadState,
     private val getDescendants: GetDescendants,
+    private val getAllAlbumDirectChildren: GetAllAlbumDirectChildren,
 ) {
     suspend operator fun invoke(volumeId: VolumeId, linkId: LinkId): Result<Unit> = coRunCatching {
         cleanup(
@@ -55,7 +59,7 @@ class DownloadCleanup @Inject constructor(
             when (link) {
                 is Link.Folder -> folderCleanup(volumeId, link, includingDescendants)
                 is Link.File -> fileCleanup(volumeId, link)
-                is Link.Album -> Unit//error("TODO")
+                is Link.Album -> albumCleanup(volumeId, link, includingDescendants)
             }
         }
     }
@@ -86,6 +90,25 @@ class DownloadCleanup @Inject constructor(
                             link = link,
                             includingDescendants = false
                         )
+                    }
+                }
+        }
+    }
+
+    private suspend fun albumCleanup(
+        volumeId: VolumeId,
+        albumLink: Link.Album,
+        includingDescendants: Boolean,
+    ) {
+        removeDownloadState(albumLink)
+        if (includingDescendants) {
+            getAllAlbumDirectChildren(volumeId, albumLink.id)
+                .onSuccess { children ->
+                    children.forEach { fileId ->
+                        invoke(
+                            volumeId = volumeId,
+                            linkId = fileId,
+                        ).getOrNull(LogTag.DOWNLOAD, "Failed to cleanup file $fileId")
                     }
                 }
         }

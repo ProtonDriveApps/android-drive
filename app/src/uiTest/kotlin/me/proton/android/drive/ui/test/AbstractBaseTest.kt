@@ -59,11 +59,15 @@ abstract class AbstractBaseTest {
     @get:Rule(order = 1)
     val driveTestDataRule = DriveTestDataRule()
 
+    abstract val mainUserId: UserId
+
     internal open val shouldShowOnboardingAfterLogin get() = false
     internal open val shouldShowWhatsNewAfterLogin get() = false
     internal open val shouldShowRatingBoosterAfterLogin get() = false
+    internal open val shouldShowDrivePlusPromoAfterLogin get() = false
+    internal open val shouldShowDriveLitePromoAfterLogin get() = false
 
-    internal fun setOverlaysDisplayStateAfterLogin() {
+    internal fun setOverlaysDisplayStateAfterLogin(userId: UserId) {
         CoroutineScope(Dispatchers.Main).launch {
             if (!shouldShowOnboardingAfterLogin) {
                 Companion.uiTestHelper.doNotShowOnboardingAfterLogin()
@@ -73,6 +77,12 @@ abstract class AbstractBaseTest {
             }
             if (!shouldShowRatingBoosterAfterLogin) {
                 Companion.uiTestHelper.doNotShowRatingBoosterAfterLogin()
+            }
+            if (!shouldShowDrivePlusPromoAfterLogin) {
+                Companion.uiTestHelper.doNotShowDrivePlusPromoAfterLogin(userId)
+            }
+            if (!shouldShowDriveLitePromoAfterLogin) {
+                Companion.uiTestHelper.doNotShowDriveLitePromoAfterLogin(userId)
             }
         }
     }

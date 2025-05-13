@@ -25,6 +25,6 @@
   <string name="title_not_found">Ni najdeno</string>
   <string name="proton_docs_insert_image_header_title">Vstavi sliko</string>
   <string name="proton_docs_option_select_file">Izberite datoteko</string>
-  <string name="proton_docs_unsupported_file_type">Only inserting images is supported for now</string>
-  <string name="proton_docs_load_error">Loading document failed</string>
+  <string name="proton_docs_unsupported_file_type">Zaenkrat je podprto samo vstavljanje slik.</string>
+  <string name="proton_docs_load_error">Nalaganje dokumenta ni uspelo</string>
 </resources>

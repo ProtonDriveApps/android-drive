@@ -52,9 +52,9 @@ fun IllustratedMessage(
         imageContent = {
             Image(painter = painterResource(id = imageResId), contentDescription = null)
         },
-        titleResId = titleResId,
+        title = stringResource(id = titleResId),
         modifier = modifier,
-        descriptionResId = descriptionResId,
+        description = descriptionResId?.let { stringResource(id = descriptionResId) }
     )
 }
 
@@ -65,6 +65,46 @@ fun IllustratedMessage(
     modifier: Modifier = Modifier,
     @StringRes descriptionResId: Int? = null,
 ) {
+    IllustratedMessage(
+        imageContent = imageContent,
+        title = stringResource(id = titleResId),
+        modifier = modifier,
+        description = descriptionResId?.let { stringResource(id = descriptionResId) }
+    )
+}
+
+@Composable
+fun IllustratedMessage(
+    imageContent: @Composable () -> Unit,
+    title: String,
+    modifier: Modifier = Modifier,
+    description: String? = null,
+) {
+    IllustratedMessage(
+        imageContent = imageContent,
+        titleContent = {
+            Text(
+                text = title,
+                style = ProtonTheme.typography.headlineNorm.copy(textAlign = TextAlign.Center),
+                modifier = Modifier.padding(
+                    top = ProtonDimens.DefaultSpacing,
+                    start = ProtonDimens.DefaultSpacing,
+                    end = ProtonDimens.DefaultSpacing,
+                )
+            )
+        },
+        modifier = modifier,
+        description = description,
+    )
+}
+
+@Composable
+fun IllustratedMessage(
+    imageContent: @Composable () -> Unit,
+    titleContent: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    description: String? = null,
+) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
@@ -73,18 +113,10 @@ fun IllustratedMessage(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             imageContent()
-            Text(
-                text = stringResource(id = titleResId),
-                style = ProtonTheme.typography.headlineNorm.copy(textAlign = TextAlign.Center),
-                modifier = Modifier.padding(
-                    top = ProtonDimens.DefaultSpacing,
-                    start = ProtonDimens.DefaultSpacing,
-                    end = ProtonDimens.DefaultSpacing,
-                )
-            )
-            descriptionResId?.let {
+            titleContent()
+            description?.let {
                 Text(
-                    text = stringResource(id = descriptionResId),
+                    text = description,
                     style = ProtonTheme.typography.defaultNorm.copy(textAlign = TextAlign.Center),
                     modifier = Modifier.padding(
                         top = ProtonDimens.SmallSpacing,

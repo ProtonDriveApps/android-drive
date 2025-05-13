@@ -64,6 +64,8 @@ fun PhotosContent(
     selectedPhotos: Set<LinkId>,
     viewState: PhotosStatusViewState,
     showPhotosStateBanner: Boolean,
+    showPhotoShareMigrationNeededBanner: Boolean,
+    showStorageBanner: Boolean,
     modifier: Modifier = Modifier,
     inMultiselect: Boolean = false,
     onClick: (DriveLink) -> Unit,
@@ -81,6 +83,7 @@ fun PhotosContent(
     isRefreshEnabled: Boolean,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
+    onStartPhotoShareMigration: () -> Unit,
 ) {
     ProtonPullToRefresh(
         isPullToRefreshEnabled = isRefreshEnabled,
@@ -93,6 +96,8 @@ fun PhotosContent(
             selectedPhotos = selectedPhotos,
             viewState = viewState,
             showPhotosStateBanner = showPhotosStateBanner,
+            showStorageBanner = showStorageBanner,
+            showPhotoShareMigrationNeededBanner = showPhotoShareMigrationNeededBanner,
             modifier = modifier,
             inMultiselect= inMultiselect,
             onClick = onClick,
@@ -107,6 +112,7 @@ fun PhotosContent(
             onChangeNetwork = onChangeNetwork,
             onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
             onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
+            onStartPhotoShareMigration = onStartPhotoShareMigration,
         )
     }
 }
@@ -118,6 +124,8 @@ fun PhotosContent(
     selectedPhotos: Set<LinkId>,
     viewState: PhotosStatusViewState,
     showPhotosStateBanner: Boolean,
+    showPhotoShareMigrationNeededBanner: Boolean,
+    showStorageBanner: Boolean,
     modifier: Modifier = Modifier,
     inMultiselect: Boolean = false,
     onClick: (DriveLink) -> Unit,
@@ -132,6 +140,7 @@ fun PhotosContent(
     onChangeNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
+    onStartPhotoShareMigration: () -> Unit,
 ) {
     val gridState = items.rememberLazyGridState()
     val driveLinksMap by rememberFlowWithLifecycle(flow = driveLinksFlow)
@@ -232,6 +241,10 @@ fun PhotosContent(
                     }
                 }
         ) {
+            PhotoShareMigrationNeededState(
+                isVisible = showPhotoShareMigrationNeededBanner,
+                onStart = onStartPhotoShareMigration,
+            )
             PhotosStatesContainer(
                 viewState = viewState,
                 showPhotosStateBanner = showPhotosStateBanner,
@@ -244,7 +257,10 @@ fun PhotosContent(
                 onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
                 onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
             )
-            StorageBanner(onGetStorage = onGetStorage)
+            StorageBanner(
+                isVisible = showStorageBanner,
+                onGetStorage = onGetStorage,
+            )
         }
     }
 }

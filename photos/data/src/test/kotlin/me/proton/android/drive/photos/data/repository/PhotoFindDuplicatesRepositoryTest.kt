@@ -93,7 +93,7 @@ class PhotoFindDuplicatesRepositoryTest {
         }
 
         val backupDuplicates = photoFindDuplicatesRepository.findDuplicates(
-            folderId = folderId,
+            parentId = folderId,
             nameHashes = listOf("hash"),
             clientUids = listOf("client-id"),
         )

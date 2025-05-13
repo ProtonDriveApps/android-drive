@@ -27,6 +27,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.link.domain.entity.Folder
 import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.presentation.R as CorePresentation
 
 sealed interface FileOptionEntry<in T : DriveLink> {
@@ -60,6 +61,25 @@ sealed interface FileOptionEntry<in T : DriveLink> {
 
         @DrawableRes
         fun getIcon(driveLink: DriveLink): Int
+    }
+}
+
+class ToggleFavoriteFileEntry(
+    override val onClick: (DriveLink.File) -> Unit,
+) : FileOptionEntry.StateBasedEntry<DriveLink.File> {
+    @Composable
+    override fun getLabel(driveLink: DriveLink): String = stringResource(
+        if (driveLink.isFavorite) {
+            I18N.string.files_remove_from_favorite_action
+        } else {
+            I18N.string.files_add_to_favorite_action
+        }
+    )
+
+    override fun getIcon(driveLink: DriveLink): Int = if (driveLink.isFavorite) {
+        BasePresentation.drawable.ic_proton_heart_filled
+    } else {
+        CorePresentation.drawable.ic_proton_heart
     }
 }
 
@@ -167,6 +187,16 @@ class RenameFileEntry(
     override fun getLabel(): String = stringResource(id = I18N.string.files_rename_file_action)
 }
 
+class SaveSharePhotoEntry(
+    override val onClick: (DriveLink.File) -> Unit,
+) : FileOptionEntry.SimpleEntry<DriveLink.File> {
+
+    override val icon: Int = BasePresentation.drawable.ic_cloud_arrow_down
+
+    @Composable
+    override fun getLabel(): String = stringResource(id = I18N.string.files_save_shared_photo_action)
+}
+
 class SendFileEntry(
     override val onClick: (DriveLink.File) -> Unit,
 ) : FileOptionEntry.SimpleEntry<DriveLink.File> {
@@ -270,4 +300,14 @@ class RemoveFromAlbumFileEntry(
 
     @Composable
     override fun getLabel(): String = stringResource(id = I18N.string.common_remove_from_album_action)
+}
+
+class LeaveAlbumEntry(
+    override val onClick: (DriveLink.Album) -> Unit,
+) : FileOptionEntry.SimpleEntry<DriveLink.Album> {
+
+    override val icon: Int = CorePresentation.drawable.ic_proton_trash_cross
+
+    @Composable
+    override fun getLabel(): String = stringResource(I18N.string.common_leave_album_action)
 }

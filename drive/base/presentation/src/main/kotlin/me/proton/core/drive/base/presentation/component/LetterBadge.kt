@@ -20,6 +20,7 @@ package me.proton.core.drive.base.presentation.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.offset
@@ -31,8 +32,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultCornerRadius
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
@@ -64,9 +67,27 @@ fun BoxScope.LetterBadge(
     }
 }
 
+@Composable
+fun BadgeWithBorder(
+    borderColor: Color,
+    badgeColor: Color,
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .size(MediumSpacing)
+            .border(2.dp, borderColor, CircleShape)
+            .background(badgeColor, CircleShape),
+        contentAlignment = Alignment.Center
+    ) {
+        content()
+    }
+}
+
 @Preview
 @Composable
-fun LetterBadge() {
+fun LetterBadgePreview() {
     ProtonTheme {
         Box {
             Image(

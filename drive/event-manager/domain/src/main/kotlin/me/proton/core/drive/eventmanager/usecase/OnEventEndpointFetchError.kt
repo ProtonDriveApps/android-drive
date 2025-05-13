@@ -33,9 +33,12 @@ class OnEventEndpointFetchError @Inject constructor(
 ) {
     suspend operator fun invoke(userId: UserId, volumeId: VolumeId, error: Throwable): Result<Unit> = coRunCatching {
         when {
-            error.hasProtonErrorCode(INVALID_REQUIREMENTS) ||
-            error.hasProtonErrorCode(NOT_EXISTS) -> handleOnEventEndpointNotExists(userId, volumeId).getOrThrow()
-            error.hasProtonErrorCode(NOT_ALLOWED) -> handleOnEventEndpointNotAllowed(userId, volumeId).getOrThrow()
+            error.hasThrowableOrCauseProtonErrorCode(INVALID_REQUIREMENTS) ||
+            error.hasThrowableOrCauseProtonErrorCode(NOT_EXISTS) -> handleOnEventEndpointNotExists(userId, volumeId).getOrThrow()
+            error.hasThrowableOrCauseProtonErrorCode(NOT_ALLOWED) -> handleOnEventEndpointNotAllowed(userId, volumeId).getOrThrow()
         }
     }
+
+    private fun Throwable.hasThrowableOrCauseProtonErrorCode(code: Int): Boolean =
+        hasProtonErrorCode(code) || (cause?.hasProtonErrorCode(code) ?: false)
 }

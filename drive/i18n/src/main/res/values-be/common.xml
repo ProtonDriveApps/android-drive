@@ -69,6 +69,10 @@
   <string name="common_create_album_action">Стварыць альбом</string>
   <string name="common_set_as_album_cover_action">Задаць у якасці вокладкі альбома</string>
   <string name="common_add_action">Дадаць</string>
+  <string name="common_remove_from_album_action">Выдаліць з альбома</string>
+  <string name="common_leave_album_action">Выйсці з альбома</string>
+  <string name="common_start_action">Пачаць</string>
+  <string name="common_save_all_action">Захаваць усе</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аўдыя</string>

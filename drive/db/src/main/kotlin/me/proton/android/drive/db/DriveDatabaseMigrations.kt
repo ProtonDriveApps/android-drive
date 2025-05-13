@@ -542,4 +542,35 @@ object DriveDatabaseMigrations {
             LinkDatabase.MIGRATION_3.migrate(db)
         }
     }
+
+    val MIGRATION_84_85 = object : Migration(84, 85) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            UserSettingsDatabase.MIGRATION_8.migrate(db)
+        }
+    }
+    
+    val MIGRATION_85_86 = object : Migration(85, 86) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            ShareUserDatabase.MIGRATION_7.migrate(db)
+        }
+    }
+
+    val MIGRATION_86_87 = object : Migration(86, 87) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            PhotoDatabase.MIGRATION_3.migrate(db)
+            DriveLinkPhotoDatabase.MIGRATION_3.migrate(db)
+        }
+    }
+
+    val MIGRATION_87_88 = object : Migration(87, 88) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            ShareUserDatabase.MIGRATION_8.migrate(db)
+        }
+    }
+
+    val MIGRATION_88_89 = object : Migration(88, 89) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            PhotoDatabase.MIGRATION_4.migrate(db)
+        }
+    }
 }

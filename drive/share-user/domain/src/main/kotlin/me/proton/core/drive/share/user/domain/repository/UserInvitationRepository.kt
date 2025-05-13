@@ -22,22 +22,40 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.share.user.domain.entity.UserInvitation
 import me.proton.core.drive.share.user.domain.entity.UserInvitationId
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Folder
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.File
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Photo
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Document
 
 interface UserInvitationRepository {
 
-    suspend fun hasInvitations(userId: UserId): Boolean
+    suspend fun hasInvitations(
+        userId: UserId,
+        types: Set<ShareTargetType> = setOf(Folder, File, Photo, Document),
+    ): Boolean
 
     suspend fun getInvitation(id: UserInvitationId): UserInvitation
 
-    fun getInvitationsFlow(userId: UserId, limit: Int): Flow<List<UserInvitation>>
+    fun getInvitationsFlow(
+        userId: UserId,
+        limit: Int,
+        types: Set<ShareTargetType> = setOf(Folder, File, Photo, Document),
+    ): Flow<List<UserInvitation>>
 
-    fun getInvitationsCountFlow(userId: UserId): Flow<Int>
+    fun getInvitationsCountFlow(
+        userId: UserId,
+        types: Set<ShareTargetType> = setOf(Folder, File, Photo, Document),
+    ): Flow<Int>
 
     suspend fun acceptInvitation(invitationId: UserInvitationId, sessionKeySignature: String)
 
     suspend fun rejectInvitation(invitationId: UserInvitationId)
 
-    suspend fun fetchAndStoreInvitations(userId: UserId): List<UserInvitationId>
+    suspend fun fetchAndStoreInvitations(
+        userId: UserId,
+        types: Set<ShareTargetType> = setOf(Folder, File, Photo, Document),
+    ): List<UserInvitationId>
 
     suspend fun fetchAndStoreInvitation(userId: UserId, invitationId: String)
 }

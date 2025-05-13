@@ -35,6 +35,7 @@ fun Modifier.driveLinkSemantics(link: DriveLink, linkLayoutType: LayoutType) =
             link is DriveLink.File && link.hasThumbnail
         this[DriveLinkSemanticsProperties.IsSharedByLink] = link.hasShareLink
         this[DriveLinkSemanticsProperties.IsSharedWithUsers] = link.isSharedWithUsers
+        this[DriveLinkSemanticsProperties.IsFavorite] = link.isFavorite
         this[DriveLinkSemanticsProperties.DownloadState] = when (link.downloadState) {
             is DownloadState.Downloaded -> SemanticsDownloadState.Downloaded
             DownloadState.Downloading -> SemanticsDownloadState.Downloading
@@ -50,6 +51,7 @@ object DriveLinkSemanticsProperties {
     val HasThumbnail = SemanticsPropertyKey<Boolean>(name = "HasThumbnail")
     val IsSharedByLink = SemanticsPropertyKey<Boolean>(name = "IsSharedByLink")
     val IsSharedWithUsers = SemanticsPropertyKey<Boolean>(name = "IsSharedWithUsers")
+    val IsFavorite = SemanticsPropertyKey<Boolean>(name = "IsFavorite")
     val DownloadState = SemanticsPropertyKey<SemanticsDownloadState>(name = "DownloadState")
 }
 

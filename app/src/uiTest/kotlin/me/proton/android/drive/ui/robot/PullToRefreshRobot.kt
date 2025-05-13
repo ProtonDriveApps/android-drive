@@ -18,13 +18,25 @@
 
 package me.proton.android.drive.ui.robot
 
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipe
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefreshTestTags
 import me.proton.test.fusion.Fusion.node
 
 interface PullToRefreshRobot : Robot {
+
+    val pullToRefreshContent get() = node.withTag(ProtonPullToRefreshTestTags.content)
+
     fun <T : Robot> pullToRefresh(goesTo: T): T {
-        node.withTag(ProtonPullToRefreshTestTags.content).swipeDown()
+        pullToRefreshContent.swipeDown()
         waitUntilLoaded()
+        return goesTo
+    }
+
+    fun <T : Robot> swipeUpAlbumsContent(goesTo: T): T {
+        pullToRefreshContent.interaction.performTouchInput {
+            swipe(start = center, end = center.copy(y = 0f), durationMillis = 500)
+        }
         return goesTo
     }
 }

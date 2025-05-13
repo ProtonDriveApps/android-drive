@@ -59,7 +59,12 @@ interface LinkDao {
     @Query(
         "SELECT EXISTS(SELECT * FROM LinkEntity WHERE user_id = :userId AND share_id = :shareId AND id = :linkId)"
     )
-    fun hasLinkEntity(userId: UserId, shareId: String, linkId: String): Flow<Boolean>
+    suspend fun hasLinkEntity(userId: UserId, shareId: String, linkId: String): Boolean
+
+    @Query(
+        "SELECT EXISTS(SELECT * FROM LinkEntity WHERE user_id = :userId AND share_id = :shareId AND id = :linkId)"
+    )
+    fun hasLinkEntityFlow(userId: UserId, shareId: String, linkId: String): Flow<Boolean>
 
     @Query(
         "SELECT EXISTS(SELECT * FROM LinkFilePropertiesEntity WHERE file_user_id = :userId AND file_share_id = :shareId)"
@@ -168,6 +173,18 @@ interface LinkDao {
                 linkAlbumProperties.properties as? LinkAlbumPropertiesEntity
             }.toTypedArray()
         )
+        linksWithProperties.forEach { properties ->
+            val linkId = properties.linkId
+            deleteTags(linkId.userId, linkId.shareId.id, linkId.id)
+        }
+        insertTags(
+            *linksWithProperties.mapNotNull { properties ->
+                properties.tags.takeIf { tags -> tags.isNotEmpty() }?.map { tag ->
+                    val linkId = properties.linkId
+                    LinkTagEntity(linkId.userId, linkId.shareId.id, linkId.id, tag)
+                }
+            }.flatten().toTypedArray()
+        )
     }
 
     suspend fun insertTags(linkId: LinkId, tags: List<Long>) {
@@ -181,6 +198,17 @@ interface LinkDao {
             *tags.map { tag -> LinkTagEntity(linkId.userId, linkId.shareId.id, linkId.id, tag) }.toTypedArray()
         )
     }
+
+    @Query(
+        """
+        DELETE FROM LinkTagEntity 
+        WHERE tag_user_id = :userId
+        AND tag_share_id = :shareId
+        AND tag_link_id = :linkId
+    """
+    )
+    suspend fun deleteTags(userId: UserId, shareId: String, linkId: String)
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertTags(vararg entity: LinkTagEntity)
     @Delete
@@ -202,9 +230,22 @@ interface LinkDao {
             LEFT JOIN LinkAlbumPropertiesEntity ON
                 LinkEntity.share_id = LinkAlbumPropertiesEntity.album_share_id AND
                 LinkEntity.id = LinkAlbumPropertiesEntity.album_link_id
-            LEFT JOIN (SELECT tag_share_id, tag_link_id, GROUP_CONCAT(tag, ',') AS tags_data FROM LinkTagEntity) LinkTagsData ON
+            LEFT JOIN (
+                    SELECT tag_share_id, tag_link_id, GROUP_CONCAT(tag, ',') AS tags_data 
+                    FROM LinkTagEntity 
+                    GROUP BY tag_share_id, tag_link_id
+            ) LinkTagsData ON
                 LinkEntity.share_id = LinkTagsData.tag_share_id AND
                 LinkEntity.id = LinkTagsData.tag_link_id
+            LEFT JOIN (
+                    SELECT
+                        LinkEntity.share_id as parent_table_share_id,
+                        LinkEntity.id AS parent_table_id,
+                        LinkEntity.type AS parent_type
+                    FROM LinkEntity
+            ) AS ParentLinkEntity ON
+                LinkEntity.share_id = ParentLinkEntity.parent_table_share_id AND
+                LinkEntity.parent_id = ParentLinkEntity.parent_table_id
         """
         const val LINK_WITH_PROPERTIES_ENTITY = "LinkEntity $PROPERTIES_ENTITIES_JOIN_STATEMENT"
     }

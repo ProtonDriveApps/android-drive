@@ -35,7 +35,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
@@ -50,9 +49,7 @@ import me.proton.core.drive.drivelink.shared.presentation.viewstate.UserInvitati
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveMobileSharingInvitationsAcceptReject
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
-import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 import me.proton.core.drive.share.user.domain.usecase.GetAllSharedWithMeIds
@@ -116,24 +113,20 @@ class SharedWithMeViewModel @Inject constructor(
 
     override suspend fun getAllIds(): Result<List<SharedLinkId>> = getAllSharedWithMeIds(userId)
 
-    val userInvitationBannerViewState =
-        getFeatureFlagFlow(driveMobileSharingInvitationsAcceptReject(userId)).transform { featureFlag ->
-            if (featureFlag.on) {
-                emitAll(getUserInvitationCountFlow(userId, refresh = flowOf(true))
-                    .filterSuccessOrError()
-                    .mapSuccessValueOrNull()
-                    .filterNotNull()
-                    .filter { count -> count > 0 }
-                    .map { count ->
-                        UserInvitationBannerViewState(
-                            appContext.quantityString(
-                                I18N.plurals.shared_by_me_invitation_banner_description,
-                                count
-                            )
-                        )
-                    }
+    val userInvitationBannerViewState = getUserInvitationCountFlow(
+        userId = userId,
+        refresh = flowOf(true),
+    ).filterSuccessOrError()
+        .mapSuccessValueOrNull()
+        .filterNotNull()
+        .filter { count -> count > 0 }
+        .map { count ->
+            UserInvitationBannerViewState(
+                appContext.quantityString(
+                    I18N.plurals.shared_by_me_invitation_banner_description,
+                    count
                 )
-            }
+            )
         }
 
 }

@@ -4,9 +4,9 @@ import android.webkit.MimeTypeMap
 import androidx.core.net.toUri
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.link.domain.PhotoTag
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.test.DriveRule
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -14,7 +14,6 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
-import org.robolectric.shadows.ShadowMimeTypeMap
 import javax.inject.Inject
 
 @HiltAndroidTest

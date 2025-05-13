@@ -220,8 +220,8 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
     }
 
     private suspend fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean =
-        onProtonHttpException { protonCode ->
-            when (protonCode) {
+        onProtonHttpException { protonData ->
+            when (protonData.code) {
                 ProtonApiCode.NOT_EXISTS,
                 -> true.also { recreateFile(uploadFileLink, cleanUpWorkers, networkTypeProviders) }
 

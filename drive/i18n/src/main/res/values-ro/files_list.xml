@@ -48,6 +48,12 @@
   <string name="files_send_to_trash_action">Mutare în «Gunoi»</string>
   <string name="files_remove_me_action">Elimină-mă</string>
   <string name="files_move_file_action">Mutare</string>
+  <string name="files_add_to_favorite_action">Adăugare la favorite</string>
+  <string name="files_remove_from_favorite_action">Eliminare din favorite</string>
+  <string name="files_add_to_favorite_action_success">S-a adăugat la favorite.</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Fotografia a fost copiată fluxul foto și marcată acolo ca favorită.</string>
+  <string name="files_remove_from_favorite_action_success">S-a eliminat din favorite.</string>
+  <string name="files_save_shared_photo_action">Salvare fotografie partajată</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

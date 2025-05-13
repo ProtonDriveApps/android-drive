@@ -28,4 +28,29 @@
   <string name="files_upload_content_description_cancel_upload">Zrušiť nahrávanie súboru</string>
   <string name="files_upload_failure_storage_full_title">Plné úložisko</string>
   <string name="files_upload_failure_storage_full_description">Úložný priestor na vašom účte je plný. Uvoľnite miesto alebo prejdite na plán s väčším úložiskom.</string>
+  <string name="files_operation_failed_all">Operácia zlyhala</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="one">%1$d zlyhanie</item>
+    <item quantity="few">%1$d zlyhania</item>
+    <item quantity="many">%1$d zlyhaní</item>
+    <item quantity="other">%1$d zlyhaní</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="one">%1$d úspešný</item>
+    <item quantity="few">%1$d úspešné</item>
+    <item quantity="many">%1$d úspešných</item>
+    <item quantity="other">%1$d úspešných</item>
+  </plurals>
 </resources>

@@ -90,10 +90,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">Κοινόχρηστα στοιχεία σε εκκρεμότητα (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Εκκρεμή κοινοποιημένα άλμπουμ (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Δεν εκκρεμούν κοινόχρηστα στοιχεία</string>
+  <string name="shared_user_album_invitations_title_empty">Δεν υπάρχουν εκκρεμή κοινοποιημένα άλμπουμ</string>
   <string name="shared_user_invitations_description_empty">Όλες οι νέες προσκλήσεις θα βρίσκονται εδώ</string>
   <string name="shared_user_invitations_accept_button">Αποδοχή</string>
   <string name="shared_user_invitations_decline_button">Απόρριψη</string>
   <string name="shared_user_invitations_accept_success">Έγινε αποδοχή κοινόχρηστου στοιχείου</string>
   <string name="shared_user_invitations_decline_success">Έγινε απόρριψη κοινόχρηστου στοιχείου</string>
+  <string name="shared_user_album_invitations_accept_success">Η πρόσκληση έγινε αποδεκτή</string>
+  <string name="shared_user_album_invitations_decline_success">Η πρόσκληση απορρίφθηκε</string>
 </resources>

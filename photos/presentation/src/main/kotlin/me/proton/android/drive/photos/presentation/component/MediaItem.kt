@@ -42,10 +42,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -81,6 +83,7 @@ import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.domain.entity.SharingDetails
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.share.domain.entity.ShareId
@@ -90,6 +93,7 @@ import me.proton.core.drive.thumbnail.presentation.extension.thumbnailVO
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.presentation.R
 import java.util.concurrent.TimeUnit.MINUTES
+import me.proton.core.drive.base.presentation.R as BasePresentation
 
 @Composable
 fun MediaItem(
@@ -154,6 +158,7 @@ private fun MediaItem(
                 },
             )
             .background(ProtonTheme.colors.backgroundSecondary)
+            .testTag(ProtonMediaItemTestTags.mediaItemPreviewBox)
     ) {
         val localContext = LocalContext.current
         val imageLoader = LocalImageLoader.current
@@ -221,6 +226,13 @@ fun FileOverlay(
                 .padding(ProtonDimens.ExtraSmallSpacing),
             horizontalArrangement = Arrangement.spacedBy(ProtonDimens.ExtraSmallSpacing),
         ) {
+            if (file.isFavorite) {
+                PhotoIcon(
+                    id = BasePresentation.drawable.ic_proton_heart_filled,
+                    contentDescription = null,
+                    tintColor = Color.White,
+                )
+            }
             if (file.isMarkedAsOffline) {
                 PhotoDownloadIcon(file)
             }
@@ -325,6 +337,7 @@ private fun PhotoIcon(
     id: Int,
     contentDescription: String?,
     modifier: Modifier = Modifier,
+    tintColor: Color = ProtonTheme.colors.shade0,
 ) {
     PhotoIconContainer(modifier = modifier) {
         Icon(
@@ -333,7 +346,7 @@ private fun PhotoIcon(
                 .align(Alignment.Center),
             painter = painterResource(id = id),
             contentDescription = contentDescription,
-            tint = ProtonTheme.colors.shade0,
+            tint = tintColor,
         )
     }
 }
@@ -400,7 +413,8 @@ fun MediaItemPreview() {
             ),
             photoCaptureTime = TimestampS(0),
             photoContentHash = "",
-            mainPhotoLinkId = "MAIN_ID"
+            mainPhotoLinkId = "MAIN_ID",
+            tags = listOf(PhotoTag.Favorites),
         ),
         volumeId = VolumeId("VOLUME_ID"),
         isMarkedAsOffline = true,
@@ -425,4 +439,8 @@ fun MediaItemPreview() {
             onLongClick = {},
         )
     }
+}
+
+object ProtonMediaItemTestTags {
+    const val mediaItemPreviewBox = "media-item-preview-box"
 }

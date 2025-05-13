@@ -26,8 +26,9 @@ import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
-import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -44,17 +45,29 @@ class DeleteLocalContent @Inject constructor(
 
     suspend operator fun invoke(
         volumeId: VolumeId,
-        linkId: LinkId,
+        fileId: FileId,
         coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
     ): Result<Unit> = coRunCatching {
         invoke(
             volumeId = volumeId,
-            link = getLink(linkId).toResult().getOrThrow(),
+            file = getLink(fileId).toResult().getOrThrow(),
             coroutineContext = coroutineContext
         ).getOrThrow()
     }
 
     suspend operator fun invoke(
+        volumeId: VolumeId,
+        folderId: FolderId,
+        coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
+    ): Result<Unit> = coRunCatching {
+        invoke(
+            volumeId = volumeId,
+            folder = getLink(folderId).toResult().getOrThrow(),
+            coroutineContext = coroutineContext
+        ).getOrThrow()
+    }
+
+    private suspend operator fun invoke(
         volumeId: VolumeId,
         link: Link,
         coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
@@ -72,7 +85,7 @@ class DeleteLocalContent @Inject constructor(
                 coroutineContext = coroutineContext
             ).getOrThrow()
 
-            is Link.Album -> error("TODO")
+            is Link.Album -> error("Albums are not supported with this use case")
         }
     }
 
@@ -101,8 +114,13 @@ class DeleteLocalContent @Inject constructor(
         folder: Link.Folder,
         coroutineContext: CoroutineContext = Job() + Dispatchers.IO,
     ) = coRunCatching {
-        getAllFolderChildren(folder.id).getOrThrow().onEach { link ->
-            invoke(volumeId, link, coroutineContext)
-        }
+        getAllFolderChildren(
+            folderId = folder.id,
+            block = { children ->
+                children.onEach { link ->
+                    invoke(volumeId, link, coroutineContext)
+                }
+            }
+        )
     }
 }

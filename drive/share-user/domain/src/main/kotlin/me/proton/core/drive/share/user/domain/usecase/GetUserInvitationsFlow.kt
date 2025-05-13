@@ -30,8 +30,12 @@ import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.repository.fetcher
-import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.share.user.domain.entity.UserInvitation
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Folder
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.File
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Album
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Photo
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Document
 import me.proton.core.drive.share.user.domain.repository.UserInvitationRepository
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
@@ -41,12 +45,20 @@ class GetUserInvitationsFlow @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
 ) {
     operator fun invoke(
-        userId: UserId, refresh: Flow<Boolean> = flowOf { !repository.hasInvitations(userId) }
+        userId: UserId,
+        albumsOnly: Boolean = false,
+        refresh: Flow<Boolean> = flowOf { !repository.hasInvitations(userId) }
     ): Flow<DataResult<List<UserInvitation>>> = refresh.transform { shouldRefresh ->
+        val types = if (albumsOnly) {
+            setOf(Album)
+        } else {
+            setOf(Folder, File, Photo, Document)
+        }
         if (shouldRefresh) {
             fetcher {
                 repository.fetchAndStoreInvitations(
                     userId = userId,
+                    types = types,
                 )
             }
         }
@@ -54,6 +66,7 @@ class GetUserInvitationsFlow @Inject constructor(
             repository.getInvitationsFlow(
                 userId = userId,
                 limit = configurationProvider.dbPageSize,
+                types = types,
             ).onEach { userInvitations ->
                 userInvitations.filter { userInvitation -> userInvitation.details == null }
                     .map { userInvitation -> userInvitation.id }

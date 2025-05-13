@@ -47,6 +47,12 @@
   <string name="files_send_to_trash_action">Flytta till papperskorg</string>
   <string name="files_remove_me_action">Ta bort mig</string>
   <string name="files_move_file_action">Flytta</string>
+  <string name="files_add_to_favorite_action">Lägg till i favoriter</string>
+  <string name="files_remove_from_favorite_action">Ta bort från favoriter</string>
+  <string name="files_add_to_favorite_action_success">Tillagd till favoriter</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Photo was copied to stream and marked favorite there</string>
+  <string name="files_remove_from_favorite_action_success">Borttagen från favoriter</string>
+  <string name="files_save_shared_photo_action">Spara delat foto</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

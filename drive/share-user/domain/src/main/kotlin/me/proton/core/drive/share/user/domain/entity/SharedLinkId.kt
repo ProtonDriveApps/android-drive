@@ -23,4 +23,5 @@ import me.proton.core.drive.link.domain.entity.LinkId
 data class SharedLinkId(
     val volumeId: String,
     val linkId: LinkId,
+    val type: ShareTargetType? = null,
 )

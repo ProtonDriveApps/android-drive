@@ -32,6 +32,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -43,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import me.proton.core.compose.component.ProtonSecondaryButton
+import me.proton.core.compose.component.ProtonSolidButton
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultCornerRadius
@@ -62,6 +64,7 @@ import me.proton.core.drive.base.presentation.component.LetterBadge
 import me.proton.core.drive.base.presentation.component.text.TextWithMiddleEllipsis
 import me.proton.core.drive.base.presentation.extension.asHumanReadableString
 import me.proton.core.drive.base.presentation.extension.iconResId
+import me.proton.core.drive.base.presentation.extension.protonNotificationSuccessButtonColors
 import me.proton.core.drive.drivelink.shared.presentation.extension.key
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.UserInvitation
@@ -106,69 +109,74 @@ fun UserInvitationItem(
 ) {
     val enabled = details != null
 
-    Row(
+    Column(
         modifier = modifier.padding(
             horizontal = ProtonDimens.DefaultSpacing,
-            vertical = ProtonDimens.SmallSpacing
-        ),
-        horizontalArrangement = Arrangement.spacedBy(ProtonDimens.DefaultSpacing),
-        verticalAlignment = Alignment.Top,
+            vertical = ProtonDimens.DefaultSpacing,
+        )
     ) {
-        Box {
-            if(details != null) {
-                Image(
-                    painter = painterResource(
-                        if (details.type == 1L) {
-                            R.drawable.ic_folder_48
-                        } else {
-                            (details.mimeType?.toFileTypeCategory()
-                                ?: FileTypeCategory.Unknown).iconResId
-                        }
-                    ),
-                    contentDescription = null,
-                )
-                LetterBadge(details.inviterEmail)
-            } else {
-                Box(
-                    modifier = Modifier
-                        .size(IconSize)
-                        .clip(RoundedCornerShape(DefaultCornerRadius))
-                        .background(ProtonTheme.colors.backgroundSecondary)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box {
+                if(details != null) {
+                    Image(
+                        painter = painterResource(
+                            when (details.type) {
+                                1L -> R.drawable.ic_folder_48
+                                3L -> R.drawable.ic_folder_album_48
+                                else -> (details.mimeType?.toFileTypeCategory()
+                                    ?: FileTypeCategory.Unknown).iconResId
+                            }
+                        ),
+                        contentDescription = null,
+                    )
+                    LetterBadge(details.inviterEmail)
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .size(IconSize)
+                            .clip(RoundedCornerShape(DefaultCornerRadius))
+                            .background(ProtonTheme.colors.backgroundSecondary)
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .padding(start = ProtonDimens.DefaultSpacing)
+                    .weight(1f)
+            ) {
+                if (details?.cryptoName is CryptoProperty.Decrypted) {
+                    TextWithMiddleEllipsis(
+                        text = details.cryptoName.value,
+                        style = ProtonTheme.typography.defaultNorm,
+                    )
+                } else {
+                    EncryptedItem()
+                }
+                Text(
+                    text = details?.description.orEmpty(),
+                    style = ProtonTheme.typography.captionWeak,
                 )
             }
         }
-        Column {
-            if (details?.cryptoName is CryptoProperty.Decrypted) {
-                TextWithMiddleEllipsis(
-                    text = details.cryptoName.value,
-                    style = ProtonTheme.typography.defaultNorm,
-                )
-            } else {
-                EncryptedItem()
+        Spacer(Modifier.height(ProtonDimens.DefaultSpacing))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(ProtonDimens.DefaultSpacing)
+        )
+        {
+            ProtonSecondaryButton(
+                modifier = Modifier.weight(1F),
+                enabled = enabled,
+                onClick = onDecline,
+            ) {
+                Text(text = stringResource(id = I18N.string.shared_user_invitations_decline_button))
             }
-            Text(
-                text = details?.description.orEmpty(),
-                style = ProtonTheme.typography.captionWeak,
-            )
-            Spacer(Modifier.height(ProtonDimens.DefaultSpacing))
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(ProtonDimens.DefaultSpacing)
-            )
-            {
-                ProtonSecondaryButton(
-                    modifier = Modifier.weight(1F),
-                    enabled = enabled,
-                    onClick = onDecline,
-                ) {
-                    Text(text = stringResource(id = I18N.string.shared_user_invitations_decline_button))
-                }
-                ProtonSecondaryButton(
-                    modifier = Modifier.weight(1F),
-                    enabled = enabled,
-                    onClick = onAccept,
-                ) {
-                    Text(text = stringResource(id = I18N.string.shared_user_invitations_accept_button))
-                }
+            ProtonSolidButton(
+                modifier = Modifier.weight(1F),
+                enabled = enabled,
+                onClick = onAccept,
+                colors = ButtonDefaults.protonNotificationSuccessButtonColors()
+            ) {
+                Text(text = stringResource(id = I18N.string.shared_user_invitations_accept_button))
             }
         }
     }

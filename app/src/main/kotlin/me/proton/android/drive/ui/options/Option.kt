@@ -22,6 +22,7 @@ import me.proton.android.drive.ui.common.FolderEntry
 import me.proton.android.drive.ui.common.folderEntry
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.drive.base.domain.entity.Permissions
+import me.proton.core.drive.base.domain.extension.isViewerOrEditorOnly
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.drivelink.domain.extension.isPhoto
@@ -34,6 +35,7 @@ import me.proton.core.drive.files.presentation.entry.DownloadEntry
 import me.proton.core.drive.files.presentation.entry.DownloadFileEntry
 import me.proton.core.drive.files.presentation.entry.FileInfoEntry
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
+import me.proton.core.drive.files.presentation.entry.LeaveAlbumEntry
 import me.proton.core.drive.files.presentation.entry.ManageAccessEntry
 import me.proton.core.drive.files.presentation.entry.MoveEntry
 import me.proton.core.drive.files.presentation.entry.MoveFileEntry
@@ -42,9 +44,12 @@ import me.proton.core.drive.files.presentation.entry.RemoveFromAlbumEntry
 import me.proton.core.drive.files.presentation.entry.RemoveFromAlbumFileEntry
 import me.proton.core.drive.files.presentation.entry.RemoveMeEntry
 import me.proton.core.drive.files.presentation.entry.RenameFileEntry
+import me.proton.core.drive.files.presentation.entry.SaveSharePhotoEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
 import me.proton.core.drive.files.presentation.entry.SetAsAlbumCoverEntry
+import me.proton.core.drive.files.presentation.entry.ShareMultiplePhotosEntry
 import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntry
+import me.proton.core.drive.files.presentation.entry.ToggleFavoriteFileEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
 import me.proton.core.drive.files.presentation.entry.ToggleTrashEntry
 import me.proton.core.drive.files.presentation.entry.TrashEntry
@@ -54,6 +59,7 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.isProtonCloudFile
 import me.proton.core.drive.link.domain.extension.isSharedUrlExpired
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
@@ -84,7 +90,7 @@ sealed class Option(
     data object CreateFolder : Option(
         ApplicableQuantity.Single,
         setOf(ApplicableTo.FOLDER),
-        setOf(State.NOT_TRASHED, State.SHARED, State.NOT_SHARED),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
     ) {
         fun build(
             runAction: RunAction,
@@ -141,6 +147,19 @@ sealed class Option(
         ) = DownloadEntry {
             runAction { download() }
         }
+    }
+
+    data object FavoriteToggle : Option(
+        ApplicableQuantity.Single,
+        setOf(ApplicableTo.FILE_PHOTO),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            toggleFavorite: suspend (DriveLink.File) -> Unit,
+        ) = ToggleFavoriteFileEntry { driveLink ->
+            runAction { toggleFavorite(driveLink) }
+        } as FileOptionEntry<DriveLink>
     }
 
     data object Info : Option(
@@ -240,6 +259,22 @@ sealed class Option(
         }
     }
 
+
+    data object SaveSharePhoto : Option(
+        ApplicableQuantity.Single,
+        setOf(
+            ApplicableTo.FILE_PHOTO,
+        ),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            saveSharePhoto: (link: DriveLink.File) -> Unit,
+        ) = SaveSharePhotoEntry { driveLink ->
+            runAction { saveSharePhoto(driveLink) }
+        } as FileOptionEntry<DriveLink>
+    }
+
     data object SendFile : Option(
         ApplicableQuantity.Single,
         ApplicableTo.ANY_DOWNLOADABLE_FILE,
@@ -336,6 +371,19 @@ sealed class Option(
         }
     }
 
+    data object ShareMultiplePhotos : Option(
+        ApplicableQuantity.All,
+        setOf(ApplicableTo.FILE_PHOTO),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            navigateToShareMultiplePhotosOptions: () -> Unit,
+        ) = ShareMultiplePhotosEntry {
+            runAction { navigateToShareMultiplePhotosOptions() }
+        }
+    }
+
     data object CreateAlbum : Option(
         ApplicableQuantity.All,
         setOf(ApplicableTo.FILE_PHOTO),
@@ -382,6 +430,21 @@ sealed class Option(
         ) = RemoveFromAlbumEntry {
             runAction {
                 removeSelectedFromAlbum()
+            }
+        }
+    }
+
+    data object LeaveAlbum : Option(
+        ApplicableQuantity.Single,
+        setOf(ApplicableTo.ALBUM),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            leaveAlbum: suspend (DriveLink.Album) -> Unit,
+        ) = LeaveAlbumEntry { album ->
+            runAction {
+                leaveAlbum(album)
             }
         }
     }
@@ -460,6 +523,7 @@ fun Iterable<Option>.filterRoot(driveLink: DriveLink, featureFlag: FeatureFlag) 
 fun Iterable<Option>.filterShareMember(isMember: Boolean) = filter { option ->
     if (!isMember) {
         when (option) {
+            Option.LeaveAlbum -> false
             Option.RemoveMe -> false
             else -> true
         }
@@ -479,16 +543,20 @@ fun Iterable<Option>.filterPermissions(
         Option.DeletePermanently -> permissions.canWrite
         Option.Download -> permissions.canRead
         Option.Info -> permissions.canRead
+        Option.LeaveAlbum -> permissions.canRead
         Option.ManageAccess -> permissions.isAdmin
         Option.Move -> permissions.canWrite
         Option.OfflineToggle -> permissions.canRead
+        Option.FavoriteToggle -> permissions.canWrite
         Option.OpenInBrowser -> permissions.canRead
         Option.Rename -> permissions.canWrite
-        Option.RemoveFromAlbum -> permissions.isAdmin
+        Option.RemoveFromAlbum -> permissions.canWrite
         Option.RemoveMe -> permissions.canRead
+        Option.SaveSharePhoto -> permissions.isViewerOrEditorOnly
         Option.SendFile -> permissions.canRead
         Option.SetAsAlbumCover -> permissions.isAdmin
         Option.ShareViaInvitations -> permissions.isAdmin
+        Option.ShareMultiplePhotos -> permissions.isAdmin
         Option.TakeAPhoto -> permissions.canWrite
         Option.Trash -> permissions.isAdmin
         Option.UploadFile -> permissions.canWrite
@@ -504,15 +572,40 @@ fun Iterable<Option>.filterProtonDocs(killSwitch: FeatureFlag) = filter { option
 }
 
 fun Iterable<Option>.filterAlbums(
-    featureFlagOn: Boolean,
+    isEnabled: Boolean,
     killSwitch: FeatureFlag,
     albumId: AlbumId? = null,
 ) = filter { option ->
-    val featureEnabled = featureFlagOn && killSwitch.off
+    val featureEnabled = isEnabled && killSwitch.off
     when (option) {
-        Option.CreateAlbum -> featureEnabled
+        Option.CreateAlbum -> featureEnabled && albumId == null
+        Option.ShareMultiplePhotos -> featureEnabled && albumId == null
         Option.RemoveFromAlbum -> featureEnabled && albumId != null
         Option.SetAsAlbumCover -> featureEnabled && albumId != null
+        Option.Trash -> albumId == null
+        else -> true
+    }
+}
+
+fun Iterable<Option>.filterPhotoFavorite(
+    isEnabled: Boolean,
+    killSwitch: FeatureFlag,
+) = filter { option ->
+    val featureEnabled = isEnabled && killSwitch.off
+    when (option) {
+        Option.FavoriteToggle -> featureEnabled
+        else -> true
+    }
+}
+
+fun Iterable<Option>.filterShare(
+    shareTempDisabledOn: Boolean,
+    albumId: AlbumId? = null,
+) = filter { option ->
+    when (option) {
+        Option.ShareViaInvitations -> albumId == null && !shareTempDisabledOn
+        Option.ManageAccess -> albumId == null && !shareTempDisabledOn
+        Option.ShareMultiplePhotos -> !shareTempDisabledOn
         else -> true
     }
 }

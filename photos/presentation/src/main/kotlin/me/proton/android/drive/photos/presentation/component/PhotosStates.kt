@@ -19,10 +19,13 @@
 package me.proton.android.drive.photos.presentation.component
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -498,6 +501,42 @@ fun NoConnectivityState(
         tint = ProtonTheme.colors.notificationError,
         text = I18N.string.photos_error_waiting_connectivity,
     )
+}
+
+@Composable
+fun PhotoShareMigrationNeededState(
+    isVisible: Boolean,
+    modifier: Modifier = Modifier,
+    onStart: () -> Unit,
+) {
+    AnimatedVisibility(
+        modifier = modifier,
+        visible = isVisible,
+        enter = EnterTransition.None,
+        exit = shrinkVertically() + fadeOut(),
+    ) {
+        BackupCard(modifier = modifier) {
+            Column {
+                BackupStateCard(
+                    modifier = Modifier,
+                    icon = CorePresentation.drawable.ic_proton_cloud,
+                    tint = ProtonTheme.colors.notificationError,
+                    text = I18N.string.photos_share_migration_needed_banner_title,
+                )
+                Divider(
+                    color = ProtonTheme.colors.separatorNorm,
+                    modifier = Modifier
+                        .height(1.dp)
+                        .fillMaxWidth()
+                )
+                ErrorDetails(
+                    text = stringResource(I18N.string.photos_share_migration_needed_banner_description),
+                    action = I18N.string.common_start_action,
+                    onClick = onStart,
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)

@@ -47,6 +47,12 @@
   <string name="files_send_to_trash_action">Mou a la paperera</string>
   <string name="files_remove_me_action">Esborra\'m</string>
   <string name="files_move_file_action">Mou</string>
+  <string name="files_add_to_favorite_action">Afegeix als favorits</string>
+  <string name="files_remove_from_favorite_action">Esborra dels preferits</string>
+  <string name="files_add_to_favorite_action_success">S\'ha afegit als preferits.</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">La foto s\'ha copiat a l\'estríming i s\'ha marcat com a preferida allà.</string>
+  <string name="files_remove_from_favorite_action_success">S\'ha suprimit dels preferits.</string>
+  <string name="files_save_shared_photo_action">Desa la foto compartida</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

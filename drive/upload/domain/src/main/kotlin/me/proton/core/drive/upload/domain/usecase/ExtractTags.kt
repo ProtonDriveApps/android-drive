@@ -19,7 +19,7 @@
 package me.proton.core.drive.upload.domain.usecase
 
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.link.domain.PhotoTag
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.upload.domain.provider.TagsProvider
 import javax.inject.Inject
 

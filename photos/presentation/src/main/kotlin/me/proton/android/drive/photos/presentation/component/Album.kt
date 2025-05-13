@@ -19,6 +19,9 @@
 package me.proton.android.drive.photos.presentation.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +31,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,6 +41,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -74,12 +77,16 @@ import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.AlbumViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.AlbumViewState
 import me.proton.core.compose.theme.ProtonDimens
+import me.proton.core.compose.theme.ProtonDimens.MediumSpacing
+import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmallUnspecified
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.component.Deferred
+import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.ExpandableLazyVerticalGrid
 import me.proton.core.drive.base.presentation.component.IllustratedMessage
+import me.proton.core.drive.base.presentation.component.LARGE_HEIGHT
 import me.proton.core.drive.base.presentation.component.ProtonIconTextButton
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.base.presentation.component.ThemelessStatusBarScreen
@@ -96,12 +103,15 @@ import me.proton.core.drive.base.presentation.extension.onContent
 import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
+import me.proton.core.drive.base.presentation.extension.protonDriveCustomGreenButtonColors
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.shared.presentation.viewstate.ShareUserViewState
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
@@ -159,6 +169,7 @@ fun Album(
     listEffect.HandleListEffect(items = items)
     Album(
         name = viewState.name,
+        isNameEncrypted = viewState.isNameEncrypted,
         details = viewState.details,
         navigationIcon = viewState.navigationIconResId,
         title = viewState.title,
@@ -170,6 +181,14 @@ fun Album(
         listContentState = viewState.listContentState,
         inMultiselect = viewState.inMultiselect,
         showActions = viewState.showActions,
+        showAddAction = viewState.showAddAction,
+        addActionEnabled = viewState.addActionEnabled,
+        showSaveAllAction = viewState.showSaveAllAction,
+        saveAllActionEnabled = viewState.saveAllActionEnabled,
+        saveAllActionLoading = viewState.saveAllActionLoading,
+        showShareAction = viewState.showShareAction,
+        shareUsers = viewState.shareUsers,
+        shareActionEnabled = viewState.shareActionEnabled,
         actionFlow = viewState.topBarActions,
         onTopAppBarNavigation = viewEvent.onTopAppBarNavigation,
         onScroll = viewEvent.onScroll,
@@ -177,6 +196,9 @@ fun Album(
         onClick = viewEvent.onDriveLink,
         onLongClick = viewEvent.onSelectDriveLink,
         onAddToAlbum = viewEvent.onAddToAlbum,
+        onSaveAll = viewEvent.onSaveAll,
+        onShare = viewEvent.onShare,
+        onShareUsers = viewEvent.onShareUsers,
         modifier = modifier,
     )
 }
@@ -184,6 +206,7 @@ fun Album(
 @Composable
 fun Album(
     name: String,
+    isNameEncrypted: Boolean,
     details: String,
     navigationIcon: Int?,
     title: String?,
@@ -194,7 +217,15 @@ fun Album(
     state: MutableState<ExpandableLazyVerticalGrid.State>,
     listContentState: ListContentState,
     inMultiselect: Boolean,
-    showActions:Boolean,
+    showActions: Boolean,
+    showAddAction: Boolean,
+    addActionEnabled: Boolean,
+    showSaveAllAction: Boolean,
+    saveAllActionEnabled: Boolean,
+    saveAllActionLoading: Boolean,
+    showShareAction: Boolean,
+    shareUsers: List<ShareUserViewState>,
+    shareActionEnabled: Boolean,
     actionFlow: Flow<Set<Action>>,
     onTopAppBarNavigation: () -> Unit,
     onScroll: (Set<LinkId>) -> Unit,
@@ -202,11 +233,14 @@ fun Album(
     onClick: (DriveLink) -> Unit,
     onLongClick: (DriveLink) -> Unit,
     onAddToAlbum: () -> Unit,
+    onSaveAll: () -> Unit,
+    onShare: () -> Unit,
+    onShareUsers: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val gridState = items.rememberLazyGridState()
     val firstVisibleItemIndex by remember(gridState) { derivedStateOf { gridState.firstVisibleItemIndex } }
-    LaunchedEffect(items.itemSnapshotList.items) {
+    LaunchedEffect(items.itemSnapshotList.items, firstVisibleItemIndex) {
         onScroll(
             items.itemSnapshotList.items
                 .takeIf { list -> list.isNotEmpty() && list.size > firstVisibleItemIndex }
@@ -222,6 +256,7 @@ fun Album(
     }
     Album(
         name = name,
+        isNameEncrypted = isNameEncrypted,
         details = details,
         navigationIcon = navigationIcon,
         title = title,
@@ -234,12 +269,23 @@ fun Album(
         gridState = gridState,
         inMultiselect = inMultiselect,
         showActions = showActions,
+        showAddAction = showAddAction,
+        addActionEnabled = addActionEnabled,
+        onSaveAll = onSaveAll,
+        showSaveAllAction = showSaveAllAction,
+        saveAllActionEnabled = saveAllActionEnabled,
+        saveAllActionLoading = saveAllActionLoading,
+        showShareAction = showShareAction,
+        shareUsers = shareUsers,
+        shareActionEnabled = shareActionEnabled,
         actionFlow = actionFlow,
         onTopAppBarNavigation = onTopAppBarNavigation,
         onErrorAction = onErrorAction,
         onClick = onClick,
         onLongClick = onLongClick,
         onAddToAlbum = onAddToAlbum,
+        onShare = onShare,
+        onShareUsers = onShareUsers,
         modifier = modifier,
     )
 }
@@ -247,6 +293,7 @@ fun Album(
 @Composable
 fun Album(
     name: String,
+    isNameEncrypted: Boolean,
     details: String,
     navigationIcon: Int?,
     title: String?,
@@ -258,13 +305,24 @@ fun Album(
     listContentState: ListContentState,
     gridState: LazyGridState,
     inMultiselect: Boolean,
-    showActions:Boolean,
+    showActions: Boolean,
+    showAddAction: Boolean,
+    addActionEnabled: Boolean,
+    showSaveAllAction: Boolean,
+    saveAllActionEnabled: Boolean,
+    saveAllActionLoading: Boolean,
+    showShareAction: Boolean,
+    shareUsers: List<ShareUserViewState>,
+    shareActionEnabled: Boolean,
     actionFlow: Flow<Set<Action>>,
     onTopAppBarNavigation: () -> Unit,
     onErrorAction: () -> Unit,
     onClick: (DriveLink) -> Unit,
     onLongClick: (DriveLink) -> Unit,
     onAddToAlbum: () -> Unit,
+    onSaveAll: () -> Unit,
+    onShare: () -> Unit,
+    onShareUsers: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val (topComposableHeight, overlapThreshold) = if (isLandscape) {
@@ -282,9 +340,9 @@ fun Album(
         columns = PhotosGridCells(minSize = 128.dp, minCount = 3),
         minGridHeight = minGridHeight,
         maxGridHeight = maxGridHeight,
-        contentPadding = PaddingValues(ProtonDimens.SmallSpacing),
-        verticalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing),
-        horizontalArrangement = Arrangement.spacedBy(ProtonDimens.SmallSpacing),
+        contentPadding = PaddingValues(SmallSpacing),
+        verticalArrangement = Arrangement.spacedBy(SmallSpacing),
+        horizontalArrangement = Arrangement.spacedBy(SmallSpacing),
         state = state,
         gridState = gridState,
         lazyVerticalGridModifier = Modifier
@@ -293,7 +351,7 @@ fun Album(
                 ProtonTheme.colors.backgroundNorm,
                 RoundedCornerShape(ProtonDimens.ExtraLargeCornerRadius)
             )
-            .padding(all = ProtonDimens.SmallSpacing),
+            .padding(all = SmallSpacing),
         topComposable = {
             AlbumTopBar(
                 navigationIcon = navigationIcon,
@@ -318,11 +376,14 @@ fun Album(
             ) {
                 AlbumListHeader(
                     name = name,
+                    isNameEncrypted = isNameEncrypted,
                     details = details,
+                    shareUsers = shareUsers,
                     modifier = Modifier.padding(
-                        vertical = ProtonDimens.DefaultSpacing,
+                        vertical = SmallSpacing,
                         horizontal = ProtonDimens.ExtraSmallSpacing,
-                    )
+                    ),
+                    onShareUsers = onShareUsers,
                 )
                 if (showActions) {
                     AlbumActions(
@@ -331,6 +392,15 @@ fun Album(
                             horizontal = ProtonDimens.ExtraSmallSpacing,
                         ),
                         onAdd = onAddToAlbum,
+                        showAdd = showAddAction,
+                        addEnabled = addActionEnabled,
+                        onSaveAll = onSaveAll,
+                        showSaveAll = showSaveAllAction,
+                        saveAllEnabled = saveAllActionEnabled,
+                        saveAllLoading = saveAllActionLoading,
+                        onShare = onShare,
+                        showShare = showShareAction,
+                        shareEnabled = shareActionEnabled,
                     )
                 }
             }
@@ -476,63 +546,126 @@ fun BoxScope.AlbumTopBar(
 @Composable
 fun AlbumListHeader(
     name: String,
+    isNameEncrypted: Boolean,
     details: String,
+    shareUsers: List<ShareUserViewState>,
     modifier: Modifier = Modifier,
+    onShareUsers: () -> Unit,
 ) {
     Column(
         modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(SmallSpacing),
     ) {
-        AlbumDetails(details)
-        Spacer(modifier = Modifier.height(ProtonDimens.SmallSpacing))
-        AlbumName(name)
+        AlbumDetails(
+            details = details,
+            shareUsers = shareUsers,
+            onShareUsers = onShareUsers,
+        )
+        AlbumName(name, isNameEncrypted)
     }
 }
 
 @Composable
 fun AlbumName(
     name: String,
+    isNameEncrypted: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Text(
-        text = name,
-        modifier = modifier,
-        style = ProtonTheme.typography.hero,
-        color = ProtonTheme.colors.textNorm,
-        maxLines = 3,
-        overflow = TextOverflow.Ellipsis,
-    )
+    if (isNameEncrypted) {
+        EncryptedItem(modifier = modifier.height(LARGE_HEIGHT))
+    } else {
+        Text(
+            text = name,
+            modifier = modifier,
+            style = ProtonTheme.typography.hero,
+            color = ProtonTheme.colors.textNorm,
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
 }
 
 @Composable
 fun AlbumDetails(
     details: String,
+    shareUsers: List<ShareUserViewState>,
     modifier: Modifier = Modifier,
+    onShareUsers: () -> Unit,
 ) {
-    Text(
-        text = details,
-        modifier = modifier,
-        style = ProtonTheme.typography.captionMedium,
-        color = ProtonTheme.colors.textHint,
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-    )
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = MediumSpacing),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(SmallSpacing)
+    ) {
+        Text(
+            text = details,
+            style = ProtonTheme.typography.captionMedium,
+            color = ProtonTheme.colors.textHint,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f)
+        )
+        AnimatedVisibility(
+            visible = shareUsers.isNotEmpty(),
+            enter = slideInHorizontally(initialOffsetX = { it }),
+            exit = slideOutHorizontally(targetOffsetX = { it })
+        ) {
+            SharedUsers(
+                users = shareUsers.map { shareUser -> shareUser.firstLetter },
+                onClick = onShareUsers,
+            )
+        }
+    }
 }
 
 @Composable
 fun AlbumActions(
     onAdd: () -> Unit,
+    onSaveAll: () -> Unit,
+    onShare: () -> Unit,
     modifier: Modifier = Modifier,
+    showAdd: Boolean = true,
     addEnabled: Boolean = true,
+    showSaveAll: Boolean = true,
+    saveAllEnabled: Boolean = true,
+    saveAllLoading: Boolean = false,
+    showShare: Boolean = true,
+    shareEnabled: Boolean = true,
 ) {
     Row(
-        modifier = modifier
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        ProtonIconTextButton(
-            iconPainter = painterResource(CorePresentation.drawable.ic_proton_plus_circle_filled),
-            title = stringResource(I18N.string.common_add_action),
-            enabled = addEnabled,
-            onClick = onAdd,
-        )
+        if (showAdd) {
+            ProtonIconTextButton(
+                iconPainter = painterResource(CorePresentation.drawable.ic_proton_plus_circle_filled),
+                title = stringResource(I18N.string.common_add_action),
+                enabled = addEnabled,
+                onClick = onAdd,
+            )
+        }
+        if (showSaveAll) {
+            ProtonIconTextButton(
+                iconPainter = painterResource(BasePresentation.drawable.ic_cloud_arrow_down_filled),
+                title = stringResource(I18N.string.common_save_all_action),
+                enabled = saveAllEnabled,
+                loading = saveAllLoading,
+                onClick = onSaveAll,
+            )
+        }
+        if (showShare) {
+            ProtonIconTextButton(
+                iconPainter = painterResource(BasePresentation.drawable.ic_user_plus_filled),
+                title = stringResource(I18N.string.common_share),
+                enabled = shareEnabled,
+                colors = ButtonDefaults.protonDriveCustomGreenButtonColors(),
+                onClick = onShare,
+                modifier = Modifier.heightIn(min = 40.dp)
+            )
+        }
     }
 }
 
@@ -565,10 +698,9 @@ fun AlbumEmpty(
 ) {
     IllustratedMessage(
         imageContent = {
-            Icon(
+            Image(
                 painter = painterResource(imageResId),
                 contentDescription = null,
-                tint = ProtonTheme.colors.iconWeak,
             )
         },
         titleResId = titleResId,

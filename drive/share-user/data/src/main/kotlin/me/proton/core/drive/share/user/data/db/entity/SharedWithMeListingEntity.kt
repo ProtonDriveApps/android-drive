@@ -27,6 +27,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.LINK_ID
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
+import me.proton.core.drive.base.data.db.Column.TYPE
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.base.data.db.Column.VOLUME_ID
 
@@ -57,4 +58,6 @@ data class SharedWithMeListingEntity(
     val shareId: String,
     @ColumnInfo(name = LINK_ID)
     val linkId: String,
+    @ColumnInfo(TYPE)
+    val type: Long? = null,
 )

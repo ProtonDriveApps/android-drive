@@ -28,4 +28,29 @@
   <string name="files_upload_content_description_cancel_upload">Скасаваць запампоўванне файла</string>
   <string name="files_upload_failure_storage_full_title">Сховішча запоўнена</string>
   <string name="files_upload_failure_storage_full_description">У вашым уліковым запісе скончылася месца для захоўвання. Вызваліце месца або палепшыце да тарыфнага плана з большым памерам сховішча.</string>
+  <string name="files_operation_failed_all">Збой аперацыі</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="one">%1$d збой</item>
+    <item quantity="few">%1$d збоі</item>
+    <item quantity="many">%1$d збояў</item>
+    <item quantity="other">%1$d збояў</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="one">%1$d паспяхова</item>
+    <item quantity="few">%1$d паспяхова</item>
+    <item quantity="many">%1$d паспяхова</item>
+    <item quantity="other">%1$d паспяхова</item>
+  </plurals>
 </resources>

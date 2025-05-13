@@ -33,14 +33,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,6 +82,7 @@ import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.base.presentation.component.list.ListError
+import me.proton.core.drive.base.presentation.extension.isPortrait
 import me.proton.core.drive.base.presentation.extension.onContent
 import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
@@ -92,7 +96,6 @@ import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.android.drive.photos.presentation.R as PhotosPresentation
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 
@@ -102,6 +105,7 @@ fun Albums(
     viewEvent: AlbumsViewEvent,
     items: Flow<List<AlbumsItem>>,
     modifier: Modifier = Modifier,
+    headerContent: @Composable () -> Unit,
 ) {
     val albumItems by items.collectAsStateWithLifecycle(
         initialValue = emptyList()
@@ -115,19 +119,28 @@ fun Albums(
         }
         viewState.listContentState
             .onLoading {
-                AlbumsLoading()
+                AlbumsLoading(
+                    headerContent = headerContent,
+                )
             }
             .onEmpty { state ->
                 AlbumsEmpty(
+                    isRefreshEnabled = viewState.isRefreshEnabled,
+                    isRefreshing = viewState.listContentState.isRefreshing,
                     imageResId = state.imageResId,
                     titleResId = state.titleId,
                     descriptionResId = state.descriptionResId,
+                    actionResId = state.actionResId,
+                    headerContent = headerContent,
+                    onRefresh = viewEvent.onRefresh,
+                    onAction = viewEvent.onCreateNewAlbum
                 )
             }
             .onError { error ->
                 AlbumsError(
                     message = error.message,
                     actionResId = error.actionResId,
+                    headerContent = headerContent,
                     onAction = viewEvent.onErrorAction,
                 )
             }
@@ -136,6 +149,8 @@ fun Albums(
                     items = albumItems,
                     isRefreshEnabled = viewState.isRefreshEnabled,
                     isRefreshing = viewState.listContentState.isRefreshing,
+                    headerContent = headerContent,
+                    placeholderImageResId = viewState.placeholderImageResId,
                     onRefresh = viewEvent.onRefresh,
                     onScroll = viewEvent.onScroll,
                     onClick = viewEvent.onDriveLinkAlbum,
@@ -147,32 +162,53 @@ fun Albums(
 @Composable
 fun AlbumsLoading(
     modifier: Modifier = Modifier,
+    headerContent: @Composable () -> Unit,
 ) {
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
-    ) {
-        Deferred {
-            CircularProgressIndicator()
+    Column {
+        headerContent()
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Deferred {
+                CircularProgressIndicator()
+            }
         }
     }
 }
 
 @Composable
 fun AlbumsEmpty(
+    isRefreshEnabled: Boolean,
+    isRefreshing: Boolean,
+    @DrawableRes imageResId: Int,
     modifier: Modifier = Modifier,
-    @DrawableRes imageResId: Int = PhotosPresentation.drawable.empty_photos_daynight,
-    @StringRes titleResId: Int = I18N.string.photos_empty_title,
-    @StringRes descriptionResId: Int? = I18N.string.photos_empty_description,
+    @StringRes titleResId: Int = I18N.string.albums_empty_albums_list_screen_title,
+    @StringRes descriptionResId: Int? =I18N.string.albums_empty_albums_list_screen_description,
+    @StringRes actionResId: Int? = I18N.string.common_create_album_action,
+    headerContent: @Composable () -> Unit,
+    onRefresh: () -> Unit,
+    onAction: () -> Unit,
 ) {
-    ListEmpty(
-        imageResId = imageResId,
-        titleResId = titleResId,
-        descriptionResId = descriptionResId,
-        actionResId = null,
-        modifier = modifier,
-        onAction = {},
-    )
+    ProtonPullToRefresh(
+        isPullToRefreshEnabled = isRefreshEnabled,
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+    ) {
+        Column {
+            headerContent()
+            ListEmpty(
+                imageResId = imageResId,
+                titleResId = titleResId,
+                descriptionResId = descriptionResId,
+                actionResId = actionResId,
+                modifier = modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState()),
+                onAction = onAction,
+            )
+        }
+    }
 }
 
 @Composable
@@ -180,22 +216,28 @@ fun AlbumsError(
     message: String,
     @StringRes actionResId: Int?,
     modifier: Modifier = Modifier,
+    headerContent: @Composable () -> Unit,
     onAction: () -> Unit,
 ) {
-    ListError(
-        message = message,
-        actionResId = actionResId,
-        modifier = modifier,
-        onAction = onAction,
-    )
+    Column {
+        headerContent()
+        ListError(
+            message = message,
+            actionResId = actionResId,
+            modifier = modifier,
+            onAction = onAction,
+        )
+    }
 }
 
 @Composable
 fun AlbumsContent(
     items: List<AlbumsItem>,
+    placeholderImageResId: Int,
     isRefreshEnabled: Boolean,
     isRefreshing: Boolean,
     modifier: Modifier = Modifier,
+    headerContent: @Composable () -> Unit,
     onScroll: (Set<LinkId>) -> Unit,
     onRefresh: () -> Unit,
     onClick: (DriveLink.Album) -> Unit,
@@ -207,7 +249,9 @@ fun AlbumsContent(
     ) {
         AlbumsContent(
             items = items,
+            placeholderImageResId = placeholderImageResId,
             modifier = modifier,
+            headerContent = headerContent,
             onScroll = onScroll,
             onClick = onClick,
         )
@@ -217,7 +261,9 @@ fun AlbumsContent(
 @Composable
 fun AlbumsContent(
     items: List<AlbumsItem>,
+    placeholderImageResId: Int,
     modifier: Modifier = Modifier,
+    headerContent: @Composable () -> Unit,
     onScroll: (Set<LinkId>) -> Unit,
     onClick: (DriveLink.Album) -> Unit,
 ) {
@@ -247,6 +293,11 @@ fun AlbumsContent(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
         state = gridState,
     ) {
+        item(
+            span = { GridItemSpan(maxLineSpan) }
+        ) {
+            headerContent()
+        }
         items(
             count = items.size,
             key = { index ->
@@ -260,6 +311,7 @@ fun AlbumsContent(
         ) { index ->
             AlbumItem(
                 albumsItem = items[index],
+                placeholderImageResId = placeholderImageResId,
                 onClick = onClick,
             )
         }
@@ -269,6 +321,7 @@ fun AlbumsContent(
 @Composable
 fun AlbumItem(
     albumsItem: AlbumsItem,
+    placeholderImageResId: Int,
     modifier: Modifier = Modifier,
     onClick: (DriveLink.Album) -> Unit,
 ) {
@@ -277,6 +330,7 @@ fun AlbumItem(
             AlbumItem(
                 album = album,
                 cover = albumsItem.coverLink,
+                placeholderImageResId = placeholderImageResId,
                 modifier = modifier,
                 onClick = onClick,
             )
@@ -287,6 +341,7 @@ fun AlbumItem(
             albumPhotoCount = albumsItem.photoCount,
             modifier = modifier,
             coverDriveLink = albumsItem.coverLink,
+            placeholderImageResId = placeholderImageResId,
         )
     }
 }
@@ -294,6 +349,7 @@ fun AlbumItem(
 @Composable
 fun AlbumItem(
     album: DriveLink.Album,
+    placeholderImageResId: Int,
     cover: DriveLink.File?,
     modifier: Modifier = Modifier,
     onClick: (DriveLink.Album) -> Unit,
@@ -308,6 +364,7 @@ fun AlbumItem(
             .driveLinkSemantics(album, LayoutType.Grid)
             .clickable(onClick = { onClick(album) }),
         coverDriveLink = cover,
+        placeholderImageResId = placeholderImageResId,
     )
 }
 
@@ -317,6 +374,7 @@ fun AlbumItem(
     albumDetails: String,
     isAlbumNameEncrypted: Boolean,
     albumPhotoCount: Long,
+    placeholderImageResId: Int,
     modifier: Modifier = Modifier,
     coverDriveLink: DriveLink.File? = null,
 ) {
@@ -335,6 +393,7 @@ fun AlbumItem(
         AlbumItemCard(
             coverDriveLink = coverDriveLink,
             rotation = rotation,
+            placeholderImageResId = placeholderImageResId,
         )
         Spacer(modifier = Modifier.height(ProtonDimens.SmallSpacing))
         Column(
@@ -353,7 +412,8 @@ fun AlbumItem(
                         maxLines = 2,
                         color = ProtonTheme.colors.textNorm,
                         style = ProtonTheme.typography.body2Medium,
-                    )
+                        modifier = Modifier.testTag(ProtonPreviewAlbumItemTestTags.albumName),
+                        )
                 }
             }
             Spacer(modifier = Modifier.height(ProtonDimens.ExtraSmallSpacing))
@@ -364,6 +424,7 @@ fun AlbumItem(
                 maxLines = 1,
                 color = ProtonTheme.colors.textWeak,
                 style = ProtonTheme.typography.captionRegular,
+                modifier = Modifier.testTag(ProtonPreviewAlbumItemTestTags.albumDetails),
             )
         }
     }
@@ -372,6 +433,7 @@ fun AlbumItem(
 @Composable
 fun AlbumItemCard(
     coverDriveLink: DriveLink.File?,
+    placeholderImageResId: Int,
     modifier: Modifier = Modifier,
     rotation: Float = 0f,
 ) {
@@ -392,7 +454,9 @@ fun AlbumItemCard(
             .rotate(rotation)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxSize()
+                .testTag(ProtonPreviewAlbumItemTestTags.albumPreviewBox),
             contentAlignment = Alignment.Center,
         ) {
             Crossfade(
@@ -400,10 +464,11 @@ fun AlbumItemCard(
                 modifier = modifier,
             ) { showPlaceholder ->
                 if (showPlaceholder) {
-                    Icon(
-                        painter = painterResource(BasePresentation.drawable.ic_proton_images),
+                    val placeholderSize = if (isPortrait) 52.dp else 48.dp
+                    Image(
+                        painter = painterResource(placeholderImageResId),
                         contentDescription = null,
-                        tint = ProtonTheme.colors.iconHint,
+                        modifier = Modifier.size(placeholderSize)
                     )
                 } else {
                     coverDriveLink?.let { link ->
@@ -428,7 +493,14 @@ internal val minCoverSize: Dp = 150.dp
 @Composable
 private fun PreviewAlbumsEmpty() {
     ProtonTheme {
-        AlbumsEmpty()
+        AlbumsEmpty(
+            isRefreshEnabled = false,
+            isRefreshing = false,
+            imageResId = BasePresentation.drawable.empty_albums_daynight,
+            headerContent = {},
+            onRefresh = {},
+            onAction = {},
+        )
     }
 }
 
@@ -485,7 +557,15 @@ private fun PreviewAlbumItem() {
                 sharePermissions = null,
             ),
             cover = null,
+            placeholderImageResId = BasePresentation.drawable.empty_albums_daynight,
+            modifier = Modifier,
             onClick = {},
         )
     }
+}
+
+object ProtonPreviewAlbumItemTestTags {
+    const val albumPreviewBox = "album-preview-box"
+    const val albumDetails = "album-details"
+    const val albumName = "album-name"
 }

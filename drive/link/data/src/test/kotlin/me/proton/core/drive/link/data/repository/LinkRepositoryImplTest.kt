@@ -18,10 +18,11 @@
 
 package me.proton.core.drive.link.data.repository
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.db.test.DriveDatabaseRule
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.file
 import me.proton.core.drive.db.test.folder
 import me.proton.core.drive.db.test.mainShare
@@ -39,31 +40,35 @@ import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.domain.usecase.SortLinksByParents
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
-
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class LinkRepositoryImplTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
 
     private lateinit var repository: LinkRepositoryImpl
     private val sortLinksByParents = SortLinksByParents()
 
+    @Inject lateinit var configurationProvider: ConfigurationProvider
+
     @Before
     fun setUp() {
-        repository = LinkRepositoryImpl(mockk(), database.db, sortLinksByParents)
+        repository = LinkRepositoryImpl(mockk(), driveRule.db, sortLinksByParents, configurationProvider)
     }
 
     @Test
     fun empty() = runTest {
-        database.myFiles {}
+        driveRule.db.myFiles {}
 
         val linkIds = repository.findLinkIds(userId, volumeId, "link-id")
 
@@ -72,7 +77,7 @@ class LinkRepositoryImplTest {
 
     @Test
     fun one() = runTest {
-        database.db.user {
+        driveRule.db.user {
             volume {
                 mainShare {
                     file("link-id-1")
@@ -90,7 +95,7 @@ class LinkRepositoryImplTest {
 
     @Test
     fun many() = runTest {
-        database.db.user {
+        driveRule.db.user {
             volume {
                 mainShare {
                     folder("link-id")
@@ -113,7 +118,7 @@ class LinkRepositoryImplTest {
 
     @Test
     fun `no tags`() = runTest {
-        database.db.user {
+        driveRule.db.user {
             volume {
                 photoShare {
                     file("link-id", tags = emptyList())
@@ -128,18 +133,22 @@ class LinkRepositoryImplTest {
 
     @Test
     fun `many tags`() = runTest {
-        val tags: List<PhotoTag> = listOf(PhotoTag.Screenshots, PhotoTag.Videos, PhotoTag.LivePhotos)
-        database.db.user {
+        val videoTags: List<PhotoTag> = listOf(PhotoTag.Favorites, PhotoTag.Videos)
+        val livePhotoTags: List<PhotoTag> = listOf(PhotoTag.LivePhotos)
+        driveRule.db.user {
             volume {
                 photoShare {
-                    file("link-id", tags = tags.map { tag -> tag.value })
+                    file("link-id-video", tags = videoTags.map { tag -> tag.value })
+                    file("link-id-live-photo", tags = livePhotoTags.map { tag -> tag.value })
                 }
             }
         }
 
-        val link = repository.getLinkFlow(FileId(photoShareId, "link-id")).toResult().getOrThrow() as Link.File
+        val videoLink = repository.getLinkFlow(FileId(photoShareId, "link-id-video")).toResult().getOrThrow() as Link.File
+        val livePhotoLink = repository.getLinkFlow(FileId(photoShareId, "link-id-live-photo")).toResult().getOrThrow() as Link.File
 
-        assertEquals(tags, link.tags)
+        assertEquals(livePhotoTags, livePhotoLink.tags)
+        assertEquals(videoTags, videoLink.tags)
     }
 
 }

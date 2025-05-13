@@ -41,7 +41,7 @@ class HandleBackupError @Inject constructor(
             stopBackup(folderId, backupError).getOrThrow()
             deleteLocalContent(
                 volumeId = getShare(folderId.shareId).toResult().getOrThrow().volumeId,
-                linkId = folderId,
+                folderId = folderId,
             ).getOrNull(BACKUP, "Cannot delete local content: ${folderId.id.logId()}")
         } else {
             addBackupError(folderId, backupError).getOrThrow()

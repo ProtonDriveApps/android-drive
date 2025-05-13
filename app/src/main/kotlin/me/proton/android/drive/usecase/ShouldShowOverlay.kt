@@ -30,22 +30,27 @@ class ShouldShowOverlay @Inject constructor(
     private val shouldShowOnboarding: ShouldShowOnboarding,
     private val shouldShowWhatsNew: ShouldShowWhatsNew,
     private val shouldShowRatingBooster: ShouldShowRatingBooster,
+    private val shouldShowSubscriptionPromo: ShouldShowSubscriptionPromo,
     private val repository: UiSettingsRepository,
 ) {
     suspend operator fun invoke(userId: UserId): Result<UserOverlay?> = coRunCatching {
         if (repository.hasShownOverlay()) {
-            null
-        } else if (shouldShowOnboarding(userId).getOrThrow()) {
-            UserOverlay.Onboarding
+            return@coRunCatching null
+        }
+        if (shouldShowOnboarding(userId).getOrThrow()) {
+            return@coRunCatching UserOverlay.Onboarding
+        }
+        val subscriptionPromo = shouldShowSubscriptionPromo(userId).getOrThrow()
+        if (subscriptionPromo != null) {
+            return@coRunCatching subscriptionPromo
+        }
+        val whatsNewKey = shouldShowWhatsNew(userId).getOrThrow()
+        if (whatsNewKey != null) {
+            UserOverlay.WhatsNew(whatsNewKey)
+        } else if (shouldShowRatingBooster(userId).getOrThrow()) {
+            UserOverlay.RatingBooster
         } else {
-            val whatsNewKey = shouldShowWhatsNew(userId).getOrThrow()
-            if (whatsNewKey != null) {
-                UserOverlay.WhatsNew(whatsNewKey)
-            } else if (shouldShowRatingBooster(userId).getOrThrow()) {
-                UserOverlay.RatingBooster
-            } else {
-                null
-            }
+            null
         }
     }
 }

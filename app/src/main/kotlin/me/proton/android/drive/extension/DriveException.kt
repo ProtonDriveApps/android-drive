@@ -23,10 +23,12 @@ import me.proton.android.drive.lock.domain.exception.LockException
 import me.proton.core.drive.base.data.entity.LoggerLevel
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.exception.DriveException
+import me.proton.core.drive.link.domain.exception.LinksResultException
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.exception.ShareException
 import me.proton.android.drive.lock.presentation.extension.getDefaultMessage as lockGetDefaultMessage
 import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.drive.link.presentation.extension.getDefaultMessage as linkGetDefaultMessage
 
 fun DriveException.getDefaultMessage(context: Context): String = when (val exception = this) {
     is ShareException.ShareLocked -> when (exception.shareType) {
@@ -42,6 +44,7 @@ fun DriveException.getDefaultMessage(context: Context): String = when (val excep
         else -> context.getString(I18N.string.error_creating_share_not_allowed)
     }
     is LockException -> exception.lockGetDefaultMessage(context)
+    is LinksResultException -> exception.linkGetDefaultMessage(context)
     else -> error("Default message for exception is missing")
 }
 

@@ -21,6 +21,7 @@ package me.proton.core.drive.drivelink.photo.domain.usecase
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.photo.domain.entity.PhotoListingsPage
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -35,7 +36,8 @@ class FetchPhotoListingPage @Inject constructor(
         volumeId: VolumeId,
         shareId: ShareId,
         pageKey: String?,
-        pageSize: Int
+        pageSize: Int,
+        tag: PhotoTag? = null
     ): Result<PhotoListingsPage> = coRunCatching {
         val (photoListings, saveAction) = photoRepository.fetchPhotoListings(
             userId = userId,
@@ -43,6 +45,7 @@ class FetchPhotoListingPage @Inject constructor(
             shareId = shareId,
             pageSize = pageSize,
             previousPageLastLinkId = pageKey,
+            tag = tag,
         )
         PhotoListingsPage(
             photoListings = photoListings,

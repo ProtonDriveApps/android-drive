@@ -30,14 +30,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.ui.navigation.HomeTab
@@ -47,22 +43,18 @@ import me.proton.android.drive.ui.viewstate.HomeViewState
 import me.proton.android.drive.usecase.CanGetMoreFreeStorage
 import me.proton.android.drive.usecase.GetDynamicHomeTabsFlow
 import me.proton.android.drive.usecase.ShouldShowOverlay
-import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.entity.SessionUserId
-import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
+import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.component.NavigationTab
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveMobileSharingInvitationsAcceptReject
-import me.proton.core.drive.feature.flag.domain.extension.on
-import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEvent
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewState
 import me.proton.core.drive.share.user.domain.usecase.HasUserInvitationFlow
-import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.payment.domain.PaymentManager
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.User
 import me.proton.core.util.kotlin.CoreLogger
@@ -81,24 +73,23 @@ class HomeViewModel @Inject constructor(
     private val canGetMoreFreeStorage: CanGetMoreFreeStorage,
     getDynamicHomeTabsFlow: GetDynamicHomeTabsFlow,
     hasUserInvitationFlow: HasUserInvitationFlow,
-    getFeatureFlagFlow: GetFeatureFlagFlow,
     private val broadcastMessages: BroadcastMessages,
     private val shouldShowOverlay: ShouldShowOverlay,
+    private val paymentManager: PaymentManager,
 ) : ViewModel(), NotificationDotViewModel, UserViewModel by UserViewModel(savedStateHandle) {
     private var navigateToTab: ((route: String) -> Unit)? = null
 
-    override val notificationDotRequested = getFeatureFlagFlow(
-        driveMobileSharingInvitationsAcceptReject(userId),
-    ).transform { featureFlag ->
-        if (featureFlag.on) {
-            emitAll(hasUserInvitationFlow(userId))
-        }
-    }.stateIn(viewModelScope, SharingStarted.Lazily, false)
+    override val notificationDotRequested = hasUserInvitationFlow(userId)
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
+    private val notificationDotForPhotosTab: StateFlow<Boolean> = hasUserInvitationFlow(userId, true)
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
 
     val tabs: StateFlow<Map<out HomeTab, NavigationTab>> = combine(
         getDynamicHomeTabsFlow(userId),
         notificationDotRequested,
-    ) { dynamicHomeTabs, notificationDotRequested ->
+        notificationDotForPhotosTab,
+    ) { dynamicHomeTabs, notificationDotRequested, notificationDotForPhotosTab ->
         dynamicHomeTabs
             .filter { dynamicHomeTab -> dynamicHomeTab.isEnabled }
             .sortedBy { dynamicHomeTab -> dynamicHomeTab.order }
@@ -106,8 +97,11 @@ class HomeViewModel @Inject constructor(
                 dynamicHomeTab.screen to NavigationTab(
                     iconResId = dynamicHomeTab.iconResId,
                     titleResId = dynamicHomeTab.titleResId,
-                    notificationDotVisible = dynamicHomeTab.screen is Screen.SharedTabs
-                            && notificationDotRequested,
+                    notificationDotVisible = when (dynamicHomeTab.screen) {
+                        is Screen.SharedTabs -> notificationDotRequested
+                        is Screen.PhotosAndAlbums -> notificationDotForPhotosTab
+                        else -> false
+                    }
                 )
             }
             .associateBy({ tab -> tab.first }, { tab -> tab.second })
@@ -145,6 +139,7 @@ class HomeViewModel @Inject constructor(
         navigateToOnboarding: () -> Unit,
         navigateToWhatsNew: (WhatsNewKey) -> Unit,
         navigateToRatingBooster: () -> Unit,
+        navigateToSubscriptionPromo: (String) -> Unit,
     ): HomeViewEvent = object : HomeViewEvent {
         override val onTab = { tab: NavigationTab -> navigateToTab(tab.screen(userId)) }
         override val onFirstLaunch: () -> Unit = {
@@ -153,6 +148,7 @@ class HomeViewModel @Inject constructor(
                     UserOverlay.Onboarding -> navigateToOnboarding()
                     is UserOverlay.WhatsNew -> navigateToWhatsNew(overlay.key)
                     UserOverlay.RatingBooster -> navigateToRatingBooster()
+                    is UserOverlay.Subcription -> navigateToSubscriptionPromo(overlay.key)
                     null -> {}
                 }
             }
@@ -189,7 +185,7 @@ class HomeViewModel @Inject constructor(
             else -> error("Unhandled tab item route: $route")
         }
 
-    private fun getViewState(
+    private suspend fun getViewState(
         user: User?,
         startDestination: String,
         tabs: Map<out HomeTab, NavigationTab>,
@@ -204,6 +200,11 @@ class HomeViewModel @Inject constructor(
                 BuildConfig.VERSION_NAME,
                 currentUser = user,
                 showGetFreeStorage = user?.let { canGetMoreFreeStorage(user) } ?: false,
+                showSubscription = user?.userId?.let { userId ->
+                    coRunCatching {
+                        paymentManager.isSubscriptionAvailable(userId)
+                    }.getOrNull(VIEW_MODEL, "Failed to read subscriptions")
+                } ?: false
             )
         )
 

@@ -29,7 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import me.proton.android.drive.ui.viewmodel.PickerPhotosAndAlbumsViewModel
+import me.proton.android.drive.ui.viewmodel.PickerPhotosViewModel
 import me.proton.core.drive.base.presentation.extension.shadow
 
 @Composable
@@ -38,7 +38,7 @@ fun PickerAlbumScreen(
     onAddToAlbumDone: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel = hiltViewModel<PickerPhotosAndAlbumsViewModel>()
+    val viewModel = hiltViewModel<PickerPhotosViewModel>()
     val viewState by viewModel.viewState.collectAsStateWithLifecycle(initialValue = null)
     val lifecycle = LocalLifecycleOwner.current
     val viewEvent = remember(lifecycle) {
@@ -77,10 +77,12 @@ fun PickerAlbumScreen(
     ) {
         AlbumScreen(
             navigateToAlbumOptions = {},
-            navigateToPhotosOptions = { _, _ -> },
+            navigateToPhotosOptions = { _, _, _ -> },
             navigateToMultiplePhotosOptions = { _, _ -> },
             navigateToPreview = { _, _ -> },
             navigateToPicker = { _ -> },
+            navigateToShareViaInvitations = {},
+            navigateToManageAccess = {},
             navigateBack = onBack,
         )
         BottomActions(

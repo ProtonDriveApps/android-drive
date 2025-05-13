@@ -73,6 +73,7 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgres
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetPagedOfflineDriveLinksList
 import me.proton.core.drive.files.presentation.state.FilesViewState
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -206,6 +207,7 @@ class OfflineViewModel @Inject constructor(
     fun viewEvent(
         navigateToFiles: (FolderId, String?) -> Unit,
         navigateToPreview: (PagerType, FileId) -> Unit,
+        navigateToAlbum: (AlbumId) -> Unit,
         navigateToSortingDialog: (Sorting) -> Unit,
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
         navigateBack: () -> Unit,
@@ -224,6 +226,7 @@ class OfflineViewModel @Inject constructor(
                                     fileId
                                 )
                             },
+                            navigateToAlbum = navigateToAlbum,
                         )
                     }
                 }

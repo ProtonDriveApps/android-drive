@@ -28,12 +28,16 @@ object MultipleFileFolderOptionsRobot : Robot {
     )
     private val createAlbumButton get() = node.withText(I18N.string.common_create_album_action)
     private val removeFromAlbum get() = node.withText(I18N.string.common_remove_from_album_action)
+    private val shareButton get() = node.withText(I18N.string.common_share)
 
     fun clickOnCreateAlbum() = CreateAlbumTabRobot.apply {
         createAlbumButton.scrollTo().click()
     }
     fun clickRemoveFromAlbum() = AlbumRobot.apply {
         removeFromAlbum.scrollTo().click()
+    }
+    fun clickShare() = ShareMultiplePhotosOptionsRobot.apply {
+        shareButton.scrollTo().click()
     }
 
     override fun robotDisplayed() {

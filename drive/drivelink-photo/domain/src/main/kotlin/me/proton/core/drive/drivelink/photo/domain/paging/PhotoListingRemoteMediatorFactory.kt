@@ -20,7 +20,6 @@ package me.proton.core.drive.drivelink.photo.domain.paging
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.RemoteMediator
-import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.photo.domain.entity.PhotoListingsPage
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -30,6 +29,7 @@ interface PhotoListingRemoteMediatorFactory {
     fun create(
         volumeId: VolumeId,
         pagedListKey: String,
+        tagged: Boolean,
         remotePhotoListings: suspend (pageKey: String?, pageSize: Int) -> Result<PhotoListingsPage>,
         deleteAllLocalPhotoListings: suspend () -> Result<Unit>,
     ): RemoteMediator<Int, PhotoListing>

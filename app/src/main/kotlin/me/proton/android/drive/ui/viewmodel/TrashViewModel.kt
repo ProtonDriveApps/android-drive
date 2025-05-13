@@ -63,7 +63,7 @@ import me.proton.core.drive.trash.domain.TrashManager
 import me.proton.core.drive.trash.domain.usecase.GetEmptyTrashState
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.drive.volume.domain.usecase.GetVolumes
+import me.proton.core.drive.volume.domain.usecase.GetActiveVolumes
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.usecase.GetLayoutType
 import me.proton.drive.android.settings.domain.usecase.ToggleLayoutType
@@ -84,7 +84,7 @@ class TrashViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val toggleLayoutType: ToggleLayoutType,
     private val configurationProvider: ConfigurationProvider,
-    getVolumes: GetVolumes,
+    getActiveVolumes: GetActiveVolumes,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val volumeIdFlow = MutableStateFlow<VolumeId?>(null)
@@ -108,7 +108,7 @@ class TrashViewModel @Inject constructor(
         listContentState,
         listContentAppendingState,
         layoutType,
-        getVolumes(userId).mapSuccessValueOrNull(),
+        getActiveVolumes(userId).mapSuccessValueOrNull(),
     ) { sorting, contentState, appendingState, layoutType, volumes ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(

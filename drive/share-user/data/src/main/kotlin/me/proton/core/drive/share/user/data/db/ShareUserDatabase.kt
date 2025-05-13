@@ -21,6 +21,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
 import me.proton.core.data.room.db.extension.dropTable
 import me.proton.core.data.room.db.migration.DatabaseMigration
+import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.share.user.data.db.dao.ShareExternalInvitationDao
 import me.proton.core.drive.share.user.data.db.dao.ShareInvitationDao
 import me.proton.core.drive.share.user.data.db.dao.ShareMemberDao
@@ -329,6 +330,26 @@ interface ShareUserDatabase : Database {
                 database.execSQL(
                     """
                     CREATE INDEX IF NOT EXISTS `index_UserInvitationDetailsEntity_user_id` ON `UserInvitationDetailsEntity` (`user_id`)
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_7 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    ALTER TABLE `UserInvitationIdEntity` ADD COLUMN ${Column.TYPE} INTEGER DEFAULT NULL
+                    """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_8 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    """
+                    ALTER TABLE `SharedWithMeListingEntity` ADD COLUMN ${Column.TYPE} INTEGER DEFAULT NULL
                     """.trimIndent()
                 )
             }

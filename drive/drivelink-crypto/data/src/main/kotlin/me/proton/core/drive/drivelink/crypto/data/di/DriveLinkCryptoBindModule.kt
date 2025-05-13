@@ -21,19 +21,13 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.proton.core.drive.drivelink.crypto.data.repository.DecryptedTextRepositoryImpl
 import me.proton.core.drive.drivelink.crypto.data.usecase.GetSessionForkProtonDocumentUriStringImpl
-import me.proton.core.drive.drivelink.crypto.domain.repository.DecryptedTextRepository
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetSessionForkProtonDocumentUriString
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 interface DriveLinkCryptoBindModule {
-
-    @Binds
-    @Singleton
-    fun bindsRepositoryImpl(impl: DecryptedTextRepositoryImpl): DecryptedTextRepository
 
     @Binds
     @Singleton

@@ -37,6 +37,7 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
+import me.proton.core.drive.drivelink.rename.domain.usecase.RenameAlbum
 import me.proton.core.drive.drivelink.rename.domain.usecase.RenameLink
 import me.proton.core.drive.drivelink.rename.presentation.RenameEffect
 import me.proton.core.drive.link.domain.entity.AlbumId
@@ -48,9 +49,10 @@ import me.proton.core.drive.i18n.R as I18N
 @HiltViewModel
 class RenameLinkViewModel @Inject constructor(
     @ApplicationContext appContext: Context,
-    getDriveLink: GetDecryptedDriveLink,
     savedStateHandle: SavedStateHandle,
+    private val getDriveLink: GetDecryptedDriveLink,
     private val renameLink: RenameLink,
+    private val renameAlbum: RenameAlbum,
     private val broadcastMessages: BroadcastMessages,
 ) : RenameViewModel(appContext, savedStateHandle) {
     private val unused = getDriveLink(linkId)
@@ -77,10 +79,22 @@ class RenameLinkViewModel @Inject constructor(
             ?: ""
 
     override suspend fun doRenameFile(name: String) {
-        renameLink(
-            linkId = linkId,
-            linkName = name,
-        )
+        val renameBlock: suspend () -> Result<Unit> = {
+            if (linkId is AlbumId) {
+                val driveLink = getDriveLink(linkId).toResult().getOrThrow()
+                renameAlbum(
+                    volumeId = driveLink.volumeId,
+                    albumId = linkId,
+                    newName = name,
+                )
+            } else {
+                renameLink(
+                    linkId = linkId,
+                    linkName = name,
+                )
+            }
+        }
+        renameBlock()
             .onFailure { error ->
                 error.log(LogTag.RENAME, "Cannot rename link: ${linkId.id.logId()}")
                 error.handle()

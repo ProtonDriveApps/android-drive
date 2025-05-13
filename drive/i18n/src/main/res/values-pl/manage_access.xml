@@ -18,8 +18,8 @@
   -->
 <resources>
   <string name="title_manage_access">Zarządzaj dostępem</string>
-  <string name="manage_access_share_with">Udostępnij</string>
-  <string name="manage_access_share_with_anyone">Udostępnij komukolwiek</string>
+  <string name="manage_access_share_with">Udostępnij użytkownikowi</string>
+  <string name="manage_access_share_with_anyone">Udostępnij</string>
   <string name="manage_access_link_settings_action">Ustawienia linku</string>
   <string name="manage_access_link_description_public">Każda osoba mająca link</string>
   <string name="manage_access_link_description_password_protected">Każdy z linkiem i hasłem</string>

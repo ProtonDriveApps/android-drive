@@ -69,6 +69,10 @@
   <string name="common_create_album_action">Luo albumi</string>
   <string name="common_set_as_album_cover_action">Aseta albumin kanneksi</string>
   <string name="common_add_action">Lisää</string>
+  <string name="common_remove_from_album_action">Poista albumista</string>
+  <string name="common_leave_album_action">Leave album</string>
+  <string name="common_start_action">Start</string>
+  <string name="common_save_all_action">Save all</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ääni</string>

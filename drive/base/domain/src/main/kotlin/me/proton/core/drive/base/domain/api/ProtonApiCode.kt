@@ -22,6 +22,8 @@ package me.proton.core.drive.base.domain.api
  */
 object ProtonApiCode {
     const val SUCCESS = 1000L
+    const val SUCCESS_MULTI_RESPONSE = 1001L
+    const val SUCCESS_ACCEPTED = 1002L
     const val INVALID_REQUIREMENTS = 2000
     const val INVALID_VALUE = 2001
     const val NOT_ALLOWED = 2011
@@ -40,5 +42,9 @@ object ProtonApiCode {
     const val KEY_GET_DOMAIN_EXTERNAL = 33103
     const val KEY_GET_INVALID_KT = 33104;
 
-    val Long.isSuccessful: Boolean get() = this == SUCCESS
+    val Long.isSuccessful: Boolean get() = this in setOf(
+        SUCCESS,
+        SUCCESS_MULTI_RESPONSE,
+        SUCCESS_ACCEPTED,
+    )
 }

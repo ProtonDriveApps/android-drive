@@ -21,4 +21,11 @@ package me.proton.core.drive.base.domain.entity
 @JvmInline
 value class SaveAction(val value: suspend () -> Unit) {
     suspend operator fun invoke() = value()
+
+    companion object {
+        fun fromList(actions: List<SaveAction>): SaveAction =
+            SaveAction {
+                actions.forEach { action -> action() }
+            }
+    }
 }

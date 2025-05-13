@@ -26,6 +26,7 @@ import me.proton.core.drive.base.data.api.Dto.CONTENT_HASH
 import me.proton.core.drive.base.data.api.Dto.HASH
 import me.proton.core.drive.base.data.api.Dto.IS_CHILD_OF_ALBUM
 import me.proton.core.drive.base.data.api.Dto.LINK_ID
+import me.proton.core.drive.base.data.api.Dto.RELATED_PHOTOS
 
 @Serializable
 data class AlbumPhotoListingDto(
@@ -37,6 +38,8 @@ data class AlbumPhotoListingDto(
     val hash: String? = null,
     @SerialName(CONTENT_HASH)
     val contentHash: String? = null,
+    @SerialName(RELATED_PHOTOS)
+    val relatedPhotos: List<RelatedPhotoDto> = emptyList(),
     @SerialName(ADDED_TIME)
     val addedTime: Long,
     @SerialName(IS_CHILD_OF_ALBUM)

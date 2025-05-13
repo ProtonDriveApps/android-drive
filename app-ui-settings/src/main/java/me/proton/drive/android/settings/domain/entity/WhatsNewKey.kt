@@ -21,6 +21,5 @@ package me.proton.drive.android.settings.domain.entity
 import me.proton.core.drive.base.domain.entity.TimestampS
 
 enum class WhatsNewKey(val limit: TimestampS) {
-    PUBLIC_SHARING(limit = TimestampS(1743465600)), // end of march 2025
+    ALBUMS(limit = TimestampS(1753920000)), // end of July 2025
 }
-

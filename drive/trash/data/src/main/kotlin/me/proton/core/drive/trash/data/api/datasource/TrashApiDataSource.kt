@@ -18,11 +18,10 @@
 
 package me.proton.core.drive.trash.data.api.datasource
 
-import me.proton.core.drive.link.domain.entity.ParentId
-import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.trash.data.api.DriveTrashApi
 import me.proton.core.drive.trash.data.api.request.LinkIDsRequest
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiException
 import javax.inject.Inject
@@ -33,21 +32,28 @@ class TrashApiDataSource @Inject constructor(
 
     @Throws(ApiException::class)
     suspend fun sendToTrash(
-        parentId: ParentId,
+        userId: UserId,
+        volumeId: VolumeId,
         linkIds: List<String>,
-    ) = apiProvider.get<DriveTrashApi>(parentId.userId).invoke {
-        sendToTrash(parentId.shareId.id, parentId.id, LinkIDsRequest(linkIds))
+    ) = apiProvider.get<DriveTrashApi>(userId).invoke {
+        sendToTrash(volumeId.id, LinkIDsRequest(linkIds))
     }.valueOrThrow
 
     @Throws(ApiException::class)
-    suspend fun restoreFromTrash(shareId: ShareId, linkIds: List<String>) =
-        apiProvider.get<DriveTrashApi>(shareId.userId).invoke {
-            restoreFromTrash(shareId.id, LinkIDsRequest(linkIds))
-        }.valueOrThrow
+    suspend fun restoreFromTrash(
+        userId: UserId,
+        volumeId: VolumeId,
+        linkIds: List<String>,
+    ) = apiProvider.get<DriveTrashApi>(userId).invoke {
+        restoreFromTrash(volumeId.id, LinkIDsRequest(linkIds))
+    }.valueOrThrow
 
     @Throws(ApiException::class)
-    suspend fun deleteItemsFromTrash(shareId: ShareId, linkIds: List<String>) =
-        apiProvider.get<DriveTrashApi>(shareId.userId).invoke {
-            deleteItemsFromTrash(shareId.id, LinkIDsRequest(linkIds))
-        }.valueOrThrow
+    suspend fun deleteItemsFromTrash(
+        userId: UserId,
+        volumeId: VolumeId,
+        linkIds: List<String>,
+    ) = apiProvider.get<DriveTrashApi>(userId).invoke {
+        deleteItemsFromTrash(volumeId.id, LinkIDsRequest(linkIds))
+    }.valueOrThrow
 }

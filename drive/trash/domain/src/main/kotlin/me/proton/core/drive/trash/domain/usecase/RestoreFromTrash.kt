@@ -19,14 +19,15 @@
 package me.proton.core.drive.trash.domain.usecase
 
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
+import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.trash.domain.TrashManager
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class RestoreFromTrash @Inject constructor(
@@ -50,10 +51,18 @@ class RestoreFromTrash @Inject constructor(
         linkIds: List<LinkId>,
     ) {
         getShare(shareId).toResult().getOrNull()?.let { share ->
-            linkTrashRepository.insertOrUpdateTrashState(share.volumeId, linkIds, TrashState.RESTORING)
-            trashManager.restore(userId, shareId, linkIds).onFailure {
-                linkTrashRepository.insertOrUpdateTrashState(share.volumeId, linkIds, TrashState.TRASHED)
-            }
+            invoke(userId, share.volumeId, linkIds)
+        }
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        volumeId: VolumeId,
+        linkIds: List<LinkId>,
+    ) {
+        linkTrashRepository.insertOrUpdateTrashState(volumeId, linkIds, TrashState.RESTORING)
+        trashManager.restore(userId, volumeId, linkIds).onFailure {
+            linkTrashRepository.insertOrUpdateTrashState(volumeId, linkIds, TrashState.TRASHED)
         }
     }
 }

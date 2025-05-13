@@ -21,10 +21,8 @@ package me.proton.android.drive.ui.test.flow.preview
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
-import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.BaseTest
-import me.proton.android.drive.ui.annotation.SmokeTest
 import me.proton.android.drive.ui.robot.AlbumRobot
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ALBUMS
@@ -52,11 +50,11 @@ class PreviewAlbumFlowTest : BaseTest() {
     fun previewAlbumTest() {
 
         val firstImage = "activeTaggedFileInAlbum-3.jpg"
-        val secondImage = "activeTaggedFileInAlbum-2.jpg"
-        val thirdImage = "activeTaggedFileInAlbum-1.jpg"
+        val secondImage = "activeFileInAlbum.jpg"
+        val thirdImage = "activeVideoFileInAlbum-1.jpg"
 
         PhotosTabRobot
-            .clickOnAlbumsTab()
+            .clickOnAlbumsTitleTab()
             .clickOnAlbum("album-for-photos")
             .clickOnPhoto(firstImage)
             .verify {
@@ -68,12 +66,12 @@ class PreviewAlbumFlowTest : BaseTest() {
             }
             .swipePage(SwipeDirection.Left)
             .verify {
-                assertPreviewIsDisplayed(thirdImage)
+                assertMediaPreviewDisplayed(thirdImage)
             }
             .clickBack(AlbumRobot)
             .clickOnPhoto(thirdImage)
             .verify {
-                assertPreviewIsDisplayed(thirdImage)
+                assertMediaPreviewDisplayed(thirdImage)
             }
             .swipePage(SwipeDirection.Right)
             .verify {
@@ -82,6 +80,33 @@ class PreviewAlbumFlowTest : BaseTest() {
             .swipePage(SwipeDirection.Right)
             .verify {
                 assertPreviewIsDisplayed(firstImage)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun previewAlbumDeleteAndRestorePhotoTest() {
+
+        val photo = "activeFileInStreamAndAlbum.jpg"
+        PhotosTabRobot
+            .clickOnAlbumsTitleTab()
+            .clickOnAlbum("album-for-photos-in-stream")
+            .clickOnPhoto(photo)
+            .verify {
+                assertPreviewIsDisplayed(photo)
+            }
+            .clickOnContextualButton()
+            .clickMoveToTrash()
+        AlbumRobot
+            .verify {
+                assertEmptyAlbum()
+            }
+            .clickOnUndo(goesTo = AlbumRobot)
+            .verify {
+                itemIsDisplayed(photo)
             }
     }
 }

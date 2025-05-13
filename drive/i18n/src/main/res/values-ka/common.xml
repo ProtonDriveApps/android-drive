@@ -69,6 +69,10 @@
   <string name="common_create_album_action">ალბომის შექმნა</string>
   <string name="common_set_as_album_cover_action">Set as album cover</string>
   <string name="common_add_action">Add</string>
+  <string name="common_remove_from_album_action">Remove from album</string>
+  <string name="common_leave_album_action">Leave album</string>
+  <string name="common_start_action">Start</string>
+  <string name="common_save_all_action">Save all</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">აუდიო</string>

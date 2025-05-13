@@ -20,11 +20,16 @@ package me.proton.core.drive.photo.data.api
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.PhotoTag
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.data.api.request.AddToAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreateAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreatePhotoRequest
+import me.proton.core.drive.photo.data.api.request.FavoriteRequest
 import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
 import me.proton.core.drive.photo.data.api.request.RemoveFromAlbumRequest
+import me.proton.core.drive.photo.data.api.request.TagRequest
 import me.proton.core.drive.photo.data.api.request.UpdateAlbumRequest
 import me.proton.core.drive.photo.data.extension.toAlbumData
 import me.proton.core.drive.photo.data.extension.toDtoSort
@@ -56,6 +61,7 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
         pageSize: Int,
         previousPageLastLinkId: String?,
         minimumCaptureTime: TimestampS,
+        tag: Long? = null
     ) =
         apiProvider
             .get<PhotoApi>(userId)
@@ -66,6 +72,7 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
                     pageSize = requireNotNull(takeIf { pageSize in 1..500 }?.let { pageSize }),
                     previousPageLastLinkId = previousPageLastLinkId,
                     minimumCaptureTime = minimumCaptureTime.value,
+                    tag = tag,
                 )
             }.valueOrThrow.photos
 
@@ -126,7 +133,8 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
         anchorId: String?,
         sortingBy: PhotoListing.Album.SortBy,
         sortingDirection: Direction,
-
+        onlyDirectChildren: Boolean = false,
+        includeTrashedChildren: Boolean = false,
     ) = apiProvider
         .get<PhotoApi>(userId)
         .invoke {
@@ -136,6 +144,8 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
                 anchorId = anchorId,
                 sort = sortingBy.toDtoSort(),
                 descending = sortingDirection.toDtoDesc(),
+                onlyDirectChildren = onlyDirectChildren.toInt(),
+                includeTrashedChildren = includeTrashedChildren.toInt(),
             )
         }.valueOrThrow
 
@@ -189,5 +199,72 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
                 albumId = albumId,
                 deleteAlbumPhotos = deleteAlbumPhotos.toInt(),
             )
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun addFavorite(
+        volumeId: VolumeId,
+        fileId: FileId,
+        request: FavoriteRequest = FavoriteRequest(),
+    ) = apiProvider
+        .get<PhotoApi>(fileId.userId)
+        .invoke {
+            addFavorite(
+                volumeId = volumeId.id,
+                linkId = fileId.id,
+                request = request
+            )
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun addTag(
+        volumeId: VolumeId,
+        fileId: FileId,
+        tags: List<PhotoTag>,
+    ) = apiProvider
+        .get<PhotoApi>(fileId.userId)
+        .invoke {
+            addTags(
+                volumeId = volumeId.id,
+                linkId = fileId.id,
+                request = TagRequest(
+                    tags = tags.map { tag -> tag.value }
+                ),
+            )
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun deleteTag(
+        volumeId: VolumeId,
+        fileId: FileId,
+        tags: List<PhotoTag>,
+    ) = apiProvider
+        .get<PhotoApi>(fileId.userId)
+        .invoke {
+            deleteTags(
+                volumeId = volumeId.id,
+                linkId = fileId.id,
+                request = TagRequest(
+                    tags = tags.map { tag -> tag.value }
+                ),
+            )
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun getPhotoShareMigrationStatus(
+        userId: UserId,
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            getPhotoShareMigrationStatus()
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun startPhotoShareMigration(
+        userId: UserId,
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            startPhotoShareMigration()
         }.valueOrThrow
 }

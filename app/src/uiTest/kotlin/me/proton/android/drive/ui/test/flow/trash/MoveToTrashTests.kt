@@ -19,11 +19,15 @@
 package me.proton.android.drive.ui.test.flow.trash
 
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
+import me.proton.android.drive.ui.robot.PreviewRobot
 import me.proton.android.drive.ui.test.BaseTest
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ALBUMS
 import me.proton.core.drive.files.presentation.extension.LayoutType.Grid
 import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
@@ -103,9 +107,35 @@ class MoveToTrashTests : BaseTest() {
     }
 
     @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun moveAPhotoInAlbumToTrash() {
+        val albumName = "album-for-photos"
+        val image = "activeTaggedFileInAlbum-3.jpg"
+        PhotosTabRobot.waitUntilLoaded()
+        PhotosTabRobot
+            .clickOnAlbumsTitleTab()
+            .clickOnAlbum(albumName)
+            .longClickOnItem(image)
+            .clickOptions()
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
+            .verify {
+                itemIsNotDisplayed(image)
+            }
+            .clickSidebarButton()
+            .clickTrash()
+            .verify {
+                itemIsDisplayed(image)
+            }
+    }
+
+    @Test
     @PrepareUser(loginBefore = true)
     @Scenario(forTag = "main", value = 9)
-    fun removeAnonymousFile() {
+    fun moveAnonymousFileToTrash() {
         val filename = "anonymous-file"
         PhotosTabRobot
             .clickFilesTab()
@@ -123,5 +153,213 @@ class MoveToTrashTests : BaseTest() {
             .verify {
                 itemIsDisplayed(filename)
             }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2)
+    fun noTrashItemsInTrash() {
+        FilesTabRobot
+            .openSidebarBySwipe()
+            .clickTrash()
+            .verify {
+                robotDisplayed()
+                confirmTrashIsEmpty()
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 5)
+    fun removeAFolderWithChildFolder() {
+        val folderName = "moveFile"
+        PhotosTabRobot
+            .clickFilesTab()
+            .scrollToItemWithName(folderName)
+            .clickMoreOnItem(folderName)
+            .clickMoveToTrash()
+            .verify {
+                moveToTrashSuccessGrowlerIsDisplayedWithUndoButton(1)
+            }
+            .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
+            .verify {
+                itemIsNotDisplayed(folderName)
+            }
+            .openSidebarBySwipe()
+            .clickTrash()
+            .verify {
+                robotDisplayed()
+                itemIsDisplayed(folderName)
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 5)
+    fun removeChildFolder() {
+        val parentFolder = "moveFile"
+        val childFolder = "folder1"
+        PhotosTabRobot
+            .clickFilesTab()
+            .scrollToItemWithName(parentFolder)
+            .clickOnFolder(parentFolder)
+            .clickMoreOnItem(childFolder)
+            .clickMoveToTrash()
+            .verify {
+                moveToTrashSuccessGrowlerIsDisplayedWithUndoButton(1)
+            }
+            .verify {
+                itemIsNotDisplayed(childFolder)
+            }
+            .openSidebarBySwipe()
+            .clickTrash()
+            .verify {
+                robotDisplayed()
+                itemIsDisplayed(childFolder)
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 5)
+    fun removeMultipleItemsUsingMultiSelection() {
+        val parentFolder = "moveFile"
+        val file1 = "sameName.txt"
+        val file2 = "index.html"
+        val file3 = "presentation.pdf"
+        val folder = "folder1"
+
+        PhotosTabRobot
+            .clickFilesTab()
+            .scrollToItemWithName(parentFolder)
+            .clickOnFolder(parentFolder)
+            .clickLayoutSwitcher()
+            .scrollToItemWithName(file1)
+            .longClickOnItem(file1)
+            .scrollToItemWithName(folder)
+            .longClickOnItem(folder)
+            .scrollToItemWithName(file2)
+            .longClickOnItem(file2)
+            .scrollToItemWithName(file3)
+            .longClickOnItem(file3)
+            .clickOptions()
+            .verify {
+                numberOfItemsSelectedIsSeen(4)
+            }
+            .clickMoveToTrash()
+            .verify {
+                moveToTrashSuccessGrowlerIsDisplayedWithUndoButton(4)
+            }
+            .openSidebarBySwipe()
+            .clickTrash()
+            .verify {
+                robotDisplayed()
+                itemIsDisplayed(folder)
+                itemIsDisplayed(file1)
+                itemIsDisplayed(file2)
+                itemIsDisplayed(file3)
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 5)
+    fun moveManyItemsToTrash() {
+        val parentFolder = "moveFile"
+        val file = "example.txt"
+        val folder = "folder1"
+        val numOfItems = 11
+
+        PhotosTabRobot
+            .clickFilesTab()
+            .scrollToItemWithName(parentFolder)
+            .clickOnFolder(parentFolder)
+            .scrollToItemWithName(file)
+            .longClickOnItem(file)
+            .clickSelectAll()
+            .verify {
+                navBarShowsNumOfItemsSelected(numOfItems)
+            }
+            .clickOptions()
+            .verify {
+                numberOfItemsSelectedIsSeen(numOfItems)
+            }
+            .clickMoveToTrash()
+            .verify {
+                moveToTrashSuccessGrowlerIsDisplayedWithUndoButton(numOfItems)
+            }
+            .verify {
+                letsFillThisFolderMessageIsDisplayed()
+            }
+            .openSidebarBySwipe()
+            .clickTrash()
+            .verify {
+                robotDisplayed()
+                itemIsDisplayed(folder)
+                numberOfItemsInTrash(11)
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 2, isPhotos = true)
+    fun movePhotoToTrashFromPreview() {
+        val dec2022 = ImageName.December2022
+        val jan2023 = ImageName.January2023
+        val lastMonth = ImageName.LastMonth
+        val lastWeek = ImageName.LastWeek
+        val yesterday = ImageName.Yesterday
+        val main = ImageName.Main
+        val now = ImageName.Now
+
+        PhotosTabRobot.waitUntilLoaded()
+        PhotosTabRobot
+            .clickPhotosTab()
+            .scrollToEnd()
+            .clickOnPhoto(dec2022)
+            .verify { assertPreviewIsDisplayed(dec2022.fileName) }
+            .clickOnContextualButton()
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, PreviewRobot)
+            .verify { assertPreviewIsDisplayed(jan2023.fileName) }
+            .clickOnContextualButton()
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, PreviewRobot)
+            .verify { assertPreviewIsDisplayed(lastMonth.fileName) }
+            .clickOnContextualButton()
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, PreviewRobot)
+            .verify { assertPreviewIsDisplayed(lastWeek.fileName) }
+        .clickBack(PhotosTabRobot)
+            .verify {
+                endToEndEncryptedFooterIsSeen()
+                assertPhotoCountEquals(4)
+                assertPhotoNotDisplayed(dec2022.fileName)
+                assertPhotoNotDisplayed(jan2023.fileName)
+                assertPhotoNotDisplayed(lastMonth.fileName)
+                assertPhotoDisplayed(main.fileName)
+                assertPhotoDisplayed(now.fileName)
+                assertPhotoDisplayed(yesterday.fileName)
+                assertPhotoDisplayed(lastWeek.fileName)
+            }
+            .clickOnPhoto(main)
+            .verify { assertPreviewIsDisplayed(main.fileName) }
+        PreviewRobot
+            .clickOnContextualButton()
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, PreviewRobot)
+            .verify { assertPreviewIsDisplayed(now.fileName) }
+            .clickOnContextualButton()
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, PreviewRobot)
+            .verify { assertPreviewIsDisplayed(yesterday.fileName) }
+            .clickOnContextualButton()
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, PreviewRobot)
+            .verify { assertPreviewIsDisplayed(lastWeek.fileName) }
+            .clickOnContextualButton()
+            .clickMoveToTrash()
+        PhotosTabRobot
+            .verify { confirmPhotosPermissionMessageIsSeen() }
     }
 }

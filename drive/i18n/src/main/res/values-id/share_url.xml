@@ -89,10 +89,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">Item yang dibagikan yang belum ditanggapi (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Album bersama tertunda (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Tidak ada item yang dibagikan yang belum ditanggapi</string>
+  <string name="shared_user_album_invitations_title_empty">Tidak ada album bersama yang tertunda</string>
   <string name="shared_user_invitations_description_empty">Seluruh undangan baru akan muncul di sini</string>
   <string name="shared_user_invitations_accept_button">Terima</string>
   <string name="shared_user_invitations_decline_button">Tolak</string>
   <string name="shared_user_invitations_accept_success">Item terbagi diterima</string>
   <string name="shared_user_invitations_decline_success">Item terbagi ditolak</string>
+  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
+  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
 </resources>

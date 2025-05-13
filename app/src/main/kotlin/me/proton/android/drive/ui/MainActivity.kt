@@ -67,6 +67,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.extension.deepLinkBaseUrl
 import me.proton.android.drive.lock.data.provider.BiometricPromptProvider
@@ -91,7 +92,6 @@ import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.ListenToBroadcastMessages
-import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.messagequeue.domain.ActionProvider
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.thumbnail.presentation.coil.ThumbnailEnabled
@@ -120,7 +120,6 @@ class MainActivity : FragmentActivity() {
     @Inject lateinit var activityLauncher: ActivityLauncher
     @Inject lateinit var announceEvent: AnnounceEvent
     @Inject lateinit var showRatingBooster: ShowRatingBooster
-    @Inject lateinit var albumsFeatureFlag: AlbumsFeatureFlag
 
     lateinit var configurationProvider: ConfigurationProvider
     private val accountViewModel: AccountViewModel by viewModels()
@@ -183,6 +182,7 @@ class MainActivity : FragmentActivity() {
                         navigateToBugReport = bugReportViewModel::sendBugReport,
                         navigateToSubscription = plansViewModel::showCurrentPlans,
                         navigateToRatingBooster = { showRatingBooster(this@MainActivity) },
+                        navigateToUpgradePlan = plansViewModel::startUpgrade,
                     ) { isOpen ->
                         isDrawerOpen = isOpen
                     }
@@ -241,17 +241,10 @@ class MainActivity : FragmentActivity() {
     @Composable
     private fun photosRoute(): State<String?> =
         remember {
-            accountViewModel.primaryAccount.flatMapLatest { account ->
+            accountViewModel.primaryAccount.mapLatest { account ->
                 account?.let {
-                    albumsFeatureFlag(account.userId)
-                        .map { enabled ->
-                            if (enabled) {
-                                Screen.PhotosAndAlbums.route
-                            } else {
-                                Screen.Photos.route
-                            }
-                        }
-                } ?: flowOf(null)
+                    Screen.PhotosAndAlbums.route
+                }
             }
         }.collectAsState(initial = null)
 

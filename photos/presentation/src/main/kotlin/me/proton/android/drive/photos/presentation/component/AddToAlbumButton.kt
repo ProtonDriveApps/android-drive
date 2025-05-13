@@ -35,15 +35,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.proton.core.compose.component.ProtonButton
-import me.proton.core.compose.component.protonButtonColors
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.drive.base.presentation.extension.blendToSolid
+import me.proton.core.drive.base.presentation.extension.protonNotificationSuccessButtonColors
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
@@ -54,16 +52,7 @@ fun AddToAlbumButton(
     loading: Boolean = false,
     contained: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    colors: ButtonColors = ButtonDefaults.protonButtonColors(
-        backgroundColor = ProtonTheme.colors.notificationSuccess,
-        contentColor = Color.White,
-        disabledBackgroundColor = ProtonTheme.colors.notificationSuccess.blendToSolid(
-            alpha = 0.3f,
-            bg = ProtonTheme.colors.backgroundNorm,
-        ),
-        disabledContentColor = Color.White.copy(alpha = 0.5f),
-        loading = loading,
-    ),
+    colors: ButtonColors = ButtonDefaults.protonNotificationSuccessButtonColors(loading),
     onClick: () -> Unit,
 ) {
     ProtonButton(

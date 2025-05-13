@@ -31,7 +31,6 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.TRASH
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
@@ -42,13 +41,12 @@ import me.proton.core.drive.link.domain.repository.LinkRepository
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
-import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.domain.usecase.GetShare
-import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_VOLUME_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_WORK_ID
 import me.proton.core.drive.trash.domain.notification.DeleteFilesExtra
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.util.concurrent.TimeUnit
 import me.proton.core.drive.i18n.R as I18N
 
@@ -59,19 +57,18 @@ class PermanentlyDeleteFileNodesWorker @AssistedInject constructor(
     private val trashRepository: LinkTrashRepository,
     private val broadcastMessages: BroadcastMessages,
     private val updateEventAction: UpdateEventAction,
-    private val getShare: GetShare,
     linkTrashRepository: LinkTrashRepository,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : AbstractMultiResponseCoroutineWorker(linkTrashRepository, appContext, params) {
 
     private val userId = UserId(inputData.getString(KEY_USER_ID) ?: "")
-    private val shareId = ShareId(userId, inputData.getString(KEY_SHARE_ID) ?: "")
+    private val volumeId = VolumeId(inputData.getString(KEY_VOLUME_ID) ?: "")
     override val workId = inputData.getString(KEY_WORK_ID) ?: ""
 
     override suspend fun executeCall(links: List<Link>): Map<LinkId, DataResult<Unit>> =
-        updateEventAction(shareId) {
-            driveTrashRepository.deleteItemsFromTrash(shareId, links.ids)
+        updateEventAction(userId, volumeId) {
+            driveTrashRepository.deleteItemsFromTrash(userId, volumeId, links.ids)
         }
 
     override suspend fun handleSuccesses(linkIds: List<LinkId>) {
@@ -84,20 +81,18 @@ class PermanentlyDeleteFileNodesWorker @AssistedInject constructor(
                 linkIds.size,
             ),
             type = BroadcastMessage.Type.SUCCESS,
-            extra = DeleteFilesExtra(userId, shareId, linkIds)
+            extra = DeleteFilesExtra(userId, volumeId, linkIds)
         )
     }
 
     override suspend fun handleErrors(linkIds: List<LinkId>, exception: Exception?, message: String?) {
         exception?.log(TRASH, "Error while permanently deleting ${linkIds.size} files")
-        getShare(shareId).toResult().getOrNull()?.let { share ->
-            trashRepository.insertOrUpdateTrashState(share.volumeId, linkIds, TrashState.TRASHED)
-        }
+        trashRepository.insertOrUpdateTrashState(volumeId, linkIds, TrashState.TRASHED)
         broadcastMessages(
             userId = userId,
             message = message ?: applicationContext.getString(I18N.string.trash_error_occurred_deleting_from_trash),
             type = BroadcastMessage.Type.ERROR,
-            extra = DeleteFilesExtra(userId, shareId, linkIds, exception ?: RuntimeException(message))
+            extra = DeleteFilesExtra(userId, volumeId, linkIds, exception ?: RuntimeException(message))
         )
     }
 
@@ -105,13 +100,13 @@ class PermanentlyDeleteFileNodesWorker @AssistedInject constructor(
 
         fun getWorkRequest(
             userId: UserId,
-            shareId: ShareId,
+            volumeId: VolumeId,
             workId: String,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(PermanentlyDeleteFileNodesWorker::class.java)
                 .setInputData(
-                    workDataOf(userId, shareId, workId)
+                    workDataOf(userId, volumeId, workId)
                 )
                 .setBackoffCriteria(
                     BackoffPolicy.EXPONENTIAL,
@@ -123,11 +118,11 @@ class PermanentlyDeleteFileNodesWorker @AssistedInject constructor(
 
         fun workDataOf(
             userId: UserId,
-            shareId: ShareId,
+            volumeId: VolumeId,
             workId: String,
         ) = Data.Builder()
             .putString(KEY_USER_ID, userId.id)
-            .putString(KEY_SHARE_ID, shareId.id)
+            .putString(KEY_VOLUME_ID, volumeId.id)
             .putString(KEY_WORK_ID, workId)
             .build()
     }

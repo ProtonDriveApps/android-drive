@@ -26,6 +26,9 @@ object TrashRobot : Robot, LinksRobot, NavigationBarRobot, GrowlerRobot {
     private val optionsButton get() = node.withContentDescription(I18N.string.trash_more_options)
     private val emptyTrashButton get() = node.withText(I18N.string.title_empty_trash_action)
     private val confirmEmptyTrashButton get() = node.withText(I18N.string.files_confirm_empty_trash_confirm_action)
+    private val trashIsEmptyMessage get() = node.withText(I18N.string.description_empty_trash)
+    private val trashIsEmptyTitle get() = node.withText(I18N.string.title_empty_trash)
+    private val trashMoreOptions get() = node.withText(I18N.string.trash_more_options)
 
     override fun robotDisplayed() {
         trashScreen.await { assertIsDisplayed() }
@@ -40,5 +43,10 @@ object TrashRobot : Robot, LinksRobot, NavigationBarRobot, GrowlerRobot {
     }
     fun confirmEmptyTrash() = apply {
         confirmEmptyTrashButton.click()
+    }
+    fun confirmTrashIsEmpty() = apply {
+        trashIsEmptyTitle.await { assertIsDisplayed() }
+        trashIsEmptyMessage.await { assertIsDisplayed() }
+        trashMoreOptions.await { assertIsNotDisplayed() }
     }
 }

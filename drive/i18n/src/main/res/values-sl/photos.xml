@@ -67,8 +67,8 @@
   <string name="photos_error_backup_missing_folder">Varnostna mapa ni bila najdena</string>
   <string name="photos_error_backup_failed">Varnostna kopija ni uspela.</string>
   <string name="photos_error_backup_temporarily_disabled">Varnostno kopiranje je onemogočeno.</string>
-  <string name="photos_error_backup_migration_title">Update Required</string>
-  <string name="photos_error_backup_migration_description">To use photos features, please update your app to the latest version.</string>
+  <string name="photos_error_backup_migration_title">Zahtevana je posodobitev</string>
+  <string name="photos_error_backup_migration_description">Če želite uporabljati funkcije za fotografije, posodobite aplikacijo na najnovejšo različico.</string>
   <string name="photos_error_missing_permissions">Manjkajoča dovoljenja</string>
   <!--
         Variable %1$s is an application name
@@ -81,7 +81,7 @@
   <string name="photos_error_waiting_wifi_connectivity_action">Uporabi mobilne podatke</string>
   <string name="photos_error_local_storage">Pomnilnik naprave je poln</string>
   <string name="photos_error_local_storage_description">Če želite nadaljevati varnostno kopiranje, morate sprostiti prostor za shranjevanje v napravi.</string>
-  <string name="photos_error_background_restrictions">Set battery usage to \'Unrestricted\' for background app activity</string>
+  <string name="photos_error_background_restrictions">Nastavite porabo baterije na »Neomejeno« za aktivnost aplikacije v ozadju</string>
   <string name="photos_error_background_restrictions_description">Za dosledno varnostno kopiranje v ozadju prilagodite nastavitve baterije ali pogosto odprite aplikacijo.</string>
   <string name="photos_error_background_restrictions_action">Nastavitve</string>
   <string name="photos_empty_title">Ni še varnostnih kopij</string>
@@ -95,7 +95,7 @@
   <string name="photos_backup_state_completed">Varnostno kopiranje končano</string>
   <string name="photos_backup_state_uncompleted">Varnostno kopiranje je dokončano s težavami</string>
   <string name="photos_backup_state_uncompleted_action">Razrešeno</string>
-  <string name="photos_backup_state_preparing">Preparing to back up</string>
+  <string name="photos_backup_state_preparing">Priprava na varnostno kopiranje</string>
   <string name="photos_backup_state_encrypting">Šifriranje …</string>
   <string name="photos_backup_state_uploading">Varnostno kopiranje …</string>
   <!--
@@ -125,4 +125,42 @@
   <string name="photos_upsell_title">Naj vam nikoli ne zmanjka prostora</string>
   <string name="photos_upsell_description">Nadgradite in ohranite vse vaše spomine varno šifrirane</string>
   <string name="photos_upsell_dismiss_action">Ne zdaj</string>
+  <string name="photos_filter_favorite">Priljubljene</string>
+  <string name="photos_filter_screenshots">Posnetki zaslona</string>
+  <string name="photos_filter_videos">Videoposnetki</string>
+  <string name="photos_filter_livephotos">Fotografije v živo</string>
+  <string name="photos_filter_motionphotos">Gibljive fotografije</string>
+  <string name="photos_filter_selfies">Selfiji</string>
+  <string name="photos_filter_portraits">Portreti</string>
+  <string name="photos_filter_bursts">Rafali</string>
+  <string name="photos_filter_panoramas">Panorame</string>
+  <string name="photos_filter_raws">RAW</string>
+  <string name="photos_favorite_empty_title">Brez priljubljenih</string>
+  <string name="photos_favorite_empty_description">Vaše priljubljene fotografije bodo prikazane tukaj</string>
+  <string name="photos_screenshots_empty_title">Brez posnetkov zaslona</string>
+  <string name="photos_screenshots_empty_description">Vaši posnetki zaslona bodo prikazani tukaj</string>
+  <string name="photos_videos_empty_title">Brez videoposnetkov</string>
+  <string name="photos_videos_empty_description">Vaši videoposnetki bodo prikazani tukaj</string>
+  <string name="photos_livephotos_empty_title">Brez fotografij v živo</string>
+  <string name="photos_livephotos_empty_description">Vaše fotografije v živo bodo prikazane tukaj</string>
+  <string name="photos_motionphotos_empty_title">Brez gibljivih fotografij</string>
+  <string name="photos_motionphotos_empty_description">Vaše gibljive fotografije bodo prikazane tukaj</string>
+  <string name="photos_selfies_empty_title">Brez selfijev</string>
+  <string name="photos_selfies_empty_description">Vaše fotografije selfijev bodo prikazane tukaj</string>
+  <string name="photos_portraits_empty_title">Brez portretov</string>
+  <string name="photos_portraits_empty_description">Vaše fotografije portretov bodo prikazane tukaj</string>
+  <string name="photos_bursts_empty_title">Brez rafalov</string>
+  <string name="photos_bursts_empty_description">Vaši foto rafali bodo prikazani tukaj</string>
+  <string name="photos_panoramas_empty_title">Brez panoram</string>
+  <string name="photos_panoramas_empty_description">Vaše panoramske fotografije bodo prikazane tukaj</string>
+  <string name="photos_raws_empty_title">Brez RAW</string>
+  <string name="photos_raws_empty_description">Vaše fotografije RAW bodo prikazane tukaj</string>
+  <string name="photos_share_migration_in_progress_title">Setting up Albums and Filters</string>
+  <string name="photos_share_migration_in_progress_description">If you have a large photo library, it might take some time. You can close the app. We\'ll work on it in the background.</string>
+  <string name="photos_share_migration_needed_banner_title">Potrebna je selitev podatkov</string>
+  <string name="photos_share_migration_needed_banner_description">Po selitvi lahko uporabljate nove funkcije, kot so filtri in foto album.</string>
+  <string name="photos_important_updates_title">Pomembne posodobitve</string>
+  <string name="photos_important_updates_subtitle">Potrebna je posodobitev knjižnice fotografij</string>
+  <string name="photos_important_updates_description">Ta hitra posodobitev pripravi vaše fotografije za nove funkcije, kot so filtri in albumi.</string>
+  <string name="photos_important_updates_cancel_action">Opomni me kasneje</string>
 </resources>

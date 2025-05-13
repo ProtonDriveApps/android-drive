@@ -36,13 +36,15 @@ class ShowUpsell @Inject constructor(
     private val isPhotosEnabled: IsPhotosEnabled,
     private val getPhotoCount: GetPhotoCount,
     private val getUser: GetUser,
+    private val showImportantUpdates: ShowImportantUpdates,
 ) {
     operator fun invoke(userId: UserId) = combine(
         hasCanceledUserMessages(userId, UserMessage.UPSELL_PHOTOS),
         isPhotosEnabled(userId),
         getPhotoCount(userId),
-    ) { hasCanceledUserMessages, isPhotosEnabled, photoCount ->
-        if (hasCanceledUserMessages) {
+        showImportantUpdates(userId),
+    ) { hasCanceledUserMessages, isPhotosEnabled, photoCount, showImportantUpdates ->
+        if (hasCanceledUserMessages || showImportantUpdates) {
             false
         } else {
             isPhotosEnabled && hasEnoughPhotosUploaded(photoCount) && isFreeUser(userId) == true

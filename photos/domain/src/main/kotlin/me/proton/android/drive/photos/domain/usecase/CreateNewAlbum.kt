@@ -29,8 +29,10 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.photo.domain.usecase.AddPhotosToAlbum
 import me.proton.core.drive.drivelink.photo.domain.usecase.CreateAlbum
+import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.usecase.GetLink
+import me.proton.core.drive.photo.domain.usecase.DeleteAlbum
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import javax.inject.Inject
 
@@ -41,6 +43,8 @@ class CreateNewAlbum @Inject constructor(
     private val getPhotoShare: GetPhotoShare,
     private val getLink: GetLink,
     private val announceEvent: AsyncAnnounceEvent,
+    private val updateEventAction: UpdateEventAction,
+    private val deleteAlbum: DeleteAlbum,
 ) {
     suspend operator fun invoke(
         userId: UserId,
@@ -48,19 +52,28 @@ class CreateNewAlbum @Inject constructor(
     ): Result<AlbumId> = coRunCatching {
         val albumName = requireNotNull(repository.getName(userId)) { "Album name cannot be null" }
         val addToAlbumPhotos = repository.getPhotoListings(userId)
-        val albumId = createAlbum(userId, albumName, isLocked).getOrThrow()
         val photoShare = getPhotoShare(userId).toResult().getOrThrow()
+        val albumId = createAlbum(userId, albumName, isLocked).getOrThrow()
         addPhotosToAlbum(
             volumeId = photoShare.volumeId,
             albumId = albumId,
             photoIds = addToAlbumPhotos.map { photoListing ->
                 photoListing.linkId
             },
-        ).getOrThrow()
-        getLink(
-            albumId = albumId,
-            refresh = flowOf(true)
-        ).toResult().getOrNull(LogTag.PHOTO, "Failed to get album link")
+        )
+            .onFailure {
+                deleteAlbum(photoShare.volumeId, albumId).getOrThrow()
+            }
+            .getOrThrow()
+        updateEventAction(
+            userId = userId,
+            volumeId = photoShare.volumeId,
+        ) {
+            getLink(
+                albumId = albumId,
+                refresh = flowOf(true)
+            ).toResult().getOrNull(LogTag.PHOTO, "Failed to get album link")
+        }
         albumId
     }.also { result ->
         result

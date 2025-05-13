@@ -68,8 +68,8 @@ abstract class CommonCreateFileWorker(
     done = done,
 ) {
     protected suspend fun Throwable.handle(uploadFileLink: UploadFileLink): Boolean =
-        onProtonHttpException { protonCode ->
-            if (protonCode == ProtonApiCode.ALREADY_EXISTS) {
+        onProtonHttpException { protonData ->
+            if (protonData.code == ProtonApiCode.ALREADY_EXISTS) {
                 updateName(
                     uploadFileLinkId = uploadFileLink.id,
                     name = uploadFileLink.name
@@ -86,8 +86,8 @@ abstract class CommonCreateFileWorker(
      * TODO: this should be handled in Core for any response
      */
     protected suspend fun Throwable.handleFeatureDisabled() =
-        onProtonHttpException { protonCode ->
-            if (protonCode == ProtonApiCode.FEATURE_DISABLED) {
+        onProtonHttpException { protonData ->
+            if (protonData.code == ProtonApiCode.FEATURE_DISABLED) {
                 refreshFeatureFlags(userId, FeatureFlagRepository.RefreshId.API_ERROR_FEATURE_DISABLED).getOrNull()
             }
         }

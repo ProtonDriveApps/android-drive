@@ -27,6 +27,11 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.repository.fetcher
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Folder
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.File
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Album
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Photo
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Document
 import me.proton.core.drive.share.user.domain.repository.UserInvitationRepository
 import javax.inject.Inject
 
@@ -35,17 +40,25 @@ class GetUserInvitationCountFlow @Inject constructor(
 ) {
     operator fun invoke(
         userId: UserId,
-        refresh: Flow<Boolean> = flowOf { !repository.hasInvitations(userId) }
+        albumsOnly: Boolean = false,
+        refresh: Flow<Boolean> = flowOf { !repository.hasInvitations(userId) },
     ): Flow<DataResult<Int>> = refresh.transform { shouldRefresh ->
+        val types = if (albumsOnly) {
+            setOf(Album)
+        } else {
+            setOf(Folder, File, Photo, Document)
+        }
         if (shouldRefresh) {
             fetcher {
                 repository.fetchAndStoreInvitations(
                     userId = userId,
+                    types = types,
                 )
             }
         }
         emitAll(repository.getInvitationsCountFlow(
             userId = userId,
+            types = types,
         ).map { invitations -> invitations.asSuccess })
     }
 }

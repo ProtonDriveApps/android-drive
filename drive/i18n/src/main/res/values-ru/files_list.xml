@@ -49,6 +49,12 @@
   <string name="files_send_to_trash_action">Переместить в корзину</string>
   <string name="files_remove_me_action">Удалите меня</string>
   <string name="files_move_file_action">Переместить</string>
+  <string name="files_add_to_favorite_action">Добавить в избранное</string>
+  <string name="files_remove_from_favorite_action">Удалить из избранного</string>
+  <string name="files_add_to_favorite_action_success">Успешно добавлено в избранное</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Фото было скопировано для просмотра и помечено как избранное</string>
+  <string name="files_remove_from_favorite_action_success">Успешно удалено из избранного</string>
+  <string name="files_save_shared_photo_action">Сохранить общие фото</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

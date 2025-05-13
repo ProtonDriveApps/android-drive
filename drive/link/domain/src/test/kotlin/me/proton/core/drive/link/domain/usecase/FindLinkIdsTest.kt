@@ -18,9 +18,10 @@
 
 package me.proton.core.drive.link.domain.usecase
 
+import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.db.test.DriveDatabaseRule
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.file
 import me.proton.core.drive.db.test.mainShare
 import me.proton.core.drive.db.test.mainShareId
@@ -34,30 +35,36 @@ import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.data.repository.LinkRepositoryImpl
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.test.DriveRule
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import javax.inject.Inject
 
+@HiltAndroidTest
 @RunWith(RobolectricTestRunner::class)
 class FindLinkIdsTest {
 
     @get:Rule
-    val database = DriveDatabaseRule()
+    val driveRule = DriveRule(this)
 
     private lateinit var findLinkIds: FindLinkIds
     private val sortLinksByParents = SortLinksByParents()
 
+    @Inject
+    lateinit var configurationProvider: ConfigurationProvider
+
     @Before
     fun setUp() {
-        findLinkIds = FindLinkIds(LinkRepositoryImpl(mockk(), database.db, sortLinksByParents))
+        findLinkIds = FindLinkIds(LinkRepositoryImpl(mockk(), driveRule.db, sortLinksByParents, configurationProvider))
     }
 
     @Test
     fun empty() = runTest {
-        database.myFiles {}
+        driveRule.db.myFiles {}
 
         val linkIds = findLinkIds(userId, volumeId, "link-id").getOrThrow()
 
@@ -66,7 +73,7 @@ class FindLinkIdsTest {
 
     @Test
     fun many() = runTest {
-        database.db.user {
+        driveRule.db.user {
             volume {
                 mainShare {
                     file("link-id")

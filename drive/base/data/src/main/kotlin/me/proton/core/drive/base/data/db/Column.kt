@@ -103,6 +103,7 @@ object Column {
     const val ORIENTATION = "orientation"
     const val ORIGIN = "origin"
     const val PARENT_ID = "parent_id"
+    const val PARENT_TYPE = "parent_type"
     const val PASSPHRASE = "passphrase"
     const val PASSPHRASE_SIGNATURE = "passphrase_signature"
     const val PASSWORD = "password"

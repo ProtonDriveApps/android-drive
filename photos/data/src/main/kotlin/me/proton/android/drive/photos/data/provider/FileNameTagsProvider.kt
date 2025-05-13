@@ -18,7 +18,7 @@
 
 package me.proton.android.drive.photos.data.provider
 
-import me.proton.core.drive.link.domain.PhotoTag
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.upload.domain.provider.TagsProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import javax.inject.Inject

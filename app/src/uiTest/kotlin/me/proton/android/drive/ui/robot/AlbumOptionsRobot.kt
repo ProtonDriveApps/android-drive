@@ -26,12 +26,27 @@ object AlbumOptionsRobot : Robot {
     private val albumOptionsScreen get() = node.withTag(AlbumOptionsTestTag.albumOptions)
     private val renameButton get() = node.withText(I18N.string.common_rename_action)
     private val deleteAlbumButton get() = node.withText(I18N.string.albums_delete_album_action)
+    private val shareButton get() = node.withText(I18N.string.common_share)
+    private val manageAccessButton get() = node.withText(I18N.string.common_manage_access_action)
+    private val leaveAlbumButton get() = node.withText(I18N.string.common_leave_album_action)
 
     fun clickRename() = RenameRobot.apply {
         renameButton.scrollTo().click()
     }
 
     fun clickDeleteAlbum() = deleteAlbumButton.clickTo(ConfirmDeleteAlbumRobot)
+
+    fun clickShare() = shareButton
+        .hasAncestor(node.withTag(AlbumOptionsTestTag.albumOptions))
+        .clickTo(ShareUserRobot)
+
+    fun clickManageAccess() = manageAccessButton.clickTo(ManageAccessRobot)
+
+    fun clickLeaveAlbum() = leaveAlbumButton.clickTo(ConfirmLeaveAlbumRobot)
+
+    fun assertDeleteAlbumOptionIsDisplayed() {
+        deleteAlbumButton.await { assertIsDisplayed() }
+    }
 
     override fun robotDisplayed() {
         albumOptionsScreen.await { assertIsDisplayed() }

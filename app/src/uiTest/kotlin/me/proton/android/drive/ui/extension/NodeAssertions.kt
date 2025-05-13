@@ -51,6 +51,10 @@ fun NodeAssertions.assertIsSharedWithUsers(expectedValue: Boolean) = apply {
     interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.IsSharedWithUsers, expectedValue))
 }
 
+fun NodeAssertions.assertIsFavorite(expectedValue: Boolean) = apply {
+    interaction.assert(SemanticsMatcher.expectValue(DriveLinkSemanticsProperties.IsFavorite, expectedValue))
+}
+
 // Remove after TPE-334 is resolved
 fun NodeAssertions.doesNotExist() =
     try {

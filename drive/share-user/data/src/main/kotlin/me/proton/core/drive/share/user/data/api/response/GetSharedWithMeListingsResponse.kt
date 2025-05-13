@@ -26,6 +26,7 @@ import me.proton.core.drive.base.data.api.Dto.LINKS
 import me.proton.core.drive.base.data.api.Dto.LINK_ID
 import me.proton.core.drive.base.data.api.Dto.MORE
 import me.proton.core.drive.base.data.api.Dto.SHARE_ID
+import me.proton.core.drive.base.data.api.Dto.SHARE_TARGET_TYPE
 import me.proton.core.drive.base.data.api.Dto.VOLUME_ID
 
 @Serializable
@@ -48,4 +49,6 @@ data class LinkSharedWithMeResponseDto(
     val shareId: String,
     @SerialName(LINK_ID)
     val linkId: String,
+    @SerialName(SHARE_TARGET_TYPE)
+    val shareTargetType: Long? = null,
 )

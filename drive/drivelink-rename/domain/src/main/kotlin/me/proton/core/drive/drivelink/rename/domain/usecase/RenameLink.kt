@@ -26,6 +26,7 @@ import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import me.proton.core.drive.link.domain.usecase.GetLink
+import me.proton.core.drive.link.domain.usecase.ValidateLinkName
 import javax.inject.Inject
 
 class RenameLink @Inject constructor(
@@ -33,6 +34,7 @@ class RenameLink @Inject constructor(
     private val createRenameInfo: CreateRenameInfo,
     private val getLink: GetLink,
     private val updateEventAction: UpdateEventAction,
+    private val validateLinkName: ValidateLinkName,
 ) {
     suspend operator fun invoke(
         parentFolder: Link.Folder,
@@ -52,7 +54,7 @@ class RenameLink @Inject constructor(
     suspend operator fun invoke(
         rootFolder: Link.Folder,
         folderName: String,
-        shouldValidateName: Boolean = true,
+        nameValidator: (String) -> String = { validateLinkName(folderName).getOrThrow() },
     ): Result<Unit> = coRunCatching {
         require(rootFolder.parentId == null) { "Use this method only for renaming a root folder" }
         updateEventAction(
@@ -60,7 +62,7 @@ class RenameLink @Inject constructor(
         ) {
             linkRepository.renameLink(
                 linkId = rootFolder.id,
-                renameInfo = createRenameInfo(rootFolder, folderName, shouldValidateName).getOrThrow()
+                renameInfo = createRenameInfo(rootFolder, folderName, nameValidator).getOrThrow()
             ).getOrThrow()
         }
     }
@@ -80,12 +82,12 @@ class RenameLink @Inject constructor(
     suspend operator fun invoke(
         rootFolderId: FolderId,
         folderName: String,
-        shouldValidateName: Boolean = true,
+        nameValidator: (String) -> String = { validateLinkName(folderName).getOrThrow() },
     ): Result<Unit> = coRunCatching {
         invoke(
             rootFolder = getLink(rootFolderId).toResult().getOrThrow(),
             folderName = folderName,
-            shouldValidateName = shouldValidateName,
+            nameValidator = nameValidator,
         ).getOrThrow()
     }
 }

@@ -228,4 +228,45 @@
             "Untitled document 2025-11-28 12.34.56"
     -->
   <string name="new_document_name">未命名文件 %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a price
+        Example:
+            "More storage for only $1.00"
+    -->
+  <string name="drive_lite_promo_title">只需 %1$s 即可獲得更多儲存空間</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Variable %2$s is a string representation of a storage size
+        Variable %3$s is a string representation of a price
+        Example:
+            "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
+    -->
+  <string name="drive_lite_promo_description">當您需要多一點，但不是很多的儲存空間時。隆重推出 %1$s，只需每月 %3$s 即可享有 %2$s 的儲存空間。</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Example:
+            "Get Drive Lite"
+    -->
+  <string name="drive_lite_promo_action">取得 %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a storage size
+        Variable %2$s is a string representation of a price
+        Example:
+            "Get 200GB for just $0.99"
+    -->
+  <string name="drive_plus_promo_title">以 %2$s 的價格取得 %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a large number
+        Variable %2$s is a string representation of a price
+        Variable %3$s is a string representation of a price
+        Example:
+            "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
+    -->
+  <string name="drive_plus_promo_description">這代表您有足夠的安全儲存空間，能儲存超過 %1$s 張高畫質相片。首月只需 %2$s，之後每月 %3$s。</string>
+  <!--
+        Variable %1$s is the price of the plan
+        Example:
+            "Upgrade for $0.99"
+    -->
+  <string name="drive_plus_promo_action">以 %1$s 的價格升級</string>
 </resources>

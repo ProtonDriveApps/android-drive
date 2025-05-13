@@ -22,22 +22,30 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.ClientUid
-import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.base.domain.entity.SaveAction
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.ParentId
+import me.proton.core.drive.link.domain.entity.PhotoTag
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.data.api.PhotoApiDataSource
 import me.proton.core.drive.photo.data.api.entity.PhotoListingDto
 import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
 import me.proton.core.drive.photo.data.db.PhotoDatabase
+import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
+import me.proton.core.drive.photo.data.db.entity.TaggedPhotoListingEntity
 import me.proton.core.drive.photo.data.extension.toCreatePhotoRequest
+import me.proton.core.drive.photo.data.extension.toEntity
 import me.proton.core.drive.photo.data.extension.toPhotoDuplicate
 import me.proton.core.drive.photo.data.extension.toPhotoListing
 import me.proton.core.drive.photo.data.extension.toPhotoListingEntity
+import me.proton.core.drive.photo.data.extension.toTaggedPhotoListingEntity
 import me.proton.core.drive.photo.domain.entity.PhotoDuplicate
 import me.proton.core.drive.photo.domain.entity.PhotoInfo
 import me.proton.core.drive.photo.domain.entity.PhotoListing
+import me.proton.core.drive.photo.domain.entity.RelatedPhoto
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Direction
@@ -50,13 +58,26 @@ class PhotoRepositoryImpl @Inject constructor(
     private val db: PhotoDatabase,
 ) : PhotoRepository {
 
-    override suspend fun createPhotoShareWithRootLink(userId: UserId, photoInfo: PhotoInfo): Pair<String, String> =
-        with (api.createPhotoShareWithRootLink(userId, photoInfo.volumeId, photoInfo.toCreatePhotoRequest())) {
-            shareId to linkId
-        }
+    override suspend fun createPhotoShareWithRootLink(
+        userId: UserId,
+        photoInfo: PhotoInfo,
+    ): Pair<String, String> = api.createPhotoShareWithRootLink(
+        userId = userId,
+        volumeId = photoInfo.volumeId,
+        request = photoInfo.toCreatePhotoRequest(),
+    ).run {
+        shareId to linkId
+    }
 
-    override fun getPhotoListingCount(userId: UserId, volumeId: VolumeId): Flow<Int> =
+    override fun getPhotoListingCount(
+        userId: UserId,
+        volumeId: VolumeId,
+        tag: PhotoTag?,
+    ): Flow<Int> = if (tag == null) {
         db.photoListingDao.getPhotoListingCount(userId, volumeId.id)
+    } else {
+        db.taggedPhotoListingDao.getPhotoListingCount(userId, volumeId.id, tag.value)
+    }
 
     override suspend fun fetchPhotoListings(
         userId: UserId,
@@ -66,6 +87,7 @@ class PhotoRepositoryImpl @Inject constructor(
         previousPageLastLinkId: String?,
         minimumCaptureTime: TimestampS,
         sortingDirection: Direction,
+        tag: PhotoTag?,
     ): Pair<List<PhotoListing>, SaveAction> =
         fetchPhotoListingDtos(
             userId = userId,
@@ -74,15 +96,28 @@ class PhotoRepositoryImpl @Inject constructor(
             pageSize = pageSize,
             previousPageLastLinkId = previousPageLastLinkId,
             minimumCaptureTime = minimumCaptureTime,
+            tag = tag
         ).map { photoListingDto ->
-            photoListingDto.toPhotoListing(shareId)
+            photoListingDto.toPhotoListing(shareId, tag)
         }.let { photoListings ->
             photoListings to SaveAction {
-                db.photoListingDao.insertOrUpdate(
-                    *photoListings.map { photoListing ->
+                if (tag == null) {
+                    val map = photoListings.associate { photoListing ->
                         photoListing.toPhotoListingEntity(volumeId)
-                    }.toTypedArray()
-                )
+                    }
+                    db.inTransaction {
+                        db.photoListingDao.insertOrUpdate(*map.keys.toTypedArray())
+                        db.relatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
+                    }
+                } else {
+                    val map = photoListings.associate { photoListing ->
+                        photoListing.toTaggedPhotoListingEntity(volumeId)
+                    }
+                    db.inTransaction {
+                        db.taggedPhotoListingDao.insertOrUpdate(*map.keys.toTypedArray())
+                        db.taggedRelatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
+                    }
+                }
             }
         }
 
@@ -94,6 +129,7 @@ class PhotoRepositoryImpl @Inject constructor(
         previousPageLastLinkId: String?,
         minimumCaptureTime: TimestampS,
         sortingDirection: Direction,
+        tag: PhotoTag?,
     ): List<PhotoListing> {
         val photoListingDtos = fetchPhotoListingDtos(
             userId = userId,
@@ -102,13 +138,27 @@ class PhotoRepositoryImpl @Inject constructor(
             pageSize = pageSize,
             previousPageLastLinkId = previousPageLastLinkId,
             minimumCaptureTime = minimumCaptureTime,
+            tag = tag,
         )
-        db.photoListingDao.insertOrUpdate(
-            *photoListingDtos.map { photoListingDto ->
+        if (tag == null) {
+            val map = photoListingDtos.associate { photoListingDto ->
                 photoListingDto.toPhotoListingEntity(volumeId, shareId)
-            }.toTypedArray()
-        )
-        return photoListingDtos.map { photoListingDto -> photoListingDto.toPhotoListing(shareId) }
+            }
+            db.photoListingDao.insertOrUpdate(*map.keys.toTypedArray())
+            db.relatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
+        } else {
+            val map = photoListingDtos.associate { photoListingDto ->
+                photoListingDto.toTaggedPhotoListingEntity(volumeId, shareId, tag)
+            }
+            db.taggedPhotoListingDao.insertOrUpdate(*map.keys.toTypedArray())
+            db.taggedRelatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
+        }
+        return photoListingDtos.map { photoListingDto ->
+            photoListingDto.toPhotoListing(
+                shareId,
+                tag
+            )
+        }
     }
 
     override suspend fun getPhotoListings(
@@ -117,7 +167,8 @@ class PhotoRepositoryImpl @Inject constructor(
         fromIndex: Int,
         count: Int,
         sortingDirection: Direction,
-    ): List<PhotoListing> =
+        tag: PhotoTag?,
+    ): List<PhotoListing> = if (tag == null) {
         db.photoListingDao.getPhotoListings(
             userId = userId,
             volumeId = volumeId.id,
@@ -125,11 +176,22 @@ class PhotoRepositoryImpl @Inject constructor(
             limit = count,
             offset = fromIndex,
         ).map { photoListingEntity -> photoListingEntity.toPhotoListing() }
+    } else {
+        db.taggedPhotoListingDao.getPhotoListings(
+            userId = userId,
+            volumeId = volumeId.id,
+            tag = tag.value,
+            direction = sortingDirection,
+            limit = count,
+            offset = fromIndex,
+        ).map { photoListingEntity -> photoListingEntity.toPhotoListing() }
+
+    }
 
     override suspend fun findDuplicates(
         userId: UserId,
         volumeId: VolumeId,
-        parentId: FolderId,
+        parentId: ParentId,
         nameHashes: List<String>,
         clientUids: List<ClientUid>,
     ): List<PhotoDuplicate> =
@@ -149,8 +211,9 @@ class PhotoRepositoryImpl @Inject constructor(
         volumeId: VolumeId,
         fromIndex: Int,
         count: Int,
-        sortingDirection: Direction
-    ): Flow<Result<List<PhotoListing>>> =
+        sortingDirection: Direction,
+        tag: PhotoTag?,
+    ): Flow<Result<List<PhotoListing>>> = if (tag == null) {
         db.photoListingDao.getPhotoListingsFlow(
             userId = userId,
             volumeId = volumeId.id,
@@ -162,6 +225,20 @@ class PhotoRepositoryImpl @Inject constructor(
                 entities.map { photoListingEntity -> photoListingEntity.toPhotoListing() }
             }
         }
+    } else {
+        db.taggedPhotoListingDao.getPhotoListingsFlow(
+            userId = userId,
+            volumeId = volumeId.id,
+            tag = tag.value,
+            direction = sortingDirection,
+            limit = count,
+            offset = fromIndex,
+        ).map { entities ->
+            coRunCatching {
+                entities.map { photoListingEntity -> photoListingEntity.toPhotoListing() }
+            }
+        }
+    }
 
     private suspend fun fetchPhotoListingDtos(
         userId: UserId,
@@ -170,6 +247,7 @@ class PhotoRepositoryImpl @Inject constructor(
         previousPageLastLinkId: String?,
         minimumCaptureTime: TimestampS,
         sortingDirection: Direction,
+        tag: PhotoTag? = null,
     ): List<PhotoListingDto> =
         api.getPhotoListings(
             userId = userId,
@@ -178,6 +256,7 @@ class PhotoRepositoryImpl @Inject constructor(
             pageSize = pageSize,
             previousPageLastLinkId = previousPageLastLinkId,
             minimumCaptureTime = minimumCaptureTime,
+            tag = tag?.value
         )
 
     override suspend fun delete(linkIds: List<LinkId>) {
@@ -186,16 +265,62 @@ class PhotoRepositoryImpl @Inject constructor(
                 .groupBy({ link -> link.shareId }) { link -> link.id }
                 .forEach { (shareId, linkIds) ->
                     db.photoListingDao.delete(shareId.userId, shareId.id, linkIds)
+                    db.taggedPhotoListingDao.delete(shareId.userId, shareId.id, linkIds)
                 }
         }
     }
 
-    override suspend fun deleteAll(userId: UserId, volumeId: VolumeId) =
+    override suspend fun deleteAll(
+        userId: UserId,
+        volumeId: VolumeId,
+        tag: PhotoTag?,
+    ) = if (tag == null) {
         db.photoListingDao.deleteAll(userId, volumeId.id)
+    } else {
+        db.taggedPhotoListingDao.deleteAll(userId, volumeId.id, tag.value)
+    }
 
     override suspend fun insertOrIgnore(volumeId: VolumeId, photoListings: List<PhotoListing>) {
-        db.photoListingDao.insertOrIgnore(
-            *photoListings.map { photoListing -> photoListing.toPhotoListingEntity(volumeId) }.toTypedArray()
-        )
+        val entities = photoListings.map { photoListing ->
+            if (photoListing.tag == null) {
+                photoListing.toPhotoListingEntity(volumeId)
+            } else {
+                photoListing.toTaggedPhotoListingEntity(volumeId)
+            }
+        }
+        db.inTransaction {
+            db.photoListingDao.insertOrIgnore(
+                * entities.filterIsInstance<PhotoListingEntity>().toTypedArray()
+            )
+            photoListings.map { it.linkId }
+                .distinct()
+                .groupBy({ link -> link.shareId }) { link -> link.id }
+                .forEach { (shareId, linkIds) ->
+                    db.taggedPhotoListingDao.delete(shareId.userId, shareId.id, linkIds)
+                }
+            db.taggedPhotoListingDao.insertOrIgnore(
+                * entities.filterIsInstance<TaggedPhotoListingEntity>().toTypedArray()
+            )
+        }
     }
+
+    override suspend fun getRelatedPhotos(
+        volumeId: VolumeId,
+        mainFileId: FileId,
+        fromIndex: Int,
+        count: Int,
+    ): List<RelatedPhoto> = (db.relatedPhotoDao.getPhotoListings(
+        userId = mainFileId.userId,
+        volumeId = volumeId.id,
+        mainLinkId = mainFileId.id,
+        limit = count,
+        offset = fromIndex,
+    ).map { it.toEntity() } + db.taggedRelatedPhotoDao.getPhotoListings(
+        userId = mainFileId.userId,
+        volumeId = volumeId.id,
+        mainLinkId = mainFileId.id,
+        limit = count,
+        offset = fromIndex,
+    ).map { it.toEntity() })
+        .distinct()
 }

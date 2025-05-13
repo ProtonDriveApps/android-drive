@@ -55,6 +55,10 @@ object PreviewRobot : NavigationBarRobot {
             }
     }
 
+    fun goBackToPhotosGridView() {
+        node.withTag(TopAppBarComponentTestTag.navigationButton).click()
+    }
+
     fun assertPreviewIsDisplayed(itemName: String) {
         preview.await { assertIsDisplayed() }
         topBarWithTextDisplayed(itemName)

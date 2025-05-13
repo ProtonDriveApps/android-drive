@@ -25,10 +25,12 @@ import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.user.data.api.SharedApiDataSource
 import me.proton.core.drive.share.user.data.db.ShareUserDatabase
 import me.proton.core.drive.share.user.data.db.entity.SharedWithMeListingEntity
+import me.proton.core.drive.share.user.data.extension.toShareTargetTypeDtos
 import me.proton.core.drive.share.user.data.extension.toSharedByMeListingEntity
 import me.proton.core.drive.share.user.data.extension.toSharedLinkId
 import me.proton.core.drive.share.user.data.extension.toSharedListing
 import me.proton.core.drive.share.user.data.extension.toSharedWithMeListingEntity
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType
 import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 import me.proton.core.drive.share.user.domain.entity.SharedListing
 import me.proton.core.drive.share.user.domain.repository.SharedRepository
@@ -77,10 +79,13 @@ class SharedRepositoryImpl @Inject constructor(
 
     override suspend fun getSharedWithMeListing(
         userId: UserId,
+        types: Set<ShareTargetType>,
         index: Int,
         count: Int
     ): List<SharedLinkId> = db.sharedWithMeListingDao.getSharedWithMeListing(
         userId = userId,
+        types = types.toShareTargetTypeDtos(),
+        includeNullType = types.contains(ShareTargetType.Album).not(),
         limit = count,
         offset = index,
     ).map { sharedWithMeListingEntity ->
@@ -133,4 +138,13 @@ class SharedRepositoryImpl @Inject constructor(
 
     override suspend fun deleteAllLocalSharedByMe(userId: UserId) =
         db.sharedByMeListingDao.deleteAll(userId)
+
+    override suspend fun getSaveAction(sharedListing: SharedListing): SaveAction =
+        SaveAction {
+            db.sharedByMeListingDao.insertOrIgnore(
+                *sharedListing.linkIds.map { sharedLinkId ->
+                    sharedLinkId.toSharedByMeListingEntity()
+                }.toTypedArray()
+            )
+        }
 }

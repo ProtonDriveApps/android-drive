@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.viewstate
 
 data class PhotosAndAlbumsViewState(
     val selectedTab: Tab,
+    val isAlbumsTabVisible: Boolean,
 ) {
     enum class Tab {
         PHOTOS, ALBUMS

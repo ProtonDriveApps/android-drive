@@ -19,24 +19,29 @@
 package me.proton.core.drive.drivelink.photo.domain.usecase
 
 import kotlinx.coroutines.flow.firstOrNull
+import me.proton.core.drive.base.domain.extension.onProtonHttpException
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.photo.CreateAddToAlbumInfo
-import me.proton.core.drive.documentsprovider.domain.usecase.GetContentDigest
+import me.proton.core.drive.documentsprovider.domain.usecase.GetFileIdContentDigestMap
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinks
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.photo.domain.entity.AddToRemoveFromAlbumResult
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
+import me.proton.core.drive.photo.domain.usecase.GetRelatedPhotoIds
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.util.kotlin.takeIfNotEmpty
 import javax.inject.Inject
 
 class AddPhotosToAlbum @Inject constructor(
     private val albumRepository: AlbumRepository,
+    private val getRelatedPhotoIds: GetRelatedPhotoIds,
     private val createAddToAlbumInfo: CreateAddToAlbumInfo,
     private val getDriveLinks: GetDriveLinks,
     private val configurationProvider: ConfigurationProvider,
-    private val getContentDigest: GetContentDigest,
+    private val getFileIdContentDigestMap: GetFileIdContentDigestMap,
+    private val copyPhoto: CopyPhoto,
 ) {
 
     suspend operator fun invoke(
@@ -51,12 +56,15 @@ class AddPhotosToAlbum @Inject constructor(
         val addVolumePhotosToAlbumResult = addVolumePhotosToAlbum(
             volumeId = volumeId,
             albumId = albumId,
-            photoIds = volumePhotoIds,
+            photoIds = volumePhotoIds + volumePhotoIds.map { photoId ->
+                getRelatedPhotoIds(volumeId, photoId).getOrThrow()
+            }.flatten(),
         )
         val addSharedWithMePhotosToAlbumResult = addSharedWithMePhotosToAlbum(
-            volumeId = volumeId,
             albumId = albumId,
-            photoIds = sharedWithMePhotoIds,
+            photoIds = sharedWithMePhotoIds + sharedWithMePhotoIds.map { photoId ->
+                getRelatedPhotoIds(volumeId, photoId).getOrThrow()
+            }.flatten(),
         )
         AddToRemoveFromAlbumResult(
             addVolumePhotosToAlbumResult.results + addSharedWithMePhotosToAlbumResult.results
@@ -67,28 +75,44 @@ class AddPhotosToAlbum @Inject constructor(
         volumeId: VolumeId,
         albumId: AlbumId,
         photoIds: List<FileId>,
-    ) = albumRepository.addToAlbum(
+    ): AddToRemoveFromAlbumResult = albumRepository.addToAlbum(
         volumeId = volumeId,
         albumId = albumId,
-        addToAlbumInfos = photoIds.map { photoId ->
-            createAddToAlbumInfo(
-                photoId = photoId,
-                albumId = albumId,
-                contentDigest = getContentDigest(photoId).getOrThrow(),
-            ).getOrThrow()
-        },
+        addToAlbumInfos =
+        createAddToAlbumInfo(
+            photoIds = photoIds,
+            albumId = albumId,
+            contentDigests = getFileIdContentDigestMap(photoIds.toSet()),
+        ).getOrThrow(),
     )
 
     private suspend fun addSharedWithMePhotosToAlbum(
-        volumeId: VolumeId,
         albumId: AlbumId,
         photoIds: List<FileId>,
-    ): AddToRemoveFromAlbumResult {
-        if (photoIds.isNotEmpty()) {
-            TODO("addSharedWithMePhotosToAlbum is not implemented yet")
-        }
-        return AddToRemoveFromAlbumResult()
-    }
+    ): AddToRemoveFromAlbumResult =
+        photoIds
+            .takeIfNotEmpty()
+            ?.map { photoId ->
+                val error = copyPhoto(
+                    newParentId = albumId,
+                    fileId = photoId,
+                    shouldUpdateEvent = false,
+                ).exceptionOrNull()
+                if (error == null) {
+                    AddToRemoveFromAlbumResult.AddRemovePhotoResult.Success(photoId.id)
+                } else {
+                    val (code, error) = error.onProtonHttpException { protonData ->
+                        protonData.code.toLong() to protonData.error
+                    } ?: (-1L to "")
+                    AddToRemoveFromAlbumResult.AddRemovePhotoResult.Error(
+                        fileId = photoId.id,
+                        code = code,
+                        error = error,
+                    )
+                }
+            }
+            ?.let { AddToRemoveFromAlbumResult(it) }
+            ?: AddToRemoveFromAlbumResult()
 
     private suspend fun volumeAndSharedWithMeFileIds(
         volumeId: VolumeId,

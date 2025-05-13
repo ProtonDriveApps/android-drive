@@ -28,6 +28,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import me.proton.android.drive.photos.domain.usecase.AddToAlbumInfo
 import me.proton.android.drive.photos.domain.usecase.RemovePhotosFromAlbum
+import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel.Companion
+import me.proton.android.drive.ui.viewmodel.MultipleFileOrFolderOptionsViewModel.Companion.KEY_ALBUM_ID
 import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Attributes
@@ -44,12 +46,12 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbums
-import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.CreateAlbumEntry
 import me.proton.core.drive.files.presentation.entry.DownloadEntry
 import me.proton.core.drive.files.presentation.entry.MoveEntry
 import me.proton.core.drive.files.presentation.entry.RemoveFromAlbumEntry
+import me.proton.core.drive.files.presentation.entry.ShareMultiplePhotosEntry
 import me.proton.core.drive.files.presentation.entry.TrashEntry
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -62,6 +64,7 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.trash.domain.usecase.SendToTrash
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.volume.domain.usecase.HasPhotoVolume
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -80,10 +83,14 @@ class MultipleFileOrFolderOptionsViewModelTest {
     private val configurationProvider = mockk<ConfigurationProvider>()
     private val removePhotosFromAlbum = mockk<RemovePhotosFromAlbum>()
     private val broadcastMessages = mockk<BroadcastMessages>()
+    private val hasPhotoVolume = mockk<HasPhotoVolume>()
 
     @Before
     fun before() {
-        coEvery { savedStateHandle.get<String>(any()) } returns "value"
+        coEvery { savedStateHandle.get<String>(any()) } answers {
+            val key: String = arg(0)
+            if (key == FileOrFolderOptionsViewModel.KEY_ALBUM_ID) null else "value"
+        }
         coEvery { getSelectedDriveLinks.invoke(any()) } returns flowOf()
         coEvery { getFeatureFlagFlow.invoke(any(), any(), any())} answers {
             val id: FeatureFlagId = arg(0)
@@ -93,12 +100,13 @@ class MultipleFileOrFolderOptionsViewModelTest {
             { false }
         }
         coEvery { configurationProvider.albumsFeatureFlag} returns true
+        coEvery { hasPhotoVolume.invoke(any()) } returns flowOf(true)
     }
 
     @Test
     fun `files options`() = runTest {
         // Given
-        val files = listOf(fileDriveLink)
+        val files = listOf(fileDriveLink, fileDriveLink2)
 
         // When
         val entries = files.fileOptionEntries()
@@ -115,9 +123,10 @@ class MultipleFileOrFolderOptionsViewModelTest {
     }
 
     @Test
-    fun `photos options without album feature flag`() = runTest {
+    fun `photos options without photo volume`() = runTest {
         // Given
-        val files = listOf(photoDriveLink)
+        coEvery { hasPhotoVolume.invoke(any()) } returns flowOf(false)
+        val files = listOf(photoDriveLink, photoDriveLink2)
 
         // When
         val entries = files.fileOptionEntries()
@@ -133,12 +142,37 @@ class MultipleFileOrFolderOptionsViewModelTest {
     }
 
     @Test
-    fun `photos options with album feature flag `() = runTest {
+    fun `photos options with photo volume`() = runTest {
         // Given
         val featureFlagId = driveAlbums(UserId("value"))
         coEvery { getFeatureFlagFlow(featureFlagId, any(), any()) } returns
                 flowOf( FeatureFlag(featureFlagId, State.ENABLED))
-        val files = listOf(photoDriveLink)
+        coEvery { savedStateHandle.get<String>(KEY_ALBUM_ID) } returns null
+        val files = listOf(photoDriveLink, photoDriveLink2)
+
+        // When
+        val entries = files.fileOptionEntries()
+
+        // Then
+        assertEquals(
+            listOf(
+                CreateAlbumEntry::class,
+                ShareMultiplePhotosEntry::class,
+                DownloadEntry::class,
+                TrashEntry::class,
+            ),
+            entries.map { it.javaClass.kotlin }
+        )
+    }
+
+    @Test
+    fun `photos options within album`() = runTest {
+        // Given
+        val featureFlagId = driveAlbums(UserId("value"))
+        coEvery { getFeatureFlagFlow(featureFlagId, any(), any()) } returns
+                flowOf( FeatureFlag(featureFlagId, State.ENABLED))
+        coEvery { savedStateHandle.get<String>(Companion.KEY_ALBUM_ID) } returns "album-id"
+        val files = listOf(photoDriveLink, photoDriveLink2)
 
         // When
         val entries = files.fileOptionEntries()
@@ -147,21 +181,19 @@ class MultipleFileOrFolderOptionsViewModelTest {
         assertEquals(
             listOf(
                 RemoveFromAlbumEntry::class,
-                CreateAlbumEntry::class,
                 DownloadEntry::class,
-                TrashEntry::class,
             ),
             entries.map { it.javaClass.kotlin }
         )
     }
-
 
     private suspend fun List<DriveLink>.fileOptionEntries() =
         fileOrFolderOptionsViewModel().entries(
             driveLinks = this,
             runAction = {},
             navigateToMove = { _: SelectionId, _: FolderId? -> },
-            navigateToCreateNewAlbum = {  },
+            navigateToCreateNewAlbum = {},
+            navigateToShareMultiplePhotosOptions = {},
             dismiss = {},
         ).filterNotNull().first()
 
@@ -175,9 +207,9 @@ class MultipleFileOrFolderOptionsViewModelTest {
         addToAlbumInfo = addToAlbumInfo,
         removePhotosFromAlbum = removePhotosFromAlbum,
         getFeatureFlagFlow = getFeatureFlagFlow,
-        albumsFeatureFlag = AlbumsFeatureFlag(getFeatureFlagFlow, configurationProvider),
         broadcastMessages = broadcastMessages,
         configurationProvider = configurationProvider,
+        hasPhotoVolume = hasPhotoVolume,
     )
 
     private val fileLink = Link.File(
@@ -238,11 +270,24 @@ class MultipleFileOrFolderOptionsViewModelTest {
         sharePermissions = Permissions.admin
     )
 
+    private val fileDriveLink2 = fileDriveLink.copy(
+        link = fileDriveLink.link.copy(
+            id = FileId(ShareId(UserId("USER_ID"), "SHARE_ID"), "ID2"),
+        ),
+        cryptoName = CryptoProperty.Decrypted("Link name 2", VerificationStatus.Success),
+    )
+
     private val photoDriveLink = fileDriveLink.copy(
         link = fileLink.copy(
             photoCaptureTime = TimestampS(0),
             photoContentHash = "",
             mainPhotoLinkId = "MAIN_ID"
+        )
+    )
+
+    private val photoDriveLink2 = photoDriveLink.copy(
+        link = photoDriveLink.link.copy(
+            id = FileId(ShareId(UserId("USER_ID"), "SHARE_ID"), "ID2"),
         )
     )
 }

@@ -69,6 +69,10 @@
   <string name="common_create_album_action">Creare album</string>
   <string name="common_set_as_album_cover_action">Setare ca și copertă de album</string>
   <string name="common_add_action">Adăugare</string>
+  <string name="common_remove_from_album_action">Ștergere din album</string>
+  <string name="common_leave_album_action">Părăsire album</string>
+  <string name="common_start_action">Început</string>
+  <string name="common_save_all_action">Salvare toate</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

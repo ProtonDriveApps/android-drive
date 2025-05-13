@@ -23,26 +23,33 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import me.proton.android.drive.ui.viewevent.PhotosAndAlbumsViewEvent
 import me.proton.android.drive.ui.viewstate.PhotosAndAlbumsViewState
 import me.proton.android.drive.ui.viewstate.PhotosAndAlbumsViewState.Tab
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.volume.domain.usecase.HasPhotoVolume
 import javax.inject.Inject
 
 @HiltViewModel
 class PhotosAndAlbumsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    hasPhotoVolume: HasPhotoVolume,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val selectedTab = MutableStateFlow(Tab.PHOTOS)
 
     val initialViewState: PhotosAndAlbumsViewState = PhotosAndAlbumsViewState(
         selectedTab = Tab.PHOTOS,
+        isAlbumsTabVisible = false,
     )
 
-    val viewState: Flow<PhotosAndAlbumsViewState> = selectedTab.map { selectedTab ->
+    val viewState: Flow<PhotosAndAlbumsViewState> = combine(
+        selectedTab,
+        hasPhotoVolume(userId),
+    ) { selectedTab, hasPhotoVolume ->
         initialViewState.copy(
             selectedTab = selectedTab,
+            isAlbumsTabVisible = hasPhotoVolume,
         )
     }
 

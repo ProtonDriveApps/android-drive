@@ -33,7 +33,11 @@ fun Link.toLinkWithProperties() = LinkWithProperties(
         shareId = id.shareId.id,
         userId = id.userId,
         parentId = parentId?.id,
-        type = if (this is Link.Folder) 1L else 2L,
+        type = when (this) {
+            is Link.Folder -> LinkDto.TYPE_FOLDER
+            is Link.File -> LinkDto.TYPE_FILE
+            is Link.Album -> LinkDto.TYPE_ALBUM
+        },
         name = name,
         nameSignatureEmail = nameSignatureEmail,
         hash = hash,
@@ -89,6 +93,11 @@ fun Link.toLinkWithProperties() = LinkWithProperties(
             photoCount = photoCount,
             coverLinkId = coverLinkId?.id,
         )
+    },
+    tags = if (this is Link.File) {
+        this.tags.map { tag -> tag.value }
+    } else {
+        emptyList()
     }
 )
 

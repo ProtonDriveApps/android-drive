@@ -56,6 +56,9 @@ class GetUserDataStore @Inject constructor(
         private const val KEY_CREATE_DOCUMENT_ACITON_INVOKED = "create_document_action_invoked"
         private const val KEY_NOTIFICATION_PERMISSION_RATIONALE_REJECTED = "notification_permission_rationale_rejected"
         private const val KEY_NEW_ALBUM_NAME = "new_album_name"
+        private const val KEY_SUBSCRIPTION_LAST_UPDATE = "subscription_last_update_"
+        private const val KEY_PHOTO_SHARE_MIGRATION_STATE = "photo_share_migration_state"
+        private const val KEY_PHOTOS_IMPORTANT_UPDATES_LAST_SHOWN = "photos_important_updates_last_shown"
     }
 
     data object Keys {
@@ -65,5 +68,8 @@ class GetUserDataStore @Inject constructor(
             KEY_NOTIFICATION_PERMISSION_RATIONALE_REJECTED
         )
         val newAlbumName get() = stringPreferencesKey(KEY_NEW_ALBUM_NAME)
+        fun subscriptionLastUpdate(name: String) = longPreferencesKey(KEY_SUBSCRIPTION_LAST_UPDATE + name)
+        val photoShareMigrationState get() = stringPreferencesKey(KEY_PHOTO_SHARE_MIGRATION_STATE)
+        val photosImportantUpdatesLastShown get() = longPreferencesKey(KEY_PHOTOS_IMPORTANT_UPDATES_LAST_SHOWN)
     }
 }

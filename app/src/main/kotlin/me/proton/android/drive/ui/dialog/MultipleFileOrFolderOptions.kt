@@ -41,6 +41,7 @@ fun MultipleFileOrFolderOptions(
     runAction: RunAction,
     navigateToMove: (selectionId: SelectionId, folderId: FolderId?) -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
+    navigateToShareMultiplePhotosOptions: (SelectionId) -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -54,6 +55,7 @@ fun MultipleFileOrFolderOptions(
             runAction = runAction,
             navigateToMove = navigateToMove,
             navigateToCreateNewAlbum = navigateToCreateNewAlbum,
+            navigateToShareMultiplePhotosOptions = navigateToShareMultiplePhotosOptions,
             dismiss = dismiss,
         ).flowWithLifecycle(
             lifecycle = lifecycle,

@@ -25,4 +25,5 @@ data class UserInvitationId(
     val volumeId: VolumeId,
     val shareId: ShareId,
     val invitationId: String,
+    val type: ShareTargetType? = null,
 )

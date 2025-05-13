@@ -74,6 +74,4 @@ data class PhotoListingEntity(
     val hash: String?,
     @ColumnInfo(name = CONTENT_HASH)
     val contentHash: String?,
-    @ColumnInfo(name = MAIN_PHOTO_LINK_ID)
-    val mainPhotoLinkId: String?,
 )

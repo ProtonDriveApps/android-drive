@@ -19,6 +19,7 @@ package me.proton.core.drive.link.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.FORBIDDEN_CHARS_REGEX
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.link.domain.entity.InvalidLinkName
 import javax.inject.Inject
 
 class ValidateLinkName @Inject constructor(
@@ -27,18 +28,11 @@ class ValidateLinkName @Inject constructor(
     operator fun invoke(name: String): Result<String> {
         val trimmedName = name.trim()
         return when {
-            setOf(".", "..").contains(trimmedName) -> Result.failure(Invalid.Periods)
-            FORBIDDEN_CHARS_REGEX.containsMatchIn(trimmedName) -> Result.failure(Invalid.ForbiddenCharacters)
-            trimmedName.isEmpty() -> Result.failure(Invalid.Empty)
-            trimmedName.length > configurationProvider.linkMaxNameLength -> Result.failure(Invalid.ExceedsMaxLength(configurationProvider.linkMaxNameLength))
+            setOf(".", "..").contains(trimmedName) -> Result.failure(InvalidLinkName.Periods)
+            FORBIDDEN_CHARS_REGEX.containsMatchIn(trimmedName) -> Result.failure(InvalidLinkName.ForbiddenCharacters)
+            trimmedName.isEmpty() -> Result.failure(InvalidLinkName.Empty)
+            trimmedName.length > configurationProvider.linkMaxNameLength -> Result.failure(InvalidLinkName.ExceedsMaxLength(configurationProvider.linkMaxNameLength))
             else -> Result.success(trimmedName)
         }
-    }
-
-    sealed class Invalid : Throwable() {
-        object Empty : Invalid()
-        data class ExceedsMaxLength(val maxLength: Int) : Invalid()
-        object Periods : Invalid()
-        object ForbiddenCharacters : Invalid()
     }
 }

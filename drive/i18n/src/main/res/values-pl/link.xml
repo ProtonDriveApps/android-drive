@@ -28,4 +28,29 @@
   <string name="files_upload_content_description_cancel_upload">Anuluj przesyłanie pliku</string>
   <string name="files_upload_failure_storage_full_title">Przestrzeń dyskowa jest pełna</string>
   <string name="files_upload_failure_storage_full_description">Przestrzeń dyskowa jest pełna. Zwolnij część miejsca lub ulepsz plan z większą przestrzenią dyskową.</string>
+  <string name="files_operation_failed_all">Operacja nie powiodła się</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="one">%1$d błąd</item>
+    <item quantity="few">%1$d błędy</item>
+    <item quantity="many">%1$d błędów</item>
+    <item quantity="other">%1$d błędów</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="one">%1$d succeeded</item>
+    <item quantity="few">%1$d succeeded</item>
+    <item quantity="many">%1$d succeeded</item>
+    <item quantity="other">%1$d succeeded</item>
+  </plurals>
 </resources>

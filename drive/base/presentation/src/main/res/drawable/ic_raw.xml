@@ -1,0 +1,25 @@
+<!--
+  ~ Copyright (c) 2025 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:height="24dp" android:viewportHeight="16" android:viewportWidth="16" android:width="24dp">
+      
+    <path android:fillColor="#706D6B" android:fillType="evenOdd" android:pathData="M6.887,11.549V9.335H7.463L9.612,11.872C9.79,12.083 10.106,12.109 10.316,11.93C10.527,11.752 10.553,11.436 10.375,11.226L8.671,9.213C8.813,9.172 8.955,9.119 9.092,9.052C9.606,8.799 10.076,8.314 10.076,7.518C10.076,6.726 9.61,6.234 9.102,5.968C8.618,5.715 8.061,5.642 7.693,5.645H6.387C6.111,5.645 5.887,5.869 5.887,6.145V11.549C5.887,11.825 6.111,12.049 6.387,12.049C6.663,12.049 6.887,11.825 6.887,11.549ZM7.7,6.645C7.959,6.642 8.341,6.699 8.639,6.855C8.915,6.999 9.076,7.197 9.076,7.518C9.076,7.836 8.92,8.022 8.65,8.155C8.355,8.3 7.974,8.346 7.715,8.335L7.705,8.335H6.887V6.645L7.695,6.645L7.7,6.645Z"/>
+      
+    <path android:fillColor="#706D6B" android:fillType="evenOdd" android:pathData="M4,1C2.895,1 2,1.895 2,3V13C2,14.105 2.895,15 4,15H12C13.105,15 14,14.105 14,13V5.828C14,5.298 13.789,4.789 13.414,4.414L10.586,1.586C10.211,1.211 9.702,1 9.172,1H4ZM13,13V6H10.5C9.672,6 9,5.328 9,4.5V2H4C3.448,2 3,2.448 3,3V13C3,13.552 3.448,14 4,14H12C12.552,14 13,13.552 13,13ZM10,2.414L12.586,5H10.5C10.224,5 10,4.776 10,4.5V2.414Z"/>
+    
+</vector>

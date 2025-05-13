@@ -45,11 +45,11 @@ class TrashExtraActionProvider @Inject constructor(
 
     private fun TrashFilesExtra.provideAction(): ActionProvider.Action = if (exception == null) {
         ActionProvider.Action(I18N.string.trash_action_undo) {
-            restoreFromTrash(userId, parentId.shareId, links)
+            restoreFromTrash(userId, volumeId, links)
         }
     } else {
         ActionProvider.Action(I18N.string.trash_action_retry) {
-            sendToTrash(userId, parentId, links)
+            sendToTrash(userId, volumeId, links)
         }
     }
 
@@ -57,7 +57,7 @@ class TrashExtraActionProvider @Inject constructor(
         null // We don't have the folder to send them back
     } else {
         ActionProvider.Action(I18N.string.trash_action_retry) {
-            restoreFromTrash(userId, shareId, links)
+            restoreFromTrash(userId, volumeId, links)
         }
     }
 
@@ -65,7 +65,7 @@ class TrashExtraActionProvider @Inject constructor(
         null // Can't undo a delete operation
     } else {
         ActionProvider.Action(I18N.string.trash_action_retry) {
-            deleteFromTrash(userId, shareId, links)
+            deleteFromTrash(userId, volumeId, links)
         }
     }
 

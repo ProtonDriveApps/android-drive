@@ -41,10 +41,12 @@ import me.proton.core.drive.link.selection.domain.entity.SelectionId
 @Composable
 fun AlbumScreen(
     navigateToAlbumOptions: (AlbumId) -> Unit,
-    navigateToPhotosOptions: (FileId, AlbumId?) -> Unit,
+    navigateToPhotosOptions: (FileId, AlbumId?, SelectionId?) -> Unit,
     navigateToMultiplePhotosOptions: (selectionId: SelectionId, AlbumId?) -> Unit,
     navigateToPreview: (FileId, AlbumId) -> Unit,
     navigateToPicker: (AlbumId) -> Unit,
+    navigateToShareViaInvitations: (AlbumId) -> Unit,
+    navigateToManageAccess: (AlbumId) -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -58,6 +60,8 @@ fun AlbumScreen(
             navigateToMultiplePhotosOptions = navigateToMultiplePhotosOptions,
             navigateToPreview = navigateToPreview,
             navigateToPicker = navigateToPicker,
+            navigateToShareViaInvitations = navigateToShareViaInvitations,
+            navigateToManageAccess = navigateToManageAccess,
             navigateBack = navigateBack,
             lifecycle = lifecycle,
         )

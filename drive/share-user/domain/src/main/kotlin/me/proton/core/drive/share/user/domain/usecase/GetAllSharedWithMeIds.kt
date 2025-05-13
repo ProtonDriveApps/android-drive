@@ -22,6 +22,10 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.function.pagedList
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Folder
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.File
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Photo
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Document
 import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 import me.proton.core.drive.share.user.domain.repository.SharedRepository
 import javax.inject.Inject
@@ -35,6 +39,7 @@ class GetAllSharedWithMeIds @Inject constructor(
         pagedList(configurationProvider.dbPageSize) { index, count ->
             repository.getSharedWithMeListing(
                 userId = userId,
+                types = setOf(Folder, File, Photo, Document),
                 index = index,
                 count = count,
             )

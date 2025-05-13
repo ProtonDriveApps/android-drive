@@ -42,25 +42,27 @@ class DecryptDriveLinks @Inject constructor(
 
     suspend operator fun invoke(driveLinks: List<DriveLink>): List<DriveLink> {
         val decryptedLinks = ConcurrentHashMap<LinkId, DriveLink?>()
-        driveLinks.groupBy { driveLink -> driveLink.parentId }.forEach { (_, links) ->
-            links.firstOrNull()?.let { firstLink -> getLinkParentKey(firstLink) }?.map { parentKey ->
-                unlockKey(parentKey.keyHolder) { unlockedKey ->
-                    supervisorScope {
-                        val deferred = links.chunkedInto(configurationProvider.decryptionInParallel).map { driveLinks ->
-                            async {
-                                driveLinks.forEach { link ->
-                                    decryptedLinks[link.id] = decryptDriveLink(unlockedKey, link)
-                                        .onFailure { error ->
-                                            CoreLogger.e(
-                                                LogTag.ENCRYPTION,
-                                                error,
-                                                "There was an error decrypting drive link: ${link.id.id.logId()}"
-                                            )
-                                        }.getOrNull()
+        driveLinks.groupBy { driveLink -> driveLink.id.shareId }.forEach { (_, shareLinks) ->
+            shareLinks.groupBy { driveLink -> driveLink.parentId }.forEach { (_, links) ->
+                links.firstOrNull()?.let { firstLink -> getLinkParentKey(firstLink) }?.map { parentKey ->
+                    unlockKey(parentKey.keyHolder) { unlockedKey ->
+                        supervisorScope {
+                            val deferred = links.chunkedInto(configurationProvider.decryptionInParallel).map { driveLinks ->
+                                async {
+                                    driveLinks.forEach { link ->
+                                        decryptedLinks[link.id] = decryptDriveLink(unlockedKey, link)
+                                            .onFailure { error ->
+                                                CoreLogger.e(
+                                                    LogTag.ENCRYPTION,
+                                                    error,
+                                                    "There was an error decrypting drive link: ${link.id.id.logId()}"
+                                                )
+                                            }.getOrNull()
+                                    }
                                 }
                             }
+                            deferred.awaitAll()
                         }
-                        deferred.awaitAll()
                     }
                 }
             }

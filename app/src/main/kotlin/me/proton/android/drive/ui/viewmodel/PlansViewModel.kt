@@ -55,4 +55,11 @@ class PlansViewModel @Inject constructor(
             plansOrchestrator.showCurrentPlanWorkflow(account.userId)
         }
     }
+
+    fun startUpgrade() {
+        viewModelScope.launch {
+            val account = primaryAccount.filterNotNull().first()
+            plansOrchestrator.startUpgradeWorkflow(account.userId)
+        }
+    }
 }

@@ -39,7 +39,7 @@
   <string name="common_on">Vklopljeno</string>
   <string name="common_off">Izklopljeno</string>
   <string name="common_all">Vse</string>
-  <string name="common_unknown">Unknown</string>
+  <string name="common_unknown">Neznano</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">V redu</string>
@@ -67,8 +67,12 @@
   <string name="common_open_in_browser_action">Odpri v brskalniku</string>
   <string name="common_done_action">Končano</string>
   <string name="common_create_album_action">Ustvari album</string>
-  <string name="common_set_as_album_cover_action">Set as album cover</string>
-  <string name="common_add_action">Add</string>
+  <string name="common_set_as_album_cover_action">Nastavi kot naslovnico albuma</string>
+  <string name="common_add_action">Dodaj</string>
+  <string name="common_remove_from_album_action">Odstrani iz albuma</string>
+  <string name="common_leave_album_action">Zapusti album</string>
+  <string name="common_start_action">Začetek</string>
+  <string name="common_save_all_action">Shrani vse</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Zvok</string>
@@ -80,7 +84,7 @@
   <string name="common_type_pages">Datoteka Pages</string>
   <string name="common_type_pdf">PDF dokument</string>
   <string name="common_type_ppt">Predstavitev</string>
-  <string name="common_type_proton_doc">Proton document</string>
+  <string name="common_type_proton_doc">Dokument Proton</string>
   <string name="common_type_text">Besedilo</string>
   <string name="common_type_trustedkey">Zaupanja vreden ključ</string>
   <string name="common_type_unknown">Dvojiško</string>
@@ -103,7 +107,7 @@
         Example:
             "Name cannot include invisible characters, "/" or "\"
     -->
-  <string name="common_error_name_with_forbidden_characters">Name cannot include invisible characters, \"%1$s\" or \"%2$s\"</string>
+  <string name="common_error_name_with_forbidden_characters">Ime ne sme vsebovati nevidnih znakov, »%1$s« ali »%2$s«</string>
   <string name="common_error_name_periods">Ime ne sme biti \".\" ali \"..\"</string>
   <string name="common_error_no_internet">Ni spletne povezave</string>
   <string name="common_error_http_5xx">Prišlo je do napake strežnika</string>

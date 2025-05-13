@@ -50,3 +50,6 @@ val BaseLink.isProtonDocument: Boolean
 
 val BaseLink.isProtonCloudFile: Boolean
     get() = mimeType.startsWith("application/vnd.proton.")
+
+fun BaseLink.xAttrKey(sha256OfXAttr: String?): String
+        = "xattr.${parentId?.id}.$sha256OfXAttr"

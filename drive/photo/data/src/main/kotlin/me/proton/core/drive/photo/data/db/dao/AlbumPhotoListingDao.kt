@@ -47,43 +47,139 @@ abstract class AlbumPhotoListingDao : BaseDao<AlbumPhotoListingEntity>() {
         albumId: String,
     ): Flow<Int>
 
-    @Query(ALBUM_PHOTO_LISTING)
-    abstract suspend fun getAlbumPhotoListings(
+    suspend fun getAlbumPhotoListings(
         userId: UserId,
         volumeId: String,
         albumId: String,
         sortingBy: PhotoListing.Album.SortBy,
         direction: Direction,
+        limit: Int,
+        offset: Int,
+    ): List<AlbumPhotoListingEntity> = when(direction){
+        Direction.ASCENDING -> getAlbumPhotoListingsAsc(
+            userId = userId,
+            volumeId = volumeId,
+            albumId = albumId,
+            sortingBy = sortingBy,
+            limit = limit,
+            offset = offset,
+        )
+        Direction.DESCENDING -> getAlbumPhotoListingsDesc(
+            userId = userId,
+            volumeId = volumeId,
+            albumId = albumId,
+            sortingBy = sortingBy,
+            limit = limit,
+            offset = offset,
+        )
+    }
+
+    fun getAlbumPhotoListingsFlow(
+        userId: UserId,
+        volumeId: String,
+        albumId: String,
+        sortingBy: PhotoListing.Album.SortBy,
+        direction: Direction,
+        limit: Int,
+        offset: Int,
+    ): Flow<List<AlbumPhotoListingEntity>> = when (direction) {
+        Direction.ASCENDING -> getAlbumPhotoListingsAscFlow(
+            userId = userId,
+            volumeId = volumeId,
+            albumId = albumId,
+            sortingBy = sortingBy,
+            limit = limit,
+            offset = offset,
+        )
+
+        Direction.DESCENDING -> getAlbumPhotoListingsDescFlow(
+            userId = userId,
+            volumeId = volumeId,
+            albumId = albumId,
+            sortingBy = sortingBy,
+            limit = limit,
+            offset = offset,
+        )
+    }
+
+    @Query(ALBUM_PHOTO_LISTING_ASC)
+    internal abstract suspend fun getAlbumPhotoListingsAsc(
+        userId: UserId,
+        volumeId: String,
+        albumId: String,
+        sortingBy: PhotoListing.Album.SortBy,
         limit: Int,
         offset: Int,
     ): List<AlbumPhotoListingEntity>
 
-    @Query(ALBUM_PHOTO_LISTING)
-    abstract fun getAlbumPhotoListingsFlow(
+    @Query(ALBUM_PHOTO_LISTING_ASC)
+    internal abstract fun getAlbumPhotoListingsAscFlow(
         userId: UserId,
         volumeId: String,
         albumId: String,
         sortingBy: PhotoListing.Album.SortBy,
-        direction: Direction,
         limit: Int,
         offset: Int,
     ): Flow<List<AlbumPhotoListingEntity>>
 
+    @Query(ALBUM_PHOTO_LISTING_DESC)
+    internal abstract suspend fun getAlbumPhotoListingsDesc(
+        userId: UserId,
+        volumeId: String,
+        albumId: String,
+        sortingBy: PhotoListing.Album.SortBy,
+        limit: Int,
+        offset: Int,
+    ): List<AlbumPhotoListingEntity>
+
+    @Query(ALBUM_PHOTO_LISTING_DESC)
+    internal abstract fun getAlbumPhotoListingsDescFlow(
+        userId: UserId,
+        volumeId: String,
+        albumId: String,
+        sortingBy: PhotoListing.Album.SortBy,
+        limit: Int,
+        offset: Int,
+    ): Flow<List<AlbumPhotoListingEntity>>
+
+    @Query("""
+        DELETE FROM AlbumPhotoListingEntity WHERE
+            user_id = :userId AND
+            volume_id = :volumeId AND
+            album_id = :albumId AND
+            id IN (:linkIds)
+    """)
+    abstract suspend fun delete(userId: UserId, volumeId: String, albumId: String, linkIds: List<String>)
+
     @Query("DELETE FROM AlbumPhotoListingEntity WHERE user_id = :userId AND volume_id = :volumeId AND album_id = :albumId")
     abstract suspend fun deleteAll(userId: UserId, volumeId: String, albumId: String)
 
+    @Query("DELETE FROM AlbumPhotoListingEntity WHERE user_id = :userId AND share_id = :shareId AND id in (:linkIds)")
+    abstract suspend fun delete(userId: UserId, shareId: String, linkIds: List<String>)
+
     companion object {
-        const val ALBUM_PHOTO_LISTING = """
+        const val ALBUM_PHOTO_LISTING_ASC = """
             SELECT * FROM AlbumPhotoListingEntity
             WHERE
                 user_id = :userId AND
                 volume_id = :volumeId AND
                 album_id = :albumId
             ORDER BY
-                CASE WHEN :direction = 'ASCENDING' AND :sortingBy = 'CAPTURED' THEN capture_time END ASC,
-                CASE WHEN :direction = 'ASCENDING' AND :sortingBy = 'ADDED' THEN added_time END ASC,
-                CASE WHEN :direction = 'DESCENDING' AND :sortingBy = 'CAPTURED' THEN capture_time END DESC,
-                CASE WHEN :direction = 'DESCENDING' AND :sortingBy = 'ADDED' THEN added_time END DESC
+                CASE WHEN :sortingBy = 'ADDED' THEN added_time END ASC,
+                capture_time ASC,
+                id ASC
+            LIMIT :limit OFFSET :offset
+        """
+        const val ALBUM_PHOTO_LISTING_DESC = """
+            SELECT * FROM AlbumPhotoListingEntity
+            WHERE
+                user_id = :userId AND
+                volume_id = :volumeId AND
+                album_id = :albumId
+            ORDER BY
+                CASE WHEN :sortingBy = 'ADDED' THEN added_time END DESC,
+                capture_time DESC,
+                id DESC
             LIMIT :limit OFFSET :offset
         """
     }

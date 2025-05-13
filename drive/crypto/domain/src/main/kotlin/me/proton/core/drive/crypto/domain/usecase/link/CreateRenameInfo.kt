@@ -49,13 +49,9 @@ class CreateRenameInfo @Inject constructor(
         link: Link,
         name: String,
         mimeType: String,
-        shouldValidateName: Boolean = true,
+        nameValidator: (String) -> String = { validateLinkName(name).getOrThrow() },
     ): Result<RenameInfo> = coRunCatching {
-        val linkName = if (shouldValidateName) {
-            validateLinkName(name).getOrThrow()
-        } else {
-            name
-        }
+        val linkName = nameValidator(name)
         val parentFolderKey = getNodeKey(parentFolder).getOrThrow()
         val parentFolderHashKey = getNodeHashKey(parentFolder, parentFolderKey).getOrThrow()
         val signatureAddress = getSignatureAddress(link.shareId).getOrThrow()
@@ -76,14 +72,10 @@ class CreateRenameInfo @Inject constructor(
     suspend operator fun invoke(
         rootFolder: Link.Folder,
         name: String,
-        shouldValidateName: Boolean = true,
+        nameValidator: (String) -> String = { validateLinkName(name).getOrThrow() },
     ): Result<RenameInfo> = coRunCatching {
         require(rootFolder.parentId == null) { "Use this method only for renaming a root folder" }
-        val folderName = if (shouldValidateName) {
-            validateLinkName(name).getOrThrow()
-        } else {
-            name
-        }
+        val folderName = nameValidator(name)
         val parentKey = getLinkParentKey(rootFolder).getOrThrow()
         val signatureAddress = getSignatureAddress(rootFolder.shareId).getOrThrow()
         RenameInfo(

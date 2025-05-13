@@ -47,6 +47,12 @@
   <string name="files_send_to_trash_action">Flytt til papirkurven</string>
   <string name="files_remove_me_action">Fjern meg</string>
   <string name="files_move_file_action">Flytt</string>
+  <string name="files_add_to_favorite_action">Legg til i favoritter</string>
+  <string name="files_remove_from_favorite_action">Fjern fra favoritter</string>
+  <string name="files_add_to_favorite_action_success">Lagt til i favoritter</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Bildet ble kopiert til nyhetsstrømmen og markert som favoritt der</string>
+  <string name="files_remove_from_favorite_action_success">Fjernet fra favoritter</string>
+  <string name="files_save_shared_photo_action">Lagre delt bilde</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

@@ -18,7 +18,12 @@
 
 package me.proton.core.drive.crypto.domain.usecase.photo
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.DecryptLinkName
 import me.proton.core.drive.crypto.domain.usecase.HmacSha256
@@ -27,6 +32,7 @@ import me.proton.core.drive.cryptobase.domain.usecase.ChangeMessage
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.extension.nodePassphrase
 import me.proton.core.drive.key.domain.extension.nodePassphraseSignature
+import me.proton.core.drive.key.domain.extension.signatureEmail
 import me.proton.core.drive.key.domain.usecase.GetAddressKeys
 import me.proton.core.drive.key.domain.usecase.GetNodeHashKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
@@ -52,12 +58,13 @@ class CreateAddToAlbumInfo @Inject constructor(
     private val hmacSha256: HmacSha256,
     private val moveNodeKey: MoveNodeKey,
     private val getContentHash: GetContentHash,
+    private val configurationProvider: ConfigurationProvider,
 ) {
 
     suspend operator fun invoke(
         photoId: FileId,
         albumId: AlbumId,
-        contentDigest: String,
+        contentDigest: String?,
     ): Result<AddToAlbumInfo> = coRunCatching {
         val album = getLink(albumId).toResult().getOrThrow()
         val albumKey = getNodeKey(album).getOrThrow()
@@ -86,17 +93,63 @@ class CreateAddToAlbumInfo @Inject constructor(
             hash = hmacSha256(albumHashKey, decryptedPhotoName).getOrThrow(),
             nameSignatureEmail = signatureAddress,
             nodePassphrase = newPhotoKey.nodePassphrase,
-            nodePassphraseSignature = if (photo.signatureEmail.isEmpty() || photo.nameSignatureEmail.isNullOrEmpty()) {
-                newPhotoKey.nodePassphraseSignature
-            } else {
-                null
-            },
-            signatureEmail = if (photo.signatureEmail.isEmpty()) {
-                signatureAddress
-            } else {
-                null
-            },
-            contentHash = getContentHash(albumHashKey, contentDigest).getOrThrow(),
+            nodePassphraseSignature = photo.nodePassphraseSignature(newPhotoKey),
+            signatureEmail = photo.signatureEmail(signatureAddress),
+            contentHash = contentDigest?.let {
+                getContentHash(albumHashKey, contentDigest).getOrThrow()
+            } ?: requireNotNull(photo.photoContentHash),
         )
+    }
+
+    suspend operator fun invoke(
+        photoIds: List<FileId>,
+        albumId: AlbumId,
+        contentDigests: Map<FileId, String?>,
+    ): Result<List<AddToAlbumInfo>> = withContext(Dispatchers.IO) {
+        coRunCatching {
+            val album = getLink(albumId).toResult().getOrThrow()
+            val albumKey = getNodeKey(album).getOrThrow()
+            val albumHashKey = getNodeHashKey(album, albumKey).getOrThrow()
+            val signatureAddress = getSignatureAddress(album.shareId).getOrThrow()
+            val addressKeys = getAddressKeys(albumId.userId, signatureAddress).keyHolder
+            photoIds.chunked(configurationProvider.contentDigestsInParallel)
+                .flatMap { chunk ->
+                    chunk.map { photoId ->
+                        async {
+                            val photo = getLink(photoId).toResult().getOrThrow()
+                            val decryptedPhotoName = decryptLinkName(photo).getOrThrow().text
+                            val currentParentFolder =
+                                getLink(photo.requireParentId()).toResult().getOrThrow()
+                            val currentParentFolderKey =
+                                getNodeKey(currentParentFolder).getOrThrow()
+                            val newPhotoKey = moveNodeKey(
+                                userId = album.userId,
+                                key = getNodeKey(photoId).getOrThrow(),
+                                oldParentKey = currentParentFolderKey,
+                                newParentKey = albumKey,
+                                signatureAddress = signatureAddress,
+                            ).getOrThrow()
+                            AddToAlbumInfo(
+                                linkId = photoId.id,
+                                name = changeMessage(
+                                    oldMessage = photo.name,
+                                    oldMessageDecryptionKey = currentParentFolderKey.keyHolder,
+                                    newMessage = decryptedPhotoName,
+                                    newMessageEncryptionKey = albumKey.keyHolder,
+                                    signKey = addressKeys,
+                                ).getOrThrow(),
+                                hash = hmacSha256(albumHashKey, decryptedPhotoName).getOrThrow(),
+                                nameSignatureEmail = signatureAddress,
+                                nodePassphrase = newPhotoKey.nodePassphrase,
+                                nodePassphraseSignature = photo.nodePassphraseSignature(newPhotoKey),
+                                signatureEmail = photo.signatureEmail(signatureAddress),
+                                contentHash = contentDigests[photoId]?.let { contentDigest ->
+                                    getContentHash(albumHashKey, contentDigest).getOrThrow()
+                                } ?: requireNotNull(photo.photoContentHash),
+                            )
+                        }
+                    }.awaitAll()
+                }
+        }
     }
 }

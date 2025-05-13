@@ -62,6 +62,7 @@ class DefaultHomeTabViewModel @Inject constructor(
     private fun TabItem.toHomeTab(): HomeTab = when (route) {
         Screen.Files.route -> HomeTab.FILES
         Screen.Photos.route -> HomeTab.PHOTOS
+        Screen.PhotosAndAlbums.route -> HomeTab.PHOTOS
         Screen.Computers.route -> HomeTab.COMPUTERS
         Screen.SharedTabs.route -> HomeTab.SHARED
         else -> error("Unhandled tab item route: $route")

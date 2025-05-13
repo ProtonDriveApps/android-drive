@@ -18,7 +18,6 @@
 package me.proton.core.drive.file.base.domain.extension
 
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import me.proton.core.drive.file.base.domain.entity.XAttr
 import kotlin.time.Duration
@@ -26,6 +25,7 @@ import kotlin.time.Duration.Companion.seconds
 
 private val json = Json {
     ignoreUnknownKeys = true
+    isLenient = true
 }
 
 fun String.toXAttr(): Result<XAttr> = try {

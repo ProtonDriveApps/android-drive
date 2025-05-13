@@ -18,14 +18,14 @@
 
 package me.proton.android.drive.ui.robot
 
-import me.proton.android.drive.ui.screen.PickerPhotosAndAlbumsScreenTestTag
+import me.proton.android.drive.ui.screen.PickerPhotosScreenTestTag
 import me.proton.core.drive.i18n.R
 import me.proton.test.fusion.Fusion.node
 
 interface PickerPhotosRobot : Robot {
 
-    private val resetButton get() = node.withTag(PickerPhotosAndAlbumsScreenTestTag.resetButton)
-    private val addToAlbumButton get() = node.withTag(PickerPhotosAndAlbumsScreenTestTag.addToAlbumButton)
+    private val resetButton get() = node.withTag(PickerPhotosScreenTestTag.resetButton)
+    private val addToAlbumButton get() = node.withTag(PickerPhotosScreenTestTag.addToAlbumButton)
 
     fun <T : Robot> clickOnReset(goesTo: T) = resetButton.clickTo(goesTo)
     fun <T : Robot> clickOnAddToAlbum(goesTo: T) = addToAlbumButton.clickTo(goesTo)

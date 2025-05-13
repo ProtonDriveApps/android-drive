@@ -19,14 +19,12 @@
 package me.proton.android.drive.usecase
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.usecase.HasBusinessPlan
-import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.drive.android.settings.domain.entity.DynamicHomeTab
 import me.proton.drive.android.settings.domain.entity.HomeTab
 import me.proton.drive.android.settings.domain.usecase.GetHomeTab
@@ -37,17 +35,15 @@ import me.proton.core.presentation.R as CorePresentation
 class GetDynamicHomeTabsFlow @Inject constructor(
     private val getHomeTab: GetHomeTab,
     private val hasBusinessPlan: HasBusinessPlan,
-    private val albumsFeatureFlag: AlbumsFeatureFlag,
 ) {
     operator fun invoke(userId: UserId): Flow<List<DynamicHomeTab>> = getHomeTab(userId)
         .map { userDefaultHomeTab ->
-            val areAlbumsEnabled = albumsFeatureFlag(userId).firstOrNull() ?: false
             HomeTab
                 .entries
                 .map { homeTab: HomeTab ->
                     DynamicHomeTab(
                         id = homeTab,
-                        route = homeTab.route(areAlbumsEnabled),
+                        route = homeTab.route(),
                         order = homeTab.ordinal,
                         iconResId = homeTab.iconResId(),
                         titleResId = homeTab.titleResId,
@@ -61,9 +57,9 @@ class GetDynamicHomeTabsFlow @Inject constructor(
                 .ifNoDefaultMakeFirstDefault()
         }
 
-    private fun HomeTab.route(areAlbumsEnabled: Boolean): String = when (this) {
+    private fun HomeTab.route(): String = when (this) {
         HomeTab.FILES -> Screen.Files.route
-        HomeTab.PHOTOS -> if (areAlbumsEnabled) Screen.PhotosAndAlbums.route else Screen.Photos.route
+        HomeTab.PHOTOS -> Screen.PhotosAndAlbums.route
         HomeTab.COMPUTERS -> Screen.Computers.route
         HomeTab.SHARED -> Screen.SharedTabs.route
     }

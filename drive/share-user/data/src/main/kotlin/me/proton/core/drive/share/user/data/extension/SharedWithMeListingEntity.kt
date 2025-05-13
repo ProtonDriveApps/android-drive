@@ -26,4 +26,5 @@ import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 fun SharedWithMeListingEntity.toSharedLinkId() = SharedLinkId(
     volumeId = volumeId,
     linkId = FileId(ShareId(userId, shareId), linkId),
+    type = type?.toShareTargetType()
 )

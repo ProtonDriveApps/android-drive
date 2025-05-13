@@ -21,12 +21,21 @@ import me.proton.core.drive.link.data.db.entity.LinkWithProperties
 import me.proton.core.drive.link.data.db.entity.LinkWithPropertiesEntity
 
 fun LinkWithPropertiesEntity.toLinkWithProperties() = when {
-    folderProperties != null -> LinkWithProperties(link, folderProperties)
+    folderProperties != null -> LinkWithProperties(
+        link = link,
+        properties = folderProperties,
+        parentLinkType = parentLinkType,
+    )
     fileProperties != null -> LinkWithProperties(
         link = link,
         properties = fileProperties,
-        tags = tagsData?.split(",").orEmpty().map { it.toLong() }
+        tags = tagsData?.split(",").orEmpty().map { it.toLong() },
+        parentLinkType = parentLinkType,
     )
-    albumProperties != null -> LinkWithProperties(link, albumProperties)
+    albumProperties != null -> LinkWithProperties(
+        link = link,
+        properties = albumProperties,
+        parentLinkType = parentLinkType,
+    )
     else -> error("Either file, folder or album properties are required")
 }

@@ -24,18 +24,26 @@ import kotlinx.coroutines.flow.mapLatest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.asSuccessOrNullAsError
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.data.api.LinkApiDataSource
+import me.proton.core.drive.link.data.api.response.LinkResponse
 import me.proton.core.drive.link.data.db.LinkDatabase
 import me.proton.core.drive.link.data.db.entity.LinkWithProperties
 import me.proton.core.drive.link.data.extension.toCheckAvailableHashes
 import me.proton.core.drive.link.data.extension.toLink
 import me.proton.core.drive.link.data.extension.toLinkWithProperties
+import me.proton.core.drive.link.data.extension.toLinksResult
 import me.proton.core.drive.link.domain.entity.CheckAvailableHashes
 import me.proton.core.drive.link.domain.entity.CheckAvailableHashesInfo
+import me.proton.core.drive.link.domain.entity.CopyInfo
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.LinksResult
 import me.proton.core.drive.link.domain.entity.MoveInfo
+import me.proton.core.drive.link.domain.entity.MoveMultipleInfo
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.entity.RenameInfo
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.repository.LinkRepository
@@ -49,6 +57,7 @@ class LinkRepositoryImpl @Inject constructor(
     private val api: LinkApiDataSource,
     private val db: LinkDatabase,
     private val sortLinksByParents: SortLinksByParents,
+    private val configurationProvider: ConfigurationProvider,
 ) : LinkRepository {
 
     private val dao = db.linkDao
@@ -60,15 +69,20 @@ class LinkRepositoryImpl @Inject constructor(
             }
 
     override fun hasLink(linkId: LinkId): Flow<Boolean> =
-        dao.hasLinkEntity(linkId.userId, linkId.shareId.id, linkId.id)
+        dao.hasLinkEntityFlow(linkId.userId, linkId.shareId.id, linkId.id)
 
     override suspend fun hasAnyFileLink(shareId: ShareId): Boolean =
         dao.hasAnyFileEntity(shareId.userId, shareId.id)
 
     override suspend fun fetchLink(linkId: LinkId) {
         dao.insertOrUpdate(
-            api.getLink(linkId)
-                .toLinkWithProperties(linkId.shareId)
+            *setOf(
+                api.getLink(linkId)
+                    .toLinkWithProperties(linkId.shareId)
+            )
+                .updateNullParentWithAlbumIdIfApplicable()
+                .toTypedArray()
+
         )
     }
 
@@ -87,6 +101,44 @@ class LinkRepositoryImpl @Inject constructor(
         api.moveLink(linkId, moveInfo)
     }
 
+    override suspend fun moveMultipleLinks(
+        userId: UserId,
+        volumeId: VolumeId,
+        moveMultipleInfo: MoveMultipleInfo,
+    ): LinksResult {
+        val responses: MutableList<LinkResponse> = mutableListOf()
+        moveMultipleInfo.links.chunked(configurationProvider.maxApiBatchDataSize).forEach { chunk ->
+            val response = api.moveMultipleLinks(
+                userId = userId,
+                volumeId = volumeId,
+                moveMultipleInfo = moveMultipleInfo.copy(
+                    links = chunk,
+                ),
+            ).responses
+            responses.addAll(response)
+        }
+        return responses.toLinksResult()
+    }
+
+    override suspend fun transferMultipleLinks(
+        userId: UserId,
+        volumeId: VolumeId,
+        moveMultipleInfo: MoveMultipleInfo,
+    ): LinksResult {
+        val responses: MutableList<LinkResponse> = mutableListOf()
+        moveMultipleInfo.links.chunked(configurationProvider.maxApiBatchDataSize).forEach { chunk ->
+            val response = api.transferMultipleLinks(
+                userId = userId,
+                volumeId = volumeId,
+                moveMultipleInfo = moveMultipleInfo.copy(
+                    links = chunk,
+                ),
+            ).responses
+            responses.addAll(response)
+        }
+        return responses.toLinksResult()
+    }
+
     override suspend fun renameLink(
         linkId: LinkId,
         renameInfo: RenameInfo,
@@ -95,7 +147,13 @@ class LinkRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertOrUpdate(links: List<Link>) {
-        db.linkDao.insertOrUpdate(*links.map { link -> link.toLinkWithProperties() }.toTypedArray())
+        db.linkDao.insertOrUpdate(
+            *links
+                .map { link -> link.toLinkWithProperties() }
+                .toSet()
+                .updateNullParentWithAlbumIdIfApplicable()
+                .toTypedArray()
+        )
     }
 
     override suspend fun delete(linkIds: List<LinkId>) {
@@ -112,8 +170,18 @@ class LinkRepositoryImpl @Inject constructor(
         api
             .getLinks(shareId, linkIds)
             .let { response ->
-                response.parents.map { linkDto -> linkDto.toLinkWithProperties(shareId).toLink() } to
-                        response.links.map { linkDto -> linkDto.toLinkWithProperties(shareId).toLink() }
+                response
+                    .parents
+                    .map { linkDto -> linkDto.toLinkWithProperties(shareId) }
+                    .toSet()
+                    .updateNullParentWithAlbumIdIfApplicable()
+                    .map { linkWithProperties -> linkWithProperties.toLink() } to
+                        response
+                            .links
+                            .map { linkDto -> linkDto.toLinkWithProperties(shareId) }
+                            .toSet()
+                            .updateNullParentWithAlbumIdIfApplicable()
+                            .map { linkWithProperties -> linkWithProperties.toLink() }
             }
     }
 
@@ -124,6 +192,8 @@ class LinkRepositoryImpl @Inject constructor(
             db.linkDao.insertOrUpdate(
                 *(sortedParents + links.toSet())
                     .map { link -> link.toLinkWithProperties() }
+                    .toSet()
+                    .updateNullParentWithAlbumIdIfApplicable()
                     .toTypedArray()
             )
         }
@@ -134,6 +204,8 @@ class LinkRepositoryImpl @Inject constructor(
                 .getLinks(shareId, linkIds)
                 .links
                 .map { linkDto -> linkDto.toLinkWithProperties(shareId) }
+                .toSet()
+                .updateNullParentWithAlbumIdIfApplicable()
                 .toTypedArray()
         )
     }
@@ -159,4 +231,38 @@ class LinkRepositoryImpl @Inject constructor(
         db.linkDao.getLinks(userId, volumeId.id, linkId).map { linkFilePropertiesEntity ->
             linkFilePropertiesEntity.toLinkWithProperties().linkId
         }
+
+    override suspend fun copyFile(
+        volumeId: VolumeId,
+        fileId: FileId,
+        targetParentId: ParentId,
+        copyInfo: CopyInfo,
+    ): LinkId =
+        api.copyFile(
+            userId = fileId.userId,
+            volumeId = volumeId,
+            fileId = fileId,
+            copyInfo = copyInfo,
+        ).let { linkId ->
+            FileId(targetParentId.shareId, linkId)
+        }
+
+    private suspend fun Set<LinkWithProperties>.updateNullParentWithAlbumIdIfApplicable() =
+        map { linkWithProperties ->
+            if (linkWithProperties.link.parentId == null) {
+                val cachedAlbumId = linkWithProperties
+                    .albumInfos
+                    .map { albumInfo -> albumInfo.albumId }
+                    .firstOrNull { albumId ->
+                        db.linkDao.hasLinkEntity(albumId.userId, albumId.shareId.id, albumId.id)
+                    }
+                linkWithProperties.copy(
+                    link = linkWithProperties.link.copy(
+                        parentId = cachedAlbumId?.id
+                    )
+                )
+            } else {
+                linkWithProperties
+            }
+        }.toSet()
 }

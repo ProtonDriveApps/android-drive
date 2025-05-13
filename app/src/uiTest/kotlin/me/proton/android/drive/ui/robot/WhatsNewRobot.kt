@@ -24,7 +24,7 @@ import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
 
 object WhatsNewRobot : Robot {
-    private val gotItButton get() = node.withText(I18N.string.whats_new_public_sharing_action)
+    private val gotItButton get() = node.withText(I18N.string.common_got_it_action)
     private val whatsNewScreen get() = node.withTag(WhatsNewTestTag.screen)
 
     fun <T : Robot> clickGotIt(goesTo: T) = gotItButton.clickTo(goesTo)

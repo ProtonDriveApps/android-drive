@@ -21,6 +21,7 @@ package me.proton.core.drive.share.user.domain.repository
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType
 import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 import me.proton.core.drive.share.user.domain.entity.SharedListing
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -39,7 +40,12 @@ interface SharedRepository {
 
     suspend fun getSharedByMeListing(userId: UserId, index: Int, count: Int): List<SharedLinkId>
 
-    suspend fun getSharedWithMeListing(userId: UserId, index: Int, count: Int): List<SharedLinkId>
+    suspend fun getSharedWithMeListing(
+        userId: UserId,
+        types: Set<ShareTargetType>,
+        index: Int,
+        count: Int,
+    ): List<SharedLinkId>
 
     suspend fun deleteAllLocalSharedWithMe(userId: UserId)
 
@@ -58,4 +64,6 @@ interface SharedRepository {
     ): SharedListing
 
     suspend fun deleteAllLocalSharedByMe(userId: UserId)
+
+    suspend fun getSaveAction(sharedListing: SharedListing): SaveAction
 }

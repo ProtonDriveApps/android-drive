@@ -70,6 +70,7 @@ driveModule(
     implementation(libs.bundles.accompanist)
     implementation(libs.bundles.core)
     implementation(libs.google.play.review)
+    implementation(libs.lottie.compose)
     implementation(libs.material)
     implementation(libs.okhttp)
     implementation(libs.plumber)

@@ -33,32 +33,25 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.data.workmanager.onProtonHttpException
 import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.TRASH
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.eventmanager.usecase.HandleOnDeleteEvent
-import me.proton.core.drive.link.domain.entity.AlbumId
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.extension.ids
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
-import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.domain.usecase.GetShare
-import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_ALBUM_ID
-import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_FOLDER_ID
-import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_USER_ID
+import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_VOLUME_ID
 import me.proton.core.drive.trash.data.manager.worker.WorkerKeys.KEY_WORK_ID
 import me.proton.core.drive.trash.domain.notification.TrashFilesExtra
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.util.concurrent.TimeUnit
 import me.proton.core.drive.i18n.R as I18N
 
@@ -70,25 +63,21 @@ class TrashFileNodesWorker @AssistedInject constructor(
     private val updateEventAction: UpdateEventAction,
     private val linkRepository: LinkRepository,
     private val handleOnDeleteEvent: HandleOnDeleteEvent,
-    private val getShare: GetShare,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : AbstractMultiResponseCoroutineWorker(linkTrashRepository, appContext, params) {
 
     private val userId = UserId(inputData.getString(KEY_USER_ID) ?: "")
-    private val shareId = ShareId(userId, inputData.getString(KEY_SHARE_ID) ?: "")
-    private val parentId = getParentId()
+    private val volumeId = VolumeId(inputData.getString(KEY_VOLUME_ID) ?: "")
     override val workId = inputData.getString(KEY_WORK_ID) ?: ""
 
     override suspend fun executeCall(links: List<Link>): Map<LinkId, DataResult<Unit>> =
-        updateEventAction(shareId) {
-            driveTrashRepository.sendToTrash(parentId, links.ids)
+        updateEventAction(userId, volumeId) {
+            driveTrashRepository.sendToTrash(userId, volumeId, links.ids)
         }
 
     override suspend fun handleSuccesses(linkIds: List<LinkId>) {
-        getShare(shareId).toResult().getOrNull()?.let { share ->
-            linkTrashRepository.insertOrUpdateTrashState(share.volumeId, linkIds, TrashState.TRASHED)
-        }
+        linkTrashRepository.insertOrUpdateTrashState(volumeId, linkIds, TrashState.TRASHED)
         broadcastMessages(
             userId = userId,
             message = applicationContext.resources.getQuantityString(
@@ -97,7 +86,7 @@ class TrashFileNodesWorker @AssistedInject constructor(
                 linkIds.size,
             ),
             type = BroadcastMessage.Type.SUCCESS,
-            extra = TrashFilesExtra(userId, parentId, linkIds)
+            extra = TrashFilesExtra(userId, volumeId, linkIds)
         )
     }
 
@@ -108,7 +97,7 @@ class TrashFileNodesWorker @AssistedInject constructor(
             userId = userId,
             message = message ?: applicationContext.getString(I18N.string.trash_error_occurred_sending_to_trash),
             type = BroadcastMessage.Type.ERROR,
-            extra = TrashFilesExtra(userId, parentId, linkIds, exception ?: RuntimeException(message))
+            extra = TrashFilesExtra(userId, volumeId, linkIds, exception ?: RuntimeException(message))
         )
         handleNotExists(linkIds)
     }
@@ -119,8 +108,8 @@ class TrashFileNodesWorker @AssistedInject constructor(
                 linkRepository.fetchLink(linkId)
             }.onFailure { error ->
                 error.log(TRASH, "Cannot get link ${linkId.id.logId()}")
-                error.onProtonHttpException { protonCode ->
-                    if (protonCode == NOT_EXISTS) {
+                error.onProtonHttpException { protonData ->
+                    if (protonData.code == NOT_EXISTS) {
                         handleOnDeleteEvent(listOf(linkId), stopOnFailure = true)
                             .onFailure { error ->
                                 error.log(TRASH)
@@ -131,27 +120,16 @@ class TrashFileNodesWorker @AssistedInject constructor(
         }
     }
 
-    private fun getParentId(): ParentId =
-        inputData.getString(KEY_FOLDER_ID)
-            ?.let { folderId ->
-                FolderId(shareId, folderId)
-            }
-            ?: inputData.getString(KEY_ALBUM_ID)
-                ?.let { albumId ->
-                    AlbumId(shareId, albumId)
-                }
-            ?: error("Parent not found")
-
     companion object {
 
         fun getWorkRequest(
             userId: UserId,
-            parentId: ParentId,
+            volumeId: VolumeId,
             workId: String,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest = OneTimeWorkRequest.Builder(TrashFileNodesWorker::class.java)
             .setInputData(
-                workDataOf(userId, parentId, workId)
+                workDataOf(userId, volumeId, workId)
             )
             .setBackoffCriteria(
                 BackoffPolicy.EXPONENTIAL,
@@ -163,17 +141,11 @@ class TrashFileNodesWorker @AssistedInject constructor(
 
         fun workDataOf(
             userId: UserId,
-            parentId: ParentId,
+            volumeId: VolumeId,
             workId: String,
         ) = Data.Builder()
             .putString(KEY_USER_ID, userId.id)
-            .putString(KEY_SHARE_ID, parentId.shareId.id)
-            .apply {
-                when (parentId) {
-                    is FolderId -> putString(KEY_FOLDER_ID, parentId.id)
-                    is AlbumId -> putString(KEY_ALBUM_ID, parentId.id)
-                }
-            }
+            .putString(KEY_VOLUME_ID, volumeId.id)
             .putString(KEY_WORK_ID, workId)
             .build()
     }

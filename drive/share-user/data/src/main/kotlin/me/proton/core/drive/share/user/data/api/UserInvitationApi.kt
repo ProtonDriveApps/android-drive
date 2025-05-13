@@ -24,15 +24,17 @@ import me.proton.core.drive.share.user.data.api.response.GetUserInvitationRespon
 import me.proton.core.drive.share.user.data.api.response.GetUserInvitationsResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
-import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface UserInvitationApi : BaseRetrofitApi {
 
     @GET("drive/v2/shares/invitations")
-    suspend fun getInvitations(): GetUserInvitationsResponse
+    suspend fun getInvitations(
+        @Query("AnchorID") anchorId: String?,
+    ): GetUserInvitationsResponse
 
     @GET("drive/v2/shares/invitations/{invitationId}")
     suspend fun getInvitation(

@@ -18,8 +18,8 @@
 
 package me.proton.android.drive.ui.dialog
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,7 +36,6 @@ import androidx.lifecycle.flowWithLifecycle
 import me.proton.android.drive.photos.presentation.extension.details
 import me.proton.android.drive.ui.viewmodel.AlbumOptionsViewModel
 import me.proton.core.compose.component.bottomsheet.BottomSheetContent
-import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.presentation.component.BottomSheetEntry
 import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -55,6 +54,7 @@ fun AlbumOptions(
     navigateToManageAccess: (linkId: LinkId) -> Unit,
     navigateToRename: (linkId: LinkId) -> Unit,
     navigateToDelete: (AlbumId) -> Unit,
+    navigateToLeave: (AlbumId) -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -70,6 +70,7 @@ fun AlbumOptions(
             navigateToManageAccess = navigateToManageAccess,
             navigateToRename = navigateToRename,
             navigateToDelete = navigateToDelete,
+            navigateToLeave = navigateToLeave,
             dismiss = dismiss,
         ).flowWithLifecycle(
             lifecycle = lifecycle,
@@ -153,10 +154,9 @@ fun AlbumOptionsHeader(
             subtitle = details,
             modifier = modifier,
         ) { contentModifier ->
-            Icon(
-                painter = painterResource(id = BasePresentation.drawable.ic_proton_images),
+            Image(
+                painter = painterResource(id = BasePresentation.drawable.ic_folder_album),
                 contentDescription = null,
-                tint = ProtonTheme.colors.iconNorm,
                 modifier = contentModifier,
             )
         }

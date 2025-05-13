@@ -28,6 +28,7 @@ interface GrowlerRobot {
         StringUtils.pluralStringFromResource(
             I18N.plurals.trash_operation_successful_format,
             quantity,
+            quantity
         )
     )
     private fun renameSuccessGrowler(newName: String) = node.withText(
@@ -44,8 +45,17 @@ interface GrowlerRobot {
         )
     )
 
+    private fun deleteFromAlbumSuccessGrowler(quantity: Int) = node.withText(
+        StringUtils.pluralStringFromResource(
+            I18N.plurals.in_app_notification_remove_from_album_success,
+            quantity,
+            quantity
+        )
+    )
+
     private val retryButton get() = node.withText(I18N.string.common_retry)
     private val noInternetLabel get() = node.withText(I18N.string.common_error_no_internet)
+    private val undoButton get() = node.withText(I18N.string.trash_action_undo)
 
     fun <T : Robot> dismissFolderCreateSuccessGrowler(itemName: String, goesTo: T) =
         node
@@ -63,7 +73,6 @@ interface GrowlerRobot {
     fun <T : Robot> dismissRenameSuccessGrowler(newName: String, goesTo: T) =
         renameSuccessGrowler(newName).clickTo(goesTo)
 
-
     fun <T : Robot> dismissDeleteSuccessGrowler(quantity: Int, goesTo: T) =
         deletePermanentlySuccessGrowler(quantity).clickTo(goesTo)
 
@@ -74,5 +83,16 @@ interface GrowlerRobot {
     fun retryGrowlerIsDisplayed() {
         retryButton.await { assertIsDisplayed() }
         noInternetLabel.assertIsDisplayed()
+    }
+
+    fun moveToTrashSuccessGrowlerIsDisplayedWithUndoButton(quantity: Int) {
+        moveToTrashSuccessGrowler(quantity).assertIsDisplayed()
+        undoButton.await { assertIsDisplayed() }
+    }
+
+    fun itemsRemovedFromAlbumGrowlerIsDisplayedAndDismissed(quantity: Int) {
+        deleteFromAlbumSuccessGrowler(quantity).assertIsDisplayed()
+        deleteFromAlbumSuccessGrowler(quantity).click()
+        deleteFromAlbumSuccessGrowler(quantity).assertIsNotDisplayed()
     }
 }

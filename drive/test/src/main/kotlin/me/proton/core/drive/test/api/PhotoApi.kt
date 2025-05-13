@@ -21,6 +21,8 @@ package me.proton.core.drive.test.api
 import me.proton.core.drive.base.data.api.response.CodeResponse
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.photo.data.api.entity.AlbumPhotoListingDto
+import me.proton.core.drive.photo.data.api.request.FavoriteRequest
+import me.proton.core.drive.photo.data.api.request.TagRequest
 import me.proton.core.drive.photo.data.api.response.AddToRemoveFromAlbumResponse
 import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse
@@ -28,6 +30,10 @@ import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.network.data.protonApi.ProtonErrorData
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
+import retrofit2.http.Body
+import retrofit2.http.HTTP
+import retrofit2.http.POST
+import retrofit2.http.Path
 
 fun MockWebServer.createAlbum(block: RequestContext.() -> MockResponse) = routing {
     post("/drive/photos/volumes/{volumeID}/albums", block)
@@ -168,6 +174,49 @@ fun MockWebServer.addPhotosToAlbumFailure(
                         )
                     )
                 }
+            )
+        }
+    }
+}
+
+fun MockWebServer.postLinkFavorite(block: RequestContext.() -> MockResponse) = routing {
+    post("/drive/photos/volumes/{volumeID}/links/{linkID}/favorite", block)
+}
+
+fun MockWebServer.postLinkFavorite() {
+    postLinkFavorite {
+        jsonResponse {
+            CodeResponse(
+                code = ProtonApiCode.SUCCESS.toInt(),
+            )
+        }
+    }
+}
+
+fun MockWebServer.postLinkTags(block: RequestContext.() -> MockResponse) = routing {
+    post("/drive/photos/volumes/{volumeID}/links/{linkID}/tags", block)
+}
+
+fun MockWebServer.postLinkTags() {
+    postLinkTags {
+        jsonResponse {
+            CodeResponse(
+                code = ProtonApiCode.SUCCESS.toInt(),
+            )
+        }
+    }
+}
+
+
+fun MockWebServer.deleteLinkTags(block: RequestContext.() -> MockResponse) = routing {
+    delete("/drive/photos/volumes/{volumeID}/links/{linkID}/tags", block)
+}
+
+fun MockWebServer.deleteLinkTags() {
+    deleteLinkTags {
+        jsonResponse {
+            CodeResponse(
+                code = ProtonApiCode.SUCCESS.toInt(),
             )
         }
     }

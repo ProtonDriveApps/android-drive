@@ -18,6 +18,6 @@
   -->
 <resources>
   <string name="whats_new_title">Novosti</string>
-  <string name="whats_new_public_sharing_title">Skupna raba z vsemi</string>
-  <string name="whats_new_public_sharing_description">Create shareable links to collaborate on folders and files — no Proton account required</string>
+  <string name="whats_new_albums_title">Foto albumi so tu!</string>
+  <string name="whats_new_albums_description">Organize your memories with our new Albums feature. Filter by videos, favorites, and more—all with the same end-to-end encryption you trust.</string>
 </resources>

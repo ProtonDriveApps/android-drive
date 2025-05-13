@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonColors
@@ -36,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,7 +57,7 @@ import me.proton.core.presentation.R as CorePresentation
 fun ProtonIconTextButton(
     iconPainter: Painter,
     title: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier.heightIn(min = 44.dp),
     enabled: Boolean = true,
     loading: Boolean = false,
     contained: Boolean = true,
@@ -71,12 +73,12 @@ fun ProtonIconTextButton(
 ) {
     ProtonButton(
         onClick = onClick,
-        modifier = modifier.heightIn(min = ProtonDimens.DefaultButtonMinHeight),
+        modifier = modifier,
         enabled = enabled,
         loading = loading,
         contained = contained,
         interactionSource = interactionSource,
-        elevation = ButtonDefaults.protonElevation(),
+        elevation = null,
         shape = RoundedCornerShape(ProtonDimens.DefaultSpacing),
         border = null,
         colors = colors,
@@ -85,6 +87,7 @@ fun ProtonIconTextButton(
             IconTextContent(
                 iconPainter = iconPainter,
                 text = title,
+                textColor = colors.contentColor(enabled).value,
                 enabled = enabled,
             )
         },
@@ -95,6 +98,7 @@ fun ProtonIconTextButton(
 fun IconTextContent(
     iconPainter: Painter,
     text: String,
+    textColor: Color,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
@@ -106,10 +110,12 @@ fun IconTextContent(
         Icon(
             painter = iconPainter,
             contentDescription = null,
+            modifier = Modifier.size(16.dp),
         )
         Spacer(modifier = Modifier.width(ProtonDimens.ExtraSmallSpacing))
         Text(
             text = text,
+            color = textColor,
             style = ProtonTheme.typography.defaultStrongNorm(enabled),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

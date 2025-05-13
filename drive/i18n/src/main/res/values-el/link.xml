@@ -28,4 +28,25 @@
   <string name="files_upload_content_description_cancel_upload">Ακύρωση ανεβάσματος φακέλου</string>
   <string name="files_upload_failure_storage_full_title">Γεμάτος χώρος αποθήκευσης</string>
   <string name="files_upload_failure_storage_full_description">Ο αποθηκευτικός χώρος του λογαριασμού σας έχει εξαντληθεί. Ελευθερώστε χώρο ή κάντε αναβάθμιση στο πλάνο σας με περισσότερο χώρο αποθήκευσης.</string>
+  <string name="files_operation_failed_all">Η λειτουργία απέτυχε</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="one">%1$d απέτυχε</item>
+    <item quantity="other">%1$d απέτυχαν</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="one">%1$d επετεύχθη</item>
+    <item quantity="other">%1$d επετεύχθησαν</item>
+  </plurals>
 </resources>

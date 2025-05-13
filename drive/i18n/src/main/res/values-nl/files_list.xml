@@ -47,6 +47,12 @@
   <string name="files_send_to_trash_action">Naar prullenbak verplaatsen</string>
   <string name="files_remove_me_action">Verwijder mij</string>
   <string name="files_move_file_action">Verplaatsen</string>
+  <string name="files_add_to_favorite_action">Aan favorieten toevoegen</string>
+  <string name="files_remove_from_favorite_action">Verwijderen uit favorieten</string>
+  <string name="files_add_to_favorite_action_success">Succesvol toegevoegd aan favorieten</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Foto is naar de stream gekopieerd en daar als favoriet gemarkeerd</string>
+  <string name="files_remove_from_favorite_action_success">Succesvol verwijderd uit favorieten</string>
+  <string name="files_save_shared_photo_action">Gedeelde foto opslaan</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

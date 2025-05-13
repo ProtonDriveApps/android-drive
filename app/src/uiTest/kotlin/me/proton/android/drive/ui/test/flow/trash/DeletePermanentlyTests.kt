@@ -219,4 +219,50 @@ class DeletePermanentlyTests : BaseTest() {
                 itemIsNotDisplayed(file)
             }
     }
+
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun deleteAPhotoInAlbum() {
+        val image = "trashedFileInAlbum.jpg"
+        PhotosTabRobot.waitUntilLoaded()
+        PhotosTabRobot
+            .clickSidebarButton()
+            .clickTrash()
+            .clickMoreOnItem(image)
+            .clickDeletePermanently()
+            .confirmDelete()
+            .dismissDeleteSuccessGrowler(1, TrashRobot)
+        TrashRobot
+            .verify {
+                itemIsNotDisplayed(image)
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @Scenario(forTag = "main", value = 4, isPhotos = true, isDevice = true)
+    fun emptyTrashDeleteAllPhotos() {
+        val itemsInTrash = arrayOf(
+            "trashedFileInAlbumByOtherUser.jpg",
+            "trashedFileInAlbum.jpg",
+            "trashedFileInStreamInAlbum.jpg",
+        )
+
+        PhotosTabRobot
+            .openSidebarBySwipe()
+            .clickTrash()
+            .verify {
+                robotDisplayed()
+            }
+            .openMoreOptions()
+            .clickEmptyTrash()
+            .confirmEmptyTrash()
+            .verify {
+                itemIsNotDisplayed(*itemsInTrash)
+            }
+    }
 }

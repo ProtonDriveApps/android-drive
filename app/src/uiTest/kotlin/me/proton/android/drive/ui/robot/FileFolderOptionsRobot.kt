@@ -21,6 +21,9 @@ package me.proton.android.drive.ui.robot
 import me.proton.android.drive.ui.dialog.FileFolderOptionsDialogTestTag
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
+import me.proton.android.drive.ui.dialog.MultipleFileFolderOptionsDialogTestTag
+import me.proton.core.test.android.instrumented.utils.StringUtils
+
 
 @Suppress("TooManyFunctions")
 object FileFolderOptionsRobot : Robot {
@@ -28,6 +31,7 @@ object FileFolderOptionsRobot : Robot {
     private val moveButton get() = node.withText(I18N.string.files_move_file_action)
     private val moveToTrashButton get() = node.withText(I18N.string.files_send_to_trash_action)
     private val restoreFromTrashButton get() = node.withText(I18N.string.files_restore_from_trash_action)
+    private val saveSharedPhotoButton get() = node.withText(I18N.string.files_save_shared_photo_action)
     private val makeAvailableOfflineButton get() = node.withText(I18N.string.common_make_available_offline_action)
     private val openInBrowserButton get() = node.withText(I18N.string.common_open_in_browser_action)
     private val removeAvailableOfflineButton get() = node
@@ -35,6 +39,8 @@ object FileFolderOptionsRobot : Robot {
     private val manageLinkButton get() = node.withText(I18N.string.common_manage_link_action)
     private val setAsAlbumCoverButton get() = node.withText(I18N.string.common_set_as_album_cover_action)
     private val shareButton get() = node.withText(I18N.string.common_share)
+    private val addToFavoriteButton get() = node.withText(I18N.string.files_add_to_favorite_action)
+    private val removeFromFavoriteButton get() = node.withText(I18N.string.files_remove_from_favorite_action)
     private val manageAccessButton get() = node.withText(I18N.string.common_manage_access_action)
     private val removeMeButton get() = node.withText(I18N.string.files_remove_me_action)
     private val renameButton get() = node.withText(I18N.string.files_rename_file_action)
@@ -60,6 +66,12 @@ object FileFolderOptionsRobot : Robot {
     fun clickRemoveFromAlbum() = AlbumRobot.apply {
         removeFromAlbum.scrollTo().click()
     }
+    fun <T : Robot> clickAddToFavorite(goesTo: T) =
+        addToFavoriteButton.scrollTo().clickTo(goesTo)
+
+    fun <T : Robot> clickRemoveFromFavorite(goesTo: T) =
+        removeFromFavoriteButton.scrollTo().clickTo(goesTo)
+
     fun clickShare() = ShareUserRobot.apply {
         shareButton.scrollTo().click()
     }
@@ -82,6 +94,9 @@ object FileFolderOptionsRobot : Robot {
     fun clickRestoreTrash() = FilesTabRobot.apply {
         restoreFromTrashButton.scrollTo().click()
     }
+    fun clickSaveSharedPhoto() = AlbumRobot.apply {
+        saveSharedPhotoButton.scrollTo().click()
+    }
     fun clickMakeAvailableOffline() = FilesTabRobot.apply {
         makeAvailableOfflineButton.scrollTo().click()
     }
@@ -101,6 +116,17 @@ object FileFolderOptionsRobot : Robot {
     }
 
     fun clickOpenInBrowserButton() = openInBrowserButton.scrollTo().clickTo(FilesTabRobot)
+
+    fun numberOfItemsSelectedIsSeen(quantity: Int) {
+        node.withTag(MultipleFileFolderOptionsDialogTestTag.fileOrFolderOptions).hasDescendant(
+            node.withText(
+                StringUtils.pluralStringFromResource(
+                    I18N.plurals.common_selected,
+                    quantity,
+                    quantity
+                )
+            )).assertIsDisplayed()
+    }
 
     override fun robotDisplayed() {
         fileFolderOptionsScreen.await { assertIsDisplayed() }

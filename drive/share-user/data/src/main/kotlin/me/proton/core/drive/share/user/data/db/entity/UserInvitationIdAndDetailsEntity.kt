@@ -28,6 +28,7 @@ import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.DETAILS
 import me.proton.core.drive.base.data.db.Column.ID
 import me.proton.core.drive.base.data.db.Column.SHARE_ID
+import me.proton.core.drive.base.data.db.Column.TYPE
 import me.proton.core.drive.base.data.db.Column.USER_ID
 import me.proton.core.drive.base.data.db.Column.VOLUME_ID
 
@@ -56,5 +57,6 @@ data class UserInvitationIdAndDetailsEntity(
     val shareId: String,
     @Embedded(prefix = "details_")
     val details: UserInvitationDetailsEntity?,
-
+    @ColumnInfo(TYPE)
+    val shareTargetType: Long? = null,
 )

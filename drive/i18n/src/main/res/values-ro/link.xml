@@ -28,4 +28,27 @@
   <string name="files_upload_content_description_cancel_upload">Anulare încărcare fișier</string>
   <string name="files_upload_failure_storage_full_title">Spațiu de stocare plin</string>
   <string name="files_upload_failure_storage_full_description">Contul nu mai are spațiu de stocare. Eliberați spațiu sau treceți la un plan cu mai mult spațiu de stocare.</string>
+  <string name="files_operation_failed_all">Operațiunea a eșuat.</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="one">Au eșuat: %1$d</item>
+    <item quantity="few">Au eșuat: %1$d</item>
+    <item quantity="other">Au eșuat: %1$d</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="one">Au reușit: %1$d</item>
+    <item quantity="few">Au reușit: %1$d</item>
+    <item quantity="other">Au reușit: %1$d</item>
+  </plurals>
 </resources>

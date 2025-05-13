@@ -23,7 +23,7 @@ import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.backup.domain.repository.FindDuplicatesRepository
 import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
@@ -35,15 +35,15 @@ class PhotoFindDuplicatesRepository @Inject constructor(
 ) : FindDuplicatesRepository {
 
     override suspend fun findDuplicates(
-        folderId: FolderId,
+        parentId: ParentId,
         nameHashes: List<String>,
         clientUids: List<ClientUid>,
     ): List<BackupDuplicate> {
-        val photoShare = getPhotoShare(folderId.userId).toResult().getOrThrow()
+        val photoShare = getPhotoShare(parentId.userId).toResult().getOrThrow()
         return photoRepository.findDuplicates(
-            userId = folderId.userId,
+            userId = parentId.userId,
             volumeId = photoShare.volumeId,
-            parentId = folderId,
+            parentId = parentId,
             nameHashes = nameHashes,
             clientUids = emptyList(),
         ).filter { photoDuplicate ->

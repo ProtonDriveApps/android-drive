@@ -22,10 +22,11 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.AlbumRobot
+import me.proton.android.drive.ui.robot.AlbumsTabRobot
 import me.proton.android.drive.ui.robot.CreateAlbumTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.PickerAlbumRobot
-import me.proton.android.drive.ui.robot.PickerPhotosAndAlbumsRobot
+import me.proton.android.drive.ui.robot.ShareUserRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.utils.getRandomString
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
@@ -45,7 +46,7 @@ class CreatingAlbumFlowTest : BaseTest() {
         val randomAlbumName = getRandomString()
 
         PhotosTabRobot
-            .clickOnAlbumsTab()
+            .clickOnAlbumsTitleTab()
             .clickPlusButton()
             .typeName(randomAlbumName)
             .clickOnDone(AlbumRobot)
@@ -64,7 +65,7 @@ class CreatingAlbumFlowTest : BaseTest() {
         val albumName = "album-for-photos"
 
         PhotosTabRobot
-            .clickOnAlbumsTab()
+            .clickOnAlbumsTitleTab()
             .clickPlusButton()
             .typeName(albumName)
             .clickOnDone(AlbumRobot)
@@ -97,7 +98,7 @@ class CreatingAlbumFlowTest : BaseTest() {
                 assertItemsInAlbum(1)
             }
             .clickBack(PhotosTabRobot)
-            .clickOnAlbumsTab()
+            .clickOnAlbumsTitleTab()
             .verify {
                 robotDisplayed()
                 assertAlbumIsDisplayed(albumName, 1)
@@ -111,11 +112,10 @@ class CreatingAlbumFlowTest : BaseTest() {
     @FeatureFlag(DRIVE_ALBUMS, ENABLED)
     fun inEmptyAlbumAddPhotosThenCreate() {
         val albumName = "new-album"
-        val album = "album-for-photos-in-stream"
         val photo1 = "activeTaggedFileInStream-2.jpg"
         val photo2 = "activeFileInStreamAndAlbum.jpg"
         PhotosTabRobot
-            .clickOnAlbumsTab()
+            .clickOnAlbumsTitleTab()
             .clickPlusButton()
             .typeName(albumName)
             .clickOnAdd()
@@ -123,25 +123,55 @@ class CreatingAlbumFlowTest : BaseTest() {
                 assertTotalPhotosToAddToAlbum(0)
             }
             .clickOnPhoto(photo1)
-            .clickOnAlbumsTab()
-            .clickOnAlbum(album, PickerAlbumRobot)
-            .clickOnPhoto(photo2)
             .verify {
-                assertTotalPhotosToAddToAlbum(2)
+                assertTotalPhotosToAddToAlbum(1)
             }
             .clickOnReset(PickerAlbumRobot)
             .verify {
                 assertTotalPhotosToAddToAlbum(0)
             }
             .clickOnPhoto(photo2)
-            .clickBack(PickerPhotosAndAlbumsRobot)
-            .clickOnPhotosTab()
             .clickOnPhoto(photo1)
             .clickOnAddToAlbum(CreateAlbumTabRobot)
             .clickOnDone(AlbumRobot)
             .verify {
                 assertAlbumNameIsDisplayed(albumName)
                 assertItemsInAlbum(2)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun createSharedAlbum() {
+        val sharingUser = protonRule.testDataRule.preparedUsers["sharingUser"]!!
+        val firstPhoto = "activeTaggedFileInStream-1.jpg"
+        val secondPhoto = "activeTaggedFileInStream-2.jpg"
+        val sharedAlbumName = "My shared album"
+        PhotosTabRobot
+            .longClickOnPhoto(firstPhoto)
+            .longClickOnPhoto(secondPhoto)
+            .clickMultipleOptions()
+            .clickShare()
+            .clickOnNewSharedAlbum()
+            .typeName(sharedAlbumName)
+            .clickOnShare(ShareUserRobot)
+            .typeEmail(sharingUser.email)
+            .clickSend()
+            .verify {
+                dismissInvitationSent(1)
+            }
+        AlbumRobot
+            .verify {
+                assertAlbumNameIsDisplayed(sharedAlbumName)
+            }
+            .clickBack(PhotosTabRobot)
+            .clickOnAlbumsTitleTab()
+            .clickOnFilterSharedByMe()
+            .verify {
+                assertAlbumIsDisplayed(sharedAlbumName)
             }
     }
 }

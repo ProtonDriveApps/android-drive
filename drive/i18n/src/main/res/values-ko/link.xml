@@ -28,4 +28,23 @@
   <string name="files_upload_content_description_cancel_upload">파일 업로드 취소</string>
   <string name="files_upload_failure_storage_full_title">저장 공간이 가득 찼습니다.</string>
   <string name="files_upload_failure_storage_full_description">사용자의 저장 공간이 초과되었습니다. 공간을 비우거나 요금제를 업그레이드 하세요.</string>
+  <string name="files_operation_failed_all">작업 실패</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="other">%1$d개 실패</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="other">%1$d개 성공</item>
+  </plurals>
 </resources>

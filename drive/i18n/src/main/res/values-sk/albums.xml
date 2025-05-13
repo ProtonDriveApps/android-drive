@@ -39,9 +39,18 @@
   <string name="albums_delete_album_dialog_description_with_children">Niektoré fotografie v tomto albume nie sú uložené na časovej osi. Vymazaním tohto albumu sa tieto fotografie natrvalo odstránia.\nChcete ich pred odstránením uložiť?</string>
   <string name="albums_delete_album_dialog_delete_without_saving_action">Vymazať bez uloženia</string>
   <string name="albums_delete_album_dialog_save_and_delete_action">Uložiť fotografie a vymazať</string>
+  <string name="albums_leave_album_dialog_title">Opustiť album?</string>
+  <!--
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">Naozaj chcete opustiť album „%1$s“?\nStratíte prístup k fotografiám, ktoré ste ešte neuložili.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Opustiť bez uloženia</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Uložiť fotografie a odísť</string>
   <string name="albums_add_zero_to_album_button">Pridať do albumu</string>
   <!--
-        Variable %1$s is a number of photos to add to album
+        Variable %1$d is a number of photos to add to album
         Example:
             "Add 1 to album"
             "Add 33 to album"
@@ -53,4 +62,125 @@
     <item quantity="other">Pridať do %1$d albumov</item>
   </plurals>
   <string name="albums_set_album_as_cover_success">Nastaviť ako obal albumu</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="one">%1$d položka pridaná do albumu</item>
+    <item quantity="few">%1$d položky pridané do albumu</item>
+    <item quantity="many">%1$d položiek pridaných do albumu</item>
+    <item quantity="other">%1$d položiek pridaných do albumu</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="one">%1$d položka už existuje</item>
+    <item quantity="few">%1$d položky už existujú</item>
+    <item quantity="many">%1$d položiek už existuje</item>
+    <item quantity="other">%1$d položiek už existuje</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="one">%1$d položka zlyhala</item>
+    <item quantity="few">%1$d položky zlyhali</item>
+    <item quantity="many">%1$d položiek zlyhalo</item>
+    <item quantity="other">%1$d položiek zlyhalo</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="one">%1$d položka pridaná do vášho Drive</item>
+    <item quantity="few">%1$d položky pridané do vášho Drive</item>
+    <item quantity="many">%1$d položiek pridaných do vášho Drive</item>
+    <item quantity="other">%1$d položiek pridaných do vášho Drive</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="one">%1$d položka už existuje</item>
+    <item quantity="few">%1$d položky už existujú</item>
+    <item quantity="many">%1$d položiek už existuje</item>
+    <item quantity="other">%1$d položiek už existuje</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="one">%1$d položka zlyhala</item>
+    <item quantity="few">%1$d položky zlyhali</item>
+    <item quantity="many">%1$d položiek zlyhalo</item>
+    <item quantity="other">%1$d položiek zlyhalo</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="one">%1$d položka odstránená z albumu</item>
+    <item quantity="few">%1$d položky odstránené z albumu</item>
+    <item quantity="many">%1$d položiek odstránených z albumu</item>
+    <item quantity="other">%1$d položiek odstránených z albumu</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="one">%1$d položka zlyhala</item>
+    <item quantity="few">%1$d položky zlyhali</item>
+    <item quantity="many">%1$d položiek zlyhalo</item>
+    <item quantity="other">%1$d položiek zlyhalo</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">Žiadne fotografie</string>
+  <string name="albums_empty_album_screen_description">Fotografie pridané vami alebo inými členmi sa zobrazia tu</string>
+  <string name="albums_empty_albums_list_screen_title">Žiadne albumy</string>
+  <string name="albums_empty_albums_list_screen_description">Na tomto mieste sa zobrazia albumy, ktoré vytvoríte alebo ku ktorým sa pripojíte</string>
+  <string name="albums_empty_albums_my_albums_screen_description">The albums that you create will appear here</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">No shared albums</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Albums you\'ve shared will appear here</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">No albums shared with me</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Albums shared with you will appear here</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="one">%1$d s vami zdieľaný album</item>
+    <item quantity="few">%1$d s vami zdieľané albumy</item>
+    <item quantity="many">%1$d s vami zdieľaných albumov</item>
+    <item quantity="other">%1$d s vami zdieľaných albumov</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">Zdieľané cez</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Pridať do zdieľaného albumu</string>
+  <string name="albums_share_multiple_photos_options_album_details">Zdieľaný album</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Nový zdieľaný album</string>
 </resources>

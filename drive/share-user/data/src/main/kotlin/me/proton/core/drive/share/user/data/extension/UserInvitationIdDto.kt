@@ -27,4 +27,5 @@ fun UserInvitationIdDto.toEntity(userId: UserId) = UserInvitationIdEntity(
     userId = userId,
     volumeId = volumeId,
     shareId = shareId,
+    type = shareTargetType,
 )

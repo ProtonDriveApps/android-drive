@@ -36,15 +36,118 @@
   <string name="albums_delete_album_dialog_description_with_children">이 앨범 내의 일부 사진이 타임라인에 저장되지 않았습니다. 앨범에서 사진을 삭제하면 해당 사진 또한 영구적으로 삭제됩니다.\n삭제하기 전에 저장하시겠어요?</string>
   <string name="albums_delete_album_dialog_delete_without_saving_action">저장하지 않고 삭제하기</string>
   <string name="albums_delete_album_dialog_save_and_delete_action">사진 저장하고 삭제하기</string>
-  <string name="albums_add_zero_to_album_button">Add to album</string>
+  <string name="albums_leave_album_dialog_title">앨범에서 나가시겠어요?</string>
   <!--
-        Variable %1$s is a number of photos to add to album
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">앨범 \"%1$s\"에서 정말 나가시겠습니까?\n아직 저장하지 못한 사진의 접근 권한이 상실됩니다.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">저장하지 않고 나가기</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">사진을 저장하고 나가기</string>
+  <string name="albums_add_zero_to_album_button">앨범에 추가</string>
+  <!--
+        Variable %1$d is a number of photos to add to album
         Example:
             "Add 1 to album"
             "Add 33 to album"
     -->
   <plurals name="albums_add_non_zero_to_album_button">
-    <item quantity="other">Add %1$d to album</item>
+    <item quantity="other">앨범에 %1$d개 추가</item>
   </plurals>
-  <string name="albums_set_album_as_cover_success">Set as album cover</string>
+  <string name="albums_set_album_as_cover_success">앨범 커버로 설정</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="other">%1$d개 항목이 앨범에 추가되었습니다</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="other">%1$d개 항목이 이미 추가되어 있습니다</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="other">%1$d개 항목 실패</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="other">%1$d개의 항목이 Drive에 추가되었습니다.</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="other">%1$d개 항목이 이미 추가되어 있습니다</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="other">%1$d개 항목 실패</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="other">%1$d개 항목이 앨범에서 제거되었습니다</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="other">%1$d개 항목 실패</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">사진 없음</string>
+  <string name="albums_empty_album_screen_description">나 또는 다른 구성원이 추가한 사진이 여기에 표시됩니다</string>
+  <string name="albums_empty_albums_list_screen_title">앨범 없음</string>
+  <string name="albums_empty_albums_list_screen_description">내가 생성하거나 참여한 앨범이 여기에 표시됩니다</string>
+  <string name="albums_empty_albums_my_albums_screen_description">내가 생성한 앨범이 여기에 표시됩니다</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">공유된 앨범 없음</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">내가 공유한 앨범이 여기에 표시됩니다</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">나와 공유된 앨범 없음</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">나와 공유된 앨범이 여기에 표시됩니다</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="other">%1$d개 앨범이 나와 공유됨</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">공유에 사용할 앱:</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">공유 앨범에 추가</string>
+  <string name="albums_share_multiple_photos_options_album_details">공유된 앨범</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">신규 공유된 앨범</string>
 </resources>

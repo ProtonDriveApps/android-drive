@@ -53,6 +53,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
+import me.proton.android.drive.BuildConfig
 import me.proton.android.drive.extension.getDefaultMessage
 import me.proton.android.drive.extension.log
 import me.proton.android.drive.ui.effect.PreviewEffect
@@ -104,6 +105,7 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.domain.extension.isProtonDocument
 import me.proton.core.drive.link.domain.extension.requireFolderId
 import me.proton.core.drive.link.domain.extension.rootFolderId
@@ -159,6 +161,9 @@ class PreviewViewModel @Inject constructor(
                 id = albumIdString,
             )
         }
+    private val photoTag = savedStateHandle.get<String>(Screen.PagerPreview.PHOTO_TAG)?.let { tag ->
+        PhotoTag.fromLong(tag.toLong())
+    }
     private val trigger = MutableSharedFlow<Trigger>(1).apply {
         val shareId = savedStateHandle.require<String>(Screen.PagerPreview.SHARE_ID)
         val fileId = savedStateHandle.require<String>(Screen.PagerPreview.FILE_ID)
@@ -206,6 +211,7 @@ class PreviewViewModel @Inject constructor(
             )
             PagerType.PHOTO -> PhotoContentProvider(
                 userId = userId,
+                photoTag = photoTag,
                 getDecryptedDriveLink = getDecryptedDriveLink,
                 getPhotoShare = getPhotoShare,
                 photoRepository = photoRepository,
@@ -275,7 +281,9 @@ class PreviewViewModel @Inject constructor(
             },
             currentIndex = currentIndex.value,
         )
-        CoreLogger.d(VIEW_MODEL, "$previewViewState")
+        if (BuildConfig.DEBUG) {
+            CoreLogger.d(VIEW_MODEL, "$previewViewState")
+        }
         emit(previewViewState)
     }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
@@ -715,6 +723,7 @@ class PhotoContentProvider(
     getPhotoShare: GetPhotoShare,
     photoRepository: PhotoRepository,
     userId: UserId,
+    photoTag: PhotoTag?,
     configurationProvider: ConfigurationProvider,
     coroutineScope: CoroutineScope,
 ) : PreviewContentProvider {
@@ -729,14 +738,20 @@ class PhotoContentProvider(
         .distinctUntilChanged()
         .transform { photoShare ->
             emitAll(
-                photoRepository.getPhotoListingCount(userId, photoShare.volumeId)
+                photoRepository.getPhotoListingCount(userId, photoShare.volumeId, photoTag)
                     .distinctUntilChanged()
                     .transformLatest {
                         emit(
                             pagedList(
                                 pageSize = configurationProvider.dbPageSize,
                             ) { fromIndex, count ->
-                                photoRepository.getPhotoListings(userId, photoShare.volumeId, fromIndex, count)
+                                photoRepository.getPhotoListings(
+                                    userId = userId,
+                                    volumeId = photoShare.volumeId,
+                                    fromIndex = fromIndex,
+                                    count = count,
+                                    tag = photoTag,
+                                )
                             }
                         )
                     }

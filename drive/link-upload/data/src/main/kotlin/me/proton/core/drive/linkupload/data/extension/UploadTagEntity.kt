@@ -18,8 +18,8 @@
 
 package me.proton.core.drive.linkupload.data.extension
 
-import me.proton.core.drive.link.domain.PhotoTag
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.linkupload.data.db.entity.UploadTagEntity
 
 fun UploadTagEntity.toPhotoTag(): PhotoTag? =
-    PhotoTag.entries.firstOrNull { photoTag -> photoTag.value == tag }
+    PhotoTag.fromLong(tag)

@@ -32,15 +32,12 @@ import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.eventmanager.usecase.HandleOnDeleteEvent
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.trash.data.manager.worker.EmptyTrashSuccessWorker
@@ -51,7 +48,6 @@ import me.proton.core.drive.trash.data.manager.worker.TrashFileNodesWorker
 import me.proton.core.drive.trash.domain.TrashManager
 import me.proton.core.drive.trash.domain.repository.DriveTrashRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.drive.volume.domain.usecase.GetVolume
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -73,7 +69,7 @@ class StubbedTrashManager @Inject constructor(
 
     override suspend fun trash(
         userId: UserId,
-        parentId: ParentId,
+        volumeId: VolumeId,
         linkIds: List<LinkId>,
     ): DataResult<String> = linkTrashRepository.insertWork(linkIds).onSuccess { workId ->
         TestListenableWorkerBuilder<TrashFileNodesWorker>(context)
@@ -83,20 +79,19 @@ class StubbedTrashManager @Inject constructor(
                     workerClassName: String,
                     workerParameters: WorkerParameters,
                 ) = TrashFileNodesWorker(
-                    appContext = appContext,
-                    params = workerParameters,
                     driveTrashRepository = driveTrashRepository,
                     linkTrashRepository = linkTrashRepository,
                     broadcastMessages = broadcastMessages,
                     updateEventAction = updateEventAction,
                     linkRepository = linkRepository,
                     handleOnDeleteEvent = handleOnDeleteEvent,
-                    getShare = getShare,
+                    appContext = appContext,
+                    params = workerParameters,
                 )
 
             })
             .setInputData(
-                TrashFileNodesWorker.workDataOf(userId, parentId, workId)
+                TrashFileNodesWorker.workDataOf(userId, volumeId, workId)
             )
             .build()
             .doWork()
@@ -104,7 +99,7 @@ class StubbedTrashManager @Inject constructor(
 
     override suspend fun restore(
         userId: UserId,
-        shareId: ShareId,
+        volumeId: VolumeId,
         linkIds: List<LinkId>,
     ): DataResult<String> = linkTrashRepository.insertWork(linkIds).onSuccess { workId ->
         TestListenableWorkerBuilder<RestoreFileNodesWorker>(context)
@@ -114,18 +109,17 @@ class StubbedTrashManager @Inject constructor(
                     workerClassName: String,
                     workerParameters: WorkerParameters,
                 ) = RestoreFileNodesWorker(
-                    appContext = appContext,
-                    params = workerParameters,
                     driveTrashRepository = driveTrashRepository,
                     linkTrashRepository = linkTrashRepository,
                     broadcastMessages = broadcastMessages,
                     updateEventAction = updateEventAction,
-                    getShare = getShare,
+                    appContext = appContext,
+                    params = workerParameters,
                 )
 
             })
             .setInputData(
-                RestoreFileNodesWorker.workDataOf(userId, shareId, workId)
+                RestoreFileNodesWorker.workDataOf(userId, volumeId, workId)
             )
             .build()
             .doWork()
@@ -134,7 +128,7 @@ class StubbedTrashManager @Inject constructor(
 
     override suspend fun delete(
         userId: UserId,
-        shareId: ShareId,
+        volumeId: VolumeId,
         linkIds: List<LinkId>,
     ): DataResult<String> = linkTrashRepository.insertWork(linkIds).onSuccess { workId ->
         TestListenableWorkerBuilder<PermanentlyDeleteFileNodesWorker>(context)
@@ -144,20 +138,19 @@ class StubbedTrashManager @Inject constructor(
                     workerClassName: String,
                     workerParameters: WorkerParameters,
                 ) = PermanentlyDeleteFileNodesWorker(
-                    appContext = appContext,
-                    params = workerParameters,
                     driveTrashRepository = driveTrashRepository,
                     linkRepository = linkRepository,
                     trashRepository = linkTrashRepository,
                     broadcastMessages = broadcastMessages,
                     updateEventAction = updateEventAction,
-                    getShare = getShare,
                     linkTrashRepository = linkTrashRepository,
+                    appContext = appContext,
+                    params = workerParameters,
                 )
 
             })
             .setInputData(
-                PermanentlyDeleteFileNodesWorker.workDataOf(userId, shareId, workId)
+                PermanentlyDeleteFileNodesWorker.workDataOf(userId, volumeId, workId)
             )
             .build()
             .doWork()

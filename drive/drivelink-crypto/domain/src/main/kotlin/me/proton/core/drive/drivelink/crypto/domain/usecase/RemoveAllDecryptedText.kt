@@ -18,7 +18,7 @@
 package me.proton.core.drive.drivelink.crypto.domain.usecase
 
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.drivelink.crypto.domain.repository.DecryptedTextRepository
+import me.proton.core.drive.crypto.domain.repository.DecryptedTextRepository
 import javax.inject.Inject
 
 class RemoveAllDecryptedText @Inject constructor(

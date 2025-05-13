@@ -23,8 +23,10 @@ import androidx.test.rule.GrantPermissionRule
 import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.initializer.MainInitializer
 import me.proton.android.drive.ui.MainActivity
+import me.proton.android.drive.ui.rules.OverlayRule
 import me.proton.android.drive.ui.rules.SlowTestRule
 import me.proton.android.drive.ui.test.AbstractBaseTest
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.rule.ProtonRule
 import me.proton.core.test.rule.extension.protonAndroidComposeRule
 import org.junit.Rule
@@ -44,17 +46,19 @@ open class ConfigurableTest : AbstractBaseTest() {
         additionalRules = linkedSetOf(
             IntentsRule(),
             SlowTestRule(),
-            configurationRule
+            configurationRule,
+            OverlayRule(this),
         ),
         beforeHilt = {
             configureFusion()
         },
         afterHilt = {
             MainInitializer.init(it.targetContext)
-            setOverlaysDisplayStateAfterLogin()
         },
         logoutBefore = false
     )
+
+    override val mainUserId: UserId get() = configurationRule.mainUserId
 
     @get:Rule(order = 2)
     val ruleChain: RuleChain = RuleChain

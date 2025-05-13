@@ -21,18 +21,14 @@ package me.proton.android.drive.ui.test.flow.share.user
 import androidx.test.core.app.ActivityScenario
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.ui.MainActivity
-import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.SharedWithMeRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.android.drive.utils.getRandomString
 import me.proton.android.drive.utils.replaceEmailPrefix
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_MOBILE_SHARING_INVITATIONS_ACCEPT_REJECT
 import me.proton.core.test.quark.v2.command.populate
 import me.proton.core.test.quark.v2.command.userCreateAddress
-import me.proton.core.test.quark.v2.command.volumeCreate
 import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.core.test.rule.annotation.mapToUser
 import org.junit.Test
@@ -44,17 +40,15 @@ class UserInvitationIdFlowTest : BaseTest() {
     @PrepareUser(withTag = "main", loginBefore = true)
     @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
-    @FeatureFlag(DRIVE_MOBILE_SHARING_INVITATIONS_ACCEPT_REJECT, ENABLED)
     fun acceptUserInvitationFileAndPreview() {
         val name = "newShare.txt"
         PhotosTabRobot
             .navigateToSharedWithMeTab()
             .clickUserInvitation(2)
             .clickAccept(name)
-            .verify {
-                assertAcceptSucceed()
-            }
+            .dismissAcceptSucceed()
             .clickBack(SharedWithMeRobot)
+            .scrollToItemWithName(name)
             .clickOnFile(name)
             .verify {
                 nodeWithTextDisplayed("Hello World!")
@@ -64,7 +58,6 @@ class UserInvitationIdFlowTest : BaseTest() {
     @Test
     @PrepareUser(withTag = "main")
     @PrepareUser(withTag = "sharingUser")
-    @FeatureFlag(DRIVE_MOBILE_SHARING_INVITATIONS_ACCEPT_REJECT, ENABLED)
     fun acceptUserInvitationWithMultipleAddress() {
         val user = protonRule.testDataRule.mainTestUser!!
         val primaryName = getRandomString(10)
@@ -89,26 +82,22 @@ class UserInvitationIdFlowTest : BaseTest() {
             .navigateToSharedWithMeTab()
             .clickUserInvitation(2)
             .clickAccept(name)
-            .verify {
-                assertAcceptSucceed()
-            }
+            .dismissAcceptSucceed()
     }
 
     @Test
     @PrepareUser(withTag = "main", loginBefore = true)
     @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
-    @FeatureFlag(DRIVE_MOBILE_SHARING_INVITATIONS_ACCEPT_REJECT, ENABLED)
     fun acceptUserInvitationFolderAndOpen() {
         val name = "newShare"
         PhotosTabRobot
             .navigateToSharedWithMeTab()
             .clickUserInvitation(2)
             .clickAccept(name)
-            .verify {
-                assertAcceptSucceed()
-            }
+            .dismissAcceptSucceed()
             .clickBack(SharedWithMeRobot)
+            .scrollToItemWithName(name)
             .clickOnFolder(name)
             .verify {
                 itemIsDisplayed("legacyShareInsideNew.txt")
@@ -119,15 +108,12 @@ class UserInvitationIdFlowTest : BaseTest() {
     @PrepareUser(withTag = "main", loginBefore = true)
     @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
-    @FeatureFlag(DRIVE_MOBILE_SHARING_INVITATIONS_ACCEPT_REJECT, ENABLED)
     fun declineUserInvitation() {
         PhotosTabRobot
             .navigateToSharedWithMeTab()
             .clickUserInvitation(2)
             .clickDecline("newShare")
-            .verify {
-                assertDeclineSucceed()
-            }
+            .dismissDeclineSucceed()
             .clickBack(SharedWithMeRobot)
             .verify {
                 itemIsNotDisplayed("newShare")
@@ -138,18 +124,15 @@ class UserInvitationIdFlowTest : BaseTest() {
     @PrepareUser(withTag = "main", loginBefore = true)
     @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "sharingUser", value = 6, sharedWithUserTag = "main")
-    @FeatureFlag(DRIVE_MOBILE_SHARING_INVITATIONS_ACCEPT_REJECT, ENABLED)
     fun emptyUserInvitation() {
         PhotosTabRobot
             .navigateToSharedWithMeTab()
             .clickUserInvitation(2)
             .clickDecline("newShare")
-            .verify {
-                assertDeclineSucceed()
-            }
+            .dismissDeclineSucceed()
             .clickDecline("newShare.txt")
+            .dismissDeclineSucceed()
             .verify {
-                assertDeclineSucceed()
                 assertEmpty()
             }
     }

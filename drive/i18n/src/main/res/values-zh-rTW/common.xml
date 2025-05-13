@@ -39,7 +39,7 @@
   <string name="common_on">開啟</string>
   <string name="common_off">關閉</string>
   <string name="common_all">全部</string>
-  <string name="common_unknown">Unknown</string>
+  <string name="common_unknown">未知</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">好</string>
@@ -67,8 +67,12 @@
   <string name="common_open_in_browser_action">在瀏覽器中開啟</string>
   <string name="common_done_action">完成</string>
   <string name="common_create_album_action">創建相簿</string>
-  <string name="common_set_as_album_cover_action">Set as album cover</string>
-  <string name="common_add_action">Add</string>
+  <string name="common_set_as_album_cover_action">設定為相簿封面</string>
+  <string name="common_add_action">新增</string>
+  <string name="common_remove_from_album_action">從相簿移除</string>
+  <string name="common_leave_album_action">Leave album</string>
+  <string name="common_start_action">Start</string>
+  <string name="common_save_all_action">Save all</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">音訊</string>

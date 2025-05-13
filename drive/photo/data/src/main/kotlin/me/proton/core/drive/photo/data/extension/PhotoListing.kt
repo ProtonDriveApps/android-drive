@@ -20,7 +20,11 @@ package me.proton.core.drive.photo.data.extension
 
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.data.db.entity.AlbumPhotoListingEntity
+import me.proton.core.drive.photo.data.db.entity.AlbumRelatedPhotoEntity
 import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
+import me.proton.core.drive.photo.data.db.entity.RelatedPhotoEntity
+import me.proton.core.drive.photo.data.db.entity.TaggedPhotoListingEntity
+import me.proton.core.drive.photo.data.db.entity.TaggedRelatedPhotoEntity
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
@@ -33,8 +37,42 @@ fun PhotoListing.toPhotoListingEntity(volumeId: VolumeId) =
         captureTime = captureTime.value,
         hash = nameHash,
         contentHash = contentHash,
-        mainPhotoLinkId = null,
-    )
+    ) to relatedPhotos.map { relatedPhoto ->
+        RelatedPhotoEntity(
+            userId = linkId.shareId.userId,
+            volumeId = volumeId.id,
+            shareId = linkId.shareId.id,
+            linkId = relatedPhoto.linkId.id,
+            mainPhotoLinkId = linkId.id,
+            captureTime = relatedPhoto.captureTime.value,
+            hash = relatedPhoto.nameHash,
+            contentHash = relatedPhoto.contentHash,
+        )
+    }
+
+fun PhotoListing.toTaggedPhotoListingEntity(volumeId: VolumeId) =
+    TaggedPhotoListingEntity(
+        userId = linkId.userId,
+        volumeId = volumeId.id,
+        shareId = linkId.shareId.id,
+        tag = requireNotNull(tag?.value) { "tag is required to create TaggedPhotoListingEntity"},
+        linkId = linkId.id,
+        captureTime = captureTime.value,
+        hash = nameHash,
+        contentHash = contentHash,
+    ) to relatedPhotos.map { relatedPhoto ->
+        TaggedRelatedPhotoEntity(
+            userId = linkId.shareId.userId,
+            volumeId = volumeId.id,
+            shareId = linkId.shareId.id,
+            tag = requireNotNull(tag?.value) { "tag is required to create TaggedPhotoListingEntity"},
+            linkId = relatedPhoto.linkId.id,
+            mainPhotoLinkId = linkId.id,
+            captureTime = relatedPhoto.captureTime.value,
+            hash = relatedPhoto.nameHash,
+            contentHash = relatedPhoto.contentHash,
+        )
+    }
 
 fun PhotoListing.Album.toAlbumPhotoListingEntity(volumeId: VolumeId) =
     AlbumPhotoListingEntity(
@@ -48,7 +86,19 @@ fun PhotoListing.Album.toAlbumPhotoListingEntity(volumeId: VolumeId) =
         isChildOfAlbum = isChildOfAlbum,
         hash = nameHash,
         contentHash = contentHash,
-    )
+    ) to relatedPhotos.map { relatedPhoto ->
+        AlbumRelatedPhotoEntity(
+            userId = linkId.shareId.userId,
+            volumeId = volumeId.id,
+            shareId = linkId.shareId.id,
+            albumId = albumId.id,
+            linkId = relatedPhoto.linkId.id,
+            mainPhotoLinkId = linkId.id,
+            captureTime = relatedPhoto.captureTime.value,
+            hash = relatedPhoto.nameHash,
+            contentHash = relatedPhoto.contentHash,
+        )
+    }
 
 fun PhotoListing.Album.SortBy.toDtoSort(): String = when (this) {
     PhotoListing.Album.SortBy.CAPTURED -> "Captured"

@@ -18,9 +18,13 @@
 
 package me.proton.android.drive.ui.robot
 
+import me.proton.android.drive.photos.presentation.component.ProtonPreviewAlbumItemTestTags
 import me.proton.android.drive.photos.presentation.extension.albumDetails
+import me.proton.android.drive.ui.screen.PhotosAndAlbumsScreenTestTag
 import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.targetContext
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.test.android.instrumented.utils.StringUtils
+import me.proton.test.fusion.Fusion.allNodes
 import me.proton.test.fusion.Fusion.node
 import me.proton.core.drive.i18n.R as I18N
 
@@ -31,7 +35,8 @@ object AlbumsTabRobot :
     HomeRobot,
     LinksRobot,
     NavigationBarRobot {
-    private val albumTitle get() = node.withText(I18N.string.albums_title)
+    private val albumTitleTab get() = node.withTag(PhotosAndAlbumsScreenTestTag.albumsTitleTab)
+    private val photosTitleTab get() = node.withTag(PhotosAndAlbumsScreenTestTag.photosTitleTab)
 
     private val filterAll get() = node.withText(I18N.string.albums_filter_all)
     private val filterMyAlbums get() = node.withText(I18N.string.albums_filter_my_albums)
@@ -41,8 +46,14 @@ object AlbumsTabRobot :
     private val emptyTitle get() = node.withText(I18N.string.albums_empty_albums_list_screen_title)
     private val emptyDescription get() = node.withText(I18N.string.albums_empty_albums_list_screen_description)
 
+    private val emptySharedWithMeTitle get() = node.withText(I18N.string.albums_empty_albums_shared_with_me_screen_title)
+    private val emptySharedWithMeDescription get() = node.withText(I18N.string.albums_empty_albums_shared_with_me_screen_description)
+
     private val plusButton get() = node.withContentDescription(I18N.string.content_description_albums_new)
 
+    private val previewAlbumItems get() = allNodes.withTag(ProtonPreviewAlbumItemTestTags.albumName)
+
+    fun clickOnPhotosTitleTab() = photosTitleTab.clickTo(PhotosTabRobot)
 
     fun clickOnFilterAll() = apply {
         filterAll.click()
@@ -60,10 +71,26 @@ object AlbumsTabRobot :
         filterSharedWithMe.click()
     }
 
+    fun swipeFiltersToEnd() = apply {
+        filterSharedWithMe.onParent().swipeLeft()
+    }
+
     fun clickPlusButton() = plusButton.clickTo(CreateAlbumTabRobot)
+
+    fun clickUserInvitation(count: Int) = node.withText(
+        StringUtils.pluralStringFromResource(
+            I18N.plurals.shared_with_me_album_invitations_banner_description,
+            count,
+            count
+        )
+    ).clickTo(UserInvitationRobot)
 
     fun assertAlbumIsDisplayed(name: String) {
         node.withText(name).await { assertIsDisplayed() }
+    }
+
+    fun assertAtLeastOneAlbumIsDisplayed() {
+        previewAlbumItems.onFirst().await { assertIsDisplayed() }
     }
 
     fun assertAlbumIsDisplayed(
@@ -95,9 +122,14 @@ object AlbumsTabRobot :
         emptyDescription.await { assertIsDisplayed() }
     }
 
+    fun assertIsEmptySharedWithMe() {
+        emptySharedWithMeTitle.await { assertIsDisplayed() }
+        emptySharedWithMeDescription.await { assertIsDisplayed() }
+    }
+
     override fun robotDisplayed() {
         homeScreenDisplayed()
         photosTab.assertIsSelected()
-        albumTitle.assertIsDisplayed()
+        albumTitleTab.assertIsDisplayed()
     }
 }

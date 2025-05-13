@@ -33,6 +33,7 @@ import me.proton.android.drive.ui.viewmodel.OfflineViewModel
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.files.presentation.component.DriveLinksFlow
 import me.proton.core.drive.files.presentation.component.Files
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -43,6 +44,7 @@ import me.proton.core.drive.sorting.domain.entity.Sorting
 fun OfflineScreen(
     navigateToFiles: (folderId: FolderId, folderName: String?) -> Unit,
     navigateToPreview: (pagerType: PagerType, fileId: FileId) -> Unit,
+    navigateToAlbum: (AlbumId) -> Unit,
     navigateToSortingDialog: (Sorting) -> Unit,
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
     navigateBack: () -> Unit,
@@ -56,6 +58,7 @@ fun OfflineScreen(
         viewModel.viewEvent(
             navigateToFiles = navigateToFiles,
             navigateToPreview = navigateToPreview,
+            navigateToAlbum = navigateToAlbum,
             navigateToSortingDialog = navigateToSortingDialog,
             navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
             navigateBack = navigateBack,

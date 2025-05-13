@@ -20,12 +20,17 @@ package me.proton.core.drive.share.user.data.api.response
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import me.proton.core.drive.base.data.api.Dto
+import me.proton.core.drive.base.data.api.Dto.ANCHOR_ID
+import me.proton.core.drive.base.data.api.Dto.INVITATIONS
+import me.proton.core.drive.base.data.api.Dto.MORE
 import me.proton.core.drive.share.user.data.api.entities.UserInvitationIdDto
 
 @Serializable
 data class GetUserInvitationsResponse (
-
-    @SerialName(Dto.INVITATIONS)
+    @SerialName(INVITATIONS)
     val invitations: List<UserInvitationIdDto>,
+    @SerialName(ANCHOR_ID)
+    val anchorId: String? = null,
+    @SerialName(MORE)
+    val hasMore: Boolean = false,
 )

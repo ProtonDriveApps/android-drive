@@ -24,13 +24,18 @@ import me.proton.core.drive.base.domain.log.LogTag.EVENTS
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.drivelink.offline.domain.usecase.UpdateOfflineContent
 import me.proton.core.drive.eventmanager.entity.LinkEventVO
+import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.ids
+import me.proton.core.drive.link.domain.extension.rootFolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.link.domain.usecase.InsertOrUpdateLinks
 import me.proton.core.drive.linktrash.domain.usecase.SetOrRemoveTrashState
 import me.proton.core.drive.photo.domain.usecase.InsertOrDeleteAlbumListings
+import me.proton.core.drive.photo.domain.usecase.InsertOrDeleteAlbumPhotoListings
 import me.proton.core.drive.photo.domain.usecase.InsertOrDeletePhotoListings
+import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
@@ -41,10 +46,15 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
     private val getLink: GetLink,
     private val insertOrDeletePhotoListings: InsertOrDeletePhotoListings,
     private val insertOrDeleteAlbumListings: InsertOrDeleteAlbumListings,
+    private val getPhotoShare: GetPhotoShare,
+    private val insertOrDeleteAlbumPhotoListings: InsertOrDeleteAlbumPhotoListings,
 ) {
 
     suspend operator fun invoke(vos: List<LinkEventVO>) {
         if (vos.isNotEmpty()) {
+            val photoShare = getPhotoShare(vos.first().link.userId)
+                        .toResult()
+                        .getOrNull()
             vos
                 .groupBy({ vo -> vo.volumeId }) { vo -> vo.link }
                 .forEach { (volumeId, links) ->
@@ -52,7 +62,8 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
                     insertOrUpdateLinks(links)
                     setOrRemoveTrashState(volumeId, links)
                     updateOfflineContent(modifiedStateOrParentLinks.ids)
-                    insertOrDeletePhotoListings(volumeId, links.filterIsInstance<Link.File>())
+                    insertOrDeletePhotoListings(volumeId, links.filterVolumePhotoListings(photoShare?.rootFolderId))
+                    insertOrDeleteAlbumPhotoListings(volumeId, links.filterIsInstance<Link.File>())
                     insertOrDeleteAlbumListings(volumeId, links.filterIsInstance<Link.Album>())
                 }
         }
@@ -69,4 +80,8 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
             }
         )
     }
+
+    private fun List<Link>.filterVolumePhotoListings(photoShareRootFolderId: FolderId?) =
+        filterIsInstance<Link.File>()
+            .filter { link -> link.parentId == photoShareRootFolderId }
 }

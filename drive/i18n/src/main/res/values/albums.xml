@@ -20,6 +20,8 @@
     <string name="albums_title">Albums</string>
     <string name="albums_new_album_name_hint">Album name</string>
     <string name="albums_new_album_created_successfully">Album created</string>
+    <string name="albums_new_album_create_error_name_is_blank">@string/common_error_name_is_blank</string>
+    <string name="albums_new_album_create_error_name_too_long">@string/common_error_name_too_long</string>
     <string name="albums_filter_all">@string/common_all</string>
     <string name="albums_filter_my_albums">My albums</string>
     <string name="albums_filter_shared_by_me">@string/shared_by_me_title</string>
@@ -42,6 +44,16 @@
     <string name="albums_delete_album_dialog_delete_album_action">@string/albums_delete_album_action</string>
     <string name="albums_delete_album_dialog_delete_without_saving_action">Delete without saving</string>
     <string name="albums_delete_album_dialog_save_and_delete_action">Save photos and delete</string>
+    <string name="albums_leave_album_dialog_title">Leave album?</string>
+    <!--
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+    <string name="albums_leave_album_dialog_description">Are you sure that you want to leave album \"%1$s\"?\nYou will lose access to photos you haven\'t saved yet.</string>
+    <string name="albums_leave_album_dialog_cancel_action">@string/common_cancel_action</string>
+    <string name="albums_leave_album_dialog_leave_without_saving_action">Leave without saving</string>
+    <string name="albums_leave_album_dialog_save_and_leave_action">Save photos and leave</string>
     <string name="albums_add_zero_to_album_button">Add to album</string>
     <!--
         Variable %1$d is a number of photos to add to album
@@ -85,6 +97,36 @@
         <item quantity="other">%1$d items failed</item>
     </plurals>
     <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+    <plurals name="in_app_notification_add_to_stream_success">
+        <item quantity="one">%1$d item added to your Drive</item>
+        <item quantity="other">%1$d items added to your Drive</item>
+    </plurals>
+    <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+    <plurals name="in_app_notification_add_to_stream_already_exists">
+        <item quantity="one">%1$d item already exists</item>
+        <item quantity="other">%1$d items already exist</item>
+    </plurals>
+    <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+    <plurals name="in_app_notification_add_to_stream_failed">
+        <item quantity="one">%1$d item failed</item>
+        <item quantity="other">%1$d items failed</item>
+    </plurals>
+    <!--
         Variable %1$d is a number of photos removed from album
         Example:
             "1 item removed from album"
@@ -105,7 +147,27 @@
         <item quantity="other">%1$d items failed</item>
     </plurals>
     <string name="albums_empty_album_screen_title">No photos</string>
-    <string name="albums_empty_album_screen_description">Photos added by you or other members will appear here</string>
+    <string name="albums_empty_album_screen_description">The photos that you or other members add will appear here</string>
     <string name="albums_empty_albums_list_screen_title">No albums</string>
     <string name="albums_empty_albums_list_screen_description">The albums that you create or join will appear here</string>
+    <string name="albums_empty_albums_my_albums_screen_description">The albums that you create will appear here</string>
+    <string name="albums_empty_albums_shared_by_me_screen_title">No shared albums</string>
+    <string name="albums_empty_albums_shared_by_me_screen_description">Albums you\'ve shared will appear here</string>
+    <string name="albums_empty_albums_shared_with_me_screen_title">No albums shared with me</string>
+    <string name="albums_empty_albums_shared_with_me_screen_description">Albums shared with you will appear here</string>
+    <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+    <plurals name="shared_with_me_album_invitations_banner_description">
+        <item quantity="one">%1$d album shared with you</item>
+        <item quantity="other">%1$d albums shared with you</item>
+    </plurals>
+    <string name="albums_share_multiple_photos_options_section_title">Share via</string>
+    <string name="albums_share_multiple_photos_options_shared_albums_section_title">Add to shared album</string>
+    <string name="albums_share_multiple_photos_options_album_details">Shared album</string>
+    <string name="albums_share_multiple_photos_options_new_shared_album">New shared album</string>
+    <string name="albums_add_to_album_start_message">Adding photos to the encrypted album. Please keep the app open while the process is ongoing.</string>
 </resources>

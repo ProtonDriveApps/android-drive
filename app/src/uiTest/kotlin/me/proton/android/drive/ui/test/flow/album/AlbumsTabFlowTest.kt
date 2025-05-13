@@ -36,7 +36,7 @@ class AlbumsTabFlowTest : ExternalStorageBaseTest() {
     @Before
     fun setUp() {
         PhotosTabRobot
-            .clickOnAlbumsTab()
+            .clickOnAlbumsTitleTab()
             .verify {
                 robotDisplayed()
             }
@@ -50,6 +50,8 @@ class AlbumsTabFlowTest : ExternalStorageBaseTest() {
     fun albumSharedByMeFilter() {
         AlbumsTabRobot
             .clickOnFilterSharedByMe()
+            .verify { assertAtLeastOneAlbumIsDisplayed() }
+            .swipeUpAlbumsContent(AlbumsTabRobot)
             .verify {
                 assertAlbumIsDisplayed("activeAlbum-shared")
                 assertAlbumIsNotDisplayed("album-for-photos-in-stream")
@@ -63,9 +65,10 @@ class AlbumsTabFlowTest : ExternalStorageBaseTest() {
     @FeatureFlag(DRIVE_ALBUMS, ENABLED)
     fun albumSharedWithMeFilter() {
         AlbumsTabRobot
+            .swipeFiltersToEnd()
             .clickOnFilterSharedWithMe()
             .verify {
-                assertIsEmpty()
+                assertIsEmptySharedWithMe()
             }
     }
 
@@ -78,6 +81,8 @@ class AlbumsTabFlowTest : ExternalStorageBaseTest() {
         val albumName = "activeAlbum-shared"
         val albumPhotoCount = 0
         AlbumsTabRobot
+            .verify { assertAtLeastOneAlbumIsDisplayed() }
+            .swipeUpAlbumsContent(AlbumsTabRobot)
             .clickOnAlbum(albumName)
             .verify {
                 robotDisplayed()
@@ -93,13 +98,15 @@ class AlbumsTabFlowTest : ExternalStorageBaseTest() {
     @FeatureFlag(DRIVE_ALBUMS, ENABLED)
     fun albumWithPhotos() {
         val albumName = "album-for-photos"
-        val albumPhotoCount = 5
+        val albumPhotoCount = 6
         AlbumsTabRobot
+            .verify { assertAtLeastOneAlbumIsDisplayed() }
             .clickOnAlbum(albumName)
             .verify {
                 robotDisplayed()
                 assertAlbumNameIsDisplayed(albumName)
                 assertItemsInAlbum(albumPhotoCount)
+                assertVisibleMediaItemsInAlbum(albumPhotoCount)
             }
     }
 }

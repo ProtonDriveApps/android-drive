@@ -20,4 +20,5 @@ package me.proton.android.drive.ui.effect
 
 sealed interface PhotosEffect {
     data object ShowUpsell : PhotosEffect
+    data object ShowImportantUpdates: PhotosEffect
 }

@@ -39,7 +39,7 @@
   <string name="common_on">Aktif</string>
   <string name="common_off">Nonaktif</string>
   <string name="common_all">Semua</string>
-  <string name="common_unknown">Unknown</string>
+  <string name="common_unknown">Tidak diketahui</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -67,8 +67,12 @@
   <string name="common_open_in_browser_action">Buka di browser</string>
   <string name="common_done_action">Selesai</string>
   <string name="common_create_album_action">Buat album</string>
-  <string name="common_set_as_album_cover_action">Set as album cover</string>
-  <string name="common_add_action">Add</string>
+  <string name="common_set_as_album_cover_action">Foto berhasil dipasang sebagai sampul</string>
+  <string name="common_add_action">Tambah</string>
+  <string name="common_remove_from_album_action">Hapus dari album</string>
+  <string name="common_leave_album_action">Tinggalkan album</string>
+  <string name="common_start_action">Mulai</string>
+  <string name="common_save_all_action">Save all</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>

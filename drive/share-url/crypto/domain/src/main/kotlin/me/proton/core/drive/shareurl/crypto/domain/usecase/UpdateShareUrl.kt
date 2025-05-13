@@ -23,12 +23,12 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.share.CreateShareUrlCustomPasswordInfo
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
-import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrl
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlCustomPasswordInfo
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlExpirationDurationInfo
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
+import me.proton.core.drive.shareurl.base.domain.extension.userId
 import me.proton.core.drive.shareurl.base.domain.repository.ShareUrlRepository
 import me.proton.core.drive.shareurl.base.domain.usecase.GetShareUrl
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -41,7 +41,6 @@ class UpdateShareUrl @Inject constructor(
     private val createShareUrlCustomPasswordInfo: CreateShareUrlCustomPasswordInfo,
     private val shareUrlRepository: ShareUrlRepository,
     private val updateEventAction: UpdateEventAction,
-    private val getMainShare: GetMainShare,
     private val dateTimeFormatter: DateTimeFormatter,
     private val configurationProvider: ConfigurationProvider,
 ) {
@@ -76,7 +75,7 @@ class UpdateShareUrl @Inject constructor(
         shareUrlCustomPasswordInfo: ShareUrlCustomPasswordInfo?,
         shareUrlExpirationDurationInfo : ShareUrlExpirationDurationInfo?,
     ): Result<ShareUrl> = coRunCatching {
-        updateEventAction(getMainShare(shareUrlId.shareId.userId).toResult().getOrThrow().id) {
+        updateEventAction(shareUrlId.userId, volumeId) {
             shareUrlRepository.updateShareUrl(
                 volumeId = volumeId,
                 shareUrlId = shareUrlId,

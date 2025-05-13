@@ -49,6 +49,12 @@
   <string name="files_send_to_trash_action">Перамясціць у сметніцу</string>
   <string name="files_remove_me_action">Выдаліць мяне</string>
   <string name="files_move_file_action">Перамясціць</string>
+  <string name="files_add_to_favorite_action">Дадаць у абраныя</string>
+  <string name="files_remove_from_favorite_action">Выдаліць з абранага</string>
+  <string name="files_add_to_favorite_action_success">Паспяхова дададзена ў абранае</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Фатаграфія была скапіявана ў плынь і пазначана там як абраная</string>
+  <string name="files_remove_from_favorite_action_success">Паспяхова выдалена са спіса абраных</string>
+  <string name="files_save_shared_photo_action">Захаваць абагуленую фатаграфію</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

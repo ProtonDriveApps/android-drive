@@ -59,6 +59,7 @@ import me.proton.core.presentation.R as CorePresentation
 
 @Composable
 fun StorageBanner(
+    isVisible: Boolean,
     onGetStorage: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -72,7 +73,7 @@ fun StorageBanner(
     }
     AnimatedVisibility(
         modifier = modifier,
-        visible = viewState != null,
+        visible = viewState != null && isVisible,
         enter = EnterTransition.None,
         exit = shrinkVertically() + fadeOut(),
     ) {

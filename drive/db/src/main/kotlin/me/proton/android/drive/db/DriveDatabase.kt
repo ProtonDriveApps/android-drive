@@ -66,6 +66,7 @@ import me.proton.core.drive.drivelink.paged.data.db.entity.DriveLinkRemoteKeyEnt
 import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
 import me.proton.core.drive.drivelink.photo.data.db.entity.AlbumPhotoListingRemoteKeyEntity
 import me.proton.core.drive.drivelink.photo.data.db.entity.PhotoListingRemoteKeyEntity
+import me.proton.core.drive.drivelink.photo.data.db.entity.TaggedPhotoListingRemoteKeyEntity
 import me.proton.core.drive.drivelink.selection.data.db.DriveLinkSelectionDatabase
 import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
 import me.proton.core.drive.drivelink.shared.data.db.entity.SharedRemoteKeyEntity
@@ -118,7 +119,11 @@ import me.proton.core.drive.observability.data.db.entity.CounterEntity
 import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.photo.data.db.entity.AlbumListingEntity
 import me.proton.core.drive.photo.data.db.entity.AlbumPhotoListingEntity
+import me.proton.core.drive.photo.data.db.entity.AlbumRelatedPhotoEntity
 import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
+import me.proton.core.drive.photo.data.db.entity.RelatedPhotoEntity
+import me.proton.core.drive.photo.data.db.entity.TaggedPhotoListingEntity
+import me.proton.core.drive.photo.data.db.entity.TaggedRelatedPhotoEntity
 import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.share.data.db.ShareEntity
 import me.proton.core.drive.share.data.db.ShareMembershipEntity
@@ -299,7 +304,12 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         WorkerRunEntity::class,
         // Photos
         PhotoListingEntity::class,
+        RelatedPhotoEntity::class,
+        TaggedPhotoListingEntity::class,
+        TaggedRelatedPhotoEntity::class,
         PhotoListingRemoteKeyEntity::class,
+        TaggedPhotoListingRemoteKeyEntity::class,
+        AlbumRelatedPhotoEntity::class,
         AlbumPhotoListingEntity::class,
         AlbumListingEntity::class,
         AlbumPhotoListingRemoteKeyEntity::class,
@@ -422,7 +432,7 @@ abstract class DriveDatabase :
     DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 84
+        const val VERSION = 89
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -508,6 +518,11 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_81_82,
             DriveDatabaseMigrations.MIGRATION_82_83,
             DriveDatabaseMigrations.MIGRATION_83_84,
+            DriveDatabaseMigrations.MIGRATION_84_85,
+            DriveDatabaseMigrations.MIGRATION_85_86,
+            DriveDatabaseMigrations.MIGRATION_86_87,
+            DriveDatabaseMigrations.MIGRATION_87_88,
+            DriveDatabaseMigrations.MIGRATION_88_89,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

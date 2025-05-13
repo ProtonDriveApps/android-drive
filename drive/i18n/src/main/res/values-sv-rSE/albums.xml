@@ -37,9 +37,18 @@
   <string name="albums_delete_album_dialog_description_with_children">Några foton i detta album sparas inte på din tidslinje. Att ta bort detta album kommer ta bort dessa foton permanent.\nVill du spara dem innan du tar bort dem?</string>
   <string name="albums_delete_album_dialog_delete_without_saving_action">Ta bort utan att spara</string>
   <string name="albums_delete_album_dialog_save_and_delete_action">Spara foton och ta bort</string>
+  <string name="albums_leave_album_dialog_title">Lämna album?</string>
+  <!--
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">Är du säker på att du vill lämna album ”%1$s”?\nDu kommer förlora åtkomst till foton du inte har sparat än.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Lämna utan att spara</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Spara foton och lämna</string>
   <string name="albums_add_zero_to_album_button">Lägg till i album</string>
   <!--
-        Variable %1$s is a number of photos to add to album
+        Variable %1$d is a number of photos to add to album
         Example:
             "Add 1 to album"
             "Add 33 to album"
@@ -49,4 +58,107 @@
     <item quantity="other">Lägg till %1$d till album</item>
   </plurals>
   <string name="albums_set_album_as_cover_success">Ställ in som albumomslag</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="one">%1$d objekt tillagt i album</item>
+    <item quantity="other">%1$d objekt tillagda i album</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="one">%1$d objektet finns redan</item>
+    <item quantity="other">%1$d objekt finns redan</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="one">%1$d objektet misslyckades</item>
+    <item quantity="other">%1$d objekt misslyckades</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="one">%1$d item added to your Drive</item>
+    <item quantity="other">%1$d items added to your Drive</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="one">%1$d objekt finns redan</item>
+    <item quantity="other">%1$d objekt finns redan</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="one">%1$d objekt misslyckades</item>
+    <item quantity="other">%1$d objekt misslyckades</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="one">%1$d objekt borttaget från album</item>
+    <item quantity="other">%1$d objekt borttagna från album</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="one">%1$d objekt misslyckades</item>
+    <item quantity="other">%1$d objekt misslyckades</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">Inga foton</string>
+  <string name="albums_empty_album_screen_description">Foton tillagda av dig eller andra medlemmar kommer visas här</string>
+  <string name="albums_empty_albums_list_screen_title">Inga album</string>
+  <string name="albums_empty_albums_list_screen_description">Albumen du skapar eller går med i kommer visas här</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Album du skapar kommer visas här</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Inga delade album</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Album du delat kommer visas här</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Inga album delade med mig</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Album delade med dig kommer visas här</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="one">%1$d album delat med dig</item>
+    <item quantity="other">%1$d album delade med dig</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">Dela via</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Lägg till i delat album</string>
+  <string name="albums_share_multiple_photos_options_album_details">Delat album</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Nytt delat album</string>
 </resources>

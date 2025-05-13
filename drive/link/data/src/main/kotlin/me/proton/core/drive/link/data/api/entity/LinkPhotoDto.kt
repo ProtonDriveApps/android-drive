@@ -26,6 +26,7 @@ import me.proton.core.drive.base.data.api.Dto.EXIF
 import me.proton.core.drive.base.data.api.Dto.HASH
 import me.proton.core.drive.base.data.api.Dto.LINK_ID
 import me.proton.core.drive.base.data.api.Dto.MAIN_PHOTO_LINK_ID
+import me.proton.core.drive.base.data.api.Dto.RELATED_PHOTOS_LINK_IDS
 
 @Serializable
 data class LinkPhotoDto(
@@ -41,4 +42,6 @@ data class LinkPhotoDto(
     val contentHash: String? = null,
     @SerialName(EXIF)
     val exif: String? = null,
+    @SerialName(RELATED_PHOTOS_LINK_IDS)
+    val relatedPhotosLinkIds: List<String> = emptyList(),
 )

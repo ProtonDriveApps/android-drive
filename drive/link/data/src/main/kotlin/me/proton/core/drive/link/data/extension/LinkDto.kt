@@ -54,7 +54,7 @@ private fun LinkDto.toLinkEntity(shareId: ShareId) =
     )
 
 
-fun LinkDto.toLinkWithProperties(shareId: ShareId): LinkWithProperties {
+fun LinkDto.toLinkWithProperties(shareId: ShareId, parentLinkType: Long? = null): LinkWithProperties {
     val linkEntity = toLinkEntity(shareId)
     val folderProperties = this.folderProperties
     val fileProperties = this.fileProperties
@@ -62,19 +62,24 @@ fun LinkDto.toLinkWithProperties(shareId: ShareId): LinkWithProperties {
     return when {
         albumProperties != null ->
             LinkWithProperties(
-                linkEntity,
-                albumProperties.toLinkAlbumPropertiesEntity(linkEntity.userId, linkEntity.shareId, linkEntity.id)
+                link = linkEntity,
+                properties = albumProperties.toLinkAlbumPropertiesEntity(linkEntity.userId, linkEntity.shareId, linkEntity.id),
+                parentLinkType = parentLinkType,
             )
         folderProperties != null ->
             LinkWithProperties(
-                linkEntity,
-                folderProperties.toLinkFolderPropertiesEntity(linkEntity.userId, linkEntity.shareId, linkEntity.id)
+                link = linkEntity,
+                properties = folderProperties.toLinkFolderPropertiesEntity(linkEntity.userId, linkEntity.shareId, linkEntity.id),
+                parentLinkType = parentLinkType,
             )
         fileProperties != null ->
             LinkWithProperties(
                 link = linkEntity,
                 properties = fileProperties.toLinkFilePropertiesEntity(linkEntity.userId, linkEntity.shareId, linkEntity.id),
-                tags = photoProperties?.tags.orEmpty()
+                tags = photoProperties?.tags.orEmpty(),
+                albumInfos = photoProperties?.toAlbumInfo(linkEntity.userId, linkEntity.shareId).orEmpty(),
+                relatedPhotoIds = fileProperties.activeRevision.photo?.relatedPhotosLinkIds.orEmpty(),
+                parentLinkType = parentLinkType,
             )
         else -> error("Link should have either file, folder or album properties")
     }

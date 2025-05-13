@@ -20,12 +20,12 @@ package me.proton.core.drive.photo.data.extension
 
 import me.proton.core.drive.link.data.api.entity.LinkDto
 import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.photo.data.api.response.DuplicateDto
 import me.proton.core.drive.photo.domain.entity.PhotoDuplicate
 
-fun DuplicateDto.toPhotoDuplicate(parentId: FolderId) = PhotoDuplicate(
+fun DuplicateDto.toPhotoDuplicate(parentId: ParentId) = PhotoDuplicate(
     parentId = parentId,
     hash = hash,
     contentHash = contentHash,

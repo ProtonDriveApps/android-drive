@@ -33,13 +33,17 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
+import me.proton.android.drive.photos.presentation.R
 import me.proton.android.drive.photos.presentation.state.AlbumsItem
 import me.proton.android.drive.photos.presentation.viewevent.AlbumsViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.AlbumsFilter
@@ -48,6 +52,7 @@ import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.isRetryable
@@ -59,6 +64,8 @@ import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.common.Action
+import me.proton.core.drive.base.presentation.common.getThemeDrawableId
+import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.base.presentation.viewstate.TagViewState
@@ -66,6 +73,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
 import me.proton.core.drive.drivelink.photo.domain.usecase.FetchAndStoreAllAlbumListings
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetAllAlbumListings
+import me.proton.core.drive.drivelink.shared.presentation.viewstate.UserInvitationBannerViewState
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.shareId
@@ -73,6 +81,7 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.photo.domain.extension.filterBy
 import me.proton.core.drive.share.domain.entity.Share
+import me.proton.core.drive.share.user.domain.usecase.GetUserInvitationCountFlow
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
@@ -90,6 +99,7 @@ class AlbumsViewModel @Inject constructor(
     private val getPhotosDriveLink: GetPhotosDriveLink,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
     private val broadcastMessages: BroadcastMessages,
+    private val getUserInvitationCountFlow: GetUserInvitationCountFlow,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle), HomeTabViewModel {
     private var fetchingJob: Job? = null
     private val _homeEffect = MutableSharedFlow<HomeEffect>()
@@ -112,19 +122,25 @@ class AlbumsViewModel @Inject constructor(
     )
     private val topBarActions: MutableStateFlow<Set<Action>> =
         MutableStateFlow(setOf(addAlbumAction))
+    private val emptyStateImageResId: Int get() = getThemeDrawableId(
+        light = BasePresentation.drawable.empty_albums_light,
+        dark = BasePresentation.drawable.empty_albums_dark,
+        dayNight = BasePresentation.drawable.empty_albums_daynight,
+    )
 
     val initialViewState: AlbumsViewState =
         AlbumsViewState(
             topBarActions = topBarActions,
             listContentState = listContentState.value,
             isRefreshEnabled = listContentState.value != ListContentState.Loading,
+            placeholderImageResId = emptyStateImageResId,
             navigationIconResId = CorePresentation.drawable.ic_proton_hamburger,
             filters = listOf(
                 AlbumsFilter(
                     AlbumListing.Filter.ALL,
                     TagViewState(
                         label = appContext.getString(I18N.string.albums_filter_all),
-                        icon = CorePresentation.drawable.ic_proton_checkmark,
+                        icon = BasePresentation.drawable.ic_folder_album_outline,
                         selected = true,
                     )
                 ),
@@ -151,6 +167,22 @@ class AlbumsViewModel @Inject constructor(
                 ),
             )
         )
+    val userInvitationBannerViewState = getUserInvitationCountFlow(
+        userId = userId,
+        albumsOnly = true,
+        refresh = flowOf(true),
+    ).filterSuccessOrError()
+        .mapSuccessValueOrNull()
+        .filterNotNull()
+        .filter { count -> count > 0 }
+        .map { count ->
+            UserInvitationBannerViewState(
+                appContext.quantityString(
+                    I18N.plurals.shared_with_me_album_invitations_banner_description,
+                    count
+                )
+            )
+        }
 
     private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
     val driveLink: StateFlow<DriveLink.Folder?> = retryTrigger.transformLatest {
@@ -199,11 +231,35 @@ class AlbumsViewModel @Inject constructor(
 
                 is DataResult.Success -> emit(result.value).also {
                     if (result.value.isEmpty()) {
-                        listContentState.value = ListContentState.Empty(
-                            imageResId = BasePresentation.drawable.empty_albums,
-                            titleId = I18N.string.albums_empty_albums_list_screen_title,
-                            descriptionResId = I18N.string.albums_empty_albums_list_screen_description,
-                        )
+                        listContentState.value = when (albumListingsFilter.value) {
+                            AlbumListing.Filter.ALL -> ListContentState.Empty(
+                                imageResId = emptyStateImageResId,
+                                titleId = I18N.string.albums_empty_albums_list_screen_title,
+                                descriptionResId = I18N.string.albums_empty_albums_list_screen_description,
+                                actionResId = I18N.string.common_create_album_action
+                            )
+
+                            AlbumListing.Filter.MY_ALBUMS -> ListContentState.Empty(
+                                imageResId = emptyStateImageResId,
+                                titleId = I18N.string.albums_empty_albums_list_screen_title,
+                                descriptionResId = I18N.string.albums_empty_albums_my_albums_screen_description,
+                                actionResId = I18N.string.common_create_album_action
+                            )
+
+                            AlbumListing.Filter.SHARED_BY_ME -> ListContentState.Empty(
+                                imageResId = emptyStateImageResId,
+                                titleId = I18N.string.albums_empty_albums_shared_by_me_screen_title,
+                                descriptionResId = I18N.string.albums_empty_albums_shared_by_me_screen_description,
+                                actionResId = I18N.string.common_create_album_action
+                            )
+
+                            AlbumListing.Filter.SHARED_WITH_ME -> ListContentState.Empty(
+                                imageResId = emptyStateImageResId,
+                                titleId = I18N.string.albums_empty_albums_shared_with_me_screen_title,
+                                descriptionResId = I18N.string.albums_empty_albums_shared_with_me_screen_description,
+                                actionResId = null
+                            )
+                        }
                     } else {
                         listContentState.value = ListContentState.Content()
                     }
@@ -260,6 +316,7 @@ class AlbumsViewModel @Inject constructor(
     fun viewEvent(
         navigateToCreateNewAlbum: () -> Unit,
         navigateToAlbum: (AlbumId) -> Unit,
+        navigateToUserInvitation: (Boolean) -> Unit,
     ): AlbumsViewEvent = object : AlbumsViewEvent {
         override val onRefresh = this@AlbumsViewModel::onRefresh
         override val onScroll = this@AlbumsViewModel::onScroll
@@ -273,6 +330,7 @@ class AlbumsViewModel @Inject constructor(
         }
         override val onCreateNewAlbum = { navigateToCreateNewAlbum() }
         override val onFilterSelected = this@AlbumsViewModel::onFilterSelected
+        override val onUserInvitation = { navigateToUserInvitation(true) }
     }.also { viewEvent ->
         this.viewEvent = viewEvent
     }

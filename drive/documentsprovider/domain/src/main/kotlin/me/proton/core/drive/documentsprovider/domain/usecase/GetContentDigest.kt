@@ -41,18 +41,29 @@ class GetContentDigest @Inject constructor(
     private val decryptLinkXAttr: DecryptLinkXAttr
 ) {
 
-    suspend operator fun invoke(fileId: FileId): Result<String> = coRunCatching {
+    suspend operator fun invoke(
+        fileId: FileId,
+        fallbackToRecalculateFromFile: Boolean = false,
+    ): Result<String> = coRunCatching {
         invoke(
-            getDriveLink(fileId = fileId).toResult().getOrThrow()
+            driveLink = getDriveLink(fileId = fileId).toResult().getOrThrow(),
+            fallbackToRecalculateFromFile = fallbackToRecalculateFromFile,
         ).getOrThrow()
     }
 
-    suspend operator fun invoke(driveLink: DriveLink.File): Result<String> = coRunCatching {
+    suspend operator fun invoke(
+        driveLink: DriveLink.File,
+        fallbackToRecalculateFromFile: Boolean = false,
+    ): Result<String> = coRunCatching {
         getContentDigestFromXAttr(driveLink)
-            .onSuccess {
-                return@coRunCatching it
+            .recoverCatching {
+                if (fallbackToRecalculateFromFile) {
+                    getContentDigestFromFile(driveLink).getOrThrow()
+                } else {
+                    throw it
+                }
             }
-        getContentDigestFromFile(driveLink).getOrThrow()
+            .getOrThrow()
     }
 
     private suspend fun getContentDigestFromXAttr(

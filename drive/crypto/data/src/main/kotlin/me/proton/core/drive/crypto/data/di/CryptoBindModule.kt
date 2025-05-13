@@ -21,10 +21,12 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.drive.crypto.data.repository.DecryptedTextRepositoryImpl
 import me.proton.core.drive.crypto.data.usecase.DecryptDataImpl
 import me.proton.core.drive.crypto.data.usecase.EncryptDataImpl
 import me.proton.core.drive.crypto.data.usecase.base.ReencryptKeyPacketImpl
 import me.proton.core.drive.crypto.data.usecase.share.ReencryptSharePassphraseWithUrlPasswordImpl
+import me.proton.core.drive.crypto.domain.repository.DecryptedTextRepository
 import me.proton.core.drive.crypto.domain.usecase.DecryptData
 import me.proton.core.drive.crypto.domain.usecase.EncryptData
 import me.proton.core.drive.crypto.domain.usecase.base.ReencryptKeyPacket
@@ -51,4 +53,8 @@ interface CryptoBindModule {
     @Binds
     @Singleton
     fun bindsDecryptData(impl: DecryptDataImpl): DecryptData
+
+    @Binds
+    @Singleton
+    fun bindsDecryptedTextRepositoryImpl(impl: DecryptedTextRepositoryImpl): DecryptedTextRepository
 }

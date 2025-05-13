@@ -30,4 +30,5 @@ interface AlbumsViewEvent {
     val onDriveLinkAlbum: (DriveLink.Album) -> Unit get() = {}
     val onCreateNewAlbum: () -> Unit get() = {}
     val onFilterSelected: (AlbumListing.Filter) -> Unit get() = {}
+    val onUserInvitation: () -> Unit get() = {}
 }

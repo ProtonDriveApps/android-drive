@@ -23,6 +23,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
 import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.loginTestHelper
+import me.proton.core.domain.entity.UserId
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
@@ -30,6 +31,7 @@ import org.junit.runners.model.Statement
 class ConfigurationRule : TestRule {
 
     lateinit var configuration: ConfigurationRoot
+    lateinit var mainUserId: UserId
 
     fun getArgString(key: String): String {
         return configuration.info.args.getValue(key).jsonPrimitive.content
@@ -61,7 +63,7 @@ class ConfigurationRule : TestRule {
             object : Statement() {
                 override fun evaluate() {
                     configuration.user.run {
-                        loginTestHelper.login(username, password)
+                        mainUserId = loginTestHelper.login(username, password).userId
                     }
 
                     base.evaluate()

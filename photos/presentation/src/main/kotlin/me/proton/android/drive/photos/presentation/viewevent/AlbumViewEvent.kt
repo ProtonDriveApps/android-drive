@@ -35,4 +35,7 @@ interface AlbumViewEvent {
     val onSelectedOptions: () -> Unit get() = {}
     val onBack: () -> Unit get() = {}
     val onTopAppBarNavigation: () -> Unit get() = {}
+    val onShare: () -> Unit get() = {}
+    val onSaveAll: () -> Unit get() = {}
+    val onShareUsers: () -> Unit get() = {}
 }

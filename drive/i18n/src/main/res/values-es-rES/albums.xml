@@ -37,9 +37,18 @@
   <string name="albums_delete_album_dialog_description_with_children">Algunas fotos de este álbum no se guardan en la cronología. Eliminar este álbum eliminará permanentemente esas fotos.\n¿Quiere guardarlas antes de eliminarla?</string>
   <string name="albums_delete_album_dialog_delete_without_saving_action">Eliminar sin guardar</string>
   <string name="albums_delete_album_dialog_save_and_delete_action">Guardar las fotos y eliminar</string>
+  <string name="albums_leave_album_dialog_title">¿Salir del álbum?</string>
+  <!--
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">¿Estás seguro de que quieres salir del álbum \"%1$s\"?\nPerderás el acceso a las fotos que aún no hayas guardado.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Salir sin guardar</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Guardar las fotos y salir</string>
   <string name="albums_add_zero_to_album_button">Añadir al álbum</string>
   <!--
-        Variable %1$s is a number of photos to add to album
+        Variable %1$d is a number of photos to add to album
         Example:
             "Add 1 to album"
             "Add 33 to album"
@@ -49,4 +58,107 @@
     <item quantity="other">Añadir %1$d al álbum</item>
   </plurals>
   <string name="albums_set_album_as_cover_success">Establecer como portada de álbum</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="one">%1$d elemento añadido al álbum</item>
+    <item quantity="other">%1$d elementos añadidos al álbum</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="one">Ya existe %1$d elemento.</item>
+    <item quantity="other">Ya existen %1$d elementos.</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="one">Error con %1$d elemento</item>
+    <item quantity="other">Error con %1$d elementos</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="one">Se ha añadido %1$d elemento a tu Drive</item>
+    <item quantity="other">%1$d elementos añadidos a tu Drive</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="one">%1$d elemento ya existe</item>
+    <item quantity="other">%1$d elementos ya existen</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="one">%1$d elemento ha fallado</item>
+    <item quantity="other">Han fallado %1$d elementos</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="one">%1$d elemento eliminado del álbum</item>
+    <item quantity="other">%1$d elementos eliminados del álbum</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="one">Error con %1$d elemento</item>
+    <item quantity="other">Error con %1$d elementos</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">No hay fotos</string>
+  <string name="albums_empty_album_screen_description">Las fotos añadidas por ti o por otros miembros aparecerán aquí</string>
+  <string name="albums_empty_albums_list_screen_title">Ningún álbum</string>
+  <string name="albums_empty_albums_list_screen_description">Los álbumes que crees o a los que te unas aparecerán aquí.</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Los álbumes que crees aparecerán aquí</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">No hay álbumes compartidos</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Los álbumes que has compartido aparecerán aquí</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">No hay álbumes compartidos contigo</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Los álbumes que se han compartido contigo aparecerán aquí</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="one">Se ha compartido %1$d álbum contigo.</item>
+    <item quantity="other">Se han compartido %1$d álbumes contigo.</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">Compartir por</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Añadir al álbum compartido</string>
+  <string name="albums_share_multiple_photos_options_album_details">Álbum compartido</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Nuevo álbum compartido</string>
 </resources>

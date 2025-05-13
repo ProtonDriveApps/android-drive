@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import me.proton.android.drive.ui.annotation.Scenario
-import me.proton.android.drive.ui.test.AbstractBaseTest
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.domain.getPrimaryAccount
@@ -42,8 +41,13 @@ import me.proton.core.drive.share.user.domain.usecase.ConvertExternalInvitation
 import me.proton.core.drive.share.user.domain.usecase.GetExternalInvitationsFlow
 import me.proton.core.drive.share.user.domain.usecase.GetInvitationsFlow
 import me.proton.core.drive.share.user.domain.usecase.InviteMembers
+import me.proton.core.test.quark.Quark.GenKeys
 import me.proton.core.test.quark.data.User
-import me.proton.core.test.quark.v2.command.userCreate
+import me.proton.core.test.quark.response.CreateUserQuarkResponse
+import me.proton.core.test.quark.v2.QuarkCommand
+import me.proton.core.test.quark.v2.command.CreateAddress
+import me.proton.core.test.quark.v2.command.USERS_CREATE
+import me.proton.core.test.quark.v2.toEncodedArgs
 import me.proton.core.test.rule.annotation.PrepareUser
 import me.proton.core.util.kotlin.random
 import org.junit.Assert.assertEquals
@@ -129,4 +133,32 @@ class ExternalInvitationTest : BaseTest() {
             getInvitationsFlow(shareId, flowOf(true)).toResult().getOrThrow().map { it.email },
         )
     }
+}
+
+// Remove with version 33 of core
+fun QuarkCommand.userCreate(
+    user: User = User(),
+    createAddress: CreateAddress? = CreateAddress.WithKey(GenKeys.Curve25519)
+): CreateUserQuarkResponse {
+    val args = listOf(
+        "--external" to if (user.isExternal) "true" else "",
+        "--external-email" to if (user.isExternal) user.email else "",
+        "-N" to user.name,
+        "-p" to user.password,
+        "-m" to user.passphrase,
+        "-r" to user.recoveryEmail,
+        "-c" to if (createAddress is CreateAddress.NoKey) "true" else "",
+        "-k" to if (createAddress is CreateAddress.WithKey) createAddress.genKeys.name else "",
+        "--format" to "json"
+    ).toEncodedArgs(ignoreEmpty = true)
+
+    val response =
+        route(USERS_CREATE)
+            .args(args)
+            .build()
+            .let {
+                client.executeQuarkRequest(it)
+            }
+
+    return json.decodeFromString(response.body!!.string())
 }

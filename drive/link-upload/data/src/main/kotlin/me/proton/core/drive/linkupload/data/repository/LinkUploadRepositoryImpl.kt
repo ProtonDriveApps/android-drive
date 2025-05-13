@@ -32,9 +32,9 @@ import me.proton.core.drive.base.domain.extension.bytes
 import me.proton.core.drive.base.domain.extension.iterator
 import me.proton.core.drive.base.domain.function.pagedList
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.link.domain.PhotoTag
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
 import me.proton.core.drive.linkupload.data.db.entity.UploadTagEntity

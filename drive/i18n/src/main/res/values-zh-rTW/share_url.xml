@@ -89,10 +89,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">擱置中的已分享項目（%1$d）</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
   <string name="shared_user_invitations_title_empty">沒有擱置中的已分享項目</string>
+  <string name="shared_user_album_invitations_title_empty">No pending shared albums</string>
   <string name="shared_user_invitations_description_empty">所有新邀請函都會在此處</string>
   <string name="shared_user_invitations_accept_button">接受</string>
   <string name="shared_user_invitations_decline_button">婉拒</string>
   <string name="shared_user_invitations_accept_success">已接受已分享的項目</string>
   <string name="shared_user_invitations_decline_success">已拒絕已分享的項目</string>
+  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
+  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
 </resources>

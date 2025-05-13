@@ -20,9 +20,14 @@ package me.proton.android.drive.ui.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -41,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -88,14 +94,16 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.base.presentation.component.Title
+import me.proton.core.drive.drivelink.shared.presentation.component.UserInvitationBanner
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.i18n.R as I18N
 
 @Composable
 fun PhotosAndAlbumsScreen(
     homeScaffoldState: HomeScaffoldState,
     navigateToPhotosPermissionRationale: () -> Unit,
-    navigateToPhotosPreview: (fileId: FileId) -> Unit,
-    navigateToPhotosOptions: (fileId: FileId) -> Unit,
+    navigateToPhotosPreview: (fileId: FileId, photoTag: PhotoTag?) -> Unit,
+    navigateToPhotosOptions: (fileId: FileId, SelectionId?) -> Unit,
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
@@ -104,6 +112,8 @@ fun PhotosAndAlbumsScreen(
     navigateToNotificationPermissionRationale: () -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
+    navigateToUserInvitation: (Boolean) -> Unit,
+    navigateToPhotosImportantUpdates: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<PhotosAndAlbumsViewModel>()
@@ -135,6 +145,7 @@ fun PhotosAndAlbumsScreen(
                 navigateToPhotosUpsell = navigateToPhotosUpsell,
                 navigateToBackupSettings = navigateToBackupSettings,
                 navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
+                navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
                 defaultTitle = defaultTitle,
             )
 
@@ -142,6 +153,7 @@ fun PhotosAndAlbumsScreen(
                 homeScaffoldState = homeScaffoldState,
                 navigateToCreateNewAlbum = navigateToCreateNewAlbum,
                 navigateToAlbum = navigateToAlbum,
+                navigateToUserInvitation = navigateToUserInvitation,
                 defaultTitle = defaultTitle,
             )
         }
@@ -153,6 +165,7 @@ fun AlbumsTab(
     homeScaffoldState: HomeScaffoldState,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
+    navigateToUserInvitation: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     defaultTitle: @Composable (Modifier) -> Unit,
 ) {
@@ -165,8 +178,12 @@ fun AlbumsTab(
         viewModel.viewEvent(
             navigateToCreateNewAlbum = navigateToCreateNewAlbum,
             navigateToAlbum = navigateToAlbum,
+            navigateToUserInvitation = navigateToUserInvitation,
         )
     }
+    val userInvitationViewState by viewModel.userInvitationBannerViewState.collectAsStateWithLifecycle(
+        initialValue = null
+    )
 
     viewModel.HandleHomeEffect(homeScaffoldState)
 
@@ -190,7 +207,25 @@ fun AlbumsTab(
         viewEvent = viewEvent,
         items = viewModel.albumItems,
         modifier = modifier.fillMaxSize(),
-    )
+    ) {
+        Box(Modifier.defaultMinSize(minHeight = 1.dp)) {
+            // minHeight: always draw to have the header visible in the lazy list
+            AnimatedVisibility(
+                visible = userInvitationViewState != null,
+                enter = expandVertically() + fadeIn(),
+                exit = shrinkVertically() + fadeOut(),
+            ) {
+                userInvitationViewState?.let { viewState ->
+                    UserInvitationBanner(
+                        description = viewState.description,
+                        showSectionHeader = false,
+                        onClick = viewEvent.onUserInvitation,
+                        modifier = Modifier.padding(bottom = ProtonDimens.DefaultSpacing)
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Composable
@@ -198,14 +233,15 @@ fun PhotosTab(
     homeScaffoldState: HomeScaffoldState,
     modifier: Modifier = Modifier,
     navigateToPhotosPermissionRationale: () -> Unit,
-    navigateToPhotosPreview: (fileId: FileId) -> Unit,
-    navigateToPhotosOptions: (fileId: FileId) -> Unit,
+    navigateToPhotosPreview: (fileId: FileId, photoTag: PhotoTag?) -> Unit,
+    navigateToPhotosOptions: (fileId: FileId, SelectionId?) -> Unit,
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
+    navigateToPhotosImportantUpdates: () -> Unit,
     defaultTitle: @Composable (Modifier) -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
@@ -221,6 +257,7 @@ fun PhotosTab(
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
+            navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
             lifecycle = lifecycle,
         )
     }
@@ -235,6 +272,9 @@ fun PhotosTab(
             when (effect) {
                 PhotosEffect.ShowUpsell -> launch(Dispatchers.Main) {
                     viewEvent.onShowUpsell()
+                }
+                PhotosEffect.ShowImportantUpdates -> launch(Dispatchers.Main) {
+                    viewEvent.onShowImportantUpdates()
                 }
             }
         }.launchIn(this)
@@ -334,23 +374,29 @@ fun Tabs(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TabItem(
-            modifier = Modifier.padding(end = ProtonDimens.SmallSpacing),
+            modifier = Modifier
+                .testTag(PhotosAndAlbumsScreenTestTag.photosTitleTab)
+                .padding(end = ProtonDimens.SmallSpacing),
             tab = Tab.PHOTOS,
             text = I18N.string.photos_title,
             viewState = viewState,
             viewEvent = viewEvent,
         )
-        VerticalDivider(
-            modifier = Modifier.padding(vertical = ProtonDimens.DefaultSpacing),
-            color = ProtonTheme.colors.separatorNorm,
-        )
-        TabItem(
-            modifier = Modifier.padding(start = ProtonDimens.SmallSpacing),
-            tab = Tab.ALBUMS,
-            text = I18N.string.albums_title,
-            viewState = viewState,
-            viewEvent = viewEvent,
-        )
+        if (viewState.isAlbumsTabVisible) {
+            VerticalDivider(
+                modifier = Modifier.padding(vertical = ProtonDimens.DefaultSpacing),
+                color = ProtonTheme.colors.separatorNorm,
+            )
+            TabItem(
+                modifier = Modifier
+                    .testTag(PhotosAndAlbumsScreenTestTag.albumsTitleTab)
+                    .padding(start = ProtonDimens.SmallSpacing),
+                tab = Tab.ALBUMS,
+                text = I18N.string.albums_title,
+                viewState = viewState,
+                viewEvent = viewEvent,
+            )
+        }
     }
 }
 
@@ -403,8 +449,16 @@ fun TabsPreview() {
     ProtonTheme {
         Tabs(
             modifier = Modifier.height(ProtonDimens.DefaultButtonMinHeight),
-            viewState = PhotosAndAlbumsViewState(selectedTab = Tab.PHOTOS),
+            viewState = PhotosAndAlbumsViewState(
+                selectedTab = Tab.PHOTOS,
+                isAlbumsTabVisible = true,
+            ),
             viewEvent = object : PhotosAndAlbumsViewEvent {}
         )
     }
+}
+
+object PhotosAndAlbumsScreenTestTag {
+    const val photosTitleTab = "photos title tab"
+    const val albumsTitleTab = "albums title tab"
 }

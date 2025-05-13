@@ -89,10 +89,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">공유된 항목 대기 중 (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">공유된 앨범 대기 중 (%1$d)</string>
   <string name="shared_user_invitations_title_empty">대기중인 공유된 항목 없음</string>
+  <string name="shared_user_album_invitations_title_empty">대기중인 공유된 항목 없음</string>
   <string name="shared_user_invitations_description_empty">새로운 초대가 여기 나타납니다.</string>
   <string name="shared_user_invitations_accept_button">수락</string>
   <string name="shared_user_invitations_decline_button">거절</string>
   <string name="shared_user_invitations_accept_success">공유된 항목 수락됨</string>
   <string name="shared_user_invitations_decline_success">공유된 항목 거절됨</string>
+  <string name="shared_user_album_invitations_accept_success">초대가 수락되었습니다</string>
+  <string name="shared_user_album_invitations_decline_success">초대가 거절되었습니다</string>
 </resources>

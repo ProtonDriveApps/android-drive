@@ -43,7 +43,9 @@ class DecryptNameOrKeepEncrypted @Inject constructor(
                     this
                 }
             )
-    private suspend fun decryptDeviceName(device: Device): Result<CryptoProperty<String>> = coRunCatching {
+    private suspend fun decryptDeviceName(
+        device: Device,
+    ): Result<CryptoProperty<String>> = coRunCatching {
         with (
             decryptLinkName(
                 getLink(device.rootLinkId).toResult().getOrThrow()

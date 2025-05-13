@@ -26,6 +26,7 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
@@ -41,21 +42,22 @@ class GetPagedPhotoListingsList @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
 ) {
 
-    operator fun invoke(userId: UserId): Flow<PagingData<PhotoListing>> = getPhotoShare(userId)
+    operator fun invoke(userId: UserId, tag: PhotoTag? = null): Flow<PagingData<PhotoListing>> = getPhotoShare(userId)
         .transform { result ->
             when (result) {
                 is DataResult.Processing -> Unit
                 is DataResult.Success -> emitAll(
-                    invoke(result.value)
+                    invoke(result.value, tag)
                 )
                 is DataResult.Error -> emit(PagingData.empty())
             }.exhaustive
         }
 
-    operator fun invoke(share: Share): Flow<PagingData<PhotoListing>> =
+    operator fun invoke(share: Share, tag: PhotoTag? = null): Flow<PagingData<PhotoListing>> =
         getPagedPhotoListings(
             volumeId = share.volumeId,
-            pagedListKey = "PHOTO_LISTING",
+            pagedListKey = tag?.let { "PHOTO_LISTING_$tag" } ?: "PHOTO_LISTING",
+            tagged = tag != null,
             remotePhotoListings = { pageKey, _ ->
                 fetchPhotoListingPage(
                     userId = share.id.userId,
@@ -63,6 +65,7 @@ class GetPagedPhotoListingsList @Inject constructor(
                     shareId = share.id,
                     pageKey = pageKey,
                     pageSize = configurationProvider.apiListingPageSize,
+                    tag = tag,
                 )
             },
             localPagedPhotoListings = { fromIndex, count ->
@@ -71,12 +74,21 @@ class GetPagedPhotoListingsList @Inject constructor(
                     volumeId = share.volumeId,
                     fromIndex = fromIndex,
                     count = count,
+                    tag = tag,
                 )
             },
-            localPhotoListingCount = { photoRepository.getPhotoListingCount(share.id.userId, share.volumeId) },
+            localPhotoListingCount = { photoRepository.getPhotoListingCount(
+                userId = share.id.userId,
+                volumeId = share.volumeId,
+                tag = tag,
+            ) },
             deleteAllLocalPhotoListings = {
                 coRunCatching {
-                    photoRepository.deleteAll(share.id.userId, share.volumeId)
+                    photoRepository.deleteAll(
+                        userId = share.id.userId,
+                        volumeId = share.volumeId,
+                        tag = tag,
+                    )
                 }
             }
         )

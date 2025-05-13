@@ -31,5 +31,6 @@ sealed interface AlbumsItem {
         val isShared: Boolean,
         val album: DriveLink.Album? = null,
         val coverLink: DriveLink.File? = null,
+        val albumDetails: String? = null,
     ) : AlbumsItem
 }

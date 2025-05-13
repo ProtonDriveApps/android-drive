@@ -326,6 +326,7 @@ class FilesViewModel @Inject constructor(
                         driveLink.onClick(
                             navigateToFolder = navigateToFiles,
                             navigateToPreview = navigateToPreview,
+                            navigateToAlbum = { error("Album is not expected here") },
                         )
                     }
                 }
@@ -364,7 +365,7 @@ class FilesViewModel @Inject constructor(
         override val onMoreOptions = { driveLink: DriveLink -> navigateToFileOrFolderOptions(driveLink.id) }
         override val onSelectedOptions = {
             onSelectedOptions(
-                { linkId: LinkId, _ -> navigateToFileOrFolderOptions(linkId) },
+                { linkId: LinkId, _, _ -> navigateToFileOrFolderOptions(linkId) },
                 { selectionId: SelectionId, _ -> navigateToMultipleFileOrFolderOptions(selectionId) },
             )
         }

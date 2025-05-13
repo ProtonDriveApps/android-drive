@@ -52,16 +52,19 @@ import me.proton.core.presentation.R as CorePresentation
 fun UserInvitationBanner(
     description: String,
     modifier: Modifier = Modifier,
-    title: String = stringResource(id = I18N.string.shared_by_me_invitation_banner_title),
+    sectionHeaderTitle: String = stringResource(id = I18N.string.shared_by_me_invitation_banner_title),
+    showSectionHeader: Boolean = true,
     onClick: () -> Unit = {},
 ) {
     Column(modifier) {
-        Text(
-            text = title,
-            style = ProtonTheme.typography.defaultSmallWeak,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.padding(DefaultSpacing)
-        )
+        if (showSectionHeader) {
+            Text(
+                text = sectionHeaderTitle,
+                style = ProtonTheme.typography.defaultSmallWeak,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(DefaultSpacing)
+            )
+        }
         Row(
             modifier = Modifier
                 .clickable { onClick() }
@@ -110,7 +113,7 @@ fun UserInvitationBannerLightPreview() {
     ProtonTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             UserInvitationBanner(
-                title = stringResource(I18N.string.shared_by_me_invitation_banner_title),
+                sectionHeaderTitle = stringResource(I18N.string.shared_by_me_invitation_banner_title),
                 description = pluralStringResource(
                     I18N.plurals.shared_by_me_invitation_banner_description,
                     1,
@@ -127,7 +130,7 @@ fun UserInvitationBannerDarkPreview() {
     ProtonTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             UserInvitationBanner(
-                title = stringResource(I18N.string.shared_by_me_invitation_banner_title),
+                sectionHeaderTitle = stringResource(I18N.string.shared_by_me_invitation_banner_title),
                 description = pluralStringResource(
                     I18N.plurals.shared_by_me_invitation_banner_description,
                     1,

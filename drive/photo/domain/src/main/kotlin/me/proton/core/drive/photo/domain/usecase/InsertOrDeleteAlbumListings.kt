@@ -20,12 +20,13 @@ package me.proton.core.drive.photo.domain.usecase
 
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class InsertOrDeleteAlbumListings @Inject constructor(
-    private val insertOrIgnoreAlbumListings: InsertOrIgnoreAlbumListings,
+    private val insertOrUpdateAlbumListings: InsertOrUpdateAlbumListings,
     private val deleteAlbumListings: DeleteAlbumListings,
 ) {
 
@@ -35,17 +36,17 @@ class InsertOrDeleteAlbumListings @Inject constructor(
     ): Result<Unit> = coRunCatching {
         albums
             .map { album -> album.toAlbumListing(volumeId) to album.state }
-            .insertOrIgnoreAlbumListings()
+            .insertOrUpdateAlbumListings()
             .deleteAlbumListings()
     }
 
-    private suspend fun List<Pair<AlbumListing, Link.State>>.insertOrIgnoreAlbumListings(
+    private suspend fun List<Pair<AlbumListing, Link.State>>.insertOrUpdateAlbumListings(
     ): List<Pair<AlbumListing, Link.State>> = this.also { albumListingsWithState ->
         albumListingsWithState
             .filter { (_, state) -> state == Link.State.ACTIVE }
             .map { (albumListing, _) -> albumListing }
             .let { albumListing ->
-                insertOrIgnoreAlbumListings(albumListing)
+                insertOrUpdateAlbumListings(albumListing)
             }
     }
 
@@ -67,6 +68,6 @@ class InsertOrDeleteAlbumListings @Inject constructor(
             photoCount = photoCount,
             lastActivityTime = lastActivityTime,
             coverLinkId = coverLinkId,
-            isShared = isShared,
+            isShared = isSharedByLinkOrWithUsers,
         )
 }

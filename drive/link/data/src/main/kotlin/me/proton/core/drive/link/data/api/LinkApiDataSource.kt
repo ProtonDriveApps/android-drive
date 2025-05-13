@@ -17,17 +17,24 @@
  */
 package me.proton.core.drive.link.data.api
 
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.link.data.api.entity.LinkDto
 import me.proton.core.drive.link.data.api.request.CheckAvailableHashesRequest
 import me.proton.core.drive.link.data.api.request.GetLinksRequest
 import me.proton.core.drive.link.data.api.request.MoveLinkRequest
 import me.proton.core.drive.link.data.api.request.RenameLinkRequest
+import me.proton.core.drive.link.data.extension.toCopyLinkRequest
+import me.proton.core.drive.link.data.extension.toMoveMultipleLinksRequest
 import me.proton.core.drive.link.domain.entity.CheckAvailableHashesInfo
+import me.proton.core.drive.link.domain.entity.CopyInfo
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.MoveInfo
+import me.proton.core.drive.link.domain.entity.MoveMultipleInfo
 import me.proton.core.drive.link.domain.entity.RenameInfo
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.network.data.ApiProvider
 import me.proton.core.network.domain.ApiException
 
@@ -101,4 +108,45 @@ class LinkApiDataSource(private val apiProvider: ApiProvider) {
                 )
             )
         }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun moveMultipleLinks(
+        userId: UserId,
+        volumeId: VolumeId,
+        moveMultipleInfo: MoveMultipleInfo,
+    ) =
+        apiProvider.get<LinkApi>(userId).invoke {
+            moveMultipleLinks(
+                volumeId = volumeId.id,
+                request = moveMultipleInfo.toMoveMultipleLinksRequest(),
+            )
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun transferMultipleLinks(
+        userId: UserId,
+        volumeId: VolumeId,
+        moveMultipleInfo: MoveMultipleInfo,
+    ) =
+        apiProvider.get<LinkApi>(userId).invoke {
+            transferMultipleLinks(
+                volumeId = volumeId.id,
+                request = moveMultipleInfo.toMoveMultipleLinksRequest(),
+            )
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun copyFile(
+        userId: UserId,
+        volumeId: VolumeId,
+        fileId: FileId,
+        copyInfo: CopyInfo,
+    ) =
+        apiProvider.get<LinkApi>(userId).invoke {
+            copyLink(
+                volumeId = volumeId.id,
+                linkId = fileId.id,
+                request = copyInfo.toCopyLinkRequest(),
+            )
+        }.valueOrThrow.linkId
 }

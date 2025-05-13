@@ -80,6 +80,7 @@ class MoveFileDeepFlowSuccessTest : BaseTest() {
             .clickBack(FilesTabRobot)
             .clickBack(FilesTabRobot)
             .clickOnFolder(folder1)
+            .scrollToItemWithName(file)
             .verify {
                 itemIsDisplayed(file)
             }

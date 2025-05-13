@@ -22,16 +22,19 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.SHARE
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.usecase.GetAddressId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
+import me.proton.core.drive.volume.domain.usecase.GetVolume
 import me.proton.core.user.domain.entity.AddressId
 import javax.inject.Inject
 
 class GetAddressId @Inject constructor(
-    private val getMainShare: GetMainShare,
+    private val getVolume: GetVolume,
     private val getShare: GetShare,
     private val getAddressId: GetAddressId,
     private val getShareMembership: GetShareMembership,
@@ -40,8 +43,13 @@ class GetAddressId @Inject constructor(
         userId: UserId,
         volumeId: VolumeId,
     ): Result<AddressId> = coRunCatching {
-        getMainShare(userId, volumeId).toResult()
-            .getOrNull(SHARE, "Cannot find main share")
+        getVolume(userId, volumeId).toResult()
+            .getOrNull(SHARE, "Cannot find volume ${volumeId.id.logId()}")
+            ?.let { volume -> ShareId(userId, volume.shareId) }
+            ?.let { shareId ->
+                getShare(shareId).toResult()
+                    .getOrNull("Cannot find volume share: ${shareId.id.logId()}")
+            }
             ?.addressId
             ?: getAddressId(userId)
     }

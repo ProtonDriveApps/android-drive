@@ -49,12 +49,13 @@ class WhatsNewViewModel @Inject constructor(
 
     val viewState: Flow<WhatsNewViewState?> = flowOf {
         when (key) {
-            WhatsNewKey.PUBLIC_SHARING -> WhatsNewViewState(
-                title = appContext.getString(I18N.string.whats_new_public_sharing_title),
-                description = appContext.getString(I18N.string.whats_new_public_sharing_description),
-                action = appContext.getString(I18N.string.whats_new_public_sharing_action),
-                image = BasePresentation.drawable.img_whats_new_public_sharing,
+            WhatsNewKey.ALBUMS -> WhatsNewViewState(
+                title = appContext.getString(I18N.string.whats_new_albums_title),
+                description = appContext.getString(I18N.string.whats_new_albums_description),
+                action = appContext.getString(I18N.string.whats_new_albums_action),
+                image = BasePresentation.drawable.img_whats_new_albums,
             )
+            else -> null
         }
     }
 

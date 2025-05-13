@@ -119,7 +119,6 @@ class MakeAvailableOfflineFlowTest : BaseTest() {
             .verify {
                 robotDisplayed()
             }
-            .deselectPhoto(firstImage)
             .longClickOnPhoto(secondImage.fileName)
             .clickOptions()
             .clickMakeAvailableOffline(goesTo = PhotosTabRobot)

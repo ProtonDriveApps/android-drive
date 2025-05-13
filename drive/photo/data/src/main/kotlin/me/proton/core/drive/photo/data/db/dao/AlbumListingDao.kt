@@ -32,7 +32,6 @@ abstract class AlbumListingDao : BaseDao<AlbumListingEntity>() {
     @Query(ALBUM_LISTING)
     abstract suspend fun getAlbumListings(
         userId: UserId,
-        volumeId: String,
         direction: Direction,
         limit: Int,
         offset: Int,
@@ -41,7 +40,6 @@ abstract class AlbumListingDao : BaseDao<AlbumListingEntity>() {
     @Query(ALBUM_LISTING)
     abstract fun getAlbumListingsFlow(
         userId: UserId,
-        volumeId: String,
         direction: Direction,
         limit: Int,
         offset: Int,
@@ -60,8 +58,7 @@ abstract class AlbumListingDao : BaseDao<AlbumListingEntity>() {
         const val ALBUM_LISTING = """
             SELECT * FROM AlbumListingEntity
             WHERE
-                user_id = :userId AND
-                volume_id = :volumeId
+                user_id = :userId
             ORDER BY
                 CASE WHEN :direction = 'ASCENDING' THEN last_activity_time END ASC,
                 CASE WHEN :direction = 'DESCENDING' THEN last_activity_time END DESC

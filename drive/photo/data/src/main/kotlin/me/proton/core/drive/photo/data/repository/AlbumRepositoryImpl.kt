@@ -18,16 +18,24 @@
 
 package me.proton.core.drive.photo.data.repository
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.repository.BaseRepository
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.data.api.PhotoApiDataSource
 import me.proton.core.drive.photo.data.api.response.AddToRemoveFromAlbumResponse
@@ -40,6 +48,7 @@ import me.proton.core.drive.photo.data.extension.toAlbumListingEntity
 import me.proton.core.drive.photo.data.extension.toAlbumPhotoListing
 import me.proton.core.drive.photo.data.extension.toAlbumPhotoListingEntity
 import me.proton.core.drive.photo.data.extension.toCreateAlbumRequest
+import me.proton.core.drive.photo.data.extension.toEntity
 import me.proton.core.drive.photo.data.extension.toUpdateAlbumRequest
 import me.proton.core.drive.photo.domain.entity.AddToAlbumInfo
 import me.proton.core.drive.photo.domain.entity.AddToRemoveFromAlbumResult
@@ -47,9 +56,11 @@ import me.proton.core.drive.photo.domain.entity.AlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.photo.domain.entity.AlbumPhotoListingList
 import me.proton.core.drive.photo.domain.entity.PhotoListing
+import me.proton.core.drive.photo.domain.entity.RelatedPhoto
 import me.proton.core.drive.photo.domain.entity.UpdateAlbumInfo
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
@@ -59,6 +70,7 @@ class AlbumRepositoryImpl @Inject constructor(
     private val db: PhotoDatabase,
     private val baseRepository: BaseRepository,
     private val configurationProvider: ConfigurationProvider,
+    private val getShare: GetShare,
 ) : AlbumRepository {
 
     override suspend fun createAlbum(userId: UserId, volumeId: VolumeId, albumInfo: AlbumInfo) =
@@ -101,8 +113,12 @@ class AlbumRepositoryImpl @Inject constructor(
         while (true) {
             val response = api.getAlbumSharedWithMeListings(userId, anchorId)
             albumListingEntities.addAll(
-                response.albums.map { albumListingsDto ->
-                    albumListingsDto.toAlbumListingEntity(shareId)
+                response.albums.mapNotNull { albumListingsDto ->
+                    albumListingsDto.shareId?.let { shareId ->
+                        val albumShareId = ShareId(userId, shareId)
+                        getShare(albumShareId).toResult().getOrThrow()
+                        albumListingsDto.toAlbumListingEntity(albumShareId)
+                    }
                 }
             )
             if (response.more && response.anchorId != null) {
@@ -126,14 +142,12 @@ class AlbumRepositoryImpl @Inject constructor(
 
     override suspend fun getAlbumListings(
         userId: UserId,
-        volumeId: VolumeId,
         fromIndex: Int,
         count: Int,
         sortingDirection: Direction,
     ): List<AlbumListing> =
         db.albumListingDao.getAlbumListings(
             userId = userId,
-            volumeId = volumeId.id,
             direction = sortingDirection,
             limit = count,
             offset = fromIndex,
@@ -141,14 +155,12 @@ class AlbumRepositoryImpl @Inject constructor(
 
     override fun getAlbumListingsFlow(
         userId: UserId,
-        volumeId: VolumeId,
         fromIndex: Int,
         count: Int,
         sortingDirection: Direction
     ): Flow<Result<List<AlbumListing>>> =
         db.albumListingDao.getAlbumListingsFlow(
             userId = userId,
-            volumeId = volumeId.id,
             direction = sortingDirection,
             limit = count,
             offset = fromIndex,
@@ -158,10 +170,10 @@ class AlbumRepositoryImpl @Inject constructor(
             }
         }
 
-    override suspend fun insertOrIgnoreAlbumListings(
+    override suspend fun insertOrUpdateAlbumListings(
         albumListings: List<AlbumListing>
     ) {
-        db.albumListingDao.insertOrIgnore(
+        db.albumListingDao.insertOrUpdate(
             *albumListings.map { albumListing ->
                 albumListing.toAlbumListingEntity()
             }.toTypedArray()
@@ -178,6 +190,16 @@ class AlbumRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun deleteAlbumPhotoListing(linkIds: List<LinkId>) {
+        db.inTransaction {
+            linkIds
+                .groupBy({ link -> link.shareId }) { link -> link.id }
+                .forEach { (shareId, linkIds) ->
+                    db.albumPhotoListingDao.delete(shareId.userId, shareId.id, linkIds)
+                }
+        }
+    }
+
     override suspend fun fetchAlbumPhotoListings(
         userId: UserId,
         volumeId: VolumeId,
@@ -185,6 +207,8 @@ class AlbumRepositoryImpl @Inject constructor(
         anchorId: String?,
         sortingBy: PhotoListing.Album.SortBy,
         sortingDirection: Direction,
+        onlyDirectChildren: Boolean,
+        includeTrashedChildren: Boolean,
     ): Pair<AlbumPhotoListingList, SaveAction> =
         fetchAlbumPhotoListingDtos(
             userId = userId,
@@ -193,6 +217,8 @@ class AlbumRepositoryImpl @Inject constructor(
             anchorId = anchorId,
             sortingBy = sortingBy,
             sortingDirection = sortingDirection,
+            onlyDirectChildren = onlyDirectChildren,
+            includeTrashedChildren = includeTrashedChildren,
         ).let { response ->
             val albumPhotoListings = response.photos.map { albumPhotoListingDto ->
                 albumPhotoListingDto.toAlbumPhotoListing(albumId.shareId, albumId)
@@ -202,11 +228,13 @@ class AlbumRepositoryImpl @Inject constructor(
                 anchorId = response.anchorId,
                 hasMore = response.hasMore,
             ) to SaveAction {
-                db.albumPhotoListingDao.insertOrUpdate(
-                    *albumPhotoListings.map { albumPhotoListing ->
-                        albumPhotoListing.toAlbumPhotoListingEntity(volumeId)
-                    }.toTypedArray()
-                )
+                val map = albumPhotoListings.associate { albumPhotoListing ->
+                    albumPhotoListing.toAlbumPhotoListingEntity(volumeId)
+                }
+                db.inTransaction {
+                    db.albumPhotoListingDao.insertOrUpdate(*map.keys.toTypedArray())
+                    db.albumRelatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
+                }
             }
         }
 
@@ -218,6 +246,8 @@ class AlbumRepositoryImpl @Inject constructor(
         anchorId: String?,
         sortingBy: PhotoListing.Album.SortBy,
         sortingDirection: Direction,
+        onlyDirectChildren: Boolean,
+        includeTrashedChildren: Boolean,
     ): List<PhotoListing.Album> {
         val albumPhotoListingDtos = fetchAlbumPhotoListingDtos(
             userId = userId,
@@ -226,12 +256,16 @@ class AlbumRepositoryImpl @Inject constructor(
             anchorId = anchorId,
             sortingBy = sortingBy,
             sortingDirection = sortingDirection,
+            onlyDirectChildren = onlyDirectChildren,
+            includeTrashedChildren = includeTrashedChildren,
         ).photos
-        db.albumPhotoListingDao.insertOrUpdate(
-            *albumPhotoListingDtos.map { albumPhotoListingDto ->
-                albumPhotoListingDto.toAlbumPhotoListingEntity(volumeId, shareId, albumId)
-            }.toTypedArray()
-        )
+        val map = albumPhotoListingDtos.associate { albumPhotoListingDto ->
+            albumPhotoListingDto.toAlbumPhotoListingEntity(volumeId, shareId, albumId)
+        }
+        db.inTransaction {
+            db.albumPhotoListingDao.insertOrUpdate(*map.keys.toTypedArray())
+            db.albumRelatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
+        }
         return albumPhotoListingDtos.map { albumPhotoListingDto ->
             albumPhotoListingDto.toAlbumPhotoListing(shareId, albumId)
         }
@@ -288,6 +322,19 @@ class AlbumRepositoryImpl @Inject constructor(
     ): Flow<Int> =
         db.albumPhotoListingDao.getAlbumPhotoListingCount(userId, volumeId.id, albumId.id)
 
+    override suspend fun deleteAlbumPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        fileIds: Set<FileId>,
+    ) =
+        db.albumPhotoListingDao.delete(
+            userId = userId,
+            volumeId = volumeId.id,
+            albumId = albumId.id,
+            linkIds = fileIds.map { fileId -> fileId.id },
+        )
+
     override suspend fun deleteAllAlbumPhotoListings(
         userId: UserId,
         volumeId: VolumeId,
@@ -298,11 +345,13 @@ class AlbumRepositoryImpl @Inject constructor(
         volumeId: VolumeId,
         photoListings: List<PhotoListing.Album>,
     ) {
-        db.albumPhotoListingDao.insertOrIgnore(
-            *photoListings.map { photoListing ->
-                photoListing.toAlbumPhotoListingEntity(volumeId)
-            }.toTypedArray()
-        )
+        val map = photoListings.associate { photoListing ->
+            photoListing.toAlbumPhotoListingEntity(volumeId)
+        }
+        db.inTransaction {
+            db.albumPhotoListingDao.insertOrIgnore(*map.keys.toTypedArray())
+            db.albumRelatedPhotoDao.insertOrIgnore(*map.values.flatten().toTypedArray())
+        }
     }
 
     override suspend fun addToAlbum(
@@ -311,14 +360,24 @@ class AlbumRepositoryImpl @Inject constructor(
         addToAlbumInfos: List<AddToAlbumInfo>,
     ): AddToRemoveFromAlbumResult {
         val responses: MutableList<AddToRemoveFromAlbumResponse.Responses> = mutableListOf()
-        addToAlbumInfos.chunked(configurationProvider.addToRemoveFromAlbumMaxApiDataSize).forEach { chunk ->
-            val response = api.addToAlbum(
-                userId = albumId.userId,
-                volumeId = volumeId,
-                albumId = albumId.id,
-                addToAlbumInfos = chunk,
-            ).valueOrThrow
-            responses.addAll(response.responses)
+        val mutex = Mutex()
+        withContext(Dispatchers.IO) {
+            addToAlbumInfos
+                .chunked(configurationProvider.addToRemoveFromAlbumMaxApiDataSize)
+                .map { chunk ->
+                    async {
+                        val response = api.addToAlbum(
+                            userId = albumId.userId,
+                            volumeId = volumeId,
+                            albumId = albumId.id,
+                            addToAlbumInfos = chunk,
+                        ).valueOrThrow
+                        mutex.withLock {
+                            responses.addAll(response.responses)
+                        }
+                    }
+                }
+                .awaitAll()
         }
         return responses.toAddToRemoveFromAlbumResult()
     }
@@ -361,6 +420,8 @@ class AlbumRepositoryImpl @Inject constructor(
         anchorId: String?,
         sortingBy: PhotoListing.Album.SortBy,
         sortingDirection: Direction,
+        onlyDirectChildren: Boolean = false,
+        includeTrashedChildren: Boolean = false,
     ): GetAlbumPhotoListingResponse =
         api.getAlbumPhotoListings(
             userId = userId,
@@ -369,5 +430,22 @@ class AlbumRepositoryImpl @Inject constructor(
             anchorId = anchorId,
             sortingBy = sortingBy,
             sortingDirection = sortingDirection,
+            onlyDirectChildren = onlyDirectChildren,
+            includeTrashedChildren = includeTrashedChildren,
         )
+
+    override suspend fun getRelatedPhotos(
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        mainFileId: FileId,
+        fromIndex: Int,
+        count: Int,
+    ): List<RelatedPhoto> = db.albumRelatedPhotoDao.getRelatedPhotos(
+        userId = mainFileId.userId,
+        volumeId = volumeId.id,
+        albumId = albumId.id,
+        mainLinkId = mainFileId.id,
+        limit = count,
+        offset = fromIndex,
+    ).map { it.toEntity() }
 }

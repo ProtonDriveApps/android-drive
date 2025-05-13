@@ -154,8 +154,8 @@ class MoveFileWorker @AssistedInject constructor(
     }
 
     private fun Throwable.handledFileAlreadyExists(): Boolean =
-        onProtonHttpException { protonCode ->
-            if (protonCode == ProtonApiCode.ALREADY_EXISTS) {
+        onProtonHttpException { protonData ->
+            if (protonData.code == ProtonApiCode.ALREADY_EXISTS) {
                 broadcastMessages(
                     userId = userId,
                     message = applicationContext.getString(

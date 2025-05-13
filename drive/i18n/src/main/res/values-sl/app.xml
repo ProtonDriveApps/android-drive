@@ -64,7 +64,7 @@
   <string name="in_app_notification_upload_files_only">V %1$s je mogoče naložiti samo datoteke</string>
   <string name="in_app_notification_importing_file_already_exists">Datoteka z istim imenom že obstaja, poskusite počistiti predpomnilnik aplikacije</string>
   <string name="in_app_notification_clear_local_cache_success">Lokalni predpomnilnik je bil uspešno počiščen</string>
-  <string name="in_app_notification_destination_screen_not_found">Destination screen not found</string>
+  <string name="in_app_notification_destination_screen_not_found">Ciljni zaslon ni bil najden</string>
   <string name="in_app_notification_create_document_success">Dokument ustvarjen</string>
   <!-- endregion -->
   <!-- region Notification -->
@@ -153,8 +153,8 @@
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Varnostno kopiranje ni dovoljeno</string>
   <string name="notification_content_text_backup_paused_disabled">Varnostno kopiranje je bilo onemogočeno</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Varnostno kopiranje ne more delovati v ozadju</string>
-  <string name="notification_content_text_backup_preparing">Preparing to back up</string>
-  <string name="notification_content_text_backup_failed_migration">Migration in progress, update your application</string>
+  <string name="notification_content_text_backup_preparing">Priprava na varnostno kopiranje</string>
+  <string name="notification_content_text_backup_failed_migration">Poteka selitev. Posodobite vašo aplikacijo</string>
   <string name="notification_content_title_download_complete">Prenos končan</string>
   <string name="notification_content_title_forced_sign_out">Prosimo prijavite se</string>
   <string name="notification_content_text_forced_sign_out">Oprostite, ker motim! Imeli smo težave s sinhronizacijo - prosimo, prijavite se znova in vse bo potekalo gladko.</string>
@@ -167,16 +167,16 @@
   <string name="notification_channel_transfer_description">Kanal za shranjevanje v oblaku, obvestila o nalaganju in prenosu</string>
   <string name="notification_channel_warning_title">Opozorilo</string>
   <string name="notification_channel_warning_description">Kanal za opozorila, ki zahtevajo ukrepanje uporabnika</string>
-  <string name="notification_permission_rationale_title_backup">Stay updated on your backup status</string>
-  <string name="notification_permission_rationale_description_backup">Receive notifications about the progress and status of your backups.</string>
+  <string name="notification_permission_rationale_title_backup">Bodite na tekočem s stanjem vaše varnostne kopije</string>
+  <string name="notification_permission_rationale_description_backup">Prejemajte obvestila o napredku in stanju vaših varnostnih kopij.</string>
   <string name="notification_permission_rationale_action_accept">Omogoči obvestila</string>
   <string name="notification_permission_rationale_action_reject">Ne zdaj</string>
-  <string name="notification_content_title_transferring">Transferring data</string>
+  <string name="notification_content_title_transferring">Prenos podatkov</string>
   <!-- endregion -->
   <string name="content_description_select_all">Izberite vse predmete na seznamu</string>
   <string name="content_description_selected_options">Pokaži več možnosti za izbrane datoteke in/ali mape</string>
   <string name="content_description_files_upload_upload_file">Naloži datoteko</string>
-  <string name="content_description_albums_new">Create new album</string>
+  <string name="content_description_albums_new">Ustvari nov album</string>
   <string name="description_empty_my_files">Tapnite gumb, da začnete dodajati datoteke.</string>
   <string name="description_empty_folder_read_only">Tukaj ni ničesar videti.</string>
   <string name="description_empty_shared">Povezane datoteke so prikazane tukaj, tako da lahko preprosto sledite in upravljate, kar je v skupni rabi.</string>
@@ -190,7 +190,7 @@
   <string name="description_files_stop_sharing_action_success">Povezava do vaše datoteke je bila izbrisana.</string>
   <string name="description_files_stop_sharing_action_error">Pri brisanju povezave do vaše datoteke je prišlo do napake.</string>
   <string name="description_files_stop_all_sharing">S tem boste izbrisali povezavo in onemogočili dostop za vse.</string>
-  <string name="description_files_stop_all_sharing_action_success">Sharing of your file has been deleted.</string>
+  <string name="description_files_stop_all_sharing_action_success">Souporaba vaše datoteke je bila izbrisana.</string>
   <string name="description_files_stop_all_sharing_action_error">Med brisanjem skupne rabe vaše datoteke je prišlo do napake.</string>
   <string name="ignore_file_signature_action">Vseeno si oglejte</string>
   <string name="action_empty_files_add_files">Naloži</string>
@@ -200,7 +200,7 @@
   <string name="error_share_locked">Skupna raba je zaklenjena.</string>
   <string name="error_main_share_not_found">Glavne skupne rabe ne najde.</string>
   <string name="error_share_not_found">Skupna raba ni najdena.</string>
-  <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
+  <string name="error_creating_photo_share_not_allowed">Varnostno kopiranje fotografij je začasno onemogočeno.</string>
   <string name="error_creating_share_not_allowed">Ustvarjanje skupne rabe je začasno onemogočeno.</string>
   <string name="operation_open_document">odpri dokument</string>
   <string name="operation_create_document">ustvarite dokument.</string>
@@ -243,4 +243,45 @@
             "Untitled document 2025-11-28 12.34.56"
     -->
   <string name="new_document_name">Neimenovan dokument %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a price
+        Example:
+            "More storage for only $1.00"
+    -->
+  <string name="drive_lite_promo_title">Več prostora za shranjevanje za samo %1$s</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Variable %2$s is a string representation of a storage size
+        Variable %3$s is a string representation of a price
+        Example:
+            "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
+    -->
+  <string name="drive_lite_promo_description">Ko potrebujete nekaj več prostora za shranjevanje, a ne veliko. Predstavljamo vam %1$s s %2$s prostora za shranjevanje za samo %3$s na mesec.</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Example:
+            "Get Drive Lite"
+    -->
+  <string name="drive_lite_promo_action">Pridobi %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a storage size
+        Variable %2$s is a string representation of a price
+        Example:
+            "Get 200GB for just $0.99"
+    -->
+  <string name="drive_plus_promo_title">Pridobite %1$s za samo %2$s</string>
+  <!--
+        Variable %1$s is a string representation of a large number
+        Variable %2$s is a string representation of a price
+        Variable %3$s is a string representation of a price
+        Example:
+            "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
+    -->
+  <string name="drive_plus_promo_description">To je dovolj varne shrambe za več kot %1$s fotografij visoke ločljivosti. Prvi mesec dobite za %2$s, nato pa %3$s/mesec.</string>
+  <!--
+        Variable %1$s is the price of the plan
+        Example:
+            "Upgrade for $0.99"
+    -->
+  <string name="drive_plus_promo_action">Nadgradi za %1$s</string>
 </resources>

@@ -93,6 +93,71 @@ fun AddToRemoveFromAlbumResult.processAdd(context: Context, block: (String, Broa
             )
         }
 
+fun AddToRemoveFromAlbumResult.processAddToStream(context: Context, block: (String, BroadcastMessage.Type) -> Unit) =
+    this
+        .onSuccess { count ->
+            block(
+                context.quantityString(
+                    I18N.plurals.in_app_notification_add_to_stream_success,
+                    count,
+                ),
+                BroadcastMessage.Type.INFO,
+            )
+        }
+        .onAddToAlreadyExists { alreadyExistsCount, successCount ->
+            block(
+                buildString {
+                    append(
+                        context.quantityString(
+                            I18N.plurals.in_app_notification_add_to_stream_already_exists,
+                            alreadyExistsCount,
+                        )
+                    )
+                    if (successCount > 0) {
+                        append(", ")
+                        append(
+                            context.quantityString(
+                                I18N.plurals.in_app_notification_add_to_stream_success,
+                                successCount,
+                            )
+                        )
+                    }
+                },
+                BroadcastMessage.Type.WARNING,
+            )
+        }
+        .onAddToFailure { failedCount, successCount, alreadyExistsCount ->
+            block(
+                buildString {
+                    append(
+                        context.quantityString(
+                            I18N.plurals.in_app_notification_add_to_stream_failed,
+                            failedCount,
+                        )
+                    )
+                    if (alreadyExistsCount > 0) {
+                        append(", ")
+                        append(
+                            context.quantityString(
+                                I18N.plurals.in_app_notification_add_to_stream_already_exists,
+                                alreadyExistsCount,
+                            )
+                        )
+                    }
+                    if (successCount > 0) {
+                        append(", ")
+                        append(
+                            context.quantityString(
+                                I18N.plurals.in_app_notification_add_to_stream_success,
+                                successCount,
+                            )
+                        )
+                    }
+                },
+                BroadcastMessage.Type.ERROR,
+            )
+        }
+
 fun AddToRemoveFromAlbumResult.processRemove(context: Context, block: (String, BroadcastMessage.Type) -> Unit) =
     this
         .onSuccess { count ->

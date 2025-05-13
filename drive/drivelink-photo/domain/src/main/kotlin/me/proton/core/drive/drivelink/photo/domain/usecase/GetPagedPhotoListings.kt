@@ -40,6 +40,7 @@ class GetPagedPhotoListings @Inject constructor(
     operator fun invoke(
         volumeId: VolumeId,
         pagedListKey: String,
+        tagged: Boolean,
         remotePhotoListings: suspend (pageKey: String?, pageSize: Int) -> Result<PhotoListingsPage>,
         deleteAllLocalPhotoListings: suspend () -> Result<Unit>,
         localPagedPhotoListings: (Int, Int) -> Flow<Result<List<PhotoListing>>>,
@@ -51,7 +52,13 @@ class GetPagedPhotoListings @Inject constructor(
             initialLoadSize = pageSize,
             enablePlaceholders = false,
         ),
-        remoteMediator = factory.create(volumeId, pagedListKey, remotePhotoListings, deleteAllLocalPhotoListings),
+        remoteMediator = factory.create(
+            volumeId = volumeId,
+            pagedListKey = pagedListKey,
+            tagged = tagged,
+            remotePhotoListings = remotePhotoListings,
+            deleteAllLocalPhotoListings = deleteAllLocalPhotoListings,
+        ),
         pagingSourceFactory = {
             { fromIndex: Int, count: Int ->
                 localPagedPhotoListings(fromIndex, count)

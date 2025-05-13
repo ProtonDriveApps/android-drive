@@ -25,9 +25,9 @@ import me.proton.core.drive.base.domain.entity.Location
 import me.proton.core.drive.base.domain.entity.MediaResolution
 import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.link.domain.PhotoTag
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.linkupload.domain.entity.RawBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBlock
 import me.proton.core.drive.linkupload.domain.entity.UploadBulk

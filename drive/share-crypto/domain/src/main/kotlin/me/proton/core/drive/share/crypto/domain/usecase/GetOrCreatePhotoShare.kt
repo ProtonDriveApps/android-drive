@@ -23,13 +23,18 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.transform
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.exception.ShareException
+import me.proton.core.drive.volume.domain.usecase.GetVolume
 import javax.inject.Inject
 
 class GetOrCreatePhotoShare @Inject constructor(
     private val getPhotoShare: GetPhotoShare,
     private val createPhotoShare: CreatePhotoShare,
+    private val getVolume: GetVolume,
 ) {
     operator fun invoke(userId: UserId): Flow<DataResult<Share>> =
         getPhotoShare(userId).transform { result ->
@@ -45,6 +50,16 @@ class GetOrCreatePhotoShare @Inject constructor(
 
                         else -> emit(result)
                     }
+                }
+                is DataResult.Success -> {
+                    getVolume(
+                        userId = userId,
+                        volumeId = result.value.volumeId
+                    ).toResult().getOrNull(
+                        tag = LogTag.PHOTO,
+                        message = "Getting photo share volume failed",
+                    )
+                    emit(result)
                 }
 
                 else -> emit(result)

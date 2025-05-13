@@ -35,6 +35,7 @@ driveModule(
     api(project(":photos:data"))
     api(project(":drive:backup:domain"))
     implementation(project(":drive:base:presentation"))
+    implementation(project(":drive:drivelink-shared:presentation"))
     implementation(project(":drive:files:presentation"))
     implementation(project(":drive:notification:presentation"))
     implementation(project(":drive:thumbnail:presentation"))
@@ -45,4 +46,5 @@ driveModule(
     implementation(libs.coil.video)
     implementation(libs.core.presentation)
     implementation(libs.core.presentation.compose)
+    implementation(libs.lottie.compose)
 }

@@ -22,8 +22,8 @@ import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.backup.domain.repository.FindDuplicatesRepository
 import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.link.domain.entity.CheckAvailableHashesInfo
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.repository.LinkRepository
 import javax.inject.Inject
 
@@ -32,13 +32,13 @@ class FolderFindDuplicatesRepository @Inject constructor(
 ) : FindDuplicatesRepository {
 
     override suspend fun findDuplicates(
-        folderId: FolderId,
+        parentId: ParentId,
         nameHashes: List<String>,
         clientUids: List<ClientUid>,
     ): List<BackupDuplicate> {
         val clientUid = clientUids.firstOrNull()
         val (availableHashes, pendingHashes) = linkRepository.checkAvailableHashes(
-            linkId = folderId,
+            linkId = parentId,
             checkAvailableHashesInfo = CheckAvailableHashesInfo(
                 hashes = nameHashes,
                 clientUid = clientUid
@@ -49,7 +49,7 @@ class FolderFindDuplicatesRepository @Inject constructor(
         }.toSet()
         val notAvailable = notAvailableHashes.map { availableHash ->
             BackupDuplicate(
-                parentId = folderId,
+                parentId = parentId,
                 hash = availableHash,
                 contentHash = null,
                 linkId = null,
@@ -61,7 +61,7 @@ class FolderFindDuplicatesRepository @Inject constructor(
         val draft = pendingHashes.filter { hash -> hash.clientUid == clientUid }
             .map { pendingHash ->
                 BackupDuplicate(
-                    parentId = folderId,
+                    parentId = parentId,
                     hash = pendingHash.hash,
                     contentHash = null,
                     linkId = pendingHash.fileId,

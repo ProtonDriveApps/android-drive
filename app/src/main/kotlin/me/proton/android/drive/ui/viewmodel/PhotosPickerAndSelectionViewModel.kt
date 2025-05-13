@@ -29,6 +29,7 @@ import me.proton.android.drive.photos.domain.usecase.GetPhotoListingCount
 import me.proton.android.drive.photos.domain.usecase.RemoveFromAlbumInfo
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.toVolumePhotoListing
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
@@ -66,11 +67,9 @@ open class PhotosPickerAndSelectionViewModel(
     override fun onDriveLink(driveLink: DriveLink, nonSelectedBlock: () -> Unit) {
         if (inPickerMode && driveLink is DriveLink.File) {
             if (selected.value.contains(driveLink.id)) {
-                removeFromAlbum(driveLink)
-                removeSelected(listOf(driveLink.id))
+                removeFromAlbumAndFromSelected(driveLink)
             } else {
-                addToAlbum(driveLink)
-                addSelected(listOf(driveLink.id))
+                addToAlbumAndToSelected(driveLink)
             }
         } else {
             super.onDriveLink(driveLink, nonSelectedBlock)
@@ -100,22 +99,28 @@ open class PhotosPickerAndSelectionViewModel(
         }
     }
 
-    private fun addToAlbum(driveLink: DriveLink.File) = viewModelScope.launch {
+    private fun addToAlbumAndToSelected(driveLink: DriveLink.File) = viewModelScope.launch {
         val photoListings = setOf(driveLink.toVolumePhotoListing())
         if (destinationAlbumId == null) {
             addToAlbumInfo(photoListings)
+                .getOrNull(VIEW_MODEL, "Failed to add to album info for new album ShareId=${driveLink.id.shareId.id.logId()}, LinkId=${driveLink.id.id.logId()}")
         } else {
             addToAlbumInfo(destinationAlbumId, photoListings)
+                .getOrNull(VIEW_MODEL, "Failed to add to album info ShareId=${driveLink.id.shareId.id.logId()}, LinkId=${driveLink.id.id.logId()}")
         }
+        addSelected(listOf(driveLink.id))
     }
 
-    private fun removeFromAlbum(driveLink: DriveLink.File) = viewModelScope.launch {
+    private fun removeFromAlbumAndFromSelected(driveLink: DriveLink.File) = viewModelScope.launch {
         val photoListings = setOf(driveLink.toVolumePhotoListing())
         if (destinationAlbumId == null) {
             removeFromAlbumInfo(photoListings)
+                .getOrNull(VIEW_MODEL, "Failed to remove from album info for new album ShareId=${driveLink.id.shareId.id.logId()}, LinkId=${driveLink.id.id.logId()}")
         } else {
             removeFromAlbumInfo(destinationAlbumId, photoListings)
+                .getOrNull(VIEW_MODEL, "Failed to remove from album info ShareId=${driveLink.id.shareId.id.logId()}, LinkId=${driveLink.id.id.logId()}")
         }
+        removeSelected(listOf(driveLink.id))
     }
 
     companion object {

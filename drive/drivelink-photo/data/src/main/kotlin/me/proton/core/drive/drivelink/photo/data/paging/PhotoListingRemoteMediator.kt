@@ -77,7 +77,7 @@ class PhotoListingRemoteMediator @Inject constructor(
                 photoListings.lastOrNull()?.linkId?.id
             }
             CoreLogger.d(LogTag.PAGING, "pageKey ($pageKey) nextPageKey ($nextPageKey)")
-            val remoteKeys = photoListings.map { photoListing ->
+            val remoteKeys = photoListings.map { photoListing: PhotoListing ->
                 PhotoListingRemoteKeyEntity(
                     key = pagedListKey,
                     userId = photoListing.linkId.userId,

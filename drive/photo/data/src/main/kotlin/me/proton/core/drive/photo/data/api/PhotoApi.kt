@@ -22,8 +22,10 @@ import me.proton.core.drive.base.data.api.response.CodeResponse
 import me.proton.core.drive.photo.data.api.request.AddToAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreateAlbumRequest
 import me.proton.core.drive.photo.data.api.request.CreatePhotoRequest
+import me.proton.core.drive.photo.data.api.request.FavoriteRequest
 import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
 import me.proton.core.drive.photo.data.api.request.RemoveFromAlbumRequest
+import me.proton.core.drive.photo.data.api.request.TagRequest
 import me.proton.core.drive.photo.data.api.request.UpdateAlbumRequest
 import me.proton.core.drive.photo.data.api.response.AddToRemoveFromAlbumResponse
 import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
@@ -32,10 +34,12 @@ import me.proton.core.drive.photo.data.api.response.FindDuplicatesResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.drive.photo.data.api.response.GetPhotoListingResponse
+import me.proton.core.drive.photo.data.api.response.MigrationStatusResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -55,6 +59,7 @@ interface PhotoApi : BaseRetrofitApi {
         @Query("PageSize") pageSize: Int,
         @Query("PreviousPageLastLinkID") previousPageLastLinkId: String?,
         @Query("MinimumCaptureTime") minimumCaptureTime: Long,
+        @Query("Tag") tag: Long? = null,
     ): GetPhotoListingResponse
 
     @POST("drive/volumes/{enc_volumeID}/photos/duplicates")
@@ -94,6 +99,8 @@ interface PhotoApi : BaseRetrofitApi {
         @Query("AnchorID") anchorId: String?,
         @Query("Sort") sort: String?,
         @Query("Desc") descending: Int?,
+        @Query("OnlyChildren") onlyDirectChildren: Int = 0,
+        @Query("IncludeTrashed") includeTrashedChildren: Int = 0,
     ): GetAlbumPhotoListingResponse
 
     @POST("drive/photos/volumes/{volumeID}/albums/{linkID}/add-multiple")
@@ -116,4 +123,31 @@ interface PhotoApi : BaseRetrofitApi {
         @Path("linkID") albumId: String,
         @Query("DeleteAlbumPhotos") deleteAlbumPhotos: Int,
     ): CodeResponse
+
+    @POST("drive/photos/volumes/{volumeID}/links/{linkID}/favorite")
+    suspend fun addFavorite(
+        @Path("volumeID") volumeId: String,
+        @Path("linkID") linkId: String,
+        @Body request: FavoriteRequest,
+    ): CodeResponse
+
+    @POST("drive/photos/volumes/{volumeID}/links/{linkID}/tags")
+    suspend fun addTags(
+        @Path("volumeID") volumeId: String,
+        @Path("linkID") linkId: String,
+        @Body request: TagRequest,
+    ): CodeResponse
+
+    @HTTP(method = "DELETE", path = "/drive/photos/volumes/{volumeID}/links/{linkID}/tags", hasBody = true)
+    suspend fun deleteTags(
+        @Path("volumeID") volumeId: String,
+        @Path("linkID") linkId: String,
+        @Body request: TagRequest,
+    ): CodeResponse
+
+    @GET("drive/photos/migrate-legacy")
+    suspend fun getPhotoShareMigrationStatus(): MigrationStatusResponse
+
+    @POST("drive/photos/migrate-legacy")
+    suspend fun startPhotoShareMigration(): CodeResponse
 }

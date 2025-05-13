@@ -22,11 +22,13 @@ import androidx.test.espresso.intent.rule.IntentsRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import me.proton.android.drive.initializer.MainInitializer
 import me.proton.android.drive.ui.MainActivity
+import me.proton.android.drive.ui.extension.mainUserId
 import me.proton.android.drive.ui.robot.OnboardingRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
+import me.proton.android.drive.ui.rules.OverlayRule
 import me.proton.android.drive.ui.rules.SlowTestRule
 import me.proton.android.drive.ui.test.AbstractBaseTest
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.android.robots.auth.AddAccountRobot
 import me.proton.core.test.android.robots.auth.login.LoginRobot
 import me.proton.core.test.rule.ProtonRule
@@ -35,7 +37,6 @@ import me.proton.core.test.rule.annotation.mapToUser
 import me.proton.core.test.rule.extension.protonAndroidComposeRule
 import org.junit.Rule
 import org.junit.Test
-import javax.inject.Inject
 
 @HiltAndroidTest
 class OnboardingNoPermissionsFlowTest : AbstractBaseTest() {
@@ -48,17 +49,19 @@ class OnboardingNoPermissionsFlowTest : AbstractBaseTest() {
         fusionEnabled = true,
         additionalRules = linkedSetOf(
             IntentsRule(),
-            SlowTestRule()
+            SlowTestRule(),
+            OverlayRule(this),
         ),
         beforeHilt = {
             configureFusion()
         },
         afterHilt = {
             MainInitializer.init(it.targetContext)
-            setOverlaysDisplayStateAfterLogin()
         },
         logoutBefore = true
     )
+
+    override val mainUserId: UserId get() = protonRule.mainUserId
 
     @Test
     @PrepareUser(loginBefore = true)

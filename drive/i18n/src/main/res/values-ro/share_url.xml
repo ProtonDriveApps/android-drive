@@ -91,10 +91,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">Articole partajate în așteptare (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Albume partajate în așteptare (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Nicio partajare în așteptare</string>
+  <string name="shared_user_album_invitations_title_empty">Nu există albume partajate în așteptare</string>
   <string name="shared_user_invitations_description_empty">Toate noile invitații vor fi aici</string>
   <string name="shared_user_invitations_accept_button">Acceptare</string>
   <string name="shared_user_invitations_decline_button">Respingere</string>
   <string name="shared_user_invitations_accept_success">Articolul partajat a fost acceptat.</string>
   <string name="shared_user_invitations_decline_success">Articolul partajat a fost respins.</string>
+  <string name="shared_user_album_invitations_accept_success">Invitație acceptată</string>
+  <string name="shared_user_album_invitations_decline_success">Invitație refuzată</string>
 </resources>

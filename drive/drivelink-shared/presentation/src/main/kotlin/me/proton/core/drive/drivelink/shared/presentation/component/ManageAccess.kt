@@ -132,20 +132,22 @@ fun ManageAccessContent(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.verticalScroll(rememberScrollState())) {
-        ShareWithAnyone(
-            viewState = viewState.loadingViewState,
-            publicUrl = viewState.publicUrl,
-            accessibilityDescription = viewState.accessibilityDescription,
-            permissionsDescription = viewState.permissionsDescription,
-            onRetry = viewEvent.onRetry,
-            onStartSharing = viewEvent.onStartLinkSharing,
-            onStopSharing = viewEvent.onStopLinkSharing,
-            onCopyLink = viewEvent.onCopyLink,
-            onConfigureSharing = viewEvent.onConfigureSharing,
-            onMore = viewState.takeIf { it.canEditLink }?.let {
-                viewEvent.onEditLinkPermissions
-            },
-        )
+        if (viewState.showShareWithAnyone) {
+            ShareWithAnyone(
+                viewState = viewState.loadingViewState,
+                publicUrl = viewState.publicUrl,
+                accessibilityDescription = viewState.accessibilityDescription,
+                permissionsDescription = viewState.permissionsDescription,
+                onRetry = viewEvent.onRetry,
+                onStartSharing = viewEvent.onStartLinkSharing,
+                onStopSharing = viewEvent.onStopLinkSharing,
+                onCopyLink = viewEvent.onCopyLink,
+                onConfigureSharing = viewEvent.onConfigureSharing,
+                onMore = viewState.takeIf { it.canEditLink }?.let {
+                    viewEvent.onEditLinkPermissions
+                },
+            )
+        }
         if (viewState.shareUsers.isNotEmpty()) {
             SectionTitle(stringResource(I18N.string.manage_access_share_with))
             ShareUsers(
@@ -191,6 +193,7 @@ fun ManageAccessSharedPreview() {
                             type = INVITATION,
                         )
                     ),
+                    showShareWithAnyone = true,
                 ),
                 viewEvent = object : ManageAccessViewEvent {
                     override val onBackPressed: () -> Unit = {}
@@ -227,6 +230,7 @@ fun ManageAccessNotSharedPreview() {
                     canEditLink = true,
                     loadingViewState = LoadingViewState.Initial,
                     shareUsers = emptyList(),
+                    showShareWithAnyone = true,
                 ),
                 viewEvent = object : ManageAccessViewEvent {
                     override val onBackPressed: () -> Unit = {}

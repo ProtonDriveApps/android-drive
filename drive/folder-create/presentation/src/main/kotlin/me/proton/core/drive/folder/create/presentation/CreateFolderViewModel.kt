@@ -37,10 +37,10 @@ import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.folder.create.domain.usecase.CreateFolder
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.Empty
-import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.ExceedsMaxLength
-import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.ForbiddenCharacters
-import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.Periods
+import me.proton.core.drive.link.domain.entity.InvalidLinkName.Empty
+import me.proton.core.drive.link.domain.entity.InvalidLinkName.ExceedsMaxLength
+import me.proton.core.drive.link.domain.entity.InvalidLinkName.ForbiddenCharacters
+import me.proton.core.drive.link.domain.entity.InvalidLinkName.Periods
 import me.proton.core.drive.share.domain.entity.ShareId
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N

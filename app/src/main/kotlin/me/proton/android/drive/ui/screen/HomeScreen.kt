@@ -67,10 +67,10 @@ import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawer
 import me.proton.core.drive.sorting.domain.entity.Sorting
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 
 @Composable
@@ -88,9 +88,10 @@ fun HomeScreen(
     navigateToTrash: () -> Unit,
     navigateToOffline: () -> Unit,
     navigateToPreview: (fileId: FileId, pagerType: PagerType) -> Unit,
+    navigateToPreviewWithTag: (fileId: FileId, pagerType: PagerType, photoTag: PhotoTag) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
     navigateToSettings: () -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToFileOrFolderOptions: (LinkId, SelectionId?) -> Unit,
     navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     navigateToSubscription: () -> Unit,
@@ -104,9 +105,11 @@ fun HomeScreen(
     navigateToWhatsNew: (WhatsNewKey) -> Unit,
     navigateToRatingBooster: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
-    navigateToUserInvitation: () -> Unit,
+    navigateToUserInvitation: (Boolean) -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
+    navigateToSubscriptionPromo: (String) -> Unit,
+    navigateToPhotosImportantUpdates: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     setLocalSnackbarPadding(BottomNavigationHeight)
@@ -140,6 +143,7 @@ fun HomeScreen(
             navigateToOnboarding = navigateToOnboarding,
             navigateToWhatsNew = navigateToWhatsNew,
             navigateToRatingBooster = navigateToRatingBooster,
+            navigateToSubscriptionPromo = navigateToSubscriptionPromo,
         )
     }
     viewState?.let { currentViewState ->
@@ -149,6 +153,7 @@ fun HomeScreen(
             startDestination = startDestination,
             onDrawerStateChanged = onDrawerStateChanged,
             navigateToPreview = navigateToPreview,
+            navigateToPreviewWithTag = navigateToPreviewWithTag,
             navigateToSorting = navigateToSorting,
             navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
             navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
@@ -163,6 +168,7 @@ fun HomeScreen(
             navigateToUserInvitation = navigateToUserInvitation,
             navigateToCreateNewAlbum = navigateToCreateNewAlbum,
             navigateToAlbum = navigateToAlbum,
+            navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
             arguments = arguments,
             viewState = currentViewState,
             viewEvent = viewEvent,
@@ -186,8 +192,9 @@ internal fun Home(
     startDestination: String,
     onDrawerStateChanged: (Boolean) -> Unit,
     navigateToPreview: (fileId: FileId, pagerType: PagerType) -> Unit,
+    navigateToPreviewWithTag: (fileId: FileId, pagerType: PagerType, photoTag: PhotoTag) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToFileOrFolderOptions: (LinkId, SelectionId?) -> Unit,
     navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     arguments: Bundle,
@@ -201,9 +208,10 @@ internal fun Home(
     navigateToBackupSettings: () -> Unit,
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
-    navigateToUserInvitation: () -> Unit,
+    navigateToUserInvitation: (Boolean) -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
+    navigateToPhotosImportantUpdates: () -> Unit,
 ) {
     val homeScaffoldState = rememberHomeScaffoldState()
     val isDrawerOpen = with(homeScaffoldState.scaffoldState.drawerState) {
@@ -288,6 +296,7 @@ internal fun Home(
                     startDestination,
                     homeScaffoldState,
                     navigateToPreview,
+                    navigateToPreviewWithTag,
                     navigateToSorting,
                     navigateToFileOrFolderOptions,
                     navigateToMultipleFileOrFolderOptions,
@@ -302,6 +311,7 @@ internal fun Home(
                     navigateToUserInvitation,
                     navigateToCreateNewAlbum,
                     navigateToAlbum,
+                    navigateToPhotosImportantUpdates,
                 )
             }
         }

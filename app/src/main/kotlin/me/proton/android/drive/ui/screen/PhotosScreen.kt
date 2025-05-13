@@ -59,6 +59,7 @@ import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 
 @Composable
@@ -66,14 +67,15 @@ fun PhotosScreen(
     homeScaffoldState: HomeScaffoldState,
     modifier: Modifier = Modifier,
     navigateToPhotosPermissionRationale: () -> Unit,
-    navigateToPhotosPreview: (fileId: FileId) -> Unit,
-    navigateToPhotosOptions: (fileId: FileId) -> Unit,
+    navigateToPhotosPreview: (fileId: FileId, photoTag: PhotoTag?) -> Unit,
+    navigateToPhotosOptions: (fileId: FileId, SelectionId?) -> Unit,
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
+    navigateToPhotosImportantUpdates: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
     val viewState by rememberFlowWithLifecycle(flow = viewModel.viewState)
@@ -88,6 +90,7 @@ fun PhotosScreen(
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
+            navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
             lifecycle = lifecycle,
         )
     }
@@ -99,6 +102,9 @@ fun PhotosScreen(
             when (effect) {
                 PhotosEffect.ShowUpsell -> launch(Dispatchers.Main) {
                     viewEvent.onShowUpsell()
+                }
+                PhotosEffect.ShowImportantUpdates -> launch(Dispatchers.Main) {
+                    viewEvent.onShowImportantUpdates()
                 }
             }
         }.launchIn(this)

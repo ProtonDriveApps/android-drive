@@ -18,6 +18,7 @@
 package me.proton.core.drive.link.domain.usecase
 
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.link.domain.entity.InvalidLinkName
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,24 +53,24 @@ class ValidateLinkNameTest(
         @Suppress("unused")
         val data = listOf(
             // region invalid file or folder names
-            arrayOf(".", Result.failure<String>(ValidateLinkName.Invalid.Periods)),
-            arrayOf(" . ", Result.failure<String>(ValidateLinkName.Invalid.Periods)),
-            arrayOf("\n.", Result.failure<String>(ValidateLinkName.Invalid.Periods)),
-            arrayOf("..", Result.failure<String>(ValidateLinkName.Invalid.Periods)),
-            arrayOf(" ..", Result.failure<String>(ValidateLinkName.Invalid.Periods)),
-            arrayOf(".. ", Result.failure<String>(ValidateLinkName.Invalid.Periods)),
-            arrayOf("\t..\t", Result.failure<String>(ValidateLinkName.Invalid.Periods)),
-            arrayOf("", Result.failure<String>(ValidateLinkName.Invalid.Empty)),
-            arrayOf(" ", Result.failure<String>(ValidateLinkName.Invalid.Empty)),
-            arrayOf("\t", Result.failure<String>(ValidateLinkName.Invalid.Empty)),
-            arrayOf("\n", Result.failure<String>(ValidateLinkName.Invalid.Empty)),
-            arrayOf("a/b", Result.failure<String>(ValidateLinkName.Invalid.ForbiddenCharacters)),
-            arrayOf(" /ab", Result.failure<String>(ValidateLinkName.Invalid.ForbiddenCharacters)),
-            arrayOf("ab/ ", Result.failure<String>(ValidateLinkName.Invalid.ForbiddenCharacters)),
-            arrayOf("\\test/", Result.failure<String>(ValidateLinkName.Invalid.ForbiddenCharacters)),
+            arrayOf(".", Result.failure<String>(InvalidLinkName.Periods)),
+            arrayOf(" . ", Result.failure<String>(InvalidLinkName.Periods)),
+            arrayOf("\n.", Result.failure<String>(InvalidLinkName.Periods)),
+            arrayOf("..", Result.failure<String>(InvalidLinkName.Periods)),
+            arrayOf(" ..", Result.failure<String>(InvalidLinkName.Periods)),
+            arrayOf(".. ", Result.failure<String>(InvalidLinkName.Periods)),
+            arrayOf("\t..\t", Result.failure<String>(InvalidLinkName.Periods)),
+            arrayOf("", Result.failure<String>(InvalidLinkName.Empty)),
+            arrayOf(" ", Result.failure<String>(InvalidLinkName.Empty)),
+            arrayOf("\t", Result.failure<String>(InvalidLinkName.Empty)),
+            arrayOf("\n", Result.failure<String>(InvalidLinkName.Empty)),
+            arrayOf("a/b", Result.failure<String>(InvalidLinkName.ForbiddenCharacters)),
+            arrayOf(" /ab", Result.failure<String>(InvalidLinkName.ForbiddenCharacters)),
+            arrayOf("ab/ ", Result.failure<String>(InvalidLinkName.ForbiddenCharacters)),
+            arrayOf("\\test/", Result.failure<String>(InvalidLinkName.ForbiddenCharacters)),
             arrayOf(
                 (1..LINK_MAX_NAME_LENGTH + 1).map { '.' }.joinToString(""),
-                Result.failure<String>(ValidateLinkName.Invalid.ExceedsMaxLength(LINK_MAX_NAME_LENGTH))
+                Result.failure<String>(InvalidLinkName.ExceedsMaxLength(LINK_MAX_NAME_LENGTH))
             ),
             // endregion
             // region valid file or folder names

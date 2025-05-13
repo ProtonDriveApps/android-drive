@@ -28,7 +28,14 @@ import javax.inject.Inject
 class HasUserInvitationFlow @Inject constructor(
     val getUserInvitationCountFlow: GetUserInvitationCountFlow,
 ) {
-    operator fun invoke(userId: UserId) = getUserInvitationCountFlow(userId, refresh = flowOf(true))
+    operator fun invoke(
+        userId: UserId,
+        albumsOnly: Boolean = false,
+    ) = getUserInvitationCountFlow(
+        userId = userId,
+        albumsOnly = albumsOnly,
+        refresh = flowOf(true),
+    )
         .filterSuccessOrError().mapSuccessValueOrNull().map { count ->
             count != null && count > 0
         }

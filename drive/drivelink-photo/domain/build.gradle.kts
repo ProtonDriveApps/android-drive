@@ -27,6 +27,7 @@ driveModule(hilt = true) {
     api(project(":drive:documentsprovider:domain"))
     api(project(":drive:drivelink:domain"))
     api(project(":drive:drivelink-crypto:domain"))
+    api(project(":drive:files:domain"))
     api(project(":drive:photo:domain"))
     api(project(":drive:share-crypto:domain"))
     api(libs.androidx.paging.common)

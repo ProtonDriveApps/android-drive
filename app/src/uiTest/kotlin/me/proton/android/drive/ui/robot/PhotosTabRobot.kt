@@ -22,17 +22,21 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import me.proton.android.drive.photos.presentation.component.PhotosTestTag
+import me.proton.android.drive.photos.presentation.extension.toPhotosFilter
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.extension.doesNotExist
 import me.proton.android.drive.ui.extension.withItemType
 import me.proton.android.drive.ui.extension.withLayoutType
 import me.proton.android.drive.ui.extension.withTextResource
 import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
+import me.proton.android.drive.ui.screen.PhotosAndAlbumsScreenTestTag
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.toPercentString
 import me.proton.core.drive.files.presentation.extension.ItemType
 import me.proton.core.drive.files.presentation.extension.LayoutType
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.plan.test.robot.SubscriptionRobot
+import me.proton.core.test.android.instrumented.ProtonTest
 import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.test.fusion.Fusion.allNodes
 import me.proton.test.fusion.Fusion.node
@@ -47,7 +51,8 @@ object PhotosTabRobot :
     SystemPhotosNoPermissionRobot,
     HomeRobot,
     LinksRobot,
-    NavigationBarRobot {
+    NavigationBarRobot,
+    Robot {
 
     private val photosContent get() = node.withTag(PhotosTestTag.content)
     private val enableBackupButton
@@ -55,7 +60,9 @@ object PhotosTabRobot :
     private val enableErrorBackupButton
         get() = node.withText(I18N.string.photos_error_backup_disabled_action)
 
-    private val albumsTitle get() = node.withText(I18N.string.albums_title)
+    private val albumTitleTab get() = node.withTag(PhotosAndAlbumsScreenTestTag.albumsTitleTab)
+    private val photosTitleTab get() = node.withTag(PhotosAndAlbumsScreenTestTag.photosTitleTab)
+    private val allTab = node.withText(I18N.string.photos_filter_all)
     private val backupCompleted get() = node.withText(I18N.string.photos_backup_state_completed)
     private val backupPreparing get() = node.withText(I18N.string.photos_backup_state_preparing)
     private val backupFailed get() = node.withText(I18N.string.photos_error_backup_failed)
@@ -64,12 +71,19 @@ object PhotosTabRobot :
     private val updateRequired get() = node.withText(I18N.string.photos_error_backup_migration_title)
     private val noConnectivityBanner get() = node.withText(I18N.string.photos_error_waiting_wifi_connectivity)
     private val getMoreStorageButton get() = node.withText(I18N.string.storage_quotas_get_storage_action)
-    private val storageFullTitle get() =
-        node.withTextResource(I18N.string.storage_quotas_full_title, I18N.string.app_name)
+    private val storageFullTitle
+        get() =
+            node.withTextResource(I18N.string.storage_quotas_full_title, I18N.string.app_name)
+
     private fun storageFullTitle(percentage: Int) = node.withTextResource(
         I18N.string.storage_quotas_not_full_title,
         Percentage(percentage).toPercentString(Locale.getDefault())
     )
+
+    private val endToEndEncryptedFooter get() = node.withText(I18N.string.photos_encrypted_footer)
+
+    private val photosPermissionMessage get() = node.withText(I18N.string.photos_permissions_title)
+
     private val itCanTakeAWhileLabel get() = node.withText(I18N.string.photos_empty_loading_label_progress)
     private val closeQuotaBannerButton get() = node.withContentDescription(I18N.string.common_close_action)
     private val photosBackupDisabled get() = node.withText(I18N.string.error_creating_photo_share_not_allowed)
@@ -78,14 +92,19 @@ object PhotosTabRobot :
             tag == PhotosTestTag.loading || tag == PhotosTestTag.content
         } == true
     }
+
     private fun itemsLeft(items: Int) =
-        node.withPluralTextResource(I18N.plurals.notification_content_text_backup_in_progress, items)
+        node.withPluralTextResource(
+            I18N.plurals.notification_content_text_backup_in_progress,
+            items
+        )
 
     private fun photoWithName(name: String) = linkWithName(name)
         .withItemType(ItemType.File)
         .withLayoutType(LayoutType.Grid)
 
-    fun clickOnAlbumsTab() = albumsTitle.clickTo(AlbumsTabRobot)
+    fun clickOnPhotosTitleTab() = photosTitleTab.clickTo(PhotosTabRobot)
+    fun clickOnAlbumsTitleTab() = albumTitleTab.clickTo(AlbumsTabRobot)
     fun enableBackup() = enableBackupButton.clickTo(PhotosTabRobot)
     fun enableBackupWhenDisabled() = enableErrorBackupButton.clickTo(PhotosTabRobot)
     fun clickOnMore() = missingFolder.clickTo(PhotosBackupRobot)
@@ -98,6 +117,18 @@ object PhotosTabRobot :
         photosContent.scrollTo(photoWithName(imageName.fileName))
     }
 
+    fun scrollToPhoto(name: String): PhotosTabRobot = apply {
+        photosContent.scrollTo(photoWithName(name))
+    }
+
+    fun scrollToEnd(): PhotosTabRobot = apply {
+        photosContent.scrollTo(endToEndEncryptedFooter)
+    }
+
+    fun endToEndEncryptedFooterIsSeen() {
+        endToEndEncryptedFooter.await { assertIsDisplayed() }
+    }
+
     fun longClickOnPhoto(fileName: String) =
         photoWithName(fileName).longClickTo(this)
 
@@ -106,8 +137,11 @@ object PhotosTabRobot :
     fun clickOnPhoto(name: String) =
         photoWithName(name).clickTo(PreviewRobot)
 
-    fun deselectPhoto(imageName: ImageName) =
-        photoWithName(imageName.fileName).clickTo(PhotosTabRobot)
+    fun clickOnAllTab() = allTab.clickTo(PhotosTabRobot)
+
+    fun clickOnTagTab(tag: PhotoTag) =
+        node.withText(tag.toPhotosFilter(ProtonTest.getTargetContext()).tagViewState.label)
+            .clickTo(PhotosTabRobot)
 
     fun assertPhotoDisplayed(imageName: ImageName) {
         photoWithName(imageName.fileName).await { assertIsDisplayed() }
@@ -201,6 +235,14 @@ object PhotosTabRobot :
     fun assertPhotosLoadingOrContentDisplayed() = node
         .addSemanticMatcher(eitherLoadingOrContentMatcher)
         .await { assertIsDisplayed() }
+
+    fun confirmPhotosPermissionMessageIsSeen() = apply {
+        photosPermissionMessage.await { assertIsDisplayed() }
+        node.withText(
+            StringUtils.stringFromResource(
+                I18N.string.photos_permissions_action
+            ))
+    }
 
     fun dismissBackupSetupGrowler(vararg folders: String) = node.withText(
         StringUtils.pluralStringFromResource(

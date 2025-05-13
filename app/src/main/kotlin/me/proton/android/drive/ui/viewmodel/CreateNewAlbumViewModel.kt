@@ -22,7 +22,6 @@ import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.CombinedLoadStates
 import androidx.paging.cachedIn
 import androidx.paging.map
@@ -60,6 +59,8 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.toVolumePhotoListing
 import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
 import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.InvalidLinkName.Empty
+import me.proton.core.drive.link.domain.entity.InvalidLinkName.ExceedsMaxLength
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import javax.inject.Inject
@@ -69,17 +70,18 @@ import me.proton.core.drive.i18n.R as I18N
 @HiltViewModel
 class CreateNewAlbumViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    getPagedAddToAlbumPhotoListings: GetPagedAddToAlbumPhotoListings,
     @ApplicationContext private val appContext: Context,
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
     private val updateAlbumName: UpdateAlbumName,
     private val clearNewAlbum: ClearNewAlbum,
     private val getNewAlbumName: GetNewAlbumName,
-    private val getPagedAddToAlbumPhotoListings: GetPagedAddToAlbumPhotoListings,
     private val photoDriveLinks: PhotoDriveLinks,
     private val createNewAlbum: CreateNewAlbum,
     private val removeFromAlbumInfo: RemoveFromAlbumInfo,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
+    private val isSharedAlbum = savedStateHandle.get<Boolean>(SHARED_ALBUM) ?: false
     private val isCreationInProgress = MutableStateFlow(false)
     private val currentAlbumName = MutableStateFlow<String?>(null)
     private val initialAlbumName = flowOf {
@@ -100,6 +102,11 @@ class CreateNewAlbumViewModel @Inject constructor(
         isAddEnabled = true,
         isRemoveEnabled = true,
         isCreationInProgress = isCreationInProgress.value,
+        doneButtonLabelResId = if (isSharedAlbum) {
+            I18N.string.common_share
+        } else {
+            I18N.string.common_done_action
+        },
         name = initialAlbumName,
         hint = appContext.getString(I18N.string.albums_new_album_name_hint),
     )
@@ -147,18 +154,12 @@ class CreateNewAlbumViewModel @Inject constructor(
         viewModelScope.launch {
             currentAlbumName.value?.let { albumName ->
                 isCreationInProgress.value = true
+                showAddToAlbumStartMessage()
                 createNewAlbum(userId = userId, isLocked = false)
                     .onFailure { error ->
                         isCreationInProgress.value = false
                         error.log(VIEW_MODEL, "Creating new album failed")
-                        broadcastMessages(
-                            userId = userId,
-                            message = error.getDefaultMessage(
-                                context = appContext,
-                                useExceptionMessage = configurationProvider.useExceptionMessage,
-                            ),
-                            type = BroadcastMessage.Type.ERROR,
-                        )
+                        error.handle()
                     }
                     .onSuccess { albumId ->
                         isCreationInProgress.value = false
@@ -214,5 +215,36 @@ class CreateNewAlbumViewModel @Inject constructor(
                     error.log(VIEW_MODEL, "Clear new album failed")
                 }
         }
+    }
+
+    private fun Throwable.handle() {
+        val message = when (this) {
+            Empty -> appContext.getString(I18N.string.albums_new_album_create_error_name_is_blank)
+            is ExceedsMaxLength -> appContext.getString(
+                I18N.string.albums_new_album_create_error_name_too_long,
+                this.maxLength
+            )
+            else -> getDefaultMessage(
+                context = appContext,
+                useExceptionMessage = configurationProvider.useExceptionMessage,
+            )
+        }
+        broadcastMessages(
+            userId = userId,
+            message = message,
+            type = BroadcastMessage.Type.ERROR,
+        )
+    }
+
+    private fun showAddToAlbumStartMessage() {
+        broadcastMessages(
+            userId = userId,
+            message = appContext.getString(I18N.string.albums_add_to_album_start_message),
+            type = BroadcastMessage.Type.INFO,
+        )
+    }
+
+    companion object {
+        const val SHARED_ALBUM = "sharedAlbum"
     }
 }

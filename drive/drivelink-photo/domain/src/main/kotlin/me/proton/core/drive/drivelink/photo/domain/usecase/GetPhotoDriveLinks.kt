@@ -84,8 +84,12 @@ class GetPhotoDriveLinks @Inject constructor(
     }
 
     private suspend fun fetch(linkIds: Set<LinkId>) = coRunCatching {
-        linkIds.chunked(configurationProvider.apiPageSize).forEach { chunkedLinkIds ->
-            linkRepository.fetchAndStoreLinks(chunkedLinkIds.toSet())
-        }
+        linkIds
+            .groupBy { linkId -> linkId.shareId }
+            .forEach { (_, links) ->
+                links.chunked(configurationProvider.apiPageSize).forEach { chunkedLinkIds ->
+                    coRunCatching { linkRepository.fetchAndStoreLinks(chunkedLinkIds.toSet()) }.getOrNull()
+                }
+            }
     }
 }

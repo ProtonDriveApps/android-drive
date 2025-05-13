@@ -27,6 +27,9 @@ import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.file.base.domain.extension.getThumbnailId
 import me.proton.core.drive.file.base.domain.extension.getThumbnailIds
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.extension.hasShareLink
+import me.proton.core.drive.link.domain.extension.isPhoto
+import me.proton.core.drive.link.domain.extension.isSharedByLinkOrWithUsers
 import me.proton.core.drive.photo.domain.entity.PhotoListing
 
 fun DriveLink.updateLastModified(lastModified: TimestampS) = link.let { link ->
@@ -43,15 +46,15 @@ val DriveLink.File.thumbnailIds: Set<ThumbnailId> get() = link.getThumbnailIds(v
 
 fun DriveLink.File.getThumbnailId(type: ThumbnailType): ThumbnailId? = link.getThumbnailId(volumeId, type)
 
-val DriveLink.File.isPhoto: Boolean get() = link.photoCaptureTime != null
+val DriveLink.File.isPhoto: Boolean get() = link.isPhoto
 
 val DriveLink.isEditor: Boolean get() = link.permissions.has(Permissions.Permission.WRITE)
 
 val DriveLink.hasShareLink: Boolean
-    get() = link.sharingDetails?.shareUrlId != null
+    get() = link.hasShareLink
 
 val DriveLink.isSharedByLinkOrWithUsers: Boolean
-    get() = link.sharingDetails?.shareId != null
+    get() = link.isSharedByLinkOrWithUsers
 
 val DriveLink.isSharedWithUsers: Boolean
     get() = (shareInvitationCount ?: 0) > 0 || (shareMemberCount ?: 0) > 0
@@ -73,3 +76,9 @@ fun DriveLink.File.toVolumePhotoListing(): PhotoListing.Volume =
                 contentHash = link.photoContentHash,
             )
         }
+
+val List<DriveLink>.lowestCommonPermissions: Permissions get() =
+    minOfOrNull { driveLink -> driveLink.sharePermissions?.value ?: Permissions.owner.value }
+        ?.let { value ->
+            Permissions(value)
+        } ?: Permissions.owner

@@ -18,12 +18,17 @@
 
 package me.proton.android.drive.ui.robot
 
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipe
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.ui.extension.assertDownloadState
 import me.proton.android.drive.ui.extension.assertHasItemType
 import me.proton.android.drive.ui.extension.assertHasLayoutType
 import me.proton.android.drive.ui.extension.assertHasThumbnail
+import me.proton.android.drive.ui.extension.assertIsFavorite
 import me.proton.android.drive.ui.extension.assertIsSharedByLink
 import me.proton.android.drive.ui.extension.assertIsSharedWithUsers
 import me.proton.android.drive.ui.extension.doesNotExist
@@ -35,7 +40,9 @@ import me.proton.core.drive.files.presentation.component.files.FilesListHeaderTe
 import me.proton.core.drive.files.presentation.extension.ItemType
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.drive.files.presentation.extension.SemanticsDownloadState
+import me.proton.test.fusion.Fusion.allNodes
 import me.proton.test.fusion.Fusion.node
+import org.junit.Assert.assertEquals
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import me.proton.core.drive.i18n.R as I18N
@@ -46,6 +53,10 @@ interface LinksRobot : PullToRefreshRobot, Robot {
     val filesContent get() = node.withTag(FilesTestTag.content)
 
     private val layoutSwitcher get() = node.withTag(FilesListHeaderTestTag.layoutSwitcher)
+    private val letsFillThisFolderMessage get() = node.withText(I18N.string.title_empty_folder)
+    private val tapTheButtonToStartAddingFilesMessage get() = node.withText(I18N.string.description_empty_my_files)
+    private val uploadButton get() = node.withText(I18N.string.action_empty_files_add_files)
+    private val selectAll get() = node.withContentDescription(I18N.string.content_description_select_all)
 
     private val selectedOptionsButton
         get() = node
@@ -57,6 +68,8 @@ interface LinksRobot : PullToRefreshRobot, Robot {
         node.withTag(FilesTestTag.moreButton).hasAncestor(linkWithName(name))
 
     fun clickLayoutSwitcher() = layoutSwitcher.clickTo(FilesTabRobot)
+
+    fun clickSelectAll() = selectAll.clickTo(FilesTabRobot)
 
     fun scrollToItemWithName(itemName: String): LinksRobot = apply {
         filesContent.scrollTo(linkWithName(itemName))
@@ -114,6 +127,9 @@ interface LinksRobot : PullToRefreshRobot, Robot {
     fun longClickOnItem(name: String) =
         linkWithName(name).longClickTo(FilesTabRobot)
 
+    fun <T : Robot> longClickOnItem(name: String, goesTo: T) =
+        linkWithName(name).longClickTo(goesTo)
+
     fun itemIsDisplayed(
         name: String,
         layoutType: LayoutType? = null,
@@ -121,6 +137,7 @@ interface LinksRobot : PullToRefreshRobot, Robot {
         hasThumbnail: Boolean? = null,
         isSharedByLink: Boolean? = null,
         isSharedWithUsers: Boolean? = null,
+        isFavorite: Boolean? = null,
         downloadState: SemanticsDownloadState? = null
     ) {
         linkWithName(name)
@@ -130,9 +147,16 @@ interface LinksRobot : PullToRefreshRobot, Robot {
                 hasThumbnail?.let { assertHasThumbnail(it) }
                 isSharedByLink?.let { assertIsSharedByLink(it) }
                 isSharedWithUsers?.let { assertIsSharedWithUsers(it) }
+                isFavorite?.let { assertIsFavorite(it) }
                 downloadState?.let { assertDownloadState(it) }
                 assertIsDisplayed()
             }
+    }
+
+    fun letsFillThisFolderMessageIsDisplayed() {
+        letsFillThisFolderMessage.await { assertIsDisplayed() }
+        tapTheButtonToStartAddingFilesMessage.await { assertIsDisplayed() }
+        uploadButton.await { assertIsDisplayed() }
     }
 
     fun itemIsNotDisplayed(vararg names: String) {
@@ -142,5 +166,49 @@ interface LinksRobot : PullToRefreshRobot, Robot {
                     doesNotExist()
                 }
         }
+    }
+
+    fun swipeUpContent(): LinksRobot = apply {
+        node.withTag(FilesTestTag.content).interaction.performTouchInput {
+            swipe(start = center, end = center.copy(y = 0f), durationMillis = 500)
+        }
+    }
+
+    fun getItemsInTrash(): MutableSet<String> {
+        val collectedTexts = mutableSetOf<String>()
+        var canScroll = true
+        val maxScrolls = 5
+        var scrolls = 0
+
+        while (canScroll && scrolls < maxScrolls) {
+            val beforeScrollContents = captureVisibleTexts()
+            collectedTexts.addAll(beforeScrollContents)
+
+            swipeUpContent()
+
+            val afterScrollContents = captureVisibleTexts()
+            collectedTexts.addAll(afterScrollContents)
+
+            if (afterScrollContents == beforeScrollContents) {
+                canScroll = false
+            }
+
+            scrolls++
+        }
+        return collectedTexts
+    }
+
+    fun numberOfItemsInTrash(itemsExpectedInTrashList: Int) {
+        assertEquals(itemsExpectedInTrashList, getItemsInTrash().count())
+    }
+
+    private fun captureVisibleTexts(): Set<String> {
+        return allNodes
+            .withTag(FilesTestTag.listDetailsTitle)
+            .interaction.fetchSemanticsNodes()
+            .mapNotNull {
+                it.config.getOrNull(SemanticsProperties.Text)?.joinToString("")
+            }
+            .toSet()
     }
 }

@@ -128,7 +128,9 @@ fun NavigationDrawer(
 
                     SettingsListItem(closeDrawerAction, viewEvent)
 
-                    SubscriptionListItem(closeDrawerAction, viewEvent)
+                    if (viewState.showSubscription) {
+                        SubscriptionListItem(closeDrawerAction, viewEvent)
+                    }
 
                     ReportBugListItem(closeDrawerAction, viewEvent)
 

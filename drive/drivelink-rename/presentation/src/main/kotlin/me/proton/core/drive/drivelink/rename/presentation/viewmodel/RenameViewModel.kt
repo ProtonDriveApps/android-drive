@@ -41,10 +41,10 @@ import me.proton.core.drive.drivelink.rename.presentation.RenameViewState
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.Empty
-import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.ExceedsMaxLength
-import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.ForbiddenCharacters
-import me.proton.core.drive.link.domain.usecase.ValidateLinkName.Invalid.Periods
+import me.proton.core.drive.link.domain.entity.InvalidLinkName.Empty
+import me.proton.core.drive.link.domain.entity.InvalidLinkName.ExceedsMaxLength
+import me.proton.core.drive.link.domain.entity.InvalidLinkName.ForbiddenCharacters
+import me.proton.core.drive.link.domain.entity.InvalidLinkName.Periods
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.i18n.R as I18N
 

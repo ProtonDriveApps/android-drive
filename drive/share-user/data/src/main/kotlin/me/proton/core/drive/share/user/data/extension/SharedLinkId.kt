@@ -29,6 +29,7 @@ fun SharedLinkId.toSharedWithMeListingEntity() =
         volumeId = volumeId,
         shareId = linkId.shareId.id,
         linkId = linkId.id,
+        type = type?.toShareTargetTypeDto(),
     )
 
 fun SharedLinkId.toSharedByMeListingEntity() =

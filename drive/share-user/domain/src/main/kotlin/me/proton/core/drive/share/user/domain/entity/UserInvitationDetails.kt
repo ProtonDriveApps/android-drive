@@ -18,12 +18,9 @@
 
 package me.proton.core.drive.share.user.domain.entity
 
-import androidx.room.ColumnInfo
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.volume.domain.entity.VolumeId
 
 data class UserInvitationDetails(
     val id: UserInvitationId,

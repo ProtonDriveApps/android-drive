@@ -18,7 +18,7 @@
 
 package me.proton.core.drive.upload.domain.provider
 
-import me.proton.core.drive.link.domain.PhotoTag
+import me.proton.core.drive.link.domain.entity.PhotoTag
 
 interface TagsProvider {
     suspend operator fun invoke(uriString: String): List<PhotoTag>

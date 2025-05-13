@@ -38,6 +38,8 @@ import me.proton.core.drive.thumbnail.domain.usecase.CreateThumbnail
 import javax.inject.Inject
 import kotlin.math.ceil
 import kotlin.math.roundToInt
+import androidx.core.graphics.createBitmap
+import androidx.core.net.toUri
 
 class ImageThumbnailProvider @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -60,7 +62,7 @@ class ImageThumbnailProvider @Inject constructor(
                 inJustDecodeBounds = true
                 inPreferredConfig = Bitmap.Config.RGB_565
 
-                val uri = Uri.parse(uriString)
+                val uri = uriString.toUri()
                 context.contentResolver.openFileDescriptor(uri, "r").use { parcelFileDescriptor ->
                     parcelFileDescriptor?.fileDescriptor?.let { fd ->
                         BitmapFactory.decodeFileDescriptor(fd, null, this)
@@ -115,7 +117,7 @@ class ImageThumbnailProvider @Inject constructor(
                 postTranslate(-rect.left, -rect.top)
             }
         }
-        return Bitmap.createBitmap(width, height, config).applyCanvas {
+        return createBitmap(width, height, requireNotNull(config)).applyCanvas {
             drawBitmap(this@rotate, matrix, paint)
         }.also {
             recycle()

@@ -22,6 +22,7 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 
 
 sealed interface PhotoListing {
@@ -29,12 +30,16 @@ sealed interface PhotoListing {
     val captureTime: TimestampS
     val nameHash: String?
     val contentHash: String?
+    val tag: PhotoTag?
+    val relatedPhotos: List<RelatedPhoto>
 
     data class Volume(
         override val linkId: FileId,
         override val captureTime: TimestampS,
         override val nameHash: String?,
         override val contentHash: String?,
+        override val tag: PhotoTag? = null,
+        override val relatedPhotos: List<RelatedPhoto> = emptyList(),
     ) : PhotoListing
 
     data class Album(
@@ -42,14 +47,24 @@ sealed interface PhotoListing {
         override val captureTime: TimestampS,
         override val nameHash: String?,
         override val contentHash: String?,
+        override val relatedPhotos: List<RelatedPhoto> = emptyList(),
         val albumId: AlbumId,
         val addedTime: TimestampS,
         val isChildOfAlbum: Boolean,
     ) : PhotoListing {
+
+        override val tag: PhotoTag? = null
 
         enum class SortBy {
             CAPTURED,
             ADDED,
         }
     }
+
+    data class RelatedPhoto(
+        val linkId: FileId,
+        val captureTime: TimestampS,
+        val nameHash: String?,
+        val contentHash: String?,
+    )
 }

@@ -133,6 +133,8 @@ sealed class Link : BaseLink {
         val photoThumbnailId: String? = null,
         val photoThumbnailContentHash: String? = null,
         val tags: List<PhotoTag> = emptyList(),
+        val albumsInfos: List<AlbumInfo> = emptyList(),
+        val relatedPhotoIds: List<FileId> = emptyList(),
     ) : Link(), me.proton.core.drive.link.domain.entity.File {
         override val isFavorite: Boolean
             get() = PhotoTag.Favorites in tags

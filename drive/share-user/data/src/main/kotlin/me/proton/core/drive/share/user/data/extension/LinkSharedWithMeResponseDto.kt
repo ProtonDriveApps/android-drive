@@ -28,4 +28,5 @@ fun LinkSharedWithMeResponseDto.toSharedLinkId(userId: UserId) =
     SharedLinkId(
         volumeId = volumeId,
         linkId = FileId(ShareId(userId, shareId), linkId),
+        type = shareTargetType?.toShareTargetType(),
     )

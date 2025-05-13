@@ -20,6 +20,7 @@ package me.proton.core.drive.crypto.domain.usecase
 import me.proton.core.crypto.common.pgp.DecryptedText
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.crypto.domain.repository.DecryptedTextRepository
 import me.proton.core.drive.cryptobase.domain.CryptoScope
 import me.proton.core.drive.cryptobase.domain.entity.UnlockedKey
 import me.proton.core.drive.cryptobase.domain.usecase.DecryptAndVerifyText
@@ -30,6 +31,8 @@ import me.proton.core.drive.key.domain.usecase.GetLinkParentKey
 import me.proton.core.drive.key.domain.usecase.GetVerificationKeys
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.nameKey
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -45,16 +48,19 @@ class DecryptLinkName @Inject constructor(
     private val getVerificationKeys: GetVerificationKeys,
     private val getLink: GetLink,
     private val getPublicKeyRing: GetPublicKeyRing,
+    private val decryptedTextRepository: DecryptedTextRepository,
 ) {
     suspend operator fun invoke(
         link: Link,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
-    ): Result<DecryptedText> =
-        getLinkParentKey(link).mapCatching { parentKey ->
-            unlockKey(parentKey.keyHolder) { unlockedKey ->
-                invoke(unlockedKey, link.id, coroutineContext).getOrThrow()
+    ): Result<DecryptedText> = coRunCatching {
+        decryptedTextRepository.getDecryptedText(link.userId, link.nameKey)
+            ?: getLinkParentKey(link).mapCatching { parentKey ->
+                unlockKey(parentKey.keyHolder) { unlockedKey ->
+                    invoke(unlockedKey, link.id, coroutineContext).getOrThrow()
+                }.getOrThrow()
             }.getOrThrow()
-        }
+    }
 
     suspend operator fun invoke(
         unlockedKey: UnlockedKey,
@@ -62,6 +68,15 @@ class DecryptLinkName @Inject constructor(
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ): Result<DecryptedText> = coRunCatching(coroutineContext) {
         val link = getLink(linkId).toResult().getOrThrow()
+        decryptedTextRepository.getDecryptedText(link.userId, link.nameKey)
+            ?: decryptAndVerifyLinkName(unlockedKey, link, coroutineContext).getOrThrow()
+    }
+
+    private suspend fun decryptAndVerifyLinkName(
+        unlockedKey: UnlockedKey,
+        link: Link,
+        coroutineContext: CoroutineContext,
+    ): Result<DecryptedText> = coRunCatching {
         val email = link.nameSignatureEmail ?: link.signatureEmail
         val verificationKeys = getVerificationKeys(
             link = link,
@@ -74,6 +89,10 @@ class DecryptLinkName @Inject constructor(
             verifyKeyRing = getPublicKeyRing(verificationKeys).getOrThrow(),
             verificationFailedContext = javaClass.simpleName,
             coroutineContext = coroutineContext,
-        ).getOrThrow()
+        )
+            .onSuccess { decryptedName ->
+                decryptedTextRepository.addDecryptedText(link.userId, link.nameKey, decryptedName)
+            }
+            .getOrThrow()
     }
 }

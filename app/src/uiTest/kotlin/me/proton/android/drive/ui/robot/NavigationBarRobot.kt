@@ -19,6 +19,8 @@
 package me.proton.android.drive.ui.robot
 
 import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag
+import me.proton.core.drive.i18n.R
+import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.test.fusion.Fusion.node
 
 interface NavigationBarRobot : Robot {
@@ -34,4 +36,14 @@ interface NavigationBarRobot : Robot {
     fun <T : Robot> close(goesTo: T) = navigationCloseButton.clickTo(goesTo)
 
     fun clickSidebarButton() = navigationHamburgerButton.clickTo(SidebarRobot)
+
+    fun navBarShowsNumOfItemsSelected(quantity: Int) {
+        node.withTag(TopAppBarComponentTestTag.appBar)
+            .withText(
+            StringUtils.pluralStringFromResource(R.plurals.common_selected,
+                quantity,
+                quantity
+            )
+        ).assertIsDisplayed()
+    }
 }

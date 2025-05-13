@@ -31,22 +31,134 @@
     <item quantity="one">%1$s element</item>
     <item quantity="other">%1$s elementer</item>
   </plurals>
-  <string name="albums_delete_album_action">Delete album</string>
-  <string name="albums_delete_album_dialog_title">Delete album?</string>
-  <string name="albums_delete_album_dialog_description">This will only delete the album. Your photos will remain in your timeline. This action cannot be undone.</string>
-  <string name="albums_delete_album_dialog_description_with_children">Some photos in this album are not saved to your timeline. Deleting this album will permanently delete those photos.\nWould you like to save them before removing?</string>
-  <string name="albums_delete_album_dialog_delete_without_saving_action">Delete without saving</string>
-  <string name="albums_delete_album_dialog_save_and_delete_action">Save photos and delete</string>
-  <string name="albums_add_zero_to_album_button">Add to album</string>
+  <string name="albums_delete_album_action">Slett album</string>
+  <string name="albums_delete_album_dialog_title">Slette album?</string>
+  <string name="albums_delete_album_dialog_description">Dette vil bare slette albumet. Bildene dine vil forbli i tidslinjen din. Denne handlingen kan ikke angres.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Noen bilder i dette albumet er ikke lagret på tidslinjen din. Hvis du sletter dette albumet, vil disse bildene bli permanent slettet.\nVil du lagre dem før du fjerner det?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Slett uten å lagre</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Lagre bilder og slett</string>
+  <string name="albums_leave_album_dialog_title">Forlate album?</string>
   <!--
-        Variable %1$s is a number of photos to add to album
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">Er du sikker på at du vil forlate albumet \"%1$s\"?\nDu mister tilgangen til bilder du ikke har lagret ennå.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Forlat uten å lagre</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Lagre bilder og forlat</string>
+  <string name="albums_add_zero_to_album_button">Legg til i album</string>
+  <!--
+        Variable %1$d is a number of photos to add to album
         Example:
             "Add 1 to album"
             "Add 33 to album"
     -->
   <plurals name="albums_add_non_zero_to_album_button">
-    <item quantity="one">Add %1$d to album</item>
-    <item quantity="other">Add %1$d to album</item>
+    <item quantity="one">Legg til %1$d i album</item>
+    <item quantity="other">Legg til %1$d i album</item>
   </plurals>
-  <string name="albums_set_album_as_cover_success">Set as album cover</string>
+  <string name="albums_set_album_as_cover_success">Angi som albumomslag</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="one">%1$d element lagt til i albumet</item>
+    <item quantity="other">%1$d elementer lagt til i albumet</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="one">%1$d element finnes allerede</item>
+    <item quantity="other">%1$d elementer finnes allerede</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="one">%1$d element mislyktes</item>
+    <item quantity="other">%1$d elementer mislyktes</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="one">%1$d element lagt til i din Drive</item>
+    <item quantity="other">%1$d elementer lagt til i din Drive</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="one">%1$d element finnes allerede</item>
+    <item quantity="other">%1$d elementer finnes allerede</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="one">%1$d element mislyktes</item>
+    <item quantity="other">%1$d elementer mislyktes</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="one">%1$d element fjernet fra albumet</item>
+    <item quantity="other">%1$d elementer fjernet fra albumet</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="one">%1$d element mislyktes</item>
+    <item quantity="other">%1$d elementer mislyktes</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">Ingen bilder</string>
+  <string name="albums_empty_album_screen_description">Bilder som er lagt til av deg eller andre medlemmer, vises her</string>
+  <string name="albums_empty_albums_list_screen_title">Ingen album</string>
+  <string name="albums_empty_albums_list_screen_description">Albumene du oppretter eller blir med i, vises her</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Albumene du oppretter, vises her</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Ingen delte album</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Albumene du har delt, vises her</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Ingen album delt med meg</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Album som er delt med deg, vises her</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="one">%1$d album delt med deg</item>
+    <item quantity="other">%1$d album delt med deg</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">Del via</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Legg til i delt album</string>
+  <string name="albums_share_multiple_photos_options_album_details">Delt album</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Nytt delt album</string>
 </resources>

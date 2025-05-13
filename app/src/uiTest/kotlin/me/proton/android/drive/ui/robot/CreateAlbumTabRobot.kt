@@ -30,6 +30,7 @@ object CreateAlbumTabRobot : Robot {
             .hasDescendant(node.withText(I18N.string.albums_new_album_name_hint))
 
     private val doneButton get() = node.withText(I18N.string.common_done_action)
+    private val shareButton get() = node.withText(I18N.string.common_share)
     private val addButton get() = node.withText(I18N.string.common_add_action)
 
     fun typeName(text: String) = apply { newAlbumHint.typeText(text) }
@@ -42,7 +43,10 @@ object CreateAlbumTabRobot : Robot {
 
     fun <T : Robot> clickOnDone(goesTo: T) = doneButton.clickTo(goesTo)
 
-    fun clickOnAdd() = addButton.clickTo(PickerPhotosAndAlbumsRobot)
+    fun clickOnAdd() = addButton.clickTo(PickerPhotosTabRobot)
+
+    fun <T : Robot> clickOnShare(goesTo: T) = shareButton.clickTo(goesTo)
+
 
     override fun robotDisplayed() {
         newAlbumHint.assertIsDisplayed()

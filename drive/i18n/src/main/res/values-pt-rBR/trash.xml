@@ -32,7 +32,7 @@
             "5 items restored"
     -->
   <plurals name="trash_restore_operation_successful_format">
-    <item quantity="one">%1 item restaurado</item>
+    <item quantity="one">1 item restaurado</item>
     <item quantity="other">%d itens restaurados</item>
   </plurals>
   <!--

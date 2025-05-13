@@ -23,8 +23,6 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.link.domain.entity.ParentId
-import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface DriveTrashRepository {
@@ -37,19 +35,22 @@ interface DriveTrashRepository {
     ): Result<Pair<List<Link>, SaveAction>>
 
     suspend fun sendToTrash(
-        parentId: ParentId,
+        userId: UserId,
+        volumeId: VolumeId,
         links: List<LinkId>,
     ): Map<LinkId, DataResult<Unit>>
 
     suspend fun restoreFromTrash(
-        shareId: ShareId,
+        userId: UserId,
+        volumeId: VolumeId,
         links: List<LinkId>,
     ): Map<LinkId, DataResult<Unit>>
 
     suspend fun emptyTrash(userId: UserId, volumeId: VolumeId)
 
     suspend fun deleteItemsFromTrash(
-        shareId: ShareId,
+        userId: UserId,
+        volumeId: VolumeId,
         links: List<LinkId>,
     ): Map<LinkId, DataResult<Unit>>
 }

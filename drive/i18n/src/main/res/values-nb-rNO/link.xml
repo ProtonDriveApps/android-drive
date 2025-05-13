@@ -28,4 +28,25 @@
   <string name="files_upload_content_description_cancel_upload">Avbryt filopplasting</string>
   <string name="files_upload_failure_storage_full_title">Lagringsplassen er full</string>
   <string name="files_upload_failure_storage_full_description">Kontoen din er tom for lagringsplass. Frigjør plass eller oppgrader til en plan med mer lagringsplass.</string>
+  <string name="files_operation_failed_all">Operasjonen mislyktes</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="one">%1$d mislyktes</item>
+    <item quantity="other">%1$d mislyktes</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="one">%1$d fullført</item>
+    <item quantity="other">%1$d fullførte</item>
+  </plurals>
 </resources>

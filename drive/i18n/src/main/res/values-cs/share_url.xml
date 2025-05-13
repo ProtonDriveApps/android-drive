@@ -92,10 +92,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">Nevyřízené sdílené položky (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Nevyřízená sdílená alba (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Žádné nevyřízené sdílené položky</string>
+  <string name="shared_user_album_invitations_title_empty">Žádná nevyřízená sdílená alba</string>
   <string name="shared_user_invitations_description_empty">Všechny nové pozvánky budou zde</string>
   <string name="shared_user_invitations_accept_button">Přijmout</string>
   <string name="shared_user_invitations_decline_button">Odmítnout</string>
   <string name="shared_user_invitations_accept_success">Sdílená položka přijata</string>
   <string name="shared_user_invitations_decline_success">Sdílená položka odmítnuta</string>
+  <string name="shared_user_album_invitations_accept_success">Pozvánka přijata</string>
+  <string name="shared_user_album_invitations_decline_success">Pozvánka odmítnuta</string>
 </resources>

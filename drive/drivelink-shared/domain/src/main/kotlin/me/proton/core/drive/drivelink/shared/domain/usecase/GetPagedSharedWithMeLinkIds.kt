@@ -21,8 +21,16 @@ package me.proton.core.drive.drivelink.shared.domain.usecase
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Folder
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.File
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Photo
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Document
 import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 
 interface GetPagedSharedWithMeLinkIds {
-    operator fun invoke(userId: UserId): Flow<PagingData<SharedLinkId>>
+    operator fun invoke(
+        userId: UserId,
+        types: Set<ShareTargetType> = setOf(Folder, File, Photo, Document),
+    ): Flow<PagingData<SharedLinkId>>
 }

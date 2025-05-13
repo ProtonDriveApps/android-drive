@@ -29,7 +29,7 @@ import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.link.domain.PhotoTag
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.upload.domain.provider.TagsProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import javax.inject.Inject

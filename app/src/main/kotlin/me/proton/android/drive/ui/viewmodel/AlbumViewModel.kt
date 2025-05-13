@@ -35,10 +35,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
@@ -48,26 +47,36 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
+import me.proton.android.drive.extension.getDefaultMessage
+import me.proton.android.drive.photos.domain.usecase.AddPhotosToStream
 import me.proton.android.drive.photos.domain.usecase.AddToAlbumInfo
 import me.proton.android.drive.photos.domain.usecase.GetAddToAlbumPhotoListings
 import me.proton.android.drive.photos.domain.usecase.GetPhotoListingCount
 import me.proton.android.drive.photos.domain.usecase.RemoveFromAlbumInfo
 import me.proton.android.drive.photos.presentation.extension.details
+import me.proton.android.drive.photos.presentation.extension.processAddToStream
 import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.AlbumViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.AlbumViewState
 import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
+import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.onSuccess
+import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.entity.Permissions
+import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.extension.isViewerOrEditorOnly
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.onFailure
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.common.Action
+import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.base.presentation.state.ListContentAppendingState
@@ -75,10 +84,19 @@ import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPagedAlbumPhotoListingsList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
+import me.proton.core.drive.drivelink.shared.presentation.extension.toViewState
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsTempDisabledOnRelease
+import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -87,12 +105,16 @@ import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.photo.domain.entity.PhotoListing
+import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.share.user.domain.entity.ShareUser
+import me.proton.core.drive.share.user.domain.usecase.GetShareUsers
 import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
+import me.proton.core.drive.base.domain.extension.combine as baseCombine
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -110,10 +132,14 @@ class AlbumViewModel @Inject constructor(
     addToAlbumInfo: AddToAlbumInfo,
     removeFromAlbumInfo: RemoveFromAlbumInfo,
     getAddToAlbumPhotoListings: GetAddToAlbumPhotoListings,
+    getPhotoShare: GetPhotoShare,
+    getFeatureFlagFlow: GetFeatureFlagFlow,
+    getShareUsers: GetShareUsers,
     @ApplicationContext private val appContext: Context,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
     private val photoDriveLinks: PhotoDriveLinks,
     private val getPagedAlbumPhotoListingsList: GetPagedAlbumPhotoListingsList,
+    private val addPhotosToStream: AddPhotosToStream,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
 ) : PhotosPickerAndSelectionViewModel(
@@ -130,6 +156,14 @@ class AlbumViewModel @Inject constructor(
     override val filterByParentId: Boolean = false
     private val shareId = ShareId(userId, requireNotNull(savedStateHandle.get<String>(SHARE_ID)))
     private val albumId = AlbumId(shareId, requireNotNull(savedStateHandle[ALBUM_ID]))
+    private val shareTempDisabled = getFeatureFlagFlow(driveAlbumsTempDisabledOnRelease(userId))
+        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveAlbumsTempDisabledOnRelease(userId), NOT_FOUND))
+    private val photoShare: StateFlow<Share?> = getPhotoShare(userId)
+        .filterSuccessOrError()
+        .mapSuccessValueOrNull()
+        .stateIn(viewModelScope, Eagerly, null)
+    private val driveCopyFeature = getFeatureFlagFlow(FeatureFlagId.driveCopy(userId))
+        .stateIn(viewModelScope, Eagerly, FeatureFlag(FeatureFlagId.driveCopy(userId), NOT_FOUND))
     private var fetchingJob: Job? = null
     private val listContentState = MutableStateFlow<ListContentState>(ListContentState.Loading)
     private val listContentAppendingState = MutableStateFlow<ListContentAppendingState>(
@@ -145,7 +179,13 @@ class AlbumViewModel @Inject constructor(
         notificationDotVisible = false,
         onAction = { viewEvent?.onAlbumOptions?.invoke() },
     )
+    private val emptyStateImageResId: Int get() = getThemeDrawableId(
+        light = BasePresentation.drawable.empty_albums_light,
+        dark = BasePresentation.drawable.empty_albums_dark,
+        dayNight = BasePresentation.drawable.empty_albums_daynight,
+    )
     private val topBarActions: MutableStateFlow<Set<Action>> = MutableStateFlow(setOf(albumOptionsAction))
+    private val saveAllLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
     val driveLink: StateFlow<DriveLink.Album?> = retryTrigger.transformLatest {
         emitAll(
@@ -182,13 +222,42 @@ class AlbumViewModel @Inject constructor(
                     return@mapWithPrevious null
                 }
         )
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    }.stateIn(viewModelScope, Eagerly, null)
 
-    val viewState: Flow<AlbumViewState> = combine(
+    private val shareUsers = driveLink.transformLatest {
+        if((it?.sharePermissions ?: Permissions.owner).isAdmin) {
+            emitAll(getShareUsers(albumId).transformLatest { dataResult ->
+                dataResult.onSuccess { list ->
+                    emit(list)
+                }.onFailure { error ->
+                    emit(emptyList())
+                    if (error.cause !is NoSuchElementException) {
+                        error.cause?.log(VIEW_MODEL)
+                        broadcastMessages(
+                            userId = userId,
+                            message = error.getDefaultMessage(
+                                appContext,
+                                configurationProvider.useExceptionMessage
+                            ),
+                            type = BroadcastMessage.Type.WARNING
+                        )
+                    }
+                }
+            })
+        } else {
+            emit(emptyList())
+        }
+    }.stateIn(viewModelScope, Eagerly, emptyList())
+
+    val viewState: Flow<AlbumViewState> = baseCombine(
         driveLink.filterNotNull(),
         listContentState,
         selected,
-    ) { album, contentState, selected ->
+        photoShare.filterNotNull(),
+        driveCopyFeature,
+        saveAllLoading,
+        shareUsers,
+    ) { album, contentState, selected, photoShare, driveCopy, saveAllLoading, shareUsers ->
         topBarActions.value = when {
             inPickerMode -> emptySet()
             selected.isNotEmpty() -> setOf(
@@ -200,7 +269,8 @@ class AlbumViewModel @Inject constructor(
         }
         AlbumViewState(
             name = album.name,
-            details = album.details(appContext),
+            isNameEncrypted = album.isNameEncrypted,
+            details = album.details(appContext, showDisplayName = true),
             coverLinkId = album.coverLinkId,
             listContentState = contentState,
             isRefreshEnabled = contentState !is ListContentState.Loading,
@@ -220,6 +290,15 @@ class AlbumViewModel @Inject constructor(
                         selected.size
                     )
                 },
+            showAddAction = (album.sharePermissions ?: Permissions.owner).canWrite && driveCopy.on,
+            addActionEnabled = selected.isEmpty() && !inPickerMode,
+            showSaveAllAction = (album.sharePermissions ?: Permissions.owner).isViewerOrEditorOnly && driveCopy.on
+                    && album.photoCount < configurationProvider.savePhotoToStreamLimit,
+            saveAllActionEnabled = selected.isEmpty() && !inPickerMode,
+            saveAllActionLoading = saveAllLoading,
+            showShareAction = (album.sharePermissions ?: Permissions.owner).isAdmin && shareTempDisabled.value.off,
+            shareActionEnabled = selected.isEmpty() && !inPickerMode,
+            shareUsers = shareUsers.map { shareUser -> shareUser.toViewState(appContext) },
         )
     }
 
@@ -250,10 +329,12 @@ class AlbumViewModel @Inject constructor(
 
     fun viewEvent(
         navigateToAlbumOptions: (AlbumId) -> Unit,
-        navigateToPhotosOptions: (FileId, AlbumId?) -> Unit,
+        navigateToPhotosOptions: (FileId, AlbumId?, SelectionId?) -> Unit,
         navigateToMultiplePhotosOptions: (selectionId: SelectionId, AlbumId?) -> Unit,
         navigateToPreview: (FileId, AlbumId) -> Unit,
         navigateToPicker: (AlbumId) -> Unit,
+        navigateToShareViaInvitations: (AlbumId) -> Unit,
+        navigateToManageAccess: (AlbumId) -> Unit,
         navigateBack: () -> Unit,
         lifecycle: Lifecycle,
     ) : AlbumViewEvent = object : AlbumViewEvent {
@@ -263,7 +344,7 @@ class AlbumViewModel @Inject constructor(
                     lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                         flow.take(1).collect { driveLink ->
                             driveLink.onClick(
-                                navigateToFolder = { _, _ -> error("Photos should not have folders") },
+                                navigateToFolder = { _, _ -> error("Album should not have folders") },
                                 navigateToPreview = { linkId ->
                                     viewModelScope.launch {
                                         navigateToPreview(
@@ -272,6 +353,7 @@ class AlbumViewModel @Inject constructor(
                                         )
                                     }
                                 },
+                                navigateToAlbum = { error("Album should not have albums") },
                             )
                         }
                     }
@@ -290,7 +372,7 @@ class AlbumViewModel @Inject constructor(
             coroutineScope = viewModelScope,
             emptyState = MutableStateFlow(
                 ListContentState.Empty(
-                    imageResId = BasePresentation.drawable.ic_proton_images_50,
+                    imageResId = emptyStateImageResId,
                     titleId = I18N.string.albums_empty_album_screen_title,
                     descriptionResId = I18N.string.albums_empty_album_screen_description,
                 )
@@ -324,6 +406,9 @@ class AlbumViewModel @Inject constructor(
         override val onSelectedOptions =
             { onSelectedOptions(navigateToPhotosOptions, navigateToMultiplePhotosOptions, albumId) }
         override val onBack = { onBack() }
+        override val onShare = { navigateToShareViaInvitations(albumId) }
+        override val onSaveAll = this@AlbumViewModel::onSaveAll
+        override val onShareUsers = { navigateToManageAccess(albumId) }
     }.also { viewEvent ->
         this.viewEvent = viewEvent
     }
@@ -339,6 +424,33 @@ class AlbumViewModel @Inject constructor(
     private fun onAddToAlbum(navigateToPicker: (AlbumId) -> Unit) {
         viewModelScope.launch {
             navigateToPicker(this@AlbumViewModel.driveLink.filterNotNull().first().id)
+        }
+    }
+
+    private fun onSaveAll() {
+        viewModelScope.launch {
+            saveAllLoading.value = true
+            addPhotosToStream(albumId).onFailure { error ->
+                error.log(LogTag.ALBUM, "Cannot copy photo to stream: ${albumId.id.logId()}")
+                broadcastMessages(
+                    userId = userId,
+                    message = error.getDefaultMessage(
+                        appContext,
+                        configurationProvider.useExceptionMessage
+                    ),
+                    type = BroadcastMessage.Type.ERROR
+                )
+            }.onSuccess { result ->
+                result.processAddToStream(appContext) { message, type ->
+                    broadcastMessages(
+                        userId = userId,
+                        message = message,
+                        type = type,
+                    )
+                }
+            }
+
+            saveAllLoading.value = false
         }
     }
 

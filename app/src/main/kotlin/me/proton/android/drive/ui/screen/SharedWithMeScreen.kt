@@ -18,8 +18,12 @@
 
 package me.proton.android.drive.ui.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,6 +40,7 @@ import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.drive.drivelink.shared.presentation.component.Shared
 import me.proton.core.drive.drivelink.shared.presentation.component.UserInvitationBanner
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -45,9 +50,10 @@ fun SharedWithMeScreen(
     homeScaffoldState: HomeScaffoldState,
     navigateToFiles: (FolderId, String?) -> Unit,
     navigateToPreview: (FileId) -> Unit,
+    navigateToAlbum: (AlbumId) -> Unit,
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
-    navigateToUserInvitation: () -> Unit,
-    modifier: Modifier = Modifier
+    navigateToUserInvitation: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<SharedWithMeViewModel>()
     val viewState by viewModel.viewState.collectAsStateWithLifecycle(initialValue = viewModel.initialViewState)
@@ -59,7 +65,9 @@ fun SharedWithMeScreen(
         viewModel.viewEvent(
             navigateToFiles = navigateToFiles,
             navigateToPreview = navigateToPreview,
+            navigateToAlbum = navigateToAlbum,
             navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+            navigateToUserInvitation = navigateToUserInvitation,
             lifecycle = lifecycle,
         )
     }
@@ -77,11 +85,17 @@ fun SharedWithMeScreen(
         headerContent = {
             Box(Modifier.defaultMinSize(minHeight = 1.dp)) {
                 // minHeight: always draw to have the header visible in the lazy list
-                userInvitationViewState?.let { viewState ->
-                    UserInvitationBanner(
-                        description = viewState.description,
-                        onClick = navigateToUserInvitation,
-                    )
+                AnimatedVisibility(
+                    visible = userInvitationViewState != null,
+                    enter = expandVertically() + fadeIn(),
+                    exit = shrinkVertically() + fadeOut(),
+                ) {
+                    userInvitationViewState?.let { viewState ->
+                        UserInvitationBanner(
+                            description = viewState.description,
+                            onClick = viewEvent.onUserInvitation,
+                        )
+                    }
                 }
             }
         }

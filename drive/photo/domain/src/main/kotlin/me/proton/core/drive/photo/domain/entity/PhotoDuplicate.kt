@@ -20,11 +20,11 @@ package me.proton.core.drive.photo.domain.entity
 
 import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
+import me.proton.core.drive.link.domain.entity.ParentId
 
 data class PhotoDuplicate(
-    val parentId: FolderId,
+    val parentId: ParentId,
     val hash: String,
     val contentHash: String?,
     val linkId: FileId?,

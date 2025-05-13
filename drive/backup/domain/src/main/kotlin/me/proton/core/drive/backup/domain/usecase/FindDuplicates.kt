@@ -57,7 +57,7 @@ class FindDuplicates @Inject constructor(
                 val hashes = files.mapNotNull { file -> file.hash }
                 val clientUid = getOrCreateClientUid().getOrThrow()
                 val backupDuplicates = findDuplicatesRepository.findDuplicates(
-                    folderId = folderId,
+                    parentId = folderId,
                     nameHashes = hashes,
                     clientUids = listOf(clientUid)
                 )

@@ -48,6 +48,7 @@ import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Sorting
@@ -62,8 +63,9 @@ fun HomeNavGraph(
     startDestination: String,
     homeScaffoldState: HomeScaffoldState,
     navigateToPreview: (fileId: FileId, pagerType: PagerType) -> Unit,
+    navigateToPreviewWithTag: (fileId: FileId, pagerType: PagerType, photoTag: PhotoTag) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToFileOrFolderOptions: (LinkId, SelectionId?) -> Unit,
     navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     navigateToPhotosPermissionRationale: () -> Unit,
@@ -73,9 +75,10 @@ fun HomeNavGraph(
     navigateToBackupSettings: () -> Unit,
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
-    navigateToUserInvitation: () -> Unit,
+    navigateToUserInvitation: (Boolean) -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
+    navigateToPhotosImportantUpdates: () -> Unit,
 ) = DriveNavHost(
     navController = homeNavController,
     startDestination = startDestination
@@ -87,7 +90,7 @@ fun HomeNavGraph(
         homeScaffoldState,
         { fileId -> navigateToPreview(fileId, PagerType.FOLDER) },
         navigateToSorting,
-        { linkId -> navigateToFileOrFolderOptions(linkId) },
+        { linkId -> navigateToFileOrFolderOptions(linkId, null) },
         { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId) },
         navigateToParentFolderOptions,
     )
@@ -97,8 +100,14 @@ fun HomeNavGraph(
         arguments,
         homeScaffoldState,
         navigateToPhotosPermissionRationale,
-        navigateToPhotosPreview = { fileId -> navigateToPreview(fileId, PagerType.PHOTO) },
-        navigateToPhotosOptions = { fileId -> navigateToFileOrFolderOptions(fileId) },
+        navigateToPhotosPreview = { fileId, photoTag ->
+            if (photoTag == null) {
+                navigateToPreview(fileId, PagerType.PHOTO)
+            } else {
+                navigateToPreviewWithTag(fileId, PagerType.PHOTO, photoTag)
+            }
+        },
+        navigateToPhotosOptions = { fileId, selectionId -> navigateToFileOrFolderOptions(fileId, selectionId) },
         navigateToMultiplePhotosOptions = { selectionId ->
             navigateToMultipleFileOrFolderOptions(selectionId)
         },
@@ -107,6 +116,7 @@ fun HomeNavGraph(
         navigateToPhotosUpsell = navigateToPhotosUpsell,
         navigateToBackupSettings = navigateToBackupSettings,
         navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
+        navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
     )
     addPhotosAndAlbums(
         homeNavController,
@@ -114,8 +124,14 @@ fun HomeNavGraph(
         arguments,
         homeScaffoldState,
         navigateToPhotosPermissionRationale,
-        navigateToPhotosPreview = { fileId -> navigateToPreview(fileId, PagerType.PHOTO) },
-        navigateToPhotosOptions = { fileId -> navigateToFileOrFolderOptions(fileId) },
+        navigateToPhotosPreview = { fileId, photoTag ->
+            if (photoTag == null) {
+                navigateToPreview(fileId, PagerType.PHOTO)
+            } else {
+                navigateToPreviewWithTag(fileId, PagerType.PHOTO, photoTag)
+            }
+        },
+        navigateToPhotosOptions = { fileId, selectionId -> navigateToFileOrFolderOptions(fileId, selectionId) },
         navigateToMultiplePhotosOptions = { selectionId ->
             navigateToMultipleFileOrFolderOptions(selectionId)
         },
@@ -126,6 +142,8 @@ fun HomeNavGraph(
         navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
         navigateToCreateNewAlbum = navigateToCreateNewAlbum,
         navigateToAlbum = navigateToAlbum,
+        navigateToUserInvitation = navigateToUserInvitation,
+        navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
     )
     addComputers(
         homeNavController,
@@ -134,7 +152,7 @@ fun HomeNavGraph(
         homeScaffoldState,
         { fileId -> navigateToPreview(fileId, PagerType.FOLDER) },
         navigateToSorting,
-        { linkId -> navigateToFileOrFolderOptions(linkId) },
+        { linkId -> navigateToFileOrFolderOptions(linkId, null) },
         { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId) },
         navigateToParentFolderOptions,
         navigateToComputerOptions,
@@ -146,8 +164,9 @@ fun HomeNavGraph(
         homeScaffoldState = homeScaffoldState,
         navigateToFolderPreview = { fileId -> navigateToPreview(fileId, PagerType.FOLDER) },
         navigateToSinglePreview = { fileId -> navigateToPreview(fileId, PagerType.SINGLE) },
+        navigateToAlbum = navigateToAlbum,
         navigateToSorting = navigateToSorting,
-        navigateToFileOrFolderOptions = { linkId -> navigateToFileOrFolderOptions(linkId) },
+        navigateToFileOrFolderOptions = { linkId -> navigateToFileOrFolderOptions(linkId, null) },
         navigateToMultipleFileOrFolderOptions = { selectionId ->
             navigateToMultipleFileOrFolderOptions(selectionId)
         },
@@ -165,7 +184,7 @@ fun NavGraphBuilder.addFiles(
     homeScaffoldState: HomeScaffoldState,
     navigateToPreview: (linkId: FileId) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
-    navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToFileOrFolderOptions: (LinkId) -> Unit,
     navigateToMultipleFileOrFolderOptions: (SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
 ) = composable(
@@ -237,14 +256,15 @@ fun NavGraphBuilder.addPhotos(
     arguments: Bundle,
     homeScaffoldState: HomeScaffoldState,
     navigateToPhotosPermissionRationale: () -> Unit,
-    navigateToPhotosPreview: (fileId: FileId) -> Unit,
-    navigateToPhotosOptions: (fileId: FileId) -> Unit,
+    navigateToPhotosPreview: (fileId: FileId, photoTag: PhotoTag?) -> Unit,
+    navigateToPhotosOptions: (fileId: FileId, SelectionId?) -> Unit,
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
+    navigateToPhotosImportantUpdates: () -> Unit,
 ) = composable(
     route = Screen.Photos.route,
     arguments = listOf(
@@ -271,6 +291,7 @@ fun NavGraphBuilder.addPhotos(
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
             navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
+            navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
         )
     } ?: let {
         val userId = UserId(requireNotNull(arguments.getString(Screen.Photos.USER_ID)))
@@ -292,8 +313,8 @@ fun NavGraphBuilder.addPhotosAndAlbums(
     arguments: Bundle,
     homeScaffoldState: HomeScaffoldState,
     navigateToPhotosPermissionRationale: () -> Unit,
-    navigateToPhotosPreview: (fileId: FileId) -> Unit,
-    navigateToPhotosOptions: (fileId: FileId) -> Unit,
+    navigateToPhotosPreview: (fileId: FileId, PhotoTag?) -> Unit,
+    navigateToPhotosOptions: (fileId: FileId, SelectionId?) -> Unit,
     navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
     navigateToSubscription: () -> Unit,
     navigateToPhotosIssues: (FolderId) -> Unit,
@@ -302,6 +323,8 @@ fun NavGraphBuilder.addPhotosAndAlbums(
     navigateToNotificationPermissionRationale: () -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
+    navigateToUserInvitation: (Boolean) -> Unit,
+    navigateToPhotosImportantUpdates: () -> Unit,
 ) = composable(
     route = Screen.PhotosAndAlbums.route,
     arguments = listOf(
@@ -325,6 +348,8 @@ fun NavGraphBuilder.addPhotosAndAlbums(
             navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
             navigateToCreateNewAlbum = navigateToCreateNewAlbum,
             navigateToAlbum = navigateToAlbum,
+            navigateToUserInvitation = navigateToUserInvitation,
+            navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
         )
     } ?: let {
         val userId = UserId(requireNotNull(arguments.getString(Screen.PhotosAndAlbums.USER_ID)))
@@ -481,11 +506,12 @@ fun NavGraphBuilder.addSharedTabs(
     homeScaffoldState: HomeScaffoldState,
     navigateToFolderPreview: (fileId: FileId) -> Unit,
     navigateToSinglePreview: (fileId: FileId) -> Unit,
+    navigateToAlbum: (AlbumId) -> Unit,
     navigateToSorting: (sorting: Sorting) -> Unit,
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
     navigateToMultipleFileOrFolderOptions: (SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
-    navigateToUserInvitation: () -> Unit,
+    navigateToUserInvitation: (Boolean) -> Unit,
 ) = composable(
     route = Screen.SharedTabs.route,
     enterTransition = defaultEnterSlideTransition {
@@ -560,6 +586,7 @@ fun NavGraphBuilder.addSharedTabs(
                 },
                 navigateToPreview = navigateToSinglePreview,
                 navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+                navigateToAlbum = navigateToAlbum,
                 navigateToUserInvitation = navigateToUserInvitation,
             )
         }

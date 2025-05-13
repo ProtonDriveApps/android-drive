@@ -19,12 +19,16 @@ package me.proton.core.drive.link.data.api
 
 import me.proton.core.drive.base.data.api.response.CodeResponse
 import me.proton.core.drive.link.data.api.request.CheckAvailableHashesRequest
+import me.proton.core.drive.link.data.api.request.CopyLinkRequest
 import me.proton.core.drive.link.data.api.request.GetLinksRequest
 import me.proton.core.drive.link.data.api.request.MoveLinkRequest
+import me.proton.core.drive.link.data.api.request.MoveMultipleLinksRequest
 import me.proton.core.drive.link.data.api.request.RenameLinkRequest
 import me.proton.core.drive.link.data.api.response.CheckAvailableHashesResponse
+import me.proton.core.drive.link.data.api.response.CopyLinkResponse
 import me.proton.core.drive.link.data.api.response.GetLinkResponse
 import me.proton.core.drive.link.data.api.response.GetLinksResponse
+import me.proton.core.drive.link.data.api.response.LinkResponses
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -65,4 +69,23 @@ interface LinkApi : BaseRetrofitApi {
         @Path("enc_shareID") shareId: String,
         @Body request: GetLinksRequest,
     ): GetLinksResponse
+
+    @PUT("drive/volumes/{volumeID}/links/move-multiple")
+    suspend fun moveMultipleLinks(
+        @Path("volumeID") volumeId: String,
+        @Body request: MoveMultipleLinksRequest,
+    ): LinkResponses
+
+    @PUT("drive/volumes/{volumeID}/links/transfer-multiple")
+    suspend fun transferMultipleLinks(
+        @Path("volumeID") volumeId: String,
+        @Body request: MoveMultipleLinksRequest,
+    ): LinkResponses
+
+    @POST("drive/volumes/{volumeID}/links/{linkID}/copy")
+    suspend fun copyLink(
+        @Path("volumeID") volumeId: String,
+        @Path("linkID") linkId: String,
+        @Body request: CopyLinkRequest
+    ): CopyLinkResponse
 }

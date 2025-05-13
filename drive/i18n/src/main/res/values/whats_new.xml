@@ -18,7 +18,7 @@
 
 <resources>
     <string name="whats_new_title">What\'s new</string>
-    <string name="whats_new_public_sharing_title">Share with anyone</string>
-    <string name="whats_new_public_sharing_description">Create shareable links to collaborate on folders and files — no Proton account required</string>
-    <string name="whats_new_public_sharing_action">@string/common_got_it_action</string>
+    <string name="whats_new_albums_title">Photo albums are here!</string>
+    <string name="whats_new_albums_description">Organize your memories with our new Albums feature. Filter by videos, favorites, and more—all with the same end-to-end encryption you trust.</string>
+    <string name="whats_new_albums_action">@string/common_got_it_action</string>
 </resources>

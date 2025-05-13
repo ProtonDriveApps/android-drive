@@ -90,10 +90,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">Elementos compartidos pendientes (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Álbumes compartidos pendientes (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Ningún elemento compartido pendiente</string>
+  <string name="shared_user_album_invitations_title_empty">No hay álbumes compartidos pendientes</string>
   <string name="shared_user_invitations_description_empty">Todas las invitaciones nuevas aparecerán aquí</string>
   <string name="shared_user_invitations_accept_button">Aceptar</string>
   <string name="shared_user_invitations_decline_button">Rechazar</string>
   <string name="shared_user_invitations_accept_success">Se aceptó el elemento compartido.</string>
   <string name="shared_user_invitations_decline_success">Se rechazó el elemento compartido.</string>
+  <string name="shared_user_album_invitations_accept_success">La invitación fue cancelada.</string>
+  <string name="shared_user_album_invitations_decline_success">Invitación rechazada</string>
 </resources>

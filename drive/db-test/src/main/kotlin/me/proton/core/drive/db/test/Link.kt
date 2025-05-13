@@ -174,7 +174,6 @@ suspend fun FolderContext.file(
                 captureTime = 0,
                 hash = null,
                 contentHash = null,
-                mainPhotoLinkId = null,
             )
         )
     }

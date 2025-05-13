@@ -60,3 +60,10 @@ class RemoveFromAlbumEntry(
     override val icon: Int = CorePresentation.drawable.ic_proton_minus_circle
     override val label: Int = I18N.string.common_remove_from_album_action
 }
+
+class ShareMultiplePhotosEntry(
+    override val onClick: (Unit) -> Unit,
+) : OptionEntry<Unit> {
+    override val icon: Int = CorePresentation.drawable.ic_proton_user_plus
+    override val label: Int = I18N.string.common_share
+}

@@ -69,6 +69,10 @@
   <string name="common_create_album_action">Criar álbum</string>
   <string name="common_set_as_album_cover_action">Definir como capa do álbum</string>
   <string name="common_add_action">Adicionar</string>
+  <string name="common_remove_from_album_action">Remover do álbum</string>
+  <string name="common_leave_album_action">Sair do álbum</string>
+  <string name="common_start_action">Início</string>
+  <string name="common_save_all_action">Salvar tudo</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Áudio</string>

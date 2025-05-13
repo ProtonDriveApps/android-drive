@@ -141,5 +141,10 @@ data class LinkDto(
         const val STATE_DELETED = 3L
         const val STATE_RESTORING = 4L
         // endregion
+        // region Type
+        const val TYPE_FOLDER = 1L
+        const val TYPE_FILE = 2L
+        const val TYPE_ALBUM = 3L
+        // endregion
     }
 }

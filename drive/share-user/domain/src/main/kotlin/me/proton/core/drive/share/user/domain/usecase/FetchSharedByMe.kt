@@ -20,14 +20,18 @@ package me.proton.core.drive.share.user.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.share.user.domain.entity.SharedListing
+import me.proton.core.drive.share.user.domain.extension.toPairSharedListingSaveAction
 import me.proton.core.drive.share.user.domain.repository.SharedRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class FetchSharedByMe @Inject constructor(
     private val repository: SharedRepository,
+    private val fetchAllSharedByMeOnPhotoVolume: FetchAllSharedByMeOnPhotoVolume,
 ) {
 
     suspend operator fun invoke(
@@ -35,6 +39,17 @@ class FetchSharedByMe @Inject constructor(
         volumeId: VolumeId,
         anchorId: String?,
     ): Result<Pair<SharedListing, SaveAction>> = coRunCatching {
-        repository.fetchSharedByMeListing(userId = userId, volumeId = volumeId, anchorId = anchorId)
+        listOfNotNull(
+            takeIf { anchorId == null }
+                ?.let {
+                    fetchAllSharedByMeOnPhotoVolume(userId)
+                        .getOrNull(LogTag.SHARING, "Fetching shared by me on photo volume failed")
+                },
+            repository.fetchSharedByMeListing(
+                userId = userId,
+                volumeId = volumeId,
+                anchorId = anchorId,
+            ),
+        ).toPairSharedListingSaveAction()
     }
 }

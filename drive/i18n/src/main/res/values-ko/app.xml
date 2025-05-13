@@ -228,4 +228,45 @@
             "Untitled document 2025-11-28 12.34.56"
     -->
   <string name="new_document_name">무제 문서 %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a price
+        Example:
+            "More storage for only $1.00"
+    -->
+  <string name="drive_lite_promo_title">단 %1$s(으)로 더 많은 스토리지 누리기</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Variable %2$s is a string representation of a storage size
+        Variable %3$s is a string representation of a price
+        Example:
+            "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
+    -->
+  <string name="drive_lite_promo_description">조금 더 많은 스토리지가 필요하다면? %1$s를 소개합니다. 단 월간 %3$s(으)로 %2$s 스토리지가 제공됩니다.</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Example:
+            "Get Drive Lite"
+    -->
+  <string name="drive_lite_promo_action">%1$s 구독</string>
+  <!--
+        Variable %1$s is a string representation of a storage size
+        Variable %2$s is a string representation of a price
+        Example:
+            "Get 200GB for just $0.99"
+    -->
+  <string name="drive_plus_promo_title">단돈 %2$s에 %1$s 구독하기</string>
+  <!--
+        Variable %1$s is a string representation of a large number
+        Variable %2$s is a string representation of a price
+        Variable %3$s is a string representation of a price
+        Example:
+            "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
+    -->
+  <string name="drive_plus_promo_description">이 정도의 공간은 고해상도 사진 %1$s장 이상을 안전하게 저장할 수 있는 충분한 저장공간입니다. 첫 달은 %2$s에 이용하고, 그 다음 달부터는 월 %3$s에 이용해 보세요.</string>
+  <!--
+        Variable %1$s is the price of the plan
+        Example:
+            "Upgrade for $0.99"
+    -->
+  <string name="drive_plus_promo_action">%1$s(으)로 업그레이드</string>
 </resources>

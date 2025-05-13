@@ -31,7 +31,10 @@ import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
 import me.proton.core.drive.drivelink.shared.data.paging.SharedRemoteMediator
 import me.proton.core.drive.drivelink.shared.domain.usecase.GetPagedSharedWithMeLinkIds
 import me.proton.core.drive.share.user.data.db.ShareUserDatabase
+import me.proton.core.drive.share.user.data.extension.toShareTargetTypeDtos
 import me.proton.core.drive.share.user.data.extension.toSharedLinkId
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType
+import me.proton.core.drive.share.user.domain.entity.ShareTargetType.Album
 import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 import me.proton.core.drive.share.user.domain.usecase.DeleteAllLocalSharedWithMe
 import me.proton.core.drive.share.user.domain.usecase.FetchSharedWithMe
@@ -46,7 +49,10 @@ class GetPagedSharedWithMeLinkIdsImpl @Inject constructor(
     private val driveLinkSharedDatabase: DriveLinkSharedDatabase,
 ) : GetPagedSharedWithMeLinkIds {
 
-    override operator fun invoke(userId: UserId): Flow<PagingData<SharedLinkId>> =
+    override operator fun invoke(
+        userId: UserId,
+        types: Set<ShareTargetType>,
+    ): Flow<PagingData<SharedLinkId>> =
         Pager(
             config = PagingConfig(
                 pageSize = configurationProvider.dbPageSize,
@@ -60,7 +66,11 @@ class GetPagedSharedWithMeLinkIdsImpl @Inject constructor(
                 database = driveLinkSharedDatabase,
             ),
             pagingSourceFactory = {
-                shareUserDatabase.sharedWithMeListingDao.getSharedWithMeListingPagingSource(userId)
+                shareUserDatabase.sharedWithMeListingDao.getSharedWithMeListingPagingSource(
+                    userId = userId,
+                    types = types.toShareTargetTypeDtos(),
+                    includeNullType = types.contains(Album).not(),
+                )
             }
         )
             .flow

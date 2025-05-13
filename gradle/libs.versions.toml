@@ -34,7 +34,7 @@ android-tools = "1.1.5"
 # Coil
 coil = "2.4.0"
 # Core
-core = "30.4.4"
+core = "31.0.0"
 core-test-quark = "14.1.0"
 # Dagger
 dagger = "2.49"
@@ -42,6 +42,7 @@ dagger = "2.49"
 desugar = "2.0.4"
 # Github
 treessence = "1.0.5"
+lottie = "6.6.6"
 # Google Play
 google-play-review = "2.0.1"
 # Gradle
@@ -57,7 +58,7 @@ kotlin = "2.0.21"
 coroutines = "1.8.0"
 serializationJson = "1.6.3"
 # Sentry
-sentry = "6.25.0"
+sentry = "7.21.0"
 # Showkase
 showkase = "1.0.3"
 # Squareup
@@ -280,6 +281,9 @@ kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref =
 # Kotlinx
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationJson" }
+
+# Lottie
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 # Material
 material = { module = "com.google.android.material:material", version.ref = "material" }

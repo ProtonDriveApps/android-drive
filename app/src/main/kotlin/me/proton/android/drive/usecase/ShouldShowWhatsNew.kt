@@ -24,6 +24,7 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAndroidWhatsNew
 import me.proton.core.drive.feature.flag.domain.extension.on
+import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.drive.android.settings.domain.entity.WhatsNewKey
 import javax.inject.Inject
@@ -33,6 +34,7 @@ import javax.inject.Singleton
 class ShouldShowWhatsNew @Inject constructor(
     private val wasWhatsNewShown: WasWhatsNewShown,
     private val getFeatureFlagFlow: GetFeatureFlagFlow,
+    private val albumsFeatureFlag: AlbumsFeatureFlag,
 ) {
 
     suspend operator fun invoke(userId: UserId): Result<WhatsNewKey?> = coRunCatching {
@@ -42,7 +44,7 @@ class ShouldShowWhatsNew @Inject constructor(
             ).first().on
         ) {
             when {
-                canShow(WhatsNewKey.PUBLIC_SHARING) -> WhatsNewKey.PUBLIC_SHARING
+                canShow(WhatsNewKey.ALBUMS) && albumsOn(userId) -> WhatsNewKey.ALBUMS
                 else -> null
             }
         } else {
@@ -52,4 +54,6 @@ class ShouldShowWhatsNew @Inject constructor(
 
     private suspend fun ShouldShowWhatsNew.canShow(key: WhatsNewKey) =
         TimestampS() < key.limit && wasWhatsNewShown(key).getOrThrow().not()
+
+    private suspend fun albumsOn(userId: UserId): Boolean = albumsFeatureFlag(userId).first()
 }

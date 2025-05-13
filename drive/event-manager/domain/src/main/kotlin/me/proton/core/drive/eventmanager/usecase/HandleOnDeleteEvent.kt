@@ -28,11 +28,15 @@ import me.proton.core.drive.drivelink.download.domain.usecase.CancelDownload
 import me.proton.core.drive.drivelink.offline.domain.usecase.DeleteLocalContent
 import me.proton.core.drive.folder.domain.usecase.GetAllFolderChildren
 import me.proton.core.drive.link.domain.entity.AlbumId
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.ids
 import me.proton.core.drive.link.domain.usecase.DeleteLinks
 import me.proton.core.drive.photo.domain.usecase.DeleteAlbumListings
+import me.proton.core.drive.photo.domain.usecase.DeleteAlbumPhotoListings
 import me.proton.core.drive.photo.domain.usecase.DeletePhotoListings
+import me.proton.core.drive.photo.domain.usecase.DeleteRelatedPhotoLinks
+import me.proton.core.drive.photo.domain.usecase.GetAllAlbumDirectChildren
 import me.proton.core.drive.share.crypto.domain.usecase.DeleteLocalShares
 import me.proton.core.drive.volume.crypto.domain.usecase.DeleteLocalVolumes
 import javax.inject.Inject
@@ -48,9 +52,15 @@ class HandleOnDeleteEvent @Inject constructor(
     private val deletePhotoListings: DeletePhotoListings,
     private val deleteLocalVolumes: DeleteLocalVolumes,
     private val deleteAlbumListings: DeleteAlbumListings,
+    private val deleteAlbumPhotoListings: DeleteAlbumPhotoListings,
+    private val deleteRelatedPhotoLinks: DeleteRelatedPhotoLinks,
+    private val getAllAlbumDirectChildren: GetAllAlbumDirectChildren,
 ) {
 
-    suspend operator fun invoke(linkIds: List<LinkId>, stopOnFailure: Boolean = false): Result<Unit> = coRunCatching {
+    suspend operator fun invoke(
+        linkIds: List<LinkId>,
+        stopOnFailure: Boolean = false,
+    ): Result<Unit> = coRunCatching {
         if (linkIds.isEmpty()) {
             return@coRunCatching
         }
@@ -58,20 +68,29 @@ class HandleOnDeleteEvent @Inject constructor(
             .forEach { driveLink ->
                 cancelDownload(driveLink)
                 when (driveLink) {
-                    is DriveLink.File -> deleteLocalContent(driveLink).getOrNullOrThrowIf(stopOnFailure)
+                    is DriveLink.File -> deleteLocalContent(driveLink)
+                        .getOrNullOrThrowIf(stopOnFailure)
                     is DriveLink.Folder -> getChildren(driveLink.id, false)
                         .onSuccess { children ->
                             invoke(children.ids, stopOnFailure).getOrNullOrThrowIf(stopOnFailure)
                         }
                         .getOrNullOrThrowIf(stopOnFailure)
-                    is DriveLink.Album -> Unit//error("TODO")
+                    is DriveLink.Album -> getAllAlbumDirectChildren(driveLink.volumeId, driveLink.id)
+                        .onSuccess { children ->
+                            if (children.isNotEmpty()) {
+                                invoke(children, stopOnFailure).getOrNullOrThrowIf(stopOnFailure)
+                            }
+                        }
+                        .getOrNullOrThrowIf(stopOnFailure)
                 }
             }
         deleteLocalVolumes(linkIds).getOrNullOrThrowIf(stopOnFailure)
         deleteLocalShares(linkIds).getOrNullOrThrowIf(stopOnFailure)
         deleteLinks(linkIds).getOrNullOrThrowIf(stopOnFailure)
         deletePhotoListings(linkIds).getOrNullOrThrowIf(stopOnFailure)
+        deleteAlbumPhotoListings(linkIds).getOrNullOrThrowIf(stopOnFailure)
         deleteAlbumListings(linkIds.filterIsInstance<AlbumId>()).getOrNullOrThrowIf(stopOnFailure)
+        deleteRelatedPhotoLinks(linkIds.filterIsInstance<FileId>()).getOrNullOrThrowIf(stopOnFailure)
     }
 
     private fun<T> Result<T>.getOrNullOrThrowIf(shouldThrow: Boolean): T? = if (shouldThrow) {

@@ -23,6 +23,8 @@ import androidx.paging.CombinedLoadStates
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.PhotoTag
+import me.proton.core.drive.photo.domain.entity.AlbumListing
 
 interface PhotosViewEvent {
     val onScroll: (Int, Set<LinkId>) -> Unit get() = { _, _ -> }
@@ -49,4 +51,7 @@ interface PhotosViewEvent {
     val onDismissBackgroundRestrictions: () -> Unit get() = {}
     val onResolve: () -> Unit get() = {}
     val onShowUpsell: () -> Unit
+    val onFilterSelected: (PhotoTag?) -> Unit get() = {}
+    val onStartPhotoShareMigration: () -> Unit get() = {}
+    val onShowImportantUpdates: () -> Unit
 }

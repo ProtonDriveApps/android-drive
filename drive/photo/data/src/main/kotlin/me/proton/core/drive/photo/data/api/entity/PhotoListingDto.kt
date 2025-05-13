@@ -24,7 +24,7 @@ import me.proton.core.drive.base.data.api.Dto.CAPTURE_TIME
 import me.proton.core.drive.base.data.api.Dto.CONTENT_HASH
 import me.proton.core.drive.base.data.api.Dto.HASH
 import me.proton.core.drive.base.data.api.Dto.LINK_ID
-import me.proton.core.drive.base.data.api.Dto.MAIN_PHOTO_LINK_ID
+import me.proton.core.drive.base.data.api.Dto.RELATED_PHOTOS
 
 @Serializable
 data class PhotoListingDto(
@@ -36,4 +36,6 @@ data class PhotoListingDto(
     val hash: String? = null,
     @SerialName(CONTENT_HASH)
     val contentHash: String? = null,
+    @SerialName(RELATED_PHOTOS)
+    val relatedPhotos: List<RelatedPhotoDto> = emptyList(),
 )

@@ -27,12 +27,11 @@ import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ALBUMS
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_DYNAMIC_ENTITLEMENT_CONFIGURATION
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PUBLIC_SHARE_EDIT_MODE
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PUBLIC_SHARE_EDIT_MODE_DISABLED
-import me.proton.core.test.quark.data.Plan
 import me.proton.core.test.rule.annotation.PrepareUser
-import me.proton.core.test.rule.annotation.payments.TestSubscriptionData
 import org.junit.Test
 
 @HiltAndroidTest
@@ -59,6 +58,22 @@ class SharingManageAccessFlowTest : BaseTest() {
         PhotosTabRobot.waitUntilLoaded()
         PhotosTabRobot
             .longClickOnPhoto(image.fileName)
+            .clickOptions()
+            .clickManageAccess()
+            .clickAllowToAnyone()
+            .verify { assertLinkIsShareWithAnyonePublic() }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun sharePhotoAfterMigration() {
+        val image = "activeTaggedFileInStream-1.jpg"
+        PhotosTabRobot.waitUntilLoaded()
+        PhotosTabRobot
+            .longClickOnPhoto(image)
             .clickOptions()
             .clickManageAccess()
             .clickAllowToAnyone()

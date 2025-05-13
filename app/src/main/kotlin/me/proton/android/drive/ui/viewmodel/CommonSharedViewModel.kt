@@ -54,6 +54,7 @@ import me.proton.core.drive.drivelink.shared.domain.usecase.SharedDriveLinks
 import me.proton.core.drive.drivelink.shared.presentation.entity.SharedItem
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.SharedViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SharedViewState
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -101,7 +102,9 @@ abstract class CommonSharedViewModel(
     fun viewEvent(
         navigateToFiles: (FolderId, String?) -> Unit,
         navigateToPreview: (fileId: FileId) -> Unit,
+        navigateToAlbum: (AlbumId) -> Unit,
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+        navigateToUserInvitation: (Boolean) -> Unit,
         lifecycle: Lifecycle,
     ): SharedViewEvent = object : SharedViewEvent {
 
@@ -112,6 +115,7 @@ abstract class CommonSharedViewModel(
                         driveLink.onClick(
                             navigateToFolder = navigateToFiles,
                             navigateToPreview = navigateToPreview,
+                            navigateToAlbum = navigateToAlbum,
                         )
                     }
                 }
@@ -143,6 +147,8 @@ abstract class CommonSharedViewModel(
         override val onMoreOptions = { driveLink: DriveLink -> navigateToFileOrFolderOptions(driveLink.id) }
 
         override val onErrorAction = this@CommonSharedViewModel::onErrorAction
+
+        override val onUserInvitation = { navigateToUserInvitation(false) }
     }
 
     private fun onScroll(driveLinkIds: Set<LinkId>) {

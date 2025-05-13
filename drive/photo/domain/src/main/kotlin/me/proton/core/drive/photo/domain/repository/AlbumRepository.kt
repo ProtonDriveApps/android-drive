@@ -23,12 +23,14 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.photo.domain.entity.AddToAlbumInfo
 import me.proton.core.drive.photo.domain.entity.AddToRemoveFromAlbumResult
 import me.proton.core.drive.photo.domain.entity.AlbumInfo
 import me.proton.core.drive.photo.domain.entity.AlbumListing
 import me.proton.core.drive.photo.domain.entity.AlbumPhotoListingList
 import me.proton.core.drive.photo.domain.entity.PhotoListing
+import me.proton.core.drive.photo.domain.entity.RelatedPhoto
 import me.proton.core.drive.photo.domain.entity.UpdateAlbumInfo
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Direction
@@ -54,7 +56,6 @@ interface AlbumRepository {
 
     suspend fun getAlbumListings(
         userId: UserId,
-        volumeId: VolumeId,
         fromIndex: Int,
         count: Int,
         sortingDirection: Direction = Direction.DESCENDING,
@@ -62,13 +63,12 @@ interface AlbumRepository {
 
     fun getAlbumListingsFlow(
         userId: UserId,
-        volumeId: VolumeId,
         fromIndex: Int,
         count: Int,
         sortingDirection: Direction = Direction.DESCENDING,
     ): Flow<Result<List<AlbumListing>>>
 
-    suspend fun insertOrIgnoreAlbumListings(
+    suspend fun insertOrUpdateAlbumListings(
         albumListings: List<AlbumListing>,
     )
 
@@ -81,6 +81,8 @@ interface AlbumRepository {
         anchorId: String?,
         sortingBy: PhotoListing.Album.SortBy,
         sortingDirection: Direction = Direction.DESCENDING,
+        onlyDirectChildren: Boolean = false,
+        includeTrashedChildren: Boolean = false,
     ): Pair<AlbumPhotoListingList, SaveAction>
 
     suspend fun fetchAndStoreAlbumPhotoListings(
@@ -91,6 +93,8 @@ interface AlbumRepository {
         anchorId: String?,
         sortingBy: PhotoListing.Album.SortBy,
         sortingDirection: Direction = Direction.DESCENDING,
+        onlyDirectChildren: Boolean = false,
+        includeTrashedChildren: Boolean = false,
     ): List<PhotoListing.Album>
 
     suspend fun getAlbumPhotoListings(
@@ -119,6 +123,13 @@ interface AlbumRepository {
         albumId: AlbumId,
     ): Flow<Int>
 
+    suspend fun deleteAlbumPhotoListings(
+        userId: UserId,
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        fileIds: Set<FileId>,
+    )
+
     suspend fun deleteAllAlbumPhotoListings(userId: UserId, volumeId: VolumeId, albumId: AlbumId)
 
     suspend fun insertOrIgnoreAlbumPhotoListing(
@@ -145,4 +156,14 @@ interface AlbumRepository {
         albumId: AlbumId,
         deleteAlbumPhotos: Boolean,
     )
+
+    suspend fun deleteAlbumPhotoListing(linkIds: List<LinkId>)
+
+    suspend fun getRelatedPhotos(
+        volumeId: VolumeId,
+        albumId: AlbumId,
+        mainFileId: FileId,
+        fromIndex: Int,
+        count: Int,
+    ): List<RelatedPhoto>
 }

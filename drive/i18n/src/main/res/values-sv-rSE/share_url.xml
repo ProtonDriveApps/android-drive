@@ -90,10 +90,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">Väntande delade objekt (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Väntande delade album (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Inga väntande delade objekt</string>
+  <string name="shared_user_album_invitations_title_empty">Inga väntande delade album</string>
   <string name="shared_user_invitations_description_empty">Alla nya inbjudningar kommer vara här</string>
   <string name="shared_user_invitations_accept_button">Acceptera</string>
   <string name="shared_user_invitations_decline_button">Avböj</string>
   <string name="shared_user_invitations_accept_success">Delat objekt accepterat</string>
   <string name="shared_user_invitations_decline_success">Delat objekt avböjt</string>
+  <string name="shared_user_album_invitations_accept_success">Inbjudan accepterad</string>
+  <string name="shared_user_album_invitations_decline_success">Inbjudan avböjd</string>
 </resources>

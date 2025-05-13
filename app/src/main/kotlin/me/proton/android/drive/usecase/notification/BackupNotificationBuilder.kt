@@ -65,7 +65,7 @@ class BackupNotificationBuilder @Inject constructor(
     ): NotificationCompat.Builder = setContentIntent(
         contentIntent(
             notificationId = notificationId,
-            uri = "${appContext.deepLinkBaseUrl}/${Screen.Photos(notificationId.channel.userId)}".toUri(),
+            uri = "${appContext.deepLinkBaseUrl}/${Screen.PhotosAndAlbums(notificationId.channel.userId)}".toUri(),
         )
     )
 

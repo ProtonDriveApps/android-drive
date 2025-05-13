@@ -20,46 +20,34 @@ package me.proton.core.drive.drivelink.device.domain.usecase
 
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.device.domain.extension.name
 import me.proton.core.drive.device.domain.usecase.GetDevice
 import me.proton.core.drive.device.domain.usecase.RenameDevice
 import me.proton.core.drive.drivelink.rename.domain.usecase.RenameLink
-import me.proton.core.drive.link.domain.usecase.ValidateLinkName
+import me.proton.core.drive.link.domain.usecase.ValidateLinkNameSize
 import javax.inject.Inject
 
 class RenameDevice @Inject constructor(
     private val getDevice: GetDevice,
     private val renameDevice: RenameDevice,
     private val renameLink: RenameLink,
-    private val configurationProvider: ConfigurationProvider,
+    private val validateLinkNameSize: ValidateLinkNameSize,
 ) {
 
     suspend operator fun invoke(userId: UserId, deviceId: DeviceId, name: String): Result<Unit> = coRunCatching {
-        val deviceName = validateDeviceName(name)
         val device = getDevice(userId, deviceId).toResult().getOrThrow()
         renameLink(
             rootFolderId = device.rootLinkId,
-            folderName = deviceName,
-            shouldValidateName = false,
+            folderName = name,
+            nameValidator = { validateLinkNameSize(name).getOrThrow() },
         ).getOrThrow()
         if (device.name.isNotEmpty()) {
             // Non-empty device name should be replaced by empty one, as real device name is part of device share
             // root folder
             renameDevice(userId, deviceId, DEFAULT_DEVICE_NAME).getOrThrow()
         }
-    }
-
-    private fun validateDeviceName(name: String): String {
-        val trimmedName = name.trim()
-        val maxLength = configurationProvider.linkMaxNameLength
-        when {
-            trimmedName.isEmpty() -> throw ValidateLinkName.Invalid.Empty
-            trimmedName.length > maxLength -> throw ValidateLinkName.Invalid.ExceedsMaxLength(maxLength)
-        }
-        return trimmedName
     }
 
     companion object {

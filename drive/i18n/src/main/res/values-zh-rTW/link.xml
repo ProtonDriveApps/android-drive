@@ -28,4 +28,23 @@
   <string name="files_upload_content_description_cancel_upload">取消檔案上傳</string>
   <string name="files_upload_failure_storage_full_title">儲存空間已滿</string>
   <string name="files_upload_failure_storage_full_description">您的帳號儲存空間已用完。釋放一些空間或升級至有更多儲存空間的方案。</string>
+  <string name="files_operation_failed_all">Operation failed</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="other">%1$d failed</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="other">%1$d succeeded</item>
+  </plurals>
 </resources>

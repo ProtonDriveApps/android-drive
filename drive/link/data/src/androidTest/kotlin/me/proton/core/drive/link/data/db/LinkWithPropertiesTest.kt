@@ -99,7 +99,7 @@ class LinkWithPropertiesTest {
         db.linkDao.delete(link)
         // endregion
         //region Then
-        assertFalse(db.linkDao.hasLinkEntity(testParentLink.userId, testParentLink.shareId, testParentLink.id).first())
+        assertFalse(db.linkDao.hasLinkEntityFlow(testParentLink.userId, testParentLink.shareId, testParentLink.id).first())
         // endregion
     }
 
@@ -113,7 +113,7 @@ class LinkWithPropertiesTest {
         db.linkDao.delete(parentLink)
         // endregion
         //region Then
-        assertFalse(db.linkDao.hasLinkEntity(testLink.userId, testLink.shareId, testLink.id).first())
+        assertFalse(db.linkDao.hasLinkEntityFlow(testLink.userId, testLink.shareId, testLink.id).first())
         // endregion
     }
 

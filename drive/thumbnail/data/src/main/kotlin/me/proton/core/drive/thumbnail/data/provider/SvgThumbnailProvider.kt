@@ -42,8 +42,7 @@ class SvgThumbnailProvider @Inject constructor(
 
     private val options = Options(
         context = context,
-        config = Bitmap.Config.RGB_565,
-        allowRgb565 = true,
+        config = Bitmap.Config.ARGB_8888,
     )
 
     override suspend fun getThumbnail(

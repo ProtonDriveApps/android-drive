@@ -17,7 +17,7 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="storage_drive_usage">Выкарыстанне Drive</string>
+  <string name="storage_drive_usage">Выкарыстана ў Drive</string>
   <string name="storage_total_usage">Усяго выкарыстана</string>
   <string name="storage_details_format"><![CDATA[Выкарыстана %1$s з %2$s]]></string>
   <!--

@@ -30,4 +30,25 @@
     <string name="files_upload_failure_storage_full_title">Storage full</string>
     <string name="files_upload_failure_storage_full_description">Your account is out of storage space. Free up space or upgrade to a plan with more storage.</string>
 
+    <string name="files_operation_failed_all">Operation failed</string>
+    <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+    <plurals name="files_operation_failed_count_of_failures">
+        <item quantity="one">%1$d failed</item>
+        <item quantity="other">%1$d failed</item>
+    </plurals>
+    <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+    <plurals name="files_operation_failed_count_of_successes">
+        <item quantity="one">%1$d succeeded</item>
+        <item quantity="other">%1$d succeeded</item>
+    </plurals>
 </resources>

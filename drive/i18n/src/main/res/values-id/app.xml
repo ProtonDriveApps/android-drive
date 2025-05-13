@@ -228,4 +228,45 @@
             "Untitled document 2025-11-28 12.34.56"
     -->
   <string name="new_document_name">Dokumen tak berjudul %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a price
+        Example:
+            "More storage for only $1.00"
+    -->
+  <string name="drive_lite_promo_title">Ruang penyimpanan lebih banyak hanya seharga %1$s</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Variable %2$s is a string representation of a storage size
+        Variable %3$s is a string representation of a price
+        Example:
+            "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
+    -->
+  <string name="drive_lite_promo_description">Saat Anda membutuhkan sedikit lebih banyak penyimpanan, tetapi tidak banyak. Memperkenalkan %1$s, yang menampilkan %2$s penyimpanan hanya seharga %3$s per bulan.</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Example:
+            "Get Drive Lite"
+    -->
+  <string name="drive_lite_promo_action">Dapatkan %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a storage size
+        Variable %2$s is a string representation of a price
+        Example:
+            "Get 200GB for just $0.99"
+    -->
+  <string name="drive_plus_promo_title">Dapatkan %1$s hanya dengan %2$s</string>
+  <!--
+        Variable %1$s is a string representation of a large number
+        Variable %2$s is a string representation of a price
+        Variable %3$s is a string representation of a price
+        Example:
+            "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
+    -->
+  <string name="drive_plus_promo_description">Itu adalah penyimpanan aman yang cukup untuk lebih dari %1$s foto beresolusi tinggi. Dapatkan bulan pertama Anda seharga %2$s, lalu %3$s/bulan.</string>
+  <!--
+        Variable %1$s is the price of the plan
+        Example:
+            "Upgrade for $0.99"
+    -->
+  <string name="drive_plus_promo_action">Tingkatkan seharga %1$s</string>
 </resources>

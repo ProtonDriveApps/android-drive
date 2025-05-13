@@ -20,8 +20,8 @@ package me.proton.core.drive.trash.domain.notification
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.data.api.response.Response
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.domain.extension.firstSuccessOrError
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.db.test.file
@@ -93,7 +93,7 @@ class TrashExtraActionProviderTest {
             actionProvider.provideAction(
                 DeleteFilesExtra(
                     userId = userId,
-                    shareId = folderId.shareId,
+                    volumeId = volumeId,
                     links = listOf(fileId),
                 )
             )
@@ -107,7 +107,7 @@ class TrashExtraActionProviderTest {
         actionProvider.provideAction(
             DeleteFilesExtra(
                 userId = userId,
-                shareId = folderId.shareId,
+                volumeId = volumeId,
                 links = listOf(fileId),
                 exception = RuntimeException(),
             )
@@ -148,7 +148,7 @@ class TrashExtraActionProviderTest {
             actionProvider.provideAction(
                 RestoreFilesExtra(
                     userId = userId,
-                    shareId = folderId.shareId,
+                    volumeId = volumeId,
                     links = listOf(fileId),
                 )
             )
@@ -175,7 +175,7 @@ class TrashExtraActionProviderTest {
         actionProvider.provideAction(
             RestoreFilesExtra(
                 userId = userId,
-                shareId = folderId.shareId,
+                volumeId = volumeId,
                 links = listOf(fileId),
                 exception = RuntimeException(),
             )
@@ -196,7 +196,7 @@ class TrashExtraActionProviderTest {
         actionProvider.provideAction(
             TrashFilesExtra(
                 userId = userId,
-                parentId = folderId,
+                volumeId = volumeId,
                 links = listOf(fileId),
             )
         )!!.invoke()
@@ -211,7 +211,7 @@ class TrashExtraActionProviderTest {
         actionProvider.provideAction(
             TrashFilesExtra(
                 userId = userId,
-                parentId = folderId,
+                volumeId = volumeId,
                 links = listOf(fileId),
                 exception = RuntimeException(),
             )

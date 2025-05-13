@@ -28,4 +28,25 @@
   <string name="files_upload_content_description_cancel_upload">Cancel·la la càrrega del fitxer</string>
   <string name="files_upload_failure_storage_full_title">Emmagatzematge ple</string>
   <string name="files_upload_failure_storage_full_description">El vostre compte no té espai d\'emmagatzematge. Allibereu espai o milloreu a un pla amb més emmagatzematge.</string>
+  <string name="files_operation_failed_all">Error amb l\'operació</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="one">%1$d error</item>
+    <item quantity="other">%1$d errors</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="one">%1$d amb èxit</item>
+    <item quantity="other">%1$d amb èxit</item>
+  </plurals>
 </resources>

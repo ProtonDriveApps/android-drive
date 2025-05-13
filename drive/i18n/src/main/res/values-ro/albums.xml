@@ -38,9 +38,18 @@
   <string name="albums_delete_album_dialog_description_with_children">Unele fotografii din acest album nu sunt salvate în cronologi. Ștergerea acestui album va șterge definitiv acele fotografii.\nDoriți să le salvați înainte de a le elimina?</string>
   <string name="albums_delete_album_dialog_delete_without_saving_action">Ștergere fără salvare</string>
   <string name="albums_delete_album_dialog_save_and_delete_action">Salvare și ștergere fotografii</string>
+  <string name="albums_leave_album_dialog_title">Părăsiți albumul?</string>
+  <!--
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">Sigur doriți să părăsiți albumul „%1$s”?\nVeți pierde accesul la fotografiile pe care încă nu le-ați salvat.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Părăsire fără salvare</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Salvare fotografii și ieșire</string>
   <string name="albums_add_zero_to_album_button">Adăugare în album</string>
   <!--
-        Variable %1$s is a number of photos to add to album
+        Variable %1$d is a number of photos to add to album
         Example:
             "Add 1 to album"
             "Add 33 to album"
@@ -51,4 +60,116 @@
     <item quantity="other">Adăugare %1$d în album</item>
   </plurals>
   <string name="albums_set_album_as_cover_success">Setată ca și copertă de album</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="one">Articole adăugate în album: %1$d</item>
+    <item quantity="few">Articole adăugate în album: %1$d</item>
+    <item quantity="other">Articole adăugate în album: %1$d</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="one">Articole deja existente: %1$d</item>
+    <item quantity="few">Articole deja existente: %1$d</item>
+    <item quantity="other">Articole deja existente: %1$d</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="one">Articole eșuate: %1$d</item>
+    <item quantity="few">Articole eșuate: %1$d</item>
+    <item quantity="other">Articole eșuate: %1$d</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="one">Articole adăugate în Drive: %1$d</item>
+    <item quantity="few">Articole adăugate în Drive: %1$d</item>
+    <item quantity="other">Articole adăugate în Drive: %1$d</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="one">Articole deja existente: %1$d</item>
+    <item quantity="few">Articole deja existente: %1$d</item>
+    <item quantity="other">Articole deja existente: %1$d</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="one">Articole eșuate: %1$d</item>
+    <item quantity="few">Articole eșuate: %1$d</item>
+    <item quantity="other">Articole eșuate: %1$d</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="one">Articole eliminate din album: %1$d</item>
+    <item quantity="few">Articole eliminate din album: %1$d</item>
+    <item quantity="other">Articole eliminate din album: %1$d</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="one">Articole eșuate: %1$d</item>
+    <item quantity="few">Articole eșuate: %1$d</item>
+    <item quantity="other">Articole eșuate: %1$d</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">Nu există fotografii</string>
+  <string name="albums_empty_album_screen_description">Fotografiile adăugate vor apărea aici.</string>
+  <string name="albums_empty_albums_list_screen_title">Nu există albume</string>
+  <string name="albums_empty_albums_list_screen_description">Albumele create sau la care v-ați alăturat vor apărea aici.</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Albumele create vor apărea aici.</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Nu există albume partajate.</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Albumele pe care le-ați partajat vor apărea aici.</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Nu există albume care vi s-au partajat.</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Albumele care vi s-au partajat vor apărea aici.</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="one">Albume care vi s-au partajat: %1$d</item>
+    <item quantity="few">Albume care vi s-au partajat: %1$d</item>
+    <item quantity="other">Albume care vi s-au partajat: %1$d</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">Partajare prin</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Adăugare la album partajat</string>
+  <string name="albums_share_multiple_photos_options_album_details">Album partajat</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Partajare album nou</string>
 </resources>

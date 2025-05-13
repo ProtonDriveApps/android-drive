@@ -67,8 +67,12 @@
   <string name="common_open_in_browser_action">ブラウザで開く</string>
   <string name="common_done_action">完了</string>
   <string name="common_create_album_action">アルバムを作成</string>
-  <string name="common_set_as_album_cover_action">Set as album cover</string>
+  <string name="common_set_as_album_cover_action">アルバムカバーに設定</string>
   <string name="common_add_action">追加</string>
+  <string name="common_remove_from_album_action">アルバムから削除</string>
+  <string name="common_leave_album_action">アルバムから離れる</string>
+  <string name="common_start_action">開始</string>
+  <string name="common_save_all_action">すべて保存</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">音声</string>

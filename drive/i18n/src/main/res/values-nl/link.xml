@@ -28,4 +28,25 @@
   <string name="files_upload_content_description_cancel_upload">Upload annuleren</string>
   <string name="files_upload_failure_storage_full_title">Opslag vol</string>
   <string name="files_upload_failure_storage_full_description">Uw account heeft geen opslagruimte meer. Maak ruimte vrij of upgrade naar een abonnement met meer opslagruimte.</string>
+  <string name="files_operation_failed_all">Operatie mislukt</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="one">%1$d mislukt</item>
+    <item quantity="other">%1$d mislukt</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="one">%1$d geslaagd</item>
+    <item quantity="other">%1$d geslaagd</item>
+  </plurals>
 </resources>

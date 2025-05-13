@@ -29,4 +29,5 @@ driveModule(hilt = true) {
     implementation(project(":drive:drivelink-download:domain"))
     implementation(project(":drive:drivelink-list:domain"))
     implementation(project(":drive:drivelink-sorting"))
+    implementation(project(":drive:photo:domain"))
 }

@@ -69,6 +69,10 @@
   <string name="common_create_album_action">Skapa album</string>
   <string name="common_set_as_album_cover_action">Ställ in som albumomslag</string>
   <string name="common_add_action">Lägg till</string>
+  <string name="common_remove_from_album_action">Ta bort från album</string>
+  <string name="common_leave_album_action">Lämna album</string>
+  <string name="common_start_action">Starta</string>
+  <string name="common_save_all_action">Spara alla</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ljud</string>

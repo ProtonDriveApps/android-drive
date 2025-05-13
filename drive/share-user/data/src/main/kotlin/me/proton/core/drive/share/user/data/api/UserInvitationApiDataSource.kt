@@ -33,8 +33,11 @@ class UserInvitationApiDataSource @Inject constructor(
     @Throws(ApiException::class)
     suspend fun getInvitations(
         userId: UserId,
+        anchorId: String?,
     ) = apiProvider.get<UserInvitationApi>(userId).invoke {
-        getInvitations()
+        getInvitations(
+            anchorId = anchorId,
+        )
     }.valueOrThrow
 
     @Throws(ApiException::class)

@@ -20,11 +20,11 @@ package me.proton.core.drive.backup.domain.repository
 
 import me.proton.core.drive.backup.domain.entity.BackupDuplicate
 import me.proton.core.drive.base.domain.entity.ClientUid
-import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.ParentId
 
 interface FindDuplicatesRepository {
     suspend fun findDuplicates(
-        folderId: FolderId,
+        parentId: ParentId,
         nameHashes: List<String>,
         clientUids: List<ClientUid>,
     ): List<BackupDuplicate>

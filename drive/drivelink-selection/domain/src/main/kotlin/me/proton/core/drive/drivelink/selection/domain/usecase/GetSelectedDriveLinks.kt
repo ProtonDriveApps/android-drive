@@ -20,6 +20,8 @@ package me.proton.core.drive.drivelink.selection.domain.usecase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.domain.usecase.UpdateSharePermissions
+import me.proton.core.drive.drivelink.domain.usecase.UpdateShareUserDisplayName
 import me.proton.core.drive.drivelink.selection.domain.repository.DriveLinkSelectionRepository
 import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
@@ -29,14 +31,15 @@ import javax.inject.Inject
 class GetSelectedDriveLinks @Inject constructor(
     private val repository: DriveLinkSelectionRepository,
     private val deselectLinks: DeselectLinks,
+    private val updateSharePermissions: UpdateSharePermissions,
+    private val updateShareUserDisplayName: UpdateShareUserDisplayName,
 ) {
 
     operator fun invoke(selectionId: SelectionId): Flow<List<DriveLink>> =
-        repository.getSelectedDriveLinks(selectionId)
+        getSelectedDriveLinks(selectionId)
 
     operator fun invoke(selectionId: SelectionId, parentId: ParentId): Flow<List<DriveLink>> =
-        repository
-            .getSelectedDriveLinks(selectionId)
+        getSelectedDriveLinks(selectionId)
             .map { driveLinks ->
                 driveLinks.filter { driveLink -> driveLink.parentId == parentId }
                     .also { children ->
@@ -45,5 +48,15 @@ class GetSelectedDriveLinks @Inject constructor(
                             (driveLinks - children.toSet()).map { driveLink -> driveLink.id },
                         )
                     }
+            }
+
+    private fun getSelectedDriveLinks(selectionId: SelectionId): Flow<List<DriveLink>> =
+        repository.getSelectedDriveLinks(selectionId)
+            .map { driveLinks ->
+                driveLinks.map { driveLink ->
+                    driveLink
+                        .let { link -> updateSharePermissions(link) }
+                        .let { link -> updateShareUserDisplayName(link) }
+                }
             }
 }

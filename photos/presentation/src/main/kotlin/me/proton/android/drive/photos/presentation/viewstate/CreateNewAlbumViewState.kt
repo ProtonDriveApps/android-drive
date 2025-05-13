@@ -26,6 +26,7 @@ data class CreateNewAlbumViewState(
     val isAddEnabled: Boolean,
     val isRemoveEnabled: Boolean,
     val isCreationInProgress: Boolean,
+    val doneButtonLabelResId: Int,
     val name: Flow<String>,
     val hint: String? = null,
 )

@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="navigation_item_subscription">Падпіска</string>
-  <string name="navigation_item_bug_report">Паведаміць пра памылку</string>
+  <string name="navigation_item_bug_report">Паведаміць аб памылцы</string>
   <string name="navigation_more_section_header">Больш</string>
   <string name="navigation_storage_section_header">Сховішча</string>
   <string name="navigation_item_get_free_storage">Атрымайце да 5 ГБ бясплатна</string>

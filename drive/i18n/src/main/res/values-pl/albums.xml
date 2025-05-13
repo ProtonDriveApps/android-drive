@@ -33,24 +33,154 @@
     <item quantity="many">%1$s elementów</item>
     <item quantity="other">%1$s elementów</item>
   </plurals>
-  <string name="albums_delete_album_action">Delete album</string>
-  <string name="albums_delete_album_dialog_title">Delete album?</string>
-  <string name="albums_delete_album_dialog_description">This will only delete the album. Your photos will remain in your timeline. This action cannot be undone.</string>
-  <string name="albums_delete_album_dialog_description_with_children">Some photos in this album are not saved to your timeline. Deleting this album will permanently delete those photos.\nWould you like to save them before removing?</string>
-  <string name="albums_delete_album_dialog_delete_without_saving_action">Delete without saving</string>
-  <string name="albums_delete_album_dialog_save_and_delete_action">Save photos and delete</string>
-  <string name="albums_add_zero_to_album_button">Add to album</string>
+  <string name="albums_delete_album_action">Usuń album</string>
+  <string name="albums_delete_album_dialog_title">Usunąć album?</string>
+  <string name="albums_delete_album_dialog_description">Spowoduje to jedynie usunięcie albumu. Zdjęcia pozostaną na osi czasu. Akcji nie można cofnąć.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Niektóre zdjęcia w tym albumie nie są zapisywane na osi czasu. Usunięcie tego albumu spowoduje trwałe usunięcie tych zdjęć.\nCzy chcesz je zapisać przed usunięciem?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Usuń bez zapisywania</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Zapisz zdjęcia i usuń</string>
+  <string name="albums_leave_album_dialog_title">Opuścić album?</string>
   <!--
-        Variable %1$s is a number of photos to add to album
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">Czy na pewno chcesz opuścić album \"%1$s\"?\nStracisz dostęp do niezapisanych zdjęć.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Opuść bez zapisywania</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Zapisz zdjęcia i opuść</string>
+  <string name="albums_add_zero_to_album_button">Dodaj do albumu</string>
+  <!--
+        Variable %1$d is a number of photos to add to album
         Example:
             "Add 1 to album"
             "Add 33 to album"
     -->
   <plurals name="albums_add_non_zero_to_album_button">
-    <item quantity="one">Add %1$d to album</item>
-    <item quantity="few">Add %1$d to album</item>
-    <item quantity="many">Add %1$d to album</item>
-    <item quantity="other">Add %1$d to album</item>
+    <item quantity="one">Dodaj %1$d do albumu</item>
+    <item quantity="few">Dodaj %1$d do albumu</item>
+    <item quantity="many">Dodaj %1$d do albumu</item>
+    <item quantity="other">Dodaj %1$d do albumu</item>
   </plurals>
-  <string name="albums_set_album_as_cover_success">Set as album cover</string>
+  <string name="albums_set_album_as_cover_success">Ustaw jako okładkę albumu</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="one">Dodano %1$d element do albumu</item>
+    <item quantity="few">Dodano %1$d elementy do albumu</item>
+    <item quantity="many">Dodano %1$d elementów do albumu</item>
+    <item quantity="other">Dodano %1$d elementów do albumu</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="one">%1$d element już istnieje</item>
+    <item quantity="few">%1$d elementy już istnieją</item>
+    <item quantity="many">%1$d elementów już istnieje</item>
+    <item quantity="other">%1$d elementów już istnieje</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="one">Dodanie %1$d elementu nie powiodło się</item>
+    <item quantity="few">Dodanie %1$d elementów nie powiodło się</item>
+    <item quantity="many">Dodanie %1$d elementów nie powiodło się</item>
+    <item quantity="other">Dodanie %1$d elementów nie powiodło się</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="one">Dodano %1$d element do dysku</item>
+    <item quantity="few">Dodano %1$d elementy do dysku</item>
+    <item quantity="many">Dodano %1$d elementów do dysku</item>
+    <item quantity="other">Dodano %1$d elementów do dysku</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="one">%1$d element już istnieje</item>
+    <item quantity="few">%1$d elementy już istnieją</item>
+    <item quantity="many">%1$d elementów już istnieje</item>
+    <item quantity="other">%1$d elementów już istnieje</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="one">Nie udało się dodać %1$d elementu</item>
+    <item quantity="few">Nie udało się dodać %1$d elementów</item>
+    <item quantity="many">Nie udało się dodać %1$d elementów</item>
+    <item quantity="other">Nie udało się dodać %1$d elementów</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="one">Usunięto %1$d element z albumu</item>
+    <item quantity="few">Usunięto %1$d elementy z albumu</item>
+    <item quantity="many">Usunięto %1$d elementów z albumu</item>
+    <item quantity="other">Usunięto %1$d elementów z albumu</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="one">Usunięcie %1$d elementu nie powiodło się</item>
+    <item quantity="few">Usunięcie %1$d elementów nie powiodło się</item>
+    <item quantity="many">Usunięcie %1$d elementów nie powiodło się</item>
+    <item quantity="other">Usunięcie %1$d elementów nie powiodło się</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">Brak zdjęć</string>
+  <string name="albums_empty_album_screen_description">Zdjęcia dodane przez Ciebie lub innych użytkowników pojawią się tutaj</string>
+  <string name="albums_empty_albums_list_screen_title">Brak albumów</string>
+  <string name="albums_empty_albums_list_screen_description">Utworzone i udostępnione albumy pojawią się tutaj</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Utworzone albumy pojawią się tutaj</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Brak udostępnionych albumów</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Udostępnione albumy pojawią się tutaj</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Brak albumów udostępnionych Ci</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Albumy udostępnione Ci pojawią się tutaj</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="one">Udostępniono Ci %1$d album</item>
+    <item quantity="few">Udostępniono Ci %1$d albumy</item>
+    <item quantity="many">Udostępniono Ci %1$d albumów</item>
+    <item quantity="other">Udostępniono Ci %1$d albumów</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">Udostępnij</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Dodaj do udostępnionego albumu</string>
+  <string name="albums_share_multiple_photos_options_album_details">Udostępniony album</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Nowy udostępniony album</string>
 </resources>

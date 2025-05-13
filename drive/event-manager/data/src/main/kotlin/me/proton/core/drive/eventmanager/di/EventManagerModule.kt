@@ -25,6 +25,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.ElementsIntoSet
 import me.proton.core.contact.data.ContactEmailEventListener
+import me.proton.core.drive.eventmanager.DriveCoreEventListener
 import me.proton.core.drive.eventmanager.LinkEventListener
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.eventmanager.repository.VolumeConfigRepository
@@ -53,6 +54,7 @@ object EventManagerModule {
         userAddressEventListener: UserAddressEventListener,
         userSettingsEventListener: UserSettingsEventListener,
         linkEventListener: LinkEventListener,
+        driveCoreEventListener: DriveCoreEventListener,
         notificationEventListener: NotificationEventListener,
         pushEventListener: PushEventListener,
         contactEmailEventListener: ContactEmailEventListener,
@@ -63,6 +65,7 @@ object EventManagerModule {
         userAddressEventListener,
         userSettingsEventListener,
         linkEventListener,
+        driveCoreEventListener,
         notificationEventListener,
         pushEventListener,
         contactEmailEventListener,

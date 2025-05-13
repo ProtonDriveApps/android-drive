@@ -28,6 +28,7 @@ import me.proton.core.drive.linktrash.domain.entity.TrashState
 import me.proton.core.drive.linktrash.domain.repository.LinkTrashRepository
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.trash.domain.TrashManager
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class SendToTrash @Inject constructor(
@@ -47,10 +48,18 @@ class SendToTrash @Inject constructor(
 
     suspend operator fun invoke(userId: UserId, parentId: ParentId, linkIds: List<LinkId>) {
         getShare(parentId.shareId).toResult().getOrNull()?.let { share ->
-            trashRepository.insertOrUpdateTrashState(share.volumeId, linkIds, TrashState.TRASHING)
-            trashManager.trash(userId, parentId, linkIds).onFailure {
-                trashRepository.removeTrashState(linkIds)
-            }
+            invoke(userId, share.volumeId, linkIds)
+        }
+    }
+
+    suspend operator fun invoke(
+        userId: UserId,
+        volumeId: VolumeId,
+        linkIds: List<LinkId>,
+    ) {
+        trashRepository.insertOrUpdateTrashState(volumeId, linkIds, TrashState.TRASHING)
+        trashManager.trash(userId, volumeId, linkIds).onFailure {
+            trashRepository.removeTrashState(linkIds)
         }
     }
 

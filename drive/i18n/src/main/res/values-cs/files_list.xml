@@ -49,6 +49,12 @@
   <string name="files_send_to_trash_action">Přesunout do koše</string>
   <string name="files_remove_me_action">Odebrat mě</string>
   <string name="files_move_file_action">Přesunout</string>
+  <string name="files_add_to_favorite_action">Přidat do oblíbených</string>
+  <string name="files_remove_from_favorite_action">Odebrat z oblíbených</string>
+  <string name="files_add_to_favorite_action_success">Úspěšně přidáno do oblíbených</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Fotka byla zkopírována do streamu a označena zde jako oblíbená</string>
+  <string name="files_remove_from_favorite_action_success">Úspěšně odebráno z oblíbených</string>
+  <string name="files_save_shared_photo_action">Uložit sdílenou fotku</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

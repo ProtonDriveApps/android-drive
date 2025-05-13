@@ -29,16 +29,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import androidx.media3.common.MediaItem
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
@@ -50,6 +48,25 @@ import me.proton.core.drive.base.presentation.extension.conditional
 @OptIn(UnstableApi::class)
 fun MediaPreview(
     uri: Uri,
+    isFullScreen: Boolean,
+    modifier: Modifier = Modifier,
+    play: Boolean = true,
+    mediaControllerVisibility: (Boolean) -> Unit = {}
+) {
+    val viewModel = hiltViewModel<MediaPreviewViewModel>()
+    MediaPreview(
+        player = viewModel.getPlayer(uri),
+        isFullScreen = isFullScreen,
+        modifier = modifier,
+        play = play,
+        mediaControllerVisibility = mediaControllerVisibility,
+    )
+}
+
+@Composable
+@OptIn(UnstableApi::class)
+fun MediaPreview(
+    player: ExoPlayer,
     isFullScreen: Boolean,
     modifier: Modifier = Modifier,
     play: Boolean = true,
@@ -71,15 +88,6 @@ fun MediaPreview(
             },
         contentAlignment = Alignment.Center
     ) {
-        val localContext = LocalContext.current
-        val player = remember(uri) { ExoPlayer.Builder(localContext).build() }
-        DisposableEffect(uri) {
-            player.setMediaItem(MediaItem.fromUri(uri))
-            player.prepare()
-            onDispose {
-                player.release()
-            }
-        }
         val lifecycleOwner = LocalLifecycleOwner.current
         DisposableEffect(lifecycleOwner) {
             val lifecycleObserver = LifecycleEventObserver { _, event ->

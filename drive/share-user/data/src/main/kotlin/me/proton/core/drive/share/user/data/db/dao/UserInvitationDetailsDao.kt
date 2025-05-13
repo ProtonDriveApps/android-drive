@@ -24,7 +24,6 @@ import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.share.user.data.db.entity.UserInvitationDetailsEntity
 import me.proton.core.drive.share.user.data.db.entity.UserInvitationIdAndDetailsEntity
-import me.proton.core.drive.share.user.data.db.entity.UserInvitationIdEntity
 
 @Dao
 abstract class UserInvitationDetailsDao : BaseDao<UserInvitationDetailsEntity>() {
@@ -78,6 +77,7 @@ abstract class UserInvitationDetailsDao : BaseDao<UserInvitationDetailsEntity>()
                 UserInvitationIdEntity.user_id, 
                 UserInvitationIdEntity.volume_id,
                 UserInvitationIdEntity.share_id,
+                UserInvitationIdEntity.type,
                 UserInvitationIdEntity.id,
                 UserInvitationDetailsEntity.user_id AS details_user_id,
                 UserInvitationDetailsEntity.volume_id AS details_volume_id,
@@ -102,7 +102,10 @@ abstract class UserInvitationDetailsDao : BaseDao<UserInvitationDetailsEntity>()
             AND UserInvitationIdEntity.volume_id = UserInvitationDetailsEntity.volume_id
             AND UserInvitationIdEntity.share_id = UserInvitationDetailsEntity.share_id
             AND UserInvitationIdEntity.id = UserInvitationDetailsEntity.id
-            WHERE UserInvitationIdEntity.user_id = :userId
+            WHERE
+                UserInvitationIdEntity.user_id = :userId AND
+                UserInvitationIdEntity.type IN (:types) OR
+                (:includeNullType AND UserInvitationIdEntity.type IS NULL)
             ORDER BY UserInvitationDetailsEntity.create_time DESC
             LIMIT :limit
         """
@@ -110,5 +113,7 @@ abstract class UserInvitationDetailsDao : BaseDao<UserInvitationDetailsEntity>()
     abstract fun getInvitationsFlow(
         userId: UserId,
         limit: Int,
+        types: Set<Long>,
+        includeNullType: Boolean,
     ): Flow<List<UserInvitationIdAndDetailsEntity>>
 }

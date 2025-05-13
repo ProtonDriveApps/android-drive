@@ -24,10 +24,14 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import me.proton.android.drive.initializer.MainInitializer
 import me.proton.android.drive.ui.MainActivity
+import me.proton.android.drive.ui.extension.mainUserId
+import me.proton.android.drive.ui.rules.OverlayRule
 import me.proton.android.drive.ui.rules.SlowTestRule
+import me.proton.core.domain.entity.UserId
 import me.proton.core.test.rule.ProtonRule
 import me.proton.core.test.rule.extension.protonAndroidComposeRule
 import org.junit.Rule
+import org.junit.rules.ExternalResource
 import org.junit.rules.RuleChain
 
 @HiltAndroidTest
@@ -42,17 +46,19 @@ abstract class BaseTest : AbstractBaseTest() {
         fusionEnabled = true,
         additionalRules = linkedSetOf(
             IntentsRule(),
-            SlowTestRule()
+            SlowTestRule(),
+            OverlayRule(this),
         ),
         beforeHilt = {
             configureFusion()
         },
         afterHilt = {
             MainInitializer.init(it.targetContext)
-            setOverlaysDisplayStateAfterLogin()
         },
         logoutBefore = true
     )
+
+    override val mainUserId: UserId get() = protonRule.mainUserId
 
     @get:Rule(order = 2)
     val ruleChain: RuleChain = RuleChain

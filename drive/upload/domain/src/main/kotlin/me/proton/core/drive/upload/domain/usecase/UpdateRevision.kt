@@ -36,7 +36,7 @@ import me.proton.core.drive.file.base.domain.usecase.UpdateRevision
 import me.proton.core.drive.key.domain.entity.Key
 import me.proton.core.drive.key.domain.usecase.BuildNodeKey
 import me.proton.core.drive.key.domain.usecase.GetNodeKey
-import me.proton.core.drive.link.domain.PhotoTag
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.extension.isThumbnail

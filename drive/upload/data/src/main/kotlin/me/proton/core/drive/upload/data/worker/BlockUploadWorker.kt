@@ -186,8 +186,8 @@ class BlockUploadWorker @AssistedInject constructor(
     private suspend fun Throwable.handle(
         uploadBlock: me.proton.core.drive.linkupload.domain.entity.UploadBlock,
     ): Boolean =
-        onProtonHttpException { protonCode ->
-            when (protonCode) {
+        onProtonHttpException { protonData ->
+            when (protonData.code) {
                 NOT_EXISTS -> updateToken(
                     uploadFileLinkId = uploadFileLinkId,
                     index = index,

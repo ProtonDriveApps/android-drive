@@ -19,11 +19,14 @@
 package me.proton.android.drive.photos.presentation.viewstate
 
 import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Immutable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.state.ListContentState
+import me.proton.core.drive.base.presentation.viewstate.TagViewState
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 
 data class PhotosViewState(
     val title: String,
@@ -38,4 +41,16 @@ data class PhotosViewState(
     val isRefreshEnabled: Boolean = true,
     val notificationDotVisible: Boolean = false,
     val inMultiselect: Boolean = false,
+    val filters: List<PhotosFilter> = emptyList(),
+    val shouldShowFilters: Boolean = false,
+    val emptyPhotoTagState: EmptyPhotoTagState? = null,
+    val showPhotoShareMigrationInProgress: Boolean = false,
+    val showPhotoShareMigrationNeededBanner: Boolean = false,
+    val showStorageBanner: Boolean = false,
+)
+
+@Immutable
+data class PhotosFilter(
+    val filter: PhotoTag?,
+    val tagViewState: TagViewState,
 )

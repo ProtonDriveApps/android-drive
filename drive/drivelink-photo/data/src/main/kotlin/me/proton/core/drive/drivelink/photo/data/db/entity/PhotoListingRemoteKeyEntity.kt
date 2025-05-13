@@ -28,7 +28,6 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.CAPTURE_TIME
 import me.proton.core.drive.base.data.db.Column.ID
-import me.proton.core.drive.base.data.db.Column.INDEX
 import me.proton.core.drive.base.data.db.Column.KEY
 import me.proton.core.drive.base.data.db.Column.LINK_ID
 import me.proton.core.drive.base.data.db.Column.NEXT_KEY

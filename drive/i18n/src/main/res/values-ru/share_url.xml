@@ -92,10 +92,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">В ожидании %1$d общих элементов)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Ожидающие общие альбомы (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Нет общих элементов в ожидании</string>
+  <string name="shared_user_album_invitations_title_empty">Нет ожидающих общих альбомов</string>
   <string name="shared_user_invitations_description_empty">Все новые приглашения будут здесь</string>
   <string name="shared_user_invitations_accept_button">Принять</string>
   <string name="shared_user_invitations_decline_button">Отклонить</string>
   <string name="shared_user_invitations_accept_success">Общий элемент принят</string>
   <string name="shared_user_invitations_decline_success">Общий элемент отклонен</string>
+  <string name="shared_user_album_invitations_accept_success">Приглашение принято</string>
+  <string name="shared_user_album_invitations_decline_success">Приглашение отклонено</string>
 </resources>

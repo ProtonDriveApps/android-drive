@@ -47,6 +47,12 @@
   <string name="files_send_to_trash_action">Μετακίνηση στα Διαγραμμένα</string>
   <string name="files_remove_me_action">Αφαιρέστε με</string>
   <string name="files_move_file_action">Μεταφορά</string>
+  <string name="files_add_to_favorite_action">Προσθήκη στα αγαπημένα</string>
+  <string name="files_remove_from_favorite_action">Κατάργηση από τα αγαπημένα</string>
+  <string name="files_add_to_favorite_action_success">Προστέθηκε στα αγαπημένα με επιτυχία</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Η φωτογραφία αντιγράφηκε στη ροή και επισημάνθηκε εκεί ως αγαπημένη</string>
+  <string name="files_remove_from_favorite_action_success">Καταργήθηκε από τα αγαπημένα με επιτυχία</string>
+  <string name="files_save_shared_photo_action">Αποθήκευση κοινοποιημένης φωτογραφίας</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

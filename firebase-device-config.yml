@@ -2,19 +2,7 @@ quickTest:
   device:
     - model: MediumPhone.arm
       version: 33
-    - model: Pixel2.arm
-      version: 30
-quickTest-2:
-  device:
-    - model: Pixel2.arm
-      version: 33
-    - model: Pixel3
-      version: 30
-quickTest-3:
-  device:
     - model: SmallPhone.arm
-      version: 33
-    - model: NexusLowRes
       version: 30
 tier-1: # no english as it is the default for other targets
   device:

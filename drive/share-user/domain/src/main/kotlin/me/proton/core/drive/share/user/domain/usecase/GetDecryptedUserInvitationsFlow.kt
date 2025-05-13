@@ -49,10 +49,11 @@ class GetDecryptedUserInvitationsFlow @Inject constructor(
 ) {
     operator fun invoke(
         userId: UserId,
+        albumsOnly: Boolean = false,
         refresh: Flow<Boolean> = flowOf { !repository.hasInvitations(userId) },
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ): Flow<DataResult<List<UserInvitation>>> =
-        getUserInvitationsFlow(userId, refresh).mapSuccess { (_, invitations) ->
+        getUserInvitationsFlow(userId, albumsOnly, refresh).mapSuccess { (_, invitations) ->
             invitations.map { invitation ->
                 invitation.details?.let { details ->
                     details.decryptLinkName(userId, coroutineContext)
@@ -87,5 +88,4 @@ class GetDecryptedUserInvitationsFlow @Inject constructor(
             passphrase = passphrase,
         ).getOrThrow()
     }
-
 }

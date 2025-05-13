@@ -81,7 +81,7 @@
             "3 items shared with you"
     -->
   <plurals name="shared_by_me_invitation_banner_description">
-    <item quantity="one">%1$d item shared with you</item>
+    <item quantity="one">%1$d predmet v skupni rabi z vami</item>
     <item quantity="two">%1$d items shared with you</item>
     <item quantity="few">%1$d items shared with you</item>
     <item quantity="other">%1$d items shared with you</item>
@@ -92,10 +92,19 @@
             "Pending shared items (1)"
     -->
   <string name="shared_user_invitations_title">Pending shared items (%1$d)</string>
-  <string name="shared_user_invitations_title_empty">No pending shared items</string>
-  <string name="shared_user_invitations_description_empty">All new invitations will be here</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Ni čakajočih deljenih predmetov</string>
+  <string name="shared_user_album_invitations_title_empty"/>
+  <string name="shared_user_invitations_description_empty">Vsa nova povabila bodo tukaj</string>
   <string name="shared_user_invitations_accept_button">Sprejmi</string>
   <string name="shared_user_invitations_decline_button">Zavrni</string>
   <string name="shared_user_invitations_accept_success">Shared item accepted</string>
   <string name="shared_user_invitations_decline_success">Shared item declined</string>
+  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
+  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
 </resources>

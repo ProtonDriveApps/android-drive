@@ -133,12 +133,12 @@ open class SelectionViewModel(
     }
 
     protected inline fun <reified T : LinkId> onSelectedOptions(
-        navigateToFileOrFolderOptions: (linkId: T, albumId: AlbumId?) -> Unit,
+        navigateToFileOrFolderOptions: (linkId: T, albumId: AlbumId?, selectionId: SelectionId?) -> Unit,
         navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId, albumId: AlbumId?) -> Unit,
         albumId: AlbumId? = null,
     ) {
         if (selected.value.size == 1) {
-            navigateToFileOrFolderOptions(selected.value.first() as T, albumId)
+            navigateToFileOrFolderOptions(selected.value.first() as T, albumId, selectionId.value)
         } else {
             selectionId.value?.let { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId, albumId) }
         }

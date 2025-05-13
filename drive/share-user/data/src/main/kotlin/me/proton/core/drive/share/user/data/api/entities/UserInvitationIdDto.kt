@@ -21,6 +21,7 @@ package me.proton.core.drive.share.user.data.api.entities
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.data.api.Dto
+import me.proton.core.drive.base.data.api.Dto.SHARE_TARGET_TYPE
 
 @Serializable
 data class UserInvitationIdDto(
@@ -30,4 +31,6 @@ data class UserInvitationIdDto(
     val shareId: String,
     @SerialName(Dto.INVITATION_ID)
     val id: String,
+    @SerialName(SHARE_TARGET_TYPE)
+    val shareTargetType: Long? = null,
 )

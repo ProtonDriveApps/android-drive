@@ -36,9 +36,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
@@ -48,6 +49,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
@@ -57,19 +59,25 @@ import me.proton.android.drive.photos.domain.usecase.GetAddToAlbumPhotoListings
 import me.proton.android.drive.photos.domain.usecase.GetPhotoListingCount
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
 import me.proton.android.drive.photos.domain.usecase.RemoveFromAlbumInfo
+import me.proton.android.drive.photos.domain.usecase.ShowImportantUpdates
 import me.proton.android.drive.photos.domain.usecase.ShowUpsell
 import me.proton.android.drive.photos.presentation.R
+import me.proton.android.drive.photos.presentation.extension.isSelected
+import me.proton.android.drive.photos.presentation.extension.toEmptyPhotoTagState
+import me.proton.android.drive.photos.presentation.extension.toPhotosFilter
 import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewevent.PhotosViewEvent
 import me.proton.android.drive.photos.presentation.viewmodel.BackupPermissionsViewModel
 import me.proton.android.drive.photos.presentation.viewmodel.BackupStatusFormatter
 import me.proton.android.drive.photos.presentation.viewmodel.SeparatorFormatter
+import me.proton.android.drive.photos.presentation.viewstate.PhotosFilter
 import me.proton.android.drive.photos.presentation.viewstate.PhotosViewState
 import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.effect.PhotosEffect
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
+import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.entity.BackupStatus
@@ -100,15 +108,26 @@ import me.proton.core.drive.base.presentation.extension.quantityString
 import me.proton.core.drive.base.presentation.state.ListContentAppendingState
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.viewmodel.onLoadState
+import me.proton.core.drive.base.presentation.viewstate.TagViewState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.photo.domain.extension.isInProgress
+import me.proton.core.drive.drivelink.photo.domain.extension.isPending
+import me.proton.core.drive.drivelink.photo.domain.manager.PhotoShareMigrationManager
 import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPagedPhotoListingsList
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPhotoCount
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsDisabled
+import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
@@ -117,6 +136,7 @@ import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.user.domain.entity.UserMessage
 import me.proton.core.drive.user.domain.usecase.CancelUserMessage
+import me.proton.core.drive.volume.domain.usecase.HasPhotoVolume
 import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
 import me.proton.core.util.kotlin.CoreLogger
 import java.util.Calendar
@@ -152,13 +172,18 @@ class PhotosViewModel @Inject constructor(
     removeFromAlbumInfo: RemoveFromAlbumInfo,
     getAddToAlbumPhotoListings: GetAddToAlbumPhotoListings,
     getPhotoListingCount: GetPhotoListingCount,
+    albumsFeatureFlag: AlbumsFeatureFlag,
+    getFeatureFlagFlow: GetFeatureFlagFlow,
     val backupPermissionsViewModel: BackupPermissionsViewModel,
     private val photoDriveLinks: PhotoDriveLinks,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
     private val syncFolders: SyncFolders,
     private val checkMissingFolders: CheckMissingFolders,
     private val cancelUserMessage: CancelUserMessage,
+    private val photoShareMigrationManager: PhotoShareMigrationManager,
+    private val hasPhotoVolume: HasPhotoVolume,
     shouldUpgradeStorage: ShouldUpgradeStorage,
+    showImportantUpdates: ShowImportantUpdates,
 ) : PhotosPickerAndSelectionViewModel(
         savedStateHandle = savedStateHandle,
         selectLinks = selectLinks,
@@ -172,6 +197,15 @@ class PhotosViewModel @Inject constructor(
     ),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
+
+    private val albumsFeatureFlagOn = combine(
+        albumsFeatureFlag(userId)
+            .stateIn(viewModelScope, Eagerly, configurationProvider.albumsFeatureFlag),
+        getFeatureFlagFlow(driveAlbumsDisabled(userId))
+            .stateIn(viewModelScope, Eagerly, FeatureFlag(driveAlbumsDisabled(userId), NOT_FOUND))
+    ) { featureFlagOn, killSwitch ->
+        featureFlagOn && killSwitch.off
+    }
 
     override val driveLinkFilter = { driveLink: DriveLink -> driveLink !is DriveLink.Album }
 
@@ -194,11 +228,33 @@ class PhotosViewModel @Inject constructor(
             emit(PhotosEffect.ShowUpsell)
         }
     }
+    private val photosEffectShowImportantUpdates = showImportantUpdates(userId).transform { show ->
+        if (show) {
+            CoreLogger.i(PHOTO, "Showing important updates")
+            emit(PhotosEffect.ShowImportantUpdates)
+        }
+    }
     val photosEffect: Flow<PhotosEffect> = merge(
         _photosEffect.asSharedFlow(),
         photosEffectShowUpsell,
+        photosEffectShowImportantUpdates,
     )
+    private val photoListingsFilter: MutableStateFlow<PhotoTag?> =
+        MutableStateFlow(null)
 
+    private val photosFilters = listOf(
+        PhotosFilter(
+            filter = null,
+            tagViewState = TagViewState(
+                label = appContext.getString(I18N.string.photos_filter_all),
+                icon = CorePresentation.drawable.ic_proton_image,
+                selected = true,
+            )
+        ),
+        PhotoTag.Favorites.toPhotosFilter(appContext),
+        PhotoTag.Videos.toPhotosFilter(appContext),
+        PhotoTag.Raw.toPhotosFilter(appContext),
+    )
     val initialViewState = PhotosViewState(
         title = appContext.getString(I18N.string.photos_title),
         navigationIconResId = CorePresentation.drawable.ic_proton_hamburger,
@@ -210,7 +266,11 @@ class PhotosViewModel @Inject constructor(
         backupStatusViewState = null,
         selected = selected,
         isRefreshEnabled = selected.value.isEmpty(),
-        inMultiselect = false
+        inMultiselect = false,
+        filters = emptyList(),
+        showPhotoShareMigrationInProgress = false,
+        showPhotoShareMigrationNeededBanner = false,
+        showStorageBanner = false,
     )
     private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
     val driveLink: StateFlow<DriveLink.Folder?> = retryTrigger.transformLatest {
@@ -233,61 +293,65 @@ class PhotosViewModel @Inject constructor(
                                 shareType = Share.Type.PHOTO,
                             )
                             error.log(VIEW_MODEL, "Cannot get drive link")
+                            if (previous is DataResult.Success) {
+                                retryLoadingPhotosDriveLinkFolder()
+                            }
                         }
                     return@mapWithPrevious null
                 }
         )
-    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    }.stateIn(viewModelScope, Eagerly, null)
 
     val driveLinksMap: Flow<Map<LinkId, DriveLink>> = photoDriveLinks.getDriveLinksMapFlow(userId)
 
-    val driveLinks: Flow<PagingData<PhotosItem>> =
-        parentId
-            .filterNotNull()
-            .distinctUntilChanged()
-            .transformLatest { _ ->
-                emitAll(
-                    getPagedPhotoListingsList(userId)
-                        .map { pagingData ->
-                            pagingData.map { photoListing ->
-                                PhotosItem.PhotoListing(
-                                    photoListing.linkId,
-                                    photoListing.captureTime,
-                                    null
-                                )
-                            }
+    val driveLinks: Flow<PagingData<PhotosItem>> = combine(
+        parentId.filterNotNull().distinctUntilChanged(),
+        photoListingsFilter,
+    ) { _, filter ->
+        filter
+    }.transformLatest { filter ->
+        emit(PagingData.empty())
+        emitAll(getPagedPhotoListingsList(userId, filter)
+            .map { pagingData ->
+                pagingData.map { photoListing ->
+                    PhotosItem.PhotoListing(
+                        photoListing.linkId,
+                        photoListing.captureTime,
+                        null
+                    )
+                }
+            }
+            .map {
+                it.insertSeparators { before: PhotosItem.PhotoListing?, after: PhotosItem.PhotoListing? ->
+                    if (after == null) {
+                        null
+                    } else if (before == null) {
+                        PhotosItem.Separator(
+                            value = separatorFormatter.toSeparator(after.captureTime),
+                        )
+                    } else {
+                        val beforeCalendar = Calendar.getInstance().apply {
+                            timeInMillis = before.captureTime.value * 1000L
                         }
-                        .map {
-                            it.insertSeparators { before: PhotosItem.PhotoListing?, after: PhotosItem.PhotoListing? ->
-                                if (after == null) {
-                                    null
-                                } else if (before == null) {
-                                    PhotosItem.Separator(
-                                        value = separatorFormatter.toSeparator(after.captureTime),
-                                    )
-                                } else {
-                                    val beforeCalendar = Calendar.getInstance().apply {
-                                        timeInMillis = before.captureTime.value * 1000L
-                                    }
-                                    val afterCalendar = Calendar.getInstance().apply {
-                                        timeInMillis = after.captureTime.value * 1000L
-                                    }
-                                    if (beforeCalendar.get(Calendar.YEAR)
-                                        != afterCalendar.get(Calendar.YEAR) ||
-                                        beforeCalendar.get(Calendar.MONTH)
-                                        != afterCalendar.get(Calendar.MONTH)
-                                    ) {
-                                        PhotosItem.Separator(
-                                            value = separatorFormatter.toSeparator(after.captureTime),
-                                        )
-                                    } else {
-                                        null
-                                    }
-                                }
-                            }
+                        val afterCalendar = Calendar.getInstance().apply {
+                            timeInMillis = after.captureTime.value * 1000L
                         }
-                )
-            }.cachedIn(viewModelScope)
+                        if (beforeCalendar.get(Calendar.YEAR)
+                            != afterCalendar.get(Calendar.YEAR) ||
+                            beforeCalendar.get(Calendar.MONTH)
+                            != afterCalendar.get(Calendar.MONTH)
+                        ) {
+                            PhotosItem.Separator(
+                                value = separatorFormatter.toSeparator(after.captureTime),
+                            )
+                        } else {
+                            null
+                        }
+                    }
+                }
+            }
+        )
+    }.cachedIn(viewModelScope)
 
     private val listContentAppendingState = MutableStateFlow<ListContentAppendingState>(
         ListContentAppendingState.Idle
@@ -328,8 +392,12 @@ class PhotosViewModel @Inject constructor(
         getPhotoCount(userId = userId),
         firstVisibleItemIndex,
         forceStatusExpand,
-        notificationDotRequested
-    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested ->
+        notificationDotRequested,
+        photoListingsFilter,
+        albumsFeatureFlagOn,
+        hasPhotoVolume(userId),
+        photoShareMigrationManager.status,
+    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, albumsFeatureFlagOn, hasPhotoVolume, photoShareMigrationStatus ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -348,6 +416,17 @@ class PhotosViewModel @Inject constructor(
                 ((firstVisibleItemIndex?.let { index -> index > 0 } ?: false)
                         || !isDisableOrRunning)
         val showHamburgerMenuIcon = selected.isEmpty()
+        val backupStatusViewState = backupStatusFormatter.toViewState(
+            backupState = backupState,
+            count = count.takeIf { configurationProvider.photosSavedCounter },
+        )
+        val filters = photosFilters.map { filter ->
+            filter.copy(
+                tagViewState = filter.tagViewState.copy(
+                    selected = filter.filter == photoListingsFilter,
+                ),
+            )
+        }
         initialViewState.copy(
             title = if (selected.isNotEmpty()) {
                 appContext.quantityString(
@@ -368,22 +447,28 @@ class PhotosViewModel @Inject constructor(
             showEmptyList = backupState.isBackupEnabled || backupState.hasDefaultFolder == false ,
             showPhotosStateIndicator = showPhotosStateIndicator && !inPickerMode,
             showPhotosStateBanner = showPhotosStateBanner && !inPickerMode,
-            backupStatusViewState = backupStatusFormatter.toViewState(
-                backupState = backupState,
-                count = count.takeIf { configurationProvider.photosSavedCounter },
-            ),
+            backupStatusViewState = backupStatusViewState,
             isRefreshEnabled = selected.isEmpty(),
+            filters = filters,
+            shouldShowFilters = filters.isNotEmpty()
+                    && hasPhotoVolume
+                    && (listContentState !is ListContentState.Empty || !filters.isSelected(null)),
+            emptyPhotoTagState = photoListingsFilter?.toEmptyPhotoTagState(),
+            showPhotoShareMigrationInProgress = albumsFeatureFlagOn && photoShareMigrationStatus.isInProgress,
+            showPhotoShareMigrationNeededBanner = albumsFeatureFlagOn && photoShareMigrationStatus.isPending,
+            showStorageBanner = !inPickerMode,
         )
     }
 
     fun viewEvent(
-        navigateToPreview: (fileId: FileId) -> Unit,
-        navigateToPhotosOptions: (fileId: FileId) -> Unit,
+        navigateToPreview: (fileId: FileId, photoTag: PhotoTag?) -> Unit,
+        navigateToPhotosOptions: (fileId: FileId, SelectionId?) -> Unit,
         navigateToMultiplePhotosOptions: (selectionId: SelectionId) -> Unit,
         navigateToSubscription: () -> Unit,
         navigateToPhotosIssues: (FolderId) -> Unit,
         navigateToPhotosUpsell: () -> Unit,
         navigateToBackupSettings: () -> Unit,
+        navigateToPhotosImportantUpdates: () -> Unit,
         lifecycle: Lifecycle,
     ): PhotosViewEvent = object : PhotosViewEvent {
 
@@ -394,7 +479,10 @@ class PhotosViewModel @Inject constructor(
                         flow.take(1).collect { driveLink ->
                             driveLink.onClick(
                                 navigateToFolder = { _, _ -> error("Photos should not have folders") },
-                                navigateToPreview = navigateToPreview,
+                                navigateToPreview = { fileId, ->
+                                    navigateToPreview(fileId, photoListingsFilter.value)
+                                },
+                                navigateToAlbum = { error("Photos should not have albums") },
                             )
                         }
                     }
@@ -427,7 +515,7 @@ class PhotosViewModel @Inject constructor(
         override val onErrorAction = this@PhotosViewModel::onErrorAction
         override val onSelectedOptions = {
             onSelectedOptions(
-                { linkId: FileId, _ -> navigateToPhotosOptions(linkId) },
+                { linkId: FileId, _, selectionId -> navigateToPhotosOptions(linkId, selectionId) },
                 { selectionId: SelectionId, _ -> navigateToMultiplePhotosOptions(selectionId) },
             )
         }
@@ -456,6 +544,9 @@ class PhotosViewModel @Inject constructor(
             }
         }
         override val onShowUpsell = navigateToPhotosUpsell
+        override val onFilterSelected = this@PhotosViewModel::onFilterSelected
+        override val onStartPhotoShareMigration = this@PhotosViewModel::onStartPhotoShareMigration
+        override val onShowImportantUpdates = navigateToPhotosImportantUpdates
     }.also { viewEvent ->
         this.viewEvent = viewEvent
     }
@@ -603,6 +694,31 @@ class PhotosViewModel @Inject constructor(
                 }
             }
             _listEffect.emit(ListEffect.REFRESH)
+        }
+    }
+
+    private fun onFilterSelected(filter: PhotoTag?) {
+        viewModelScope.launch {
+            photoListingsFilter.emit(filter)
+            listContentState.value = ListContentState.Loading
+            removeAllSelected()
+        }
+    }
+
+    private fun onStartPhotoShareMigration() {
+        viewModelScope.launch {
+            photoShareMigrationManager.start(userId)
+                .onFailure { error ->
+                    error.log(VIEW_MODEL, "Failed to start photo share migration")
+                    broadcastMessages(
+                        userId = userId,
+                        message = error.getDefaultMessage(
+                            appContext,
+                            configurationProvider.useExceptionMessage
+                        ),
+                        type = BroadcastMessage.Type.ERROR,
+                    )
+                }
         }
     }
 }
