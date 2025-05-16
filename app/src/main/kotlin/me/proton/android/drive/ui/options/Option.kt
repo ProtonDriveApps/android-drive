@@ -583,6 +583,7 @@ fun Iterable<Option>.filterAlbums(
         Option.RemoveFromAlbum -> featureEnabled && albumId != null
         Option.SetAsAlbumCover -> featureEnabled && albumId != null
         Option.Trash -> albumId == null
+        Option.SaveSharePhoto -> featureEnabled && albumId != null
         else -> true
     }
 }

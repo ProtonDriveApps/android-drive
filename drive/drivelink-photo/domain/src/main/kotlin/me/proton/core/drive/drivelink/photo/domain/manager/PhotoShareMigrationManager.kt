@@ -218,17 +218,21 @@ class PhotoShareMigrationManager @Inject constructor(
                 tag = PHOTO,
                 message = "RemoteMigrationStatus = ${status}, state = ${state.value.name}, albumsFeatureOn = ${albumsFeatureOn.value}"
             )
-            if (albumsFeatureOn.value) {
-                when (status) {
-                    is RemoteMigrationStatus.Failed -> Unit
-                    RemoteMigrationStatus.NotNeeded -> onMigrationNotNeeded(userId)
-                    RemoteMigrationStatus.Pending -> onMigrationPending(userId)
-                    RemoteMigrationStatus.InProgress -> onMigrationInProgress(userId)
-                    is RemoteMigrationStatus.Complete -> onMigrationComplete(
-                        userId,
-                        status.newVolumeId
-                    )
+            when (status) {
+                is RemoteMigrationStatus.Failed -> Unit
+                RemoteMigrationStatus.NotNeeded -> if (albumsFeatureOn.value) {
+                    onMigrationNotNeeded(userId)
                 }
+                RemoteMigrationStatus.Pending -> if (albumsFeatureOn.value) {
+                    onMigrationPending(userId)
+                }
+                RemoteMigrationStatus.InProgress -> if (albumsFeatureOn.value) {
+                    onMigrationInProgress(userId)
+                }
+                is RemoteMigrationStatus.Complete -> onMigrationComplete(
+                    userId,
+                    status.newVolumeId
+                )
             }
         }
     }
