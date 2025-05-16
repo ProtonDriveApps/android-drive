@@ -28,6 +28,7 @@
     <!-- Empty task affinity is used to prevent task hijacking -->
     <application
         android:name=".App"
+        android:memtagMode="async"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
