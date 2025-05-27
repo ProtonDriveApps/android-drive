@@ -34,6 +34,26 @@
   <plurals name="files_upload_being_uploaded_notification">
     <item quantity="other">%1$d개 파일이 다음으로 업로드 중: %2$s</item>
   </plurals>
+  <!--
+        Variable %1$d is a quantity of files that failed to be uploaded
+        Variable %2$s is a folder name where files failed to be uploaded to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_failed_notification">
+    <item quantity="other">%1$d개 파일을 다음 위치로 업로드하는데 실패했습니다: %2$s</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that are being ignored
+        Variable %2$s is a folder name where files are being ignored to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_being_ignored_notification">
+    <item quantity="other">%1$d개 파일이 무시되었습니다</item>
+  </plurals>
   <string name="files_upload_preparing">업로드 준비 중. 시간이 다소 걸릴 수 있습니다.</string>
   <!--
         Variable %1$s is the maximum number of uploading files

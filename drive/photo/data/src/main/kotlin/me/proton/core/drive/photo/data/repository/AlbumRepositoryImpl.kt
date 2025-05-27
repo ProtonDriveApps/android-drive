@@ -393,7 +393,7 @@ class AlbumRepositoryImpl @Inject constructor(
                 userId = albumId.userId,
                 volumeId = volumeId,
                 albumId = albumId.id,
-                linkIds = linkIds.map { linkId -> linkId.id },
+                linkIds = chunk.map { linkId -> linkId.id },
             ).valueOrThrow
             responses.addAll(response.responses)
         }

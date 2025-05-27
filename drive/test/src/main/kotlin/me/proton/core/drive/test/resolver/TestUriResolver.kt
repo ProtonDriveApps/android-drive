@@ -39,6 +39,8 @@ class TestUriResolver @Inject constructor() : UriResolver {
         block(ByteArrayInputStream(uriString.toByteArray()))
     }
 
+    override suspend fun exists(uriString: String): Boolean = true
+
     override suspend fun getName(uriString: String): String = uriString
 
     override suspend fun getSize(uriString: String): Bytes = uriString.length.bytes

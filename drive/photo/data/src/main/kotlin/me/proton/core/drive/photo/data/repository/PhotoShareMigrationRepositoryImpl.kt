@@ -90,4 +90,24 @@ class PhotoShareMigrationRepositoryImpl @Inject constructor(
             preferences[GetUserDataStore.Keys.photosImportantUpdatesLastShown] = lastShown.value
         }
     }
+
+    override suspend fun saveBucketIds(userId: UserId, bucketsIds: List<Int>) {
+        getUserDataStore(userId).edit { preferences ->
+            preferences[GetUserDataStore.Keys.photosMigrationBucketIds] =
+                bucketsIds.map { bucketsId ->
+                    bucketsId.toString()
+                }.toSet()
+        }
+    }
+
+    override suspend fun getBucketIds(userId: UserId): List<Int> =
+        getUserDataStore(userId).get(GetUserDataStore.Keys.photosMigrationBucketIds)
+            .orEmpty()
+            .map { stringBucketId -> stringBucketId.toInt() }
+
+    override suspend fun deleteBucketIds(userId: UserId) {
+        getUserDataStore(userId).edit {  preferences ->
+            preferences.remove(GetUserDataStore.Keys.photosMigrationBucketIds)
+        }
+    }
 }

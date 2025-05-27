@@ -35,6 +35,28 @@
     <item quantity="one">%1$d fil laddas upp till: %2$s</item>
     <item quantity="other">%1$d filer laddas upp till: %2$s</item>
   </plurals>
+  <!--
+        Variable %1$d is a quantity of files that failed to be uploaded
+        Variable %2$s is a folder name where files failed to be uploaded to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_failed_notification">
+    <item quantity="one">%1$d fil misslyckades att laddas upp till: %2$s</item>
+    <item quantity="other">%1$d filer misslyckades att laddas upp till: %2$s</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that are being ignored
+        Variable %2$s is a folder name where files are being ignored to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_being_ignored_notification">
+    <item quantity="one">%1$d fil ignorerades</item>
+    <item quantity="other">%1$d filer ignorerades</item>
+  </plurals>
   <string name="files_upload_preparing">Förbereder uppladdning. Detta kan ta en stund.</string>
   <!--
         Variable %1$s is the maximum number of uploading files

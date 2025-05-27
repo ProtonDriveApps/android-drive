@@ -29,6 +29,7 @@ import me.proton.android.drive.photos.data.di.PhotosConfigurationModule
 import me.proton.android.drive.photos.domain.provider.PhotosDefaultConfigurationProvider
 import me.proton.android.drive.provider.PhotosConnectedDefaultConfigurationProvider
 import me.proton.android.drive.ui.annotation.FeatureFlag
+import me.proton.android.drive.ui.annotation.FeatureFlags
 import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
@@ -37,6 +38,7 @@ import me.proton.android.drive.ui.robot.settings.PhotosBackupRobot
 import me.proton.android.drive.ui.test.PhotosBaseTest
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
+import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ALBUMS_DISABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PHOTOS_UPLOAD_DISABLED
 import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Before
@@ -304,9 +306,24 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
 
     @Test
     @PrepareUser(loginBefore = true)
+    @FeatureFlags([
+        FeatureFlag(DRIVE_PHOTOS_UPLOAD_DISABLED, ENABLED),
+        FeatureFlag(DRIVE_ALBUMS_DISABLED, ENABLED),
+    ])
+    fun featureDisabledAndAlbumsDisabled() {
+        PhotosTabRobot
+            .verify {
+                assertPhotosShareCreationDisabled()
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
     @FeatureFlag(DRIVE_PHOTOS_UPLOAD_DISABLED, ENABLED)
     fun featureDisabled() {
+        pictureCameraFolder.copyFileFromAssets("boat.jpg")
         PhotosTabRobot
+            .enableBackup()
             .verify {
                 assertPhotosBackupDisabled()
             }
@@ -314,13 +331,36 @@ class PhotosSyncFlowTest : PhotosBaseTest() {
 
     @Test
     @PrepareUser(loginBefore = true)
-    @FeatureFlag(DRIVE_PHOTOS_UPLOAD_DISABLED, ENABLED)
-    fun featureDisabledFromSettings() {
+    @FeatureFlags([
+        FeatureFlag(DRIVE_PHOTOS_UPLOAD_DISABLED, ENABLED),
+        FeatureFlag(DRIVE_ALBUMS_DISABLED, ENABLED),
+    ])
+    fun featureDisabledAndAlbumsDisabledFromSettings() {
         PhotosTabRobot
             .openSidebarBySwipe()
             .clickSettings()
             .clickPhotosBackup()
             .clickBackupToggle(PhotosBackupRobot)
+            .verify {
+                assertPhotosShareCreationDisabled()
+            }
+    }
+
+    @Test
+    @PrepareUser(loginBefore = true)
+    @FeatureFlag(DRIVE_PHOTOS_UPLOAD_DISABLED, ENABLED)
+    fun featureDisabledFromSettings() {
+        pictureCameraFolder.copyFileFromAssets("boat.jpg")
+        PhotosTabRobot
+            .openSidebarBySwipe()
+            .clickSettings()
+            .clickPhotosBackup()
+            .clickBackupToggle(PhotosBackupRobot)
+            .verify {
+                assertPhotosBackupTurnOn()
+            }
+            .clickBack(SettingsRobot)
+            .clickBack(PhotosTabRobot)
             .verify {
                 assertPhotosBackupDisabled()
             }

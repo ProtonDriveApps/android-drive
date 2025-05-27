@@ -152,9 +152,9 @@
   <string name="photos_share_migration_in_progress_title">Configuració d’àlbums i filtres</string>
   <string name="photos_share_migration_in_progress_description">Si teniu una gran biblioteca de fotos, pot trigar una estona. Podeu tancar l\'aplicació. Hi treballarem en segon pla.</string>
   <string name="photos_share_migration_needed_banner_title">Es requereix una migració de dades.</string>
-  <string name="photos_share_migration_needed_banner_description">Després de la migració, podeu utilitzar funcions noves com ara filtres i àlbums de fotos</string>
+  <string name="photos_share_migration_needed_banner_description">Després de la migració, podeu utilitzar noves característiques com ara els filtres i l\'àlbum de fotos</string>
   <string name="photos_important_updates_title">Actualitzacions importants</string>
   <string name="photos_important_updates_subtitle">Cal actualitzar la biblioteca de fotos</string>
-  <string name="photos_important_updates_description">Aquesta actualització ràpida prepara les vostres fotos per a les noves característiques, com ara filtres i àlbums</string>
+  <string name="photos_important_updates_description">Aquesta actualització ràpida prepara les fotos per a noves característiques, com ara filtres i àlbums</string>
   <string name="photos_important_updates_cancel_action">Recorda-m\'ho més tard</string>
 </resources>

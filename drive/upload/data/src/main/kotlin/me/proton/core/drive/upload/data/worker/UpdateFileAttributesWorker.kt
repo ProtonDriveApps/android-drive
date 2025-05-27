@@ -44,7 +44,6 @@ import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
-import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -80,9 +79,6 @@ class UpdateFileAttributesWorker @AssistedInject constructor(
         uploadFileLink.logWorkState("update file attributes")
         updateUploadFileAttributes(uploadFileLink)
             .onFailure { error ->
-                if (error is FileNotFoundException) {
-                    setUploadAsCancelled()
-                }
                 return uploadFileLink.retryOrAbort(
                     retryable = error.isRetryable,
                     canRetry = canRetry(),

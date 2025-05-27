@@ -102,6 +102,6 @@
   <string name="shared_user_invitations_decline_button">Tolak</string>
   <string name="shared_user_invitations_accept_success">Item terbagi diterima</string>
   <string name="shared_user_invitations_decline_success">Item terbagi ditolak</string>
-  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
-  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
+  <string name="shared_user_album_invitations_accept_success">Undangan diterima</string>
+  <string name="shared_user_album_invitations_decline_success">Undangan ditolak</string>
 </resources>

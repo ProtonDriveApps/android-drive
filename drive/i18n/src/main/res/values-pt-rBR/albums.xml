@@ -139,10 +139,10 @@
     <item quantity="other">%1$d itens falharam</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Sem fotos</string>
-  <string name="albums_empty_album_screen_description">As fotos adicionadas por você ou por outros membros aparecerão aqui</string>
+  <string name="albums_empty_album_screen_description">As fotos que você ou outros membros adicionarem aparecerão aqui</string>
   <string name="albums_empty_albums_list_screen_title">Sem álbuns</string>
-  <string name="albums_empty_albums_list_screen_description">Os álbuns que você criar ou participar aparecerão aqui</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Os álbuns que você criar aparecerão aqui</string>
+  <string name="albums_empty_albums_list_screen_description">Os álbuns que você criar ou entrar aparecerão aqui</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Àlbuns que você criar aparecerão aqui</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Sem álbuns compartilhados</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Os álbuns que você compartilhou aparecerão aqui.</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">Nenhum álbum compartilhado comigo</string>
@@ -161,4 +161,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Adicionar ao álbum compartilhado</string>
   <string name="albums_share_multiple_photos_options_album_details">Álbum compartilhado</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Novo álbum compartilhado</string>
+  <string name="albums_add_to_album_start_message">Adicionando fotos ao álbum criptografado. Mantenha o aplicativo aberto durante o processo.</string>
+  <string name="albums_add_to_albums_options_new_album">Adicionar ao novo álbum</string>
+  <string name="albums_add_to_albums_options_shared_album">Meu álbum compartilhado</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Por %1$s</string>
 </resources>

@@ -57,6 +57,7 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
+import me.proton.core.drive.files.presentation.entry.AddToAlbumsFileEntry
 import me.proton.core.drive.files.presentation.entry.DownloadFileEntry
 import me.proton.core.drive.files.presentation.entry.FileInfoEntry
 import me.proton.core.drive.files.presentation.entry.ManageAccessEntry
@@ -76,7 +77,9 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.SharingDetails
+import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
+import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
@@ -110,6 +113,7 @@ class FileOrFolderOptionsViewModelTest {
     private val getOldestActiveVolume = mockk<GetOldestActiveVolume>()
     private val addPhotosToStream = mockk<AddPhotosToStream>()
     private val hasPhotoVolume = mockk<HasPhotoVolume>()
+    private val selectLinks = mockk<SelectLinks>()
 
     @Before
     fun before() {
@@ -140,6 +144,7 @@ class FileOrFolderOptionsViewModelTest {
             )
         ))
         coEvery { hasPhotoVolume.invoke(any()) } returns flowOf(true)
+        coEvery { selectLinks(any()) } returns Result.success(SelectionId("selection-id"))
     }
 
     @Test
@@ -346,12 +351,15 @@ class FileOrFolderOptionsViewModelTest {
     }
 
     @Test
-    fun `file options on photo share with photo volume`() = runTest {
+    fun `file options on photo share with photo volume from album`() = runTest {
         // Given
         coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(photoDriveLink.asSuccess)
-        val featureFlagId = FeatureFlagId.driveAlbums(UserId("value"))
-        coEvery { getFeatureFlagFlow(featureFlagId, any(), any()) } returns
-                flowOf( FeatureFlag(featureFlagId, State.ENABLED))
+        val driveAlbumsFlagId = FeatureFlagId.driveAlbums(UserId("value"))
+        coEvery { getFeatureFlagFlow(driveAlbumsFlagId, any(), any()) } returns
+                flowOf( FeatureFlag(driveAlbumsFlagId, State.ENABLED))
+        val driveAlbumsDisabledFlagId = FeatureFlagId.driveAlbumsDisabled(UserId("value"))
+        coEvery { getFeatureFlagFlow(driveAlbumsDisabledFlagId, any(), any()) } returns
+                flowOf( FeatureFlag(driveAlbumsDisabledFlagId, State.NOT_FOUND))
         coEvery { savedStateHandle.get<String>(KEY_ALBUM_ID) } returns "album-id"
 
         // When
@@ -367,6 +375,40 @@ class FileOrFolderOptionsViewModelTest {
                 SendFileEntry::class,
                 DownloadFileEntry::class,
                 FileInfoEntry::class,
+            ),
+            entries.map { it.javaClass.kotlin }
+        )
+    }
+
+    @Test
+    fun `file options on photo share with photo volume from photo stream`() = runTest {
+        // Given
+        coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(photoDriveLink.asSuccess)
+        coEvery { savedStateHandle.get<String>(KEY_ALBUM_ID) } returns null
+        coEvery { getFeatureFlagFlow.invoke(any())} answers {
+            val id: FeatureFlagId = arg(0)
+            flowOf(
+                if (id == FeatureFlagId.driveAlbumsDisabled(UserId("value"))) {
+                    FeatureFlag(id, State.NOT_FOUND)
+                } else {
+                    FeatureFlag(id, State.ENABLED)
+                }
+            )
+        }
+
+        // When
+        val entries = fileOptionEntries()
+
+        // Then
+        assertEquals(
+            listOf(
+                ToggleOfflineEntry::class,
+                ToggleFavoriteFileEntry::class,
+                AddToAlbumsFileEntry::class,
+                SendFileEntry::class,
+                DownloadFileEntry::class,
+                FileInfoEntry::class,
+                ToggleTrashEntry::class,
             ),
             entries.map { it.javaClass.kotlin }
         )
@@ -411,6 +453,7 @@ class FileOrFolderOptionsViewModelTest {
             navigateToSendFile = { _: FileId -> },
             navigateToManageAccess = { _: LinkId -> },
             navigateToShareViaInvitations = { _: LinkId -> },
+            navigateToAddToAlbumsOptions = {},
             dismiss = {},
         ).filterNotNull().first()
 
@@ -434,6 +477,7 @@ class FileOrFolderOptionsViewModelTest {
         getOldestActiveVolume = getOldestActiveVolume,
         addPhotosToStream = addPhotosToStream,
         hasPhotoVolume = hasPhotoVolume,
+        selectLinks = selectLinks,
     )
 
     private val fileLink = Link.File(

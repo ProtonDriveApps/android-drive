@@ -24,6 +24,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import me.proton.core.domain.entity.UserId
@@ -59,6 +60,7 @@ class GetUserDataStore @Inject constructor(
         private const val KEY_SUBSCRIPTION_LAST_UPDATE = "subscription_last_update_"
         private const val KEY_PHOTO_SHARE_MIGRATION_STATE = "photo_share_migration_state"
         private const val KEY_PHOTOS_IMPORTANT_UPDATES_LAST_SHOWN = "photos_important_updates_last_shown"
+        private const val KEY_PHOTOS_MIGRATION_BUCKET_IDS = "photos_migration_bucket_ids"
     }
 
     data object Keys {
@@ -71,5 +73,6 @@ class GetUserDataStore @Inject constructor(
         fun subscriptionLastUpdate(name: String) = longPreferencesKey(KEY_SUBSCRIPTION_LAST_UPDATE + name)
         val photoShareMigrationState get() = stringPreferencesKey(KEY_PHOTO_SHARE_MIGRATION_STATE)
         val photosImportantUpdatesLastShown get() = longPreferencesKey(KEY_PHOTOS_IMPORTANT_UPDATES_LAST_SHOWN)
+        val photosMigrationBucketIds get() = stringSetPreferencesKey(KEY_PHOTOS_MIGRATION_BUCKET_IDS)
     }
 }

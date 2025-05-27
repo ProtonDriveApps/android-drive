@@ -24,28 +24,28 @@
   <string name="settings_auto_lock">Автоматично блокувати програму</string>
   <string name="settings_auto_lock_durations_immediately">Негайно</string>
   <plurals name="settings_auto_lock_durations_seconds">
-    <item quantity="one">За %1$d секунду</item>
-    <item quantity="few">За %1$d секунди</item>
-    <item quantity="many">За %1$d секунд</item>
-    <item quantity="other">За %1$d секунд</item>
+    <item quantity="one">Через %1$d секунду</item>
+    <item quantity="few">Через %1$d секунди</item>
+    <item quantity="many">Через %1$d секунд</item>
+    <item quantity="other">Через %1$d секунд</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_minutes">
-    <item quantity="one">За %1$d хвилину</item>
-    <item quantity="few">За %1$d хвилини</item>
-    <item quantity="many">За %1$d хвилин</item>
-    <item quantity="other">За %1$d хвилин</item>
+    <item quantity="one">Через %1$d хвилину</item>
+    <item quantity="few">Через %1$d хвилини</item>
+    <item quantity="many">Через %1$d хвилин</item>
+    <item quantity="other">Через %1$d хвилин</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_hours">
-    <item quantity="one">За %1$d годину</item>
-    <item quantity="few">За %1$d години</item>
-    <item quantity="many">За %1$d годин</item>
-    <item quantity="other">За %1$d годин</item>
+    <item quantity="one">Через %1$d годину</item>
+    <item quantity="few">Через %1$d години</item>
+    <item quantity="many">Через %1$d годин</item>
+    <item quantity="other">Через %1$d годин</item>
   </plurals>
   <plurals name="settings_auto_lock_durations_days">
-    <item quantity="one">За %1$d день</item>
-    <item quantity="few">За %1$d дні</item>
-    <item quantity="many">За %1$d днів</item>
-    <item quantity="other">За %1$d днів</item>
+    <item quantity="one">Через %1$d день</item>
+    <item quantity="few">Через %1$d дні</item>
+    <item quantity="many">Через %1$d днів</item>
+    <item quantity="other">Через %1$d днів</item>
   </plurals>
   <string name="settings_section_backup">Резервне копіювання</string>
   <string name="settings_photos_backup_folders_title">Вивантажити з</string>

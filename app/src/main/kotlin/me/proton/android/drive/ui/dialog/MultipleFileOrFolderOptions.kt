@@ -40,7 +40,7 @@ import me.proton.core.drive.link.selection.domain.entity.SelectionId
 fun MultipleFileOrFolderOptions(
     runAction: RunAction,
     navigateToMove: (selectionId: SelectionId, folderId: FolderId?) -> Unit,
-    navigateToCreateNewAlbum: () -> Unit,
+    navigateToAddToAlbumsOptions: (SelectionId) -> Unit,
     navigateToShareMultiplePhotosOptions: (SelectionId) -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
@@ -54,7 +54,7 @@ fun MultipleFileOrFolderOptions(
             driveLinks = selectedDriveLinks,
             runAction = runAction,
             navigateToMove = navigateToMove,
-            navigateToCreateNewAlbum = navigateToCreateNewAlbum,
+            navigateToAddToAlbumsOptions = navigateToAddToAlbumsOptions,
             navigateToShareMultiplePhotosOptions = navigateToShareMultiplePhotosOptions,
             dismiss = dismiss,
         ).flowWithLifecycle(

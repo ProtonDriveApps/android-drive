@@ -76,6 +76,7 @@ import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.effect.PhotosEffect
+import me.proton.android.drive.usecase.GetSubscriptionAction
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.domain.arch.onSuccess
@@ -89,7 +90,6 @@ import me.proton.core.drive.backup.domain.usecase.RetryBackup
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
-import me.proton.core.drive.base.domain.extension.combine
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.onFailure
@@ -135,13 +135,16 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink.Companion.RE
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.user.domain.entity.UserMessage
+import me.proton.core.drive.user.domain.extension.isFree
 import me.proton.core.drive.user.domain.usecase.CancelUserMessage
 import me.proton.core.drive.volume.domain.usecase.HasPhotoVolume
 import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
+import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.CoreLogger
 import java.util.Calendar
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
+import me.proton.core.drive.base.domain.extension.combine as baseCombine
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
@@ -149,9 +152,28 @@ import me.proton.core.presentation.R as CorePresentation
 @HiltViewModel
 @Suppress("StaticFieldLeak", "LongParameterList")
 class PhotosViewModel @Inject constructor(
-    @ApplicationContext private val appContext: Context,
-    getPagedPhotoListingsList: GetPagedPhotoListingsList,
     savedStateHandle: SavedStateHandle,
+    selectLinks: SelectLinks,
+    deselectLinks: DeselectLinks,
+    selectAll: SelectAll,
+    getSelectedDriveLinks: GetSelectedDriveLinks,
+    addToAlbumInfo: AddToAlbumInfo,
+    removeFromAlbumInfo: RemoveFromAlbumInfo,
+    getAddToAlbumPhotoListings: GetAddToAlbumPhotoListings,
+    getPhotoListingCount: GetPhotoListingCount,
+    getPagedPhotoListingsList: GetPagedPhotoListingsList,
+    getBackupState: GetBackupState,
+    getDisabledBackupState: GetDisabledBackupState,
+    getPhotoCount: GetPhotoCount,
+    showUpsell: ShowUpsell,
+    userManager: UserManager,
+    getSubscriptionAction: GetSubscriptionAction,
+    albumsFeatureFlag: AlbumsFeatureFlag,
+    getFeatureFlagFlow: GetFeatureFlagFlow,
+    hasPhotoVolume: HasPhotoVolume,
+    shouldUpgradeStorage: ShouldUpgradeStorage,
+    showImportantUpdates: ShowImportantUpdates,
+    @ApplicationContext private val appContext: Context,
     private val separatorFormatter: SeparatorFormatter,
     private val backupStatusFormatter: BackupStatusFormatter,
     private val getPhotosDriveLink: GetPhotosDriveLink,
@@ -160,30 +182,13 @@ class PhotosViewModel @Inject constructor(
     private val backupPermissionsManager: BackupPermissionsManager,
     private val configurationProvider: ConfigurationProvider,
     private val broadcastMessages: BroadcastMessages,
-    getBackupState: GetBackupState,
-    getDisabledBackupState: GetDisabledBackupState,
-    getPhotoCount: GetPhotoCount,
-    showUpsell: ShowUpsell,
-    getSelectedDriveLinks: GetSelectedDriveLinks,
-    selectAll: SelectAll,
-    selectLinks: SelectLinks,
-    deselectLinks: DeselectLinks,
-    addToAlbumInfo: AddToAlbumInfo,
-    removeFromAlbumInfo: RemoveFromAlbumInfo,
-    getAddToAlbumPhotoListings: GetAddToAlbumPhotoListings,
-    getPhotoListingCount: GetPhotoListingCount,
-    albumsFeatureFlag: AlbumsFeatureFlag,
-    getFeatureFlagFlow: GetFeatureFlagFlow,
-    val backupPermissionsViewModel: BackupPermissionsViewModel,
     private val photoDriveLinks: PhotoDriveLinks,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
     private val syncFolders: SyncFolders,
     private val checkMissingFolders: CheckMissingFolders,
     private val cancelUserMessage: CancelUserMessage,
     private val photoShareMigrationManager: PhotoShareMigrationManager,
-    private val hasPhotoVolume: HasPhotoVolume,
-    shouldUpgradeStorage: ShouldUpgradeStorage,
-    showImportantUpdates: ShowImportantUpdates,
+    val backupPermissionsViewModel: BackupPermissionsViewModel,
 ) : PhotosPickerAndSelectionViewModel(
         savedStateHandle = savedStateHandle,
         selectLinks = selectLinks,
@@ -215,6 +220,9 @@ class PhotosViewModel @Inject constructor(
         get() = selectedOptionsAction {
             viewEvent?.onSelectedOptions?.invoke()
         }
+    private val openSubscriptionAction = getSubscriptionAction {
+        viewEvent?.onGetStorage?.invoke()
+    }
     private val topBarActions: MutableStateFlow<Set<Action>> = MutableStateFlow(emptySet())
 
     private val listContentState = MutableStateFlow<ListContentState>(ListContentState.Loading)
@@ -385,7 +393,7 @@ class PhotosViewModel @Inject constructor(
         }
     }
 
-    val viewState: Flow<PhotosViewState> = combine(
+    val viewState: Flow<PhotosViewState> = baseCombine(
         selected,
         listContentState,
         backupState,
@@ -397,7 +405,8 @@ class PhotosViewModel @Inject constructor(
         albumsFeatureFlagOn,
         hasPhotoVolume(userId),
         photoShareMigrationManager.status,
-    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, albumsFeatureFlagOn, hasPhotoVolume, photoShareMigrationStatus ->
+        userManager.observeUser(userId),
+    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, albumsFeatureFlagOn, hasPhotoVolume, photoShareMigrationStatus, user ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -405,7 +414,10 @@ class PhotosViewModel @Inject constructor(
             else -> contentState
         }
         if (selected.isEmpty()) {
-            topBarActions.value = emptySet()
+            topBarActions.value = setOfNotNull(
+                takeIf { user != null && user.isFree }
+                    ?.let { openSubscriptionAction },
+            )
         } else {
             topBarActions.value = setOf(selectAllAction, selectedOptionsAction)
         }

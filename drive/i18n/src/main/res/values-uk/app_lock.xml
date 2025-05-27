@@ -23,10 +23,10 @@
   <string name="app_lock_biometric_subtitle_confirmation_enable">Щоб увімкнути розблокування, підтвердьте дію способом розблокування свого пристрою</string>
   <string name="app_lock_biometric_subtitle_confirmation_disable">Щоб вимкнути розблокування, підтвердьте дію способом розблокування свого пристрою</string>
   <string name="app_lock_option_never_set">Увімкнути біометрію або блокування пристрою</string>
-  <string name="app_lock_option_none">Лишати розблокованим</string>
+  <string name="app_lock_option_none">Не блокувати</string>
   <string name="app_lock_option_system">Біометрія або блокування пристрою</string>
   <string name="app_lock_system_dialog_title">Увімкнути біометричний доступ</string>
-  <string name="app_lock_system_dialog_description">Налаштуйте біометрію або блокування доступу до пристрою на цьому пристрої.</string>
+  <string name="app_lock_system_dialog_description">Налаштуйте біометрію або блокування доступу на цьому пристрої.</string>
   <string name="app_lock_system_dialog_settings_button">Налаштування</string>
   <string name="app_lock_system_not_available">Біометрія або блокування пристрою недоступні на вашому пристрої</string>
   <string name="app_lock_enabled">Доступ за допомогою біометрії або блокування пристрою активовано</string>

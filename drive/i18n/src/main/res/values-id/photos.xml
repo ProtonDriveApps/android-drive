@@ -146,8 +146,8 @@
   <string name="photos_panoramas_empty_description">Foto panorama Anda akan muncul di sini</string>
   <string name="photos_raws_empty_title">Tidak ada RAW</string>
   <string name="photos_raws_empty_description">Foto RAW Anda akan muncul di sini</string>
-  <string name="photos_share_migration_in_progress_title">Setting up Albums and Filters</string>
-  <string name="photos_share_migration_in_progress_description">If you have a large photo library, it might take some time. You can close the app. We\'ll work on it in the background.</string>
+  <string name="photos_share_migration_in_progress_title">Mengatur Album dan Filter</string>
+  <string name="photos_share_migration_in_progress_description">Jika Anda memiliki perpustakaan foto yang besar, ini mungkin akan memakan waktu. Anda dapat menutup aplikasi. Kami akan menanganinya di latar belakang.</string>
   <string name="photos_share_migration_needed_banner_title">Migrasi data diperlukan</string>
   <string name="photos_share_migration_needed_banner_description">Setelah migrasi, Anda dapat menggunakan fitur-fitur baru seperti filter dan album foto</string>
   <string name="photos_important_updates_title">Pembaruan penting</string>

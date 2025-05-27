@@ -65,7 +65,7 @@
   <string name="common_copy_link_action">Копіювати посилання</string>
   <string name="common_stop_sharing_action">Закрити доступ</string>
   <string name="common_open_in_browser_action">Відкрити в браузері</string>
-  <string name="common_done_action">Готово</string>
+  <string name="common_done_action">Виконано</string>
   <string name="common_create_album_action">Create album</string>
   <string name="common_set_as_album_cover_action">Set as album cover</string>
   <string name="common_add_action">Add</string>
@@ -73,6 +73,7 @@
   <string name="common_leave_album_action">Leave album</string>
   <string name="common_start_action">Start</string>
   <string name="common_save_all_action">Save all</string>
+  <string name="common_add_to_albums_action">Add to albums</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аудіо</string>
@@ -94,7 +95,7 @@
   <string name="common_type_zip">Архів</string>
   <!-- endregion -->
   <!-- region Common file and folder name validation errors -->
-  <string name="common_error_name_is_blank">Назва обов\'язкова</string>
+  <string name="common_error_name_is_blank">Необхідно ввести назву</string>
   <!--
         Variable %1$d is a number
         Example:
@@ -107,7 +108,7 @@
         Example:
             "Name cannot include invisible characters, "/" or "\"
     -->
-  <string name="common_error_name_with_forbidden_characters">Ім\'я не може містити невидимі символи, «%1$s» або «%2$s»</string>
+  <string name="common_error_name_with_forbidden_characters">Ім\'я не може містити невидимі символи, \"%1$s\" або \"%2$s\"</string>
   <string name="common_error_name_periods">Назва не повинна бути \".\" або \"..\"</string>
   <string name="common_error_no_internet">Немає з\'єднання з інтернетом</string>
   <string name="common_error_http_5xx">Сталася помилка сервера</string>
@@ -150,10 +151,10 @@
             "13 selected"
     -->
   <plurals name="common_selected">
-    <item quantity="one">%1$d обраний</item>
-    <item quantity="few">%1$d обрані</item>
-    <item quantity="many">%1$d обраних</item>
-    <item quantity="other">%1$d обраних</item>
+    <item quantity="one">Вибрано %1$d</item>
+    <item quantity="few">Вибрано %1$d</item>
+    <item quantity="many">Вибрано %1$d</item>
+    <item quantity="other">Вибрано %1$d</item>
   </plurals>
   <!-- region In-app notification -->
   <!--

@@ -20,9 +20,12 @@ package me.proton.core.drive.drivelink.photo.domain.usecase
 
 import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.backup.domain.usecase.SaveBucketIdsForMigration
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.folder.domain.usecase.DeleteLocalContent
@@ -41,6 +44,7 @@ class PhotoShareCleanup @Inject constructor(
     private val getShares: GetShares,
     private val getVolume: GetVolume,
     private val deleteShare: DeleteShare,
+    private val saveBucketIdsForMigration: SaveBucketIdsForMigration,
     private val deleteLocalContent: DeleteLocalContent,
     private val getLink: GetLink,
 ) {
@@ -51,6 +55,8 @@ class PhotoShareCleanup @Inject constructor(
             shareType = Share.Type.PHOTO,
             refresh = flowOf(false),
         ).toResult().getOrNull()?.firstOrNull()?.let { photoShare ->
+            saveBucketIdsForMigration(photoShare.rootFolderId)
+                .getOrNull(BACKUP, "Cannot save bucket ids after photo share cleanup")
             getVolume(
                 userId = userId,
                 volumeId = photoShare.volumeId,

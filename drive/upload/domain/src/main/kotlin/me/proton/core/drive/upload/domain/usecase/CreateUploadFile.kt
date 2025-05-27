@@ -17,8 +17,6 @@
  */
 package me.proton.core.drive.upload.domain.usecase
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -29,10 +27,10 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.repository.LinkUploadRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 class CreateUploadFile @Inject constructor(
     private val linkUploadRepository: LinkUploadRepository,
+    private val isUploadFileExist: IsUploadFileExist,
     private val getUploadFileName: GetUploadFileName,
     private val getUploadFileMimeType: GetUploadFileMimeType,
     private val getUploadFileSize: GetUploadFileSize,
@@ -72,42 +70,6 @@ class CreateUploadFile @Inject constructor(
         userId: UserId,
         volumeId: VolumeId,
         parentId: FolderId,
-        uriString: String,
-        shouldDeleteSourceUri: Boolean,
-        networkTypeProviderType: NetworkTypeProviderType,
-        shouldAnnounceEvent: Boolean,
-        cacheOption: CacheOption,
-        priority: Long,
-        shouldBroadcastErrorMessage: Boolean,
-        coroutineContext: CoroutineContext = Dispatchers.IO,
-    ): Result<UploadFileLink> = coRunCatching(coroutineContext) {
-        val uriInfo = getUploadFileUriInfo(uriString)
-        val mimeType = getUploadFileMimeType(uriInfo)
-        linkUploadRepository.insertUploadFileLink(
-            UploadFileLink(
-                userId = userId,
-                volumeId = volumeId,
-                shareId = parentId.shareId,
-                parentLinkId = parentId,
-                name = getUploadFileName(uriInfo),
-                mimeType = mimeType,
-                size = getUploadFileSize(uriInfo),
-                lastModified = getUploadFileLastModified(uriInfo),
-                uriString = uriString,
-                shouldDeleteSourceUri = shouldDeleteSourceUri,
-                networkTypeProviderType = networkTypeProviderType,
-                shouldAnnounceEvent = shouldAnnounceEvent,
-                cacheOption = cacheOption,
-                priority = priority,
-                shouldBroadcastErrorMessage = shouldBroadcastErrorMessage,
-            )
-        )
-    }
-
-    suspend operator fun invoke(
-        userId: UserId,
-        volumeId: VolumeId,
-        parentId: FolderId,
         uploadFileDescriptions: List<UploadFileDescription>,
         shouldDeleteSourceUri: Boolean,
         networkTypeProviderType: NetworkTypeProviderType,
@@ -117,7 +79,9 @@ class CreateUploadFile @Inject constructor(
         shouldBroadcastErrorMessage: Boolean,
     ): Result<List<UploadFileLink>> = coRunCatching {
         linkUploadRepository.insertUploadFileLinks(
-            uploadFileDescriptions.map { description ->
+            uploadFileDescriptions.filter { description ->
+                isUploadFileExist(description)
+            }.map { description ->
                 val uriString = description.uri
                 val uriInfo = takeIf { description.properties == null }?.let { getUploadFileUriInfo(uriString) }
                 val mimeType = getUploadFileMimeType(description, uriInfo)

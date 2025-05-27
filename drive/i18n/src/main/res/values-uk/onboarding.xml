@@ -18,9 +18,9 @@
   -->
 <resources>
   <string name="onboarding_action_skip">Не зараз</string>
-  <string name="onboarding_title">Автоматично зберігайте та зашифровуйте ваші фото та відео</string>
-  <string name="onboarding_description_part_one">Зберігайте ваші спогади в безпеці з</string>
-  <string name="onboarding_description_part_two">наскрізне зашифроване сховище</string>
+  <string name="onboarding_title">Автоматично зберігайте й шифруйте фото й відео</string>
+  <string name="onboarding_description_part_one">Зберігайте свої спогади в безпеці</string>
+  <string name="onboarding_description_part_two">у наскрізно зашифрованому сховищі</string>
   <string name="onboarding_description_free">безплатно</string>
   <string name="onboarding_action_primary">Увімкнути вивантаження з камери</string>
   <string name="onboarding_action_secondary">Додаткові параметри вивантаження</string>

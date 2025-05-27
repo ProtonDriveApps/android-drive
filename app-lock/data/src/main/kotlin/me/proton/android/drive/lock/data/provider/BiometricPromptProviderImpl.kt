@@ -73,7 +73,7 @@ class BiometricPromptProviderImpl @Inject constructor(
 
     private fun buildBiometricPrompt(): BiometricPrompt {
         val activity = activities.flush().firstResumedOrNull()
-        requireNotNull(activity)
+        requireNotNull(activity) { "activity is required" }
         val executor = ContextCompat.getMainExecutor(activity)
         return BiometricPrompt(
             activity,

@@ -33,8 +33,10 @@ class UploadSideEffect @Inject constructor(
     suspend operator fun invoke(event: Event.Upload) {
         if (event.state in finalState) {
             val uploadFileLink = getUploadFileLink(event.uploadFileLinkId).toResult().getOrThrow()
-            val uploadCreationDateTime = requireNotNull(uploadFileLink.uploadCreationDateTime)
-            val size = requireNotNull(uploadFileLink.size)
+            val uploadCreationDateTime = requireNotNull(uploadFileLink.uploadCreationDateTime) {
+                "upload creation date time is required"
+            }
+            val size = requireNotNull(uploadFileLink.size) { "size is required" }
             updateUploadStats(
                 UploadStats(
                     folderId = uploadFileLink.parentLinkId,

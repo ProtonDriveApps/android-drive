@@ -26,5 +26,5 @@
     <item name="img_upsell_drive_daynight" type="drawable" format="reference">@drawable/img_upsell_drive_dark</item>
     <item name="img_update_required_daynight" type="drawable" format="reference">@drawable/img_update_required_dark</item>
     <item name="empty_albums_daynight" type="drawable" format="reference">@drawable/empty_albums_dark</item>
+    <item name="drive_subscriptions_badge_daynight" type="drawable" format="reference">@drawable/drive_subscription_badge_dark</item>
 </resources>
-

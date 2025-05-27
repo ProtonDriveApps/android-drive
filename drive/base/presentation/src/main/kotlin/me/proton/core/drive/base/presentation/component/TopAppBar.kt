@@ -19,6 +19,9 @@ package me.proton.core.drive.base.presentation.component
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,6 +34,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -48,7 +52,6 @@ import me.proton.core.compose.theme.ProtonDimens.DefaultButtonMinHeight
 import me.proton.core.compose.theme.ProtonDimens.DefaultIconSize
 import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
-import me.proton.core.compose.theme.headlineSmall
 import me.proton.core.compose.theme.headlineSmallNorm
 import me.proton.core.drive.base.presentation.common.Action
 import me.proton.core.drive.base.presentation.component.TopAppBarComponentTestTag.navigationButton
@@ -185,19 +188,48 @@ fun ActionButton(
 }
 
 @Composable
+fun ActionButton(
+    @DrawableRes image: Int,
+    @StringRes contentDescription: Int,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .size(ActionButtonSize)
+            .clip(shape = CircleShape)
+            .clickable { if (enabled) onClick() },
+        contentAlignment = Alignment.Center,
+    ) {
+        Image(
+            painter = painterResource(id = image),
+            contentDescription = stringResource(id = contentDescription),
+        )
+    }
+}
+
+@Composable
 fun TopBarActions(
     actionFlow: Flow<Set<Action>>,
     iconTintColor: Color = IconTintColor,
 ) {
     val actions by rememberFlowWithLifecycle(flow = actionFlow).collectAsState(initial = emptySet())
     actions.forEach { action ->
-        ActionButton(
-            icon = action.iconResId,
-            iconTintColor = iconTintColor,
-            contentDescription = action.contentDescriptionResId,
-            notificationDotVisible = action.notificationDotVisible,
-            onClick = action.onAction
-        )
+        when (action) {
+            is Action.Icon -> ActionButton(
+                icon = action.iconResId,
+                iconTintColor = iconTintColor,
+                contentDescription = action.contentDescriptionResId,
+                notificationDotVisible = action.notificationDotVisible,
+                onClick = action.onAction
+            )
+            is Action.Image -> ActionButton(
+                image = action.imageResId,
+                contentDescription = action.contentDescriptionResId,
+                onClick = action.onAction
+            )
+        }
     }
 }
 

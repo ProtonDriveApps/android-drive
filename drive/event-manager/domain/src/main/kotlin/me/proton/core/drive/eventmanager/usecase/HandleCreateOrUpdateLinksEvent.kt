@@ -19,6 +19,7 @@
 package me.proton.core.drive.eventmanager.usecase
 
 import me.proton.core.drive.base.domain.extension.flowOf
+import me.proton.core.drive.base.domain.extension.nullIfNotFound
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.EVENTS
 import me.proton.core.drive.base.domain.log.logId
@@ -70,9 +71,13 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
     }
 
     private suspend fun List<Link>.modifiedStateOrParentLinks() = filter { link ->
-        getLink(link.id, flowOf { false }).toResult().fold(
+        getLink(link.id, flowOf { false }).toResult().nullIfNotFound().fold(
             onSuccess = { staleLink ->
-                (staleLink.state != link.state) or (staleLink.parentId != link.parentId)
+                if (staleLink != null) {
+                    (staleLink.state != link.state) or (staleLink.parentId != link.parentId)
+                } else {
+                    true
+                }
             },
             onFailure = { error ->
                 CoreLogger.w(EVENTS, error, "Cannot get link ${link.id.id.logId()}")

@@ -42,6 +42,7 @@ import me.proton.core.compose.component.ProtonSettingsHeader
 import me.proton.core.compose.component.ProtonSettingsItem
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonTheme
+import me.proton.core.devicemigration.presentation.settings.SignInToAnotherDeviceItem
 import me.proton.core.drive.base.presentation.component.NavigationDrawerAppVersion
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.settings.presentation.component.DebugSettings
@@ -95,6 +96,12 @@ fun Settings(
             ) {
                 viewEvent.onAccountSettings()
             }
+            SignInToAnotherDeviceItem(
+                content = { label: String, onClick: () -> Unit ->
+                    ProtonSettingsItem(name = label, onClick = onClick)
+                },
+                onLogOut = { viewEvent.onSignOut() }
+            )
 
             ProtonSettingsHeader(title = I18N.string.settings_section_security)
 
@@ -237,6 +244,7 @@ private fun SettingsPreview() {
                 onPhotosBackup = {},
                 onDefaultHomeTab = {},
                 onShowLog = {},
+                onSignOut = {},
             )
         )
     }

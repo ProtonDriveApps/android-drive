@@ -73,6 +73,7 @@
   <string name="common_leave_album_action">Αποχώρηση από το άλμπουμ</string>
   <string name="common_start_action">Έναρξη</string>
   <string name="common_save_all_action">Αποθήκευση όλων</string>
+  <string name="common_add_to_albums_action">Προσθήκη στα άλμπουμ</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ήχος</string>

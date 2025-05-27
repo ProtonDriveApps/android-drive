@@ -18,7 +18,6 @@
 package me.proton.core.drive.upload.domain.usecase
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching

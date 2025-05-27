@@ -73,6 +73,7 @@
   <string name="common_leave_album_action">アルバムから離れる</string>
   <string name="common_start_action">開始</string>
   <string name="common_save_all_action">すべて保存</string>
+  <string name="common_add_to_albums_action">Add to albums</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">音声</string>

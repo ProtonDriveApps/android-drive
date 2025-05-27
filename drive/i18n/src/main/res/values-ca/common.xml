@@ -73,6 +73,7 @@
   <string name="common_leave_album_action">Deixa l\'àlbum</string>
   <string name="common_start_action">Inicia</string>
   <string name="common_save_all_action">Desa-ho tot</string>
+  <string name="common_add_to_albums_action">Afegeix als àlbums</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Àudio</string>

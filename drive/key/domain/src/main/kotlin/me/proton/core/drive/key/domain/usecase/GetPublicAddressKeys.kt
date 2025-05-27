@@ -34,9 +34,13 @@ class GetPublicAddressKeys @Inject constructor(
     private val getAddressKeys: GetAddressKeys,
 ) {
 
-    suspend operator fun invoke(userId: UserId, email: String): Result<Key> = coRunCatching {
+    suspend operator fun invoke(
+        userId: UserId,
+        email: String,
+        isUsedForSignatureVerification: Boolean = true,
+    ): Result<Key> = coRunCatching {
         check(email.isNotEmpty()) { "Cannot found key for anonymous user" }
-        getAddressKey(userId, email)
+        getAddressKey(userId, email, isUsedForSignatureVerification)
             .getOrNull()
             ?: let {
                 getPublicAddressInfo(userId, email)
@@ -45,14 +49,23 @@ class GetPublicAddressKeys @Inject constructor(
                         PublicAddressKeys(publicAddressInfo.keyHolder())
                     }
             }
-            ?: getAddressKeys(userId, email)
+            ?: getAddressKeys(
+                userId = userId,
+                email = email,
+                isUsedForSignatureVerification = isUsedForSignatureVerification,
+            )
     }
 
-    private suspend fun getAddressKey(userId: UserId, email: String): Result<Key> = coRunCatching {
+    private suspend fun getAddressKey(
+        userId: UserId,
+        email: String,
+        isUsedForSignatureVerification: Boolean,
+    ): Result<Key> = coRunCatching {
         getAddressKeys(
             userId = userId,
             email = email,
             fallbackToAllAddressKeys = false,
+            isUsedForSignatureVerification = isUsedForSignatureVerification,
         )
     }
 }

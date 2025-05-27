@@ -76,6 +76,22 @@ open class PhotosPickerAndSelectionViewModel(
         }
     }
 
+    override fun onSelectDriveLink(driveLink: DriveLink) {
+        if (inPickerMode && driveLink is DriveLink.File) {
+            addToAlbumAndToSelected(driveLink)
+        } else {
+            super.onSelectDriveLink(driveLink)
+        }
+    }
+
+    override fun onDeselectDriveLink(driveLink: DriveLink) {
+        if (inPickerMode && driveLink is DriveLink.File) {
+            removeFromAlbumAndFromSelected(driveLink)
+        } else {
+            super.onDeselectDriveLink(driveLink)
+        }
+    }
+
     suspend fun initializeSelectionInPickerMode() {
         if (inPickerMode) {
             getAddToAlbumPhotoListings(userId, destinationAlbumId)

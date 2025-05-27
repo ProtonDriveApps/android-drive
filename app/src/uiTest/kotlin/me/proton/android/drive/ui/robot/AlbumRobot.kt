@@ -115,6 +115,14 @@ object AlbumRobot : LinksRobot, NavigationBarRobot {
 
     fun dismissAddToAlbumStartMessage() = addToAlbumStartMessage.clickTo(AlbumRobot)
 
+    fun dismissAddToAlbumSuccess(count: Int) = node.withText(
+        targetContext.resources.getQuantityString(
+            I18N.plurals.in_app_notification_add_to_album_success,
+            count,
+            count,
+        )
+    ).clickTo(AlbumRobot)
+
     override fun robotDisplayed() {
         albumScreen.await { assertIsDisplayed() }
     }

@@ -139,7 +139,7 @@
     <item quantity="other">%1$d elementer mislyktes</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Ingen bilder</string>
-  <string name="albums_empty_album_screen_description">Bilder som er lagt til av deg eller andre medlemmer, vises her</string>
+  <string name="albums_empty_album_screen_description">Bildene du eller andre medlemmer legger til, vises her</string>
   <string name="albums_empty_albums_list_screen_title">Ingen album</string>
   <string name="albums_empty_albums_list_screen_description">Albumene du oppretter eller blir med i, vises her</string>
   <string name="albums_empty_albums_my_albums_screen_description">Albumene du oppretter, vises her</string>
@@ -161,4 +161,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Legg til i delt album</string>
   <string name="albums_share_multiple_photos_options_album_details">Delt album</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nytt delt album</string>
+  <string name="albums_add_to_album_start_message">Legger til bilder i det krypterte albumet. La appen være åpen mens prosessen pågår.</string>
+  <string name="albums_add_to_albums_options_new_album">Legg til i nytt album</string>
+  <string name="albums_add_to_albums_options_shared_album">Mitt delte album</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Av %1$s</string>
 </resources>

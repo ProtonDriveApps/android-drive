@@ -27,9 +27,15 @@ import me.proton.android.drive.photos.domain.usecase.SetupPhotosBackup
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
+import me.proton.core.drive.backup.domain.entity.BucketEntry
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
+import me.proton.core.drive.backup.domain.usecase.CleanBucketIdsForMigration
+import me.proton.core.drive.backup.domain.usecase.GetBucketIdsForMigration
 import me.proton.core.drive.backup.domain.usecase.StartBackup
+import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -45,6 +51,8 @@ class EnablePhotosBackupImpl @Inject constructor(
     private val permissionsManager: BackupPermissionsManager,
     private val configurationProvider: ConfigurationProvider,
     private val announceEvent: AnnounceEvent,
+    private val getBucketIdsForMigration: GetBucketIdsForMigration,
+    private val cleanBucketIdsForMigration: CleanBucketIdsForMigration,
 ) : EnablePhotosBackup {
 
     override suspend operator fun invoke(folderId: FolderId): Result<PhotoBackupState> = coRunCatching {
@@ -62,12 +70,19 @@ class EnablePhotosBackupImpl @Inject constructor(
         allFolders: Boolean = false
     ): PhotoBackupState = if (backupManager.isEnabled(folderId).first().not()) {
         val folderName = configurationProvider.backupDefaultBucketName
-        val folderFilter: (String) -> Boolean = if (allFolders) {
+        val folderFilter: (BucketEntry) -> Boolean = if (allFolders) {
             { _ -> true }
         } else {
-            val folderNames = configurationProvider.backupAdditionalBucketNames
-            val names = listOf(folderName) + folderNames
-            { name -> name in names }
+            val bucketIds = getBucketIdsForMigration(folderId.userId)
+                .getOrNull(BACKUP, "Cannot get bucket ids for migration")
+                .orEmpty()
+            if (bucketIds.isEmpty()) {
+                val folderNames = configurationProvider.backupAdditionalBucketNames
+                val names = listOf(folderName) + folderNames
+                { entry -> entry.bucketName in names }
+            } else {
+                { entry -> entry.bucketId in bucketIds }
+            }
         }
         setupPhotosBackup(folderId, folderFilter).getOrThrow().let { results ->
             if (results.isEmpty()) {
@@ -80,6 +95,11 @@ class EnablePhotosBackupImpl @Inject constructor(
             }
         }.also { state ->
             if (state is PhotoBackupState.Enabled) {
+                cleanBucketIdsForMigration(folderId.userId)
+                    .getOrNull(
+                        tag = BACKUP,
+                        message = "Cannot clear bucket ids for migration after backup is enabled"
+                    )
                 announceEvent(folderId.userId, Event.BackupEnabled(folderId))
             }
             startBackup(folderId)

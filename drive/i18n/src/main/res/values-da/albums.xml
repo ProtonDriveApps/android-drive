@@ -31,22 +31,22 @@
     <item quantity="one">%1$s element</item>
     <item quantity="other">%1$s elementer</item>
   </plurals>
-  <string name="albums_delete_album_action">Delete album</string>
-  <string name="albums_delete_album_dialog_title">Delete album?</string>
-  <string name="albums_delete_album_dialog_description">This will only delete the album. Your photos will remain in your timeline. This action cannot be undone.</string>
-  <string name="albums_delete_album_dialog_description_with_children">Some photos in this album are not saved to your timeline. Deleting this album will permanently delete those photos.\nWould you like to save them before removing?</string>
-  <string name="albums_delete_album_dialog_delete_without_saving_action">Delete without saving</string>
-  <string name="albums_delete_album_dialog_save_and_delete_action">Save photos and delete</string>
-  <string name="albums_leave_album_dialog_title">Leave album?</string>
+  <string name="albums_delete_album_action">Slet album</string>
+  <string name="albums_delete_album_dialog_title">Slet album?</string>
+  <string name="albums_delete_album_dialog_description">Dette vil kun slette albummet. Dine fotos forbliver i din tidslinje. Denne handling kan ikke fortrydes.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Nogle billeder i dette album er ikke gemt på din tidslinje. Sletning af dette album vil permanent slette disse billeder.\nVil du gerne gemme dem før fjernelse?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Slet uden at gemme</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Gem fotos og slet</string>
+  <string name="albums_leave_album_dialog_title">Forlad album?</string>
   <!--
         Variable %1$s is an album name
         Example:
             "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
     -->
   <string name="albums_leave_album_dialog_description">Are you sure that you want to leave album \"%1$s\"?\nYou will lose access to photos you haven\'t saved yet.</string>
-  <string name="albums_leave_album_dialog_leave_without_saving_action">Leave without saving</string>
-  <string name="albums_leave_album_dialog_save_and_leave_action">Save photos and leave</string>
-  <string name="albums_add_zero_to_album_button">Add to album</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Forlad uden at gemme</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Gem fotos og forlad</string>
+  <string name="albums_add_zero_to_album_button">Føj til album</string>
   <!--
         Variable %1$d is a number of photos to add to album
         Example:
@@ -54,8 +54,8 @@
             "Add 33 to album"
     -->
   <plurals name="albums_add_non_zero_to_album_button">
-    <item quantity="one">Add %1$d to album</item>
-    <item quantity="other">Add %1$d to album</item>
+    <item quantity="one">Føj %1$d til album</item>
+    <item quantity="other">Føj %1$d til album</item>
   </plurals>
   <string name="albums_set_album_as_cover_success">Set as album cover</string>
   <!--
@@ -75,7 +75,7 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_album_already_exists">
-    <item quantity="one">%1$d item already exists</item>
+    <item quantity="one">%1$d element findes allerede</item>
     <item quantity="other">%1$d items already exist</item>
   </plurals>
   <!--
@@ -85,8 +85,8 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_album_failed">
-    <item quantity="one">%1$d item failed</item>
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="one">%1$d element mislykkedes</item>
+    <item quantity="other">%1$d elementer mislykkedes</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos added to your Drive
@@ -115,8 +115,8 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_stream_failed">
-    <item quantity="one">%1$d item failed</item>
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="one">%1$d element mislykkedes</item>
+    <item quantity="other">%1$d elementer mislykkedes</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos removed from album
@@ -135,17 +135,17 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_removed_from_album_failed">
-    <item quantity="one">%1$d item failed</item>
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="one">%1$d element mislykkedes</item>
+    <item quantity="other">%1$d elementer mislykkedes</item>
   </plurals>
-  <string name="albums_empty_album_screen_title">No photos</string>
-  <string name="albums_empty_album_screen_description">Photos added by you or other members will appear here</string>
-  <string name="albums_empty_albums_list_screen_title">No albums</string>
-  <string name="albums_empty_albums_list_screen_description">The albums that you create or join will appear here</string>
-  <string name="albums_empty_albums_my_albums_screen_description">The albums that you create will appear here</string>
-  <string name="albums_empty_albums_shared_by_me_screen_title">No shared albums</string>
+  <string name="albums_empty_album_screen_title">Ingen fotos</string>
+  <string name="albums_empty_album_screen_description">Photos that you or other members add will appear here</string>
+  <string name="albums_empty_albums_list_screen_title">Ingen albummer</string>
+  <string name="albums_empty_albums_list_screen_description">Albums that you create or join will appear here</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Albums that you create will appear here</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Ingen delte albummer</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Albums you\'ve shared will appear here</string>
-  <string name="albums_empty_albums_shared_with_me_screen_title">No albums shared with me</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Ingen albummer delt med mig</string>
   <string name="albums_empty_albums_shared_with_me_screen_description">Albums shared with you will appear here</string>
   <!--
         Variable %1$d is a quantity of albums shared
@@ -157,8 +157,18 @@
     <item quantity="one">%1$d album shared with you</item>
     <item quantity="other">%1$d albums shared with you</item>
   </plurals>
-  <string name="albums_share_multiple_photos_options_section_title">Share via</string>
-  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Add to shared album</string>
-  <string name="albums_share_multiple_photos_options_album_details">Shared album</string>
-  <string name="albums_share_multiple_photos_options_new_shared_album">New shared album</string>
+  <string name="albums_share_multiple_photos_options_section_title">Del via</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Tilføj til delt album</string>
+  <string name="albums_share_multiple_photos_options_album_details">Delt album</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Nyt delt album</string>
+  <string name="albums_add_to_album_start_message">Adding photos to the encrypted album. Please keep the app open while the process is ongoing.</string>
+  <string name="albums_add_to_albums_options_new_album">Add to new album</string>
+  <string name="albums_add_to_albums_options_shared_album">My shared album</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">By %1$s</string>
 </resources>

@@ -161,8 +161,8 @@
   <string name="albums_empty_album_screen_title">Няма фотаграфій</string>
   <string name="albums_empty_album_screen_description">Фатаграфіі дадзеныя вамі або іншымі ўдзельнікамі будуць з\'яўляцца тут</string>
   <string name="albums_empty_albums_list_screen_title">Няма альбомаў</string>
-  <string name="albums_empty_albums_list_screen_description">Альбомы, якія вы стварылі або далучыліся будуць з\'яўляцца тут</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Створаныя вамі альбомы з\'явяцца тут</string>
+  <string name="albums_empty_albums_list_screen_description">Альбомы, якія вы стварылі або далучылі будуць з\'яўляцца тут</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Створаныя вамі альбомы будуць з\'яўляцца тут</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Няма абагуленых альбомаў</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Абагуленыя вамі альбомы з\'явяцца тут</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">З вамі пакуль не абагулілі альбомы</string>
@@ -183,4 +183,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Дадаць у абагулены альбом</string>
   <string name="albums_share_multiple_photos_options_album_details">Абагулены альбом</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Новы абагулены альбом</string>
+  <string name="albums_add_to_album_start_message">Дадаюцца фатаграфіі ў зашыфраваны альбом. Не закрывайце праграму падчас гэтага працэсу.</string>
+  <string name="albums_add_to_albums_options_new_album">Дадаць у новы альбом</string>
+  <string name="albums_add_to_albums_options_shared_album">Мой абагулены альбом</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Ад %1$s</string>
 </resources>

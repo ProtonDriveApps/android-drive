@@ -59,17 +59,17 @@ fun DriveLink.Album.details(
     appContext: Context,
     useCreationTime: Boolean = true,
     showDisplayName: Boolean = false,
-): String {
-    return albumDetails(
-        appContext = appContext,
-        photoCount = photoCount,
-        isShared = link.sharingDetails != null,
-        displayName = (shareUser?.displayName ?: shareUser?.email).takeIf {
-            showDisplayName && sharePermissions != null
-        },
-        creationTime = link.creationTime.takeIf { useCreationTime },
-    )
-}
+): String = albumDetails(
+    appContext = appContext,
+    photoCount = photoCount,
+    isShared = link.sharingDetails != null,
+    displayName = (shareUser?.displayName ?: shareUser?.email).takeIf {
+        showDisplayName && sharePermissions != null
+    }?.let { displayName ->
+        appContext.getString(I18N.string.albums_shared_with_me_details, displayName)
+    },
+    creationTime = link.creationTime.takeIf { useCreationTime },
+)
 
 @VisibleForTesting
 fun albumDetails(

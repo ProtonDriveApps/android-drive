@@ -27,9 +27,13 @@ suspend fun UserAddressRepository.getAddressKeys(
     userId: UserId,
     email: String,
     fallbackToAllAddressKeys: Boolean = true,
+    isUsedForSignatureVerification: Boolean = false,
 ): KeyHolder =
     with (getAddresses(userId)) {
-        firstOrNull { userAddress -> userAddress.email == email }?.keys?.keyHolder()
+        firstOrNull { userAddress ->
+            userAddress.email == email && (!isUsedForSignatureVerification || userAddress.enabled)
+        }
+            ?.keys?.keyHolder()
             ?: let {
                 if (fallbackToAllAddressKeys) {
                     flatMap { userAddress -> userAddress.keys }.keyHolder()
@@ -45,7 +49,10 @@ suspend fun UserAddressRepository.getAddressKeys(
     fallbackToAllAddressKeys: Boolean = true,
 ): KeyHolder =
     with (getAddresses(userId)) {
-        firstOrNull { userAddress -> userAddress.addressId == addressId }?.keys?.keyHolder()
+        firstOrNull { userAddress ->
+            userAddress.addressId == addressId
+        }
+            ?.keys?.keyHolder()
             ?: let {
                 if (fallbackToAllAddressKeys) {
                     flatMap { userAddress -> userAddress.keys }.keyHolder()

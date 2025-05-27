@@ -25,6 +25,6 @@
   <string name="title_not_found">Не знайдено</string>
   <string name="proton_docs_insert_image_header_title">Вставити зображення</string>
   <string name="proton_docs_option_select_file">Вибрати файл</string>
-  <string name="proton_docs_unsupported_file_type">Підтримується тільки вставка зображень</string>
+  <string name="proton_docs_unsupported_file_type">Наразі підтримується лише вставлення зображень</string>
   <string name="proton_docs_load_error">Не вдалося завантажити документ</string>
 </resources>

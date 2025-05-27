@@ -33,6 +33,7 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
+import me.proton.core.drive.linkupload.domain.extension.isFileEmpty
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.upload.data.exception.UploadCleanupException
@@ -207,10 +208,8 @@ abstract class UploadCoroutineWorker(
         val networkType =
             requireNotNull(networkTypeProviders[uploadFileLink.networkTypeProviderType])
                 .get(uploadFileLink.parentLinkId)
-        val size = uploadFileLink.size
-        val isFileEmpty = size != null && size.value > 0L
         when {
-            isFileEmpty
+            uploadFileLink.isFileEmpty
             -> FileUploadFlow.EmptyFileFromScratch(
                 workManager,
                 userId,

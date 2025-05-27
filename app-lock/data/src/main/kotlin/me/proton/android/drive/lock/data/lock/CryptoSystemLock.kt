@@ -47,7 +47,7 @@ class CryptoSystemLock @Inject constructor(
         block: suspend (passphrase: ByteArray) -> T,
     ): Result<T> = coRunCatching {
         val systemLockKey = appLockRepository.getLockKey(AppLockType.SYSTEM)
-        require(systemLockKey.appKey == key)
+        require(systemLockKey.appKey == key) { "Key is not matching with app key" }
         val initializationVector = systemLockKey.appKeyPassphrase.copyOf(Config.DEFAULT_CIPHER_IV_BYTES)
         val cipher = biometricPromptProvider.authenticate(
             title = appContext.getString(I18N.string.app_lock_biometric_title_app_locked),

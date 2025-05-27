@@ -37,6 +37,32 @@
     <item quantity="many">%1$d файлов загружается на: %2$s</item>
     <item quantity="other">%1$d файлов загружаются на: %2$s</item>
   </plurals>
+  <!--
+        Variable %1$d is a quantity of files that failed to be uploaded
+        Variable %2$s is a folder name where files failed to be uploaded to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_failed_notification">
+    <item quantity="one">Не удалось загрузить %1$d файл в: %2$s</item>
+    <item quantity="few">Не удалось загрузить %1$d файла в: %2$s</item>
+    <item quantity="many">Не удалось загрузить %1$d файлов в: %2$s</item>
+    <item quantity="other">Не удалось загрузить %1$d файлов в: %2$s</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that are being ignored
+        Variable %2$s is a folder name where files are being ignored to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_being_ignored_notification">
+    <item quantity="one">%1$d файл был проигнорирован</item>
+    <item quantity="few">%1$d файла были проигнорированы</item>
+    <item quantity="many">%1$d файлов были проигнорированы</item>
+    <item quantity="other">%1$d файлов были проигнорированы</item>
+  </plurals>
   <string name="files_upload_preparing">Подготовка к загрузке. Это может занять некоторое время.</string>
   <!--
         Variable %1$s is the maximum number of uploading files

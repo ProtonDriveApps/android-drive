@@ -81,7 +81,7 @@ open class SelectionViewModel(
                 }
             )
         }.stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
-    protected val selectAllAction = Action(
+    protected val selectAllAction = Action.Icon(
         iconResId = CorePresentation.drawable.ic_proton_check_triple,
         contentDescriptionResId = I18N.string.content_description_select_all,
         onAction = {
@@ -104,7 +104,7 @@ open class SelectionViewModel(
         }
     }
 
-    protected fun selectedOptionsAction(onAction: (() -> Unit)?) = Action(
+    protected fun selectedOptionsAction(onAction: (() -> Unit)?) = Action.Icon(
         iconResId = CorePresentation.drawable.ic_proton_three_dots_vertical,
         contentDescriptionResId = R.string.content_description_selected_options,
         onAction = { onAction?.invoke() }
@@ -144,9 +144,9 @@ open class SelectionViewModel(
         }
     }
 
-    protected fun onSelectDriveLink(driveLink: DriveLink) = addSelected(listOf(driveLink.id))
+    protected open fun onSelectDriveLink(driveLink: DriveLink) = addSelected(listOf(driveLink.id))
 
-    protected fun onDeselectDriveLink(driveLink: DriveLink) = removeSelected(listOf(driveLink.id))
+    protected open fun onDeselectDriveLink(driveLink: DriveLink) = removeSelected(listOf(driveLink.id))
 
     protected fun onBack() { removeAllSelected() }
 

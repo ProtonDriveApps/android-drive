@@ -210,6 +210,7 @@ class SettingsViewModel @Inject constructor(
         navigateToPhotosBackup: () -> Unit,
         navigateToDefaultHomeTab: () -> Unit,
         navigateToLog: () -> Unit,
+        navigateToSignOut: () -> Unit
     ) = SettingsViewEvent(
         navigateBack = navigateBack,
         onLinkClicked = { link ->
@@ -259,6 +260,9 @@ class SettingsViewModel @Inject constructor(
         },
         onShowLog = {
             navigateToLog()
+        },
+        onSignOut = {
+            navigateToSignOut()
         },
     )
 

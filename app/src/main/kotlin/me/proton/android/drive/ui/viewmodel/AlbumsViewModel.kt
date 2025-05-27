@@ -114,7 +114,7 @@ class AlbumsViewModel @Inject constructor(
     private val albumListingsFilter: MutableStateFlow<AlbumListing.Filter> =
         MutableStateFlow(AlbumListing.Filter.ALL)
     private var viewEvent: AlbumsViewEvent? = null
-    private val addAlbumAction = Action(
+    private val addAlbumAction = Action.Icon(
         iconResId = CorePresentation.drawable.ic_proton_plus,
         contentDescriptionResId = I18N.string.content_description_albums_new,
         notificationDotVisible = false,

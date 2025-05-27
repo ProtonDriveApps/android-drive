@@ -21,6 +21,7 @@ package me.proton.android.drive.ui.robot
 import androidx.annotation.StringRes
 import me.proton.android.drive.ui.screen.HomeScreenTestTag
 import me.proton.core.drive.base.presentation.component.BottomNavigationComponentTestTag
+import me.proton.core.plan.test.robot.SubscriptionRobot
 import me.proton.test.fusion.Fusion.node
 import me.proton.test.fusion.ui.common.enums.SwipeDirection
 import kotlin.time.Duration.Companion.seconds
@@ -32,6 +33,7 @@ interface HomeRobot : Robot {
     val photosTab get() = tabWithText(I18N.string.photos_title)
     val computersTab get() = tabWithText(I18N.string.computers_title)
     val sharedTab get() = tabWithText(I18N.string.title_shared)
+    private val openSubscriptionButton get() = node.withContentDescription(I18N.string.content_description_subscription_action)
 
     fun clickFilesTab() = filesTab.clickTo(FilesTabRobot)
     fun clickPhotosTab() = photosTab.clickTo(PhotosTabRobot)
@@ -41,6 +43,8 @@ interface HomeRobot : Robot {
     fun openSidebarBySwipe() = SidebarRobot.apply {
         homeScreen.swipe(SwipeDirection.Right)
     }
+
+    fun clickOpenSubscription() = SubscriptionRobot.apply { openSubscriptionButton.click() }
 
     private fun tabWithText(@StringRes textRes: Int) =
         node

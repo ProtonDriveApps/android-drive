@@ -146,8 +146,8 @@
   <string name="photos_panoramas_empty_description">パノラマがここに表示されます</string>
   <string name="photos_raws_empty_title">RAWがありません</string>
   <string name="photos_raws_empty_description">RAWがここに表示されます</string>
-  <string name="photos_share_migration_in_progress_title">Setting up Albums and Filters</string>
-  <string name="photos_share_migration_in_progress_description">If you have a large photo library, it might take some time. You can close the app. We\'ll work on it in the background.</string>
+  <string name="photos_share_migration_in_progress_title">アルバムとフィルタを設定中</string>
+  <string name="photos_share_migration_in_progress_description">写真ライブラリが大きい場合、時間がかかることがあります。その際は、アプリを閉じていただいて構いません。バックグラウンドで処理を行います。</string>
   <string name="photos_share_migration_needed_banner_title">データ移行が必要です</string>
   <string name="photos_share_migration_needed_banner_description">移行後に、フィルターや写真アルバムなどの新しい機能を使用できます。</string>
   <string name="photos_important_updates_title">重要なアップデート</string>

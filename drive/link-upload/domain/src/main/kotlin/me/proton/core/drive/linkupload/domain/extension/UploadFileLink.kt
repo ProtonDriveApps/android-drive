@@ -29,6 +29,8 @@ fun UploadFileLink.requireFileId() = requireNotNull(fileId)
 
 val UploadFileLink.sizeOrZero get() = size ?: 0.bytes
 
+val UploadFileLink.isFileEmpty get() = size != null && size.value == 0L
+
 fun UploadFileLink.toInitiator(): Initiator = when (priority) {
     in 1..UploadFileLink.USER_PRIORITY -> Initiator.explicit
     else -> Initiator.background

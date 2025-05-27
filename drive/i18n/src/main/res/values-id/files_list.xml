@@ -51,7 +51,7 @@
   <string name="files_add_to_favorite_action_success">Berhasil ditambahkan ke favorit</string>
   <string name="files_add_to_favorite_from_foreign_volume_action_success">Foto disalin ke aliran dan ditandai sebagai favorit di sana</string>
   <string name="files_remove_from_favorite_action_success">Berhasil dihapus dari favorit</string>
-  <string name="files_save_shared_photo_action">Save shared photo</string>
+  <string name="files_save_shared_photo_action">Simpan foto yang dibagikan</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

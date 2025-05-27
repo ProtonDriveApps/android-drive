@@ -38,7 +38,14 @@ class BuildContentKey @Inject constructor(
     suspend operator fun invoke(file: Link.File, fileKey: Key.Node): Result<ContentKey> = coRunCatching {
         contentKeyFactory.createContentKey(
             decryptKey = fileKey,
-            verifyKey = listOf(fileKey, getAddressKeys(file.id.userId, file.uploadedBy)),
+            verifyKey = listOf(
+                fileKey,
+                getAddressKeys(
+                    userId = file.id.userId,
+                    email = file.uploadedBy,
+                    isUsedForSignatureVerification = true,
+                )
+            ),
             contentKeyPacket = file.contentKeyPacket,
             contentKeyPacketSignature = file.contentKeyPacketSignature ?: "" // TODO: see what to do in this case
         )
@@ -73,7 +80,14 @@ class BuildContentKey @Inject constructor(
         val signatureAddress = getSignatureAddress(ShareId(userId, shareId)).getOrThrow()
         contentKeyFactory.createContentKey(
             decryptKey = fileKey,
-            verifyKey = listOf(fileKey, getAddressKeys(userId, signatureAddress)),
+            verifyKey = listOf(
+                fileKey,
+                getAddressKeys(
+                    userId = userId,
+                    email = signatureAddress,
+                    isUsedForSignatureVerification = true,
+                )
+            ),
             contentKeyPacket = contentKeyPacket,
             contentKeyPacketSignature = contentKeyPacketSignature
         )

@@ -52,10 +52,12 @@ import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.backup.domain.repository.BucketRepository
 import me.proton.core.drive.backup.domain.usecase.AddFolder
+import me.proton.core.drive.backup.domain.usecase.CleanBucketIdsForMigration
 import me.proton.core.drive.backup.domain.usecase.DeleteFolders
 import me.proton.core.drive.backup.domain.usecase.GetAllBuckets
 import me.proton.core.drive.backup.domain.usecase.GetBackupState
 import me.proton.core.drive.backup.domain.usecase.GetBackupStatus
+import me.proton.core.drive.backup.domain.usecase.GetBucketIdsForMigration
 import me.proton.core.drive.backup.domain.usecase.GetConfiguration
 import me.proton.core.drive.backup.domain.usecase.GetDisabledBackupState
 import me.proton.core.drive.backup.domain.usecase.GetErrors
@@ -73,6 +75,7 @@ import me.proton.core.drive.drivelink.data.extension.toEncryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.data.extension.toLink
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.photo.domain.repository.PhotoShareMigrationRepository
 import me.proton.core.drive.user.data.repository.UserMessageRepositoryImpl
 import me.proton.core.drive.user.domain.usecase.HasCanceledUserMessages
 import org.junit.Assert.assertEquals
@@ -133,6 +136,7 @@ class PhotoBackupStateTest {
 
         val backupConfigurationRepository = BackupConfigurationRepositoryImpl(database.db)
         val getConfiguration = GetConfiguration(backupConfigurationRepository)
+        val migrationRepository = mockk<PhotoShareMigrationRepository>()
         enablePhotosBackup = EnablePhotosBackupImpl(
             appContext = appContext,
             setupPhotosBackup = SetupPhotosBackup(
@@ -158,6 +162,8 @@ class PhotoBackupStateTest {
                 override val appVersionHeader = ""
             },
             announceEvent = announceEvent,
+            getBucketIdsForMigration = GetBucketIdsForMigration(migrationRepository),
+            cleanBucketIdsForMigration = CleanBucketIdsForMigration(migrationRepository),
         )
 
         disablePhotosBackup = DisablePhotosBackup(

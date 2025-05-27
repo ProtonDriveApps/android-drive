@@ -18,9 +18,20 @@
 
 package me.proton.core.drive.base.presentation.common
 
-data class Action(
-    val iconResId: Int,
-    val contentDescriptionResId: Int,
-    val notificationDotVisible: Boolean = false,
-    val onAction: () -> Unit
-)
+sealed class Action(
+    open val onAction: () -> Unit,
+    open val contentDescriptionResId: Int,
+) {
+    data class Icon(
+        val iconResId: Int,
+        override val contentDescriptionResId: Int,
+        val notificationDotVisible: Boolean = false,
+        override val onAction: () -> Unit
+    ) : Action(onAction, contentDescriptionResId)
+
+    data class Image(
+        val imageResId: Int,
+        override val contentDescriptionResId: Int,
+        override val onAction: () -> Unit
+    ) : Action(onAction, contentDescriptionResId)
+}

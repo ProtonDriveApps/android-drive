@@ -139,9 +139,9 @@
     <item quantity="other">Errore con %1$d elementi</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Nessuna foto</string>
-  <string name="albums_empty_album_screen_description">Le foto aggiunte da te o da altri membri appariranno qui</string>
+  <string name="albums_empty_album_screen_description">Le foto che tu o altri membri aggiungete saranno visualizzati qui.</string>
   <string name="albums_empty_albums_list_screen_title">Nessun album</string>
-  <string name="albums_empty_albums_list_screen_description">Gli album che crei o a cui ti unisci appariranno qui.</string>
+  <string name="albums_empty_albums_list_screen_description">Gli album che crei o a cui ti unisci saranno visualizzati qui</string>
   <string name="albums_empty_albums_my_albums_screen_description">Gli album che crei saranno visualizzati qui</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Nessun album condiviso</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Gli album che hai condiviso saranno visualizzati qui</string>
@@ -161,4 +161,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Aggiungi all\'album condiviso</string>
   <string name="albums_share_multiple_photos_options_album_details">Album condiviso</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nuovo album condiviso</string>
+  <string name="albums_add_to_album_start_message">Aggiunta di foto all\'album crittografato. Mantieni l\'app aperta durante il processo.</string>
+  <string name="albums_add_to_albums_options_new_album">Aggiungi al nuovo album</string>
+  <string name="albums_add_to_albums_options_shared_album">Il mio album condiviso</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Di %1$s</string>
 </resources>

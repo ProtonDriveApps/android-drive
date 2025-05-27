@@ -39,4 +39,10 @@ interface PhotoShareMigrationRepository {
     fun getPhotosImportantUpdatesLastShownFlow(userId: UserId): Flow<TimestampMs?>
 
     suspend fun setPhotosImportantUpdatesLastShown(userId: UserId, lastShown: TimestampMs)
+
+    suspend fun saveBucketIds(userId: UserId, bucketsIds: List<Int>)
+
+    suspend fun getBucketIds(userId: UserId): List<Int>
+
+    suspend fun deleteBucketIds(userId: UserId)
 }

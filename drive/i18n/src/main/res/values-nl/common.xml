@@ -73,6 +73,7 @@
   <string name="common_leave_album_action">Album verlaten</string>
   <string name="common_start_action">Start</string>
   <string name="common_save_all_action">Alles opslaan</string>
+  <string name="common_add_to_albums_action">Voeg toe aan albums</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>
@@ -191,5 +192,7 @@
             "System could not found any application that could take a picture"
     -->
   <string name="common_in_app_notification_activity_not_found">Het systeem kan geen enkele toepassing vinden die %1$s kan gebruiken</string>
+  <!-- endregion -->
+  <!-- endregion -->
   <!-- endregion -->
 </resources>

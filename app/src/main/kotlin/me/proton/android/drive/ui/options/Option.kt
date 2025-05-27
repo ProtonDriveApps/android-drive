@@ -28,7 +28,8 @@ import me.proton.core.drive.drivelink.domain.extension.hasShareLink
 import me.proton.core.drive.drivelink.domain.extension.isPhoto
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.extension.off
-import me.proton.core.drive.files.presentation.entry.CreateAlbumEntry
+import me.proton.core.drive.files.presentation.entry.AddToAlbumsEntry
+import me.proton.core.drive.files.presentation.entry.AddToAlbumsFileEntry
 import me.proton.core.drive.files.presentation.entry.DeleteAlbumEntry
 import me.proton.core.drive.files.presentation.entry.DeletePermanentlyEntry
 import me.proton.core.drive.files.presentation.entry.DownloadEntry
@@ -384,17 +385,24 @@ sealed class Option(
         }
     }
 
-    data object CreateAlbum : Option(
+    data object AddToAlbums : Option(
         ApplicableQuantity.All,
         setOf(ApplicableTo.FILE_PHOTO),
         setOf(State.NOT_TRASHED) + State.ANY_SHARED
     ) {
         fun build(
             runAction: RunAction,
-            createAlbum: () -> Unit,
-        ) = CreateAlbumEntry {
-            runAction { createAlbum() }
+            navigateToAddToAlbumsOptions: () -> Unit,
+        ) = AddToAlbumsEntry {
+            runAction { navigateToAddToAlbumsOptions() }
         }
+
+        fun build(
+            runAction: RunAction,
+            addToAlbums: (DriveLink.File) -> Unit,
+        ) = AddToAlbumsFileEntry { driveLink ->
+            runAction { addToAlbums(driveLink) }
+        } as FileOptionEntry<DriveLink>
     }
 
     data object SetAsAlbumCover : Option(
@@ -512,6 +520,7 @@ fun Iterable<Option>.filterRoot(driveLink: DriveLink, featureFlag: FeatureFlag) 
             Option.Rename -> false //featureFlag.state == FeatureFlag.State.ENABLED
             Option.Trash -> featureFlag.state == FeatureFlag.State.ENABLED
             Option.Move -> false
+            Option.FavoriteToggle -> false
             else -> true
         }
     } else {
@@ -536,8 +545,8 @@ fun Iterable<Option>.filterPermissions(
     permissions: Permissions
 ) = filter { option ->
     when (option) {
+        Option.AddToAlbums -> permissions.canWrite
         Option.CreateDocument -> permissions.canWrite
-        Option.CreateAlbum -> permissions.canWrite
         Option.CreateFolder -> permissions.canWrite
         Option.DeleteAlbum -> permissions.isAdmin
         Option.DeletePermanently -> permissions.canWrite
@@ -578,7 +587,7 @@ fun Iterable<Option>.filterAlbums(
 ) = filter { option ->
     val featureEnabled = isEnabled && killSwitch.off
     when (option) {
-        Option.CreateAlbum -> featureEnabled && albumId == null
+        Option.AddToAlbums -> featureEnabled && albumId == null
         Option.ShareMultiplePhotos -> featureEnabled && albumId == null
         Option.RemoveFromAlbum -> featureEnabled && albumId != null
         Option.SetAsAlbumCover -> featureEnabled && albumId != null

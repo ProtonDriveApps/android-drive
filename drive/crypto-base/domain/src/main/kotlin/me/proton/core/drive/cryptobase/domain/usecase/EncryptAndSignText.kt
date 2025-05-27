@@ -32,11 +32,11 @@ class EncryptAndSignText @Inject constructor(
 ) {
     suspend operator fun invoke(
         encryptKey: KeyHolder,
-        verifyKey: KeyHolder,
+        signKey: KeyHolder,
         text: String,
         coroutineContext: CoroutineContext = CryptoScope.EncryptAndDecrypt.coroutineContext,
     ): Result<String> = coRunCatching(coroutineContext) {
-        verifyKey.useKeysAs(cryptoContext) { key ->
+        signKey.useKeysAs(cryptoContext) { key ->
             key.encryptAndSignText(text, encryptKey.publicKeyRing(cryptoContext))
         }
     }

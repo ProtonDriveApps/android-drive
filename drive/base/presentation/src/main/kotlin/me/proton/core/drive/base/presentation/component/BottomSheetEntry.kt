@@ -49,8 +49,8 @@ fun BottomSheetEntry(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
             .padding(bottom = ProtonDimens.SmallSpacing)
+            .clickable(onClick = onClick)
             .height(ItemHeight),
         verticalAlignment = Alignment.CenterVertically
     ) {

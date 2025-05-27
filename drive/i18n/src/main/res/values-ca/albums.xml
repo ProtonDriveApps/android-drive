@@ -95,8 +95,8 @@
             "17 items added to your Drive"
     -->
   <plurals name="in_app_notification_add_to_stream_success">
-    <item quantity="one">S\'ha afegit %1$d element al vostre Drive</item>
-    <item quantity="other">S\'han afegit %1$d elements al vostre Drive</item>
+    <item quantity="one">S\'ha afegit %1$d element al Drive</item>
+    <item quantity="other">S\'han afegit %1$d elements al Drive</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -139,14 +139,14 @@
     <item quantity="other">Error amb %1$d elements</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Cap foto</string>
-  <string name="albums_empty_album_screen_description">Les fotos afegides per vosaltres o per altres membres apareixeran aquí</string>
+  <string name="albums_empty_album_screen_description">Les fotos que hi afegiu vosaltres o altres membres apareixeran aquí.</string>
   <string name="albums_empty_albums_list_screen_title">Cap àlbum</string>
-  <string name="albums_empty_albums_list_screen_description">Els àlbums que creeu o uniu-vos-hi apareixeran aquí.</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Els àlbums que creeu apareixeran aquí.</string>
+  <string name="albums_empty_albums_list_screen_description">Els àlbums que creeu o us hi afegiu apareixeran aquí</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Els àlbums que creeu apareixeran aquí</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">No hi ha àlbums compartits.</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Els àlbums que heu compartit apareixeran aquí</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">No s\'ha compartit cap àlbum amb mi</string>
-  <string name="albums_empty_albums_shared_with_me_screen_description">Els àlbums que han compartit amb vosaltres apareixeran aquí</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Els àlbums que han compartit amb vós apareixeran aquí</string>
   <!--
         Variable %1$d is a quantity of albums shared
         Example:
@@ -161,4 +161,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Afegeix a l\'àlbum compartit</string>
   <string name="albums_share_multiple_photos_options_album_details">Àlbum compartit</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nou àlbum compartit</string>
+  <string name="albums_add_to_album_start_message">S\'estan afegint fotos a l\'àlbum xifrat. Mantingueu l\'aplicació oberta mentre duri el procés.</string>
+  <string name="albums_add_to_albums_options_new_album">Afegeix al nou àlbum</string>
+  <string name="albums_add_to_albums_options_shared_album">El meu àlbum compartit</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">De %1$s</string>
 </resources>

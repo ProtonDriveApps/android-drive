@@ -139,10 +139,10 @@
     <item quantity="other">%1$d items mislukt</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Geen foto\'s</string>
-  <string name="albums_empty_album_screen_description">Foto\'s die door u of andere leden zijn toegevoegd verschijnen hier.</string>
+  <string name="albums_empty_album_screen_description">Photos that you or other members add will appear here</string>
   <string name="albums_empty_albums_list_screen_title">Geen albums</string>
-  <string name="albums_empty_albums_list_screen_description">De albums die u maakt of waar u aan deelneemt worden hier weergegeven.</string>
-  <string name="albums_empty_albums_my_albums_screen_description">De albums die u maakt, verschijnen hier</string>
+  <string name="albums_empty_albums_list_screen_description">Albums that you create or join will appear here</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Albums that you create will appear here</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Geen gedeelde albums</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Albums die u hebt gedeeld, verschijnen hier</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">Er zijn geen albums met mij gedeeld</string>
@@ -161,4 +161,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Toevoegen aan gedeeld album</string>
   <string name="albums_share_multiple_photos_options_album_details">Gedeeld album</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nieuw gedeeld album</string>
+  <string name="albums_add_to_album_start_message">Foto\'s toevoegen aan het versleutelde album. Houd de app open terwijl dit proces bezig is.</string>
+  <string name="albums_add_to_albums_options_new_album">Aan nieuw album toevoegen</string>
+  <string name="albums_add_to_albums_options_shared_album">Mijn gedeelde album</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Door %1$s</string>
 </resources>

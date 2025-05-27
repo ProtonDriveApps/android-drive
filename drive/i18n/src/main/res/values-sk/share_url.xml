@@ -105,6 +105,6 @@
   <string name="shared_user_invitations_decline_button">Odmietnuť</string>
   <string name="shared_user_invitations_accept_success">Zdieľaná položka akceptovaná</string>
   <string name="shared_user_invitations_decline_success">Zdieľaná položka odmietnutá</string>
-  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
-  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
+  <string name="shared_user_album_invitations_accept_success">Pozvánka prijatá</string>
+  <string name="shared_user_album_invitations_decline_success">Pozvánka odmietnutá</string>
 </resources>

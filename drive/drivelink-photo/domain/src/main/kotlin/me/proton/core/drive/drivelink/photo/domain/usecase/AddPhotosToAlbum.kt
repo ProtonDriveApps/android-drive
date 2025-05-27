@@ -31,7 +31,6 @@ import me.proton.core.drive.photo.domain.entity.AddToRemoveFromAlbumResult
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.photo.domain.usecase.GetRelatedPhotoIds
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.util.kotlin.takeIfNotEmpty
 import javax.inject.Inject
 
 class AddPhotosToAlbum @Inject constructor(
@@ -89,30 +88,27 @@ class AddPhotosToAlbum @Inject constructor(
     private suspend fun addSharedWithMePhotosToAlbum(
         albumId: AlbumId,
         photoIds: List<FileId>,
-    ): AddToRemoveFromAlbumResult =
-        photoIds
-            .takeIfNotEmpty()
-            ?.map { photoId ->
-                val error = copyPhoto(
-                    newParentId = albumId,
-                    fileId = photoId,
-                    shouldUpdateEvent = false,
-                ).exceptionOrNull()
-                if (error == null) {
-                    AddToRemoveFromAlbumResult.AddRemovePhotoResult.Success(photoId.id)
-                } else {
-                    val (code, error) = error.onProtonHttpException { protonData ->
-                        protonData.code.toLong() to protonData.error
-                    } ?: (-1L to "")
-                    AddToRemoveFromAlbumResult.AddRemovePhotoResult.Error(
-                        fileId = photoId.id,
-                        code = code,
-                        error = error,
-                    )
-                }
+    ): AddToRemoveFromAlbumResult = copyPhoto(
+        newParentId = albumId,
+        fileIds = photoIds,
+        shouldUpdateEvent = false,
+    ).map { result ->
+        result.fold(
+            onFailure = { error ->
+                val (code, error) = error.onProtonHttpException { protonData ->
+                    protonData.code.toLong() to protonData.error
+                } ?: (-1L to "")
+                AddToRemoveFromAlbumResult.AddRemovePhotoResult.Error(
+                    fileId = "",
+                    code = code,
+                    error = error,
+                )
+            },
+            onSuccess = { photoId ->
+                AddToRemoveFromAlbumResult.AddRemovePhotoResult.Success(photoId.id)
             }
-            ?.let { AddToRemoveFromAlbumResult(it) }
-            ?: AddToRemoveFromAlbumResult()
+        )
+    }.let { AddToRemoveFromAlbumResult(it) }
 
     private suspend fun volumeAndSharedWithMeFileIds(
         volumeId: VolumeId,

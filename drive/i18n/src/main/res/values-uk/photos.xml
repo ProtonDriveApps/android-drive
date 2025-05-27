@@ -18,7 +18,7 @@
   -->
 <resources>
   <string name="photos_title">Фото</string>
-  <string name="photos_permissions_title">Шифруйте та створюйте резервні копії ваших фото й відео</string>
+  <string name="photos_permissions_title">Шифруйте й створюйте резервні копії фото й відео</string>
   <string name="photos_permissions_section_1_title">Захистіть свої спогади</string>
   <string name="photos_permissions_section_1_description">Ваші фото наскрізно шифруються, що гарантує цілковиту приватність.</string>
   <string name="photos_permissions_section_2_title">Автоматичне резервне копіювання</string>

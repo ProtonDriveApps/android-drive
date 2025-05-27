@@ -69,7 +69,10 @@ class BuildNodeKey @Inject constructor(
                 key = decryptNestedPrivateKey(
                     decryptKey = parentKey.keyHolder,
                     key = uploadFileLink.nestedPrivateKey,
-                    verifySignatureKey = getPublicAddressKeys(userId, signatureAddress).getOrThrow().keyHolder,
+                    verifySignatureKey = getPublicAddressKeys(
+                        userId = userId,
+                        email = signatureAddress,
+                    ).getOrThrow().keyHolder,
                     allowCompromisedVerificationKeys = true,
                 ).getOrThrow(),
                 parent = parentKey,
@@ -89,8 +92,8 @@ class BuildNodeKey @Inject constructor(
                     parentKey.keyHolder
                 } else {
                     getPublicAddressKeys(
-                        link.id.userId,
-                        link.signatureEmail
+                        userId = link.id.userId,
+                        email = link.signatureEmail,
                     ).getOrThrow().keyHolder
                 },
                 allowCompromisedVerificationKeys = true,

@@ -56,7 +56,10 @@ class VerifyDownloadedBlocks @Inject constructor(
             .getOrThrow()
         try {
             val blocks = revision.blocks
-                .map { block -> block to requireNotNull(getBlockFile(fileId.userId, volumeId, revisionId, block)) }
+                .map { block ->
+                    val file = getBlockFile(fileId.userId, volumeId, revisionId, block)
+                    block to requireNotNull(file) { "Cannot get block to verify download" }
+                }
                 .moveBlocksDependingOnOfflineState(volumeId, fileId, revisionId)
                 .map { (block, file) -> block.copy(url = file.path) }
             setDownloadState(

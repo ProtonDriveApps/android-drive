@@ -26,6 +26,7 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import me.proton.android.drive.ui.viewmodel.AddToAlbumsOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.AlbumOptionsViewModel
 import me.proton.android.drive.ui.viewmodel.AlbumViewModel
 import me.proton.android.drive.ui.viewmodel.ComputerOptionsViewModel
@@ -222,6 +223,18 @@ sealed class Screen(val route: String) {
 
         const val USER_ID = Screen.USER_ID
         const val SELECTION_ID = ShareMultiplePhotosOptionsViewModel.SELECTION_ID
+    }
+
+    data object AddToAlbumsOptions : Screen(
+        "options/multiple/addToAlbums/{userId}/selectionId={selectionId}"
+    ) {
+        operator fun invoke(
+            userId: UserId,
+            selectionId: SelectionId,
+        ) = "options/multiple/addToAlbums/${userId.id}/selectionId=${selectionId.id}"
+
+        const val USER_ID = Screen.USER_ID
+        const val SELECTION_ID = AddToAlbumsOptionsViewModel.SELECTION_ID
     }
 
     data object Info : Screen("info/{userId}/shares/{shareId}/files?linkId={linkId}") {

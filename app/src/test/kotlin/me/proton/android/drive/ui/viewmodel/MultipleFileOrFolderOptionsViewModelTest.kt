@@ -47,7 +47,7 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbums
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
-import me.proton.core.drive.files.presentation.entry.CreateAlbumEntry
+import me.proton.core.drive.files.presentation.entry.AddToAlbumsEntry
 import me.proton.core.drive.files.presentation.entry.DownloadEntry
 import me.proton.core.drive.files.presentation.entry.MoveEntry
 import me.proton.core.drive.files.presentation.entry.RemoveFromAlbumEntry
@@ -78,7 +78,6 @@ class MultipleFileOrFolderOptionsViewModelTest {
     private val sendToTrash = mockk<SendToTrash>()
     private val exportToDownload = mockk<ExportToDownload>()
     private val deselectLinks = mockk<DeselectLinks>()
-    private val addToAlbumInfo = mockk<AddToAlbumInfo>()
     private val getFeatureFlagFlow = mockk<GetFeatureFlagFlow>()
     private val configurationProvider = mockk<ConfigurationProvider>()
     private val removePhotosFromAlbum = mockk<RemovePhotosFromAlbum>()
@@ -156,7 +155,7 @@ class MultipleFileOrFolderOptionsViewModelTest {
         // Then
         assertEquals(
             listOf(
-                CreateAlbumEntry::class,
+                AddToAlbumsEntry::class,
                 ShareMultiplePhotosEntry::class,
                 DownloadEntry::class,
                 TrashEntry::class,
@@ -192,7 +191,7 @@ class MultipleFileOrFolderOptionsViewModelTest {
             driveLinks = this,
             runAction = {},
             navigateToMove = { _: SelectionId, _: FolderId? -> },
-            navigateToCreateNewAlbum = {},
+            navigateToAddToAlbumsOptions = {},
             navigateToShareMultiplePhotosOptions = {},
             dismiss = {},
         ).filterNotNull().first()
@@ -204,7 +203,6 @@ class MultipleFileOrFolderOptionsViewModelTest {
         sendToTrash = sendToTrash,
         exportToDownload = exportToDownload,
         deselectLinks = deselectLinks,
-        addToAlbumInfo = addToAlbumInfo,
         removePhotosFromAlbum = removePhotosFromAlbum,
         getFeatureFlagFlow = getFeatureFlagFlow,
         broadcastMessages = broadcastMessages,

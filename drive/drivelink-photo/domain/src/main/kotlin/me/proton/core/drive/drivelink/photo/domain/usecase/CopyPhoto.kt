@@ -18,9 +18,16 @@
 
 package me.proton.core.drive.drivelink.photo.domain.usecase
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.extension.onProtonHttpException
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.crypto.domain.usecase.file.CreateCopyInfo
 import me.proton.core.drive.documentsprovider.domain.usecase.GetContentDigest
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.files.domain.usecase.CopyFile
@@ -28,6 +35,7 @@ import me.proton.core.drive.link.domain.entity.CopyInfo
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.ParentId
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.photo.domain.entity.AddToRemoveFromAlbumResult
 import me.proton.core.drive.photo.domain.usecase.GetRelatedPhotoIds
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.core.drive.share.domain.usecase.GetShare
@@ -41,6 +49,8 @@ class CopyPhoto @Inject constructor(
     private val getShare: GetShare,
     private val getPhotoShare: GetPhotoShare,
     private val getRelatedPhotoIds: GetRelatedPhotoIds,
+    private val createCopyInfo: CreateCopyInfo,
+    private val configurationProvider: ConfigurationProvider,
 ) {
 
     suspend operator fun invoke(
@@ -91,6 +101,55 @@ class CopyPhoto @Inject constructor(
                 copyInfo = copyInfo,
             ).getOrThrow()
         }
+        fileId
+    }
+
+    suspend operator fun invoke(
+        newParentId: ParentId,
+        fileIds: List<FileId>,
+        shouldUpdateEvent: Boolean = true,
+    ): List<Result<FileId>> = withContext(Dispatchers.IO) {
+        coRunCatching {
+            fileIds.chunked(configurationProvider.contentDigestsInParallel)
+                .flatMap { chunk ->
+                    chunk.map { fileId ->
+                        async {
+                            val fileShare = getShare(fileId.shareId).toResult().getOrThrow()
+                            val parentShare = getShare(newParentId.shareId).toResult().getOrThrow()
+                            require(fileShare.volumeId != parentShare.volumeId) {
+                                "Cannot copy photo to the same volume"
+                            }
+                            Triple(parentShare.volumeId, fileId, getRelatedPhotoIds(fileShare.volumeId, fileId).getOrThrow())
+                        }
+                    }.awaitAll()
+                }
+                .groupBy({it.first}) {
+                    it.second to it.third
+                }
+                .map { (volumeId, relatedPhotoIds) ->
+                    createCopyInfo(
+                        newVolumeId = volumeId,
+                        newParentId = newParentId,
+                        fileIds = fileIds,
+                        relatedPhotoIds = relatedPhotoIds.toMap(),
+                    ).getOrThrow()
+                }
+                .flatMap { copyInfos ->
+                    fileIds.chunked(configurationProvider.contentDigestsInParallel)
+                        .flatMap { chunk ->
+                            chunk.map { fileId ->
+                                async {
+                                    invoke(
+                                        newParentId = newParentId,
+                                        fileId = fileId,
+                                        copyInfo = copyInfos[fileId]!!,
+                                        shouldUpdateEvent = shouldUpdateEvent,
+                                    )
+                                }
+                            }.awaitAll()
+                        }
+                }
+        }.getOrThrow()
     }
 
     private suspend fun optionalUpdateEventAction(

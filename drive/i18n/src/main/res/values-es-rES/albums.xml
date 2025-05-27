@@ -141,7 +141,7 @@
   <string name="albums_empty_album_screen_title">No hay fotos</string>
   <string name="albums_empty_album_screen_description">Las fotos añadidas por ti o por otros miembros aparecerán aquí</string>
   <string name="albums_empty_albums_list_screen_title">Ningún álbum</string>
-  <string name="albums_empty_albums_list_screen_description">Los álbumes que crees o a los que te unas aparecerán aquí.</string>
+  <string name="albums_empty_albums_list_screen_description">Los álbumes que crees o a los que te unas aparecerán aquí</string>
   <string name="albums_empty_albums_my_albums_screen_description">Los álbumes que crees aparecerán aquí</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">No hay álbumes compartidos</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Los álbumes que has compartido aparecerán aquí</string>
@@ -161,4 +161,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Añadir al álbum compartido</string>
   <string name="albums_share_multiple_photos_options_album_details">Álbum compartido</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nuevo álbum compartido</string>
+  <string name="albums_add_to_album_start_message">Añadiendo fotos al álbum cifrado. Mantén la aplicación abierta mientras el proceso está en curso.</string>
+  <string name="albums_add_to_albums_options_new_album">Añadir al nuevo álbum</string>
+  <string name="albums_add_to_albums_options_shared_album">Mi álbum compartido</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">De %1$s</string>
 </resources>

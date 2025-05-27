@@ -62,6 +62,7 @@ import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.presentation.component.BottomNavigation
 import me.proton.core.drive.base.presentation.component.ModalBottomSheet
+import me.proton.core.drive.base.presentation.component.RunOnFirstLifecycleStateLaunchedEffect
 import me.proton.core.drive.device.domain.entity.DeviceId
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
@@ -177,7 +178,7 @@ fun HomeScreen(
                 .testTag(HomeScreenTestTag.screen),
         )
     } ?: DeferredCircularProgressIndicator(modifier)
-    LaunchedEffect(Unit) {
+    RunOnFirstLifecycleStateLaunchedEffect {
         viewEvent.onFirstLaunch()
     }
 }

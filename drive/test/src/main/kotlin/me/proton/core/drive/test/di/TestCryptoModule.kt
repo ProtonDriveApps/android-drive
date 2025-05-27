@@ -22,8 +22,11 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import me.proton.core.crypto.android.aead.AndroidAeadCryptoFactory
 import me.proton.core.crypto.android.context.AndroidCryptoContext
 import me.proton.core.crypto.android.srp.GOpenPGPSrpChallenge
+import me.proton.core.crypto.common.aead.AeadCrypto
+import me.proton.core.crypto.common.aead.AeadCryptoFactory
 import me.proton.core.crypto.common.context.CryptoContext
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.crypto.common.srp.SrpChallenge
@@ -55,7 +58,18 @@ class TestCryptoModule {
     ): CryptoContext =
         AndroidCryptoContext(
             keyStoreCrypto = keyStoreCrypto,
-            aeadCrypto = FakeAeadCrypto(),
+            aeadCryptoFactory = object : AeadCryptoFactory {
+                override val default: AeadCrypto
+                    get() = FakeAeadCrypto()
+
+                override fun create(
+                    keyAlgorithm: String,
+                    transformation: String,
+                    authTagBits: Int,
+                    ivBytes: Int
+                ): AeadCrypto = default
+
+            },
             pgpCrypto = FakePGPCrypto(),
             srpCrypto = FakeSrpCrypto(),
         )

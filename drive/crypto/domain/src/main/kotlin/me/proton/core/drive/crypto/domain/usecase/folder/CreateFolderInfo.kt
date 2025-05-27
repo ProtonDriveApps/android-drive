@@ -68,7 +68,10 @@ class CreateFolderInfo @Inject constructor(
             parentLinkId = parentFolder.id.id,
             name = encryptAndSignText(
                 encryptKey = parentFolderKey.keyHolder,
-                verifyKey = getAddressKeys(userId, signatureAddress).keyHolder,
+                signKey = getAddressKeys(
+                    userId = userId,
+                    email = signatureAddress,
+                ).keyHolder,
                 text = folderName,
             ).getOrThrow(),
             hash = hmacSha256(parentFolderHashKey, folderName).getOrThrow(),

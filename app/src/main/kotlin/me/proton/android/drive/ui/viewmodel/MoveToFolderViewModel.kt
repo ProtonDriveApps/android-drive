@@ -114,7 +114,7 @@ class MoveToFolderViewModel @Inject constructor(
         error("Move without any drive link")
     }
     private var viewEvent: MoveToFolderViewEvent? = null
-    private val createFolderAction = Action(
+    private val createFolderAction = Action.Icon(
         iconResId = CorePresentation.drawable.ic_proton_folder_plus,
         contentDescriptionResId = I18N.string.folder_option_create_folder,
         onAction = { viewEvent?.onCreateFolder?.invoke() },

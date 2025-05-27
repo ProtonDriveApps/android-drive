@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.getDefaultMessage
-import me.proton.android.drive.photos.domain.usecase.AddToAlbumInfo
 import me.proton.android.drive.photos.domain.usecase.RemovePhotosFromAlbum
 import me.proton.android.drive.photos.presentation.extension.processRemove
 import me.proton.android.drive.ui.options.Option
@@ -40,8 +39,6 @@ import me.proton.android.drive.ui.options.filterAll
 import me.proton.android.drive.ui.options.filterPermissions
 import me.proton.android.drive.ui.options.filterShare
 import me.proton.core.drive.base.data.extension.log
-import me.proton.core.drive.base.domain.extension.getOrNull
-import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -49,9 +46,7 @@ import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.documentsprovider.domain.usecase.ExportToDownload
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.drivelink.domain.extension.isPhoto
 import me.proton.core.drive.drivelink.domain.extension.lowestCommonPermissions
-import me.proton.core.drive.drivelink.domain.extension.toVolumePhotoListing
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
@@ -80,7 +75,6 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
     private val sendToTrash: SendToTrash,
     private val exportToDownload: ExportToDownload,
     private val deselectLinks: DeselectLinks,
-    private val addToAlbumInfo: AddToAlbumInfo,
     private val removePhotosFromAlbum: RemovePhotosFromAlbum,
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
@@ -105,7 +99,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
         driveLinks: List<DriveLink>,
         runAction: (suspend () -> Unit) -> Unit,
         navigateToMove: (SelectionId, parentId: FolderId?) -> Unit,
-        navigateToCreateNewAlbum: () -> Unit,
+        navigateToAddToAlbumsOptions: (SelectionId) -> Unit,
         navigateToShareMultiplePhotosOptions: (SelectionId) -> Unit,
         dismiss: () -> Unit,
     ): Flow<List<OptionEntry<Unit>>> = combine(
@@ -146,21 +140,11 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
                             }
                         }
                     )
-                    is Option.CreateAlbum -> option.build(
+                    is Option.AddToAlbums -> option.build(
                         runAction = runAction,
-                        createAlbum = {
-                            viewModelScope.launch {
-                                addToAlbumInfo(
-                                    driveLinks
-                                        .filterIsInstance<DriveLink.File>()
-                                        .filter { driveLink -> driveLink.isPhoto }
-                                        .map { driveLink -> driveLink.toVolumePhotoListing() }
-                                        .toSet()
-                                ).getOrNull(LogTag.PHOTO, "Adding photos to album info failed.")
-                                navigateToCreateNewAlbum()
-                                deselectLinks(selectionId)
-                            }
-                        },
+                        navigateToAddToAlbumsOptions = {
+                            navigateToAddToAlbumsOptions(selectionId)
+                        }
                     )
                     is Option.RemoveFromAlbum -> option.build(
                         runAction = runAction,
@@ -226,7 +210,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
 
         private val options = setOfNotNull(
             Option.RemoveFromAlbum,
-            Option.CreateAlbum,
+            Option.AddToAlbums,
             Option.ShareMultiplePhotos,
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Option.Download else null,
             Option.Move,

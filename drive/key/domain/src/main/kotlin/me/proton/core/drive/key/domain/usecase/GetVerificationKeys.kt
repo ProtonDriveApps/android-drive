@@ -45,7 +45,10 @@ class GetVerificationKeys @Inject constructor(
         if (email.isEmpty()) {
             fallbackTo.getKey(link)
         } else {
-            getPublicAddressKeys(link.userId, email).getOrThrow()
+            getPublicAddressKeys(
+                userId = link.userId,
+                email = email,
+            ).getOrThrow()
         }
     }
 

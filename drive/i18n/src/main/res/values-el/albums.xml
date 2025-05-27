@@ -139,9 +139,9 @@
     <item quantity="other">%1$d στοιχεία απέτυχαν</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Καμία φωτογραφία</string>
-  <string name="albums_empty_album_screen_description">Οι φωτογραφίες που προστέθηκαν από εσάς ή άλλα μέλη θα εμφανίζονται εδώ</string>
+  <string name="albums_empty_album_screen_description">Οι φωτογραφίες που εσείς ή άλλα μέλη προσθέτεται θα εμφανίζονται εδώ</string>
   <string name="albums_empty_albums_list_screen_title">Κανένα άλμπουμ</string>
-  <string name="albums_empty_albums_list_screen_description">Τα άλμπουμ που δημιουργείτε η συμμετέχετε θα εμφανίζονται εδώ</string>
+  <string name="albums_empty_albums_list_screen_description">Τα άλμπουμ που δημιουργείτε ή συμμετέχετε θα εμφανίζονται εδώ</string>
   <string name="albums_empty_albums_my_albums_screen_description">Τα άλμπουμ που δημιουργείτε θα εμφανίζονται εδώ</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Χωρίς κοινόχρηστα άλμπουμ</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Τα άλμπουμ που έχετε κοινοποιήσει θα εμφανίζονται εδώ</string>
@@ -161,4 +161,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Προσθήκη στο κοινοποιημένο άλμπουμ</string>
   <string name="albums_share_multiple_photos_options_album_details">Κοινοποιημένο άλμπουμ</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Νέο κοινοποιημένο άλμπουμ</string>
+  <string name="albums_add_to_album_start_message">Γίνεται προσθήκη φωτογραφιών στο κρυπτογραφημένο άλμπουμ. Παρακαλούμε διατηρήστε την εφαρμογή ανοιχτή κατά τη διάρκεια της διαδικασίας.</string>
+  <string name="albums_add_to_albums_options_new_album">Προσθήκη σε νέο άλμπουμ</string>
+  <string name="albums_add_to_albums_options_shared_album">Το κοινόχρηστο άλμπουμ μου</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Από %1$s</string>
 </resources>

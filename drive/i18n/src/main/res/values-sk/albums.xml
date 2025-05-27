@@ -159,14 +159,14 @@
     <item quantity="other">%1$d položiek zlyhalo</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Žiadne fotografie</string>
-  <string name="albums_empty_album_screen_description">Fotografie pridané vami alebo inými členmi sa zobrazia tu</string>
+  <string name="albums_empty_album_screen_description">Fotografie, ktoré pridáte vy alebo iní členovia, sa budú zobrazovať tu</string>
   <string name="albums_empty_albums_list_screen_title">Žiadne albumy</string>
   <string name="albums_empty_albums_list_screen_description">Na tomto mieste sa zobrazia albumy, ktoré vytvoríte alebo ku ktorým sa pripojíte</string>
-  <string name="albums_empty_albums_my_albums_screen_description">The albums that you create will appear here</string>
-  <string name="albums_empty_albums_shared_by_me_screen_title">No shared albums</string>
-  <string name="albums_empty_albums_shared_by_me_screen_description">Albums you\'ve shared will appear here</string>
-  <string name="albums_empty_albums_shared_with_me_screen_title">No albums shared with me</string>
-  <string name="albums_empty_albums_shared_with_me_screen_description">Albums shared with you will appear here</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Na tomto mieste sa zobrazia albumy, ktoré vytvoríte</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Žiadne zdieľané albumy</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Na tomto mieste sa zobrazia albumy, ktoré zdieľate</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Žiadne albumy neboli so mnou zdieľané</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Tu sa zobrazia s vami zdieľané albumy</string>
   <!--
         Variable %1$d is a quantity of albums shared
         Example:
@@ -183,4 +183,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Pridať do zdieľaného albumu</string>
   <string name="albums_share_multiple_photos_options_album_details">Zdieľaný album</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nový zdieľaný album</string>
+  <string name="albums_add_to_album_start_message">Pridávanie fotografií do zašifrovaného albumu. Počas prebiehajúceho procesu nechajte aplikáciu otvorenú.</string>
+  <string name="albums_add_to_albums_options_new_album">Pridať do nového albumu</string>
+  <string name="albums_add_to_albums_options_shared_album">Môj zdieľaný album</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Od %1$s</string>
 </resources>

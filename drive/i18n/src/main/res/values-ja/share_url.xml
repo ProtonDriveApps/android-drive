@@ -102,6 +102,6 @@
   <string name="shared_user_invitations_decline_button">拒否</string>
   <string name="shared_user_invitations_accept_success">共有アイテムを受け入れました</string>
   <string name="shared_user_invitations_decline_success">共有アイテムを拒否しました</string>
-  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
-  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
+  <string name="shared_user_album_invitations_accept_success">招待が承認されました</string>
+  <string name="shared_user_album_invitations_decline_success">招待は拒否されました</string>
 </resources>

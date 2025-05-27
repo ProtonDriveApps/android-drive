@@ -62,10 +62,8 @@ import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.arch.onSuccess
-import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Permissions
-import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.isViewerOrEditorOnly
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
@@ -108,7 +106,6 @@ import me.proton.core.drive.photo.domain.entity.PhotoListing
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.share.domain.entity.ShareId
-import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.share.user.domain.usecase.GetShareUsers
 import me.proton.core.drive.sorting.domain.entity.Direction
 import me.proton.core.util.kotlin.CoreLogger
@@ -173,7 +170,7 @@ class AlbumViewModel @Inject constructor(
     val listEffect: Flow<ListEffect>
         get() = _listEffect.asSharedFlow()
     private var viewEvent: AlbumViewEvent? = null
-    private val albumOptionsAction = Action(
+    private val albumOptionsAction = Action.Icon(
         iconResId = CorePresentation.drawable.ic_proton_three_dots_vertical,
         contentDescriptionResId = I18N.string.common_more,
         notificationDotVisible = false,
@@ -233,14 +230,6 @@ class AlbumViewModel @Inject constructor(
                     emit(emptyList())
                     if (error.cause !is NoSuchElementException) {
                         error.cause?.log(VIEW_MODEL)
-                        broadcastMessages(
-                            userId = userId,
-                            message = error.getDefaultMessage(
-                                appContext,
-                                configurationProvider.useExceptionMessage
-                            ),
-                            type = BroadcastMessage.Type.WARNING
-                        )
                     }
                 }
             })

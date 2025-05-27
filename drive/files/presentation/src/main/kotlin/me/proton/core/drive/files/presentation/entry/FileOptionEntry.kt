@@ -311,3 +311,12 @@ class LeaveAlbumEntry(
     @Composable
     override fun getLabel(): String = stringResource(I18N.string.common_leave_album_action)
 }
+
+class AddToAlbumsFileEntry(
+    override val onClick: (DriveLink.File) -> Unit,
+) : FileOptionEntry.SimpleEntry<DriveLink.File> {
+    override val icon: Int = CorePresentation.drawable.ic_proton_plus
+
+    @Composable
+    override fun getLabel(): String = stringResource(id = I18N.string.common_add_to_albums_action)
+}

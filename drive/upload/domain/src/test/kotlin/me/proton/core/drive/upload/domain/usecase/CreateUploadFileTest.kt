@@ -60,6 +60,7 @@ class CreateUploadFileTest {
             block: suspend (InputStream) -> T,
         ): T = error("Should not call uri resolver")
 
+        override suspend fun exists(uriString: String) = error("Should not call uri resolver")
         override suspend fun getName(uriString: String) = error("Should not call uri resolver")
         override suspend fun getSize(uriString: String) = error("Should not call uri resolver")
         override suspend fun getMimeType(uriString: String) = error("Should not call uri resolver")
@@ -80,6 +81,7 @@ class CreateUploadFileTest {
         coEvery { linkUploadRepository.insertUploadFileLinks(any()) } answers { firstArg() }
         createUploadFile = CreateUploadFile(
             linkUploadRepository,
+            isUploadFileExist = IsUploadFileExist(uriResolver),
             getUploadFileName = GetUploadFileName(
                 uriResolver = uriResolver,
                 validateLinkName = ValidateLinkName(configurationProvider)

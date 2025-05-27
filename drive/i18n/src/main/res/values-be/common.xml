@@ -73,6 +73,7 @@
   <string name="common_leave_album_action">Выйсці з альбома</string>
   <string name="common_start_action">Пачаць</string>
   <string name="common_save_all_action">Захаваць усе</string>
+  <string name="common_add_to_albums_action">Дадаць у альбомы</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аўдыя</string>

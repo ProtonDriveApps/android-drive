@@ -149,9 +149,9 @@
     <item quantity="other">Articole eșuate: %1$d</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Nu există fotografii</string>
-  <string name="albums_empty_album_screen_description">Fotografiile adăugate vor apărea aici.</string>
+  <string name="albums_empty_album_screen_description">Fotografii pe care dvs. sau alți membri le adăugați vor apărea aici.</string>
   <string name="albums_empty_albums_list_screen_title">Nu există albume</string>
-  <string name="albums_empty_albums_list_screen_description">Albumele create sau la care v-ați alăturat vor apărea aici.</string>
+  <string name="albums_empty_albums_list_screen_description">Albumele pe care le creați sau la care v-ați alăturat vor apărea aici</string>
   <string name="albums_empty_albums_my_albums_screen_description">Albumele create vor apărea aici.</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Nu există albume partajate.</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Albumele pe care le-ați partajat vor apărea aici.</string>
@@ -172,4 +172,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Adăugare la album partajat</string>
   <string name="albums_share_multiple_photos_options_album_details">Album partajat</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Partajare album nou</string>
+  <string name="albums_add_to_album_start_message">Se adaugă fotografii în albumul criptat. Mențineți aplicația deschisă pe durata procesului.</string>
+  <string name="albums_add_to_albums_options_new_album">Adăugare în album nou</string>
+  <string name="albums_add_to_albums_options_shared_album">Album partajat</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">De către %1$s</string>
 </resources>

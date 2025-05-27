@@ -28,7 +28,7 @@
   <string name="files_upload_content_description_cancel_upload">Annullér upload af fil</string>
   <string name="files_upload_failure_storage_full_title">Lageret er fuldt</string>
   <string name="files_upload_failure_storage_full_description">Din konto har ikke mere lagerplads. Frigør plads eller opgrader til et abonnement med mere plads.</string>
-  <string name="files_operation_failed_all">Operation failed</string>
+  <string name="files_operation_failed_all">Operation mislykkedes</string>
   <!--
         Variable %1$d is a number of failed links in the failed operation
         Example:

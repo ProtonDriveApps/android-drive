@@ -43,6 +43,10 @@ class FileUriResolver(
             ?.inputStream()
             ?.use { fileInputStream -> block(fileInputStream) }
 
+    override suspend fun exists(uriString: String): Boolean = coRunCatching(coroutineContext) {
+        uri(uriString).file?.exists() ?: false
+    }.getOrNull() ?: false
+
     override suspend fun getName(uriString: String): String? = coRunCatching(coroutineContext) {
         uri(uriString).name
     }.getOrNull()

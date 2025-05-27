@@ -20,9 +20,13 @@ package me.proton.android.drive.ui.robot
 
 import me.proton.android.drive.photos.presentation.component.ProtonPreviewAlbumItemTestTags
 import me.proton.android.drive.photos.presentation.extension.albumDetails
+import me.proton.android.drive.ui.extension.withItemType
+import me.proton.android.drive.ui.extension.withLayoutType
 import me.proton.android.drive.ui.screen.PhotosAndAlbumsScreenTestTag
 import me.proton.android.drive.ui.test.AbstractBaseTest.Companion.targetContext
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.files.presentation.extension.ItemType
+import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.test.android.instrumented.utils.StringUtils
 import me.proton.test.fusion.Fusion.allNodes
 import me.proton.test.fusion.Fusion.node
@@ -43,8 +47,16 @@ object AlbumsTabRobot :
     private val filterSharedByMe get() = node.withText(I18N.string.albums_filter_shared_by_me)
     private val filterSharedWithMe get() = node.withText(I18N.string.albums_filter_shared_with_me)
 
-    private val emptyTitle get() = node.withText(I18N.string.albums_empty_albums_list_screen_title)
-    private val emptyDescription get() = node.withText(I18N.string.albums_empty_albums_list_screen_description)
+    private val emptyTitle get() = node.withText(I18N.string.albums_empty_album_screen_title)
+    private val emptyDescription get() = node.withText(I18N.string.albums_empty_album_screen_description)
+
+    private val emptyListTitle get() = node.withText(I18N.string.albums_empty_albums_list_screen_title)
+    private val emptyListDescription get() = node.withText(I18N.string.albums_empty_albums_list_screen_description)
+
+    private val emptyMyAlbumsDescription get () = node.withText(I18N.string.albums_empty_albums_my_albums_screen_description)
+
+    private val emptySharedByMeTitle get() = node.withText(I18N.string.albums_empty_albums_shared_by_me_screen_title)
+    private val emptySharedByMeDescription get() = node.withText(I18N.string.albums_empty_albums_shared_by_me_screen_description)
 
     private val emptySharedWithMeTitle get() = node.withText(I18N.string.albums_empty_albums_shared_with_me_screen_title)
     private val emptySharedWithMeDescription get() = node.withText(I18N.string.albums_empty_albums_shared_with_me_screen_description)
@@ -73,6 +85,10 @@ object AlbumsTabRobot :
 
     fun swipeFiltersToEnd() = apply {
         filterSharedWithMe.onParent().swipeLeft()
+    }
+
+    fun swipeFiltersToStart() = apply {
+        filterSharedWithMe.onParent().swipeRight()
     }
 
     fun clickPlusButton() = plusButton.clickTo(CreateAlbumTabRobot)
@@ -113,13 +129,34 @@ object AlbumsTabRobot :
             .await { assertIsDisplayed() }
     }
 
+    fun assertAlbumCountEquals(count: Int) {
+        allNodes
+            .withItemType(ItemType.Album)
+            .assertCountEquals(count)
+    }
+
     fun assertAlbumIsNotDisplayed(name: String) {
         node.withText(name).await { assertIsNotDisplayed() }
     }
 
-    fun assertIsEmpty() {
+    fun assertIsEmptyAlbum() {
         emptyTitle.await { assertIsDisplayed() }
         emptyDescription.await { assertIsDisplayed() }
+    }
+
+    fun assertIsEmptyList() {
+        emptyListTitle.await { assertIsDisplayed() }
+        emptyListDescription.await { assertIsDisplayed() }
+    }
+
+    fun assertIsEmptyMyAlbums() {
+        emptyListTitle.await { assertIsDisplayed() }
+        emptyMyAlbumsDescription.await { assertIsDisplayed() }
+    }
+
+    fun assertIsEmptySharedByMe() {
+        emptySharedByMeTitle.await { assertIsDisplayed() }
+        emptySharedByMeDescription.await { assertIsDisplayed() }
     }
 
     fun assertIsEmptySharedWithMe() {

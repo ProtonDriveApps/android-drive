@@ -280,28 +280,33 @@ class PhotoRepositoryImpl @Inject constructor(
         db.taggedPhotoListingDao.deleteAll(userId, volumeId.id, tag.value)
     }
 
-    override suspend fun insertOrIgnore(volumeId: VolumeId, photoListings: List<PhotoListing>) {
-        val entities = photoListings.map { photoListing ->
-            if (photoListing.tag == null) {
-                photoListing.toPhotoListingEntity(volumeId)
-            } else {
-                photoListing.toTaggedPhotoListingEntity(volumeId)
+    override suspend fun insertOrIgnore(
+        volumeId: VolumeId,
+        photoListings: List<PhotoListing>,
+    ) = db.inTransaction {
+        photoListings.map { it.linkId }
+            .distinct()
+            .groupBy({ link -> link.shareId }) { link -> link.id }
+            .forEach { (shareId, linkIds) ->
+                db.taggedPhotoListingDao.delete(shareId.userId, shareId.id, linkIds)
             }
-        }
-        db.inTransaction {
-            db.photoListingDao.insertOrIgnore(
-                * entities.filterIsInstance<PhotoListingEntity>().toTypedArray()
-            )
-            photoListings.map { it.linkId }
-                .distinct()
-                .groupBy({ link -> link.shareId }) { link -> link.id }
-                .forEach { (shareId, linkIds) ->
-                    db.taggedPhotoListingDao.delete(shareId.userId, shareId.id, linkIds)
+        photoListings.groupBy { photoListing -> photoListing.tag != null }
+            .forEach { (tagged, photoListings) ->
+                if (tagged) {
+                    val map = photoListings.associate { photoListing ->
+                        photoListing.toTaggedPhotoListingEntity(volumeId)
+                    }
+                    db.taggedPhotoListingDao.insertOrUpdate(*map.keys.toTypedArray())
+                    db.taggedRelatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
+
+                } else {
+                    val map = photoListings.associate { photoListing ->
+                        photoListing.toPhotoListingEntity(volumeId)
+                    }
+                    db.photoListingDao.insertOrUpdate(*map.keys.toTypedArray())
+                    db.relatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
                 }
-            db.taggedPhotoListingDao.insertOrIgnore(
-                * entities.filterIsInstance<TaggedPhotoListingEntity>().toTypedArray()
-            )
-        }
+            }
     }
 
     override suspend fun getRelatedPhotos(

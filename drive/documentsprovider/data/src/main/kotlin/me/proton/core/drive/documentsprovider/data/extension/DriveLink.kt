@@ -50,7 +50,7 @@ internal fun DriveLink.addTo(cursor: MatrixCursor.RowBuilder) {
 
     cursor.add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, DocumentId(userId, id).encode())
     cursor.add(DocumentsContract.Document.COLUMN_DISPLAY_NAME, name)
-    cursor.add(DocumentsContract.Document.COLUMN_SIZE, size)
+    cursor.add(DocumentsContract.Document.COLUMN_SIZE, size.value)
     cursor.add(
         DocumentsContract.Document.COLUMN_MIME_TYPE,
         if (this is Folder) DocumentsContract.Document.MIME_TYPE_DIR else mimeType

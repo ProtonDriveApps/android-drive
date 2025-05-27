@@ -41,7 +41,7 @@ interface UploadWorkManager {
         shouldAnnounceEvent: Boolean,
         priority: Long,
         shouldBroadcastErrorMessage: Boolean,
-    )
+    ) : List<UploadFileLink>
 
     suspend fun upload(
         uploadBulk: UploadBulk,
@@ -74,4 +74,10 @@ interface UploadWorkManager {
     fun broadcastFilesBeingUploaded(folder: Folder, uriStrings: List<String>)
 
     fun broadcastUploadLimitReached(userId: UserId)
+
+    fun broadcastFilesBeingUploaded(
+        folder: Folder,
+        uriStrings: List<String>,
+        uploadFileLinks: List<UploadFileLink>
+    )
 }

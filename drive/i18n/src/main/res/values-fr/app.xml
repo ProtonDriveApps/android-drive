@@ -274,4 +274,6 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Changer d\'abonnement pour %1$s</string>
+  <!-- endregion -->
+  <!-- endregion -->
 </resources>

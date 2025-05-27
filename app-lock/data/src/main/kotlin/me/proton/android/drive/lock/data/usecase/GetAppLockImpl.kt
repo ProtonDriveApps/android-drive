@@ -27,7 +27,7 @@ import javax.inject.Inject
 
 class GetAppLockImpl @Inject constructor() : GetAppLock {
     override operator fun invoke(secretKey: SecretKey, appLockType: AppLockType): Result<AppLock> = coRunCatching {
-        require(secretKey is PgpSecretKey)
+        require(secretKey is PgpSecretKey) { "secret key is no a PgpSecretKey, but ${secretKey.javaClass.simpleName}" }
         AppLock(
             key = secretKey.lockedKey,
             type = appLockType,

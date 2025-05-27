@@ -46,7 +46,7 @@
             "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
     -->
   <string name="albums_leave_album_dialog_description">Ali ste prepričani, da želite zapustiti album »%1$s«?\nIzgubili boste dostop do fotografij, ki jih še niste shranili.</string>
-  <string name="albums_leave_album_dialog_leave_without_saving_action">Leave without saving</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Zapusti brez shranjevanja</string>
   <string name="albums_leave_album_dialog_save_and_leave_action">Shrani fotografije in zapusti</string>
   <string name="albums_add_zero_to_album_button">Dodaj v album</string>
   <!--
@@ -159,14 +159,14 @@
     <item quantity="other">%1$d items failed</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Brez fotografij</string>
-  <string name="albums_empty_album_screen_description">Fotografije, ki ste jih dodali vi ali drugi člani, bodo prikazane tukaj</string>
+  <string name="albums_empty_album_screen_description">Photos that you or other members add will appear here</string>
   <string name="albums_empty_albums_list_screen_title">Brez albumi</string>
-  <string name="albums_empty_albums_list_screen_description">Albumi, ki jih ustvarite ali se jim pridružite, bodo prikazani tukaj</string>
-  <string name="albums_empty_albums_my_albums_screen_description">The albums that you create will appear here</string>
-  <string name="albums_empty_albums_shared_by_me_screen_title">No shared albums</string>
-  <string name="albums_empty_albums_shared_by_me_screen_description">Albums you\'ve shared will appear here</string>
+  <string name="albums_empty_albums_list_screen_description">Albums that you create or join will appear here</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Albums that you create will appear here</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Ni albumov v skupni rabi</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Albumi, ki ste jih dali v deli, bodo prikazani tukaj</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">No albums shared with me</string>
-  <string name="albums_empty_albums_shared_with_me_screen_description">Albums shared with you will appear here</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Albumi, ki so bili dani v skupno rabo z vami, bodo prikazani tukaj</string>
   <!--
         Variable %1$d is a quantity of albums shared
         Example:
@@ -183,4 +183,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Dodaj v album v skupni rabi</string>
   <string name="albums_share_multiple_photos_options_album_details">Album v skupni rabi</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nov album v skupni rabi</string>
+  <string name="albums_add_to_album_start_message">Dodajanje fotografij v šifriran album. Aplikacija naj bo med postopkom odprta.</string>
+  <string name="albums_add_to_albums_options_new_album">Add to new album</string>
+  <string name="albums_add_to_albums_options_shared_album">My shared album</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">By %1$s</string>
 </resources>

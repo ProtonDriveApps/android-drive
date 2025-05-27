@@ -93,6 +93,7 @@ fun HomeNavGraph(
         { linkId -> navigateToFileOrFolderOptions(linkId, null) },
         { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId) },
         navigateToParentFolderOptions,
+        navigateToSubscription,
     )
     addPhotos(
         homeNavController,
@@ -156,6 +157,7 @@ fun HomeNavGraph(
         { selectionId -> navigateToMultipleFileOrFolderOptions(selectionId) },
         navigateToParentFolderOptions,
         navigateToComputerOptions,
+        navigateToSubscription,
     )
     addSharedTabs(
         navController = homeNavController,
@@ -172,6 +174,7 @@ fun HomeNavGraph(
         },
         navigateToParentFolderOptions = navigateToParentFolderOptions,
         navigateToUserInvitation = navigateToUserInvitation,
+        navigateToSubscription,
     )
 }
 
@@ -187,6 +190,7 @@ fun NavGraphBuilder.addFiles(
     navigateToFileOrFolderOptions: (LinkId) -> Unit,
     navigateToMultipleFileOrFolderOptions: (SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
+    navigateToSubscription: () -> Unit,
 ) = composable(
     route = Screen.Files.route,
     enterTransition = defaultEnterSlideTransition {
@@ -232,6 +236,7 @@ fun NavGraphBuilder.addFiles(
             navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
             navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
             navigateToParentFolderOptions = navigateToParentFolderOptions,
+            navigateToSubscription = navigateToSubscription,
         )
     } ?: let {
         val userId = UserId(requireNotNull(arguments.getString(Screen.Files.USER_ID)))
@@ -374,6 +379,7 @@ fun NavGraphBuilder.addComputers(
     navigateToMultipleFileOrFolderOptions: (SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     navigateToComputerOptions: (deviceId: DeviceId) -> Unit,
+    navigateToSubscription: () -> Unit,
 ) = composable(
     route = Screen.Computers.route,
     enterTransition = defaultEnterSlideTransition {
@@ -462,6 +468,7 @@ fun NavGraphBuilder.addComputers(
                     navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
                     navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
                     navigateToParentFolderOptions = navigateToParentFolderOptions,
+                    navigateToSubscription = navigateToSubscription,
                     navigateBack = { navController.popBackStack() },
                 )
             }
@@ -512,6 +519,7 @@ fun NavGraphBuilder.addSharedTabs(
     navigateToMultipleFileOrFolderOptions: (SelectionId) -> Unit,
     navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
     navigateToUserInvitation: (Boolean) -> Unit,
+    navigateToSubscription: () -> Unit,
 ) = composable(
     route = Screen.SharedTabs.route,
     enterTransition = defaultEnterSlideTransition {
@@ -570,6 +578,7 @@ fun NavGraphBuilder.addSharedTabs(
                 navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
                 navigateToMultipleFileOrFolderOptions = navigateToMultipleFileOrFolderOptions,
                 navigateToParentFolderOptions = navigateToParentFolderOptions,
+                navigateToSubscription = navigateToSubscription,
                 navigateBack = { navController.popBackStack() },
             )
         } else {

@@ -19,5 +19,5 @@
 <resources>
   <string name="whats_new_title">Čo je nové</string>
   <string name="whats_new_albums_title">Albumy s fotkami sú tu!</string>
-  <string name="whats_new_albums_description">Organize your memories with our new Albums feature. Filter by videos, favorites, and more—all with the same end-to-end encryption you trust.</string>
+  <string name="whats_new_albums_description">Usporiadajte si spomienky pomocou našej novej funkcie Albumy. Filtrujte podľa videí, obľúbených položiek a ďalších – to všetko s rovnakým end-to-end šifrovaním, ktorému dôverujete.</string>
 </resources>

@@ -67,7 +67,7 @@ class GetBlocksUploadUrl @Inject constructor(
     suspend operator fun invoke(uploadFileLink: UploadFileLink, index: Long): Result<UploadBlocksUrl> = coRunCatching {
         val uploadBlocks = linkUploadRepository.getUploadBlocks(uploadFileLink)
         val fileBlocks = uploadBlocks.filter { uploadBlock -> uploadBlock.index == index }
-        require(fileBlocks.size == 1)
+        require(fileBlocks.size == 1) { "Expecting file block size to be 1, was ${fileBlocks.size}" }
         val (uploadBlock, uploadThumbnail) = if (fileBlocks.first().isThumbnail) {
             emptyList<UploadBlock>() to fileBlocks
         } else {

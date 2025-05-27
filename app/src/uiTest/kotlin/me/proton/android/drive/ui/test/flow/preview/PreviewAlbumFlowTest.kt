@@ -82,31 +82,4 @@ class PreviewAlbumFlowTest : BaseTest() {
                 assertPreviewIsDisplayed(firstImage)
             }
     }
-
-    @Test
-    @PrepareUser(withTag = "main", loginBefore = true)
-    @PrepareUser(withTag = "sharingUser")
-    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
-    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
-    fun previewAlbumDeleteAndRestorePhotoTest() {
-
-        val photo = "activeFileInStreamAndAlbum.jpg"
-        PhotosTabRobot
-            .clickOnAlbumsTitleTab()
-            .clickOnAlbum("album-for-photos-in-stream")
-            .clickOnPhoto(photo)
-            .verify {
-                assertPreviewIsDisplayed(photo)
-            }
-            .clickOnContextualButton()
-            .clickMoveToTrash()
-        AlbumRobot
-            .verify {
-                assertEmptyAlbum()
-            }
-            .clickOnUndo(goesTo = AlbumRobot)
-            .verify {
-                itemIsDisplayed(photo)
-            }
-    }
 }

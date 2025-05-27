@@ -32,5 +32,6 @@ driveModule(
 ) {
     implementation(project(":drive:base:presentation"))
     implementation(libs.core.accountManager)
+    implementation(libs.core.deviceMigration)
     implementation(libs.core.userSettings)
 }

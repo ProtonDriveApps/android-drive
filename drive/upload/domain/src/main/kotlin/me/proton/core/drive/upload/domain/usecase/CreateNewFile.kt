@@ -27,17 +27,24 @@ import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.usecase.UpdateLinkFileInfo
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadFileCreationTime
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
+import me.proton.core.drive.upload.domain.resolver.UriResolver
+import java.io.FileNotFoundException
 import javax.inject.Inject
 
 class CreateNewFile @Inject constructor(
+    private val isUploadFileExist: IsUploadFileExist,
     private val createNewFile: CreateNewFile,
     private val getLink: GetLink,
     private val updateUploadState: UpdateUploadState,
     private val updateUploadFileCreationTime: UpdateUploadFileCreationTime,
     private val updateLinkFileInfo: UpdateLinkFileInfo,
+    private val uriResolver: UriResolver,
 ) {
     suspend operator fun invoke(uploadFileLink: UploadFileLink): Result<UploadFileLink> = coRunCatching {
         with (uploadFileLink) {
+            uriString?.let { uriString ->
+                checkFileExists(uriString)
+            }
             updateUploadState(id, UploadState.CREATING_NEW_FILE).getOrThrow()
             updateUploadFileCreationTime(id, TimestampS()).getOrThrow()
             try {
@@ -56,5 +63,13 @@ class CreateNewFile @Inject constructor(
                 throw e
             }
         }
+    }
+
+    private suspend fun checkFileExists(uriString: String) {
+        val uploadFileExist = isUploadFileExist(uriString)
+        if (!uploadFileExist) {
+            throw FileNotFoundException("File does not exist or is trashed $uriString")
+        }
+        uriResolver.useInputStream(uriString) {}
     }
 }

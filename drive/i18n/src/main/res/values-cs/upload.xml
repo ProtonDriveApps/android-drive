@@ -37,6 +37,32 @@
     <item quantity="many">%1$d souborů je nahráváno do: %2$s</item>
     <item quantity="other">%1$d souborů je nahráváno do: %2$s</item>
   </plurals>
+  <!--
+        Variable %1$d is a quantity of files that failed to be uploaded
+        Variable %2$s is a folder name where files failed to be uploaded to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_failed_notification">
+    <item quantity="one">%1$d soubor se nepodařilo nahrát do: %2$s</item>
+    <item quantity="few">%1$d soubory se nepodařilo nahrát do: %2$s</item>
+    <item quantity="many">%1$d souborů se nepodařilo nahrát do: %2$s</item>
+    <item quantity="other">%1$d souborů se nepodařilo nahrát do: %2$s</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that are being ignored
+        Variable %2$s is a folder name where files are being ignored to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_being_ignored_notification">
+    <item quantity="one">%1$d soubor byl ignorován</item>
+    <item quantity="few">%1$d soubory byly ignorovány</item>
+    <item quantity="many">%1$d souborů bylo ignorováno</item>
+    <item quantity="other">%1$d souborů bylo ignorováno</item>
+  </plurals>
   <string name="files_upload_preparing">Příprava nahrání. Toto může chvíli trvat.</string>
   <!--
         Variable %1$s is the maximum number of uploading files

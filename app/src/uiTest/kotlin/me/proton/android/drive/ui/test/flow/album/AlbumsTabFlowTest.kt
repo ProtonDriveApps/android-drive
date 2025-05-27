@@ -18,9 +18,13 @@
 
 package me.proton.android.drive.ui.test.flow.album
 
+import androidx.test.espresso.Espresso
 import dagger.hilt.android.testing.HiltAndroidTest
+import me.proton.android.drive.photos.presentation.component.Album
 import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
+import me.proton.android.drive.ui.robot.AlbumRobot
+import me.proton.android.drive.ui.robot.AlbumRobot.assertAlbumNameIsDisplayed
 import me.proton.android.drive.ui.robot.AlbumsTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.ExternalStorageBaseTest
@@ -61,14 +65,14 @@ class AlbumsTabFlowTest : ExternalStorageBaseTest() {
     @Test
     @PrepareUser(withTag = "main", loginBefore = true)
     @PrepareUser(withTag = "sharingUser")
-    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 10, sharedWithUserTag = "main")
     @FeatureFlag(DRIVE_ALBUMS, ENABLED)
     fun albumSharedWithMeFilter() {
         AlbumsTabRobot
             .swipeFiltersToEnd()
             .clickOnFilterSharedWithMe()
             .verify {
-                assertIsEmptySharedWithMe()
+                assertAlbumIsDisplayed("album-for-photos-uploaded-by-other-user")
             }
     }
 
@@ -94,6 +98,52 @@ class AlbumsTabFlowTest : ExternalStorageBaseTest() {
     @Test
     @PrepareUser(withTag = "main", loginBefore = true)
     @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 10, sharedWithUserTag = "main")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun albumAllFilter() {
+        val newAlbumName = "new-album"
+        val existingAlbumName = "album-for-photos-uploaded-by-other-user"
+        PhotosTabRobot
+            .clickOnAlbumsTitleTab()
+            .clickPlusButton()
+            .typeName(newAlbumName)
+            .clickOnDone(AlbumRobot)
+            .verify {assertEmptyAlbum()}
+            .clickBack(AlbumsTabRobot)
+        AlbumsTabRobot
+            .clickOnFilterAll()
+            .verify {
+                assertAlbumNameIsDisplayed(newAlbumName)
+                assertAlbumNameIsDisplayed(existingAlbumName)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 10, sharedWithUserTag = "main")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun albumMyAlbumsFilter() {
+        val newAlbumName = "new-album"
+        val existingAlbumName = "album-for-photos-uploaded-by-other-user"
+        PhotosTabRobot
+            .clickOnAlbumsTitleTab()
+            .clickPlusButton()
+            .typeName(newAlbumName)
+            .clickOnDone(AlbumRobot)
+            .verify {assertEmptyAlbum()}
+            .clickBack(AlbumRobot)
+        AlbumsTabRobot
+            .clickOnFilterAlbums()
+            .verify {
+                assertAlbumNameIsDisplayed(newAlbumName)
+                assertAlbumIsNotDisplayed(existingAlbumName)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
     @FeatureFlag(DRIVE_ALBUMS, ENABLED)
     fun albumWithPhotos() {
@@ -107,6 +157,94 @@ class AlbumsTabFlowTest : ExternalStorageBaseTest() {
                 assertAlbumNameIsDisplayed(albumName)
                 assertItemsInAlbum(albumPhotoCount)
                 assertVisibleMediaItemsInAlbum(albumPhotoCount)
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 10, sharedWithUserTag = "main")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun albumAllFilterEmptyState() {
+        val album = "album-for-photos-uploaded-by-other-user"
+        AlbumsTabRobot
+            .swipeFiltersToEnd()
+            .clickOnFilterSharedWithMe()
+            .verify { assertAtLeastOneAlbumIsDisplayed() }
+            .clickOnAlbum(album)
+            .clickOnMoreButton()
+            .clickLeaveAlbum()
+            .verify { assertDescriptionIsDisplayed(album) }
+            .clickOnLeaveWithoutSaving(AlbumsTabRobot)
+            .swipeFiltersToStart()
+            .clickOnFilterAll()
+            .verify {
+                assertIsEmptyList()
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 10, sharedWithUserTag = "main")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun albumMyAlbumsEmptyState() {
+        AlbumsTabRobot
+            .clickOnFilterAlbums()
+            .verify {
+                assertIsEmptyMyAlbums()
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "sharingUser", value = 10, sharedWithUserTag = "main")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun albumSharedByMeEmptyState() {
+        AlbumsTabRobot
+            .clickOnFilterSharedByMe()
+            .verify {
+                assertIsEmptySharedByMe()
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @PrepareUser(withTag = "sharingUser")
+    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun albumSharedWithMeEmptyState() {
+        AlbumsTabRobot
+            .swipeFiltersToEnd()
+            .clickOnFilterSharedWithMe()
+            .verify {
+                assertIsEmptySharedWithMe()
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun albumListEmptyState() {
+        AlbumsTabRobot
+            .verify {
+                assertIsEmptyList()
+            }
+    }
+
+    @Test
+    @PrepareUser(withTag = "main", loginBefore = true)
+    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
+    fun albumEmptyState() {
+        val album = "emptyAlbum"
+        AlbumsTabRobot
+            .clickPlusButton()
+            .typeName(album)
+            .clickOnDone(AlbumRobot)
+            Espresso.closeSoftKeyboard()
+            AlbumRobot.verify {
+                assertEmptyAlbum()
             }
     }
 }

@@ -86,7 +86,8 @@ object PhotosTabRobot :
 
     private val itCanTakeAWhileLabel get() = node.withText(I18N.string.photos_empty_loading_label_progress)
     private val closeQuotaBannerButton get() = node.withContentDescription(I18N.string.common_close_action)
-    private val photosBackupDisabled get() = node.withText(I18N.string.error_creating_photo_share_not_allowed)
+    private val photoShareCreationDisabled get() = node.withText(I18N.string.error_creating_photo_share_not_allowed)
+    private val photosBackupDisabled get() = node.withText(I18N.string.photos_error_backup_temporarily_disabled)
     val eitherLoadingOrContentMatcher = SemanticsMatcher("Either loading or content") {
         it.config.getOrNull(SemanticsProperties.TestTag)?.let { tag ->
             tag == PhotosTestTag.loading || tag == PhotosTestTag.content
@@ -222,6 +223,10 @@ object PhotosTabRobot :
 
     fun assertLeftToBackup(items: Int) {
         itemsLeft(items).await { assertIsDisplayed() }
+    }
+
+    fun assertPhotosShareCreationDisabled() {
+        photoShareCreationDisabled.await { assertIsDisplayed() }
     }
 
     fun assertPhotosBackupDisabled() {

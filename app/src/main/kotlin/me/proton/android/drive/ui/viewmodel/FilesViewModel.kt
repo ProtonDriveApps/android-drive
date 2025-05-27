@@ -50,6 +50,7 @@ import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.android.drive.ui.navigation.Screen
+import me.proton.android.drive.usecase.GetSubscriptionAction
 import me.proton.android.drive.usecase.OnFilesDriveLinkError
 import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.domain.arch.onSuccess
@@ -94,7 +95,9 @@ import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.domain.usecase.CancelUploadFile
 import me.proton.core.drive.upload.domain.usecase.GetUploadProgress
+import me.proton.core.drive.user.domain.extension.isFree
 import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
+import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.CoreLogger
 import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.usecase.GetLayoutType
@@ -109,26 +112,28 @@ import me.proton.core.presentation.R as CorePresentation
 @ExperimentalCoroutinesApi
 @SuppressLint("StaticFieldLeak")
 class FilesViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
+    selectLinks: SelectLinks,
+    deselectLinks: DeselectLinks,
+    selectAll: SelectAll,
+    getSelectedDriveLinks: GetSelectedDriveLinks,
+    shouldUpgradeStorage: ShouldUpgradeStorage,
+    getDriveLink: GetDecryptedDriveLink,
+    getLayoutType: GetLayoutType,
+    getSorting: GetSorting,
+    getUserDataStore: GetUserDataStore,
+    userManager: UserManager,
+    getSubscriptionAction: GetSubscriptionAction,
     @ApplicationContext private val appContext: Context,
     private val getDownloadProgress: GetDownloadProgress,
-    getDriveLink: GetDecryptedDriveLink,
     private val cancelUploadFile: CancelUploadFile,
-    getLayoutType: GetLayoutType,
     private val toggleLayoutType: ToggleLayoutType,
     private val getPagedDriveLinks: GetPagedDriveLinksList,
     private val getUploadFileLinks: GetUploadFileLinks,
     private val getUploadProgress: GetUploadProgress,
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
     private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
-    selectLinks: SelectLinks,
-    selectAll: SelectAll,
-    deselectLinks: DeselectLinks,
-    getSelectedDriveLinks: GetSelectedDriveLinks,
-    savedStateHandle: SavedStateHandle,
-    getSorting: GetSorting,
     private val configurationProvider: ConfigurationProvider,
-    shouldUpgradeStorage: ShouldUpgradeStorage,
-    getUserDataStore: GetUserDataStore,
 ) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
@@ -177,12 +182,15 @@ class FilesViewModel @Inject constructor(
     private val _listEffect = MutableSharedFlow<ListEffect>()
     private val _homeEffect = MutableSharedFlow<HomeEffect>()
     private val layoutType = getLayoutType(userId).stateIn(viewModelScope, SharingStarted.Eagerly, LayoutType.DEFAULT)
-    private val addFilesAction = Action(
+    private val addFilesAction = Action.Icon(
         iconResId = CorePresentation.drawable.ic_proton_plus,
         contentDescriptionResId = I18N.string.content_description_files_upload_upload_file,
         notificationDotVisible = true,
         onAction = { viewEvent?.onParentFolderOptions?.invoke() },
     )
+    private val openSubscriptionAction = getSubscriptionAction {
+        viewEvent?.onSubscription?.invoke()
+    }
 
     private val selectedOptionsAction get() = selectedOptionsAction {
         viewEvent?.onSelectedOptions?.invoke()
@@ -219,8 +227,8 @@ class FilesViewModel @Inject constructor(
         selected,
         notificationDotRequested,
         createDocumentNotificationDotViewModel.notificationDotRequested,
-
-    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested, createDocumentNotificationDotRequested ->
+        userManager.observeUser(userId),
+    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested, createDocumentNotificationDotRequested, user ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -230,7 +238,9 @@ class FilesViewModel @Inject constructor(
         if (selected.isEmpty()) {
             val permissions = driveLink?.sharePermissions ?: Permissions.owner
             topBarActions.value = if (permissions.canWrite) {
-                setOf(
+                setOfNotNull(
+                    takeIf { user != null && user.isFree && isRootFolder }
+                        ?.let { openSubscriptionAction },
                     addFilesAction.copy(
                         notificationDotVisible = createDocumentNotificationDotRequested,
                     )
@@ -315,6 +325,7 @@ class FilesViewModel @Inject constructor(
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
         navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
         navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
+        navigateToSubscription: () -> Unit,
         navigateBack: () -> Unit,
         lifecycle: Lifecycle,
     ): FilesViewEvent = object : FilesViewEvent {
@@ -376,6 +387,7 @@ class FilesViewModel @Inject constructor(
         override val onSelectDriveLink = { driveLink: DriveLink -> onSelectDriveLink(driveLink) }
         override val onDeselectDriveLink = { driveLink: DriveLink -> onDeselectDriveLink(driveLink) }
         override val onBack = { onBack() }
+        override val onSubscription = navigateToSubscription
     }.also { viewEvent ->
         this.viewEvent = viewEvent
     }

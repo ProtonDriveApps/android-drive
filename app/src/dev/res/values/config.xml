@@ -18,5 +18,6 @@
   -->
 
 <resources>
+    <bool name="core_feature_auth_signin_two_step_enabled">false</bool>
     <bool name="core_feature_common_password_check_enabled">false</bool>
 </resources>

@@ -50,9 +50,10 @@ class UploadEventMapper(
             getUploadFileLink(event.uploadFileLinkId).toResult().getOrThrow()
                 .takeIf { uploadFileLink -> uploadFileLink.isPhoto() }
                 ?.let { uploadFileLink ->
-                    val uploadCreationDateTime =
-                        requireNotNull(uploadFileLink.uploadCreationDateTime)
-                    val size = requireNotNull(uploadFileLink.size)
+                    val uploadCreationDateTime = requireNotNull(uploadFileLink.uploadCreationDateTime) {
+                        "upload creation date time is required"
+                    }
+                    val size = requireNotNull(uploadFileLink.size) { "size is required" }
                     PhotosEvent.UploadDone(
                         duration = clock().value - uploadCreationDateTime.value,
                         sizeKB = size.toKiB(),

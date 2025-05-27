@@ -59,6 +59,7 @@ import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
+import me.proton.core.drive.upload.data.usecase.BroadcastFilesBeingUploaded
 import me.proton.core.drive.upload.data.worker.CreateUploadFileLinkWorker
 import me.proton.core.drive.upload.data.worker.UploadCleanupWorker
 import me.proton.core.drive.upload.data.worker.UploadEventWorker
@@ -80,6 +81,7 @@ class UploadWorkManagerImpl @Inject constructor(
     private val getUploadBlocks: GetUploadBlocks,
     private val getUploadFileLinks: GetUploadFileLinksPaged,
     private val broadcastMessages: BroadcastMessages,
+    private val broadcastFilesBeingUploaded: BroadcastFilesBeingUploaded,
     private val createUploadFile: CreateUploadFile,
     private val updateUploadFileInfo: UpdateUploadFileInfo,
     private val updateUploadState: UpdateUploadState,
@@ -124,8 +126,8 @@ class UploadWorkManagerImpl @Inject constructor(
         shouldAnnounceEvent: Boolean,
         priority: Long,
         shouldBroadcastErrorMessage: Boolean,
-    ) {
-        createUploadFile(
+    ): List<UploadFileLink> {
+        val uploadFileLinks = createUploadFile(
             userId = userId,
             volumeId = volumeId,
             parentId = folderId,
@@ -151,8 +153,11 @@ class UploadWorkManagerImpl @Inject constructor(
                         announceUploadEvent(uploadFileLink, newUploadEvent(uploadFileLink.id))
                     }
                 }
-            }
-        workManager.enqueueUpload(userId, shouldAnnounceEvent)
+            }.getOrNull().orEmpty()
+        if(uploadFileLinks.isNotEmpty()) {
+            workManager.enqueueUpload(userId, shouldAnnounceEvent)
+        }
+        return uploadFileLinks
     }
 
     override suspend fun upload(
@@ -292,6 +297,18 @@ class UploadWorkManagerImpl @Inject constructor(
                 folder.name,
             ),
             type = BroadcastMessage.Type.INFO,
+        )
+
+    override fun broadcastFilesBeingUploaded(
+        folder: Folder,
+        uriStrings: List<String>,
+        uploadFileLinks: List<UploadFileLink>,
+    ) =
+        broadcastFilesBeingUploaded(
+            userId = folder.userId,
+            folderName = folder.name,
+            uriStringSize = uriStrings.size,
+            uploadFileLinksSize = uploadFileLinks.size,
         )
 
     override fun broadcastUploadLimitReached(userId: UserId) =

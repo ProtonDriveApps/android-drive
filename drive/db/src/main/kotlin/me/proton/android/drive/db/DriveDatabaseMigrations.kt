@@ -573,4 +573,10 @@ object DriveDatabaseMigrations {
             PhotoDatabase.MIGRATION_4.migrate(db)
         }
     }
+
+    val MIGRATION_89_90 = object : Migration(89, 90) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            AccountDatabase.MIGRATION_10.migrate(db)
+        }
+    }
 }

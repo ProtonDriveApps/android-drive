@@ -21,8 +21,10 @@ package me.proton.core.drive.backup.domain.usecase
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.backup.domain.entity.BackupError
+import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.extension.toEventBackupState
 import me.proton.core.drive.backup.domain.manager.BackupManager
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -37,6 +39,7 @@ class StopBackup @Inject constructor(
     private val announceEvent: AnnounceEvent,
     private val getAllFolders: GetAllFolders,
     private val markAllEnqueuedAsReady: MarkAllEnqueuedAsReady,
+    private val saveBucketIdsForMigration: SaveBucketIdsForMigration,
 ) {
 
     suspend operator fun invoke(folderId: FolderId, error: BackupError) = coRunCatching {
@@ -44,6 +47,10 @@ class StopBackup @Inject constructor(
         announceEvent(folderId.userId, Event.BackupStopped(folderId, error.type.toEventBackupState()))
         logBackupStats(folderId)
         addBackupError(folderId, error).getOrThrow()
+        if (error.type == BackupErrorType.MIGRATION) {
+            saveBucketIdsForMigration(folderId)
+                .getOrNull(BACKUP, "Cannot save bucket ids after backup stopped due to migration")
+        }
         getAllFolders(folderId).getOrThrow().forEach { backupFolder ->
             markAllEnqueuedAsReady(backupFolder).onSuccess { count ->
                 CoreLogger.d(BACKUP, "Mark $count files as ready")

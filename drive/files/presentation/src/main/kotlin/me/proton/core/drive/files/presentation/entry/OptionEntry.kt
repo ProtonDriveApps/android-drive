@@ -47,11 +47,11 @@ class TrashEntry(
     override val label: Int = I18N.string.files_send_to_trash_action
 }
 
-class CreateAlbumEntry(
+class AddToAlbumsEntry(
     override val onClick: (Unit) -> Unit,
 ) : OptionEntry<Unit> {
     override val icon: Int = CorePresentation.drawable.ic_proton_plus
-    override val label: Int = I18N.string.common_create_album_action
+    override val label: Int = I18N.string.common_add_to_albums_action
 }
 
 class RemoveFromAlbumEntry(

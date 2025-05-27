@@ -40,7 +40,10 @@ class CreateShareUrlInfo @Inject constructor(
 ) {
     suspend operator fun invoke(share: Share): Result<ShareUrlInfo> = coRunCatching {
         val userId = share.id.userId
-        val addressId = requireNotNull(share.addressId) // TODO: this can be null if share was not get by bootstrap, try fallback to creator then
+        // TODO: this can be null if share was not get by bootstrap, try fallback to creator then
+        val addressId = requireNotNull(share.addressId) {
+            "share address id is required to create share url info"
+        }
         val randomUrlPassword = generatePassphrase(urlPassphraseSize, true)
         require(randomUrlPassword.length == RANDOM_URL_PASSWORD_SIZE) {
             "Random URL password size (${randomUrlPassword.length}) does not match requirement (${RANDOM_URL_PASSWORD_SIZE})"

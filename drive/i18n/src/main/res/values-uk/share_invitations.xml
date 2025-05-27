@@ -29,10 +29,10 @@
             "2 persons added"
     -->
   <plurals name="share_via_invitations_person_added">
-    <item quantity="one">Додано 1 людину</item>
-    <item quantity="few">Додано %1$d людини</item>
-    <item quantity="many">Додано %1$d людей</item>
-    <item quantity="other">Додано %1$d людей</item>
+    <item quantity="one">Додано 1 користувача</item>
+    <item quantity="few">Додано %1$d користувачів</item>
+    <item quantity="many">Додано %1$d користувачів</item>
+    <item quantity="other">Додано %1$d користувачів</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -40,10 +40,10 @@
             "2 persons cannot be invited"
     -->
   <plurals name="share_via_invitations_person_added_error">
-    <item quantity="one">Не можна запросити 1 людину</item>
-    <item quantity="few">Не можна запросити %1$d людини</item>
-    <item quantity="many">Не можна запросити %1$d людей</item>
-    <item quantity="other">Не можна запросити %1$d людей</item>
+    <item quantity="one">Не вдається запросити 1 користувача</item>
+    <item quantity="few">Не вдається запросити %1$d користувачів</item>
+    <item quantity="many">Не вдається запросити %1$d користувачів</item>
+    <item quantity="other">Не вдається запросити %1$d користувачів</item>
   </plurals>
   <!--
         Variable %1$d is a number
@@ -51,10 +51,10 @@
             "Sharing with 2 persons"
     -->
   <plurals name="share_via_invitations_sharing_with">
-    <item quantity="one">Поширено для 1 людини</item>
-    <item quantity="few">Поширено для %1$d людей</item>
-    <item quantity="many">Поширено для %1$d людей</item>
-    <item quantity="other">Поширено для %1$d людей</item>
+    <item quantity="one">Поширено для 1 користувача</item>
+    <item quantity="few">Поширено для %1$d користувачів</item>
+    <item quantity="many">Поширено для %1$d користувачів</item>
+    <item quantity="other">Поширено для %1$d користувачів</item>
   </plurals>
   <string name="common_permission_owner">Власник</string>
   <string name="common_permission_admin">Адміністратор</string>
@@ -72,19 +72,19 @@
         Examples:
             "user@mail.com (Accepted)"
     -->
-  <string name="share_via_invitations_external_invitation_accepted">%1$s (Прийнята)</string>
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Прийнято)</string>
   <!--
         Variable %1$s is an email
         Examples:
             "user@mail.com (Unknown)"
     -->
   <string name="share_via_invitations_external_invitation_unknown">%1$s (Невідомо)</string>
-  <string name="share_via_invitations_add_people_hint">Додати людей</string>
+  <string name="share_via_invitations_add_people_hint">Додати користувачів</string>
   <string name="share_via_invitations_copy_invite_link_action">Копіювати посилання запрошення</string>
   <string name="share_via_invitations_remove_access_action">Вилучити доступ</string>
-  <string name="share_via_invitations_stop_sharing_description">Видалити посилання та доступ для всіх</string>
+  <string name="share_via_invitations_stop_sharing_description">Видалити посилання і скасувати доступ для всіх</string>
   <string name="share_via_invitations_resend_invite_action">Повторно надіслати запрошення</string>
-  <string name="share_via_invitations_resend_invite_success">Запрошення знову надіслано</string>
+  <string name="share_via_invitations_resend_invite_success">Запрошення надіслано повторно</string>
   <!--
         Variable %1$d is a number
         Examples:

@@ -153,11 +153,11 @@
   <string name="photos_raws_empty_title">Nu există fotografii RAW</string>
   <string name="photos_raws_empty_description">Fotografiile RAW vor apărea aici.</string>
   <string name="photos_share_migration_in_progress_title">Setare albume și filtre</string>
-  <string name="photos_share_migration_in_progress_description">Dacă aveți o bibliotecă foto mare, ar putea dura ceva timp. Puteți închide aplicația. Vom lucra la ea în fundal.</string>
+  <string name="photos_share_migration_in_progress_description">Dacă aveți multe fotografii, ar putea dura ceva timp. Puteți închide aplicația. Vom lucra în fundal.</string>
   <string name="photos_share_migration_needed_banner_title">Este necesară migrarea datelor</string>
   <string name="photos_share_migration_needed_banner_description">După migrare, puteți folosi funcții noi, cum ar fi filtrele și albumele foto.</string>
   <string name="photos_important_updates_title">Actualizări importante</string>
-  <string name="photos_important_updates_subtitle">Trebuie actualizată biblioteca foto</string>
+  <string name="photos_important_updates_subtitle">Galeria foto trebuie actualizată</string>
   <string name="photos_important_updates_description">Această actualizare rapidă vă pregătește fotografiile pentru funcții noi, cum ar fi filtrele și albumele.</string>
   <string name="photos_important_updates_cancel_action">Amintește-mi mai târziu</string>
 </resources>

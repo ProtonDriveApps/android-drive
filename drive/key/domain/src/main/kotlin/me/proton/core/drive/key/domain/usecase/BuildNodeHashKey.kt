@@ -76,7 +76,11 @@ class BuildNodeHashKey @Inject constructor(
     ) = coRunCatching {
         NodeHashKey(
             decryptKey = key,
-            legacyVerifyKey = getAddressKeys(userId, signatureEmail),
+            legacyVerifyKey = getAddressKeys(
+                userId = userId,
+                email = signatureEmail,
+                isUsedForSignatureVerification = true,
+            ),
             encryptedHashKey = nodeHashKey,
         )
     }

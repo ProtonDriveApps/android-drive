@@ -106,7 +106,7 @@ class UploadFiles @Inject constructor(
             throw NotEnoughSpaceException()
         } else {
             with(uploadWorkManager) {
-                upload(
+                val uploadFileLinks = upload(
                     userId = folder.userId,
                     volumeId = folder.volumeId,
                     folderId = folder.id,
@@ -122,6 +122,7 @@ class UploadFiles @Inject constructor(
                     broadcastFilesBeingUploaded(
                         folder = folder,
                         uriStrings = uriStrings,
+                        uploadFileLinks = uploadFileLinks,
                     )
                 }
             }

@@ -18,10 +18,51 @@
 
 package me.proton.android.drive.ui.test.flow.account
 
+import androidx.test.espresso.intent.rule.IntentsRule
+import androidx.test.rule.GrantPermissionRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.runBlocking
+import me.proton.android.drive.initializer.MainInitializer
+import me.proton.android.drive.ui.MainActivity
+import me.proton.android.drive.ui.extension.mainUserId
+import me.proton.android.drive.ui.rules.OverlayRule
+import me.proton.android.drive.ui.rules.SlowTestRule
+import me.proton.android.drive.ui.test.AbstractBaseTest
 import me.proton.android.drive.ui.test.BaseTest
 import me.proton.core.auth.test.MinimalSignUpExternalTests
+import me.proton.core.domain.entity.UserId
+import me.proton.core.test.rule.ProtonRule
+import me.proton.core.test.rule.extension.protonAndroidComposeRule
+import org.junit.Rule
+import org.junit.rules.RuleChain
 
 @HiltAndroidTest
-open class SignUpFlowTest : BaseTest(), MinimalSignUpExternalTests
+open class SignUpFlowTest : AbstractBaseTest(), MinimalSignUpExternalTests {
+    private val permissionRule: GrantPermissionRule = runBlocking {
+        GrantPermissionRule.grant(*baseTestPermissions.toTypedArray())
+    }
+
+    val protonRule: ProtonRule = protonAndroidComposeRule<MainActivity>(
+        annotationTestData = driveTestDataRule.scenarioAnnotationTestData,
+        fusionEnabled = true,
+        additionalRules = linkedSetOf(
+            IntentsRule(),
+            SlowTestRule(),
+        ),
+        beforeHilt = {
+            configureFusion()
+        },
+        afterHilt = {
+            MainInitializer.init(it.targetContext)
+        },
+        logoutBefore = true
+    )
+
+    override val mainUserId: UserId get() = error("unlogged test")
+
+    @get:Rule(order = 2)
+    val ruleChain: RuleChain = RuleChain
+        .outerRule(permissionRule)
+        .around(protonRule)
+}
 

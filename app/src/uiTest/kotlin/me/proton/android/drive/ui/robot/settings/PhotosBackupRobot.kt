@@ -52,7 +52,7 @@ object PhotosBackupRobot : Robot, NavigationBarRobot {
     fun clickFolder(name: String) = node.withText(name).clickTo(PhotosBackupRobot)
     fun clickConfirm() = confirmButton.clickTo(PhotosBackupRobot)
 
-    fun assertPhotosBackupDisabled() {
+    fun assertPhotosShareCreationDisabled() {
         photosBackupDisabled.await { assertIsDisplayed() }
     }
 

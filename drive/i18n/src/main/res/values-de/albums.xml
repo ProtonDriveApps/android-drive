@@ -139,7 +139,7 @@
     <item quantity="other">%1$d Einträge fehlgeschlagen</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Keine Fotos</string>
-  <string name="albums_empty_album_screen_description">Fotos, die du oder andere Mitglieder hinzufügst, werden hier angezeigt</string>
+  <string name="albums_empty_album_screen_description">Fotos, die du oder andere Mitglieder hinzufügen, werden hier angezeigt</string>
   <string name="albums_empty_albums_list_screen_title">Keine Alben</string>
   <string name="albums_empty_albums_list_screen_description">Alben, die du erstellst oder denen du beitrittst, werden hier angezeigt</string>
   <string name="albums_empty_albums_my_albums_screen_description">Die von dir erstellten Alben werden hier angezeigt</string>
@@ -161,4 +161,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Zu geteilten Album hinzufügen</string>
   <string name="albums_share_multiple_photos_options_album_details">Geteiltes Album</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Neues geteiltes Album</string>
+  <string name="albums_add_to_album_start_message">Fotos zum verschlüsselten Album hinzufügen. Bitte lass die App während des Vorgangs geöffnet.</string>
+  <string name="albums_add_to_albums_options_new_album">Zu neuem Album hinzufügen</string>
+  <string name="albums_add_to_albums_options_shared_album">Mein geteiltes Album</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Von %1$s</string>
 </resources>

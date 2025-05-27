@@ -18,7 +18,12 @@
 
 package me.proton.core.drive.crypto.domain.usecase.file
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.DecryptLinkName
 import me.proton.core.drive.crypto.domain.usecase.HmacSha256
@@ -57,6 +62,7 @@ class CreateCopyInfo @Inject constructor(
     private val hmacSha256: HmacSha256,
     private val moveNodeKey: MoveNodeKey,
     private val getContentHash: GetContentHash,
+    private val configurationProvider: ConfigurationProvider,
 ) {
 
     suspend operator fun invoke(
@@ -95,7 +101,7 @@ class CreateCopyInfo @Inject constructor(
         ).getOrThrow()
         val hash = hmacSha256(newParentHashKey, decryptedFileName).getOrThrow()
         val nodePassphrase = newLinkKey.nodePassphrase
-        val nodePassphraseSignature =file.nodePassphraseSignature(newLinkKey)
+        val nodePassphraseSignature = file.nodePassphraseSignature(newLinkKey)
         val signatureEmail = file.signatureEmail(signatureAddress)
         if (file.isPhoto) {
             CopyInfo.Photo(
@@ -133,6 +139,98 @@ class CreateCopyInfo @Inject constructor(
                 nodePassphraseSignature = nodePassphraseSignature,
                 signatureEmail = signatureEmail,
             )
+        }
+    }
+
+    suspend operator fun invoke(
+        newVolumeId: VolumeId,
+        newParentId: ParentId,
+        fileIds: List<FileId>,
+        relatedPhotoIds: Map<FileId, List<FileId>>,
+        contentDigestMap: Map<FileId, String?> = emptyMap(),
+    ): Result<Map<FileId, CopyInfo>> = withContext(Dispatchers.IO) {
+        coRunCatching {
+            if (fileIds.isEmpty()) {
+                emptyMap()
+            } else {
+                val userId = fileIds.first().userId
+                val newParent = getLink(newParentId).toResult().getOrThrow()
+                val newParentKey = getNodeKey(newParent).getOrThrow()
+                val newParentHashKey = when(newParent) {
+                    is Link.Album -> getNodeHashKey(newParent, newParentKey).getOrThrow()
+                    is Link.Folder -> getNodeHashKey(newParent, newParentKey).getOrThrow()
+                    else -> error("Either folder of album can be parent")
+                }
+                fileIds.chunked(configurationProvider.contentDigestsInParallel)
+                    .flatMap { chunk ->
+                        chunk.map { fileId ->
+                            async {
+                                val file = getLink(fileId).toResult().getOrThrow()
+                                val currentParent = getLink(file.requireParentId()).toResult().getOrThrow()
+                                val currentParentKey = getNodeKey(currentParent).getOrThrow()
+                                val decryptedFileName = decryptLinkName(file).getOrThrow().text
+                                val signatureAddress = getSignatureAddress(file.shareId).getOrThrow()
+                                val newLinkKey = moveNodeKey(
+                                    userId = userId,
+                                    key = getNodeKey(file).getOrThrow(),
+                                    oldParentKey = currentParentKey,
+                                    newParentKey = newParentKey,
+                                    signatureAddress = signatureAddress,
+                                ).getOrThrow()
+                                val name = changeMessage(
+                                    oldMessage = file.name,
+                                    oldMessageDecryptionKey = currentParentKey.keyHolder,
+                                    newMessage = decryptedFileName,
+                                    newMessageEncryptionKey = newParentKey.keyHolder,
+                                    signKey = getAddressKeys(userId, signatureAddress).keyHolder,
+                                ).getOrThrow()
+                                val hash = hmacSha256(newParentHashKey, decryptedFileName).getOrThrow()
+                                val nodePassphrase = newLinkKey.nodePassphrase
+                                val nodePassphraseSignature = file.nodePassphraseSignature(newLinkKey)
+                                val signatureEmail = file.signatureEmail(signatureAddress)
+                                file.id to
+                                if (file.isPhoto) {
+                                    CopyInfo.Photo(
+                                        name = name,
+                                        hash = hash,
+                                        targetVolumeId = newVolumeId.id,
+                                        targetParentLinkId = newParentId.id,
+                                        nodePassphrase = nodePassphrase,
+                                        nameSignatureEmail = signatureAddress,
+                                        nodePassphraseSignature = nodePassphraseSignature,
+                                        signatureEmail = signatureEmail,
+                                        photos = CopyInfo.Photo.Photos(
+                                            contentHash = contentDigestMap[fileId]?.let { contentDigest ->
+                                                getContentHash(newParentHashKey, contentDigest).getOrThrow()
+                                            } ?: requireNotNull(file.photoContentHash),
+                                            relatedPhotos = relatedPhotoIds[fileId].orEmpty().map { relatedPhotoId ->
+                                                createRelatePhotoCopyInfo(
+                                                    relatedPhotoId = relatedPhotoId,
+                                                    currentParentKey = currentParentKey,
+                                                    newParentKey = newParentKey,
+                                                    newParentHashKey = newParentHashKey,
+                                                    contentDigest = contentDigestMap[relatedPhotoId],
+                                                )
+                                            }
+                                        )
+                                    )
+                                } else {
+                                    CopyInfo.File(
+                                        name = name,
+                                        hash = hash,
+                                        targetVolumeId = newVolumeId.id,
+                                        targetParentLinkId = newParentId.id,
+                                        nodePassphrase = nodePassphrase,
+                                        nameSignatureEmail = signatureAddress,
+                                        nodePassphraseSignature = nodePassphraseSignature,
+                                        signatureEmail = signatureEmail,
+                                    )
+                                }
+                            }
+                        }
+                    }.awaitAll()
+                    .toMap()
+            }
         }
     }
 

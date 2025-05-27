@@ -90,7 +90,7 @@
             "17 items added to your Drive"
     -->
   <plurals name="in_app_notification_add_to_stream_success">
-    <item quantity="other">%1$d items added to your Drive</item>
+    <item quantity="other">%1$d item ditambahkan ke drive Anda</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -99,7 +99,7 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_stream_already_exists">
-    <item quantity="other">%1$d items already exist</item>
+    <item quantity="other">%1$d item sudah ada</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -108,7 +108,7 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_stream_failed">
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="other">%1$d item gagal</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos removed from album
@@ -129,14 +129,14 @@
     <item quantity="other">%1$d item gagal dihapus</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Tidak ada foto</string>
-  <string name="albums_empty_album_screen_description">Foto yang ditambahkan oleh Anda atau anggota lain akan muncul di sini</string>
+  <string name="albums_empty_album_screen_description">Foto yang Anda atau anggota lain tambahkan akan muncul di sini</string>
   <string name="albums_empty_albums_list_screen_title">Tidak ada album</string>
   <string name="albums_empty_albums_list_screen_description">Album yang Anda buat atau gabung akan muncul di sini</string>
-  <string name="albums_empty_albums_my_albums_screen_description">The albums that you create will appear here</string>
-  <string name="albums_empty_albums_shared_by_me_screen_title">No shared albums</string>
-  <string name="albums_empty_albums_shared_by_me_screen_description">Albums you\'ve shared will appear here</string>
-  <string name="albums_empty_albums_shared_with_me_screen_title">No albums shared with me</string>
-  <string name="albums_empty_albums_shared_with_me_screen_description">Albums shared with you will appear here</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Album yang Anda buat akan muncul di sini</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Tidak ada album bersama</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Album yang Anda bagikan akan muncul di sini</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Tidak ada album yang dibagikan dengan saya</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Album yang dibagikan dengan Anda akan muncul di sini</string>
   <!--
         Variable %1$d is a quantity of albums shared
         Example:
@@ -150,4 +150,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Tambahkan ke album bersama</string>
   <string name="albums_share_multiple_photos_options_album_details">Album bersama</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Album bersama baru</string>
+  <string name="albums_add_to_album_start_message">Menambahkan foto ke album terenkripsi. Harap tetap buka aplikasi selagi proses berjalan.</string>
+  <string name="albums_add_to_albums_options_new_album">Tambah ke album baru</string>
+  <string name="albums_add_to_albums_options_shared_album">Album bersama saya</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Oleh %1$s</string>
 </resources>

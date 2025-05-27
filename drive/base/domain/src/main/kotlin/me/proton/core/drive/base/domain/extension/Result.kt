@@ -62,3 +62,11 @@ fun <T> Result<T>.getOrNull(tag: String, message: String? = null): T? = this
         CoreLogger.d(tag, error, message.orEmpty())
     }
     .getOrNull()
+
+fun <T> Result<T>.nullIfNotFound(): Result<T?> = this.recoverCatching { error ->
+    if (error is NoSuchElementException || error.cause is NoSuchElementException) {
+        null
+    } else {
+        throw error
+    }
+}

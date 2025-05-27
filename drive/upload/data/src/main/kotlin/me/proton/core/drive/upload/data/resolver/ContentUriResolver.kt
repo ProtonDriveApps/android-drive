@@ -23,6 +23,9 @@ import android.content.ContentResolver.SCHEME_CONTENT
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
+import android.provider.OpenableColumns
 import kotlinx.coroutines.Dispatchers
 import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.TimestampMs
@@ -52,6 +55,22 @@ class ContentUriResolver(
         applicationContext.contentResolver.openInputStream(Uri.parse(uriString))?.use { inputStream ->
             block(inputStream)
         }
+
+    override suspend fun exists(uriString: String) = withContentResolver(uriString) { uri ->
+        query(
+            uri,
+            arrayOf(OpenableColumns.DISPLAY_NAME),
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                "${MediaStore.MediaColumns.IS_TRASHED} = 0"
+            } else {
+                null
+            },
+            null,
+            null
+        )?.use { cursor ->
+            cursor.count > 0
+        }
+    } ?: false
 
     override suspend fun getName(uriString: String): String? = withContentResolver(uriString) { uri ->
         query(uri, null, null, null, null)?.use { cursor ->

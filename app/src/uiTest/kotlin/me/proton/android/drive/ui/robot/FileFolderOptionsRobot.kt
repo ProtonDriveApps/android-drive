@@ -50,6 +50,7 @@ object FileFolderOptionsRobot : Robot {
     private val deletePermanentlyButton get() = node.withText(I18N.string.common_delete_permanently_action)
     private val deleteConfirm get() = node.withText(I18N.string.title_files_confirm_deletion)
     private val removeFromAlbum get() = node.withText(I18N.string.common_remove_from_album_action)
+    private val addToAlbumsButton get() = node.withText(I18N.string.common_add_to_albums_action)
 
     fun clickMove() = MoveToFolderRobot.apply {
         moveButton.scrollTo().click()
@@ -116,6 +117,10 @@ object FileFolderOptionsRobot : Robot {
     }
 
     fun clickOpenInBrowserButton() = openInBrowserButton.scrollTo().clickTo(FilesTabRobot)
+
+    fun clickAddToAlbums() = AddToAlbumsOptionsRobot.apply {
+        addToAlbumsButton.scrollTo().click()
+    }
 
     fun numberOfItemsSelectedIsSeen(quantity: Int) {
         node.withTag(MultipleFileFolderOptionsDialogTestTag.fileOrFolderOptions).hasDescendant(

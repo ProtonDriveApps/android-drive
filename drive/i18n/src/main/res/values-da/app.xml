@@ -246,13 +246,13 @@
         Example:
             "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
     -->
-  <string name="drive_lite_promo_description">When you need a little more storage, but not a lot. Introducing %1$s, featuring %2$s storage for only %3$s a month.</string>
+  <string name="drive_lite_promo_description">Når du har brug for lidt mere lagerplads, men ikke ret meget. Vi introducerer %1$s, med %2$s lagerplads for kun %3$s om måneden.</string>
   <!--
         Variable %1$s is the name of the plan
         Example:
             "Get Drive Lite"
     -->
-  <string name="drive_lite_promo_action">Get %1$s</string>
+  <string name="drive_lite_promo_action">Få %1$s</string>
   <!--
         Variable %1$s is a string representation of a storage size
         Variable %2$s is a string representation of a price

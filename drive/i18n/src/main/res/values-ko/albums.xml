@@ -129,10 +129,10 @@
     <item quantity="other">%1$d개 항목 실패</item>
   </plurals>
   <string name="albums_empty_album_screen_title">사진 없음</string>
-  <string name="albums_empty_album_screen_description">나 또는 다른 구성원이 추가한 사진이 여기에 표시됩니다</string>
+  <string name="albums_empty_album_screen_description">Photos that you or other members add will appear here</string>
   <string name="albums_empty_albums_list_screen_title">앨범 없음</string>
-  <string name="albums_empty_albums_list_screen_description">내가 생성하거나 참여한 앨범이 여기에 표시됩니다</string>
-  <string name="albums_empty_albums_my_albums_screen_description">내가 생성한 앨범이 여기에 표시됩니다</string>
+  <string name="albums_empty_albums_list_screen_description">Albums that you create or join will appear here</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Albums that you create will appear here</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">공유된 앨범 없음</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">내가 공유한 앨범이 여기에 표시됩니다</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">나와 공유된 앨범 없음</string>
@@ -150,4 +150,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">공유 앨범에 추가</string>
   <string name="albums_share_multiple_photos_options_album_details">공유된 앨범</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">신규 공유된 앨범</string>
+  <string name="albums_add_to_album_start_message">암호화된 앨범으로 사진 추가 중입니다. 처리되는 동안 앱을 닫지 마세요.</string>
+  <string name="albums_add_to_albums_options_new_album">Add to new album</string>
+  <string name="albums_add_to_albums_options_shared_album">My shared album</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">By %1$s</string>
 </resources>

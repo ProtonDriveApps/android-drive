@@ -40,6 +40,7 @@ import me.proton.core.drive.files.presentation.component.folder.FolderOptions
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.notification.presentation.component.NotificationPermission
 
 @Composable
@@ -53,6 +54,7 @@ fun FileOrFolderOptions(
     navigateToManageAccess: (linkId: LinkId) -> Unit,
     navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
+    navigateToAddToAlbumsOptions: (selectionId: SelectionId) -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -70,6 +72,7 @@ fun FileOrFolderOptions(
         navigateToSendFile = navigateToSendFile,
         navigateToManageAccess = navigateToManageAccess,
         navigateToShareViaInvitations = navigateToShareViaInvitations,
+        navigateToAddToAlbumsOptions = navigateToAddToAlbumsOptions,
         dismiss = dismiss,
         modifier = modifier
             .navigationBarsPadding()
@@ -93,6 +96,7 @@ fun FileOrFolderOptions(
     navigateToSendFile: (fileId: FileId) -> Unit,
     navigateToManageAccess: (linkId: LinkId) -> Unit,
     navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
+    navigateToAddToAlbumsOptions: (selectionId: SelectionId) -> Unit,
     dismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -117,6 +121,7 @@ fun FileOrFolderOptions(
                     navigateToSendFile = navigateToSendFile,
                     navigateToManageAccess = navigateToManageAccess,
                     navigateToShareViaInvitations = navigateToShareViaInvitations,
+                    navigateToAddToAlbumsOptions = navigateToAddToAlbumsOptions,
                     dismiss = dismiss,
                     showCreateDocumentPicker = { filename, onNotFound ->
                         createDocumentLauncher.launchWithNotFound(filename, onNotFound)
@@ -145,6 +150,7 @@ fun FileOrFolderOptions(
                     navigateToSendFile = navigateToSendFile,
                     navigateToManageAccess = navigateToManageAccess,
                     navigateToShareViaInvitations = navigateToShareViaInvitations,
+                    navigateToAddToAlbumsOptions = navigateToAddToAlbumsOptions,
                     dismiss = dismiss,
                 ).flowWithLifecycle(
                     lifecycle = lifecycle,

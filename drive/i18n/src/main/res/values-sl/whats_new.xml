@@ -19,5 +19,5 @@
 <resources>
   <string name="whats_new_title">Novosti</string>
   <string name="whats_new_albums_title">Foto albumi so tu!</string>
-  <string name="whats_new_albums_description">Organize your memories with our new Albums feature. Filter by videos, favorites, and more—all with the same end-to-end encryption you trust.</string>
+  <string name="whats_new_albums_description">Organizirajte svoje spomine z našo novo funkcijo Albumi. Filtrirajte po videoposnetkih, priljubljenih in še več – vse z enakim šifriranjem od konca do konca, ki mu zaupate.</string>
 </resources>

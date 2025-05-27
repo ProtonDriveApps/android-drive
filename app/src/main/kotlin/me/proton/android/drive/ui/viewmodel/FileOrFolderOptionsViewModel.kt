@@ -82,6 +82,7 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
+import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.Volume
@@ -111,6 +112,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     private val toggleFavorite: ToggleFavorite,
     private val addPhotosToStream: AddPhotosToStream,
     private val hasPhotoVolume: HasPhotoVolume,
+    private val selectLinks: SelectLinks,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val selectionId = savedStateHandle.get<String?>(KEY_SELECTION_ID)?.let { SelectionId(it) }
     private var dismiss: (() -> Unit)? = null
@@ -163,6 +165,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         navigateToSendFile: (fileId: FileId) -> Unit,
         navigateToManageAccess: (linkId: LinkId) -> Unit,
         navigateToShareViaInvitations: (linkId: LinkId) -> Unit,
+        navigateToAddToAlbumsOptions: (selectionId: SelectionId) -> Unit,
         dismiss: () -> Unit,
         showCreateDocumentPicker: (String, () -> Unit) -> Unit = { _, _ -> },
     ): Flow<List<FileOptionEntry<T>>> = combine(
@@ -264,6 +267,21 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                             deselectLinks()
                         }
                     }
+                    is Option.AddToAlbums -> option.build(runAction) { driveLink ->
+                            if (selectionId != null) {
+                                navigateToAddToAlbumsOptions(selectionId)
+                            } else {
+                                viewModelScope.launch {
+                                    selectLinks(listOf(driveLink.id))
+                                        .onFailure { error ->
+                                            error.log(VIEW_MODEL, "Failed to select links")
+                                        }
+                                        .onSuccess { selectionId ->
+                                            navigateToAddToAlbumsOptions(selectionId)
+                                        }
+                                }
+                            }
+                    }
                     else -> throw IllegalStateException(
                         "Option ${option.javaClass.simpleName} is not found. Did you forget to add it?"
                     )
@@ -342,7 +360,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         val fileId = driveLink.id
         addPhotosToStream(
             photoIds = listOf(fileId),
-            albumId = requireNotNull(albumId),
+            albumId = requireNotNull(albumId) { "album id is required to save shared photo"},
         ).onFailure { error ->
             error.log(LogTag.ALBUM, "Cannot copy photo to stream: ${fileId.id.logId()}")
             broadcastMessages(
@@ -418,6 +436,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             Option.RemoveFromAlbum,
             Option.OfflineToggle,
             Option.FavoriteToggle,
+            Option.AddToAlbums,
             Option.SaveSharePhoto,
             Option.ShareViaInvitations,
             Option.ManageAccess,

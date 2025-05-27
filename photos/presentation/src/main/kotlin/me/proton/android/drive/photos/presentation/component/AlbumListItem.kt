@@ -26,7 +26,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -96,7 +96,7 @@ fun AlbumListItem(
     val localContext = LocalContext.current
     AlbumListItem(
         albumName = album.name,
-        albumDetails = albumDetails ?: album.details(appContext = localContext, useCreationTime = false),
+        albumDetails = albumDetails,
         isAlbumNameEncrypted = album.cryptoName is CryptoProperty.Encrypted,
         albumPhotoCount = album.photoCount,
         modifier = modifier
@@ -109,7 +109,7 @@ fun AlbumListItem(
 @Composable
 fun AlbumListItem(
     albumName: String,
-    albumDetails: String,
+    albumDetails: String?,
     isAlbumNameEncrypted: Boolean,
     albumPhotoCount: Long,
     modifier: Modifier = Modifier,
@@ -119,7 +119,7 @@ fun AlbumListItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = ProtonDimens.DefaultSpacing)
-            .height(ProtonDimens.DefaultButtonMinHeight),
+            .heightIn(min = 52.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -164,12 +164,14 @@ fun AlbumListItem(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            Text(
-                text = albumDetails,
-                style = ProtonTheme.typography.captionWeak,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            if (albumDetails != null) {
+                Text(
+                    text = albumDetails,
+                    style = ProtonTheme.typography.captionWeak,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
         }
         Text(
             text = albumPhotoCount.toString(),

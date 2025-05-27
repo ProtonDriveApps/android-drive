@@ -156,7 +156,7 @@
   <string name="photos_raws_empty_title">Brez RAW</string>
   <string name="photos_raws_empty_description">Vaše fotografije RAW bodo prikazane tukaj</string>
   <string name="photos_share_migration_in_progress_title">Setting up Albums and Filters</string>
-  <string name="photos_share_migration_in_progress_description">If you have a large photo library, it might take some time. You can close the app. We\'ll work on it in the background.</string>
+  <string name="photos_share_migration_in_progress_description">Če imate veliko knjižnico fotografij, lahko traja nekaj časa. Lahko zaprete aplikacijo. Delali bomo v ozadju.</string>
   <string name="photos_share_migration_needed_banner_title">Potrebna je selitev podatkov</string>
   <string name="photos_share_migration_needed_banner_description">Po selitvi lahko uporabljate nove funkcije, kot so filtri in foto album.</string>
   <string name="photos_important_updates_title">Pomembne posodobitve</string>

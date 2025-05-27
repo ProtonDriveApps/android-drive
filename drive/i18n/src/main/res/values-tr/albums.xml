@@ -139,10 +139,10 @@
     <item quantity="other">%1$d öge kaldırılamadı</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Herhangi bir fotoğraf yok</string>
-  <string name="albums_empty_album_screen_description">Sizin veya diğer üyelerin eklediği fotoğraflar burada görüntülenir</string>
+  <string name="albums_empty_album_screen_description">Sizin veya diğer üyeler tarafından eklenen fotoğraflar burada görünecektir.</string>
   <string name="albums_empty_albums_list_screen_title">Herhangi bir albüm yok</string>
-  <string name="albums_empty_albums_list_screen_description">Oluşturduğunuz veya katıldığınız albümler burada görüntülenir</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Oluşturduğunuz albümler burada görüntülenir</string>
+  <string name="albums_empty_albums_list_screen_description">Oluşturduğunuz veya katıldığınız albümler burada görünecektir.</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Oluşturduğunuz albümler burada görünecektir.</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Paylaşılmış bir albüm yok</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Paylaştığınız albümler burada görüntülenir</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">Benimle paylaşılmış bir albüm yok</string>
@@ -161,4 +161,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Paylaşılan albüme ekle</string>
   <string name="albums_share_multiple_photos_options_album_details">Paylaşılan albüm</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Yeni paylaşılan albüm</string>
+  <string name="albums_add_to_album_start_message">Şifrelenmiş albüme fotoğraf ekliyorsunuz. Lütfen işlem sürerken uygulamayı açık tutun.</string>
+  <string name="albums_add_to_albums_options_new_album">Yeni albüme ekle</string>
+  <string name="albums_add_to_albums_options_shared_album">Paylaştığım albüm</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">%1$s tarafından</string>
 </resources>

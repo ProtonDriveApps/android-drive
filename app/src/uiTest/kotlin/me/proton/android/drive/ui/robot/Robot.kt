@@ -73,6 +73,9 @@ interface Robot {
     fun nodeWithContentDescriptionDisplayed(@StringRes stringRes: Int) =
         node.withContentDescription(stringRes).await { assertIsDisplayed() }
 
+    fun nodeWithContentDescriptionIsNotDisplayed(@StringRes stringRes: Int) =
+        node.withContentDescription(stringRes).await { assertIsNotDisplayed() }
+
     @OptIn(ExperimentalTestApi::class)
     fun waitUntilLoaded(timeout: Duration = 90.seconds) =
         FusionConfig.Compose.testRule.get()

@@ -31,6 +31,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.data.entity.LoggerLevel
+import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -38,6 +40,7 @@ import me.proton.core.drive.feature.flag.domain.usecase.RefreshFeatureFlags
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.UpdateName
+import me.proton.core.drive.upload.data.exception.UploadCleanupException
 import me.proton.core.drive.upload.data.extension.isRetryable
 import me.proton.core.drive.upload.data.extension.retryOrAbort
 import me.proton.core.drive.upload.data.worker.WorkerKeys.KEY_UPLOAD_FILE_LINK_ID
@@ -48,6 +51,7 @@ import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.drive.worker.domain.usecase.CanRun
 import me.proton.core.drive.worker.domain.usecase.Done
 import me.proton.core.drive.worker.domain.usecase.Run
+import java.io.FileNotFoundException
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -88,14 +92,24 @@ class CreateNewFileWorker @AssistedInject constructor(
         createNewFile(uploadFileLink)
             .onFailure { error ->
                 error.handleFeatureDisabled()
-                val retryable = error.isRetryable || error.handle(uploadFileLink)
-                val canRetry = canRetry()
-                return uploadFileLink.retryOrAbort(
-                    retryable = retryable,
-                    canRetry = canRetry,
-                    error = error,
-                    message = "Creating new file failed"
-                )
+                if (error is FileNotFoundException) {
+                    setUploadAsCancelled()
+                    error.log(
+                        tag = logTag(),
+                        message = "File does not exist anymore, cancelling upload",
+                        level = LoggerLevel.WARNING,
+                    )
+                    throw UploadCleanupException(error, uploadFileLink.name)
+                } else {
+                    val retryable = error.isRetryable || error.handle(uploadFileLink)
+                    val canRetry = canRetry()
+                    return uploadFileLink.retryOrAbort(
+                        retryable = retryable,
+                        canRetry = canRetry,
+                        error = error,
+                        message = "Creating new file failed"
+                    )
+                }
             }
         return Result.success()
     }

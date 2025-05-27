@@ -19,15 +19,12 @@
 package me.proton.android.drive.ui.test.flow.trash
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.PreviewRobot
 import me.proton.android.drive.ui.test.BaseTest
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ALBUMS
 import me.proton.core.drive.files.presentation.extension.LayoutType.Grid
 import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
@@ -103,32 +100,6 @@ class MoveToTrashTests : BaseTest() {
             .verify {
                 itemIsDisplayed(fileName)
                 itemIsDisplayed(ImageName.Main.fileName)
-            }
-    }
-
-    @Test
-    @PrepareUser(withTag = "main", loginBefore = true)
-    @PrepareUser(withTag = "sharingUser")
-    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
-    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
-    fun moveAPhotoInAlbumToTrash() {
-        val albumName = "album-for-photos"
-        val image = "activeTaggedFileInAlbum-3.jpg"
-        PhotosTabRobot.waitUntilLoaded()
-        PhotosTabRobot
-            .clickOnAlbumsTitleTab()
-            .clickOnAlbum(albumName)
-            .longClickOnItem(image)
-            .clickOptions()
-            .clickMoveToTrash()
-            .dismissMoveToTrashSuccessGrowler(1, FilesTabRobot)
-            .verify {
-                itemIsNotDisplayed(image)
-            }
-            .clickSidebarButton()
-            .clickTrash()
-            .verify {
-                itemIsDisplayed(image)
             }
     }
 

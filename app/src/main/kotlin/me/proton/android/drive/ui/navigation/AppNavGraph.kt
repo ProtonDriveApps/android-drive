@@ -65,6 +65,7 @@ import me.proton.android.drive.extension.runFromRoute
 import me.proton.android.drive.lock.presentation.component.AppLock
 import me.proton.android.drive.log.DriveLogTag
 import me.proton.android.drive.photos.presentation.component.PhotosPermissionRationale
+import me.proton.android.drive.ui.dialog.AddToAlbumsOptions
 import me.proton.android.drive.ui.dialog.AlbumOptions
 import me.proton.android.drive.ui.dialog.AutoLockDurations
 import me.proton.android.drive.ui.dialog.ComputerOptions
@@ -400,6 +401,7 @@ fun AppNavGraph(
         addConfirmLeaveAlbumDialog(navController)
         addShareMultiplePhotosOptions(navController)
         addPhotosImportantUpdates(navController)
+        addAddToAlbumsOptions(navController)
     }
 }
 
@@ -561,6 +563,11 @@ fun NavGraphBuilder.addFileOrFolderOptions(
                 popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
             }
         },
+        navigateToAddToAlbumsOptions = { selectionId ->
+            navController.navigate(Screen.AddToAlbumsOptions(userId, selectionId)) {
+                popUpTo(Screen.FileOrFolderOptions.route) { inclusive = true }
+            }
+        },
         dismiss = {
             navController.popBackStack(
                 route = Screen.FileOrFolderOptions.route,
@@ -596,8 +603,8 @@ fun NavGraphBuilder.addMultipleFileOrFolderOptions(
                 popUpTo(Screen.MultipleFileOrFolderOptions.route) { inclusive = true }
             }
         },
-        navigateToCreateNewAlbum = {
-            navController.navigate(Screen.PhotosAndAlbums.CreateNewAlbum(userId)) {
+        navigateToAddToAlbumsOptions = { selectionId ->
+            navController.navigate(Screen.AddToAlbumsOptions(userId, selectionId)) {
                 popUpTo(Screen.MultipleFileOrFolderOptions.route) { inclusive = true }
             }
         },
@@ -1463,6 +1470,9 @@ fun NavGraphBuilder.addSettings(navController: NavHostController) = composable(
         navigateToLog = {
             navController.navigate(Screen.Log(userId))
         },
+        navigateToSignOut = {
+            navController.navigate(Screen.Dialogs.SignOut(userId))
+        }
     )
 }
 
@@ -2501,6 +2511,30 @@ fun NavGraphBuilder.addPhotosImportantUpdates(
 ) { _, runAction ->
     PhotosImportantUpdates(
         runAction = runAction,
+    )
+}
+
+fun NavGraphBuilder.addAddToAlbumsOptions(
+    navController: NavHostController,
+) = modalBottomSheet(
+    route = Screen.AddToAlbumsOptions.route,
+    viewState = ModalBottomSheetViewState(dismissOnAction = false),
+    arguments = listOf(
+        navArgument(Screen.AddToAlbumsOptions.USER_ID) { type = NavType.StringType },
+        navArgument(Screen.AddToAlbumsOptions.SELECTION_ID) { type = NavType.StringType },
+    ),
+) { navBackStackEntry, runAction ->
+    val userId = UserId(navBackStackEntry.require(Screen.AddToAlbumsOptions.USER_ID))
+    AddToAlbumsOptions(
+        runAction = runAction,
+        navigateToCreateNewAlbum = {
+            navController.navigate(
+                Screen.PhotosAndAlbums.CreateNewAlbum(userId)
+            )
+        },
+        navigateToAlbum = { albumId ->
+            navController.navigate(Screen.Album(albumId))
+        }
     )
 }
 

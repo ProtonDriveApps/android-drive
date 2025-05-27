@@ -27,7 +27,7 @@
   <string name="computers_synced_folders_empty_title">No hay carpetas sincronizadas</string>
   <string name="computers_synced_folders_empty_description">Las carpetas sincronizadas se\nmostrarán aquí</string>
   <string name="computers_synced_folders_no_folder">La computadora se eliminó</string>
-  <string name="computers_rename_title">Renombrar computadora</string>
+  <string name="computers_rename_title">Cambiar el nombre de la computadora</string>
   <string name="computers_rename_success">Computadora renombrada</string>
   <!--
         Variable %1$s is a computer name

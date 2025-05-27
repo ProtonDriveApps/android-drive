@@ -36,6 +36,7 @@ import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
@@ -127,15 +128,14 @@ class UploadCleanupWorker @AssistedInject constructor(
                     reason = reason,
                 )
             )
-            getBlockFolder(userId, uploadFileLink)
-                .onFailure { error ->
-                    error.log(uploadFileLink.logTag(), "Cannot get block to delete them")
+            getBlockFolder(userId, uploadFileLink).getOrNull(
+                tag = uploadFileLink.logTag(),
+                message = "Cannot get block to delete them",
+            )?.let { file ->
+                if (!file.deleteRecursively()) {
+                    CoreLogger.w(uploadFileLink.logTag(), "Cannot delete all the files")
                 }
-                .onSuccess { file ->
-                    if (!file.deleteRecursively()) {
-                        CoreLogger.w(uploadFileLink.logTag(), "Cannot delete all the files")
-                    }
-                }
+            }
             removeUploadFile(uploadFileLink).onFailure { error ->
                 error.log(uploadFileLink.logTag(), "Cannot remove file")
             }

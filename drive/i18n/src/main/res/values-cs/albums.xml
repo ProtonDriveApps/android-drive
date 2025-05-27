@@ -159,10 +159,10 @@
     <item quantity="other">%1$d položek selhalo</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Žádné fotky</string>
-  <string name="albums_empty_album_screen_description">Zde se objeví fotky přidané vámi nebo jinými členy</string>
+  <string name="albums_empty_album_screen_description">Zde se objeví fotky, které přidáte vy nebo jiní členové</string>
   <string name="albums_empty_albums_list_screen_title">Žádná alba</string>
-  <string name="albums_empty_albums_list_screen_description">Zde se zobrazí alba, která jste vytvořili nebo ke kterým jste se připojili.</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Zde se zobrazí alba, která jste vytvořili</string>
+  <string name="albums_empty_albums_list_screen_description">Zde se zobrazí alba, která vytvoříte nebo ke kterým se připojíte</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Zde se zobrazí alba, která vytvoříte</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Žádná sdílená alba</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Zde se zobrazí alba, která jste sdíleli</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">Žádná alba sdílena se mnou</string>
@@ -183,4 +183,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Přidat do sdíleného alba</string>
   <string name="albums_share_multiple_photos_options_album_details">Sdílené album</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nové sdílené album</string>
+  <string name="albums_add_to_album_start_message">Přidávání fotek do šifrovaného alba. Ponechte aplikaci otevřenou, dokud proces neskončí.</string>
+  <string name="albums_add_to_albums_options_new_album">Přidat do nového alba</string>
+  <string name="albums_add_to_albums_options_shared_album">Mé sdílené album</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Od %1$s</string>
 </resources>

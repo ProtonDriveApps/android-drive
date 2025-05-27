@@ -45,12 +45,14 @@ class GetAddressKeys @Inject constructor(
         userId: UserId,
         email: String,
         fallbackToAllAddressKeys: Boolean = true,
+        isUsedForSignatureVerification: Boolean = false,
     ): Key =
         AddressKeys(
             userAddressRepository.getAddressKeys(
                 userId = userId,
                 email = email,
                 fallbackToAllAddressKeys = fallbackToAllAddressKeys,
+                isUsedForSignatureVerification = isUsedForSignatureVerification,
             )
         )
 }

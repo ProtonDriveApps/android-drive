@@ -48,7 +48,7 @@ class StubbedUploadWorkManager @Inject constructor() : UploadWorkManager {
         shouldAnnounceEvent: Boolean,
         priority: Long,
         shouldBroadcastErrorMessage: Boolean
-    ) {
+    ): List<UploadFileLink> {
         TODO("Not yet implemented")
     }
 
@@ -103,6 +103,14 @@ class StubbedUploadWorkManager @Inject constructor() : UploadWorkManager {
     }
 
     override fun broadcastUploadLimitReached(userId: UserId) {
+        TODO("Not yet implemented")
+    }
+
+    override fun broadcastFilesBeingUploaded(
+        folder: Folder,
+        uriStrings: List<String>,
+        uploadFileLinks: List<UploadFileLink>
+    ) {
         TODO("Not yet implemented")
     }
 }

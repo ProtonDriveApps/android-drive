@@ -97,12 +97,12 @@
     -->
   <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Ingen afventende delte elementer</string>
-  <string name="shared_user_album_invitations_title_empty">No pending shared albums</string>
+  <string name="shared_user_album_invitations_title_empty">Ingen afventende delte albummer</string>
   <string name="shared_user_invitations_description_empty">Alle nye invitationer vil være her</string>
   <string name="shared_user_invitations_accept_button">Accepter</string>
   <string name="shared_user_invitations_decline_button">Afvis</string>
   <string name="shared_user_invitations_accept_success">Delt element accepteret</string>
   <string name="shared_user_invitations_decline_success">Delt element afvist</string>
-  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
-  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
+  <string name="shared_user_album_invitations_accept_success">Invitation accepteret</string>
+  <string name="shared_user_album_invitations_decline_success">Invitation afvist</string>
 </resources>

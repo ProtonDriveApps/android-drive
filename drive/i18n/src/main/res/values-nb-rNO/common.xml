@@ -73,6 +73,7 @@
   <string name="common_leave_album_action">Forlat album</string>
   <string name="common_start_action">Start</string>
   <string name="common_save_all_action">Lagre alle</string>
+  <string name="common_add_to_albums_action">Legg til i album</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Lyd</string>

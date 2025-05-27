@@ -31,4 +31,5 @@ data class SettingsViewEvent(
     val onPhotosBackup: () -> Unit,
     val onDefaultHomeTab: () -> Unit,
     val onShowLog: () -> Unit,
+    val onSignOut: () -> Unit
 )

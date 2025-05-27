@@ -88,16 +88,16 @@ fun TextPreview(
     content: List<String>,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(
-                horizontal = ProtonDimens.MediumSpacing,
-                vertical = ProtonDimens.SmallSpacing
-            )
-    ) {
-        items(content.size) { i ->
-            SelectionContainer {
+    SelectionContainer {
+        LazyColumn(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(
+                    horizontal = ProtonDimens.MediumSpacing,
+                    vertical = ProtonDimens.SmallSpacing
+                )
+        ) {
+            items(content.size) { i ->
                 Text(
                     text = content[i],
                     style = ProtonTheme.typography.defaultSmall,

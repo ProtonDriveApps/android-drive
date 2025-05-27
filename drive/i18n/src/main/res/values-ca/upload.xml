@@ -35,6 +35,28 @@
     <item quantity="one">Pujant %1$d fitxer a: %2$s</item>
     <item quantity="other">Pujant %1$d fitxers a: %2$s</item>
   </plurals>
+  <!--
+        Variable %1$d is a quantity of files that failed to be uploaded
+        Variable %2$s is a folder name where files failed to be uploaded to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_failed_notification">
+    <item quantity="one">No s\'ha pogut carregar %1$d fitxer a: %2$s</item>
+    <item quantity="other">%1$d fitxer no s\'han pogut carregar a: %2$s</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that are being ignored
+        Variable %2$s is a folder name where files are being ignored to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_being_ignored_notification">
+    <item quantity="one">%1$d fitxer es va ignorar</item>
+    <item quantity="other">%1$d fitxers es van ignorar</item>
+  </plurals>
   <string name="files_upload_preparing">S\'està preparant la pujada. Això pot trigar una estona.</string>
   <!--
         Variable %1$s is the maximum number of uploading files

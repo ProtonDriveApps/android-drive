@@ -20,6 +20,7 @@ package me.proton.android.drive.photos.domain.usecase
 
 import me.proton.android.drive.photos.domain.entity.SetupPhotosBackupResult
 import me.proton.core.drive.backup.domain.entity.BackupFolder
+import me.proton.core.drive.backup.domain.entity.BucketEntry
 import me.proton.core.drive.backup.domain.repository.BucketRepository
 import me.proton.core.drive.backup.domain.usecase.AddFolder
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
@@ -36,13 +37,11 @@ class SetupPhotosBackup @Inject constructor(
 
     suspend operator fun invoke(
         folderId: FolderId,
-        folderFilter: (String) -> Boolean,
+        folderFilter: (BucketEntry) -> Boolean,
     ) = coRunCatching {
         setupPhotosConfigurationBackup(folderId).getOrThrow()
         val bucketEntries = bucketRepository.getAll()
-        bucketEntries.filter { entry ->
-            entry.bucketName?.let { name -> folderFilter(name) } ?: false
-        }.map { entry ->
+        bucketEntries.filter(folderFilter).map { entry ->
             BackupFolder(
                 bucketId = entry.bucketId,
                 folderId = folderId,

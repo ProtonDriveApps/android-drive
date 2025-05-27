@@ -35,8 +35,8 @@
   <string name="file_operation_error_file_already_exists_at_destination">Елемент з такою назвою вже існує у теці призначення</string>
   <string name="folder_options_header_title">У \"%1$s\"</string>
   <string name="folder_options_header_title_encrypted">У</string>
-  <string name="files_toggle_layout_to_list_content_description">Подання списку</string>
-  <string name="files_toggle_layout_to_grid_content_description">Подання сітки</string>
+  <string name="files_toggle_layout_to_list_content_description">Подання списком</string>
+  <string name="files_toggle_layout_to_grid_content_description">Подання сіткою</string>
   <!--
         Variable %1$s is a time indicator which is formatted based on the user's locale
         Examples:

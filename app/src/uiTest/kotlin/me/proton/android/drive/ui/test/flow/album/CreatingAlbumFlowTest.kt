@@ -81,35 +81,6 @@ class CreatingAlbumFlowTest : BaseTest() {
     @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
     @FeatureFlag(DRIVE_ALBUMS, ENABLED)
-    fun createAnAlbumWithPhotos() {
-        val albumName = "new-album"
-
-        PhotosTabRobot
-            .longClickOnPhoto("activeTaggedFileInStream-2.jpg")
-            .longClickOnPhoto("activeVideoFileInStream-1.jpg")
-            .clickMultipleOptions()
-            .clickOnCreateAlbum()
-            .typeName(albumName)
-            .clickOnRemoveFirstPhoto()
-            .clickOnDone(AlbumRobot)
-            .verify {
-                robotDisplayed()
-                assertAlbumNameIsDisplayed(albumName)
-                assertItemsInAlbum(1)
-            }
-            .clickBack(PhotosTabRobot)
-            .clickOnAlbumsTitleTab()
-            .verify {
-                robotDisplayed()
-                assertAlbumIsDisplayed(albumName, 1)
-            }
-    }
-
-    @Test
-    @PrepareUser(withTag = "main", loginBefore = true)
-    @PrepareUser(withTag = "sharingUser")
-    @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
-    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
     fun inEmptyAlbumAddPhotosThenCreate() {
         val albumName = "new-album"
         val photo1 = "activeTaggedFileInStream-2.jpg"

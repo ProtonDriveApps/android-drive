@@ -19,5 +19,5 @@
 <resources>
   <string name="whats_new_title">最新情報</string>
   <string name="whats_new_albums_title">写真アルバムが登場！</string>
-  <string name="whats_new_albums_description">Organize your memories with our new Albums feature. Filter by videos, favorites, and more—all with the same end-to-end encryption you trust.</string>
+  <string name="whats_new_albums_description">新しいアルバム機能で思い出を整理しましょう。ビデオ、お気に入りなどでフィルタリングできます。すべて信頼できる同じエンドツーエンド暗号化を使用しています。</string>
 </resources>

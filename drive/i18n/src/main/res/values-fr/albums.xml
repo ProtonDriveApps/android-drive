@@ -139,9 +139,9 @@
     <item quantity="other">%1$d éléments n\'ont pas abouti.</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Aucune photo</string>
-  <string name="albums_empty_album_screen_description">Les photos ajoutées par vous ou par d\'autres membres apparaîtront ici.</string>
+  <string name="albums_empty_album_screen_description">Les photos que vous ou d\'autres membres ajoutez apparaîtront ici.</string>
   <string name="albums_empty_albums_list_screen_title">Aucun album</string>
-  <string name="albums_empty_albums_list_screen_description">Les albums que vous créez ou rejoignez apparaîtront ici.</string>
+  <string name="albums_empty_albums_list_screen_description">Les albums que vous créez ou rejoignez apparaîtront ici</string>
   <string name="albums_empty_albums_my_albums_screen_description">Les albums que vous créez apparaîtront ici.</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Aucun album partagé</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Les albums que vous avez partagés apparaîtront ici</string>
@@ -161,4 +161,14 @@
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Ajouter à l\'album partagé</string>
   <string name="albums_share_multiple_photos_options_album_details">Album partagé</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nouvel album partagé</string>
+  <string name="albums_add_to_album_start_message">Ajout de photos à l’album chiffré. Veuillez garder l’application ouverte pendant toute la durée du processus.</string>
+  <string name="albums_add_to_albums_options_new_album">Ajouter au nouvel album</string>
+  <string name="albums_add_to_albums_options_shared_album">Mon album partagé</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Par %1$s</string>
 </resources>

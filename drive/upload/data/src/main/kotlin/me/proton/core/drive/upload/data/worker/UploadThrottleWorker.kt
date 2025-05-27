@@ -37,6 +37,7 @@ import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
 import me.proton.core.drive.linkupload.domain.entity.NetworkTypeProviderType
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
+import me.proton.core.drive.linkupload.domain.extension.isFileEmpty
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
 import me.proton.core.drive.upload.data.extension.logTag
 import me.proton.core.drive.upload.data.extension.uniqueUploadWorkName
@@ -112,8 +113,6 @@ class UploadThrottleWorker @AssistedInject constructor(
         .get(parentLinkId)
         .let { networkType ->
             val isFileAlreadyCreated = draftRevisionId.isNotEmpty()
-            val fileSize = size
-            val isFileEmpty = fileSize != null && fileSize.value == 0L
             when {
                 isFileAlreadyCreated && isFileEmpty
                 -> FileUploadFlow.EmptyFileAlreadyCreated(

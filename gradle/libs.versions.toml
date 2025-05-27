@@ -34,7 +34,7 @@ android-tools = "1.1.5"
 # Coil
 coil = "2.4.0"
 # Core
-core = "31.0.0"
+core = "32.0.2"
 core-test-quark = "14.1.0"
 # Dagger
 dagger = "2.49"
@@ -169,6 +169,7 @@ core-auth = { module = "me.proton.core:auth", version.ref = "core" }
 core-auth-domain = { module = "me.proton.core:auth-domain", version.ref = "core" }
 core-auth-fido = { module = "me.proton.core:auth-fido", version.ref = "core" }
 core-auth-test = { module = "me.proton.core:auth-test", version.ref = "core" }
+core-biometric = { module = "me.proton.core:biometric", version.ref = "core" }
 core-challenge = { module = "me.proton.core:challenge", version.ref = "core" }
 core-challenge-data = { module = "me.proton.core:challenge-data", version.ref = "core" }
 core-contact = { module = "me.proton.core:contact", version.ref = "core" }
@@ -182,6 +183,7 @@ core-cryptoCommon = { module = "me.proton.core:crypto-common", version.ref = "co
 core-cryptoValidator = { module = "me.proton.core:crypto-validator", version.ref = "core" }
 core-data = { module = "me.proton.core:data", version.ref = "core" }
 core-dataRoom = { module = "me.proton.core:data-room", version.ref = "core" }
+core-deviceMigration = { module = "me.proton.core:device-migration", version.ref = "core" }
 core-domain = { module = "me.proton.core:domain", version.ref = "core" }
 core-eventManager = { module = "me.proton.core:event-manager", version.ref = "core" }
 core-eventManager-dagger = { module = "me.proton.core:event-manager-dagger", version.ref = "core" }
@@ -324,7 +326,7 @@ testParameterInjector = { module = "com.google.testparameterinjector:test-parame
 
 [bundles]
 accompanist = ["accompanist-systemUiController", "accompanist-permissions", "accompanist-drawablepainter", "accompanist-placeholderMaterial"]
-core = ["core-account", "core-accountManager", "core-accountRecovery", "core-auth", "core-auth-fido", "core-challenge", "core-contact", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-keyTransparency", "core-label", "core-network", "core-notification", "core-observability", "core-payment", "core-payment-iap", "core-plan", "core-plan-presentation-compose", "core-report", "core-presentation", "core-presentation-compose", "core-proguard-rules", "core-push", "core-telemetry", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilAndroidSentry", "core-utilKotlin", "core-config-data", "core-userRecovery"]
+core = ["core-account", "core-accountManager", "core-accountRecovery", "core-auth", "core-auth-fido", "core-biometric", "core-challenge", "core-contact", "core-country", "core-crypto", "core-cryptoValidator", "core-data", "core-dataRoom", "core-deviceMigration", "core-domain", "core-eventManager", "core-featureFlag", "core-humanVerification", "core-key", "core-keyTransparency", "core-label", "core-network", "core-notification", "core-observability", "core-payment", "core-payment-iap", "core-plan", "core-plan-presentation-compose", "core-report", "core-presentation", "core-presentation-compose", "core-proguard-rules", "core-push", "core-telemetry", "core-user", "core-userSettings", "core-utilAndroidDagger", "core-utilAndroidSentry", "core-utilKotlin", "core-config-data", "core-userRecovery"]
 core-test = ["core-accountManager-test", "core-auth-test", "core-accountRecovery-test", "core-humanVerification-test", "core-report-test", "core-plan-test", "core-userSettings-test"]
 test-android = ["junit", "mockk-android", "coroutines-test", "androidx-test-core-ktx", "androidx-test-runner", "androidx-test-rules", "androidx-compose-ui-test", "androidx-compose-ui-test-junit", "androidx-test-uiautomator", "core-test-android-instrumented"]
 test-jvm = ["junit", "mockk-jvm", "coroutines-test", "androidx-test-core-ktx", "androidx-work-testing", "core-test-kotlin", "core-test-quark", "robolectric", "mockwebserver"]

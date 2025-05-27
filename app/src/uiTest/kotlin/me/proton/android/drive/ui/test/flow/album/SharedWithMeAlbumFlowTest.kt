@@ -130,6 +130,7 @@ class SharedWithMeAlbumFlowTest : BaseTest() {
             .clickOnPhoto(photo)
             .clickOnAddToAlbum(AlbumRobot)
             .dismissAddToAlbumStartMessage()
+            .dismissAddToAlbumSuccess(1)
             .pullToRefresh(AlbumRobot)
             .verify {
                 assertItemsInAlbum(4)

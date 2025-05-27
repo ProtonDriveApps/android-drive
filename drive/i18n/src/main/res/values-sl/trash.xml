@@ -35,9 +35,9 @@
     -->
   <plurals name="trash_restore_operation_successful_format">
     <item quantity="one">1 predmet je bil obnovljen.</item>
-    <item quantity="two">%d items restored</item>
-    <item quantity="few">%d items restored</item>
-    <item quantity="other">%d items restored</item>
+    <item quantity="two">%d predmeti so bili obnovljeni.</item>
+    <item quantity="few">%d predmetov so bili obnovljeni.</item>
+    <item quantity="other">%d predmetov so bili obnovljeni.</item>
   </plurals>
   <!--
         Variable %1$d is a number
