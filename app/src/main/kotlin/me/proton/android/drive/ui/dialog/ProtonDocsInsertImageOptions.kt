@@ -42,8 +42,8 @@ import me.proton.core.compose.component.bottomsheet.BottomSheetEntry
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultSmallStrongNorm
 import me.proton.core.drive.base.presentation.component.rememberFilePickerLauncher
-import me.proton.core.drive.base.presentation.extension.captureWithNotFound
 import me.proton.core.drive.base.presentation.extension.launchWithNotFound
+import me.proton.core.drive.base.presentation.extension.rememberPermissionCameraLauncher
 import me.proton.core.drive.files.presentation.entry.OptionEntry
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -73,10 +73,15 @@ fun ProtonDocsInsertImageOptions(
             )
         }
     )
+    val permissionCameraLauncher = rememberPermissionCameraLauncher(cameraLauncher) { result ->
+        if (!result) {
+            viewModel.onCameraPermissionDenied()
+        }
+    }
     val entries = remember {
         viewModel.entries(
             showFilePicker = { onNotFound -> filePickerLauncher.launchWithNotFound(onNotFound) },
-            takeAPhoto = { uri, onNotFound -> cameraLauncher.captureWithNotFound(uri, onNotFound) },
+            takeAPhoto = { uri, onNotFound -> permissionCameraLauncher.capture(uri, onNotFound) },
             saveResult = saveResult,
             dismiss = dismiss,
         )

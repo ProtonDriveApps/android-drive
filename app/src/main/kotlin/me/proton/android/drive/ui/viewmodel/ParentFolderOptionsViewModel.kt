@@ -206,6 +206,14 @@ class ParentFolderOptionsViewModel @Inject constructor(
         }
     }
 
+    fun onCameraPermissionDenied() {
+        broadcastMessages(
+            userId = userId,
+            message = appContext.getString(I18N.string.error_camera_permission),
+            type = BroadcastMessage.Type.ERROR,
+        )
+    }
+
     private fun onTakeAPhoto(takeAPhoto: (Uri, () -> Unit) -> Unit) {
         viewModelScope.launch(Job() + Dispatchers.IO) {
             val photoFile = File.createTempFile("IMG_${now}_", ".jpg", getCacheTempFolder(userId))

@@ -205,6 +205,7 @@
     <string name="error_share_not_found">Share is not found.</string>
     <string name="error_creating_photo_share_not_allowed">Photo backup is temporarily disabled.</string>
     <string name="error_creating_share_not_allowed">Creating share is temporarily disabled.</string>
+    <string name="error_camera_permission">Camera permission is required.</string>
     <string name="operation_open_document">open a document</string>
     <string name="operation_create_document">create a document</string>
     <string name="operation_take_picture">take a picture</string>

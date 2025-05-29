@@ -18,12 +18,14 @@
 
 package me.proton.android.drive.ui.viewmodel
 
+import android.content.Context
 import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -31,9 +33,11 @@ import kotlinx.coroutines.withContext
 import me.proton.android.drive.usecase.GetUriForFile
 import me.proton.android.drive.usecase.NotifyActivityNotFound
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
+import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.GetCacheTempFolder
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.files.presentation.entry.OptionEntry
+import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
 import java.text.SimpleDateFormat
@@ -45,10 +49,12 @@ import me.proton.core.presentation.R as CorePresentation
 
 @HiltViewModel
 class ProtonDocsInsertImageOptionsViewModel @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val savedStateHandle: SavedStateHandle,
     private val getCacheTempFolder: GetCacheTempFolder,
     private val getUriForFile: GetUriForFile,
     private val notifyActivityNotFound: NotifyActivityNotFound,
+    private val broadcastMessages: BroadcastMessages,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val simpleDateFormat: SimpleDateFormat by lazy { SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US) }
     private val now: String get() = simpleDateFormat.format(Date())
@@ -101,6 +107,14 @@ class ProtonDocsInsertImageOptionsViewModel @Inject constructor(
             updatePhotoUri(null)
             dismiss()
         }
+    }
+
+    fun onCameraPermissionDenied() {
+        broadcastMessages(
+            userId = userId,
+            message = appContext.getString(I18N.string.error_camera_permission),
+            type = BroadcastMessage.Type.ERROR,
+        )
     }
 
     private fun onTakeAPhoto(takeAPhoto: (Uri, () -> Unit) -> Unit) {

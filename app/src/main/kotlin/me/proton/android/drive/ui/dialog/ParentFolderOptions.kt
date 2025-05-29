@@ -35,8 +35,8 @@ import me.proton.android.drive.ui.viewmodel.ParentFolderOptionsViewModel
 import me.proton.core.compose.activity.rememberCameraLauncher
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.drive.base.presentation.component.rememberFilePickerLauncher
-import me.proton.core.drive.base.presentation.extension.captureWithNotFound
 import me.proton.core.drive.base.presentation.extension.launchWithNotFound
+import me.proton.core.drive.base.presentation.extension.rememberPermissionCameraLauncher
 import me.proton.core.drive.files.presentation.component.folder.ParentFolderOptions
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -105,6 +105,11 @@ fun ParentFolderOptions(
             )
         }
     )
+    val permissionCameraLauncher = rememberPermissionCameraLauncher(cameraLauncher) { result ->
+        if (!result) {
+            viewModel.onCameraPermissionDenied()
+        }
+    }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val entries by remember(viewModel, lifecycle) {
         viewModel.entries(
@@ -112,7 +117,7 @@ fun ParentFolderOptions(
             navigateToCreateFolder = navigateToCreateFolder,
             navigateToPreview = navigateToPreview,
             showFilePicker = { onNotFound -> filePickerLauncher.launchWithNotFound(onNotFound) },
-            takeAPhoto = { uri, onNotFound -> cameraLauncher.captureWithNotFound(uri, onNotFound) },
+            takeAPhoto = { uri, onNotFound -> permissionCameraLauncher.capture(uri, onNotFound) },
             dismiss = dismiss,
         ).flowWithLifecycle(
             lifecycle = lifecycle,
