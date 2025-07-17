@@ -34,7 +34,7 @@ suspend fun DriveDatabase.photo(
     block: suspend FolderContext.() -> Unit,
 ): FolderId = user {
     withKey()
-    volume {
+    photoVolume {
         photoShare(block)
     }
 }

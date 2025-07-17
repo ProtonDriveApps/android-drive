@@ -69,6 +69,7 @@ import me.proton.core.drive.files.presentation.entry.RenameFileEntry
 import me.proton.core.drive.files.presentation.entry.SendFileEntry
 import me.proton.core.drive.files.presentation.entry.SetAsAlbumCoverEntry
 import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntry
+import me.proton.core.drive.files.presentation.entry.TagPhotoFileEntry
 import me.proton.core.drive.files.presentation.entry.ToggleFavoriteFileEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
 import me.proton.core.drive.files.presentation.entry.ToggleTrashEntry
@@ -81,6 +82,7 @@ import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
+import me.proton.core.drive.photo.domain.usecase.ScanPhotoForTags
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.user.domain.entity.ShareUser
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
@@ -114,6 +116,7 @@ class FileOrFolderOptionsViewModelTest {
     private val addPhotosToStream = mockk<AddPhotosToStream>()
     private val hasPhotoVolume = mockk<HasPhotoVolume>()
     private val selectLinks = mockk<SelectLinks>()
+    private val scanPhotoForTags = mockk<ScanPhotoForTags>()
 
     @Before
     fun before() {
@@ -129,7 +132,8 @@ class FileOrFolderOptionsViewModelTest {
         coEvery { getFeatureFlagFlow.refreshAfterDuration} answers {
             { false }
         }
-        coEvery { configurationProvider.albumsFeatureFlag} returns true
+        coEvery { configurationProvider.albumsFeatureFlag } returns true
+        coEvery { configurationProvider.scanPhotoFileForTags } returns true
         coEvery { deselectLinks(any()) } returns Unit
         coEvery { getOldestActiveVolume(any(), any()) } returns flowOf(DataResult.Success(
             source = ResponseSource.Local,
@@ -234,16 +238,6 @@ class FileOrFolderOptionsViewModelTest {
     fun `file options on main share url and member sharing only and owner permissions`() = runTest {
         // Given
         coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(fileDriveLink.asSuccess)
-        coEvery { getFeatureFlagFlow.invoke(any())} answers {
-            val id: FeatureFlagId = arg(0)
-            flowOf(
-                if (id == FeatureFlagId.driveAlbumsTempDisabledOnRelease(UserId("value"))) {
-                    FeatureFlag(id, State.NOT_FOUND)
-                } else {
-                    FeatureFlag(id, State.ENABLED)
-                }
-            )
-        }
         // When
         val entries = fileOptionEntries()
 
@@ -354,9 +348,6 @@ class FileOrFolderOptionsViewModelTest {
     fun `file options on photo share with photo volume from album`() = runTest {
         // Given
         coEvery { getDriveLink.invoke(any<LinkId>(), any()) } returns flowOf(photoDriveLink.asSuccess)
-        val driveAlbumsFlagId = FeatureFlagId.driveAlbums(UserId("value"))
-        coEvery { getFeatureFlagFlow(driveAlbumsFlagId, any(), any()) } returns
-                flowOf( FeatureFlag(driveAlbumsFlagId, State.ENABLED))
         val driveAlbumsDisabledFlagId = FeatureFlagId.driveAlbumsDisabled(UserId("value"))
         coEvery { getFeatureFlagFlow(driveAlbumsDisabledFlagId, any(), any()) } returns
                 flowOf( FeatureFlag(driveAlbumsDisabledFlagId, State.NOT_FOUND))
@@ -405,6 +396,9 @@ class FileOrFolderOptionsViewModelTest {
                 ToggleOfflineEntry::class,
                 ToggleFavoriteFileEntry::class,
                 AddToAlbumsFileEntry::class,
+                TagPhotoFileEntry::class,
+                ShareViaInvitationsEntry::class,
+                ManageAccessEntry::class,
                 SendFileEntry::class,
                 DownloadFileEntry::class,
                 FileInfoEntry::class,
@@ -478,6 +472,7 @@ class FileOrFolderOptionsViewModelTest {
         addPhotosToStream = addPhotosToStream,
         hasPhotoVolume = hasPhotoVolume,
         selectLinks = selectLinks,
+        scanPhotoForTags = scanPhotoForTags,
     )
 
     private val fileLink = Link.File(

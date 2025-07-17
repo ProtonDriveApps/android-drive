@@ -74,6 +74,7 @@
   <string name="common_start_action">Start</string>
   <string name="common_save_all_action">Lagre alle</string>
   <string name="common_add_to_albums_action">Legg til i album</string>
+  <string name="common_tag_photo_action">Skann bilde for tagger</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Lyd</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">PDF-dokument</string>
   <string name="common_type_ppt">Presentasjon</string>
   <string name="common_type_proton_doc">Proton-dokument</string>
+  <string name="common_type_proton_sheet">Proton-regneark</string>
   <string name="common_type_text">Tekst</string>
   <string name="common_type_trustedkey">Klarert nøkkel</string>
   <string name="common_type_unknown">Binær</string>

@@ -27,10 +27,10 @@
   <string name="title_empty_folder">Ja podeu omplir aquesta carpeta</string>
   <string name="title_empty_folder_read_only">Carpeta buida</string>
   <string name="title_empty_shared">Feu un seguiment del que està passant</string>
-  <string name="title_empty_offline_available">Res disponible fora de línia</string>
+  <string name="title_empty_offline_available">No hi ha res disponible fora de línia</string>
   <string name="title_empty_trash">La paperera és buida.</string>
   <string name="title_empty_trash_action">Buida la paperera</string>
-  <string name="title_files_confirm_deletion">Voleu suprimir permanentment?</string>
+  <string name="title_files_confirm_deletion">Voleu eliminar-ho permanentment?</string>
   <string name="title_default_home_screen_tab">Trieu la pestanya per defecte de la pantalla d\'inici</string>
   <!-- endregion -->
   <string name="menu_item_header_title_app">Aplicació</string>
@@ -38,14 +38,15 @@
   <string name="settings_about_links_acknowledgments_title">Crèdits</string>
   <string name="settings_about_links_privacy_policy_title">Política de privacitat</string>
   <string name="settings_about_links_terms_of_service_title">Condicions del servei</string>
-  <string name="common_error_no_browser_available">No s\'ha pogut obrir l\'enllaç perquè sembla que no teniu un navegador instal·lat</string>
+  <string name="common_error_no_browser_available">No s\'ha pogut obrir l\'enllaç perquè sembla que no teniu cap navegador instal·lat</string>
   <string name="move_to">Mou a</string>
   <string name="move_file_confirm_action">Mou</string>
-  <string name="move_file_error_cannot_move_folder_into_itself">No podeu moure una carpeta a si mateixa</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">No podeu moure una carpeta a ella mateixa</string>
   <string name="folder_option_import_file">Carrega un fitxer</string>
-  <string name="folder_option_create_folder">Crear una carpeta</string>
-  <string name="folder_option_take_a_photo">Fer una foto nova</string>
+  <string name="folder_option_create_folder">Crea una carpeta</string>
+  <string name="folder_option_take_a_photo">Feu una nova foto</string>
   <string name="folder_option_create_document">Crea un document</string>
+  <string name="folder_option_create_spreadsheet">Crea un full de càlcul</string>
   <string name="settings_theme_system_default">Valors per defecte del sistema</string>
   <string name="settings_theme_dark">Fosc</string>
   <string name="settings_theme_light">Clar</string>
@@ -54,7 +55,7 @@
         Examples:
             "Upload to My files"
     -->
-  <string name="upload_to_title_format">Carregar a %1$s</string>
+  <string name="upload_to_title_format">Carrega a %1$s</string>
   <string name="upload_title">Carrega</string>
   <!--
         Variable %1$s is an application name
@@ -68,14 +69,14 @@
   <string name="in_app_notification_create_document_success">S\'ha creat el document.</string>
   <!-- endregion -->
   <!-- region Notification -->
-  <string name="notification_content_title_storage_full">Emmagatzematge ple</string>
+  <string name="notification_content_title_storage_full">L\'emmagatzematge és ple.</string>
   <!--
         Variable %1$s is an application name
         Example:
             "Uploading files to Proton Drive"
     -->
   <string name="notification_content_title_upload_uploading">Carregant fitxers a %1$s</string>
-  <string name="notification_content_title_upload_complete">Càrrega completada</string>
+  <string name="notification_content_title_upload_complete">S\'ha completat la càrrega.</string>
   <!--
         Variable %1$d is a quantity of files that are uploading
         Example:
@@ -83,8 +84,8 @@
             "Uploading 3 files"
     -->
   <plurals name="notification_content_text_upload_uploading">
-    <item quantity="one">Carregant %1$d fitxer</item>
-    <item quantity="other">Carregant %1$d fitxers</item>
+    <item quantity="one">S\'està carregant %1$d fitxer</item>
+    <item quantity="other">S\'estàn carregant %1$d fitxers</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have been uploaded
@@ -93,8 +94,8 @@
             "3 files uploaded"
     -->
   <plurals name="notification_content_text_upload_uploaded">
-    <item quantity="one">%1$d fitxer carregat</item>
-    <item quantity="other">%1$d fitxers carregats</item>
+    <item quantity="one">S\'ha carregat %1$d fitxer.</item>
+    <item quantity="other">S\'han carregat %1$d fitxers.</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have been cancelled
@@ -103,8 +104,8 @@
             "3 files cancelled"
     -->
   <plurals name="notification_content_text_upload_cancelled">
-    <item quantity="one">%1$d fitxer cancel·lat</item>
-    <item quantity="other">%1$d fitxers cancel·lats</item>
+    <item quantity="one">S\'ha cancel·lat %1$d fitxer.</item>
+    <item quantity="other">S\'ha cancel·lat %1$d fitxers.</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that have fail to upload
@@ -132,13 +133,13 @@
     <item quantity="one">Queda %1$s element.</item>
     <item quantity="other">Queden %1$s elements.</item>
   </plurals>
-  <string name="notification_content_text_backup_complete">S\'ha finalitzat la còpia de seguretat.</string>
+  <string name="notification_content_text_backup_complete">Ha finalitzat la còpia de seguretat.</string>
   <string name="notification_content_text_backup_uncompleted">S\'ha completat la còpia de seguretat amb problemes.</string>
   <string name="notification_content_text_backup_failed">Error en la còpia de seguretat</string>
   <string name="notification_content_text_backup_failed_drive_storage">L\'emmagatzematge de Proton és ple.</string>
   <string name="notification_content_text_backup_failed_local_storage">L\'emmagatzematge local és ple.</string>
   <string name="notification_content_text_backup_failed_permission">Falten permisos.</string>
-  <string name="notification_content_text_backup_failed_connectivity">Sense connexió a internet</string>
+  <string name="notification_content_text_backup_failed_connectivity">No hi ha connexió a internet</string>
   <string name="notification_content_text_backup_failed_wifi_connectivity">S\'està esperant una connexió Wi-Fi.</string>
   <string name="notification_content_text_backup_failed_photos_upload_not_allowed">Les còpies de seguretat no estan permeses.</string>
   <string name="notification_content_text_backup_paused_disabled">S\'ha desactivat la còpia de seguretat.</string>
@@ -146,7 +147,7 @@
   <string name="notification_content_text_backup_preparing">S\'està preparant per a fer una còpia de seguretat</string>
   <string name="notification_content_text_backup_failed_migration">La migració està en curs. Actualitzeu l\'aplicació.</string>
   <string name="notification_content_title_download_complete">Descàrrega completa</string>
-  <string name="notification_content_title_forced_sign_out">Inicia la sessió</string>
+  <string name="notification_content_title_forced_sign_out">Inicieu la sessió</string>
   <string name="notification_content_text_forced_sign_out">Hi ha hagut un problema amb la sincronització. Torneu a iniciar la sessió i tot funcionarà sense problemes.</string>
   <string name="notification_content_title_no_space_left_on_device">No queda espai al dispositiu</string>
   <string name="notification_content_text_no_space_left_on_device">És possible que l\'aplicació no funcioni correctament.</string>
@@ -167,7 +168,8 @@
   <string name="content_description_selected_options">Mostra més opcions per als fitxers i/o carpetes seleccionades</string>
   <string name="content_description_files_upload_upload_file">Carrega un fitxer</string>
   <string name="content_description_albums_new">Crea un àlbum</string>
-  <string name="description_empty_my_files">Toqueu el botó per a començar a afegir fitxers.</string>
+  <string name="content_description_subscription_action">Obre la subscripció</string>
+  <string name="description_empty_my_files">Toqueu el botó per començar a afegir fitxers.</string>
   <string name="description_empty_folder_read_only">Aquí no hi ha res a veure</string>
   <string name="description_empty_shared">Els fitxers enllaçats apareixen aquí perquè pugueu fer-ne un seguiment i gestionar fàcilment els elements compartits.</string>
   <string name="description_empty_trash">Aquí és on romanen els elements esborrats fins que els elimineu o restaureu.</string>
@@ -180,8 +182,8 @@
   <string name="description_files_stop_sharing_action_success">S\'ha esborrat l\'enllaç al fitxer.</string>
   <string name="description_files_stop_sharing_action_error">S\'ha produït un error en esborrar l\'enllaç al fitxer.</string>
   <string name="description_files_stop_all_sharing">Això esborrarà l\'enllaç i eliminarà l\'accés per a tothom.</string>
-  <string name="description_files_stop_all_sharing_action_success">S\'ha suprimit l\'ús compartit al vostre fitxer.</string>
-  <string name="description_files_stop_all_sharing_action_error">S\'ha produït un error en suprimir la compartició al fitxer.</string>
+  <string name="description_files_stop_all_sharing_action_success">S\'ha suprimit l\'ús compartit del vostre fitxer.</string>
+  <string name="description_files_stop_all_sharing_action_error">S\'ha produït un error en suprimir la compartició del fitxer.</string>
   <string name="ignore_file_signature_action">Veure de totes maneres</string>
   <string name="action_empty_files_add_files">Carrega</string>
   <string name="error_could_not_send_file">S\'ha produït un error en intentar enviar el fitxer</string>
@@ -192,6 +194,7 @@
   <string name="error_share_not_found">No s\'ha trobat la compartició.</string>
   <string name="error_creating_photo_share_not_allowed">La còpia de seguretat de fotos està desactivada temporalment.</string>
   <string name="error_creating_share_not_allowed">S\'ha desactivat temporalment la creació d\'elements compartits.</string>
+  <string name="error_camera_permission">Cal permís d\'accés a la càmera.</string>
   <string name="operation_open_document">obrir un document</string>
   <string name="operation_create_document">crear un document</string>
   <string name="operation_take_picture">fer una foto</string>

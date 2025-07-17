@@ -66,11 +66,11 @@ class TagRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun addTags(volumeId: VolumeId, fileId: FileId, tags: List<PhotoTag>) {
+    override suspend fun addTags(volumeId: VolumeId, fileId: FileId, tags: Set<PhotoTag>) {
         api.addTag(volumeId, fileId, tags)
     }
 
-    override suspend fun deleteTags(volumeId: VolumeId, fileId: FileId, tags: List<PhotoTag>) {
+    override suspend fun deleteTags(volumeId: VolumeId, fileId: FileId, tags: Set<PhotoTag>) {
         api.deleteTag(volumeId, fileId, tags)
     }
 }

@@ -21,7 +21,7 @@
   <string name="settings_section_security">Безопасность</string>
   <string name="settings_section_about">О программе</string>
   <string name="settings_section_statistics">Статистика использования</string>
-  <string name="settings_auto_lock">Автоматическая блокировка приложения</string>
+  <string name="settings_auto_lock">Автоматически блокировать приложение</string>
   <string name="settings_auto_lock_durations_immediately">Немедленно</string>
   <plurals name="settings_auto_lock_durations_seconds">
     <item quantity="one">Через %1$d секунду</item>
@@ -63,7 +63,7 @@
             "Camera will no longer be backing up to the cloud."
     -->
   <string name="settings_photos_backup_folders_confirm_stop_sync_description">Резервное копирование %1$s в облако больше выполняться не будет. Фотографии, резервные копии которых уже созданы, не будут удалены.</string>
-  <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">Остановка резервного копирования</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">Остановить резервное копирование</string>
   <plurals name="settings_photos_backup_folders_description_photos">
     <item quantity="one">%1$d фото</item>
     <item quantity="few">%1$d фото</item>

@@ -30,6 +30,5 @@ data class SettingsViewEvent(
     val onClearLocalCache: () -> Unit,
     val onPhotosBackup: () -> Unit,
     val onDefaultHomeTab: () -> Unit,
-    val onShowLog: () -> Unit,
-    val onSignOut: () -> Unit
+    val onShowLog: () -> Unit
 )

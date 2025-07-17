@@ -42,6 +42,9 @@ object AlbumRobot : LinksRobot, NavigationBarRobot {
     private val shareButton get() = node.withText(I18N.string.common_share)
     private val emptyAlbumText get() = node.withText(I18N.string.albums_empty_album_screen_title)
     private val mediaItems get() = allNodes.withTag(ProtonMediaItemTestTags.mediaItemPreviewBox)
+    private val linkRenameSuccessful = I18N.string.link_rename_successful
+    private val errorNameTooLong = I18N.string.common_error_name_too_long
+    private val errorNameBlank = node.withText(I18N.string.common_error_name_is_blank)
     private val favoriteFromForeignVolume
         get() = node.withText(I18N.string.files_add_to_favorite_from_foreign_volume_action_success)
     private val addToAlbumStartMessage
@@ -108,6 +111,26 @@ object AlbumRobot : LinksRobot, NavigationBarRobot {
         .withItemType(ItemType.File)
         .withLayoutType(LayoutType.Cover)
         .await { assertIsDisplayed() }
+
+    fun assertNameMaxLengthError(maxLength: Int) = node
+        .withText(
+            targetContext.getString(
+                errorNameTooLong,
+                maxLength
+            )
+        )
+
+    fun assertNameEmptyError() =
+        errorNameBlank.await { assertIsDisplayed() }
+
+
+    fun assertAlbumRenameSuccessMessage(name: String) = node
+        .withText(
+            targetContext.getString(
+                linkRenameSuccessful,
+                name
+            )
+        )
 
     fun assertEmptyAlbum() = emptyAlbumText.await { assertIsDisplayed() }
 

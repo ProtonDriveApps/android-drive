@@ -34,7 +34,7 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.D
 import me.proton.core.drive.feature.flag.domain.handler.FeatureFlagHandler
 import me.proton.core.drive.share.crypto.domain.usecase.GetPhotoShare
 import me.proton.android.drive.photos.data.provider.XmpTagsProvider
-import me.proton.core.drive.upload.domain.provider.TagsProvider
+import me.proton.core.drive.photo.domain.provider.TagsProvider
 import javax.inject.Singleton
 
 @Module

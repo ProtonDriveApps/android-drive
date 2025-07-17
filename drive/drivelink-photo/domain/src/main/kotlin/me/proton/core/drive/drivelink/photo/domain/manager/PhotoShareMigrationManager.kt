@@ -47,7 +47,6 @@ import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.photo.domain.usecase.PhotoShareCleanup
-import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.photo.domain.entity.PhotoShareMigrationState
 import me.proton.core.drive.photo.domain.repository.PhotoShareMigrationRepository
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -59,7 +58,6 @@ import kotlin.coroutines.CoroutineContext
 
 class PhotoShareMigrationManager @Inject constructor(
     coroutineContext: CoroutineContext,
-    albumsFeatureFlag: AlbumsFeatureFlag,
     configurationProvider: ConfigurationProvider,
     private val photoShareMigrationRepository: PhotoShareMigrationRepository,
     private val getVolume: GetVolume,
@@ -87,13 +85,6 @@ class PhotoShareMigrationManager @Inject constructor(
                     }
             )
         }.stateIn(coroutineScope, Eagerly, PhotoShareMigrationState.UNINITIALIZED)
-    private val albumsFeatureOn: StateFlow<Boolean> = userId
-        .filterNotNull()
-        .transform {
-            emitAll(
-                albumsFeatureFlag(it)
-            )
-        }.stateIn(coroutineScope, Eagerly, false)
 
     val status: Flow<MigrationStatus> = state.map { migrationState ->
         when (migrationState) {
@@ -216,19 +207,13 @@ class PhotoShareMigrationManager @Inject constructor(
         mutex.withLock {
             CoreLogger.i(
                 tag = PHOTO,
-                message = "RemoteMigrationStatus = ${status}, state = ${state.value.name}, albumsFeatureOn = ${albumsFeatureOn.value}"
+                message = "RemoteMigrationStatus = ${status}, state = ${state.value.name}"
             )
             when (status) {
                 is RemoteMigrationStatus.Failed -> Unit
-                RemoteMigrationStatus.NotNeeded -> if (albumsFeatureOn.value) {
-                    onMigrationNotNeeded(userId)
-                }
-                RemoteMigrationStatus.Pending -> if (albumsFeatureOn.value) {
-                    onMigrationPending(userId)
-                }
-                RemoteMigrationStatus.InProgress -> if (albumsFeatureOn.value) {
-                    onMigrationInProgress(userId)
-                }
+                RemoteMigrationStatus.NotNeeded -> onMigrationNotNeeded(userId)
+                RemoteMigrationStatus.Pending -> onMigrationPending(userId)
+                RemoteMigrationStatus.InProgress -> onMigrationInProgress(userId)
                 is RemoteMigrationStatus.Complete -> onMigrationComplete(
                     userId,
                     status.newVolumeId

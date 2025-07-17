@@ -30,6 +30,8 @@ import me.proton.core.drive.crypto.domain.usecase.GetSessionForkPayload
 import me.proton.core.drive.cryptobase.domain.usecase.GenerateNewSessionKey
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetSessionForkProtonDocumentUriString
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.link.domain.extension.isProtonDocument
+import me.proton.core.drive.link.domain.extension.isProtonSpreadsheet
 import me.proton.core.drive.link.domain.extension.shareId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.usecase.GetShare
@@ -101,7 +103,13 @@ internal fun Uri.Builder.appendFragment(
 
 internal fun DriveLink.returnUrl(email: String): String =
     Uri.Builder()
-        .appendPath("doc")
+        .appendPath(
+            when {
+                isProtonDocument -> "doc"
+                isProtonSpreadsheet -> "sheet"
+                else -> error("Unexpected drive link")
+            }
+        )
         .appendQueryParameter("volumeId", volumeId.id)
         .appendQueryParameter("linkId", id.id)
         .appendQueryParameter("email", email)

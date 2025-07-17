@@ -21,6 +21,7 @@ package me.proton.android.drive.usecase
 import androidx.datastore.preferences.core.edit
 import me.proton.core.drive.base.data.datastore.GetUserDataStore
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.document.base.domain.entity.DocumentType
 import me.proton.core.drive.document.create.domain.usecase.CreateNewDocument
 import me.proton.core.drive.document.create.presentation.usecase.NewDocumentName
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -34,11 +35,13 @@ class CreateNewDocument @Inject constructor(
 ) {
     suspend operator fun invoke(
         parentFolderId: FolderId,
-        name: String
+        name: String,
+        documentType: DocumentType,
     ) = coRunCatching {
         createNewDocument(
             parentFolderId = parentFolderId,
             name = name,
+            documentType = documentType,
         ).getOrThrow().also {
             getUserDataStore(parentFolderId.userId)
                 .edit { preferences ->
@@ -50,10 +53,12 @@ class CreateNewDocument @Inject constructor(
 
     suspend operator fun invoke(
         parentFolderId: FolderId,
+        documentType: DocumentType,
     ) = coRunCatching {
         invoke(
             parentFolderId = parentFolderId,
             name = newDocumentName(),
+            documentType = documentType,
         ).getOrThrow()
     }
 }

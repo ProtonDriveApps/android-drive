@@ -82,9 +82,9 @@
     -->
   <plurals name="in_app_notification_add_to_album_already_exists">
     <item quantity="one">%1$d item already exists</item>
-    <item quantity="two">%1$d items already exist</item>
-    <item quantity="few">%1$d items already exist</item>
-    <item quantity="other">%1$d items already exist</item>
+    <item quantity="two">%1$d predmeta že obstajata</item>
+    <item quantity="few">%1$d predmeti že obstajajo</item>
+    <item quantity="other">%1$d predmetov že obstaja</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -160,11 +160,11 @@
   </plurals>
   <string name="albums_empty_album_screen_title">Brez fotografij</string>
   <string name="albums_empty_album_screen_description">Photos that you or other members add will appear here</string>
-  <string name="albums_empty_albums_list_screen_title">Brez albumi</string>
+  <string name="albums_empty_albums_list_screen_title">Ni albumov</string>
   <string name="albums_empty_albums_list_screen_description">Albums that you create or join will appear here</string>
   <string name="albums_empty_albums_my_albums_screen_description">Albums that you create will appear here</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Ni albumov v skupni rabi</string>
-  <string name="albums_empty_albums_shared_by_me_screen_description">Albumi, ki ste jih dali v deli, bodo prikazani tukaj</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Albumi, ki ste jih dali v skupno rabo, bodo prikazani tukaj</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">No albums shared with me</string>
   <string name="albums_empty_albums_shared_with_me_screen_description">Albumi, ki so bili dani v skupno rabo z vami, bodo prikazani tukaj</string>
   <!--
@@ -184,7 +184,7 @@
   <string name="albums_share_multiple_photos_options_album_details">Album v skupni rabi</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nov album v skupni rabi</string>
   <string name="albums_add_to_album_start_message">Dodajanje fotografij v šifriran album. Aplikacija naj bo med postopkom odprta.</string>
-  <string name="albums_add_to_albums_options_new_album">Add to new album</string>
+  <string name="albums_add_to_albums_options_new_album">Dodaj v nov album</string>
   <string name="albums_add_to_albums_options_shared_album">My shared album</string>
   <!--
         Variable %1$s is an album owner name i.e. display name or email
@@ -192,5 +192,5 @@
             "By Pablo Picasso"
             "By pablo.picasso@example.com"
     -->
-  <string name="albums_shared_with_me_details">By %1$s</string>
+  <string name="albums_shared_with_me_details">Avtor: %1$s</string>
 </resources>

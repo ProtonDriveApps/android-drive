@@ -20,8 +20,8 @@ package me.proton.android.drive.lock.domain.usecase
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
+import me.proton.android.drive.lock.domain.extension.autoLockDefaultDuration
 import me.proton.android.drive.lock.domain.repository.AppLockRepository
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import javax.inject.Inject
@@ -33,7 +33,7 @@ class GetAutoLockDuration @Inject constructor(
 ) {
     operator fun invoke(): Flow<Duration> = flow {
         if (appLockRepository.hasAutoLockDuration().not()) {
-            emit(configurationProvider.autoLockDurations.first())
+            emit(configurationProvider.autoLockDefaultDuration)
         }
         emitAll(appLockRepository.getAutoLockDuration())
     }

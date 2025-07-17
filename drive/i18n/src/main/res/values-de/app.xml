@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Ordner erstellen</string>
   <string name="folder_option_take_a_photo">Neues Foto aufnehmen</string>
   <string name="folder_option_create_document">Dokument erstellen</string>
+  <string name="folder_option_create_spreadsheet">Tabellenkalkulation erstellen</string>
   <string name="settings_theme_system_default">Systemstandard</string>
   <string name="settings_theme_dark">Dunkel</string>
   <string name="settings_theme_light">Hell</string>
@@ -167,6 +168,7 @@
   <string name="content_description_selected_options">Mehr Optionen für die ausgewählten Dateien und/oder Ordner anzeigen</string>
   <string name="content_description_files_upload_upload_file">Eine Datei hochladen</string>
   <string name="content_description_albums_new">Neues Album erstellen</string>
+  <string name="content_description_subscription_action">Offenes Abonnement</string>
   <string name="description_empty_my_files">Tippe auf die Schaltfläche, um mit dem Hinzufügen von Dateien zu beginnen.</string>
   <string name="description_empty_folder_read_only">Hier gibt es nichts zu sehen</string>
   <string name="description_empty_shared">Verlinkte Dateien werden hier angezeigt, damit du leicht verfolgen und verwalten kannst, was freigegeben wurde.</string>
@@ -192,6 +194,7 @@
   <string name="error_share_not_found">Freigabe nicht gefunden.</string>
   <string name="error_creating_photo_share_not_allowed">Die Fotosicherung ist vorübergehend deaktiviert.</string>
   <string name="error_creating_share_not_allowed">Das Erstellen von Freigaben ist vorübergehend deaktiviert.</string>
+  <string name="error_camera_permission">Eine Erlaubnis für das Verwenden der Kamera ist erforderlich.</string>
   <string name="operation_open_document">Dokumente öffnen kann</string>
   <string name="operation_create_document">Dokumente erstellen kann</string>
   <string name="operation_take_picture">Fotos aufnehmen kann</string>
@@ -274,6 +277,8 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Upgrade für %1$s</string>
+  <!-- endregion -->
+  <!-- endregion -->
   <!-- endregion -->
   <!-- endregion -->
 </resources>

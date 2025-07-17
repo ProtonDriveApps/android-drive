@@ -23,6 +23,7 @@ import me.proton.core.drive.crypto.domain.usecase.HmacSha256
 import me.proton.core.drive.crypto.domain.usecase.file.AvoidDuplicateFileName
 import me.proton.core.drive.crypto.domain.usecase.upload.ManifestSignature
 import me.proton.core.drive.cryptobase.domain.usecase.EncryptText
+import me.proton.core.drive.document.base.domain.entity.DocumentType
 import me.proton.core.drive.document.base.domain.entity.NewDocumentInfo
 import me.proton.core.drive.key.domain.extension.keyHolder
 import me.proton.core.drive.key.domain.extension.nodeKey
@@ -57,6 +58,7 @@ class CreateNewDocumentInfo @Inject constructor(
     suspend operator fun invoke(
         folder: Link.Folder,
         name: String,
+        documentType: DocumentType,
     ): Result<NewDocumentInfo> = coRunCatching {
         val folderKey = getNodeKey(folder).getOrThrow()
         val folderHashKey = getNodeHashKey(folder, folderKey).getOrThrow()
@@ -85,6 +87,7 @@ class CreateNewDocumentInfo @Inject constructor(
             contentKeyPacket = documentContentKey.contentKeyPacket,
             contentKeyPacketSignature = documentContentKey.contentKeyPacketSignature,
             manifestSignature = manifestSignature(addressKey).getOrThrow(),
+            documentType = documentType,
         )
     }
 }

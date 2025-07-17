@@ -48,6 +48,9 @@ val BaseLink.isSharedUrlExpired get() = shareUrlExpirationTime?.let { expiration
 val BaseLink.isProtonDocument: Boolean
     get() = mimeType.toFileTypeCategory() == FileTypeCategory.ProtonDoc
 
+val BaseLink.isProtonSpreadsheet: Boolean
+    get() = mimeType.toFileTypeCategory() == FileTypeCategory.ProtonSheet
+
 val BaseLink.isProtonCloudFile: Boolean
     get() = mimeType.startsWith("application/vnd.proton.")
 

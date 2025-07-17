@@ -20,6 +20,7 @@ package me.proton.core.drive.document.create.domain.usecase
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.document.CreateNewDocumentInfo
+import me.proton.core.drive.document.base.domain.entity.DocumentType
 import me.proton.core.drive.document.base.domain.repository.DocumentRepository
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.link.domain.entity.FileId
@@ -37,6 +38,7 @@ class CreateNewDocument @Inject constructor(
     suspend operator fun invoke(
         parentFolder: Link.Folder,
         name: String,
+        documentType: DocumentType,
     ): Result<FileId> = coRunCatching {
         updateEventAction(
             shareId = parentFolder.id.shareId,
@@ -46,6 +48,7 @@ class CreateNewDocument @Inject constructor(
                 newDocumentInfo = createNewDocumentInfo(
                     folder = parentFolder,
                     name = name,
+                    documentType = documentType,
                 ).getOrThrow()
             )
         }
@@ -54,10 +57,12 @@ class CreateNewDocument @Inject constructor(
     suspend operator fun invoke(
         parentFolderId: FolderId,
         name: String,
+        documentType: DocumentType,
     ): Result<FileId> = coRunCatching {
         invoke(
             parentFolder = getLink(parentFolderId).toResult().getOrThrow(),
             name = name,
+            documentType = documentType,
         ).getOrThrow()
     }
 }

@@ -163,4 +163,30 @@
   <string name="photos_important_updates_subtitle">Photo library update needed</string>
   <string name="photos_important_updates_description">This quick update prepares your photos for new features like filters and albums</string>
   <string name="photos_important_updates_cancel_action">Remind me later</string>
+  <string name="photos_tags_migration_title">Tags migration</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos migrates
+        Example:
+           Finished, 1 file were migrated.
+           Finished, 12 345 files were migrated.
+    -->
+  <plurals name="photos_tags_migration_finished">
+    <item quantity="one">Finished, %1$s file was migrated.</item>
+    <item quantity="few">Finished, %1$s files were migrated.</item>
+    <item quantity="many">Finished, %1$s files were migrated.</item>
+    <item quantity="other">Finished, %1$s files were migrated.</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos to migrate
+        Variable %1$s is a quantity (formatted) of photos waiting for download
+        Example:
+           Ongoing, migrating 1 file, 0 waiting for download.
+           Ongoing, migrating 12 345 files, 123 waiting for download.
+    -->
+  <plurals name="photos_tags_migration_ongoing">
+    <item quantity="one">Ongoing, migrating %1$s file, %2$s waiting for download.</item>
+    <item quantity="few">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="many">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+  </plurals>
 </resources>

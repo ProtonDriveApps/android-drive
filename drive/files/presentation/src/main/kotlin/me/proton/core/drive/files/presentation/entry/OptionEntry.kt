@@ -67,3 +67,11 @@ class ShareMultiplePhotosEntry(
     override val icon: Int = CorePresentation.drawable.ic_proton_user_plus
     override val label: Int = I18N.string.common_share
 }
+
+
+class TagPhotoEntry(
+    override val onClick: (Unit) -> Unit,
+) : OptionEntry<Unit> {
+    override val icon: Int = CorePresentation.drawable.ic_proton_tag_plus
+    override val label: Int = I18N.string.common_tag_photo_action
+}

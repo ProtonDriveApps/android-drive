@@ -47,6 +47,7 @@ data class PhotosViewState(
     val showPhotoShareMigrationInProgress: Boolean = false,
     val showPhotoShareMigrationNeededBanner: Boolean = false,
     val showStorageBanner: Boolean = false,
+    val isFastScrollEnabled: Boolean = false,
 )
 
 @Immutable

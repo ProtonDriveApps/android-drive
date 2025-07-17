@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Utwórz folder</string>
   <string name="folder_option_take_a_photo">Zrób nowe zdjęcie</string>
   <string name="folder_option_create_document">Utwórz dokument</string>
+  <string name="folder_option_create_spreadsheet">Utwórz arkusz kalkulacyjny</string>
   <string name="settings_theme_system_default">Domyślny systemu</string>
   <string name="settings_theme_dark">Ciemny</string>
   <string name="settings_theme_light">Jasny</string>
@@ -177,6 +178,7 @@
   <string name="content_description_selected_options">Pokaż więcej opcji dla zaznaczonych plików i folderów</string>
   <string name="content_description_files_upload_upload_file">Prześlij plik</string>
   <string name="content_description_albums_new">Utwórz nowy album</string>
+  <string name="content_description_subscription_action">Otwórz subskrypcję</string>
   <string name="description_empty_my_files">Dotknij przycisku, aby dodać pliki.</string>
   <string name="description_empty_folder_read_only">Niczego tutaj nie ma</string>
   <string name="description_empty_shared">Linki do plików będą dostępne tutaj, aby łatwo zarządzać tym, co udostępniasz.</string>
@@ -202,6 +204,7 @@
   <string name="error_share_not_found">Udostępniony obiekt nie został znaleziony.</string>
   <string name="error_creating_photo_share_not_allowed">Tworzenie kopii zapasowej zdjęć jest tymczasowo wyłączone.</string>
   <string name="error_creating_share_not_allowed">Udostępnianie jest tymczasowo wyłączone.</string>
+  <string name="error_camera_permission">Uprawnienie do aparatu jest wymagane.</string>
   <string name="operation_open_document">otwarcia dokumentu</string>
   <string name="operation_create_document">utworzenia dokumentu</string>
   <string name="operation_take_picture">zrobienia zdjęcia</string>
@@ -284,6 +287,8 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Ulepsz za %1$s</string>
+  <!-- endregion -->
+  <!-- endregion -->
   <!-- endregion -->
   <!-- endregion -->
 </resources>

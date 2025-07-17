@@ -25,6 +25,6 @@
   <string name="title_not_found">Tidak ditemukan</string>
   <string name="proton_docs_insert_image_header_title">Sisipkan gambar</string>
   <string name="proton_docs_option_select_file">Pilih berkas</string>
-  <string name="proton_docs_unsupported_file_type">Saat ini hanya mendukung penyisipan gambar saja</string>
-  <string name="proton_docs_load_error">Pemuatan dokumen gagal</string>
+  <string name="proton_docs_unsupported_file_type">Hanya penyisipan gambar yang didukung untuk saat ini</string>
+  <string name="proton_docs_load_error">Dokumen gagal dimuat</string>
 </resources>

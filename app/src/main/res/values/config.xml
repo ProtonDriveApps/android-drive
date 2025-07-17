@@ -31,4 +31,5 @@
     <bool name="core_feature_observability_enabled">true</bool>
     <bool name="core_feature_payments_v5_enabled">true</bool>
     <bool name="core_feature_device_migration_enabled">true</bool>
+    <bool name="core_feature_password_policy_enabled">true</bool>
 </resources>

@@ -26,6 +26,7 @@ android {
 
 driveModule(
     hilt = true,
+    socialTest = true,
 ) {
     api(project(":drive:base:domain"))
     api(project(":drive:event-manager:base:domain"))

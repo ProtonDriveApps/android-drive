@@ -30,4 +30,5 @@ interface DebugSettingsViewEvent {
     val onReset: () -> Unit
     val onUpdateFeatureFlagFreshDuration: (String) -> Unit
     val onToggleUseVerifier: (Boolean) -> Unit
+    val onToggleSendPhotoTagsInCommit: (Boolean) -> Unit
 }

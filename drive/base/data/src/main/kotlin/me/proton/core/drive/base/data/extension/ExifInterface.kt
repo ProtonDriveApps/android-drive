@@ -126,7 +126,7 @@ private val Char.invSign: Int get() = when (this) {
     else -> error("Unexpected character: $this")
 }
 
-val ExifInterface.subjectArea: String? get() = getAttribute(TAG_SUBJECT_AREA)
+val ExifInterface.subjectArea: String? get() = getAttribute(TAG_SUBJECT_AREA)?.takeUnless { it.isEmpty() }
 
 val ExifInterface.cameraExifTags: CameraExifTags? get() = coRunCatching {
     CameraExifTags(

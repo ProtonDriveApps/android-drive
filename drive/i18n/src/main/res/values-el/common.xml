@@ -74,6 +74,7 @@
   <string name="common_start_action">Έναρξη</string>
   <string name="common_save_all_action">Αποθήκευση όλων</string>
   <string name="common_add_to_albums_action">Προσθήκη στα άλμπουμ</string>
+  <string name="common_tag_photo_action">Σάρωση φωτογραφίας για ετικέτες</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ήχος</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">Έγγραφο PDF</string>
   <string name="common_type_ppt">Παρουσίαση</string>
   <string name="common_type_proton_doc">Έγγραφο Proton</string>
+  <string name="common_type_proton_sheet">Proton υπολογιστικό φύλλο</string>
   <string name="common_type_text">Κείμενο</string>
   <string name="common_type_trustedkey">Αξιόπιστο κλειδί</string>
   <string name="common_type_unknown">Δυαδικό</string>

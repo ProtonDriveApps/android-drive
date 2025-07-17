@@ -19,16 +19,20 @@
 package me.proton.android.drive.ui.screen
 
 import android.content.Context
+import android.widget.Space
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -39,6 +43,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,7 +56,9 @@ import me.proton.android.drive.ui.viewevent.PhotosBackupViewEvent
 import me.proton.android.drive.ui.viewmodel.PhotosBackupViewModel
 import me.proton.android.drive.ui.viewstate.PhotosBackupOption
 import me.proton.android.drive.ui.viewstate.PhotosBackupViewState
+import me.proton.android.drive.ui.viewstate.TagsMigrationProgressState
 import me.proton.core.compose.component.ProtonRawListItem
+import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonDimens.DefaultSpacing
 import me.proton.core.compose.theme.ProtonDimens.ListItemHeight
 import me.proton.core.compose.theme.ProtonDimens.SmallSpacing
@@ -59,6 +67,7 @@ import me.proton.core.compose.theme.captionWeak
 import me.proton.core.compose.theme.defaultNorm
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
 
 @Composable
@@ -82,6 +91,9 @@ fun PhotosBackupScreen(
             .systemBarsPadding(),
         navigateBack = navigateBack,
     ) {
+        viewState.tagsMigrationProgressState?.let { state ->
+            TagsMigrationProgress(state)
+        }
         PhotoExtractDataAction()
         LibraryFolders(
             modifier = Modifier.fillMaxSize(),
@@ -215,6 +227,36 @@ fun BackupPhotosToggle(
     }
 }
 
+@Composable
+fun TagsMigrationProgress(
+    state: TagsMigrationProgressState,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .sizeIn(minHeight = ListItemHeight)
+            .padding(horizontal = DefaultSpacing, vertical = SmallSpacing),
+    ) {
+        Text(
+            text = state.title,
+            style = ProtonTheme.typography.defaultNorm(),
+
+            )
+        Text(
+            text = state.description,
+            style = ProtonTheme.typography.captionWeak(),
+        )
+        state.progress?.let { progress ->
+            Spacer(Modifier.height(SmallSpacing))
+            LinearProgressIndicator(
+                modifier = Modifier.fillMaxWidth(),
+                progress = progress,
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun PhotosBackupPreview() {
@@ -275,6 +317,36 @@ private fun PreviewBackupPhotosDescriptionToggle() {
                 checked = true,
             ),
             onToggle = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+fun TagsMigrationProgressFinishedPreview() {
+    ProtonTheme {
+        TagsMigrationProgress(
+            TagsMigrationProgressState(
+                title = stringResource(I18N.string.photos_tags_migration_title),
+                description = pluralStringResource(I18N.plurals.photos_tags_migration_finished, 12345)
+                    .format("12 345"),
+                progress = null,
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+fun TagsMigrationProgressOngoingPreview() {
+    ProtonTheme {
+        TagsMigrationProgress(
+            TagsMigrationProgressState(
+                title = stringResource(I18N.string.photos_tags_migration_title),
+                description = pluralStringResource(I18N.plurals.photos_tags_migration_ongoing, 12345)
+                    .format("12 345", "123"),
+                progress = 0.5F,
+            )
         )
     }
 }

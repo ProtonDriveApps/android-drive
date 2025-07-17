@@ -21,19 +21,36 @@ package me.proton.core.drive.test.api
 import me.proton.core.drive.base.data.api.response.CodeResponse
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.photo.data.api.entity.AlbumPhotoListingDto
-import me.proton.core.drive.photo.data.api.request.FavoriteRequest
-import me.proton.core.drive.photo.data.api.request.TagRequest
+import me.proton.core.drive.photo.data.api.entity.PhotoListingDto
 import me.proton.core.drive.photo.data.api.response.AddToRemoveFromAlbumResponse
 import me.proton.core.drive.photo.data.api.response.CreateAlbumResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
+import me.proton.core.drive.photo.data.api.response.GetPhotoListingResponse
+import me.proton.core.drive.photo.data.api.response.TagsMigrationResponse
+import me.proton.core.drive.photo.data.api.response.TagsMigrationResponse.Anchor
 import me.proton.core.network.data.protonApi.ProtonErrorData
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
-import retrofit2.http.Body
-import retrofit2.http.HTTP
-import retrofit2.http.POST
-import retrofit2.http.Path
+
+
+
+fun MockWebServer.getPhotoListings(block: RequestContext.() -> MockResponse) = routing {
+    get("/drive/volumes/{enc_volumeID}/photos", block)
+}
+
+fun MockWebServer.getPhotoListings(
+    photoListingDtos: List<PhotoListingDto> = emptyList(),
+) {
+    getPhotoListings {
+        jsonResponse {
+            GetPhotoListingResponse(
+                code = ProtonApiCode.SUCCESS,
+                photos = photoListingDtos,
+            )
+        }
+    }
+}
 
 fun MockWebServer.createAlbum(block: RequestContext.() -> MockResponse) = routing {
     post("/drive/photos/volumes/{volumeID}/albums", block)
@@ -219,5 +236,35 @@ fun MockWebServer.deleteLinkTags() {
                 code = ProtonApiCode.SUCCESS.toInt(),
             )
         }
+    }
+}
+
+fun MockWebServer.getTagsMigrationStatus(block: RequestContext.() -> MockResponse) = routing {
+    get("/drive/photos/volumes/{volumeID}/tags-migration", block)
+}
+
+fun MockWebServer.getTagsMigrationStatus(
+    finished: Boolean = false,
+    anchor: Anchor? = null,
+) = getTagsMigrationStatus {
+    jsonResponse {
+        TagsMigrationResponse(
+            code = ProtonApiCode.SUCCESS,
+            finished = finished,
+            anchor = anchor,
+        )
+    }
+}
+
+
+fun MockWebServer.postTagsMigrationStatus(block: RequestContext.() -> MockResponse) = routing {
+    post("/drive/photos/volumes/{volumeID}/tags-migration", block)
+}
+
+fun MockWebServer.postTagsMigrationStatus() = postTagsMigrationStatus {
+    jsonResponse {
+        CodeResponse(
+            code = ProtonApiCode.SUCCESS.toInt(),
+        )
     }
 }

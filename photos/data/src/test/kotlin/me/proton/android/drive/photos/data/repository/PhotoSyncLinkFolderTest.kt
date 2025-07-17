@@ -36,8 +36,8 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.db.test.DriveDatabaseRule
 import me.proton.core.drive.db.test.myFiles
 import me.proton.core.drive.db.test.photo
+import me.proton.core.drive.db.test.photoVolumeId
 import me.proton.core.drive.db.test.userId
-import me.proton.core.drive.db.test.volumeId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.photo.data.api.PhotoApiDataSource
 import me.proton.core.drive.photo.data.api.entity.PhotoListingDto
@@ -128,7 +128,7 @@ class PhotoSyncLinkFolderTest {
         coEvery {
             photoApiDataSource.getPhotoListings(
                 userId = userId,
-                volumeId = volumeId,
+                volumeId = photoVolumeId,
                 sortingDirection = Direction.DESCENDING,
                 pageSize = pageSize,
                 previousPageLastLinkId = any(),
@@ -158,7 +158,7 @@ class PhotoSyncLinkFolderTest {
 
         assertEquals(
             88,
-            database.db.photoListingDao.getPhotoListingCount(userId, volumeId.id).first()
+            database.db.photoListingDao.getPhotoListingCount(userId, photoVolumeId.id).first()
         )
     }
 }

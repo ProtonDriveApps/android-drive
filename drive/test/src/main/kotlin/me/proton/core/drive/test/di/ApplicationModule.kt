@@ -38,6 +38,7 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.repository.ClientUidRepository
 import me.proton.core.drive.test.TestConfigurationProvider
 import me.proton.core.drive.test.handler.MemoryEventHandler
+import me.proton.core.drive.test.manager.ErrorWorkManager
 import me.proton.core.drive.test.repository.TestClientUidRepository
 import javax.inject.Singleton
 
@@ -48,7 +49,7 @@ object ApplicationModule {
     @Provides
     @Singleton
     fun provideWorkManager(): WorkManager {
-        error("WorkManager should not be injected for test, create a Test*WorkManager implementation that only uses use cases")
+        return ErrorWorkManager
     }
 
     @Provides

@@ -74,6 +74,7 @@
   <string name="common_start_action">Začetek</string>
   <string name="common_save_all_action">Shrani vse</string>
   <string name="common_add_to_albums_action">Add to albums</string>
+  <string name="common_tag_photo_action">Scan photo for tags</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Zvok</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">PDF dokument</string>
   <string name="common_type_ppt">Predstavitev</string>
   <string name="common_type_proton_doc">Dokument Proton</string>
+  <string name="common_type_proton_sheet">Proton spreadsheet</string>
   <string name="common_type_text">Besedilo</string>
   <string name="common_type_trustedkey">Zaupanja vreden ključ</string>
   <string name="common_type_unknown">Dvojiško</string>

@@ -54,6 +54,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -90,6 +92,7 @@ import me.proton.core.compose.component.ProtonSnackbarType
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.crypto.common.keystore.KeyStoreCrypto
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.ListenToBroadcastMessages
 import me.proton.core.drive.messagequeue.domain.ActionProvider
@@ -151,6 +154,7 @@ class MainActivity : FragmentActivity() {
             window.attributes.layoutInDisplayCutoutMode =
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }
+        startSafeBrowsing()
         setContent {
             var isDrawerOpen by remember { mutableStateOf(false) }
             val snackbarHostState = remember { ProtonSnackbarHostState() }
@@ -283,7 +287,7 @@ class MainActivity : FragmentActivity() {
 
     @Composable
     private fun Content(isDarkTheme: Boolean, content: @Composable () -> Unit) {
-        ThumbnailEnabled {
+        ThumbnailEnabled(configurationProvider) {
             ProtonTheme(isDarkTheme) {
                 ProvideLocalSnackbarPadding {
                     content()
@@ -340,6 +344,16 @@ class MainActivity : FragmentActivity() {
                 WindowManager.LayoutParams.FLAG_SECURE
             )
         }
+    }
+
+    private fun startSafeBrowsing() {
+        runCatching {
+            if (WebViewFeature.isFeatureSupported(WebViewFeature.START_SAFE_BROWSING)) {
+                WebViewCompat.startSafeBrowsing(applicationContext) { isSuccess ->
+                    CoreLogger.d(DriveLogTag.UI, "Start safe browsing: $isSuccess")
+                }
+            }
+        }.getOrNull(DriveLogTag.UI, "startSafeBrowsing failed")
     }
 
     override fun onDestroy() {

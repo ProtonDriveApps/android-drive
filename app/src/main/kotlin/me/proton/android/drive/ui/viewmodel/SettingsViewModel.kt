@@ -134,6 +134,9 @@ class SettingsViewModel @Inject constructor(
         override val onToggleUseVerifier = { useVerifier: Boolean ->
             debugSettings.useVerifier = useVerifier
         }
+        override val onToggleSendPhotoTagsInCommit = { sendPhotoTagsInCommit: Boolean ->
+            debugSettings.sendPhotoTagsInCommit = sendPhotoTagsInCommit
+        }
     }
 
     private val debugSettingsFlow = baseCombine(debugSettings.baseUrlFlow,
@@ -144,6 +147,7 @@ class SettingsViewModel @Inject constructor(
         debugSettings.allowBackupDeletedFilesEnabledFlow,
         debugSettings.featureFlagFreshDurationFlow,
         debugSettings.useVerifierFlow,
+        debugSettings.sendPhotoTagsInCommitFlow,
     ) {
             baseUrl,
             host,
@@ -152,7 +156,8 @@ class SettingsViewModel @Inject constructor(
             logToFileEnabled,
             allowBackupDeletedFilesEnabled,
             featureFlagFreshDuration,
-            useVerifier
+            useVerifier,
+            sendPhotoTagsInCommit
         ->
         getDebugSettings(
             host = host,
@@ -163,6 +168,7 @@ class SettingsViewModel @Inject constructor(
             allowBackupDeletedFilesEnabled = allowBackupDeletedFilesEnabled,
             featureFlagFreshDuration = featureFlagFreshDuration.toString(),
             useVerifier = useVerifier,
+            sendPhotoTagsInCommit = sendPhotoTagsInCommit,
         )
     }
 
@@ -209,8 +215,7 @@ class SettingsViewModel @Inject constructor(
         navigateToAutoLockDurations: () -> Unit,
         navigateToPhotosBackup: () -> Unit,
         navigateToDefaultHomeTab: () -> Unit,
-        navigateToLog: () -> Unit,
-        navigateToSignOut: () -> Unit
+        navigateToLog: () -> Unit
     ) = SettingsViewEvent(
         navigateBack = navigateBack,
         onLinkClicked = { link ->
@@ -260,10 +265,7 @@ class SettingsViewModel @Inject constructor(
         },
         onShowLog = {
             navigateToLog()
-        },
-        onSignOut = {
-            navigateToSignOut()
-        },
+        }
     )
 
     private suspend fun getAppAccessSubtitleResId(isAppLockEnabled: Boolean): Int = when {
@@ -301,6 +303,7 @@ class SettingsViewModel @Inject constructor(
         allowBackupDeletedFilesEnabled: Boolean,
         featureFlagFreshDuration: String,
         useVerifier: Boolean,
+        sendPhotoTagsInCommit: Boolean,
     ): DebugSettingsStateAndEvent? =
         (BuildConfig.DEBUG || BuildConfig.FLAVOR == BuildConfig.FLAVOR_ALPHA)
             .takeIf { isDebug -> isDebug }
@@ -315,6 +318,7 @@ class SettingsViewModel @Inject constructor(
                         allowBackupDeletedFiles = allowBackupDeletedFilesEnabled,
                         featureFlagFreshDuration = featureFlagFreshDuration,
                         useVerifier = useVerifier,
+                        sendPhotoTagsInCommit = sendPhotoTagsInCommit,
                     ),
                     viewEvent = debugSettingsViewEvent
                 )

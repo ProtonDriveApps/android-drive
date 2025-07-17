@@ -47,7 +47,7 @@
   <string name="shared_link_action_copy_link">Капіяваць спасылку</string>
   <string name="shared_link_action_copy_password">Капіяваць пароль</string>
   <string name="shared_link_action_share_link">Абагуліць спасылку</string>
-  <string name="shared_link_dialog_title_discard_changes">Адхіліць змены?</string>
+  <string name="shared_link_dialog_title_discard_changes">Скасаваць змены?</string>
   <string name="shared_link_dialog_description">Вы страціце ўсе незахаваныя змены.</string>
   <string name="shared_link_hint_expiration_date_field">Тэрмін дзеяння адсутнічае</string>
   <string name="shared_link_message_update_share_url">Налады абагулення абноўлены</string>

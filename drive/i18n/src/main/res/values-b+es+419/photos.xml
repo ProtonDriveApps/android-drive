@@ -157,4 +157,26 @@
   <string name="photos_important_updates_subtitle">Es necesario actualizar la biblioteca de fotos</string>
   <string name="photos_important_updates_description">Esta actualización rápida prepara sus fotos para nuevas funciones como filtros y álbumes</string>
   <string name="photos_important_updates_cancel_action">Recordarme más tarde</string>
+  <string name="photos_tags_migration_title">Migración de etiquetas</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos migrates
+        Example:
+           Finished, 1 file were migrated.
+           Finished, 12 345 files were migrated.
+    -->
+  <plurals name="photos_tags_migration_finished">
+    <item quantity="one">Finalizado, %1$s archivo migrado.</item>
+    <item quantity="other">Finalizado, %1$s archivos migrados.</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos to migrate
+        Variable %1$s is a quantity (formatted) of photos waiting for download
+        Example:
+           Ongoing, migrating 1 file, 0 waiting for download.
+           Ongoing, migrating 12 345 files, 123 waiting for download.
+    -->
+  <plurals name="photos_tags_migration_ongoing">
+    <item quantity="one">En curso, migrando %1$s archivo, %2$s esperando para su descarga.</item>
+    <item quantity="other">En curso, migrando %1$s archivos, %2$s esperando para su descarga.</item>
+  </plurals>
 </resources>

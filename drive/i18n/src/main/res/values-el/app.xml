@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Δημιούργησε ένα φάκελο</string>
   <string name="folder_option_take_a_photo">Βγάλε μία νέα φωτογραφία</string>
   <string name="folder_option_create_document">Δημιουργία εγγράφου</string>
+  <string name="folder_option_create_spreadsheet">Δημιουργία υπολογιστικού φύλλου</string>
   <string name="settings_theme_system_default">Προεπιλογή συστήματος</string>
   <string name="settings_theme_dark">Σκοτεινό</string>
   <string name="settings_theme_light">Φωτεινό</string>
@@ -167,6 +168,7 @@
   <string name="content_description_selected_options">Εμφάνιση περισσότερων επιλογών για επιλεγμένα αρχεία ή/και φακέλους</string>
   <string name="content_description_files_upload_upload_file">Ανέβασε ένα αρχείο</string>
   <string name="content_description_albums_new">Δημιουργήστε νέο άλμπουμ</string>
+  <string name="content_description_subscription_action">Ανοιχτή συνδρομή</string>
   <string name="description_empty_my_files">Πατήστε το κουμπί για να αρχίσετε να προσθέτετε αρχεία.</string>
   <string name="description_empty_folder_read_only">Δεν υπάρχει τίποτα να δείτε εδώ</string>
   <string name="description_empty_shared">Τα συνδεδεμένα αρχεία εμφανίζονται εδώ, ώστε να μπορείτε εύκολα να παρακολουθείτε και να διαχειρίζεστε τα ήδη διαμοιρασμένα.</string>
@@ -192,6 +194,7 @@
   <string name="error_share_not_found">Η κοινή χρήση δεν βρέθηκε</string>
   <string name="error_creating_photo_share_not_allowed">Η δημιουργία αντιγράφων ασφαλείας φωτογραφιών είναι προσωρινά απενεργοποιημένη.</string>
   <string name="error_creating_share_not_allowed">Η δημιουργία κοινόχρηστου στοιχείου είναι προσωρινά απενεργοποιημένη.</string>
+  <string name="error_camera_permission">Απαιτείται άδεια κάμερας.</string>
   <string name="operation_open_document">άνοιξε ένα έγγραφο</string>
   <string name="operation_create_document">δημιούργησε ένα έγγραφο</string>
   <string name="operation_take_picture">βγάλτε φωτογραφία</string>

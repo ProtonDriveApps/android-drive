@@ -67,6 +67,7 @@ driveModule(
     implementation(libs.androidx.dataStore.preferences)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.webkit)
     implementation(libs.bundles.accompanist)
     implementation(libs.bundles.core)
     implementation(libs.google.play.review)
@@ -120,14 +121,6 @@ val lastBeta = tags.countSubstrings("${Config.versionName}-beta")
 
 android {
     namespace = "me.proton.android.drive"
-    signingConfigs {
-        create("release") {
-            storeFile = file(privateProperties.getProperty("SIGN_KEY_STORE_FILE_PATH") ?: "protonkey.jks")
-            storePassword = privateProperties.getProperty("SIGN_KEY_STORE_PASSWORD")
-            keyAlias = privateProperties.getProperty("SIGN_KEY_ALIAS")
-            keyPassword = privateProperties.getProperty("SIGN_KEY_ALIAS_PASSWORD")
-        }
-    }
 
     testOptions {
         execution = "ANDROIDX_TEST_ORCHESTRATOR"
@@ -230,7 +223,7 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 

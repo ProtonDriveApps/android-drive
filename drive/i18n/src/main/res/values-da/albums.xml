@@ -43,7 +43,7 @@
         Example:
             "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
     -->
-  <string name="albums_leave_album_dialog_description">Are you sure that you want to leave album \"%1$s\"?\nYou will lose access to photos you haven\'t saved yet.</string>
+  <string name="albums_leave_album_dialog_description">Er du sikker på, at du vil forlade albummet \"%1$s\"?\nDu vil miste adgang til fotos, som du endnu ikke har gemt.</string>
   <string name="albums_leave_album_dialog_leave_without_saving_action">Forlad uden at gemme</string>
   <string name="albums_leave_album_dialog_save_and_leave_action">Gem fotos og forlad</string>
   <string name="albums_add_zero_to_album_button">Føj til album</string>
@@ -57,7 +57,7 @@
     <item quantity="one">Føj %1$d til album</item>
     <item quantity="other">Føj %1$d til album</item>
   </plurals>
-  <string name="albums_set_album_as_cover_success">Set as album cover</string>
+  <string name="albums_set_album_as_cover_success">Indstil som albumforside</string>
   <!--
         Variable %1$d is a number of photos added to album
         Example:

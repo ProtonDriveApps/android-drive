@@ -151,7 +151,7 @@
   <string name="albums_share_multiple_photos_options_album_details">共有アルバム</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">新しい共有アルバム</string>
   <string name="albums_add_to_album_start_message">暗号化済みアルバムに写真を追加しています。処理中はアプリを開いたままにしてください。</string>
-  <string name="albums_add_to_albums_options_new_album">Add to new album</string>
+  <string name="albums_add_to_albums_options_new_album">新しいアルバムに追加</string>
   <string name="albums_add_to_albums_options_shared_album">My shared album</string>
   <!--
         Variable %1$s is an album owner name i.e. display name or email

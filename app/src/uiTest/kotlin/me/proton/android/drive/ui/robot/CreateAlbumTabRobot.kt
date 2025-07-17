@@ -32,6 +32,7 @@ object CreateAlbumTabRobot : Robot {
     private val doneButton get() = node.withText(I18N.string.common_done_action)
     private val shareButton get() = node.withText(I18N.string.common_share)
     private val addButton get() = node.withText(I18N.string.common_add_action)
+    private val albumCreatedSuccessfully get() = node.withText(I18N.string.albums_new_album_created_successfully)
 
     fun typeName(text: String) = apply { newAlbumHint.typeText(text) }
 
@@ -43,9 +44,13 @@ object CreateAlbumTabRobot : Robot {
 
     fun <T : Robot> clickOnDone(goesTo: T) = doneButton.clickTo(goesTo)
 
+    fun assertDoneButtonIsDisabled() = doneButton.assertIsNotClickable()
+
     fun clickOnAdd() = addButton.clickTo(PickerPhotosTabRobot)
 
     fun <T : Robot> clickOnShare(goesTo: T) = shareButton.clickTo(goesTo)
+
+    fun <T : Robot> dismissAlbumCreatedSuccessfully(goesTo: T) = albumCreatedSuccessfully.clickTo(goesTo)
 
 
     override fun robotDisplayed() {

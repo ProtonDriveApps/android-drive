@@ -124,6 +124,8 @@ import me.proton.core.drive.photo.data.db.entity.PhotoListingEntity
 import me.proton.core.drive.photo.data.db.entity.RelatedPhotoEntity
 import me.proton.core.drive.photo.data.db.entity.TaggedPhotoListingEntity
 import me.proton.core.drive.photo.data.db.entity.TaggedRelatedPhotoEntity
+import me.proton.core.drive.photo.data.db.entity.TagsMigrationFileEntity
+import me.proton.core.drive.photo.data.db.entity.TagsMigrationFileTagEntity
 import me.proton.core.drive.share.data.db.ShareDatabase
 import me.proton.core.drive.share.data.db.ShareEntity
 import me.proton.core.drive.share.data.db.ShareMembershipEntity
@@ -315,6 +317,8 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         AlbumPhotoListingRemoteKeyEntity::class,
         MediaStoreVersionEntity::class,
         AddToAlbumEntity::class,
+        TagsMigrationFileEntity::class,
+        TagsMigrationFileTagEntity::class,
         // FeatureFlag
         DriveFeatureFlagRefreshEntity::class,
         // Device
@@ -432,7 +436,7 @@ abstract class DriveDatabase :
     DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 90
+        const val VERSION = 92
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -524,6 +528,8 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_87_88,
             DriveDatabaseMigrations.MIGRATION_88_89,
             DriveDatabaseMigrations.MIGRATION_89_90,
+            DriveDatabaseMigrations.MIGRATION_90_91,
+            DriveDatabaseMigrations.MIGRATION_91_92,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

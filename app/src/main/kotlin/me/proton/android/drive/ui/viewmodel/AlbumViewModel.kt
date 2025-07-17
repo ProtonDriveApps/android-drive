@@ -88,12 +88,6 @@ import me.proton.core.drive.drivelink.photo.domain.usecase.GetPagedAlbumPhotoLis
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
 import me.proton.core.drive.drivelink.shared.presentation.extension.toViewState
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsTempDisabledOnRelease
-import me.proton.core.drive.feature.flag.domain.extension.off
-import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
@@ -153,14 +147,10 @@ class AlbumViewModel @Inject constructor(
     override val filterByParentId: Boolean = false
     private val shareId = ShareId(userId, requireNotNull(savedStateHandle.get<String>(SHARE_ID)))
     private val albumId = AlbumId(shareId, requireNotNull(savedStateHandle[ALBUM_ID]))
-    private val shareTempDisabled = getFeatureFlagFlow(driveAlbumsTempDisabledOnRelease(userId))
-        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveAlbumsTempDisabledOnRelease(userId), NOT_FOUND))
     private val photoShare: StateFlow<Share?> = getPhotoShare(userId)
         .filterSuccessOrError()
         .mapSuccessValueOrNull()
         .stateIn(viewModelScope, Eagerly, null)
-    private val driveCopyFeature = getFeatureFlagFlow(FeatureFlagId.driveCopy(userId))
-        .stateIn(viewModelScope, Eagerly, FeatureFlag(FeatureFlagId.driveCopy(userId), NOT_FOUND))
     private var fetchingJob: Job? = null
     private val listContentState = MutableStateFlow<ListContentState>(ListContentState.Loading)
     private val listContentAppendingState = MutableStateFlow<ListContentAppendingState>(
@@ -243,10 +233,9 @@ class AlbumViewModel @Inject constructor(
         listContentState,
         selected,
         photoShare.filterNotNull(),
-        driveCopyFeature,
         saveAllLoading,
         shareUsers,
-    ) { album, contentState, selected, photoShare, driveCopy, saveAllLoading, shareUsers ->
+    ) { album, contentState, selected, photoShare, saveAllLoading, shareUsers ->
         topBarActions.value = when {
             inPickerMode -> emptySet()
             selected.isNotEmpty() -> setOf(
@@ -279,13 +268,13 @@ class AlbumViewModel @Inject constructor(
                         selected.size
                     )
                 },
-            showAddAction = (album.sharePermissions ?: Permissions.owner).canWrite && driveCopy.on,
+            showAddAction = (album.sharePermissions ?: Permissions.owner).canWrite,
             addActionEnabled = selected.isEmpty() && !inPickerMode,
-            showSaveAllAction = (album.sharePermissions ?: Permissions.owner).isViewerOrEditorOnly && driveCopy.on
+            showSaveAllAction = (album.sharePermissions ?: Permissions.owner).isViewerOrEditorOnly
                     && album.photoCount < configurationProvider.savePhotoToStreamLimit,
             saveAllActionEnabled = selected.isEmpty() && !inPickerMode,
             saveAllActionLoading = saveAllLoading,
-            showShareAction = (album.sharePermissions ?: Permissions.owner).isAdmin && shareTempDisabled.value.off,
+            showShareAction = (album.sharePermissions ?: Permissions.owner).isAdmin,
             shareActionEnabled = selected.isEmpty() && !inPickerMode,
             shareUsers = shareUsers.map { shareUser -> shareUser.toViewState(appContext) },
         )

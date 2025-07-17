@@ -74,6 +74,7 @@
   <string name="common_start_action">Mulai</string>
   <string name="common_save_all_action">Simpan semua</string>
   <string name="common_add_to_albums_action">Tambah ke album</string>
+  <string name="common_tag_photo_action">Pindai foto untuk tag</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">Dokumen PDF</string>
   <string name="common_type_ppt">Presentasi</string>
   <string name="common_type_proton_doc">Dokumen Proton</string>
+  <string name="common_type_proton_sheet">Proton spreadsheet</string>
   <string name="common_type_text">Teks</string>
   <string name="common_type_trustedkey">Kunci terpercaya</string>
   <string name="common_type_unknown">Biner</string>

@@ -146,7 +146,7 @@
   <string name="photos_bursts_empty_title">Inga serier</string>
   <string name="photos_bursts_empty_description">Dina fotoserier kommer visas här</string>
   <string name="photos_panoramas_empty_title">No panoramas</string>
-  <string name="photos_panoramas_empty_description">Your panorama photos will appear here</string>
+  <string name="photos_panoramas_empty_description">Dina panoramafoton kommer visas här</string>
   <string name="photos_raws_empty_title">Inga RAW</string>
   <string name="photos_raws_empty_description">Dina RAW-foton kommer visas här</string>
   <string name="photos_share_migration_in_progress_title">Ställer in album och filter</string>
@@ -157,4 +157,26 @@
   <string name="photos_important_updates_subtitle">Fotobibliotek behöver uppdateras</string>
   <string name="photos_important_updates_description">Denna snabba uppdatering förbereder dina foton för nya funktioner som filter och album</string>
   <string name="photos_important_updates_cancel_action">Påminn mig senare</string>
+  <string name="photos_tags_migration_title">Tags migration</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos migrates
+        Example:
+           Finished, 1 file were migrated.
+           Finished, 12 345 files were migrated.
+    -->
+  <plurals name="photos_tags_migration_finished">
+    <item quantity="one">Klart, %1$s fil migrerades.</item>
+    <item quantity="other">Klart, %1$s filer migrerades.</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos to migrate
+        Variable %1$s is a quantity (formatted) of photos waiting for download
+        Example:
+           Ongoing, migrating 1 file, 0 waiting for download.
+           Ongoing, migrating 12 345 files, 123 waiting for download.
+    -->
+  <plurals name="photos_tags_migration_ongoing">
+    <item quantity="one">Ongoing, migrating %1$s file, %2$s waiting for download.</item>
+    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+  </plurals>
 </resources>

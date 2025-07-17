@@ -127,8 +127,7 @@ class DriveTrashRepositoryImpl @Inject constructor(
             allLinks.toList(),
             SaveAction {
                 db.inTransaction {
-                    insertOrUpdateLinks(sortLinksByParents(allParents.toList()))
-                    insertOrUpdateLinks(fetchedLinks.toList())
+                    insertOrUpdateLinks(sortLinksByParents((fetchedLinks + allParents).toSet().toList()))
                     linkTrashRepository.insertOrUpdateTrashState(
                         volumeId = volumeId,
                         linkIds = allLinks.map { link -> link.id },

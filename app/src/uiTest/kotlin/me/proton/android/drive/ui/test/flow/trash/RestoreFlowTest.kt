@@ -19,7 +19,6 @@
 package me.proton.android.drive.ui.test.flow.trash
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.data.ImageName
 import me.proton.android.drive.ui.robot.BackendRobot
@@ -27,8 +26,6 @@ import me.proton.android.drive.ui.robot.FilesTabRobot
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.robot.TrashRobot
 import me.proton.android.drive.ui.test.BaseTest
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ALBUMS
 import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
 
@@ -164,7 +161,6 @@ class RestoreFlowTest : BaseTest() {
     @PrepareUser(withTag = "main", loginBefore = true)
     @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
-    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
     fun restoreAPhotoInAlbum() {
         val albumName = "album-for-photos"
         val image = "trashedFileInAlbum.jpg"

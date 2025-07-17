@@ -95,7 +95,7 @@
         Example:
             "Pending shared albums (2)"
     -->
-  <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
+  <string name="shared_user_album_invitations_title">Afventende delte albummer (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Ingen afventende delte elementer</string>
   <string name="shared_user_album_invitations_title_empty">Ingen afventende delte albummer</string>
   <string name="shared_user_invitations_description_empty">Alle nye invitationer vil være her</string>

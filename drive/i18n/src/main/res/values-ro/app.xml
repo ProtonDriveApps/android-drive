@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Creare folder</string>
   <string name="folder_option_take_a_photo">Fotografie nouă</string>
   <string name="folder_option_create_document">Creare document</string>
+  <string name="folder_option_create_spreadsheet">Creare foaie de calcul</string>
   <string name="settings_theme_system_default">Implicit din sistem</string>
   <string name="settings_theme_dark">Neagră</string>
   <string name="settings_theme_light">Albă</string>
@@ -172,6 +173,7 @@
   <string name="content_description_selected_options">Afișare mai multe opțiuni pentru fișierele și/sau folderele selectate.</string>
   <string name="content_description_files_upload_upload_file">Încărcați un fișier</string>
   <string name="content_description_albums_new">Creare album</string>
+  <string name="content_description_subscription_action">Deschidere abonament</string>
   <string name="description_empty_my_files">Apăsați butonul pe a începe adăugarea fișierelor.</string>
   <string name="description_empty_folder_read_only">Nu e nimic de văzut aici</string>
   <string name="description_empty_shared">Fișierele partajate apar aici ca să puteți să urmăriți și gestiona ce este partajat.</string>
@@ -197,6 +199,7 @@
   <string name="error_share_not_found">Partajarea nu a fost găsită.</string>
   <string name="error_creating_photo_share_not_allowed">Conservarea fotografiilor este momentan dezactivată.</string>
   <string name="error_creating_share_not_allowed">Crearea partajărilor este momentan dezactivată.</string>
+  <string name="error_camera_permission">Este necesară permisiunea pentru cameră.</string>
   <string name="operation_open_document">deschidă un document</string>
   <string name="operation_create_document">creeze un document</string>
   <string name="operation_take_picture">fotografieze</string>

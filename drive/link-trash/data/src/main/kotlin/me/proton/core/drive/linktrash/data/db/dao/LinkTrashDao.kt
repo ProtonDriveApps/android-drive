@@ -55,7 +55,7 @@ interface LinkTrashDao : LinkDao {
     )
     override suspend fun delete(userId: UserId, shareId: String, linkIds: List<String>)
 
-    @Query("""UPDATE LinkTrashStateEntity SET state = "DELETED" WHERE user_id = :userId AND volume_id = :volumeId""")
+    @Query("""UPDATE LinkTrashStateEntity SET state = 'DELETED' WHERE user_id = :userId AND volume_id = :volumeId""")
     suspend fun delete(userId: UserId, volumeId: String)
 
     @Query("SELECT EXISTS(SELECT * FROM LinkTrashStateEntity WHERE user_id = :userId AND $TRASHED_CONDITION)")
@@ -94,14 +94,14 @@ interface LinkTrashDao : LinkDao {
         """
 
         const val NOT_TRASHED_CONDITION = """
-            (LinkTrashStateEntity.state IS NULL OR LinkTrashStateEntity.state == "TRASHING")
+            (LinkTrashStateEntity.state IS NULL OR LinkTrashStateEntity.state == 'TRASHING')
         """
 
         const val TRASHED_CONDITION = """
             (
                 LinkTrashStateEntity.state IS NOT NULL AND 
-                LinkTrashStateEntity.state != "TRASHING" AND 
-                LinkTrashStateEntity.state != "DELETED"
+                LinkTrashStateEntity.state != 'TRASHING' AND
+                LinkTrashStateEntity.state != 'DELETED'
             )
         """
     }

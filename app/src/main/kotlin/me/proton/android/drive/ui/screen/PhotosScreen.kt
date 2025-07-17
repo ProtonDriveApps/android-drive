@@ -52,6 +52,7 @@ import me.proton.android.drive.ui.effect.PhotosEffect
 import me.proton.android.drive.ui.viewmodel.PhotosViewModel
 import me.proton.android.drive.ui.viewstate.HomeScaffoldState
 import me.proton.core.compose.flow.rememberFlowWithLifecycle
+import me.proton.core.drive.base.domain.entity.FastScrollAnchor
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.component.TopBarActions
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
@@ -119,6 +120,9 @@ fun PhotosScreen(
         photos = photos,
         listEffect = listEffect,
         driveLinksFlow = viewModel.driveLinksMap,
+        getFastScrollAnchors = { items: List<PhotosItem>, anchors: Int, anchorsInLabel ->
+            viewModel.getFastScrollAnchors(items, anchors, anchorsInLabel)
+        },
         modifier = modifier,
     )
     BackupPermissions(
@@ -138,6 +142,7 @@ fun PhotosScreen(
     photos: Flow<PagingData<PhotosItem>>,
     listEffect: Flow<ListEffect>,
     driveLinksFlow: Flow<Map<LinkId, DriveLink>>,
+    getFastScrollAnchors: suspend (List<PhotosItem>, Int, Int) -> List<FastScrollAnchor>,
     modifier: Modifier = Modifier,
 ) {
     val selectedPhotos by rememberFlowWithLifecycle(flow = viewState.selected)
@@ -176,6 +181,7 @@ fun PhotosScreen(
         listEffect = listEffect,
         driveLinksFlow = driveLinksFlow,
         selectedPhotos = selectedPhotos,
+        getFastScrollAnchors = getFastScrollAnchors,
         modifier = modifier.fillMaxSize(),
     )
 }

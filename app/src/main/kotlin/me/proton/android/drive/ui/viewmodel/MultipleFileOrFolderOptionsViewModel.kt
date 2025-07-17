@@ -37,6 +37,7 @@ import me.proton.android.drive.ui.options.Option
 import me.proton.android.drive.ui.options.filterAlbums
 import me.proton.android.drive.ui.options.filterAll
 import me.proton.android.drive.ui.options.filterPermissions
+import me.proton.android.drive.ui.options.filterPhotoTag
 import me.proton.android.drive.ui.options.filterShare
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -51,16 +52,16 @@ import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveL
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsDisabled
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsTempDisabledOnRelease
-import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.OptionEntry
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.requireFolderId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.photo.domain.usecase.ScanPhotoForTags
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.trash.domain.usecase.SendToTrash
 import me.proton.core.drive.volume.domain.usecase.HasPhotoVolume
@@ -79,6 +80,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
     private val hasPhotoVolume: HasPhotoVolume,
+    private val scanPhotoForTags: ScanPhotoForTags,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val selectionId = SelectionId(requireNotNull(savedStateHandle.get(KEY_SELECTION_ID)))
     val selectedDriveLinks: Flow<List<DriveLink>> = getSelectedDriveLinks(selectionId)
@@ -92,8 +94,6 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
     }
     private val albumsKillSwitch = getFeatureFlagFlow(driveAlbumsDisabled(userId))
         .stateIn(viewModelScope, Eagerly, FeatureFlag(driveAlbumsDisabled(userId), NOT_FOUND))
-    private val shareTempDisabled = getFeatureFlagFlow(driveAlbumsTempDisabledOnRelease(userId))
-        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveAlbumsTempDisabledOnRelease(userId), NOT_FOUND))
 
     fun entries(
         driveLinks: List<DriveLink>,
@@ -105,12 +105,12 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
     ): Flow<List<OptionEntry<Unit>>> = combine(
         hasPhotoVolume(userId),
         albumsKillSwitch,
-        shareTempDisabled,
-    ) { hasPhotoVolume, albumsKillSwitch, shareDisabled ->
+    ) { hasPhotoVolume, albumsKillSwitch ->
         options
             .filterAll(driveLinks)
             .filterAlbums(hasPhotoVolume, albumsKillSwitch, albumId)
-            .filterShare(shareDisabled.on, albumId)
+            .filterPhotoTag(configurationProvider.scanPhotoFileForTags)
+            .filterShare(false, albumId)
             .filterPermissions(driveLinks.lowestCommonPermissions)
             .map { option ->
                 when (option) {
@@ -129,6 +129,15 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
                             navigateToMove(selectionId, driveLinks.first().requireFolderId())
                         }
                     )
+                    is Option.TagPhotoFile -> option.build(
+                        runAction = runAction,
+                        tagPhotos = {
+                            viewModelScope.launch {
+                                scanPhotoForTags(driveLinks)
+                                deselectLinks(selectionId)
+                            }
+                        }
+                    )
                     is Option.Download -> option.build(
                         runAction = runAction,
                         download = {
@@ -136,7 +145,6 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
                                 exportToDownload(
                                     driveLinks.filterIsInstance<DriveLink.File>().map { driveLink -> driveLink.id }
                                 )
-                                deselectLinks(selectionId)
                             }
                         }
                     )
@@ -174,6 +182,15 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
             }
     }
 
+    private suspend fun scanPhotoForTags(driveLinks: List<DriveLink>) {
+        scanPhotoForTags(
+            driveLinks.first().volumeId,
+            driveLinks.map { it.link }.filterIsInstance<Link.File>()
+        ).onFailure { error ->
+            error.log(VIEW_MODEL, "Failed to scan ${driveLinks.size} photos for tags")
+        }
+    }
+
     private suspend fun removePhotosFromAlbum(
         driveLinks: List<DriveLink.File>,
     ) {
@@ -209,6 +226,7 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
         const val KEY_ALBUM_SHARE_ID = "albumShareId"
 
         private val options = setOfNotNull(
+            Option.TagPhotoFile,
             Option.RemoveFromAlbum,
             Option.AddToAlbums,
             Option.ShareMultiplePhotos,

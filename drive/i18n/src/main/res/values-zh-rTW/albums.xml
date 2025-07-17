@@ -36,7 +36,7 @@
   <string name="albums_delete_album_dialog_description_with_children">此相簿中的某些照片未儲存至您的時間軸。刪除此相簿將永久刪除這些照片。\n您想要在移除前儲存它們嗎？</string>
   <string name="albums_delete_album_dialog_delete_without_saving_action">不儲存直接刪除</string>
   <string name="albums_delete_album_dialog_save_and_delete_action">儲存照片並刪除</string>
-  <string name="albums_leave_album_dialog_title">Leave album?</string>
+  <string name="albums_leave_album_dialog_title">離開相簿?</string>
   <!--
         Variable %1$s is an album name
         Example:
@@ -99,7 +99,7 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_stream_already_exists">
-    <item quantity="other">%1$d items already exist</item>
+    <item quantity="other">已存在 %1$d 個項目</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -108,7 +108,7 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_stream_failed">
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="other">%1$d 個項目失敗</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos removed from album

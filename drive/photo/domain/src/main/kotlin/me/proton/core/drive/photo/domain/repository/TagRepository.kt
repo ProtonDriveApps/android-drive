@@ -34,12 +34,12 @@ interface TagRepository {
     suspend fun addTags(
         volumeId: VolumeId,
         fileId: FileId,
-        tags: List<PhotoTag>,
+        tags: Set<PhotoTag>,
     )
 
     suspend fun deleteTags(
         volumeId: VolumeId,
         fileId: FileId,
-        tags: List<PhotoTag>,
+        tags: Set<PhotoTag>,
     )
 }

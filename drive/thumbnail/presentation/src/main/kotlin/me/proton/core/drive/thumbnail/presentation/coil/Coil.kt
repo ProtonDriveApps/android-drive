@@ -33,6 +33,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailCacheFile
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailInputStream
@@ -43,6 +44,7 @@ import me.proton.core.drive.thumbnail.presentation.coil.fetch.ThumbnailKeyer
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun ThumbnailEnabled(
+    configurationProvider: ConfigurationProvider,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
@@ -55,6 +57,8 @@ fun ThumbnailEnabled(
             getThumbnailCacheFile = injections.getThumbnailCacheFile
         )
         val thumbnailDecoderFactory = ThumbnailDecoder.Factory(
+            context = context,
+            maxThumbnail = configurationProvider.thumbnailPhoto,
             decryptThumbnail = injections.decryptThumbnail
         )
         currentImageLoader.newBuilder()

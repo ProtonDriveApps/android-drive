@@ -99,8 +99,7 @@ fun Settings(
             SignInToAnotherDeviceItem(
                 content = { label: String, onClick: () -> Unit ->
                     ProtonSettingsItem(name = label, onClick = onClick)
-                },
-                onLogOut = { viewEvent.onSignOut() }
+                }
             )
 
             ProtonSettingsHeader(title = I18N.string.settings_section_security)
@@ -243,8 +242,7 @@ private fun SettingsPreview() {
                 onClearLocalCache = {},
                 onPhotosBackup = {},
                 onDefaultHomeTab = {},
-                onShowLog = {},
-                onSignOut = {},
+                onShowLog = {}
             )
         )
     }

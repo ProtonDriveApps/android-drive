@@ -36,10 +36,10 @@
             "12 failed"
     -->
   <plurals name="files_operation_failed_count_of_failures">
-    <item quantity="one">%1$d ni uspelo</item>
+    <item quantity="one">%1$d ni uspel</item>
     <item quantity="two">%1$d nista uspela</item>
-    <item quantity="few">%1$d nista uspela</item>
-    <item quantity="other">%1$d nista uspela</item>
+    <item quantity="few">%1$d niso uspeli</item>
+    <item quantity="other">%1$d ni uspelih</item>
   </plurals>
   <!--
         Variable %1$d is a number of succeeded links in the failed operation

@@ -18,12 +18,9 @@
 
 package me.proton.android.drive.photos.presentation.component
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Icon
@@ -55,7 +52,7 @@ import me.proton.android.drive.photos.presentation.viewstate.PhotosViewState
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultHighlightNorm
-import me.proton.core.compose.theme.defaultNorm
+import me.proton.core.drive.base.domain.entity.FastScrollAnchor
 import me.proton.core.drive.base.presentation.component.IllustratedMessage
 import me.proton.core.drive.base.presentation.component.list.ListEmpty
 import me.proton.core.drive.base.presentation.effect.HandleListEffect
@@ -78,6 +75,7 @@ fun Photos(
     listEffect: Flow<ListEffect>,
     driveLinksFlow: Flow<Map<LinkId, DriveLink>>,
     selectedPhotos: Set<LinkId>,
+    getFastScrollAnchors: suspend (List<PhotosItem>, Int, Int) -> List<FastScrollAnchor>,
     modifier: Modifier = Modifier,
 ) {
     val items = photos.collectAsLazyPagingItems()
@@ -180,6 +178,7 @@ fun Photos(
                             showStorageBanner = viewState.showStorageBanner,
                             modifier = modifier.testTag(PhotosTestTag.content),
                             inMultiselect = viewState.inMultiselect,
+                            isFastScrollEnabled = viewState.isFastScrollEnabled,
                             selectedPhotos = selectedPhotos,
                             onClick = viewEvent.onDriveLink,
                             onLongClick = viewEvent.onSelectDriveLink,
@@ -199,6 +198,7 @@ fun Photos(
                             isRefreshing = viewState.listContentState.isRefreshing,
                             onRefresh = viewEvent.onRefresh,
                             onStartPhotoShareMigration = viewEvent.onStartPhotoShareMigration,
+                            getFastScrollAnchors = getFastScrollAnchors,
                         )
                     }
             }

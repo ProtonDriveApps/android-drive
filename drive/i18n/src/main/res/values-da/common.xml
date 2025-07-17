@@ -67,13 +67,14 @@
   <string name="common_open_in_browser_action">Åbn i browser</string>
   <string name="common_done_action">Udført</string>
   <string name="common_create_album_action">Opret album</string>
-  <string name="common_set_as_album_cover_action">Set as album cover</string>
+  <string name="common_set_as_album_cover_action">Indstil som albumforside</string>
   <string name="common_add_action">Tilføj</string>
   <string name="common_remove_from_album_action">Fjern fra album</string>
   <string name="common_leave_album_action">Forlad album</string>
   <string name="common_start_action">Start</string>
   <string name="common_save_all_action">Gem alle</string>
-  <string name="common_add_to_albums_action">Add to albums</string>
+  <string name="common_add_to_albums_action">Føj til albummer</string>
+  <string name="common_tag_photo_action">Scan foto efter tags</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Lyd</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">PDF-dokument</string>
   <string name="common_type_ppt">Præsentation</string>
   <string name="common_type_proton_doc">Proton-dokument</string>
+  <string name="common_type_proton_sheet">Proton regneark</string>
   <string name="common_type_text">Tekst</string>
   <string name="common_type_trustedkey">Betroet nøgle</string>
   <string name="common_type_unknown">Binær</string>

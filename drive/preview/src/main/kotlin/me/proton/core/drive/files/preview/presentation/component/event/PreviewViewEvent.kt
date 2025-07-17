@@ -31,4 +31,5 @@ interface PreviewViewEvent {
     val onOpenInBrowser: () -> Unit
     val onProtonDocsDownloadResult: (Result<String>) -> Unit
     val onProtonDocsShowFileChooser: (ValueCallback<Array<Uri>>?, FileChooserParams?) -> Boolean
+    val onWebViewRelease: (String) -> Unit
 }

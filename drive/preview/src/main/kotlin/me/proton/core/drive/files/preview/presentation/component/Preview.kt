@@ -391,10 +391,26 @@ fun PreviewContent(
                 host = host,
                 appVersionHeader = appVersionHeader,
                 modifier = pointerInputModifier.padding(top = topBarHeight),
+                onWebViewRelease = viewEvent.onWebViewRelease,
                 onDownloadResult = viewEvent.onProtonDocsDownloadResult,
                 onShowFileChooser = viewEvent.onProtonDocsShowFileChooser,
             )
             is Uri -> ProtonDocumentPreview(
+                modifier = pointerInputModifier.padding(top = topBarHeight),
+                onOpenInBrowser = viewEvent.onOpenInBrowser,
+            )
+            else -> Unit
+        }
+        PreviewComposable.ProtonSheet -> when (source) {
+            is String -> ProtonSpreadsheetPreview(
+                uriString = requireIsInstance(source),
+                title = title,
+                host = host,
+                appVersionHeader = appVersionHeader,
+                modifier = pointerInputModifier.padding(top = topBarHeight),
+                onWebViewRelease = viewEvent.onWebViewRelease,
+            )
+            is Uri -> ProtonSpreadsheetPreview(
                 modifier = pointerInputModifier.padding(top = topBarHeight),
                 onOpenInBrowser = viewEvent.onOpenInBrowser,
             )
@@ -564,6 +580,7 @@ fun PreviewPreviewLoadingState() {
                     override val onOpenInBrowser: () -> Unit = {}
                     override val onProtonDocsDownloadResult: (Result<String>) -> Unit = {}
                     override val onProtonDocsShowFileChooser: (ValueCallback<Array<Uri>>?, WebChromeClient.FileChooserParams?) -> Boolean = { _, _ -> false }
+                    override val onWebViewRelease: (String) -> Unit = {}
                 },
             )
         }
@@ -614,6 +631,7 @@ fun FileTypeCategory.toComposable(): PreviewComposable = when (this) {
     FileTypeCategory.Text -> PreviewComposable.Text
     FileTypeCategory.Video -> PreviewComposable.Video
     FileTypeCategory.ProtonDoc -> PreviewComposable.ProtonDoc
+    FileTypeCategory.ProtonSheet -> PreviewComposable.ProtonSheet
     FileTypeCategory.Calendar,
     FileTypeCategory.Doc,
     FileTypeCategory.Keynote,
@@ -638,6 +656,7 @@ enum class PreviewComposable {
     Video,
     Pdf,
     ProtonDoc,
+    ProtonSheet,
     Text,
     Unknown,
 }

@@ -107,6 +107,7 @@ import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.link.domain.extension.isProtonDocument
+import me.proton.core.drive.link.domain.extension.isProtonSpreadsheet
 import me.proton.core.drive.link.domain.extension.requireFolderId
 import me.proton.core.drive.link.domain.extension.rootFolderId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
@@ -364,6 +365,15 @@ class PreviewViewModel @Inject constructor(
                 }
             }
         }
+        override val onWebViewRelease = { uriString: String ->
+            protonDocumentUriStringCache
+                .entries
+                .firstOrNull { (_, uri) -> uri == uriString }
+                ?.let { (fileId, _) ->
+                    protonDocumentUriStringCache.remove(fileId)
+                }
+            retry(verifySignature = false)
+        }
     }
 
     suspend fun onPageChanged(page: Int) {
@@ -427,7 +437,7 @@ class PreviewViewModel @Inject constructor(
         contentStatesCache.getOrPut(id) {
             if (mimeType.toFileTypeCategory().toComposable() == PreviewComposable.Unknown) {
                 NO_PREVIEW_SUPPORTED
-            } else if (isProtonDocument) {
+            } else if (isProtonDocument || isProtonSpreadsheet) {
                 trigger.map {
                     getProtonDocumentUriString(this@getContentStateFlow, it.retry)
                         .fold(

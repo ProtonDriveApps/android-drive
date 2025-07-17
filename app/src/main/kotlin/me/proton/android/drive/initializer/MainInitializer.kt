@@ -58,6 +58,7 @@ class MainInitializer : Initializer<Unit> {
         ShareInitializer::class.java,
         TelemetryInitializer::class.java,
         CleanupInitializer::class.java,
+        TagsMigrationInitializer::class.java,
         PingActiveUserInitializer::class.java,
         LogInterceptorInitializer::class.java,
         AccountReadyObserverInitializer::class.java,

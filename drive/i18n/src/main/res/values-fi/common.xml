@@ -70,10 +70,11 @@
   <string name="common_set_as_album_cover_action">Aseta albumin kanneksi</string>
   <string name="common_add_action">Lisää</string>
   <string name="common_remove_from_album_action">Poista albumista</string>
-  <string name="common_leave_album_action">Leave album</string>
-  <string name="common_start_action">Start</string>
-  <string name="common_save_all_action">Save all</string>
-  <string name="common_add_to_albums_action">Add to albums</string>
+  <string name="common_leave_album_action">Poistu albumista</string>
+  <string name="common_start_action">Aloita</string>
+  <string name="common_save_all_action">Tallenna kaikki</string>
+  <string name="common_add_to_albums_action">Lisää albumeihin</string>
+  <string name="common_tag_photo_action">Scan photo for tags</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ääni</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">PDF-dokumentti</string>
   <string name="common_type_ppt">Esitys</string>
   <string name="common_type_proton_doc">Proton-dokumentti</string>
+  <string name="common_type_proton_sheet">Proton-laskentataulukko</string>
   <string name="common_type_text">Teksti</string>
   <string name="common_type_trustedkey">Luotettu avain</string>
   <string name="common_type_unknown">Binaari</string>

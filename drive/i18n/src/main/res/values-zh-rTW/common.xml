@@ -70,10 +70,11 @@
   <string name="common_set_as_album_cover_action">設定為相簿封面</string>
   <string name="common_add_action">新增</string>
   <string name="common_remove_from_album_action">從相簿移除</string>
-  <string name="common_leave_album_action">Leave album</string>
-  <string name="common_start_action">Start</string>
+  <string name="common_leave_album_action">離開相簿</string>
+  <string name="common_start_action">開始</string>
   <string name="common_save_all_action">Save all</string>
   <string name="common_add_to_albums_action">Add to albums</string>
+  <string name="common_tag_photo_action">Scan photo for tags</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">音訊</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">PDF 文件</string>
   <string name="common_type_ppt">簡報</string>
   <string name="common_type_proton_doc">Proton 文件</string>
+  <string name="common_type_proton_sheet">Proton spreadsheet</string>
   <string name="common_type_text">文字</string>
   <string name="common_type_trustedkey">信任的金鑰</string>
   <string name="common_type_unknown">二進位</string>

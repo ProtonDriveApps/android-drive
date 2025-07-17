@@ -18,44 +18,58 @@
 
 package me.proton.android.drive.photos.presentation.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
+import androidx.compose.ui.Alignment.Companion.CenterEnd
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import kotlinx.coroutines.flow.Flow
 import me.proton.android.drive.photos.presentation.extension.rememberLazyGridState
 import me.proton.android.drive.photos.presentation.state.PhotosItem
 import me.proton.android.drive.photos.presentation.viewstate.PhotosStatusViewState
-import me.proton.core.compose.flow.rememberFlowWithLifecycle
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.defaultWeak
+import me.proton.core.drive.base.domain.entity.FastScrollAnchor
+import me.proton.core.drive.base.presentation.component.FastScroller
 import me.proton.core.drive.base.presentation.component.ProtonPullToRefresh
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.user.presentation.quota.component.StorageBanner
+import me.proton.core.drive.base.presentation.R as BasePresentation
 
 @Composable
 fun PhotosContent(
@@ -68,6 +82,7 @@ fun PhotosContent(
     showStorageBanner: Boolean,
     modifier: Modifier = Modifier,
     inMultiselect: Boolean = false,
+    isFastScrollEnabled: Boolean = false,
     onClick: (DriveLink) -> Unit,
     onLongClick: (DriveLink) -> Unit,
     onEnable: () -> Unit,
@@ -84,6 +99,7 @@ fun PhotosContent(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     onStartPhotoShareMigration: () -> Unit,
+    getFastScrollAnchors: suspend (List<PhotosItem>, Int, Int) -> List<FastScrollAnchor>,
 ) {
     ProtonPullToRefresh(
         isPullToRefreshEnabled = isRefreshEnabled,
@@ -100,6 +116,7 @@ fun PhotosContent(
             showPhotoShareMigrationNeededBanner = showPhotoShareMigrationNeededBanner,
             modifier = modifier,
             inMultiselect= inMultiselect,
+            isFastScrollEnabled = isFastScrollEnabled,
             onClick = onClick,
             onLongClick = onLongClick,
             onEnable = onEnable,
@@ -113,6 +130,7 @@ fun PhotosContent(
             onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
             onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
             onStartPhotoShareMigration = onStartPhotoShareMigration,
+            getFastScrollAnchors = getFastScrollAnchors,
         )
     }
 }
@@ -128,6 +146,7 @@ fun PhotosContent(
     showStorageBanner: Boolean,
     modifier: Modifier = Modifier,
     inMultiselect: Boolean = false,
+    isFastScrollEnabled: Boolean = false,
     onClick: (DriveLink) -> Unit,
     onLongClick: (DriveLink) -> Unit,
     onEnable: () -> Unit,
@@ -141,10 +160,10 @@ fun PhotosContent(
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
     onStartPhotoShareMigration: () -> Unit,
+    getFastScrollAnchors: suspend (List<PhotosItem>, Int, Int) -> List<FastScrollAnchor>,
 ) {
     val gridState = items.rememberLazyGridState()
-    val driveLinksMap by rememberFlowWithLifecycle(flow = driveLinksFlow)
-        .collectAsState(initial = emptyMap())
+    val driveLinksMap by driveLinksFlow.collectAsStateWithLifecycle(initialValue = emptyMap())
     val firstVisibleItemIndex by remember(gridState) { derivedStateOf { gridState.firstVisibleItemIndex } }
     LaunchedEffect(firstVisibleItemIndex, items.itemSnapshotList.items) {
         onScroll(
@@ -166,6 +185,7 @@ fun PhotosContent(
 
     var sizeInDp by remember { mutableStateOf(DpSize.Zero) }
     val density = LocalDensity.current
+    val isThumbVisible = remember { mutableStateOf(false) }
 
     Box {
         LazyVerticalGrid(
@@ -232,35 +252,82 @@ fun PhotosContent(
             }
         }
 
-        PhotosBanners(
-            modifier = Modifier
-                .align(BottomCenter)
-                .onSizeChanged { size ->
-                    sizeInDp = density.run {
-                        DpSize(size.width.toDp(), size.height.toDp())
+        AnimatedVisibility(
+            visible = !isThumbVisible.value,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.align(BottomCenter),
+        ) {
+            PhotosBanners(
+                modifier = Modifier
+                    .onSizeChanged { size ->
+                        sizeInDp = density.run {
+                            DpSize(size.width.toDp(), size.height.toDp())
+                        }
+                    }
+            ) {
+                PhotoShareMigrationNeededState(
+                    isVisible = showPhotoShareMigrationNeededBanner,
+                    onStart = onStartPhotoShareMigration,
+                )
+                PhotosStatesContainer(
+                    viewState = viewState,
+                    showPhotosStateBanner = showPhotosStateBanner,
+                    onEnable = onEnable,
+                    onPermissions = onPermissions,
+                    onRetry = onRetry,
+                    onResolve = onResolve,
+                    onResolveMissingFolder = onResolveMissingFolder,
+                    onChangeNetwork = onChangeNetwork,
+                    onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
+                    onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
+                )
+                StorageBanner(
+                    isVisible = showStorageBanner,
+                    onGetStorage = onGetStorage,
+                )
+            }
+        }
+        val haptic = LocalHapticFeedback.current
+        FastScroller(
+            state = gridState,
+            itemCount = items.itemCount,
+            isThumbVisible = isThumbVisible,
+            isFastScrollEnabled = isFastScrollEnabled,
+            thumbContent = {
+                Box(
+                    modifier = Modifier
+                        .size(48.dp),
+                    contentAlignment = CenterEnd,
+                ) {
+                    Card(
+                        shape = RoundedCornerShape(100.dp),
+                        elevation = ProtonDimens.SmallSpacing,
+                        backgroundColor = ProtonTheme.colors.backgroundSecondary,
+                        contentColor = ProtonTheme.colors.textNorm,
+                        modifier = Modifier
+                            .size(width = 32.dp, height = 37.dp)
+                    ) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Icon(
+                                painter = painterResource(
+                                    BasePresentation.drawable.ic_proton_chevron_up_down_16
+                                ),
+                                contentDescription = null,
+                                tint = ProtonTheme.colors.iconNorm,
+                            )
+                        }
                     }
                 }
-        ) {
-            PhotoShareMigrationNeededState(
-                isVisible = showPhotoShareMigrationNeededBanner,
-                onStart = onStartPhotoShareMigration,
-            )
-            PhotosStatesContainer(
-                viewState = viewState,
-                showPhotosStateBanner = showPhotosStateBanner,
-                onEnable = onEnable,
-                onPermissions = onPermissions,
-                onRetry = onRetry,
-                onResolve = onResolve,
-                onResolveMissingFolder = onResolveMissingFolder,
-                onChangeNetwork = onChangeNetwork,
-                onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
-                onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
-            )
-            StorageBanner(
-                isVisible = showStorageBanner,
-                onGetStorage = onGetStorage,
-            )
-        }
+            },
+            onDraggedToPosition = {
+                haptic.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+            },
+            getFastScrollAnchors = { maxSteps, stepsForLabel ->
+                getFastScrollAnchors(items.itemSnapshotList.items, maxSteps, stepsForLabel)
+            },
+        )
     }
 }

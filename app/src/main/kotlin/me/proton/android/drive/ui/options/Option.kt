@@ -50,6 +50,8 @@ import me.proton.core.drive.files.presentation.entry.SendFileEntry
 import me.proton.core.drive.files.presentation.entry.SetAsAlbumCoverEntry
 import me.proton.core.drive.files.presentation.entry.ShareMultiplePhotosEntry
 import me.proton.core.drive.files.presentation.entry.ShareViaInvitationsEntry
+import me.proton.core.drive.files.presentation.entry.TagPhotoEntry
+import me.proton.core.drive.files.presentation.entry.TagPhotoFileEntry
 import me.proton.core.drive.files.presentation.entry.ToggleFavoriteFileEntry
 import me.proton.core.drive.files.presentation.entry.ToggleOfflineEntry
 import me.proton.core.drive.files.presentation.entry.ToggleTrashEntry
@@ -60,8 +62,8 @@ import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.isProtonCloudFile
 import me.proton.core.drive.link.domain.extension.isSharedUrlExpired
-import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.drive.i18n.R as I18N
+import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.presentation.R as CorePresentation
 
 sealed class Option(
@@ -76,12 +78,10 @@ sealed class Option(
     ) {
         fun build(
             runAction: RunAction,
-            notificationDotVisible: Boolean,
             createDocument: (FolderId) -> Unit,
         ) = folderEntry(
-            icon = CorePresentation.drawable.ic_proton_file,
+            icon = BasePresentation.drawable.ic_proton_docs_filled,
             labelResId = I18N.string.folder_option_create_document,
-            notificationDotVisible = notificationDotVisible,
             runAction = runAction,
         ) {
             createDocument(id)
@@ -102,6 +102,23 @@ sealed class Option(
             runAction = runAction,
         ) {
             navigateToCreateFolder(id)
+        }
+    }
+
+    data object CreateSpreadsheet : Option(
+        ApplicableQuantity.Single,
+        setOf(ApplicableTo.FOLDER),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            createSpreadsheet: (FolderId) -> Unit,
+        ) = folderEntry(
+            icon = BasePresentation.drawable.ic_proton_sheets_filled,
+            labelResId = I18N.string.folder_option_create_spreadsheet,
+            runAction = runAction,
+        ) {
+            createSpreadsheet(id)
         }
     }
 
@@ -456,6 +473,29 @@ sealed class Option(
             }
         }
     }
+
+    data object TagPhotoFile : Option(
+        ApplicableQuantity.All,
+        setOf(ApplicableTo.FILE_PHOTO),
+        setOf(State.NOT_TRASHED) + State.ANY_SHARED,
+    ) {
+        fun build(
+            runAction: RunAction,
+            tagPhoto: suspend (DriveLink.File) -> Unit,
+        ) = TagPhotoFileEntry { photoFile ->
+            runAction {
+                tagPhoto(photoFile)
+            }
+        } as FileOptionEntry<DriveLink>
+        fun build(
+            runAction: RunAction,
+            tagPhotos: suspend () -> Unit,
+        ) = TagPhotoEntry {
+            runAction {
+                tagPhotos()
+            }
+        }
+    }
 }
 
 sealed class ApplicableQuantity(open val quantity: Long) {
@@ -548,6 +588,7 @@ fun Iterable<Option>.filterPermissions(
         Option.AddToAlbums -> permissions.canWrite
         Option.CreateDocument -> permissions.canWrite
         Option.CreateFolder -> permissions.canWrite
+        Option.CreateSpreadsheet -> permissions.canWrite
         Option.DeleteAlbum -> permissions.isAdmin
         Option.DeletePermanently -> permissions.canWrite
         Option.Download -> permissions.canRead
@@ -566,6 +607,7 @@ fun Iterable<Option>.filterPermissions(
         Option.SetAsAlbumCover -> permissions.isAdmin
         Option.ShareViaInvitations -> permissions.isAdmin
         Option.ShareMultiplePhotos -> permissions.isAdmin
+        Option.TagPhotoFile -> permissions.isAdmin
         Option.TakeAPhoto -> permissions.canWrite
         Option.Trash -> permissions.isAdmin
         Option.UploadFile -> permissions.canWrite
@@ -575,7 +617,13 @@ fun Iterable<Option>.filterPermissions(
 fun Iterable<Option>.filterProtonDocs(killSwitch: FeatureFlag) = filter { option ->
     when (option) {
         Option.CreateDocument -> killSwitch.off
-        Option.OpenInBrowser -> killSwitch.off
+        else -> true
+    }
+}
+
+fun Iterable<Option>.filterProtonSheets(isEnabled: Boolean) = filter { option ->
+    when (option) {
+        Option.CreateSpreadsheet -> isEnabled
         else -> true
     }
 }
@@ -587,6 +635,7 @@ fun Iterable<Option>.filterAlbums(
 ) = filter { option ->
     val featureEnabled = isEnabled && killSwitch.off
     when (option) {
+        Option.TagPhotoFile -> featureEnabled && albumId == null
         Option.AddToAlbums -> featureEnabled && albumId == null
         Option.ShareMultiplePhotos -> featureEnabled && albumId == null
         Option.RemoveFromAlbum -> featureEnabled && albumId != null
@@ -604,6 +653,15 @@ fun Iterable<Option>.filterPhotoFavorite(
     val featureEnabled = isEnabled && killSwitch.off
     when (option) {
         Option.FavoriteToggle -> featureEnabled
+        else -> true
+    }
+}
+
+fun Iterable<Option>.filterPhotoTag(
+    isEnabled: Boolean,
+) = filter { option ->
+    when (option) {
+        Option.TagPhotoFile -> isEnabled
         else -> true
     }
 }

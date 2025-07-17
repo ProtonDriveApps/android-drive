@@ -22,6 +22,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import me.proton.core.drive.base.data.api.Dto.CONTENT_KEY_PACKET
 import me.proton.core.drive.base.data.api.Dto.CONTENT_KEY_PACKET_SIGNATURE
+import me.proton.core.drive.base.data.api.Dto.DOCUMENT_TYPE
 import me.proton.core.drive.base.data.api.Dto.HASH
 import me.proton.core.drive.base.data.api.Dto.MANIFEST_SIGNATURE
 import me.proton.core.drive.base.data.api.Dto.NAME
@@ -53,4 +54,6 @@ data class CreateDocumentRequest(
     val contentKeyPacketSignature: String?,
     @SerialName(MANIFEST_SIGNATURE)
     val manifestSignature: String,
+    @SerialName(DOCUMENT_TYPE)
+    val documentType: Long,
 )

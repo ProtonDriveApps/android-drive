@@ -20,6 +20,7 @@ package me.proton.core.drive.drivelink.photo.data.paging
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.RemoteMediator
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
 import me.proton.core.drive.drivelink.photo.domain.entity.PhotoListingsPage
@@ -30,6 +31,7 @@ import javax.inject.Inject
 
 class PhotoListingRemoteMediatorFactoryImpl @Inject constructor(
     private val database: DriveLinkPhotoDatabase,
+    private val configurationProvider: ConfigurationProvider,
 ) : PhotoListingRemoteMediatorFactory {
 
     @OptIn(ExperimentalPagingApi::class)
@@ -54,6 +56,7 @@ class PhotoListingRemoteMediatorFactoryImpl @Inject constructor(
             database = database,
             remotePhotoListings = remotePhotoListings,
             deleteAllLocalPhotoListings = deleteAllLocalPhotoListings,
+            configurationProvider = configurationProvider,
         )
     }
 }

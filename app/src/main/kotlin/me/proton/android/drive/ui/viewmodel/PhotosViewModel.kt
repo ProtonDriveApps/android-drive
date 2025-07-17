@@ -46,6 +46,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
@@ -62,6 +63,8 @@ import me.proton.android.drive.photos.domain.usecase.RemoveFromAlbumInfo
 import me.proton.android.drive.photos.domain.usecase.ShowImportantUpdates
 import me.proton.android.drive.photos.domain.usecase.ShowUpsell
 import me.proton.android.drive.photos.presentation.R
+import me.proton.android.drive.photos.presentation.extension.getFastScrollAnchors
+import me.proton.android.drive.photos.presentation.extension.isFastScrollThresholdReached
 import me.proton.android.drive.photos.presentation.extension.isSelected
 import me.proton.android.drive.photos.presentation.extension.toEmptyPhotoTagState
 import me.proton.android.drive.photos.presentation.extension.toPhotosFilter
@@ -90,6 +93,7 @@ import me.proton.core.drive.backup.domain.usecase.RetryBackup
 import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.domain.entity.FastScrollAnchor
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.onFailure
@@ -118,11 +122,8 @@ import me.proton.core.drive.drivelink.photo.domain.usecase.GetPagedPhotoListings
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPhotoCount
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsDisabled
 import me.proton.core.drive.feature.flag.domain.extension.off
-import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -133,6 +134,7 @@ import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink.Companion.RECENT_BACKUP_PRIORITY
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.photo.domain.usecase.GetTagsMigrationStatusFlow
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.user.domain.entity.UserMessage
 import me.proton.core.drive.user.domain.extension.isFree
@@ -142,6 +144,7 @@ import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
 import me.proton.core.user.domain.UserManager
 import me.proton.core.util.kotlin.CoreLogger
 import java.util.Calendar
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 import me.proton.core.drive.base.domain.extension.combine as baseCombine
@@ -168,11 +171,11 @@ class PhotosViewModel @Inject constructor(
     showUpsell: ShowUpsell,
     userManager: UserManager,
     getSubscriptionAction: GetSubscriptionAction,
-    albumsFeatureFlag: AlbumsFeatureFlag,
     getFeatureFlagFlow: GetFeatureFlagFlow,
     hasPhotoVolume: HasPhotoVolume,
     shouldUpgradeStorage: ShouldUpgradeStorage,
     showImportantUpdates: ShowImportantUpdates,
+    getTagsMigrationStatusFlow: GetTagsMigrationStatusFlow,
     @ApplicationContext private val appContext: Context,
     private val separatorFormatter: SeparatorFormatter,
     private val backupStatusFormatter: BackupStatusFormatter,
@@ -203,14 +206,12 @@ class PhotosViewModel @Inject constructor(
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
 
-    private val albumsFeatureFlagOn = combine(
-        albumsFeatureFlag(userId)
-            .stateIn(viewModelScope, Eagerly, configurationProvider.albumsFeatureFlag),
+    private val albumsFeatureFlagOn: StateFlow<Boolean> =
         getFeatureFlagFlow(driveAlbumsDisabled(userId))
-            .stateIn(viewModelScope, Eagerly, FeatureFlag(driveAlbumsDisabled(userId), NOT_FOUND))
-    ) { featureFlagOn, killSwitch ->
-        featureFlagOn && killSwitch.off
-    }
+            .map { killSwitch ->
+                killSwitch.off
+            }
+            .stateIn(viewModelScope, Eagerly, true)
 
     override val driveLinkFilter = { driveLink: DriveLink -> driveLink !is DriveLink.Album }
 
@@ -250,19 +251,37 @@ class PhotosViewModel @Inject constructor(
     private val photoListingsFilter: MutableStateFlow<PhotoTag?> =
         MutableStateFlow(null)
 
-    private val photosFilters = listOf(
-        PhotosFilter(
-            filter = null,
-            tagViewState = TagViewState(
-                label = appContext.getString(I18N.string.photos_filter_all),
-                icon = CorePresentation.drawable.ic_proton_image,
-                selected = true,
+    private val photosFilters = getTagsMigrationStatusFlow(userId).mapLatest { tagsMigrationStatus ->
+        listOf(
+            PhotosFilter(
+                filter = null,
+                tagViewState = TagViewState(
+                    label = appContext.getString(I18N.string.photos_filter_all),
+                    icon = CorePresentation.drawable.ic_proton_image,
+                    selected = true,
+                )
             )
-        ),
-        PhotoTag.Favorites.toPhotosFilter(appContext),
-        PhotoTag.Videos.toPhotosFilter(appContext),
-        PhotoTag.Raw.toPhotosFilter(appContext),
-    )
+        ) + if (!tagsMigrationStatus.finished) {
+            listOf(
+                PhotoTag.Favorites,
+                PhotoTag.Videos,
+                PhotoTag.Raw,
+            ).map { tag -> tag.toPhotosFilter(appContext) }
+        } else {
+            listOf(
+                PhotoTag.Favorites,
+                PhotoTag.Videos,
+                PhotoTag.Raw,
+                PhotoTag.Screenshots,
+                PhotoTag.Selfies,
+                PhotoTag.Portraits,
+                PhotoTag.Bursts,
+                PhotoTag.Panoramas,
+            ).map { tag -> tag.toPhotosFilter(appContext) }
+        }
+    }
+
+    private val isFastScrollEnabled: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val initialViewState = PhotosViewState(
         title = appContext.getString(I18N.string.photos_title),
         navigationIconResId = CorePresentation.drawable.ic_proton_hamburger,
@@ -334,8 +353,14 @@ class PhotosViewModel @Inject constructor(
                     if (after == null) {
                         null
                     } else if (before == null) {
+                        val cal = Calendar.getInstance().apply {
+                            timeInMillis = after.captureTime.value * 1000L
+                        }
                         PhotosItem.Separator(
                             value = separatorFormatter.toSeparator(after.captureTime),
+                            year = cal.get(Calendar.YEAR),
+                            month = cal.get(Calendar.MONTH),
+                            afterCaptureTime = after.captureTime,
                         )
                     } else {
                         val beforeCalendar = Calendar.getInstance().apply {
@@ -349,8 +374,14 @@ class PhotosViewModel @Inject constructor(
                             beforeCalendar.get(Calendar.MONTH)
                             != afterCalendar.get(Calendar.MONTH)
                         ) {
+                            val cal = Calendar.getInstance().apply {
+                                timeInMillis = after.captureTime.value * 1000L
+                            }
                             PhotosItem.Separator(
                                 value = separatorFormatter.toSeparator(after.captureTime),
+                                year = cal.get(Calendar.YEAR),
+                                month = cal.get(Calendar.MONTH),
+                                afterCaptureTime = after.captureTime,
                             )
                         } else {
                             null
@@ -406,7 +437,9 @@ class PhotosViewModel @Inject constructor(
         hasPhotoVolume(userId),
         photoShareMigrationManager.status,
         userManager.observeUser(userId),
-    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, albumsFeatureFlagOn, hasPhotoVolume, photoShareMigrationStatus, user ->
+        isFastScrollEnabled,
+        photosFilters,
+    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, albumsFeatureFlagOn, hasPhotoVolume, photoShareMigrationStatus, user, isFastScrollEnabled, photosFilters ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -455,6 +488,7 @@ class PhotosViewModel @Inject constructor(
             },
             notificationDotVisible = showHamburgerMenuIcon && notificationDotRequested,
             inMultiselect = selected.isNotEmpty() || inPickerMode,
+            isFastScrollEnabled = isFastScrollEnabled,
             listContentState = listContentState,
             showEmptyList = backupState.isBackupEnabled || backupState.hasDefaultFolder == false ,
             showPhotosStateIndicator = showPhotosStateIndicator && !inPickerMode,
@@ -588,7 +622,7 @@ class PhotosViewModel @Inject constructor(
         if (driveLinkIds.isNotEmpty()) {
             fetchingJob?.cancel()
             fetchingJob = viewModelScope.launch {
-                delay(300.milliseconds)
+                delay(100.milliseconds)
                 photoDriveLinks.load(driveLinkIds)
             }
         }
@@ -732,5 +766,28 @@ class PhotosViewModel @Inject constructor(
                     )
                 }
         }
+    }
+    private val fastScrollLabelFormatter = SeparatorFormatter(
+        resources = appContext.resources,
+        clock = { Calendar.getInstance().apply { set(3000, 0, 1) }.timeInMillis },
+        locale = Locale.getDefault(),
+    )
+
+    fun getFastScrollAnchors(
+        items: List<PhotosItem>,
+        anchors: Int,
+        anchorsInLabel: Int,
+    ): List<FastScrollAnchor> = fastScrollAnchors.getOrPut(items.itemsHash to anchors) {
+        items.getFastScrollAnchors(anchors, anchorsInLabel) { captureTime ->
+            fastScrollLabelFormatter.toSeparator(captureTime)
+        }
+    }.also {
+        isFastScrollEnabled.value = isFastScrollThresholdReached(items.size, anchors, anchorsInLabel)
+    }
+
+    private val fastScrollAnchors: MutableMap<Pair<Int, Int>, List<FastScrollAnchor>> = mutableMapOf()
+
+    private val List<PhotosItem>.itemsHash get() = this.fold(1) { acc, item ->
+        31 * acc + item.hashCode()
     }
 }

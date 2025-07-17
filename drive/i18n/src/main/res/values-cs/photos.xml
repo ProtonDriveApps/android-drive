@@ -163,4 +163,30 @@
   <string name="photos_important_updates_subtitle">Je nutná aktualizace knihovny fotek</string>
   <string name="photos_important_updates_description">Tato rychlá aktualizace připraví vaše fotky na nové funkce, jako jsou filtry a alba</string>
   <string name="photos_important_updates_cancel_action">Připomenout později</string>
+  <string name="photos_tags_migration_title">Migrace štítků</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos migrates
+        Example:
+           Finished, 1 file were migrated.
+           Finished, 12 345 files were migrated.
+    -->
+  <plurals name="photos_tags_migration_finished">
+    <item quantity="one">Dokončeno, %1$s soubor byl migrován.</item>
+    <item quantity="few">Dokončeno, %1$s soubory byly migrovány.</item>
+    <item quantity="many">Dokončeno, %1$s souborů bylo migrováno.</item>
+    <item quantity="other">Dokončeno, %1$s souborů bylo migrováno.</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos to migrate
+        Variable %1$s is a quantity (formatted) of photos waiting for download
+        Example:
+           Ongoing, migrating 1 file, 0 waiting for download.
+           Ongoing, migrating 12 345 files, 123 waiting for download.
+    -->
+  <plurals name="photos_tags_migration_ongoing">
+    <item quantity="one">Probíhá migrace %1$s souboru, %2$s ve frontě ke stažení.</item>
+    <item quantity="few">Probíhá migrace %1$s souborů, %2$s ve frontě ke stažení.</item>
+    <item quantity="many">Probíhá migrace %1$s souborů, %2$s ve frontě ke stažení.</item>
+    <item quantity="other">Probíhá migrace %1$s souborů, %2$s ve frontě ke stažení.</item>
+  </plurals>
 </resources>

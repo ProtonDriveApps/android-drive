@@ -33,4 +33,5 @@ fun NewDocumentInfo.toCreateDocumentRequest() =
         contentKeyPacket = contentKeyPacket,
         contentKeyPacketSignature = contentKeyPacketSignature,
         manifestSignature = manifestSignature,
+        documentType = documentType.toDocumentTypeDto(),
     )

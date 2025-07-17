@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Vytvoriť priečinok</string>
   <string name="folder_option_take_a_photo">Urobiť novú fotografiu</string>
   <string name="folder_option_create_document">Vytvoriť dokument</string>
+  <string name="folder_option_create_spreadsheet">Vytvoriť tabuľku</string>
   <string name="settings_theme_system_default">Podľa systému</string>
   <string name="settings_theme_dark">Tmavý</string>
   <string name="settings_theme_light">Svetlý</string>
@@ -177,6 +178,7 @@
   <string name="content_description_selected_options">Zobraziť viac možností pre vybrané súbory a/alebo priečinky</string>
   <string name="content_description_files_upload_upload_file">Nahrať súbor</string>
   <string name="content_description_albums_new">Vytvoriť nový album</string>
+  <string name="content_description_subscription_action">Otvoriť predplatné</string>
   <string name="description_empty_my_files">Kliknutím na tlačidlo začnete pridávať súbory.</string>
   <string name="description_empty_folder_read_only">Nie je tu nič k videniu</string>
   <string name="description_empty_shared">Tu sa zobrazujú odkazované súbory, takže môžete ľahko sledovať a spravovať, čo zdieľate.</string>
@@ -202,6 +204,7 @@
   <string name="error_share_not_found">Zdieľanie nebolo nájdené.</string>
   <string name="error_creating_photo_share_not_allowed">Zálohovanie fotografií je dočasne zakázané.</string>
   <string name="error_creating_share_not_allowed">Zdieľanie je dočasne zakázané.</string>
+  <string name="error_camera_permission">Je potrebné povolenie na používanie fotoaparátu.</string>
   <string name="operation_open_document">otvoriť dokument</string>
   <string name="operation_create_document">vytvoriť dokument</string>
   <string name="operation_take_picture">odfotiť</string>

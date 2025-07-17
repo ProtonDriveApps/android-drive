@@ -25,23 +25,20 @@ import me.proton.core.drive.base.domain.extension.isOlderThen
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.drivelink.photo.domain.extension.isPending
 import me.proton.core.drive.drivelink.photo.domain.manager.PhotoShareMigrationManager
-import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.photo.domain.repository.PhotoShareMigrationRepository
 import javax.inject.Inject
 
 class ShowImportantUpdates @Inject constructor(
     configurationProvider: ConfigurationProvider,
-    private val albumsFeatureFlag: AlbumsFeatureFlag,
     private val photoShareMigrationManager: PhotoShareMigrationManager,
     private val repository: PhotoShareMigrationRepository,
 ) {
     private val remindInterval = configurationProvider.minimumPhotosImportantUpdatesInterval
 
     operator fun invoke(userId: UserId): Flow<Boolean> = combine(
-        albumsFeatureFlag(userId),
         photoShareMigrationManager.status,
         repository.getPhotosImportantUpdatesLastShownFlow(userId),
-    ) { albumsFeature, migrationStatus, lastShown ->
-        albumsFeature && migrationStatus.isPending && lastShown.isOlderThen(remindInterval)
+    ) { migrationStatus, lastShown ->
+        migrationStatus.isPending && lastShown.isOlderThen(remindInterval)
     }
 }

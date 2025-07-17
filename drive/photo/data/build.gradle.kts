@@ -28,6 +28,7 @@ driveModule(
     hilt = true,
     serialization = true,
     socialTest = true,
+    workManager = true,
 ) {
     api(project(":drive:base:data"))
     api(project(":drive:photo:domain"))

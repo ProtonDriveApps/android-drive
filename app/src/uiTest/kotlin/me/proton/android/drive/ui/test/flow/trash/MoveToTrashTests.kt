@@ -286,6 +286,11 @@ class MoveToTrashTests : BaseTest() {
         PhotosTabRobot.waitUntilLoaded()
         PhotosTabRobot
             .clickPhotosTab()
+            .longClickOnPhoto(main.fileName)
+            .clickOptions()
+            .clickMoveToTrash()
+            .dismissMoveToTrashSuccessGrowler(1, PreviewRobot)
+        PhotosTabRobot
             .scrollToEnd()
             .clickOnPhoto(dec2022)
             .verify { assertPreviewIsDisplayed(dec2022.fileName) }
@@ -304,22 +309,18 @@ class MoveToTrashTests : BaseTest() {
         .clickBack(PhotosTabRobot)
             .verify {
                 endToEndEncryptedFooterIsSeen()
-                assertPhotoCountEquals(4)
+                assertPhotoCountEquals(3)
                 assertPhotoNotDisplayed(dec2022.fileName)
                 assertPhotoNotDisplayed(jan2023.fileName)
                 assertPhotoNotDisplayed(lastMonth.fileName)
-                assertPhotoDisplayed(main.fileName)
+                assertPhotoNotDisplayed(main.fileName)
                 assertPhotoDisplayed(now.fileName)
                 assertPhotoDisplayed(yesterday.fileName)
                 assertPhotoDisplayed(lastWeek.fileName)
             }
-            .clickOnPhoto(main)
-            .verify { assertPreviewIsDisplayed(main.fileName) }
-        PreviewRobot
-            .clickOnContextualButton()
-            .clickMoveToTrash()
-            .dismissMoveToTrashSuccessGrowler(1, PreviewRobot)
+            .clickOnPhoto(now)
             .verify { assertPreviewIsDisplayed(now.fileName) }
+        PreviewRobot
             .clickOnContextualButton()
             .clickMoveToTrash()
             .dismissMoveToTrashSuccessGrowler(1, PreviewRobot)

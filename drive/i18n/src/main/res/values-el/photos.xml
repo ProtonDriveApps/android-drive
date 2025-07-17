@@ -157,4 +157,26 @@
   <string name="photos_important_updates_subtitle">Απαιτείται ενημέρωση της βιβλιοθήκης φωτογραφιών</string>
   <string name="photos_important_updates_description">Αυτή η γρήγορη ενημέρωση προετοιμάζει τις φωτογραφίες σας για νέες δυνατότητες, όπως φίλτρα και άλμπουμ</string>
   <string name="photos_important_updates_cancel_action">Υπενθύμιση αργότερα</string>
+  <string name="photos_tags_migration_title">Μεταφορά ετικετών</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos migrates
+        Example:
+           Finished, 1 file were migrated.
+           Finished, 12 345 files were migrated.
+    -->
+  <plurals name="photos_tags_migration_finished">
+    <item quantity="one">Ολοκληρώθηκε, %1$s αρχείο μεταφέρθηκε.</item>
+    <item quantity="other">Ολοκληρώθηκε, %1$s αρχεία μεταφέρθηκαν.</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos to migrate
+        Variable %1$s is a quantity (formatted) of photos waiting for download
+        Example:
+           Ongoing, migrating 1 file, 0 waiting for download.
+           Ongoing, migrating 12 345 files, 123 waiting for download.
+    -->
+  <plurals name="photos_tags_migration_ongoing">
+    <item quantity="one">Σε εξέλιξη, μετεγκατάσταση %1$s αρχείου, %2$s σε αναμονή λήψης.</item>
+    <item quantity="other">Σε εξέλιξη, μετεγκατάσταση %1$s αρχεία, %2$s σε αναμονή λήψης.</item>
+  </plurals>
 </resources>

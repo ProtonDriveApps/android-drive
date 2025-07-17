@@ -20,7 +20,7 @@ package me.proton.core.drive.drivelink.photo.domain.paging
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.transform
@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.log
+import me.proton.core.drive.base.data.util.KeyTrackingLruCache
 import me.proton.core.drive.base.domain.extension.mapCatching
 import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -44,16 +45,26 @@ class PhotoDriveLinks @Inject constructor(
     configurationProvider: ConfigurationProvider,
 ) {
     private val capacity = configurationProvider.dbPageSize
-    private val driveLinkIds = MutableStateFlow<Set<LinkId>>(emptySet())
+    private val loadTrigger = MutableSharedFlow<Set<LinkId>>(replay = 1)
+    private val cache: KeyTrackingLruCache<LinkId, DriveLink> = KeyTrackingLruCache(capacity)
 
-    fun getDriveLinksMapFlow(userId: UserId): Flow<Map<LinkId, DriveLink>> = driveLinkIds.transformLatest { linkIds ->
+    fun getDriveLinksMapFlow(
+        userId: UserId,
+    ): Flow<Map<LinkId, DriveLink>> = loadTrigger.transformLatest { driveLinkIds ->
+        val cachedDriveLinks = driveLinkIds.mapNotNull { linkId -> cache.get(linkId) }
+        if (cachedDriveLinks.size == driveLinkIds.size) {
+            emit(cachedDriveLinks.associateBy { driveLink -> driveLink.id })
+        }
         emitAll(
-            getPhotoDriveLinks(userId, linkIds)
+            getPhotoDriveLinks(userId, driveLinkIds)
                 .mapCatching { driveLinks ->
                     decryptDriveLinks(driveLinks)
                 }
                 .transform { result ->
                     result.onSuccess { driveLinks ->
+                        driveLinks.forEach { driveLink ->
+                            cache.put(driveLink.id, driveLink)
+                        }
                         emit(driveLinks)
                     }.onFailure { error ->
                         error.log(PHOTO, "Cannot decrypt drive links", WARNING)
@@ -67,14 +78,6 @@ class PhotoDriveLinks @Inject constructor(
 
     suspend fun load(linkIds: Set<LinkId>) {
         require(linkIds.size < capacity) { "Too many link ids. Try increasing capacity." }
-        val latestLinkIds = driveLinkIds.value + linkIds
-        val overflow = (latestLinkIds.size) - capacity
-        driveLinkIds.emit(
-            if (overflow > 0) {
-                latestLinkIds.drop(overflow).toSet()
-            } else {
-                latestLinkIds
-            }
-        )
+        loadTrigger.emit(cache.keys() + linkIds)
     }
 }

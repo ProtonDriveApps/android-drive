@@ -22,11 +22,11 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.drive.photo.domain.repository.TagRepository
 import me.proton.core.drive.share.domain.usecase.GetShare
+import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
 
 class AddPhotoTag @Inject constructor(
@@ -34,14 +34,22 @@ class AddPhotoTag @Inject constructor(
     private val getShare: GetShare,
     private val updateEventAction: UpdateEventAction,
 ) {
-    suspend operator fun invoke(fileId: FileId, tags: List<PhotoTag>) = coRunCatching {
+    suspend operator fun invoke(fileId: FileId, tags: Set<PhotoTag>) = coRunCatching {
+        checkTags(tags)
+        val share = getShare(fileId.shareId).toResult().getOrThrow()
+        invoke(share.volumeId, fileId, tags).getOrThrow()
+    }
+    suspend operator fun invoke(volumeId: VolumeId, fileId: FileId, tags: Set<PhotoTag>) = coRunCatching {
+        checkTags(tags)
+        updateEventAction(fileId.userId, volumeId) {
+            repository.addTags(volumeId, fileId, tags)
+        }
+    }
+
+    private fun checkTags(tags: Set<PhotoTag>) {
         check(PhotoTag.Favorites !in tags) {
             "Favorite cannot be added with AddPhotoTag use AddPhotoFavorite"
         }
-        val share = getShare(fileId.shareId).toResult().getOrThrow()
-
-        updateEventAction(fileId.userId, share.volumeId) {
-            repository.addTags(share.volumeId, fileId, tags)
-        }
+        check(tags.isNotEmpty()) { "Tags set should not be empty" }
     }
 }

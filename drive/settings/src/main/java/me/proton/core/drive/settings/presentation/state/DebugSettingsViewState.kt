@@ -26,4 +26,5 @@ data class DebugSettingsViewState(
     val allowBackupDeletedFiles: Boolean,
     val featureFlagFreshDuration: String,
     val useVerifier: Boolean,
+    val sendPhotoTagsInCommit: Boolean,
 )

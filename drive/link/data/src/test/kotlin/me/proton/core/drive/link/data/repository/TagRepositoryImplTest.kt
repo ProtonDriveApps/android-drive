@@ -79,13 +79,13 @@ class TagRepositoryImplTest {
     fun addTags() = runTest {
         driveRule.server.postLinkTags()
 
-        tagRepository.addTags(volumeId, fileId, listOf(PhotoTag.Screenshots))
+        tagRepository.addTags(volumeId, fileId, setOf(PhotoTag.Screenshots))
     }
 
     @Test
     fun deleteTags() = runTest {
         driveRule.server.deleteLinkTags()
-        tagRepository.deleteTags(volumeId, fileId, listOf(PhotoTag.Favorites))
+        tagRepository.deleteTags(volumeId, fileId, setOf(PhotoTag.Favorites))
     }
 
 }

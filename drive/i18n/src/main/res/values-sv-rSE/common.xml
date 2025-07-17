@@ -74,6 +74,7 @@
   <string name="common_start_action">Starta</string>
   <string name="common_save_all_action">Spara alla</string>
   <string name="common_add_to_albums_action">Lägg till i album</string>
+  <string name="common_tag_photo_action">Scan photo for tags</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Ljud</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">PDF-dokument</string>
   <string name="common_type_ppt">Presentation</string>
   <string name="common_type_proton_doc">Proton-dokument</string>
+  <string name="common_type_proton_sheet">Proton kalkylblad</string>
   <string name="common_type_text">Text</string>
   <string name="common_type_trustedkey">Betrodd nyckel</string>
   <string name="common_type_unknown">Binär</string>

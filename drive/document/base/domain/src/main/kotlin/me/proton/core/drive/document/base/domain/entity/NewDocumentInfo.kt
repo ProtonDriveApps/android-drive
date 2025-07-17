@@ -31,4 +31,5 @@ data class NewDocumentInfo(
     val contentKeyPacket: String,
     val contentKeyPacketSignature: String,
     val manifestSignature: String,
+    val documentType: DocumentType,
 )

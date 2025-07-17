@@ -81,6 +81,13 @@ fun DebugSettings(
         ) { useVerifier ->
             viewEvent.onToggleUseVerifier(useVerifier)
         }
+        ProtonSettingsToggleItem(
+            name = stringResource(id = I18N.string.debug_settings_send_photo_tags_in_commit),
+            hint = stringResource(id = I18N.string.debug_settings_send_photo_tags_in_commit_description),
+            value = viewState.sendPhotoTagsInCommit,
+        ) { useVerifier ->
+            viewEvent.onToggleSendPhotoTagsInCommit(useVerifier)
+        }
 
         ProtonSettingsToggleItem(
             name = stringResource(id = I18N.string.debug_settings_log_to_file),

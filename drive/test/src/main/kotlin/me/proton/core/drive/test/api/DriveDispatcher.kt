@@ -19,6 +19,8 @@
 package me.proton.core.drive.test.api
 
 import kotlinx.serialization.json.Json
+import me.proton.core.drive.base.data.api.response.CodeResponse
+import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.util.kotlin.serialize
 import okhttp3.internal.UTC
 import okhttp3.mockwebserver.Dispatcher
@@ -183,3 +185,9 @@ inline fun <reified T : Any> RequestContext.jsonResponse(
 fun RequestContext.retryableErrorResponse() = response(HttpURLConnection.HTTP_CLIENT_TIMEOUT)
 
 fun RequestContext.errorResponse() = response(HttpURLConnection.HTTP_BAD_REQUEST)
+
+fun RequestContext.codeResponse(code: Long = ProtonApiCode.SUCCESS) = jsonResponse {
+    CodeResponse(
+        code = code.toInt(),
+    )
+}

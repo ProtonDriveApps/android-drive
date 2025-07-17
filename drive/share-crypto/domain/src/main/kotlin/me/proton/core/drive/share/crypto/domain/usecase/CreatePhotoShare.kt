@@ -20,10 +20,8 @@ package me.proton.core.drive.share.crypto.domain.usecase
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.arch.DataResult
@@ -34,15 +32,12 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.extension.transformSuccess
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.crypto.domain.usecase.photo.CreatePhotoInfo
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbums
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsDisabled
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsNewVolumes
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.drivePhotosUploadDisabled
 import me.proton.core.drive.feature.flag.domain.extension.off
-import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.extension.onDisabledOrNotFound
 import me.proton.core.drive.feature.flag.domain.extension.onEnabled
-import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
+import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
 import me.proton.core.drive.feature.flag.domain.usecase.WithFeatureFlag
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
 import me.proton.core.drive.share.domain.entity.Share
@@ -70,7 +65,7 @@ class CreatePhotoShare @Inject constructor(
     private val withFeatureFlag: WithFeatureFlag,
     private val getAddressId: GetAddressId,
     private val getOrCreateVolume: GetOrCreateVolume,
-    private val getFeatureFlagFlow: GetFeatureFlagFlow,
+    private val getFeatureFlag: GetFeatureFlag,
 ) {
     operator fun invoke(userId: UserId): Flow<DataResult<Share>> =
         getOrCreateMainShare(userId)
@@ -143,20 +138,8 @@ class CreatePhotoShare @Inject constructor(
             emitAll(getShare(ShareId(userId, result.value.shareId)))
         }
 
-    private suspend fun isPhotoVolumeCreationAllowed(userId: UserId): Boolean = combine(
-        getFeatureFlagFlow(
-            featureFlagId = driveAlbums(userId),
-            emitNotFoundInitially = false,
-        ),
-        getFeatureFlagFlow(
-            featureFlagId = driveAlbumsNewVolumes(userId),
-            emitNotFoundInitially = false,
-        ),
-        getFeatureFlagFlow(
+    private suspend fun isPhotoVolumeCreationAllowed(userId: UserId): Boolean =
+        getFeatureFlag(
             featureFlagId = driveAlbumsDisabled(userId),
-            emitNotFoundInitially = false,
-        )
-    ) { driveAlbums, driveAlbumsNewVolumes, driveAlbumsDisabled ->
-        driveAlbumsDisabled.off && (driveAlbums.on || driveAlbumsNewVolumes.on)
-    }.first()
+        ).off
 }

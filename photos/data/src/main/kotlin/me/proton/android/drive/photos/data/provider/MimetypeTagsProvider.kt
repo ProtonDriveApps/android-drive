@@ -20,25 +20,33 @@ package me.proton.android.drive.photos.data.provider
 
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
+import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.PhotoTag
-import me.proton.core.drive.upload.domain.provider.TagsProvider
+import me.proton.core.drive.link.domain.usecase.GetLink
+import me.proton.core.drive.photo.domain.provider.TagsProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import javax.inject.Inject
 
 class MimetypeTagsProvider @Inject constructor(
     private val uriResolver: UriResolver,
+    private val getLink: GetLink,
 ) : TagsProvider {
     override suspend fun invoke(uriString: String): List<PhotoTag> {
-        val mimeType = uriResolver.getMimeType(uriString)
-        return listOfNotNull(
-            when {
-                mimeType == null -> null
-                mimeType in rawMimetypes -> PhotoTag.Raw
-                mimeType.toFileTypeCategory() == FileTypeCategory.Video -> PhotoTag.Videos
-                else -> null
-            }
-        )
+        return uriResolver.getMimeType(uriString).photoTags()
     }
+
+    override suspend fun invoke(fileId: FileId): List<PhotoTag> =
+        getLink(fileId).toResult().getOrThrow().mimeType.photoTags()
+
+    private fun String?.photoTags() = listOfNotNull(
+        when {
+            this == null -> null
+            this in rawMimetypes -> PhotoTag.Raw
+            toFileTypeCategory() == FileTypeCategory.Video -> PhotoTag.Videos
+            else -> null
+        }
+    )
 
     private companion object {
         val rawMimetypes = listOf(

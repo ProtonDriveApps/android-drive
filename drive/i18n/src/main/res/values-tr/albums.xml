@@ -139,10 +139,10 @@
     <item quantity="other">%1$d öge kaldırılamadı</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Herhangi bir fotoğraf yok</string>
-  <string name="albums_empty_album_screen_description">Sizin veya diğer üyeler tarafından eklenen fotoğraflar burada görünecektir.</string>
+  <string name="albums_empty_album_screen_description">Sizin veya diğer üyelerin eklediği fotoğraflar burada görüntülenir</string>
   <string name="albums_empty_albums_list_screen_title">Herhangi bir albüm yok</string>
-  <string name="albums_empty_albums_list_screen_description">Oluşturduğunuz veya katıldığınız albümler burada görünecektir.</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Oluşturduğunuz albümler burada görünecektir.</string>
+  <string name="albums_empty_albums_list_screen_description">Oluşturduğunuz veya katıldığınız albümler burada görüntülenir</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Oluşturduğunuz albümler burada görüntülenir</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Paylaşılmış bir albüm yok</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Paylaştığınız albümler burada görüntülenir</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">Benimle paylaşılmış bir albüm yok</string>

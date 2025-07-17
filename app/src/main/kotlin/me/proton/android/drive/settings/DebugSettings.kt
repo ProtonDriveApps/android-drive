@@ -50,6 +50,7 @@ class DebugSettings(
     private val prefsFeatureFlagFreshDuration = longPreferencesKey(FEATURE_FLAG_FRESH_DURATION)
     private val prefsUseVerifier = booleanPreferencesKey(USE_VERIFIER)
     private val prefsPhotosUpsellPhotoCount = intPreferencesKey(PHOTOS_UPSELL_PHOTO_COUNT)
+    private val prefsSendPhotoTagsInCommit = booleanPreferencesKey(SENG_PHOTO_TAGS_IN_COMMIT)
     val baseUrlFlow: Flow<String> = prefsKeyBaseUrl.asFlow(
         dataStore = context.dataStore,
         default = buildConfig.baseUrl
@@ -81,6 +82,10 @@ class DebugSettings(
     val useVerifierFlow: Flow<Boolean> = prefsUseVerifier.asFlow(
         dataStore = context.dataStore,
         default = buildConfig.useVerifier,
+    )
+    val sendPhotoTagsInCommitFlow: Flow<Boolean> = prefsSendPhotoTagsInCommit.asFlow(
+        dataStore = context.dataStore,
+        default = buildConfig.sendPhotoTagsInCommit,
     )
 
     override var baseUrl by Delegate(
@@ -139,6 +144,13 @@ class DebugSettings(
         default = buildConfig.photosUpsellPhotoCount,
     )
     override var albumsFeatureFlag: Boolean = true
+    override var scanPhotoFileForTags: Boolean = true
+    override var tagsMigrationProgress: Boolean = true
+    override var sendPhotoTagsInCommit by Delegate(
+        dataStore = context.dataStore,
+        key = prefsSendPhotoTagsInCommit,
+        default = buildConfig.sendPhotoTagsInCommit,
+    )
 
     fun reset(coroutineScope: CoroutineScope) {
         coroutineScope.launch {
@@ -159,5 +171,6 @@ class DebugSettings(
         const val FEATURE_FLAG_FRESH_DURATION = "feature_flag_fresh_duration"
         const val USE_VERIFIER = "use_verifier"
         const val PHOTOS_UPSELL_PHOTO_COUNT = "photos_upsell_photo_count"
+        const val SENG_PHOTO_TAGS_IN_COMMIT = "seng_photo_tags_in_commit"
     }
 }

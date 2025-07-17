@@ -1469,9 +1469,6 @@ fun NavGraphBuilder.addSettings(navController: NavHostController) = composable(
         },
         navigateToLog = {
             navController.navigate(Screen.Log(userId))
-        },
-        navigateToSignOut = {
-            navController.navigate(Screen.Dialogs.SignOut(userId))
         }
     )
 }

@@ -39,7 +39,7 @@
   <string name="common_on">ჩართ</string>
   <string name="common_off">გამორთული</string>
   <string name="common_all">ყველა</string>
-  <string name="common_unknown">Unknown</string>
+  <string name="common_unknown">უცნობი</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">დიახ</string>
@@ -68,12 +68,13 @@
   <string name="common_done_action">მზადაა</string>
   <string name="common_create_album_action">ალბომის შექმნა</string>
   <string name="common_set_as_album_cover_action">Set as album cover</string>
-  <string name="common_add_action">Add</string>
+  <string name="common_add_action">დამატება</string>
   <string name="common_remove_from_album_action">Remove from album</string>
   <string name="common_leave_album_action">Leave album</string>
-  <string name="common_start_action">Start</string>
+  <string name="common_start_action">გაშვება</string>
   <string name="common_save_all_action">Save all</string>
   <string name="common_add_to_albums_action">Add to albums</string>
+  <string name="common_tag_photo_action">Scan photo for tags</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">აუდიო</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">PDF დოკუმენტი</string>
   <string name="common_type_ppt">პრეზენტაცია</string>
   <string name="common_type_proton_doc">Proton-ის დოკუმენტი</string>
+  <string name="common_type_proton_sheet">Proton spreadsheet</string>
   <string name="common_type_text">ტექსტი</string>
   <string name="common_type_trustedkey">სანდო გასაღები</string>
   <string name="common_type_unknown">ბინარული</string>

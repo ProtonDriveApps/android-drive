@@ -26,7 +26,7 @@
   <string name="title_empty_my_files">Tambahkan berkas pertama Anda</string>
   <string name="title_empty_folder">Mari isi folder ini</string>
   <string name="title_empty_folder_read_only">Folder kosong</string>
-  <string name="title_empty_shared">Ikuti apa-apa saja yang terjadi</string>
+  <string name="title_empty_shared">Ikuti apa saja yang terjadi</string>
   <string name="title_empty_offline_available">Tidak ada konten offline yang tersedia</string>
   <string name="title_empty_trash">Sampah kosong</string>
   <string name="title_empty_trash_action">Kosongkan sampah</string>
@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Buat folder</string>
   <string name="folder_option_take_a_photo">Ambil foto baru</string>
   <string name="folder_option_create_document">Buat dokumen</string>
+  <string name="folder_option_create_spreadsheet">Buat spreadsheet</string>
   <string name="settings_theme_system_default">Bawaan sistem</string>
   <string name="settings_theme_dark">Gelap</string>
   <string name="settings_theme_light">Terang</string>
@@ -162,6 +163,7 @@
   <string name="content_description_selected_options">Tampilkan lebih banyak pilihan untuk berkas dan/atau folder yang dipilih</string>
   <string name="content_description_files_upload_upload_file">Unggah berkas</string>
   <string name="content_description_albums_new">Buat album baru</string>
+  <string name="content_description_subscription_action">Perpanjang langganan</string>
   <string name="description_empty_my_files">Ketuk tombol yang ada pada layar untuk mulai menambahkan berkas.</string>
   <string name="description_empty_folder_read_only">Tidak ada apa-apa di sini</string>
   <string name="description_empty_shared">Seluruh berkas yang ditautkan akan muncul pada layar ini, sehingga Anda dapat melacak dan mengelola apa-apa saja yang dibagikan dengan mudah.</string>
@@ -187,6 +189,7 @@
   <string name="error_share_not_found">Pembagian tidak ditemukan.</string>
   <string name="error_creating_photo_share_not_allowed">Pencadangan foto sementara dinonaktifkan.</string>
   <string name="error_creating_share_not_allowed">Pembuatan tautan berbagi untuk sementara dinonaktifkan.</string>
+  <string name="error_camera_permission">Perizinan kamera diperlukan.</string>
   <string name="operation_open_document">buka dokumen</string>
   <string name="operation_create_document">buat dokumen</string>
   <string name="operation_take_picture">ambil gambar</string>

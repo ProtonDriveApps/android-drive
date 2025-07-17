@@ -31,7 +31,7 @@ class ToggleFavorite @Inject constructor(
         driveLink: DriveLink.File,
     ) = coRunCatching {
         if (driveLink.isFavorite) {
-            removePhotoTag(driveLink.id, listOf(PhotoTag.Favorites)).getOrThrow()
+            removePhotoTag(driveLink.id, setOf(PhotoTag.Favorites)).getOrThrow()
         } else {
             addPhotoFavorite(driveLink).getOrThrow()
         }

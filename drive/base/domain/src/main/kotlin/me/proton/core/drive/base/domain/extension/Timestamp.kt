@@ -28,3 +28,5 @@ fun TimestampMs?.isOlderThen(duration: Duration): Boolean = this?.let { timestam
 } ?: true
 
 fun TimestampS?.isOlderThen(duration: Duration): Boolean = this?.toTimestampMs().isOlderThen(duration)
+
+val TimestampS?.orNow get() = TimestampS()

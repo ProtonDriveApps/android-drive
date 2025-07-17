@@ -26,7 +26,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.extension.getDefaultMessage
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
@@ -38,6 +41,8 @@ import me.proton.android.drive.photos.presentation.viewmodel.BackupPermissionsVi
 import me.proton.android.drive.ui.viewevent.PhotosBackupViewEvent
 import me.proton.android.drive.ui.viewstate.PhotosBackupOption
 import me.proton.android.drive.ui.viewstate.PhotosBackupViewState
+import me.proton.android.drive.ui.viewstate.TagsMigrationProgressState
+import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.backup.domain.entity.BackupNetworkType
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.exception.DriveException
@@ -51,6 +56,13 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.extension.launchIgnoreBatteryOptimizations
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.photo.domain.entity.TagsMigrationFile
+import me.proton.core.drive.photo.domain.entity.TagsMigrationStatistics
+import me.proton.core.drive.photo.domain.usecase.GetTagsMigrationStatistics
+import me.proton.core.drive.volume.domain.entity.Volume
+import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
+import java.text.NumberFormat
+import java.util.Locale
 import javax.inject.Inject
 import me.proton.core.drive.i18n.R as I18N
 
@@ -66,6 +78,8 @@ class PhotosBackupViewModel @Inject constructor(
     private val broadcastMessages: BroadcastMessages,
     private val isIgnoringBatteryOptimizations: IsIgnoringBatteryOptimizations,
     private val configurationProvider: ConfigurationProvider,
+    private val getGetTagsMigrationStatistics: GetTagsMigrationStatistics,
+    private val getOldestActiveVolume: GetOldestActiveVolume,
     val backupPermissionsViewModel: BackupPermissionsViewModel,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
@@ -87,11 +101,26 @@ class PhotosBackupViewModel @Inject constructor(
             enabled = false,
         )
     )
+    private val tagsMigrationStatistics: Flow<TagsMigrationStatistics?> =
+        if (configurationProvider.tagsMigrationProgress) {
+            getOldestActiveVolume(userId, Volume.Type.PHOTO)
+                .mapSuccessValueOrNull()
+                .transformLatest { volume ->
+                    if (volume != null) {
+                        emitAll(getGetTagsMigrationStatistics(userId, volume.id))
+                    } else {
+                        emit(null)
+                    }
+                }
+        } else {
+            flowOf(null)
+        }
     val viewState: Flow<PhotosBackupViewState> = combine(
         isPhotosEnabled(userId),
         getPhotosConfiguration(userId),
         isIgnoringBatteryOptimizations(),
-    ) { enabled, configuration, isIgnoringBatteryOptimizations ->
+        tagsMigrationStatistics
+    ) { enabled, configuration, isIgnoringBatteryOptimizations, tagsMigrationStatistics ->
         initialViewState.copy(
             backup = initialViewState.backup.copy(checked = enabled),
             mobileData = initialViewState.mobileData.copy(
@@ -101,7 +130,35 @@ class PhotosBackupViewModel @Inject constructor(
             ignoringBatteryOptimizations = initialViewState.ignoringBatteryOptimizations.copy(
                 checked = isIgnoringBatteryOptimizations,
                 enabled = enabled
-            )
+            ),
+            tagsMigrationProgressState = tagsMigrationStatistics?.let { statistics ->
+                val isFinished = statistics.isFinished
+                val progress = statistics.progress
+                val numberInstance = NumberFormat.getNumberInstance(Locale.getDefault())
+                val count = statistics.count
+                val formattedCount = numberInstance.format(count)
+                if (isFinished) {
+                    TagsMigrationProgressState(
+                        title = appContext.getString(I18N.string.photos_tags_migration_title),
+                        description = appContext.resources
+                            .getQuantityString(I18N.plurals.photos_tags_migration_finished, count)
+                            .format(formattedCount),
+                    )
+                } else if (progress != null) {
+                    val preparedCount = statistics.count(TagsMigrationFile.State.PREPARED)
+                    val formattedPreparedCount =
+                        numberInstance.format(preparedCount)
+                    TagsMigrationProgressState(
+                        title = appContext.getString(I18N.string.photos_tags_migration_title),
+                        description = appContext.resources
+                            .getQuantityString(I18N.plurals.photos_tags_migration_ongoing, count)
+                            .format(formattedCount, formattedPreparedCount),
+                        progress = progress,
+                    )
+                } else {
+                    null
+                }
+            }
         )
     }
 

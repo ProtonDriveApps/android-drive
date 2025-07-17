@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Crea cartella</string>
   <string name="folder_option_take_a_photo">Scatta una nuova foto</string>
   <string name="folder_option_create_document">Crea un documento</string>
+  <string name="folder_option_create_spreadsheet">Crea foglio di calcolo</string>
   <string name="settings_theme_system_default">Predefinito di sistema</string>
   <string name="settings_theme_dark">Scuro</string>
   <string name="settings_theme_light">Chiaro</string>
@@ -167,6 +168,7 @@
   <string name="content_description_selected_options">Mostra più opzioni per i file e/o le cartelle selezionati</string>
   <string name="content_description_files_upload_upload_file">Carica un file</string>
   <string name="content_description_albums_new">Crea nuovo album</string>
+  <string name="content_description_subscription_action">Abbonamento aperto</string>
   <string name="description_empty_my_files">Tocca il pulsante per iniziare ad aggiungere file.</string>
   <string name="description_empty_folder_read_only">Non c\'è niente da vedere qui</string>
   <string name="description_empty_shared">I file collegati appaiono qui così puoi facilmente monitorare e gestire cosa è condiviso.</string>
@@ -192,6 +194,7 @@
   <string name="error_share_not_found">La condivisione non è stata trovata.</string>
   <string name="error_creating_photo_share_not_allowed">Il backup delle foto è temporaneamente disabilitato.</string>
   <string name="error_creating_share_not_allowed">La creazione della condivisione è temporaneamente disabilitata.</string>
+  <string name="error_camera_permission">Autorizzazione di accesso alla fotocamera necessaria</string>
   <string name="operation_open_document">apri un documento</string>
   <string name="operation_create_document">creare un documento</string>
   <string name="operation_take_picture">scattare una foto</string>
@@ -274,6 +277,8 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Effettua l\'upgrade per %1$s</string>
+  <!-- endregion -->
+  <!-- endregion -->
   <!-- endregion -->
   <!-- endregion -->
 </resources>

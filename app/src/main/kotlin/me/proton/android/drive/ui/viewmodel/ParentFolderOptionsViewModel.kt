@@ -40,12 +40,12 @@ import me.proton.android.drive.extension.log
 import me.proton.android.drive.ui.options.Option
 import me.proton.android.drive.ui.options.filter
 import me.proton.android.drive.ui.options.filterProtonDocs
+import me.proton.android.drive.ui.options.filterProtonSheets
 import me.proton.android.drive.usecase.CreateNewDocument
 import me.proton.android.drive.usecase.GetUriForFile
 import me.proton.android.drive.usecase.NotifyActivityNotFound
 import me.proton.core.compose.component.bottomsheet.RunAction
 import me.proton.core.domain.arch.mapSuccessValueOrNull
-import me.proton.core.drive.base.data.datastore.GetUserDataStore
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.log.LogTag.UPLOAD
@@ -55,13 +55,15 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.usecase.GetCacheTempFolder
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.document.base.domain.entity.DocumentType
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.upload.domain.usecase.UploadFiles
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDevelopment
+import me.proton.core.drive.feature.flag.domain.extension.off
+import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.link.domain.entity.FileId
@@ -84,7 +86,6 @@ import me.proton.core.drive.i18n.R as I18N
 class ParentFolderOptionsViewModel @Inject constructor(
     getDriveLink: GetDecryptedDriveLink,
     getFeatureFlagFlow: GetFeatureFlagFlow,
-    getUserDataStore: GetUserDataStore,
     private val savedStateHandle: SavedStateHandle,
     @ApplicationContext private val appContext: Context,
     private val uploadFiles: UploadFiles,
@@ -113,11 +114,13 @@ class ParentFolderOptionsViewModel @Inject constructor(
         }
         .stateIn(viewModelScope, Eagerly, null)
     private val docsKillSwitch = getFeatureFlagFlow(FeatureFlagId.driveDocsDisabled(userId))
-        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveSharingDevelopment(userId), NOT_FOUND))
-    private val createDocumentNotificationDotViewModel = CreateDocumentNotificationDotViewModel(
-        userId = userId,
-        getUserDataStore = getUserDataStore,
-    )
+        .stateIn(viewModelScope, Eagerly, FeatureFlag(FeatureFlagId.driveDocsDisabled(userId), NOT_FOUND))
+    private val sheetsKillSwitch = getFeatureFlagFlow(FeatureFlagId.docsSheetsDisabled(userId))
+        .stateIn(viewModelScope, Eagerly, FeatureFlag(FeatureFlagId.docsSheetsDisabled(userId), NOT_FOUND))
+    private val sheetsFeatureFlag = getFeatureFlagFlow(FeatureFlagId.docsSheetsEnabled(userId))
+        .stateIn(viewModelScope, Eagerly, FeatureFlag(FeatureFlagId.docsSheetsEnabled(userId), NOT_FOUND))
+    private val createSheetOnMobileFeatureFlag = getFeatureFlagFlow(FeatureFlagId.docsCreateNewSheetOnMobileEnabled(userId))
+        .stateIn(viewModelScope, Eagerly, FeatureFlag(FeatureFlagId.docsCreateNewSheetOnMobileEnabled(userId), NOT_FOUND))
 
     fun entries(
         runAction: RunAction,
@@ -129,20 +132,27 @@ class ParentFolderOptionsViewModel @Inject constructor(
     ): Flow<List<FileOptionEntry<DriveLink.Folder>>> = combine(
         driveLink.filterNotNull(),
         docsKillSwitch,
-        createDocumentNotificationDotViewModel.notificationDotRequested,
-    ) { folder, protonDocsKillSwitch, createDocumentNotificationDotRequested ->
+        sheetsKillSwitch,
+        sheetsFeatureFlag,
+        createSheetOnMobileFeatureFlag,
+    ) { folder, protonDocsKillSwitch, _, _, _ ->
         options
             .filter(folder)
             .filterProtonDocs(protonDocsKillSwitch)
+            .filterProtonSheets(isProtonSheetsEnabled)
             .map { option ->
                 when (option) {
                     is Option.CreateDocument -> option.build(
                         runAction = runAction,
-                        notificationDotVisible = createDocumentNotificationDotRequested,
                     ) { folderId ->
-                        onCreateDocument(folderId, navigateToPreview)
+                        onCreateDocument(folderId, DocumentType.Document, navigateToPreview)
                     }
                     is Option.CreateFolder -> option.build(runAction, navigateToCreateFolder)
+                    is Option.CreateSpreadsheet -> option.build(
+                        runAction = runAction,
+                    ) { folderId ->
+                        onCreateDocument(folderId, DocumentType.Spreadsheet, navigateToPreview)
+                    }
                     is Option.TakeAPhoto -> option.build { onTakeAPhoto(takeAPhoto) }
                     is Option.UploadFile -> option.build {
                         showFilePicker { handleActivityNotFound(I18N.string.operation_open_document) }
@@ -242,9 +252,10 @@ class ParentFolderOptionsViewModel @Inject constructor(
 
     private fun onCreateDocument(
         folderId: FolderId,
+        documentType: DocumentType,
         navigateToPreview: (FileId) -> Unit,
     ) = viewModelScope.launch {
-        createNewDocument(folderId)
+        createNewDocument(folderId, documentType)
             .onSuccess { fileId ->
                 navigateToPreview(fileId)
             }
@@ -257,6 +268,9 @@ class ParentFolderOptionsViewModel @Inject constructor(
             }
     }
 
+    private val isProtonSheetsEnabled: Boolean get() =
+        sheetsFeatureFlag.value.on && createSheetOnMobileFeatureFlag.value.on && sheetsKillSwitch.value.off
+
     companion object {
         const val KEY_SHARE_ID = "shareId"
         const val KEY_FOLDER_ID = "folderId"
@@ -267,6 +281,7 @@ class ParentFolderOptionsViewModel @Inject constructor(
             Option.TakeAPhoto,
             Option.CreateFolder,
             Option.CreateDocument,
+            Option.CreateSpreadsheet,
         )
     }
 }

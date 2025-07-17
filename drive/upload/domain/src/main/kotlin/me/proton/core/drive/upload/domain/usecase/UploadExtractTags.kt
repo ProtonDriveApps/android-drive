@@ -24,6 +24,7 @@ import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.usecase.UpdatePhotoTags
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
+import me.proton.core.drive.photo.domain.usecase.ExtractTags
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 

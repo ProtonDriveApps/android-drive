@@ -74,6 +74,7 @@
   <string name="common_start_action">Start</string>
   <string name="common_save_all_action">Save all</string>
   <string name="common_add_to_albums_action">Add to albums</string>
+  <string name="common_tag_photo_action">Scan photo for tags</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аудіо</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">Документ PDF</string>
   <string name="common_type_ppt">Презентація</string>
   <string name="common_type_proton_doc">Документ Proton</string>
+  <string name="common_type_proton_sheet">Proton spreadsheet</string>
   <string name="common_type_text">Текст</string>
   <string name="common_type_trustedkey">Довірений ключ</string>
   <string name="common_type_unknown">Двійковий</string>

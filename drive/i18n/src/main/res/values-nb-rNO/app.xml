@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Opprett mappe</string>
   <string name="folder_option_take_a_photo">Ta et nytt bilde</string>
   <string name="folder_option_create_document">Opprett dokument</string>
+  <string name="folder_option_create_spreadsheet">Opprett regneark</string>
   <string name="settings_theme_system_default">Systemstandard</string>
   <string name="settings_theme_dark">Mørk</string>
   <string name="settings_theme_light">Lys</string>
@@ -167,6 +168,7 @@
   <string name="content_description_selected_options">Vis flere alternativer for valgte filer og/eller mapper</string>
   <string name="content_description_files_upload_upload_file">Last opp en fil</string>
   <string name="content_description_albums_new">Opprett nytt album</string>
+  <string name="content_description_subscription_action">Åpne abonnementet</string>
   <string name="description_empty_my_files">Trykk på knappen for å legge til filer.</string>
   <string name="description_empty_folder_read_only">Det er ingenting å se her</string>
   <string name="description_empty_shared">Koblede filer vises her, slik at du enkelt kan spore og administrere hva som er delt.</string>
@@ -192,6 +194,7 @@
   <string name="error_share_not_found">Deleressursen ble ikke funnet.</string>
   <string name="error_creating_photo_share_not_allowed">Sikkerhetskopi av bilde er midlertidig deaktivert.</string>
   <string name="error_creating_share_not_allowed">Oppretting av delt ressurs er midlertidig deaktivert.</string>
+  <string name="error_camera_permission">Kameratillatelse kreves.</string>
   <string name="operation_open_document">åpne et dokument</string>
   <string name="operation_create_document">opprett et dokument</string>
   <string name="operation_take_picture">ta et bilde</string>

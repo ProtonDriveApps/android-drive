@@ -36,8 +36,8 @@
             "12 failed"
     -->
   <plurals name="files_operation_failed_count_of_failures">
-    <item quantity="one">%1$d failed</item>
-    <item quantity="other">%1$d failed</item>
+    <item quantity="one">%1$d mislykkedes</item>
+    <item quantity="other">%1$d mislykkedes</item>
   </plurals>
   <!--
         Variable %1$d is a number of succeeded links in the failed operation
@@ -46,7 +46,7 @@
             "24 succeeded"
     -->
   <plurals name="files_operation_failed_count_of_successes">
-    <item quantity="one">%1$d succeeded</item>
-    <item quantity="other">%1$d succeeded</item>
+    <item quantity="one">%1$d lykkedes</item>
+    <item quantity="other">%1$d lykkedes</item>
   </plurals>
 </resources>

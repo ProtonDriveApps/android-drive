@@ -135,6 +135,12 @@ object AlbumsTabRobot :
             .assertCountEquals(count)
     }
 
+    fun assertTwoAlbumsWithSameNameExist(name: String) {
+        allNodes
+            .withText(name)
+            .assertCountEquals(2)
+    }
+
     fun assertAlbumIsNotDisplayed(name: String) {
         node.withText(name).await { assertIsNotDisplayed() }
     }

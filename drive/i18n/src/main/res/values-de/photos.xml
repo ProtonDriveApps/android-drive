@@ -157,4 +157,26 @@
   <string name="photos_important_updates_subtitle">Foto-Mediathek muss aktualisiert werden</string>
   <string name="photos_important_updates_description">Dieses schnelle Update bereitet deine Fotos auf neue Funktionen wie Filter und Albums vor</string>
   <string name="photos_important_updates_cancel_action">Später erneut fragen</string>
+  <string name="photos_tags_migration_title">Schlagwörter Migration</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos migrates
+        Example:
+           Finished, 1 file were migrated.
+           Finished, 12 345 files were migrated.
+    -->
+  <plurals name="photos_tags_migration_finished">
+    <item quantity="one">Beendet, %1$s Datei wurde migriert.</item>
+    <item quantity="other">Beendet, %1$s Dateien wurden migriert.</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos to migrate
+        Variable %1$s is a quantity (formatted) of photos waiting for download
+        Example:
+           Ongoing, migrating 1 file, 0 waiting for download.
+           Ongoing, migrating 12 345 files, 123 waiting for download.
+    -->
+  <plurals name="photos_tags_migration_ongoing">
+    <item quantity="one">Wird ausgeführt, Migration von %1$s Datei, auf das Herunterladen von %2$s wird gewartet.</item>
+    <item quantity="other">Wird ausgeführt, Migration von %1$s Dateien, auf das Herunterladen von %2$s wird gewartet.</item>
+  </plurals>
 </resources>

@@ -19,12 +19,9 @@
 package me.proton.android.drive.ui.test.flow.preview
 
 import dagger.hilt.android.testing.HiltAndroidTest
-import me.proton.android.drive.ui.annotation.FeatureFlag
 import me.proton.android.drive.ui.annotation.Scenario
 import me.proton.android.drive.ui.robot.PhotosTabRobot
 import me.proton.android.drive.ui.test.BaseTest
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_ALBUMS
 import me.proton.core.drive.link.domain.entity.PhotoTag
 import me.proton.core.test.rule.annotation.PrepareUser
 import org.junit.Test
@@ -36,7 +33,6 @@ class PreviewTaggedPhotosFlowTest : BaseTest() {
     @PrepareUser(withTag = "main", loginBefore = true)
     @PrepareUser(withTag = "sharingUser")
     @Scenario(forTag = "main", value = 10, sharedWithUserTag = "sharingUser")
-    @FeatureFlag(DRIVE_ALBUMS, ENABLED)
     fun previewTaggedPhotoTest() {
         val fileName = "activeTaggedFileInStream-6.jpg"
 

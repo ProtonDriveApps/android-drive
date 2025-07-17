@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.file.base.domain.usecase
 
+import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.eventmanager.base.domain.usecase.UpdateEventAction
 import me.proton.core.drive.file.base.domain.entity.PhotoAttributes
@@ -27,6 +28,7 @@ import javax.inject.Inject
 class UpdateRevision @Inject constructor(
     private val fileRepository: FileRepository,
     private val updateEventAction: UpdateEventAction,
+    private val configurationProvider: ConfigurationProvider,
 ) {
     suspend operator fun invoke(
         fileId: FileId,
@@ -45,7 +47,11 @@ class UpdateRevision @Inject constructor(
                 signatureAddress = signatureAddress,
                 blockNumber = blockNumber,
                 xAttr = xAttr,
-                photoAttributes = photoAttributes,
+                photoAttributes = if (configurationProvider.sendPhotoTagsInCommit) {
+                    photoAttributes
+                } else {
+                    photoAttributes?.copy(tags = emptySet())
+                },
             ).getOrThrow()
         }
     }

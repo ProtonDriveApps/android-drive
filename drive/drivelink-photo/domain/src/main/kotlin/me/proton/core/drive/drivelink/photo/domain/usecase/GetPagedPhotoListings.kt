@@ -64,7 +64,7 @@ class GetPagedPhotoListings @Inject constructor(
                 localPagedPhotoListings(fromIndex, count)
             }.asPagingSource(
                 sourceSize = localPhotoListingCount(),
-                observablePageSize = configurationProvider.dbPageSize,
+                observablePageSize = maxOf(configurationProvider.dbPageSize, 4 * pageSize),
             )
         },
     ).flow

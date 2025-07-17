@@ -188,9 +188,8 @@ class LinkRepositoryImpl @Inject constructor(
     override suspend fun fetchAndStoreLinksWithParents(shareId: ShareId, linkIds: Set<String>) =
         fetchLinks(shareId, linkIds).also { result ->
             val (parents, links) = result.getOrThrow()
-            val sortedParents = sortLinksByParents(parents.toSet().toList())
             db.linkDao.insertOrUpdate(
-                *(sortedParents + links.toSet())
+                *sortLinksByParents((parents + links).toSet().toList())
                     .map { link -> link.toLinkWithProperties() }
                     .toSet()
                     .updateNullParentWithAlbumIdIfApplicable()

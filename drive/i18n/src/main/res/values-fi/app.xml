@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Luo kansio</string>
   <string name="folder_option_take_a_photo">Ota uusi kuva</string>
   <string name="folder_option_create_document">Luo dokumentti</string>
+  <string name="folder_option_create_spreadsheet">Luo laskentataulukko</string>
   <string name="settings_theme_system_default">Seuraa järjestelmää</string>
   <string name="settings_theme_dark">Tumma</string>
   <string name="settings_theme_light">Vaalea</string>
@@ -144,7 +145,7 @@
   <string name="notification_content_text_backup_paused_disabled">Varmuuskopiointi poistettiin käytöstä</string>
   <string name="notification_content_text_backup_paused_background_restrictions">Varmuuskopiointia ei voida suorittaa taustalla</string>
   <string name="notification_content_text_backup_preparing">Valmistellaan varmuuskopiointia</string>
-  <string name="notification_content_text_backup_failed_migration">Migraatio käynnissä, päivitä sovellus</string>
+  <string name="notification_content_text_backup_failed_migration">Siirto käynnissä, päivitä sovelluksesi</string>
   <string name="notification_content_title_download_complete">Lataus on valmis</string>
   <string name="notification_content_title_forced_sign_out">Kirjaudu sisään</string>
   <string name="notification_content_text_forced_sign_out">Pahoittelut keskeytyksestä! Synkronoitaessa kohdattiin ongelma - kirjaudu sisään uudelleen, niin kaikki sujuu taas hyvin.</string>
@@ -167,6 +168,7 @@
   <string name="content_description_selected_options">Näytä lisää valintoja valituille tiedostoille ja/tai kansioille</string>
   <string name="content_description_files_upload_upload_file">Tallenna tiedosto</string>
   <string name="content_description_albums_new">Luo uusi albumi</string>
+  <string name="content_description_subscription_action">Avaa tilaus</string>
   <string name="description_empty_my_files">Aloita tiedostojen lisääminen napauttamalla painiketta.</string>
   <string name="description_empty_folder_read_only">Täällä ei ole mitään nähtävää</string>
   <string name="description_empty_shared">Linkitetyt tiedostot näkyvät täällä, jotta voit helposti seurata ja hallita jaettua sisältöä.</string>
@@ -192,6 +194,7 @@
   <string name="error_share_not_found">Jakoa ei löytynyt.</string>
   <string name="error_creating_photo_share_not_allowed">Kuvien varmuuskopiointi on poistettu tilapäisesti käytöstä.</string>
   <string name="error_creating_share_not_allowed">Jakojen luonti on poistettu tilapäisesti käytöstä.</string>
+  <string name="error_camera_permission">Camera permission is required.</string>
   <string name="operation_open_document">avaa dokumentti</string>
   <string name="operation_create_document">luoda dokumentin</string>
   <string name="operation_take_picture">ottaa kuvan</string>
@@ -238,7 +241,7 @@
         Example:
             "More storage for only $1.00"
     -->
-  <string name="drive_lite_promo_title">More storage for only %1$s</string>
+  <string name="drive_lite_promo_title">Lisää tallennustilaa vain hintaan %1$s</string>
   <!--
         Variable %1$s is the name of the plan
         Variable %2$s is a string representation of a storage size
@@ -246,20 +249,20 @@
         Example:
             "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
     -->
-  <string name="drive_lite_promo_description">When you need a little more storage, but not a lot. Introducing %1$s, featuring %2$s storage for only %3$s a month.</string>
+  <string name="drive_lite_promo_description">Kun tarvitset hieman lisää tallennustilaa, muttet paljoa. Esittelyssä %1$s, sisältäen %2$s tallennustilaa vain %3$s kuukaudessa.</string>
   <!--
         Variable %1$s is the name of the plan
         Example:
             "Get Drive Lite"
     -->
-  <string name="drive_lite_promo_action">Get %1$s</string>
+  <string name="drive_lite_promo_action">Hanki %1$s</string>
   <!--
         Variable %1$s is a string representation of a storage size
         Variable %2$s is a string representation of a price
         Example:
             "Get 200GB for just $0.99"
     -->
-  <string name="drive_plus_promo_title">Get %1$s for just %2$s</string>
+  <string name="drive_plus_promo_title">Hanki %1$s vain hintaan %2$s</string>
   <!--
         Variable %1$s is a string representation of a large number
         Variable %2$s is a string representation of a price
@@ -267,11 +270,11 @@
         Example:
             "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
     -->
-  <string name="drive_plus_promo_description">That is enough secure storage for over %1$s high-resolution photos. Get your first month for %2$s, then %3$s/month.</string>
+  <string name="drive_plus_promo_description">Se on riittävästi turvallista tallennustilaa yli %1$s korkearesoluutioiselle valokuvalle. Hanki ensimmäinen kuukausi hintaan %2$s, jonka jälkeen hinta on %3$s/kuukausi.</string>
   <!--
         Variable %1$s is the price of the plan
         Example:
             "Upgrade for $0.99"
     -->
-  <string name="drive_plus_promo_action">Upgrade for %1$s</string>
+  <string name="drive_plus_promo_action">Päivitä hintaan %1$s</string>
 </resources>

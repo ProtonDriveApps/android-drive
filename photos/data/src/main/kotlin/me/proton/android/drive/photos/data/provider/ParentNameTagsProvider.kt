@@ -18,8 +18,9 @@
 
 package me.proton.android.drive.photos.data.provider
 
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.PhotoTag
-import me.proton.core.drive.upload.domain.provider.TagsProvider
+import me.proton.core.drive.photo.domain.provider.TagsProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import javax.inject.Inject
 
@@ -34,6 +35,8 @@ class ParentNameTagsProvider @Inject constructor(
             else -> null
         }
     )
+
+    override suspend fun invoke(fileId: FileId): List<PhotoTag> = emptyList()
 
     private companion object {
         const val PARENT_NAME_SCREENSHOT = "Screenshots"

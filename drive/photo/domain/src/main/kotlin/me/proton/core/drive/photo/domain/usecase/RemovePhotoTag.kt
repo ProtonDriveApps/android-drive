@@ -33,7 +33,7 @@ class RemovePhotoTag @Inject constructor(
     private val getShare: GetShare,
     private val updateEventAction: UpdateEventAction,
 ) {
-    suspend operator fun invoke(fileId: FileId, tags: List<PhotoTag>) = coRunCatching {
+    suspend operator fun invoke(fileId: FileId, tags: Set<PhotoTag>) = coRunCatching {
         val share = getShare(fileId.shareId).toResult().getOrThrow()
         updateEventAction(fileId.userId, share.volumeId) {
             repository.deleteTags(share.volumeId, fileId, tags)

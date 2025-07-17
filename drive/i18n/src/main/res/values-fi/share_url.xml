@@ -95,14 +95,14 @@
         Example:
             "Pending shared albums (2)"
     -->
-  <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
+  <string name="shared_user_album_invitations_title">Odottavat jaetut albumit (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Odottavia jakoja ei ole</string>
-  <string name="shared_user_album_invitations_title_empty">No pending shared albums</string>
+  <string name="shared_user_album_invitations_title_empty">Ei odottavia jaettuja albumeita</string>
   <string name="shared_user_invitations_description_empty">Kaikki uudet kutsut tulevat tänne</string>
   <string name="shared_user_invitations_accept_button">Hyväksy</string>
   <string name="shared_user_invitations_decline_button">Kieltäydy</string>
   <string name="shared_user_invitations_accept_success">Jako hyväksyttiin</string>
   <string name="shared_user_invitations_decline_success">Jaosta kieltäydyttiin</string>
-  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
-  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
+  <string name="shared_user_album_invitations_accept_success">Kutsu hyväksytty</string>
+  <string name="shared_user_album_invitations_decline_success">Kutsusta kieltäydytty</string>
 </resources>

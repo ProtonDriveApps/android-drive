@@ -37,7 +37,6 @@ import me.proton.android.drive.ui.options.Option
 import me.proton.android.drive.ui.options.filter
 import me.proton.android.drive.ui.options.filterPermissions
 import me.proton.android.drive.ui.options.filterRoot
-import me.proton.android.drive.ui.options.filterShare
 import me.proton.android.drive.ui.options.filterShareMember
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.entity.Permissions
@@ -51,9 +50,7 @@ import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isShareMember
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsTempDisabledOnRelease
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDevelopment
-import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.link.domain.entity.AlbumId
@@ -73,8 +70,6 @@ class AlbumOptionsViewModel @Inject constructor(
         shareId = ShareId(userId, savedStateHandle.require(KEY_SHARE_ID)),
         id = savedStateHandle.require(KEY_ALBUM_ID)
     )
-    private val shareTempDisabled = getFeatureFlagFlow(driveAlbumsTempDisabledOnRelease(userId))
-        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveAlbumsTempDisabledOnRelease(userId), NOT_FOUND))
     private val sharingDevelopment = getFeatureFlagFlow(driveSharingDevelopment(userId))
         .stateIn(viewModelScope, Eagerly, FeatureFlag(driveSharingDevelopment(userId), NOT_FOUND))
     private var dismiss: (() -> Unit)? = null
@@ -110,14 +105,12 @@ class AlbumOptionsViewModel @Inject constructor(
         dismiss: () -> Unit,
     ): Flow<List<FileOptionEntry<DriveLink.Album>>> = combine(
         driveLink.filterNotNull(),
-        shareTempDisabled,
         sharingDevelopment,
-    ) { driveLink, shareTempDisabled, sharingDevelopment ->
+    ) { driveLink, sharingDevelopment ->
         options
             .filter(driveLink)
             .filterShareMember(driveLink.isShareMember)
             .filterPermissions(driveLink.sharePermissions ?: Permissions.owner)
-            .filterShare(shareTempDisabled.on)
             .filterRoot(driveLink, sharingDevelopment)
             .map { option ->
                 when (option) {

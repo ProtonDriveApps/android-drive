@@ -26,6 +26,7 @@ data class PhotosBackupViewState(
     val backup: PhotosBackupOption,
     val mobileData: PhotosBackupOption,
     val ignoringBatteryOptimizations: PhotosBackupOption,
+    val tagsMigrationProgressState: TagsMigrationProgressState? = null,
 )
 
 @Immutable
@@ -34,4 +35,11 @@ data class PhotosBackupOption(
     val checked: Boolean,
     val enabled: Boolean = true,
     val description: String? = null,
+)
+
+@Immutable
+data class TagsMigrationProgressState(
+    val title: String,
+    val description: String,
+    val progress: Float? = null,
 )

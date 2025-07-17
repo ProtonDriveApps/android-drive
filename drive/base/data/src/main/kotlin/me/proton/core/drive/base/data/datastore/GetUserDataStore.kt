@@ -61,6 +61,7 @@ class GetUserDataStore @Inject constructor(
         private const val KEY_PHOTO_SHARE_MIGRATION_STATE = "photo_share_migration_state"
         private const val KEY_PHOTOS_IMPORTANT_UPDATES_LAST_SHOWN = "photos_important_updates_last_shown"
         private const val KEY_PHOTOS_MIGRATION_BUCKET_IDS = "photos_migration_bucket_ids"
+        private const val KEY_PHOTOS_MIGRATION_TAGS_LAST_FINISHED_UPDATE = "key_photos_migration_tags_last_finished_update"
     }
 
     data object Keys {
@@ -74,5 +75,6 @@ class GetUserDataStore @Inject constructor(
         val photoShareMigrationState get() = stringPreferencesKey(KEY_PHOTO_SHARE_MIGRATION_STATE)
         val photosImportantUpdatesLastShown get() = longPreferencesKey(KEY_PHOTOS_IMPORTANT_UPDATES_LAST_SHOWN)
         val photosMigrationBucketIds get() = stringSetPreferencesKey(KEY_PHOTOS_MIGRATION_BUCKET_IDS)
+        val photosMigrationTagsLastFinishedUpdate get() = longPreferencesKey(KEY_PHOTOS_MIGRATION_TAGS_LAST_FINISHED_UPDATE)
     }
 }

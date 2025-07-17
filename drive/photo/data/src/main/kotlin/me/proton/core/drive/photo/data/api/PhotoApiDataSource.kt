@@ -31,6 +31,7 @@ import me.proton.core.drive.photo.data.api.request.FindDuplicatesRequest
 import me.proton.core.drive.photo.data.api.request.RemoveFromAlbumRequest
 import me.proton.core.drive.photo.data.api.request.TagRequest
 import me.proton.core.drive.photo.data.api.request.UpdateAlbumRequest
+import me.proton.core.drive.photo.data.api.response.TagsMigrationRequest
 import me.proton.core.drive.photo.data.extension.toAlbumData
 import me.proton.core.drive.photo.data.extension.toDtoSort
 import me.proton.core.drive.photo.domain.entity.AddToAlbumInfo
@@ -220,7 +221,7 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
     suspend fun addTag(
         volumeId: VolumeId,
         fileId: FileId,
-        tags: List<PhotoTag>,
+        tags: Set<PhotoTag>,
     ) = apiProvider
         .get<PhotoApi>(fileId.userId)
         .invoke {
@@ -237,7 +238,7 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
     suspend fun deleteTag(
         volumeId: VolumeId,
         fileId: FileId,
-        tags: List<PhotoTag>,
+        tags: Set<PhotoTag>,
     ) = apiProvider
         .get<PhotoApi>(fileId.userId)
         .invoke {
@@ -266,5 +267,26 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
         .get<PhotoApi>(userId)
         .invoke {
             startPhotoShareMigration()
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun getTagsMigrationStatus(
+        userId: UserId,
+        volumeId: VolumeId,
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            getTagsMigrationStatus(volumeId.id)
+        }.valueOrThrow
+
+    @Throws(ApiException::class)
+    suspend fun postTagsMigrationStatus(
+        userId: UserId,
+        volumeId: VolumeId,
+        request: TagsMigrationRequest,
+    ) = apiProvider
+        .get<PhotoApi>(userId)
+        .invoke {
+            postTagsMigrationStatus(volumeId.id, request)
         }.valueOrThrow
 }

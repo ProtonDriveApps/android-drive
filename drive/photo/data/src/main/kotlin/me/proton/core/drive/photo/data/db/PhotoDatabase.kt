@@ -20,9 +20,11 @@ package me.proton.core.drive.photo.data.db
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
+import me.proton.core.data.room.db.extension.addTableColumn
 import me.proton.core.data.room.db.extension.dropTableColumn
 import me.proton.core.data.room.db.migration.DatabaseMigration
 import me.proton.core.drive.base.data.db.Column.MAIN_PHOTO_LINK_ID
+import me.proton.core.drive.base.data.db.Column.MIME_TYPE
 import me.proton.core.drive.photo.data.db.dao.AlbumListingDao
 import me.proton.core.drive.photo.data.db.dao.AlbumPhotoListingDao
 import me.proton.core.drive.photo.data.db.dao.PhotoListingDao
@@ -30,6 +32,9 @@ import me.proton.core.drive.photo.data.db.dao.AlbumRelatedPhotoDao
 import me.proton.core.drive.photo.data.db.dao.RelatedPhotoDao
 import me.proton.core.drive.photo.data.db.dao.TaggedPhotoListingDao
 import me.proton.core.drive.photo.data.db.dao.TaggedRelatedPhotoDao
+import me.proton.core.drive.photo.data.db.dao.TagsMigrationFileDao
+import me.proton.core.drive.photo.data.db.dao.TagsMigrationFileTagDao
+import me.proton.core.drive.photo.data.db.entity.TagsMigrationFileEntity
 
 interface PhotoDatabase : Database {
     val photoListingDao: PhotoListingDao
@@ -39,6 +44,8 @@ interface PhotoDatabase : Database {
     val albumListingDao: AlbumListingDao
     val albumPhotoListingDao: AlbumPhotoListingDao
     val albumRelatedPhotoDao: AlbumRelatedPhotoDao
+    val tagsMigrationFileDao: TagsMigrationFileDao
+    val tagsMigrationFileTagDao: TagsMigrationFileTagDao
 
     companion object {
         val MIGRATION_0 = object : DatabaseMigration {
@@ -461,6 +468,55 @@ interface PhotoDatabase : Database {
                     CREATE INDEX IF NOT EXISTS `index_AlbumRelatedPhotoEntity_user_id_volume_id_album_id_main_photo_link_id` ON `AlbumRelatedPhotoEntity`
                      (`user_id`, `volume_id`, `album_id`, `main_photo_link_id`)
                 """.trimIndent())
+            }
+        }
+        val MIGRATION_5 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `TagsMigrationFileEntity` (
+                    `user_id` TEXT NOT NULL, 
+                    `volume_id` TEXT NOT NULL, 
+                    `share_id` TEXT NOT NULL, 
+                    `id` TEXT NOT NULL, 
+                    `capture_time` INTEGER NOT NULL, 
+                    `state` TEXT NOT NULL, 
+                    `uri` TEXT, 
+                    PRIMARY KEY(`user_id`, `volume_id`, `share_id`, `id`), 
+                    FOREIGN KEY(`user_id`, `share_id`) REFERENCES `ShareEntity`(`user_id`, `id`) 
+                    ON UPDATE NO ACTION ON DELETE CASCADE 
+                    )
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_TagsMigrationFileEntity_user_id_volume_id` ON `TagsMigrationFileEntity` (`user_id`, `volume_id`)
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_TagsMigrationFileEntity_user_id_share_id` ON `TagsMigrationFileEntity` (`user_id`, `share_id`)
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_TagsMigrationFileEntity_user_id_volume_id_share_id_id` ON `TagsMigrationFileEntity` (`user_id`, `volume_id`, `share_id`, `id`)
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS `TagsMigrationFileTagEntity` (
+                    `user_id` TEXT NOT NULL, 
+                    `volume_id` TEXT NOT NULL, 
+                    `share_id` TEXT NOT NULL, 
+                    `id` TEXT NOT NULL, 
+                    `tag` INTEGER NOT NULL, 
+                    PRIMARY KEY(`user_id`, `volume_id`, `share_id`, `id`, `tag`), 
+                    FOREIGN KEY(`user_id`, `volume_id`, `share_id`, `id`) 
+                    REFERENCES `TagsMigrationFileEntity`(`user_id`, `volume_id`, `share_id`, `id`) 
+                    ON UPDATE NO ACTION ON DELETE CASCADE 
+                    )
+                """.trimIndent())
+                database.execSQL("""
+                    CREATE INDEX IF NOT EXISTS `index_TagsMigrationFileTagEntity_user_id_volume_id_share_id_id` ON `TagsMigrationFileTagEntity` (`user_id`, `volume_id`, `share_id`, `id`)
+                """.trimIndent())
+            }
+        }
+
+        val MIGRATION_6 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.addTableColumn("TagsMigrationFileEntity", MIME_TYPE, "TEXT")
             }
         }
     }

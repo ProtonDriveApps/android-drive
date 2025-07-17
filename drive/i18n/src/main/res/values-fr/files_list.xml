@@ -44,7 +44,7 @@
     -->
   <string name="title_modified_with_date">Modification : %1$s</string>
   <string name="files_restore_from_trash_action">Restaurer</string>
-  <string name="files_send_to_trash_action">Déplacer dans le dossier Corbeille</string>
+  <string name="files_send_to_trash_action">Déplacer vers la corbeille</string>
   <string name="files_remove_me_action">Me retirer</string>
   <string name="files_move_file_action">Déplacer</string>
   <string name="files_add_to_favorite_action">Ajouter aux favoris</string>

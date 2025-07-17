@@ -20,7 +20,6 @@ package me.proton.core.drive.files.preview.presentation.component
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.view.ViewGroup
 import android.webkit.ConsoleMessage
 import android.webkit.ValueCallback
@@ -35,14 +34,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.os.bundleOf
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.log.LogTag
@@ -71,6 +68,7 @@ fun ProtonDocumentPreview(
     host: String,
     appVersionHeader: String,
     modifier: Modifier = Modifier,
+    onWebViewRelease: (uriString: String) -> Unit,
     onDownloadResult: (Result<String>) -> Unit,
     onShowFileChooser: (ValueCallback<Array<Uri>>?, FileChooserParams?) -> Boolean,
 ) {
@@ -86,7 +84,6 @@ fun ProtonDocumentPreview(
         ClientVersionProvider(appVersionHeader)
     }
     val localWebView = remember(uriString) { mutableStateOf<WebView?>(null) }
-    val webViewBundle = rememberSaveable(uriString) { mutableStateOf<Bundle?>(null) }
     val focusManager = LocalFocusManager.current
     AndroidView(
         factory = { context ->
@@ -160,13 +157,12 @@ fun ProtonDocumentPreview(
                         )
                     }
                 }
-                webViewBundle.value?.let { bundle -> restoreState(bundle) } ?: loadUrl(uriString)
+                post { loadUrl(uriString) }
                 localWebView.value = this
             }
         },
-        onRelease = { webView ->
-            val bundle = webViewBundle.value ?: bundleOf().also { bundle -> webViewBundle.value = bundle }
-            webView.saveState(bundle)
+        onRelease = { _ ->
+            onWebViewRelease(uriString)
         },
         modifier = modifier
             .fillMaxSize()

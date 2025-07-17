@@ -99,7 +99,7 @@
     -->
   <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
   <string name="shared_user_invitations_title_empty">Ni čakajočih deljenih predmetov</string>
-  <string name="shared_user_album_invitations_title_empty"/>
+  <string name="shared_user_album_invitations_title_empty">Ni čakajočih deljenih albumov</string>
   <string name="shared_user_invitations_description_empty">Vsa nova povabila bodo tukaj</string>
   <string name="shared_user_invitations_accept_button">Sprejmi</string>
   <string name="shared_user_invitations_decline_button">Zavrni</string>

@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Opret mappe</string>
   <string name="folder_option_take_a_photo">Tag et nyt foto</string>
   <string name="folder_option_create_document">Opret dokument</string>
+  <string name="folder_option_create_spreadsheet">Opret regneark</string>
   <string name="settings_theme_system_default">Systemstandard</string>
   <string name="settings_theme_dark">Mørk</string>
   <string name="settings_theme_light">Lys</string>
@@ -167,6 +168,7 @@
   <string name="content_description_selected_options">Vis flere muligheder for valgte filer og/eller mapper</string>
   <string name="content_description_files_upload_upload_file">Upload en fil</string>
   <string name="content_description_albums_new">Opret nyt album</string>
+  <string name="content_description_subscription_action">Åbn abonnement</string>
   <string name="description_empty_my_files">Tryk på knappen for at tilføje filer.</string>
   <string name="description_empty_folder_read_only">Der er intet at se her</string>
   <string name="description_empty_shared">Linkede filer vises her, så du nemt kan spore og administrere, hvad der er delt.</string>
@@ -192,6 +194,7 @@
   <string name="error_share_not_found">Deling ikke fundet.</string>
   <string name="error_creating_photo_share_not_allowed">Sikkerhedskopiering af fotos er midlertidigt deaktiveret.</string>
   <string name="error_creating_share_not_allowed">Oprettelse af deling er midlertidigt deaktiveret.</string>
+  <string name="error_camera_permission">Kameratilladelse er påkrævet.</string>
   <string name="operation_open_document">åbn et dokument</string>
   <string name="operation_create_document">opret et dokument</string>
   <string name="operation_take_picture">tag et billede</string>
@@ -238,7 +241,7 @@
         Example:
             "More storage for only $1.00"
     -->
-  <string name="drive_lite_promo_title">More storage for only %1$s</string>
+  <string name="drive_lite_promo_title">Mere lagerplads for kun %1$s</string>
   <!--
         Variable %1$s is the name of the plan
         Variable %2$s is a string representation of a storage size
@@ -259,7 +262,7 @@
         Example:
             "Get 200GB for just $0.99"
     -->
-  <string name="drive_plus_promo_title">Get %1$s for just %2$s</string>
+  <string name="drive_plus_promo_title">Få %1$s for kun %2$s</string>
   <!--
         Variable %1$s is a string representation of a large number
         Variable %2$s is a string representation of a price
@@ -267,11 +270,11 @@
         Example:
             "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
     -->
-  <string name="drive_plus_promo_description">That is enough secure storage for over %1$s high-resolution photos. Get your first month for %2$s, then %3$s/month.</string>
+  <string name="drive_plus_promo_description">Det er nok sikker lagerplads til over %1$s fotos i høj opløsning. Få din første måned for %2$s, derefter %3$s/måned.</string>
   <!--
         Variable %1$s is the price of the plan
         Example:
             "Upgrade for $0.99"
     -->
-  <string name="drive_plus_promo_action">Upgrade for %1$s</string>
+  <string name="drive_plus_promo_action">Opgradér for %1$s</string>
 </resources>

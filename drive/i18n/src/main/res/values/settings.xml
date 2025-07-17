@@ -98,4 +98,6 @@
     <string name="debug_settings_send_log" translatable="false">Send log</string>
     <string name="debug_settings_use_verifier" translatable="false">Verify uploads</string>
     <string name="debug_settings_use_verifier_description" translatable="false">When enabled, all uploaded blocks will have verification token</string>
+    <string name="debug_settings_send_photo_tags_in_commit" translatable="false">Send photo tags in commit</string>
+    <string name="debug_settings_send_photo_tags_in_commit_description" translatable="false">When enabled, tags will be send by photos backup, committing upload file</string>
 </resources>

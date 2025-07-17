@@ -83,6 +83,7 @@ import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.compose.theme.headlineSmallNorm
 import me.proton.core.compose.theme.headlineSmallUnspecified
+import me.proton.core.drive.base.domain.entity.FastScrollAnchor
 import me.proton.core.drive.base.presentation.component.RepeatOnLifecycleLaunchedEffect
 import me.proton.core.drive.base.presentation.component.TopAppBar
 import me.proton.core.drive.base.presentation.component.TopBarActions
@@ -290,6 +291,9 @@ fun PhotosTab(
         photos = photos,
         listEffect = listEffect,
         driveLinksFlow = viewModel.driveLinksMap,
+        getFastScrollAnchors = { items: List<PhotosItem>, anchors: Int, anchorsInLabel: Int ->
+            viewModel.getFastScrollAnchors(items, anchors, anchorsInLabel)
+        },
         modifier = modifier,
         defaultTitle = defaultTitle,
     )
@@ -311,6 +315,7 @@ private fun PhotosTab(
     listEffect: Flow<ListEffect>,
     driveLinksFlow: Flow<Map<LinkId, DriveLink>>,
     defaultTitle: @Composable (Modifier) -> Unit,
+    getFastScrollAnchors: suspend (List<PhotosItem>, Int, Int) -> List<FastScrollAnchor>,
     modifier: Modifier = Modifier,
 ) {
     val selectedPhotos by rememberFlowWithLifecycle(flow = viewState.selected)
@@ -358,6 +363,7 @@ private fun PhotosTab(
         listEffect = listEffect,
         driveLinksFlow = driveLinksFlow,
         selectedPhotos = selectedPhotos,
+        getFastScrollAnchors = getFastScrollAnchors,
         modifier = modifier.fillMaxSize(),
     )
 }

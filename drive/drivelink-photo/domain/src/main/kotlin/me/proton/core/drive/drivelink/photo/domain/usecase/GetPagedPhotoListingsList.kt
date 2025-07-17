@@ -90,6 +90,7 @@ class GetPagedPhotoListingsList @Inject constructor(
                         tag = tag,
                     )
                 }
-            }
+            },
+            pageSize = configurationProvider.photoListingsPageSize,
         )
 }

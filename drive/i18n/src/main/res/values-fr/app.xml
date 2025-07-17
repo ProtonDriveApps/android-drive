@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Créer un dossier</string>
   <string name="folder_option_take_a_photo">Prendre une nouvelle photo</string>
   <string name="folder_option_create_document">Créer un document</string>
+  <string name="folder_option_create_spreadsheet">Créer une feuille de calcul</string>
   <string name="settings_theme_system_default">Thème par défaut</string>
   <string name="settings_theme_dark">Sombre</string>
   <string name="settings_theme_light">Clair</string>
@@ -167,6 +168,7 @@
   <string name="content_description_selected_options">Afficher plus d\'options pour les fichiers et/ou dossiers sélectionnés</string>
   <string name="content_description_files_upload_upload_file">Importer un fichier</string>
   <string name="content_description_albums_new">Créer un album</string>
+  <string name="content_description_subscription_action">Ouvrir l\'abonnement</string>
   <string name="description_empty_my_files">Appuyez sur le bouton pour ajouter des fichiers.</string>
   <string name="description_empty_folder_read_only">Il n\'y a aucune donnée à afficher.</string>
   <string name="description_empty_shared">Les fichiers associés apparaissent ici pour que vous puissiez facilement suivre et gérer ce qui est partagé.</string>
@@ -192,6 +194,7 @@
   <string name="error_share_not_found">Le partage est introuvable.</string>
   <string name="error_creating_photo_share_not_allowed">La sauvegarde des photos est temporairement désactivée.</string>
   <string name="error_creating_share_not_allowed">La création des partages est temporairement désactivée.</string>
+  <string name="error_camera_permission">L\'autorisation d\'accès à la caméra est nécessaire.</string>
   <string name="operation_open_document">ouvrir un document</string>
   <string name="operation_create_document">créer un document</string>
   <string name="operation_take_picture">prendre une photo</string>
@@ -274,6 +277,8 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Changer d\'abonnement pour %1$s</string>
+  <!-- endregion -->
+  <!-- endregion -->
   <!-- endregion -->
   <!-- endregion -->
 </resources>

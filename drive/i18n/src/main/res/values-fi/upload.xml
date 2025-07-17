@@ -43,8 +43,8 @@
             "3 files failed to be uploaded to: Pictures"
     -->
   <plurals name="files_upload_failed_notification">
-    <item quantity="one">%1$d file failed to be uploaded to: %2$s</item>
-    <item quantity="other">%1$d files failed to be uploaded to: %2$s</item>
+    <item quantity="one">%1$d tiedostoa ei voitu lähettää sijaintiin: %2$s</item>
+    <item quantity="other">%1$d tiedostoa ei voitu lähettää sijaintiin: %2$s</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that are being ignored
@@ -54,8 +54,8 @@
             "3 files failed to be uploaded to: Pictures"
     -->
   <plurals name="files_upload_being_ignored_notification">
-    <item quantity="one">%1$d file was ignored</item>
-    <item quantity="other">%1$d files were ignored</item>
+    <item quantity="one">%1$d tiedosto ohitettiin</item>
+    <item quantity="other">%1$d tiedostoa ohitettiin</item>
   </plurals>
   <string name="files_upload_preparing">Tallennusta valmistellaan. Tämä saattaa kestää jonkin aikaa.</string>
   <!--

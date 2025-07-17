@@ -110,6 +110,8 @@ interface ConfigurationProvider {
     val observeWorkManagerInterval: Duration get() = 1.minutes
     val cacheInternalStorageLimit: Bytes get() = 512.MiB
     val albumsFeatureFlag: Boolean get() = true
+    val scanPhotoFileForTags: Boolean get() = false
+    val tagsMigrationProgress: Boolean get() = false
     val minimumAlbumListingFetchInterval: Duration get() = 5.days
     val addToRemoveFromAlbumMaxApiDataSize: Int get() = 10
     val maxApiBatchDataSize: Int get() = 100
@@ -117,6 +119,8 @@ interface ConfigurationProvider {
     val minimumPhotosImportantUpdatesInterval: Duration get() = 7.days
     val minimumPhotoShareMigrationStatusFetchInterval: Duration get() = 10.seconds
     val savePhotoToStreamLimit: Long get() = 100
+    val photoListingsPageSize: Int get() = 25_000
+    val sendPhotoTagsInCommit: Boolean get() = true
 
     data class Thumbnail(
         val maxWidth: Int,

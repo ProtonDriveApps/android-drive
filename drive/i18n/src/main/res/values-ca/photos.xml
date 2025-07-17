@@ -157,4 +157,26 @@
   <string name="photos_important_updates_subtitle">Cal actualitzar la biblioteca de fotos</string>
   <string name="photos_important_updates_description">Aquesta actualització ràpida prepara les fotos per a noves característiques, com ara filtres i àlbums</string>
   <string name="photos_important_updates_cancel_action">Recorda-m\'ho més tard</string>
+  <string name="photos_tags_migration_title">Migració d\'etiquetes</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos migrates
+        Example:
+           Finished, 1 file were migrated.
+           Finished, 12 345 files were migrated.
+    -->
+  <plurals name="photos_tags_migration_finished">
+    <item quantity="one">Finalitzat, el fitxer %1$s ha migrat.</item>
+    <item quantity="other">Finalitzat, els fitxers %1$s han migrat.</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos to migrate
+        Variable %1$s is a quantity (formatted) of photos waiting for download
+        Example:
+           Ongoing, migrating 1 file, 0 waiting for download.
+           Ongoing, migrating 12 345 files, 123 waiting for download.
+    -->
+  <plurals name="photos_tags_migration_ongoing">
+    <item quantity="one">Operació en curs: %1$s fitxer està migrant i %2$s altre es troba a l\'espera de ser descarregat.</item>
+    <item quantity="other">Operació en curs: %1$s fitxers estan migrant i %2$s més es troben a l\'espera de ser descarregats.</item>
+  </plurals>
 </resources>

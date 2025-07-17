@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">폴더 생성</string>
   <string name="folder_option_take_a_photo">새 사진 촬영</string>
   <string name="folder_option_create_document">문서 생성</string>
+  <string name="folder_option_create_spreadsheet">스프레드시트 생성</string>
   <string name="settings_theme_system_default">시스템 기본값</string>
   <string name="settings_theme_dark">다크</string>
   <string name="settings_theme_light">라이트</string>
@@ -162,6 +163,7 @@
   <string name="content_description_selected_options">선택한 파일 또는 폴더에 대한 추가 옵션 표시</string>
   <string name="content_description_files_upload_upload_file">파일 업로드</string>
   <string name="content_description_albums_new">새로운 앨범 생성</string>
+  <string name="content_description_subscription_action">구독 열기</string>
   <string name="description_empty_my_files">파일을 추가하려면 버튼을 탭하세요.</string>
   <string name="description_empty_folder_read_only">이곳엔 아무것도 없습니다.</string>
   <string name="description_empty_shared">링크로 공유한 파일이 여기에 표시되므로 공유된 항목을 쉽게 확인 및 관리할 수 있습니다.</string>
@@ -187,6 +189,7 @@
   <string name="error_share_not_found">공유를 찾을 수 없습니다.</string>
   <string name="error_creating_photo_share_not_allowed">사진 백업이 일시적으로 비활성화되었습니다.</string>
   <string name="error_creating_share_not_allowed">공유를 일시적으로 생성할 수 없습니다.</string>
+  <string name="error_camera_permission">카메라 권한이 필요합니다.</string>
   <string name="operation_open_document">문서 열기</string>
   <string name="operation_create_document">문서 생성</string>
   <string name="operation_take_picture">사진 촬영</string>

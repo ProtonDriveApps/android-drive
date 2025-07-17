@@ -22,14 +22,18 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.proton.android.drive.photos.data.repository.MediaStoreVersionRepositoryImpl
 import me.proton.android.drive.photos.data.repository.AlbumInfoRepositoryImpl
+import me.proton.android.drive.photos.data.repository.MediaStoreVersionRepositoryImpl
 import me.proton.android.drive.photos.data.usecase.EnablePhotosBackupImpl
 import me.proton.android.drive.photos.data.usecase.GetPagedAddToAlbumPhotoListingsImpl
-import me.proton.android.drive.photos.domain.repository.MediaStoreVersionRepository
+import me.proton.android.drive.photos.data.usecase.TagsMigrationPrepareFileImpl
 import me.proton.android.drive.photos.domain.repository.AlbumInfoRepository
+import me.proton.android.drive.photos.domain.repository.MediaStoreVersionRepository
 import me.proton.android.drive.photos.domain.usecase.EnablePhotosBackup
+import me.proton.android.drive.photos.domain.usecase.FetchAllPhotoListingsImpl
 import me.proton.android.drive.photos.domain.usecase.GetPagedAddToAlbumPhotoListings
+import me.proton.core.drive.photo.domain.usecase.FetchAllPhotoListings
+import me.proton.core.drive.photo.domain.usecase.TagsMigrationPrepareFile
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -51,4 +55,12 @@ interface PhotosBindModule {
     @Binds
     @Singleton
     fun bindsGetPagedAddToAlbumPhotoListings(impl: GetPagedAddToAlbumPhotoListingsImpl): GetPagedAddToAlbumPhotoListings
+
+    @Binds
+    @Singleton
+    fun bindsTagsMigrationPrepareFile(impl: TagsMigrationPrepareFileImpl): TagsMigrationPrepareFile
+
+    @Binds
+    @Singleton
+    fun bindsFetchAllPhotoListings(impl: FetchAllPhotoListingsImpl): FetchAllPhotoListings
 }

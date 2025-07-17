@@ -35,6 +35,8 @@ import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.drive.photo.data.api.response.GetPhotoListingResponse
 import me.proton.core.drive.photo.data.api.response.MigrationStatusResponse
+import me.proton.core.drive.photo.data.api.response.TagsMigrationRequest
+import me.proton.core.drive.photo.data.api.response.TagsMigrationResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -138,7 +140,11 @@ interface PhotoApi : BaseRetrofitApi {
         @Body request: TagRequest,
     ): CodeResponse
 
-    @HTTP(method = "DELETE", path = "/drive/photos/volumes/{volumeID}/links/{linkID}/tags", hasBody = true)
+    @HTTP(
+        method = "DELETE",
+        path = "/drive/photos/volumes/{volumeID}/links/{linkID}/tags",
+        hasBody = true
+    )
     suspend fun deleteTags(
         @Path("volumeID") volumeId: String,
         @Path("linkID") linkId: String,
@@ -150,4 +156,13 @@ interface PhotoApi : BaseRetrofitApi {
 
     @POST("drive/photos/migrate-legacy")
     suspend fun startPhotoShareMigration(): CodeResponse
+
+    @GET("drive/photos/volumes/{volumeID}/tags-migration")
+    suspend fun getTagsMigrationStatus(@Path("volumeID") volumeId: String): TagsMigrationResponse
+
+    @POST("drive/photos/volumes/{volumeID}/tags-migration")
+    suspend fun postTagsMigrationStatus(
+        @Path("volumeID") volumeId: String,
+        @Body request: TagsMigrationRequest
+    ): CodeResponse
 }

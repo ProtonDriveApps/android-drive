@@ -27,6 +27,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -40,6 +41,7 @@ import me.proton.android.drive.ui.options.filter
 import me.proton.android.drive.ui.options.filterAlbums
 import me.proton.android.drive.ui.options.filterPermissions
 import me.proton.android.drive.ui.options.filterPhotoFavorite
+import me.proton.android.drive.ui.options.filterPhotoTag
 import me.proton.android.drive.ui.options.filterProtonDocs
 import me.proton.android.drive.ui.options.filterRoot
 import me.proton.android.drive.ui.options.filterShare
@@ -50,7 +52,6 @@ import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Permissions
-import me.proton.core.drive.base.domain.extension.combine
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -70,10 +71,8 @@ import me.proton.core.drive.drivelink.trash.domain.usecase.ToggleTrashState
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsDisabled
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsTempDisabledOnRelease
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveDocsDisabled
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDevelopment
-import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.link.domain.entity.AlbumId
@@ -84,6 +83,7 @@ import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.photo.domain.usecase.ScanPhotoForTags
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.Volume
 import me.proton.core.drive.volume.domain.usecase.GetOldestActiveVolume
@@ -113,6 +113,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     private val addPhotosToStream: AddPhotosToStream,
     private val hasPhotoVolume: HasPhotoVolume,
     private val selectLinks: SelectLinks,
+    private val scanPhotoForTags: ScanPhotoForTags,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val selectionId = savedStateHandle.get<String?>(KEY_SELECTION_ID)?.let { SelectionId(it) }
     private var dismiss: (() -> Unit)? = null
@@ -148,9 +149,6 @@ class FileOrFolderOptionsViewModel @Inject constructor(
     private val albumsKillSwitch = getFeatureFlagFlow(driveAlbumsDisabled(userId))
         .stateIn(viewModelScope, Eagerly, FeatureFlag(driveAlbumsDisabled(userId), NOT_FOUND))
 
-    private val shareTempDisabled = getFeatureFlagFlow(driveAlbumsTempDisabledOnRelease(userId))
-        .stateIn(viewModelScope, Eagerly, FeatureFlag(driveAlbumsTempDisabledOnRelease(userId), NOT_FOUND))
-
     private val photoVolume = getOldestActiveVolume(userId, Volume.Type.PHOTO)
         .mapSuccessValueOrNull()
         .stateIn(viewModelScope, Eagerly, null)
@@ -174,14 +172,14 @@ class FileOrFolderOptionsViewModel @Inject constructor(
         docsKillSwitch,
         hasPhotoVolume(userId),
         albumsKillSwitch,
-        shareTempDisabled,
-    ) { driveLink, sharingDevelopment, protonDocsKillSwitch, hasPhotoVolume, albumsKillSwitch, shareTempDisabled ->
+    ) { driveLink, sharingDevelopment, protonDocsKillSwitch, hasPhotoVolume, albumsKillSwitch ->
         options
             .filter(driveLink)
             .filterAlbums(hasPhotoVolume, albumsKillSwitch, albumId)
+            .filterPhotoTag(configurationProvider.scanPhotoFileForTags)
             .filterPhotoFavorite(hasPhotoVolume, albumsKillSwitch)
             .filterRoot(driveLink, sharingDevelopment)
-            .filterShare(shareTempDisabled.on, albumId)
+            .filterShare(false, albumId)
             .filterShareMember(driveLink.isShareMember)
             .filterPermissions(driveLink.sharePermissions ?: Permissions.owner)
             .filterProtonDocs(protonDocsKillSwitch)
@@ -255,6 +253,12 @@ class FileOrFolderOptionsViewModel @Inject constructor(
                             deselectLinks()
                         }
                     }
+                    is Option.TagPhotoFile -> option.build(runAction) { driveLink ->
+                        viewModelScope.launch {
+                            scanPhotoForTags(driveLink)
+                            deselectLinks()
+                        }
+                    }
                     is Option.SaveSharePhoto -> option.build(runAction) { driveLink ->
                         viewModelScope.launch {
                             saveSharedPhoto(driveLink)
@@ -289,6 +293,12 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             }.also {
                 this.dismiss = dismiss
             }
+    }
+
+    private suspend fun scanPhotoForTags(driveLink: DriveLink.File) {
+        scanPhotoForTags(driveLink.volumeId, listOf(driveLink.link)).onFailure { error ->
+            error.log(VIEW_MODEL, "Failed to scan photo for tags ${driveLink.id.id.logId()}")
+        }
     }
 
     private fun deselectLinks() {
@@ -438,6 +448,7 @@ class FileOrFolderOptionsViewModel @Inject constructor(
             Option.FavoriteToggle,
             Option.AddToAlbums,
             Option.SaveSharePhoto,
+            Option.TagPhotoFile,
             Option.ShareViaInvitations,
             Option.ManageAccess,
             Option.SendFile,

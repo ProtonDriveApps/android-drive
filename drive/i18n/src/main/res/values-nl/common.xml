@@ -74,6 +74,7 @@
   <string name="common_start_action">Start</string>
   <string name="common_save_all_action">Alles opslaan</string>
   <string name="common_add_to_albums_action">Voeg toe aan albums</string>
+  <string name="common_tag_photo_action">Foto scannen op tags</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Audio</string>
@@ -86,6 +87,7 @@
   <string name="common_type_pdf">PDF-document</string>
   <string name="common_type_ppt">Presentatie</string>
   <string name="common_type_proton_doc">Proton-document</string>
+  <string name="common_type_proton_sheet">Proton-spreadsheet</string>
   <string name="common_type_text">Tekst</string>
   <string name="common_type_trustedkey">Vertrouwde sleutel</string>
   <string name="common_type_unknown">Binair</string>
@@ -192,6 +194,8 @@
             "System could not found any application that could take a picture"
     -->
   <string name="common_in_app_notification_activity_not_found">Het systeem kan geen enkele toepassing vinden die %1$s kan gebruiken</string>
+  <!-- endregion -->
+  <!-- endregion -->
   <!-- endregion -->
   <!-- endregion -->
   <!-- endregion -->

@@ -100,18 +100,15 @@ suspend fun FolderContext.folder(
     id: String,
     sharingDetailsShareId: String? = null,
     block: suspend FolderContext.() -> Unit = {},
-): FolderId {
-    folder(
-        link = NullableLinkEntity(
-            id = id,
-            parentId = link.id,
-            type = 1L,
-            sharingDetailsShareId = sharingDetailsShareId,
-        ),
-        block = block
-    )
-    return FolderId(ShareId(user.userId, share.id), id)
-}
+): FolderId = folder(
+    link = NullableLinkEntity(
+        id = id,
+        parentId = link.id,
+        type = 1L,
+        sharingDetailsShareId = sharingDetailsShareId,
+    ),
+    block = block
+)
 
 suspend fun FolderContext.folder(
     link: LinkEntity,
@@ -122,10 +119,11 @@ suspend fun FolderContext.folder(
         nodeHashKey = "node-hash-key-${link.id}"
     ),
     block: suspend FolderContext.() -> Unit,
-) {
+): FolderId {
     db.driveLinkDao.insertOrUpdate(link)
     db.driveLinkDao.insertOrUpdate(properties)
     FolderContext(db, user, account, volume, share, link, this.link).block()
+    return FolderId(ShareId(user.userId, share.id), link.id)
 }
 
 suspend fun FolderContext.file(
@@ -133,35 +131,23 @@ suspend fun FolderContext.file(
     sharingDetailsShareId: String? = null,
     tags: List<Long> = emptyList(),
     block: suspend FileContext.() -> Unit = {},
-): FileId {
-    file(
-        link = NullableLinkEntity(
-            id = id,
-            parentId = this.link.id,
-            type = 2L,
-            sharingDetailsShareId = sharingDetailsShareId,
-        ),
-        tags = tags,
-        block = block,
-    )
-    return FileId(ShareId(user.userId, share.id), id)
-}
+): FileId = file(
+    link = NullableLinkEntity(
+        id = id,
+        parentId = this.link.id,
+        type = 2L,
+        sharingDetailsShareId = sharingDetailsShareId,
+    ),
+    tags = tags,
+    block = block,
+)
 
 suspend fun FolderContext.file(
     link: LinkEntity,
-    properties: LinkFilePropertiesEntity = LinkFilePropertiesEntity(
-        userId = user.userId,
-        shareId = share.id,
-        linkId = link.id,
-        activeRevisionId = "revision-${link.id}",
-        hasThumbnail = false,
-        contentKeyPacket = "",
-        contentKeyPacketSignature = null,
-        activeRevisionSignatureAddress = null,
-    ),
+    properties: LinkFilePropertiesEntity = linkFilePropertiesEntity(link),
     tags: List<Long> = emptyList(),
     block: suspend FileContext.() -> Unit = {},
-) {
+): FileId {
     db.driveLinkDao.insertOrUpdate(link)
     db.driveLinkDao.insertOrUpdate(properties)
     if (share.type == ShareDto.TYPE_PHOTO) {
@@ -180,29 +166,52 @@ suspend fun FolderContext.file(
     db.driveLinkDao.insertTags(*tags.map { tag ->
         LinkTagEntity(userId, share.id, link.id, tag)
     }.toTypedArray())
-    FileContext(db, user, account, volume, share, link, this.link, properties.activeRevisionId).block()
+    FileContext(
+        db = db,
+        user = user,
+        account = account,
+        volume = volume,
+        share = share,
+        link = link,
+        parent = this.link,
+        revisionId = properties.activeRevisionId,
+    ).block()
+    return FileId(ShareId(user.userId, share.id), link.id)
 }
+
+fun FolderContext.linkFilePropertiesEntity(
+    link: LinkEntity,
+    photoContentHash: String? = null,
+) =
+    LinkFilePropertiesEntity(
+        userId = user.userId,
+        shareId = share.id,
+        linkId = link.id,
+        activeRevisionId = "revision-${link.id}",
+        hasThumbnail = false,
+        contentKeyPacket = "",
+        contentKeyPacketSignature = null,
+        activeRevisionSignatureAddress = null,
+        photoContentHash = photoContentHash
+    )
 
 suspend fun FolderContext.album(
     id: String,
     block: suspend AlbumContext.() -> Unit,
-): AlbumId {
-    album(
-        link = NullableLinkEntity(id = id, parentId= this.link.id, type = 3L),
-        properties = LinkAlbumPropertiesEntity(
-            userId = user.userId,
-            shareId = share.id,
-            linkId = id,
-            nodeHashKey = "node-hash-key-$id",
-            locked = false,
-            lastActivityTime = 0L,
-            photoCount = 0L,
-            coverLinkId = null,
-        ),
-        block = block,
-    )
-    return AlbumId(ShareId(user.userId, share.id), id)
-}
+): AlbumId = album(
+    link = NullableLinkEntity(id = id, parentId = this.link.id, type = 3L),
+    properties = LinkAlbumPropertiesEntity(
+        userId = user.userId,
+        shareId = share.id,
+        linkId = id,
+        nodeHashKey = "node-hash-key-$id",
+        locked = false,
+        lastActivityTime = 0L,
+        photoCount = 0L,
+        coverLinkId = null,
+    ),
+    block = block,
+)
 
 suspend fun FolderContext.album(
     link: LinkEntity,
@@ -217,10 +226,11 @@ suspend fun FolderContext.album(
         coverLinkId = null,
     ),
     block: suspend AlbumContext.() -> Unit,
-) {
+): AlbumId {
     db.driveLinkDao.insertOrUpdate(link)
     db.driveLinkDao.insertOrUpdate(properties)
-    AlbumContext(db, user, account, volume,share, link, this.link).block()
+    AlbumContext(db, user, account, volume, share, link, this.link).block()
+    return AlbumId(ShareId(user.userId, share.id), link.id)
 }
 
 @Suppress("FunctionName")
@@ -238,11 +248,12 @@ private fun ShareContext.NullableLinkEntity(
 )
 
 @Suppress("FunctionName")
-private fun FolderContext.NullableLinkEntity(
+fun FolderContext.NullableLinkEntity(
     id: String,
     parentId: String?,
     type: Long,
-    sharingDetailsShareId: String? = null
+    sharingDetailsShareId: String? = null,
+    name: String = id,
 ) = NullableLinkEntity(
     userId = user.userId,
     shareId = share.id,
@@ -251,6 +262,7 @@ private fun FolderContext.NullableLinkEntity(
     type = type,
     sharingDetailsShareId = sharingDetailsShareId,
     signatureAddress = account.email ?: "",
+    name = name,
 )
 
 @Suppress("FunctionName")
@@ -261,6 +273,7 @@ fun NullableLinkEntity(
     parentId: String?,
     type: Long,
     signatureAddress: String,
+    name: String = id,
     state: Long = LinkDto.STATE_ACTIVE,
     sharingDetailsShareId: String? = null,
 ) = LinkEntity(
@@ -269,7 +282,7 @@ fun NullableLinkEntity(
     userId = userId,
     parentId = parentId,
     type = type,
-    name = id,
+    name = name,
     nameSignatureEmail = "",
     hash = "",
     state = state,

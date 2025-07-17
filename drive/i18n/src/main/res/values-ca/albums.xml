@@ -34,7 +34,7 @@
   <string name="albums_delete_album_action">Elimina l\'àlbum</string>
   <string name="albums_delete_album_dialog_title">Voleu eliminar l\'àlbum?</string>
   <string name="albums_delete_album_dialog_description">Això només eliminarà l\'àlbum. Les vostres fotos romandran a la vostra cronologia. Aquesta acció no es pot desfer.</string>
-  <string name="albums_delete_album_dialog_description_with_children">Algunes fotos d\'aquest àlbum no es desen a la vostra cronologia. Si suprimiu aquest àlbum, aquestes fotos se suprimiran permanentment.\nVoleu desar-les abans de suprimir-les?</string>
+  <string name="albums_delete_album_dialog_description_with_children">Algunes fotos d\'aquest àlbum no s\'han desat a la vostra cronologia. Si suprimiu aquest àlbum, aquestes fotos se suprimiran permanentment.\nVoleu desar-les abans de suprimir-les?</string>
   <string name="albums_delete_album_dialog_delete_without_saving_action">Elimina sense desar</string>
   <string name="albums_delete_album_dialog_save_and_delete_action">Desa les fotos i suprimeix</string>
   <string name="albums_leave_album_dialog_title">Voleu deixar l\'àlbum?</string>
@@ -43,7 +43,7 @@
         Example:
             "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
     -->
-  <string name="albums_leave_album_dialog_description">Esteu segur que voleu deixar l\'àlbum « %1$s »?\nPerdreu l\'accés a les fotos que encara no heu desat.</string>
+  <string name="albums_leave_album_dialog_description">Segur que voleu deixar l\'àlbum « %1$s »?\nPerdreu l\'accés a les fotos que encara no heu desat.</string>
   <string name="albums_leave_album_dialog_leave_without_saving_action">Deixa sense desar</string>
   <string name="albums_leave_album_dialog_save_and_leave_action">Desa les fotos i surt</string>
   <string name="albums_add_zero_to_album_button">Afegeix a l\'àlbum</string>
@@ -139,14 +139,14 @@
     <item quantity="other">Error amb %1$d elements</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Cap foto</string>
-  <string name="albums_empty_album_screen_description">Les fotos que hi afegiu vosaltres o altres membres apareixeran aquí.</string>
+  <string name="albums_empty_album_screen_description">Les fotos afegides per vosaltres o altres membres apareixeran aquí.</string>
   <string name="albums_empty_albums_list_screen_title">Cap àlbum</string>
   <string name="albums_empty_albums_list_screen_description">Els àlbums que creeu o us hi afegiu apareixeran aquí</string>
   <string name="albums_empty_albums_my_albums_screen_description">Els àlbums que creeu apareixeran aquí</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">No hi ha àlbums compartits.</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Els àlbums que heu compartit apareixeran aquí</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">No s\'ha compartit cap àlbum amb mi</string>
-  <string name="albums_empty_albums_shared_with_me_screen_description">Els àlbums que han compartit amb vós apareixeran aquí</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Els àlbums que us han compartit apareixeran aquí</string>
   <!--
         Variable %1$d is a quantity of albums shared
         Example:
@@ -157,7 +157,7 @@
     <item quantity="one">S\'ha compartit %1$d àlbum amb vosaltres.</item>
     <item quantity="other">S\'han compartit %1$d àlbums compartits amb vosaltres.</item>
   </plurals>
-  <string name="albums_share_multiple_photos_options_section_title">Comparteix mitjançant</string>
+  <string name="albums_share_multiple_photos_options_section_title">Compartiu mitjançant</string>
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Afegeix a l\'àlbum compartit</string>
   <string name="albums_share_multiple_photos_options_album_details">Àlbum compartit</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nou àlbum compartit</string>

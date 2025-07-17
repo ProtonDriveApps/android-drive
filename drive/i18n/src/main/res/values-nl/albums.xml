@@ -139,10 +139,10 @@
     <item quantity="other">%1$d items mislukt</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Geen foto\'s</string>
-  <string name="albums_empty_album_screen_description">Photos that you or other members add will appear here</string>
+  <string name="albums_empty_album_screen_description">Foto\'s die door u of andere leden zijn toegevoegd verschijnen hier.</string>
   <string name="albums_empty_albums_list_screen_title">Geen albums</string>
-  <string name="albums_empty_albums_list_screen_description">Albums that you create or join will appear here</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Albums that you create will appear here</string>
+  <string name="albums_empty_albums_list_screen_description">De albums die u maakt of waar u aan deelneemt worden hier weergegeven.</string>
+  <string name="albums_empty_albums_my_albums_screen_description">De albums die u maakt, verschijnen hier</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">Geen gedeelde albums</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">Albums die u hebt gedeeld, verschijnen hier</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">Er zijn geen albums met mij gedeeld</string>

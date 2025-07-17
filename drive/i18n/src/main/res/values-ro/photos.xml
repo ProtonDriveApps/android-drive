@@ -160,4 +160,28 @@
   <string name="photos_important_updates_subtitle">Galeria foto trebuie actualizată</string>
   <string name="photos_important_updates_description">Această actualizare rapidă vă pregătește fotografiile pentru funcții noi, cum ar fi filtrele și albumele.</string>
   <string name="photos_important_updates_cancel_action">Amintește-mi mai târziu</string>
+  <string name="photos_tags_migration_title">Migrare etichete</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos migrates
+        Example:
+           Finished, 1 file were migrated.
+           Finished, 12 345 files were migrated.
+    -->
+  <plurals name="photos_tags_migration_finished">
+    <item quantity="one">Finalizat. Fișiere migrate: %1$s</item>
+    <item quantity="few">Finalizat. Fișiere migrate: %1$s</item>
+    <item quantity="other">Finalizat. Fișiere migrate: %1$s</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos to migrate
+        Variable %1$s is a quantity (formatted) of photos waiting for download
+        Example:
+           Ongoing, migrating 1 file, 0 waiting for download.
+           Ongoing, migrating 12 345 files, 123 waiting for download.
+    -->
+  <plurals name="photos_tags_migration_ongoing">
+    <item quantity="one">În desfășurare. Fișiere de migrat: %1$s. Așteaptă descărcarea: %2$s.</item>
+    <item quantity="few">În desfășurare. Fișiere de migrat: %1$s. Așteaptă descărcarea: %2$s.</item>
+    <item quantity="other">În desfășurare. Fișiere de migrat: %1$s. Așteaptă descărcarea: %2$s.</item>
+  </plurals>
 </resources>

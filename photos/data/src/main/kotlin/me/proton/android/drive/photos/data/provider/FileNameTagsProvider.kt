@@ -18,26 +18,32 @@
 
 package me.proton.android.drive.photos.data.provider
 
+import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.PhotoTag
-import me.proton.core.drive.upload.domain.provider.TagsProvider
+import me.proton.core.drive.photo.domain.provider.TagsProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
 import javax.inject.Inject
 
 class FileNameTagsProvider @Inject constructor(
     private val uriResolver: UriResolver,
+    private val getDecryptedDriveLink: GetDecryptedDriveLink,
 ) : TagsProvider {
     override suspend fun invoke(
         uriString: String,
-    ): List<PhotoTag> {
-        val filename = uriResolver.getName(uriString)?.lowercase()
-        return listOfNotNull(
-            when {
-                filename == null -> null
-                filename.startsWith(FILE_NAME_SCREENSHOT_PREFIX) -> PhotoTag.Screenshots
-                else -> null
-            }
-        )
-    }
+    ): List<PhotoTag> = uriResolver.getName(uriString)?.photoTags().orEmpty()
+
+    override suspend fun invoke(fileId: FileId): List<PhotoTag> =
+        getDecryptedDriveLink(fileId).toResult().getOrThrow().name.photoTags()
+
+    private fun String?.photoTags() = listOfNotNull(
+        when {
+            this == null -> null
+            lowercase().startsWith(FILE_NAME_SCREENSHOT_PREFIX) -> PhotoTag.Screenshots
+            else -> null
+        }
+    )
 
     private companion object {
         const val FILE_NAME_SCREENSHOT_PREFIX = "screenshot"

@@ -579,4 +579,16 @@ object DriveDatabaseMigrations {
             AccountDatabase.MIGRATION_10.migrate(db)
         }
     }
+
+    val MIGRATION_90_91 = object : Migration(90, 91) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            PhotoDatabase.MIGRATION_5.migrate(db)
+        }
+    }
+
+    val MIGRATION_91_92 = object : Migration(91, 92) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            PhotoDatabase.MIGRATION_6.migrate(db)
+        }
+    }
 }

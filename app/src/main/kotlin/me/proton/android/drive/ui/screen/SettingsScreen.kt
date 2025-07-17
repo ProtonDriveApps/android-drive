@@ -48,7 +48,6 @@ fun SettingsScreen(
     navigateToPhotosBackup: () -> Unit,
     navigateToDefaultHomeTab: () -> Unit,
     navigateToLog: () -> Unit,
-    navigateToSignOut: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<SettingsViewModel>()
@@ -78,8 +77,7 @@ fun SettingsScreen(
                     navigateToAutoLockDurations = navigateToAutoLockDurations,
                     navigateToPhotosBackup = navigateToPhotosBackup,
                     navigateToDefaultHomeTab = navigateToDefaultHomeTab,
-                    navigateToLog = navigateToLog,
-                    navigateToSignOut = navigateToSignOut
+                    navigateToLog = navigateToLog
                 ),
             )
 

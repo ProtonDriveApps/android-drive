@@ -27,7 +27,6 @@ import kotlinx.coroutines.Job
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.drivelink.photo.domain.manager.PhotoShareMigrationManager
 import me.proton.core.drive.drivelink.photo.domain.usecase.PhotoShareCleanup
-import me.proton.core.drive.feature.flag.domain.usecase.AlbumsFeatureFlag
 import me.proton.core.drive.photo.domain.repository.PhotoShareMigrationRepository
 import me.proton.core.drive.volume.domain.usecase.GetVolume
 import me.proton.core.drive.volume.domain.usecase.HasPhotoVolume
@@ -41,7 +40,6 @@ object DriveLinkPhotoModule {
     @Provides
     fun providePhotoShareMigrationManager(
         photoShareMigrationRepository: PhotoShareMigrationRepository,
-        albumsFeatureFlag: AlbumsFeatureFlag,
         configurationProvider: ConfigurationProvider,
         getVolume: GetVolume,
         photoShareCleanup: PhotoShareCleanup,
@@ -49,7 +47,6 @@ object DriveLinkPhotoModule {
     ): PhotoShareMigrationManager =
         PhotoShareMigrationManager(
             coroutineContext = Job() + Dispatchers.IO,
-            albumsFeatureFlag = albumsFeatureFlag,
             configurationProvider = configurationProvider,
             photoShareMigrationRepository = photoShareMigrationRepository,
             getVolume = getVolume,

@@ -29,7 +29,7 @@
   <string name="app_lock_system_dialog_description">Configureu la biometria o l\'accés de bloqueig del dispositiu en aquest dispositiu.</string>
   <string name="app_lock_system_dialog_settings_button">Preferències</string>
   <string name="app_lock_system_not_available">La biometria o el bloqueig del dispositiu no està disponible al dispositiu</string>
-  <string name="app_lock_enabled">S\'ha activat l\'accés al bloqueig biomètric o per dispositiu</string>
+  <string name="app_lock_enabled">S\'ha activat l\'accés al bloqueig biomètric o del dispositiu</string>
   <string name="app_lock_disabled">S\'ha desactivat el bloqueig de l\'aplicació.</string>
   <string name="app_lock_access_title">Trieu com bloquejar l\'aplicació</string>
   <string name="app_lock_unlock_the_app">Desbloqueja l\'aplicació</string>

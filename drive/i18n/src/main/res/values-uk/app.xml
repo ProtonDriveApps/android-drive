@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Створити теку</string>
   <string name="folder_option_take_a_photo">Зробити нове фото</string>
   <string name="folder_option_create_document">Створити документ</string>
+  <string name="folder_option_create_spreadsheet">Create spreadsheet</string>
   <string name="settings_theme_system_default">Системна</string>
   <string name="settings_theme_dark">Темна</string>
   <string name="settings_theme_light">Світла</string>
@@ -177,6 +178,7 @@
   <string name="content_description_selected_options">Показати більше опцій для вибраних файлів і/або тек</string>
   <string name="content_description_files_upload_upload_file">Вивантажити файл</string>
   <string name="content_description_albums_new">Create new album</string>
+  <string name="content_description_subscription_action">Open subscription</string>
   <string name="description_empty_my_files">Торкніться кнопки, щоб розпочати додавання файлів.</string>
   <string name="description_empty_folder_read_only">Тут нічого немає</string>
   <string name="description_empty_shared">Тут з\'являються пов\'язані файли, щоб ви могли легко контролювати спільний доступ.</string>
@@ -202,6 +204,7 @@
   <string name="error_share_not_found">Спільний доступ не знайдено.</string>
   <string name="error_creating_photo_share_not_allowed">Резервне копіювання фотографій тимчасово вимкнено.</string>
   <string name="error_creating_share_not_allowed">Створення спільного доступу тимчасово вимкнено.</string>
+  <string name="error_camera_permission">Camera permission is required.</string>
   <string name="operation_open_document">відкрити документ</string>
   <string name="operation_create_document">створити документ</string>
   <string name="operation_take_picture">сфотографувати</string>

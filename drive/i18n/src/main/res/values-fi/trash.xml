@@ -23,7 +23,7 @@
             "5 items sent to trash"
     -->
   <plurals name="trash_operation_successful_format">
-    <item quantity="one">1 kohde siirrettiin roskakoriin</item>
+    <item quantity="one">Yksi kohde siirrettiin roskakoriin</item>
     <item quantity="other">%1$d kohdetta siirrettiin roskakoriin</item>
   </plurals>
   <!--
@@ -32,7 +32,7 @@
             "5 items restored"
     -->
   <plurals name="trash_restore_operation_successful_format">
-    <item quantity="one">1 kohde palautettiin</item>
+    <item quantity="one">Yksi kohde palautettiin</item>
     <item quantity="other">%d kohdetta palautettiin</item>
   </plurals>
   <!--
@@ -41,7 +41,7 @@
             "5 items deleted permanently"
     -->
   <plurals name="trash_delete_operation_successful_format">
-    <item quantity="one">1 kohde poistettiin pysyvästi</item>
+    <item quantity="one">Yksi kohde poistettiin pysyvästi</item>
     <item quantity="other">%d kohdetta poistettiin pysyvästi</item>
   </plurals>
   <string name="trash_empty_operation_successful">Roskakori tyhjennettiin</string>

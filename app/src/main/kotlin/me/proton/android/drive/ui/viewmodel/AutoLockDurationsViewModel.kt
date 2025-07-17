@@ -26,6 +26,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import me.proton.android.drive.lock.domain.extension.autoLockDefaultDuration
 import me.proton.android.drive.lock.domain.usecase.GetAutoLockDuration
 import me.proton.android.drive.lock.domain.usecase.UpdateAutoLockDuration
 import me.proton.android.drive.ui.viewevent.AutoLockDurationsViewEvent
@@ -46,7 +47,7 @@ class AutoLockDurationsViewModel @Inject constructor(
     val initialViewState: AutoLockDurationsViewState = AutoLockDurationsViewState(
         title = appContext.getString(I18N.string.settings_auto_lock),
         durations = configurationProvider.autoLockDurations,
-        selected = configurationProvider.autoLockDurations.first(),
+        selected = configurationProvider.autoLockDefaultDuration,
     )
     val viewState: Flow<AutoLockDurationsViewState> = getAutoLockDuration().map { duration ->
         initialViewState.copy(

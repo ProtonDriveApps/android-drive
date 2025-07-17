@@ -320,3 +320,13 @@ class AddToAlbumsFileEntry(
     @Composable
     override fun getLabel(): String = stringResource(id = I18N.string.common_add_to_albums_action)
 }
+
+
+class TagPhotoFileEntry(
+    override val onClick: (DriveLink.File) -> Unit,
+) : FileOptionEntry.SimpleEntry<DriveLink.File> {
+    override val icon: Int = CorePresentation.drawable.ic_proton_tag_plus
+
+    @Composable
+    override fun getLabel(): String = stringResource(id = I18N.string.common_tag_photo_action)
+}

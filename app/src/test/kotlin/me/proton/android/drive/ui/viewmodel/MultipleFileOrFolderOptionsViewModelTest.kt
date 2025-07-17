@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
-import me.proton.android.drive.photos.domain.usecase.AddToAlbumInfo
 import me.proton.android.drive.photos.domain.usecase.RemovePhotosFromAlbum
 import me.proton.android.drive.ui.viewmodel.FileOrFolderOptionsViewModel.Companion
 import me.proton.android.drive.ui.viewmodel.MultipleFileOrFolderOptionsViewModel.Companion.KEY_ALBUM_ID
@@ -45,13 +44,13 @@ import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveL
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
-import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbums
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
 import me.proton.core.drive.files.presentation.entry.AddToAlbumsEntry
 import me.proton.core.drive.files.presentation.entry.DownloadEntry
 import me.proton.core.drive.files.presentation.entry.MoveEntry
 import me.proton.core.drive.files.presentation.entry.RemoveFromAlbumEntry
 import me.proton.core.drive.files.presentation.entry.ShareMultiplePhotosEntry
+import me.proton.core.drive.files.presentation.entry.TagPhotoEntry
 import me.proton.core.drive.files.presentation.entry.TrashEntry
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -60,6 +59,7 @@ import me.proton.core.drive.link.domain.entity.SharingDetails
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
+import me.proton.core.drive.photo.domain.usecase.ScanPhotoForTags
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.shareurl.base.domain.entity.ShareUrlId
 import me.proton.core.drive.trash.domain.usecase.SendToTrash
@@ -83,6 +83,7 @@ class MultipleFileOrFolderOptionsViewModelTest {
     private val removePhotosFromAlbum = mockk<RemovePhotosFromAlbum>()
     private val broadcastMessages = mockk<BroadcastMessages>()
     private val hasPhotoVolume = mockk<HasPhotoVolume>()
+    private val scanPhotoForTags = mockk<ScanPhotoForTags>()
 
     @Before
     fun before() {
@@ -99,6 +100,7 @@ class MultipleFileOrFolderOptionsViewModelTest {
             { false }
         }
         coEvery { configurationProvider.albumsFeatureFlag} returns true
+        coEvery { configurationProvider.scanPhotoFileForTags} returns true
         coEvery { hasPhotoVolume.invoke(any()) } returns flowOf(true)
     }
 
@@ -143,9 +145,6 @@ class MultipleFileOrFolderOptionsViewModelTest {
     @Test
     fun `photos options with photo volume`() = runTest {
         // Given
-        val featureFlagId = driveAlbums(UserId("value"))
-        coEvery { getFeatureFlagFlow(featureFlagId, any(), any()) } returns
-                flowOf( FeatureFlag(featureFlagId, State.ENABLED))
         coEvery { savedStateHandle.get<String>(KEY_ALBUM_ID) } returns null
         val files = listOf(photoDriveLink, photoDriveLink2)
 
@@ -155,6 +154,7 @@ class MultipleFileOrFolderOptionsViewModelTest {
         // Then
         assertEquals(
             listOf(
+                TagPhotoEntry::class,
                 AddToAlbumsEntry::class,
                 ShareMultiplePhotosEntry::class,
                 DownloadEntry::class,
@@ -167,9 +167,6 @@ class MultipleFileOrFolderOptionsViewModelTest {
     @Test
     fun `photos options within album`() = runTest {
         // Given
-        val featureFlagId = driveAlbums(UserId("value"))
-        coEvery { getFeatureFlagFlow(featureFlagId, any(), any()) } returns
-                flowOf( FeatureFlag(featureFlagId, State.ENABLED))
         coEvery { savedStateHandle.get<String>(Companion.KEY_ALBUM_ID) } returns "album-id"
         val files = listOf(photoDriveLink, photoDriveLink2)
 
@@ -208,6 +205,7 @@ class MultipleFileOrFolderOptionsViewModelTest {
         broadcastMessages = broadcastMessages,
         configurationProvider = configurationProvider,
         hasPhotoVolume = hasPhotoVolume,
+        scanPhotoForTags = scanPhotoForTags,
     )
 
     private val fileLink = Link.File(

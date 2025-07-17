@@ -26,6 +26,7 @@ android {
 
 driveModule(
     hilt = true,
+    socialTest = true,
 ) {
     api(project(":drive:drivelink-download:domain"))
     implementation(project(":drive:drivelink-download:data"))

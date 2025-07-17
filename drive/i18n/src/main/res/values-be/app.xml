@@ -46,6 +46,7 @@
   <string name="folder_option_create_folder">Стварыць папку</string>
   <string name="folder_option_take_a_photo">Зрабіць новую фатаграфію</string>
   <string name="folder_option_create_document">Стварыць дакумент</string>
+  <string name="folder_option_create_spreadsheet">Стварыць электронную табліцу</string>
   <string name="settings_theme_system_default">Адпаведна сістэме</string>
   <string name="settings_theme_dark">Цёмная</string>
   <string name="settings_theme_light">Светлая</string>
@@ -177,6 +178,7 @@
   <string name="content_description_selected_options">Паказаць больш параметраў для выбраных файлаў і/або папак</string>
   <string name="content_description_files_upload_upload_file">Запампаваць файл</string>
   <string name="content_description_albums_new">Стварыць новы альбом</string>
+  <string name="content_description_subscription_action">Адкрыць падпіску</string>
   <string name="description_empty_my_files">Націсніце кнопку, каб пачаць дадаваць файлы.</string>
   <string name="description_empty_folder_read_only">Няма даных для адлюстравання</string>
   <string name="description_empty_shared">Тут будуць з\'яўляцца звязаныя файлы, каб вы маглі лёгка адсочваць і кіраваць тым, што абагулена.</string>
@@ -202,6 +204,7 @@
   <string name="error_share_not_found">Абагульванне не знойдзена.</string>
   <string name="error_creating_photo_share_not_allowed">Рэзервовая копія фатаграфій часова адключана.</string>
   <string name="error_creating_share_not_allowed">Абагульненне часова адключана.</string>
+  <string name="error_camera_permission">Патрабуецца дазвол на выкарыстанне камеры.</string>
   <string name="operation_open_document">адкрыць дакумент</string>
   <string name="operation_create_document">стварыць дакумент</string>
   <string name="operation_take_picture">зрабіць здымак</string>
