@@ -154,7 +154,7 @@
   <string name="photos_important_updates_subtitle">사진 보관함 업데이트가 필요합니다.</string>
   <string name="photos_important_updates_description">해당 간단 업데이트는 필터 및 앨범과 같은 새로운 기능 구동을 위해 사진을 준비시킵니다.</string>
   <string name="photos_important_updates_cancel_action">나중에 다시 알림</string>
-  <string name="photos_tags_migration_title">Tags migration</string>
+  <string name="photos_tags_migration_title">태그 마이그레이션</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates
         Example:
@@ -162,7 +162,7 @@
            Finished, 12 345 files were migrated.
     -->
   <plurals name="photos_tags_migration_finished">
-    <item quantity="other">Finished, %1$s files were migrated.</item>
+    <item quantity="other">작업 완료, %1$s개 파일이 마이그레이션되었습니다.</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos to migrate
@@ -172,6 +172,6 @@
            Ongoing, migrating 12 345 files, 123 waiting for download.
     -->
   <plurals name="photos_tags_migration_ongoing">
-    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="other">진행 중, %1$s개 파일 마이그레이션 중, %2$s개 파일 다운로드 대기 중.</item>
   </plurals>
 </resources>

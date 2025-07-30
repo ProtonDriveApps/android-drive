@@ -81,30 +81,30 @@
             "3 items shared with you"
     -->
   <plurals name="shared_by_me_invitation_banner_description">
-    <item quantity="one">%1$d item shared with you</item>
-    <item quantity="few">%1$d items shared with you</item>
-    <item quantity="many">%1$d items shared with you</item>
-    <item quantity="other">%1$d items shared with you</item>
+    <item quantity="one">%1$d елемент поширено для вас</item>
+    <item quantity="few">%1$d елементи поширено для вас</item>
+    <item quantity="many">%1$d елементів поширено для вас</item>
+    <item quantity="other">%1$d елементів поширено для вас</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of item shared
         Example:
             "Pending shared items (1)"
     -->
-  <string name="shared_user_invitations_title">Pending shared items (%1$d)</string>
+  <string name="shared_user_invitations_title">Очікування поширених елементів (%1$d)</string>
   <!--
         Variable %1$d is a quantity of albums shared
         Example:
             "Pending shared albums (2)"
     -->
-  <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
-  <string name="shared_user_invitations_title_empty">No pending shared items</string>
-  <string name="shared_user_album_invitations_title_empty">No pending shared albums</string>
-  <string name="shared_user_invitations_description_empty">All new invitations will be here</string>
+  <string name="shared_user_album_invitations_title">Очікування поширених альбомів (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Немає очікуваних спільних елементів</string>
+  <string name="shared_user_album_invitations_title_empty">Немає очікуваних спільних альбомів</string>
+  <string name="shared_user_invitations_description_empty">Усі нові запрошення будуть тут</string>
   <string name="shared_user_invitations_accept_button">Схвалити</string>
   <string name="shared_user_invitations_decline_button">Відхилити</string>
-  <string name="shared_user_invitations_accept_success">Shared item accepted</string>
-  <string name="shared_user_invitations_decline_success">Shared item declined</string>
-  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
-  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
+  <string name="shared_user_invitations_accept_success">Поділений елемент прийнято</string>
+  <string name="shared_user_invitations_decline_success">Поділений елемент відхилено</string>
+  <string name="shared_user_album_invitations_accept_success">Запрошення прийнято</string>
+  <string name="shared_user_album_invitations_decline_success">Запрошення відхилено</string>
 </resources>

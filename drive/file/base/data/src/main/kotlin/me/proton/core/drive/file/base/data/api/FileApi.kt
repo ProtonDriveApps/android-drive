@@ -32,6 +32,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
@@ -55,6 +56,7 @@ interface FileApi : BaseRetrofitApi {
         @Path("enc_revisionID") revisionId: String,
         @Query("FromBlockIndex") fromBlockIndex: Int,
         @Query("PageSize") pageSize: Int,
+        @Header("Cache-Control") cacheControl: String = "no-cache",
     ): GetRevisionResponse
 
     @PUT("drive/shares/{enc_shareID}/files/{enc_linkID}/revisions/{enc_revisionID}")

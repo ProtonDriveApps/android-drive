@@ -41,6 +41,7 @@ driveModule(
     api(libs.androidx.compose.uiTooling)
     api(libs.androidx.lifecycle.runtime.ktx)
     api(libs.androidx.paging.compose)
+    api(libs.androidx.window)
     api(libs.core.network)
     api(libs.core.presentation)
     api(libs.core.presentation.compose)

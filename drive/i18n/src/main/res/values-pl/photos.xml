@@ -163,7 +163,7 @@
   <string name="photos_important_updates_subtitle">Aktualizacja biblioteki zdjęć jest wymagana</string>
   <string name="photos_important_updates_description">Ta szybka aktualizacja przygotowuje zdjęcia na nowe funkcje, takie jak filtry i albumy</string>
   <string name="photos_important_updates_cancel_action">Przypomnij później</string>
-  <string name="photos_tags_migration_title">Tags migration</string>
+  <string name="photos_tags_migration_title">Migracja tagów</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates
         Example:
@@ -171,10 +171,10 @@
            Finished, 12 345 files were migrated.
     -->
   <plurals name="photos_tags_migration_finished">
-    <item quantity="one">Finished, %1$s file was migrated.</item>
-    <item quantity="few">Finished, %1$s files were migrated.</item>
-    <item quantity="many">Finished, %1$s files were migrated.</item>
-    <item quantity="other">Finished, %1$s files were migrated.</item>
+    <item quantity="one">Zakończono. Zmigrowano %1$s plik</item>
+    <item quantity="few">Zakończono. Zmigrowano %1$s pliki</item>
+    <item quantity="many">Zakończono. Zmigrowano %1$s plików</item>
+    <item quantity="other">Zakończono. Zmigrowano %1$s plików</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos to migrate
@@ -184,9 +184,9 @@
            Ongoing, migrating 12 345 files, 123 waiting for download.
     -->
   <plurals name="photos_tags_migration_ongoing">
-    <item quantity="one">Ongoing, migrating %1$s file, %2$s waiting for download.</item>
-    <item quantity="few">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
-    <item quantity="many">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
-    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="one">Trwa migracja %1$s pliku (%2$s oczekujące).</item>
+    <item quantity="few">Trwa migracja %1$s plików (%2$s oczekujące).</item>
+    <item quantity="many">Trwa migracja %1$s plików (%2$s oczekujące).</item>
+    <item quantity="other">Trwa migracja %1$s plików (%2$s oczekujące).</item>
   </plurals>
 </resources>

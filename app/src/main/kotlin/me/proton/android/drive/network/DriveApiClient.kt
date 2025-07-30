@@ -33,8 +33,7 @@ class DriveApiClient @Inject constructor(
         get() = configurationProvider.appVersionHeader
     override val enableDebugLogging: Boolean
         get() = BuildConfig.DEBUG || BuildConfig.FLAVOR == BuildConfig.FLAVOR_ALPHA
-    override val shouldUseDoh: Boolean
-        get() = false
+    override suspend fun shouldUseDoh(): Boolean = false
     override val userAgent: String
         get() = StringBuilder()
             .append("ProtonDrive/${BuildConfig.VERSION_NAME} ")

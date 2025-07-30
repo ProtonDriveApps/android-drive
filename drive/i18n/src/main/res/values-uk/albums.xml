@@ -17,10 +17,10 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="albums_title">Albums</string>
-  <string name="albums_new_album_name_hint">Album name</string>
-  <string name="albums_new_album_created_successfully">Album created</string>
-  <string name="albums_filter_my_albums">My albums</string>
+  <string name="albums_title">Альбоми</string>
+  <string name="albums_new_album_name_hint">Назва альбому</string>
+  <string name="albums_new_album_created_successfully">Альбом створено</string>
+  <string name="albums_filter_my_albums">Мої альбоми</string>
   <!--
         Variable %1$s is a number of photos in the album
         Example:
@@ -33,22 +33,22 @@
     <item quantity="many">%1$s елементів</item>
     <item quantity="other">%1$s елементів</item>
   </plurals>
-  <string name="albums_delete_album_action">Delete album</string>
-  <string name="albums_delete_album_dialog_title">Delete album?</string>
-  <string name="albums_delete_album_dialog_description">This will only delete the album. Your photos will remain in your timeline. This action cannot be undone.</string>
-  <string name="albums_delete_album_dialog_description_with_children">Some photos in this album are not saved to your timeline. Deleting this album will permanently delete those photos.\nWould you like to save them before removing?</string>
-  <string name="albums_delete_album_dialog_delete_without_saving_action">Delete without saving</string>
-  <string name="albums_delete_album_dialog_save_and_delete_action">Save photos and delete</string>
-  <string name="albums_leave_album_dialog_title">Leave album?</string>
+  <string name="albums_delete_album_action">Видалити альбом</string>
+  <string name="albums_delete_album_dialog_title">Видалити альбом?</string>
+  <string name="albums_delete_album_dialog_description">Це лише видалить альбом. Ваші фотографії залишаться у вашій хронології. Цю дію неможливо скасувати.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Деякі фотографії в цьому альбомі не збережено у вашу хронологію. Видалення цього альбому назавжди видалить ці фотографії.\nБажаєте зберегти їх перед видаленням?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Видалити без збереження</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Зберегти фото та видалити</string>
+  <string name="albums_leave_album_dialog_title">Покинути альбом?</string>
   <!--
         Variable %1$s is an album name
         Example:
             "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
     -->
-  <string name="albums_leave_album_dialog_description">Are you sure that you want to leave album \"%1$s\"?\nYou will lose access to photos you haven\'t saved yet.</string>
-  <string name="albums_leave_album_dialog_leave_without_saving_action">Leave without saving</string>
-  <string name="albums_leave_album_dialog_save_and_leave_action">Save photos and leave</string>
-  <string name="albums_add_zero_to_album_button">Add to album</string>
+  <string name="albums_leave_album_dialog_description">Ви впевнені, що хочете залишити альбом «%1$s»?\nВи втратите доступ до фотографій, які ви ще не зберегли.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Вийти без збереження</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Зберегти фото та вийти</string>
+  <string name="albums_add_zero_to_album_button">Додати до альбому</string>
   <!--
         Variable %1$d is a number of photos to add to album
         Example:
@@ -56,12 +56,12 @@
             "Add 33 to album"
     -->
   <plurals name="albums_add_non_zero_to_album_button">
-    <item quantity="one">Add %1$d to album</item>
-    <item quantity="few">Add %1$d to album</item>
-    <item quantity="many">Add %1$d to album</item>
-    <item quantity="other">Add %1$d to album</item>
+    <item quantity="one">Додати %1$d до альбому</item>
+    <item quantity="few">Додати %1$d до альбому</item>
+    <item quantity="many">Додати %1$d до альбому</item>
+    <item quantity="other">Додати %1$d до альбому</item>
   </plurals>
-  <string name="albums_set_album_as_cover_success">Set as album cover</string>
+  <string name="albums_set_album_as_cover_success">Встановити як обкладинку альбому</string>
   <!--
         Variable %1$d is a number of photos added to album
         Example:
@@ -69,10 +69,10 @@
             "17 items added to album"
     -->
   <plurals name="in_app_notification_add_to_album_success">
-    <item quantity="one">%1$d item added to album</item>
-    <item quantity="few">%1$d items added to album</item>
-    <item quantity="many">%1$d items added to album</item>
-    <item quantity="other">%1$d items added to album</item>
+    <item quantity="one">%1$d елемент додано до альбому</item>
+    <item quantity="few">%1$d елементи додано до альбому</item>
+    <item quantity="many">%1$d елементів додано до альбому</item>
+    <item quantity="other">%1$d елементів додано до альбому</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -81,10 +81,10 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_album_already_exists">
-    <item quantity="one">%1$d item already exists</item>
-    <item quantity="few">%1$d items already exist</item>
-    <item quantity="many">%1$d items already exist</item>
-    <item quantity="other">%1$d items already exist</item>
+    <item quantity="one">%1$d елемент уже існує</item>
+    <item quantity="few">%1$d елементи вже існує</item>
+    <item quantity="many">%1$d елементів уже існує</item>
+    <item quantity="other">%1$d елементів уже існує</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -93,10 +93,10 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_album_failed">
-    <item quantity="one">%1$d item failed</item>
-    <item quantity="few">%1$d items failed</item>
-    <item quantity="many">%1$d items failed</item>
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="one">Збій %1$d елемента</item>
+    <item quantity="few">Збій %1$d елементів</item>
+    <item quantity="many">Збій %1$d елементів</item>
+    <item quantity="other">Збій %1$d елементів</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos added to your Drive
@@ -105,10 +105,10 @@
             "17 items added to your Drive"
     -->
   <plurals name="in_app_notification_add_to_stream_success">
-    <item quantity="one">%1$d item added to your Drive</item>
-    <item quantity="few">%1$d items added to your Drive</item>
-    <item quantity="many">%1$d items added to your Drive</item>
-    <item quantity="other">%1$d items added to your Drive</item>
+    <item quantity="one">%1$d елемент додано до Drive</item>
+    <item quantity="few">%1$d елементи додано до Drive</item>
+    <item quantity="many">%1$d елементів додано до Drive</item>
+    <item quantity="other">%1$d елементів додано до Drive</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -117,10 +117,10 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_stream_already_exists">
-    <item quantity="one">%1$d item already exists</item>
-    <item quantity="few">%1$d items already exist</item>
-    <item quantity="many">%1$d items already exist</item>
-    <item quantity="other">%1$d items already exist</item>
+    <item quantity="one">%1$d елемент уже існує</item>
+    <item quantity="few">%1$d елементи вже існує</item>
+    <item quantity="many">%1$d елементів уже існує</item>
+    <item quantity="other">%1$d елементів уже існує</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -129,10 +129,10 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_stream_failed">
-    <item quantity="one">%1$d item failed</item>
-    <item quantity="few">%1$d items failed</item>
-    <item quantity="many">%1$d items failed</item>
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="one">Збій %1$d елемента</item>
+    <item quantity="few">Збій %1$d елементів</item>
+    <item quantity="many">Збій %1$d елементів</item>
+    <item quantity="other">Збій %1$d елементів</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos removed from album
@@ -141,10 +141,10 @@
             "13 items removed from album"
     -->
   <plurals name="in_app_notification_remove_from_album_success">
-    <item quantity="one">%1$d item removed from album</item>
-    <item quantity="few">%1$d items removed from album</item>
-    <item quantity="many">%1$d items removed from album</item>
-    <item quantity="other">%1$d items removed from album</item>
+    <item quantity="one">%1$d елемент видалено з альбому</item>
+    <item quantity="few">%1$d елементи видалено з альбому</item>
+    <item quantity="many">%1$d елементів видалено з альбому</item>
+    <item quantity="other">%1$d елементів видалено з альбому</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not removed because removing failed
@@ -153,20 +153,20 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_removed_from_album_failed">
-    <item quantity="one">%1$d item failed</item>
-    <item quantity="few">%1$d items failed</item>
-    <item quantity="many">%1$d items failed</item>
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="one">Збій %1$d елемента</item>
+    <item quantity="few">Збій %1$d елементів</item>
+    <item quantity="many">Збій %1$d елементів</item>
+    <item quantity="other">Збій %1$d елементів</item>
   </plurals>
-  <string name="albums_empty_album_screen_title">No photos</string>
-  <string name="albums_empty_album_screen_description">Photos that you or other members add will appear here</string>
-  <string name="albums_empty_albums_list_screen_title">No albums</string>
-  <string name="albums_empty_albums_list_screen_description">Albums that you create or join will appear here</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Albums that you create will appear here</string>
-  <string name="albums_empty_albums_shared_by_me_screen_title">No shared albums</string>
-  <string name="albums_empty_albums_shared_by_me_screen_description">Albums you\'ve shared will appear here</string>
-  <string name="albums_empty_albums_shared_with_me_screen_title">No albums shared with me</string>
-  <string name="albums_empty_albums_shared_with_me_screen_description">Albums shared with you will appear here</string>
+  <string name="albums_empty_album_screen_title">Немає фотографій</string>
+  <string name="albums_empty_album_screen_description">Фотографії, які додасте ви або інші учасники, з\'являться тут</string>
+  <string name="albums_empty_albums_list_screen_title">Немає альбомів</string>
+  <string name="albums_empty_albums_list_screen_description">Альбоми, які ви створюєте або до яких приєднуєтеся, з\'являться тут</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Створені вами альбоми з\'являться тут</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Немає спільних альбомів</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Альбоми, якими ви поділились, з\'являться тут</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Немає альбомів, поширених для мене</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Альбоми, якими з вами поділились, з\'являться тут</string>
   <!--
         Variable %1$d is a quantity of albums shared
         Example:
@@ -174,23 +174,23 @@
             "3 albums shared with you"
     -->
   <plurals name="shared_with_me_album_invitations_banner_description">
-    <item quantity="one">%1$d album shared with you</item>
-    <item quantity="few">%1$d albums shared with you</item>
-    <item quantity="many">%1$d albums shared with you</item>
-    <item quantity="other">%1$d albums shared with you</item>
+    <item quantity="one">%1$d альбом поширено для вас</item>
+    <item quantity="few">%1$d альбоми поширено для вас</item>
+    <item quantity="many">%1$d альбомів поширено для вас</item>
+    <item quantity="other">%1$d альбомів поширено для вас</item>
   </plurals>
-  <string name="albums_share_multiple_photos_options_section_title">Share via</string>
-  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Add to shared album</string>
-  <string name="albums_share_multiple_photos_options_album_details">Shared album</string>
-  <string name="albums_share_multiple_photos_options_new_shared_album">New shared album</string>
-  <string name="albums_add_to_album_start_message">Adding photos to the encrypted album. Please keep the app open while the process is ongoing.</string>
-  <string name="albums_add_to_albums_options_new_album">Add to new album</string>
-  <string name="albums_add_to_albums_options_shared_album">My shared album</string>
+  <string name="albums_share_multiple_photos_options_section_title">Поділитися через</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Додати до спільного альбому</string>
+  <string name="albums_share_multiple_photos_options_album_details">Спільний альбом</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Новий спільний альбом</string>
+  <string name="albums_add_to_album_start_message">Додавання фотографій до зашифрованого альбому. Тримайте застосунок відкритим, поки триває процес.</string>
+  <string name="albums_add_to_albums_options_new_album">Додати до нового альбому</string>
+  <string name="albums_add_to_albums_options_shared_album">Мій спільний альбом</string>
   <!--
         Variable %1$s is an album owner name i.e. display name or email
         Example:
             "By Pablo Picasso"
             "By pablo.picasso@example.com"
     -->
-  <string name="albums_shared_with_me_details">By %1$s</string>
+  <string name="albums_shared_with_me_details">Від %1$s</string>
 </resources>

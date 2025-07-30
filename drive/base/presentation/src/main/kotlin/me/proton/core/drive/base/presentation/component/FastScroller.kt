@@ -62,6 +62,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import me.proton.core.compose.theme.ProtonDimens
 import me.proton.core.compose.theme.ProtonTheme
@@ -183,13 +184,10 @@ fun FastScroller(
             (snappedOffsetY / stepPx).roundToInt()
         }
     }
-    val currentVisibleItemIndex = remember {
-        derivedStateOf { state.firstVisibleItemIndex }
-    }
     LaunchedEffect(Unit) {
         combine(
-            snapshotFlow { currentStepIndex },
-            snapshotFlow { currentVisibleItemIndex.value }
+            snapshotFlow { snappedOffsetY }.map { (it / stepPx).roundToInt() },
+            snapshotFlow { state.firstVisibleItemIndex }
         ) { currentStepIndex, currentVisibleItemIndex ->
             if (boxHeightPx > 0) {
                 if (isDragging) {

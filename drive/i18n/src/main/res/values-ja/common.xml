@@ -74,7 +74,7 @@
   <string name="common_start_action">開始</string>
   <string name="common_save_all_action">すべて保存</string>
   <string name="common_add_to_albums_action">アルバムに追加</string>
-  <string name="common_tag_photo_action">Scan photo for tags</string>
+  <string name="common_tag_photo_action">写真のタグをスキャン</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">音声</string>
@@ -87,7 +87,7 @@
   <string name="common_type_pdf">PDFドキュメント</string>
   <string name="common_type_ppt">プレゼンテーション</string>
   <string name="common_type_proton_doc">Proton文書</string>
-  <string name="common_type_proton_sheet">Proton spreadsheet</string>
+  <string name="common_type_proton_sheet">Proton スプレッドシート</string>
   <string name="common_type_text">テキスト</string>
   <string name="common_type_trustedkey">信頼できるキー</string>
   <string name="common_type_unknown">バイナリ</string>

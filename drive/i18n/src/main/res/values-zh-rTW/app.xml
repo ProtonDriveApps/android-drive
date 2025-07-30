@@ -189,7 +189,7 @@
   <string name="error_share_not_found">找不到分享。</string>
   <string name="error_creating_photo_share_not_allowed">照片備份已暫時停用。</string>
   <string name="error_creating_share_not_allowed">創建分享已暫時停用。</string>
-  <string name="error_camera_permission">Camera permission is required.</string>
+  <string name="error_camera_permission">須要相機權限。</string>
   <string name="operation_open_document">開啟文件</string>
   <string name="operation_create_document">建立新文件</string>
   <string name="operation_take_picture">拍張照片</string>

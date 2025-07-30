@@ -154,7 +154,7 @@
   <string name="photos_important_updates_subtitle">写真ライブラリの更新が必要です</string>
   <string name="photos_important_updates_description">この簡単な更新では、フィルターやアルバムなどの新機能のために写真が準備されます。</string>
   <string name="photos_important_updates_cancel_action">後で通知する</string>
-  <string name="photos_tags_migration_title">Tags migration</string>
+  <string name="photos_tags_migration_title">タグの移行</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates
         Example:
@@ -162,7 +162,7 @@
            Finished, 12 345 files were migrated.
     -->
   <plurals name="photos_tags_migration_finished">
-    <item quantity="other">Finished, %1$s files were migrated.</item>
+    <item quantity="other">完了、%1$s個のファイルが移行されました</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos to migrate
@@ -172,6 +172,6 @@
            Ongoing, migrating 12 345 files, 123 waiting for download.
     -->
   <plurals name="photos_tags_migration_ongoing">
-    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="other">進行中、%1$s個のファイルが移行中、%2$s個がダウンロード待機中</item>
   </plurals>
 </resources>

@@ -34,6 +34,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.log
@@ -230,7 +231,7 @@ class GetBlocksUploadUrlWorker @AssistedInject constructor(
         } ?: false
 
     private suspend fun isNotEnqueued(): Boolean =
-        workManager.getWorkInfosByTag(uploadFileLinkId.uniqueUploadWorkName).await()
+        workManager.getWorkInfosByTagFlow(uploadFileLinkId.uniqueUploadWorkName).first()
             .filter { workInfo -> workInfo.tags.contains(BlockUploadWorker.TAG) }
             .none { workInfo -> !workInfo.state.isFinished }
 

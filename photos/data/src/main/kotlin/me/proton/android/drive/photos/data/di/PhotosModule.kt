@@ -28,6 +28,7 @@ import dagger.multibindings.StringKey
 import me.proton.android.drive.photos.data.provider.FileNameTagsProvider
 import me.proton.android.drive.photos.data.provider.MimetypeTagsProvider
 import me.proton.android.drive.photos.data.provider.ParentNameTagsProvider
+import me.proton.android.drive.photos.data.provider.RatioTagsProvider
 import me.proton.android.drive.photos.domain.handler.DrivePhotosUploadDisabledFeatureFlagHandler
 import me.proton.core.drive.backup.domain.usecase.StopBackup
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.DRIVE_PHOTOS_UPLOAD_DISABLED
@@ -58,11 +59,13 @@ object PhotosModule {
         fileName: FileNameTagsProvider,
         mimetype: MimetypeTagsProvider,
         parentName: ParentNameTagsProvider,
+        ratio: RatioTagsProvider,
         xmp: XmpTagsProvider,
     ): Set<TagsProvider> = setOf(
         fileName,
         mimetype,
         parentName,
+        ratio,
         xmp,
     )
 }

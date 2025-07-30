@@ -95,6 +95,7 @@ import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.FastScrollAnchor
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
@@ -779,7 +780,11 @@ class PhotosViewModel @Inject constructor(
         anchorsInLabel: Int,
     ): List<FastScrollAnchor> = fastScrollAnchors.getOrPut(items.itemsHash to anchors) {
         items.getFastScrollAnchors(anchors, anchorsInLabel) { captureTime ->
-            fastScrollLabelFormatter.toSeparator(captureTime)
+            runCatching { fastScrollLabelFormatter.toSeparator(captureTime) }
+                .getOrNull(
+                    tag = VIEW_MODEL,
+                    message = "Failed to format label for separator from capture time (sec): ${captureTime.value}",
+                ) ?: "#"
         }
     }.also {
         isFastScrollEnabled.value = isFastScrollThresholdReached(items.size, anchors, anchorsInLabel)

@@ -42,6 +42,7 @@ import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadBlocks
 import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadState
+import me.proton.core.drive.linkdownload.domain.usecase.RemoveDownloadState
 import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
 import javax.inject.Inject
@@ -57,6 +58,7 @@ class GetFile @Inject constructor(
     private val isConnectedToNetwork: isConnectedToNetwork,
     private val verifyDownloadedState: VerifyDownloadedState,
     private val getDownloadBlocks: GetDownloadBlocks,
+    private val removeDownloadState: RemoveDownloadState,
 ) {
     operator fun invoke(
         driveLink: DriveLink.File,
@@ -78,6 +80,7 @@ class GetFile @Inject constructor(
             }.getOrThrow()
         val blocks = getDownloadBlocks(driveLink.id).getOrThrow()
         val downloadedDriveLink: DriveLink.File = if (!verifiedDriveLink.isDownloaded(blocks)) {
+            removeDownloadState(verifiedDriveLink.link)
             CoreLogger.d(LogTag.GET_FILE, "File ${driveLink.id.id.logId()} is not downloaded yet, let's download it!")
             if (!retryable && !isConnectedToNetwork()) {
                 CoreLogger.w(LogTag.GET_FILE, "Download ${driveLink.id.id.logId()} failed as it is not retryable and there is no network connection")

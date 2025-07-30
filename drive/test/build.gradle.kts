@@ -62,6 +62,7 @@ dependencies {
     api(libs.core.test.kotlin)
     api(libs.mockwebserver)
     api(libs.androidx.work.runtime.ktx)
+    api(libs.androidx.work.testing)
     api(libs.kotlinx.serialization.json)
     api(project(":drive:base:domain"))
     api(project(":drive:crypto:data"))

@@ -176,7 +176,7 @@
            Ongoing, migrating 12 345 files, 123 waiting for download.
     -->
   <plurals name="photos_tags_migration_ongoing">
-    <item quantity="one">In corso, migrazione di %1$s file, %2$s in attesa di download.</item>
-    <item quantity="other">In corso, migrazione di %1$s file, %2$s in attesa di download.</item>
+    <item quantity="one">Migrazione di %1$s file in corso e %2$s in attesa di download</item>
+    <item quantity="other">Migrazione di %1$s file in corso e %2$s in attesa di download</item>
   </plurals>
 </resources>

@@ -33,6 +33,7 @@ import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.usecase.SignOut
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.DeleteShare
+import me.proton.core.drive.share.domain.usecase.GetMainShare
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.CoreLogger
@@ -43,6 +44,7 @@ class OnResetAllEvent @Inject constructor(
     private val deleteShare: DeleteShare,
     private val signOut: SignOut,
     private val announceEvent: AnnounceEvent,
+    private val getMainShare: GetMainShare,
 ) {
     private val coroutineScope = CoroutineScope(Job() + Dispatchers.Main)
 
@@ -63,7 +65,17 @@ class OnResetAllEvent @Inject constructor(
     operator fun invoke(userId: UserId, volumeId: VolumeId) {
         coroutineScope.launch {
             CoreLogger.d(LogTag.EVENTS, "onResetAll: volumeId ${volumeId.id.logId()}")
-            signOutUser(userId)
+            getMainShare(userId).toResult()
+                .getOrNull(LogTag.EVENTS, "Cannot get main share")?.let { mainShare ->
+                    if (mainShare.volumeId == volumeId) {
+                        signOutUser(userId)
+                    } else {
+                        CoreLogger.d(
+                            tag = LogTag.EVENTS,
+                            message = "onResetAll: do nothing as volume (${volumeId.id.logId()}) is not main share volume (${mainShare.volumeId.id.logId()})",
+                        )
+                    }
+                }
         }
     }
 

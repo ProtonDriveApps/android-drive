@@ -54,7 +54,7 @@
   <string name="common_got_it_action">Зразумела</string>
   <string name="common_next_action">Далей</string>
   <string name="common_save_action">Захаваць</string>
-  <string name="common_discard_action">Скасаваць</string>
+  <string name="common_discard_action">Адхіліць</string>
   <string name="common_skip_action">Прапусціць</string>
   <string name="common_delete_permanently_action">Выдаліць незваротна</string>
   <string name="common_make_available_offline_action">Зрабіць даступным па-за сеткай</string>

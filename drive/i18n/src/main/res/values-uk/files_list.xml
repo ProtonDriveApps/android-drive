@@ -49,12 +49,12 @@
   <string name="files_send_to_trash_action">Перемістити до смітника</string>
   <string name="files_remove_me_action">Вилучити мене</string>
   <string name="files_move_file_action">Перемістити</string>
-  <string name="files_add_to_favorite_action">Add to favorites</string>
-  <string name="files_remove_from_favorite_action">Remove from favorites</string>
-  <string name="files_add_to_favorite_action_success">Added to favorites successfully</string>
-  <string name="files_add_to_favorite_from_foreign_volume_action_success">Photo was copied to stream and marked favorite there</string>
-  <string name="files_remove_from_favorite_action_success">Removed from favorites successfully</string>
-  <string name="files_save_shared_photo_action">Save shared photo</string>
+  <string name="files_add_to_favorite_action">Додати до улюбленого</string>
+  <string name="files_remove_from_favorite_action">Видалити з улюбленого</string>
+  <string name="files_add_to_favorite_action_success">Успішно додано до улюбленого</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Фото було скопійоване до трансляції та позначене там як улюблене</string>
+  <string name="files_remove_from_favorite_action_success">Успішно видалено з улюбленого</string>
+  <string name="files_save_shared_photo_action">Зберегти поширене фото</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

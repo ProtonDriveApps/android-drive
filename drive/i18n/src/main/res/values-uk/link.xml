@@ -28,7 +28,7 @@
   <string name="files_upload_content_description_cancel_upload">Скасувати вивантаження файлу</string>
   <string name="files_upload_failure_storage_full_title">Сховище заповнене</string>
   <string name="files_upload_failure_storage_full_description">У вашому обліковому записі вичерпано місце в сховищі. Звільніть місце або перейдіть на тарифний план з більшим обсягом сховища.</string>
-  <string name="files_operation_failed_all">Operation failed</string>
+  <string name="files_operation_failed_all">Операцію не виконано</string>
   <!--
         Variable %1$d is a number of failed links in the failed operation
         Example:
@@ -36,10 +36,10 @@
             "12 failed"
     -->
   <plurals name="files_operation_failed_count_of_failures">
-    <item quantity="one">%1$d failed</item>
+    <item quantity="one">Не вдалося: %1$d</item>
     <item quantity="few">%1$d failed</item>
     <item quantity="many">%1$d failed</item>
-    <item quantity="other">%1$d failed</item>
+    <item quantity="other">Не вдалося: %1$d</item>
   </plurals>
   <!--
         Variable %1$d is a number of succeeded links in the failed operation
@@ -48,9 +48,9 @@
             "24 succeeded"
     -->
   <plurals name="files_operation_failed_count_of_successes">
-    <item quantity="one">%1$d succeeded</item>
+    <item quantity="one">Успішно: %1$d</item>
     <item quantity="few">%1$d succeeded</item>
     <item quantity="many">%1$d succeeded</item>
-    <item quantity="other">%1$d succeeded</item>
+    <item quantity="other">Успішно: %1$d</item>
   </plurals>
 </resources>

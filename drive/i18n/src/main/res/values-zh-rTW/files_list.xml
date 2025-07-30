@@ -30,8 +30,8 @@
     <item quantity="other">%1$d 個項目已成功移動。</item>
   </plurals>
   <string name="file_operation_error_file_already_exists_at_destination">目標資料夾已存在一個具有相同名稱的項目</string>
-  <string name="folder_options_header_title">在「%1$s」中</string>
-  <string name="folder_options_header_title_encrypted">在</string>
+  <string name="folder_options_header_title">位於「%1$s」</string>
+  <string name="folder_options_header_title_encrypted">位於</string>
   <string name="files_toggle_layout_to_list_content_description">清單版面配置</string>
   <string name="files_toggle_layout_to_grid_content_description">網格版面配置</string>
   <!--
@@ -46,12 +46,12 @@
   <string name="files_send_to_trash_action">移至垃圾桶</string>
   <string name="files_remove_me_action">移除我</string>
   <string name="files_move_file_action">移動</string>
-  <string name="files_add_to_favorite_action">Add to favorites</string>
+  <string name="files_add_to_favorite_action">新增至我的最愛</string>
   <string name="files_remove_from_favorite_action">從我的最愛移除</string>
-  <string name="files_add_to_favorite_action_success">Added to favorites successfully</string>
-  <string name="files_add_to_favorite_from_foreign_volume_action_success">Photo was copied to stream and marked favorite there</string>
-  <string name="files_remove_from_favorite_action_success">Removed from favorites successfully</string>
-  <string name="files_save_shared_photo_action">Save shared photo</string>
+  <string name="files_add_to_favorite_action_success">已成功新增至我的最愛</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">相片已複製至串流並將其標記為我的最愛</string>
+  <string name="files_remove_from_favorite_action_success">已成功從我的最愛中移除</string>
+  <string name="files_save_shared_photo_action">儲存已共享的相片</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

@@ -19,7 +19,7 @@
 <resources>
   <string name="link_rename_title_file">Перейменувати файл</string>
   <string name="link_rename_title_folder">Перейменувати теку</string>
-  <string name="link_rename_title_album">Rename an album</string>
+  <string name="link_rename_title_album">Перейменувати альбом</string>
   <string name="link_rename_successful">\"%1$s\" успішно перейменовано</string>
   <string name="link_rename_error_link_not_found">Не вдалося перейменувати, оскільки файл або теку більше не можна знайти</string>
   <string name="link_rename_error_general">Не вдалося перейменувати теку з невідомої причини</string>

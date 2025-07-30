@@ -170,7 +170,12 @@ sealed class Event {
             val code: Int,
             val message: String,
             val jsonBody: String? = null,
+            val source: Source = Source.Unknown,
         )
+
+        enum class Source {
+            Unknown, Network, Cache,
+        }
     }
 
     data class Logger(

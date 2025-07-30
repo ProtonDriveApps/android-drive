@@ -39,7 +39,7 @@
   <string name="common_on">Увімк</string>
   <string name="common_off">Вимк</string>
   <string name="common_all">Всі</string>
-  <string name="common_unknown">Unknown</string>
+  <string name="common_unknown">Невідомо</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -66,15 +66,15 @@
   <string name="common_stop_sharing_action">Закрити доступ</string>
   <string name="common_open_in_browser_action">Відкрити в браузері</string>
   <string name="common_done_action">Виконано</string>
-  <string name="common_create_album_action">Create album</string>
-  <string name="common_set_as_album_cover_action">Set as album cover</string>
-  <string name="common_add_action">Add</string>
-  <string name="common_remove_from_album_action">Remove from album</string>
-  <string name="common_leave_album_action">Leave album</string>
-  <string name="common_start_action">Start</string>
-  <string name="common_save_all_action">Save all</string>
-  <string name="common_add_to_albums_action">Add to albums</string>
-  <string name="common_tag_photo_action">Scan photo for tags</string>
+  <string name="common_create_album_action">Створити альбом</string>
+  <string name="common_set_as_album_cover_action">Встановити як обкладинку альбому</string>
+  <string name="common_add_action">Додати</string>
+  <string name="common_remove_from_album_action">Видалити з альбому</string>
+  <string name="common_leave_album_action">Покинути альбом</string>
+  <string name="common_start_action">Почати</string>
+  <string name="common_save_all_action">Зберегти все</string>
+  <string name="common_add_to_albums_action">Додати до альбомів</string>
+  <string name="common_tag_photo_action">Сканувати фото для тегів</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">Аудіо</string>
@@ -87,7 +87,7 @@
   <string name="common_type_pdf">Документ PDF</string>
   <string name="common_type_ppt">Презентація</string>
   <string name="common_type_proton_doc">Документ Proton</string>
-  <string name="common_type_proton_sheet">Proton spreadsheet</string>
+  <string name="common_type_proton_sheet">Електронна таблиця Proton</string>
   <string name="common_type_text">Текст</string>
   <string name="common_type_trustedkey">Довірений ключ</string>
   <string name="common_type_unknown">Двійковий</string>

@@ -129,10 +129,10 @@
     <item quantity="other">%1$d 個のアイテムが失敗しました</item>
   </plurals>
   <string name="albums_empty_album_screen_title">写真がありません</string>
-  <string name="albums_empty_album_screen_description">Photos that you or other members add will appear here</string>
+  <string name="albums_empty_album_screen_description">お客様や他のメンバーによって追加された写真がここに表示されます</string>
   <string name="albums_empty_albums_list_screen_title">アルバムがありません</string>
-  <string name="albums_empty_albums_list_screen_description">Albums that you create or join will appear here</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Albums that you create will appear here</string>
+  <string name="albums_empty_albums_list_screen_description">作成または参加したアルバムがここに表示されます。</string>
+  <string name="albums_empty_albums_my_albums_screen_description">作成したアルバムがここに表示されます</string>
   <string name="albums_empty_albums_shared_by_me_screen_title">共有アルバムはありません</string>
   <string name="albums_empty_albums_shared_by_me_screen_description">共有したアルバムがここに表示されます</string>
   <string name="albums_empty_albums_shared_with_me_screen_title">共有されたアルバムはありません</string>
@@ -152,12 +152,12 @@
   <string name="albums_share_multiple_photos_options_new_shared_album">新しい共有アルバム</string>
   <string name="albums_add_to_album_start_message">暗号化済みアルバムに写真を追加しています。処理中はアプリを開いたままにしてください。</string>
   <string name="albums_add_to_albums_options_new_album">新しいアルバムに追加</string>
-  <string name="albums_add_to_albums_options_shared_album">My shared album</string>
+  <string name="albums_add_to_albums_options_shared_album">私の共有アルバム</string>
   <!--
         Variable %1$s is an album owner name i.e. display name or email
         Example:
             "By Pablo Picasso"
             "By pablo.picasso@example.com"
     -->
-  <string name="albums_shared_with_me_details">By %1$s</string>
+  <string name="albums_shared_with_me_details">%1$sによる</string>
 </resources>

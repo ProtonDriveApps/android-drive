@@ -35,7 +35,7 @@ internal fun Event.Network.toLog(userId: UserId): Log =
 
 internal val Event.Network.message: String get() =
     """
-        ${response.code} (${response.occurredAt.value - request.occurredAt.value}ms) ->
+        ${response.code} (${response.source.name.take(1).lowercase()} ${response.occurredAt.value - request.occurredAt.value}ms) ->
         ${request.method.uppercase(Locale.US)} ${request.urlPath}
     """.trimIndent().replace("\n", " ")
 

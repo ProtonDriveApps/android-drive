@@ -45,10 +45,10 @@
             "3 files failed to be uploaded to: Pictures"
     -->
   <plurals name="files_upload_failed_notification">
-    <item quantity="one">%1$d file failed to be uploaded to: %2$s</item>
-    <item quantity="few">%1$d files failed to be uploaded to: %2$s</item>
-    <item quantity="many">%1$d files failed to be uploaded to: %2$s</item>
-    <item quantity="other">%1$d files failed to be uploaded to: %2$s</item>
+    <item quantity="one">Не вдалося вивантажити %1$d файл до: %2$s</item>
+    <item quantity="few">Не вдалося вивантажити %1$d файли до: %2$s</item>
+    <item quantity="many">Не вдалося вивантажити %1$d файлів до: %2$s</item>
+    <item quantity="other">Не вдалося вивантажити %1$d файлів до: %2$s</item>
   </plurals>
   <!--
         Variable %1$d is a quantity of files that are being ignored
@@ -58,10 +58,10 @@
             "3 files failed to be uploaded to: Pictures"
     -->
   <plurals name="files_upload_being_ignored_notification">
-    <item quantity="one">%1$d file was ignored</item>
-    <item quantity="few">%1$d files were ignored</item>
-    <item quantity="many">%1$d files were ignored</item>
-    <item quantity="other">%1$d files were ignored</item>
+    <item quantity="one">%1$d файл було проігноровано</item>
+    <item quantity="few">%1$d файли було проігноровано</item>
+    <item quantity="many">%1$d файлів було проігноровано</item>
+    <item quantity="other">%1$d файлів було проігноровано</item>
   </plurals>
   <string name="files_upload_preparing">Підготовка до вивантаження. Це може тривати деякий час.</string>
   <!--

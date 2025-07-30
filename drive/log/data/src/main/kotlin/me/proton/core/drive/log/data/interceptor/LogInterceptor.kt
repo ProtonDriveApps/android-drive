@@ -86,6 +86,7 @@ class LogInterceptor : Interceptor {
                 // Avoid Socket is closed error (SocketException)
                 response.peekBody(byteCount = MAX_BYTE_COUNT.value).jsonString
             }.getOrNull(LogTag.LOG, "Cannot read body"),
+            source = response.source,
         ),
     )
 
@@ -102,6 +103,12 @@ class LogInterceptor : Interceptor {
             ignoreCase = true,
         )
     }?.let { runCatching { string() }.getOrNull() }
+
+    private val Response.source: Event.Network.Source get() = when {
+        networkResponse != null -> Event.Network.Source.Network
+        cacheResponse != null -> Event.Network.Source.Cache
+        else -> Event.Network.Source.Unknown
+    }
 
     companion object {
         private val MAX_BYTE_COUNT = 1.MiB

@@ -25,9 +25,11 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.await
+import androidx.work.impl.awaitWithin
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.entity.LoggerLevel.WARNING
 import me.proton.core.drive.base.data.extension.isRetryable
@@ -103,7 +105,7 @@ class UploadThrottleWorker @AssistedInject constructor(
 
     private suspend fun UploadFileLink.isNotEnqueued(): Boolean {
         val workInfos = workManager
-            .getWorkInfosByTag(id.uniqueUploadWorkName).await()
+            .getWorkInfosByTagFlow(id.uniqueUploadWorkName).first()
         return workInfos.none { workInfo -> !workInfo.state.isFinished }
     }
 

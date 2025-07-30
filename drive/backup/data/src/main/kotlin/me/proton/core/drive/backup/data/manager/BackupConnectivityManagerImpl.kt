@@ -26,19 +26,25 @@ import android.net.NetworkRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.shareIn
 import me.proton.core.drive.backup.domain.manager.BackupConnectivityManager
+import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 class BackupConnectivityManagerImpl @Inject constructor(
     @ApplicationContext private val appContext: Context,
     coroutineContext: CoroutineContext,
 ) : BackupConnectivityManager {
     private val coroutineScope = CoroutineScope(coroutineContext)
+
     private val connectivityManager by lazy {
         appContext.getSystemService(ConnectivityManager::class.java) as ConnectivityManager
     }
@@ -82,9 +88,40 @@ class BackupConnectivityManagerImpl @Inject constructor(
                 }
 
         }
-        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+        retry(
+            logMessage = {
+                val uid = android.os.Process.myUid()
+                val packageName = appContext.packageName
+                "Registering network callback as UID=$uid package=$packageName"
+            },
+        ) {
+            connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+        }
         awaitClose {
             connectivityManager.unregisterNetworkCallback(networkCallback)
         }
     }.shareIn(coroutineScope, SharingStarted.WhileSubscribed(), 1)
+
+    private suspend fun retry(
+        numberOfRetries: Int = 1,
+        duration: Duration = 1.seconds,
+        retryOn: (Throwable) -> Boolean = { it is SecurityException },
+        logMessage: (Throwable) -> String = { e -> e.message.orEmpty() },
+        block: () -> Unit,
+    ) {
+        var attemptsLeft = numberOfRetries
+        while (true) {
+            try {
+                block()
+                return
+            } catch (e: Exception) {
+                if (!retryOn(e) || attemptsLeft <= 0) {
+                    CoreLogger.d(LogTag.BACKUP, e, logMessage(e))
+                    throw e
+                }
+                attemptsLeft--
+                delay(duration)
+            }
+        }
+    }
 }

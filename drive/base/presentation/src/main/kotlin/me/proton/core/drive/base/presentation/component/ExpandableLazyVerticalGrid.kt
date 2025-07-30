@@ -48,12 +48,16 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.window.layout.WindowMetricsCalculator
 import kotlin.math.sign
 
 object ExpandableLazyVerticalGrid {
@@ -204,12 +208,21 @@ fun defaultMinMaxGridHeight(
     overlapThreshold: Dp = topComposableHeight * 0.5f,
 ): Pair<Dp, Dp> {
     val density = LocalDensity.current
-    val configuration = LocalConfiguration.current
-    val screenHeightDp = configuration.screenHeightDp.dp
     val statusBarHeightPx = WindowInsets.statusBars.getTop(density)
     val navigationBarHeightPx = WindowInsets.navigationBars.getBottom(density)
     val statusBarHeightDp = with(density) { statusBarHeightPx.toDp() }
     val navigationBarHeightDp = with(density) { navigationBarHeightPx.toDp() }
-    val screenHeight = screenHeightDp + statusBarHeightDp + navigationBarHeightDp
+    val windowMetrics = WindowMetricsCalculator.getOrCreate().computeCurrentWindowMetrics(LocalContext.current)
+    val bounds = windowMetrics.bounds
+    val insets = ViewCompat.getRootWindowInsets(LocalView.current)
+    val topInset = insets?.getInsetsIgnoringVisibility(
+        WindowInsetsCompat.Type.statusBars()
+    )?.top ?: 0
+    val bottomInset = insets?.getInsetsIgnoringVisibility(
+        WindowInsetsCompat.Type.navigationBars()
+    )?.bottom ?: 0
+    val usableHeightPx = bounds.height() - topInset - bottomInset
+    val usableHeightDp = with(density) { usableHeightPx.toDp() }
+    val screenHeight = usableHeightDp + statusBarHeightDp + navigationBarHeightDp
     return (screenHeight - topComposableHeight) to (screenHeight - (topComposableHeight - overlapThreshold))
 }

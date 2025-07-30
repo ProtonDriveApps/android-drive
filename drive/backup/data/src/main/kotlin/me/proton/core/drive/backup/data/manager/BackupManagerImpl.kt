@@ -22,6 +22,7 @@ import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import androidx.work.await
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.data.extension.uniqueScanWorkName
 import me.proton.core.drive.backup.data.worker.BackupCheckDuplicatesWorker
@@ -88,7 +89,7 @@ class BackupManagerImpl @Inject constructor(
         getAllFolders(folderId).getOrNull()?.forEach { backupFolder ->
             uploadWorkManager.cancelAllByFolder(backupFolder.folderId.userId, backupFolder.folderId)
         }
-        workManager.getWorkInfosByTag(TAG).await()
+        workManager.getWorkInfosByTagFlow(TAG).first()
             .filter { workInfo -> workInfo.tags.contains(folderId.id) }
             .forEach { workInfo -> workManager.cancelWorkById(workInfo.id) }
     }
