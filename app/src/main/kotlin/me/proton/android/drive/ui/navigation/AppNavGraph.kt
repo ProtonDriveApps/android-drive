@@ -1386,6 +1386,11 @@ fun NavGraphBuilder.addOffline(navController: NavHostController) = composable(
                 Screen.FileOrFolderOptions(userId, linkId)
             )
         },
+        navigateToAlbumOptions = { albumId ->
+            navController.navigate(
+                Screen.AlbumOptions(userId, albumId)
+            )
+        },
     )
 }
 

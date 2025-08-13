@@ -51,6 +51,7 @@ interface ConfigurationProvider {
         maxHeight = 1920,
         maxSize = 1.MiB
     )
+    val downloadBlocksInParallel: Int get() = 6
     val downloadsInParallel: Int get() = 4
     val maxFileSizeToSendWithoutDownload: Bytes get() = blockMaxSize
     val preventScreenCapture: Boolean get() = false
@@ -121,6 +122,7 @@ interface ConfigurationProvider {
     val savePhotoToStreamLimit: Long get() = 100
     val photoListingsPageSize: Int get() = 25_000
     val sendPhotoTagsInCommit: Boolean get() = true
+    val preferPipelineBasedDownloadManager: Boolean get() = false
 
     data class Thumbnail(
         val maxWidth: Int,

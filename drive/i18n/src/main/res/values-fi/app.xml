@@ -194,7 +194,7 @@
   <string name="error_share_not_found">Jakoa ei löytynyt.</string>
   <string name="error_creating_photo_share_not_allowed">Kuvien varmuuskopiointi on poistettu tilapäisesti käytöstä.</string>
   <string name="error_creating_share_not_allowed">Jakojen luonti on poistettu tilapäisesti käytöstä.</string>
-  <string name="error_camera_permission">Camera permission is required.</string>
+  <string name="error_camera_permission">Kameran käyttöoikeus tarvitaan.</string>
   <string name="operation_open_document">avaa dokumentti</string>
   <string name="operation_create_document">luoda dokumentin</string>
   <string name="operation_take_picture">ottaa kuvan</string>

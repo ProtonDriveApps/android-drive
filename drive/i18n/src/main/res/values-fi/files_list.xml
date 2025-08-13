@@ -50,7 +50,7 @@
   <string name="files_add_to_favorite_action">Lisää suosikkeihin</string>
   <string name="files_remove_from_favorite_action">Poista suosikeista</string>
   <string name="files_add_to_favorite_action_success">Lisätty suosikkeihin</string>
-  <string name="files_add_to_favorite_from_foreign_volume_action_success">Photo was copied to stream and marked favorite there</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Kuva kopioitiin virtaan ja merkittiin siellä suosikiksi</string>
   <string name="files_remove_from_favorite_action_success">Poistettu suosikeista</string>
   <string name="files_save_shared_photo_action">Tallenna jaettu kuva</string>
   <!--

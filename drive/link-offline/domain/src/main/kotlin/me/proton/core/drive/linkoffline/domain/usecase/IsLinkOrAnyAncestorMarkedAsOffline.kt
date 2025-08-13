@@ -18,6 +18,8 @@
 package me.proton.core.drive.linkoffline.domain.usecase
 
 import me.proton.core.drive.base.domain.extension.toResult
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.linknode.domain.entity.LinkNode
 import me.proton.core.drive.linknode.domain.extension.ancestors
@@ -29,15 +31,20 @@ class IsLinkOrAnyAncestorMarkedAsOffline @Inject constructor(
     private val linkOfflineRepository: LinkOfflineRepository,
     private val getLinkNode: GetLinkNode,
 ) {
-    suspend operator fun invoke(linkNode: LinkNode): Boolean =
-        if (linkOfflineRepository.isMarkedOffline(linkNode.link.id)) {
-            true
-        } else {
-            linkOfflineRepository.isAnyMarkedOffline(linkNode.ancestors.map { node -> node.link.id }.toSet())
-        }
+    suspend operator fun invoke(linkNode: LinkNode): Boolean = when {
+        linkOfflineRepository.isMarkedOffline(linkNode.link.id) -> true
+        linkOfflineRepository.isAnyMarkedOffline(
+            (linkNode.ancestors.map { node -> node.link.id }).toSet()
+        ) -> true
+        linkNode.link is Link.File -> linkOfflineRepository.isPartOfAnOfflineAlbum(
+            linkNode.link.id as FileId
+        )
+        else -> false
+    }
 
     suspend operator fun invoke(linkId: LinkId): Boolean {
         if (linkOfflineRepository.isMarkedOffline(linkId)) return true
+        if (linkId is FileId && linkOfflineRepository.isPartOfAnOfflineAlbum(linkId)) return true
         return getLinkNode(linkId).toResult().getOrNull()?.let { linkNode ->
             invoke(linkNode)
         } ?: false

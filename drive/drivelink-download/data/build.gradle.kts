@@ -29,12 +29,14 @@ driveModule(
     room = true,
     workManager = true,
     buildConfig = true,
+    socialTest = true,
 ) {
     api(project(":drive:drivelink-download:domain"))
 
     implementation(project(":drive:base:data"))
     implementation(project(":drive:drivelink:data"))
     implementation(project(":drive:file:base:domain"))
+    implementation(project(":drive:link:data"))
     implementation(project(":drive:link-node:domain"))
     implementation(project(":drive:worker:data"))
     implementation(libs.androidx.lifecycle.livedata.ktx)

@@ -94,14 +94,14 @@
         Example:
             "Pending shared albums (2)"
     -->
-  <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
+  <string name="shared_user_album_invitations_title">擱置中的已分享相簿（%1$d）</string>
   <string name="shared_user_invitations_title_empty">沒有擱置中的已分享項目</string>
-  <string name="shared_user_album_invitations_title_empty">No pending shared albums</string>
+  <string name="shared_user_album_invitations_title_empty">沒有擱置中的共享相簿</string>
   <string name="shared_user_invitations_description_empty">所有新邀請函都會在此處</string>
   <string name="shared_user_invitations_accept_button">接受</string>
   <string name="shared_user_invitations_decline_button">婉拒</string>
   <string name="shared_user_invitations_accept_success">已接受已分享的項目</string>
   <string name="shared_user_invitations_decline_success">已拒絕已分享的項目</string>
   <string name="shared_user_album_invitations_accept_success">接受邀请</string>
-  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
+  <string name="shared_user_album_invitations_decline_success">邀請已婉拒</string>
 </resources>

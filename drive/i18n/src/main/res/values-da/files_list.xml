@@ -48,10 +48,10 @@
   <string name="files_remove_me_action">Fjern mig</string>
   <string name="files_move_file_action">Flyt</string>
   <string name="files_add_to_favorite_action">Tilføj til foretrukne</string>
-  <string name="files_remove_from_favorite_action">Fjern fra favoritter</string>
-  <string name="files_add_to_favorite_action_success">Added to favorites successfully</string>
-  <string name="files_add_to_favorite_from_foreign_volume_action_success">Photo was copied to stream and marked favorite there</string>
-  <string name="files_remove_from_favorite_action_success">Removed from favorites successfully</string>
+  <string name="files_remove_from_favorite_action">Fjern fra foretrukne</string>
+  <string name="files_add_to_favorite_action_success">Føjet til foretrukne</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Foto kopieret til stream og markeret som foretrukken</string>
+  <string name="files_remove_from_favorite_action_success">Fjernet fra foretrukne</string>
   <string name="files_save_shared_photo_action">Gem delt foto</string>
   <!--
         Variable %1$s is a file/folder's name

@@ -39,6 +39,7 @@ import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import me.proton.core.presentation.app.AppLifecycleProvider
 
 class AccountReadyObserverInitializer : Initializer<Unit> {
@@ -62,8 +63,10 @@ class AccountReadyObserverInitializer : Initializer<Unit> {
                     observeWorkManager(userId).onEach { workers ->
                         announceEvent(userId, workers)
                     }.launchIn(scope)
+                    fileDownloader.start(userId, scope.coroutineContext)
                 }
                 .onAccountRemoved { account ->
+                    fileDownloader.stop(account.userId)
                     scopes.remove(account.userId)?.cancel()
                 }
         }
@@ -81,5 +84,6 @@ class AccountReadyObserverInitializer : Initializer<Unit> {
         val observeApplicationState: ObserveApplicationState
         val observeWorkManager: ObserveWorkManager
         val announceEvent: AnnounceEvent
+        val fileDownloader: DownloadManager.FileDownloader
     }
 }

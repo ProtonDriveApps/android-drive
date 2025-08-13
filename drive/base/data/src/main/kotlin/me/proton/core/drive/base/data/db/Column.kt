@@ -100,6 +100,7 @@ object Column {
     const val NOTIFICATION_EVENT_ID = "notification_event_id"
     const val NOTIFICATION_TAG = "notification_tag"
     const val NUMBER_OF_ACCESSES = "number_of_accesses"
+    const val NUMBER_OF_RETRIES = "number_of_retries"
     const val ORIENTATION = "orientation"
     const val ORIGIN = "origin"
     const val PARENT_ID = "parent_id"

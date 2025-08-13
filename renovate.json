@@ -1,0 +1,18 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "enabledManagers": ["regex"],
+  "regexManagers": [
+    {
+      "fileMatch": ["\\.yml$", "\\.yaml$"],
+      "matchStrings": [
+        "DOCKER_IMAGE_VERSION:\\s+(?<currentValue>v[0-9]+\\.[0-9]+\\.[0-9]+)"
+      ],
+      "datasourceTemplate": "gitlab-tags",
+      "depNameTemplate": "android/shared/docker-android",
+      "registryUrlTemplate": "https://gitlab.protontech.ch/"
+    }
+  ]
+}

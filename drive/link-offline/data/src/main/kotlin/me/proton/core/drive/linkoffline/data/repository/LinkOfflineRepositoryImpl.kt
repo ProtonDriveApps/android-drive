@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.linkoffline.data.repository
 
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkoffline.data.db.LinkOfflineDao
@@ -39,4 +40,7 @@ class LinkOfflineRepositoryImpl @Inject constructor(
 
     override suspend fun removeOffline(linkId: LinkId) =
         db.delete(LinkOfflineEntity(linkId.userId, linkId.shareId.id, linkId.id))
+
+    override suspend fun isPartOfAnOfflineAlbum(fileId: FileId): Boolean =
+        db.isPartOfAnOfflineAlbum(fileId.userId, fileId.shareId.id, fileId.id)
 }

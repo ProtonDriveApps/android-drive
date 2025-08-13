@@ -28,6 +28,7 @@ import me.proton.core.contact.data.local.db.ContactDatabase
 import me.proton.core.drive.backup.data.db.BackupDatabase
 import me.proton.core.drive.base.data.db.BaseDatabase
 import me.proton.core.drive.device.data.db.DeviceDatabase
+import me.proton.core.drive.drivelink.download.data.db.DriveLinkDownloadDatabase
 import me.proton.core.drive.drivelink.photo.data.db.DriveLinkPhotoDatabase
 import me.proton.core.drive.drivelink.shared.data.db.DriveLinkSharedDatabase
 import me.proton.core.drive.entitlement.data.db.EntitlementDatabase
@@ -589,6 +590,12 @@ object DriveDatabaseMigrations {
     val MIGRATION_91_92 = object : Migration(91, 92) {
         override fun migrate(db: SupportSQLiteDatabase) {
             PhotoDatabase.MIGRATION_6.migrate(db)
+        }
+    }
+
+    val MIGRATION_92_93 = object : Migration(92, 93) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            DriveLinkDownloadDatabase.MIGRATION_0.migrate(db)
         }
     }
 }

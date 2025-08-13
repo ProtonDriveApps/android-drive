@@ -130,15 +130,15 @@
   <string name="photos_filter_panoramas">Panoramaer</string>
   <string name="photos_filter_raws">RAW</string>
   <string name="photos_favorite_empty_title">Ingen foretrukne</string>
-  <string name="photos_favorite_empty_description">Your favorited photos will appear here</string>
+  <string name="photos_favorite_empty_description">Dine foretrukne fotos vises her</string>
   <string name="photos_screenshots_empty_title">Ingen skærmfotos</string>
   <string name="photos_screenshots_empty_description">Dine skærmfoto vises her</string>
   <string name="photos_videos_empty_title">Ingen videoer</string>
   <string name="photos_videos_empty_description">Dine videoer vises her</string>
   <string name="photos_livephotos_empty_title">Ingen bevægelsesfotos</string>
-  <string name="photos_livephotos_empty_description">Your Live Photos will appear here</string>
+  <string name="photos_livephotos_empty_description">Dine Live-fotos vises her</string>
   <string name="photos_motionphotos_empty_title">Ingen bevægelsesfotos</string>
-  <string name="photos_motionphotos_empty_description">Your Motion Photos will appear here</string>
+  <string name="photos_motionphotos_empty_description">Dine Motion-fotos vises her</string>
   <string name="photos_selfies_empty_title">Ingen selfier</string>
   <string name="photos_selfies_empty_description">Dine selfie-fotos vises her</string>
   <string name="photos_portraits_empty_title">Ingen portrætter</string>
@@ -154,10 +154,10 @@
   <string name="photos_share_migration_needed_banner_title">Datamigrering nødvendig</string>
   <string name="photos_share_migration_needed_banner_description">Efter migrering kan du bruge nye funktioner som filtre og fotoalbum</string>
   <string name="photos_important_updates_title">Vigtige opdateringer</string>
-  <string name="photos_important_updates_subtitle">Photo library update needed</string>
-  <string name="photos_important_updates_description">This quick update prepares your photos for new features like filters and albums</string>
+  <string name="photos_important_updates_subtitle">Fotobibliotek kræver opdatering</string>
+  <string name="photos_important_updates_description">Denne hurtige opdatering forbereder dine fotos til nye funktioner, såsom filtre og albums</string>
   <string name="photos_important_updates_cancel_action">Påmind mig senere</string>
-  <string name="photos_tags_migration_title">Tags migration</string>
+  <string name="photos_tags_migration_title">Migration af tags</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates
         Example:
@@ -165,8 +165,8 @@
            Finished, 12 345 files were migrated.
     -->
   <plurals name="photos_tags_migration_finished">
-    <item quantity="one">Finished, %1$s file was migrated.</item>
-    <item quantity="other">Finished, %1$s files were migrated.</item>
+    <item quantity="one">Fuldført, %1$s fil blev migreret.</item>
+    <item quantity="other">Fuldført, %1$s filer blev migreret.</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos to migrate
@@ -176,7 +176,7 @@
            Ongoing, migrating 12 345 files, 123 waiting for download.
     -->
   <plurals name="photos_tags_migration_ongoing">
-    <item quantity="one">Ongoing, migrating %1$s file, %2$s waiting for download.</item>
-    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="one">I gang, migrerer %1$s fil, %2$s venter på download.</item>
+    <item quantity="other">I gang, migrerer %1$s filer, %2$s venter på download.</item>
   </plurals>
 </resources>

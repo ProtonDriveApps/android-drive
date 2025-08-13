@@ -17,6 +17,7 @@
  */
 package me.proton.core.drive.linkoffline.domain.repository
 
+import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
 
 interface LinkOfflineRepository {
@@ -40,4 +41,9 @@ interface LinkOfflineRepository {
      * Unmarked given link as offline
      */
     suspend fun removeOffline(linkId: LinkId)
+
+    /**
+     * Check if given file is part of an offline album
+     */
+    suspend fun isPartOfAnOfflineAlbum(fileId: FileId): Boolean
 }

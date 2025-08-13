@@ -87,7 +87,7 @@
   <string name="common_type_pdf">PDF 文件</string>
   <string name="common_type_ppt">簡報</string>
   <string name="common_type_proton_doc">Proton 文件</string>
-  <string name="common_type_proton_sheet">Proton spreadsheet</string>
+  <string name="common_type_proton_sheet">Proton 試算表</string>
   <string name="common_type_text">文字</string>
   <string name="common_type_trustedkey">信任的金鑰</string>
   <string name="common_type_unknown">二進位</string>

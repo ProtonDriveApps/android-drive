@@ -69,7 +69,7 @@
   <string name="in_app_notification_create_document_success">S\'ha creat el document.</string>
   <!-- endregion -->
   <!-- region Notification -->
-  <string name="notification_content_title_storage_full">L\'emmagatzematge és ple.</string>
+  <string name="notification_content_title_storage_full">Emmagatzematge ple.</string>
   <!--
         Variable %1$s is an application name
         Example:

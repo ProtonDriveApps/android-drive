@@ -45,6 +45,7 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         const val DOCS_SHEETS_DISABLED = "DocsSheetsDisabled"
         const val DRIVE_PHOTOS_TAGS_MIGRATION = "DrivePhotosTagsMigration"
         const val DRIVE_PHOTOS_TAGS_MIGRATION_DISABLED = "DrivePhotosTagsMigrationDisabled"
+        const val DRIVE_ANDROID_DOWNLOAD_MANAGER = "DriveAndroidDownloadManager"
 
         internal var developments : List<String> = listOf(
         )
@@ -71,5 +72,6 @@ data class FeatureFlagId(val userId: UserId, val id: String) {
         fun docsSheetsDisabled(userId: UserId) = FeatureFlagId(userId, DOCS_SHEETS_DISABLED)
         fun drivePhotosTagsMigration(userId: UserId) = FeatureFlagId(userId, DRIVE_PHOTOS_TAGS_MIGRATION)
         fun drivePhotosTagsMigrationDisabled(userId: UserId) = FeatureFlagId(userId, DRIVE_PHOTOS_TAGS_MIGRATION_DISABLED)
+        fun driveAndroidDownloadManager(userId: UserId) = FeatureFlagId(userId, DRIVE_ANDROID_DOWNLOAD_MANAGER)
     }
 }

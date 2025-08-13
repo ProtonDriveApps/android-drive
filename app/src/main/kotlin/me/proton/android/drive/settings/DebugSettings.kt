@@ -151,6 +151,7 @@ class DebugSettings(
         key = prefsSendPhotoTagsInCommit,
         default = buildConfig.sendPhotoTagsInCommit,
     )
+    override val preferPipelineBasedDownloadManager: Boolean = true
 
     fun reset(coroutineScope: CoroutineScope) {
         coroutineScope.launch {

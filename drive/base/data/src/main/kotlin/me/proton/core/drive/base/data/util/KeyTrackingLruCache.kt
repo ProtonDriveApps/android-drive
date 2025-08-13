@@ -24,7 +24,7 @@ class KeyTrackingLruCache<K : Any, V : Any>(maxSize: Int) {
 
     private val cache = object : LruCache<K, V>(maxSize) {
         override fun entryRemoved(evicted: Boolean, key: K, oldValue: V, newValue: V?) {
-            keySet.remove(key)
+            if (evicted) keySet.remove(key)
             super.entryRemoved(evicted, key, oldValue, newValue)
         }
     }

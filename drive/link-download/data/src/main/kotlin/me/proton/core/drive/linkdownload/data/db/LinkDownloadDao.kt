@@ -155,6 +155,29 @@ interface LinkDownloadDao : LinkDao {
         offset: Int,
     ): List<LinkDownloadState?>
 
+    @Query("""
+        SELECT
+            LinkDownloadStateEntity.state
+        FROM
+            LinkEntity
+        LEFT JOIN LinkDownloadStateEntity ON
+            LinkDownloadStateEntity.user_id = LinkEntity.user_id AND
+            LinkDownloadStateEntity.link_id = LinkEntity.id
+        INNER JOIN AlbumPhotoListingEntity ON
+            AlbumPhotoListingEntity.user_id = LinkEntity.user_id AND
+            AlbumPhotoListingEntity.id = LinkEntity.id AND
+            AlbumPhotoListingEntity.album_id = :albumId
+        WHERE
+            LinkEntity.user_id = :userId
+        LIMIT :limit OFFSET :offset
+    """)
+    suspend fun getAllAlbumChildrenStates(
+        userId: UserId,
+        albumId: String,
+        limit: Int,
+        offset: Int,
+    ): List<LinkDownloadState?>
+
     @Transaction
     suspend fun insertOrUpdate(
         userId: UserId,
@@ -196,7 +219,9 @@ interface LinkDownloadDao : LinkDao {
                 LinkEntity.share_id = LinkDownloadStateEntity.share_id AND
                 LinkEntity.id = LinkDownloadStateEntity.link_id AND
                 (LinkFilePropertiesEntity.revision_id = LinkDownloadStateEntity.revision_id OR
-                LinkFolderPropertiesEntity.folder_link_id IS NOT NULL)
+                LinkFolderPropertiesEntity.folder_link_id IS NOT NULL OR
+                LinkAlbumPropertiesEntity.album_link_id IS NOT NULL
+                )
         """
     }
 }

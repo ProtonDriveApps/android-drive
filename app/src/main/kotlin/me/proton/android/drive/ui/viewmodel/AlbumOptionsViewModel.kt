@@ -41,21 +41,21 @@ import me.proton.android.drive.ui.options.filterShareMember
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
-import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.component.RunAction
 import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLink
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isShareMember
+import me.proton.core.drive.drivelink.offline.domain.usecase.ToggleOffline
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDevelopment
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
+import me.proton.core.drive.feature.flag.domain.usecase.IsDownloadManagerEnabled
 import me.proton.core.drive.files.presentation.entry.FileOptionEntry
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.LinkId
-import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.share.domain.entity.ShareId
 import javax.inject.Inject
 
@@ -64,7 +64,8 @@ class AlbumOptionsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     getDriveLink: GetDecryptedDriveLink,
     getFeatureFlagFlow: GetFeatureFlagFlow,
-    private val broadcastMessages: BroadcastMessages,
+    private val toggleOffline: ToggleOffline,
+    private val isDownloadManagerEnabled: IsDownloadManagerEnabled,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val albumId = AlbumId(
         shareId = ShareId(userId, savedStateHandle.require(KEY_SHARE_ID)),
@@ -112,10 +113,13 @@ class AlbumOptionsViewModel @Inject constructor(
             .filterShareMember(driveLink.isShareMember)
             .filterPermissions(driveLink.sharePermissions ?: Permissions.owner)
             .filterRoot(driveLink, sharingDevelopment)
+            .filterOffline(isDownloadManagerEnabled(userId))
             .map { option ->
                 when (option) {
                     is Option.OfflineToggle -> option.build(runAction) { driveLink ->
-                        notYetImplemented()
+                        viewModelScope.launch {
+                            toggleOffline(driveLink)
+                        }
                     }
                     is Option.ShareViaInvitations -> option.build(runAction, navigateToShareViaInvitations)
                     is Option.ManageAccess -> option.build(runAction, navigateToManageAccess)
@@ -135,12 +139,13 @@ class AlbumOptionsViewModel @Inject constructor(
             }
     }
 
-    private fun notYetImplemented() = viewModelScope.launch {
-        broadcastMessages(
-            userId = userId,
-            message = "Not yet implemented",
-            type = BroadcastMessage.Type.INFO,
-        )
+    private fun Iterable<Option>.filterOffline(
+        isEnabled: Boolean,
+    ) = filter { option ->
+        when (option) {
+            Option.OfflineToggle -> isEnabled
+            else -> true
+        }
     }
 
     companion object {
@@ -148,7 +153,7 @@ class AlbumOptionsViewModel @Inject constructor(
         const val KEY_ALBUM_ID = "albumId"
 
         private val options = setOf(
-            //Option.OfflineToggle,
+            Option.OfflineToggle,
             Option.ShareViaInvitations,
             Option.ManageAccess,
             Option.Rename,

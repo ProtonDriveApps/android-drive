@@ -22,7 +22,7 @@ object Config {
     const val minSdk = 26
     const val targetSdk = 35
     const val testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    const val versionName = "2.24.0"
+    const val versionName = "2.25.0"
     const val archivesBaseName = "ProtonDrive-$versionName"
     val supportedResourceConfigurations = listOf(
         "b+es+419",

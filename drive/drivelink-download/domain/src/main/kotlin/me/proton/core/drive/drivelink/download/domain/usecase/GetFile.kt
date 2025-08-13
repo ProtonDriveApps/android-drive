@@ -37,6 +37,7 @@ import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptLinkContent
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.download.domain.extension.isDownloaded
+import me.proton.core.drive.feature.flag.domain.usecase.IsDownloadManagerEnabled
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
@@ -59,6 +60,7 @@ class GetFile @Inject constructor(
     private val verifyDownloadedState: VerifyDownloadedState,
     private val getDownloadBlocks: GetDownloadBlocks,
     private val removeDownloadState: RemoveDownloadState,
+    private val isDownloadManagerEnabled: IsDownloadManagerEnabled,
 ) {
     operator fun invoke(
         driveLink: DriveLink.File,
@@ -158,7 +160,10 @@ class GetFile @Inject constructor(
     }
 
     private suspend fun FlowCollector<State>.emitDownloading(fileId: FileId): Boolean =
-        getDownloadProgress(getDriveLink(fileId).toResult().getOrThrow())?.let { progress ->
+        getDownloadProgress(
+            getDriveLink(fileId).toResult().getOrThrow(),
+            isDownloadManagerEnabled(fileId.userId),
+        )?.let { progress ->
             emit(State.Downloading(progress))
             true
         } ?: false

@@ -62,7 +62,10 @@ class HandleCreateOrUpdateLinksEvent @Inject constructor(
                     val modifiedStateOrParentLinks = links.modifiedStateOrParentLinks()
                     insertOrUpdateLinks(links)
                     setOrRemoveTrashState(volumeId, links)
-                    updateOfflineContent(modifiedStateOrParentLinks.ids)
+                    updateOfflineContent(
+                        modifiedStateOrParentLinks.ids +
+                                links.filterIsInstance<Link.Album>().map { link -> link.id }
+                    )
                     insertOrDeletePhotoListings(volumeId, links.filterVolumePhotoListings(photoShare?.rootFolderId))
                     insertOrDeleteAlbumPhotoListings(volumeId, links.filterIsInstance<Link.File>())
                     insertOrDeleteAlbumListings(volumeId, links.filterIsInstance<Link.Album>())

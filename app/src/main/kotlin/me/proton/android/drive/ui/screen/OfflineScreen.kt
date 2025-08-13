@@ -47,6 +47,7 @@ fun OfflineScreen(
     navigateToAlbum: (AlbumId) -> Unit,
     navigateToSortingDialog: (Sorting) -> Unit,
     navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+    navigateToAlbumOptions: (AlbumId) -> Unit,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -61,6 +62,7 @@ fun OfflineScreen(
             navigateToAlbum = navigateToAlbum,
             navigateToSortingDialog = navigateToSortingDialog,
             navigateToFileOrFolderOptions = navigateToFileOrFolderOptions,
+            navigateToAlbumOptions = navigateToAlbumOptions,
             navigateBack = navigateBack,
             lifecycle = lifecycle,
         )

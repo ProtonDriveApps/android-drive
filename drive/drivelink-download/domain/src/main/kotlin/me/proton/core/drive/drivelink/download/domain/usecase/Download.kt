@@ -20,13 +20,19 @@ package me.proton.core.drive.drivelink.download.domain.usecase
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
+import me.proton.core.drive.drivelink.download.domain.entity.DownloadFileLink
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadWorkManager
+import me.proton.core.drive.feature.flag.domain.usecase.IsDownloadManagerEnabled
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.userId
 import javax.inject.Inject
 
 class Download @Inject constructor(
     private val downloadWorkManager: DownloadWorkManager,
+    private val downloadManager: DownloadManager,
     private val getDriveLink: GetDriveLink,
+    private val isDownloadManagerEnabled: IsDownloadManagerEnabled,
 ) {
 
     suspend operator fun invoke(linkId: LinkId, retryable: Boolean = true) =
@@ -39,6 +45,15 @@ class Download @Inject constructor(
 
     suspend operator fun invoke(driveLinks: List<DriveLink>, retryable: Boolean = true) =
         driveLinks.forEach { driveLink ->
-            downloadWorkManager.download(driveLink, retryable)
+            if (isDownloadManagerEnabled(driveLink.id.userId)) {
+                val priority = if (retryable) {
+                    DownloadFileLink.AVAILABLE_OFFLINE_PRIORITY
+                } else {
+                    DownloadFileLink.USER_PRIORITY
+                }
+                downloadManager.download(driveLink, priority, retryable)
+            } else {
+                downloadWorkManager.download(driveLink, retryable)
+            }
         }
 }

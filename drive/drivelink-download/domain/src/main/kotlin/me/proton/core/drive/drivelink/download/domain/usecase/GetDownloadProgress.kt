@@ -18,12 +18,20 @@
 package me.proton.core.drive.drivelink.download.domain.usecase
 
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadWorkManager
 import javax.inject.Inject
 
 class GetDownloadProgress @Inject constructor(
     private val downloadWorkManager: DownloadWorkManager,
+    private val downloadManager: DownloadManager,
 ) {
-    operator fun invoke(driveLink: DriveLink.File) =
+    operator fun invoke(
+        driveLink: DriveLink.File,
+        isDownloadManagerEnabled: Boolean
+    ) = if (isDownloadManagerEnabled) {
+        downloadManager.getProgressFlow(driveLink)
+    } else {
         downloadWorkManager.getProgressFlow(driveLink)
+    }
 }

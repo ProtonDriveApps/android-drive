@@ -20,6 +20,7 @@ package me.proton.core.drive.linkdownload.domain.repository
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
 import me.proton.core.drive.file.base.domain.entity.Block
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
@@ -58,6 +59,13 @@ interface LinkDownloadRepository {
     suspend fun areAllFilesDownloaded(
         folderId: FolderId,
         excludeMimeTypes: Set<String> = emptySet(),
+    ): Boolean
+
+    /**
+     * Tells if all photos (links) within a given album are downloaded
+     */
+    suspend fun areAllAlbumPhotosDownloaded(
+        albumId: AlbumId,
     ): Boolean
 
     suspend fun getDownloadBlocks(

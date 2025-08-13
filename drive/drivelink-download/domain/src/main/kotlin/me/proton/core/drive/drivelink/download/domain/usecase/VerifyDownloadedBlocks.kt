@@ -22,6 +22,7 @@ import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.file.base.domain.entity.Block
+import me.proton.core.drive.file.base.domain.entity.Revision
 import me.proton.core.drive.file.base.domain.usecase.GetBlockFile
 import me.proton.core.drive.file.base.domain.usecase.GetRevision
 import me.proton.core.drive.link.domain.entity.FileId
@@ -32,7 +33,6 @@ import me.proton.core.drive.linkdownload.domain.usecase.SetDownloadState
 import me.proton.core.drive.linkoffline.domain.usecase.IsLinkOrAnyAncestorMarkedAsOffline
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.io.File
-import java.lang.NullPointerException
 import javax.inject.Inject
 
 class VerifyDownloadedBlocks @Inject constructor(
@@ -54,13 +54,21 @@ class VerifyDownloadedBlocks @Inject constructor(
                 setDownloadState(fileId, DownloadState.Error)
             }
             .getOrThrow()
+        invoke(volumeId, fileId, revision).getOrThrow()
+    }
+
+    suspend operator fun invoke(
+        volumeId: VolumeId,
+        fileId: FileId,
+        revision: Revision,
+    ): Result<Boolean> = coRunCatching {
         try {
             val blocks = revision.blocks
                 .map { block ->
-                    val file = getBlockFile(fileId.userId, volumeId, revisionId, block)
+                    val file = getBlockFile(fileId.userId, volumeId, revision.id, block)
                     block to requireNotNull(file) { "Cannot get block to verify download" }
                 }
-                .moveBlocksDependingOnOfflineState(volumeId, fileId, revisionId)
+                .moveBlocksDependingOnOfflineState(volumeId, fileId, revision.id)
                 .map { (block, file) -> block.copy(url = file.path) }
             setDownloadState(
                 linkId = fileId,

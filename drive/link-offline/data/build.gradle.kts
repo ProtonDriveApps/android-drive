@@ -31,4 +31,5 @@ driveModule(
 ) {
     api(project(":drive:link:data"))
     api(project(":drive:link-offline:domain"))
+    implementation(project(":drive:photo:data"))
 }

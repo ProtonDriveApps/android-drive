@@ -24,6 +24,7 @@ import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.function.pagedList
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.file.base.domain.entity.Block
+import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.extension.userId
@@ -98,6 +99,17 @@ class LinkDownloadRepositoryImpl(
             shareId = folderId.shareId.id,
             folderId = folderId.id,
             excludeMimeTypes = excludeMimeTypes,
+            limit = count,
+            offset = fromIndex,
+        )
+    }.all { state -> state == LinkDownloadState.DOWNLOADED }
+
+    override suspend fun areAllAlbumPhotosDownloaded(
+        albumId: AlbumId,
+    ): Boolean = pagedList(configurationProvider.dbPageSize) { fromIndex, count ->
+        db.getAllAlbumChildrenStates(
+            userId = albumId.userId,
+            albumId = albumId.id,
             limit = count,
             offset = fromIndex,
         )

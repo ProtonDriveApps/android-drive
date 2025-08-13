@@ -21,7 +21,11 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.drive.drivelink.download.data.repository.DownloadFileRepositoryImpl
+import me.proton.core.drive.drivelink.download.data.repository.DownloadParentLinkRepositoryImpl
 import me.proton.core.drive.drivelink.download.data.repository.DriveLinkDownloadRepositoryImpl
+import me.proton.core.drive.drivelink.download.domain.repository.DownloadFileRepository
+import me.proton.core.drive.drivelink.download.domain.repository.DownloadParentLinkRepository
 import me.proton.core.drive.drivelink.download.domain.repository.DriveLinkDownloadRepository
 import javax.inject.Singleton
 
@@ -32,4 +36,12 @@ interface DownloadBindModule {
     @Binds
     @Singleton
     fun bindsRepositoryImpl(impl: DriveLinkDownloadRepositoryImpl): DriveLinkDownloadRepository
+
+    @Binds
+    @Singleton
+    fun bindsDownloadFileRepository(impl: DownloadFileRepositoryImpl): DownloadFileRepository
+
+    @Binds
+    @Singleton
+    fun bindsDownloadParentLinkRepository(impl: DownloadParentLinkRepositoryImpl): DownloadParentLinkRepository
 }

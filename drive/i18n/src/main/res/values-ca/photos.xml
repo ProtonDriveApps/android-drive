@@ -133,7 +133,7 @@
   <string name="photos_favorite_empty_description">Les vostres fotos preferides apareixeran aquí.</string>
   <string name="photos_screenshots_empty_title">Cap captura de pantalla</string>
   <string name="photos_screenshots_empty_description">Les vostres captures de pantalla apareixeran aquí.</string>
-  <string name="photos_videos_empty_title">Cap vídeo</string>
+  <string name="photos_videos_empty_title">Sense vídeos</string>
   <string name="photos_videos_empty_description">Els vostres vídeos apareixeran aquí.</string>
   <string name="photos_livephotos_empty_title">Cap foto en directe</string>
   <string name="photos_livephotos_empty_description">Les vostres fotos en directe apareixeran aquí.</string>

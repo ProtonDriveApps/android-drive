@@ -17,10 +17,10 @@
   ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <resources>
-  <string name="albums_title">Albummer</string>
+  <string name="albums_title">Album</string>
   <string name="albums_new_album_name_hint">Albumnavn</string>
   <string name="albums_new_album_created_successfully">Album oprettet</string>
-  <string name="albums_filter_my_albums">Mine albummer</string>
+  <string name="albums_filter_my_albums">Mine album</string>
   <!--
         Variable %1$s is a number of photos in the album
         Example:
@@ -65,8 +65,8 @@
             "17 items added to album"
     -->
   <plurals name="in_app_notification_add_to_album_success">
-    <item quantity="one">%1$d item added to album</item>
-    <item quantity="other">%1$d items added to album</item>
+    <item quantity="one">%1$d element tilføjet til album</item>
+    <item quantity="other">%1$d elementer tilføjet til album</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -76,7 +76,7 @@
     -->
   <plurals name="in_app_notification_add_to_album_already_exists">
     <item quantity="one">%1$d element findes allerede</item>
-    <item quantity="other">%1$d items already exist</item>
+    <item quantity="other">%1$d elementer findes allerede</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -95,8 +95,8 @@
             "17 items added to your Drive"
     -->
   <plurals name="in_app_notification_add_to_stream_success">
-    <item quantity="one">%1$d item added to your Drive</item>
-    <item quantity="other">%1$d items added to your Drive</item>
+    <item quantity="one">%1$d element tilføjet til Drive</item>
+    <item quantity="other">%1$d elementer tilføjet til Drive</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -105,8 +105,8 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_stream_already_exists">
-    <item quantity="one">%1$d item already exists</item>
-    <item quantity="other">%1$d items already exist</item>
+    <item quantity="one">%1$d element findes allerede</item>
+    <item quantity="other">%1$d elementer findes allerede</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -125,8 +125,8 @@
             "13 items removed from album"
     -->
   <plurals name="in_app_notification_remove_from_album_success">
-    <item quantity="one">%1$d item removed from album</item>
-    <item quantity="other">%1$d items removed from album</item>
+    <item quantity="one">%1$d element fjernet fra album</item>
+    <item quantity="other">%1$d elementer fjernet fra album</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not removed because removing failed
@@ -139,14 +139,14 @@
     <item quantity="other">%1$d elementer mislykkedes</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Ingen fotos</string>
-  <string name="albums_empty_album_screen_description">Photos that you or other members add will appear here</string>
-  <string name="albums_empty_albums_list_screen_title">Ingen albummer</string>
-  <string name="albums_empty_albums_list_screen_description">Albums that you create or join will appear here</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Albums that you create will appear here</string>
-  <string name="albums_empty_albums_shared_by_me_screen_title">Ingen delte albummer</string>
-  <string name="albums_empty_albums_shared_by_me_screen_description">Albums you\'ve shared will appear here</string>
-  <string name="albums_empty_albums_shared_with_me_screen_title">Ingen albummer delt med mig</string>
-  <string name="albums_empty_albums_shared_with_me_screen_description">Albums shared with you will appear here</string>
+  <string name="albums_empty_album_screen_description">Fotos, som du eller andre medlemmer tilføjer, vises her</string>
+  <string name="albums_empty_albums_list_screen_title">Ingen album</string>
+  <string name="albums_empty_albums_list_screen_description">De album, du opretter eller tilmelder dig, vises her</string>
+  <string name="albums_empty_albums_my_albums_screen_description">De album, du opretter, vises her</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Ingen delte album</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">De album, du deler, vises her</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Ingen album delt med mig</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">De album, andre har delt med dig, vises her</string>
   <!--
         Variable %1$d is a quantity of albums shared
         Example:
@@ -154,21 +154,21 @@
             "3 albums shared with you"
     -->
   <plurals name="shared_with_me_album_invitations_banner_description">
-    <item quantity="one">%1$d album shared with you</item>
-    <item quantity="other">%1$d albums shared with you</item>
+    <item quantity="one">%1$d album delt med dig</item>
+    <item quantity="other">%1$d album delt med dig</item>
   </plurals>
   <string name="albums_share_multiple_photos_options_section_title">Del via</string>
   <string name="albums_share_multiple_photos_options_shared_albums_section_title">Tilføj til delt album</string>
   <string name="albums_share_multiple_photos_options_album_details">Delt album</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nyt delt album</string>
-  <string name="albums_add_to_album_start_message">Adding photos to the encrypted album. Please keep the app open while the process is ongoing.</string>
-  <string name="albums_add_to_albums_options_new_album">Add to new album</string>
-  <string name="albums_add_to_albums_options_shared_album">My shared album</string>
+  <string name="albums_add_to_album_start_message">Tilføjer fotos til det krypterede album. Hold app\'en åben, mens processen er i gang.</string>
+  <string name="albums_add_to_albums_options_new_album">Tilføj til nyt album</string>
+  <string name="albums_add_to_albums_options_shared_album">Mit delte album</string>
   <!--
         Variable %1$s is an album owner name i.e. display name or email
         Example:
             "By Pablo Picasso"
             "By pablo.picasso@example.com"
     -->
-  <string name="albums_shared_with_me_details">By %1$s</string>
+  <string name="albums_shared_with_me_details">Af %1$s</string>
 </resources>

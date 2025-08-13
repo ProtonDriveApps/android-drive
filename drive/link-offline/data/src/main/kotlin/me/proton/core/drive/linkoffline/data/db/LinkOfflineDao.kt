@@ -45,6 +45,25 @@ interface LinkOfflineDao : LinkDao {
     """)
     suspend fun hasAnyLinkOfflineEntity(userId: UserId, shareId: String, linkIds: List<String>): Boolean
 
+    @Query("""
+        SELECT EXISTS (SELECT * FROM AlbumListingEntity
+            LEFT JOIN LinkOfflineEntity ON
+                AlbumListingEntity.user_id = LinkOfflineEntity.user_id AND
+                AlbumListingEntity.share_id = LinkOfflineEntity.share_id AND
+                AlbumListingEntity.id = LinkOfflineEntity.link_id
+            LEFT JOIN AlbumPhotoListingEntity ON
+                AlbumListingEntity.user_id = AlbumPhotoListingEntity.user_id AND
+                AlbumListingEntity.share_id = AlbumPhotoListingEntity.share_id AND
+                AlbumListingEntity.id = AlbumPhotoListingEntity.album_id
+            WHERE
+                AlbumListingEntity.user_id = :userId AND
+                AlbumListingEntity.share_id = :shareId AND
+                AlbumPhotoListingEntity.id = :fileId AND
+                LinkOfflineEntity.link_id IS NOT NULL
+        )
+    """)
+    suspend fun isPartOfAnOfflineAlbum(userId: UserId, shareId: String, fileId: String): Boolean
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertOrIgnore(vararg linkOfflineEntities: LinkOfflineEntity)
 

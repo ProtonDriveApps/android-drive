@@ -50,7 +50,7 @@
   <string name="common_send_action">Envia</string>
   <string name="common_create_action">Crea</string>
   <string name="common_cancel_action">Cancel·la</string>
-  <string name="common_cancel_all_action">Cancel·leu-ho tot</string>
+  <string name="common_cancel_all_action">Cancel·la-ho tot</string>
   <string name="common_got_it_action">Ho heu aconseguit</string>
   <string name="common_next_action">Següent</string>
   <string name="common_save_action">Desa</string>
@@ -87,7 +87,7 @@
   <string name="common_type_pdf">Document PDF</string>
   <string name="common_type_ppt">Presentació</string>
   <string name="common_type_proton_doc">Document de Proton</string>
-  <string name="common_type_proton_sheet">Full de càlcul de Proton</string>
+  <string name="common_type_proton_sheet">Full de càlcul del Proton</string>
   <string name="common_type_text">Text</string>
   <string name="common_type_trustedkey">Clau de confiança</string>
   <string name="common_type_unknown">Binari</string>

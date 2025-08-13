@@ -157,7 +157,7 @@
   <string name="photos_important_updates_subtitle">Kuvakirjaston päivitys vaaditaan</string>
   <string name="photos_important_updates_description">Tämä nopea päivitys valmistelee kuviasi uusia ominaisuuksia, kuten suodattimia ja albumeita, varten</string>
   <string name="photos_important_updates_cancel_action">Muistuta myöhemmin</string>
-  <string name="photos_tags_migration_title">Tags migration</string>
+  <string name="photos_tags_migration_title">Tunnisteiden siirto</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates
         Example:
@@ -165,8 +165,8 @@
            Finished, 12 345 files were migrated.
     -->
   <plurals name="photos_tags_migration_finished">
-    <item quantity="one">Finished, %1$s file was migrated.</item>
-    <item quantity="other">Finished, %1$s files were migrated.</item>
+    <item quantity="one">Valmista. %1$s tiedosto siirrettiin.</item>
+    <item quantity="other">Valmista. %1$s tiedostoa siirrettiin.</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos to migrate
@@ -176,7 +176,7 @@
            Ongoing, migrating 12 345 files, 123 waiting for download.
     -->
   <plurals name="photos_tags_migration_ongoing">
-    <item quantity="one">Ongoing, migrating %1$s file, %2$s waiting for download.</item>
-    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="one">Menossa. Siirretään %1$s tiedostoa, %2$s odottaa lataamista.</item>
+    <item quantity="other">Menossa. Siirretään %1$s tiedostoa, %2$s odottaa lataamista.</item>
   </plurals>
 </resources>

@@ -27,6 +27,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -69,6 +70,7 @@ import me.proton.android.drive.photos.presentation.state.AlbumsItem
 import me.proton.android.drive.photos.presentation.viewevent.AlbumsViewEvent
 import me.proton.android.drive.photos.presentation.viewstate.AlbumsViewState
 import me.proton.core.compose.theme.ProtonDimens
+import me.proton.core.compose.theme.ProtonDimens.ExtraSmallSpacing
 import me.proton.core.compose.theme.ProtonTheme
 import me.proton.core.crypto.common.pgp.VerificationStatus
 import me.proton.core.domain.entity.UserId
@@ -88,6 +90,7 @@ import me.proton.core.drive.base.presentation.extension.onEmpty
 import me.proton.core.drive.base.presentation.extension.onError
 import me.proton.core.drive.base.presentation.extension.onLoading
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.files.presentation.component.files.OfflineIcon
 import me.proton.core.drive.files.presentation.extension.LayoutType
 import me.proton.core.drive.files.presentation.extension.driveLinkSemantics
 import me.proton.core.drive.link.domain.entity.AlbumId
@@ -336,7 +339,7 @@ fun AlbumItem(
             )
         } ?: AlbumItem(
             albumName = "",
-            albumDetails = "",
+            albumDetails = {},
             isAlbumNameEncrypted = true,
             albumPhotoCount = albumsItem.photoCount,
             modifier = modifier,
@@ -357,7 +360,12 @@ fun AlbumItem(
     val localContext = LocalContext.current
     AlbumItem(
         albumName = album.name,
-        albumDetails = album.details(appContext = localContext, useCreationTime = false),
+        albumDetails = {
+            AlbumDetails(
+                album = album,
+                details = album.details(appContext = localContext, useCreationTime = false),
+            )
+        },
         isAlbumNameEncrypted = album.cryptoName is CryptoProperty.Encrypted,
         albumPhotoCount = album.photoCount,
         modifier = modifier
@@ -371,7 +379,7 @@ fun AlbumItem(
 @Composable
 fun AlbumItem(
     albumName: String,
-    albumDetails: String,
+    albumDetails: @Composable () -> Unit,
     isAlbumNameEncrypted: Boolean,
     albumPhotoCount: Long,
     placeholderImageResId: Int,
@@ -383,7 +391,7 @@ fun AlbumItem(
     Column(
         modifier = modifier
             .padding(
-                top = ProtonDimens.ExtraSmallSpacing,
+                top = ExtraSmallSpacing,
                 bottom = ProtonDimens.DefaultSpacing,
                 start = ProtonDimens.DefaultSpacing,
                 end = ProtonDimens.DefaultSpacing,
@@ -417,16 +425,27 @@ fun AlbumItem(
                 }
             }
             Spacer(modifier = Modifier.height(ProtonDimens.ExtraSmallSpacing))
-
-            Text(
-                text = albumDetails,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                color = ProtonTheme.colors.textWeak,
-                style = ProtonTheme.typography.captionRegular,
-                modifier = Modifier.testTag(ProtonPreviewAlbumItemTestTags.albumDetails),
-            )
+            albumDetails()
         }
+    }
+}
+
+@Composable
+fun AlbumDetails(
+    album: DriveLink.Album,
+    details: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier) {
+        OfflineIcon(modifier = Modifier.padding(end = ExtraSmallSpacing), link = album)
+        Text(
+            text = details,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            color = ProtonTheme.colors.textWeak,
+            style = ProtonTheme.typography.captionRegular,
+            modifier = Modifier.testTag(ProtonPreviewAlbumItemTestTags.albumDetails),
+        )
     }
 }
 

@@ -30,7 +30,7 @@ driveModule(
     room = true,
 ) {
     api(project(":drive:link:data"))
-
-    implementation(project(":drive:link-download:domain"))
+    api(project(":drive:link-download:domain"))
+    api(project(":drive:photo:data"))
 }
 

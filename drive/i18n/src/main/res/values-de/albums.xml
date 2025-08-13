@@ -19,7 +19,7 @@
 <resources>
   <string name="albums_title">Alben</string>
   <string name="albums_new_album_name_hint">Albumname</string>
-  <string name="albums_new_album_created_successfully">Album erstellt.</string>
+  <string name="albums_new_album_created_successfully">Album erstellt</string>
   <string name="albums_filter_my_albums">Meine Alben</string>
   <!--
         Variable %1$s is a number of photos in the album

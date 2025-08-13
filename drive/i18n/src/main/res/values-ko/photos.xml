@@ -132,7 +132,7 @@
   <string name="photos_screenshots_empty_description">스크린샷이 여기에 표시됩니다</string>
   <string name="photos_videos_empty_title">동영상 없음</string>
   <string name="photos_videos_empty_description">동영상이 여기에 표시됩니다</string>
-  <string name="photos_livephotos_empty_title">Live Photro 사진 없음</string>
+  <string name="photos_livephotos_empty_title">Live Photo 사진 없음</string>
   <string name="photos_livephotos_empty_description">Live Photo 사진이 여기에 표시됩니다</string>
   <string name="photos_motionphotos_empty_title">움직이는 사진 없음</string>
   <string name="photos_motionphotos_empty_description">움직이는 사진이 여기에 표시됩니다</string>

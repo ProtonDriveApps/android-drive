@@ -60,6 +60,7 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
@@ -79,6 +80,7 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgres
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
+import me.proton.core.drive.feature.flag.domain.usecase.IsDownloadManagerEnabled
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
 import me.proton.core.drive.link.domain.entity.FileId
@@ -134,6 +136,7 @@ class FilesViewModel @Inject constructor(
     private val onFilesDriveLinkError: OnFilesDriveLinkError,
     private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     private val configurationProvider: ConfigurationProvider,
+    private val isDownloadManagerEnabled: IsDownloadManagerEnabled,
 ) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
@@ -142,6 +145,9 @@ class FilesViewModel @Inject constructor(
     private val folderId = savedStateHandle.get<String>(Screen.Files.FOLDER_ID)?.let { folderId ->
         shareId?.let { FolderId(ShareId(userId, shareId), folderId) }
     }
+    private val isDownloadEnabled: StateFlow<Boolean> = flowOf {
+        isDownloadManagerEnabled(userId)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
     private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
     val driveLink: StateFlow<DriveLink.Folder?> = retryTrigger.transformLatest {
         emitAll(
@@ -394,7 +400,7 @@ class FilesViewModel @Inject constructor(
 
     fun getDownloadProgressFlow(link: DriveLink): Flow<Percentage>? =
         if (link is DriveLink.File) {
-            getDownloadProgress(link)
+            getDownloadProgress(link, isDownloadEnabled.value)
         } else {
             null
         }

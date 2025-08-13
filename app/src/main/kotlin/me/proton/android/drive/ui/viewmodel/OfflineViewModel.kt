@@ -50,7 +50,6 @@ import me.proton.android.drive.ui.viewevent.OfflineViewEvent
 import me.proton.android.drive.ui.viewstate.OfflineViewState
 import me.proton.android.drive.usecase.OpenProtonDocumentInBrowser
 import me.proton.core.domain.arch.onSuccess
-import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Percentage
@@ -61,7 +60,6 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.effect.ListEffect
-import me.proton.core.drive.base.presentation.extension.require
 import me.proton.core.drive.base.presentation.state.ListContentAppendingState
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
@@ -72,6 +70,7 @@ import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgress
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetPagedOfflineDriveLinksList
+import me.proton.core.drive.feature.flag.domain.usecase.IsDownloadManagerEnabled
 import me.proton.core.drive.files.presentation.state.FilesViewState
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
@@ -86,6 +85,7 @@ import me.proton.drive.android.settings.domain.entity.LayoutType
 import me.proton.drive.android.settings.domain.usecase.GetLayoutType
 import me.proton.drive.android.settings.domain.usecase.ToggleLayoutType
 import javax.inject.Inject
+import me.proton.core.drive.base.domain.extension.flowOf as baseFlowOf
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 import me.proton.core.presentation.R as CorePresentation
@@ -105,12 +105,16 @@ class OfflineViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     private val broadcastMessages: BroadcastMessages,
+    private val isDownloadManagerEnabled: IsDownloadManagerEnabled,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
     private val shareId = savedStateHandle.get<String>(Screen.Files.SHARE_ID)
     private val folderId = savedStateHandle.get<String>(Screen.Files.FOLDER_ID)?.let { folderId ->
         shareId?.let { FolderId(ShareId(userId, shareId), folderId) }
     }
+    private val isDownloadEnabled: StateFlow<Boolean> = baseFlowOf {
+        isDownloadManagerEnabled(userId)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
     val driveLink: StateFlow<DriveLink.Folder?> = getDriveLink(userId, folderId, failOnDecryptionError = false)
         .map { result ->
             result
@@ -210,6 +214,7 @@ class OfflineViewModel @Inject constructor(
         navigateToAlbum: (AlbumId) -> Unit,
         navigateToSortingDialog: (Sorting) -> Unit,
         navigateToFileOrFolderOptions: (linkId: LinkId) -> Unit,
+        navigateToAlbumOptions: (AlbumId) -> Unit,
         navigateBack: () -> Unit,
         lifecycle: Lifecycle,
     ): OfflineViewEvent = object : OfflineViewEvent {
@@ -249,7 +254,13 @@ class OfflineViewModel @Inject constructor(
             coroutineScope = viewModelScope,
             emptyState = MutableStateFlow(emptyState),
         ) { }
-        override val onMoreOptions = { driveLink: DriveLink -> navigateToFileOrFolderOptions(driveLink.id) }
+        override val onMoreOptions = { driveLink: DriveLink ->
+            if (driveLink is DriveLink.Album) {
+                navigateToAlbumOptions(driveLink.id)
+            } else {
+                navigateToFileOrFolderOptions(driveLink.id)
+            }
+        }
         override val onToggleLayout = this@OfflineViewModel::onToggleLayout
         override val onErrorAction = { retryList() }
         override val onAppendErrorAction = { retryList() }
@@ -259,7 +270,7 @@ class OfflineViewModel @Inject constructor(
         get() = _listEffect.asSharedFlow()
 
     fun getDownloadProgressFlow(driveLink: DriveLink): Flow<Percentage>? = if (driveLink is DriveLink.File) {
-        getDownloadProgress(driveLink)
+        getDownloadProgress(driveLink, isDownloadEnabled.value)
     } else {
         null
     }
