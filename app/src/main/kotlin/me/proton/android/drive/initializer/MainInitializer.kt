@@ -65,6 +65,8 @@ class MainInitializer : Initializer<Unit> {
         FirstAppUsageInitializer::class.java,
         UploadInitializer::class.java,
         PhotoShareMigrationManagerInitializer::class.java,
+        DownloadInitializer::class.java,
+        WebViewInitializer::class.java,
     )
 
     companion object {

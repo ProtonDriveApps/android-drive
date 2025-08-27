@@ -113,7 +113,7 @@ class ProcessIntent @Inject constructor(
     ) {
         with (validateExternalUri) {
             getParcelableArrayListExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)?.let {
-                val uris = it.validate()
+                val uris = it.filterNotNull().validate()
                 val userId = accountViewModel.primaryAccount.filterNotNull().first().userId
                 val size = uris.size
                 validateUploadLimit(userId, size)

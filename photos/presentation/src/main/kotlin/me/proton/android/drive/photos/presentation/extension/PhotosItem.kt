@@ -26,10 +26,10 @@ import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.util.kotlin.CoreLogger
 
-fun List<PhotosItem>.getFastScrollAnchors(
+suspend fun List<PhotosItem>.getFastScrollAnchors(
     anchors: Int,
     anchorsInLabel: Int,
-    getLabel: (TimestampS) -> String,
+    getLabel: suspend (TimestampS) -> String,
 ): List<FastScrollAnchor> {
     CoreLogger.d(
         tag = LogTag.PHOTO,

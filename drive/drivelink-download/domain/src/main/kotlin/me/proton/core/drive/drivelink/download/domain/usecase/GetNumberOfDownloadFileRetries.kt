@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2024 Proton AG.
+ * Copyright (c) 2025 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -16,22 +16,22 @@
  * along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package me.proton.core.drive.linkupload.domain.extension
+package me.proton.core.drive.drivelink.download.domain.usecase
 
-import me.proton.core.drive.base.domain.extension.bytes
+import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.drivelink.download.domain.repository.DownloadFileRepository
 import me.proton.core.drive.link.domain.entity.FileId
-import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
-import me.proton.core.drive.observability.domain.metrics.UploadInitiator
+import me.proton.core.drive.volume.domain.entity.VolumeId
+import javax.inject.Inject
 
-val UploadFileLink.fileId get() = linkId?.let { FileId(shareId, linkId) }
+class GetNumberOfDownloadFileRetries @Inject constructor(
+    private val downloadFileRepository: DownloadFileRepository,
+) {
 
-fun UploadFileLink.requireFileId() = requireNotNull(fileId)
-
-val UploadFileLink.sizeOrZero get() = size ?: 0.bytes
-
-val UploadFileLink.isFileEmpty get() = size != null && size.value == 0L
-
-fun UploadFileLink.toInitiator(): UploadInitiator = when (priority) {
-    in 1..UploadFileLink.USER_PRIORITY -> UploadInitiator.explicit
-    else -> UploadInitiator.background
+    suspend operator fun invoke(
+        volumeId: VolumeId, fileId: FileId
+    ): Result<Int> = coRunCatching {
+        downloadFileRepository.getNumberOfRetries(volumeId, fileId)
+            ?: throw NoSuchElementException()
+    }
 }

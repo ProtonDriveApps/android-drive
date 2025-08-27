@@ -41,12 +41,17 @@ import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_REVISI
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_VOLUME_ID
+import me.proton.core.drive.drivelink.download.domain.exception.InvalidBlocksException
+import me.proton.core.drive.drivelink.download.domain.extension.post
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
+import me.proton.core.drive.drivelink.download.domain.usecase.DownloadMetricsNotifier
 import me.proton.core.drive.drivelink.download.domain.usecase.VerifyDownloadedBlocks
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.CoreLogger
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltWorker
 class FileDownloadVerifyWorker @AssistedInject constructor(
@@ -54,6 +59,8 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val workManager: WorkManager,
     private val verifyDownloadedBlocks: VerifyDownloadedBlocks,
+    private val downloadErrorManager: DownloadErrorManager,
+    private val downloadMetricsNotifier: DownloadMetricsNotifier,
 ) : CoroutineWorker(appContext, workerParams) {
     private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
     private val volumeId = VolumeId(requireNotNull(inputData.getString(KEY_VOLUME_ID)))
@@ -67,10 +74,15 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         CoreLogger.d(logTag, "Started verifying downloaded blocks")
         return verifyDownloadedBlocks(volumeId, fileId, revisionId)
-            .onFailure { error -> error.log(logTag) }
+            .onFailure { error ->
+                downloadErrorManager.post(fileId, error, isCancelledByUser = error is CancellationException)
+                downloadMetricsNotifier(fileId, false, error)
+                error.log(logTag)
+            }
             .getOrNull()?.let { verified ->
                 if (verified) {
                     CoreLogger.i(logTag, "File is successfully downloaded")
+                    downloadMetricsNotifier(fileId, true)
                     Result.success()
                 } else {
                     if (retryable) {
@@ -86,6 +98,9 @@ class FileDownloadVerifyWorker @AssistedInject constructor(
                         )
                     }
                     CoreLogger.w(logTag, "Verification failed, retryable = $retryable")
+                    val invalidBlocksException = InvalidBlocksException()
+                    downloadErrorManager.post(fileId, invalidBlocksException)
+                    downloadMetricsNotifier(fileId, false, invalidBlocksException)
                     Result.failure()
                 }
             } ?: Result.failure()

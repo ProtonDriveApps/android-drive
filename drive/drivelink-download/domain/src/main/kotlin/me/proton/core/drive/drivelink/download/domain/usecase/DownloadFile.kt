@@ -36,11 +36,14 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.drivelink.download.domain.exception.InvalidBlocksException
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.file.base.domain.extension.verifyOrDelete
 import me.proton.core.drive.file.base.domain.usecase.GetBlockFile
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.linkdownload.domain.entity.DownloadState
+import me.proton.core.drive.linkdownload.domain.usecase.SetDownloadState
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
@@ -53,6 +56,7 @@ class DownloadFile @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val getPermanentFolder: GetPermanentFolder,
     private val getCacheFolder: GetCacheFolder,
+    private val setDownloadState: SetDownloadState,
 ) {
 
     suspend operator fun invoke(
@@ -103,11 +107,12 @@ class DownloadFile @Inject constructor(
             .onSuccess { isVerified ->
                 if (!isVerified) {
                     deleteDownloadedBlocks(volumeId, fileId, revision.id)
+                    throw InvalidBlocksException()
                 }
             }
             .getOrThrow()
         CoreLogger.d(LogTag.DOWNLOAD, "Downloaded blocks verification: isSuccessful=$verified")
-    }
+    }.onFailure { setDownloadState(fileId, DownloadState.Error) }
 
     private suspend fun List<Block>.blocksForDownload(
         userId: UserId,

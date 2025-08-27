@@ -24,6 +24,7 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.extension.toInitiator
+import me.proton.core.drive.observability.data.extension.toShareType
 import me.proton.core.drive.observability.domain.constraint.CountConstraint
 import me.proton.core.drive.observability.domain.constraint.MinimumIntervalConstraint
 import me.proton.core.drive.observability.domain.metrics.UploadErroringUsersTotal
@@ -37,7 +38,6 @@ import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.share.domain.usecase.GetShare
 import me.proton.core.drive.upload.data.extension.log
 import me.proton.core.drive.upload.data.extension.logTag
-import me.proton.core.drive.upload.data.extension.toShareType
 import me.proton.core.drive.upload.data.extension.toUploadErrorType
 import me.proton.core.drive.upload.domain.handler.UploadErrorHandler
 import me.proton.core.drive.upload.domain.manager.UploadErrorManager

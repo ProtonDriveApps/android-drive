@@ -774,7 +774,7 @@ class PhotosViewModel @Inject constructor(
         locale = Locale.getDefault(),
     )
 
-    fun getFastScrollAnchors(
+    suspend fun getFastScrollAnchors(
         items: List<PhotosItem>,
         anchors: Int,
         anchorsInLabel: Int,

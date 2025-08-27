@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
 import me.proton.core.drive.observability.domain.metrics.UploadErroringUsersTotal.Companion.SCHEMA_ID
-import me.proton.core.drive.observability.domain.metrics.common.Initiator
 import me.proton.core.drive.observability.domain.metrics.common.ShareType
 import me.proton.core.observability.domain.entity.SchemaId
 
@@ -38,13 +37,15 @@ data class UploadErroringUsersTotal(
     data class LabelsData(
         val plan: Plan,
         val shareType: ShareType,
-        val initiator: Initiator,
+        val initiator: UploadInitiator,
     )
 
     @Suppress("EnumEntryName")
     enum class Plan {
         free,
-        paid
+        paid,
+        anonymous,
+        unknown,
     }
 
     companion object {

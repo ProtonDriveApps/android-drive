@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Proton AG.
+ * Copyright (c) 2025 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -27,9 +27,9 @@ import me.proton.core.drive.observability.domain.metrics.common.ShareType
 import me.proton.core.observability.domain.entity.SchemaId
 
 @Serializable
-@Schema(description = "Measures unique successful or failed uploads and number of retries")
-@SchemaId("https://proton.me/drive_upload_success_rate_total_v2.schema.json")
-data class UploadSuccessRateTotal(
+@Schema(description = "Measures unique successful or failed downloads and number of retries")
+@SchemaId("https://proton.me/drive_download_success_rate_total_v1.schema.json")
+data class DownloadSuccessRateTotal(
     override val Labels: LabelsData,
     @Required override val Value: Long = 1,
 ) : DriveObservabilityData() {
@@ -39,6 +39,5 @@ data class UploadSuccessRateTotal(
         val status: ResultStatus,
         val retry: BooleanStatus,
         val shareType: ShareType,
-        val initiator: UploadInitiator,
     )
 }

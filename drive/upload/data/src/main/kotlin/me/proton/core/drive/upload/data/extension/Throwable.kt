@@ -23,12 +23,12 @@ import me.proton.android.drive.verifier.domain.exception.VerifierException
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.api.ProtonApiCode
 import me.proton.core.drive.base.data.extension.isErrno
+import me.proton.core.drive.base.data.extension.isHttpError
 import me.proton.core.drive.base.data.extension.isRetryable
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
 import me.proton.core.drive.observability.domain.metrics.UploadErrorsTotal
 import me.proton.core.drive.upload.domain.exception.InconsistencyException
 import me.proton.core.network.domain.ApiException
-import me.proton.core.network.domain.ApiResult
 import me.proton.core.network.domain.hasProtonErrorCode
 import me.proton.core.network.domain.isHttpError
 import me.proton.core.drive.base.data.extension.log as baseLog
@@ -66,18 +66,10 @@ fun Throwable.toUploadErrorType(): UploadErrorsTotal.Type = when(this) {
         hasProtonErrorCode(ProtonApiCode.EXCEEDED_QUOTA) -> UploadErrorsTotal.Type.free_space_exceeded
         hasProtonErrorCode(ProtonApiCode.TOO_MANY_CHILDREN) -> UploadErrorsTotal.Type.too_many_children
         isHttpError(429) -> UploadErrorsTotal.Type.rate_limited
-        isHttpError(400..499) -> UploadErrorsTotal.Type.http_4xx
-        isHttpError(500..599) -> UploadErrorsTotal.Type.http_5xx
+        isHttpError(400..499) -> UploadErrorsTotal.Type.`4xx`
+        isHttpError(500..599) -> UploadErrorsTotal.Type.`5xx`
         else -> UploadErrorsTotal.Type.unknown
     }
     is VerifierException, is VerificationException -> UploadErrorsTotal.Type.integrity_error
     else -> UploadErrorsTotal.Type.unknown
-}
-
-internal fun ApiException.isHttpError(range: IntRange): Boolean =
-    error.isHttpError(range)
-
-internal fun <T> ApiResult<T>.isHttpError(range: IntRange): Boolean {
-    val httpError = this as? ApiResult.Error.Http
-    return httpError?.httpCode in range
 }

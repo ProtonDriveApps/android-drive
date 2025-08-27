@@ -132,3 +132,8 @@ fun Throwable.isErrno(errno: Int): Boolean = if (cause is ErrnoException) {
 } else {
     cause?.isErrno(errno) ?: false
 }
+
+fun <T> ApiResult<T>.isHttpError(range: IntRange): Boolean {
+    val httpError = this as? ApiResult.Error.Http
+    return httpError?.httpCode in range
+}

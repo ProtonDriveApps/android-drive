@@ -21,6 +21,8 @@ package me.proton.android.drive.photos.presentation.viewmodel
 import android.content.Context
 import android.content.res.Resources
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.log.LogTag
@@ -49,6 +51,8 @@ class SeparatorFormatter constructor(
         @ApplicationContext context: Context
     ) : this(context.resources, System::currentTimeMillis, Locale.getDefault())
 
+    private val mutex = Mutex()
+
     private val sameYear: SimpleDateFormat by lazy {
         SimpleDateFormat("MMMM", locale)
     }
@@ -56,7 +60,7 @@ class SeparatorFormatter constructor(
         SimpleDateFormat("MMMM yyyy", locale)
     }
 
-    fun toSeparator(timestampS: TimestampS): String {
+    suspend fun toSeparator(timestampS: TimestampS): String = mutex.withLock {
         val timestampInSeconds = timestampS.value.coerceIn(minTimestampS.value, maxTimestampS.value)
         val calendar = Calendar.getInstance(locale).apply {
             timeInMillis = timestampInSeconds * 1000L

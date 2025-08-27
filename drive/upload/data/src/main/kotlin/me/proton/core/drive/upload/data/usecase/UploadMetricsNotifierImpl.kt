@@ -25,6 +25,7 @@ import me.proton.core.drive.base.domain.log.LogTag.UploadTag.logTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.extension.toInitiator
+import me.proton.core.drive.observability.data.extension.toShareType
 import me.proton.core.drive.observability.domain.metrics.UploadErrorsTotal
 import me.proton.core.drive.observability.domain.metrics.UploadSuccessRateTotal
 import me.proton.core.drive.observability.domain.metrics.common.BooleanStatus
@@ -32,7 +33,6 @@ import me.proton.core.drive.observability.domain.metrics.common.ResultStatus
 import me.proton.core.drive.observability.domain.metrics.common.ShareType
 import me.proton.core.drive.observability.domain.usecase.EnqueueObservabilityEvent
 import me.proton.core.drive.share.domain.usecase.GetShare
-import me.proton.core.drive.upload.data.extension.toShareType
 import me.proton.core.drive.upload.data.extension.toUploadErrorType
 import me.proton.core.drive.upload.domain.usecase.UploadMetricsNotifier
 import me.proton.core.util.kotlin.CoreLogger

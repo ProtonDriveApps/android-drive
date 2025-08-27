@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Proton AG.
+ * Copyright (c) 2025 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -21,52 +21,48 @@ package me.proton.android.drive.initializer
 import android.content.Context
 import androidx.lifecycle.coroutineScope
 import androidx.startup.Initializer
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import me.proton.android.drive.extension.log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag
-import me.proton.core.drive.upload.domain.handler.UploadErrorHandler
-import me.proton.core.drive.upload.domain.manager.UploadErrorManager
 import me.proton.core.presentation.app.AppLifecycleProvider
+import me.proton.core.util.kotlin.CoreLogger
 
-class UploadInitializer : Initializer<Unit> {
+class WebViewInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
-        with (
+        with(
             EntryPointAccessors.fromApplication(
                 context.applicationContext,
-                UploadInitializerEntryPoint::class.java,
+                WebViewInitializerEntryPoint::class.java
             )
         ) {
-            uploadErrorManager.errors
-                .onEach { uploadError -> handleUploadError(uploadError) }
-                .launchIn(appLifecycleProvider.lifecycle.coroutineScope)
-        }
-    }
-
-    override fun dependencies(): List<Class<out Initializer<*>>> = listOf(
-        WorkManagerInitializer::class.java,
-    )
-
-    private suspend fun UploadInitializerEntryPoint.handleUploadError(uploadError: UploadErrorManager.Error) {
-        uploadErrorHandlers.forEach { uploadErrorHandler ->
-            runCatching {
-                uploadErrorHandler.onError(uploadError)
-            }.onFailure { error ->
-                error.log(LogTag.UPLOAD, "Failed to handle upload error")
+            appLifecycleProvider.lifecycle.coroutineScope.launch(Dispatchers.Default) {
+                runCatching {
+                    if (WebViewFeature.isFeatureSupported(WebViewFeature.START_SAFE_BROWSING)) {
+                        @Suppress("DEPRECATION")
+                        WebViewCompat.startSafeBrowsing(context.applicationContext) { isSuccess ->
+                            CoreLogger.d(LogTag.WEBVIEW, "Start safe browsing: $isSuccess")
+                        }
+                    }
+                }.getOrNull(LogTag.WEBVIEW, "startSafeBrowsing failed")
             }
         }
     }
 
+    override fun dependencies(): List<Class<out Initializer<*>>> = listOf(
+        LoggerInitializer::class.java,
+    )
+
     @EntryPoint
     @InstallIn(SingletonComponent::class)
-    interface UploadInitializerEntryPoint {
+    interface WebViewInitializerEntryPoint {
         val appLifecycleProvider: AppLifecycleProvider
-        val uploadErrorManager: UploadErrorManager
-        val uploadErrorHandlers: @JvmSuppressWildcards Set<UploadErrorHandler>
     }
 }

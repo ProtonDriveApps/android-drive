@@ -38,4 +38,5 @@ interface DownloadFileRepository {
     suspend fun updateStateToFailed(id: Long, runAt: Long = System.currentTimeMillis())
     suspend fun getAllWithState(userId: UserId, state: DownloadFileLink.State): List<DownloadFileLink>
     suspend fun resetStateAndIncreaseRetries(id: Long, state: DownloadFileLink.State)
+    suspend fun getNumberOfRetries(volumeId: VolumeId, fileId: FileId): Int?
 }

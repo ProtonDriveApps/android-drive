@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 Proton AG.
+ * Copyright (c) 2025 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -16,24 +16,19 @@
  * along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-plugins {
-    id("com.android.library")
-}
+package me.proton.core.drive.drivelink.download.domain.extension
 
-android {
-    namespace = "me.proton.core.drive.drivelink.download.domain"
-}
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
+import me.proton.core.drive.link.domain.entity.FileId
 
-driveModule(
-    hilt = true,
-) {
-    api(project(":drive:drivelink:domain"))
-    api(project(":drive:link-download:domain"))
-    api(project(":drive:folder:domain"))
-    api(project(":drive:observability:domain"))
-    api(project(":drive:photo:domain"))
-
-    implementation(project(":drive:drivelink-crypto:domain"))
-    implementation(project(":drive:crypto-base:domain")) // For VerificationException maybe we should this class somewhere else
-    implementation(project(":drive:file:base:domain"))
-}
+suspend fun DownloadErrorManager.post(
+    fileId: FileId,
+    throwable: Throwable,
+    isCancelledByUser: Boolean = false,
+) = post(
+    DownloadErrorManager.Error(
+        fileId = fileId,
+        throwable = throwable,
+        isCancelledByUser = isCancelledByUser,
+    )
+)

@@ -118,4 +118,17 @@ class DownloadFileRepositoryImpl @Inject constructor(
         }
         Unit
     }
+
+    override suspend fun getNumberOfRetries(
+        volumeId: VolumeId,
+        fileId: FileId,
+    ): Int? =
+        dao
+            .get(
+                userId = fileId.userId,
+                volumeId = volumeId.id,
+                shareId = fileId.shareId.id,
+                fileId = fileId.id,
+            )
+            ?.numberOfRetries
 }

@@ -21,7 +21,6 @@ package me.proton.core.drive.observability.domain.metrics
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
-import me.proton.core.drive.observability.domain.metrics.common.Initiator
 import me.proton.core.drive.observability.domain.metrics.common.ShareType
 import me.proton.core.observability.domain.entity.SchemaId
 
@@ -37,7 +36,7 @@ data class UploadErrorsTotal(
     data class LabelsData(
         val type: Type,
         val shareType: ShareType,
-        val initiator: Initiator,
+        val initiator: UploadInitiator,
     )
 
     @Suppress("EnumEntryName")
@@ -48,8 +47,8 @@ data class UploadErrorsTotal(
         server_error,
         integrity_error,
         rate_limited,
-        http_4xx,
-        http_5xx,
+        `4xx`,
+        `5xx`,
         unknown
     }
 }

@@ -53,6 +53,8 @@ import me.proton.core.drive.volume.domain.usecase.GetVolumes
 import me.proton.core.eventmanager.domain.EventManagerConfig
 import me.proton.core.eventmanager.domain.EventManagerProvider
 import me.proton.core.presentation.app.AppLifecycleProvider
+import java.util.Collections
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -68,7 +70,8 @@ class DriveEventManager @Inject constructor(
     private val repository: VolumeConfigRepository
 ) {
     private val scopes = mutableMapOf<UserId, CoroutineScope>()
-    private val startedConfigs = mutableSetOf<VolumeConfig>()
+    private val startedConfigs: MutableSet<VolumeConfig> =
+        Collections.newSetFromMap(ConcurrentHashMap())
 
     fun start() {
         accountManager.observe(appLifecycleProvider.lifecycle, minActiveState = Lifecycle.State.CREATED)
@@ -158,11 +161,12 @@ class DriveEventManager @Inject constructor(
     }
 
     private suspend fun Account.stopListeningToVolumesEvents() {
-        startedConfigs.forEach { config ->
+        val configs = startedConfigs.toList()
+        startedConfigs.clear()
+        configs.forEach { config ->
             eventManagerProvider.get(
                 EventManagerConfig.Drive.Volume(userId, config.volumeId.id, config.minimumFetchInterval)
             ).stop()
         }
-        startedConfigs.clear()
     }
 }

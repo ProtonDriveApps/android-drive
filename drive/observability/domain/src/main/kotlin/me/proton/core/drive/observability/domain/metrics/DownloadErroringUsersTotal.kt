@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Proton AG.
+ * Copyright (c) 2025 Proton AG.
  * This file is part of Proton Core.
  *
  * Proton Core is free software: you can redistribute it and/or modify
@@ -21,24 +21,33 @@ package me.proton.core.drive.observability.domain.metrics
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Required
 import kotlinx.serialization.Serializable
-import me.proton.core.drive.observability.domain.metrics.common.BooleanStatus
-import me.proton.core.drive.observability.domain.metrics.common.ResultStatus
+import me.proton.core.drive.observability.domain.metrics.DownloadErroringUsersTotal.Companion.SCHEMA_ID
 import me.proton.core.drive.observability.domain.metrics.common.ShareType
 import me.proton.core.observability.domain.entity.SchemaId
 
 @Serializable
-@Schema(description = "Measures unique successful or failed uploads and number of retries")
-@SchemaId("https://proton.me/drive_upload_success_rate_total_v2.schema.json")
-data class UploadSuccessRateTotal(
+@Schema(description = "Measures how many users experienced download error in the past 10 minutes")
+@SchemaId(SCHEMA_ID)
+data class DownloadErroringUsersTotal(
     override val Labels: LabelsData,
     @Required override val Value: Long = 1,
 ) : DriveObservabilityData() {
 
     @Serializable
     data class LabelsData(
-        val status: ResultStatus,
-        val retry: BooleanStatus,
+        val plan: Plan,
         val shareType: ShareType,
-        val initiator: UploadInitiator,
     )
+
+    @Suppress("EnumEntryName")
+    enum class Plan {
+        free,
+        paid,
+        anonymous,
+        unknown,
+    }
+
+    companion object {
+        const val SCHEMA_ID = "https://proton.me/drive_download_erroring_users_total_v1.schema.json"
+    }
 }

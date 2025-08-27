@@ -39,6 +39,7 @@ driveModule(
     implementation(project(":drive:folder:domain"))
     implementation(project(":drive:link:data"))
     implementation(project(":drive:link:presentation"))
+    implementation(project(":drive:observability:data"))
     implementation(project(":drive:share:data"))
     implementation(project(":drive:worker:data"))
     implementation(project(":verifier:data"))

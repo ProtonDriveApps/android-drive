@@ -44,14 +44,21 @@ import me.proton.core.drive.drivelink.download.data.extension.setSize
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_BLOCK_HASH
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_BLOCK_INDEX
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_BLOCK_URL
+import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FILE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_REVISION_ID
+import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_VOLUME_ID
+import me.proton.core.drive.drivelink.download.domain.extension.post
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadBlock
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.file.base.domain.exception.CancelledException
 import me.proton.core.drive.file.base.domain.extension.verifyOrDelete
 import me.proton.core.drive.file.base.domain.usecase.GetBlockFile
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.CoreLogger
 import java.util.concurrent.TimeUnit
@@ -62,6 +69,7 @@ class BlockDownloadWorker @AssistedInject constructor(
     @Assisted workerParams: WorkerParameters,
     private val getBlockFile: GetBlockFile,
     private val downloadBlock: DownloadBlock,
+    private val downloadErrorManager: DownloadErrorManager,
 ) : CoroutineWorker(appContext, workerParams) {
     private val userId = UserId(requireNotNull(inputData.getString(KEY_USER_ID)))
     private val volumeId = VolumeId(requireNotNull(inputData.getString(KEY_VOLUME_ID)))
@@ -70,6 +78,11 @@ class BlockDownloadWorker @AssistedInject constructor(
     private val url = requireNotNull(inputData.getString(KEY_BLOCK_URL))
     private val hash = requireNotNull(inputData.getString(KEY_BLOCK_HASH))
     private val logTag = "${LogTag.DOWNLOAD}.${revisionId.logId()}.$index"
+    private val fileId: FileId? = inputData.getString(KEY_SHARE_ID)?.let { shareIdString ->
+        inputData.getString(KEY_FILE_ID)?.let { fileIdString ->
+            FileId(ShareId(userId, shareIdString), fileIdString)
+        }
+    }
 
     override suspend fun doWork(): Result = coroutineScope {
         CoreLogger.d(logTag, "Started downloading block")
@@ -105,6 +118,9 @@ class BlockDownloadWorker @AssistedInject constructor(
                         "Downloading block failed"
                     }
                 )
+                fileId?.let {
+                    downloadErrorManager.post(fileId, error, error.cause is CancelledException)
+                }
             }
         job.cancelAndJoin()
         Result.success(getSizeData(0L))
@@ -112,8 +128,8 @@ class BlockDownloadWorker @AssistedInject constructor(
 
     companion object {
         fun getWorkRequest(
-            userId: UserId,
             volumeId: String,
+            fileId: FileId,
             revisionId: String,
             block: Block,
             isRetryable: Boolean,
@@ -128,8 +144,10 @@ class BlockDownloadWorker @AssistedInject constructor(
             )
             .setInputData(
                 Data.Builder()
-                    .putString(KEY_USER_ID, userId.id)
+                    .putString(KEY_USER_ID, fileId.userId.id)
                     .putString(KEY_VOLUME_ID, volumeId)
+                    .putString(KEY_SHARE_ID, fileId.shareId.id)
+                    .putString(KEY_FILE_ID, fileId.id)
                     .putString(KEY_REVISION_ID, revisionId)
                     .putLong(KEY_BLOCK_INDEX, block.index)
                     .putString(KEY_BLOCK_URL, block.url)
@@ -141,7 +159,7 @@ class BlockDownloadWorker @AssistedInject constructor(
                 WorkRequest.MIN_BACKOFF_MILLIS,
                 TimeUnit.MILLISECONDS
             )
-            .addTags(listOf(userId.id) + tags)
+            .addTags(listOf(fileId.userId.id) + tags)
             .build()
     }
 }

@@ -48,12 +48,15 @@ import me.proton.core.drive.drivelink.download.data.manager.DownloadManagerImpl.
 import me.proton.core.drive.drivelink.download.data.worker.FileDownloaderWorker
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadFileLink
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadParentLink
+import me.proton.core.drive.drivelink.download.domain.extension.post
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import me.proton.core.drive.drivelink.download.domain.manager.PipelineManager
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadFileRepository
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadParentLinkRepository
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadCleanup
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadFile
+import me.proton.core.drive.drivelink.download.domain.usecase.DownloadMetricsNotifier
 import me.proton.core.drive.folder.domain.usecase.GetDescendants
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.File
@@ -74,6 +77,7 @@ import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.cancellation.CancellationException
 
 @Singleton
 class DownloadManagerImpl @Inject constructor(
@@ -91,6 +95,8 @@ class DownloadManagerImpl @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val getAllAlbumChildren: GetAllAlbumChildren,
     private val areAllAlbumPhotosDownloaded: AreAllAlbumPhotosDownloaded,
+    private val downloadErrorManager: DownloadErrorManager,
+    private val downloadMetricsNotifier: DownloadMetricsNotifier,
 ) : DownloadManager, DownloadManager.FileDownloader, PipelineManager.TaskProvider<DownloadFileTask> {
     private var userId: UserId? = null
     private val runningTasks = MutableStateFlow(emptySet<DownloadFileTask>())
@@ -195,6 +201,7 @@ class DownloadManagerImpl @Inject constructor(
 
     override suspend fun taskCancelled(task: DownloadFileTask, isCancelledByStop: Boolean) {
         CoreLogger.d(task.downloadFileLink.fileId.logTag, "taskCancelled pipelineId=${task.pipelineId} isCancelledByStop=$isCancelledByStop")
+        downloadErrorManager.post(task.downloadFileLink.fileId, CancellationException(), true)
         runningTasks.value -= task
         if (task.downloadFileLink.retryable && !isCancelledByStop && task.downloadFileLink.numberOfRetries < configurationProvider.maxApiAutoRetries) {
             downloadFileRepository.updateStateToFailed(task.downloadFileLink.id)
@@ -219,12 +226,15 @@ class DownloadManagerImpl @Inject constructor(
 
     private suspend fun taskCompleteSuccessfully(task: DownloadFileTask) {
         CoreLogger.d(task.downloadFileLink.fileId.logTag, "taskCompleted pipelineId=${task.pipelineId}")
+        downloadMetricsNotifier(task.downloadFileLink.fileId, true)
         runningTasks.value -= task
         downloadFileRepository.delete(task.downloadFileLink.id)
     }
 
     private suspend fun taskCompletedWithException(task: DownloadFileTask, throwable: Throwable) {
         CoreLogger.d(task.downloadFileLink.fileId.logTag, throwable, "taskCompleted pipelineId=${task.pipelineId}")
+        downloadErrorManager.post(task.downloadFileLink.fileId, throwable)
+        downloadMetricsNotifier(task.downloadFileLink.fileId, false, throwable)
         runningTasks.value -= task
         if (task.downloadFileLink.retryable && task.downloadFileLink.numberOfRetries < configurationProvider.maxApiAutoRetries) {
             downloadFileRepository.updateStateToFailed(task.downloadFileLink.id)

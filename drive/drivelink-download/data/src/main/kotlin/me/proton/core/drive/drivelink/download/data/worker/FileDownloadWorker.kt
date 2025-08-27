@@ -49,6 +49,9 @@ import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_REVISI
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_VOLUME_ID
+import me.proton.core.drive.drivelink.download.domain.extension.post
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
+import me.proton.core.drive.drivelink.download.domain.usecase.DownloadMetricsNotifier
 import me.proton.core.drive.drivelink.download.domain.usecase.SetDownloadingAndGetRevision
 import me.proton.core.drive.file.base.domain.entity.Revision
 import me.proton.core.drive.link.domain.entity.FileId
@@ -74,6 +77,8 @@ class FileDownloadWorker @AssistedInject constructor(
     private val setDownloadingAndGetRevision: SetDownloadingAndGetRevision,
     private val setDownloadState: SetDownloadState,
     private val configurationProvider: ConfigurationProvider,
+    private val downloadErrorManager: DownloadErrorManager,
+    private val downloadMetricsNotifier: DownloadMetricsNotifier,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -90,8 +95,10 @@ class FileDownloadWorker @AssistedInject constructor(
     override suspend fun doLimitedRetryWork(): Result =
         try {
             CoreLogger.d(logTag, "Started downloading file with revision ${revisionId.logId()}")
-            downloadBlocks(setDownloadingAndGetRevision(fileId, revisionId).getOrThrow())
+            downloadBlocks(fileId, setDownloadingAndGetRevision(fileId, revisionId).getOrThrow())
         } catch (e: Exception) {
+            downloadErrorManager.post(fileId, e, e is CancellationException)
+            downloadMetricsNotifier(fileId, false, e)
             if (e is CancellationException) {
                 throw e
             }
@@ -113,11 +120,11 @@ class FileDownloadWorker @AssistedInject constructor(
         }
 
     @SuppressLint("EnqueueWork")
-    private suspend fun downloadBlocks(revision: Revision): Result {
+    private suspend fun downloadBlocks(fileId: FileId, revision: Revision): Result {
         revision.blocks.map { block ->
             BlockDownloadWorker.getWorkRequest(
-                userId = userId,
                 volumeId = volumeId,
+                fileId = fileId,
                 revisionId = revisionId,
                 block = block,
                 isRetryable = isRetryable,

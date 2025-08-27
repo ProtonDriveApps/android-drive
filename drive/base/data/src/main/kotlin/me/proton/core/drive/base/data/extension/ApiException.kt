@@ -49,3 +49,6 @@ fun ApiException.log(
     }
     loggerLevel.log(tag, this, message)
 }
+
+fun ApiException.isHttpError(range: IntRange): Boolean =
+    error.isHttpError(range)

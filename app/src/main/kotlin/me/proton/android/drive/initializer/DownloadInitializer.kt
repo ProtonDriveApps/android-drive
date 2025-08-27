@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Proton AG.
+ * Copyright (c) 2025 Proton AG.
  * This file is part of Proton Drive.
  *
  * Proton Drive is free software: you can redistribute it and/or modify
@@ -29,21 +29,22 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.proton.android.drive.extension.log
 import me.proton.core.drive.base.domain.log.LogTag
-import me.proton.core.drive.upload.domain.handler.UploadErrorHandler
-import me.proton.core.drive.upload.domain.manager.UploadErrorManager
+import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.drivelink.download.data.handler.ObservabilityDownloadErrorHandler
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
 import me.proton.core.presentation.app.AppLifecycleProvider
 
-class UploadInitializer : Initializer<Unit> {
+class DownloadInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
         with (
             EntryPointAccessors.fromApplication(
                 context.applicationContext,
-                UploadInitializerEntryPoint::class.java,
+                DownloadInitializerEntryPoint::class.java,
             )
         ) {
-            uploadErrorManager.errors
-                .onEach { uploadError -> handleUploadError(uploadError) }
+            downloadErrorManager.errors
+                .onEach { downloadError -> handleDownloadError(downloadError) }
                 .launchIn(appLifecycleProvider.lifecycle.coroutineScope)
         }
     }
@@ -52,21 +53,21 @@ class UploadInitializer : Initializer<Unit> {
         WorkManagerInitializer::class.java,
     )
 
-    private suspend fun UploadInitializerEntryPoint.handleUploadError(uploadError: UploadErrorManager.Error) {
-        uploadErrorHandlers.forEach { uploadErrorHandler ->
-            runCatching {
-                uploadErrorHandler.onError(uploadError)
-            }.onFailure { error ->
-                error.log(LogTag.UPLOAD, "Failed to handle upload error")
-            }
+    private suspend fun DownloadInitializerEntryPoint.handleDownloadError(
+        downloadError: DownloadErrorManager.Error
+    ) {
+        coRunCatching {
+            downloadErrorHandler.onError(downloadError)
+        }.onFailure { error ->
+            error.log(LogTag.DOWNLOAD, "Failed to handle download error")
         }
     }
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
-    interface UploadInitializerEntryPoint {
+    interface DownloadInitializerEntryPoint {
         val appLifecycleProvider: AppLifecycleProvider
-        val uploadErrorManager: UploadErrorManager
-        val uploadErrorHandlers: @JvmSuppressWildcards Set<UploadErrorHandler>
+        val downloadErrorManager: DownloadErrorManager
+        val downloadErrorHandler: ObservabilityDownloadErrorHandler
     }
 }

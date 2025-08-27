@@ -28,11 +28,13 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.download.data.manager.DownloadManagerImpl
 import me.proton.core.drive.drivelink.download.data.manager.PipelineManagerImpl
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadFileRepository
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadParentLinkRepository
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadCleanup
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadFile
+import me.proton.core.drive.drivelink.download.domain.usecase.DownloadMetricsNotifier
 import me.proton.core.drive.folder.domain.usecase.GetDescendants
 import me.proton.core.drive.linkdownload.domain.usecase.AreAllAlbumPhotosDownloaded
 import me.proton.core.drive.linkdownload.domain.usecase.AreAllFilesDownloaded
@@ -60,6 +62,8 @@ object DownloadModule {
         isMarkedAsOffline: IsMarkedAsOffline,
         getAllAlbumChildren: GetAllAlbumChildren,
         areAllAlbumPhotosDownloaded: AreAllAlbumPhotosDownloaded,
+        downloadErrorManager: DownloadErrorManager,
+        downloadMetricsNotifier: DownloadMetricsNotifier,
     ): DownloadManager = DownloadManagerImpl(
         PipelineManagerImpl(configurationProvider.downloadsInParallel, LogTag.DOWNLOAD),
         downloadFileRepository,
@@ -75,6 +79,8 @@ object DownloadModule {
         configurationProvider,
         getAllAlbumChildren,
         areAllAlbumPhotosDownloaded,
+        downloadErrorManager,
+        downloadMetricsNotifier,
     )
 
     @Provides

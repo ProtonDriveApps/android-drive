@@ -27,6 +27,7 @@ import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.combine
@@ -34,6 +35,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.accountmanager.domain.AccountManager
@@ -67,6 +69,7 @@ class TagsMigrationInitializer : Initializer<Unit> {
 
     private val scopes = mutableMapOf<UserId, CoroutineScope>()
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun create(context: Context) {
         with(
             EntryPointAccessors.fromApplication(
@@ -92,58 +95,72 @@ class TagsMigrationInitializer : Initializer<Unit> {
                             null
                         }
                     }
-                    val volumeFlow = getOldestActiveVolume(userId, Volume.Type.PHOTO)
+                    val volumeIdFlow = getOldestActiveVolume(userId, Volume.Type.PHOTO)
                         .mapSuccessValueOrNull()
                         .filterNotNull()
+                        .map { volume -> volume.id }
                         .distinctUntilChanged()
 
-                    combine(enabledFlow, volumeFlow) { enabled, volume ->
-                        enabled to volume
-                    }.onEach { (enabled, volume) ->
+                    combine(enabledFlow, volumeIdFlow) { enabled, volumeId ->
+                        enabled to volumeId
+                    }.onEach { (enabled, volumeId) ->
                         when (enabled) {
-                            true -> startTagsMigration(userId, volume.id)
+                            true -> startTagsMigration(userId, volumeId)
                                 .getOrNull(
                                     PHOTO,
-                                    "Failed to start migration for volume: ${volume.id.id.logId()}"
+                                    "Failed to start migration for volume: ${volumeId.id.logId()}"
                                 )
 
-                            false -> stopTagsMigration(userId, volume.id).getOrNull(
+                            false -> stopTagsMigration(userId, volumeId).getOrNull(
                                 PHOTO,
-                                "Failed to stop migration for volume: ${volume.id.id.logId()}"
+                                "Failed to stop migration for volume: ${volumeId.id.logId()}"
                             )
 
                             null -> {} // do nothing
                         }
                     }.launchIn(scope)
-                    volumeFlow.transformLatest { volume ->
+                    volumeIdFlow.transformLatest { volumeId ->
                         emitAll(
                             getLatestTagsMigrationFile(
                                 userId,
-                                volume.id,
+                                volumeId,
                                 TagsMigrationFile.State.PREPARED
+                            ).map { tagsMigrationFile ->
+                                tagsMigrationFile?.let { tagsMigrationFile.fileId}
+                            }
+                        )
+                    }
+                        .filterNotNull()
+                        .distinctUntilChanged()
+                        .onEach { fileId ->
+                            coRunCatching {
+                                CoreLogger.d(PHOTO, "Starting download for ${fileId.id.logId()}")
+                                download(fileId)
+                            }.getOrNull(
+                                PHOTO,
+                                "Failed to start download file: ${fileId.id.logId()}"
                             )
+                        }.launchIn(scope)
+                    volumeIdFlow.transformLatest { volumeId ->
+                        emitAll(
+                            getTagsMigrationDownloadedFile(userId, volumeId)
+                                .map { tagsMigrationFile ->
+                                    tagsMigrationFile?.let { tagsMigrationFile.fileId to volumeId }
+                                }
                         )
-                    }.filterNotNull().onEach { file ->
-                        coRunCatching {
-                            CoreLogger.d(PHOTO, "Starting download for ${file.fileId.id.logId()}")
-                            download(file.fileId)
-                        }.getOrNull(
-                            PHOTO,
-                            "Failed to start download file: ${file.fileId.id.logId()}"
-                        )
-                    }.launchIn(scope)
-                    volumeFlow.transformLatest { volume ->
-                        emitAll(getTagsMigrationDownloadedFile(userId, volume.id))
-                    }.filterNotNull().onEach { file ->
-                        CoreLogger.d(PHOTO, "Continuing tags migration for ${file.fileId.id.logId()}")
-                        continueTagsMigrationAfterDownload(
-                            volumeId = file.volumeId,
-                            fileId = file.fileId,
-                        ).getOrNull(
-                            PHOTO,
-                            "Failed to start tagging file: ${file.fileId.id.logId()}"
-                        )
-                    }.launchIn(scope)
+                    }
+                        .filterNotNull()
+                        .distinctUntilChanged()
+                        .onEach { (fileId, volumeId) ->
+                            CoreLogger.d(PHOTO, "Continuing tags migration for ${fileId.id.logId()}")
+                            continueTagsMigrationAfterDownload(
+                                volumeId = volumeId,
+                                fileId = fileId,
+                            ).getOrNull(
+                                PHOTO,
+                                "Failed to start tagging file: ${fileId.id.logId()}"
+                            )
+                        }.launchIn(scope)
                 }
                 .onAccountRemoved { account ->
                     scopes.remove(account.userId)?.cancel()

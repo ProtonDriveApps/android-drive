@@ -23,5 +23,7 @@ enum class ShareType {
     main,
     device,
     photo,
-    shared
+    shared,
+    shared_public,
+    shared_photo,
 }

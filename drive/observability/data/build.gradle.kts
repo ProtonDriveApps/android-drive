@@ -31,4 +31,5 @@ driveModule(
 ) {
     api(project(":drive:base:data"))
     api(project(":drive:observability:domain"))
+    api(project(":drive:share:domain"))
 }

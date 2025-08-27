@@ -79,7 +79,7 @@ class VerifyDownloadedBlocks @Inject constructor(
                 blocks = blocks,
             )
             true
-        } catch (e: NullPointerException) {
+        } catch (e: Throwable) {
             removeDownloadState(fileId)
             false
         }
