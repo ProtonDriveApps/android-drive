@@ -30,4 +30,5 @@ interface NotificationManager {
     fun removeUserChannels(userId: UserId, channels: List<Channel.User>)
 
     fun createAppChannels(name: String, channels: List<Channel.App>)
+    fun hasValidChannel(notificationId: NotificationId): Boolean
 }

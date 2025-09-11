@@ -47,12 +47,12 @@
   <string name="files_send_to_trash_action">ნაგვის ყუთში გადატანა</string>
   <string name="files_remove_me_action">წამშალე</string>
   <string name="files_move_file_action">გადატანა</string>
-  <string name="files_add_to_favorite_action">Add to favorites</string>
-  <string name="files_remove_from_favorite_action">Remove from favorites</string>
-  <string name="files_add_to_favorite_action_success">Added to favorites successfully</string>
-  <string name="files_add_to_favorite_from_foreign_volume_action_success">Photo was copied to stream and marked favorite there</string>
-  <string name="files_remove_from_favorite_action_success">Removed from favorites successfully</string>
-  <string name="files_save_shared_photo_action">Save shared photo</string>
+  <string name="files_add_to_favorite_action">ფავორიტებში დამატება</string>
+  <string name="files_remove_from_favorite_action">ფავორიტებიდან წაშლა</string>
+  <string name="files_add_to_favorite_action_success">ფავორიტებში წარმატებით დაემატა</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">ფოტო გადაკოპირდა ნაკადში და იქ მოინიშნა ფავორიტად</string>
+  <string name="files_remove_from_favorite_action_success">ფავორიტებიდან წარმატებით წაიშალა</string>
+  <string name="files_save_shared_photo_action">გაზიარებული ფოტოს შენახვა</string>
   <!--
         Variable %1$s is a file/folder's name
         Examples:

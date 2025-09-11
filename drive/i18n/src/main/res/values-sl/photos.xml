@@ -67,8 +67,6 @@
   <string name="photos_error_backup_missing_folder">Varnostna mapa ni bila najdena</string>
   <string name="photos_error_backup_failed">Varnostna kopija ni uspela.</string>
   <string name="photos_error_backup_temporarily_disabled">Varnostno kopiranje je onemogočeno.</string>
-  <string name="photos_error_backup_migration_title">Zahtevana je posodobitev</string>
-  <string name="photos_error_backup_migration_description">Če želite uporabljati funkcije za fotografije, posodobite aplikacijo na najnovejšo različico.</string>
   <string name="photos_error_missing_permissions">Manjkajoča dovoljenja</string>
   <!--
         Variable %1$s is an application name
@@ -159,10 +157,6 @@
   <string name="photos_share_migration_in_progress_description">Če imate veliko knjižnico fotografij, lahko traja nekaj časa. Lahko zaprete aplikacijo. Delali bomo v ozadju.</string>
   <string name="photos_share_migration_needed_banner_title">Potrebna je selitev podatkov</string>
   <string name="photos_share_migration_needed_banner_description">Po selitvi lahko uporabljate nove funkcije, kot so filtri in foto album.</string>
-  <string name="photos_important_updates_title">Pomembne posodobitve</string>
-  <string name="photos_important_updates_subtitle">Potrebna je posodobitev knjižnice fotografij</string>
-  <string name="photos_important_updates_description">Ta hitra posodobitev pripravi vaše fotografije za nove funkcije, kot so filtri in albumi.</string>
-  <string name="photos_important_updates_cancel_action">Opomni me kasneje</string>
   <string name="photos_tags_migration_title">Tags migration</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

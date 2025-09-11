@@ -18,6 +18,7 @@
 package me.proton.core.drive.base.data.di
 
 import android.content.Context
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,9 +33,11 @@ import me.proton.core.drive.base.data.provider.ExifVideoAttributesProvider
 import me.proton.core.drive.base.data.provider.MetadataRetrieverVideoAttributesProvider
 import me.proton.core.drive.base.data.provider.MimeTypeProviderImpl
 import me.proton.core.drive.base.data.provider.StorageLocationProviderImpl
+import me.proton.core.drive.base.data.util.StopWatchImpl
 import me.proton.core.drive.base.domain.provider.FileAttributesProvider
 import me.proton.core.drive.base.domain.provider.MimeTypeProvider
 import me.proton.core.drive.base.domain.provider.StorageLocationProvider
+import me.proton.core.drive.base.domain.util.StopWatch
 import javax.inject.Singleton
 
 @Module
@@ -85,4 +88,7 @@ object BaseModule {
             exifVideoAttributesProvider,
             metadataRetrieverVideoAttributesProvider,
         )
+
+    @Provides
+    fun provideStopWatch(): StopWatch = StopWatchImpl()
 }

@@ -252,24 +252,6 @@ class PhotoApiDataSource(private val apiProvider: ApiProvider) {
         }.valueOrThrow
 
     @Throws(ApiException::class)
-    suspend fun getPhotoShareMigrationStatus(
-        userId: UserId,
-    ) = apiProvider
-        .get<PhotoApi>(userId)
-        .invoke {
-            getPhotoShareMigrationStatus()
-        }.valueOrThrow
-
-    @Throws(ApiException::class)
-    suspend fun startPhotoShareMigration(
-        userId: UserId,
-    ) = apiProvider
-        .get<PhotoApi>(userId)
-        .invoke {
-            startPhotoShareMigration()
-        }.valueOrThrow
-
-    @Throws(ApiException::class)
     suspend fun getTagsMigrationStatus(
         userId: UserId,
         volumeId: VolumeId,

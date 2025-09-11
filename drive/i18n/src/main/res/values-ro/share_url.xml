@@ -63,9 +63,9 @@
   <!--
         Variable %1$d is max number of days
         Example:
-            "Expiration date must not be after more then 90 days"
+            "Expiration date must not be after more than 90 days"
     -->
-  <string name="shared_link_error_message_expiration_date_too_late">Data de expirare trebuie să fie după maxim %1$d de zile.</string>
+  <string name="shared_link_error_message_expiration_date_too_late">Data de expirare nu trebuie să fie după mai mult de %1$d de zile.</string>
   <string name="shared_link_error_legacy_link">Aceasta este o legătură web veche a cărui gestionare nu este suportată. Nu o mai partajați și creați alta.</string>
   <string name="title_share_via_link">Partajare prin legătură web</string>
   <string name="shared_with_me_title">Partajate cu mine</string>

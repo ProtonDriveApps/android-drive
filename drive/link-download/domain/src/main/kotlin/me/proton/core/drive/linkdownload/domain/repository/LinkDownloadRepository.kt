@@ -19,6 +19,7 @@ package me.proton.core.drive.linkdownload.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -72,4 +73,6 @@ interface LinkDownloadRepository {
         linkId: LinkId,
         revisionId: String,
     ): List<Block>
+
+    fun getDownloadingCountFlow(userId: UserId): Flow<Long>
 }

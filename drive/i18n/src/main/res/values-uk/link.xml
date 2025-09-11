@@ -37,8 +37,8 @@
     -->
   <plurals name="files_operation_failed_count_of_failures">
     <item quantity="one">Не вдалося: %1$d</item>
-    <item quantity="few">%1$d failed</item>
-    <item quantity="many">%1$d failed</item>
+    <item quantity="few">Не вдалося: %1$d</item>
+    <item quantity="many">Не вдалося: %1$d</item>
     <item quantity="other">Не вдалося: %1$d</item>
   </plurals>
   <!--
@@ -49,8 +49,8 @@
     -->
   <plurals name="files_operation_failed_count_of_successes">
     <item quantity="one">Успішно: %1$d</item>
-    <item quantity="few">%1$d succeeded</item>
-    <item quantity="many">%1$d succeeded</item>
+    <item quantity="few">Успішно: %1$d</item>
+    <item quantity="many">Успішно: %1$d</item>
     <item quantity="other">Успішно: %1$d</item>
   </plurals>
 </resources>

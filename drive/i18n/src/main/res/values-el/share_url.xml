@@ -63,7 +63,7 @@
   <!--
         Variable %1$d is max number of days
         Example:
-            "Expiration date must not be after more then 90 days"
+            "Expiration date must not be after more than 90 days"
     -->
   <string name="shared_link_error_message_expiration_date_too_late">Η ημερομηνία λήξης δεν πρέπει να είναι μετά από περισσότερο από %1$d ημέρες</string>
   <string name="shared_link_error_legacy_link">Αυτός είναι ένας παλιός σύνδεσμος του οποίου η διαχείριση δεν υποστηρίζεται. Συνιστάται να διακόψετε την κοινή χρήση αυτού του συνδέσμου και να λάβετε έναν νέο σύνδεσμο.</string>

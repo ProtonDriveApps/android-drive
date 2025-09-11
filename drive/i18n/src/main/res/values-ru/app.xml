@@ -46,7 +46,7 @@
   <string name="folder_option_create_folder">Создать папку</string>
   <string name="folder_option_take_a_photo">Сделать новое фото</string>
   <string name="folder_option_create_document">Создать документ</string>
-  <string name="folder_option_create_spreadsheet">Create spreadsheet</string>
+  <string name="folder_option_create_spreadsheet">Создать электронную таблицу</string>
   <string name="settings_theme_system_default">Настройки по умолчанию</string>
   <string name="settings_theme_dark">Тёмная</string>
   <string name="settings_theme_light">Светлая</string>
@@ -178,7 +178,7 @@
   <string name="content_description_selected_options">Показать дополнительные опции для выбранных файлов и/или папок</string>
   <string name="content_description_files_upload_upload_file">Загрузить файл</string>
   <string name="content_description_albums_new">Создать новый альбом</string>
-  <string name="content_description_subscription_action">Open subscription</string>
+  <string name="content_description_subscription_action">Открыть подписку</string>
   <string name="description_empty_my_files">Нажмите кнопку, чтобы начать добавление файлов.</string>
   <string name="description_empty_folder_read_only">Здесь не на что смотреть</string>
   <string name="description_empty_shared">Здесь отображаются связанные файлы, что позволяет вам удобно их отслеживать и управлять общим доступом к ним.</string>
@@ -204,7 +204,7 @@
   <string name="error_share_not_found">Ссылка общего доступа не найдена.</string>
   <string name="error_creating_photo_share_not_allowed">Резервное копирование фотографий временно отключено.</string>
   <string name="error_creating_share_not_allowed">Создание общего доступа временно отключено.</string>
-  <string name="error_camera_permission">Camera permission is required.</string>
+  <string name="error_camera_permission">Требуется разрешение на доступ к камере.</string>
   <string name="operation_open_document">открыть документ</string>
   <string name="operation_create_document">создать документ</string>
   <string name="operation_take_picture">сделать снимок</string>

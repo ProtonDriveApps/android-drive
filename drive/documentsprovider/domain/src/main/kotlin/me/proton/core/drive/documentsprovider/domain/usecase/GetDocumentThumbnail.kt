@@ -35,7 +35,7 @@ class GetDocumentThumbnail @Inject constructor(
     private val decryptThumbnail: DecryptThumbnail,
 ) {
 
-    @Suppress("UNUSED_PARAMETER", "BlockingMethodInNonBlockingContext")
+    @Suppress("UNUSED_PARAMETER")
     suspend operator fun invoke(documentId: DocumentId, signal: CancellationSignal?): AssetFileDescriptor =
         withDriveLinkFile(documentId) { _, driveLink ->
             getThumbnailCachedInputStream(
@@ -48,13 +48,12 @@ class GetDocumentThumbnail @Inject constructor(
                         decryptThumbnail(
                             fileId = driveLink.id,
                             inputStream = inputStream,
-                            checkSignature = false,
                         ).getOrThrow()
                 }.map { decryptedData ->
                     val pipe = ParcelFileDescriptor.createPipe()
                     val readSide = pipe[0]
                     val writeSide = pipe[1]
-                    ParcelFileDescriptor.AutoCloseOutputStream(writeSide).use { os -> os.write(decryptedData.data) }
+                    ParcelFileDescriptor.AutoCloseOutputStream(writeSide).use { os -> os.write(decryptedData) }
                     AssetFileDescriptor(readSide, 0, 0)
                 }.getOrThrow()
         }

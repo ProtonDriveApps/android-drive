@@ -67,14 +67,14 @@
   <string name="common_open_in_browser_action">ბრაუზერში გახსნა</string>
   <string name="common_done_action">მზადაა</string>
   <string name="common_create_album_action">ალბომის შექმნა</string>
-  <string name="common_set_as_album_cover_action">Set as album cover</string>
+  <string name="common_set_as_album_cover_action">ალბომის გარეკნად დაყენება</string>
   <string name="common_add_action">დამატება</string>
-  <string name="common_remove_from_album_action">Remove from album</string>
-  <string name="common_leave_album_action">Leave album</string>
+  <string name="common_remove_from_album_action">ალბომიდან ამოშლა</string>
+  <string name="common_leave_album_action">ალბომის დატოვება</string>
   <string name="common_start_action">გაშვება</string>
-  <string name="common_save_all_action">Save all</string>
-  <string name="common_add_to_albums_action">Add to albums</string>
-  <string name="common_tag_photo_action">Scan photo for tags</string>
+  <string name="common_save_all_action">ყველას შენახვა</string>
+  <string name="common_add_to_albums_action">ალბომებში დამატება</string>
+  <string name="common_tag_photo_action">ფოტოს დასკანირება თეგებისთვის</string>
   <!-- endregion -->
   <!-- region Common file types -->
   <string name="common_type_audio">აუდიო</string>
@@ -87,7 +87,7 @@
   <string name="common_type_pdf">PDF დოკუმენტი</string>
   <string name="common_type_ppt">პრეზენტაცია</string>
   <string name="common_type_proton_doc">Proton-ის დოკუმენტი</string>
-  <string name="common_type_proton_sheet">Proton spreadsheet</string>
+  <string name="common_type_proton_sheet">Proton-ის ცხრილი</string>
   <string name="common_type_text">ტექსტი</string>
   <string name="common_type_trustedkey">სანდო გასაღები</string>
   <string name="common_type_unknown">ბინარული</string>

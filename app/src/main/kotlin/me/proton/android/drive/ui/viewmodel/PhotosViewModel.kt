@@ -50,7 +50,6 @@ import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import me.proton.android.drive.photos.domain.entity.PhotoBackupState
@@ -60,7 +59,6 @@ import me.proton.android.drive.photos.domain.usecase.GetAddToAlbumPhotoListings
 import me.proton.android.drive.photos.domain.usecase.GetPhotoListingCount
 import me.proton.android.drive.photos.domain.usecase.GetPhotosDriveLink
 import me.proton.android.drive.photos.domain.usecase.RemoveFromAlbumInfo
-import me.proton.android.drive.photos.domain.usecase.ShowImportantUpdates
 import me.proton.android.drive.photos.domain.usecase.ShowUpsell
 import me.proton.android.drive.photos.presentation.R
 import me.proton.android.drive.photos.presentation.extension.getFastScrollAnchors
@@ -115,9 +113,6 @@ import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.base.presentation.viewstate.TagViewState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
-import me.proton.core.drive.drivelink.photo.domain.extension.isInProgress
-import me.proton.core.drive.drivelink.photo.domain.extension.isPending
-import me.proton.core.drive.drivelink.photo.domain.manager.PhotoShareMigrationManager
 import me.proton.core.drive.drivelink.photo.domain.paging.PhotoDriveLinks
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPagedPhotoListingsList
 import me.proton.core.drive.drivelink.photo.domain.usecase.GetPhotoCount
@@ -175,7 +170,6 @@ class PhotosViewModel @Inject constructor(
     getFeatureFlagFlow: GetFeatureFlagFlow,
     hasPhotoVolume: HasPhotoVolume,
     shouldUpgradeStorage: ShouldUpgradeStorage,
-    showImportantUpdates: ShowImportantUpdates,
     getTagsMigrationStatusFlow: GetTagsMigrationStatusFlow,
     @ApplicationContext private val appContext: Context,
     private val separatorFormatter: SeparatorFormatter,
@@ -191,7 +185,6 @@ class PhotosViewModel @Inject constructor(
     private val syncFolders: SyncFolders,
     private val checkMissingFolders: CheckMissingFolders,
     private val cancelUserMessage: CancelUserMessage,
-    private val photoShareMigrationManager: PhotoShareMigrationManager,
     val backupPermissionsViewModel: BackupPermissionsViewModel,
 ) : PhotosPickerAndSelectionViewModel(
         savedStateHandle = savedStateHandle,
@@ -238,16 +231,9 @@ class PhotosViewModel @Inject constructor(
             emit(PhotosEffect.ShowUpsell)
         }
     }
-    private val photosEffectShowImportantUpdates = showImportantUpdates(userId).transform { show ->
-        if (show) {
-            CoreLogger.i(PHOTO, "Showing important updates")
-            emit(PhotosEffect.ShowImportantUpdates)
-        }
-    }
     val photosEffect: Flow<PhotosEffect> = merge(
         _photosEffect.asSharedFlow(),
         photosEffectShowUpsell,
-        photosEffectShowImportantUpdates,
     )
     private val photoListingsFilter: MutableStateFlow<PhotoTag?> =
         MutableStateFlow(null)
@@ -296,8 +282,6 @@ class PhotosViewModel @Inject constructor(
         isRefreshEnabled = selected.value.isEmpty(),
         inMultiselect = false,
         filters = emptyList(),
-        showPhotoShareMigrationInProgress = false,
-        showPhotoShareMigrationNeededBanner = false,
         showStorageBanner = false,
     )
     private val retryTrigger = MutableSharedFlow<Unit>(replay = 1).apply { tryEmit(Unit) }
@@ -436,11 +420,10 @@ class PhotosViewModel @Inject constructor(
         photoListingsFilter,
         albumsFeatureFlagOn,
         hasPhotoVolume(userId),
-        photoShareMigrationManager.status,
         userManager.observeUser(userId),
         isFastScrollEnabled,
         photosFilters,
-    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, albumsFeatureFlagOn, hasPhotoVolume, photoShareMigrationStatus, user, isFastScrollEnabled, photosFilters ->
+    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, albumsFeatureFlagOn, hasPhotoVolume, user, isFastScrollEnabled, photosFilters ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -501,8 +484,6 @@ class PhotosViewModel @Inject constructor(
                     && hasPhotoVolume
                     && (listContentState !is ListContentState.Empty || !filters.isSelected(null)),
             emptyPhotoTagState = photoListingsFilter?.toEmptyPhotoTagState(),
-            showPhotoShareMigrationInProgress = albumsFeatureFlagOn && photoShareMigrationStatus.isInProgress,
-            showPhotoShareMigrationNeededBanner = albumsFeatureFlagOn && photoShareMigrationStatus.isPending,
             showStorageBanner = !inPickerMode,
         )
     }
@@ -515,7 +496,6 @@ class PhotosViewModel @Inject constructor(
         navigateToPhotosIssues: (FolderId) -> Unit,
         navigateToPhotosUpsell: () -> Unit,
         navigateToBackupSettings: () -> Unit,
-        navigateToPhotosImportantUpdates: () -> Unit,
         lifecycle: Lifecycle,
     ): PhotosViewEvent = object : PhotosViewEvent {
 
@@ -592,8 +572,6 @@ class PhotosViewModel @Inject constructor(
         }
         override val onShowUpsell = navigateToPhotosUpsell
         override val onFilterSelected = this@PhotosViewModel::onFilterSelected
-        override val onStartPhotoShareMigration = this@PhotosViewModel::onStartPhotoShareMigration
-        override val onShowImportantUpdates = navigateToPhotosImportantUpdates
     }.also { viewEvent ->
         this.viewEvent = viewEvent
     }
@@ -752,22 +730,6 @@ class PhotosViewModel @Inject constructor(
         }
     }
 
-    private fun onStartPhotoShareMigration() {
-        viewModelScope.launch {
-            photoShareMigrationManager.start(userId)
-                .onFailure { error ->
-                    error.log(VIEW_MODEL, "Failed to start photo share migration")
-                    broadcastMessages(
-                        userId = userId,
-                        message = error.getDefaultMessage(
-                            appContext,
-                            configurationProvider.useExceptionMessage
-                        ),
-                        type = BroadcastMessage.Type.ERROR,
-                    )
-                }
-        }
-    }
     private val fastScrollLabelFormatter = SeparatorFormatter(
         resources = appContext.resources,
         clock = { Calendar.getInstance().apply { set(3000, 0, 1) }.timeInMillis },

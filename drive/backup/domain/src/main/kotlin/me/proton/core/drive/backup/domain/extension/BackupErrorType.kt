@@ -32,5 +32,4 @@ fun BackupErrorType.toEventBackupState() = when (this) {
     -> Event.Backup.BackupState.FAILED_PHOTOS_UPLOAD_NOT_ALLOWED
 
     BackupErrorType.BACKGROUND_RESTRICTIONS -> Event.Backup.BackupState.PAUSE_BACKGROUND_RESTRICTIONS
-    BackupErrorType.MIGRATION -> Event.Backup.BackupState.FAILED_DUE_PHOTO_SHARE_MIGRATION
 }

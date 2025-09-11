@@ -59,6 +59,7 @@ import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.usecase.SetDownloadState
 import me.proton.core.drive.share.domain.entity.ShareId
+import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailPermanentFile
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.drive.worker.data.LimitedRetryCoroutineWorker
 import me.proton.core.drive.worker.domain.usecase.CanRun
@@ -79,6 +80,7 @@ class FileDownloadWorker @AssistedInject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val downloadErrorManager: DownloadErrorManager,
     private val downloadMetricsNotifier: DownloadMetricsNotifier,
+    private val getThumbnailPermanentFile: GetThumbnailPermanentFile,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -95,6 +97,7 @@ class FileDownloadWorker @AssistedInject constructor(
     override suspend fun doLimitedRetryWork(): Result =
         try {
             CoreLogger.d(logTag, "Started downloading file with revision ${revisionId.logId()}")
+            getThumbnailPermanentFile(VolumeId(volumeId), fileId, revisionId).getOrThrow()
             downloadBlocks(fileId, setDownloadingAndGetRevision(fileId, revisionId).getOrThrow())
         } catch (e: Exception) {
             downloadErrorManager.post(fileId, e, e is CancellationException)

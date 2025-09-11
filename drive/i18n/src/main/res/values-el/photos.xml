@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">Ο φάκελος αντιγράφων ασφαλείας δεν βρέθηκε</string>
   <string name="photos_error_backup_failed">Αποτυχία δημιουργίας αντιγράφου ασφαλείας.</string>
   <string name="photos_error_backup_temporarily_disabled">Η δημιουργία αντιγράφων ασφαλείας είναι προσωρινά απενεργοποιημένη.</string>
-  <string name="photos_error_backup_migration_title">Απαιτείται Ενημέρωση</string>
-  <string name="photos_error_backup_migration_description">Για να χρησιμοποιήσετε τις λειτουργίες φωτογραφιών, ενημερώστε την εφαρμογή σας στην πιο πρόσφατη έκδοση.</string>
   <string name="photos_error_missing_permissions">Ελλειπή δικαιώματα.</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Εάν έχετε μεγάλη βιβλιοθήκη φωτογραφιών, μπορεί να χρειαστεί λίγος χρόνος. Μπορείτε να κλείσετε την εφαρμογή. Θα συνεχίσουμε την επεξεργασία στο παρασκήνιο.</string>
   <string name="photos_share_migration_needed_banner_title">Απαιτείται μετεγκατάσταση δεδομένων</string>
   <string name="photos_share_migration_needed_banner_description">Μετά τη μετεγκατάσταση, μπορείτε να χρησιμοποιήσετε νέες λειτουργίες, όπως φίλτρα και άλμπουμ φωτογραφιών</string>
-  <string name="photos_important_updates_title">Σημαντικές ενημερώσεις</string>
-  <string name="photos_important_updates_subtitle">Απαιτείται ενημέρωση της βιβλιοθήκης φωτογραφιών</string>
-  <string name="photos_important_updates_description">Αυτή η γρήγορη ενημέρωση προετοιμάζει τις φωτογραφίες σας για νέες δυνατότητες, όπως φίλτρα και άλμπουμ</string>
-  <string name="photos_important_updates_cancel_action">Υπενθύμιση αργότερα</string>
   <string name="photos_tags_migration_title">Μεταφορά ετικετών</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

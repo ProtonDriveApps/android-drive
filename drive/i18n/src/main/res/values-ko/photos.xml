@@ -64,8 +64,6 @@
   <string name="photos_error_backup_missing_folder">백업 폴더를 찾을 수 없었습니다</string>
   <string name="photos_error_backup_failed">백업에 실패했습니다.</string>
   <string name="photos_error_backup_temporarily_disabled">백업을 일시적으로 사용할 수 없습니다.</string>
-  <string name="photos_error_backup_migration_title">업데이트 필요</string>
-  <string name="photos_error_backup_migration_description">사진 기능 사용을 위해, 최신 버전으로 앱을 업데이트 해주세요.</string>
   <string name="photos_error_missing_permissions">권한 없음.</string>
   <!--
         Variable %1$s is an application name
@@ -150,10 +148,6 @@
   <string name="photos_share_migration_in_progress_description">사진 라이브러리가 큰 경우 시간이 다소 걸릴 수 있습니다. 앱을 닫아도 무관합니다. 백그라운드에서 처리됩니다.</string>
   <string name="photos_share_migration_needed_banner_title">데이터 마이그레이션 필요</string>
   <string name="photos_share_migration_needed_banner_description">마이그레이션 후에는 필터 및 사진 앨범과 같은 새로운 기능을 사용할 수 있습니다</string>
-  <string name="photos_important_updates_title">중요한 소식 받기</string>
-  <string name="photos_important_updates_subtitle">사진 보관함 업데이트가 필요합니다.</string>
-  <string name="photos_important_updates_description">해당 간단 업데이트는 필터 및 앨범과 같은 새로운 기능 구동을 위해 사진을 준비시킵니다.</string>
-  <string name="photos_important_updates_cancel_action">나중에 다시 알림</string>
   <string name="photos_tags_migration_title">태그 마이그레이션</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

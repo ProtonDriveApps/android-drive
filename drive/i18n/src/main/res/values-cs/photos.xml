@@ -67,8 +67,6 @@
   <string name="photos_error_backup_missing_folder">Složka k zálohování nebyla nalezena.</string>
   <string name="photos_error_backup_failed">Zálohování selhalo.</string>
   <string name="photos_error_backup_temporarily_disabled">Zálohování je dočasně vypnuto.</string>
-  <string name="photos_error_backup_migration_title">Je vyžadována aktualizace</string>
-  <string name="photos_error_backup_migration_description">Chcete-li používat funkce fotek, aktualizujte aplikaci na nejnovější verzi.</string>
   <string name="photos_error_missing_permissions">Chybějící oprávnění.</string>
   <!--
         Variable %1$s is an application name
@@ -159,10 +157,6 @@
   <string name="photos_share_migration_in_progress_description">Pokud máte velkou knihovnu fotek, může to chvíli trvat. Můžete zavřít aplikaci. Budeme na ní pracovat na pozadí.</string>
   <string name="photos_share_migration_needed_banner_title">Je vyžadována migrace dat</string>
   <string name="photos_share_migration_needed_banner_description">Po migraci můžete používat nové funkce, jako jsou filtry a fotoalbum</string>
-  <string name="photos_important_updates_title">Důležité aktualizace</string>
-  <string name="photos_important_updates_subtitle">Je nutná aktualizace knihovny fotek</string>
-  <string name="photos_important_updates_description">Tato rychlá aktualizace připraví vaše fotky na nové funkce, jako jsou filtry a alba</string>
-  <string name="photos_important_updates_cancel_action">Připomenout později</string>
   <string name="photos_tags_migration_title">Migrace štítků</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

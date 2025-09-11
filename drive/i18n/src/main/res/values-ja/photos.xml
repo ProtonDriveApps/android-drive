@@ -64,8 +64,6 @@
   <string name="photos_error_backup_missing_folder">バックアップフォルダーが見つかりませんでした</string>
   <string name="photos_error_backup_failed">バックアップに失敗しました。</string>
   <string name="photos_error_backup_temporarily_disabled">バックアップは一時的に無効にされています。</string>
-  <string name="photos_error_backup_migration_title">アップデートが必要です</string>
-  <string name="photos_error_backup_migration_description">写真機能を使用するには、アプリを最新バージョンにアップデートしてください。</string>
   <string name="photos_error_missing_permissions">権限がありません。</string>
   <!--
         Variable %1$s is an application name
@@ -150,10 +148,6 @@
   <string name="photos_share_migration_in_progress_description">写真ライブラリが大きい場合、時間がかかることがあります。その際は、アプリを閉じていただいて構いません。バックグラウンドで処理を行います。</string>
   <string name="photos_share_migration_needed_banner_title">データ移行が必要です</string>
   <string name="photos_share_migration_needed_banner_description">移行後に、フィルターや写真アルバムなどの新しい機能を使用できます。</string>
-  <string name="photos_important_updates_title">重要なアップデート</string>
-  <string name="photos_important_updates_subtitle">写真ライブラリの更新が必要です</string>
-  <string name="photos_important_updates_description">この簡単な更新では、フィルターやアルバムなどの新機能のために写真が準備されます。</string>
-  <string name="photos_important_updates_cancel_action">後で通知する</string>
   <string name="photos_tags_migration_title">タグの移行</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

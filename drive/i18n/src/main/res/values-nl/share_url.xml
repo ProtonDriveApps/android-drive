@@ -63,9 +63,9 @@
   <!--
         Variable %1$d is max number of days
         Example:
-            "Expiration date must not be after more then 90 days"
+            "Expiration date must not be after more than 90 days"
     -->
-  <string name="shared_link_error_message_expiration_date_too_late">De vervaldatum mag niet na meer dan %1$d dagen vallen</string>
+  <string name="shared_link_error_message_expiration_date_too_late">De verloopdatum mag niet na meer dan %1$d dagen vallen.</string>
   <string name="shared_link_error_legacy_link">Dit is een oude link waarvan het beheer niet wordt ondersteund. Het wordt aanbevolen dat u stopt met het delen van deze link en een nieuwe link krijgt.</string>
   <string name="title_share_via_link">Deel via koppeling</string>
   <string name="shared_with_me_title">Gedeeld met mij</string>

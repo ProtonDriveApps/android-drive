@@ -31,7 +31,6 @@ import coil.decode.ImageSource
 import coil.fetch.SourceResult
 import coil.request.Options
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import me.proton.core.crypto.common.pgp.DecryptedData
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -58,9 +57,9 @@ class ThumbnailDecoder(
             val thumbnailOptions = BitmapFactory.Options().apply {
                 inJustDecodeBounds = true
                 BitmapFactory.decodeByteArray(
-                    decryptedData.data,
+                    decryptedData,
                     0,
-                    decryptedData.data.size,
+                    decryptedData.size,
                     this,
                 )
             }
@@ -71,9 +70,9 @@ class ThumbnailDecoder(
                 )
             } else {
                 BitmapFactory.decodeByteArray(
-                    decryptedData.data,
+                    decryptedData,
                     0,
-                    decryptedData.data.size,
+                    decryptedData.size,
                 )
             }
             DecodeResult(
@@ -106,7 +105,7 @@ class ThumbnailDecoder(
         }
     }
 
-    private fun DecryptedData.createDownscaledBitmap(originalWidth: Int, originalHeight: Int): Bitmap {
+    private fun ByteArray.createDownscaledBitmap(originalWidth: Int, originalHeight: Int): Bitmap {
         val (targetWidth, targetHeight) = if (originalWidth >= originalHeight) {
             maxThumbnail.maxWidth to ((originalHeight / originalWidth.toFloat()) * maxThumbnail.maxWidth).toInt()
         } else {
@@ -122,9 +121,9 @@ class ThumbnailDecoder(
             )
         }
         val bitmap = BitmapFactory.decodeByteArray(
-            data,
+            this,
             0,
-            data.size,
+            this.size,
             decodeOptions,
         )
         return if (bitmap.width > maxThumbnail.maxWidth || bitmap.height > maxThumbnail.maxHeight) {

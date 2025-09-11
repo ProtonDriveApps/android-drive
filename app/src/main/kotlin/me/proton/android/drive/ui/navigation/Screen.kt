@@ -392,10 +392,6 @@ sealed class Screen(val route: String) {
             operator fun invoke(userId: UserId) = "home/${userId.id}/photos/upsell"
         }
 
-        data object ImportantUpdates : Screen("home/{userId}/photos/importantUpdates") {
-            operator fun invoke(userId: UserId) = "home/${userId.id}/photos/importantUpdates"
-        }
-
         const val USER_ID = Screen.USER_ID
         const val SHARE_ID = "shareId"
     }

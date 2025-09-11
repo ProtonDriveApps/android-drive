@@ -194,7 +194,7 @@
   <string name="error_share_not_found">Delning hittades inte.</string>
   <string name="error_creating_photo_share_not_allowed">Säkerhetskopiering av foton är tillfälligt inaktiverat.</string>
   <string name="error_creating_share_not_allowed">Skapa delning är tillfälligt inaktiverat.</string>
-  <string name="error_camera_permission">Camera permission is required.</string>
+  <string name="error_camera_permission">Kamerabehörighet krävs.</string>
   <string name="operation_open_document">öppna ett dokument</string>
   <string name="operation_create_document">skapa ett dokument</string>
   <string name="operation_take_picture">ta en bild</string>

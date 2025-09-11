@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">Yedek klasörü bulunamadı</string>
   <string name="photos_error_backup_failed">Yedekleme tamamlanamadı.</string>
   <string name="photos_error_backup_temporarily_disabled">Yedekleme geçici olarak kullanımdan kaldırıldı.</string>
-  <string name="photos_error_backup_migration_title">Güncelleme gerekli</string>
-  <string name="photos_error_backup_migration_description">Fotoğraf özelliklerini kullanabilmek için, uygulamanızı son sürüme güncelleyin.</string>
   <string name="photos_error_missing_permissions">İzinler eksik.</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Büyük bir fotoğraf kitaplığınız varsa, bu işlem biraz zaman alabilir. Uygulamayı kapatabilirsiniz. Arka planda üzerinde çalışacağız.</string>
   <string name="photos_share_migration_needed_banner_title">Verilerin aktarılması gerekli</string>
   <string name="photos_share_migration_needed_banner_description">Aktarım işleminden sonra süzgeçler ve fotoğraf albümü gibi yeni özellikleri kullanabilirsiniz</string>
-  <string name="photos_important_updates_title">Önemli güncellemeler</string>
-  <string name="photos_important_updates_subtitle">Fotoğraf kitaplığının güncellenmesi gerekli</string>
-  <string name="photos_important_updates_description">Bu hızlı güncelleme, fotoğraflarınızı süzgeçler ve albümler gibi yeni özelliklere hazırlar</string>
-  <string name="photos_important_updates_cancel_action">Daha sonra hatırlat</string>
   <string name="photos_tags_migration_title">Etiket aktarma</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

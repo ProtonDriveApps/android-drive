@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">A pasta de backup não foi encontrada</string>
   <string name="photos_error_backup_failed">Falha no Backup.</string>
   <string name="photos_error_backup_temporarily_disabled">O backup está temporariamente desativado.</string>
-  <string name="photos_error_backup_migration_title">Atualização necessária</string>
-  <string name="photos_error_backup_migration_description">Para usar os recursos de fotos, atualize seu aplicativo para a última versão.</string>
   <string name="photos_error_missing_permissions">Faltam permissões.</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Se você tem uma biblioteca de fotos grande, pode demorar um pouco. Você pode fechar o aplicativo. Vamos trabalhar nisso em segundo plano.</string>
   <string name="photos_share_migration_needed_banner_title">Uma migração de dados é necessária.</string>
   <string name="photos_share_migration_needed_banner_description">Após a migração, você pode usar novos recursos, como os filtros e álbuns de fotos</string>
-  <string name="photos_important_updates_title">Atualizações importantes</string>
-  <string name="photos_important_updates_subtitle">Atualização da biblioteca de fotos necessária</string>
-  <string name="photos_important_updates_description">Esta atualização rápida prepara suas fotos para novos recursos, como filtros e álbuns</string>
-  <string name="photos_important_updates_cancel_action">Lembre-me mais tarde</string>
   <string name="photos_tags_migration_title">Migração de tags</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

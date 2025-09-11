@@ -21,11 +21,15 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.drive.announce.event.domain.usecase.AsyncAnnounceEvent
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
+import me.proton.core.drive.base.domain.util.StopWatch
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDao
 import me.proton.core.drive.linkdownload.data.db.LinkDownloadDatabase
 import me.proton.core.drive.linkdownload.data.repository.LinkDownloadRepositoryImpl
+import me.proton.core.drive.linkdownload.domain.manager.DownloadSpeedManager
 import me.proton.core.drive.linkdownload.domain.repository.LinkDownloadRepository
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
@@ -46,4 +50,12 @@ object LinkDownloadModule {
         db = linkDownloadDao,
         configurationProvider = configurationProvider,
     )
+
+    @Singleton
+    @Provides
+    fun provideDownloadSpeedManager(
+        stopWatch: StopWatch,
+        minuteWatch: StopWatch,
+        asyncAnnounceEventProvider: Provider<AsyncAnnounceEvent>,
+    ) = DownloadSpeedManager(stopWatch, minuteWatch, asyncAnnounceEventProvider)
 }

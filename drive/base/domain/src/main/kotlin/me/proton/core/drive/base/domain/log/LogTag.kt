@@ -51,6 +51,7 @@ object LogTag {
     const val WEBVIEW = "$DEFAULT.webview"
     const val PROTON_DOCS = "$WEBVIEW.proton.docs"
     const val FOLDER = "$DEFAULT.folder"
+    const val TRACKING = "$DEFAULT.tracking"
     val ViewModel.VIEW_MODEL: String get() = "$DEFAULT.view.model[${this.javaClass.simpleName}]"
 
     object UploadTag {

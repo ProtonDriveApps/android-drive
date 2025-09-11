@@ -35,9 +35,9 @@
   <string name="albums_delete_album_dialog_title">Supprimer l\'album ?</string>
   <string name="albums_delete_album_dialog_description">Cette action supprimera uniquement l\'album. Vos photos resteront dans votre fil d’actualité. Cette action ne peut être annulée.</string>
   <string name="albums_delete_album_dialog_description_with_children">Certaines photos de cet album ne sont pas enregistrées dans votre fil d’actualité. La suppression de cet album supprimera définitivement ces photos.\nSouhaitez-vous les enregistrer avant de les supprimer ?</string>
-  <string name="albums_delete_album_dialog_delete_without_saving_action">Supprimer sans enregistrer</string>
-  <string name="albums_delete_album_dialog_save_and_delete_action">Enregistrer les photos et supprimer</string>
-  <string name="albums_leave_album_dialog_title">Quitter l\'album ?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Supprimer sans sauvegarder</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Sauvegardez les photos et supprimer</string>
+  <string name="albums_leave_album_dialog_title">Abandonner l\'album ?</string>
   <!--
         Variable %1$s is an album name
         Example:
@@ -95,8 +95,8 @@
             "17 items added to your Drive"
     -->
   <plurals name="in_app_notification_add_to_stream_success">
-    <item quantity="one">%1$d élément a été ajouté à votre Drive</item>
-    <item quantity="other">%1$d éléments ont été ajoutés à votre Drive</item>
+    <item quantity="one">%1$d Un élément a été ajouté à votre espace de stockage</item>
+    <item quantity="other">%1$d Des éléments ont été ajoutés à votre espace de stockage</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -125,8 +125,8 @@
             "13 items removed from album"
     -->
   <plurals name="in_app_notification_remove_from_album_success">
-    <item quantity="one">%1$d élément a été retiré de l\'album.</item>
-    <item quantity="other">%1$d éléments ont été retirés de l\'album.</item>
+    <item quantity="one">%1$d Un élément a été supprimé de l\'album.</item>
+    <item quantity="other">%1$d Des éléments ont été supprimés de l\'album</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not removed because removing failed
@@ -135,11 +135,11 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_removed_from_album_failed">
-    <item quantity="one">%1$d élément n\'a pas abouti.</item>
-    <item quantity="other">%1$d éléments n\'ont pas abouti.</item>
+    <item quantity="one">%1$d L\'élément n\'a pas été abouti</item>
+    <item quantity="other">%1$d Les éléments n\'ont pas été aboutis</item>
   </plurals>
-  <string name="albums_empty_album_screen_title">Aucune photo</string>
-  <string name="albums_empty_album_screen_description">Les photos que vous ou d\'autres membres ajoutez apparaîtront ici.</string>
+  <string name="albums_empty_album_screen_title">Sans photos</string>
+  <string name="albums_empty_album_screen_description">Les photos que vous ou d\'autres membres ajoutezvont ici.</string>
   <string name="albums_empty_albums_list_screen_title">Aucun album</string>
   <string name="albums_empty_albums_list_screen_description">Les albums que vous créez ou rejoignez apparaîtront ici</string>
   <string name="albums_empty_albums_my_albums_screen_description">Les albums que vous créez apparaîtront ici.</string>

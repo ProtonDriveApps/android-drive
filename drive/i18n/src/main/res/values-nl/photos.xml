@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">Back-up map niet gevonden</string>
   <string name="photos_error_backup_failed">Back-up mislukt.</string>
   <string name="photos_error_backup_temporarily_disabled">Back-up is tijdelijk onbeschikbaar.</string>
-  <string name="photos_error_backup_migration_title">Update vereist</string>
-  <string name="photos_error_backup_migration_description">Werk uw app bij naar de nieuwste versie om foto\'s te gebruiken.</string>
   <string name="photos_error_missing_permissions">Ontbrekende machtigingen.</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Als u een grote fotobibliotheek hebt, kan dit enige tijd duren. U kunt de app sluiten. We werken er op de achtergrond aan.</string>
   <string name="photos_share_migration_needed_banner_title">Gegevensmigratie nodig</string>
   <string name="photos_share_migration_needed_banner_description">Na de migratie kunt u nieuwe functies gebruiken, zoals filters en een fotoalbum</string>
-  <string name="photos_important_updates_title">Belangrijke updates</string>
-  <string name="photos_important_updates_subtitle">Update van fotobibliotheek vereist</string>
-  <string name="photos_important_updates_description">Deze snelle update bereidt uw foto\'s voor op nieuwe functies, zoals filters en albums.</string>
-  <string name="photos_important_updates_cancel_action">Herinner mij later</string>
   <string name="photos_tags_migration_title">Label migratie</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

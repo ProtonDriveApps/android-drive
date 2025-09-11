@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">No s\'ha trobat la carpeta de còpia de seguretat</string>
   <string name="photos_error_backup_failed">Error en la còpia de seguretat.</string>
   <string name="photos_error_backup_temporarily_disabled">Les còpies de seguretat estan temporalment desactivades.</string>
-  <string name="photos_error_backup_migration_title">Actualització requerida</string>
-  <string name="photos_error_backup_migration_description">Per utilitzar la característica de fotos, actualitzeu l\'aplicació a la darrera versió.</string>
   <string name="photos_error_missing_permissions">Falten permisos.</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Si teniu una gran biblioteca de fotos, pot trigar una estona. Podeu tancar l\'aplicació. Hi treballarem en segon pla.</string>
   <string name="photos_share_migration_needed_banner_title">Es requereix una migració de dades.</string>
   <string name="photos_share_migration_needed_banner_description">Després de la migració, podeu utilitzar noves característiques com ara els filtres i l\'àlbum de fotos</string>
-  <string name="photos_important_updates_title">Actualitzacions importants</string>
-  <string name="photos_important_updates_subtitle">Cal actualitzar la biblioteca de fotos</string>
-  <string name="photos_important_updates_description">Aquesta actualització ràpida prepara les fotos per a noves característiques, com ara filtres i àlbums</string>
-  <string name="photos_important_updates_cancel_action">Recorda-m\'ho més tard</string>
   <string name="photos_tags_migration_title">Migració d\'etiquetes</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

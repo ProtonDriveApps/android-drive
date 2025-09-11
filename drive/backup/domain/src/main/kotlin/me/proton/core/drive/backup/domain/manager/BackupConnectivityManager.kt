@@ -26,6 +26,16 @@ interface BackupConnectivityManager {
         NONE, UNMETERED, CONNECTED
     }
 
+    data class NetworkStatusInfo(
+        val isConnected: Boolean,
+        val isValidated: Boolean,
+        val downstreamBandwidthKbps: Int,
+        val upstreamBandwidthKbps: Int,
+        val isWifi: Boolean,
+        val isCellular: Boolean,
+    )
+
     val connectivity: Flow<Connectivity>
 
+    fun getCurrentNetworkStatusInfo(): NetworkStatusInfo?
 }

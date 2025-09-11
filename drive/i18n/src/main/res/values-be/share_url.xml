@@ -63,7 +63,7 @@
   <!--
         Variable %1$d is max number of days
         Example:
-            "Expiration date must not be after more then 90 days"
+            "Expiration date must not be after more than 90 days"
     -->
   <string name="shared_link_error_message_expiration_date_too_late">Тэрмін дзеяння не можа перавышаць %1$d дзён</string>
   <string name="shared_link_error_legacy_link">Гэта старая спасылка, кіраванне якой не падтрымліваецца. Рэкамендуецца спыніць абагульванне гэтай спасылкі і атрымаць новую.</string>

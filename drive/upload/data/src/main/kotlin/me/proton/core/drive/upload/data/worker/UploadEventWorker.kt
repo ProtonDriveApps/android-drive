@@ -53,6 +53,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.Percentage
+import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -85,7 +86,7 @@ class UploadEventWorker @AssistedInject constructor(
     private val userId =
         UserId(requireNotNull(inputData.getString(WorkerKeys.KEY_USER_ID)) { "User id is required" })
 
-    private val transferDataNotification: Pair<NotificationId, Notification> = transferDataNotifier(
+    private val transferDataNotification: kotlin.Result<Pair<NotificationId, Notification>> = transferDataNotifier(
         userId = userId,
         event = Event.TransferData,
     )
@@ -95,7 +96,7 @@ class UploadEventWorker @AssistedInject constructor(
             tag = LogTag.NOTIFICATION,
             message = "Starting upload notification event worker",
         )
-        setForeground(createForegroundInfo())
+        setForeground()
         try {
             val previousIds = mutableSetOf<Long>()
             combine(getUploadFileLinksWithUriByPriority(
@@ -130,7 +131,11 @@ class UploadEventWorker @AssistedInject constructor(
             CoreLogger.d(LogTag.NOTIFICATION, e, e.message.orEmpty())
             cancel(e)
         } finally {
-            transferDataNotifier.dismissNotification(transferDataNotification.first)
+            transferDataNotification.getOrNull(LogTag.NOTIFICATION)
+                ?.first
+                ?.let { notificationId ->
+                    transferDataNotifier.dismissNotification(notificationId)
+                }
         }
         CoreLogger.d(LogTag.NOTIFICATION, "Upload notification event worker finished")
         Result.success()
@@ -165,19 +170,29 @@ class UploadEventWorker @AssistedInject constructor(
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo {
-        return createForegroundInfo()
+        return createForegroundInfo().getOrThrow()
     }
 
-    private fun createForegroundInfo(): ForegroundInfo =
+    private fun createForegroundInfo(): kotlin.Result<ForegroundInfo> = runCatching {
+        val transferNotification = transferDataNotification.getOrThrow()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ForegroundInfo(
-                transferDataNotification.first.id,
-                transferDataNotification.second,
+                transferNotification.first.id,
+                transferNotification.second,
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
             )
         } else {
-            ForegroundInfo(transferDataNotification.first.id, transferDataNotification.second)
+            ForegroundInfo(transferNotification.first.id, transferNotification.second)
         }
+    }
+
+    private suspend fun setForeground() {
+        createForegroundInfo()
+            .getOrNull(LogTag.NOTIFICATION, "Failed creating foreground info")
+            ?.let { foregroundInfo ->
+                setForeground(foregroundInfo)
+            }
+    }
 
     companion object {
 

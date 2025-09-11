@@ -20,6 +20,7 @@ package me.proton.core.drive.linkdownload.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.arch.DataResult
+import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.extension.asSuccess
 import me.proton.core.drive.base.domain.function.pagedList
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -114,4 +115,6 @@ class LinkDownloadRepositoryImpl(
             offset = fromIndex,
         )
     }.all { state -> state == LinkDownloadState.DOWNLOADED }
+
+    override fun getDownloadingCountFlow(userId: UserId) = db.getDownloadingCountFlow(userId)
 }

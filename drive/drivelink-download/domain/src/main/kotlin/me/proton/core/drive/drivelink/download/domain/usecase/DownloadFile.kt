@@ -44,6 +44,7 @@ import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.usecase.SetDownloadState
+import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailPermanentFile
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
@@ -57,6 +58,7 @@ class DownloadFile @Inject constructor(
     private val getPermanentFolder: GetPermanentFolder,
     private val getCacheFolder: GetCacheFolder,
     private val setDownloadState: SetDownloadState,
+    private val getThumbnailPermanentFile: GetThumbnailPermanentFile,
 ) {
 
     suspend operator fun invoke(
@@ -66,6 +68,7 @@ class DownloadFile @Inject constructor(
         isCancelled: () -> Boolean,
         progress: MutableStateFlow<Percentage>,
     ) = coRunCatching {
+        getThumbnailPermanentFile(volumeId, fileId, revisionId).getOrThrow()
         val revision = setDownloadingAndGetRevision(fileId, revisionId).getOrThrow()
         coroutineScope {
             val downloadProgress = MutableStateFlow(0L)

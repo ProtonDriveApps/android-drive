@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">Säkerhetskopieringsmapp hittades inte</string>
   <string name="photos_error_backup_failed">Säkerhetskopiering misslyckades.</string>
   <string name="photos_error_backup_temporarily_disabled">Säkerhetskopiering är tillfälligt inaktiverat.</string>
-  <string name="photos_error_backup_migration_title">Uppdatering krävs</string>
-  <string name="photos_error_backup_migration_description">För att använda fotofunktioner, uppdatera din app till den senaste versionen.</string>
   <string name="photos_error_missing_permissions">Saknar behörigheter.</string>
   <!--
         Variable %1$s is an application name
@@ -135,17 +133,17 @@
   <string name="photos_screenshots_empty_description">Dina skärmdumpar kommer visas här</string>
   <string name="photos_videos_empty_title">Inga videoklipp</string>
   <string name="photos_videos_empty_description">Dina videoklipp kommer visas här</string>
-  <string name="photos_livephotos_empty_title">No Live Photos</string>
-  <string name="photos_livephotos_empty_description">Your Live Photos will appear here</string>
+  <string name="photos_livephotos_empty_title">Inga Live Photos</string>
+  <string name="photos_livephotos_empty_description">Dina Live Photos visas här</string>
   <string name="photos_motionphotos_empty_title">Inga rörliga foton</string>
-  <string name="photos_motionphotos_empty_description">Your Motion Photos will appear here</string>
+  <string name="photos_motionphotos_empty_description">Dina rörliga bilder visas här</string>
   <string name="photos_selfies_empty_title">Inga selfies</string>
   <string name="photos_selfies_empty_description">Dina selfie-foton kommer visas här</string>
   <string name="photos_portraits_empty_title">Inga porträtt</string>
   <string name="photos_portraits_empty_description">Dina porträttfoton kommer visas här</string>
   <string name="photos_bursts_empty_title">Inga serier</string>
   <string name="photos_bursts_empty_description">Dina fotoserier kommer visas här</string>
-  <string name="photos_panoramas_empty_title">No panoramas</string>
+  <string name="photos_panoramas_empty_title">Inga panoramabilder</string>
   <string name="photos_panoramas_empty_description">Dina panoramafoton kommer visas här</string>
   <string name="photos_raws_empty_title">Inga RAW</string>
   <string name="photos_raws_empty_description">Dina RAW-foton kommer visas här</string>
@@ -153,11 +151,7 @@
   <string name="photos_share_migration_in_progress_description">Om du har ett stort fotobibliotek kan det ta lite tid. Du kan stänga appen. Vi kommer att arbeta med det i bakgrunden.</string>
   <string name="photos_share_migration_needed_banner_title">Datamigrering behövs</string>
   <string name="photos_share_migration_needed_banner_description">Efter migrering kan du använda nya funktioner som filter och fotoalbum</string>
-  <string name="photos_important_updates_title">Viktiga uppdateringar</string>
-  <string name="photos_important_updates_subtitle">Fotobibliotek behöver uppdateras</string>
-  <string name="photos_important_updates_description">Denna snabba uppdatering förbereder dina foton för nya funktioner som filter och album</string>
-  <string name="photos_important_updates_cancel_action">Påminn mig senare</string>
-  <string name="photos_tags_migration_title">Tags migration</string>
+  <string name="photos_tags_migration_title">Taggmigrering</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates
         Example:
@@ -176,7 +170,7 @@
            Ongoing, migrating 12 345 files, 123 waiting for download.
     -->
   <plurals name="photos_tags_migration_ongoing">
-    <item quantity="one">Ongoing, migrating %1$s file, %2$s waiting for download.</item>
-    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="one">Pågår, migrerar %1$s fil, %2$s väntar på nedladdning.</item>
+    <item quantity="other">Pågår, migrerar %1$s filer, %2$s väntar på nedladdning.</item>
   </plurals>
 </resources>

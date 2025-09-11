@@ -31,22 +31,22 @@
     <item quantity="one">%1$s ელემენტი</item>
     <item quantity="other">%1$s ელემენტი</item>
   </plurals>
-  <string name="albums_delete_album_action">Delete album</string>
-  <string name="albums_delete_album_dialog_title">Delete album?</string>
-  <string name="albums_delete_album_dialog_description">This will only delete the album. Your photos will remain in your timeline. This action cannot be undone.</string>
-  <string name="albums_delete_album_dialog_description_with_children">Some photos in this album are not saved to your timeline. Deleting this album will permanently delete those photos.\nWould you like to save them before removing?</string>
-  <string name="albums_delete_album_dialog_delete_without_saving_action">Delete without saving</string>
-  <string name="albums_delete_album_dialog_save_and_delete_action">Save photos and delete</string>
-  <string name="albums_leave_album_dialog_title">Leave album?</string>
+  <string name="albums_delete_album_action">ალბომის წაშლა</string>
+  <string name="albums_delete_album_dialog_title">წაიშალოს ალბომი?</string>
+  <string name="albums_delete_album_dialog_description">ეს მხოლოდ ალბომს წაშლის. თქვენი ფოტოები დარჩება თქვენს ქრონოლოგიაში. ამ ქმედების გაუქმება შეუძლებელია.</string>
+  <string name="albums_delete_album_dialog_description_with_children">ამ ალბომის ზოგიერთი ფოტო არ არის შენახული თქვენს ქრონოლოგიაში. ალბომის წაშლით ეს ფოტოები სამუდამოდ წაიშლება.\nგსურთ მათი შენახვა წაშლამდე?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">წაშლა შენახვის გარეშე</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">ფოტოების შენახვა და წაშლა</string>
+  <string name="albums_leave_album_dialog_title">დატოვებთ ალბომს?</string>
   <!--
         Variable %1$s is an album name
         Example:
             "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
     -->
-  <string name="albums_leave_album_dialog_description">Are you sure that you want to leave album \"%1$s\"?\nYou will lose access to photos you haven\'t saved yet.</string>
-  <string name="albums_leave_album_dialog_leave_without_saving_action">Leave without saving</string>
-  <string name="albums_leave_album_dialog_save_and_leave_action">Save photos and leave</string>
-  <string name="albums_add_zero_to_album_button">Add to album</string>
+  <string name="albums_leave_album_dialog_description">დარწმუნებული ხართ, რომ გსურთ ალბომის „%1$s“ დატოვება?\nდაკარგავთ წვდომას ფოტოებზე, რომლებიც ჯერ არ შეგინახავთ.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">დატოვება შენახვის გარეშე</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">ფოტოების შენახვა და დატოვება</string>
+  <string name="albums_add_zero_to_album_button">ალბომში დამატება</string>
   <!--
         Variable %1$d is a number of photos to add to album
         Example:
@@ -54,10 +54,10 @@
             "Add 33 to album"
     -->
   <plurals name="albums_add_non_zero_to_album_button">
-    <item quantity="one">Add %1$d to album</item>
-    <item quantity="other">Add %1$d to album</item>
+    <item quantity="one">ალბომში %1$d-ის დამატება</item>
+    <item quantity="other">ალბომში %1$d-ის დამატება</item>
   </plurals>
-  <string name="albums_set_album_as_cover_success">Set as album cover</string>
+  <string name="albums_set_album_as_cover_success">ალბომის გარეკნად დაყენება</string>
   <!--
         Variable %1$d is a number of photos added to album
         Example:
@@ -65,8 +65,8 @@
             "17 items added to album"
     -->
   <plurals name="in_app_notification_add_to_album_success">
-    <item quantity="one">%1$d item added to album</item>
-    <item quantity="other">%1$d items added to album</item>
+    <item quantity="one">ალბომს დაემატა %1$d ერთეული</item>
+    <item quantity="other">ალბომს დაემატა %1$d ერთეული</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -75,8 +75,8 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_album_already_exists">
-    <item quantity="one">%1$d item already exists</item>
-    <item quantity="other">%1$d items already exist</item>
+    <item quantity="one">%1$d ერთეული უკვე არსებობს</item>
+    <item quantity="other">%1$d ერთეული უკვე არსებობს</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -85,8 +85,8 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_album_failed">
-    <item quantity="one">%1$d item failed</item>
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="one">%1$d ერთეული ვერ დაემატა</item>
+    <item quantity="other">%1$d ერთეული ვერ დაემატა</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos added to your Drive
@@ -95,8 +95,8 @@
             "17 items added to your Drive"
     -->
   <plurals name="in_app_notification_add_to_stream_success">
-    <item quantity="one">%1$d item added to your Drive</item>
-    <item quantity="other">%1$d items added to your Drive</item>
+    <item quantity="one">თქვენს Drive-ს დაემატა %1$d ერთეული</item>
+    <item quantity="other">თქვენს Drive-ს დაემატა %1$d ერთეული</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist
@@ -105,8 +105,8 @@
             "7 items already exist"
     -->
   <plurals name="in_app_notification_add_to_stream_already_exists">
-    <item quantity="one">%1$d item already exists</item>
-    <item quantity="other">%1$d items already exist</item>
+    <item quantity="one">%1$d ერთეული უკვე არსებობს</item>
+    <item quantity="other">%1$d ერთეული უკვე არსებობს</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because adding failed
@@ -115,8 +115,8 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_add_to_stream_failed">
-    <item quantity="one">%1$d item failed</item>
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="one">%1$d ერთეული ვერ დაემატა</item>
+    <item quantity="other">%1$d ერთეული ვერ დაემატა</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos removed from album
@@ -125,8 +125,8 @@
             "13 items removed from album"
     -->
   <plurals name="in_app_notification_remove_from_album_success">
-    <item quantity="one">%1$d item removed from album</item>
-    <item quantity="other">%1$d items removed from album</item>
+    <item quantity="one">ალბომიდან ამოიშალა %1$d ერთეული</item>
+    <item quantity="other">ალბომიდან ამოიშალა %1$d ერთეული</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not removed because removing failed
@@ -135,18 +135,18 @@
             "23 items failed"
     -->
   <plurals name="in_app_notification_removed_from_album_failed">
-    <item quantity="one">%1$d item failed</item>
-    <item quantity="other">%1$d items failed</item>
+    <item quantity="one">%1$d ერთეულის ამოშლა ვერ მოხერხდა</item>
+    <item quantity="other">%1$d ერთეულის ამოშლა ვერ მოხერხდა</item>
   </plurals>
-  <string name="albums_empty_album_screen_title">No photos</string>
-  <string name="albums_empty_album_screen_description">Photos that you or other members add will appear here</string>
-  <string name="albums_empty_albums_list_screen_title">No albums</string>
-  <string name="albums_empty_albums_list_screen_description">Albums that you create or join will appear here</string>
-  <string name="albums_empty_albums_my_albums_screen_description">Albums that you create will appear here</string>
-  <string name="albums_empty_albums_shared_by_me_screen_title">No shared albums</string>
-  <string name="albums_empty_albums_shared_by_me_screen_description">Albums you\'ve shared will appear here</string>
-  <string name="albums_empty_albums_shared_with_me_screen_title">No albums shared with me</string>
-  <string name="albums_empty_albums_shared_with_me_screen_description">Albums shared with you will appear here</string>
+  <string name="albums_empty_album_screen_title">ფოტოები არ არის</string>
+  <string name="albums_empty_album_screen_description">ფოტოები, რომლებსაც თქვენ ან სხვა წევრები დაამატებთ, აქ გამოჩნდება</string>
+  <string name="albums_empty_albums_list_screen_title">ალბომები არ არის</string>
+  <string name="albums_empty_albums_list_screen_description">ალბომები, რომლებსაც შექმნით ან შეუერთდებით, აქ გამოჩნდება</string>
+  <string name="albums_empty_albums_my_albums_screen_description">ალბომები, რომლებსაც შექმნით, აქ გამოჩნდება</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">გაზიარებული ალბომები არ არის</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">თქვენ მიერ გაზიარებული ალბომები აქ გამოჩნდება</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">ჩემთვის გაზიარებული ალბომები არ არის</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">თქვენთვის გაზიარებული ალბომები აქ გამოჩნდება</string>
   <!--
         Variable %1$d is a quantity of albums shared
         Example:
@@ -154,21 +154,21 @@
             "3 albums shared with you"
     -->
   <plurals name="shared_with_me_album_invitations_banner_description">
-    <item quantity="one">%1$d album shared with you</item>
-    <item quantity="other">%1$d albums shared with you</item>
+    <item quantity="one">თქვენთვის გაზიარდა %1$d ალბომი</item>
+    <item quantity="other">თქვენთვის გაზიარდა %1$d ალბომი</item>
   </plurals>
-  <string name="albums_share_multiple_photos_options_section_title">Share via</string>
-  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Add to shared album</string>
-  <string name="albums_share_multiple_photos_options_album_details">Shared album</string>
-  <string name="albums_share_multiple_photos_options_new_shared_album">New shared album</string>
-  <string name="albums_add_to_album_start_message">Adding photos to the encrypted album. Please keep the app open while the process is ongoing.</string>
-  <string name="albums_add_to_albums_options_new_album">Add to new album</string>
-  <string name="albums_add_to_albums_options_shared_album">My shared album</string>
+  <string name="albums_share_multiple_photos_options_section_title">გაზიარება მეშვეობით</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">გაზიარებულ ალბომში დამატება</string>
+  <string name="albums_share_multiple_photos_options_album_details">გაზიარებული ალბომი</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">ახალი გაზიარებული ალბომი</string>
+  <string name="albums_add_to_album_start_message">ფოტოების დამატება დაშიფრულ ალბომში. გთხოვთ, პროცესის მიმდინარეობისას აპლიკაცია არ დახუროთ.</string>
+  <string name="albums_add_to_albums_options_new_album">ახალ ალბომში დამატება</string>
+  <string name="albums_add_to_albums_options_shared_album">ჩემი გაზიარებული ალბომი</string>
   <!--
         Variable %1$s is an album owner name i.e. display name or email
         Example:
             "By Pablo Picasso"
             "By pablo.picasso@example.com"
     -->
-  <string name="albums_shared_with_me_details">By %1$s</string>
+  <string name="albums_shared_with_me_details">ავტორი: %1$s</string>
 </resources>

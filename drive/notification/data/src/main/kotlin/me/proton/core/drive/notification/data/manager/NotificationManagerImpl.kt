@@ -93,6 +93,9 @@ class NotificationManagerImpl @Inject constructor(
         }
     }
 
+    override fun hasValidChannel(notificationId: NotificationId): Boolean =
+        notificationManagerCompat.getNotificationChannel(notificationId.channel.id) != null
+
     private fun deleteNotificationChannel(channelId: String) = runCatching {
         notificationManagerCompat.deleteNotificationChannel(channelId)
     }

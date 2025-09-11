@@ -27,9 +27,7 @@ import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.backup.domain.usecase.DeleteFile
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.backup.domain.usecase.MarkAsFailed
-import me.proton.core.drive.backup.domain.usecase.StopBackup
 import me.proton.core.drive.base.data.extension.log
-import me.proton.core.drive.base.domain.exception.BackupStopException
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -44,7 +42,6 @@ import javax.inject.Inject
 class BackupUploadErrorHandler @Inject constructor(
     private val backupManager: BackupManager,
     private val deleteFile: DeleteFile,
-    private val stopBackup: StopBackup,
     private val hasFolders: HasFolders,
     private val markAsFailed: MarkAsFailed,
 ) : UploadErrorHandler {
@@ -73,18 +70,6 @@ class BackupUploadErrorHandler @Inject constructor(
                     BackupErrorType.LOCAL_STORAGE,
                     BackupErrorType.DRIVE_STORAGE,
                     BackupErrorType.PHOTOS_UPLOAD_NOT_ALLOWED,
-                    BackupErrorType.MIGRATION,
-                    -> {
-                        BackupStopException("Backup must stop: ${backupError.type}", throwable)
-                            .log(BACKUP, "Stopping backup")
-                        stopBackup(
-                            folderId = uploadError.uploadFileLink.parentLinkId,
-                            error = backupError,
-                        ).onFailure { error ->
-                            error.log(BACKUP, "Cannot stop backup")
-                        }
-                    }
-
                     BackupErrorType.OTHER -> onFileOtherError(uploadError)
                     BackupErrorType.CONNECTIVITY,
                     BackupErrorType.WIFI_CONNECTIVITY,

@@ -64,7 +64,6 @@ class MainInitializer : Initializer<Unit> {
         AccountReadyObserverInitializer::class.java,
         FirstAppUsageInitializer::class.java,
         UploadInitializer::class.java,
-        PhotoShareMigrationManagerInitializer::class.java,
         DownloadInitializer::class.java,
         WebViewInitializer::class.java,
     )

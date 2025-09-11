@@ -25,12 +25,10 @@ import dagger.hilt.components.SingletonComponent
 import me.proton.core.drive.photo.data.manager.PhotoTagWorkManagerImpl
 import me.proton.core.drive.photo.data.repository.AlbumRepositoryImpl
 import me.proton.core.drive.photo.data.repository.PhotoRepositoryImpl
-import me.proton.core.drive.photo.data.repository.PhotoShareMigrationRepositoryImpl
 import me.proton.core.drive.photo.data.repository.TagRepositoryImpl
 import me.proton.core.drive.photo.domain.manager.PhotoTagWorkManager
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
-import me.proton.core.drive.photo.domain.repository.PhotoShareMigrationRepository
 import me.proton.core.drive.photo.domain.repository.TagRepository
 import javax.inject.Singleton
 

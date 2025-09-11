@@ -68,7 +68,6 @@ import me.proton.core.drive.drivelink.crypto.domain.usecase.GetDecryptedDriveLin
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgress
-import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetPagedOfflineDriveLinksList
 import me.proton.core.drive.feature.flag.domain.usecase.IsDownloadManagerEnabled
 import me.proton.core.drive.files.presentation.state.FilesViewState
@@ -98,7 +97,6 @@ class OfflineViewModel @Inject constructor(
     getDriveLink: GetDecryptedDriveLink,
     getSorting: GetSorting,
     getPagedOfflineDriveLinksList: GetPagedOfflineDriveLinksList,
-    getPagedDriveLinksList: GetPagedDriveLinksList,
     private val getDownloadProgress: GetDownloadProgress,
     getLayoutType: GetLayoutType,
     private val toggleLayoutType: ToggleLayoutType,
@@ -130,7 +128,7 @@ class OfflineViewModel @Inject constructor(
         if (folderId == null) {
             getPagedOfflineDriveLinksList(userId)
         } else {
-            getPagedDriveLinksList(folderId)
+            getPagedOfflineDriveLinksList(folderId)
         }
     }
         .cachedIn(viewModelScope)

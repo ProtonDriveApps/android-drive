@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">Le dossier de la sauvegarde est introuvable.</string>
   <string name="photos_error_backup_failed">La sauvegarde n\'a pas abouti.</string>
   <string name="photos_error_backup_temporarily_disabled">La sauvegarde est temporairement désactivée.</string>
-  <string name="photos_error_backup_migration_title">Mise à jour nécessaire</string>
-  <string name="photos_error_backup_migration_description">Pour utiliser les fonctionnalités de photos, veuillez mettre à jour votre application vers la dernière version.</string>
   <string name="photos_error_missing_permissions">Des autorisations sont nécessaires.</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Si vous avez une grande bibliothèque de photos, cela peut prendre un certain temps. Vous pouvez fermer l\'application. Nous y travaillerons en arrière-plan.</string>
   <string name="photos_share_migration_needed_banner_title">Une migration de données est nécessaire.</string>
   <string name="photos_share_migration_needed_banner_description">Après la migration, vous pourrez utiliser de nouvelles fonctionnalités telles que les filtres et les albums photo</string>
-  <string name="photos_important_updates_title">Mises à jour importantes</string>
-  <string name="photos_important_updates_subtitle">Mise à jour de la bibliothèque de photos requise</string>
-  <string name="photos_important_updates_description">Cette mise à jour rapide prépare vos photos pour les nouvelles fonctionnalités telles que les filtres et les albums.</string>
-  <string name="photos_important_updates_cancel_action">Me le rappeler plus tard</string>
   <string name="photos_tags_migration_title">Migration des tags</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

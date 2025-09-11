@@ -29,6 +29,7 @@ driveModule(
     room = true,
     workManager = true,
     i18n = true,
+    socialTest = true,
 ) {
     api(project(":drive:base:data"))
     api(project(":drive:upload:domain"))

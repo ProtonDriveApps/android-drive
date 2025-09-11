@@ -17,19 +17,28 @@
  */
 package me.proton.core.drive.upload.domain.usecase
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.file.base.domain.repository.FileRepository
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.entity.UploadState
 import me.proton.core.drive.linkupload.domain.usecase.UpdateToken
 import me.proton.core.drive.linkupload.domain.usecase.UpdateUploadState
+import me.proton.core.drive.linkupload.domain.manager.UploadSpeedManager
 import javax.inject.Inject
 
 class UploadBlock @Inject constructor(
     private val fileRepository: FileRepository,
     private val updateToken: UpdateToken,
     private val updateUploadState: UpdateUploadState,
+    private val uploadSpeedManager: UploadSpeedManager,
 ) {
     suspend operator fun invoke(
         uploadFileLink: UploadFileLink,
@@ -44,12 +53,21 @@ class UploadBlock @Inject constructor(
                 require(uploadBlock.file.length() != 0L) {
                     "Cannot send empty block: ${uploadBlock.file.name} for file link: ${uploadFileLink.id}"
                 }
+                val job = Job()
+                val scope = CoroutineScope(Dispatchers.IO + job)
+                uploadingProgress.scan(Pair(0L, 0L)) { accumulator, value ->
+                    accumulator.second to value
+                }.drop(1)
+                    .onEach{ (prev, next) ->
+                        uploadSpeedManager.add(uploadFileLink.userId, next - prev)
+                    }.launchIn(scope)
                 fileRepository.uploadFile(
                     userId = userId,
                     uploadUrl = url,
                     uploadFile = uploadBlock.file,
                     uploadingProgress = uploadingProgress
                 ).getOrThrow()
+                job.complete()
                 updateToken(
                     uploadFileLinkId = id,
                     index = uploadBlock.index,

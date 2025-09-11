@@ -31,10 +31,10 @@ interface UploadErrorManager {
 
     val errors: Flow<Error>
 
-    suspend fun post(error: Error)
+    fun post(error: Error)
 }
 
-suspend fun UploadErrorManager.post(
+fun UploadErrorManager.post(
     uploadFileLink: UploadFileLink,
     tags: Set<String>,
     throwable: Throwable,

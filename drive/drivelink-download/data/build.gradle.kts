@@ -39,6 +39,7 @@ driveModule(
     implementation(project(":drive:link:data"))
     implementation(project(":drive:link-node:domain"))
     implementation(project(":drive:observability:data"))
+    implementation(project(":drive:thumbnail:domain"))
     implementation(project(":drive:worker:data"))
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.core.crypto)

@@ -59,14 +59,14 @@ class BackupEnabledWorker @AssistedInject constructor(
     private val userId =
         UserId(requireNotNull(inputData.getString(WorkerKeys.KEY_USER_ID)) { "User id is required" })
 
-    private val transferDataNotification: Pair<NotificationId, Notification> = transferDataNotifier(
+    private val transferDataNotification: kotlin.Result<Pair<NotificationId, Notification>> = transferDataNotifier(
         userId = userId,
         event = Event.TransferData,
     )
 
     override suspend fun doWork(): Result {
         CoreLogger.d(LogTag.BACKUP, "BackupEnabledWorker started")
-        setForeground(createForegroundInfo())
+        setForeground()
         try {
             while (true) {
                 delay(1.minutes)
@@ -75,24 +75,39 @@ class BackupEnabledWorker @AssistedInject constructor(
                 }
             }
         } finally {
-            transferDataNotifier.dismissNotification(transferDataNotification.first)
+            transferDataNotification
+                .getOrNull(LogTag.BACKUP)
+                ?.first
+                ?.let { notificationId ->
+                    transferDataNotifier.dismissNotification(notificationId)
+                }
         }
         CoreLogger.d(LogTag.BACKUP, "BackupEnabledWorker ended")
         return Result.success()
     }
 
-    override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo()
+    override suspend fun getForegroundInfo(): ForegroundInfo = createForegroundInfo().getOrThrow()
 
-    private fun createForegroundInfo(): ForegroundInfo =
+    private fun createForegroundInfo(): kotlin.Result<ForegroundInfo> = runCatching {
+        val transferNotification = transferDataNotification.getOrThrow()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             ForegroundInfo(
-                transferDataNotification.first.id,
-                transferDataNotification.second,
+                transferNotification.first.id,
+                transferNotification.second,
                 ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
             )
         } else {
-            ForegroundInfo(transferDataNotification.first.id, transferDataNotification.second)
+            ForegroundInfo(transferNotification.first.id, transferNotification.second)
         }
+    }
+
+    private suspend fun setForeground() {
+        createForegroundInfo()
+            .getOrNull(LogTag.BACKUP, "Failed creating foreground info")
+            ?.let { foregroundInfo ->
+                setForeground(foregroundInfo)
+            }
+    }
 
     private suspend fun areAllFoldersFinished(userId: UserId): Boolean =
         getAllFolders(userId)

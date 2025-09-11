@@ -21,6 +21,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.IntoSet
+import me.proton.core.drive.drivelink.download.data.handler.DownloadSpeedErrorHandler
 import me.proton.core.drive.drivelink.download.data.handler.ObservabilityDownloadErrorHandler
 import me.proton.core.drive.drivelink.download.data.manager.DownloadErrorManagerImpl
 import me.proton.core.drive.drivelink.download.data.repository.DownloadFileRepositoryImpl
@@ -56,8 +58,11 @@ interface DownloadBindModule {
     fun bindsDownloadErrorManager(impl: DownloadErrorManagerImpl): DownloadErrorManager
 
     @Binds
-    @Singleton
-    fun bindsDownloadErrorHandler(impl: ObservabilityDownloadErrorHandler): DownloadErrorHandler
+    @IntoSet
+    fun bindsObservabilityDownloadErrorHandler(impl: ObservabilityDownloadErrorHandler): DownloadErrorHandler
+    @Binds
+    @IntoSet
+    fun bindsDownloadSpeedErrorHandler(impl: DownloadSpeedErrorHandler): DownloadErrorHandler
 
     @Binds
     @Singleton

@@ -91,8 +91,6 @@ internal fun PhotosStatesContainer(
                                     onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
                                     onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
                                 )
-
-                            BackupErrorType.MIGRATION -> BackupMigrationState()
                         }
                     }
                 }
@@ -140,7 +138,6 @@ class ViewStatePreviewParameterProvider : CollectionPreviewParameterProvider<Pho
         PhotosStatusViewState.Failed(listOf(BackupError.Connectivity())),
         PhotosStatusViewState.Failed(listOf(BackupError.PhotosUploadNotAllowed())),
         PhotosStatusViewState.Failed(listOf(BackupError.BackgroundRestrictions())),
-        PhotosStatusViewState.Failed(listOf(BackupError.Migration())),
         PhotosStatusViewState.Preparing(0.1F),
     )
 )

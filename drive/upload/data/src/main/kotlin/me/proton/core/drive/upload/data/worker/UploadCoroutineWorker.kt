@@ -18,8 +18,9 @@
 package me.proton.core.drive.upload.data.worker
 
 import android.content.Context
-import android.os.Build
-import androidx.work.WorkInfo
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES
+import androidx.work.WorkInfo.Companion.STOP_REASON_NOT_STOPPED
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import kotlinx.coroutines.CancellationException
@@ -37,6 +38,7 @@ import me.proton.core.drive.linkupload.domain.extension.isFileEmpty
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLink
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.upload.data.exception.UploadCleanupException
+import me.proton.core.drive.upload.data.exception.UploadWorkerException
 import me.proton.core.drive.upload.data.extension.getDefaultMessage
 import me.proton.core.drive.upload.data.extension.log
 import me.proton.core.drive.upload.data.extension.toEventUploadReason
@@ -84,7 +86,17 @@ abstract class UploadCoroutineWorker(
             uploadFileLink = getUploadFileLink(uploadFileLinkId).toResult().getOrThrow()
             doLimitedRetryUploadWork(uploadFileLink)
         } catch (e: CancellationException) {
-            CoreLogger.d(logTag(), "Retrying due to cancellation exception in ${javaClass.simpleName}")
+            CoreLogger.d(
+                logTag(),
+                "Retrying due to cancellation exception in ${javaClass.simpleName}"
+            )
+            val error = if (SDK_INT >= VERSION_CODES.S && stopReason != STOP_REASON_NOT_STOPPED) {
+                    UploadWorkerException(stopReason = stopReason, cause = e)
+                } else {
+                    UploadWorkerException(cause = e)
+                }
+            uploadFileLink?.post(error)
+
             Result.retry()
         } catch (e: NoSuchElementException) {
             uploadFileLink?.run {
@@ -127,7 +139,7 @@ abstract class UploadCoroutineWorker(
                 else -> throw e
             }
         } finally {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && stopReason != WorkInfo.STOP_REASON_NOT_STOPPED) {
+            if (SDK_INT >= VERSION_CODES.S && stopReason != STOP_REASON_NOT_STOPPED) {
                 CoreLogger.d(
                     tag = logTag(),
                     message = "${stopReason.toPrintableString()} (id=$id, runAttemptCount=$runAttemptCount)",
@@ -176,7 +188,7 @@ abstract class UploadCoroutineWorker(
         }
     }
 
-    private suspend fun UploadFileLink.post(error: Throwable) {
+    private fun UploadFileLink.post(error: Throwable) {
         val cause = error.getCause()
         uploadErrorManager.post(this, tags, cause)
     }

@@ -78,7 +78,6 @@ fun PhotosContent(
     selectedPhotos: Set<LinkId>,
     viewState: PhotosStatusViewState,
     showPhotosStateBanner: Boolean,
-    showPhotoShareMigrationNeededBanner: Boolean,
     showStorageBanner: Boolean,
     modifier: Modifier = Modifier,
     inMultiselect: Boolean = false,
@@ -98,7 +97,6 @@ fun PhotosContent(
     isRefreshEnabled: Boolean,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
-    onStartPhotoShareMigration: () -> Unit,
     getFastScrollAnchors: suspend (List<PhotosItem>, Int, Int) -> List<FastScrollAnchor>,
 ) {
     ProtonPullToRefresh(
@@ -113,7 +111,6 @@ fun PhotosContent(
             viewState = viewState,
             showPhotosStateBanner = showPhotosStateBanner,
             showStorageBanner = showStorageBanner,
-            showPhotoShareMigrationNeededBanner = showPhotoShareMigrationNeededBanner,
             modifier = modifier,
             inMultiselect= inMultiselect,
             isFastScrollEnabled = isFastScrollEnabled,
@@ -129,7 +126,6 @@ fun PhotosContent(
             onChangeNetwork = onChangeNetwork,
             onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
             onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
-            onStartPhotoShareMigration = onStartPhotoShareMigration,
             getFastScrollAnchors = getFastScrollAnchors,
         )
     }
@@ -142,7 +138,6 @@ fun PhotosContent(
     selectedPhotos: Set<LinkId>,
     viewState: PhotosStatusViewState,
     showPhotosStateBanner: Boolean,
-    showPhotoShareMigrationNeededBanner: Boolean,
     showStorageBanner: Boolean,
     modifier: Modifier = Modifier,
     inMultiselect: Boolean = false,
@@ -159,7 +154,6 @@ fun PhotosContent(
     onChangeNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
-    onStartPhotoShareMigration: () -> Unit,
     getFastScrollAnchors: suspend (List<PhotosItem>, Int, Int) -> List<FastScrollAnchor>,
 ) {
     val gridState = items.rememberLazyGridState()
@@ -266,10 +260,6 @@ fun PhotosContent(
                         }
                     }
             ) {
-                PhotoShareMigrationNeededState(
-                    isVisible = showPhotoShareMigrationNeededBanner,
-                    onStart = onStartPhotoShareMigration,
-                )
                 PhotosStatesContainer(
                     viewState = viewState,
                     showPhotosStateBanner = showPhotosStateBanner,

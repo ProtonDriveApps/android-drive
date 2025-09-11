@@ -114,7 +114,6 @@ fun PhotosAndAlbumsScreen(
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
     navigateToUserInvitation: (Boolean) -> Unit,
-    navigateToPhotosImportantUpdates: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<PhotosAndAlbumsViewModel>()
@@ -146,7 +145,6 @@ fun PhotosAndAlbumsScreen(
                 navigateToPhotosUpsell = navigateToPhotosUpsell,
                 navigateToBackupSettings = navigateToBackupSettings,
                 navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
-                navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
                 defaultTitle = defaultTitle,
             )
 
@@ -242,7 +240,6 @@ fun PhotosTab(
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
-    navigateToPhotosImportantUpdates: () -> Unit,
     defaultTitle: @Composable (Modifier) -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
@@ -258,7 +255,6 @@ fun PhotosTab(
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
-            navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
             lifecycle = lifecycle,
         )
     }
@@ -273,9 +269,6 @@ fun PhotosTab(
             when (effect) {
                 PhotosEffect.ShowUpsell -> launch(Dispatchers.Main) {
                     viewEvent.onShowUpsell()
-                }
-                PhotosEffect.ShowImportantUpdates -> launch(Dispatchers.Main) {
-                    viewEvent.onShowImportantUpdates()
                 }
             }
         }.launchIn(this)

@@ -63,9 +63,9 @@
   <!--
         Variable %1$d is max number of days
         Example:
-            "Expiration date must not be after more then 90 days"
+            "Expiration date must not be after more than 90 days"
     -->
-  <string name="shared_link_error_message_expiration_date_too_late">Geçerlilik süresi en fazla %1$d gün sonrası olabilir</string>
+  <string name="shared_link_error_message_expiration_date_too_late">Geçerlilik süresi %1$d günden fazla olmamalıdır</string>
   <string name="shared_link_error_legacy_link">Bu, yönetimi desteklenmeyen eski bir bağlantı. Bu bağlantı paylaşımını kaldırmanız ve yeni bir bağlantı almanız önerilir.</string>
   <string name="title_share_via_link">Bağlantı ile paylaş</string>
   <string name="shared_with_me_title">Benimle paylaşılan</string>

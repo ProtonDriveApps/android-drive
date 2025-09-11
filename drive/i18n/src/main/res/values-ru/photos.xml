@@ -67,8 +67,6 @@
   <string name="photos_error_backup_missing_folder">Папка резервной копии не найдена</string>
   <string name="photos_error_backup_failed">Резервное копирование не удалось</string>
   <string name="photos_error_backup_temporarily_disabled">Резервное копирование временно отключено.</string>
-  <string name="photos_error_backup_migration_title">Требуется обновление</string>
-  <string name="photos_error_backup_migration_description">Чтобы использовать функции фотографий, обновите свое приложение до последней версии.</string>
   <string name="photos_error_missing_permissions">Отсутствуют разрешения.</string>
   <!--
         Variable %1$s is an application name
@@ -159,11 +157,7 @@
   <string name="photos_share_migration_in_progress_description">Если у вас большая библиотека фото, это может занять некоторое время. Вы можете закрыть приложение. Мы будем работать над этим в фоновом режиме.</string>
   <string name="photos_share_migration_needed_banner_title">Необходима миграция данных</string>
   <string name="photos_share_migration_needed_banner_description">После миграции вы сможете использовать новые функции, такие как фильтры и фотоальбом.</string>
-  <string name="photos_important_updates_title">Важные обновления</string>
-  <string name="photos_important_updates_subtitle">Требуется обновление библиотеки фото</string>
-  <string name="photos_important_updates_description">Это быстрое обновление подготовит ваши фотографии к новым функциям, таким как фильтры и альбомы.</string>
-  <string name="photos_important_updates_cancel_action">Напомнить позже</string>
-  <string name="photos_tags_migration_title">Tags migration</string>
+  <string name="photos_tags_migration_title">Миграция тегов</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates
         Example:
@@ -171,10 +165,10 @@
            Finished, 12 345 files were migrated.
     -->
   <plurals name="photos_tags_migration_finished">
-    <item quantity="one">Finished, %1$s file was migrated.</item>
-    <item quantity="few">Finished, %1$s files were migrated.</item>
-    <item quantity="many">Finished, %1$s files were migrated.</item>
-    <item quantity="other">Finished, %1$s files were migrated.</item>
+    <item quantity="one">Готово, %1$s файл был перенесён.</item>
+    <item quantity="few">Готово, %1$s файла было перенесено.</item>
+    <item quantity="many">Готово, %1$s файлов было перенесено.</item>
+    <item quantity="other">Готово, %1$s файла было перенесено.</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos to migrate
@@ -184,9 +178,9 @@
            Ongoing, migrating 12 345 files, 123 waiting for download.
     -->
   <plurals name="photos_tags_migration_ongoing">
-    <item quantity="one">Ongoing, migrating %1$s file, %2$s waiting for download.</item>
-    <item quantity="few">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
-    <item quantity="many">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
-    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="one">В процессе: переносится %1$s файл, %2$s в очереди на скачивание.</item>
+    <item quantity="few">В процессе: переносятся %1$s файла, %2$s в очереди на скачивание.</item>
+    <item quantity="many">В процессе: переносятся %1$s файлов, %2$s в очереди на скачивание.</item>
+    <item quantity="other">В процессе: переносится %1$s файла, %2$s в очереди на скачивание.</item>
   </plurals>
 </resources>

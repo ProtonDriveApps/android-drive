@@ -19,32 +19,14 @@
 package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.drive.backup.domain.entity.BackupError
-import me.proton.core.drive.backup.domain.entity.BackupErrorType
-import me.proton.core.drive.base.domain.extension.getOrNull
-import me.proton.core.drive.base.domain.extension.toResult
-import me.proton.core.drive.base.domain.log.LogTag.BACKUP
-import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.folder.domain.usecase.DeleteLocalContent
 import me.proton.core.drive.link.domain.entity.FolderId
-import me.proton.core.drive.share.domain.usecase.GetShare
 import javax.inject.Inject
 
 class HandleBackupError @Inject constructor(
-    private val stopBackup: StopBackup,
     private val addBackupError: AddBackupError,
-    private val getShare: GetShare,
-    private val deleteLocalContent: DeleteLocalContent,
 ) {
     suspend operator fun invoke(folderId: FolderId, backupError: BackupError) = coRunCatching {
-        if (backupError.type == BackupErrorType.MIGRATION) {
-            stopBackup(folderId, backupError).getOrThrow()
-            deleteLocalContent(
-                volumeId = getShare(folderId.shareId).toResult().getOrThrow().volumeId,
-                folderId = folderId,
-            ).getOrNull(BACKUP, "Cannot delete local content: ${folderId.id.logId()}")
-        } else {
-            addBackupError(folderId, backupError).getOrThrow()
-        }
+        addBackupError(folderId, backupError).getOrThrow()
     }
 }

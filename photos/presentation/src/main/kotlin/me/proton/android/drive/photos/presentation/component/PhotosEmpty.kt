@@ -19,7 +19,6 @@
 package me.proton.android.drive.photos.presentation.component
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
@@ -45,7 +44,6 @@ fun PhotosEmpty(
     state: ListContentState.Empty,
     viewState: PhotosStatusViewState,
     showPhotosStateBanner: Boolean,
-    showPhotoShareMigrationNeededBanner: Boolean,
     showStorageBanner: Boolean,
     modifier: Modifier = Modifier,
     onEnable: () -> Unit,
@@ -57,7 +55,6 @@ fun PhotosEmpty(
     onChangeNetwork: () -> Unit,
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
-    onStartPhotoShareMigration: () -> Unit,
 ) {
     Box(modifier = modifier) {
         if (viewState is PhotosStatusViewState.Preparing
@@ -74,10 +71,6 @@ fun PhotosEmpty(
             )
         }
         PhotosBanners(modifier = Modifier.align(Alignment.BottomCenter)) {
-            PhotoShareMigrationNeededState(
-                isVisible = showPhotoShareMigrationNeededBanner,
-                onStart = onStartPhotoShareMigration,
-            )
             PhotosStatesContainer(
                 viewState = viewState,
                 showPhotosStateBanner = showPhotosStateBanner,
@@ -152,7 +145,6 @@ private fun PhotosEmptyPreview() {
             actionResId = null,
         ),
         showPhotosStateBanner = true,
-        showPhotoShareMigrationNeededBanner = false,
         showStorageBanner = false,
         viewState = PhotosStatusViewState.InProgress(0F, "12 345 items left"),
         onEnable = {},
@@ -164,7 +156,6 @@ private fun PhotosEmptyPreview() {
         onChangeNetwork = {},
         onIgnoreBackgroundRestrictions = {},
         onDismissBackgroundRestrictions = {},
-        onStartPhotoShareMigration = {},
     )
 }
 

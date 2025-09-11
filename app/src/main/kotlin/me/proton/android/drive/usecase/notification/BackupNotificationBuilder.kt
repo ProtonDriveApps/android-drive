@@ -114,9 +114,6 @@ class BackupNotificationBuilder @Inject constructor(
 
             Event.Backup.BackupState.PREPARING ->
                 appContext.getString(I18N.string.notification_content_text_backup_preparing)
-
-            Event.Backup.BackupState.FAILED_DUE_PHOTO_SHARE_MIGRATION ->
-                appContext.getString(I18N.string.notification_content_text_backup_preparing)
         }
 
     companion object {

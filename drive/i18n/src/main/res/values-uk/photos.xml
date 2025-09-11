@@ -67,8 +67,6 @@
   <string name="photos_error_backup_missing_folder">Теку для резервного копіювання не знайдено</string>
   <string name="photos_error_backup_failed">Збій резервного копіювання.</string>
   <string name="photos_error_backup_temporarily_disabled">Резервне копіювання тимчасово вимкнено.</string>
-  <string name="photos_error_backup_migration_title">Необхідне оновлення</string>
-  <string name="photos_error_backup_migration_description">Щоби використовувати функції фотографій, оновіть свій застосунок до останньої версії.</string>
   <string name="photos_error_missing_permissions">Відсутні дозволи.</string>
   <!--
         Variable %1$s is an application name
@@ -159,10 +157,6 @@
   <string name="photos_share_migration_in_progress_description">Якщо у вас велика фотобібліотека, це може зайняти деякий час. Ви можете закрити застосунок. Ми будемо працювати над цим у фоновому режимі.</string>
   <string name="photos_share_migration_needed_banner_title">Потрібне перенесення даних</string>
   <string name="photos_share_migration_needed_banner_description">Після перенесення ви зможете використовувати нові функції, як-от фільтри та фотоальбом</string>
-  <string name="photos_important_updates_title">Важливі оновлення</string>
-  <string name="photos_important_updates_subtitle">Необхідне оновлення фотобібліотеки</string>
-  <string name="photos_important_updates_description">Це швидке оновлення готує ваші фото для нових функцій, як-от фільтри та альбоми</string>
-  <string name="photos_important_updates_cancel_action">Нагадати пізніше</string>
   <string name="photos_tags_migration_title">Перенесення тегів</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates
@@ -185,8 +179,8 @@
     -->
   <plurals name="photos_tags_migration_ongoing">
     <item quantity="one">Триває перенесення %1$s файлу, %2$s очікує на завантаження.</item>
-    <item quantity="few">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
-    <item quantity="many">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="few">Триває перенесення %1$s файлів, %2$s очікують на завантаження.</item>
+    <item quantity="many">Триває перенесення %1$s файлів, %2$s очікують на завантаження.</item>
     <item quantity="other">Триває перенесення %1$s файлів, %2$s очікує на завантаження.</item>
   </plurals>
 </resources>

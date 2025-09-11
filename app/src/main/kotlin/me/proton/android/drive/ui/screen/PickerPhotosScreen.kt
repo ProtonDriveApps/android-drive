@@ -157,7 +157,6 @@ fun PickerPhotos(
                 navigateToPhotosUpsell = {},
                 navigateToBackupSettings = {},
                 navigateToNotificationPermissionRationale = {},
-                navigateToPhotosImportantUpdates = {},
                 defaultTitle = {},
             )
             BottomActions(

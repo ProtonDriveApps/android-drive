@@ -63,9 +63,9 @@
   <!--
         Variable %1$d is max number of days
         Example:
-            "Expiration date must not be after more then 90 days"
+            "Expiration date must not be after more than 90 days"
     -->
-  <string name="shared_link_error_message_expiration_date_too_late">La date d\'expiration ne doit pas dépasser %1$d jours.</string>
+  <string name="shared_link_error_message_expiration_date_too_late">La date d\'expiration ne doit pas excéder plus de %1$d jours.</string>
   <string name="shared_link_error_legacy_link">Il s\'agit d\'un lien ancien que nous ne pouvons plus gérer. Nous vous recommandons de ne plus partager ce lien et d\'en créer un nouveau.</string>
   <string name="title_share_via_link">Partager avec un lien</string>
   <string name="shared_with_me_title">Partagé avec moi</string>
@@ -103,6 +103,6 @@
   <string name="shared_user_invitations_decline_button">Refuser</string>
   <string name="shared_user_invitations_accept_success">L\'élément partagé a été accepté.</string>
   <string name="shared_user_invitations_decline_success">L\'élément partagé a été refusé.</string>
-  <string name="shared_user_album_invitations_accept_success">Invitation acceptée</string>
-  <string name="shared_user_album_invitations_decline_success">Invitation refusée</string>
+  <string name="shared_user_album_invitations_accept_success">L\'invitation a été acceptée</string>
+  <string name="shared_user_album_invitations_decline_success">L\'invitation a été refusée</string>
 </resources>

@@ -64,8 +64,6 @@
   <string name="photos_error_backup_missing_folder">Folder cadangan tidak ditemukan</string>
   <string name="photos_error_backup_failed">Pencadangan gagal.</string>
   <string name="photos_error_backup_temporarily_disabled">Pencadangan untuk sementara dinonaktifkan.</string>
-  <string name="photos_error_backup_migration_title">Pembaruan Dibutuhkan</string>
-  <string name="photos_error_backup_migration_description">Untuk menggunakan fitur foto, silakan perbarui aplikasi Anda ke versi terbaru.</string>
   <string name="photos_error_missing_permissions">Terdapat perizinan yang belum ditentukan.</string>
   <!--
         Variable %1$s is an application name
@@ -150,10 +148,6 @@
   <string name="photos_share_migration_in_progress_description">Jika Anda memiliki perpustakaan foto yang besar, ini mungkin akan memakan waktu. Anda dapat menutup aplikasi. Kami akan menanganinya di latar belakang.</string>
   <string name="photos_share_migration_needed_banner_title">Migrasi data diperlukan</string>
   <string name="photos_share_migration_needed_banner_description">Setelah migrasi, Anda dapat menggunakan fitur-fitur baru seperti filter dan album foto</string>
-  <string name="photos_important_updates_title">Pembaruan penting</string>
-  <string name="photos_important_updates_subtitle">Pembaruan pustaka foto diperlukan</string>
-  <string name="photos_important_updates_description">Pembaruan cepat ini mempersiapkan foto Anda untuk fitur-fitur baru seperti filter dan album</string>
-  <string name="photos_important_updates_cancel_action">Ingatkan saya nanti</string>
   <string name="photos_tags_migration_title">Migrasi tag</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

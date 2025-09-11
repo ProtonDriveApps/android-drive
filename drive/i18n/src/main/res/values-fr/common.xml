@@ -39,7 +39,7 @@
   <string name="common_on">Activé</string>
   <string name="common_off">Désactivé</string>
   <string name="common_all">Tout</string>
-  <string name="common_unknown">Inconnu</string>
+  <string name="common_unknown">Non identifié</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -69,10 +69,10 @@
   <string name="common_create_album_action">Créer un album</string>
   <string name="common_set_as_album_cover_action">Définir en tant que couverture d\'album</string>
   <string name="common_add_action">Ajouter</string>
-  <string name="common_remove_from_album_action">Retirer de l\'album</string>
+  <string name="common_remove_from_album_action">Supprimer de l\'album</string>
   <string name="common_leave_album_action">Quitter l\'album</string>
   <string name="common_start_action">Commencer</string>
-  <string name="common_save_all_action">Tout enregistrer</string>
+  <string name="common_save_all_action">Tout sauvegarder</string>
   <string name="common_add_to_albums_action">Ajouter aux albums</string>
   <string name="common_tag_photo_action">Analyser la photo pour détecter les tags</string>
   <!-- endregion -->
@@ -87,7 +87,7 @@
   <string name="common_type_pdf">Document PDF</string>
   <string name="common_type_ppt">Présentation</string>
   <string name="common_type_proton_doc">Document Proton</string>
-  <string name="common_type_proton_sheet">Feuille de calcul Proton</string>
+  <string name="common_type_proton_sheet">Tableur Proton</string>
   <string name="common_type_text">Texte</string>
   <string name="common_type_trustedkey">Clé de confiance</string>
   <string name="common_type_unknown">Binaire</string>

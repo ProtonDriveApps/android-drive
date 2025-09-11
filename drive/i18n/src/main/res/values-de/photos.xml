@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">Ordner für die Sicherung wurde nicht gefunden.</string>
   <string name="photos_error_backup_failed">Sicherung fehlgeschlagen.</string>
   <string name="photos_error_backup_temporarily_disabled">Die Sicherung ist vorübergehend deaktiviert.</string>
-  <string name="photos_error_backup_migration_title">Aktualisierung erforderlich</string>
-  <string name="photos_error_backup_migration_description">Um die Fotofunktionen nutzen zu können, aktualisiere bitte deine App auf die neueste Version.</string>
   <string name="photos_error_missing_permissions">Fehlende Berechtigungen.</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Wenn du eine große Fotosammlung hast, kann dies einige Zeit dauern. Du kannst die App schließen. Wir werden im Hintergrund daran arbeiten.</string>
   <string name="photos_share_migration_needed_banner_title">Datenmigration erforderlich</string>
   <string name="photos_share_migration_needed_banner_description">Nach der Migration kannst du neue Funktionen wie Filter und Fotoalbum nutzen</string>
-  <string name="photos_important_updates_title">Wichtige Updates</string>
-  <string name="photos_important_updates_subtitle">Foto-Mediathek muss aktualisiert werden</string>
-  <string name="photos_important_updates_description">Dieses schnelle Update bereitet deine Fotos auf neue Funktionen wie Filter und Albums vor</string>
-  <string name="photos_important_updates_cancel_action">Später erneut fragen</string>
   <string name="photos_tags_migration_title">Schlagwörter Migration</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

@@ -76,7 +76,6 @@ fun PhotosScreen(
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
-    navigateToPhotosImportantUpdates: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
     val viewState by rememberFlowWithLifecycle(flow = viewModel.viewState)
@@ -91,7 +90,6 @@ fun PhotosScreen(
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
-            navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
             lifecycle = lifecycle,
         )
     }
@@ -103,9 +101,6 @@ fun PhotosScreen(
             when (effect) {
                 PhotosEffect.ShowUpsell -> launch(Dispatchers.Main) {
                     viewEvent.onShowUpsell()
-                }
-                PhotosEffect.ShowImportantUpdates -> launch(Dispatchers.Main) {
-                    viewEvent.onShowImportantUpdates()
                 }
             }
         }.launchIn(this)

@@ -56,7 +56,7 @@ class EntitlementInitializer : Initializer<Unit> {
             )
         ) {
             val jobs: MutableMap<UserId, Job?> = mutableMapOf()
-            accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.STARTED)
+            accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.CREATED)
                 .onAccountReady { account ->
                     jobs[account.userId] =
                         observeUser(account.userId)

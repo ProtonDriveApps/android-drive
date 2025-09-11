@@ -52,6 +52,22 @@ abstract class FileDownloadDao : BaseDao<FileDownloadEntity>() {
     ): FileDownloadEntity?
 
     @Query("""
+        SELECT * FROM FileDownloadEntity WHERE
+            user_id = :userId AND
+            volume_id = :volumeId AND
+            share_id = :shareId AND
+            link_id = :fileId AND
+            revision_id = :revisionId
+    """)
+    abstract suspend fun get(
+        userId: UserId,
+        volumeId: String,
+        shareId: String,
+        fileId: String,
+        revisionId: String,
+    ): FileDownloadEntity?
+
+    @Query("""
         SELECT * FROM FileDownloadEntity WHERE id = :id
     """)
     abstract suspend fun get(

@@ -63,9 +63,9 @@
   <!--
         Variable %1$d is max number of days
         Example:
-            "Expiration date must not be after more then 90 days"
+            "Expiration date must not be after more than 90 days"
     -->
-  <string name="shared_link_error_message_expiration_date_too_late">ვადა %1$d დღეზე მეტი არ უნდა იყოს</string>
+  <string name="shared_link_error_message_expiration_date_too_late">ვადის გასვლის თარიღი არ უნდა იყოს %1$d დღეზე გვიან</string>
   <string name="shared_link_error_legacy_link">ეს ძველი ბმულია, რომლის მართვაც მხარდაჭერილი არაა. რეკომენდებულია, შეწყვიტოთ ამ ბმულის გაზიარება და ახალი ბმული გამოითხოვოთ.</string>
   <string name="title_share_via_link">ბმულით გაზიარება</string>
   <string name="shared_with_me_title">ჩემთან გაზიარებული</string>
@@ -95,14 +95,14 @@
         Example:
             "Pending shared albums (2)"
     -->
-  <string name="shared_user_album_invitations_title">Pending shared albums (%1$d)</string>
+  <string name="shared_user_album_invitations_title">მომლოდინე გაზიარებული ალბომები (%1$d)</string>
   <string name="shared_user_invitations_title_empty">დარჩენილი გაზიარებული ელემენტების გარეშე</string>
-  <string name="shared_user_album_invitations_title_empty">No pending shared albums</string>
+  <string name="shared_user_album_invitations_title_empty">მომლოდინე გაზიარებული ალბომები არ არის</string>
   <string name="shared_user_invitations_description_empty">ყველა ახალი მოსაწვევი აქ გამოჩნდება</string>
   <string name="shared_user_invitations_accept_button">დასტური</string>
   <string name="shared_user_invitations_decline_button">უარყოფა</string>
   <string name="shared_user_invitations_accept_success">გაზიარებული ელემენტი დადასტურებულია</string>
   <string name="shared_user_invitations_decline_success">გაზიარებული ელემენტი უარყოფილია</string>
-  <string name="shared_user_album_invitations_accept_success">Invitation accepted</string>
-  <string name="shared_user_album_invitations_decline_success">Invitation declined</string>
+  <string name="shared_user_album_invitations_accept_success">მოწვევა მიღებულია</string>
+  <string name="shared_user_album_invitations_decline_success">მოწვევა უარყოფილია</string>
 </resources>

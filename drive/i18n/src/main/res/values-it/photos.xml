@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">Cartella del backup non trovata</string>
   <string name="photos_error_backup_failed">Backup non riuscito</string>
   <string name="photos_error_backup_temporarily_disabled">Backup temporaneamente disabilitato</string>
-  <string name="photos_error_backup_migration_title">Aggiornamento necessario</string>
-  <string name="photos_error_backup_migration_description">Per utilizzare le funzionalità delle foto, aggiorna l\'app alla versione più recente.</string>
   <string name="photos_error_missing_permissions">Autorizzazioni mancanti</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Se hai una libreria di foto di grandi dimensioni, potrebbe volerci un po\' di tempo. Puoi chiudere l\'app. Ci lavoreremo in background.</string>
   <string name="photos_share_migration_needed_banner_title">È necessaria la migrazione dei dati</string>
   <string name="photos_share_migration_needed_banner_description">Dopo la migrazione, potrai utilizzare nuove funzionalità come filtri e album fotografici</string>
-  <string name="photos_important_updates_title">Aggiornamenti importanti</string>
-  <string name="photos_important_updates_subtitle">È necessario aggiornare la libreria di foto</string>
-  <string name="photos_important_updates_description">Questo aggiornamento fornisce nuove funzionalità per le tue foto, ad esempio filtri e album</string>
-  <string name="photos_important_updates_cancel_action">Ricordamelo più tardi</string>
   <string name="photos_tags_migration_title">Migrazione tag</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

@@ -63,10 +63,5 @@ data class BackupError(
             type = BackupErrorType.BACKGROUND_RESTRICTIONS,
             retryable = true,
         )
-
-        fun Migration() = BackupError(
-            type = BackupErrorType.MIGRATION,
-            retryable = false,
-        )
     }
 }

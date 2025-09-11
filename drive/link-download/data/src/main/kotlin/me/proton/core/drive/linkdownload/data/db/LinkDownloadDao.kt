@@ -131,6 +131,16 @@ interface LinkDownloadDao : LinkDao {
     ): Flow<LinkDownloadStateEntity?>
 
     @Query("""
+        SELECT COUNT(*) FROM LinkDownloadStateEntity
+        WHERE
+            LinkDownloadStateEntity.user_id = :userId AND 
+            LinkDownloadStateEntity.state = "DOWNLOADING"
+    """)
+    fun getDownloadingCountFlow(
+        userId: UserId,
+    ): Flow<Long>
+
+    @Query("""
         SELECT 
             LinkDownloadStateEntity.state
         FROM 

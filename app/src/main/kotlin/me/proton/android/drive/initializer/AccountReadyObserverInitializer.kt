@@ -39,8 +39,10 @@ import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
+import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import me.proton.core.presentation.app.AppLifecycleProvider
+import me.proton.core.util.kotlin.CoreLogger
 
 class AccountReadyObserverInitializer : Initializer<Unit> {
 
@@ -58,6 +60,11 @@ class AccountReadyObserverInitializer : Initializer<Unit> {
                         CoroutineScope(Dispatchers.IO + Job())
                     }
                     observeApplicationState().onEach { applicationState ->
+                        val state = if (applicationState.inForeground) "foreground" else "background"
+                        CoreLogger.d(
+                            LogTag.DEFAULT,
+                            "App in $state, ${applicationState.currentNetworkStatus?.replace("\n", ", ")}",
+                        )
                         announceEvent(userId, applicationState)
                     }.launchIn(scope)
                     observeWorkManager(userId).onEach { workers ->

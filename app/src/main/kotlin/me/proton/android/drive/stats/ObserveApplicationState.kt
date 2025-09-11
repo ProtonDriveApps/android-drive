@@ -33,12 +33,23 @@ class ObserveApplicationState @Inject constructor(
         appLifecycleProvider.state,
         connectivityManager.connectivity,
     ) { state, connectivity ->
+        connectivityManager.getCurrentNetworkStatusInfo()
         Event.ApplicationState(
             inForeground = state == AppLifecycleProvider.State.Foreground,
             connectivity = when(connectivity){
                 BackupConnectivityManager.Connectivity.NONE -> "disconnected"
                 BackupConnectivityManager.Connectivity.UNMETERED -> "connected (unmetered)"
                 BackupConnectivityManager.Connectivity.CONNECTED -> "connected (metered)"
+            },
+            currentNetworkStatus = connectivityManager.getCurrentNetworkStatusInfo()?.let { cnsi ->
+                buildString {
+                    appendLine("connected=${cnsi.isConnected}")
+                    appendLine("validated=${cnsi.isValidated}")
+                    appendLine("downstream bandwidth=${cnsi.downstreamBandwidthKbps} Kbps")
+                    appendLine("upstream bandwidth=${cnsi.upstreamBandwidthKbps} Kbps")
+                    appendLine("wifi=${cnsi.isWifi}")
+                    appendLine("cellular=${cnsi.isCellular}")
+                }
             }
         )
     }.distinctUntilChanged()

@@ -67,8 +67,6 @@
   <string name="photos_error_backup_missing_folder">Folder kopii zapasowej nie został znaleziony</string>
   <string name="photos_error_backup_failed">Tworzenie kopii zapasowej nie powiodło się.</string>
   <string name="photos_error_backup_temporarily_disabled">Tworzenie kopii zapasowej jest tymczasowo wyłączone.</string>
-  <string name="photos_error_backup_migration_title">Aktualizacja jest wymagana</string>
-  <string name="photos_error_backup_migration_description">Aby korzystać z funkcji zdjęć, zaktualizuj aplikację do najnowszej wersji.</string>
   <string name="photos_error_missing_permissions">Brak uprawnień.</string>
   <!--
         Variable %1$s is an application name
@@ -159,10 +157,6 @@
   <string name="photos_share_migration_in_progress_description">Jeśli masz dużą bibliotekę zdjęć, proces może zająć trochę czasu. Możesz zamknąć kartę. Będziemy pracować nad procesem w tle.</string>
   <string name="photos_share_migration_needed_banner_title">Migracja danych jest wymagana</string>
   <string name="photos_share_migration_needed_banner_description">Po migracji danych możesz korzystać z nowych funkcji, takich jak filtry i albumy</string>
-  <string name="photos_important_updates_title">Ważne aktualizacje</string>
-  <string name="photos_important_updates_subtitle">Aktualizacja biblioteki zdjęć jest wymagana</string>
-  <string name="photos_important_updates_description">Ta szybka aktualizacja przygotowuje zdjęcia na nowe funkcje, takie jak filtry i albumy</string>
-  <string name="photos_important_updates_cancel_action">Przypomnij później</string>
   <string name="photos_tags_migration_title">Migracja tagów</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

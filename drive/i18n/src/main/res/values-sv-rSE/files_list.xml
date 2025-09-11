@@ -50,7 +50,7 @@
   <string name="files_add_to_favorite_action">Lägg till i favoriter</string>
   <string name="files_remove_from_favorite_action">Ta bort från favoriter</string>
   <string name="files_add_to_favorite_action_success">Tillagd till favoriter</string>
-  <string name="files_add_to_favorite_from_foreign_volume_action_success">Photo was copied to stream and marked favorite there</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">Fotot kopierades till dina filer och markerades som favorit där.</string>
   <string name="files_remove_from_favorite_action_success">Borttagen från favoriter</string>
   <string name="files_save_shared_photo_action">Spara delat foto</string>
   <!--

@@ -34,7 +34,6 @@ import me.proton.core.drive.photo.data.api.response.FindDuplicatesResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumListingsResponse
 import me.proton.core.drive.photo.data.api.response.GetAlbumPhotoListingResponse
 import me.proton.core.drive.photo.data.api.response.GetPhotoListingResponse
-import me.proton.core.drive.photo.data.api.response.MigrationStatusResponse
 import me.proton.core.drive.photo.data.api.response.TagsMigrationRequest
 import me.proton.core.drive.photo.data.api.response.TagsMigrationResponse
 import me.proton.core.network.data.protonApi.BaseRetrofitApi
@@ -150,12 +149,6 @@ interface PhotoApi : BaseRetrofitApi {
         @Path("linkID") linkId: String,
         @Body request: TagRequest,
     ): CodeResponse
-
-    @GET("drive/photos/migrate-legacy")
-    suspend fun getPhotoShareMigrationStatus(): MigrationStatusResponse
-
-    @POST("drive/photos/migrate-legacy")
-    suspend fun startPhotoShareMigration(): CodeResponse
 
     @GET("drive/photos/volumes/{volumeID}/tags-migration")
     suspend fun getTagsMigrationStatus(@Path("volumeID") volumeId: String): TagsMigrationResponse

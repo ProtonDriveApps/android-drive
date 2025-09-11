@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">Varmuuskopiointikansiota ei löytynyt</string>
   <string name="photos_error_backup_failed">Varmuuskopiointi epäonnistui.</string>
   <string name="photos_error_backup_temporarily_disabled">Varmuuskopiointi on poistettu tilapäisesti käytöstä.</string>
-  <string name="photos_error_backup_migration_title">Päivitys vaaditaan</string>
-  <string name="photos_error_backup_migration_description">Käyttääksesi kuvien ominaisuuksia, päivitä sovelluksesi uusimpaan versioon.</string>
   <string name="photos_error_missing_permissions">Käyttöoikeuksia puuttuu.</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Jos kokuvakirjastosi on suuri, se voi kestää jonkin aikaa. Voit sulkea sovelluksen, käsittelemme sitä taustalla.</string>
   <string name="photos_share_migration_needed_banner_title">Tietojen siirto vaaditaan</string>
   <string name="photos_share_migration_needed_banner_description">Siirron jälkeen voit käyttää uusia ominaisuuksia, kuten suodattimia ja kuva-albumeja.</string>
-  <string name="photos_important_updates_title">Tärkeitä päivityksiä</string>
-  <string name="photos_important_updates_subtitle">Kuvakirjaston päivitys vaaditaan</string>
-  <string name="photos_important_updates_description">Tämä nopea päivitys valmistelee kuviasi uusia ominaisuuksia, kuten suodattimia ja albumeita, varten</string>
-  <string name="photos_important_updates_cancel_action">Muistuta myöhemmin</string>
   <string name="photos_tags_migration_title">Tunnisteiden siirto</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

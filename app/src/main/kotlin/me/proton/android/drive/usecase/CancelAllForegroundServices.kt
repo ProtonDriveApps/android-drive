@@ -19,14 +19,17 @@
 package me.proton.android.drive.usecase
 
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.upload.domain.usecase.CancelUploadForegroundServices
 import javax.inject.Inject
 
 class CancelAllForegroundServices @Inject constructor(
     private val cancelUploadForegroundServices: CancelUploadForegroundServices,
+    private val backupManager: BackupManager
 ) {
 
     suspend operator fun invoke(userId: UserId) {
         cancelUploadForegroundServices(userId)
+        backupManager.cancelForegroundWork(userId)
     }
 }

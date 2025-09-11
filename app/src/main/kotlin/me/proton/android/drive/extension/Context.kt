@@ -19,6 +19,8 @@
 package me.proton.android.drive.extension
 
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import me.proton.core.drive.i18n.R as I18N
 
 val Context.deepLinkBaseUrl: String get() = getString(
@@ -26,3 +28,13 @@ val Context.deepLinkBaseUrl: String get() = getString(
     getString(I18N.string.deeplink_scheme),
     getString(I18N.string.deeplink_host),
 )
+
+fun Context.hasConnectivity(): Boolean {
+    val connectivityManager =
+        getSystemService(ConnectivityManager::class.java) as ConnectivityManager
+    val activeNetwork = connectivityManager.activeNetwork ?: return false
+    val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+
+    return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+            capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+}

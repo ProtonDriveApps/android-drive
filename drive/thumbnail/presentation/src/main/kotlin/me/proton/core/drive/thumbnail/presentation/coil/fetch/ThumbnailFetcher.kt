@@ -30,7 +30,7 @@ import coil.key.Keyer
 import coil.request.Options
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
-import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailCacheFile
+import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailFile
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailInputStream
 import me.proton.core.drive.thumbnail.presentation.entity.ThumbnailVO
 import okio.BufferedSource
@@ -49,7 +49,7 @@ object ThumbnailKeyer : Keyer<ThumbnailVO> {
 class ThumbnailFetcher(
     private val context: Context,
     private val getThumbnailInputStream: GetThumbnailInputStream,
-    private val getThumbnailCacheFile: GetThumbnailCacheFile,
+    private val getThumbnailFile: GetThumbnailFile,
     private val data: ThumbnailVO,
     private val options: Options
 ) : Fetcher {
@@ -62,19 +62,29 @@ class ThumbnailFetcher(
         metadata = ThumbnailMetadata(data.fileId)
     )
 
-    override suspend fun fetch(): FetchResult? {
-        val revisionId = requireNotNull(data.revisionId) { "A file without a revision doesn't have a thumbnail" }
-        val cacheFile = getThumbnailCacheFile(data.fileId.userId, data.volumeId, data.revisionId, data.thumbnailId.type)
+    override suspend fun fetch(): FetchResult {
+        requireNotNull(data.revisionId) { "A file without a revision doesn't have a thumbnail" }
+        val thumbnailFile = getThumbnailFile(data.fileId.userId, data.volumeId, data.revisionId, data.thumbnailId.type)
         val allowNetwork = options.networkCachePolicy.readEnabled
         val allowDiskRead = options.diskCachePolicy.readEnabled
         return when {
-            allowDiskRead && cacheFile.exists() && cacheFile.length() > 0 -> SourceResult(
-                getSource(data, cacheFile.source().buffer()),
+            allowDiskRead && thumbnailFile != null && thumbnailFile.exists() && thumbnailFile.length() > 0 -> SourceResult(
+                getSource(data, thumbnailFile.source().buffer()),
                 mimeType = MIME_TYPE,
                 dataSource = DataSource.DISK,
             )
 
-            allowNetwork -> fetchFromNetwork(data, options, cacheFile)
+            allowNetwork -> fetchFromNetwork(
+                data = data,
+                options = options,
+                cacheFile = getThumbnailFile(
+                    userId = data.fileId.userId,
+                    volumeId = data.volumeId,
+                    revisionId = data.revisionId,
+                    type = data.thumbnailId.type,
+                    inCacheFolder = true,
+                )
+            )
             else -> throw IllegalArgumentException("Couldn't access the thumbnail")
         }
     }
@@ -120,7 +130,7 @@ class ThumbnailFetcher(
     class Factory constructor(
         private val context: Context,
         private val getThumbnailInputStream: GetThumbnailInputStream,
-        private val getThumbnailCacheFile: GetThumbnailCacheFile,
+        private val getThumbnailFile: GetThumbnailFile,
     ) : Fetcher.Factory<ThumbnailVO> {
         override fun create(
             data: ThumbnailVO,
@@ -130,7 +140,7 @@ class ThumbnailFetcher(
             return ThumbnailFetcher(
                 context = context,
                 getThumbnailInputStream = getThumbnailInputStream,
-                getThumbnailCacheFile = getThumbnailCacheFile,
+                getThumbnailFile = getThumbnailFile,
                 data = data,
                 options = options,
             )

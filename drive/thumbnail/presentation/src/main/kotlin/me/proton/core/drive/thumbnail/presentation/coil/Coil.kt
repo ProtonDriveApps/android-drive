@@ -35,7 +35,7 @@ import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
-import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailCacheFile
+import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailFile
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailInputStream
 import me.proton.core.drive.thumbnail.presentation.coil.decode.ThumbnailDecoder
 import me.proton.core.drive.thumbnail.presentation.coil.fetch.ThumbnailFetcher
@@ -54,7 +54,7 @@ fun ThumbnailEnabled(
         val thumbnailFetcherFactory = ThumbnailFetcher.Factory(
             context = context,
             getThumbnailInputStream = injections.getThumbnailInputStream,
-            getThumbnailCacheFile = injections.getThumbnailCacheFile
+            getThumbnailFile = injections.getThumbnailFile
         )
         val thumbnailDecoderFactory = ThumbnailDecoder.Factory(
             context = context,
@@ -85,6 +85,6 @@ fun ThumbnailEnabled(
 @InstallIn(SingletonComponent::class)
 interface HiltEntryPoint {
     val getThumbnailInputStream: GetThumbnailInputStream
-    val getThumbnailCacheFile: GetThumbnailCacheFile
+    val getThumbnailFile: GetThumbnailFile
     val decryptThumbnail: DecryptThumbnail
 }

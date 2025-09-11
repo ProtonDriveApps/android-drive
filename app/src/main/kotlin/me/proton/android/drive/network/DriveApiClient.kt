@@ -45,5 +45,5 @@ class DriveApiClient @Inject constructor(
     override fun forceUpdate(errorMessage: String) = onForceUpdate(errorMessage)
 
     override val writeTimeoutSeconds: Long get() = 90L
-    override val callTimeoutSeconds: Long get() = 90L
+    override val callTimeoutSeconds: Long get() = 0L
 }

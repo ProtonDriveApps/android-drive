@@ -39,6 +39,8 @@ import me.proton.android.drive.log.DriveLogger
 import me.proton.android.drive.log.UserLogger
 import me.proton.android.drive.notification.AppNotificationBuilderProvider
 import me.proton.android.drive.notification.NotificationEventHandler
+import me.proton.android.drive.observability.DownloadEventHandler
+import me.proton.android.drive.observability.UploadEventHandler
 import me.proton.android.drive.photos.domain.handler.PhotosEventHandler
 import me.proton.android.drive.provider.AppBuildConfigFieldsProvider
 import me.proton.android.drive.provider.BuildConfigurationProvider
@@ -47,8 +49,8 @@ import me.proton.android.drive.repository.ClientUidRepositoryImpl
 import me.proton.android.drive.settings.DebugSettings
 import me.proton.android.drive.stats.StatsEventHandler
 import me.proton.android.drive.telemetry.TelemetryEventHandler
-import me.proton.android.drive.usecase.GetDocumentsProviderRootsImpl
 import me.proton.android.drive.usecase.DriveUrlBuilderImpl
+import me.proton.android.drive.usecase.GetDocumentsProviderRootsImpl
 import me.proton.android.drive.usecase.notification.TransferDataNotificationEventWorkerNotifier
 import me.proton.core.account.domain.entity.AccountType
 import me.proton.core.accountmanager.domain.AccountManager
@@ -62,13 +64,12 @@ import me.proton.core.drive.backup.domain.repository.FindDuplicatesRepository
 import me.proton.core.drive.base.domain.provider.BuildConfigFieldsProvider
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.repository.ClientUidRepository
-import me.proton.core.drive.base.domain.usecase.DriveUrlBuilder
 import me.proton.core.drive.base.domain.usecase.DeviceInfo
+import me.proton.core.drive.base.domain.usecase.DriveUrlBuilder
 import me.proton.core.drive.documentsprovider.domain.usecase.GetDocumentsProviderRoots
 import me.proton.core.drive.key.domain.handler.PublicKeyEventHandler
 import me.proton.core.drive.log.domain.handler.LogEventHandler
 import me.proton.core.drive.notification.data.provider.NotificationBuilderProvider
-import me.proton.core.drive.upload.data.worker.UploadEventWorker
 import me.proton.core.drive.worker.data.usecase.TransferDataNotifier
 import me.proton.drive.android.settings.data.datastore.AppUiSettingsDataStore
 import javax.inject.Singleton
@@ -182,9 +183,11 @@ object ApplicationModule {
         stats: StatsEventHandler,
         photos: PhotosEventHandler,
         telemetry: TelemetryEventHandler,
+        upload: UploadEventHandler,
+        download: DownloadEventHandler,
         log: LogEventHandler,
         publicKeyEventHandler: PublicKeyEventHandler,
-    ) = setOf(notification, telemetry, photos, stats, log, publicKeyEventHandler)
+    ) = setOf(notification, telemetry, upload, download, photos, stats, log, publicKeyEventHandler)
 
     @Provides
     @Singleton

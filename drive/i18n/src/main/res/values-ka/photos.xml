@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">მარქაფის საქაღალდე ვერ ვიპოვე</string>
   <string name="photos_error_backup_failed">მარქაფი ჩავარდა</string>
   <string name="photos_error_backup_temporarily_disabled">მარქაფი დროებით გამორთულია.</string>
-  <string name="photos_error_backup_migration_title">აუცილებელია განახლება</string>
-  <string name="photos_error_backup_migration_description">სურათების ფუნქციების გამოსაყენებლად განაახლეთ თქვენი აპი ბოლო ვერსიამდე.</string>
   <string name="photos_error_missing_permissions">არასამარისი წვდომები.</string>
   <!--
         Variable %1$s is an application name
@@ -120,44 +118,40 @@
   <string name="photos_upsell_description">აწიეთ ტარიფი ახლა და დაიტოვეთ თქვენი მოგონებები დაშიფრულად და უსაფრთხოდ.</string>
   <string name="photos_upsell_dismiss_action">არა ახლა</string>
   <string name="photos_filter_favorite">რჩეული</string>
-  <string name="photos_filter_screenshots">Screenshots</string>
-  <string name="photos_filter_videos">Videos</string>
-  <string name="photos_filter_livephotos">Live Photos</string>
-  <string name="photos_filter_motionphotos">Motion Photos</string>
-  <string name="photos_filter_selfies">Selfies</string>
-  <string name="photos_filter_portraits">Portraits</string>
-  <string name="photos_filter_bursts">Bursts</string>
-  <string name="photos_filter_panoramas">Panoramas</string>
+  <string name="photos_filter_screenshots">ეკრანის ანაბეჭდები</string>
+  <string name="photos_filter_videos">ვიდეოები</string>
+  <string name="photos_filter_livephotos">ცოცხალი ფოტოები</string>
+  <string name="photos_filter_motionphotos">მოძრავი ფოტოები</string>
+  <string name="photos_filter_selfies">სელფები</string>
+  <string name="photos_filter_portraits">პორტრეტები</string>
+  <string name="photos_filter_bursts">სერიები</string>
+  <string name="photos_filter_panoramas">პანორამები</string>
   <string name="photos_filter_raws">RAW</string>
-  <string name="photos_favorite_empty_title">No favorites</string>
-  <string name="photos_favorite_empty_description">Your favorited photos will appear here</string>
-  <string name="photos_screenshots_empty_title">No screenshots</string>
-  <string name="photos_screenshots_empty_description">Your screenshots will appear here</string>
-  <string name="photos_videos_empty_title">No videos</string>
-  <string name="photos_videos_empty_description">Your videos will appear here</string>
-  <string name="photos_livephotos_empty_title">No Live Photos</string>
-  <string name="photos_livephotos_empty_description">Your Live Photos will appear here</string>
-  <string name="photos_motionphotos_empty_title">No Motion Photos</string>
-  <string name="photos_motionphotos_empty_description">Your Motion Photos will appear here</string>
-  <string name="photos_selfies_empty_title">No selfies</string>
-  <string name="photos_selfies_empty_description">Your selfies photos will appear here</string>
-  <string name="photos_portraits_empty_title">No portraits</string>
-  <string name="photos_portraits_empty_description">Your portrait photos will appear here</string>
-  <string name="photos_bursts_empty_title">No bursts</string>
-  <string name="photos_bursts_empty_description">Your photo bursts will appear here</string>
-  <string name="photos_panoramas_empty_title">No panoramas</string>
-  <string name="photos_panoramas_empty_description">Your panorama photos will appear here</string>
-  <string name="photos_raws_empty_title">No RAW</string>
-  <string name="photos_raws_empty_description">Your RAW photos will appear here</string>
-  <string name="photos_share_migration_in_progress_title">Setting up Albums and Filters</string>
-  <string name="photos_share_migration_in_progress_description">If you have a large photo library, it might take some time. You can close the app. We\'ll work on it in the background.</string>
-  <string name="photos_share_migration_needed_banner_title">Data migration needed</string>
-  <string name="photos_share_migration_needed_banner_description">After migration, you can use new features like filters and photo album</string>
-  <string name="photos_important_updates_title">Important updates</string>
-  <string name="photos_important_updates_subtitle">Photo library update needed</string>
-  <string name="photos_important_updates_description">This quick update prepares your photos for new features like filters and albums</string>
-  <string name="photos_important_updates_cancel_action">Remind me later</string>
-  <string name="photos_tags_migration_title">Tags migration</string>
+  <string name="photos_favorite_empty_title">რჩეულები არ არის</string>
+  <string name="photos_favorite_empty_description">თქვენი რჩეული ფოტოები აქ გამოჩნდება</string>
+  <string name="photos_screenshots_empty_title">ეკრანის ანაბეჭდები არ არის</string>
+  <string name="photos_screenshots_empty_description">თქვენი ეკრანის ანაბეჭდები აქ გამოჩნდება</string>
+  <string name="photos_videos_empty_title">ვიდეოები არ არის</string>
+  <string name="photos_videos_empty_description">თქვენი ვიდეოები აქ გამოჩნდება</string>
+  <string name="photos_livephotos_empty_title">ცოცხალი ფოტოები არ არის</string>
+  <string name="photos_livephotos_empty_description">თქვენი ცოცხალი ფოტოები აქ გამოჩნდება</string>
+  <string name="photos_motionphotos_empty_title">მოძრავი ფოტოები არ არის</string>
+  <string name="photos_motionphotos_empty_description">თქვენი მოძრავი ფოტოები აქ გამოჩნდება</string>
+  <string name="photos_selfies_empty_title">სელფები არ არის</string>
+  <string name="photos_selfies_empty_description">თქვენი სელფები აქ გამოჩნდება</string>
+  <string name="photos_portraits_empty_title">პორტრეტები არ არის</string>
+  <string name="photos_portraits_empty_description">თქვენი პორტრეტული ფოტოები აქ გამოჩნდება</string>
+  <string name="photos_bursts_empty_title">სერიები არ არის</string>
+  <string name="photos_bursts_empty_description">თქვენი ფოტოსერიები აქ გამოჩნდება</string>
+  <string name="photos_panoramas_empty_title">პანორამები არ არის</string>
+  <string name="photos_panoramas_empty_description">თქვენი პანორამული ფოტოები აქ გამოჩნდება</string>
+  <string name="photos_raws_empty_title">RAW ფაილები არ არის</string>
+  <string name="photos_raws_empty_description">თქვენი RAW ფოტოები აქ გამოჩნდება</string>
+  <string name="photos_share_migration_in_progress_title">ალბომებისა და ფილტრების დაყენება</string>
+  <string name="photos_share_migration_in_progress_description">თუ დიდი ფოტოთეკა გაქვთ, ამას შეიძლება დრო დასჭირდეს. შეგიძლიათ, დახუროთ აპლიკაცია. ფონურ რეჟიმში ვიმუშავებთ.</string>
+  <string name="photos_share_migration_needed_banner_title">მონაცემთა მიგრაციაა საჭირო</string>
+  <string name="photos_share_migration_needed_banner_description">მიგრაციის შემდეგ შეძლებთ ახალი ფუნქციების გამოყენებას, როგორიცაა ფილტრები და ფოტოალბომი</string>
+  <string name="photos_tags_migration_title">თეგების მიგრაცია</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates
         Example:
@@ -165,8 +159,8 @@
            Finished, 12 345 files were migrated.
     -->
   <plurals name="photos_tags_migration_finished">
-    <item quantity="one">Finished, %1$s file was migrated.</item>
-    <item quantity="other">Finished, %1$s files were migrated.</item>
+    <item quantity="one">დასრულდა, გადატანილია %1$s ფაილი.</item>
+    <item quantity="other">დასრულდა, გადატანილია %1$s ფაილი.</item>
   </plurals>
   <!--
         Variable %1$s is a quantity (formatted) of photos to migrate
@@ -176,7 +170,7 @@
            Ongoing, migrating 12 345 files, 123 waiting for download.
     -->
   <plurals name="photos_tags_migration_ongoing">
-    <item quantity="one">Ongoing, migrating %1$s file, %2$s waiting for download.</item>
-    <item quantity="other">Ongoing, migrating %1$s files, %2$s waiting for download.</item>
+    <item quantity="one">მიმდინარეობს %1$s ფაილის გადატანა, %2$s ელის ჩამოტვირთვას.</item>
+    <item quantity="other">მიმდინარეობს %1$s ფაილის გადატანა, %2$s ელის ჩამოტვირთვას.</item>
   </plurals>
 </resources>

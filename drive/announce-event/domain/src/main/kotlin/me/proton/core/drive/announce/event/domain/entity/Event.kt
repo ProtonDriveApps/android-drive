@@ -68,6 +68,26 @@ sealed class Event {
     }
 
     @Serializable
+    data class UploadSpeed(
+        val bytes: Bytes,
+        val elapsedTime: TimestampMs,
+    ) : Event() {
+        override val id: String =
+            "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs()
+    }
+
+    @Serializable
+    data class DownloadSpeed(
+        val bytes: Bytes,
+        val elapsedTime: TimestampMs,
+    ) : Event() {
+        override val id: String =
+            "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
+        override val occurredAt: TimestampMs = TimestampMs()
+    }
+
+    @Serializable
     data class Backup(
         val folderId: FolderId,
         val state: BackupState,
@@ -91,7 +111,6 @@ sealed class Event {
             UNCOMPLETED,
             PAUSE_BACKGROUND_RESTRICTIONS,
             PREPARING,
-            FAILED_DUE_PHOTO_SHARE_MIGRATION,
         }
     }
 
@@ -206,6 +225,7 @@ sealed class Event {
     data class ApplicationState(
         val inForeground: Boolean,
         val connectivity: String,
+        val currentNetworkStatus: String? = null,
     ) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}_1"
         override val occurredAt: TimestampMs = TimestampMs()

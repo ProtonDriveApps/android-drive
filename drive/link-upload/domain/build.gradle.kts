@@ -30,6 +30,7 @@ driveModule(
 ) {
     api(project(":drive:link:domain"))
     api(project(":drive:file:base:domain"))
+    api(project(":drive:announce-event"))
     implementation(project(":drive:observability:domain"))
     testImplementation(project(":drive:db-test"))
     testImplementation(project(":drive:test"))

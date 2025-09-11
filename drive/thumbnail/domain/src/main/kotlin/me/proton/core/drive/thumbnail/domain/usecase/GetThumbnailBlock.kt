@@ -22,10 +22,8 @@ import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.file.base.domain.coroutines.FileScope
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.file.base.domain.entity.ThumbnailId
-import me.proton.core.drive.file.base.domain.entity.ThumbnailType
 import me.proton.core.drive.file.base.domain.extension.index
 import me.proton.core.drive.file.base.domain.extension.url
-import me.proton.core.drive.file.base.domain.repository.FileRepository
 import me.proton.core.drive.file.base.domain.usecase.DownloadUrl
 import me.proton.core.drive.file.base.domain.usecase.FetchThumbnailUrl
 import me.proton.core.drive.link.domain.entity.FileId
@@ -35,7 +33,7 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class GetThumbnailBlock @Inject constructor(
-    private val getThumbnailCacheFile: GetThumbnailCacheFile,
+    private val getThumbnailFile: GetThumbnailFile,
     private val downloadUrl: DownloadUrl,
     private val fetchThumbnailUrl: FetchThumbnailUrl,
 ) {
@@ -47,12 +45,12 @@ class GetThumbnailBlock @Inject constructor(
         thumbnailId: ThumbnailId,
         coroutineContext: CoroutineContext = FileScope.coroutineContext
     ): Result<Block> = coRunCatching(coroutineContext) {
-        val thumbnail = getThumbnailCacheFile(fileId.userId, volumeId, revisionId, thumbnailId.type)
-            .takeIf { thumbnailFile -> thumbnailFile.exists() }
+        val thumbnail = getThumbnailFile(fileId.userId, volumeId, revisionId, thumbnailId.type)
+            .takeIf { thumbnailFile -> thumbnailFile?.exists() ?: false }
             ?: downloadUrl(
                 userId = fileId.userId,
                 url = fetchThumbnailUrl(thumbnailId).getOrThrow().url,
-                destination = getThumbnailCacheFile(fileId.userId, volumeId, revisionId, thumbnailId.type).apply { createNewFile() },
+                destination = getThumbnailFile(fileId.userId, volumeId, revisionId, thumbnailId.type, false).apply { createNewFile() },
                 progress = MutableStateFlow(0L),
             ).getOrThrow()
         Block(

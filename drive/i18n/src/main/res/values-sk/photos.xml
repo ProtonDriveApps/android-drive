@@ -67,8 +67,6 @@
   <string name="photos_error_backup_missing_folder">Zálohovací priečinok nebol nájdený</string>
   <string name="photos_error_backup_failed">Zálohovanie zlyhalo.</string>
   <string name="photos_error_backup_temporarily_disabled">Zálohovanie je dočasne zakázané.</string>
-  <string name="photos_error_backup_migration_title">Vyžaduje sa aktualizácia</string>
-  <string name="photos_error_backup_migration_description">Ak chcete používať funkcie fotografií, aktualizujte aplikáciu na najnovšiu verziu.</string>
   <string name="photos_error_missing_permissions">Chýbajúce povolenia.</string>
   <!--
         Variable %1$s is an application name
@@ -159,10 +157,6 @@
   <string name="photos_share_migration_in_progress_description">Ak máte rozsiahlu knižnicu fotografií, môže to chvíľu trvať. Aplikáciu môžete zavrieť. Budeme na tom pracovať na pozadí.</string>
   <string name="photos_share_migration_needed_banner_title">Je potrebná migrácia údajov</string>
   <string name="photos_share_migration_needed_banner_description">Po migrácii môžete používať nové funkcie, ako sú filtre a fotoalbum</string>
-  <string name="photos_important_updates_title">Dôležité aktualizácie</string>
-  <string name="photos_important_updates_subtitle">Je potrebná aktualizácia knižnice fotografií</string>
-  <string name="photos_important_updates_description">Táto rýchla aktualizácia pripraví vaše fotografie na nové funkcie, ako sú filtre a albumy.</string>
-  <string name="photos_important_updates_cancel_action">Pripomenúť neskôr</string>
   <string name="photos_tags_migration_title">Migrácia značiek</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

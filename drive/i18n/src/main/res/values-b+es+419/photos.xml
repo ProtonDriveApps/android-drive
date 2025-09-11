@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">No se encontró la carpeta de la copia de seguridad.</string>
   <string name="photos_error_backup_failed">Error de copia de seguridad</string>
   <string name="photos_error_backup_temporarily_disabled">La copia de seguridad está temporalmente desactivada.</string>
-  <string name="photos_error_backup_migration_title">Actualización necesaria</string>
-  <string name="photos_error_backup_migration_description">Para usar funciones de fotos, actualice su aplicación a la última versión.</string>
   <string name="photos_error_missing_permissions">Faltan permisos.</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Si tiene una biblioteca de fotos grande, esto podría tomar algún tiempo. Puede cerrar la aplicación. Trabajaremos en segundo plano.</string>
   <string name="photos_share_migration_needed_banner_title">Se necesitan migrar los datos</string>
   <string name="photos_share_migration_needed_banner_description">Después de la migración, puede usar nuevas funciones como filtros y álbum de fotos</string>
-  <string name="photos_important_updates_title">Actualizaciones importantes</string>
-  <string name="photos_important_updates_subtitle">Es necesario actualizar la biblioteca de fotos</string>
-  <string name="photos_important_updates_description">Esta actualización rápida prepara sus fotos para nuevas funciones como filtros y álbumes</string>
-  <string name="photos_important_updates_cancel_action">Recordarme más tarde</string>
   <string name="photos_tags_migration_title">Migración de etiquetas</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

@@ -17,17 +17,25 @@
  */
 package me.proton.core.drive.drivelink.download.domain.usecase
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.scan
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.log.LogTag.TRACKING
 import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.file.base.domain.extension.verifyOrDelete
 import me.proton.core.drive.file.base.domain.usecase.DownloadUrl
+import me.proton.core.drive.linkdownload.domain.manager.DownloadSpeedManager
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.util.kotlin.CoreLogger
 import java.io.File
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -35,6 +43,7 @@ import kotlin.coroutines.CoroutineContext
 class DownloadBlock @Inject constructor(
     private val downloadUrl: DownloadUrl,
     private val getCacheFolder: GetCacheFolder,
+    private val downloadSpeedManager: DownloadSpeedManager,
 ) {
     suspend operator fun invoke(
         userId: UserId,
@@ -47,6 +56,18 @@ class DownloadBlock @Inject constructor(
     ): Result<File> = coRunCatching(coroutineContext) {
         require(revisionId.isNotBlank()) { "Valid revision ID must be provided" }
         val file = File(getCacheFolder(userId, volumeId.id, revisionId), block.index.toString())
+        if (!downloadSpeedManager.isRunning()) {
+            CoreLogger.v(TRACKING, "Resuming, downloading blocks")
+            downloadSpeedManager.resume()
+        }
+        val speedManagerJob = Job()
+        val scope = CoroutineScope(Dispatchers.IO + speedManagerJob)
+        downloadingProgress.scan(Pair(0L, 0L)) { accumulator, value ->
+            accumulator.second to value
+        }.drop(1)
+            .onEach { (prev, next) ->
+                downloadSpeedManager.add(userId, next - prev)
+            }.launchIn(scope)
         downloadUrl(
             userId = userId,
             url = block.url,
@@ -62,6 +83,8 @@ class DownloadBlock @Inject constructor(
             .onFailure {
                 file.delete()
             }
-            .getOrThrow()
+            .getOrThrow().also {
+                speedManagerJob.complete()
+            }
     }
 }

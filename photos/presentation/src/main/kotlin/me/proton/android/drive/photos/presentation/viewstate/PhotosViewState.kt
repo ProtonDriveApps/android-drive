@@ -44,8 +44,6 @@ data class PhotosViewState(
     val filters: List<PhotosFilter> = emptyList(),
     val shouldShowFilters: Boolean = false,
     val emptyPhotoTagState: EmptyPhotoTagState? = null,
-    val showPhotoShareMigrationInProgress: Boolean = false,
-    val showPhotoShareMigrationNeededBanner: Boolean = false,
     val showStorageBanner: Boolean = false,
     val isFastScrollEnabled: Boolean = false,
 )

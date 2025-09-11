@@ -66,8 +66,6 @@
   <string name="photos_error_backup_missing_folder">Folderul de conservare nu a fost găsit.</string>
   <string name="photos_error_backup_failed">Conservarea a eșuat.</string>
   <string name="photos_error_backup_temporarily_disabled">Conservarea este momentan dezactivată.</string>
-  <string name="photos_error_backup_migration_title">Actualizare necesară</string>
-  <string name="photos_error_backup_migration_description">Pentru a utiliza funcția pentru fotografii, actualizați aplicația la cea mai recentă versiune.</string>
   <string name="photos_error_missing_permissions">Lipsesc permisiunile.</string>
   <!--
         Variable %1$s is an application name
@@ -156,10 +154,6 @@
   <string name="photos_share_migration_in_progress_description">Dacă aveți multe fotografii, ar putea dura ceva timp. Puteți închide aplicația. Vom lucra în fundal.</string>
   <string name="photos_share_migration_needed_banner_title">Este necesară migrarea datelor</string>
   <string name="photos_share_migration_needed_banner_description">După migrare, puteți folosi funcții noi, cum ar fi filtrele și albumele foto.</string>
-  <string name="photos_important_updates_title">Actualizări importante</string>
-  <string name="photos_important_updates_subtitle">Galeria foto trebuie actualizată</string>
-  <string name="photos_important_updates_description">Această actualizare rapidă vă pregătește fotografiile pentru funcții noi, cum ar fi filtrele și albumele.</string>
-  <string name="photos_important_updates_cancel_action">Amintește-mi mai târziu</string>
   <string name="photos_tags_migration_title">Migrare etichete</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

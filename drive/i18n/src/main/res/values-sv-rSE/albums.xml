@@ -95,8 +95,8 @@
             "17 items added to your Drive"
     -->
   <plurals name="in_app_notification_add_to_stream_success">
-    <item quantity="one">%1$d item added to your Drive</item>
-    <item quantity="other">%1$d items added to your Drive</item>
+    <item quantity="one">%1$d objekt har lagts till i din Drive</item>
+    <item quantity="other">%1$d objekt har lagts till i din Drive</item>
   </plurals>
   <!--
         Variable %1$d is a number of photos that were not added because they already exist

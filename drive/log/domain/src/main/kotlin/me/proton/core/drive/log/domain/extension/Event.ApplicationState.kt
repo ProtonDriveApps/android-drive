@@ -25,6 +25,7 @@ import me.proton.core.drive.log.domain.entity.Log
 internal fun Event.ApplicationState.toLog(userId: UserId): Log = Log(
     userId = userId,
     message = "App in ${if (inForeground) "foreground" else "background"}, network $connectivity",
+    moreContent = currentNetworkStatus,
     creationTime = occurredAt,
     origin = Log.Origin.EVENT_APPLICATION_STATE,
 )

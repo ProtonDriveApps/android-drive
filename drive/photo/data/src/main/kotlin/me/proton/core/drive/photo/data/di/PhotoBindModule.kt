@@ -24,12 +24,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.drive.photo.data.repository.AlbumRepositoryImpl
 import me.proton.core.drive.photo.data.repository.PhotoRepositoryImpl
-import me.proton.core.drive.photo.data.repository.PhotoShareMigrationRepositoryImpl
 import me.proton.core.drive.photo.data.repository.TagRepositoryImpl
 import me.proton.core.drive.photo.data.repository.TagsMigrationRepositoryImpl
 import me.proton.core.drive.photo.domain.repository.AlbumRepository
 import me.proton.core.drive.photo.domain.repository.PhotoRepository
-import me.proton.core.drive.photo.domain.repository.PhotoShareMigrationRepository
 import me.proton.core.drive.photo.domain.repository.TagRepository
 import me.proton.core.drive.photo.domain.repository.TagsMigrationRepository
 import javax.inject.Singleton
@@ -53,10 +51,4 @@ interface PhotoBindModule {
     @Binds
     @Singleton
     fun bindsTagsMigrationRepositoryImpl(impl: TagsMigrationRepositoryImpl): TagsMigrationRepository
-
-    @Binds
-    @Singleton
-    fun bindsPhotoShareMigrationRepositoryImpl(
-        impl: PhotoShareMigrationRepositoryImpl,
-    ): PhotoShareMigrationRepository
 }

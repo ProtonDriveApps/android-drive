@@ -64,8 +64,6 @@
   <string name="photos_error_backup_missing_folder">找不到備份資料夾</string>
   <string name="photos_error_backup_failed">備份失敗</string>
   <string name="photos_error_backup_temporarily_disabled">備份已暫時停用。</string>
-  <string name="photos_error_backup_migration_title">需要更新</string>
-  <string name="photos_error_backup_migration_description">要使用照片功能，請更新您的應用程式至最新版本。</string>
   <string name="photos_error_missing_permissions">缺少權限。</string>
   <!--
         Variable %1$s is an application name
@@ -150,10 +148,6 @@
   <string name="photos_share_migration_in_progress_description">如果您有大量的照片圖庫，可能需要一些時間。您可以關閉應用程式。我們會將其在背景處理。</string>
   <string name="photos_share_migration_needed_banner_title">需要數據遷移</string>
   <string name="photos_share_migration_needed_banner_description">遷移後，您可以使用濾鏡和相簿等新功能。</string>
-  <string name="photos_important_updates_title">重要更新</string>
-  <string name="photos_important_updates_subtitle">相片圖庫需要更新</string>
-  <string name="photos_important_updates_description">這次快速更新會讓您的照片準備好迎接新的功能，例如濾鏡和相簿。</string>
-  <string name="photos_important_updates_cancel_action">稍後提醒我</string>
   <string name="photos_tags_migration_title">標籤遷移</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

@@ -124,4 +124,17 @@ class BackupConnectivityManagerImpl @Inject constructor(
             }
         }
     }
+
+    override fun getCurrentNetworkStatusInfo(): BackupConnectivityManager.NetworkStatusInfo? =
+        connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            ?.let { capabilities ->
+                BackupConnectivityManager.NetworkStatusInfo(
+                    isConnected = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET),
+                    isValidated = capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED),
+                    downstreamBandwidthKbps = capabilities.linkDownstreamBandwidthKbps,
+                    upstreamBandwidthKbps = capabilities.linkUpstreamBandwidthKbps,
+                    isWifi = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI),
+                    isCellular = capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR),
+                )
+            }
 }

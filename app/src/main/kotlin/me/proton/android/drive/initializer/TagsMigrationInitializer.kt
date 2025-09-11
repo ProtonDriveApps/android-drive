@@ -77,7 +77,7 @@ class TagsMigrationInitializer : Initializer<Unit> {
                 TagsMigrationInitializerEntryPoint::class.java
             )
         ) {
-            accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.STARTED)
+            accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.CREATED)
                 .onAccountReady { account ->
                     val userId = account.userId
                     val scope = scopes.getOrPut(userId) {

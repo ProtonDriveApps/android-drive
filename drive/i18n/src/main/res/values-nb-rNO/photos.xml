@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">Sikkerhetskopimappen ble ikke funnet</string>
   <string name="photos_error_backup_failed">Sikkerhetskopiering mislyktes</string>
   <string name="photos_error_backup_temporarily_disabled">Sikkerhetskopiering er midlertidig deaktivert.</string>
-  <string name="photos_error_backup_migration_title">Oppdatering kreves</string>
-  <string name="photos_error_backup_migration_description">Hvis du vil bruke bildefunksjoner, må du oppdatere appen til den nyeste versjonen.</string>
   <string name="photos_error_missing_permissions">Mangler tillatelser</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Hvis du har et stort bildebibliotek, kan det ta litt tid. Du kan lukke appen. Vi jobber med det i bakgrunnen.</string>
   <string name="photos_share_migration_needed_banner_title">Datamigrering nødvendig</string>
   <string name="photos_share_migration_needed_banner_description">Etter overføringen kan du bruke nye funksjoner som filtre og fotoalbum</string>
-  <string name="photos_important_updates_title">Viktige oppdateringer</string>
-  <string name="photos_important_updates_subtitle">Oppdatering av bildebibliotek nødvendig</string>
-  <string name="photos_important_updates_description">Denne raske oppdateringen forbereder bildene dine for nye funksjoner som filtre og album</string>
-  <string name="photos_important_updates_cancel_action">Påminn meg senere</string>
   <string name="photos_tags_migration_title">Migrering av tagger</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

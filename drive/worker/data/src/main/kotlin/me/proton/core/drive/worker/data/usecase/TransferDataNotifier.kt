@@ -24,7 +24,7 @@ import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.notification.domain.entity.NotificationId
 
 interface TransferDataNotifier {
-    operator fun invoke(userId: UserId, event: Event.TransferData): Pair<NotificationId, Notification>
+    operator fun invoke(userId: UserId, event: Event.TransferData): Result<Pair<NotificationId, Notification>>
 
     fun dismissNotification(notificationId: NotificationId)
 }

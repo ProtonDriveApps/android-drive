@@ -24,16 +24,13 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.DOWNLOAD
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.crypto.domain.usecase.file.DecryptAndVerifyFiles
+import me.proton.core.drive.crypto.domain.usecase.file.DecryptFiles
 import me.proton.core.drive.crypto.domain.usecase.file.VerifyManifestSignature
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
-import me.proton.core.drive.cryptobase.domain.extension.failed
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.file.base.domain.extension.getThumbnailIds
 import me.proton.core.drive.file.base.domain.extension.requireSortedAscending
 import me.proton.core.drive.key.domain.usecase.GetContentKey
-import me.proton.core.drive.key.domain.usecase.GetNodeKey
-import me.proton.core.drive.key.domain.usecase.GetVerificationKeys
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadBlocks
@@ -46,12 +43,10 @@ import javax.inject.Inject
 @Suppress("LongParameterList")
 class DecryptLinkContent @Inject constructor(
     private val getLink: GetLink,
-    private val decryptAndVerifyFiles: DecryptAndVerifyFiles,
+    private val decryptFiles: DecryptFiles,
     private val getContentKey: GetContentKey,
     private val verifyManifestSignature: VerifyManifestSignature,
     private val getThumbnailBlock: GetThumbnailBlock,
-    private val getNodeKey: GetNodeKey,
-    private val getVerificationKeys: GetVerificationKeys,
     private val getDownloadBlocks: GetDownloadBlocks,
     private val getDownloadState: GetDownloadState,
 ) {
@@ -78,7 +73,6 @@ class DecryptLinkContent @Inject constructor(
             ).getOrThrow()
         }
         val contentKey = getContentKey(link).getOrThrow()
-        val fileKey = getNodeKey(link).getOrThrow()
         val signatureAddress = downloadState.signatureAddress.orEmpty()
         val manifestSignatureVerified = verifyManifestSignature(
             link = link,
@@ -88,19 +82,12 @@ class DecryptLinkContent @Inject constructor(
                 "Download state manifest signature is null"
             },
         ).getOrNull(DOWNLOAD, "Verification of manifest signature failed") ?: false
-        decryptAndVerifyFiles(
+        decryptFiles(
             contentKey = contentKey,
-            decryptSignatureKey = fileKey,
-            verifySignatureKey = getVerificationKeys(link, signatureAddress).getOrThrow(),
-            input = encryptedFileBlocks.map { block -> block.encSignature to File(block.url) },
+            input = encryptedFileBlocks.map { block -> File(block.url) },
             output = encryptedFileBlocks.map { block -> File("${block.url}.${UUID.randomUUID()}") },
         ).map { decryptedBlocks ->
             if (checkSignature) {
-                if (decryptedBlocks.any { decryptedFile -> decryptedFile.status.failed }) {
-                    val statusMessage = decryptedBlocks.groupBy { it.status }
-                        .map { (key, value) -> "$key: ${value.count()}" }
-                    throw VerificationException("Verification of blocks failed $statusMessage")
-                }
                 if (!manifestSignatureVerified) {
                     val signatureAddressMessage = if (signatureAddress.isEmpty()) {
                         "no email"

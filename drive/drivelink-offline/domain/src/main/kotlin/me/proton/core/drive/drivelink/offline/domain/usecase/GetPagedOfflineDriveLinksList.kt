@@ -24,9 +24,14 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.SaveAction
 import me.proton.core.drive.base.domain.extension.mapCatching
 import me.proton.core.drive.drivelink.crypto.domain.usecase.DecryptDriveLinks
+import me.proton.core.drive.drivelink.domain.usecase.GetDriveLinksCount
+import me.proton.core.drive.drivelink.list.domain.usecase.GetDecryptedDriveLinks
+import me.proton.core.drive.drivelink.list.domain.usecase.GetFolderChildrenDriveLinks
 import me.proton.core.drive.drivelink.paged.domain.entity.LinksPage
 import me.proton.core.drive.drivelink.paged.domain.usecase.GetPagedDriveLinks
 import me.proton.core.drive.drivelink.sorting.domain.usecase.SortDriveLinks
+import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.sorting.domain.entity.By
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import javax.inject.Inject
@@ -39,6 +44,9 @@ class GetPagedOfflineDriveLinksList @Inject constructor(
     private val getOfflineDriveLinksCount: GetOfflineDriveLinksCount,
     private val getDecryptedOfflineDriveLinks: GetDecryptedOfflineDriveLinks,
     private val getOfflineDriveLinks: GetOfflineDriveLinks,
+    private val getDecryptedDriveLinks: GetDecryptedDriveLinks,
+    private val getFolderChildrenDriveLinks: GetFolderChildrenDriveLinks,
+    private val getDriveLinksCount: GetDriveLinksCount,
 ) {
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -62,6 +70,33 @@ class GetPagedOfflineDriveLinksList @Inject constructor(
                     }
                 },
                 localDriveLinksCount = { getOfflineDriveLinksCount(userId = userId) },
+                processPage = takeIf { sorting.by != By.NAME && sorting.by != By.LAST_MODIFIED }?.let {
+                    { page -> decryptDriveLinks(page) }
+                },
+            )
+        }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    operator fun invoke(folderId: FolderId) =
+        getSorting(folderId.userId).flatMapLatest { sorting ->
+            getPagedDriveLinks(
+                userId = folderId.userId,
+                pagedListKey = "LIST-${folderId.shareId.id}-${folderId.id}",
+                remoteDriveLinks = { _, _ -> Result.success(LinksPage(emptyList(), SaveAction({}))) },
+                localPagedDriveLinks = { fromIndex, count ->
+                    if (sorting.by == By.NAME || sorting.by == By.LAST_MODIFIED) {
+                        getDecryptedDriveLinks(folderId, fromIndex, count)
+                            .mapCatching { driveLinks ->
+                                sortDriveLinks(sorting, driveLinks)
+                            }
+                    } else {
+                        getFolderChildrenDriveLinks(folderId, fromIndex, count)
+                            .mapCatching { driveLinks ->
+                                sortDriveLinks(sorting, driveLinks)
+                            }
+                    }
+                },
+                localDriveLinksCount = { getDriveLinksCount(parentId = folderId) },
                 processPage = takeIf { sorting.by != By.NAME && sorting.by != By.LAST_MODIFIED }?.let {
                     { page -> decryptDriveLinks(page) }
                 },

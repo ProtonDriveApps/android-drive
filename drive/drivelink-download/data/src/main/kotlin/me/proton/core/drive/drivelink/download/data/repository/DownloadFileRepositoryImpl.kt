@@ -56,8 +56,24 @@ class DownloadFileRepositoryImpl @Inject constructor(
         }?.toDownloadFileLink()
     }
 
-    override suspend fun add(downloadFileLink: DownloadFileLink) =
-        dao.insertOrUpdate(downloadFileLink.toFileDownloadEntity())
+    override suspend fun add(downloadFileLink: DownloadFileLink) {
+        db.inTransaction {
+            dao.get(
+                userId = downloadFileLink.fileId.userId,
+                volumeId = downloadFileLink.volumeId.id,
+                shareId = downloadFileLink.fileId.shareId.id,
+                fileId = downloadFileLink.fileId.id,
+                revisionId = downloadFileLink.revisionId,
+            )?.let { entity ->
+                dao.update(
+                    downloadFileLink.toFileDownloadEntity().copy(
+                        id = entity.id,
+                        state = entity.state,
+                    )
+                )
+            } ?: dao.insertOrIgnore(downloadFileLink.toFileDownloadEntity())
+        }
+    }
 
     override suspend fun delete(id: Long) =
         dao.delete(id)

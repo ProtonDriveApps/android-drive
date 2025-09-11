@@ -71,7 +71,7 @@ class BackupInitializer : Initializer<Unit> {
             BackupInitializerEntryPoint::class.java
         ).run {
             syncStaleFoldersOnForeground(appLifecycleProvider.lifecycle.coroutineScope)
-            accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.STARTED)
+            accountManager.observe(appLifecycleProvider.lifecycle, Lifecycle.State.CREATED)
                 .onAccountReady { account ->
                     val userId = account.userId
                     val scope = scopes.getOrPut(userId) {

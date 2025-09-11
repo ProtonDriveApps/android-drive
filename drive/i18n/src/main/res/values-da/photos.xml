@@ -65,8 +65,6 @@
   <string name="photos_error_backup_missing_folder">Sikkerhedskopimappen blev ikke fundet</string>
   <string name="photos_error_backup_failed">Sikkerhedskopiering mislykkedes.</string>
   <string name="photos_error_backup_temporarily_disabled">Sikkerhedskopiering er midlertidigt deaktiveret.</string>
-  <string name="photos_error_backup_migration_title">Opdatering påkrævet</string>
-  <string name="photos_error_backup_migration_description">For at bruge fotos-funktioner skal du opdatere din app til den nyeste version.</string>
   <string name="photos_error_missing_permissions">Manglende tilladelser.</string>
   <!--
         Variable %1$s is an application name
@@ -153,10 +151,6 @@
   <string name="photos_share_migration_in_progress_description">Hvis du har et stort fotobibliotek, kan det tage noget tid. Du kan lukke appen. Vi arbejder på det i baggrunden.</string>
   <string name="photos_share_migration_needed_banner_title">Datamigrering nødvendig</string>
   <string name="photos_share_migration_needed_banner_description">Efter migrering kan du bruge nye funktioner som filtre og fotoalbum</string>
-  <string name="photos_important_updates_title">Vigtige opdateringer</string>
-  <string name="photos_important_updates_subtitle">Fotobibliotek kræver opdatering</string>
-  <string name="photos_important_updates_description">Denne hurtige opdatering forbereder dine fotos til nye funktioner, såsom filtre og albums</string>
-  <string name="photos_important_updates_cancel_action">Påmind mig senere</string>
   <string name="photos_tags_migration_title">Migration af tags</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates

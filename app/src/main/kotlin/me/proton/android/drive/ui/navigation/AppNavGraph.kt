@@ -82,7 +82,6 @@ import me.proton.android.drive.ui.dialog.LogOptions
 import me.proton.android.drive.ui.dialog.MultipleFileOrFolderOptions
 import me.proton.android.drive.ui.dialog.Onboarding
 import me.proton.android.drive.ui.dialog.ParentFolderOptions
-import me.proton.android.drive.ui.dialog.PhotosImportantUpdates
 import me.proton.android.drive.ui.dialog.ProtonDocsInsertImageOptions
 import me.proton.android.drive.ui.dialog.SendFileDialog
 import me.proton.android.drive.ui.dialog.ShareExternalInvitationOptions
@@ -400,7 +399,6 @@ fun AppNavGraph(
         addSubscriptionPromoScreen(navigateToUpgradePlan)
         addConfirmLeaveAlbumDialog(navController)
         addShareMultiplePhotosOptions(navController)
-        addPhotosImportantUpdates(navController)
         addAddToAlbumsOptions(navController)
     }
 }
@@ -1006,11 +1004,6 @@ internal fun NavGraphBuilder.addHome(
         },
         navigateToSubscriptionPromo = { key ->
             navController.navigate(Screen.Promo.Subscription(userId, key))
-        },
-        navigateToPhotosImportantUpdates = {
-            navController.navigate(
-                Screen.Photos.ImportantUpdates(userId)
-            )
         },
         modifier = Modifier.fillMaxSize(),
     )
@@ -2499,20 +2492,6 @@ fun NavGraphBuilder.addShareMultiplePhotosOptions(
         navigateToAlbum = { albumId ->
             navController.navigate(Screen.Album(albumId))
         }
-    )
-}
-
-@ExperimentalAnimationApi
-fun NavGraphBuilder.addPhotosImportantUpdates(
-    navController: NavHostController,
-) = modalBottomSheet(
-    route = Screen.Photos.ImportantUpdates.route,
-    arguments = listOf(
-        navArgument(Screen.Photos.USER_ID) { type = NavType.StringType },
-    ),
-) { _, runAction ->
-    PhotosImportantUpdates(
-        runAction = runAction,
     )
 }
 

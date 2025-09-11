@@ -47,7 +47,7 @@
   <plurals name="trash_delete_operation_successful_format">
     <item quantity="one">1 елемент остаточно видалено</item>
     <item quantity="few">%d елементи остаточно видалено</item>
-    <item quantity="many">%d items deleted permanently</item>
+    <item quantity="many">%d елементів остаточно видалено</item>
     <item quantity="other">%d елементів остаточно видалено</item>
   </plurals>
   <string name="trash_empty_operation_successful">Смітник очищено</string>

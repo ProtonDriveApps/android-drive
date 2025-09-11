@@ -27,15 +27,23 @@ import javax.inject.Inject
 
 class UploadErrorManagerImpl @Inject constructor() : UploadErrorManager{
 
-    private val _errors = MutableSharedFlow<UploadErrorManager.Error>()
+    private val _errors = MutableSharedFlow<UploadErrorManager.Error>(
+        extraBufferCapacity = EXTRA_BUFFER_CAPACITY,
+    )
     override val errors: Flow<UploadErrorManager.Error> = _errors
-    override suspend fun post(error: UploadErrorManager.Error) {
+    override fun post(error: UploadErrorManager.Error) {
         CoreLogger.d(
             error.uploadFileLink.id.logTag(),
             error.throwable,
             "Posting error for: ${error.uploadFileLink.uriString} with tags: ${error.tags}"
         )
-        _errors.emit(error)
+        // in addition of extraBufferCapacity, tryEmit will emit
+        // even if the caller scope was cancelled
+        _errors.tryEmit(error)
+    }
+
+    private companion object{
+        const val EXTRA_BUFFER_CAPACITY = 64
     }
 }
 

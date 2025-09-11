@@ -396,32 +396,6 @@ fun BackupFailedState(
 }
 
 @Composable
-fun BackupMigrationState(
-    modifier: Modifier = Modifier,
-) {
-    BackupCard(modifier = modifier) {
-        Column {
-            BackupStateCard(
-                modifier = Modifier,
-                icon = CorePresentation.drawable.ic_proton_exclamation_circle,
-                tint = ProtonTheme.colors.notificationError,
-                text = I18N.string.photos_error_backup_migration_title,
-            )
-            Divider(
-                color = ProtonTheme.colors.separatorNorm,
-                modifier = Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-            )
-            ErrorDetails(
-                text = stringResource(I18N.string.photos_error_backup_migration_description,),
-                action = null,
-            )
-        }
-    }
-}
-
-@Composable
 fun BackgroundRestrictions(
     modifier: Modifier = Modifier,
     onIgnoreBackgroundRestrictions: () -> Unit,
@@ -501,42 +475,6 @@ fun NoConnectivityState(
         tint = ProtonTheme.colors.notificationError,
         text = I18N.string.photos_error_waiting_connectivity,
     )
-}
-
-@Composable
-fun PhotoShareMigrationNeededState(
-    isVisible: Boolean,
-    modifier: Modifier = Modifier,
-    onStart: () -> Unit,
-) {
-    AnimatedVisibility(
-        modifier = modifier,
-        visible = isVisible,
-        enter = EnterTransition.None,
-        exit = shrinkVertically() + fadeOut(),
-    ) {
-        BackupCard(modifier = modifier) {
-            Column {
-                BackupStateCard(
-                    modifier = Modifier,
-                    icon = CorePresentation.drawable.ic_proton_cloud,
-                    tint = ProtonTheme.colors.notificationError,
-                    text = I18N.string.photos_share_migration_needed_banner_title,
-                )
-                Divider(
-                    color = ProtonTheme.colors.separatorNorm,
-                    modifier = Modifier
-                        .height(1.dp)
-                        .fillMaxWidth()
-                )
-                ErrorDetails(
-                    text = stringResource(I18N.string.photos_share_migration_needed_banner_description),
-                    action = I18N.string.common_start_action,
-                    onClick = onStart,
-                )
-            }
-        }
-    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -814,16 +752,6 @@ fun BackupTemporarilyDisabledStatePreview() {
     ProtonTheme {
         Surface(color = ProtonTheme.colors.backgroundNorm) {
             BackupTemporarilyDisabledState(onRetry = { })
-        }
-    }
-}
-
-@Preview
-@Composable
-fun BackupMigrationStatePreview() {
-    ProtonTheme {
-        Surface(color = ProtonTheme.colors.backgroundNorm) {
-            BackupMigrationState()
         }
     }
 }

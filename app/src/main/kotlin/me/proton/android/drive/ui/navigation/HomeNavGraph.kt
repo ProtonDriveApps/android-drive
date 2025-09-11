@@ -78,7 +78,6 @@ fun HomeNavGraph(
     navigateToUserInvitation: (Boolean) -> Unit,
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
-    navigateToPhotosImportantUpdates: () -> Unit,
 ) = DriveNavHost(
     navController = homeNavController,
     startDestination = startDestination
@@ -117,7 +116,6 @@ fun HomeNavGraph(
         navigateToPhotosUpsell = navigateToPhotosUpsell,
         navigateToBackupSettings = navigateToBackupSettings,
         navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
-        navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
     )
     addPhotosAndAlbums(
         homeNavController,
@@ -144,7 +142,6 @@ fun HomeNavGraph(
         navigateToCreateNewAlbum = navigateToCreateNewAlbum,
         navigateToAlbum = navigateToAlbum,
         navigateToUserInvitation = navigateToUserInvitation,
-        navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
     )
     addComputers(
         homeNavController,
@@ -269,7 +266,6 @@ fun NavGraphBuilder.addPhotos(
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
-    navigateToPhotosImportantUpdates: () -> Unit,
 ) = composable(
     route = Screen.Photos.route,
     arguments = listOf(
@@ -296,7 +292,6 @@ fun NavGraphBuilder.addPhotos(
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
             navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
-            navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
         )
     } ?: let {
         val userId = UserId(requireNotNull(arguments.getString(Screen.Photos.USER_ID)))
@@ -329,7 +324,6 @@ fun NavGraphBuilder.addPhotosAndAlbums(
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
     navigateToUserInvitation: (Boolean) -> Unit,
-    navigateToPhotosImportantUpdates: () -> Unit,
 ) = composable(
     route = Screen.PhotosAndAlbums.route,
     arguments = listOf(
@@ -354,7 +348,6 @@ fun NavGraphBuilder.addPhotosAndAlbums(
             navigateToCreateNewAlbum = navigateToCreateNewAlbum,
             navigateToAlbum = navigateToAlbum,
             navigateToUserInvitation = navigateToUserInvitation,
-            navigateToPhotosImportantUpdates = navigateToPhotosImportantUpdates,
         )
     } ?: let {
         val userId = UserId(requireNotNull(arguments.getString(Screen.PhotosAndAlbums.USER_ID)))

@@ -28,7 +28,7 @@ import javax.inject.Inject
 
 class GetThumbnailCachedInputStream @Inject constructor(
     private val getThumbnailInputStream: GetThumbnailInputStream,
-    private val getThumbnailCacheFile: GetThumbnailCacheFile,
+    private val getThumbnailFile: GetThumbnailFile,
 ) {
 
     suspend operator fun invoke(
@@ -38,12 +38,13 @@ class GetThumbnailCachedInputStream @Inject constructor(
         thumbnailId: ThumbnailId,
         fetchFromNetworkIfDoesNotExist: Boolean = true,
     ): Result<InputStream> = coRunCatching {
-        val cacheFile = getThumbnailCacheFile(fileId.userId, volumeId, revisionId, thumbnailId.type)
-        if (!cacheFile.exists() && !fetchFromNetworkIfDoesNotExist) {
+        val thumbnailFile = getThumbnailFile(fileId.userId, volumeId, revisionId, thumbnailId.type)
+        if ((thumbnailFile == null || !thumbnailFile.exists()) && !fetchFromNetworkIfDoesNotExist) {
             return Result.failure(
-                IllegalStateException("${cacheFile.path} doesn't exists and fetchFromNetworkIfDoesNotExist is false")
+                IllegalStateException("${thumbnailFile?.path} doesn't exists and fetchFromNetworkIfDoesNotExist is false")
             )
         }
+        val cacheFile = getThumbnailFile(fileId.userId, volumeId, revisionId, thumbnailId.type, true)
         if (!cacheFile.exists()) {
             cacheFile.createNewFile()
             cacheFile.outputStream().use { outputStream ->

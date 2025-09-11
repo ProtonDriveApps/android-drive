@@ -63,5 +63,7 @@ class LogEventHandler @Inject constructor(
         is Event.SignatureVerificationFailed -> toLog(userId)
         is Event.TransferData -> toLog(userId)
         is Event.Album -> toLog(userId)
+        is Event.UploadSpeed -> toLog(userId)
+        is Event.DownloadSpeed -> toLog(userId)
     }
 }

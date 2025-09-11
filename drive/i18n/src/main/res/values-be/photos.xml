@@ -67,8 +67,6 @@
   <string name="photos_error_backup_missing_folder">Папка рэзервовага капіявання не знойдзена</string>
   <string name="photos_error_backup_failed">Збой рэзервовага капіявання.</string>
   <string name="photos_error_backup_temporarily_disabled">Стварэнне рэзервовай копіі часова адключана.</string>
-  <string name="photos_error_backup_migration_title">Патрабуецца абнаўленне</string>
-  <string name="photos_error_backup_migration_description">Абнавіце сваю праграму да апошняй версіі, каб карыстацца функцыямі фатаграфій.</string>
   <string name="photos_error_missing_permissions">Дазволы адсутнічаюць.</string>
   <!--
         Variable %1$s is an application name
@@ -159,10 +157,6 @@
   <string name="photos_share_migration_in_progress_description">Гэта можа заняць некаторы час, калі ў вас вялікая бібліятэка фатаграфій. Можна бяспечна закрыць укладку. Фатаграфіі будуць апрацоўвацца ў фонавым рэжыме.</string>
   <string name="photos_share_migration_needed_banner_title">Патрабуецца перанос даных</string>
   <string name="photos_share_migration_needed_banner_description">Пасля пераносу вы зможаце выкарыстоўваць такія новыя функцыі, як фільтры і фотаальбом</string>
-  <string name="photos_important_updates_title">Важныя абнаўленні</string>
-  <string name="photos_important_updates_subtitle">Неабходна абнаўленне бібліятэкі фатаграфій</string>
-  <string name="photos_important_updates_description">Гэта хуткае абнаўленне падрыхтуе вашы фатаграфіі для новых функцый, такіх як фільтры і альбомы</string>
-  <string name="photos_important_updates_cancel_action">Нагадаць мне пазней</string>
   <string name="photos_tags_migration_title">Перанос тэгаў</string>
   <!--
         Variable %1$s is a quantity (formatted) of photos migrates
