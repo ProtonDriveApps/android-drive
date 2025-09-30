@@ -47,6 +47,13 @@ abstract class SharedByMeListingDao : BaseDao<SharedByMeListingEntity>() {
     )
     abstract suspend fun getSharedByMeListing(userId: UserId, limit: Int, offset: Int): List<SharedByMeListingEntity>
 
+    @Query(
+        """
+            SELECT COUNT(*) FROM SharedByMeListingEntity WHERE user_id = :userId
+        """
+    )
+    abstract suspend fun getSharedByMeListingCount(userId: UserId): Int
+
 
     @Query("DELETE FROM SharedByMeListingEntity WHERE user_id = :userId")
     abstract fun deleteAll(userId: UserId)

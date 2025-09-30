@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import android.os.SystemClock
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.repeatOnLifecycle
@@ -36,6 +37,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -92,7 +94,9 @@ import me.proton.core.drive.backup.domain.usecase.SyncFolders
 import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.FastScrollAnchor
+import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
 import me.proton.core.drive.base.domain.extension.onFailure
@@ -121,15 +125,18 @@ import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsDisabled
 import me.proton.core.drive.feature.flag.domain.extension.off
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
+import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.link.domain.entity.PhotoTag
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink.Companion.RECENT_BACKUP_PRIORITY
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.observability.domain.metrics.common.mobile.performance.PageType
 import me.proton.core.drive.photo.domain.usecase.GetTagsMigrationStatusFlow
 import me.proton.core.drive.share.domain.entity.Share
 import me.proton.core.drive.user.domain.entity.UserMessage
@@ -185,6 +192,7 @@ class PhotosViewModel @Inject constructor(
     private val syncFolders: SyncFolders,
     private val checkMissingFolders: CheckMissingFolders,
     private val cancelUserMessage: CancelUserMessage,
+    private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
     val backupPermissionsViewModel: BackupPermissionsViewModel,
 ) : PhotosPickerAndSelectionViewModel(
         savedStateHandle = savedStateHandle,
@@ -305,6 +313,7 @@ class PhotosViewModel @Inject constructor(
                                 shareType = Share.Type.PHOTO,
                             )
                             error.log(VIEW_MODEL, "Cannot get drive link")
+                            toFirstItemMetricsNotifier.reset()
                             if (previous is DataResult.Success) {
                                 retryLoadingPhotosDriveLinkFolder()
                             }
@@ -427,7 +436,7 @@ class PhotosViewModel @Inject constructor(
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
-            )
+            ).also { toFirstItemMetricsNotifier.reset() }
             else -> contentState
         }
         if (selected.isEmpty()) {
@@ -487,6 +496,14 @@ class PhotosViewModel @Inject constructor(
             showStorageBanner = !inPickerMode,
         )
     }
+
+    private val _unused = flowOf {
+        toFirstItemMetricsNotifier.toFirstItemStart(
+            userId = userId,
+            pageType = PageType.photos,
+            startTime = TimestampMs(SystemClock.elapsedRealtime()),
+        )
+    }.stateIn(viewModelScope, Eagerly, Unit)
 
     fun viewEvent(
         navigateToPreview: (fileId: FileId, photoTag: PhotoTag?) -> Unit,
@@ -572,6 +589,17 @@ class PhotosViewModel @Inject constructor(
         }
         override val onShowUpsell = navigateToPhotosUpsell
         override val onFilterSelected = this@PhotosViewModel::onFilterSelected
+        override val onRenderThumbnail: (DriveLink) -> Unit = { driveLink ->
+            val stopTime = TimestampMs(SystemClock.elapsedRealtime())
+            viewModelScope.launch {
+                toFirstItemMetricsNotifier.itemThumbnailRendered(
+                    userId = driveLink.userId,
+                    pageType = PageType.photos,
+                    stopTime = stopTime,
+                )
+            }
+            Unit
+        }
     }.also { viewEvent ->
         this.viewEvent = viewEvent
     }

@@ -136,6 +136,7 @@ class UploadToViewModel @Inject constructor(
         override val onAppendErrorAction: () -> Unit = this@UploadToViewModel.onRetry
         override val upload: () -> Unit = { upload(navigateToStorageFull, exitApp) }
         override val onCreateFolder: () -> Unit = { this@UploadToViewModel.onCreateFolder(navigateToCreateFolder) }
+        override val onRenderThumbnail: (DriveLink) -> Unit = {}
     }
 
     private fun upload(navigateToStorageFull: () -> Unit, exitApp: () -> Unit) = viewModelScope.launch {

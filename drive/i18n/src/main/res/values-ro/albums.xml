@@ -44,7 +44,7 @@
         Example:
             "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
     -->
-  <string name="albums_leave_album_dialog_description">Sigur doriți să părăsiți albumul „%1$s”?\nVeți pierde accesul la fotografiile pe care încă nu le-ați salvat.</string>
+  <string name="albums_leave_album_dialog_description">Părăsiți albumul „%1$s”?\nVeți pierde accesul la fotografiile pe care încă nu le-ați salvat.</string>
   <string name="albums_leave_album_dialog_leave_without_saving_action">Părăsire fără salvare</string>
   <string name="albums_leave_album_dialog_save_and_leave_action">Salvare fotografii și ieșire</string>
   <string name="albums_add_zero_to_album_button">Adăugare în album</string>

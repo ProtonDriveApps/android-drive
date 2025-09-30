@@ -262,6 +262,7 @@ class OfflineViewModel @Inject constructor(
         override val onToggleLayout = this@OfflineViewModel::onToggleLayout
         override val onErrorAction = { retryList() }
         override val onAppendErrorAction = { retryList() }
+        override val onRenderThumbnail: (DriveLink) -> Unit = {}
     }
 
     val listEffect: Flow<ListEffect>

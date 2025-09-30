@@ -47,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
@@ -57,6 +58,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImagePainter
+import coil.compose.AsyncImagePainter.State.Empty.painter
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,6 +77,7 @@ fun PdfPreview(
     uri: Uri,
     transformationState: TransformationState,
     modifier: Modifier = Modifier,
+    onRenderSucceeded: (Any) -> Unit,
     onRenderFailed: (Throwable, Any) -> Unit,
 ) {
     val context = LocalContext.current
@@ -102,6 +106,7 @@ fun PdfPreview(
             uri = uri,
             modifier = modifier,
             transformationState = transformationState,
+            onRenderSucceeded = onRenderSucceeded,
             onRenderFailed = onRenderFailed,
             reader = reader,
         )
@@ -124,6 +129,7 @@ fun PdfPreview(
     uri: Uri,
     transformationState: TransformationState,
     reader: PdfReader,
+    onRenderSucceeded: (Any) -> Unit,
     onRenderFailed: (Throwable, Any) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -180,7 +186,11 @@ fun PdfPreview(
                             .transformable(
                                 state = transformableState,
                                 canPan = { transformationState.hasScale() }
-                            ),
+                            )
+                            .drawWithContent {
+                                drawContent()
+                                onRenderSucceeded(uri)
+                            },
                         )
                 }
                 PageNumber(

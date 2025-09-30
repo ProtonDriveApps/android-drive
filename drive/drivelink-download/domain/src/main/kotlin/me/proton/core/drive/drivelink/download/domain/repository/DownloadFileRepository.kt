@@ -21,12 +21,17 @@ package me.proton.core.drive.drivelink.download.domain.repository
 import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadFileLink
+import me.proton.core.drive.drivelink.download.domain.entity.NetworkType
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
 import me.proton.core.drive.volume.domain.entity.VolumeId
 
 interface DownloadFileRepository {
-    suspend fun getNextIdleAndUpdate(userId: UserId, state: DownloadFileLink.State): DownloadFileLink?
+    suspend fun getNextIdleAndUpdate(
+        userId: UserId,
+        networkTypes: Set<NetworkType>,
+        state: DownloadFileLink.State,
+    ): DownloadFileLink?
     suspend fun add(downloadFileLink: DownloadFileLink)
     suspend fun delete(id: Long)
     suspend fun delete(volumeId: VolumeId, fileId: FileId, revisionId: String)

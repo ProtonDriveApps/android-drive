@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import android.os.SystemClock
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -41,6 +42,7 @@ import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.common.onClick
 import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
+import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.log.LogTag.SHARING
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -54,18 +56,23 @@ import me.proton.core.drive.drivelink.shared.domain.usecase.SharedDriveLinks
 import me.proton.core.drive.drivelink.shared.presentation.entity.SharedItem
 import me.proton.core.drive.drivelink.shared.presentation.viewevent.SharedViewEvent
 import me.proton.core.drive.drivelink.shared.presentation.viewstate.SharedViewState
+import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.link.domain.entity.AlbumId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.observability.domain.metrics.common.mobile.performance.PageType
 import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 abstract class CommonSharedViewModel(
     savedStateHandle: SavedStateHandle,
     private val appContext: Context,
     private val configurationProvider: ConfigurationProvider,
     private val sharedDriveLinks: SharedDriveLinks,
+    private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle), HomeTabViewModel {
     private var fetchingJob: Job? = null
     private var fetchingDriveLinkIds: Set<LinkId> = emptySet()
@@ -73,6 +80,7 @@ abstract class CommonSharedViewModel(
     private val listContentAppendingState = MutableStateFlow<ListContentAppendingState>(
         ListContentAppendingState.Idle
     )
+    private var contentStateJob: Job? = null
     abstract val driveLinks: Flow<PagingData<SharedItem>>
     protected abstract val emptyState: ListContentState.Empty
     private val _listEffect = MutableSharedFlow<ListEffect>()
@@ -93,6 +101,14 @@ abstract class CommonSharedViewModel(
         listContentState,
         listContentAppendingState
     ) { contentState, contentAppendingState ->
+        if (contentState is ListContentState.Empty || contentState is ListContentState.Error) {
+            contentStateJob = viewModelScope.launch {
+                delay(2.seconds)
+                toFirstItemMetricsNotifier.reset()
+            }
+        } else {
+            contentStateJob?.cancel()
+        }
         initialViewState.copy(
             listContentState = contentState,
             listContentAppendingState = contentAppendingState,
@@ -149,6 +165,18 @@ abstract class CommonSharedViewModel(
         override val onErrorAction = this@CommonSharedViewModel::onErrorAction
 
         override val onUserInvitation = { navigateToUserInvitation(false) }
+
+        override val onRenderThumbnail = { driveLink: DriveLink ->
+            val stopTime = TimestampMs(SystemClock.elapsedRealtime())
+            viewModelScope.launch {
+                toFirstItemMetricsNotifier.itemThumbnailRendered(
+                    userId = driveLink.userId,
+                    pageType = getPageType(),
+                    stopTime = stopTime,
+                )
+            }
+            Unit
+        }
     }
 
     private fun onScroll(driveLinkIds: Set<LinkId>) {
@@ -180,6 +208,8 @@ abstract class CommonSharedViewModel(
             retryList()
         }
     }
+
+    protected abstract fun getPageType(): PageType
 
     abstract suspend fun getAllIds(): Result<List<SharedLinkId>>
 }

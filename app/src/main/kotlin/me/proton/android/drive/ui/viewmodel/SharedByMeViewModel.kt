@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import android.os.SystemClock
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -28,7 +29,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
@@ -37,12 +38,16 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.drivelink.shared.domain.usecase.GetPagedSharedByMeLinkIds
 import me.proton.core.drive.drivelink.shared.domain.usecase.SharedDriveLinks
 import me.proton.core.drive.drivelink.shared.presentation.entity.SharedItem
+import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
+import me.proton.core.drive.observability.domain.metrics.common.mobile.performance.PageType
 import me.proton.core.drive.share.crypto.domain.usecase.GetOrCreateMainShare
 import me.proton.core.drive.share.user.domain.usecase.GetAllSharedByMeIds
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -58,6 +63,7 @@ class SharedByMeViewModel @Inject constructor(
     configurationProvider: ConfigurationProvider,
     sharedDriveLinks: SharedDriveLinks,
     getMainShare: GetOrCreateMainShare,
+    toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
     private val getPagedSharedByMeLinkIds: GetPagedSharedByMeLinkIds,
     private val getAllSharedByMeIds: GetAllSharedByMeIds,
 ) : CommonSharedViewModel(
@@ -65,6 +71,7 @@ class SharedByMeViewModel @Inject constructor(
     appContext = appContext,
     configurationProvider = configurationProvider,
     sharedDriveLinks = sharedDriveLinks,
+    toFirstItemMetricsNotifier = toFirstItemMetricsNotifier,
 ) {
     private val emptyStateImageResId: Int = getThemeDrawableId(
         light = BasePresentation.drawable.empty_shared_by_me_light,
@@ -81,7 +88,14 @@ class SharedByMeViewModel @Inject constructor(
         .mapSuccessValueOrNull()
         .distinctUntilChanged()
         .map { share -> share?.volumeId }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        .stateIn(viewModelScope, Eagerly, null)
+    private val _unused = flowOf {
+        toFirstItemMetricsNotifier.toFirstItemStart(
+            userId = userId,
+            pageType = getPageType(),
+            startTime = TimestampMs(SystemClock.elapsedRealtime()),
+        )
+    }.stateIn(viewModelScope, Eagerly, Unit)
     override val driveLinks: Flow<PagingData<SharedItem>> = volumeId
         .filterNotNull()
         .distinctUntilChanged()
@@ -99,4 +113,6 @@ class SharedByMeViewModel @Inject constructor(
         }.cachedIn(viewModelScope)
 
     override suspend fun getAllIds() = getAllSharedByMeIds(userId)
+
+    override fun getPageType(): PageType = PageType.shared_by_me
 }

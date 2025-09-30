@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import android.os.SystemClock
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
@@ -48,7 +50,9 @@ import me.proton.android.drive.ui.effect.HomeEffect
 import me.proton.android.drive.ui.effect.HomeTabViewModel
 import me.proton.core.domain.arch.onSuccess
 import me.proton.core.drive.base.data.extension.logDefaultMessage
+import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
+import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.extension.onFailure
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -64,8 +68,11 @@ import me.proton.core.drive.base.presentation.state.ListContentAppendingState
 import me.proton.core.drive.base.presentation.state.ListContentState
 import me.proton.core.drive.base.presentation.effect.ListEffect
 import me.proton.core.drive.base.presentation.viewmodel.onLoadState
+import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.i18n.R
 import me.proton.core.drive.link.domain.entity.FolderId
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.observability.domain.metrics.common.mobile.performance.PageType
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
@@ -85,6 +92,7 @@ class SyncedFoldersViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val toggleLayoutType: ToggleLayoutType,
     private val getPagedDriveLinks: GetPagedDriveLinksList,
+    private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
     getDriveLink: GetDecryptedDriveLink,
     getLayoutType: GetLayoutType,
     getSorting: GetSorting,
@@ -133,6 +141,7 @@ class SyncedFoldersViewModel @Inject constructor(
                                 )
                             }
                         )
+                        toFirstItemMetricsNotifier.reset()
                     }
                 return@map null
             }
@@ -149,6 +158,9 @@ class SyncedFoldersViewModel @Inject constructor(
         listContentState,
         layoutType,
     ) { driveLink, sorting, listContentState, layoutType ->
+        if (listContentState is ListContentState.Empty) {
+            toFirstItemMetricsNotifier.reset()
+        }
         initialViewState.copy(
             title = folderName ?: driveLink?.name,
             isTitleEncrypted = folderName == null && driveLink.isNameEncrypted,
@@ -209,6 +221,17 @@ class SyncedFoldersViewModel @Inject constructor(
         override val onToggleLayout = this@SyncedFoldersViewModel::onToggleLayout
         override val onErrorAction = { retryList() }
         override val onAppendErrorAction = { retryList() }
+        override val onRenderThumbnail = { driveLink: DriveLink ->
+            val stopTime = TimestampMs(SystemClock.elapsedRealtime())
+            viewModelScope.launch {
+                toFirstItemMetricsNotifier.itemThumbnailRendered(
+                    userId = driveLink.userId,
+                    pageType = PageType.my_files,
+                    stopTime = stopTime,
+                )
+            }
+            Unit
+        }
     }
 
     val listEffect: Flow<ListEffect>
@@ -216,6 +239,14 @@ class SyncedFoldersViewModel @Inject constructor(
 
     override val homeEffect: Flow<HomeEffect>
         get() = _homeEffect.asSharedFlow()
+
+    private val _unused = flowOf {
+        toFirstItemMetricsNotifier.toFirstItemStart(
+            userId = userId,
+            pageType = PageType.my_files,
+            startTime = TimestampMs(SystemClock.elapsedRealtime()),
+        )
+    }.stateIn(viewModelScope, Eagerly, Unit)
 
     fun refresh() {
         viewModelScope.launch {

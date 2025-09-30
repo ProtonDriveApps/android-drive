@@ -470,6 +470,7 @@ fun Album(
                             inMultiselect = selected || selectedPhotos.isNotEmpty() || inMultiselect,
                             onClick = onClick,
                             onLongClick = onLongClick,
+                            onRenderThumbnail = {},
                         )
                     }
                 }

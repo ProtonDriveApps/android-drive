@@ -20,6 +20,7 @@ package me.proton.core.drive.base.domain.extension
 
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.ApiResult
+import me.proton.core.network.domain.hasProtonErrorCode
 
 
 fun ApiException.hasHttpCode(code: Int): Boolean =
@@ -32,3 +33,6 @@ inline fun <T> Throwable.onProtonHttpException(block: (protonData: ApiResult.Err
     ((this as? ApiException)?.error as? ApiResult.Error.Http)?.proton?.let { protonData ->
         block(protonData)
     }
+
+fun Throwable.hasThrowableOrCauseProtonErrorCode(code: Int): Boolean =
+    hasProtonErrorCode(code) || cause?.hasProtonErrorCode(code) == true

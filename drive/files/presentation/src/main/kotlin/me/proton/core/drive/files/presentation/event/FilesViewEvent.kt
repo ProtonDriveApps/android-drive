@@ -42,4 +42,5 @@ interface FilesViewEvent {
     val onBack: () -> Unit get() = {}
     val onTab: (VolumeEntry) -> Unit get() = {}
     val onSubscription: () -> Unit get() = {}
+    val onRenderThumbnail: (DriveLink) -> Unit get() = {}
 }

@@ -293,6 +293,7 @@ fun AddToAlbumItem(
             inMultiselect = inMultiselect,
             onClick = onClick,
             onLongClick = onLongClick,
+            onRenderThumbnail = {},
         )
         driveLink?.let {
             IconButton(

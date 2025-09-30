@@ -25,4 +25,5 @@ interface ComputersViewEvent {
     val onDevice: (Device) -> Unit get() = { _ -> }
     val onRefresh: () -> Unit get() = {}
     val onMoreOptions: (Device) -> Unit get() = { _ -> }
+    val onRenderThumbnail: (Device) -> Unit get() = { _ -> }
 }

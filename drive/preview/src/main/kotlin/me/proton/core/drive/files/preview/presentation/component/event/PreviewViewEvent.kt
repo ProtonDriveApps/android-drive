@@ -26,6 +26,7 @@ interface PreviewViewEvent {
     val onTopAppBarNavigation: () -> Unit
     val onMoreOptions: () -> Unit
     val onSingleTap: () -> Unit
+    val onRenderSucceeded: (Any) -> Unit
     val onRenderFailed: (Throwable, Any) -> Unit
     val mediaControllerVisibility: (Boolean) -> Unit
     val onOpenInBrowser: () -> Unit

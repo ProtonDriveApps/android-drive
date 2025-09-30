@@ -54,4 +54,5 @@ interface PhotosViewEvent {
     val onResolve: () -> Unit get() = {}
     val onShowUpsell: () -> Unit
     val onFilterSelected: (PhotoTag?) -> Unit get() = {}
+    val onRenderThumbnail: (DriveLink) -> Unit get() = {}
 }

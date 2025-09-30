@@ -26,6 +26,7 @@ import me.proton.core.drive.drivelink.download.data.db.DriveLinkDownloadDatabase
 import me.proton.core.drive.drivelink.download.data.extension.toDownloadFileLink
 import me.proton.core.drive.drivelink.download.data.extension.toFileDownloadEntity
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadFileLink
+import me.proton.core.drive.drivelink.download.domain.entity.NetworkType
 import me.proton.core.drive.drivelink.download.domain.repository.DownloadFileRepository
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.LinkId
@@ -47,9 +48,10 @@ class DownloadFileRepositoryImpl @Inject constructor(
 
     override suspend fun getNextIdleAndUpdate(
         userId: UserId,
+        networkTypes: Set<NetworkType>,
         state: DownloadFileLink.State
     ): DownloadFileLink? = db.inTransaction {
-        dao.getNext(userId, DownloadFileLink.State.IDLE)?.let { entity ->
+        dao.getNext(userId, networkTypes, DownloadFileLink.State.IDLE)?.let { entity ->
             entity.copy(state = state).also {
                 dao.update(it)
             }

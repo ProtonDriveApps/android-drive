@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import android.os.SystemClock
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -28,7 +29,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
@@ -37,6 +38,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
@@ -51,10 +53,13 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.ENABLED
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlag.State.NOT_FOUND
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveSharingDisabled
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
+import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
+import me.proton.core.drive.observability.domain.metrics.common.mobile.performance.PageType
 import me.proton.core.drive.share.user.domain.entity.SharedLinkId
 import me.proton.core.drive.share.user.domain.usecase.GetAllSharedWithMeIds
 import me.proton.core.drive.share.user.domain.usecase.GetUserInvitationCountFlow
 import javax.inject.Inject
+import me.proton.core.drive.base.domain.extension.flowOf as baseFlowOf
 import me.proton.core.drive.base.presentation.R as BasePresentation
 import me.proton.core.drive.i18n.R as I18N
 
@@ -66,6 +71,7 @@ class SharedWithMeViewModel @Inject constructor(
     sharedDriveLinks: SharedDriveLinks,
     getPagedSharedWithMeLinkIds: GetPagedSharedWithMeLinkIds,
     getFeatureFlagFlow: GetFeatureFlagFlow,
+    toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
     private val getAllSharedWithMeIds: GetAllSharedWithMeIds,
     getUserInvitationCountFlow: GetUserInvitationCountFlow,
 ) : CommonSharedViewModel(
@@ -73,11 +79,12 @@ class SharedWithMeViewModel @Inject constructor(
     appContext = appContext,
     configurationProvider = configurationProvider,
     sharedDriveLinks = sharedDriveLinks,
+    toFirstItemMetricsNotifier = toFirstItemMetricsNotifier,
 ) {
     private val killSwitch = getFeatureFlagFlow(driveSharingDisabled(userId))
         .stateIn(
             scope = viewModelScope,
-            started = SharingStarted.Eagerly,
+            started = Eagerly,
             initialValue = FeatureFlag(driveSharingDisabled(userId), NOT_FOUND)
         )
     private val emptyStateImageResId: Int = getThemeDrawableId(
@@ -91,6 +98,13 @@ class SharedWithMeViewModel @Inject constructor(
         descriptionResId = I18N.string.shared_with_me_empty_description,
         actionResId = null,
     )
+    private val _unused = baseFlowOf {
+        toFirstItemMetricsNotifier.toFirstItemStart(
+            userId = userId,
+            pageType = getPageType(),
+            startTime = TimestampMs(SystemClock.elapsedRealtime()),
+        )
+    }.stateIn(viewModelScope, Eagerly, Unit)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override val driveLinks: Flow<PagingData<SharedItem>> =
@@ -129,4 +143,5 @@ class SharedWithMeViewModel @Inject constructor(
             )
         }
 
+    override fun getPageType(): PageType = PageType.shared_with_me
 }

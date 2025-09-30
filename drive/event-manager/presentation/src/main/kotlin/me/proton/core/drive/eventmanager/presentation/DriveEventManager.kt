@@ -86,6 +86,8 @@ class DriveEventManager @Inject constructor(
             }
     }
 
+    suspend fun stop(config: EventManagerConfig.Drive) = eventManagerProvider.get(config).stop()
+
     private fun getAllStandardShareVolumeIds(userId: UserId): Flow<Set<VolumeId>> =
         getShares(
             userId = userId,

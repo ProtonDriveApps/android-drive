@@ -32,8 +32,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -71,6 +73,7 @@ fun ProtonDocumentPreview(
     onWebViewRelease: (uriString: String) -> Unit,
     onDownloadResult: (Result<String>) -> Unit,
     onShowFileChooser: (ValueCallback<Array<Uri>>?, FileChooserParams?) -> Boolean,
+    onContentShown: () -> Unit,
 ) {
     val localContext = LocalContext.current
     val blobUrlDownloader = remember(title) {
@@ -85,6 +88,11 @@ fun ProtonDocumentPreview(
     }
     val localWebView = remember(uriString) { mutableStateOf<WebView?>(null) }
     val focusManager = LocalFocusManager.current
+    var latestEventsUrlInvoked by remember { mutableStateOf(false) }
+    val regex = remember {
+        Regex("""^https?://[^/]+/api/drive/volumes/[^/]+/events/latest$""")
+    }
+    val contentShownRegex = remember { Regex(""".*favicon.*""") }
     AndroidView(
         factory = { context ->
             localWebView.value ?: WebView(context).apply {
@@ -108,6 +116,17 @@ fun ProtonDocumentPreview(
                                 true
                             }
                         } ?: super.shouldOverrideUrlLoading(view, request)
+                    }
+
+                    override fun onLoadResource(view: WebView?, url: String?) {
+                        url?.let {
+                            if (regex.matches(url)) {
+                                latestEventsUrlInvoked = true
+                            }
+                            if (latestEventsUrlInvoked && contentShownRegex.matches(url)) {
+                                onContentShown()
+                            }
+                        }
                     }
                 }
                 webChromeClient = object : WebChromeClient() {

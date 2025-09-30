@@ -18,16 +18,20 @@
 
 package me.proton.core.drive.drivelink.download.data.manager
 
+import android.content.Context
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import androidx.work.await
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transform
@@ -44,10 +48,12 @@ import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
+import me.proton.core.drive.drivelink.download.data.extension.observeNetworkTypes
 import me.proton.core.drive.drivelink.download.data.manager.DownloadManagerImpl.DownloadFileTask
 import me.proton.core.drive.drivelink.download.data.worker.FileDownloaderWorker
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadFileLink
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadParentLink
+import me.proton.core.drive.drivelink.download.domain.entity.NetworkType
 import me.proton.core.drive.drivelink.download.domain.extension.post
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
@@ -81,6 +87,7 @@ import kotlin.coroutines.cancellation.CancellationException
 
 @Singleton
 class DownloadManagerImpl @Inject constructor(
+    @ApplicationContext private val appContext: Context,
     private val pipelineManager: PipelineManager<DownloadFileTask>,
     private val downloadFileRepository: DownloadFileRepository,
     private val downloadParentLinkRepository: DownloadParentLinkRepository,
@@ -100,6 +107,7 @@ class DownloadManagerImpl @Inject constructor(
 ) : DownloadManager, DownloadManager.FileDownloader, PipelineManager.TaskProvider<DownloadFileTask> {
     private var userId: UserId? = null
     private val runningTasks = MutableStateFlow(emptySet<DownloadFileTask>())
+    private val currentNetworkTypes: MutableStateFlow<Set<NetworkType>> = MutableStateFlow(emptySet())
 
     override suspend fun start(
         userId: UserId,
@@ -113,6 +121,7 @@ class DownloadManagerImpl @Inject constructor(
         ).getOrThrow()
         observeIdleFiles(userId, coroutineContext)
         observeParents(userId, coroutineContext)
+        observeNetworkTypes(userId, coroutineContext)
     }
 
     override suspend fun stop(userId: UserId): Result<Unit> = coRunCatching {
@@ -122,8 +131,13 @@ class DownloadManagerImpl @Inject constructor(
         }
     }
 
-    override suspend fun download(driveLink: DriveLink, priority: Long, retryable: Boolean) {
-        CoreLogger.d(LogTag.DOWNLOAD, "download(driveLinkId=${driveLink.id.id.logId()}, priority=$priority, retryable=$retryable)")
+    override suspend fun download(
+        driveLink: DriveLink,
+        priority: Long,
+        retryable: Boolean,
+        networkType: NetworkType,
+    ) {
+        CoreLogger.d(LogTag.DOWNLOAD, "download(driveLinkId=${driveLink.id.id.logId()}, priority=$priority, retryable=$retryable, networkType=$networkType)")
         when (driveLink) {
             is DriveLink.File -> downloadFile(
                 volumeId = driveLink.volumeId,
@@ -131,18 +145,21 @@ class DownloadManagerImpl @Inject constructor(
                 revisionId = driveLink.activeRevisionId,
                 priority = priority,
                 retryable = retryable,
+                networkType = networkType,
             )
             is DriveLink.Folder -> downloadFolder(
                 volumeId = driveLink.volumeId,
                 parentLink = driveLink.link,
                 priority = priority,
                 retryable = retryable,
+                networkType = networkType,
             )
             is DriveLink.Album -> downloadAlbum(
                 volumeId = driveLink.volumeId,
                 albumId = driveLink.id,
                 priority = priority,
                 retryable = retryable,
+                networkType = networkType,
             )
         }
         startFileDownloaderWorker(driveLink.userId)
@@ -186,7 +203,11 @@ class DownloadManagerImpl @Inject constructor(
         pipelineId: Long,
     ): Result<DownloadFileTask> = coRunCatching {
         downloadFileRepository
-            .getNextIdleAndUpdate(requireNotNull(userId), DownloadFileLink.State.RUNNING)
+            .getNextIdleAndUpdate(
+                userId = requireNotNull(userId),
+                networkTypes = currentNetworkTypes.value,
+                state = DownloadFileLink.State.RUNNING,
+            )
             ?.let { downloadFileLink ->
                 DownloadFileTask(
                     pipelineId = pipelineId,
@@ -200,19 +221,25 @@ class DownloadManagerImpl @Inject constructor(
     }
 
     override suspend fun taskCancelled(task: DownloadFileTask, isCancelledByStop: Boolean) {
-        CoreLogger.d(task.downloadFileLink.fileId.logTag, "taskCancelled pipelineId=${task.pipelineId} isCancelledByStop=$isCancelledByStop")
-        downloadErrorManager.post(task.downloadFileLink.fileId, CancellationException(), true)
-        runningTasks.value -= task
-        if (task.downloadFileLink.retryable && !isCancelledByStop && task.downloadFileLink.numberOfRetries < configurationProvider.maxApiAutoRetries) {
-            downloadFileRepository.updateStateToFailed(task.downloadFileLink.id)
-            startFileDownloaderWorker(task.downloadFileLink.fileId.userId)
-        } else {
-            cancelFileDownload(
-                volumeId = task.downloadFileLink.volumeId,
-                fileId = task.downloadFileLink.fileId,
-                downloadFileId = task.downloadFileLink.id,
-                isCancelledByStop = isCancelledByStop,
+        withContext(NonCancellable) {
+            CoreLogger.d(
+                task.downloadFileLink.fileId.logTag,
+                "taskCancelled pipelineId=${task.pipelineId} isCancelledByStop=$isCancelledByStop"
             )
+            downloadErrorManager.post(task.downloadFileLink.fileId, CancellationException(), true)
+            runningTasks.value -= task
+            if (task.downloadFileLink.retryable && !isCancelledByStop && task.downloadFileLink.numberOfRetries < configurationProvider.maxApiAutoRetries) {
+                downloadFileRepository.updateStateToFailed(task.downloadFileLink.id)
+                startFileDownloaderWorker(task.downloadFileLink.fileId.userId)
+                setDownloadState(task.downloadFileLink.fileId, DownloadState.Error)
+            } else {
+                cancelFileDownload(
+                    volumeId = task.downloadFileLink.volumeId,
+                    fileId = task.downloadFileLink.fileId,
+                    downloadFileId = task.downloadFileLink.id,
+                    isCancelledByStop = isCancelledByStop,
+                )
+            }
         }
     }
 
@@ -251,6 +278,7 @@ class DownloadManagerImpl @Inject constructor(
         revisionId: String,
         priority: Long,
         retryable: Boolean,
+        networkType: NetworkType,
         state: DownloadFileLink.State = DownloadFileLink.State.IDLE,
     ) {
         downloadFileRepository.add(
@@ -263,6 +291,7 @@ class DownloadManagerImpl @Inject constructor(
                 retryable = retryable,
                 state = state,
                 numberOfRetries = 0,
+                networkType = networkType,
             )
         )
     }
@@ -272,6 +301,7 @@ class DownloadManagerImpl @Inject constructor(
         parentLink: Link.Folder,
         priority: Long,
         retryable: Boolean,
+        networkType: NetworkType,
     ) {
         getDescendants(parentLink, true).onFailure { error ->
             if (error is OutOfMemoryError) {
@@ -306,6 +336,7 @@ class DownloadManagerImpl @Inject constructor(
                                     revisionId = driveLink.activeRevisionId,
                                     priority = priority,
                                     retryable = retryable,
+                                    networkType = networkType,
                                 )
                             }
                         is Folder -> let {
@@ -331,6 +362,7 @@ class DownloadManagerImpl @Inject constructor(
         albumId: AlbumId,
         priority: Long,
         retryable: Boolean,
+        networkType: NetworkType,
     ) {
         getAllAlbumChildren(
             volumeId = volumeId,
@@ -360,6 +392,7 @@ class DownloadManagerImpl @Inject constructor(
                             revisionId = driveLink.activeRevisionId,
                             priority = priority,
                             retryable = retryable,
+                            networkType = networkType,
                         )
                     }
                 }
@@ -559,6 +592,28 @@ class DownloadManagerImpl @Inject constructor(
         ) { _, _ ->
             removeDownloadedParents(userId)
         }.launchIn(CoroutineScope(coroutineContext))
+    }
+
+    private fun observeNetworkTypes(userId: UserId, coroutineContext: CoroutineContext) {
+        appContext.observeNetworkTypes
+            .distinctUntilChanged()
+            .onEach { networkTypes ->
+                CoreLogger.d(
+                    tag = LogTag.DOWNLOAD,
+                    message = "NetworkTypes old=${currentNetworkTypes.value.joinToString()}, new=${networkTypes.joinToString()}",
+                )
+                pipelineManager.stopPipelines(
+                    immediately = true,
+                    cause = CancellationException("Network types changed"),
+                )
+                downloadFileRepository.getCountFlow(
+                    userId,
+                    DownloadFileLink.State.RUNNING
+                ).first { count -> count == 0 }
+                currentNetworkTypes.value = networkTypes
+                pipelineManager.startPipelines()
+            }
+            .launchIn(CoroutineScope(coroutineContext))
     }
 
     class DownloadFileTask(

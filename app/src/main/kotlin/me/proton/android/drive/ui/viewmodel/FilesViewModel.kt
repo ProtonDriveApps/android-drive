@@ -20,6 +20,7 @@ package me.proton.android.drive.ui.viewmodel
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.SystemClock
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.repeatOnLifecycle
@@ -59,6 +60,7 @@ import me.proton.core.drive.base.data.extension.getDefaultMessage
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.entity.Permissions
+import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.extension.filterSuccessOrError
 import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
@@ -81,16 +83,19 @@ import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
 import me.proton.core.drive.feature.flag.domain.usecase.IsDownloadManagerEnabled
+import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.selection.domain.entity.SelectionId
 import me.proton.core.drive.link.selection.domain.usecase.DeselectLinks
 import me.proton.core.drive.link.selection.domain.usecase.SelectLinks
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.linkupload.domain.usecase.GetUploadFileLinks
+import me.proton.core.drive.observability.domain.metrics.common.mobile.performance.PageType
 import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
@@ -137,6 +142,7 @@ class FilesViewModel @Inject constructor(
     private val openProtonDocumentInBrowser: OpenProtonDocumentInBrowser,
     private val configurationProvider: ConfigurationProvider,
     private val isDownloadManagerEnabled: IsDownloadManagerEnabled,
+    private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
 ) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
@@ -163,11 +169,21 @@ class FilesViewModel @Inject constructor(
                         .onFailure { error ->
                             onFilesDriveLinkError(userId, previous, error, listContentState)
                             error.log(VIEW_MODEL)
+                            toFirstItemMetricsNotifier.reset()
                         }
                     return@mapWithPrevious null
                 }
         )
     }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    private val _unused = flowOf {
+        if (folderId == null) {
+            toFirstItemMetricsNotifier.toFirstItemStart(
+                userId = userId,
+                pageType = PageType.my_files,
+                startTime = TimestampMs(SystemClock.elapsedRealtime()),
+            )
+        }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, Unit)
 
     val driveLinks: Flow<PagingData<DriveLink>> =
         driveLink.filterNotNull()
@@ -238,7 +254,7 @@ class FilesViewModel @Inject constructor(
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
-            )
+            ).also { toFirstItemMetricsNotifier.reset() }
             else -> contentState
         }
         if (selected.isEmpty()) {
@@ -394,6 +410,17 @@ class FilesViewModel @Inject constructor(
         override val onDeselectDriveLink = { driveLink: DriveLink -> onDeselectDriveLink(driveLink) }
         override val onBack = { onBack() }
         override val onSubscription = navigateToSubscription
+        override val onRenderThumbnail = { driveLink: DriveLink ->
+            val stopTime = TimestampMs(SystemClock.elapsedRealtime())
+            viewModelScope.launch {
+                toFirstItemMetricsNotifier.itemThumbnailRendered(
+                    userId = driveLink.userId,
+                    pageType = PageType.my_files,
+                    stopTime = stopTime,
+                )
+            }
+            Unit
+        }
     }.also { viewEvent ->
         this.viewEvent = viewEvent
     }

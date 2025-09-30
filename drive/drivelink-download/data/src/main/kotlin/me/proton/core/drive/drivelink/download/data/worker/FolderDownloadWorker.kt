@@ -42,6 +42,7 @@ import me.proton.core.drive.drivelink.download.data.extension.uniqueFolderWorkNa
 import me.proton.core.drive.drivelink.download.data.extension.uniqueWorkName
 import me.proton.core.drive.drivelink.download.data.worker.FolderDownloadStateUpdateWorker.Companion.ROOT_FOLDER_DOWNLOAD_STATE_UPDATE_TAG
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FOLDER_ID
+import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_NETWORK_TYPE
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_USER_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_VOLUME_ID
@@ -79,6 +80,8 @@ class FolderDownloadWorker @AssistedInject constructor(
     private val volumeId = VolumeId(requireNotNull(inputData.getString(KEY_VOLUME_ID)))
     private val shareId = ShareId(userId, requireNotNull(inputData.getString(KEY_SHARE_ID)))
     private val folderId = FolderId(shareId, requireNotNull(inputData.getString(KEY_FOLDER_ID)))
+    private val networkType = inputData.getString(KEY_NETWORK_TYPE)
+        ?.let { name -> NetworkType.values().find { it.name == name } } ?: NetworkType.CONNECTED
     override val logTag = folderId.logTag
 
     override suspend fun doLimitedRetryWork(): Result {
@@ -109,7 +112,7 @@ class FolderDownloadWorker @AssistedInject constructor(
         val folderTag = uniqueFolderWorkName(folderId)
         // First we create task for WorkManager's to set all node as downloading
         var workContinuation = workManager.beginWith(
-            (listOf(folder) + descendants.map { node -> node.link }).setAsDownloading(userId, folder.id)
+            (listOf(folder) + descendants.map { node -> node.link }).setAsDownloading(userId, folder.id, networkType)
         )
         // We then sort them from deepest in the hierarchy to highest, keeping folders before files
         val mutableDescendants = descendants.sortedWith(
@@ -130,7 +133,7 @@ class FolderDownloadWorker @AssistedInject constructor(
                     .filterIsInstance<Link.Folder>()
                     .find { link -> link.id == folderId}
                     ?.let { parent ->
-                        workContinuation = workContinuation.then(parent.setAsDownloaded(userId, folder.id))
+                        workContinuation = workContinuation.then(parent.setAsDownloaded(userId, folder.id, networkType))
                     }
             }
             workContinuation = when (currentDescendant) {
@@ -140,7 +143,7 @@ class FolderDownloadWorker @AssistedInject constructor(
                     // so we mark it as downloaded (this task will follow after all the node inside have
                     // been downloaded). And we remove it from the unhandled children
                     mutableDescendants.removeAt(0)
-                    workContinuation.then(currentDescendant.setAsDownloaded(userId, folder.id))
+                    workContinuation.then(currentDescendant.setAsDownloaded(userId, folder.id, networkType))
                 }
                 is Link.File -> {
                     // We are handling a file inside a folder, we retrieve all the files from that same
@@ -156,10 +159,10 @@ class FolderDownloadWorker @AssistedInject constructor(
             }
         }
         // Finally, we can mark this drive node as downloaded and finish this worker successfully
-        workContinuation.then(folder.setAsDownloaded(userId, folder.id)).enqueue().await()
+        workContinuation.then(folder.setAsDownloaded(userId, folder.id, networkType)).enqueue().await()
     }
 
-    private fun List<Link>.setAsDownloading(userId: UserId, rootFolderId: FolderId) =
+    private fun List<Link>.setAsDownloading(userId: UserId, rootFolderId: FolderId, networkType: NetworkType) =
         filterIsInstance<Link.Folder>()
             .map { folder ->
                 FolderDownloadStateUpdateWorker.getWorkRequest(
@@ -167,16 +170,18 @@ class FolderDownloadWorker @AssistedInject constructor(
                     folderId = folder.id,
                     rootFolderId = rootFolderId,
                     isDownloadFinished = false,
+                    networkType = networkType,
                     tags = listOf(uniqueFolderWorkName(rootFolderId)),
                 )
             }
 
-    private fun Link.Folder.setAsDownloaded(userId: UserId, rootFolderId: FolderId) =
+    private fun Link.Folder.setAsDownloaded(userId: UserId, rootFolderId: FolderId, networkType: NetworkType) =
         FolderDownloadStateUpdateWorker.getWorkRequest(
             userId = userId,
             folderId = id,
             rootFolderId = rootFolderId,
             isDownloadFinished = true,
+            networkType = networkType,
             tags = listOfNotNull(
                 uniqueFolderWorkName(rootFolderId),
                 takeIf { id == rootFolderId }?.let { ROOT_FOLDER_DOWNLOAD_STATE_UPDATE_TAG }
@@ -199,12 +204,13 @@ class FolderDownloadWorker @AssistedInject constructor(
     companion object {
         fun getWorkRequest(
             driveLink: DriveLink.Folder,
+            networkType: NetworkType = NetworkType.CONNECTED,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(FolderDownloadWorker::class.java)
                 .setConstraints(
                     Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiredNetworkType(networkType)
                         .build()
                 )
                 .setInputData(
@@ -213,6 +219,7 @@ class FolderDownloadWorker @AssistedInject constructor(
                         .putString(KEY_VOLUME_ID, driveLink.volumeId.id)
                         .putString(KEY_SHARE_ID, driveLink.id.shareId.id)
                         .putString(KEY_FOLDER_ID, driveLink.id.id)
+                        .putString(KEY_NETWORK_TYPE, networkType.name)
                         .build()
                 )
                 .setBackoffCriteria(

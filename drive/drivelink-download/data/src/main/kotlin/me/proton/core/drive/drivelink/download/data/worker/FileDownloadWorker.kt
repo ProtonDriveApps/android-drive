@@ -183,13 +183,14 @@ class FileDownloadWorker @AssistedInject constructor(
             fileId: FileId,
             revisionId: String,
             isRetryable: Boolean,
+            networkType: NetworkType = NetworkType.CONNECTED,
             fileTags: List<String> = emptyList(),
             tags: Collection<String> = emptyList(),
         ): OneTimeWorkRequest =
             OneTimeWorkRequest.Builder(FileDownloadWorker::class.java)
                 .setConstraints(
                     Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiredNetworkType(networkType)
                         .build()
                 )
                 .setInputData(
@@ -215,6 +216,7 @@ class FileDownloadWorker @AssistedInject constructor(
         fun getWorkRequest(
             driveLink: DriveLink.File,
             retryable: Boolean,
+            networkType: NetworkType = NetworkType.CONNECTED,
             tags: List<String> = emptyList(),
         ): OneTimeWorkRequest =
             getWorkRequest(
@@ -223,6 +225,7 @@ class FileDownloadWorker @AssistedInject constructor(
                 fileId = driveLink.id,
                 revisionId = driveLink.activeRevisionId,
                 isRetryable = retryable,
+                networkType = networkType,
                 fileTags = listOf(driveLink.uniqueWorkName),
                 tags = tags,
             )

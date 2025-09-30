@@ -139,7 +139,7 @@
     <item quantity="other">%1$d Les éléments n\'ont pas été aboutis</item>
   </plurals>
   <string name="albums_empty_album_screen_title">Sans photos</string>
-  <string name="albums_empty_album_screen_description">Les photos que vous ou d\'autres membres ajoutezvont ici.</string>
+  <string name="albums_empty_album_screen_description">Les photos que vous ou d\'autres membres ajoutez apparaîtront ici.</string>
   <string name="albums_empty_albums_list_screen_title">Aucun album</string>
   <string name="albums_empty_albums_list_screen_description">Les albums que vous créez ou rejoignez apparaîtront ici</string>
   <string name="albums_empty_albums_my_albums_screen_description">Les albums que vous créez apparaîtront ici.</string>

@@ -22,11 +22,12 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.download.domain.entity.NetworkType
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadWorkManager
 import javax.inject.Inject
 
 class TestDownloadWorkManager @Inject constructor(): DownloadWorkManager {
-    override suspend fun download(driveLink: DriveLink, retryable: Boolean) {
+    override suspend fun download(driveLink: DriveLink, retryable: Boolean, networkType: NetworkType) {
         // do nothing
     }
 

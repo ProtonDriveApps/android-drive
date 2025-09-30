@@ -25,8 +25,8 @@ import me.proton.core.drive.observability.domain.metrics.common.Pipeline
 import me.proton.core.observability.domain.entity.SchemaId
 
 @Serializable
-@Schema(description = "Measures file content upload speed (in kiB/s)")
-@SchemaId("https://proton.me/drive_upload_speed_histogram_v1.schema.json")
+@Schema(description = "Measures file content download speed (in kiB/s)")
+@SchemaId("https://proton.me/drive_download_speed_histogram_v1.schema.json")
 data class DownloadSpeedHistogram(
     override val Labels: LabelsData,
     @Required override val Value: Long,
@@ -35,7 +35,7 @@ data class DownloadSpeedHistogram(
     @Serializable
     data class LabelsData(
         val context: Context,
-        val pipeline: Pipeline = Pipeline.legacy,
+        @Required val pipeline: Pipeline = Pipeline.legacy,
     )
 
     @Suppress("EnumEntryName")

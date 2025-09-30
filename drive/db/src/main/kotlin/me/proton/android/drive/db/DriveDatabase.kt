@@ -440,7 +440,7 @@ abstract class DriveDatabase :
     DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 93
+        const val VERSION = 94
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -535,6 +535,7 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_90_91,
             DriveDatabaseMigrations.MIGRATION_91_92,
             DriveDatabaseMigrations.MIGRATION_92_93,
+            DriveDatabaseMigrations.MIGRATION_93_94,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =

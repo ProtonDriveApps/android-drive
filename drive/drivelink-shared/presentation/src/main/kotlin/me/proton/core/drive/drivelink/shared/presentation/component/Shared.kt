@@ -123,6 +123,7 @@ fun Shared(
                 onScroll = viewEvent.onScroll,
                 onRefresh = viewEvent.onRefresh,
                 onMoreOptions = viewEvent.onMoreOptions,
+                onRenderThumbnail = viewEvent.onRenderThumbnail,
                 headerContent = headerContent,
             )
         }
@@ -139,6 +140,7 @@ private fun SharedContent(
     onScroll: (Set<LinkId>) -> Unit,
     onRefresh: () -> Unit,
     onMoreOptions: (DriveLink) -> Unit,
+    onRenderThumbnail: (DriveLink) -> Unit,
     headerContent: @Composable () -> Unit = {},
 ) {
     ProtonPullToRefresh(
@@ -153,6 +155,7 @@ private fun SharedContent(
             onDriveLink = onDriveLink,
             onScroll = onScroll,
             onMoreOptions = onMoreOptions,
+            onRenderThumbnail = onRenderThumbnail,
             headerContent = headerContent
         )
     }
@@ -166,6 +169,7 @@ private fun SharedContent(
     onDriveLink: (DriveLink) -> Unit,
     onScroll: (Set<LinkId>) -> Unit,
     onMoreOptions: (DriveLink) -> Unit,
+    onRenderThumbnail: (DriveLink) -> Unit,
     headerContent: @Composable () -> Unit = {},
 ) {
     val state = items.rememberLazyListState()
@@ -208,6 +212,7 @@ private fun SharedContent(
                         link =  driveLinksMap[sharedItem.linkId.id],
                         onDriveLink = onDriveLink,
                         onMoreOptions = onMoreOptions,
+                        onRenderThumbnail = onRenderThumbnail,
                     )
                 }
             }
@@ -222,6 +227,7 @@ private fun SharedItem(
     modifier: Modifier = Modifier,
     onDriveLink: (DriveLink) -> Unit,
     onMoreOptions: (DriveLink) -> Unit,
+    onRenderThumbnail: (DriveLink) -> Unit,
 ) {
     if (link == null) {
         SharedPlaceholderItem(modifier)
@@ -231,6 +237,7 @@ private fun SharedItem(
             onDriveLink = onDriveLink,
             onMoreOptions = onMoreOptions,
             modifier = modifier,
+            onRenderThumbnail = onRenderThumbnail,
         )
     }
 }
@@ -241,6 +248,7 @@ private fun SharedItem(
     modifier: Modifier = Modifier,
     onDriveLink: (DriveLink) -> Unit,
     onMoreOptions: (DriveLink) -> Unit,
+    onRenderThumbnail: (DriveLink) -> Unit,
 ) {
     FilesListItem(
         link = link,
@@ -250,6 +258,7 @@ private fun SharedItem(
         onMoreOptionsClick = onMoreOptions,
         isClickEnabled = { _ -> true },
         isTextEnabled = {_, -> true},
+        onRenderThumbnail = onRenderThumbnail,
     )
 }
 

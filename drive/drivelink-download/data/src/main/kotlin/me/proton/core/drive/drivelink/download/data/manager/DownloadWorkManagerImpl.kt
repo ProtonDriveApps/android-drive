@@ -40,12 +40,14 @@ import me.proton.core.drive.drivelink.download.data.worker.DownloadCleanupWorker
 import me.proton.core.drive.drivelink.download.data.worker.FileDownloadWorker
 import me.proton.core.drive.drivelink.download.data.worker.FolderDownloadWorker
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SIZE
+import me.proton.core.drive.drivelink.download.domain.entity.NetworkType
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadWorkManager
 import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadingDriveLinks
 import me.proton.core.drive.file.base.domain.usecase.GetRevision
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
+import androidx.work.NetworkType as WorkNetworkType
 
 class DownloadWorkManagerImpl @Inject constructor(
     private val workManager: WorkManager,
@@ -53,14 +55,30 @@ class DownloadWorkManagerImpl @Inject constructor(
     private val getDownloadingDriveLinks: GetDownloadingDriveLinks,
 ) : DownloadWorkManager {
 
-    override suspend fun download(driveLink: DriveLink, retryable: Boolean) {
+    override suspend fun download(
+        driveLink: DriveLink,
+        retryable: Boolean,
+        networkType: NetworkType,
+    ) {
         val works = workManager.getWorkInfosByTagLiveData(driveLink.uniqueWorkName).asFlow().firstOrNull()
         if (works == null || works.all { workInfo -> workInfo.state.isFinished }) {
+            val workNetworkType = when(networkType) {
+                NetworkType.UNMETERED -> WorkNetworkType.UNMETERED
+                NetworkType.METERED -> WorkNetworkType.METERED
+                NetworkType.ANY -> WorkNetworkType.CONNECTED
+            }
             workManager.enqueue(
                 when (driveLink) {
-                    is DriveLink.Folder -> FolderDownloadWorker.getWorkRequest(driveLink)
-                    is DriveLink.File -> FileDownloadWorker.getWorkRequest(driveLink, retryable)
-                    is DriveLink.Album -> error("TODO")
+                    is DriveLink.Folder -> FolderDownloadWorker.getWorkRequest(
+                        driveLink = driveLink,
+                        networkType = workNetworkType,
+                    )
+                    is DriveLink.File -> FileDownloadWorker.getWorkRequest(
+                        driveLink = driveLink,
+                        retryable = retryable,
+                        networkType = workNetworkType,
+                    )
+                    is DriveLink.Album -> error("Albums are not supported on download work manager")
                 }
             )
         } else {

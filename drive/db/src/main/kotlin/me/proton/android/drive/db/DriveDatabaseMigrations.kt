@@ -598,4 +598,10 @@ object DriveDatabaseMigrations {
             DriveLinkDownloadDatabase.MIGRATION_0.migrate(db)
         }
     }
+
+    val MIGRATION_93_94 = object : Migration(93, 94) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            DriveLinkDownloadDatabase.MIGRATION_1.migrate(db)
+        }
+    }
 }

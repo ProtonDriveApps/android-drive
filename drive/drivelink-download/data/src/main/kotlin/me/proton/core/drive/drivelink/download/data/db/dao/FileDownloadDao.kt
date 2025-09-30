@@ -25,6 +25,7 @@ import me.proton.core.data.room.db.BaseDao
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.drivelink.download.data.db.entity.FileDownloadEntity
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadFileLink
+import me.proton.core.drive.drivelink.download.domain.entity.NetworkType
 
 @Dao
 abstract class FileDownloadDao : BaseDao<FileDownloadEntity>() {
@@ -32,10 +33,11 @@ abstract class FileDownloadDao : BaseDao<FileDownloadEntity>() {
     @Query("""
         SELECT * FROM FileDownloadEntity WHERE
             user_id = :userId AND
+            network_type IN (:networkTypes) AND
             state = :state
         ORDER BY priority, id ASC
     """)
-    abstract suspend fun getNext(userId: UserId, state: DownloadFileLink.State): FileDownloadEntity?
+    abstract suspend fun getNext(userId: UserId, networkTypes: Set<NetworkType>, state: DownloadFileLink.State): FileDownloadEntity?
 
     @Query("""
         SELECT * FROM FileDownloadEntity WHERE

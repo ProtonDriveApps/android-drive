@@ -29,6 +29,7 @@ driveModule(
 ) {
     api(project(":drive:crypto:domain"))
     api(project(":drive:drivelink:domain"))
+    api(project(":drive:observability:domain"))
     
     implementation(project(":drive:event-manager:base:domain"))
     implementation(project(":drive:message-queue:domain"))

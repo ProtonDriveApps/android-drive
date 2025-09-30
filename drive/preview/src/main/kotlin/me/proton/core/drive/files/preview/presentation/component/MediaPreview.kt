@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
@@ -51,7 +53,8 @@ fun MediaPreview(
     isFullScreen: Boolean,
     modifier: Modifier = Modifier,
     play: Boolean = true,
-    mediaControllerVisibility: (Boolean) -> Unit = {}
+    mediaControllerVisibility: (Boolean) -> Unit = {},
+    onRenderSucceeded: (Any) -> Unit = {},
 ) {
     val viewModel = hiltViewModel<MediaPreviewViewModel>()
     MediaPreview(
@@ -60,6 +63,7 @@ fun MediaPreview(
         modifier = modifier,
         play = play,
         mediaControllerVisibility = mediaControllerVisibility,
+        onRenderSucceeded = { onRenderSucceeded(uri) },
     )
 }
 
@@ -70,8 +74,21 @@ fun MediaPreview(
     isFullScreen: Boolean,
     modifier: Modifier = Modifier,
     play: Boolean = true,
-    mediaControllerVisibility: (Boolean) -> Unit = {}
+    mediaControllerVisibility: (Boolean) -> Unit = {},
+    onRenderSucceeded: () -> Unit,
 ) {
+    val listener = remember {
+        object : Player.Listener {
+            override fun onRenderedFirstFrame() {
+                super.onRenderedFirstFrame()
+                onRenderSucceeded()
+            }
+        }
+    }
+    DisposableEffect(player) {
+        player.addListener(listener)
+        onDispose { player.removeListener(listener) }
+    }
     val backgroundColor by animateColorAsState(
         targetValue = if (isFullScreen && isNightMode().not()) {
             MaterialTheme.colors.onBackground

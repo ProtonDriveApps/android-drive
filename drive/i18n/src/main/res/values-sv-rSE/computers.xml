@@ -23,7 +23,7 @@
   <string name="computers_type_linux">Linux</string>
   <string name="computers_type_unknown">Okänd</string>
   <string name="computers_empty_title">Inga datorer synkroniseras</string>
-  <string name="computers_empty_description">Skaffa skrivbordsappen\nför att synkronisera mappar</string>
+  <string name="computers_empty_description">Skaffa appen för stationär dator\nför att synkronisera mappar</string>
   <string name="computers_synced_folders_empty_title">Inga synkroniserade mappar</string>
   <string name="computers_synced_folders_empty_description">Mappar du synkroniserar från dator kommer\nvisas här</string>
   <string name="computers_synced_folders_no_folder">Dator har tagits bort</string>

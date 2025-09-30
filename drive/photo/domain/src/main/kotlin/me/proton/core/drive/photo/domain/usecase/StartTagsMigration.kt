@@ -20,6 +20,7 @@ package me.proton.core.drive.photo.domain.usecase
 
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -44,6 +45,7 @@ class StartTagsMigration @Inject constructor(
     private val getTagsMigrationStatus: GetTagsMigrationStatus,
     private val getTagsMigrationStatistics: GetTagsMigrationStatistics,
     private val getOrCreateClientUid: GetOrCreateClientUid,
+    private val updateTagsMigrationStatus: UpdateTagsMigrationStatus,
     private val workManager: PhotoTagWorkManager,
 ) {
     suspend operator fun invoke(userId: UserId, volumeId: VolumeId) = coRunCatching {
@@ -88,12 +90,28 @@ class StartTagsMigration @Inject constructor(
         if (photoListings.isEmpty()) {
             CoreLogger.i(PHOTO, "No files to migrate for volume: ${volumeId.id.logId()}")
             val statistics = getTagsMigrationStatistics(userId, volumeId).first()
-            if (!statistics.isFinished && statistics.progress != null) {
+            if (statistics.data.isEmpty()) {
                 CoreLogger.i(
                     PHOTO,
-                    "Restarting migration for the remaining local files $statistics"
+                    "Updating migration as finished for volume: ${volumeId.id.logId()}"
                 )
-                workManager.enqueue(userId, volumeId)
+                updateTagsMigrationStatus(
+                    userId, volumeId, status.copy(
+                        finished = true,
+                        anchor = status.anchor?.copy(
+                            currentTimestamp = TimestampS(),
+                            clientUid = applicationClientUid,
+                        )
+                    )
+                ).getOrThrow()
+            } else {
+                if (!statistics.isFinished && statistics.progress != null) {
+                    CoreLogger.i(
+                        PHOTO,
+                        "Restarting migration for the remaining local files $statistics"
+                    )
+                    workManager.enqueue(userId, volumeId)
+                }
             }
             return@coRunCatching
         }

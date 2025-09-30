@@ -113,6 +113,9 @@ fun Computers(
             onMoreOptions = { device ->
                 viewEvent.onMoreOptions(device)
             },
+            onRenderThumbnail = { device ->
+                viewEvent.onRenderThumbnail(device)
+            }
         )
     }
 }
@@ -125,6 +128,7 @@ fun Computers(
     onError: () -> Unit,
     onDevice: (Device) -> Unit,
     onMoreOptions: (Device) -> Unit,
+    onRenderThumbnail: (Device) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     Box(
@@ -158,6 +162,7 @@ fun Computers(
                     devices = devices,
                     onClick = onDevice,
                     onMoreOptions = onMoreOptions,
+                    onRenderThumbnail = onRenderThumbnail,
                     modifier = Modifier
                         .testTag(ComputersTestTag.content)
                 )

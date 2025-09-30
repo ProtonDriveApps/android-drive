@@ -33,4 +33,5 @@ object WorkerKeys {
     const val KEY_FILE_TAGS = "key.fileTags"
     const val KEY_ROOT_FOLDER_ID = "key.rootFolderId"
     const val KEY_ALBUM_ID = "key.albumId"
+    const val KEY_NETWORK_TYPE = "key.networkType"
 }

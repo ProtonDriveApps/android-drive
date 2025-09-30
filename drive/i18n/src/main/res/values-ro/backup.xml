@@ -21,6 +21,6 @@
   <string name="backup_issues_retry_all_action">Reîncercare toate</string>
   <string name="backup_issues_skip_action">Omitere</string>
   <string name="backup_issues_skip_confirmation_title">Se omite conservarea acestor fotografii?</string>
-  <string name="backup_issues_skip_confirmation_description">Sigur doriți să omiteți fotografiile care nu s-au conservat? Acestea nu vor fi conservate.</string>
+  <string name="backup_issues_skip_confirmation_description">Omiteți fotografiile care nu s-au conservat? Acestea nu vor fi conservate.</string>
   <string name="backup_issues_skip_confirmation_action">Omitere</string>
 </resources>

@@ -29,5 +29,5 @@ internal fun Event.DownloadSpeed.toLog(userId: UserId): Log = Log(
             "bytes(min): ${bytes.value}, " +
             "elapsed(ms): ${elapsedTime.value}",
     creationTime = occurredAt,
-    origin = Log.Origin.EVENT_UPLOAD
+    origin = Log.Origin.EVENT_DOWNLOAD,
 )

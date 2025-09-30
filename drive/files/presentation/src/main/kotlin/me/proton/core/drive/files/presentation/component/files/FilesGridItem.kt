@@ -48,6 +48,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -92,6 +93,7 @@ fun FilesGridItem(
     isSelected: Boolean = false,
     inMultiselect: Boolean = false,
     isMoreOptionsEnabled: Boolean = true,
+    onRenderThumbnail: (DriveLink) -> Unit,
 ) {
     val transferProgress = transferProgressFlow?.run {
         rememberFlowWithLifecycle(this).collectAsState(initial = null)
@@ -121,6 +123,7 @@ fun FilesGridItem(
         ) {
             GridItemImage(
                 link = link,
+                onRenderThumbnail = onRenderThumbnail,
             ) {
                 Crossfade(inMultiselect) { inMultiselect ->
                     if (inMultiselect) {
@@ -194,6 +197,7 @@ fun GridDetailsTitle(
 fun GridItemImage(
     link: DriveLink,
     modifier: Modifier = Modifier,
+    onRenderThumbnail: (DriveLink) -> Unit,
     overlayContent: @Composable () -> Unit,
 ) {
     Box(
@@ -210,7 +214,11 @@ fun GridItemImage(
                 Modifier.fillMaxSize()
             } else {
                 Modifier.align(Alignment.Center)
-            },
+            }
+                .drawWithContent {
+                    drawContent()
+                    onRenderThumbnail(link)
+                },
             painter = painterWrapper.painter,
             contentDescription = null
         )
@@ -286,6 +294,7 @@ fun PreviewGridItem() {
                 onMoreOptionsClick = {},
                 isClickEnabled = { false },
                 isTextEnabled = { true },
+                onRenderThumbnail = {},
             )
         }
     }
@@ -311,6 +320,7 @@ fun PreviewSelectedGridItem() {
                 isTextEnabled = { true },
                 isSelected = true,
                 inMultiselect = true,
+                onRenderThumbnail = {}
             )
         }
     }
@@ -336,6 +346,7 @@ fun PreviewUnselectedGridItem() {
                 isTextEnabled = { true },
                 isSelected = false,
                 inMultiselect = true,
+                onRenderThumbnail = {},
             )
         }
     }

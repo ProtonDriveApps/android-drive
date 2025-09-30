@@ -38,17 +38,20 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.transformLatest
+import me.proton.android.drive.extension.log
 import me.proton.core.accountmanager.domain.AccountManager
 import me.proton.core.accountmanager.presentation.observe
 import me.proton.core.accountmanager.presentation.onAccountReady
 import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.domain.arch.mapSuccessValueOrNull
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.domain.extension.getOrNull
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.util.coRunCatching
-import me.proton.core.drive.drivelink.download.domain.usecase.Download
+import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
+import me.proton.core.drive.drivelink.download.domain.entity.NetworkType
+import me.proton.core.drive.drivelink.download.domain.manager.DownloadWorkManager
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.drivePhotosTagsMigration
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.drivePhotosTagsMigrationDisabled
 import me.proton.core.drive.feature.flag.domain.extension.on
@@ -105,16 +108,18 @@ class TagsMigrationInitializer : Initializer<Unit> {
                         enabled to volumeId
                     }.onEach { (enabled, volumeId) ->
                         when (enabled) {
-                            true -> startTagsMigration(userId, volumeId)
-                                .getOrNull(
+                            true -> startTagsMigration(userId, volumeId).onFailure { error ->
+                                error.log(
                                     PHOTO,
                                     "Failed to start migration for volume: ${volumeId.id.logId()}"
                                 )
-
-                            false -> stopTagsMigration(userId, volumeId).getOrNull(
-                                PHOTO,
-                                "Failed to stop migration for volume: ${volumeId.id.logId()}"
-                            )
+                            }
+                            false -> stopTagsMigration(userId, volumeId).onFailure { error ->
+                                error.log(
+                                    PHOTO,
+                                    "Failed to stop migration for volume: ${volumeId.id.logId()}"
+                                )
+                            }
 
                             null -> {} // do nothing
                         }
@@ -135,11 +140,17 @@ class TagsMigrationInitializer : Initializer<Unit> {
                         .onEach { fileId ->
                             coRunCatching {
                                 CoreLogger.d(PHOTO, "Starting download for ${fileId.id.logId()}")
-                                download(fileId)
-                            }.getOrNull(
-                                PHOTO,
-                                "Failed to start download file: ${fileId.id.logId()}"
-                            )
+                                downloadWorkManager.download(
+                                    driveLink = getDriveLink(fileId).toResult().getOrThrow(),
+                                    retryable = true,
+                                    networkType = NetworkType.UNMETERED,
+                                )
+                            }.onFailure { error ->
+                                error.log(
+                                    PHOTO,
+                                    "Failed to start download file: ${fileId.id.logId()}"
+                                )
+                            }
                         }.launchIn(scope)
                     volumeIdFlow.transformLatest { volumeId ->
                         emitAll(
@@ -152,14 +163,19 @@ class TagsMigrationInitializer : Initializer<Unit> {
                         .filterNotNull()
                         .distinctUntilChanged()
                         .onEach { (fileId, volumeId) ->
-                            CoreLogger.d(PHOTO, "Continuing tags migration for ${fileId.id.logId()}")
+                            CoreLogger.d(
+                                PHOTO,
+                                "Continuing tags migration for ${fileId.id.logId()}"
+                            )
                             continueTagsMigrationAfterDownload(
                                 volumeId = volumeId,
                                 fileId = fileId,
-                            ).getOrNull(
-                                PHOTO,
-                                "Failed to start tagging file: ${fileId.id.logId()}"
-                            )
+                            ).onFailure { error ->
+                                error.log(
+                                    PHOTO,
+                                    "Failed to start tagging file: ${fileId.id.logId()}"
+                                )
+                            }
                         }.launchIn(scope)
                 }
                 .onAccountRemoved { account ->
@@ -182,7 +198,8 @@ class TagsMigrationInitializer : Initializer<Unit> {
         val getLatestTagsMigrationFile: GetLatestTagsMigrationFile
         val getTagsMigrationDownloadedFile: GetTagsMigrationDownloadedFile
         val getOldestActiveVolume: GetOldestActiveVolume
-        val download: Download
+        val getDriveLink: GetDriveLink
+        val downloadWorkManager: DownloadWorkManager
         val continueTagsMigrationAfterDownload: ContinueTagsMigrationAfterDownload
         val startTagsMigration: StartTagsMigration
         val stopTagsMigration: StopTagsMigration

@@ -35,7 +35,7 @@ data class UploadSpeedHistogram(
     @Serializable
     data class LabelsData(
         val context: Context,
-        val pipeline: Pipeline = Pipeline.legacy,
+        @Required val pipeline: Pipeline = Pipeline.legacy,
     )
 
     @Suppress("EnumEntryName")

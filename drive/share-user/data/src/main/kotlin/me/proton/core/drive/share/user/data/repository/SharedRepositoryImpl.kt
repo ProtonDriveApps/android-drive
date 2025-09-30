@@ -77,6 +77,9 @@ class SharedRepositoryImpl @Inject constructor(
         sharedByMeListingEntity.toSharedLinkId()
     }
 
+    override suspend fun getSharedByMeListingCount(userId: UserId): Int =
+        db.sharedByMeListingDao.getSharedByMeListingCount(userId)
+
     override suspend fun getSharedWithMeListing(
         userId: UserId,
         types: Set<ShareTargetType>,
@@ -91,6 +94,15 @@ class SharedRepositoryImpl @Inject constructor(
     ).map { sharedWithMeListingEntity ->
         sharedWithMeListingEntity.toSharedLinkId()
     }
+
+    override suspend fun getSharedWithMeListingCount(
+        userId: UserId,
+        types: Set<ShareTargetType>,
+    ): Int = db.sharedWithMeListingDao.getSharedWithMeListingCount(
+        userId = userId,
+        types = types.toShareTargetTypeDtos(),
+        includeNullType = types.contains(ShareTargetType.Album).not(),
+    )
 
     override suspend fun deleteAllLocalSharedWithMe(userId: UserId) =
         db.sharedWithMeListingDao.deleteAll(userId)

@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
@@ -75,6 +76,7 @@ fun ImagePreviewWithThumbnail(
     thumbnailSource: Any?,
     transformationState: TransformationState,
     isFullScreen: Boolean,
+    onRenderSucceeded: (Any) -> Unit,
     onRenderFailed: (Throwable, Any) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -84,6 +86,7 @@ fun ImagePreviewWithThumbnail(
                 source = thumbnailSource,
                 transformationState = transformationState,
                 isFullScreen = isFullScreen,
+                onRenderSucceeded = onRenderSucceeded,
                 onRenderFailed = onRenderFailed,
                 modifier = modifier,
             )
@@ -102,6 +105,7 @@ fun ImagePreviewWithThumbnail(
                 source = source,
                 transformationState = transformationState,
                 isFullScreen = isFullScreen,
+                onRenderSucceeded = onRenderSucceeded,
                 onRenderFailed = onRenderFailed,
                 modifier = modifier,
             )
@@ -114,6 +118,7 @@ fun ImagePreview(
     source: Any,
     transformationState: TransformationState,
     isFullScreen: Boolean,
+    onRenderSucceeded: (Any) -> Unit,
     onRenderFailed: (Throwable, Any) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -179,6 +184,7 @@ fun ImagePreview(
             },
         painter = painter,
         transformationState = transformationState,
+        onAsyncImagePainterSuccess = { onRenderSucceeded(source) },
     )
 }
 
@@ -195,6 +201,7 @@ fun ImagePreview(
     painter: Painter,
     transformationState: TransformationState,
     modifier: Modifier = Modifier,
+    onAsyncImagePainterSuccess: () -> Unit,
 ) {
     val state = rememberTransformableState { zoomChange, offsetChange, _ ->
         transformationState.scale = (transformationState.scale * zoomChange)
@@ -224,6 +231,13 @@ fun ImagePreview(
                     canPan = { transformationState.hasScale() },
                 )
                 .testTag(ImagePreviewComponentTestTag.image)
+                .drawWithContent {
+                    drawContent()
+                    val asyncImagePainter = painter as? AsyncImagePainter
+                    if (asyncImagePainter != null && asyncImagePainter.state is AsyncImagePainter.State.Success) {
+                        onAsyncImagePainterSuccess()
+                    }
+                }
         )
     }
 }
@@ -236,6 +250,7 @@ private fun PreviewImagePreview() {
             source = Uri.parse("https://farm2.staticflickr.com/1533/26541536141_41abe98db3_z_d.jpg"),
             transformationState = rememberTransformationState(),
             isFullScreen = false,
+            onRenderSucceeded = { _ -> },
             onRenderFailed = { _, _ -> }
         )
     }

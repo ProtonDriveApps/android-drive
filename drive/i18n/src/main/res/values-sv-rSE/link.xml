@@ -28,7 +28,7 @@
   <string name="files_upload_content_description_cancel_upload">Avbryt filuppladdning</string>
   <string name="files_upload_failure_storage_full_title">Lagringsutrymme fullt</string>
   <string name="files_upload_failure_storage_full_description">Ditt konto har slut på lagringsutrymme. Frigör utrymme eller uppgradera till ett paket med mer lagringsutrymme.</string>
-  <string name="files_operation_failed_all">Åtgärden misslyckades</string>
+  <string name="files_operation_failed_all">Åtgärd misslyckades</string>
   <!--
         Variable %1$d is a number of failed links in the failed operation
         Example:

@@ -22,23 +22,33 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.api.ProtonApiCode.INVALID_REQUIREMENTS
 import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_ALLOWED
 import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
+import me.proton.core.drive.base.domain.extension.hasThrowableOrCauseProtonErrorCode
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.volume.domain.entity.VolumeId
-import me.proton.core.network.domain.hasProtonErrorCode
 import javax.inject.Inject
 
 class OnEventEndpointFetchError @Inject constructor(
     private val handleOnEventEndpointNotExists: HandleOnEventEndpointNotExists,
     private val handleOnEventEndpointNotAllowed: HandleOnEventEndpointNotAllowed,
 ) {
-    suspend operator fun invoke(userId: UserId, volumeId: VolumeId, error: Throwable): Result<Unit> = coRunCatching {
+    suspend operator fun invoke(
+        userId: UserId,
+        volumeId: VolumeId,
+        error: Throwable,
+        stopEventLoop: suspend () -> Unit,
+    ): Result<Unit> = coRunCatching {
         when {
             error.hasThrowableOrCauseProtonErrorCode(INVALID_REQUIREMENTS) ||
-            error.hasThrowableOrCauseProtonErrorCode(NOT_EXISTS) -> handleOnEventEndpointNotExists(userId, volumeId).getOrThrow()
-            error.hasThrowableOrCauseProtonErrorCode(NOT_ALLOWED) -> handleOnEventEndpointNotAllowed(userId, volumeId).getOrThrow()
+            error.hasThrowableOrCauseProtonErrorCode(NOT_EXISTS) -> {
+                handleOnEventEndpointNotExists(userId, volumeId)
+                    .also { stopEventLoop() }
+                    .getOrThrow()
+            }
+            error.hasThrowableOrCauseProtonErrorCode(NOT_ALLOWED) -> {
+                handleOnEventEndpointNotAllowed(userId, volumeId)
+                    .also { stopEventLoop() }
+                    .getOrThrow()
+            }
         }
     }
-
-    private fun Throwable.hasThrowableOrCauseProtonErrorCode(code: Int): Boolean =
-        hasProtonErrorCode(code) || (cause?.hasProtonErrorCode(code) ?: false)
 }

@@ -42,6 +42,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
@@ -104,6 +105,7 @@ fun MediaItem(
     inMultiselect: Boolean = false,
     onClick: (DriveLink) -> Unit,
     onLongClick: (DriveLink) -> Unit,
+    onRenderThumbnail: (DriveLink) -> Unit,
 ) {
     if (link != null) {
         MediaItem(
@@ -113,6 +115,7 @@ fun MediaItem(
             inMultiselect = inMultiselect,
             onClick = onClick,
             onLongClick = onLongClick,
+            onRenderThumbnail = onRenderThumbnail,
         )
         if (BuildConfig.DEBUG) {
             Text(text = "index $index")
@@ -143,6 +146,7 @@ private fun MediaItem(
     inMultiselect: Boolean = false,
     onClick: (DriveLink) -> Unit,
     onLongClick: (DriveLink) -> Unit,
+    onRenderThumbnail: (DriveLink) -> Unit,
 ) {
     val haptic = LocalHapticFeedback.current
     Box(
@@ -173,7 +177,11 @@ private fun MediaItem(
                     visible = painterWrapper.isLoading,
                     color = ProtonTheme.colors.backgroundSecondary,
                     highlight = PlaceholderHighlight.shimmer(ProtonTheme.colors.backgroundNorm)
-                ),
+                )
+                .drawWithContent {
+                    drawContent()
+                    onRenderThumbnail(link)
+                },
             painter = painterWrapper.painter,
             contentDescription = null,
             contentScale = ContentScale.Crop,
@@ -437,6 +445,7 @@ fun MediaItemPreview() {
             modifier = Modifier.width(120.dp),
             onClick = {},
             onLongClick = {},
+            onRenderThumbnail = {},
         )
     }
 }

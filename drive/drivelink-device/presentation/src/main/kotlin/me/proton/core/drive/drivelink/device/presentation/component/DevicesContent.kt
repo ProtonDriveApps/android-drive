@@ -41,6 +41,7 @@ fun DevicesContent(
     modifier: Modifier = Modifier,
     onClick: (Device) -> Unit,
     onMoreOptions: (Device) -> Unit,
+    onRenderThumbnail: (Device) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier
@@ -55,6 +56,7 @@ fun DevicesContent(
                 device = device,
                 onClick = onClick,
                 onMoreOptionsClick = onMoreOptions,
+                onRenderThumbnail = onRenderThumbnail,
             )
         }
     }
@@ -97,6 +99,7 @@ fun PreviewDevicesContent() {
                 ),
                 onClick = {},
                 onMoreOptions = {},
+                onRenderThumbnail = {},
             )
         }
     }

@@ -30,4 +30,5 @@ interface SharedViewEvent {
     val onMoreOptions: (DriveLink) -> Unit
     val onErrorAction: () -> Unit
     val onUserInvitation: () -> Unit
+    val onRenderThumbnail: (DriveLink) -> Unit
 }

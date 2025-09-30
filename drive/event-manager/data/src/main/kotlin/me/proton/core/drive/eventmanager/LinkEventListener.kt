@@ -71,6 +71,7 @@ class LinkEventListener @Inject constructor(
     private val getShare: GetShare,
     private val onEventEndpointFetchError: OnEventEndpointFetchError,
 ) : EventListener<LinkId, LinkEventVO>() {
+    private var stopEventLoop: (suspend (EventManagerConfig.Drive.Volume) -> Unit)? = null
     internal var onFailure: (Throwable, String) -> Unit = { error, body ->
         error.log(LogTag.EVENTS, "Cannot parse event from response: $body")
     }
@@ -120,6 +121,10 @@ class LinkEventListener @Inject constructor(
         }.onFailure { error -> onFailure(error, response.body) }.getOrNull()
     }
 
+    fun setStopEventLoop(stopEventLoop: suspend (EventManagerConfig.Drive.Volume) -> Unit) {
+        this.stopEventLoop = stopEventLoop
+    }
+
     private fun WithLinkDto.getEvent(volumeId: VolumeId, shareId: ShareId): Event<LinkId, LinkEventVO> {
         val vo = LinkEventVO(
             volumeId = volumeId,
@@ -161,7 +166,11 @@ class LinkEventListener @Inject constructor(
     override suspend fun onFetchError(config: EventManagerConfig, error: Throwable) {
         (config as? EventManagerConfig.Drive.Volume)
             ?.let { driveVolumeConfig ->
-                onEventEndpointFetchError(driveVolumeConfig.userId, VolumeId(driveVolumeConfig.volumeId), error)
+                onEventEndpointFetchError(
+                    userId = driveVolumeConfig.userId,
+                    volumeId = VolumeId(driveVolumeConfig.volumeId),
+                    error = error,
+                ) { stopEventLoop?.invoke(driveVolumeConfig) }
                     .getOrNull(LogTag.EVENTS)
             }
     }

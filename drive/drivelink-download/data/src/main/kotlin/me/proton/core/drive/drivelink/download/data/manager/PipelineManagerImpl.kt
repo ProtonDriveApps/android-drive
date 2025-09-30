@@ -120,30 +120,32 @@ class PipelineManagerImpl<T : PipelineManager.Task>(
                             }
                             ?: break
                     }
-                    CoreLogger.d(
-                        tag = logTag,
-                        message = "Pipeline ($pipelineId) finished",
-                    )
                 }.also { job ->
                     runningPipelines.add(Pipeline(pipelineId, job))
+                    job.invokeOnCompletion { cause ->
+                        CoreLogger.d(
+                            tag = logTag,
+                            message = cause.pipelineFinishedMessage(pipelineId),
+                        )
+                    }
                 }
             }
         }
     }
 
-    override suspend fun stopPipelines(immediately: Boolean) = mutex.withLock {
+    override suspend fun stopPipelines(immediately: Boolean, cause: CancellationException?) = mutex.withLock {
         if (immediately) {
-            runningPipelines.forEach { pipeline -> pipeline.job.cancel(PipelineManager.StopCancelledException()) }
+            runningPipelines.forEach { pipeline -> pipeline.job.cancel(cause = cause) }
         } else {
             canRun = false
         }
     }
 
-    override suspend fun stopPipeline(pipelineId: Long) = mutex.withLock {
+    override suspend fun stopPipeline(pipelineId: Long, cause: CancellationException?) = mutex.withLock {
         runningPipelines
             .prune()
             .firstOrNull { pipeline -> pipeline.id == pipelineId }
-            ?.job?.cancel(PipelineManager.StopCancelledException()) ?: Unit
+            ?.job?.cancel(cause = cause) ?: Unit
     }
 
     @VisibleForTesting
@@ -152,6 +154,17 @@ class PipelineManagerImpl<T : PipelineManager.Task>(
 
     private fun MutableSet<Pipeline>.prune() = this.apply {
         removeIf { pipeline -> pipeline.job.isActive.not() }
+    }
+
+    private fun Throwable?.pipelineFinishedMessage(pipelineId: Long): String = buildString {
+        append("Pipeline ($pipelineId) finished")
+        this@pipelineFinishedMessage?.let { cause ->
+            if (cause is CancellationException) {
+                append(" (cancelled)")
+            } else {
+                append(" (exception=${cause.message})")
+            }
+        }
     }
 
     private fun CoroutineContext.supervisorJobScope() = CoroutineScope(

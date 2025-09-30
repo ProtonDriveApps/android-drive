@@ -21,9 +21,14 @@ import kotlinx.coroutines.flow.Flow
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
+import me.proton.core.drive.drivelink.download.domain.entity.NetworkType
 
 interface DownloadWorkManager {
-    suspend fun download(driveLink: DriveLink, retryable: Boolean)
+    suspend fun download(
+        driveLink: DriveLink,
+        retryable: Boolean,
+        networkType: NetworkType = NetworkType.ANY,
+    )
     fun cancel(driveLink: DriveLink)
     suspend fun cancelAll(userId: UserId)
     fun getProgressFlow(driveLink: DriveLink.File): Flow<Percentage>?

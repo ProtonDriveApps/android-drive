@@ -21,6 +21,7 @@ import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.download.domain.entity.DownloadFileLink
+import me.proton.core.drive.drivelink.download.domain.entity.NetworkType
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadWorkManager
 import me.proton.core.drive.feature.flag.domain.usecase.IsDownloadManagerEnabled
@@ -35,15 +36,27 @@ class Download @Inject constructor(
     private val isDownloadManagerEnabled: IsDownloadManagerEnabled,
 ) {
 
-    suspend operator fun invoke(linkId: LinkId, retryable: Boolean = true) =
+    suspend operator fun invoke(
+        linkId: LinkId,
+        retryable: Boolean = true,
+        networkType: NetworkType = NetworkType.ANY,
+    ) =
         getDriveLink(linkId).toResult().getOrThrow().let { driveLink ->
-            invoke(driveLink, retryable)
+            invoke(driveLink, retryable, networkType)
         }
 
-    suspend operator fun invoke(driveLink: DriveLink, retryable: Boolean = true) =
-        invoke(listOf(driveLink), retryable)
+    suspend operator fun invoke(
+        driveLink: DriveLink,
+        retryable: Boolean = true,
+        networkType: NetworkType = NetworkType.ANY,
+    ) =
+        invoke(listOf(driveLink), retryable, networkType)
 
-    suspend operator fun invoke(driveLinks: List<DriveLink>, retryable: Boolean = true) =
+    suspend operator fun invoke(
+        driveLinks: List<DriveLink>,
+        retryable: Boolean = true,
+        networkType: NetworkType = NetworkType.ANY,
+    ) =
         driveLinks.forEach { driveLink ->
             if (isDownloadManagerEnabled(driveLink.id.userId)) {
                 val priority = if (retryable) {
@@ -51,9 +64,9 @@ class Download @Inject constructor(
                 } else {
                     DownloadFileLink.USER_PRIORITY
                 }
-                downloadManager.download(driveLink, priority, retryable)
+                downloadManager.download(driveLink, priority, retryable, networkType)
             } else {
-                downloadWorkManager.download(driveLink, retryable)
+                downloadWorkManager.download(driveLink, retryable, networkType)
             }
         }
 }

@@ -21,11 +21,11 @@ package me.proton.core.drive.volume.domain.usecase
 import kotlinx.coroutines.flow.flowOf
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.api.ProtonApiCode.NOT_EXISTS
+import me.proton.core.drive.base.domain.extension.hasThrowableOrCauseProtonErrorCode
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import me.proton.core.drive.volume.domain.repository.VolumeRepository
-import me.proton.core.network.domain.hasProtonErrorCode
 import javax.inject.Inject
 
 class RefreshVolume @Inject constructor(
@@ -39,7 +39,7 @@ class RefreshVolume @Inject constructor(
             refresh = flowOf(true),
         ).toResult()
             .recoverCatching { error ->
-                if (error.hasProtonErrorCode(NOT_EXISTS)) {
+                if (error.hasThrowableOrCauseProtonErrorCode(NOT_EXISTS)) {
                     repository.removeVolume(userId, volumeId)
                 } else {
                     throw error

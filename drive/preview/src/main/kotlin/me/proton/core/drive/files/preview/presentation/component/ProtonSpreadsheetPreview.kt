@@ -45,6 +45,7 @@ fun ProtonSpreadsheetPreview(
     appVersionHeader: String,
     modifier: Modifier = Modifier,
     onWebViewRelease: (uriString: String) -> Unit,
+    onContentShown: () -> Unit,
 ) {
     ProtonDocumentPreview(
         uriString = uriString,
@@ -55,5 +56,6 @@ fun ProtonSpreadsheetPreview(
         onWebViewRelease = onWebViewRelease,
         onDownloadResult = {},
         onShowFileChooser = { _, _ -> false },
+        onContentShown = onContentShown,
     )
 }

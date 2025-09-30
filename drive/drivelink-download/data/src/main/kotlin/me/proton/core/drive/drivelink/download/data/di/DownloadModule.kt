@@ -18,10 +18,12 @@
 
 package me.proton.core.drive.drivelink.download.data.di
 
+import android.content.Context
 import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -49,6 +51,7 @@ object DownloadModule {
     @Provides
     @Singleton
     fun provideDownloadManager(
+        @ApplicationContext appContext: Context,
         downloadFileRepository: DownloadFileRepository,
         downloadParentLinkRepository: DownloadParentLinkRepository,
         downloadFile: DownloadFile,
@@ -65,6 +68,7 @@ object DownloadModule {
         downloadErrorManager: DownloadErrorManager,
         downloadMetricsNotifier: DownloadMetricsNotifier,
     ): DownloadManager = DownloadManagerImpl(
+        appContext = appContext,
         PipelineManagerImpl(configurationProvider.downloadsInParallel, LogTag.DOWNLOAD),
         downloadFileRepository,
         downloadParentLinkRepository,

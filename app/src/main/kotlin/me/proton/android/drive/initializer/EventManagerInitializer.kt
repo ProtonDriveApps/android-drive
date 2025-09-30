@@ -24,16 +24,25 @@ import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
+import me.proton.core.drive.eventmanager.LinkEventListener
 import me.proton.core.drive.eventmanager.presentation.DriveEventManager
 
 @Suppress("unused")
 class EventManagerInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
-        EntryPointAccessors.fromApplication(
-            context.applicationContext,
-            EventManagerInitializerEntryPoint::class.java
-        ).manager().start()
+        with (
+            EntryPointAccessors.fromApplication(
+                context.applicationContext,
+                EventManagerInitializerEntryPoint::class.java
+            )
+        ) {
+            val driveEventManager = manager()
+            linkEventListener.setStopEventLoop { config ->
+                driveEventManager.stop(config)
+            }
+            driveEventManager.start()
+        }
     }
 
     override fun dependencies(): List<Class<out Initializer<*>?>> = listOf(
@@ -45,5 +54,6 @@ class EventManagerInitializer : Initializer<Unit> {
     @InstallIn(SingletonComponent::class)
     interface EventManagerInitializerEntryPoint {
         fun manager(): DriveEventManager
+        val linkEventListener: LinkEventListener
     }
 }

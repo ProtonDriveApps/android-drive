@@ -228,6 +228,7 @@ private fun LazyColumnItems.DisplayAsGrid(
                         .driveLinkSemantics(driveLink, LayoutType.Grid),
                     isSelected = selected,
                     inMultiselect = selected || selectedDriveLinks.isNotEmpty(),
+                    onRenderThumbnail = viewEvent.onRenderThumbnail,
                 )
             }
         }
@@ -260,6 +261,7 @@ private fun LazyColumnItems.DisplayAsList(
                 isSelected = selected,
                 inMultiselect = selected || selectedDriveLinks.isNotEmpty(),
                 modifier = Modifier.driveLinkSemantics(driveLink, LayoutType.List),
+                onRenderThumbnail = viewEvent.onRenderThumbnail,
             )
         }
     }

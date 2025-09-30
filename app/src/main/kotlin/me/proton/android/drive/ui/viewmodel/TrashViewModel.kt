@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import android.os.SystemClock
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,7 +31,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
@@ -44,6 +45,8 @@ import me.proton.android.drive.ui.effect.TrashEffect
 import me.proton.android.drive.ui.navigation.Screen
 import me.proton.android.drive.ui.screen.EmptyTrashIconState
 import me.proton.core.domain.arch.mapSuccessValueOrNull
+import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.presentation.common.getThemeDrawableId
 import me.proton.core.drive.base.presentation.effect.ListEffect
@@ -53,10 +56,13 @@ import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
 import me.proton.core.drive.base.presentation.viewmodel.onLoadState
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.trash.domain.usecase.GetPagedTrashedDriveLinks
+import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
 import me.proton.core.drive.files.presentation.state.FilesViewState
 import me.proton.core.drive.files.presentation.state.VolumeEntry
 import me.proton.core.drive.link.domain.entity.LinkId
+import me.proton.core.drive.link.domain.extension.userId
+import me.proton.core.drive.observability.domain.metrics.common.mobile.performance.PageType
 import me.proton.core.drive.sorting.domain.entity.Sorting
 import me.proton.core.drive.sorting.domain.usecase.GetSorting
 import me.proton.core.drive.trash.domain.TrashManager
@@ -84,6 +90,7 @@ class TrashViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val toggleLayoutType: ToggleLayoutType,
     private val configurationProvider: ConfigurationProvider,
+    private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
     getActiveVolumes: GetActiveVolumes,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
@@ -93,6 +100,13 @@ class TrashViewModel @Inject constructor(
     private val listContentAppendingState = MutableStateFlow<ListContentAppendingState>(ListContentAppendingState.Idle)
     private val _listEffect = MutableSharedFlow<ListEffect>()
     private val _trashEffect = MutableSharedFlow<TrashEffect>()
+    private val _unused = flowOf {
+        toFirstItemMetricsNotifier.toFirstItemStart(
+            userId = userId,
+            pageType = PageType.trash,
+            startTime = TimestampMs(SystemClock.elapsedRealtime()),
+        )
+    }.stateIn(viewModelScope, Eagerly, Unit)
     val initialViewState = FilesViewState(
         title = savedStateHandle.get(Screen.Files.FOLDER_NAME),
         titleResId = I18N.string.common_trash,
@@ -102,7 +116,7 @@ class TrashViewModel @Inject constructor(
         listContentState = listContentState.value,
         listContentAppendingState = listContentAppendingState.value,
     )
-    private val layoutType = getLayoutType(userId).stateIn(viewModelScope, SharingStarted.Eagerly, LayoutType.DEFAULT)
+    private val layoutType = getLayoutType(userId).stateIn(viewModelScope, Eagerly, LayoutType.DEFAULT)
     val viewState: Flow<FilesViewState> = combine(
         getSorting(userId),
         listContentState,
@@ -113,7 +127,7 @@ class TrashViewModel @Inject constructor(
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
-            )
+            ).also { toFirstItemMetricsNotifier.reset() }
             else -> contentState
         }
         if (volumeIdFlow.value == null) {
@@ -142,7 +156,7 @@ class TrashViewModel @Inject constructor(
                     )
                 },
         )
-    }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+    }.shareIn(viewModelScope, Eagerly, replay = 1)
     val driveLinks: Flow<PagingData<DriveLink>> = volumeIdFlow.filterNotNull().transformLatest { volumeId ->
         emitAll(getTrashedDriveLinks(userId, volumeId))
     }.cachedIn(viewModelScope)
@@ -158,7 +172,7 @@ class TrashViewModel @Inject constructor(
             TrashManager.EmptyTrashState.NO_FILES_TO_TRASH -> EmptyTrashIconState.HIDDEN
             TrashManager.EmptyTrashState.TRASHING -> EmptyTrashIconState.LOADING
         }
-    }.shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+    }.shareIn(viewModelScope, Eagerly, replay = 1)
 
     private val emptyState = ListContentState.Empty(
         imageResId = emptyStateImageResId,
@@ -197,6 +211,17 @@ class TrashViewModel @Inject constructor(
         override val onToggleLayout = this@TrashViewModel::onToggleLayout
         override val onTab = { volumeEntry: VolumeEntry ->
             volumeIdFlow.tryEmit(volumeEntry.id)
+            Unit
+        }
+        override val onRenderThumbnail = { driveLink: DriveLink ->
+            val stopTime = TimestampMs(SystemClock.elapsedRealtime())
+            viewModelScope.launch {
+                toFirstItemMetricsNotifier.itemThumbnailRendered(
+                    userId = driveLink.userId,
+                    pageType = PageType.trash,
+                    stopTime = stopTime,
+                )
+            }
             Unit
         }
     }

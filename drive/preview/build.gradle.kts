@@ -33,7 +33,9 @@ driveModule(
 ) {
     implementation(project(":drive:base:data"))
     implementation(project(":drive:base:presentation"))
+    implementation(project(":drive:drivelink:domain"))
     implementation(project(":drive:feature-flag:domain"))
+    implementation(project(":drive:observability:domain"))
     implementation(project(":drive:thumbnail:presentation"))
     implementation(libs.coil.compose)
     implementation(libs.androidx.media3.exoplayer)

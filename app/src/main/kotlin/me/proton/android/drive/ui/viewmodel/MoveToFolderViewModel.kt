@@ -183,6 +183,7 @@ class MoveToFolderViewModel @Inject constructor(
         override val onAppendErrorAction: () -> Unit = this@MoveToFolderViewModel.onRetry
         override val move: () -> Unit = { confirmMove(navigateBack) }
         override val onCreateFolder: () -> Unit = { this@MoveToFolderViewModel.onCreateFolder(navigateToCreateFolder) }
+        override val onRenderThumbnail: (DriveLink) -> Unit = {}
     }.also { viewEvent ->
         this.viewEvent = viewEvent
     }

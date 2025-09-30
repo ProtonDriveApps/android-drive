@@ -122,7 +122,7 @@ interface ConfigurationProvider {
     val savePhotoToStreamLimit: Long get() = 100
     val photoListingsPageSize: Int get() = 25_000
     val sendPhotoTagsInCommit: Boolean get() = true
-    val preferPipelineBasedDownloadManager: Boolean get() = false
+    val preferPipelineBasedDownloadManager: Boolean get() = true
 
     data class Thumbnail(
         val maxWidth: Int,

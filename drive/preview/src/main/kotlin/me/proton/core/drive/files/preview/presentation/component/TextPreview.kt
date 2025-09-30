@@ -46,6 +46,7 @@ import java.io.InputStream
 fun TextPreview(
     uri: Uri,
     modifier: Modifier = Modifier,
+    onRenderSucceeded: (Any) -> Unit,
     onRenderFailed: (Throwable, Any) -> Unit,
 ) {
     var content by remember { mutableStateOf(listOf<String>()) }
@@ -65,6 +66,7 @@ fun TextPreview(
     }
     TextPreview(
         content = content,
+        onRenderSucceeded = { onRenderSucceeded(uri) },
         modifier = modifier,
     )
 }
@@ -86,8 +88,12 @@ internal fun InputStream.readTextLines(): List<String> = mutableListOf<String>()
 @Composable
 fun TextPreview(
     content: List<String>,
+    onRenderSucceeded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    LaunchedEffect(content) {
+        if (content.isNotEmpty()) onRenderSucceeded()
+    }
     SelectionContainer {
         LazyColumn(
             modifier = modifier
@@ -113,7 +119,10 @@ fun TextPreview(
 fun PreviewTextPreview() {
     ProtonTheme {
         Surface {
-            TextPreview(content = listOf("Preview text"))
+            TextPreview(
+                content = listOf("Preview text"),
+                onRenderSucceeded = {},
+            )
         }
     }
 }

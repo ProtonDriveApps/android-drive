@@ -32,25 +32,29 @@ class HasAnyCachedFolderChildren @Inject constructor(
     private val hasFolderChildren: HasFolderChildren,
     private val linkRepository: LinkRepository,
 ) {
-    suspend operator fun invoke(userId: UserId, filesOnly: Boolean = false): Boolean {
-        val shares = listOfNotNull(
-            getShares(userId, Share.Type.MAIN, flowOf(false)).toResult().getOrNull(),
-            getShares(userId, Share.Type.PHOTO, flowOf(false)).toResult().getOrNull(),
-            getShares(userId, Share.Type.DEVICE, flowOf(false)).toResult().getOrNull(),
+    suspend operator fun invoke(userId: UserId, filesOnly: Boolean = false): Boolean =
+        invoke(
+            shares = listOfNotNull(
+                getShares(userId, Share.Type.MAIN, flowOf(false)).toResult().getOrNull(),
+                getShares(userId, Share.Type.PHOTO, flowOf(false)).toResult().getOrNull(),
+                getShares(userId, Share.Type.DEVICE, flowOf(false)).toResult().getOrNull(),
+            ).flatten(),
+            filesOnly = filesOnly,
         )
+
+    suspend operator fun invoke(
+        shares: List<Share>,
+        filesOnly: Boolean = false,
+    ): Boolean {
         return if (filesOnly) {
             shares
-                .map { shares ->
-                    shares.map { share -> share.id }
-                }
-                .any { shareIds -> shareIds.any { shareId -> linkRepository.hasAnyFileLink(shareId) } }
+                .map { share -> share.id }
+                .any { shareId -> linkRepository.hasAnyFileLink(shareId) }
         } else {
             shares
-                .map { shares ->
-                    shares.map { share: Share -> FolderId(share.id, share.rootLinkId) }
-                }.map { folderIds ->
-                    folderIds.map { folderId -> hasFolderChildren(folderId) }
-                }.any { hasChildrens -> hasChildrens.any { hasChildren -> hasChildren } }
+                .map { share: Share -> FolderId(share.id, share.rootLinkId) }
+                .map { folderId -> hasFolderChildren(folderId) }
+                .any { hasChildren -> hasChildren }
         }
     }
 }

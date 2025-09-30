@@ -47,6 +47,20 @@ abstract class SharedWithMeListingDao : BaseDao<SharedWithMeListingEntity>() {
 
     @Query(
         """
+            SELECT COUNT(*) FROM SharedWithMeListingEntity
+            WHERE
+                user_id = :userId AND
+                type IN (:types) OR (:includeNullType AND type IS NULL)
+        """
+    )
+    abstract suspend fun getSharedWithMeListingCount(
+        userId: UserId,
+        types: Set<Long>,
+        includeNullType: Boolean,
+    ): Int
+
+    @Query(
+        """
             SELECT * FROM SharedWithMeListingEntity
             WHERE
                 user_id = :userId AND

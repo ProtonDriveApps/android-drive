@@ -168,6 +168,7 @@ fun Photos(
                         isRefreshing = viewState.listContentState.isRefreshing,
                         onRefresh = viewEvent.onRefresh,
                         getFastScrollAnchors = getFastScrollAnchors,
+                        onRenderThumbnail = viewEvent.onRenderThumbnail,
                     )
                 }
         }

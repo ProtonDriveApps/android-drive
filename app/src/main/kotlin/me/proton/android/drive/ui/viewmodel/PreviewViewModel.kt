@@ -21,6 +21,7 @@ package me.proton.android.drive.ui.viewmodel
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.net.Uri
+import android.os.SystemClock
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient.FileChooserParams
 import androidx.lifecycle.SavedStateHandle
@@ -68,6 +69,7 @@ import me.proton.core.drive.base.domain.entity.Attributes
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.FileTypeCategory
 import me.proton.core.drive.base.domain.entity.Permissions
+import me.proton.core.drive.base.domain.entity.TimestampMs
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.extension.bytes
@@ -94,6 +96,7 @@ import me.proton.core.drive.drivelink.offline.domain.usecase.GetDecryptedOffline
 import me.proton.core.drive.drivelink.offline.domain.usecase.GetOfflineDriveLinksCount
 import me.proton.core.drive.drivelink.sorting.domain.usecase.SortDriveLinks
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
+import me.proton.core.drive.files.preview.data.usecase.PreviewMetricsNotifier
 import me.proton.core.drive.files.preview.presentation.component.PreviewComposable
 import me.proton.core.drive.files.preview.presentation.component.event.PreviewViewEvent
 import me.proton.core.drive.files.preview.presentation.component.state.ContentState
@@ -153,6 +156,7 @@ class PreviewViewModel @Inject constructor(
     albumRepository: AlbumRepository,
     sortDriveLinks: SortDriveLinks,
     val savedStateHandle: SavedStateHandle,
+    private val previewMetricsNotifier: PreviewMetricsNotifier,
 ) : ViewModel(), UserViewModel by UserViewModel(savedStateHandle) {
 
     private val albumId =
@@ -173,7 +177,6 @@ class PreviewViewModel @Inject constructor(
     private val fileId: FileId
         get() = trigger.replayCache.first().fileId
     private val currentIndex = MutableStateFlow(-1)
-
     private var onInsertImageCallback: ((List<Uri>) -> Unit)? = null
     val _unused = savedStateHandle.getStateFlow<List<Uri>>(PROTON_DOCS_IMAGE_URIS, emptyList())
         .onEach { uris ->
@@ -182,6 +185,14 @@ class PreviewViewModel @Inject constructor(
                 onInsertImageCallback = null
                 savedStateHandle.set<List<Uri>>(PROTON_DOCS_IMAGE_URIS, emptyList())
             }
+        }
+        .launchIn(viewModelScope)
+
+    val _unused_2 = trigger
+        .map { trigger -> trigger.fileId }
+        .distinctUntilChanged()
+        .onEach { fileId ->
+            previewMetricsNotifier.previewStart(fileId, TimestampMs(SystemClock.elapsedRealtime()))
         }
         .launchIn(viewModelScope)
 
@@ -299,6 +310,7 @@ class PreviewViewModel @Inject constructor(
         override val onTopAppBarNavigation = { navigateBack() }
         override val onMoreOptions = { navigateToFileOrFolderOptions(fileId, albumId) }
         override val onSingleTap = { toggleFullscreen() }
+        override val onRenderSucceeded = { source: Any -> handleRenderSuccess(source) }
         override val onRenderFailed = { throwable: Throwable, source: Any -> renderFailed.value = throwable to source }
         override val mediaControllerVisibility = { visible: Boolean ->
             if ((visible && isFullscreen.value) || (!visible && !isFullscreen.value)) {
@@ -538,6 +550,16 @@ class PreviewViewModel @Inject constructor(
                         }
                 }
             }
+    }
+
+    private fun handleRenderSuccess(source: Any) {
+        val stopTime = TimestampMs(SystemClock.elapsedRealtime())
+        viewModelScope.launch {
+            when (source) {
+                is ThumbnailVO -> previewMetricsNotifier.previewThumbnailRendered(fileId, stopTime)
+                else -> previewMetricsNotifier.previewContentRendered(fileId, stopTime)
+            }
+        }
     }
 
     private data class Trigger(

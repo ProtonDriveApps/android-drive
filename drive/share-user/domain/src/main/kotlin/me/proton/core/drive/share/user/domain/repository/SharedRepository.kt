@@ -40,12 +40,19 @@ interface SharedRepository {
 
     suspend fun getSharedByMeListing(userId: UserId, index: Int, count: Int): List<SharedLinkId>
 
+    suspend fun getSharedByMeListingCount(userId: UserId): Int
+
     suspend fun getSharedWithMeListing(
         userId: UserId,
         types: Set<ShareTargetType>,
         index: Int,
         count: Int,
     ): List<SharedLinkId>
+
+    suspend fun getSharedWithMeListingCount(
+        userId: UserId,
+        types: Set<ShareTargetType>,
+    ): Int
 
     suspend fun deleteAllLocalSharedWithMe(userId: UserId)
 

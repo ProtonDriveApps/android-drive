@@ -1,3 +1,5 @@
+import studio.forface.easygradle.dsl.testImplementation
+
 /*
  * Copyright (c) 2023-2024 Proton AG.
  * This file is part of Proton Core.
@@ -32,9 +34,16 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    (this as ExtensionAware).extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions>("kotlinOptions") {
+    (this as ExtensionAware).extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions>(
+        "kotlinOptions"
+    ) {
         jvmTarget = JavaVersion.VERSION_17.toString()
     }
+
+    sourceSets {
+        getByName("test").resources.srcDirs(File(rootDir, "drive/test/resources"))
+    }
+
 }
 
 dependencies {
@@ -83,4 +92,8 @@ dependencies {
 
     api(libs.androidx.test.core.ktx)
     api(libs.junit)
+
+    testImplementation(libs.robolectric)
+    testImplementation(libs.dagger.hilt.android.testing)
+    add("kaptTest", libs.dagger.hilt.compiler)
 }

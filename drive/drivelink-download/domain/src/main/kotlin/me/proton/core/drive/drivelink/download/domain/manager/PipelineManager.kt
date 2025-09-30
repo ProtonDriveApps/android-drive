@@ -27,8 +27,8 @@ interface PipelineManager<T : PipelineManager.Task> {
         coroutineContext: CoroutineContext,
     ): Result<Unit>
     suspend fun startPipelines(): Result<Unit>
-    suspend fun stopPipelines(immediately: Boolean = false)
-    suspend fun stopPipeline(pipelineId: Long)
+    suspend fun stopPipelines(immediately: Boolean = false, cause: CancellationException? = StopCancelledException())
+    suspend fun stopPipeline(pipelineId: Long, cause: CancellationException? = StopCancelledException())
     suspend fun stop(): Result<Unit>
 
     interface Task {

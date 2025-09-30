@@ -21,6 +21,7 @@ package me.proton.core.drive.photo.domain.usecase
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.photo.domain.entity.TagsMigrationFile.State.DOWNLOADED
+import me.proton.core.drive.photo.domain.entity.TagsMigrationFile.State.IDLE
 import me.proton.core.drive.photo.domain.manager.PhotoTagWorkManager
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import javax.inject.Inject
@@ -36,5 +37,8 @@ class ContinueTagsMigrationAfterDownload @Inject constructor(
             fileId = fileId,
             updateStatus = true,
         )
+    }.recoverCatching { error ->
+        updateTagsMigrationFileState(volumeId, fileId, IDLE)
+        throw error
     }
 }

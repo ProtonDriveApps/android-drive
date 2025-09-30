@@ -98,6 +98,7 @@ fun PhotosContent(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     getFastScrollAnchors: suspend (List<PhotosItem>, Int, Int) -> List<FastScrollAnchor>,
+    onRenderThumbnail: (DriveLink) -> Unit,
 ) {
     ProtonPullToRefresh(
         isPullToRefreshEnabled = isRefreshEnabled,
@@ -127,6 +128,7 @@ fun PhotosContent(
             onIgnoreBackgroundRestrictions = onIgnoreBackgroundRestrictions,
             onDismissBackgroundRestrictions = onDismissBackgroundRestrictions,
             getFastScrollAnchors = getFastScrollAnchors,
+            onRenderThumbnail = onRenderThumbnail,
         )
     }
 }
@@ -155,6 +157,7 @@ fun PhotosContent(
     onIgnoreBackgroundRestrictions: () -> Unit,
     onDismissBackgroundRestrictions: () -> Unit,
     getFastScrollAnchors: suspend (List<PhotosItem>, Int, Int) -> List<FastScrollAnchor>,
+    onRenderThumbnail: (DriveLink) -> Unit,
 ) {
     val gridState = items.rememberLazyGridState()
     val driveLinksMap by driveLinksFlow.collectAsStateWithLifecycle(initialValue = emptyMap())
@@ -229,6 +232,7 @@ fun PhotosContent(
                                 inMultiselect = selected || selectedPhotos.isNotEmpty() || inMultiselect,
                                 onClick = onClick,
                                 onLongClick = onLongClick,
+                                onRenderThumbnail = onRenderThumbnail,
                             )
                         }
                     }

@@ -44,6 +44,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -111,6 +112,7 @@ fun FilesListItem(
     isSelected: Boolean = false,
     inMultiselect: Boolean = false,
     isMoreOptionsEnabled: Boolean = true,
+    onRenderThumbnail: (DriveLink) -> Unit,
 ) {
     val transferProgress = transferProgressFlow?.let {
         rememberFlowWithLifecycle(transferProgressFlow).collectAsState(initial = null)
@@ -140,7 +142,10 @@ fun FilesListItem(
                 .padding(vertical = VerticalPadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ListItemIcon(link = link)
+            ListItemIcon(
+                link = link,
+                onRenderThumbnail = onRenderThumbnail,
+            )
             Details(
                 modifier = Modifier
                     .weight(1f)
@@ -239,6 +244,7 @@ fun FilesListItemPlaceholder(
 fun ListItemIcon(
     link: DriveLink,
     modifier: Modifier = Modifier,
+    onRenderThumbnail: (DriveLink) -> Unit,
 ) {
     val member = link.shareUser?.takeUnless { it.permissions.isAdmin }
     Box(
@@ -247,7 +253,11 @@ fun ListItemIcon(
         Image(
             modifier = Modifier
                 .size(IconSize)
-                .clip(RoundedCornerShape(DefaultCornerRadius)),
+                .clip(RoundedCornerShape(DefaultCornerRadius))
+                .drawWithContent {
+                    drawContent()
+                    onRenderThumbnail(link)
+                },
             painter = link.thumbnailPainter().painter,
             contentDescription = null,
         )
@@ -487,6 +497,7 @@ fun PreviewFilesListItemPlaceholder() {
                 onMoreOptionsClick = {},
                 isClickEnabled = { false },
                 isTextEnabled = { true },
+                onRenderThumbnail = {},
             )
         }
     }
@@ -510,6 +521,7 @@ fun PreviewListItem() {
                 onMoreOptionsClick = {},
                 isClickEnabled = { false },
                 isTextEnabled = { true },
+                onRenderThumbnail = {},
             )
         }
     }
@@ -528,6 +540,7 @@ fun PreviewSharedWithMeListItems() {
                     onMoreOptionsClick = {},
                     isClickEnabled = { false },
                     isTextEnabled = { true },
+                    onRenderThumbnail = {},
                 )
                 FilesListItem(
                     link = PREVIEW_DRIVELINK_SHARED_WITH_ME,
@@ -536,6 +549,7 @@ fun PreviewSharedWithMeListItems() {
                     onMoreOptionsClick = {},
                     isClickEnabled = { false },
                     isTextEnabled = { true },
+                    onRenderThumbnail = {},
                 )
             }
         }
@@ -562,6 +576,7 @@ fun PreviewSelectedListItem() {
                 isTextEnabled = { true },
                 isSelected = true,
                 inMultiselect = true,
+                onRenderThumbnail = {},
             )
         }
     }
@@ -587,6 +602,7 @@ fun PreviewUnselectedListItem() {
                 isTextEnabled = { true },
                 isSelected = false,
                 inMultiselect = true,
+                onRenderThumbnail = {},
             )
         }
     }
@@ -613,6 +629,7 @@ fun PreviewDownloadedListItem() {
                 onMoreOptionsClick = {},
                 isClickEnabled = { false },
                 isTextEnabled = { true },
+                onRenderThumbnail = {},
             )
         }
     }
@@ -634,6 +651,7 @@ fun PreviewDownloadingListItem() {
                 onMoreOptionsClick = {},
                 isClickEnabled = { false },
                 isTextEnabled = { true },
+                onRenderThumbnail = {},
             )
         }
     }
@@ -657,6 +675,7 @@ fun PreviewDownloadedAndFavoriteListItem() {
                 onMoreOptionsClick = {},
                 isClickEnabled = { false },
                 isTextEnabled = { true },
+                onRenderThumbnail = {},
             )
         }
     }
@@ -685,6 +704,7 @@ fun PreviewDwnldAndFavShrdListItem() {
                 onMoreOptionsClick = {},
                 isClickEnabled = { false },
                 isTextEnabled = { true },
+                onRenderThumbnail = {},
             )
         }
     }
@@ -705,6 +725,7 @@ fun PreviewItemsWithoutMoreOptions() {
                 isClickEnabled = { false },
                 isTextEnabled = { true },
                 isMoreOptionsEnabled = false,
+                onRenderThumbnail = {},
             )
             FilesListItem(
                 link = PREVIEW_DRIVELINK_FOLDER.copy(
@@ -716,6 +737,7 @@ fun PreviewItemsWithoutMoreOptions() {
                 isClickEnabled = { false },
                 isTextEnabled = { true },
                 isMoreOptionsEnabled = false,
+                onRenderThumbnail = {},
             )
         }
     }

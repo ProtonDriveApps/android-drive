@@ -82,5 +82,5 @@
     <item quantity="many">%1$d элементаў</item>
     <item quantity="other">%1$d элементаў</item>
   </plurals>
-  <string name="files_upload_verification_failed">Збой запампоўвання: даныя не прайшлі праверку</string>
+  <string name="files_upload_verification_failed">Збой запампоўвання: даныя не прайшлі спраўджанне</string>
 </resources>

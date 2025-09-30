@@ -40,4 +40,5 @@ fun FileDownloadEntity.toDownloadFileLink() = DownloadFileLink(
     state = state,
     numberOfRetries = numberOfRetries,
     lastRunTimestamp = lastRunTimestamp,
+    networkType = networkType,
 )

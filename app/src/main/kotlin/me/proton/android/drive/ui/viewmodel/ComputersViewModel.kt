@@ -19,6 +19,7 @@
 package me.proton.android.drive.ui.viewmodel
 
 import android.content.Context
+import android.os.SystemClock
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,8 +28,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import me.proton.android.drive.ui.effect.HomeEffect
@@ -39,6 +42,8 @@ import me.proton.core.domain.arch.DataResult
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.extension.logDefaultMessage
 import me.proton.core.drive.base.domain.entity.CryptoProperty
+import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.extension.flowOf
 import me.proton.core.drive.base.domain.log.LogTag.VIEW_MODEL
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
 import me.proton.core.drive.base.domain.usecase.BroadcastMessages
@@ -50,9 +55,10 @@ import me.proton.core.drive.device.domain.extension.name
 import me.proton.core.drive.device.domain.usecase.RefreshDevices
 import me.proton.core.drive.drivelink.device.domain.usecase.GetDecryptedDevicesSortedByName
 import me.proton.core.drive.base.presentation.state.ListContentState
-import me.proton.core.drive.i18n.R
+import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
+import me.proton.core.drive.observability.domain.metrics.common.mobile.performance.PageType
 import me.proton.core.plan.presentation.compose.usecase.ShouldUpgradeStorage
 import javax.inject.Inject
 import me.proton.core.drive.drivelink.device.presentation.R as DriveLinkDevicePresentation
@@ -66,6 +72,7 @@ class ComputersViewModel @Inject constructor(
     private val refreshDevices: RefreshDevices,
     private val broadcastMessages: BroadcastMessages,
     private val configurationProvider: ConfigurationProvider,
+    private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
     shouldUpgradeStorage: ShouldUpgradeStorage,
 ) : ViewModel(),
     UserViewModel by UserViewModel(savedStateHandle),
@@ -89,8 +96,16 @@ class ComputersViewModel @Inject constructor(
 
     private val listContentState: MutableStateFlow<ListContentState> = MutableStateFlow(ListContentState.Loading)
 
+    private val _unused = flowOf {
+        toFirstItemMetricsNotifier.toFirstItemStart(
+            userId = userId,
+            pageType = PageType.computers,
+            startTime = TimestampMs(SystemClock.elapsedRealtime()),
+        )
+    }.stateIn(viewModelScope, Eagerly, Unit)
+
     val initialViewState = ComputersViewState(
-        title = appContext.getString(R.string.computers_title),
+        title = appContext.getString(I18N.string.computers_title),
         navigationIconResId = me.proton.core.presentation.R.drawable.ic_proton_hamburger,
         notificationDotVisible = false,
         listContentState = listContentState.value,
@@ -106,7 +121,9 @@ class ComputersViewModel @Inject constructor(
             notificationDotVisible = notificationDotRequested,
             listContentState = when (state) {
                 is ListContentState.Content -> state.copy(isRefreshing = refreshing)
-                is ListContentState.Empty -> state.copy(isRefreshing = refreshing)
+                is ListContentState.Empty -> state.copy(isRefreshing = refreshing).also {
+                    toFirstItemMetricsNotifier.reset()
+                }
                 is ListContentState.Error -> state.copy(isRefreshing = refreshing)
                 else -> state
             },
@@ -129,6 +146,7 @@ class ComputersViewModel @Inject constructor(
                         ),
                         type = BroadcastMessage.Type.ERROR,
                     )
+                    toFirstItemMetricsNotifier.reset()
                 }
                 is DataResult.Success -> {
                     val devices = result.value
@@ -181,6 +199,18 @@ class ComputersViewModel @Inject constructor(
                     .onSuccess {
                         isRefreshing.value = false
                     }
+            }
+            Unit
+        }
+
+        override val onRenderThumbnail: (Device) -> Unit = { _ ->
+            val stopTime = TimestampMs(SystemClock.elapsedRealtime())
+            viewModelScope.launch {
+                toFirstItemMetricsNotifier.itemThumbnailRendered(
+                    userId = userId,
+                    pageType = PageType.computers,
+                    stopTime = stopTime,
+                )
             }
             Unit
         }

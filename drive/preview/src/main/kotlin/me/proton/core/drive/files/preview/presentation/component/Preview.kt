@@ -363,6 +363,7 @@ fun PreviewContent(
             thumbnailSource = thumbnailSource,
             transformationState = transformationState,
             isFullScreen = isFullScreen,
+            onRenderSucceeded = viewEvent.onRenderSucceeded,
             onRenderFailed = viewEvent.onRenderFailed,
         )
         PreviewComposable.Sound,
@@ -371,17 +372,20 @@ fun PreviewContent(
             uri = requireIsInstance(source),
             isFullScreen = isFullScreen,
             play = isFocused,
-            mediaControllerVisibility = viewEvent.mediaControllerVisibility
+            mediaControllerVisibility = viewEvent.mediaControllerVisibility,
+            onRenderSucceeded = viewEvent.onRenderSucceeded,
         )
         PreviewComposable.Pdf -> PdfPreview(
             uri = requireIsInstance(source),
             modifier = pointerInputModifier.padding(top = topBarHeight),
             transformationState = transformationState,
+            onRenderSucceeded = viewEvent.onRenderSucceeded,
             onRenderFailed = viewEvent.onRenderFailed,
         )
         PreviewComposable.Text -> TextPreview(
             uri = requireIsInstance(source),
             modifier = pointerInputModifier.padding(top = topBarHeight),
+            onRenderSucceeded = viewEvent.onRenderSucceeded,
             onRenderFailed = viewEvent.onRenderFailed,
         )
         PreviewComposable.ProtonDoc -> when (source) {
@@ -394,6 +398,7 @@ fun PreviewContent(
                 onWebViewRelease = viewEvent.onWebViewRelease,
                 onDownloadResult = viewEvent.onProtonDocsDownloadResult,
                 onShowFileChooser = viewEvent.onProtonDocsShowFileChooser,
+                onContentShown = { viewEvent.onRenderSucceeded(source) }
             )
             is Uri -> ProtonDocumentPreview(
                 modifier = pointerInputModifier.padding(top = topBarHeight),
@@ -409,6 +414,7 @@ fun PreviewContent(
                 appVersionHeader = appVersionHeader,
                 modifier = pointerInputModifier.padding(top = topBarHeight),
                 onWebViewRelease = viewEvent.onWebViewRelease,
+                onContentShown = { viewEvent.onRenderSucceeded(source) }
             )
             is Uri -> ProtonSpreadsheetPreview(
                 modifier = pointerInputModifier.padding(top = topBarHeight),
@@ -575,6 +581,7 @@ fun PreviewPreviewLoadingState() {
                     override val onTopAppBarNavigation: () -> Unit = {}
                     override val onMoreOptions: () -> Unit = {}
                     override val onSingleTap: () -> Unit = {}
+                    override val onRenderSucceeded: (Any) -> Unit = { _ -> }
                     override val onRenderFailed: (Throwable, Any) -> Unit = { _, _ -> }
                     override val mediaControllerVisibility: (Boolean) -> Unit = {}
                     override val onOpenInBrowser: () -> Unit = {}

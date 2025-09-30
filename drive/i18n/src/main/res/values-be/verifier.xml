@@ -18,5 +18,5 @@
   -->
 <resources>
   <string name="verifier_initialize_failed">Збой ініцыялізацыі верыфікатара</string>
-  <string name="verifier_verify_blocks_failed">Збой праверкі блокаў верыфікатарам</string>
+  <string name="verifier_verify_blocks_failed">Збой спраўджання блокаў верыфікатарам</string>
 </resources>

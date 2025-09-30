@@ -187,7 +187,7 @@
   <string name="description_no_drive_scope">У карыстальніка адсутнічае вобласць дыска.</string>
   <string name="description_file_download_failed">Не ўдалося спампаваць. Праверце падключэнне да інтэрнэту і паспрабуйце яшчэ раз.</string>
   <string name="description_file_decryption_failed">Немагчыма расшыфраваць файл</string>
-  <string name="description_file_verify_signature_failed">Немагчыма праверыць подпіс файла</string>
+  <string name="description_file_verify_signature_failed">Немагчыма спраўдзіць подпіс файла</string>
   <string name="description_files_stop_sharing">Гэта выдаліць спасылку і закрые доступ да вашага файла або папкі для ўсіх, хто яе атрымаў.</string>
   <string name="description_files_stop_sharing_action_success">Спасылка на ваш файл была выдалена.</string>
   <string name="description_files_stop_sharing_action_error">Адбылася памылка падчас выдалення спасылкі на ваш файл.</string>

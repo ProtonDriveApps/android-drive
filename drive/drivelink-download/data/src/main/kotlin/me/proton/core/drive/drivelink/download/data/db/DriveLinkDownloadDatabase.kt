@@ -19,7 +19,9 @@ package me.proton.core.drive.drivelink.download.data.db
 
 import androidx.sqlite.db.SupportSQLiteDatabase
 import me.proton.core.data.room.db.Database
+import me.proton.core.data.room.db.extension.addTableColumn
 import me.proton.core.data.room.db.migration.DatabaseMigration
+import me.proton.core.drive.base.data.db.Column.NETWORK_TYPE
 import me.proton.core.drive.drivelink.download.data.db.dao.DriveLinkDownloadDao
 import me.proton.core.drive.drivelink.download.data.db.dao.FileDownloadDao
 import me.proton.core.drive.drivelink.download.data.db.dao.ParentLinkDownloadDao
@@ -99,6 +101,16 @@ interface DriveLinkDownloadDatabase : Database {
                 database.execSQL("""
                     CREATE INDEX IF NOT EXISTS `index_ParentLinkDownloadEntity_user_id` ON `ParentLinkDownloadEntity` (`user_id`)
                 """.trimIndent()
+                )
+            }
+        }
+
+        val MIGRATION_1 = object : DatabaseMigration {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.addTableColumn(
+                    table = "FileDownloadEntity",
+                    column = NETWORK_TYPE,
+                    type = "TEXT NOT NULL DEFAULT 'ANY'",
                 )
             }
         }

@@ -43,6 +43,7 @@ import me.proton.core.drive.drivelink.download.data.extension.logTag
 import me.proton.core.drive.drivelink.download.data.extension.uniqueFolderWorkName
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_FOLDER_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_IS_DOWNLOAD_FINISHED
+import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_NETWORK_TYPE
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_ROOT_FOLDER_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_SHARE_ID
 import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_USER_ID
@@ -73,6 +74,9 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
         FolderId(shareId, it)
     }
     private val isDownloadFinished = inputData.getBoolean(KEY_IS_DOWNLOAD_FINISHED, false)
+    private val networkType = inputData.getString(KEY_NETWORK_TYPE)
+        ?.let { name -> NetworkType.values().find { it.name == name } } ?: NetworkType.CONNECTED
+
     private val logTag = folderId.logTag
     override suspend fun doWork(): Result {
         val downloadState = if (isDownloadFinished) DownloadState.Downloaded() else DownloadState.Downloading
@@ -101,6 +105,7 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
                     workManager.enqueue(
                         FolderDownloadWorker.getWorkRequest(
                             driveLink = folderDriveLink,
+                            networkType = networkType,
                             tags = rootFolderId?.let { listOf(uniqueFolderWorkName(rootFolderId)) } ?: emptyList(),
                         )
                     ).await()
@@ -181,6 +186,7 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
             userId: UserId,
             folderId: FolderId,
             isDownloadFinished: Boolean,
+            networkType: NetworkType = NetworkType.CONNECTED,
             tags: List<String>,
             rootFolderId: FolderId? = null,
         ): OneTimeWorkRequest {
@@ -190,7 +196,7 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
             return OneTimeWorkRequest.Builder(FolderDownloadStateUpdateWorker::class.java)
                 .setConstraints(
                     Constraints.Builder()
-                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .setRequiredNetworkType(networkType)
                         .build()
                 )
                 .setInputData(
@@ -204,6 +210,7 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
                             }
                         }
                         .putBoolean(KEY_IS_DOWNLOAD_FINISHED, isDownloadFinished)
+                        .putString(KEY_NETWORK_TYPE, networkType.name)
                         .build()
                 )
                 .setBackoffCriteria(

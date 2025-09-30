@@ -31,6 +31,7 @@ data class DownloadFileLink(
     val state: State,
     val numberOfRetries: Int,
     val lastRunTimestamp: Long? = null,
+    val networkType: NetworkType = NetworkType.ANY,
 ) {
     enum class State {
         IDLE,
