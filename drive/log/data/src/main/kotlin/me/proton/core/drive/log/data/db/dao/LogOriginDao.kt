@@ -43,4 +43,9 @@ abstract class LogOriginDao : BaseDao<LogOriginEntity>() {
         SELECT * FROM LogOriginEntity WHERE user_id = :userId LIMIT :limit
     """)
     abstract fun getAll(userId: UserId, limit: Int): Flow<List<LogOriginEntity>>
+
+    @Query("""
+        DELETE FROM LogOriginEntity WHERE user_id = :userId
+    """)
+    abstract suspend fun deleteAll(userId: UserId)
 }

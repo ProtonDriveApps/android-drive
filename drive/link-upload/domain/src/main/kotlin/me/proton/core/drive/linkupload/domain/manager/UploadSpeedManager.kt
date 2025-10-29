@@ -46,13 +46,17 @@ class UploadSpeedManager @Inject constructor(
         minuteWatch.start()
     }
 
-    fun resume() {
-        stopWatch.start()
+    suspend fun resume() {
+        mutex.withLock {
+            stopWatch.start()
+        }
     }
 
-    fun pause(userId: UserId) {
-        if (stopWatch.isRunning()) {
-            announceSpeed(userId, stopWatch.getElapsedTimeInMs())
+    suspend fun pause(userId: UserId) {
+        mutex.withLock {
+            if (bytesPerMinutes > 0) {
+                checkTime(userId, THRESHOLD)
+            }
         }
         stopWatch.stop()
     }
@@ -67,8 +71,10 @@ class UploadSpeedManager @Inject constructor(
         }
     }
 
-    private fun checkTime(userId: UserId) {
-        val clockElapsedTime = minuteWatch.getElapsedTimeInMs()
+    private fun checkTime(
+        userId: UserId,
+        clockElapsedTime: Long = minuteWatch.getElapsedTimeInMs()
+    ) {
         if (clockElapsedTime >= THRESHOLD) {
             CoreLogger.d(
                 TRACKING,

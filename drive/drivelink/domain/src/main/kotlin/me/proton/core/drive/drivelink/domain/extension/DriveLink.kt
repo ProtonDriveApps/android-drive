@@ -77,6 +77,9 @@ fun DriveLink.File.toVolumePhotoListing(): PhotoListing.Volume =
             )
         }
 
+val DriveLink.File.decryptedFileName: String
+    get() = id.id
+
 val List<DriveLink>.lowestCommonPermissions: Permissions get() =
     minOfOrNull { driveLink -> driveLink.sharePermissions?.value ?: Permissions.owner.value }
         ?.let { value ->

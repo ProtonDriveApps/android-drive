@@ -48,6 +48,14 @@ abstract class BackupFolderDao : BaseDao<BackupFolderEntity>() {
     @Query(
         """
         SELECT COUNT(*) FROM BackupFolderEntity 
+        WHERE user_id = :userId
+        """
+    )
+    abstract suspend fun getCount(userId: UserId): Int
+
+    @Query(
+        """
+        SELECT COUNT(*) FROM BackupFolderEntity 
         WHERE 
             user_id = :userId AND
             share_id = :shareId AND
@@ -71,6 +79,19 @@ abstract class BackupFolderDao : BaseDao<BackupFolderEntity>() {
         userId: UserId,
         shareId: String,
         folderId: String,
+        count: Int,
+    ): Flow<List<BackupFolderEntity>>
+
+    @Query(
+        """
+        SELECT * FROM BackupFolderEntity 
+        WHERE user_id = :userId
+        ORDER BY update_time DESC
+        LIMIT :count
+        """
+    )
+    abstract fun getAllFlow(
+        userId: UserId,
         count: Int,
     ): Flow<List<BackupFolderEntity>>
 

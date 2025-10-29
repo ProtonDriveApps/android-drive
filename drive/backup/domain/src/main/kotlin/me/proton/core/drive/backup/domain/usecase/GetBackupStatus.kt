@@ -18,6 +18,7 @@
 
 package me.proton.core.drive.backup.domain.usecase
 
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.link.domain.entity.FolderId
 import javax.inject.Inject
@@ -27,4 +28,7 @@ class GetBackupStatus @Inject constructor(
 ) {
     operator fun invoke(folderId: FolderId) =
         repository.getBackupStatus(folderId)
+
+    operator fun invoke(backupFolder: BackupFolder) =
+        repository.getBackupStatus(backupFolder)
 }

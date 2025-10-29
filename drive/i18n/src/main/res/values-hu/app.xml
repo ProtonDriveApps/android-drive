@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Titles -->
+  <string name="title_decrypting">Visszafejtés</string>
+  <string name="title_files">Fájlok</string>
+  <string name="title_shared">Megosztott</string>
+  <string name="title_my_files">Saját fájlok</string>
+  <string name="title_offline_available">Offline is elérhető</string>
+  <string name="title_empty_my_files">Kezdjen hozzá, töltsön fel fájlokat</string>
+  <string name="title_empty_folder">Töltse meg ezt a mappát</string>
+  <string name="title_empty_folder_read_only">Üres mappa</string>
+  <string name="title_empty_shared">Kövesse figyelemmel az eseményeket</string>
+  <string name="title_empty_offline_available">Semmi sem érhető el offline</string>
+  <string name="title_empty_trash">A lomtár üres</string>
+  <string name="title_empty_trash_action">Lomtár kiürítése</string>
+  <string name="title_files_confirm_deletion">Végleges törlés?</string>
+  <string name="title_default_home_screen_tab">Válassza ki az alapértelmezett kezdőképernyő fület</string>
+  <!-- endregion -->
+  <string name="menu_item_header_title_app">Alkalmazás</string>
+  <string name="description_signing_out">Kijelentkezés…</string>
+  <string name="settings_about_links_acknowledgments_title">Közreműködők</string>
+  <string name="settings_about_links_privacy_policy_title">Adatvédelmi irányelvek</string>
+  <string name="settings_about_links_terms_of_service_title">Szolgáltatási feltételek</string>
+  <string name="common_error_no_browser_available">Nem sikerült a hivatkozás megnyitása, úgy tűnik nincs böngésző telepítve</string>
+  <string name="move_to">Áthelyezés ide</string>
+  <string name="move_file_confirm_action">Áthelyezés</string>
+  <string name="move_file_error_cannot_move_folder_into_itself">A mappa nem helyezhető át saját magába</string>
+  <string name="folder_option_import_file">Fájl feltöltése</string>
+  <string name="folder_option_create_folder">Mappa létrehozása</string>
+  <string name="folder_option_take_a_photo">Új fénykép készítése</string>
+  <string name="folder_option_create_document">Dokumentum létrehozása</string>
+  <string name="folder_option_create_spreadsheet">Táblázat létrehozása</string>
+  <string name="settings_theme_system_default">Rendszer alapértelmezett</string>
+  <string name="settings_theme_dark">Sötét</string>
+  <string name="settings_theme_light">Világos</string>
+  <!--
+        Variable %1$s is a title_my_files
+        Examples:
+            "Upload to My files"
+    -->
+  <string name="upload_to_title_format">Feltöltés ide: %1$s</string>
+  <string name="upload_title">Feltöltés</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Only files can be uploaded to Proton Drive"
+    -->
+  <string name="in_app_notification_upload_files_only">Csak fájlok tölthetők fel a %1$s alkalmazásba</string>
+  <string name="in_app_notification_importing_file_already_exists">Már létezik fájl ezzel a névvel, próbálja meg törölni az alkalmazás gyorsítótárát</string>
+  <string name="in_app_notification_clear_local_cache_success">Helyi gyorsítótár sikeresen ürítve</string>
+  <string name="in_app_notification_destination_screen_not_found">A cél képernyő nem található</string>
+  <string name="in_app_notification_create_document_success">Dokumentum létrehozva</string>
+  <!-- endregion -->
+  <!-- region Notification -->
+  <string name="notification_content_title_storage_full">A tárhely megtelt</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Uploading files to Proton Drive"
+    -->
+  <string name="notification_content_title_upload_uploading">Fájlok feltöltése a %1$s alkalmazásba</string>
+  <string name="notification_content_title_upload_complete">Feltöltés befejeződött</string>
+  <!--
+        Variable %1$d is a quantity of files that are uploading
+        Example:
+            "Uploading 1 file"
+            "Uploading 3 files"
+    -->
+  <plurals name="notification_content_text_upload_uploading">
+    <item quantity="one">%1$d fájl feltöltése</item>
+    <item quantity="other">%1$d fájl feltöltése</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been uploaded
+        Example:
+            "1 file uploaded"
+            "3 files uploaded"
+    -->
+  <plurals name="notification_content_text_upload_uploaded">
+    <item quantity="one">%1$d fájl feltöltve</item>
+    <item quantity="other">%1$d fájl feltöltve</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have been cancelled
+        Example:
+            "1 file cancelled"
+            "3 files cancelled"
+    -->
+  <plurals name="notification_content_text_upload_cancelled">
+    <item quantity="one">%1$d fájl megszakítva</item>
+    <item quantity="other">%1$d fájl megszakítva</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that have fail to upload
+        Example:
+            "1 file failed"
+            "3 files failed"
+    -->
+  <plurals name="notification_content_text_upload_failed">
+    <item quantity="one">%1$d fájl sikertelen</item>
+    <item quantity="other">%1$d fájl sikertelen</item>
+  </plurals>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Backing up photos to Proton Drive"
+    -->
+  <string name="notification_content_title_backup">Fényképek mentése ide: %1$s</string>
+  <!--
+    Variable %1$s is a quantity (formatted) of photos left to upload
+    Example:
+        "1 item left"
+        "12 345 items left"
+    -->
+  <plurals name="notification_content_text_backup_in_progress">
+    <item quantity="one">%1$s elem maradt</item>
+    <item quantity="other">%1$s elem maradt</item>
+  </plurals>
+  <string name="notification_content_text_backup_complete">Biztonsági mentés kész</string>
+  <string name="notification_content_text_backup_uncompleted">A biztonsági mentés problémákkal fejeződött be</string>
+  <string name="notification_content_text_backup_failed">Sikertelen mentés</string>
+  <string name="notification_content_text_backup_failed_drive_storage">A Proton tárhelye megtelt</string>
+  <string name="notification_content_text_backup_failed_local_storage">A helyi tárhelye megtelt</string>
+  <string name="notification_content_text_backup_failed_permission">Hiányoznak az engedélyek</string>
+  <string name="notification_content_text_backup_failed_connectivity">Nincs internetkapcsolat</string>
+  <string name="notification_content_text_backup_failed_wifi_connectivity">Várakozás Wi-Fi-re</string>
+  <string name="notification_content_text_backup_failed_photos_upload_not_allowed">A biztonsági mentés nem engedélyezett</string>
+  <string name="notification_content_text_backup_paused_disabled">Biztonsági mentés letiltva</string>
+  <string name="notification_content_text_backup_paused_background_restrictions">A biztonsági mentés nem fut a háttérben</string>
+  <string name="notification_content_text_backup_preparing">Felkészülés a biztonsági mentésre</string>
+  <string name="notification_content_text_backup_failed_migration">Folyamatban van az áthelyezés, frissítse az alkalmazást</string>
+  <string name="notification_content_title_download_complete">A letöltés befejeződött</string>
+  <string name="notification_content_title_forced_sign_out">Jelentkezzen be</string>
+  <string name="notification_content_text_forced_sign_out">Sajnos hiba történt a szinkronizálás közben - lépjen be újra, hogy minden ismét gördülékenyen működhessen.</string>
+  <string name="notification_content_title_no_space_left_on_device">Nincs több hely egy eszközön</string>
+  <string name="notification_content_text_no_space_left_on_device">Az alkalmazás nem fog tökéletesen működni.</string>
+  <string name="notification_channel_group_name_application">Alkalmazás</string>
+  <string name="notification_channel_background_title">Háttér</string>
+  <string name="notification_channel_background_description">Csatorna háttérműveletekhez, például biztonsági mentéshez</string>
+  <string name="notification_channel_transfer_title">Átvitel</string>
+  <string name="notification_channel_transfer_description">A felhőtárhely fel- és letöltési értesítéseinek csatornája</string>
+  <string name="notification_channel_warning_title">Figyelem</string>
+  <string name="notification_channel_warning_description">A felhasználói műveletet igénylő figyelmeztetések csatornája</string>
+  <string name="notification_permission_rationale_title_backup">Maradjon naprakész a biztonsági mentés állapotáról</string>
+  <string name="notification_permission_rationale_description_backup">Értesítéseket kaphat a biztonsági mentések előrehaladásáról és állapotáról.</string>
+  <string name="notification_permission_rationale_action_accept">Értesítések engedélyezése</string>
+  <string name="notification_permission_rationale_action_reject">Nem most</string>
+  <string name="notification_content_title_transferring">Adatok átvitele</string>
+  <!-- endregion -->
+  <string name="content_description_select_all">Az összes elem kijelölése</string>
+  <string name="content_description_selected_options">További opciók megjelenítése a kijelölt fájlokhoz vagy mappákhoz</string>
+  <string name="content_description_files_upload_upload_file">Fájl feltöltése</string>
+  <string name="content_description_albums_new">Új album létrehozása</string>
+  <string name="content_description_subscription_action">Előfizetés megnyitása</string>
+  <string name="description_empty_my_files">Érintse meg a gombot a fájlok hozzáadásához.</string>
+  <string name="description_empty_folder_read_only">Nincs itt semmi látnivaló</string>
+  <string name="description_empty_shared">A megosztott hivatkozások itt jelennek meg, az egyszerű kezelhetőségük érdekében.</string>
+  <string name="description_empty_trash">A lomtárba helyezett elemek itt jelennek meg, amíg véglegesen nem törli vagy vissza nem állítja.</string>
+  <string name="description_empty_offline_available">Tegye a legfontosabb fájlokat folyamatosan elérhetővé, akár internetkapcsolat nélkül is.</string>
+  <string name="description_no_drive_scope">A felhasználó nem férhet hozzá a felhőtárhelyhez.</string>
+  <string name="description_file_download_failed">Letöltés nem sikerült. Ellenőrizze az internetkapcsolatot, majd próbálja meg újra.</string>
+  <string name="description_file_decryption_failed">A fájl visszafejtése nem sikerült</string>
+  <string name="description_file_verify_signature_failed">A fájl aláírásának ellenőrzése nem sikerült</string>
+  <string name="description_files_stop_sharing">Ez törli a hivatkozást és megszünteti a fájl vagy mappa elérhetőségét azok számára, akiknek elküldte.</string>
+  <string name="description_files_stop_sharing_action_success">A fájlra vonatkozó hivatkozás törölve.</string>
+  <string name="description_files_stop_sharing_action_error">Hiba történt a fájlra vonatkozó hivatkozás törlésekor.</string>
+  <string name="description_files_stop_all_sharing">Ezzel törli a hivatkozást és megszünteti mindenki hozzáférését.</string>
+  <string name="description_files_stop_all_sharing_action_success">A fájl megosztása törölve lett.</string>
+  <string name="description_files_stop_all_sharing_action_error">Hiba történt a fájl megosztásának törlése közben.</string>
+  <string name="ignore_file_signature_action">Megjelenítés mindenképp</string>
+  <string name="action_empty_files_add_files">Feltöltés</string>
+  <string name="error_could_not_send_file">Hiba történt a fájl küldésekor</string>
+  <string name="error_could_not_load_folder_content">Hiba történt a mappa tartalmának betöltésekor</string>
+  <string name="error_main_share_locked">A jelszó visszaállítása miatt, a fájljai már nem érhetők el. Töltse fel a korábbi titkosítási kulcsát, hogy újra elérhesse a fájljait.</string>
+  <string name="error_share_locked">A megosztás zárolva.</string>
+  <string name="error_main_share_not_found">A fő megosztás nem található.</string>
+  <string name="error_share_not_found">Megosztás nem található.</string>
+  <string name="error_creating_photo_share_not_allowed">A fényképek biztonsági mentése ideiglenesen le van tiltva.</string>
+  <string name="error_creating_share_not_allowed">A megosztás létrehozása ideiglenesen le van tiltva.</string>
+  <string name="error_camera_permission">Kamera engedély szükséges.</string>
+  <string name="operation_open_document">dokumentum megnyitása</string>
+  <string name="operation_create_document">dokumentum létrehozása</string>
+  <string name="operation_take_picture">fénykép készítése</string>
+  <!-- region Get more free storage -->
+  <!--
+        Variable %1$s is a quantity (formatted) of max free storage
+        Example:
+            "Unlock 5 GB of secure storage"
+    -->
+  <string name="get_more_free_storage_title">Szerezzen %1$s ingyenes tárhelyet</string>
+  <string name="get_more_free_storage_description">Hajtsa végre ezeket a lépéseket az első 30 napban az ingyenes tárhelybővítéshez.</string>
+  <string name="get_more_free_storage_action_upload_title">Töltsön fel egy fájlt VAGY engedélyezze a fényképek biztonsági mentését</string>
+  <string name="get_more_free_storage_action_upload_subtitle">Minden fájlja titkosításra kerül.</string>
+  <string name="get_more_free_storage_action_link_title">Megosztási hivatkozás készítése</string>
+  <!--
+        Variable %1$s is a @string/common_get_link_action in bold
+        Example:
+            "Select any file or folder. Open the options menu and press <bold>Get link</bold>."
+    -->
+  <string name="get_more_free_storage_action_link_subtitle">Válasszon ki egy fájlt vagy mappát. Nyissa meg a beállítások menüt, és nyomja meg a %1$s gombot.</string>
+  <string name="get_more_free_storage_action_share_title">Fájl megosztása</string>
+  <string name="get_more_free_storage_action_share_subtitle">Egyszerű és biztonságos.</string>
+  <string name="get_more_free_storage_action_recovery_title">Helyreállítási módszer beállítása</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url styled as a link
+        Example:
+            "Sign in at <link>account.proton.me</link>, then go to Settings -> Recovery."
+    -->
+  <string name="get_more_free_storage_action_recovery_subtitle">Jelentkezzen be a %1$s címen, majd lépjen a Beállítások -&gt; Helyreállítás.</string>
+  <!--
+        Variable %1$s is a @string/get_more_free_storage_action_recovery_subtitle_url_string
+        Example:
+            "https://account.proton.me"
+    -->
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a string representation of a date and time
+        Example:
+            "Untitled document 2025-11-28 12.34.56"
+    -->
+  <string name="new_document_name">Névtelen dokumentum: %1$s</string>
+  <!--
+        Variable %1$s is a string representation of a price
+        Example:
+            "More storage for only $1.00"
+    -->
+  <string name="drive_lite_promo_title">Több tárhely csak %1$s-ért</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Variable %2$s is a string representation of a storage size
+        Variable %3$s is a string representation of a price
+        Example:
+            "When you need a little more storage, but not a lot. Introducing Drive Lite, featuring 20 GB storage for only $1.00 a month."
+    -->
+  <string name="drive_lite_promo_description">Amikor egy kicsit több tárhelyre van szüksége, de nem sokkal.  %1$s  %2$s tárhelyet kínál, és csak %3$s havonta.</string>
+  <!--
+        Variable %1$s is the name of the plan
+        Example:
+            "Get Drive Lite"
+    -->
+  <string name="drive_lite_promo_action">%1$s beszerzése</string>
+  <!--
+        Variable %1$s is a string representation of a storage size
+        Variable %2$s is a string representation of a price
+        Example:
+            "Get 200GB for just $0.99"
+    -->
+  <string name="drive_plus_promo_title">%1$s mindössze %2$s-ért</string>
+  <!--
+        Variable %1$s is a string representation of a large number
+        Variable %2$s is a string representation of a price
+        Variable %3$s is a string representation of a price
+        Example:
+            "That is enough secure storage for over 50,000 high-resolution photos. Get your first month for $0.99, then $4.99/month."
+    -->
+  <string name="drive_plus_promo_description">Ez elegendő biztonságos tárhely több mint %1$s nagy felbontású fénykép számára. Szerezze meg az első hónapot %2$s-ért, utána %3$s/hónap.</string>
+  <!--
+        Variable %1$s is the price of the plan
+        Example:
+            "Upgrade for $0.99"
+    -->
+  <string name="drive_plus_promo_action">Előfizetés %1$s</string>
+  <!-- endregion -->
+</resources>

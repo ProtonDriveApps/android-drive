@@ -26,7 +26,9 @@ import me.proton.core.drive.link.domain.entity.FolderId
 interface BackupFolderRepository {
     suspend fun getAll(userId: UserId): List<BackupFolder>
     suspend fun getAll(folderId: FolderId): List<BackupFolder>
+    suspend fun getCount(userId: UserId): Int
     suspend fun getCount(folderId: FolderId): Int
+    fun getAllFlow(userId: UserId, count: Int): Flow<List<BackupFolder>>
     fun getAllFlow(folderId: FolderId, count: Int): Flow<List<BackupFolder>>
 
     suspend fun insertFolder(backupFolder: BackupFolder) : BackupFolder

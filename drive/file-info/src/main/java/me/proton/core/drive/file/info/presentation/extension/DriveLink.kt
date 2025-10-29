@@ -121,9 +121,5 @@ fun DriveLink.toItems(
     }
 )
 
-private fun BaseLink.getType(context: Context): String {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        return context.contentResolver.getTypeInfo(mimeType).label.toString()
-    }
-    return context.getString(mimeType.toFileTypeCategory().labelResId)
-}
+private fun BaseLink.getType(context: Context): String =
+    context.contentResolver.getTypeInfo(mimeType).label.toString()

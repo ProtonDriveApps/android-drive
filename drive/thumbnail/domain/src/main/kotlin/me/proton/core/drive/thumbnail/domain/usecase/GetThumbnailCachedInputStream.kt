@@ -19,6 +19,7 @@
 package me.proton.core.drive.thumbnail.domain.usecase
 
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
 import me.proton.core.drive.file.base.domain.entity.ThumbnailId
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.extension.userId
@@ -29,6 +30,8 @@ import javax.inject.Inject
 class GetThumbnailCachedInputStream @Inject constructor(
     private val getThumbnailInputStream: GetThumbnailInputStream,
     private val getThumbnailFile: GetThumbnailFile,
+    private val getThumbnailDecryptedFile: GetThumbnailDecryptedFile,
+    private val decryptThumbnail: DecryptThumbnail,
 ) {
 
     suspend operator fun invoke(
@@ -36,24 +39,41 @@ class GetThumbnailCachedInputStream @Inject constructor(
         volumeId: VolumeId,
         revisionId: String,
         thumbnailId: ThumbnailId,
-        fetchFromNetworkIfDoesNotExist: Boolean = true,
+        inCacheFolder: Boolean
     ): Result<InputStream> = coRunCatching {
-        val thumbnailFile = getThumbnailFile(fileId.userId, volumeId, revisionId, thumbnailId.type)
-        if ((thumbnailFile == null || !thumbnailFile.exists()) && !fetchFromNetworkIfDoesNotExist) {
-            return Result.failure(
-                IllegalStateException("${thumbnailFile?.path} doesn't exists and fetchFromNetworkIfDoesNotExist is false")
-            )
-        }
-        val cacheFile = getThumbnailFile(fileId.userId, volumeId, revisionId, thumbnailId.type, true)
-        if (!cacheFile.exists()) {
-            cacheFile.createNewFile()
-            cacheFile.outputStream().use { outputStream ->
-                getThumbnailInputStream(thumbnailId)
-                    .getOrThrow().use { inputStream ->
-                        inputStream.copyTo(outputStream)
-                    }
+        val encryptedThumbnailFile = getThumbnailFile(
+            userId = fileId.userId,
+            volumeId = volumeId,
+            revisionId = revisionId,
+            type = thumbnailId.type,
+        )
+        val decryptedThumbnailFile = getThumbnailDecryptedFile(
+            userId = fileId.userId,
+            volumeId = volumeId,
+            revisionId = revisionId,
+            type = thumbnailId.type,
+            inCacheFolder = inCacheFolder,
+        )
+        if (decryptedThumbnailFile.exists() && decryptedThumbnailFile.length() > 0) {
+            decryptedThumbnailFile.inputStream()
+        } else if (encryptedThumbnailFile != null
+            && encryptedThumbnailFile.exists()
+            && encryptedThumbnailFile.length() > 0
+        ) {
+            decryptedThumbnailFile.outputStream().use { outputStream ->
+                outputStream.write(
+                    decryptThumbnail(fileId, encryptedThumbnailFile.inputStream()).getOrThrow()
+                )
             }
+            decryptedThumbnailFile.inputStream()
+        } else {
+            decryptedThumbnailFile.createNewFile()
+            decryptedThumbnailFile.outputStream().use { outputStream ->
+                getThumbnailInputStream(thumbnailId).getOrThrow().use { inputStream ->
+                    outputStream.write(decryptThumbnail(fileId, inputStream).getOrThrow())
+                }
+            }
+            decryptedThumbnailFile.inputStream()
         }
-        cacheFile.inputStream()
     }
 }

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2025 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="albums_title">Albumok</string>
+  <string name="albums_new_album_name_hint">Album neve</string>
+  <string name="albums_new_album_created_successfully">Album létrehozva</string>
+  <string name="albums_filter_my_albums">Albumaim</string>
+  <!--
+        Variable %1$s is a number of photos in the album
+        Example:
+            "1 item"
+            "345 items"
+    -->
+  <plurals name="albums_photo_count">
+    <item quantity="one">%1$s elem</item>
+    <item quantity="other">%1$s elem</item>
+  </plurals>
+  <string name="albums_delete_album_action">Album törlése</string>
+  <string name="albums_delete_album_dialog_title">Album törlése?</string>
+  <string name="albums_delete_album_dialog_description">Ez csak az albumot törli. A fényképek az idővonalán maradnak. Ez a művelet nem vonható vissza.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Az albumban található néhány fénykép nem lesz elmentve az idővonalra. Az album törlése véglegesen törli ezeket a fényképeket.\nSzeretné elmenteni őket az eltávolítás előtt?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Törlés mentés nélkül</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Fényképek mentése és törlés</string>
+  <string name="albums_leave_album_dialog_title">Album elhagyása?</string>
+  <!--
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">Biztosan el szeretné hagyni a(z) „%1$s” albumot?
+El fogja veszíteni a hozzáférést azokhoz a fotókhoz, amelyeket még nem mentett el.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Elhagyás mentés nélkül</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Fényképek mentése és elhagyás</string>
+  <string name="albums_add_zero_to_album_button">Hozzáadás albumhoz</string>
+  <!--
+        Variable %1$d is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">%1$d hozzáadása albumhoz</item>
+    <item quantity="other">%1$d hozzáadása albumhoz</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Beállítás albumborítóként</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="one">%1$d elem hozzáadva az albumhoz</item>
+    <item quantity="other">%1$d elem hozzáadva az albumhoz</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="one">%1$d elem már létezik</item>
+    <item quantity="other">%1$d elem már létezik</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="one">%1$d elem nem sikerült</item>
+    <item quantity="other">%1$d elem nem sikerült</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="one">%1$d elem hozzáadva az Ön Drive-jához</item>
+    <item quantity="other">%1$d elem hozzáadva az Ön Drive-jához</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="one">%1$d elem már létezik</item>
+    <item quantity="other">%1$d elem már létezik</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="one">%1$d elem nem sikerült</item>
+    <item quantity="other">%1$d elem nem sikerült</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="one">%1$d elem eltávolítva az albumból</item>
+    <item quantity="other">%1$d elem eltávolítva az albumból</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="one">%1$d elem nem sikerült</item>
+    <item quantity="other">%1$d elem nem sikerült</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">Nincsenek fényképek</string>
+  <string name="albums_empty_album_screen_description">Az Ön vagy más tagok által hozzáadott fotók itt jelennek meg</string>
+  <string name="albums_empty_albums_list_screen_title">Nincsenek albumok</string>
+  <string name="albums_empty_albums_list_screen_description">Az Ön által létrehozott vagy csatlakozott albumok itt jelennek meg</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Az Ön által létrehozott albumok itt jelennek meg</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Nincsenek megosztott albumok</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Az Ön által megosztott albumok itt jelennek meg</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Nincs velem megosztva album</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Az Önnel megosztott albumok itt jelennek meg</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="one">%1$d album van megosztva Önnel</item>
+    <item quantity="other">%1$d album van megosztva Önnel</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">Megosztás ezen keresztül</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Hozzáadás megosztott albumhoz</string>
+  <string name="albums_share_multiple_photos_options_album_details">Megosztott album</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Új megosztott album</string>
+  <string name="albums_add_to_album_start_message">Képek hozzáadása a titkosított albumhoz. Kérjük, tartsa nyitva az alkalmazást, amíg a folyamat tart.</string>
+  <string name="albums_add_to_albums_options_new_album">Hozzáadás új albumhoz</string>
+  <string name="albums_add_to_albums_options_shared_album">Megosztott albumom</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">%1$s által</string>
+</resources>

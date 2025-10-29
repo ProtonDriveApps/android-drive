@@ -40,6 +40,7 @@
   <string name="common_off">Vypnuto</string>
   <string name="common_all">Vše</string>
   <string name="common_unknown">Neznámé</string>
+  <string name="common_month">Měsíc</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -136,6 +137,13 @@
             "Security error occurred: password required or incorrect password"
     -->
   <string name="common_error_security_with_message">Došlo k bezpečnostní chybě: %1$s</string>
+  <string name="common_error_sdk">Došlo k chybě SDK</string>
+  <!--
+        Variable %1$s is the non-null message from SDK exception
+        Example:
+            "SDK error occurred:  file or folder with that name already exists"
+    -->
+  <string name="common_error_sdk_with_message">Došlo k chybě SDK: %1$s</string>
   <!-- endregion -->
   <!--
         Variable %1$s is a percentage
@@ -198,5 +206,6 @@
             "System could not found any application that could take a picture"
     -->
   <string name="common_in_app_notification_activity_not_found">Systém nenašel žádnou aplikaci, která by mohla %1$s</string>
+  <!-- endregion -->
   <!-- endregion -->
 </resources>

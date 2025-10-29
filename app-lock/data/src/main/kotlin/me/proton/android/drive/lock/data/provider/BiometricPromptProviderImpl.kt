@@ -146,7 +146,7 @@ class BiometricPromptProviderImpl @Inject constructor(
     }
 
     private val allowedAuthenticators: Int get() = when (Build.VERSION.SDK_INT) {
-        Build.VERSION_CODES.P, Build.VERSION_CODES.Q -> BIOMETRIC_WEAK or DEVICE_CREDENTIAL
+        Build.VERSION_CODES.Q -> BIOMETRIC_WEAK or DEVICE_CREDENTIAL
         else -> BIOMETRIC_STRONG or DEVICE_CREDENTIAL
     }
 }

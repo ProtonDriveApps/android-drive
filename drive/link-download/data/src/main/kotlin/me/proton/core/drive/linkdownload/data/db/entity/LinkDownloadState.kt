@@ -21,4 +21,5 @@ enum class LinkDownloadState {
     DOWNLOADING,
     ERROR,
     DOWNLOADED,
+    READY,
 }

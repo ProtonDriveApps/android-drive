@@ -824,6 +824,13 @@ sealed class Screen(val route: String) {
         const val RATIONALE_CONTEXT = NotificationPermissionRationaleViewModel.RATIONALE_CONTEXT
     }
 
+    data object BlackFridayPromo : Screen("promo/{userId}/blackFriday2025") {
+
+        operator fun invoke(userId: UserId) = "promo/${userId.id}/blackFriday2025"
+
+        const val USER_ID = Screen.USER_ID
+    }
+
     companion object {
         // "userId" needs to be shared as it is a requirement for [DriveViewModelModule]
         // to work properly. This should be address later.

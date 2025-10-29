@@ -50,10 +50,12 @@ import me.proton.core.drive.base.domain.usecase.BroadcastMessages
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.base.presentation.component.NavigationTab
 import me.proton.core.drive.base.presentation.viewmodel.UserViewModel
+import me.proton.core.drive.feature.flag.domain.usecase.IsBlackFridayPromoEnabled
 import me.proton.core.drive.messagequeue.domain.entity.BroadcastMessage
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewEvent
 import me.proton.core.drive.navigationdrawer.presentation.NavigationDrawerViewState
 import me.proton.core.drive.share.user.domain.usecase.HasUserInvitationFlow
+import me.proton.core.drive.user.domain.extension.isFree
 import me.proton.core.payment.domain.PaymentManager
 import me.proton.core.user.domain.UserManager
 import me.proton.core.user.domain.entity.User
@@ -76,6 +78,7 @@ class HomeViewModel @Inject constructor(
     private val broadcastMessages: BroadcastMessages,
     private val shouldShowOverlay: ShouldShowOverlay,
     private val paymentManager: PaymentManager,
+    private val isBlackFridayPromoEnabled: IsBlackFridayPromoEnabled,
 ) : ViewModel(), NotificationDotViewModel, UserViewModel by UserViewModel(savedStateHandle) {
     private var navigateToTab: ((route: String) -> Unit)? = null
 
@@ -140,6 +143,7 @@ class HomeViewModel @Inject constructor(
         navigateToWhatsNew: (WhatsNewKey) -> Unit,
         navigateToRatingBooster: () -> Unit,
         navigateToSubscriptionPromo: (String) -> Unit,
+        navigateToBlackFridayPromo: () -> Unit,
     ): HomeViewEvent = object : HomeViewEvent {
         override val onTab = { tab: NavigationTab -> navigateToTab(tab.screen(userId)) }
         override val onFirstLaunch: () -> Unit = {
@@ -163,6 +167,7 @@ class HomeViewModel @Inject constructor(
                 override val onBugReport = navigateToBugReport
                 override val onSubscription = navigateToSubscription
                 override val onGetFreeStorage = navigateToGetMoreFreeStorage
+                override val onBlackFridayPromo = navigateToBlackFridayPromo
             }
     }.also {
         this.navigateToTab = navigateToTab
@@ -204,7 +209,8 @@ class HomeViewModel @Inject constructor(
                     coRunCatching {
                         paymentManager.isSubscriptionAvailable(userId)
                     }.getOrNull(VIEW_MODEL, "Failed to read subscriptions")
-                } ?: false
+                } ?: false,
+                isBlackFridayPromoEnabled = user != null && user.isFree && isBlackFridayPromoEnabled(userId),
             )
         )
 

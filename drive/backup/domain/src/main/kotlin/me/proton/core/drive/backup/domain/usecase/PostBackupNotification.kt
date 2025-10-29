@@ -24,6 +24,7 @@ import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.backup.domain.entity.BackupState
 import me.proton.core.drive.backup.domain.entity.BackupStatus
 import me.proton.core.drive.backup.domain.extension.toEventBackupState
+import me.proton.core.drive.backup.domain.extension.toState
 import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -47,44 +48,13 @@ class PostBackupNotification @Inject constructor(
     }
 }
 
-private fun BackupState.toEvent(folderId: FolderId) =
-    when (val status = backupStatus) {
-        is BackupStatus.Complete -> Event.Backup(
-            folderId,
-            Event.Backup.BackupState.COMPLETE,
-            status.totalBackupPhotos,
-            status.totalBackupPhotos
+private fun BackupState.toEvent(folderId: FolderId) =backupStatus?.let{ status: BackupStatus ->
+    Event.Backup(
+            folderId = folderId,
+            state = status.toState(),
+            total = status.total,
+            preparing = status.preparing,
+            pending = status.pending,
+            failed = status.failed,
         )
-
-        is BackupStatus.Uncompleted -> Event.Backup(
-            folderId,
-            Event.Backup.BackupState.UNCOMPLETED,
-            status.totalBackupPhotos,
-            status.totalBackupPhotos
-        )
-
-        is BackupStatus.Failed -> Event.Backup(
-            folderId,
-            status.errors.map { error ->
-                error.type.toEventBackupState()
-            }.first(),
-            status.totalBackupPhotos,
-            status.pendingBackupPhotos,
-        )
-
-        is BackupStatus.InProgress -> Event.Backup(
-            folderId,
-            Event.Backup.BackupState.IN_PROGRESS,
-            status.totalBackupPhotos,
-            status.pendingBackupPhotos
-        )
-
-        is BackupStatus.Preparing -> Event.Backup(
-            folderId,
-            Event.Backup.BackupState.PREPARING,
-            status.totalBackupPhotos,
-            status.preparingBackupPhotos
-        )
-
-        null -> null
     }

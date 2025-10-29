@@ -19,48 +19,76 @@
 package me.proton.core.drive.backup.domain.entity
 
 sealed interface BackupStatus {
-    val totalBackupPhotos: Int
-    data class Complete(override val totalBackupPhotos: Int) : BackupStatus
-    data class Uncompleted(override val totalBackupPhotos: Int, val failedBackupPhotos: Int) : BackupStatus
-    data class InProgress(override val totalBackupPhotos: Int, val pendingBackupPhotos: Int) : BackupStatus {
+    val preparing: Int
+    val pending: Int
+    val failed: Int
+    val total: Int
+
+    data class Complete(
+        override val total: Int,
+        override val preparing: Int = 0,
+        override val pending: Int = 0,
+        override val failed: Int = 0,
+    ) : BackupStatus
+
+    data class Uncompleted(
+        override val total: Int,
+        override val failed: Int,
+        override val preparing: Int = 0,
+        override val pending: Int = 0,
+    ) : BackupStatus
+
+    data class InProgress(
+        override val total: Int,
+        override val pending: Int,
+        override val preparing: Int = 0,
+        override val failed: Int = 0,
+    ) : BackupStatus {
 
         init {
-            require(totalBackupPhotos > 0) {
+            require(total > 0) {
                 "total should be positive"
             }
-            require(pendingBackupPhotos >= 0) {
+            require(pending >= 0) {
                 "pending should be positive or zero"
             }
-            require(pendingBackupPhotos <= totalBackupPhotos) {
+            require(pending <= total) {
                 "pending should be inferior or equal to total"
             }
         }
 
         val progress: Float
-            get() = (totalBackupPhotos.toFloat() - pendingBackupPhotos) / totalBackupPhotos
+            get() = (total.toFloat() - pending) / total
     }
 
-    data class Preparing(override val totalBackupPhotos: Int, val preparingBackupPhotos: Int) : BackupStatus{
+    data class Preparing(
+        override val total: Int,
+        override val preparing: Int,
+        override val pending: Int = 0,
+        override val failed: Int = 0,
+    ) : BackupStatus {
 
         init {
-            require(totalBackupPhotos > 0) {
+            require(total > 0) {
                 "total should be positive"
             }
-            require(preparingBackupPhotos >= 0) {
+            require(preparing >= 0) {
                 "preparing should be positive or zero"
             }
-            require(preparingBackupPhotos <= totalBackupPhotos) {
+            require(preparing <= total) {
                 "preparing should be inferior or equal to total"
             }
         }
 
         val progress: Float
-            get() = (totalBackupPhotos.toFloat() - preparingBackupPhotos) / totalBackupPhotos
+            get() = (total.toFloat() - preparing) / total
     }
 
     data class Failed(
         val errors: List<BackupError>,
-        override val totalBackupPhotos: Int,
-        val pendingBackupPhotos: Int,
+        override val total: Int,
+        override val failed: Int,
+        override val preparing: Int = 0,
+        override val pending: Int = 0,
     ) : BackupStatus
 }

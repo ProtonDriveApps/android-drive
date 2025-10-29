@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the link name
+        Example:
+            "Share Document"
+    -->
+  <string name="title_share_via_invitations">%1$s megosztása</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons added"
+    -->
+  <plurals name="share_via_invitations_person_added">
+    <item quantity="one">1 személy hozzáadva</item>
+    <item quantity="other">%1$d személy hozzáadva</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 persons cannot be invited"
+    -->
+  <plurals name="share_via_invitations_person_added_error">
+    <item quantity="one">1 embert nem lehet meghívni</item>
+    <item quantity="other">%1$d embert nem lehet meghívni</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "Sharing with 2 persons"
+    -->
+  <plurals name="share_via_invitations_sharing_with">
+    <item quantity="one">Megosztás 1 emberrel</item>
+    <item quantity="other">Megosztás %1$d emberrel</item>
+  </plurals>
+  <string name="common_permission_owner">Tulajdonos</string>
+  <string name="common_permission_admin">Adminisztrátor</string>
+  <string name="common_permission_editor">Szerkesztheti</string>
+  <string name="common_permission_viewer">Megtekintheti</string>
+  <string name="common_permission_unknown">Ismeretlen</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Pending)"
+    -->
+  <string name="share_via_invitations_external_invitation_pending">%1$s (Várakozik)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Accepted)"
+    -->
+  <string name="share_via_invitations_external_invitation_accepted">%1$s (Elfogadva)</string>
+  <!--
+        Variable %1$s is an email
+        Examples:
+            "user@mail.com (Unknown)"
+    -->
+  <string name="share_via_invitations_external_invitation_unknown">%1$s (Ismeretlen)</string>
+  <string name="share_via_invitations_add_people_hint">Személyek hozzáadása</string>
+  <string name="share_via_invitations_copy_invite_link_action">Meghívó hivatkozás másolása</string>
+  <string name="share_via_invitations_remove_access_action">Hozzáférés eltávolítása</string>
+  <string name="share_via_invitations_stop_sharing_description">Link törlése és hozzáférés eltávolítása mindenkinek</string>
+  <string name="share_via_invitations_resend_invite_action">Meghívó újraküldése</string>
+  <string name="share_via_invitations_resend_invite_success">Meghívó újraküldve</string>
+  <!--
+        Variable %1$d is a number
+        Examples:
+            "2 members"
+    -->
+  <plurals name="share_via_invitations_group_members">
+    <item quantity="one">%1$d tag</item>
+    <item quantity="other">%1$d tagok</item>
+  </plurals>
+  <string name="share_via_invitations_message_placeholder">Üzenet hozzáadása</string>
+  <string name="share_via_invitations_send_message_and_name_label">Üzenet és fájl név beleírása a meghívó e-mailbe</string>
+</resources>

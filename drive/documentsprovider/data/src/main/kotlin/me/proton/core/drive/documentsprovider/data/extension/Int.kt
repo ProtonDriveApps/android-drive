@@ -18,8 +18,6 @@
 
 package me.proton.core.drive.documentsprovider.data.extension
 
-import android.os.Build
-
 internal inline fun Int.add(block: () -> Int): Int = this or block()
 
 internal inline fun Int.addIfElse(condition: Boolean, matched: () -> Int, unmatched: () -> Int = { 0 }): Int {
@@ -32,5 +30,3 @@ internal inline fun Int.addIfElse(condition: Boolean, matched: () -> Int, unmatc
 
 internal inline fun Int.addIf(condition: Boolean, matched: () -> Int) = addIfElse(condition, matched)
 
-internal inline fun Int.addIfAbove(apiLevel: Int, block: () -> Int): Int =
-    addIf(Build.VERSION.SDK_INT >= apiLevel, block)

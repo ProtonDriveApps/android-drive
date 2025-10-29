@@ -46,7 +46,7 @@
   <string name="folder_option_create_folder">Créer un dossier</string>
   <string name="folder_option_take_a_photo">Prendre une nouvelle photo</string>
   <string name="folder_option_create_document">Créer un document</string>
-  <string name="folder_option_create_spreadsheet">Créer un tableur</string>
+  <string name="folder_option_create_spreadsheet">Créer une feuille de calcul</string>
   <string name="settings_theme_system_default">Thème par défaut</string>
   <string name="settings_theme_dark">Sombre</string>
   <string name="settings_theme_light">Clair</string>
@@ -241,7 +241,7 @@
         Example:
             "More storage for only $1.00"
     -->
-  <string name="drive_lite_promo_title">Plus d\'espace de stockage pour un montant de %1$s</string>
+  <string name="drive_lite_promo_title">Plus d\'espace de stockage pour seulement %1$s</string>
   <!--
         Variable %1$s is the name of the plan
         Variable %2$s is a string representation of a storage size
@@ -277,6 +277,5 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">Changer d\'abonnement pour %1$s</string>
-  <!-- endregion -->
   <!-- endregion -->
 </resources>

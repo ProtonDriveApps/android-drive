@@ -46,6 +46,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.manager.BackupPermissionsManager
+import me.proton.core.drive.backup.domain.usecase.AnnounceFolderStatus
 import me.proton.core.drive.backup.domain.usecase.CheckAvailableSpace
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.backup.domain.usecase.ObserveConfigurationChanges
@@ -111,6 +112,8 @@ class BackupInitializer : Initializer<Unit> {
                         }
                     }.launchIn(scope)
 
+                    announceFolderStatus(userId).launchIn(scope)
+
                     rescanOnMediaStoreUpdate(userId).onFailure { error ->
                         error.log(BACKUP, "Cannot observe media store updates")
                     }
@@ -158,5 +161,6 @@ class BackupInitializer : Initializer<Unit> {
         val rescanOnMediaStoreUpdate: RescanOnMediaStoreUpdate
         val observeConfigurationChanges: ObserveConfigurationChanges
         val syncStaleFolders: SyncStaleFolders
+        val announceFolderStatus: AnnounceFolderStatus
     }
 }

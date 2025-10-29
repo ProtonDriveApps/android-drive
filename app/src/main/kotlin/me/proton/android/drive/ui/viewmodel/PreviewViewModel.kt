@@ -311,7 +311,10 @@ class PreviewViewModel @Inject constructor(
         override val onMoreOptions = { navigateToFileOrFolderOptions(fileId, albumId) }
         override val onSingleTap = { toggleFullscreen() }
         override val onRenderSucceeded = { source: Any -> handleRenderSuccess(source) }
-        override val onRenderFailed = { throwable: Throwable, source: Any -> renderFailed.value = throwable to source }
+        override val onRenderFailed = { throwable: Throwable, source: Any ->
+            throwable.log(VIEW_MODEL)
+            renderFailed.value = throwable to source
+        }
         override val mediaControllerVisibility = { visible: Boolean ->
             if ((visible && isFullscreen.value) || (!visible && !isFullscreen.value)) {
                 toggleFullscreen()

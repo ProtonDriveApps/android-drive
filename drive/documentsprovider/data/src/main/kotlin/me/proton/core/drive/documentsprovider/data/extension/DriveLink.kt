@@ -20,7 +20,6 @@ package me.proton.core.drive.documentsprovider.data.extension
 
 import android.annotation.SuppressLint
 import android.database.MatrixCursor
-import android.os.Build
 import android.provider.DocumentsContract
 import me.proton.core.drive.base.domain.entity.toTimestampMs
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
@@ -34,7 +33,7 @@ internal fun DriveLink.addTo(cursor: MatrixCursor.RowBuilder) {
     val flags = DocumentsContract.Document.FLAG_SUPPORTS_DELETE
         .add {
             DocumentsContract.Document.FLAG_SUPPORTS_RENAME
-        }.addIfAbove(Build.VERSION_CODES.N) {
+        }.add {
             DocumentsContract.Document.FLAG_SUPPORTS_MOVE
         }.addIfElse(
             condition = this is Folder,

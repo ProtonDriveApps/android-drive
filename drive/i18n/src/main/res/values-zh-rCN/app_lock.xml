@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="app_lock_biometric_title_app_locked">应用程序已锁定</string>
+  <string name="app_lock_biometric_subtitle_app_locked">使用设备锁解锁</string>
+  <string name="app_lock_biometric_title_confirmation">确认</string>
+  <string name="app_lock_biometric_subtitle_confirmation_enable">要启用解锁，请确认您的设备锁定</string>
+  <string name="app_lock_biometric_subtitle_confirmation_disable">要禁用解锁，请确认您的设备锁定</string>
+  <string name="app_lock_option_never_set">启用生物识别或设备锁定</string>
+  <string name="app_lock_option_none">保持解锁状态</string>
+  <string name="app_lock_option_system">生物识别或设备锁定</string>
+  <string name="app_lock_system_dialog_title">启用生物识别访问</string>
+  <string name="app_lock_system_dialog_description">在此设备上设置生物识别或设备锁定访问权限。</string>
+  <string name="app_lock_system_dialog_settings_button">设置</string>
+  <string name="app_lock_system_not_available">生物识别或设备锁定在您的设备上不可用</string>
+  <string name="app_lock_enabled">生物识别或设备锁定访问已激活</string>
+  <string name="app_lock_disabled">应用程序锁定已停用</string>
+  <string name="app_lock_access_title">选择如何锁定应用</string>
+  <string name="app_lock_unlock_the_app">解锁应用</string>
+</resources>

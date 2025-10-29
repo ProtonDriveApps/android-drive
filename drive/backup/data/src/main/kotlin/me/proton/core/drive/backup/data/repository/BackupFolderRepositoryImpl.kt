@@ -44,12 +44,25 @@ class BackupFolderRepositoryImpl @Inject constructor(
             folderId = folderId.id,
         ).map { entity -> entity.toBackupFolder() }
 
+    override suspend fun getCount(userId: UserId): Int =
+        db.backupFolderDao.getCount(
+            userId = userId,
+        )
+
     override suspend fun getCount(folderId: FolderId): Int =
         db.backupFolderDao.getCount(
             userId = folderId.userId,
             shareId = folderId.shareId.id,
             folderId = folderId.id,
         )
+    override fun getAllFlow(userId: UserId, count: Int): Flow<List<BackupFolder>> =
+        db.backupFolderDao.getAllFlow(
+            userId = userId,
+            count = count,
+        ).map { entities ->
+            entities.map { entity -> entity.toBackupFolder() }
+        }
+
     override fun getAllFlow(folderId: FolderId, count: Int): Flow<List<BackupFolder>> =
         db.backupFolderDao.getAllFlow(
             userId = folderId.userId,

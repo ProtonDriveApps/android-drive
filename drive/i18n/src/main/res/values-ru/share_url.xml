@@ -45,7 +45,7 @@
   <string name="shared_link_password_protection">Защита паролем</string>
   <string name="shared_link_expiration_date">Срок действия</string>
   <string name="shared_link_action_copy_link">Копировать ссылку</string>
-  <string name="shared_link_action_copy_password">Скопировать пароль</string>
+  <string name="shared_link_action_copy_password">Копировать пароль</string>
   <string name="shared_link_action_share_link">Поделиться ссылкой</string>
   <string name="shared_link_dialog_title_discard_changes">Сбросить изменения?</string>
   <string name="shared_link_dialog_description">Вы потеряете все несохранённые изменения.</string>

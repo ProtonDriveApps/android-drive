@@ -406,6 +406,10 @@ class FakePGPCrypto : PGPCrypto {
         return "valid" in key
     }
 
+    override fun isForwardingKey(key: Armored): Boolean {
+        return false
+    }
+
     override fun lock(unlockedKey: Unarmored, passphrase: ByteArray): Armored {
         return unlockedKey.toString()
     }

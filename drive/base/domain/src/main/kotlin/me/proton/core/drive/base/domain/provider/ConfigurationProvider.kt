@@ -85,6 +85,7 @@ interface ConfigurationProvider {
     val photoExportData: Boolean get() = false
     val checkDuplicatesPageSize: Int get() = 50
     val featureFlagFreshDuration: Duration get() = 10.minutes
+    val featureFlagLegacyFreshDuration: Duration get() = 1.days
     val useVerifier: Boolean get() = true
     val backupDefaultThumbnailsCacheLimit: Int get() = 1000
     val backupDefaultThumbnailsCacheLocalStorageThreshold: Bytes get() = 500.MiB

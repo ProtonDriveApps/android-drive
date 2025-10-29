@@ -272,4 +272,5 @@
             "Upgrade for $0.99"
     -->
   <string name="drive_plus_promo_action">以 %1$s 的價格升級</string>
+  <!-- endregion -->
 </resources>

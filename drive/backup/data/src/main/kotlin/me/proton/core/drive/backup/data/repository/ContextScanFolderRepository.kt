@@ -64,7 +64,14 @@ class ContextScanFolderRepository @Inject constructor(
             val offset = page * limit
             page++
             val backupFileInPage: List<BackupFile> = context.contentResolver
-                .query(uri, backupFolder.bucketId, sort, limit, offset, backupFolder.updateTime?.value)
+                .query(
+                    uri,
+                    backupFolder.bucketId,
+                    sort,
+                    limit,
+                    offset,
+                    backupFolder.updateTime?.value,
+                )
                 ?.use { cursor -> cursor.createMedia(backupFolder, uri) }
                 ?: emptyList()
             count = backupFileInPage.size
@@ -89,12 +96,10 @@ private fun Cursor.createMedia(backupFolder: BackupFolder, uri: Uri): List<Backu
                     BackupFile(
                         bucketId = backupFolder.bucketId,
                         folderId = backupFolder.folderId,
-                        uriString = Uri.withAppendedPath(uri, getInt(id).toString())?.let { uriMedia ->
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                                MediaStore.setRequireOriginal(uriMedia)
-                            } else {
-                                uriMedia
-                            }
+                        uriString = Uri.withAppendedPath(
+                            uri, getInt(id).toString()
+                        )?.let { uriMedia ->
+                            MediaStore.setRequireOriginal(uriMedia)
                         }.toString(),
                         mimeType = getStringOrThrow(mimeType),
                         name = getStringOrThrow(displayName),
@@ -113,26 +118,20 @@ private fun Cursor.createMedia(backupFolder: BackupFolder, uri: Uri): List<Backu
     return listOfAllImages
 }
 
-private fun Cursor.getStringOrThrow(columnIndex: Int): String = when(val type = getType(columnIndex)){
+private fun Cursor.getStringOrThrow(
+    columnIndex: Int,
+): String = when (val type = getType(columnIndex)) {
     Cursor.FIELD_TYPE_NULL -> error("Column $columnIndex is null")
     Cursor.FIELD_TYPE_STRING -> getString(columnIndex)
     else -> error("Column $columnIndex is not a string but $type")
 }
 
 private val imageCollection: Uri by lazy {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-    } else {
-        MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-    }
+    MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
 }
 
 private val videoCollection: Uri by lazy {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-    } else {
-        MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-    }
+    MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
 }
 private val projections by lazy {
     arrayOf(

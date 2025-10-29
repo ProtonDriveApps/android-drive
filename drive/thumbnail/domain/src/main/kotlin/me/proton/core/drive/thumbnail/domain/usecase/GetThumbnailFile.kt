@@ -24,7 +24,7 @@ import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.file.base.domain.coroutines.FileScope
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
-import me.proton.core.drive.file.base.domain.extension.fileName
+import me.proton.core.drive.file.base.domain.extension.nameEncFile
 import me.proton.core.drive.volume.domain.entity.VolumeId
 import java.io.File
 import javax.inject.Inject
@@ -42,7 +42,7 @@ class GetThumbnailFile @Inject constructor(
         type: ThumbnailType,
         coroutineContext: CoroutineContext = FileScope.coroutineContext,
     ) = withContext(coroutineContext) {
-        type.getFileIn(
+        type.getEncFileIn(
             getPermanentFolder(userId, volumeId.id, revisionId),
             getCacheFolder(userId, volumeId.id, revisionId),
         )
@@ -62,12 +62,12 @@ class GetThumbnailFile @Inject constructor(
             } else {
                 getPermanentFolder(userId, volumeId.id, revisionId)
             },
-            type.fileName
+            type.nameEncFile
         )
     }
 
-    private fun ThumbnailType.getFileIn(vararg folders: File): File? =
+    private fun ThumbnailType.getEncFileIn(vararg folders: File): File? =
         folders
-            .map { folder -> File(folder, fileName) }
+            .map { folder -> File(folder, nameEncFile) }
             .firstOrNull { file -> file.exists() }
 }

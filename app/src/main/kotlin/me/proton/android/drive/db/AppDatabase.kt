@@ -22,6 +22,7 @@ import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.migration.Migration
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import me.proton.android.drive.db.entity.ClientUidEntity
 import me.proton.android.drive.lock.data.db.AppLockDatabase
 import me.proton.android.drive.lock.data.db.entity.AppLockEntity
@@ -29,6 +30,7 @@ import me.proton.android.drive.lock.data.db.entity.AutoLockDurationEntity
 import me.proton.android.drive.lock.data.db.entity.EnableAppLockEntity
 import me.proton.android.drive.lock.data.db.entity.LockEntity
 import me.proton.core.data.room.db.BaseDatabase
+import me.proton.core.drive.base.data.db.LoggingOpenHelperFactory
 
 @Database(
     entities = [
@@ -54,6 +56,12 @@ abstract class AppDatabase : BaseDatabase(),
 
         fun buildDatabase(context: Context): AppDatabase =
             databaseBuilder<AppDatabase>(context, "db-app")
+                .openHelperFactory(
+                    factory = LoggingOpenHelperFactory(
+                        delegate = FrameworkSQLiteOpenHelperFactory(),
+                        clazz = AppDatabase::class.java,
+                    ),
+                )
                 .apply { migrations.forEach { addMigrations(it) } }
                 .build()
     }

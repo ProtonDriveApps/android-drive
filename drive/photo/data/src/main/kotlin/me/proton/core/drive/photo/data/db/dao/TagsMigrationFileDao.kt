@@ -90,7 +90,7 @@ abstract class TagsMigrationFileDao : BaseDao<TagsMigrationFileEntity>() {
         WHERE TagsMigrationFileEntity.user_id = :userId AND
             TagsMigrationFileEntity.volume_id = :volumeId AND
             TagsMigrationFileEntity.state = 'PREPARED' AND
-            LinkDownloadStateEntity.state = 'DOWNLOADED'
+            LinkDownloadStateEntity.state = 'READY'
         ORDER BY TagsMigrationFileEntity.capture_time DESC
         LIMIT 1
         """

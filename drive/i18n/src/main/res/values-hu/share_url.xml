@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">Hivatkozás létrehozása %1$s</string>
+  <string name="shared_link_getting_link">Hivatkozás beszerzése</string>
+  <string name="shared_link_file">fájlra</string>
+  <string name="shared_link_folder">mappára</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">A hivatkozás birtokában bárki hozzáférhet a %1$s</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Csak azok férhetnek hozzá a %1$s, akik a hivatkozást és a jelszót is ismerik</string>
+  <string name="shared_link_settings">Hivatkozás beállítások</string>
+  <string name="shared_link_options">Hivatkozás beállítások</string>
+  <string name="shared_link_privacy_settings">Adatvédelmi beállítások</string>
+  <string name="shared_link_password_protection">Jelszavas védelem</string>
+  <string name="shared_link_expiration_date">Lejárati dátum</string>
+  <string name="shared_link_action_copy_link">Hivatkozás másolása</string>
+  <string name="shared_link_action_copy_password">Jelszó másolása</string>
+  <string name="shared_link_action_share_link">Hivatkozás megosztása</string>
+  <string name="shared_link_dialog_title_discard_changes">Módosítások elvetése?</string>
+  <string name="shared_link_dialog_description">A nem mentett módosítások el fognak veszni.</string>
+  <string name="shared_link_hint_expiration_date_field">Nincs megadva lejárati dátum</string>
+  <string name="shared_link_message_update_share_url">A megosztási beállítások frissítve</string>
+  <string name="shared_link_error_message_update_share_url">A megosztási beállítások frissítése nem sikerült</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">A jelszó legalább 1, és legfeljebb %1$d karakter lehet</string>
+  <string name="shared_link_error_message_not_found">A megosztott hivatkozás nem létezik vagy lejárt</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">A lejárati időtartamnak legalább holnapig kell tartania</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more than 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">A lejárati idő nem lehet hosszabb %1$d napnál</string>
+  <string name="shared_link_error_legacy_link">Ez egy régi hivatkozás, aminek a kezelése már nem támogatott. Javasolt megszakítani a megosztást és új hivatkozást készíteni.</string>
+  <string name="title_share_via_link">Megosztás hivatkozással</string>
+  <string name="shared_with_me_title">Velem megosztva</string>
+  <string name="shared_by_me_title">Általam megosztva</string>
+  <string name="shared_empty_title">Egyelőre itt nincs semmi Önnel megosztva</string>
+  <string name="shared_with_me_empty_description">Az Önnel megosztott fájlok és mappák itt jelennek meg.</string>
+  <string name="shared_by_me_empty_description">Fájlok és mappák biztonságos megosztása végpontok közti titkosítással</string>
+  <string name="shared_by_me_invitation_banner_title">Függőben lévő megosztott elemek</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">%1$d megosztott elem</item>
+    <item quantity="other">%1$d megosztott elem</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">Függőben lévő megosztott elemek (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Függőben lévő megosztott albumok (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Nincs függőben lévő megosztott elem</string>
+  <string name="shared_user_album_invitations_title_empty">Nincs függőben lévő megosztott album</string>
+  <string name="shared_user_invitations_description_empty">Minden új meghívás itt lesz</string>
+  <string name="shared_user_invitations_accept_button">Elfogad</string>
+  <string name="shared_user_invitations_decline_button">Elutasít</string>
+  <string name="shared_user_invitations_accept_success">Megosztott elem elfogadva</string>
+  <string name="shared_user_invitations_decline_success">Megosztott elem elutasítva</string>
+  <string name="shared_user_album_invitations_accept_success">Meghívás elfogadva</string>
+  <string name="shared_user_album_invitations_decline_success">Meghívás elutasítva</string>
+</resources>

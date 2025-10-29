@@ -162,7 +162,7 @@
   <string name="albums_share_multiple_photos_options_album_details">Àlbum compartit</string>
   <string name="albums_share_multiple_photos_options_new_shared_album">Nou àlbum compartit</string>
   <string name="albums_add_to_album_start_message">S\'estan afegint fotos a l\'àlbum xifrat. Mantingueu l\'aplicació oberta mentre duri el procés.</string>
-  <string name="albums_add_to_albums_options_new_album">Afegeix al nou àlbum</string>
+  <string name="albums_add_to_albums_options_new_album">Afegeix a un àlbum nou</string>
   <string name="albums_add_to_albums_options_shared_album">El meu àlbum compartit</string>
   <!--
         Variable %1$s is an album owner name i.e. display name or email

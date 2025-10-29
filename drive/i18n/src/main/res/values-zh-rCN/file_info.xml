@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="file_info_uploaded_by_entry">上传者：</string>
+  <string name="file_info_location_entry">位置</string>
+  <string name="file_info_last_modified_entry">已修改</string>
+  <string name="file_info_number_of_accesses_entry">下载次数</string>
+  <string name="file_info_share_url_expiration_time">链接失效时间</string>
+  <string name="file_info_share_url_no_expiration_time">永不</string>
+  <string name="file_info_title_folder">文件夹详情</string>
+  <string name="file_info_title_file">文件详情</string>
+  <string name="file_info_captured_on">拍摄于</string>
+  <string name="file_info_permissions">权限</string>
+  <string name="file_info_uploaded_by_anonymous">匿名的</string>
+</resources>

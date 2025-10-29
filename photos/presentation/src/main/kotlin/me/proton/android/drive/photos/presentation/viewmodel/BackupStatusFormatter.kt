@@ -63,9 +63,9 @@ class BackupStatusFormatter(
                     progress = backupStatus.progress,
                     labelItemsLeft = resources.getQuantityString(
                         R.plurals.photos_backup_state_uploading_items_left,
-                        backupStatus.pendingBackupPhotos,
+                        backupStatus.pending,
                         NumberFormat.getNumberInstance(locale)
-                            .format(backupStatus.pendingBackupPhotos),
+                            .format(backupStatus.pending),
                     )
                 )
 

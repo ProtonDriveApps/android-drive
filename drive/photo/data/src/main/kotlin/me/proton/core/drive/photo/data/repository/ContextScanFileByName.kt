@@ -21,7 +21,6 @@ package me.proton.core.drive.photo.data.repository
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import android.os.Build
 import android.provider.MediaStore
 import android.provider.MediaStore.Files.FileColumns
 import android.provider.MediaStore.Images.ImageColumns
@@ -64,11 +63,7 @@ class ContextScanFileByName @Inject constructor(
                 },
                 getString(INDEX_ID)
             )?.let { uriMedia ->
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    MediaStore.setRequireOriginal(uriMedia)
-                } else {
-                    uriMedia
-                }
+                MediaStore.setRequireOriginal(uriMedia)
             }.toString()
         } else {
             null
@@ -76,19 +71,11 @@ class ContextScanFileByName @Inject constructor(
     }
 
     private val imageCollection: Uri by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-        } else {
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        }
+        MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
     }
 
     private val videoCollection: Uri by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-        } else {
-            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        }
+        MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
     }
 
     private companion object {

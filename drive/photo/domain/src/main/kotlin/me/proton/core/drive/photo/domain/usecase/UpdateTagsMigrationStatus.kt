@@ -33,6 +33,9 @@ class UpdateTagsMigrationStatus @Inject constructor(
         volumeId: VolumeId,
         status: TagsMigrationStatus
     ) = coRunCatching {
+        checkNotNull(status.anchor) {
+            "Anchor cannot be null to update tags migration status"
+        }
         repository.updateStatus(userId, volumeId, status)
     }
 }

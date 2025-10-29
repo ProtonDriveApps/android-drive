@@ -22,12 +22,7 @@ import android.os.CancellationSignal
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.ParcelFileDescriptor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -37,7 +32,6 @@ import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
 import me.proton.core.drive.drivelink.upload.domain.usecase.UploadAlreadyCreatedFiles
-import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.drive.upload.domain.usecase.CancelUploadFile
 import me.proton.core.util.kotlin.CoreLogger
@@ -45,7 +39,6 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.time.Duration.Companion.seconds
 
 @Singleton
 class OpenDocument @Inject constructor(
@@ -58,15 +51,11 @@ class OpenDocument @Inject constructor(
     private val uploadFiles: UploadAlreadyCreatedFiles,
 ) {
 
-    private val openedDocuments = ConcurrentHashMap<FileId, Int>()
-
     private val handlerThread = Handler(HandlerThread("OpenDocumentThread").apply {
         start()
     }.looper)
 
     private val mutexMap = ConcurrentHashMap<DocumentId, Mutex>()
-    private val deleteCoroutineScope = CoroutineScope(Dispatchers.IO)
-    private val deleteJobs = ConcurrentHashMap<String, Job>()
 
     suspend operator fun invoke(
         documentId: DocumentId,
@@ -121,7 +110,6 @@ class OpenDocument @Inject constructor(
             throw UnsupportedOperationException("$mode is not supported, only 'r'")
         }
 
-        openedDocuments[driveLink.id] = (openedDocuments[driveLink.id] ?: 0) + 1
         val state = mutexMap.getOrPut(documentId) { Mutex() }.withLock {
             getFile(driveLink).first { state ->
                 when (state) {
@@ -134,7 +122,6 @@ class OpenDocument @Inject constructor(
         require(state is GetFile.State.Ready)
 
         val file = File(state.uri.path!!)
-        deleteJobs[file.path]?.cancel()
 
         if (signal?.isCanceled == true) {
             file.delete()
@@ -152,19 +139,6 @@ class OpenDocument @Inject constructor(
                     error,
                     "An error occurred when file ${documentId.linkId?.id?.logId()} was used by another app"
                 )
-            }
-            openedDocuments[driveLink.id] = (openedDocuments[driveLink.id] ?: 1) - 1
-            if ((openedDocuments[driveLink.id] ?: 0) == 0) {
-                deleteJobs[file.path]?.cancel()
-                deleteJobs[file.path] = deleteCoroutineScope.launch {
-                    delay(1.seconds)
-                    CoreLogger.d(
-                        LogTag.DOCUMENTS_PROVIDER,
-                        "Deleting ${file.path} as the uri has been closed"
-                    )
-                    file.delete()
-                    mutexMap.remove(documentId)
-                }
             }
         }
     }

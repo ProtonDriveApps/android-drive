@@ -103,7 +103,7 @@ class LinkDownloadRepositoryImpl(
             limit = count,
             offset = fromIndex,
         )
-    }.all { state -> state == LinkDownloadState.DOWNLOADED }
+    }.all { state -> state in downloadedStates }
 
     override suspend fun areAllAlbumPhotosDownloaded(
         albumId: AlbumId,
@@ -114,7 +114,9 @@ class LinkDownloadRepositoryImpl(
             limit = count,
             offset = fromIndex,
         )
-    }.all { state -> state == LinkDownloadState.DOWNLOADED }
+    }.all { state -> state in downloadedStates }
+
+    private val downloadedStates = listOf(LinkDownloadState.DOWNLOADED, LinkDownloadState.READY)
 
     override fun getDownloadingCountFlow(userId: UserId) = db.getDownloadingCountFlow(userId)
 }

@@ -49,4 +49,9 @@ abstract class LogLevelDao : BaseDao<LogLevelEntity>() {
     """
     )
     abstract fun getAll(userId: UserId, limit: Int): Flow<List<LogLevelEntity>>
+
+    @Query("""
+        DELETE FROM LogLevelEntity WHERE user_id = :userId
+    """)
+    abstract suspend fun deleteAll(userId: UserId)
 }

@@ -31,11 +31,12 @@ import kotlinx.coroutines.sync.withLock
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.Percentage
 import me.proton.core.drive.base.domain.extension.mapWithPrevious
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
-import me.proton.core.drive.base.domain.usecase.GetCacheFolder
-import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
+import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.download.domain.exception.InvalidBlocksException
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.file.base.domain.extension.verifyOrDelete
@@ -55,10 +56,12 @@ class DownloadFile @Inject constructor(
     private val downloadBlock: DownloadBlock,
     private val verifyDownloadedBlocks: VerifyDownloadedBlocks,
     private val configurationProvider: ConfigurationProvider,
-    private val getPermanentFolder: GetPermanentFolder,
-    private val getCacheFolder: GetCacheFolder,
     private val setDownloadState: SetDownloadState,
     private val getThumbnailPermanentFile: GetThumbnailPermanentFile,
+    private val moveFileIfExists: MoveFileIfExists,
+    private val getDriveLink: GetDriveLink,
+    private val decryptDownloadedBlocks: DecryptDownloadedBlocks,
+    private val deleteDownloadedBlocks: DeleteDownloadedBlocks,
 ) {
 
     suspend operator fun invoke(
@@ -68,8 +71,15 @@ class DownloadFile @Inject constructor(
         isCancelled: () -> Boolean,
         progress: MutableStateFlow<Percentage>,
     ) = coRunCatching {
-        getThumbnailPermanentFile(volumeId, fileId, revisionId).getOrThrow()
+        val driveLink = getDriveLink(fileId).toResult().getOrThrow()
         val revision = setDownloadingAndGetRevision(fileId, revisionId).getOrThrow()
+        getThumbnailPermanentFile(volumeId, driveLink.link, revisionId).getOrThrow()
+        val file = moveFileIfExists(fileId).getOrThrow()
+        if (file != null && file.exists()) {
+            CoreLogger.d(LogTag.DOWNLOAD, "File already downloaded")
+            setDownloadState(driveLink.link, DownloadState.Ready)
+            return@coRunCatching
+        }
         coroutineScope {
             val downloadProgress = MutableStateFlow(0L)
             val mutex = Mutex()
@@ -105,16 +115,22 @@ class DownloadFile @Inject constructor(
                 }.awaitAll()
             job.cancel()
         }
-        CoreLogger.d(LogTag.DOWNLOAD, "Verifing downloaded blocks")
+        CoreLogger.d(LogTag.DOWNLOAD, "Verifying downloaded blocks")
         val verified = verifyDownloadedBlocks(volumeId, fileId, revision)
             .onSuccess { isVerified ->
                 if (!isVerified) {
-                    deleteDownloadedBlocks(volumeId, fileId, revision.id)
+                    deleteDownloadedBlocks(driveLink).getOrThrow()
                     throw InvalidBlocksException()
                 }
             }
             .getOrThrow()
         CoreLogger.d(LogTag.DOWNLOAD, "Downloaded blocks verification: isSuccessful=$verified")
+        decryptDownloadedBlocks(driveLink).onSuccess {
+            CoreLogger.i(LogTag.DOWNLOAD, "File ${driveLink.id.id.logId()} was successfully decrypted!")
+            deleteDownloadedBlocks(driveLink).getOrThrow()
+        }.onFailure { error ->
+            CoreLogger.e(LogTag.DOWNLOAD, error,"There was an error decrypting file ${driveLink.id.id.logId()}")
+        }.getOrThrow()
     }.onFailure { setDownloadState(fileId, DownloadState.Error) }
 
     private suspend fun List<Block>.blocksForDownload(
@@ -189,15 +205,5 @@ class DownloadFile @Inject constructor(
             CoreLogger.d(LogTag.DOWNLOAD, "Block ${block.index} downloaded!")
             block = removeFirstOrNull(mutex)
         }
-    }
-
-    private suspend fun deleteDownloadedBlocks(
-        volumeId: VolumeId,
-        fileId: FileId,
-        revisionId: String,
-    ) {
-        val userId = fileId.userId
-        getPermanentFolder(userId, volumeId.id, revisionId).deleteRecursively()
-        getCacheFolder(userId, volumeId.id, revisionId).deleteRecursively()
     }
 }

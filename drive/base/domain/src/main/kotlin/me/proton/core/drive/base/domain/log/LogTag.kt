@@ -53,6 +53,7 @@ object LogTag {
     const val FOLDER = "$DEFAULT.folder"
     const val TRACKING = "$DEFAULT.tracking"
     const val METRIC = "$DEFAULT.metric"
+    const val DATABASE = "$DEFAULT.database"
     val ViewModel.VIEW_MODEL: String get() = "$DEFAULT.view.model[${this.javaClass.simpleName}]"
 
     object UploadTag {
@@ -61,3 +62,4 @@ object LogTag {
 }
 
 fun String.logId(): String = this.take(8)
+fun Int.toBase36(): String = this.toUInt().toString(Character.MAX_RADIX)

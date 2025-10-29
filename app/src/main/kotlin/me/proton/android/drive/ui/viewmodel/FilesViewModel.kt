@@ -82,6 +82,7 @@ import me.proton.core.drive.drivelink.download.domain.usecase.GetDownloadProgres
 import me.proton.core.drive.drivelink.list.domain.usecase.GetPagedDriveLinksList
 import me.proton.core.drive.drivelink.selection.domain.usecase.GetSelectedDriveLinks
 import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
+import me.proton.core.drive.feature.flag.domain.usecase.IsBlackFridayPromoEnabled
 import me.proton.core.drive.feature.flag.domain.usecase.IsDownloadManagerEnabled
 import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.files.presentation.event.FilesViewEvent
@@ -143,6 +144,7 @@ class FilesViewModel @Inject constructor(
     private val configurationProvider: ConfigurationProvider,
     private val isDownloadManagerEnabled: IsDownloadManagerEnabled,
     private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
+    private val isBlackFridayPromoEnabled: IsBlackFridayPromoEnabled,
 ) : SelectionViewModel(savedStateHandle, selectLinks, deselectLinks, selectAll, getSelectedDriveLinks),
     HomeTabViewModel,
     NotificationDotViewModel by NotificationDotViewModel(shouldUpgradeStorage) {
@@ -210,9 +212,6 @@ class FilesViewModel @Inject constructor(
         notificationDotVisible = true,
         onAction = { viewEvent?.onParentFolderOptions?.invoke() },
     )
-    private val openSubscriptionAction = getSubscriptionAction {
-        viewEvent?.onSubscription?.invoke()
-    }
 
     private val selectedOptionsAction get() = selectedOptionsAction {
         viewEvent?.onSelectedOptions?.invoke()
@@ -250,7 +249,8 @@ class FilesViewModel @Inject constructor(
         notificationDotRequested,
         createDocumentNotificationDotViewModel.notificationDotRequested,
         userManager.observeUser(userId),
-    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested, createDocumentNotificationDotRequested, user ->
+        flowOf { isBlackFridayPromoEnabled(userId) },
+    ) { driveLink, sorting, contentState, appendingState, layoutType, selected, notificationDotRequested, createDocumentNotificationDotRequested, user, isBlackFridayPromoEnabled ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -262,7 +262,11 @@ class FilesViewModel @Inject constructor(
             topBarActions.value = if (permissions.canWrite) {
                 setOfNotNull(
                     takeIf { user != null && user.isFree && isRootFolder }
-                        ?.let { openSubscriptionAction },
+                        ?.let {
+                            getSubscriptionAction(isBlackFridayPromoEnabled) {
+                                viewEvent?.onSubscription?.invoke()
+                            }
+                        },
                     addFilesAction.copy(
                         notificationDotVisible = createDocumentNotificationDotRequested,
                     )
@@ -348,6 +352,7 @@ class FilesViewModel @Inject constructor(
         navigateToMultipleFileOrFolderOptions: (selectionId: SelectionId) -> Unit,
         navigateToParentFolderOptions: (folderId: FolderId) -> Unit,
         navigateToSubscription: () -> Unit,
+        navigateToBlackFridayPromo: () -> Unit,
         navigateBack: () -> Unit,
         lifecycle: Lifecycle,
     ): FilesViewEvent = object : FilesViewEvent {
@@ -409,7 +414,7 @@ class FilesViewModel @Inject constructor(
         override val onSelectDriveLink = { driveLink: DriveLink -> onSelectDriveLink(driveLink) }
         override val onDeselectDriveLink = { driveLink: DriveLink -> onDeselectDriveLink(driveLink) }
         override val onBack = { onBack() }
-        override val onSubscription = navigateToSubscription
+        override val onSubscription = { onSubscription(navigateToSubscription, navigateToBlackFridayPromo) }
         override val onRenderThumbnail = { driveLink: DriveLink ->
             val stopTime = TimestampMs(SystemClock.elapsedRealtime())
             viewModelScope.launch {
@@ -445,6 +450,19 @@ class FilesViewModel @Inject constructor(
                 retryDriveLink()
             } else {
                 retryList()
+            }
+        }
+    }
+
+    private fun onSubscription(
+        navigateToSubscription: () -> Unit,
+        navigateToBlackFridayPromo: () -> Unit
+    ) {
+        viewModelScope.launch {
+            if (isBlackFridayPromoEnabled(userId)) {
+                navigateToBlackFridayPromo()
+            } else {
+                navigateToSubscription()
             }
         }
     }

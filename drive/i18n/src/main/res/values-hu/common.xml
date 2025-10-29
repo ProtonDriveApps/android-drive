@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">Alkalmazás</string>
+  <string name="common_more">Továbbiak</string>
+  <string name="common_mime_type">MIME típus</string>
+  <string name="common_name">Név</string>
+  <string name="common_no">Nem</string>
+  <string name="common_share">Megosztás</string>
+  <string name="common_shared">Megosztott</string>
+  <string name="common_size">Méret</string>
+  <string name="common_type">Típus</string>
+  <string name="common_yes">Igen</string>
+  <string name="common_download">Letöltés</string>
+  <string name="common_downloading">Letöltés</string>
+  <string name="common_link">Hivatkozás</string>
+  <string name="common_password">Jelszó</string>
+  <string name="common_retry">Újra</string>
+  <string name="common_settings">Beállítások</string>
+  <string name="common_trash">Lomtár</string>
+  <string name="common_uploading">Feltöltés</string>
+  <string name="common_on">Be</string>
+  <string name="common_off">Ki</string>
+  <string name="common_all">Mind</string>
+  <string name="common_unknown">Ismeretlen</string>
+  <string name="common_month">Month</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">OK</string>
+  <string name="common_close_action">Bezárás</string>
+  <string name="common_retry_action">Újra</string>
+  <string name="common_undo_action">Visszavonás</string>
+  <string name="common_rename_action">Átnevezés</string>
+  <string name="common_send_action">Küldés</string>
+  <string name="common_create_action">Létrehozás</string>
+  <string name="common_cancel_action">Mégsem</string>
+  <string name="common_cancel_all_action">Összes elvetése</string>
+  <string name="common_got_it_action">Rendben</string>
+  <string name="common_next_action">Következő</string>
+  <string name="common_save_action">Mentés</string>
+  <string name="common_discard_action">Elvetés</string>
+  <string name="common_skip_action">Kihagyás</string>
+  <string name="common_delete_permanently_action">Végleges törlés</string>
+  <string name="common_make_available_offline_action">Legyen elérhető offline</string>
+  <string name="common_remove_from_offline_available_action">Offline elérhetőség megszüntetése</string>
+  <string name="common_get_link_action">Hivatkozás készítése</string>
+  <string name="common_manage_link_action">Hivatkozás kezelése</string>
+  <string name="common_manage_access_action">Hozzáférés kezelése</string>
+  <string name="common_copy_link_action">Hivatkozás másolása</string>
+  <string name="common_stop_sharing_action">Megosztás megszüntetése</string>
+  <string name="common_open_in_browser_action">Megnyitás a böngészőben</string>
+  <string name="common_done_action">Kész</string>
+  <string name="common_create_album_action">Album létrehozása</string>
+  <string name="common_set_as_album_cover_action">Beállítás albumborítóként</string>
+  <string name="common_add_action">Hozzáadás</string>
+  <string name="common_remove_from_album_action">Törlés az albumból</string>
+  <string name="common_leave_album_action">Album elhagyása</string>
+  <string name="common_start_action">Indítás</string>
+  <string name="common_save_all_action">Összes mentése</string>
+  <string name="common_add_to_albums_action">Hozzáadás albumokhoz</string>
+  <string name="common_tag_photo_action">Fénykép szkennelése címkézéshez</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">Hang</string>
+  <string name="common_type_calendar">iCalendar formátum</string>
+  <string name="common_type_doc">Dokumentum</string>
+  <string name="common_type_image">Kép</string>
+  <string name="common_type_keynote">Keynote fájl</string>
+  <string name="common_type_numbers">Numbers fájl</string>
+  <string name="common_type_pages">Pages fájl</string>
+  <string name="common_type_pdf">PDF dokumentum</string>
+  <string name="common_type_ppt">Prezentáció</string>
+  <string name="common_type_proton_doc">Proton dokumentum</string>
+  <string name="common_type_proton_sheet">Proton táblázat</string>
+  <string name="common_type_text">Szöveg</string>
+  <string name="common_type_trustedkey">Megbízható kulcs</string>
+  <string name="common_type_unknown">Bináris</string>
+  <string name="common_type_video">Videó</string>
+  <string name="common_type_xls">Munkafüzet</string>
+  <string name="common_type_xml">XML fájl</string>
+  <string name="common_type_zip">Archívum</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">A név nem lehet üres</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">A név maximum %1$d karakter lehet</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">A név nem tartalmazhat láthatatlan karaktereket, \"%1$s\" vagy \"%2$s\".</string>
+  <string name="common_error_name_periods">A név nem lehet \".\" vagy \"..\"</string>
+  <string name="common_error_no_internet">Nincs internetkapcsolat</string>
+  <string name="common_error_http_5xx">Szerverhiba történt</string>
+  <string name="common_error_internal">Belső hiba történt</string>
+  <string name="common_error_crypto">Titkosítás vagy visszafejtés nem sikerült</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">Titkosítás vagy visszafejtés nem sikerült: %1$s</string>
+  <string name="common_error_io">Kimeneti vagy bemeneti művelet nem sikerült</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">Kimeneti vagy bemeneti művelet nem sikerült: %1$s</string>
+  <string name="common_error_security">Biztonsági hiba történt</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">Biztonsági hiba történt: %1$s</string>
+  <string name="common_error_sdk">SDK error occurred</string>
+  <!--
+        Variable %1$s is the non-null message from SDK exception
+        Example:
+            "SDK error occurred:  file or folder with that name already exists"
+    -->
+  <string name="common_error_sdk_with_message">SDK error occurred: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s letöltve</string>
+  <string name="common_sign_out">Kijelentkezés</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="one">%1$d kijelölve</item>
+    <item quantity="other">%1$d kijelölve</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s a vágólapra másolva</string>
+  <string name="common_in_app_notification_download_started">A letöltés megkezdődött</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s sikeresen letöltve</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="one">%1$d fájl sikeresen letöltve</item>
+    <item quantity="other">%1$d fájl sikeresen letöltve</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">%1$s letöltése sikertelen</string>
+  <string name="common_in_app_notification_download_failed">Letöltés sikertelen</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">A rendszer nem talált alkalmazást a következőre: %1$s</string>
+  <!-- endregion -->
+  <!-- endregion -->
+</resources>

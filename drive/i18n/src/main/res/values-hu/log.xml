@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="log_title">Napló</string>
+  <string name="log_export_successfully_completed">Naplófájl sikeresen mentve.</string>
+  <string name="log_level">Szint</string>
+  <string name="log_category">Kategória</string>
+  <string name="content_description_save_log_file">Naplófájl mentése</string>
+  <string name="content_description_more_log_options">További naplózási lehetőségek</string>
+  <string name="log_level_normal">Általános</string>
+  <string name="log_level_warning">Figyelmeztetés</string>
+  <string name="log_level_error">Hiba</string>
+  <string name="log_origin_upload">Feltöltés</string>
+  <string name="log_origin_download">Letöltés</string>
+  <string name="log_origin_network">API</string>
+  <string name="log_origin_throwable">Kivétel</string>
+  <string name="log_origin_logger">Naplózó</string>
+  <string name="log_origin_screen">Képernyő</string>
+  <string name="log_origin_application_state">Alkalmazás állapot</string>
+  <string name="log_origin_workers">Dolgozók</string>
+  <string name="log_origin_backup">Biztonsági mentés</string>
+  <string name="log_origin_user">Felhasználó</string>
+  <string name="log_origin_device">Eszköz</string>
+  <string name="log_origin_crypto">Crypto</string>
+</resources>

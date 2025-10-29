@@ -31,13 +31,27 @@ open class BaseGetFeatureFlag(
 ) {
 
     val refreshAfterDuration: FeatureFlagCachePolicy = { featureFlagId ->
-        featureFlagRepository
-            .getLastRefreshTimestamp(featureFlagId.userId)
-            .isOlderThen(configurationProvider.featureFlagFreshDuration)
+        when (featureFlagId) {
+            is FeatureFlagId.Unleash -> featureFlagRepository
+                .getLastRefreshTimestamp(
+                    userId = featureFlagId.userId,
+                )
+                .isOlderThen(configurationProvider.featureFlagFreshDuration)
+            is FeatureFlagId.Legacy -> featureFlagRepository
+                .getLastRefreshTimestamp(
+                    userId = featureFlagId.userId,
+                    refreshId = FeatureFlagRepository.RefreshId.Legacy(featureFlagId.id),
+                )
+                .isOlderThen(configurationProvider.featureFlagLegacyFreshDuration)
+        }
     }
 
     protected suspend fun refreshFeatureFlag(featureFlagId: FeatureFlagId) {
-        featureFlagRepository.refresh(featureFlagId.userId).onFailure { error ->
+        val refreshId = when (featureFlagId) {
+            is FeatureFlagId.Legacy -> FeatureFlagRepository.RefreshId.Legacy(featureFlagId.id)
+            else -> FeatureFlagRepository.RefreshId.Default
+        }
+        featureFlagRepository.refresh(featureFlagId, refreshId).onFailure { error ->
             CoreLogger.w(
                 tag = LogTag.FEATURE_FLAG,
                 e = error,

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="files_upload_stage_waiting">Várakozás a feltöltésre</string>
+  <string name="files_upload_stage_encrypting">Titkosítás</string>
+  <string name="files_upload_stage_uploading">Feltöltés</string>
+  <!--
+        Variable %1$s is a string representation of a percentage
+        Example: "23% uploaded"
+    -->
+  <string name="files_upload_stage_uploading_with_progress">%1$s feltöltve</string>
+  <string name="files_upload_content_description_cancel_upload">Fájl feltöltés megszakítása</string>
+  <string name="files_upload_failure_storage_full_title">A tárhely megtelt</string>
+  <string name="files_upload_failure_storage_full_description">A fiók tárhelye teljesen megtelt. Szabadítson fel helyet, vagy váltson több tárhelyet tartalmazó csomagra.</string>
+  <string name="files_operation_failed_all">A művelet sikertelen</string>
+  <!--
+        Variable %1$d is a number of failed links in the failed operation
+        Example:
+            "1 failed"
+            "12 failed"
+    -->
+  <plurals name="files_operation_failed_count_of_failures">
+    <item quantity="one">%1$d nem sikerült</item>
+    <item quantity="other">%1$d nem sikerült</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of succeeded links in the failed operation
+        Example:
+            "1 succeeded"
+            "24 succeeded"
+    -->
+  <plurals name="files_operation_failed_count_of_successes">
+    <item quantity="one">%1$d sikeres</item>
+    <item quantity="other">%1$d sikeres</item>
+  </plurals>
+</resources>

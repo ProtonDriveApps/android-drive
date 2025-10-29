@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">创建指向 %1$s 的链接</string>
+  <string name="shared_link_getting_link">获取链接</string>
+  <string name="shared_link_file">文件</string>
+  <string name="shared_link_folder">文件夹</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">任何人都可以通过此链接访问 %1$s</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">只有拥有链接和密码的人才能访问 %1$s</string>
+  <string name="shared_link_settings">链接设置</string>
+  <string name="shared_link_options">链接选项</string>
+  <string name="shared_link_privacy_settings">隐私设置</string>
+  <string name="shared_link_password_protection">由密码保护</string>
+  <string name="shared_link_expiration_date">有效期至</string>
+  <string name="shared_link_action_copy_link">复制链接</string>
+  <string name="shared_link_action_copy_password">复制密码</string>
+  <string name="shared_link_action_share_link">共享链接</string>
+  <string name="shared_link_dialog_title_discard_changes">放弃更改？</string>
+  <string name="shared_link_dialog_description">您将丢失所有未保存的更改。</string>
+  <string name="shared_link_hint_expiration_date_field">无有效期</string>
+  <string name="shared_link_message_update_share_url">更新共享设置</string>
+  <string name="shared_link_error_message_update_share_url">更新共享设置失败</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">密码长度必须介于 1 到 %1$d 个字符之间</string>
+  <string name="shared_link_error_message_not_found">共享链接不存在或已过期</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">有效期至少应延续到明天</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more than 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">到期日期不得超过 %1$d 天</string>
+  <string name="shared_link_error_legacy_link">这是一个不支持管理的旧链接。建议您停止共享此链接并获取新链接。</string>
+  <string name="title_share_via_link">通过链接共享</string>
+  <string name="shared_with_me_title">与我分享</string>
+  <string name="shared_by_me_title">由我分享</string>
+  <string name="shared_empty_title">尚未分享任何内容</string>
+  <string name="shared_with_me_empty_description">与您共享的文件和文件夹将显示在此处</string>
+  <string name="shared_by_me_empty_description">通过端到端加密安全地共享您的文件和文件夹</string>
+  <string name="shared_by_me_invitation_banner_title">待处理的共享项目</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="other">%1$d 个项目与您共享</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">待处理的共享项目（%1$d）</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">待处理的共享相册（%1$d）</string>
+  <string name="shared_user_invitations_title_empty">没有待处理的共享项目</string>
+  <string name="shared_user_album_invitations_title_empty">无待处理的共享相册</string>
+  <string name="shared_user_invitations_description_empty">所有新的邀请都将在这里</string>
+  <string name="shared_user_invitations_accept_button">接受</string>
+  <string name="shared_user_invitations_decline_button">拒绝</string>
+  <string name="shared_user_invitations_accept_success">已接受共享项目</string>
+  <string name="shared_user_invitations_decline_success">已拒绝共享项目</string>
+  <string name="shared_user_album_invitations_accept_success">邀请已接受</string>
+  <string name="shared_user_album_invitations_decline_success">邀请已拒绝</string>
+</resources>

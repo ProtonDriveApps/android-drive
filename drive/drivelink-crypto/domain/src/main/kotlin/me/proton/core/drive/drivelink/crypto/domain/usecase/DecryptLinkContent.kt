@@ -35,6 +35,7 @@ import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.linkdownload.domain.entity.DownloadState
 import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadBlocks
 import me.proton.core.drive.linkdownload.domain.usecase.GetDownloadState
+import me.proton.core.drive.linkdownload.domain.usecase.SetDownloadState
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailBlock
 import java.io.File
 import java.util.UUID
@@ -49,6 +50,7 @@ class DecryptLinkContent @Inject constructor(
     private val getThumbnailBlock: GetThumbnailBlock,
     private val getDownloadBlocks: GetDownloadBlocks,
     private val getDownloadState: GetDownloadState,
+    private val setDownloadState: SetDownloadState,
 ) {
     suspend operator fun invoke(
         driveLink: DriveLink.File,
@@ -100,6 +102,8 @@ class DecryptLinkContent @Inject constructor(
                 }
             }
             decryptedBlocks.mergeBlocks(targetFile)
+        }.onSuccess {
+            setDownloadState(driveLink.id, DownloadState.Ready)
         }.getOrThrow()
     }
 

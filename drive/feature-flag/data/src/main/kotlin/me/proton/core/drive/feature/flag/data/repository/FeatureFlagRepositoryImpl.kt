@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.entity.TimestampMs
+import me.proton.core.drive.base.domain.extension.requireIsInstance
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.feature.flag.data.db.DriveFeatureFlagDatabase
 import me.proton.core.drive.feature.flag.data.db.entity.DriveFeatureFlagRefreshEntity
@@ -52,7 +53,18 @@ class FeatureFlagRepositoryImpl @Inject constructor(
             it?.toFeatureFlag(featureFlagId.userId)
         }
 
-    override suspend fun refresh(userId: UserId, refreshId: FeatureFlagRepository.RefreshId) = coRunCatching {
+    override suspend fun refresh(
+        featureFlagId: FeatureFlagId,
+        refreshId: FeatureFlagRepository.RefreshId,
+    ) = when (featureFlagId) {
+        is FeatureFlagId.Unleash -> refresh(featureFlagId.userId, refreshId)
+        is FeatureFlagId.Legacy -> refreshLegacy(featureFlagId, refreshId)
+    }
+
+    override suspend fun refresh(
+        userId: UserId,
+        refreshId: FeatureFlagRepository.RefreshId,
+    ) = coRunCatching {
         coreFeatureFlagRepository.getAll(userId)
         db.driveFeatureFlagRefreshDao.insertOrUpdate(
             DriveFeatureFlagRefreshEntity(
@@ -70,4 +82,27 @@ class FeatureFlagRepositoryImpl @Inject constructor(
         db.driveFeatureFlagRefreshDao.get(userId, refreshId.id)?.let { value ->
             TimestampMs(value)
         }
+
+    private suspend fun refreshLegacy(
+        featureFlagId: FeatureFlagId.Legacy,
+        refreshId: FeatureFlagRepository.RefreshId,
+    ): Result<Unit> = coRunCatching {
+        requireIsInstance<FeatureFlagRepository.RefreshId.Legacy>(refreshId) {
+            "$featureFlagId of type FeatureFlagId.Legacy requires $refreshId of type FeatureFlagRepository.RefreshId.Legacy"
+        }
+        val userId = featureFlagId.userId
+        coreFeatureFlagRepository.get(
+            userId = userId,
+            featureId = FeatureId(featureFlagId.id),
+            refresh = true,
+        )?.also {
+            db.driveFeatureFlagRefreshDao.insertOrUpdate(
+                DriveFeatureFlagRefreshEntity(
+                    userId = userId,
+                    id = refreshId.id,
+                    lastFetchTimestamp = System.currentTimeMillis(),
+                )
+            )
+        }
+    }
 }

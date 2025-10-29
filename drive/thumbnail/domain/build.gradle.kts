@@ -25,6 +25,7 @@ android {
 }
 
 driveModule(hilt = true) {
+    api(project(":drive:crypto:domain"))
     api(project(":drive:link:domain"))
     implementation(project(":drive:file:base:domain"))
 }

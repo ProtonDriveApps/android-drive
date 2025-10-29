@@ -21,6 +21,7 @@ package me.proton.core.drive.backup.domain.usecase
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.manager.BackupManager
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.toBase36
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
@@ -38,6 +39,6 @@ class DisableBackupForFolder @Inject constructor(
         val count = cancelFiles(folderId, bucketId).getOrThrow()
         CoreLogger.d(LogTag.BACKUP, "Cancelled $count items")
         deleteFolder(backupFolder).getOrThrow()
-        CoreLogger.d(LogTag.BACKUP, "Deleted folder $bucketId")
+        CoreLogger.d(LogTag.BACKUP, "Deleted folder ${bucketId.toBase36()}")
     }
 }

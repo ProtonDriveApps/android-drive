@@ -40,6 +40,7 @@ import me.proton.core.drive.backup.domain.usecase.UploadFolder
 import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.toBase36
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.share.domain.entity.ShareId
@@ -63,7 +64,7 @@ class BackupUploadFolderWorker @AssistedInject constructor(
         uploadFolder(
             backupFolder = BackupFolder(bucketId, folderId),
         ).onFailure { error ->
-            error.log(LogTag.BACKUP, "Cannot upload bucket: $bucketId")
+            error.log(LogTag.BACKUP, "Cannot upload bucket: ${bucketId.toBase36()}")
             addBackupError(folderId, error.toBackupError())
             return Result.failure()
         }

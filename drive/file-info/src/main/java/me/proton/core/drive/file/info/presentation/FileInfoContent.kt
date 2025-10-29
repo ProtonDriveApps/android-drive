@@ -18,7 +18,6 @@
 
 package me.proton.core.drive.file.info.presentation
 
-import android.os.Build
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -39,7 +38,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -60,16 +58,13 @@ import me.proton.core.drive.base.domain.entity.Bytes
 import me.proton.core.drive.base.domain.entity.CryptoProperty
 import me.proton.core.drive.base.domain.entity.Permissions
 import me.proton.core.drive.base.domain.entity.TimestampS
-import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.presentation.component.EncryptedItem
 import me.proton.core.drive.base.presentation.component.LARGE_HEIGHT
-import me.proton.core.drive.base.presentation.extension.labelResId
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.domain.extension.isNameEncrypted
 import me.proton.core.drive.file.info.presentation.entity.Item
 import me.proton.core.drive.file.info.presentation.extension.headerSemantics
 import me.proton.core.drive.file.info.presentation.extension.toItems
-import me.proton.core.drive.link.domain.entity.BaseLink
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.entity.Link
@@ -103,14 +98,6 @@ fun FileInfoContent(
             )
         }
     }
-}
-
-@Composable
-private fun BaseLink.getType(): String {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        return LocalContext.current.contentResolver.getTypeInfo(mimeType).label.toString()
-    }
-    return stringResource(id = mimeType.toFileTypeCategory().labelResId)
 }
 
 @Composable

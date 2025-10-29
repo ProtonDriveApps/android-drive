@@ -40,6 +40,7 @@
   <string name="common_off">Desactivado</string>
   <string name="common_all">Todo</string>
   <string name="common_unknown">Desconocido</string>
+  <string name="common_month">Mes</string>
   <!-- endregion -->
   <!-- region Common actions -->
   <string name="common_ok_action">OK</string>
@@ -136,6 +137,13 @@
             "Security error occurred: password required or incorrect password"
     -->
   <string name="common_error_security_with_message">Se ha producido un error de seguridad: %1$s</string>
+  <string name="common_error_sdk">Se ha producido un error de SDK</string>
+  <!--
+        Variable %1$s is the non-null message from SDK exception
+        Example:
+            "SDK error occurred:  file or folder with that name already exists"
+    -->
+  <string name="common_error_sdk_with_message">Se ha producido un error de SDK: %1$s</string>
   <!-- endregion -->
   <!--
         Variable %1$s is a percentage
@@ -194,7 +202,6 @@
             "System could not found any application that could take a picture"
     -->
   <string name="common_in_app_notification_activity_not_found">El sistema no ha encontrado ninguna aplicación que pueda %1$s.</string>
-  <!-- endregion -->
   <!-- endregion -->
   <!-- endregion -->
 </resources>

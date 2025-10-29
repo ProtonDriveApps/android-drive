@@ -19,7 +19,6 @@
 package me.proton.android.drive.initializer
 
 import android.content.Context
-import android.os.Build
 import android.os.StrictMode
 import androidx.startup.Initializer
 import dagger.hilt.EntryPoint
@@ -77,16 +76,11 @@ class LoggerInitializer : Initializer<Unit> {
             .detectAll()
         val vmPolicyBuilder = StrictMode.VmPolicy.Builder()
             .detectAll()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            threadPolicyBuilder.penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
-                logger.e(DriveLogTag.STRICT_MODE, violation)
-            }
-            vmPolicyBuilder.penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
-                logger.e(DriveLogTag.STRICT_MODE, violation)
-            }
-        } else {
-            threadPolicyBuilder.penaltyLog()
-            vmPolicyBuilder.penaltyLog()
+        threadPolicyBuilder.penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
+            logger.e(DriveLogTag.STRICT_MODE, violation)
+        }
+        vmPolicyBuilder.penaltyListener(Executors.newSingleThreadExecutor()) { violation ->
+            logger.e(DriveLogTag.STRICT_MODE, violation)
         }
         StrictMode.setThreadPolicy(threadPolicyBuilder.build())
         StrictMode.setVmPolicy(vmPolicyBuilder.build())

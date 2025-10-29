@@ -76,6 +76,7 @@ fun PhotosScreen(
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
+    navigateToBlackFridayPromo: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
     val viewState by rememberFlowWithLifecycle(flow = viewModel.viewState)
@@ -90,6 +91,7 @@ fun PhotosScreen(
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
+            navigateToBlackFridayPromo = navigateToBlackFridayPromo,
             lifecycle = lifecycle,
         )
     }

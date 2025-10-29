@@ -54,7 +54,6 @@ driveModule(
     serialization = true,
     buildConfig = true,
 ) {
-    implementation(files("../../proton-libs/gopenpgp/gopenpgp.aar"))
     implementation(project(":app-lock"))
     implementation(project(":app-ui-settings"))
     implementation(project(":drive"))
@@ -242,6 +241,13 @@ android {
     androidResources {
         generateLocaleConfig = true
     }
+}
+
+dependencies {
+    add("devImplementation", files("$rootDir/gopenpgp-v2-v3/gopenpgp.aar"))
+    add("alphaImplementation", files("$rootDir/gopenpgp-v2-v3/gopenpgp.aar"))
+    add("betaImplementation", files("$rootDir/gopenpgp-v2-v3/gopenpgp.aar"))
+    add("prodImplementation", files("../../proton-libs/gopenpgp/gopenpgp.aar"))
 }
 
 tasks.create("publishGeneratedReleaseNotes") {

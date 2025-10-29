@@ -103,6 +103,7 @@ import me.proton.android.drive.ui.screen.AccountSettingsScreen
 import me.proton.android.drive.ui.screen.AlbumScreen
 import me.proton.android.drive.ui.screen.AppAccessScreen
 import me.proton.android.drive.ui.screen.BackupIssuesScreen
+import me.proton.android.drive.ui.screen.BlackFridayPromoScreen
 import me.proton.android.drive.ui.screen.CreateNewAlbumScreen
 import me.proton.android.drive.ui.screen.DefaultHomeTabScreen
 import me.proton.android.drive.ui.screen.SubscriptionPromoScreen
@@ -400,6 +401,7 @@ fun AppNavGraph(
         addConfirmLeaveAlbumDialog(navController)
         addShareMultiplePhotosOptions(navController)
         addAddToAlbumsOptions(navController)
+        addBlackFridayPromoScreen(navController, navigateToSubscription)
     }
 }
 
@@ -1004,6 +1006,9 @@ internal fun NavGraphBuilder.addHome(
         },
         navigateToSubscriptionPromo = { key ->
             navController.navigate(Screen.Promo.Subscription(userId, key))
+        },
+        navigateToBlackFridayPromo = {
+            navController.navigate(Screen.BlackFridayPromo(userId))
         },
         modifier = Modifier.fillMaxSize(),
     )
@@ -2516,6 +2521,31 @@ fun NavGraphBuilder.addAddToAlbumsOptions(
         navigateToAlbum = { albumId ->
             navController.navigate(Screen.Album(albumId))
         }
+    )
+}
+
+@ExperimentalAnimationApi
+fun NavGraphBuilder.addBlackFridayPromoScreen(
+    navController: NavHostController,
+    navigateToSubscription: () -> Unit,
+) = composable(
+    route = Screen.BlackFridayPromo.route,
+    enterTransition = defaultEnterSlideTransition { true },
+    exitTransition = { ExitTransition.None },
+    popEnterTransition = { EnterTransition.None },
+    popExitTransition = defaultPopExitSlideTransition { true },
+    arguments = listOf(
+        navArgument(Screen.Picker.USER_ID) { type = NavType.StringType },
+    ),
+) {
+    BlackFridayPromoScreen(
+        navigateToSubscription = navigateToSubscription,
+        navigateBack = {
+            navController.popBackStack(
+                route = Screen.BlackFridayPromo.route,
+                inclusive = true,
+            )
+        },
     )
 }
 

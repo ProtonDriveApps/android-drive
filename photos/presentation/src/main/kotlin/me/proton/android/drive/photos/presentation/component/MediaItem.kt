@@ -263,7 +263,8 @@ fun FileOverlay(
 @Composable
 private fun PhotoDownloadIcon(file: DriveLink) {
     when (file.downloadState) {
-        is DownloadState.Downloaded -> PhotoIcon(R.drawable.ic_proton_arrow_down, null)
+        is DownloadState.Downloaded,
+        is DownloadState.Ready -> PhotoIcon(R.drawable.ic_proton_arrow_down, null)
         DownloadState.Downloading -> PhotoIconContainer {
             CircularProgressIndicator(
                 modifier = Modifier

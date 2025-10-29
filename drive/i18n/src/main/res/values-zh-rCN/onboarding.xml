@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="onboarding_action_skip">现在不要</string>
+  <string name="onboarding_title">自动保存和加密您的照片和视频</string>
+  <string name="onboarding_description_part_one">确保您的数据安全</string>
+  <string name="onboarding_description_part_two">端到端加密存储</string>
+  <string name="onboarding_description_free">免费</string>
+  <string name="onboarding_action_primary">开启相机上传</string>
+  <string name="onboarding_action_secondary">更多上传选项</string>
+</resources>

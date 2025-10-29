@@ -106,8 +106,8 @@ class PhotoRepositoryImpl @Inject constructor(
                         photoListing.toPhotoListingEntity(volumeId)
                     }
                     db.inTransaction {
-                        db.photoListingDao.insertOrUpdate(*map.keys.toTypedArray())
-                        db.relatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
+                        db.photoListingDao.insertOrIgnore(*map.keys.toTypedArray())
+                        db.relatedPhotoDao.insertOrIgnore(*map.values.flatten().toTypedArray())
                     }
                 } else {
                     val map = photoListings.associate { photoListing ->
@@ -144,8 +144,8 @@ class PhotoRepositoryImpl @Inject constructor(
             val map = photoListingDtos.associate { photoListingDto ->
                 photoListingDto.toPhotoListingEntity(volumeId, shareId)
             }
-            db.photoListingDao.insertOrUpdate(*map.keys.toTypedArray())
-            db.relatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
+            db.photoListingDao.insertOrIgnore(*map.keys.toTypedArray())
+            db.relatedPhotoDao.insertOrIgnore(*map.values.flatten().toTypedArray())
         } else {
             val map = photoListingDtos.associate { photoListingDto ->
                 photoListingDto.toTaggedPhotoListingEntity(volumeId, shareId, tag)
@@ -303,8 +303,8 @@ class PhotoRepositoryImpl @Inject constructor(
                     val map = photoListings.associate { photoListing ->
                         photoListing.toPhotoListingEntity(volumeId)
                     }
-                    db.photoListingDao.insertOrUpdate(*map.keys.toTypedArray())
-                    db.relatedPhotoDao.insertOrUpdate(*map.values.flatten().toTypedArray())
+                    db.photoListingDao.insertOrIgnore(*map.keys.toTypedArray())
+                    db.relatedPhotoDao.insertOrIgnore(*map.values.flatten().toTypedArray())
                 }
             }
     }

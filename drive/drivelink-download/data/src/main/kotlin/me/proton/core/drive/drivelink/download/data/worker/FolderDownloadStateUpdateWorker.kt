@@ -79,7 +79,7 @@ class FolderDownloadStateUpdateWorker @AssistedInject constructor(
 
     private val logTag = folderId.logTag
     override suspend fun doWork(): Result {
-        val downloadState = if (isDownloadFinished) DownloadState.Downloaded() else DownloadState.Downloading
+        val downloadState = if (isDownloadFinished) DownloadState.Ready else DownloadState.Downloading
         if (!isDownloadFinished || areAllFilesDownloaded(folderId)) {
             CoreLogger.d(logTag, "Setting downloading state to ${downloadState::class.simpleName}")
             setDownloadState(

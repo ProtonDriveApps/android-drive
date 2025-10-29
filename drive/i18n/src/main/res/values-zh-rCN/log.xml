@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="log_title">日志</string>
+  <string name="log_export_successfully_completed">日志文件已保存。</string>
+  <string name="log_level">等级</string>
+  <string name="log_category">类别</string>
+  <string name="content_description_save_log_file">保存日志文件</string>
+  <string name="content_description_more_log_options">更多日志选项</string>
+  <string name="log_level_normal">常规</string>
+  <string name="log_level_warning">警告</string>
+  <string name="log_level_error">错误</string>
+  <string name="log_origin_upload">上传</string>
+  <string name="log_origin_download">下载</string>
+  <string name="log_origin_network">应用程序接口</string>
+  <string name="log_origin_throwable">异常</string>
+  <string name="log_origin_logger">记录器</string>
+  <string name="log_origin_screen">屏幕</string>
+  <string name="log_origin_application_state">应用程序状态</string>
+  <string name="log_origin_workers">工作线程</string>
+  <string name="log_origin_backup">备份</string>
+  <string name="log_origin_user">用户</string>
+  <string name="log_origin_device">设备</string>
+  <string name="log_origin_crypto">加密货币</string>
+</resources>

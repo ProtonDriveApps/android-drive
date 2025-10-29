@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="content_description_file_preview">Fájl előnézete</string>
+  <string name="content_description_more_options">További lehetőségek megjelenítése</string>
+  <string name="preview_downloading_state">Letöltés…</string>
+  <string name="preview_processing_state">Feldolgozás…</string>
+  <string name="preview_empty">Nincs előnézet…</string>
+  <string name="title_not_found">Nem található</string>
+  <string name="proton_docs_insert_image_header_title">Kép beillesztése</string>
+  <string name="proton_docs_option_select_file">Fájl kiválasztása</string>
+  <string name="proton_docs_unsupported_file_type">Jelenleg csak képek beillesztése támogatott</string>
+  <string name="proton_docs_load_error">Dokumentum betöltése sikertelen</string>
+</resources>

@@ -40,7 +40,7 @@ class RefreshFeatureFlags @Inject constructor(
 
     suspend operator fun invoke(
         userId: UserId,
-        refreshId: RefreshId = RefreshId.DEFAULT,
+        refreshId: RefreshId = RefreshId.Default,
     ): Result<Unit> = coRunCatching {
         mutex.withLock {
             takeIf {

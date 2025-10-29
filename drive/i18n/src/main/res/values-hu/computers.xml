@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="computers_title">Számítógépek</string>
+  <string name="computers_type_windows">Windows</string>
+  <string name="computers_type_mac_os">MacOS</string>
+  <string name="computers_type_linux">Linux</string>
+  <string name="computers_type_unknown">Ismeretlen</string>
+  <string name="computers_empty_title">Nincsenek szinkronizáló számítógépek</string>
+  <string name="computers_empty_description">Az asztali alkalmazással\nszinkronizálhatja a mappákat</string>
+  <string name="computers_synced_folders_empty_title">Nincsenek szinkronizált mappák</string>
+  <string name="computers_synced_folders_empty_description">Itt jelennek meg a számítógépről\nszinkronizált mappák</string>
+  <string name="computers_synced_folders_no_folder">A számítógép eltávolítva</string>
+  <string name="computers_rename_title">Számítógép átnevezése</string>
+  <string name="computers_rename_success">Számítógép átnevezve</string>
+  <!--
+        Variable %1$s is a computer name
+        Examples:
+            "More options for My laptop"
+    -->
+  <string name="computers_content_description_list_more_options">További lehetőségek a következőhöz: %1$s</string>
+</resources>

@@ -23,5 +23,6 @@ sealed class DownloadState(val isFinished: Boolean) {
     data class Downloaded(
         val manifestSignature: String? = null,
         val signatureAddress: String? = null,
-    ) : DownloadState(true)
+    ) : DownloadState(false)
+    data object Ready : DownloadState(true)
 }

@@ -35,4 +35,6 @@ interface LogRepository {
     suspend fun toggleLogOrigin(userId: UserId, origin: Log.Origin)
 
     fun getAllDeselectedLogOrigins(userId: UserId, count: Int): Flow<Set<Log.Origin>>
+
+    suspend fun clearLogs(userId: UserId)
 }

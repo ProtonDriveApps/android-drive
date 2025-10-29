@@ -29,7 +29,7 @@ import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.file.base.domain.coroutines.FileScope
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
-import me.proton.core.drive.file.base.domain.extension.fileName
+import me.proton.core.drive.file.base.domain.extension.nameEncFile
 import me.proton.core.drive.file.base.domain.usecase.MoveToCache
 import me.proton.core.drive.linkupload.domain.entity.CacheOption
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -117,6 +117,6 @@ class ApplyCacheOption @Inject constructor(
             revisionId = revisionId,
             coroutineContext = FileScope.coroutineContext,
         ),
-        thumbnailType.fileName,
+        thumbnailType.nameEncFile,
     ).takeIf { file -> file.exists() }
 }

@@ -63,6 +63,7 @@ sealed class Event {
             ERROR_DRIVE_STORAGE,
             ERROR_LOCAL_STORAGE,
             ERROR_NOT_ALLOWED,
+            ERROR_INTEGRITY,
         }
 
     }
@@ -91,8 +92,10 @@ sealed class Event {
     data class Backup(
         val folderId: FolderId,
         val state: BackupState,
-        val totalBackupPhotos: Int,
-        val pendingBackupPhotos: Int,
+        val total: Int,
+        val preparing: Int,
+        val pending: Int,
+        val failed: Int,
     ) : Event() {
         override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}"
         override val occurredAt: TimestampMs = TimestampMs()
@@ -112,6 +115,20 @@ sealed class Event {
             PAUSE_BACKGROUND_RESTRICTIONS,
             PREPARING,
         }
+    }
+
+    @Serializable
+    data class BackupFolder(
+        val folderId: FolderId,
+        val bucketId: Int,
+        val state: Backup.BackupState,
+        val total: Int,
+        val preparing: Int,
+        val pending: Int,
+        val failed: Int,
+    ) : Event() {
+        override val id: String = "$EVENT_ID_PREFIX${this.javaClass.simpleName.uppercase()}"
+        override val occurredAt: TimestampMs = TimestampMs()
     }
 
     data class BackupEnabled(val folderId: FolderId) : Event() {

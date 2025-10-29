@@ -54,6 +54,7 @@ internal fun Throwable.toEventUploadReason(): Event.Upload.Reason = when (this) 
         hasProtonErrorCode(ProtonApiCode.EXCEEDED_QUOTA) -> Event.Upload.Reason.ERROR_DRIVE_STORAGE
         else -> Event.Upload.Reason.ERROR_OTHER
     }
+    is VerifierException, is VerificationException -> Event.Upload.Reason.ERROR_INTEGRITY
     else -> if (isErrno(OsConstants.ENOSPC)) {
         Event.Upload.Reason.ERROR_LOCAL_STORAGE
     } else {

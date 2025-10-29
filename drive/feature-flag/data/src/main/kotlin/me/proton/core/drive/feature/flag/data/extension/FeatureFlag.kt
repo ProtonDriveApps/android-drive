@@ -25,6 +25,6 @@ import me.proton.core.featureflag.domain.entity.FeatureFlag as CoreFeatureFlag
 
 fun CoreFeatureFlag.toFeatureFlag(userId: UserId) =
     FeatureFlag(
-        id = FeatureFlagId(userId, featureId.id),
+        id = FeatureFlagId.Unleash(userId, featureId.id),
         state = if (value) FeatureFlag.State.ENABLED else FeatureFlag.State.DISABLED,
     )

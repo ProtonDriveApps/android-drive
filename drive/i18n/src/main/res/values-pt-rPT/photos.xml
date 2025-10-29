@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">Fotografias</string>
+  <string name="photos_permissions_title">Encripte e faça uma cópia de segurança das suas fotografias e vídeos</string>
+  <string name="photos_permissions_section_1_title">Proteja as suas memórias</string>
+  <string name="photos_permissions_section_1_description">As suas fotografias são encriptadas de ponto-a-ponto, garantindo privacidade total.</string>
+  <string name="photos_permissions_section_2_title">Cópias de segurança automáticas</string>
+  <string name="photos_permissions_section_2_description">São feitas cópias de segurança das suas fotografias regularmente no seu formato original através de WiFi.</string>
+  <string name="photos_permissions_action">Ativar cópia de segurança</string>
+  <string name="photos_permission_rational_img_text">Permitir acesso</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s precisa de acesso total às suas fotografias</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">Isto é necessário para garantir que uma cópia de segurança de todas as suas fotografias é feita e estão disponíveis em todos os seus dispositivos.\n%1$s leva a sua privacidade a sério e apenas acede às suas fotografias com o propósito de sincronizar e fazer a cópia de segurança.</string>
+  <string name="photos_permission_rational_confirm_action">Definições</string>
+  <string name="photos_permission_rational_dismiss_action">Agora não</string>
+  <string name="photos_empty_loading_label_encrypted">Encriptado de ponta a ponta</string>
+  <string name="photos_empty_loading_label_progress">A cópia de segurança está em andamento.\nPode demorar algum tempo.</string>
+  <string name="photos_separator_current_month">Este mês</string>
+  <string name="photos_encrypted_footer">Encriptado de ponta a ponta</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="one">A realizar uma cópia de segurança dos itens da pasta %2$d: %1$s</item>
+    <item quantity="other">A realizar uma cópia de segurança dos itens das pastas %2$d: %1$s</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">Nenhuma pasta %1$s foi encontrada para a cópia de segurança.</string>
+  <string name="photos_error_backup_disabled">Cópia de segurança desativada.</string>
+  <string name="photos_error_backup_disabled_action">Ativar</string>
+  <string name="photos_error_backup_missing_folder">A pasta de cópia de segurança não foi encontrada.</string>
+  <string name="photos_error_backup_failed">A cópia de segurança falhou.</string>
+  <string name="photos_error_backup_temporarily_disabled">O backup de fotos está temporariamente desativado.</string>
+  <string name="photos_error_missing_permissions">Permissões em falta.</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">Para cópias de segurança automáticas e contínuas, permita que %1$s aceda a Todas as Fotografias nas definições.</string>
+  <string name="photos_error_waiting_connectivity">Sem ligação à internet</string>
+  <string name="photos_error_waiting_wifi_connectivity">A aguardar por Wi-Fi</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">Utilizar os dados móveis</string>
+  <string name="photos_error_local_storage">Capacidade de armazenamento do dispositivo está cheia</string>
+  <string name="photos_error_local_storage_description">Para continuar a cópia de segurança, precisa de libertar espaço de armazenamento no seu dispositivo.</string>
+  <string name="photos_error_background_restrictions">Defina o uso da bateria como «Sem restrições» para a atividade da aplicação em segundo plano.</string>
+  <string name="photos_error_background_restrictions_description">Para backups em segundo plano e contínuos, ajuste as definições da bateria ou abra a aplicação com frequência.</string>
+  <string name="photos_error_background_restrictions_action">Definições</string>
+  <string name="photos_empty_title">Ainda sem cópias de segurança.</string>
+  <string name="photos_empty_description">Assim que tenha fotografias ou vídeos no seu dispositivo, eles vão aparecer aqui.</string>
+  <string name="photos_backup_title">Cópia de segurança de fotografias</string>
+  <string name="photos_backup_option_mobile_data">Utilizar os dados móveis para a cópia de segurança das fotos</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">Desativar a otimização da bateria</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">Permite um backup contínuo quando a aplicação está a ser executada em segundo plano.</string>
+  <string name="photos_backup_in_app_notification_turned_on">A cópia de segurança de fotografias está ativada.</string>
+  <string name="photos_backup_in_app_notification_turned_off">A cópia de segurança de fotografias está desativada.</string>
+  <string name="photos_backup_state_completed">Cópia de segurança concluída.</string>
+  <string name="photos_backup_state_uncompleted">Cópia de segurança finalizada com problemas</string>
+  <string name="photos_backup_state_uncompleted_action">Resolver</string>
+  <string name="photos_backup_state_preparing">Preparação para a cópia de segurança</string>
+  <string name="photos_backup_state_encrypting">A encriptar…</string>
+  <string name="photos_backup_state_uploading">A efetuar cópia de segurança…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="one">%1$s item restante</item>
+    <item quantity="other">%1$s itens restantes</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="one">%1$s item guardado</item>
+    <item quantity="other">%1$s itens guardados</item>
+  </plurals>
+  <string name="photos_upsell_title">Nunca fique sem espaço de armazenamento</string>
+  <string name="photos_upsell_description">Melhore o seu plano agora e mantenha as suas memórias encriptadas e seguras.</string>
+  <string name="photos_upsell_dismiss_action">Agora não</string>
+  <string name="photos_filter_favorite">Favoritos</string>
+  <string name="photos_filter_screenshots">Capturas de ecrã</string>
+  <string name="photos_filter_videos">Vídeos</string>
+  <string name="photos_filter_livephotos">Fotos ao vivo</string>
+  <string name="photos_filter_motionphotos">Fotos de Movimento</string>
+  <string name="photos_filter_selfies">Selfies</string>
+  <string name="photos_filter_portraits">Retratos</string>
+  <string name="photos_filter_bursts">Sequências</string>
+  <string name="photos_filter_panoramas">Panoramas</string>
+  <string name="photos_filter_raws">RAW</string>
+  <string name="photos_favorite_empty_title">Sem favoritos</string>
+  <string name="photos_favorite_empty_description">As suas fotos favoritas aparecerão aqui.</string>
+  <string name="photos_screenshots_empty_title">Sem capturas de ecrã</string>
+  <string name="photos_screenshots_empty_description">As suas capturas de ecrã aparecerão aqui.</string>
+  <string name="photos_videos_empty_title">Sem vídeos</string>
+  <string name="photos_videos_empty_description">Os seus vídeos aparecerão aqui.</string>
+  <string name="photos_livephotos_empty_title">Sem fotos ao vivo</string>
+  <string name="photos_livephotos_empty_description">As suas fotos ao vivo aparecerão aqui.</string>
+  <string name="photos_motionphotos_empty_title">Sem fotos em movimento</string>
+  <string name="photos_motionphotos_empty_description">As suas fotos em movimento aparecerão aqui.</string>
+  <string name="photos_selfies_empty_title">Sem selfies</string>
+  <string name="photos_selfies_empty_description">As suas selfies aparecerão aqui.</string>
+  <string name="photos_portraits_empty_title">Sem retratos</string>
+  <string name="photos_portraits_empty_description">As suas fotos de retrato aparecerão aqui.</string>
+  <string name="photos_bursts_empty_title">Sem rajadas</string>
+  <string name="photos_bursts_empty_description">As suas rajadas de fotos aparecerão aqui.</string>
+  <string name="photos_panoramas_empty_title">Sem panorâmicas</string>
+  <string name="photos_panoramas_empty_description">As suas fotos panorâmicas aparecerão aqui.</string>
+  <string name="photos_raws_empty_title">Sem RAW</string>
+  <string name="photos_raws_empty_description">As suas fotos RAW aparecerão aqui.</string>
+  <string name="photos_share_migration_in_progress_title">A configurar álbuns e filtros</string>
+  <string name="photos_share_migration_in_progress_description">Se tiver uma biblioteca de fotos grande, pode demorar algum tempo. Pode fechar a aplicação. Trabalharemos nisso em segundo plano.</string>
+  <string name="photos_share_migration_needed_banner_title">Uma migração de dados é necessária.</string>
+  <string name="photos_share_migration_needed_banner_description">Após a migração, pode usar novas funcionalidades, como os filtros e álbuns de fotos</string>
+  <string name="photos_tags_migration_title">Migração de tags</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos migrates
+        Example:
+           Finished, 1 file were migrated.
+           Finished, 12 345 files were migrated.
+    -->
+  <plurals name="photos_tags_migration_finished">
+    <item quantity="one">Concluído, %1$s ficheiro foi transferido.</item>
+    <item quantity="other">Concluído, %1$s ficheiros foram transferidos.</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos to migrate
+        Variable %1$s is a quantity (formatted) of photos waiting for download
+        Example:
+           Ongoing, migrating 1 file, 0 waiting for download.
+           Ongoing, migrating 12 345 files, 123 waiting for download.
+    -->
+  <plurals name="photos_tags_migration_ongoing">
+    <item quantity="one">A migrar %1$s ficheiro e %2$s pendente de transferência</item>
+    <item quantity="other">A migrar %1$s ficheiros e %2$s pendente de transferência</item>
+  </plurals>
+</resources>

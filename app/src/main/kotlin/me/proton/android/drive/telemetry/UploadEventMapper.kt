@@ -64,6 +64,7 @@ class UploadEventMapper(
                             Reason.ERROR_DRIVE_STORAGE -> PhotosEvent.Reason.FAILED_DRIVE_STORAGE
                             Reason.ERROR_LOCAL_STORAGE -> PhotosEvent.Reason.FAILED_LOCAL_STORAGE
                             Reason.ERROR_NOT_ALLOWED -> PhotosEvent.Reason.FAILED_NOT_ALLOWED
+                            Reason.ERROR_INTEGRITY -> PhotosEvent.Reason.FAILED_INTEGRITY
                         },
                         mediaType = when (uploadFileLink.mimeType.toFileTypeCategory()) {
                             FileTypeCategory.Image -> PhotosEvent.MediaType.PHOTO

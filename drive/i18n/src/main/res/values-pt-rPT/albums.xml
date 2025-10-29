@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2025 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="albums_title">Álbuns</string>
+  <string name="albums_new_album_name_hint">Nome do álbum</string>
+  <string name="albums_new_album_created_successfully">O álbum foi criado.</string>
+  <string name="albums_filter_my_albums">Os meus álbuns</string>
+  <!--
+        Variable %1$s is a number of photos in the album
+        Example:
+            "1 item"
+            "345 items"
+    -->
+  <plurals name="albums_photo_count">
+    <item quantity="one"> %1$s item</item>
+    <item quantity="other">%1$s itens</item>
+  </plurals>
+  <string name="albums_delete_album_action">Eliminar o álbum</string>
+  <string name="albums_delete_album_dialog_title">Eliminar o álbum?</string>
+  <string name="albums_delete_album_dialog_description">Isto apenas eliminará o álbum. As suas fotos permanecerão na sua cronologia. Esta ação não pode ser desfeita.</string>
+  <string name="albums_delete_album_dialog_description_with_children">Algumas fotografias neste álbum não são guardadas na sua cronologia. Apagar este álbum apagará permanentemente essas fotos.\nGostaria de as guardar antes de as remover?</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">Eliminar sem guardar</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">Guardar as fotos e eliminar</string>
+  <string name="albums_leave_album_dialog_title">Sair do álbum?</string>
+  <!--
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">Tem a certeza de que pretende sair do álbum «%1$s»?\nIrá perder o acesso às fotografias que ainda não guardou.</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">Sair sem guardar</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">Guardar as fotos e sair</string>
+  <string name="albums_add_zero_to_album_button">Adicionar ao álbum</string>
+  <!--
+        Variable %1$d is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="one">Adicionar %1$d ao álbum</item>
+    <item quantity="other">Adicionar %1$d ao álbum</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">Definir como capa do álbum</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="one">%1$d item adicionado ao álbum</item>
+    <item quantity="other">%1$d itens adicionados ao álbum</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="one">%1$d item já existe</item>
+    <item quantity="other">%1$d itens já existem</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="one">Erro com %1$d item</item>
+    <item quantity="other">Erro com %1$d itens</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="one">%1$d item adicionado à sua unidade</item>
+    <item quantity="other">%1$d itens adicionados à sua unidade</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="one">%1$d item já existe</item>
+    <item quantity="other">%1$d itens já existem</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="one">Erro com %1$d item</item>
+    <item quantity="other">Erro com %1$d itens</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="one">%1$d item removido do álbum</item>
+    <item quantity="other">%1$d itens removidos do álbum</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="one">Erro com %1$d item</item>
+    <item quantity="other">Erro com %1$d itens</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">Sem fotos</string>
+  <string name="albums_empty_album_screen_description">As fotos que você ou outros membros adicionarem aparecerão aqui.</string>
+  <string name="albums_empty_albums_list_screen_title">Sem álbuns</string>
+  <string name="albums_empty_albums_list_screen_description">Os álbuns que criar ou juntar aparecerão aqui</string>
+  <string name="albums_empty_albums_my_albums_screen_description">Os álbuns que criar aparecerão aqui.</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">Sem álbuns partilhados</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">Os álbuns que partilhou aparecerão aqui.</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">Não existem álbuns partilhados comigo.</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">Os álbuns partilhados consigo irão aparecer aqui.</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="one">%1$d álbum partilhado consigo</item>
+    <item quantity="other">%1$d álbuns partilhados consigo</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">Partilhar via</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">Adicionar ao álbum partilhado</string>
+  <string name="albums_share_multiple_photos_options_album_details">Álbum partilhado</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">Novo álbum partilhado</string>
+  <string name="albums_add_to_album_start_message">A adicionar fotos ao álbum encriptado. Mantenha a aplicação aberta enquanto o processo decorre.</string>
+  <string name="albums_add_to_albums_options_new_album">Adicionar ao novo álbum</string>
+  <string name="albums_add_to_albums_options_shared_album">O meu álbum partilhado</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">Por %1$s</string>
+</resources>

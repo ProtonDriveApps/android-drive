@@ -29,7 +29,7 @@ import me.proton.core.drive.crypto.domain.usecase.upload.EncryptUploadThumbnail
 import me.proton.core.drive.crypto.domain.usecase.upload.ManifestSignature
 import me.proton.core.drive.file.base.domain.entity.Block
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
-import me.proton.core.drive.file.base.domain.extension.fileName
+import me.proton.core.drive.file.base.domain.extension.nameEncFile
 import me.proton.core.drive.file.base.domain.extension.index
 import me.proton.core.drive.file.base.domain.extension.sha256
 import me.proton.core.drive.file.base.domain.extension.toBlockType
@@ -197,7 +197,7 @@ class EncryptBlocks @Inject constructor(
         ).getOrThrow()?.let { thumbnail ->
             val encryptedUploadThumbnail = File(
                 getBlockFolder(userId, this).getOrThrow(),
-                type.fileName,
+                type.nameEncFile,
             ).apply { createNewFile() }
             encryptUploadThumbnail(
                 contentKey = contentKey,

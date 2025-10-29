@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="settings_app_lock">应用锁</string>
+  <string name="settings_section_security">安全</string>
+  <string name="settings_section_about">关于</string>
+  <string name="settings_section_statistics">使用统计数据</string>
+  <string name="settings_auto_lock">自动锁定应用</string>
+  <string name="settings_auto_lock_durations_immediately">立刻</string>
+  <plurals name="settings_auto_lock_durations_seconds">
+    <item quantity="other">%1$d 秒后</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_minutes">
+    <item quantity="other">%1$d 分钟后</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_hours">
+    <item quantity="other">%1$d 小时后</item>
+  </plurals>
+  <plurals name="settings_auto_lock_durations_days">
+    <item quantity="other">%1$d 天后</item>
+  </plurals>
+  <string name="settings_section_backup">备份</string>
+  <string name="settings_photos_backup_folders_title">上传自</string>
+  <!--
+        Variable %1$s is the default folder name (Camera)
+        Examples:
+            "Your Camera folder is backed up automatically."
+    -->
+  <string name="settings_photos_backup_folders_description">您的%1$s文件夹已自动开启备份。您可以选择其他要备份的文件夹，其中的照片将出现在照片栏中。</string>
+  <string name="settings_photos_backup_folders_not_found">找不到文件夹</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_title">停止备份文件夹？</string>
+  <!--
+        Variable %1$s is the folder name
+        Examples:
+            "Camera will no longer be backing up to the cloud."
+    -->
+  <string name="settings_photos_backup_folders_confirm_stop_sync_description">%1$s 将不再备份到云端。已备份的照片不会被删除。</string>
+  <string name="settings_photos_backup_folders_confirm_stop_sync_confirm_action">停止备份</string>
+  <plurals name="settings_photos_backup_folders_description_photos">
+    <item quantity="other">%1$d 张照片</item>
+  </plurals>
+  <plurals name="settings_photos_backup_folders_description_videos">
+    <item quantity="other">%1$d 个视频</item>
+  </plurals>
+  <!--
+        Variable %1$s is an entry in a list
+        Examples:
+            "Privacy Policy (opens in a browser)"
+    -->
+  <string name="settings_external_link_format">%1$s (在浏览器中打开)</string>
+  <string name="settings_section_appearance_settings">外观</string>
+  <string name="settings_theme_entry">主题</string>
+  <string name="settings_home_tab">默认首页选项卡</string>
+  <string name="settings_section_system">系统</string>
+  <string name="settings_clear_local_cache_entry">清除本地缓存</string>
+  <string name="settings_show_log">显示日志</string>
+</resources>

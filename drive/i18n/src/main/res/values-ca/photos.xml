@@ -127,7 +127,7 @@
   <string name="photos_filter_bursts">Ràfegues</string>
   <string name="photos_filter_panoramas">Panoràmiques</string>
   <string name="photos_filter_raws">RAW</string>
-  <string name="photos_favorite_empty_title">Cap favorit</string>
+  <string name="photos_favorite_empty_title">No hi ha favorits</string>
   <string name="photos_favorite_empty_description">Les vostres fotos preferides apareixeran aquí.</string>
   <string name="photos_screenshots_empty_title">Cap captura de pantalla</string>
   <string name="photos_screenshots_empty_description">Les vostres captures de pantalla apareixeran aquí.</string>
@@ -143,8 +143,8 @@
   <string name="photos_portraits_empty_description">Les vostres fotos de retrat apareixeran aquí.</string>
   <string name="photos_bursts_empty_title">Cap ràfega</string>
   <string name="photos_bursts_empty_description">Les vostres ràfegues de fotos apareixeran aquí.</string>
-  <string name="photos_panoramas_empty_title">Cap panoràmica</string>
-  <string name="photos_panoramas_empty_description">Les vostres fotos panoràmiques apareixeran aquí.</string>
+  <string name="photos_panoramas_empty_title">Sense panoràmiques</string>
+  <string name="photos_panoramas_empty_description">Les fotos panoràmiques apareixeran aquí.</string>
   <string name="photos_raws_empty_title">Cap RAW</string>
   <string name="photos_raws_empty_description">Les vostres fotos RAW apareixeran aquí.</string>
   <string name="photos_share_migration_in_progress_title">Configuració d’àlbums i filtres</string>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">应用</string>
+  <string name="common_more">更多</string>
+  <string name="common_mime_type">MIME 类型</string>
+  <string name="common_name">名称</string>
+  <string name="common_no">否</string>
+  <string name="common_share">分享</string>
+  <string name="common_shared">已共享</string>
+  <string name="common_size">大小</string>
+  <string name="common_type">类型</string>
+  <string name="common_yes">是</string>
+  <string name="common_download">下载</string>
+  <string name="common_downloading">下载中</string>
+  <string name="common_link">链接</string>
+  <string name="common_password">密码</string>
+  <string name="common_retry">重试</string>
+  <string name="common_settings">设置</string>
+  <string name="common_trash">回收站</string>
+  <string name="common_uploading">上传中</string>
+  <string name="common_on">已开启</string>
+  <string name="common_off">已关闭</string>
+  <string name="common_all">全部</string>
+  <string name="common_unknown">未知</string>
+  <string name="common_month">每月</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">好的</string>
+  <string name="common_close_action">关闭</string>
+  <string name="common_retry_action">重试</string>
+  <string name="common_undo_action">撤销</string>
+  <string name="common_rename_action">重命名</string>
+  <string name="common_send_action">发送</string>
+  <string name="common_create_action">创建</string>
+  <string name="common_cancel_action">取消</string>
+  <string name="common_cancel_all_action">取消所有</string>
+  <string name="common_got_it_action">了解</string>
+  <string name="common_next_action">下一步</string>
+  <string name="common_save_action">保存</string>
+  <string name="common_discard_action">舍弃</string>
+  <string name="common_skip_action">跳过</string>
+  <string name="common_delete_permanently_action">永久删除</string>
+  <string name="common_make_available_offline_action">可在离线时使用</string>
+  <string name="common_remove_from_offline_available_action">从离线可用中移除</string>
+  <string name="common_get_link_action">获取链接</string>
+  <string name="common_manage_link_action">管理链接</string>
+  <string name="common_manage_access_action">管理访问权限</string>
+  <string name="common_copy_link_action">复制链接</string>
+  <string name="common_stop_sharing_action">停止分享</string>
+  <string name="common_open_in_browser_action">在浏览器中打开</string>
+  <string name="common_done_action">已完成</string>
+  <string name="common_create_album_action">创建相册</string>
+  <string name="common_set_as_album_cover_action">设为相册封面</string>
+  <string name="common_add_action">添加</string>
+  <string name="common_remove_from_album_action">从相册中移除</string>
+  <string name="common_leave_album_action">退出相册</string>
+  <string name="common_start_action">开始</string>
+  <string name="common_save_all_action">全部保存</string>
+  <string name="common_add_to_albums_action">添加到相册</string>
+  <string name="common_tag_photo_action">扫描照片以查找标签</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">音频</string>
+  <string name="common_type_calendar">iCalendar 格式</string>
+  <string name="common_type_doc">文档</string>
+  <string name="common_type_image">图片</string>
+  <string name="common_type_keynote">Keynote 文件</string>
+  <string name="common_type_numbers">Numbers 文件</string>
+  <string name="common_type_pages">Pages 文件</string>
+  <string name="common_type_pdf">PDF 文档</string>
+  <string name="common_type_ppt">演示文稿</string>
+  <string name="common_type_proton_doc">Proton 文档</string>
+  <string name="common_type_proton_sheet">Proton 电子表格</string>
+  <string name="common_type_text">文本</string>
+  <string name="common_type_trustedkey">信任的密钥</string>
+  <string name="common_type_unknown">二进制文件</string>
+  <string name="common_type_video">视频</string>
+  <string name="common_type_xls">电子表格</string>
+  <string name="common_type_xml">XML 文件</string>
+  <string name="common_type_zip">压缩文件</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">名称不能为空</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">名称不得超过 %1$d 个字符</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">名称不能包含不可见字符以及\"%1$s\" 和 \"%2$s\" 符号</string>
+  <string name="common_error_name_periods">名称不能为\". \"或\"..\"</string>
+  <string name="common_error_no_internet">无网络连接</string>
+  <string name="common_error_http_5xx">服务器出现错误</string>
+  <string name="common_error_internal">发生内部错误</string>
+  <string name="common_error_crypto">加解密失败</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">加解密失败: %1$s</string>
+  <string name="common_error_io">输入或输出操作失败</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">输入或输出操作失败: %1$s</string>
+  <string name="common_error_security">发生安全错误</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">发生安全错误: %1$s</string>
+  <string name="common_error_sdk">发生 SDK 错误</string>
+  <!--
+        Variable %1$s is the non-null message from SDK exception
+        Example:
+            "SDK error occurred:  file or folder with that name already exists"
+    -->
+  <string name="common_error_sdk_with_message">发生 SDK 错误: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s 已下载</string>
+  <string name="common_sign_out">退出账户</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="other">已选%1$d项</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s 已复制到剪贴板</string>
+  <string name="common_in_app_notification_download_started">下载开始</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s 已下载</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="other">%1$d 个文件已下载</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">下载 %1$s 失败</string>
+  <string name="common_in_app_notification_download_failed">下载失败</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">系统找不到任何可以 %1$s 的应用程序</string>
+  <!-- endregion -->
+  <!-- endregion -->
+</resources>

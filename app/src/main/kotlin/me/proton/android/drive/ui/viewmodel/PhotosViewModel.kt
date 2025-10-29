@@ -37,7 +37,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -125,6 +124,7 @@ import me.proton.core.drive.drivelink.selection.domain.usecase.SelectAll
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.driveAlbumsDisabled
 import me.proton.core.drive.feature.flag.domain.extension.off
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlagFlow
+import me.proton.core.drive.feature.flag.domain.usecase.IsBlackFridayPromoEnabled
 import me.proton.core.drive.files.domain.usecase.ToFirstItemMetricsNotifier
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.FolderId
@@ -193,6 +193,7 @@ class PhotosViewModel @Inject constructor(
     private val checkMissingFolders: CheckMissingFolders,
     private val cancelUserMessage: CancelUserMessage,
     private val toFirstItemMetricsNotifier: ToFirstItemMetricsNotifier,
+    private val isBlackFridayPromoEnabled: IsBlackFridayPromoEnabled,
     val backupPermissionsViewModel: BackupPermissionsViewModel,
 ) : PhotosPickerAndSelectionViewModel(
         savedStateHandle = savedStateHandle,
@@ -223,9 +224,6 @@ class PhotosViewModel @Inject constructor(
         get() = selectedOptionsAction {
             viewEvent?.onSelectedOptions?.invoke()
         }
-    private val openSubscriptionAction = getSubscriptionAction {
-        viewEvent?.onGetStorage?.invoke()
-    }
     private val topBarActions: MutableStateFlow<Set<Action>> = MutableStateFlow(emptySet())
 
     private val listContentState = MutableStateFlow<ListContentState>(ListContentState.Loading)
@@ -432,7 +430,8 @@ class PhotosViewModel @Inject constructor(
         userManager.observeUser(userId),
         isFastScrollEnabled,
         photosFilters,
-    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, albumsFeatureFlagOn, hasPhotoVolume, user, isFastScrollEnabled, photosFilters ->
+        flowOf { isBlackFridayPromoEnabled(userId) },
+    ) { selected, contentState, backupState, count, firstVisibleItemIndex, forceStatusExpand, notificationDotRequested, photoListingsFilter, albumsFeatureFlagOn, hasPhotoVolume, user, isFastScrollEnabled, photosFilters, isBlackFridayPromoEnabled ->
         val listContentState = when (contentState) {
             is ListContentState.Empty -> contentState.copy(
                 imageResId = emptyStateImageResId,
@@ -442,7 +441,11 @@ class PhotosViewModel @Inject constructor(
         if (selected.isEmpty()) {
             topBarActions.value = setOfNotNull(
                 takeIf { user != null && user.isFree }
-                    ?.let { openSubscriptionAction },
+                    ?.let {
+                        getSubscriptionAction(isBlackFridayPromoEnabled) {
+                            viewEvent?.onGetStorage?.invoke()
+                        }
+                    },
             )
         } else {
             topBarActions.value = setOf(selectAllAction, selectedOptionsAction)
@@ -513,6 +516,7 @@ class PhotosViewModel @Inject constructor(
         navigateToPhotosIssues: (FolderId) -> Unit,
         navigateToPhotosUpsell: () -> Unit,
         navigateToBackupSettings: () -> Unit,
+        navigateToBlackFridayPromo: () -> Unit,
         lifecycle: Lifecycle,
     ): PhotosViewEvent = object : PhotosViewEvent {
 
@@ -573,7 +577,7 @@ class PhotosViewModel @Inject constructor(
         override val onRetry = this@PhotosViewModel::onRetry
         override val onScroll = this@PhotosViewModel::onScroll
         override val onStatusClicked = this@PhotosViewModel::onStatusClicked
-        override val onGetStorage: () -> Unit = navigateToSubscription
+        override val onGetStorage: () -> Unit = { onGetStorage(navigateToSubscription, navigateToBlackFridayPromo) }
         override val onResolveMissingFolder: () -> Unit = navigateToBackupSettings
         override val onChangeNetwork: () -> Unit = navigateToBackupSettings
         override val onIgnoreBackgroundRestrictions: (Context) -> Unit = {context ->
@@ -602,6 +606,16 @@ class PhotosViewModel @Inject constructor(
         }
     }.also { viewEvent ->
         this.viewEvent = viewEvent
+    }
+
+    private fun onGetStorage(navigateToSubscription: () -> Unit, navigateToBlackFridayPromo: () -> Unit) {
+        viewModelScope.launch {
+            if (isBlackFridayPromoEnabled(userId)) {
+                navigateToBlackFridayPromo()
+            } else {
+                navigateToSubscription()
+            }
+        }
     }
 
     private fun onPermissionsChanged(backupPermissions: BackupPermissions) {
@@ -713,7 +727,7 @@ class PhotosViewModel @Inject constructor(
     }
 
     private fun BackupStatus.isRunning(): Boolean = when (this) {
-        is BackupStatus.Complete -> totalBackupPhotos > 0
+        is BackupStatus.Complete -> total > 0
         else -> true
     }
 

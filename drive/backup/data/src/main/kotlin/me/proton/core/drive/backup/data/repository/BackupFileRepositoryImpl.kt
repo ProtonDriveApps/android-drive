@@ -164,19 +164,19 @@ class BackupFileRepositoryImpl @Inject constructor(
             shareId = folderId.shareId.id,
             folderId = folderId.id,
         ).distinctUntilChanged().map { progress ->
-            val preparing = progress.filter { it.backupFileState in listOf(IDLE, POSSIBLE_DUPLICATE) }.sumOf { it.count }
-            val pending = progress.filter { it.backupFileState in listOf(READY, ENQUEUED) }.sumOf { it.count }
-            val failed = progress.filter { it.backupFileState in listOf(FAILED) }.sumOf { it.count }
-            val total = progress.filterNot { it.backupFileState in listOf(DUPLICATED) }.sumOf { it.count }
-            when {
-                preparing != 0 -> BackupStatus.Preparing(total, preparing)
-                pending == 0 -> if (failed == 0) {
-                    BackupStatus.Complete(total)
-                } else {
-                    BackupStatus.Uncompleted(total, failed)
-                }
-                else -> BackupStatus.InProgress(total, pending)
-            }
+            progress.toEntity()
+        }
+    }
+
+    override fun getBackupStatus(backupFolder: BackupFolder): Flow<BackupStatus> {
+        val folderId = backupFolder.folderId
+        return db.backupFileDao.getProgression(
+            userId = folderId.userId,
+            shareId = folderId.shareId.id,
+            folderId = folderId.id,
+            bucketId = backupFolder.bucketId,
+        ).distinctUntilChanged().map { progress ->
+            progress.toEntity()
         }
     }
 

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2025 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="bf_promo_storage_title">1TB 저장공간: 현재 요금제의 200배</string>
+  <string name="bf_promo_document_title">온라인 문서 편집기</string>
+  <string name="bf_promo_secure_title">안전한 파일 저장공간 및 공유</string>
+  <string name="bf_promo_private_title">개인 사진 백업</string>
+  <string name="bf_promo_get_deal_button">혜택 받기</string>
+  <string name="bf_promo_drawer_title">블랙 프라이데이 세일</string>
+</resources>

@@ -51,6 +51,7 @@ class LogEventHandler @Inject constructor(
         is Event.ApplicationState -> toLog(userId)
         is Event.Workers -> toLog(userId)
         is Event.Backup -> toLog(userId)
+        is Event.BackupFolder -> toLog(userId)
         is Event.BackupCompleted -> toLog(userId)
         is Event.BackupDisabled -> toLog(userId)
         is Event.BackupEnabled -> toLog(userId)

@@ -114,6 +114,7 @@ fun PhotosAndAlbumsScreen(
     navigateToCreateNewAlbum: () -> Unit,
     navigateToAlbum: (AlbumId) -> Unit,
     navigateToUserInvitation: (Boolean) -> Unit,
+    navigateToBlackFridayPromo: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<PhotosAndAlbumsViewModel>()
@@ -145,6 +146,7 @@ fun PhotosAndAlbumsScreen(
                 navigateToPhotosUpsell = navigateToPhotosUpsell,
                 navigateToBackupSettings = navigateToBackupSettings,
                 navigateToNotificationPermissionRationale = navigateToNotificationPermissionRationale,
+                navigateToBlackFridayPromo = navigateToBlackFridayPromo,
                 defaultTitle = defaultTitle,
             )
 
@@ -240,6 +242,7 @@ fun PhotosTab(
     navigateToPhotosUpsell: () -> Unit,
     navigateToBackupSettings: () -> Unit,
     navigateToNotificationPermissionRationale: () -> Unit,
+    navigateToBlackFridayPromo: () -> Unit,
     defaultTitle: @Composable (Modifier) -> Unit,
 ) {
     val viewModel = hiltViewModel<PhotosViewModel>()
@@ -255,6 +258,7 @@ fun PhotosTab(
             navigateToPhotosIssues = navigateToPhotosIssues,
             navigateToPhotosUpsell = navigateToPhotosUpsell,
             navigateToBackupSettings = navigateToBackupSettings,
+            navigateToBlackFridayPromo = navigateToBlackFridayPromo,
             lifecycle = lifecycle,
         )
     }

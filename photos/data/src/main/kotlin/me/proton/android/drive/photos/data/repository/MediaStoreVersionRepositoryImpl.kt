@@ -19,7 +19,6 @@
 package me.proton.android.drive.photos.data.repository
 
 import android.content.Context
-import android.os.Build
 import android.provider.MediaStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.android.drive.photos.data.db.PhotosDatabase
@@ -33,32 +32,19 @@ class MediaStoreVersionRepositoryImpl @Inject constructor(
     private val database: PhotosDatabase,
 ) : MediaStoreVersionRepository {
     override suspend fun getLastVersion(userId: UserId): String? =
-        database.mediaStoreVersionDao.get(userId, volumeName)?.version
+        database.mediaStoreVersionDao.get(userId, MediaStore.VOLUME_EXTERNAL)?.version
 
     override suspend fun setLastVersion(userId: UserId, version: String?) {
         database.mediaStoreVersionDao.insertOrUpdate(
             MediaStoreVersionEntity(
                 userId = userId,
-                volumeName = volumeName,
+                volumeName = MediaStore.VOLUME_EXTERNAL,
                 version = version
             )
         )
     }
 
-    override suspend fun getCurrentVersion(): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL)
-        } else {
-            MediaStore.getVersion(context)
-        }
-    }
-
-    companion object {
-        val volumeName = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.VOLUME_EXTERNAL
-        } else {
-            "external_primary"
-        }
-    }
+    override suspend fun getCurrentVersion(): String =
+        MediaStore.getVersion(context, MediaStore.VOLUME_EXTERNAL)
 
 }

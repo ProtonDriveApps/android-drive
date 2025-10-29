@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2025 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="albums_title">相册</string>
+  <string name="albums_new_album_name_hint">相册名称</string>
+  <string name="albums_new_album_created_successfully">创建的相册</string>
+  <string name="albums_filter_my_albums">我的相册</string>
+  <!--
+        Variable %1$s is a number of photos in the album
+        Example:
+            "1 item"
+            "345 items"
+    -->
+  <plurals name="albums_photo_count">
+    <item quantity="other">%1$s 项</item>
+  </plurals>
+  <string name="albums_delete_album_action">删除相册</string>
+  <string name="albums_delete_album_dialog_title">删除相册？</string>
+  <string name="albums_delete_album_dialog_description">这只会删除相册。您的照片将保留在时间轴中。此操作无法撤销。</string>
+  <string name="albums_delete_album_dialog_description_with_children">本相册中的某些照片不会保存到您的时间轴。删除此相册将永久删除这些照片。\n您想在删除前保存它们吗？</string>
+  <string name="albums_delete_album_dialog_delete_without_saving_action">不保存且删除</string>
+  <string name="albums_delete_album_dialog_save_and_delete_action">保存照片并删除</string>
+  <string name="albums_leave_album_dialog_title">退出相册？</string>
+  <!--
+        Variable %1$s is an album name
+        Example:
+            "Are you sure that you want to leave album "Greece 2024"?\nYou will lose access to photos you haven't saved yet."
+    -->
+  <string name="albums_leave_album_dialog_description">您确定要离开相册 “%1$s” 吗？\n您将无法访问未保存的照片。</string>
+  <string name="albums_leave_album_dialog_leave_without_saving_action">退出但不保存</string>
+  <string name="albums_leave_album_dialog_save_and_leave_action">保存图片并退出</string>
+  <string name="albums_add_zero_to_album_button">添加到相册</string>
+  <!--
+        Variable %1$d is a number of photos to add to album
+        Example:
+            "Add 1 to album"
+            "Add 33 to album"
+    -->
+  <plurals name="albums_add_non_zero_to_album_button">
+    <item quantity="other">添加 %1$d 到相册</item>
+  </plurals>
+  <string name="albums_set_album_as_cover_success">设为相册封面</string>
+  <!--
+        Variable %1$d is a number of photos added to album
+        Example:
+            "1 item added to album"
+            "17 items added to album"
+    -->
+  <plurals name="in_app_notification_add_to_album_success">
+    <item quantity="other">%1$d 个项目添加到相册</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_album_already_exists">
+    <item quantity="other">%1$d 个项目已存在</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_album_failed">
+    <item quantity="other">%1$d 个项目处理失败</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos added to your Drive
+        Example:
+            "1 item added to your Drive"
+            "17 items added to your Drive"
+    -->
+  <plurals name="in_app_notification_add_to_stream_success">
+    <item quantity="other">%1$d 项已添加到您的云盘</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because they already exist
+        Example:
+            "1 item already exists"
+            "7 items already exist"
+    -->
+  <plurals name="in_app_notification_add_to_stream_already_exists">
+    <item quantity="other">%1$d 个项目已存在</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not added because adding failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_add_to_stream_failed">
+    <item quantity="other">%1$d 个项目处理失败</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos removed from album
+        Example:
+            "1 item removed from album"
+            "13 items removed from album"
+    -->
+  <plurals name="in_app_notification_remove_from_album_success">
+    <item quantity="other">%1$d 个项目已从相册中移除</item>
+  </plurals>
+  <!--
+        Variable %1$d is a number of photos that were not removed because removing failed
+        Example:
+            "1 item failed"
+            "23 items failed"
+    -->
+  <plurals name="in_app_notification_removed_from_album_failed">
+    <item quantity="other">%1$d 个项目处理失败</item>
+  </plurals>
+  <string name="albums_empty_album_screen_title">无照片</string>
+  <string name="albums_empty_album_screen_description">您或其他成员添加的照片将在此处显示</string>
+  <string name="albums_empty_albums_list_screen_title">无相册</string>
+  <string name="albums_empty_albums_list_screen_description">您创建或加入的相册将显示在此处</string>
+  <string name="albums_empty_albums_my_albums_screen_description">您创建的相册将显示在此处</string>
+  <string name="albums_empty_albums_shared_by_me_screen_title">无共享相册</string>
+  <string name="albums_empty_albums_shared_by_me_screen_description">您共享的相册将显示在此处</string>
+  <string name="albums_empty_albums_shared_with_me_screen_title">没有与我共享的相册</string>
+  <string name="albums_empty_albums_shared_with_me_screen_description">与您共享的相册将显示在此处</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "1 album shared with you"
+            "3 albums shared with you"
+    -->
+  <plurals name="shared_with_me_album_invitations_banner_description">
+    <item quantity="other">%1$d 个与您共享的相册</item>
+  </plurals>
+  <string name="albums_share_multiple_photos_options_section_title">通过以下方式分享</string>
+  <string name="albums_share_multiple_photos_options_shared_albums_section_title">添加到共享相册</string>
+  <string name="albums_share_multiple_photos_options_album_details">共享相册</string>
+  <string name="albums_share_multiple_photos_options_new_shared_album">新建共享相册</string>
+  <string name="albums_add_to_album_start_message">向加密相册添加照片。在此过程中，请保持应用处于打开状态。</string>
+  <string name="albums_add_to_albums_options_new_album">添加到新相册</string>
+  <string name="albums_add_to_albums_options_shared_album">我共享的相册</string>
+  <!--
+        Variable %1$s is an album owner name i.e. display name or email
+        Example:
+            "By Pablo Picasso"
+            "By pablo.picasso@example.com"
+    -->
+  <string name="albums_shared_with_me_details">来自 %1$s</string>
+</resources>

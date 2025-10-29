@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2022-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="storage_drive_usage">存储空间用量</string>
+  <string name="storage_total_usage">总使用量</string>
+  <string name="storage_details_format"><![CDATA[已使用 %1$s，共 %2$s]]></string>
+  <!--
+        Variable %1$s is percentage of available storage
+        Examples:
+            "Your storage is more than 50% full"
+    -->
+  <string name="storage_quotas_not_full_title">您的存储空间已满 %1$s 以上</string>
+  <!--
+        Variable %1$s is an application name
+        Examples:
+            "Free up space on your Proton Drive storage or upgrade your plan for uninterrupted backup."
+    -->
+  <string name="storage_quotas_full_title">释放 %1$s 的存储空间，或升级计划以获得不间断备份。</string>
+  <string name="storage_quotas_get_storage_action">获得更多存储空间</string>
+  <string name="user_select_other_account_content_description">选择其他账户</string>
+  <string name="description_remove_account">您即将登出账户，此账户的所有相关数据都将从此设备中清除。</string>
+</resources>

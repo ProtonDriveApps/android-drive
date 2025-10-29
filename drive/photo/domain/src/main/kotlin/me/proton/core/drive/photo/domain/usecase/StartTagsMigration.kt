@@ -20,7 +20,9 @@ package me.proton.core.drive.photo.domain.usecase
 
 import kotlinx.coroutines.flow.first
 import me.proton.core.domain.entity.UserId
+import me.proton.core.drive.base.domain.entity.ClientUid
 import me.proton.core.drive.base.domain.entity.TimestampS
+import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag.PHOTO
 import me.proton.core.drive.base.domain.log.logId
 import me.proton.core.drive.base.domain.provider.ConfigurationProvider
@@ -31,9 +33,14 @@ import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId.Companion.d
 import me.proton.core.drive.feature.flag.domain.extension.off
 import me.proton.core.drive.feature.flag.domain.extension.on
 import me.proton.core.drive.feature.flag.domain.usecase.GetFeatureFlag
+import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.photo.domain.entity.TagsMigrationAnchor
 import me.proton.core.drive.photo.domain.entity.TagsMigrationFile
+import me.proton.core.drive.photo.domain.entity.TagsMigrationStatus
 import me.proton.core.drive.photo.domain.manager.PhotoTagWorkManager
+import me.proton.core.drive.share.domain.entity.ShareId
 import me.proton.core.drive.volume.domain.entity.VolumeId
+import me.proton.core.drive.volume.domain.usecase.GetVolume
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
@@ -47,6 +54,7 @@ class StartTagsMigration @Inject constructor(
     private val getOrCreateClientUid: GetOrCreateClientUid,
     private val updateTagsMigrationStatus: UpdateTagsMigrationStatus,
     private val workManager: PhotoTagWorkManager,
+    private val getVolume: GetVolume,
 ) {
     suspend operator fun invoke(userId: UserId, volumeId: VolumeId) = coRunCatching {
         if (getFeatureFlag(drivePhotosTagsMigrationDisabled(userId)).on) {
@@ -62,7 +70,8 @@ class StartTagsMigration @Inject constructor(
             CoreLogger.i(PHOTO, "Migration already finished for volume: ${volumeId.id.logId()}")
             return@coRunCatching
         }
-        val migrationClientUid = status.anchor?.clientUid
+        val statusAnchor = status.anchor
+        val migrationClientUid = statusAnchor?.clientUid
         val applicationClientUid = getOrCreateClientUid().getOrThrow()
         if (migrationClientUid != null && migrationClientUid != applicationClientUid) {
             CoreLogger.i(
@@ -76,9 +85,9 @@ class StartTagsMigration @Inject constructor(
             userId = userId,
             volumeId = volumeId,
             pageSize = configurationProvider.apiListingPageSize,
-            linkId = status.anchor?.lastProcessedLinkId
+            linkId = statusAnchor?.lastProcessedLinkId
         ).getOrThrow().let { photoListings ->
-            val lastProcessedCaptureTime = status.anchor?.lastProcessedCaptureTime
+            val lastProcessedCaptureTime = statusAnchor?.lastProcessedCaptureTime
             if (lastProcessedCaptureTime != null) {
                 photoListings.filter { photoListing ->
                     photoListing.captureTime < lastProcessedCaptureTime
@@ -95,13 +104,11 @@ class StartTagsMigration @Inject constructor(
                     PHOTO,
                     "Updating migration as finished for volume: ${volumeId.id.logId()}"
                 )
+
                 updateTagsMigrationStatus(
-                    userId, volumeId, status.copy(
+                    userId, volumeId, TagsMigrationStatus(
                         finished = true,
-                        anchor = status.anchor?.copy(
-                            currentTimestamp = TimestampS(),
-                            clientUid = applicationClientUid,
-                        )
+                        anchor = statusAnchor.createAnchor(userId, volumeId, applicationClientUid)
                     )
                 ).getOrThrow()
             } else {
@@ -125,5 +132,27 @@ class StartTagsMigration @Inject constructor(
             )
         }).getOrThrow()
         workManager.enqueue(userId, volumeId)
+    }
+
+    private suspend fun TagsMigrationAnchor?.createAnchor(
+        userId: UserId,
+        volumeId: VolumeId,
+        applicationClientUid: ClientUid,
+        currentTimestamp:TimestampS = TimestampS(),
+    ): TagsMigrationAnchor {
+        return if (this == null) {
+            val volume = getVolume(userId, volumeId).toResult().getOrThrow()
+            TagsMigrationAnchor(
+                lastProcessedLinkId = FileId(ShareId(userId, volume.shareId), volume.linkId),
+                lastProcessedCaptureTime = volume.createTime,
+                currentTimestamp = currentTimestamp,
+                clientUid = applicationClientUid,
+            )
+        } else {
+            copy(
+                currentTimestamp = currentTimestamp,
+                clientUid = applicationClientUid,
+            )
+        }
     }
 }

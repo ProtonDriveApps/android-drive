@@ -48,9 +48,9 @@
             "24 succeeded"
     -->
   <plurals name="files_operation_failed_count_of_successes">
-    <item quantity="one">%1$d succeeded</item>
-    <item quantity="few">%1$d succeeded</item>
-    <item quantity="many">%1$d succeeded</item>
-    <item quantity="other">%1$d succeeded</item>
+    <item quantity="one">%1$d powodzenie</item>
+    <item quantity="few">%1$d powodzenia</item>
+    <item quantity="many">%1$d powodzeń</item>
+    <item quantity="other">%1$d powodzeń</item>
   </plurals>
 </resources>

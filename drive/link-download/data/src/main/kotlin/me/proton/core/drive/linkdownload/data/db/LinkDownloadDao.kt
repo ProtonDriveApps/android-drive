@@ -134,7 +134,8 @@ interface LinkDownloadDao : LinkDao {
         SELECT COUNT(*) FROM LinkDownloadStateEntity
         WHERE
             LinkDownloadStateEntity.user_id = :userId AND 
-            LinkDownloadStateEntity.state = "DOWNLOADING"
+            LinkDownloadStateEntity.state = 'DOWNLOADING' OR
+            LinkDownloadStateEntity.state = 'DOWNLOADED'
     """)
     fun getDownloadingCountFlow(
         userId: UserId,
@@ -208,6 +209,7 @@ interface LinkDownloadDao : LinkDao {
                     is DownloadState.Downloading -> LinkDownloadState.DOWNLOADING
                     is DownloadState.Error -> LinkDownloadState.ERROR
                     is DownloadState.Downloaded -> LinkDownloadState.DOWNLOADED
+                    is DownloadState.Ready -> LinkDownloadState.READY
                 },
                 manifestSignature = (downloadState as? DownloadState.Downloaded)?.manifestSignature,
                 signatureAddress = (downloadState as? DownloadState.Downloaded)?.signatureAddress,

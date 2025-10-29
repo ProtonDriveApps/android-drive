@@ -40,9 +40,18 @@ class LogRepositoryImpl @Inject constructor(
 ) : LogRepository {
 
     override suspend fun insert(logs: List<Log>) = db.inTransaction {
-        db.logDao.insertOrIgnore(*logs.map { it.toLogEntity() }.toTypedArray())
-        logs.firstOrNull()?.let { log ->
-            db.logDao.dropOldRowsToFitLimit(userId = log.userId, limit = getLogLimit())
+        if (logs.size == 1) {
+            val log = logs.first()
+            db.logDao.insertWithLimit(
+                userId = log.userId,
+                entity = log.toLogEntity(),
+                limit = getLogLimit(),
+            )
+        } else {
+            db.logDao.insertOrIgnore(*logs.map { it.toLogEntity() }.toTypedArray())
+            logs.firstOrNull()?.let { log ->
+                db.logDao.dropOldRowsToFitLimit(userId = log.userId, limit = getLogLimit())
+            }
         }
         Unit
     }
@@ -96,4 +105,10 @@ class LogRepositoryImpl @Inject constructor(
         db.logOriginDao.getAll(userId, count).map { logOriginEntities ->
             logOriginEntities.map { logOriginEntity -> logOriginEntity.origin }.toSet()
         }
+
+    override suspend fun clearLogs(userId: UserId) = db.inTransaction {
+        db.logDao.deleteAll(userId)
+        db.logLevelDao.deleteAll(userId)
+        db.logOriginDao.deleteAll(userId)
+    }
 }

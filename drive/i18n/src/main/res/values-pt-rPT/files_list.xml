@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2021-2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="file_operation_error_occurred_moving_file">Ocorreu um erro ao mover o ficheiro.</string>
+  <string name="file_operation_moving_file_successful">O ficheiro foi movido.</string>
+  <string name="file_operation_moving_folder_successful">A pasta foi movida.</string>
+  <!--
+        Variable %1$d is a quantity of items that have been successfully moved
+        Example:
+            "1 item successfully moved."
+            "9 items successfully moved."
+    -->
+  <plurals name="file_operation_moving_multiple_successful">
+    <item quantity="one">%1$d item foi movido.</item>
+    <item quantity="other">%1$d itens foram movidos.</item>
+  </plurals>
+  <string name="file_operation_error_file_already_exists_at_destination">Já existe um item com este nome na pasta de destino.</string>
+  <string name="folder_options_header_title">Em \"%1$s\"</string>
+  <string name="folder_options_header_title_encrypted">Em</string>
+  <string name="files_toggle_layout_to_list_content_description">Disposição em lista</string>
+  <string name="files_toggle_layout_to_grid_content_description">Disposição em grelha</string>
+  <!--
+        Variable %1$s is a time indicator which is formatted based on the user's locale
+        Examples:
+            "Modified 10:46"
+            "Modified Feb 28"
+            "Modified Dec 22, 2021"
+    -->
+  <string name="title_modified_with_date">Modificado %1$s</string>
+  <string name="files_restore_from_trash_action">Restaurar</string>
+  <string name="files_send_to_trash_action">Mover para o lixo</string>
+  <string name="files_remove_me_action">Remover-me</string>
+  <string name="files_move_file_action">Mover</string>
+  <string name="files_add_to_favorite_action">Adicionar aos favoritos</string>
+  <string name="files_remove_from_favorite_action">Remover dos favoritos</string>
+  <string name="files_add_to_favorite_action_success">Adicionado aos favoritos</string>
+  <string name="files_add_to_favorite_from_foreign_volume_action_success">A foto foi copiada para a cronologia e marcada como favorita lá</string>
+  <string name="files_remove_from_favorite_action_success">Removido dos favoritos</string>
+  <string name="files_save_shared_photo_action">Guardar a foto partilhada</string>
+  <!--
+        Variable %1$s is a file/folder's name
+        Examples:
+            "'My folder' will be deleted permanently. You cannot undo this action."
+            "'My file.jpg' will be deleted permanently. You cannot undo this action."
+    -->
+  <string name="files_confirm_deletion_message_format">\'%1$s\' será eliminado permanentemente. Não é possível anular esta ação.</string>
+  <string name="files_confirm_empty_trash_title">Esvaziar o lixo?</string>
+  <string name="files_confirm_empty_trash_message">Os itens o lixo serão eliminados permanentemente. Não é possível anular esta ação.</string>
+  <string name="files_confirm_empty_trash_confirm_action">Esvaziar o lixo</string>
+  <string name="files_display_file_info_action">Detalhes do ficheiro</string>
+  <string name="files_display_folder_info_action">Detalhes da pasta</string>
+</resources>

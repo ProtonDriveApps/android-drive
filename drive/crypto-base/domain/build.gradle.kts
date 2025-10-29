@@ -31,5 +31,5 @@ driveModule(hilt = true) {
     api(libs.core.key.domain)
 
     androidTestImplementation(libs.core.crypto.android)
-    androidTestImplementation(files("${rootDir.relativeTo(projectDir)}/../proton-libs/gopenpgp/gopenpgp.aar"))
+    androidTestImplementation(files("$rootDir/gopenpgp-v2-v3/gopenpgp.aar"))
 }

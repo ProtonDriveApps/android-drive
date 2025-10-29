@@ -23,6 +23,7 @@ import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.usecase.DeleteAllFolders
 import me.proton.core.drive.drivelink.crypto.domain.usecase.RemoveAllDecryptedText
 import me.proton.core.drive.key.domain.usecase.RemoveAllKeys
+import me.proton.core.drive.log.domain.usecase.ClearLogs
 import javax.inject.Inject
 
 class CleanUpAccount @Inject constructor(
@@ -30,6 +31,7 @@ class CleanUpAccount @Inject constructor(
     private val removeAllKeys: RemoveAllKeys,
     private val removeAllDecryptedText: RemoveAllDecryptedText,
     private val disableAppLock: DisableAppLock,
+    private val clearLogs: ClearLogs,
 ) {
 
     suspend operator fun invoke(userId: UserId) {
@@ -37,5 +39,6 @@ class CleanUpAccount @Inject constructor(
         removeAllKeys(userId)
         removeAllDecryptedText(userId)
         disableAppLock(userAuthenticationRequired = false)
+        clearLogs(userId)
     }
 }

@@ -88,7 +88,7 @@ abstract class CommonCreateFileWorker(
     protected suspend fun Throwable.handleFeatureDisabled() =
         onProtonHttpException { protonData ->
             if (protonData.code == ProtonApiCode.FEATURE_DISABLED) {
-                refreshFeatureFlags(userId, FeatureFlagRepository.RefreshId.API_ERROR_FEATURE_DISABLED).getOrNull()
+                refreshFeatureFlags(userId, FeatureFlagRepository.RefreshId.ApiErrorFeatureDisabled).getOrNull()
             }
         }
 }

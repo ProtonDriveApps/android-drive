@@ -24,12 +24,12 @@ import android.database.MatrixCursor
 import android.net.Uri
 import android.os.Bundle
 import android.provider.DocumentsContract
+import androidx.paging.AsyncPagingDataDiffer
 import androidx.paging.CombinedLoadStates
-import androidx.paging.DifferCallback
 import androidx.paging.LoadState
-import androidx.paging.NullPaddedList
 import androidx.paging.PagingData
-import androidx.paging.PagingDataDiffer
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListUpdateCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import me.proton.core.drive.drivelink.domain.entity.DriveLink
 
 /**
  * [PagingData] doesn't allow to fetch its content directly. Yet, as we use it to fetch the content and
@@ -46,17 +47,17 @@ import kotlinx.coroutines.sync.withLock
  * This method allows us to wait until the content is available and extract it into a [Cursor].
  * On following changes in the data, it notifies the [android.content.ContentProvider] through the [uri] provided.
  */
-suspend fun <T : Any> Flow<PagingData<T>>.asCursor(
+suspend fun Flow<PagingData<DriveLink>>.asCursor(
     context: Context,
     uri: Uri,
     projection: Array<out String>,
-    transform: MatrixCursor.RowBuilder.(T) -> Unit,
+    transform: MatrixCursor.RowBuilder.(DriveLink) -> Unit,
 ): Cursor {
 
     val mutex = Mutex(locked = true)
-    var list: List<T?>? = null
+    var list: List<DriveLink?>? = null
 
-    val collector = CollectPagingDiffer<T> { values ->
+    val collector = CollectPagingDiffer { values ->
         val savedList = list
         if (savedList != null) {
             context.contentResolver.notifyChange(uri, null)
@@ -71,7 +72,8 @@ suspend fun <T : Any> Flow<PagingData<T>>.asCursor(
             if (job.isCancelled) {
                 return@collectLatest
             }
-            collector.differ.collectFrom(pagingData)
+            collector.differ.submitData(pagingData)
+            //collector.differ.collectFrom(pagingData)
         }
     }
     CoroutineScope(job).launch {
@@ -79,18 +81,19 @@ suspend fun <T : Any> Flow<PagingData<T>>.asCursor(
             if (job.isCancelled) {
                 return@collectLatest
             }
-            if (list != null && loadState != null && !loadState.isLoading) {
+            if (list != null && !loadState.isLoading) {
                 context.contentResolver.notifyChange(uri, null)
             }
         }
     }
     return mutex.withLock { // We wait for the first collect to happen
         val loadState = collector.differ.loadStateFlow.first()
-        val isLoading = loadState?.isLoading ?: false
+        val isLoading = loadState.isLoading
         list?.let { list ->
             if (list.isNotEmpty()) {
                 // We want to trigger the next call if needed
-                collector.differ[list.size - 1]
+                collector.differ.getItem(list.size - 1)
+                //collector.differ[list.size - 1]
             }
         }
         object : MatrixCursor(projection, list?.size ?: 0) {
@@ -116,46 +119,49 @@ suspend fun <T : Any> Flow<PagingData<T>>.asCursor(
 
 private val CombinedLoadStates.isLoading: Boolean get() = append == LoadState.Loading || refresh == LoadState.Loading
 
-private class CollectPagingDiffer<T : Any>(
-    private val onList: (List<T?>) -> Unit,
+private class CollectPagingDiffer(
+    private val onList: (List<DriveLink?>) -> Unit,
 ) {
 
-    private val callback = object : DifferCallback {
-        override fun onChanged(position: Int, count: Int) {
-            if (count > 0) {
-                notifyOnList()
-            }
-        }
+    private val callback = NotifyOnListUpdateCallback(::notifyOnList)
 
-        override fun onInserted(position: Int, count: Int) {
-            if (count > 0) {
-                notifyOnList()
-            }
-        }
+    val differ = AsyncPagingDataDiffer(
+        diffCallback = object : DiffUtil.ItemCallback<DriveLink>() {
+            override fun areItemsTheSame(oldItem: DriveLink, newItem: DriveLink): Boolean =
+                oldItem.id == newItem.id
 
-        override fun onRemoved(position: Int, count: Int) {
-            if (count > 0) {
-                notifyOnList()
-            }
-        }
-    }
-
-    val differ = object : PagingDataDiffer<T>(
-        differCallback = callback,
-    ) {
-        override suspend fun presentNewList(
-            previousList: NullPaddedList<T>,
-            newList: NullPaddedList<T>,
-            lastAccessedIndex: Int,
-            onListPresentable: () -> Unit,
-        ): Int? {
-            onListPresentable()
-            notifyOnList()
-            return null
-        }
-    }
+            override fun areContentsTheSame(oldItem: DriveLink, newItem: DriveLink): Boolean =
+                oldItem == newItem
+        },
+        updateCallback = callback,
+    )
 
     private fun notifyOnList() {
+        differ.snapshot()
         onList(differ.snapshot())
     }
+}
+
+private class NotifyOnListUpdateCallback(
+    private val notifyOnList: () -> Unit
+) : ListUpdateCallback {
+    override fun onChanged(position: Int, count: Int, payload: Any?) {
+        if (count > 0) {
+            notifyOnList()
+        }
+    }
+
+    override fun onInserted(position: Int, count: Int) {
+        if (count > 0) {
+            notifyOnList()
+        }
+    }
+
+    override fun onRemoved(position: Int, count: Int) {
+        if (count > 0) {
+            notifyOnList()
+        }
+    }
+
+    override fun onMoved(fromPosition: Int, toPosition: Int) {}
 }

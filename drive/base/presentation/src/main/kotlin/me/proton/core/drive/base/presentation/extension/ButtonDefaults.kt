@@ -70,5 +70,16 @@ fun ButtonDefaults.protonDriveCustomGreenButtonColors(
         loading = loading,
     )
 
+@Composable
+fun ButtonDefaults.protonBlackFridayPromoButtonColors(
+    loading: Boolean = false
+) =
+    protonButtonColors(
+        backgroundColor = driveCustomCitrusGreen,
+        contentColor = Color.Black,
+        loading = loading,
+    )
+
 private val driveCustomGreen = Color(0xFF059669)
 private val driveCustomGreenLight = Color(0xFFECFDF5)
+val driveCustomCitrusGreen = Color(0xFFD8FF00)

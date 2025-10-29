@@ -19,8 +19,6 @@ package me.proton.core.drive.thumbnail.data.provider
 
 import android.content.Context
 import android.media.ThumbnailUtils
-import android.os.Build
-import android.provider.MediaStore
 import android.util.Size
 import dagger.hilt.android.qualifiers.ApplicationContext
 import me.proton.core.drive.base.data.usecase.CompressBitmap
@@ -41,23 +39,14 @@ class VideoThumbnailProvider @Inject constructor(
     compressBitmap = compressBitmap,
 ) {
 
-    override fun fileToBitmap(file: File, size: Size) =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            try {
-                ThumbnailUtils.createVideoThumbnail(
-                    file,
-                    size,
-                    null
-                )
-            } catch (e: IOException) {
-                CoreLogger.w(LogTag.THUMBNAIL, e, "Create video thumbnail failed")
-                null
-            }
-        } else {
-            @Suppress("DEPRECATION")
-            ThumbnailUtils.createVideoThumbnail(
-                file.absolutePath,
-                MediaStore.Video.Thumbnails.MINI_KIND
-            )
-        }
+    override fun fileToBitmap(file: File, size: Size) = try {
+        ThumbnailUtils.createVideoThumbnail(
+            file,
+            size,
+            null
+        )
+    } catch (e: IOException) {
+        CoreLogger.w(LogTag.THUMBNAIL, e, "Create video thumbnail failed")
+        null
+    }
 }

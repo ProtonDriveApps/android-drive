@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!-- region Common words -->
+  <string name="common_app">Aplicação</string>
+  <string name="common_more">Mais</string>
+  <string name="common_mime_type">Tipo MIME</string>
+  <string name="common_name">Nome</string>
+  <string name="common_no">Não</string>
+  <string name="common_share">Partilhar</string>
+  <string name="common_shared">Partilhado</string>
+  <string name="common_size">Tamanho</string>
+  <string name="common_type">Tipo</string>
+  <string name="common_yes">Sim</string>
+  <string name="common_download">Transferir</string>
+  <string name="common_downloading">Transferência em curso</string>
+  <string name="common_link">Ligação</string>
+  <string name="common_password">Palavra-passe</string>
+  <string name="common_retry">Tentar novamente</string>
+  <string name="common_settings">Definições</string>
+  <string name="common_trash">Lixo</string>
+  <string name="common_uploading">A enviar</string>
+  <string name="common_on">Ligado</string>
+  <string name="common_off">Desligado</string>
+  <string name="common_all">Tudo</string>
+  <string name="common_unknown">Desconhecido</string>
+  <string name="common_month">Month</string>
+  <!-- endregion -->
+  <!-- region Common actions -->
+  <string name="common_ok_action">OK</string>
+  <string name="common_close_action">Fechar</string>
+  <string name="common_retry_action">Tentar novamente</string>
+  <string name="common_undo_action">Desfazer</string>
+  <string name="common_rename_action">Mudar o nome</string>
+  <string name="common_send_action">Enviar</string>
+  <string name="common_create_action">Criar</string>
+  <string name="common_cancel_action">Cancelar</string>
+  <string name="common_cancel_all_action">Cancelar tudo</string>
+  <string name="common_got_it_action">Entendido</string>
+  <string name="common_next_action">Seguinte</string>
+  <string name="common_save_action">Guardar</string>
+  <string name="common_discard_action">Descartar</string>
+  <string name="common_skip_action">Ignorar</string>
+  <string name="common_delete_permanently_action">Eliminar permanentemente</string>
+  <string name="common_make_available_offline_action">Disponibilizar offline</string>
+  <string name="common_remove_from_offline_available_action">Remover do disponibilizar offline</string>
+  <string name="common_get_link_action">Obter a ligação</string>
+  <string name="common_manage_link_action">Gerir a ligação</string>
+  <string name="common_manage_access_action">Gerir acesso</string>
+  <string name="common_copy_link_action">Copiar a ligação</string>
+  <string name="common_stop_sharing_action">Parar a partilha</string>
+  <string name="common_open_in_browser_action">Abrir no navegador</string>
+  <string name="common_done_action">Terminado</string>
+  <string name="common_create_album_action">Criar um álbum</string>
+  <string name="common_set_as_album_cover_action">Definir como capa do álbum</string>
+  <string name="common_add_action">Adicionar</string>
+  <string name="common_remove_from_album_action">Remover do álbum</string>
+  <string name="common_leave_album_action">Sair do álbum</string>
+  <string name="common_start_action">Início</string>
+  <string name="common_save_all_action">Guardar tudo</string>
+  <string name="common_add_to_albums_action">Adicionar aos álbuns</string>
+  <string name="common_tag_photo_action">Analisar a foto para identificar etiquetas</string>
+  <!-- endregion -->
+  <!-- region Common file types -->
+  <string name="common_type_audio">Áudio</string>
+  <string name="common_type_calendar">Formato iCalendar</string>
+  <string name="common_type_doc">Documento</string>
+  <string name="common_type_image">Imagem</string>
+  <string name="common_type_keynote">Ficheiro Keynote</string>
+  <string name="common_type_numbers">Ficheiro Numbers</string>
+  <string name="common_type_pages">Ficheiro Page</string>
+  <string name="common_type_pdf">Documento PDF</string>
+  <string name="common_type_ppt">Apresentação</string>
+  <string name="common_type_proton_doc">Documento Proton</string>
+  <string name="common_type_proton_sheet">Folha de cálculo Proton</string>
+  <string name="common_type_text">Texto</string>
+  <string name="common_type_trustedkey">Chave de confiança</string>
+  <string name="common_type_unknown">Binário</string>
+  <string name="common_type_video">Vídeo</string>
+  <string name="common_type_xls">Folha de cálculo</string>
+  <string name="common_type_xml">Ficheiro XML</string>
+  <string name="common_type_zip">Arquivo</string>
+  <!-- endregion -->
+  <!-- region Common file and folder name validation errors -->
+  <string name="common_error_name_is_blank">O nome não pode estar vazio.</string>
+  <!--
+        Variable %1$d is a number
+        Example:
+            "Name must not exceed 280 characters"
+    -->
+  <string name="common_error_name_too_long">O nome não deve exceder %1$d carateres.</string>
+  <!--
+        Variable %1$s is a character, "/"
+        Variable %2$s is a character, "\"
+        Example:
+            "Name cannot include invisible characters, "/" or "\"
+    -->
+  <string name="common_error_name_with_forbidden_characters">O nome não pode incluir carateres invisíveis, «%1$s» ou «%2$s».</string>
+  <string name="common_error_name_periods">O nome não pode ser \".\" ou \"..\"</string>
+  <string name="common_error_no_internet">Sem ligação à internet</string>
+  <string name="common_error_http_5xx">Ocorreu um erro no servidor.</string>
+  <string name="common_error_internal">Ocorreu um erro interno.</string>
+  <string name="common_error_crypto">A encriptação ou desencriptação falhou</string>
+  <!--
+        Variable %1$s is the non-null message from Crypto exception
+        Example:
+            "Encryption or decryption failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_crypto_with_message">A encriptação ou desencriptação falhou: %1$s</string>
+  <string name="common_error_io">Erro de operação de entrada ou saída</string>
+  <!--
+        Variable %1$s is the non-null message from IO exception
+        Example:
+            "Input or output operation failed: Key cannot be used while inactive."
+    -->
+  <string name="common_error_io_with_message">Erro de operação de entrada ou saída: %1$s</string>
+  <string name="common_error_security">Ocorreu um erro de segurança.</string>
+  <!--
+        Variable %1$s is the non-null message from Security exception
+        Example:
+            "Security error occurred: password required or incorrect password"
+    -->
+  <string name="common_error_security_with_message">Ocorreu um erro de segurança: %1$s</string>
+  <string name="common_error_sdk">SDK error occurred</string>
+  <!--
+        Variable %1$s is the non-null message from SDK exception
+        Example:
+            "SDK error occurred:  file or folder with that name already exists"
+    -->
+  <string name="common_error_sdk_with_message">SDK error occurred: %1$s</string>
+  <!-- endregion -->
+  <!--
+        Variable %1$s is a percentage
+        Examples:
+            "0% downloaded"
+            "50% downloaded"
+            "100% downloaded"
+    -->
+  <string name="common_percent_downloaded">%1$s transferido</string>
+  <string name="common_sign_out">Terminar sessão</string>
+  <!--
+        Variable %1$d is a quantity of files or folders that have been selected
+        Example:
+            "1 selected"
+            "13 selected"
+    -->
+  <plurals name="common_selected">
+    <item quantity="one">%1$d selecionado</item>
+    <item quantity="other">%1$d selecionado</item>
+  </plurals>
+  <!-- region In-app notification -->
+  <!--
+        Variable %1$s is label that is copied to clipboard
+        Example:
+            "Link copied to clipboard"
+    -->
+  <string name="common_in_app_notification_copied_to_clipboard">%1$s copiado para a área de transferência</string>
+  <string name="common_in_app_notification_download_started">Transferência iniciada</string>
+  <!--
+        Variable %1$s is a file name
+        Example:
+            "schedule.pdf successfully downloaded"
+    -->
+  <string name="common_in_app_notification_download_complete">%1$s transferido</string>
+  <!--
+        Variable %1$d is a number of files which were successfully downloaded
+        Example:
+            "1 file successfully downloaded"
+            "17 files successfully downloaded"
+    -->
+  <plurals name="common_in_app_notification_files_download_complete">
+    <item quantity="one">%1$d ficheiro transferido</item>
+    <item quantity="other">%1$d ficheiros transferidos</item>
+  </plurals>
+  <!--
+        Variable %1$s is a file name
+        Examples:
+            "Downloading schedule.pdf failed"
+    -->
+  <string name="common_in_app_notification_downloading_failed">A transferência de %1$s falhou</string>
+  <string name="common_in_app_notification_download_failed">Erro na transferência</string>
+  <!--
+        Variable %1$s is one of "operation_open_document", "operation_create_document", "operation_take_picture"
+        Examples:
+            "System could not found any application that could open a document"
+            "System could not found any application that could take a picture"
+    -->
+  <string name="common_in_app_notification_activity_not_found">O sistema não conseguiu encontrar nenhuma aplicação que pudesse %1$s</string>
+  <!-- endregion -->
+  <!-- endregion -->
+</resources>

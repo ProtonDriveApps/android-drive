@@ -21,6 +21,7 @@ import me.proton.core.drive.base.domain.log.LogTag
 import me.proton.core.drive.drivelink.domain.entity.DriveLink
 import me.proton.core.drive.drivelink.download.domain.usecase.CancelDownload
 import me.proton.core.drive.drivelink.download.domain.usecase.Download
+import me.proton.core.drive.drivelink.download.domain.usecase.MoveFileIfExists
 import me.proton.core.drive.linkoffline.domain.usecase.IsAnyAncestorMarkedAsOffline
 import me.proton.core.drive.linkoffline.domain.usecase.IsLinkOrAnyAncestorMarkedAsOffline
 import me.proton.core.drive.linkoffline.domain.usecase.ToggleOffline
@@ -33,10 +34,14 @@ class ToggleOffline @Inject constructor(
     private val isAnyAncestorMarkedAsOffline: IsAnyAncestorMarkedAsOffline,
     private val download: Download,
     private val cancelDownload: CancelDownload,
+    private val moveFileIfExists: MoveFileIfExists,
 ) {
     suspend operator fun invoke(driveLink: DriveLink, isRetryable: Boolean = true) {
         val isAvailableOffline = !isLinkOrAnyAncestorMarkedAsOffline(driveLink.id)
         toggleOffline(driveLink.id)
+        if (driveLink is DriveLink.File) {
+            moveFileIfExists(driveLink).getOrThrow()
+        }
         if (isAvailableOffline) {
             download(driveLink, isRetryable)
         } else {

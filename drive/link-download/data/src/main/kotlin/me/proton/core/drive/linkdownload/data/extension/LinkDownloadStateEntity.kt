@@ -29,4 +29,6 @@ fun LinkDownloadStateEntity.toDownloadState() = when (state) {
         manifestSignature = manifestSignature,
         signatureAddress = signatureAddress,
     )
+
+    LinkDownloadState.READY -> DownloadState.Ready
 }

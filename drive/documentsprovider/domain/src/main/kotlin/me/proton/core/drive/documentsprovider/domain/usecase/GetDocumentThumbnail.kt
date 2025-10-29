@@ -20,19 +20,17 @@ package me.proton.core.drive.documentsprovider.domain.usecase
 import android.content.res.AssetFileDescriptor
 import android.os.CancellationSignal
 import android.os.ParcelFileDescriptor
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import me.proton.core.drive.crypto.domain.usecase.DecryptThumbnail
 import me.proton.core.drive.documentsprovider.domain.entity.DocumentId
 import me.proton.core.drive.drivelink.domain.extension.getThumbnailId
 import me.proton.core.drive.file.base.domain.entity.ThumbnailType
+import me.proton.core.drive.linkoffline.domain.usecase.IsLinkOrAnyAncestorMarkedAsOffline
 import me.proton.core.drive.thumbnail.domain.usecase.GetThumbnailCachedInputStream
 import javax.inject.Inject
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class GetDocumentThumbnail @Inject constructor(
     private val withDriveLinkFile: WithDriveLinkFile,
     private val getThumbnailCachedInputStream: GetThumbnailCachedInputStream,
-    private val decryptThumbnail: DecryptThumbnail,
+    private val isLinkOrAnyAncestorMarkedAsOffline: IsLinkOrAnyAncestorMarkedAsOffline,
 ) {
 
     @Suppress("UNUSED_PARAMETER")
@@ -42,18 +40,14 @@ class GetDocumentThumbnail @Inject constructor(
                 fileId = driveLink.id,
                 volumeId = driveLink.volumeId,
                 revisionId = driveLink.activeRevisionId,
-                thumbnailId = requireNotNull(driveLink.getThumbnailId(ThumbnailType.DEFAULT))
+                thumbnailId = requireNotNull(driveLink.getThumbnailId(ThumbnailType.DEFAULT)),
+                inCacheFolder = !isLinkOrAnyAncestorMarkedAsOffline(driveLink.id)
             )
                 .map { inputStream ->
-                        decryptThumbnail(
-                            fileId = driveLink.id,
-                            inputStream = inputStream,
-                        ).getOrThrow()
-                }.map { decryptedData ->
                     val pipe = ParcelFileDescriptor.createPipe()
                     val readSide = pipe[0]
                     val writeSide = pipe[1]
-                    ParcelFileDescriptor.AutoCloseOutputStream(writeSide).use { os -> os.write(decryptedData) }
+                    ParcelFileDescriptor.AutoCloseOutputStream(writeSide).use { os -> inputStream.copyTo(os) }
                     AssetFileDescriptor(readSide, 0, 0)
                 }.getOrThrow()
         }

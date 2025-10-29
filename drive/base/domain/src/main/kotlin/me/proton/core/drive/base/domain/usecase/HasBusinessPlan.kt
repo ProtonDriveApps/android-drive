@@ -30,7 +30,9 @@ import me.proton.core.user.domain.repository.UserRepository
 import me.proton.core.usersettings.domain.entity.Organization
 import me.proton.core.usersettings.domain.repository.OrganizationRepository
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class HasBusinessPlan @Inject constructor(
     private val organizationRepository: OrganizationRepository,
     private val userRepository: UserRepository,
@@ -46,20 +48,22 @@ class HasBusinessPlan @Inject constructor(
         getOrganization(userId)?.hasBusinessPlan ?: false
     }
 
-    private suspend fun getOrganization(userId: UserId): Organization? {
-        val cachedOrganization = coRunCatching {
-            organizationRepository.getOrganization(userId, false)
-        }.getOrNull()
-        return if (cachedOrganization != null) {
-            if (shouldRefreshCache(userId)) {
-                fetchOrganization(userId).getOrThrow()
-            } else {
-                cachedOrganization
-            }
-        } else {
+    suspend fun refreshIfStale(userId: UserId) = coRunCatching {
+        if (shouldRefreshCache(userId)) {
             fetchOrganization(userId).getOrThrow()
         }
     }
+
+    private suspend fun getOrganization(userId: UserId): Organization? = coRunCatching {
+        organizationRepository.getOrganization(userId, false)
+    }.getOrNull() ?: fetchOrganizationIfItWasNeverFetched(userId)
+
+    private suspend fun fetchOrganizationIfItWasNeverFetched(userId: UserId): Organization? =
+        if (baseRepository.getLastFetch(userId, ORGANIZATION_URL) == null) {
+            fetchOrganization(userId).getOrThrow()
+        } else {
+            null
+        }
 
     private suspend fun shouldRefreshCache(userId: UserId): Boolean =
         baseRepository

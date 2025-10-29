@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023-2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="photos_title">照片</string>
+  <string name="photos_permissions_title">加密并备份您的照片和视频</string>
+  <string name="photos_permissions_section_1_title">保护你的回忆</string>
+  <string name="photos_permissions_section_1_description">您的照片经过端到端加密，确保完全隐私。</string>
+  <string name="photos_permissions_section_2_title">自动备份</string>
+  <string name="photos_permissions_section_2_description">照片会定期通过 WiFi 以其原始质量进行备份。</string>
+  <string name="photos_permissions_action">开启备份</string>
+  <string name="photos_permission_rational_img_text">允许访问</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "Proton Drive needs full access to your photos"
+    -->
+  <string name="photos_permission_rational_title">%1$s 需要访问您所有的照片</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            "...available across all your devices.
+             Proton Drive takes your privacy seriously..."
+    -->
+  <string name="photos_permission_rational_description">这对于确保您的所有照片都已备份并可在所有设备上使用非常必要。\n%1$s 非常重视您的隐私，并且只会出于同步和备份的目的访问您的照片。</string>
+  <string name="photos_permission_rational_confirm_action">设置</string>
+  <string name="photos_permission_rational_dismiss_action">以后再说</string>
+  <string name="photos_empty_loading_label_encrypted">已端到端加密</string>
+  <string name="photos_empty_loading_label_progress">备份正在进行中。\n可能需要一段时间</string>
+  <string name="photos_separator_current_month">这个月</string>
+  <string name="photos_encrypted_footer">已端到端加密</string>
+  <!--
+        Variable %1$s is a folder name, %2$s is a quantity of folders found
+        Example:
+            "Backing up items from 1 folder: Camera"
+            "Backing up items from 3 folders: Camera, Raw, Screenshots"
+    -->
+  <plurals name="photos_message_folders_setup">
+    <item quantity="other">正在备份 %2$d 个文件夹中的项目：%1$s</item>
+  </plurals>
+  <!--
+        Variable %1$s is a folder name
+        Example:
+            "No Camera folder found for backup"
+    -->
+  <string name="photos_error_no_folders">未找到备份的文件夹%1$s</string>
+  <string name="photos_error_backup_disabled">已关闭备份。</string>
+  <string name="photos_error_backup_disabled_action">打开</string>
+  <string name="photos_error_backup_missing_folder">备份文件夹未找到</string>
+  <string name="photos_error_backup_failed">备份失败.</string>
+  <string name="photos_error_backup_temporarily_disabled">备份暂时不可用。</string>
+  <string name="photos_error_missing_permissions">权限不足。</string>
+  <!--
+        Variable %1$s is an application name
+        Example:
+            For continuous and automatic backups, allow Proton Drive access to All Photos in settings.
+    -->
+  <string name="photos_error_missing_permissions_description">对于持续性的自动备份，请在设置中允许 %1$s 访问所有照片。</string>
+  <string name="photos_error_waiting_connectivity">无网络连接</string>
+  <string name="photos_error_waiting_wifi_connectivity">等待Wi-Fi网络</string>
+  <string name="photos_error_waiting_wifi_connectivity_action">使用数据流量</string>
+  <string name="photos_error_local_storage">设备存储空间已满</string>
+  <string name="photos_error_local_storage_description">若要继续备份，您需要释放设备上的存储空间。</string>
+  <string name="photos_error_background_restrictions">将后台应用活动的电池使用设置为 “无限制”</string>
+  <string name="photos_error_background_restrictions_description">为了</string>
+  <string name="photos_error_background_restrictions_action">设置</string>
+  <string name="photos_empty_title">尚无备份</string>
+  <string name="photos_empty_description">一旦您的设备上有照片或视频，它们就会出现在此处。</string>
+  <string name="photos_backup_title">照片备份</string>
+  <string name="photos_backup_option_mobile_data">使用移动数据备份照片</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations">禁用电池优化</string>
+  <string name="photos_backup_option_ignoring_battery_optimizations_description">当应用程序在后台运行时允许不间断备份。</string>
+  <string name="photos_backup_in_app_notification_turned_on">照片备份已开启</string>
+  <string name="photos_backup_in_app_notification_turned_off">照片备份已关闭</string>
+  <string name="photos_backup_state_completed">备份完成</string>
+  <string name="photos_backup_state_uncompleted">备份已完成，但是存在问题</string>
+  <string name="photos_backup_state_uncompleted_action">解决</string>
+  <string name="photos_backup_state_preparing">准备备份</string>
+  <string name="photos_backup_state_encrypting">加密中…</string>
+  <string name="photos_backup_state_uploading">正在备份…</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos left to upload
+        Example:
+            "1 item left"
+            "12 345 items left"
+    -->
+  <plurals name="photos_backup_state_uploading_items_left">
+    <item quantity="other">剩余 %1$s 个项目</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos saved
+        Example:
+            "1 item saved"
+            "12 345 item saved"
+    -->
+  <plurals name="photos_backup_state_completed_items_saved">
+    <item quantity="other">%1$s 个项目已保存</item>
+  </plurals>
+  <string name="photos_upsell_title">永远不会耗尽存储空间</string>
+  <string name="photos_upsell_description">立即升级并保证您的所有数据加密且安全。</string>
+  <string name="photos_upsell_dismiss_action">以后再说</string>
+  <string name="photos_filter_favorite">收藏</string>
+  <string name="photos_filter_screenshots">截图</string>
+  <string name="photos_filter_videos">视频</string>
+  <string name="photos_filter_livephotos">实时照片</string>
+  <string name="photos_filter_motionphotos">动态照片</string>
+  <string name="photos_filter_selfies">自拍</string>
+  <string name="photos_filter_portraits">肖像</string>
+  <string name="photos_filter_bursts">连拍</string>
+  <string name="photos_filter_panoramas">全景图</string>
+  <string name="photos_filter_raws">RAW</string>
+  <string name="photos_favorite_empty_title">无收藏</string>
+  <string name="photos_favorite_empty_description">您收藏的照片将显示在此处</string>
+  <string name="photos_screenshots_empty_title">无截图</string>
+  <string name="photos_screenshots_empty_description">您的截图将显示在此处</string>
+  <string name="photos_videos_empty_title">无视频</string>
+  <string name="photos_videos_empty_description">您的视频将显示在此处</string>
+  <string name="photos_livephotos_empty_title">无实时照片</string>
+  <string name="photos_livephotos_empty_description">您的实时照片将显示在此处</string>
+  <string name="photos_motionphotos_empty_title">无动态照片</string>
+  <string name="photos_motionphotos_empty_description">您的动态照片将显示在此处</string>
+  <string name="photos_selfies_empty_title">无自拍</string>
+  <string name="photos_selfies_empty_description">您的自拍照片将显示在此处</string>
+  <string name="photos_portraits_empty_title">无肖像照</string>
+  <string name="photos_portraits_empty_description">您的肖像照将显示在此处</string>
+  <string name="photos_bursts_empty_title">无连拍</string>
+  <string name="photos_bursts_empty_description">您的连拍照片将显示在此处</string>
+  <string name="photos_panoramas_empty_title">无全景图</string>
+  <string name="photos_panoramas_empty_description">您的全景图将显示在此处</string>
+  <string name="photos_raws_empty_title">无 RAW 照片</string>
+  <string name="photos_raws_empty_description">您的 RAW 照片将显示在此处</string>
+  <string name="photos_share_migration_in_progress_title">设置相册和过滤器</string>
+  <string name="photos_share_migration_in_progress_description">如果您拥有一个很大的相册库，这可能需要一些时间。您可以关闭应用，我们将会在后台处理。</string>
+  <string name="photos_share_migration_needed_banner_title">需要迁移数据</string>
+  <string name="photos_share_migration_needed_banner_description">迁移后，您可以使用过滤器和相册等新功能</string>
+  <string name="photos_tags_migration_title">标签迁移</string>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos migrates
+        Example:
+           Finished, 1 file were migrated.
+           Finished, 12 345 files were migrated.
+    -->
+  <plurals name="photos_tags_migration_finished">
+    <item quantity="other">已完成, %1$s 个文件已迁移</item>
+  </plurals>
+  <!--
+        Variable %1$s is a quantity (formatted) of photos to migrate
+        Variable %1$s is a quantity (formatted) of photos waiting for download
+        Example:
+           Ongoing, migrating 1 file, 0 waiting for download.
+           Ongoing, migrating 12 345 files, 123 waiting for download.
+    -->
+  <plurals name="photos_tags_migration_ongoing">
+    <item quantity="other">进行中,，正在迁移 %1$s 个文件，%2$s 个等待下载</item>
+  </plurals>
+</resources>

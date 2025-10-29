@@ -40,6 +40,7 @@
     <string name="common_off">Off</string>
     <string name="common_all">All</string>
     <string name="common_unknown">Unknown</string>
+    <string name="common_month">Month</string>
     <!-- endregion -->
     <!-- region Common actions -->
     <string name="common_ok_action">OK</string>

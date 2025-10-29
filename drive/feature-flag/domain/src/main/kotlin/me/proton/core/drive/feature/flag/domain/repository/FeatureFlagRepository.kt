@@ -30,12 +30,15 @@ interface FeatureFlagRepository {
 
     suspend fun getFeatureFlagFlow(featureFlagId: FeatureFlagId): Flow<FeatureFlag?>
 
-    suspend fun refresh(userId: UserId, refreshId: RefreshId = RefreshId.DEFAULT): Result<Unit>
+    suspend fun refresh(featureFlagId: FeatureFlagId, refreshId: RefreshId = RefreshId.Default): Result<Unit>
 
-    suspend fun getLastRefreshTimestamp(userId: UserId, refreshId: RefreshId = RefreshId.DEFAULT): TimestampMs?
+    suspend fun refresh(userId: UserId, refreshId: RefreshId = RefreshId.Default): Result<Unit>
 
-    enum class RefreshId(val id: String) {
-        DEFAULT("default_id"),
-        API_ERROR_FEATURE_DISABLED("api_error_feature_disabled_id")
+    suspend fun getLastRefreshTimestamp(userId: UserId, refreshId: RefreshId = RefreshId.Default): TimestampMs?
+
+    sealed class RefreshId(val id: String) {
+        data object Default : RefreshId("default_id")
+        data object ApiErrorFeatureDisabled : RefreshId("api_error_feature_disabled_id")
+        data class Legacy(val featureId: String) : RefreshId("legacy_id_$featureId")
     }
 }

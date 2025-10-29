@@ -18,40 +18,17 @@
 
 package me.proton.core.drive.base.data.extension
 
-import android.annotation.TargetApi
 import android.content.ContentResolver
 import android.content.ContentValues
-import android.os.Build
-import android.os.Environment
 import android.provider.MediaStore
 import me.proton.core.drive.base.domain.util.coRunCatching
-import java.io.File
 import java.io.InputStream
 
 fun InputStream.exportToMediaStoreDownloads(
     contentResolver: ContentResolver,
     filename: String,
     mimeType: String,
-) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        exportToMediaStoreDownloadsApi29Plus(
-            contentResolver = contentResolver,
-            filename = filename,
-            mimeType = mimeType,
-        )
-    } else {
-        exportToMediaStoreDownloadsBeforeApi29(
-            filename = filename,
-        )
-    }
-}
-
-@TargetApi(Build.VERSION_CODES.Q)
-internal fun InputStream.exportToMediaStoreDownloadsApi29Plus(
-    contentResolver: ContentResolver,
-    filename: String,
-    mimeType: String,
-) : Result<Unit> = coRunCatching {
+) = coRunCatching {
     val values = ContentValues().apply {
         put(MediaStore.Downloads.DISPLAY_NAME, filename)
         put(MediaStore.Downloads.MIME_TYPE, mimeType)
@@ -61,28 +38,13 @@ internal fun InputStream.exportToMediaStoreDownloadsApi29Plus(
         MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY),
         values,
     )!!.let { contentUri ->
-        this.use { inputStream ->
+        this.use<InputStream, Unit> { inputStream ->
             contentResolver.openOutputStream(contentUri)!!.use { outputStream ->
                 inputStream.copyTo(outputStream)
             }
             values.clear()
             values.put(MediaStore.Downloads.IS_PENDING, 0)
             contentResolver.update(contentUri, values, null, null)
-        }
-    }
-}
-
-internal fun InputStream.exportToMediaStoreDownloadsBeforeApi29(
-    filename: String,
-): Result<Unit> = coRunCatching {
-    val downloadPath = File(
-        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-        filename,
-    ).apply { createNewFile() }
-    this.use { inputStream ->
-        downloadPath.outputStream().use { fos ->
-            inputStream.copyTo(fos)
-            fos.flush()
         }
     }
 }

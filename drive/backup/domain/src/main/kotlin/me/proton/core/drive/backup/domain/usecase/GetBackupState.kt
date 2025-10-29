@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.transformLatest
 import me.proton.core.drive.backup.domain.entity.BackupConfiguration
 import me.proton.core.drive.backup.domain.entity.BackupError
 import me.proton.core.drive.backup.domain.entity.BackupErrorType
+import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.entity.BackupNetworkType
 import me.proton.core.drive.backup.domain.entity.BackupPermissions
 import me.proton.core.drive.backup.domain.entity.BackupState
@@ -69,14 +70,37 @@ class GetBackupState @Inject constructor(
                                 errors.isEmpty() -> backupStatus
                                 else -> BackupStatus.Failed(
                                     errors = errors,
-                                    totalBackupPhotos = backupStatus.totalBackupPhotos,
-                                    pendingBackupPhotos = when (backupStatus) {
-                                        is BackupStatus.Complete -> backupStatus.totalBackupPhotos
-                                        is BackupStatus.Uncompleted -> backupStatus.totalBackupPhotos
-                                        is BackupStatus.Failed -> backupStatus.pendingBackupPhotos
-                                        is BackupStatus.InProgress -> backupStatus.pendingBackupPhotos
-                                        is BackupStatus.Preparing -> 0
-                                    }
+                                    total = backupStatus.total,
+                                    pending = backupStatus.pending,
+                                    preparing = backupStatus.preparing,
+                                    failed = backupStatus.failed,
+                                )
+                            },
+                        )
+                    })
+            }
+        }
+    operator fun invoke(backupFolder: BackupFolder): Flow<BackupState> =
+        backupManager.isEnabled(backupFolder.folderId).transformLatest { enable ->
+            if (!enable) {
+                emitAll(getDisabledBackupState())
+            } else {
+                emitAll(
+                    combine(
+                        getBackupStatus(backupFolder),
+                        errors(backupFolder.folderId),
+                    ) { backupStatus, errors ->
+                        BackupState(
+                            isBackupEnabled = true,
+                            hasDefaultFolder = true,
+                            backupStatus = when {
+                                errors.isEmpty() -> backupStatus
+                                else -> BackupStatus.Failed(
+                                    errors = errors,
+                                    total = backupStatus.total,
+                                    pending = backupStatus.pending,
+                                    preparing = backupStatus.preparing,
+                                    failed = backupStatus.failed,
                                 )
                             },
                         )

@@ -24,6 +24,7 @@ import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.file.base.domain.extension.getThumbnailIds
 import me.proton.core.drive.link.domain.entity.FileId
+import me.proton.core.drive.link.domain.entity.Link
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.link.domain.usecase.GetLink
 import me.proton.core.drive.volume.domain.entity.VolumeId
@@ -40,25 +41,32 @@ class GetThumbnailPermanentFile @Inject constructor(
         fileId: FileId,
         revisionId: String,
     ) = coRunCatching {
-        getLink(fileId)
-            .toResult()
-            .getOrThrow()
-            .let { link ->
-                link.getThumbnailIds(volumeId).forEach { thumbnailId ->
-                    getThumbnailBlock(
-                        fileId = fileId,
-                        volumeId = volumeId,
-                        revisionId = revisionId,
-                        thumbnailId = thumbnailId,
-                    )
-                        .getOrThrow()
-                        .let { block ->
-                            File(block.url)
-                                .changeParent(
-                                    getPermanentFolder(fileId.userId, volumeId.id, revisionId)
-                                )
-                        }
+        invoke(
+            volumeId = volumeId,
+            link = getLink(fileId).toResult().getOrThrow(),
+            revisionId = revisionId
+        ).getOrThrow()
+    }
+
+    suspend operator fun invoke(
+        volumeId: VolumeId,
+        link: Link.File,
+        revisionId: String,
+    ) = coRunCatching {
+        link.getThumbnailIds(volumeId).forEach { thumbnailId ->
+            getThumbnailBlock(
+                fileId = link.id,
+                volumeId = volumeId,
+                revisionId = revisionId,
+                thumbnailId = thumbnailId,
+            )
+                .getOrThrow()
+                .let { block ->
+                    File(block.url)
+                        .changeParent(
+                            getPermanentFolder(link.userId, volumeId.id, revisionId)
+                        )
                 }
-            }
+        }
     }
 }

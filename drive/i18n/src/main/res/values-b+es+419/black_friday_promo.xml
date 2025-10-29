@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2025 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="bf_promo_storage_title">1 TB de almacenamiento: 200 veces el plan actual</string>
+  <string name="bf_promo_document_title">Editor de documentos en linea</string>
+  <string name="bf_promo_secure_title">Almacenamiento y uso compartido de archivos</string>
+  <string name="bf_promo_private_title">Copia de seguridad de fotos privada</string>
+  <string name="bf_promo_get_deal_button">Obtener la oferta</string>
+  <string name="bf_promo_drawer_title">Oferta de Black Friday</string>
+</resources>

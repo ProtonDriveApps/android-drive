@@ -22,6 +22,7 @@ import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.TypeConverters
+import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import me.proton.android.drive.photos.data.db.PhotosDatabase
 import me.proton.android.drive.photos.data.db.entity.AddToAlbumEntity
 import me.proton.android.drive.photos.data.db.entity.MediaStoreVersionEntity
@@ -55,6 +56,7 @@ import me.proton.core.drive.backup.data.db.entity.BackupDuplicateEntity
 import me.proton.core.drive.backup.data.db.entity.BackupErrorEntity
 import me.proton.core.drive.backup.data.db.entity.BackupFileEntity
 import me.proton.core.drive.backup.data.db.entity.BackupFolderEntity
+import me.proton.core.drive.base.data.db.LoggingOpenHelperFactory
 import me.proton.core.drive.base.data.db.entity.UrlLastFetchEntity
 import me.proton.core.drive.device.data.db.DeviceDatabase
 import me.proton.core.drive.device.data.db.entity.DeviceEntity
@@ -107,10 +109,6 @@ import me.proton.core.drive.linkupload.data.db.entity.UploadBlockEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadBulkUriStringEntity
 import me.proton.core.drive.linkupload.data.db.entity.UploadTagEntity
-import me.proton.core.drive.log.data.db.LogDatabase
-import me.proton.core.drive.log.data.db.entity.LogEntity
-import me.proton.core.drive.log.data.db.entity.LogLevelEntity
-import me.proton.core.drive.log.data.db.entity.LogOriginEntity
 import me.proton.core.drive.messagequeue.data.storage.db.MessageQueueDatabase
 import me.proton.core.drive.messagequeue.data.storage.db.entity.MessageEntity
 import me.proton.core.drive.notification.data.db.NotificationDatabase
@@ -329,10 +327,6 @@ import me.proton.core.notification.data.local.db.NotificationDatabase as CoreNot
         DeviceEntity::class,
         // Base
         UrlLastFetchEntity::class,
-        // Log
-        LogEntity::class,
-        LogLevelEntity::class,
-        LogOriginEntity::class,
         // Sharing
         SharedWithMeListingEntity::class,
         SharedByMeListingEntity::class,
@@ -433,14 +427,13 @@ abstract class DriveDatabase :
     PhotosDatabase,
     DeviceDatabase,
     DriveBaseDatabase,
-    LogDatabase,
     DeviceRecoveryDatabase,
     PublicAddressKeyDatabase,
     AuthDatabase,
     DriveObservabilityDatabase {
 
     companion object {
-        const val VERSION = 94
+        const val VERSION = 97
 
         private val migrations = listOf(
             DriveDatabaseMigrations.MIGRATION_1_2,
@@ -536,11 +529,20 @@ abstract class DriveDatabase :
             DriveDatabaseMigrations.MIGRATION_91_92,
             DriveDatabaseMigrations.MIGRATION_92_93,
             DriveDatabaseMigrations.MIGRATION_93_94,
+            DriveDatabaseMigrations.MIGRATION_94_95,
+            DriveDatabaseMigrations.MIGRATION_95_96,
+            DriveDatabaseMigrations.MIGRATION_96_97,
         )
 
         fun buildDatabase(context: Context): DriveDatabase =
             databaseBuilder<DriveDatabase>(context, "db-drive")
                 .fallbackToDestructiveMigrationOnDowngrade()
+                .openHelperFactory(
+                    factory = LoggingOpenHelperFactory(
+                        delegate = FrameworkSQLiteOpenHelperFactory(),
+                        clazz = DriveDatabase::class.java,
+                    ),
+                )
                 .apply { migrations.forEach { addMigrations(it) } }
                 .build()
     }

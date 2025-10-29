@@ -93,19 +93,11 @@ class ContextBucketRepository @Inject constructor(
     } ?: emptyList()
 
     private val imageCollection: Uri by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-        } else {
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        }
+        MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
     }
 
     private val videoCollection: Uri by lazy {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-        } else {
-            MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-        }
+        MediaStore.Video.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
     }
 
     private companion object {

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is the file name if available
+        Variable %2$s is message field from exception
+        Example:
+            "Uploading file My file.jpg failed with reason: Something went wrong"
+    -->
+  <string name="files_upload_failure_with_description">文件 %1$s 上传失败：%2$s</string>
+  <!--
+        Variable %1$d is a quantity of files that are being uploaded
+        Variable %2$s is a folder name where files are being uploaded to
+        Example:
+            "1 file is being uploaded to: Files"
+            "3 files are being uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_being_uploaded_notification">
+    <item quantity="other">%1$d 个文件正在上传到: %2$s</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that failed to be uploaded
+        Variable %2$s is a folder name where files failed to be uploaded to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_failed_notification">
+    <item quantity="other">%1$d 个文件未能上传到：%2$s</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of files that are being ignored
+        Variable %2$s is a folder name where files are being ignored to
+        Example:
+            "1 file failed to be uploaded to: Files"
+            "3 files failed to be uploaded to: Pictures"
+    -->
+  <plurals name="files_upload_being_ignored_notification">
+    <item quantity="other">已忽略 %1$d 个文件</item>
+  </plurals>
+  <string name="files_upload_preparing">正在准备上传，此操作可能需要一些时间。</string>
+  <!--
+        Variable %1$s is the maximum number of uploading files
+        Example:
+            "Uploads are currently limited to 250 files at a time. Try again with fewer files."
+    -->
+  <string name="files_upload_limit_reached">每次最多只能上传 %1$d 份文件，请减少文件数量后重试。</string>
+  <!--
+        Variable %1$d is a quantity of items that are being used
+        Example:
+            "1 item"
+            "33 items"
+    -->
+  <plurals name="number_of_items">
+    <item quantity="other">%1$d 项</item>
+  </plurals>
+  <string name="files_upload_verification_failed">上传失败： 数据验证失败</string>
+</resources>

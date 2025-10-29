@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.base.domain.log.LogTag.TRACKING
-import me.proton.core.drive.base.domain.usecase.GetCacheFolder
+import me.proton.core.drive.base.domain.usecase.GetPermanentFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.cryptobase.domain.exception.VerificationException
 import me.proton.core.drive.file.base.domain.entity.Block
@@ -42,7 +42,7 @@ import kotlin.coroutines.CoroutineContext
 
 class DownloadBlock @Inject constructor(
     private val downloadUrl: DownloadUrl,
-    private val getCacheFolder: GetCacheFolder,
+    private val getPermanentFolder: GetPermanentFolder,
     private val downloadSpeedManager: DownloadSpeedManager,
 ) {
     suspend operator fun invoke(
@@ -55,7 +55,7 @@ class DownloadBlock @Inject constructor(
         coroutineContext: CoroutineContext = Job() + Dispatchers.IO
     ): Result<File> = coRunCatching(coroutineContext) {
         require(revisionId.isNotBlank()) { "Valid revision ID must be provided" }
-        val file = File(getCacheFolder(userId, volumeId.id, revisionId), block.index.toString())
+        val file = File(getPermanentFolder(userId, volumeId.id, revisionId), block.index.toString())
         if (!downloadSpeedManager.isRunning()) {
             CoreLogger.v(TRACKING, "Resuming, downloading blocks")
             downloadSpeedManager.resume()

@@ -21,11 +21,28 @@ package me.proton.core.drive.log.domain.extension
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.entity.Event
 import me.proton.core.drive.base.domain.log.logId
+import me.proton.core.drive.base.domain.log.toBase36
 import me.proton.core.drive.log.domain.entity.Log
 
 internal fun Event.Backup.toLog(userId: UserId): Log = Log(
     userId = userId,
-    message = "Backup[${folderId.id.logId()}] state: $state, progress: $pendingBackupPhotos/$totalBackupPhotos",
+    message = "$state"
+            + " total=$total,"
+            + " preparing=$preparing,"
+            + " pending=$pending,"
+            + " failed=$failed"
+    ,
+    creationTime = occurredAt,
+    origin = Log.Origin.EVENT_BACKUP,
+)
+
+internal fun Event.BackupFolder.toLog(userId: UserId): Log = Log(
+    userId = userId,
+    message = "$state(${bucketId.toBase36()})"
+            + " total=$total,"
+            + " preparing=$preparing,"
+            + " pending=$pending,"
+            + " failed=$failed",
     creationTime = occurredAt,
     origin = Log.Origin.EVENT_BACKUP,
 )
@@ -68,7 +85,7 @@ internal fun Event.BackupCompleted.toLog(userId: UserId): Log = Log(
 
 internal fun Event.BackupSync.toLog(userId: UserId): Log = Log(
     userId = userId,
-    message = "Backup[${folderId.id.logId()}] sync $bucketId",
+    message = "Backup[${folderId.id.logId()}] sync ${bucketId.toBase36()}",
     creationTime = occurredAt,
     origin = Log.Origin.EVENT_BACKUP,
 )

@@ -324,7 +324,7 @@ class DownloadManagerImpl @Inject constructor(
                         )
                     )
                 } else {
-                    setDownloadState(parentLink, DownloadState.Downloaded())
+                    setDownloadState(parentLink, DownloadState.Ready)
                 }
                 links.forEach { link ->
                     when (link) {
@@ -382,7 +382,7 @@ class DownloadManagerImpl @Inject constructor(
                         )
                     )
                 } else {
-                    setDownloadState(albumId, DownloadState.Downloaded())
+                    setDownloadState(albumId, DownloadState.Ready)
                 }
                 photos.forEach { fileId ->
                     getDriveLink(fileId).toResult().getOrNull(fileId.logTag)?.let { driveLink ->
@@ -535,7 +535,7 @@ class DownloadManagerImpl @Inject constructor(
                             ?.let { areAllFilesDownloaded ->
                                 if (areAllFilesDownloaded) {
                                     downloadParentLinkRepository.delete(downloadParentLink.id)
-                                    setDownloadState(parentId, DownloadState.Downloaded())
+                                    setDownloadState(parentId, DownloadState.Ready)
                                 } else {
                                     CoreLogger.d(LogTag.DOWNLOAD, "Not all files are downloaded for folder ${parentId.id.logId()}")
                                 }
@@ -544,7 +544,7 @@ class DownloadManagerImpl @Inject constructor(
                         ?.let { areAllAlbumPhotosDownloaded ->
                             if (areAllAlbumPhotosDownloaded) {
                                 downloadParentLinkRepository.delete(downloadParentLink.id)
-                                setDownloadState(parentId, DownloadState.Downloaded())
+                                setDownloadState(parentId, DownloadState.Ready)
                             } else {
                                 CoreLogger.d(LogTag.DOWNLOAD, "Not all photos are downloaded for album ${parentId.id.logId()}")
                             }

@@ -43,6 +43,7 @@ import me.proton.core.drive.backup.domain.usecase.GetAllFolders
 import me.proton.core.drive.backup.domain.usecase.HasFolders
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
 import me.proton.core.drive.base.domain.log.logId
+import me.proton.core.drive.base.domain.log.toBase36
 import me.proton.core.drive.feature.flag.domain.entity.FeatureFlagId
 import me.proton.core.drive.feature.flag.domain.extension.onDisabledOrNotFound
 import me.proton.core.drive.feature.flag.domain.extension.onEnabled
@@ -95,14 +96,14 @@ class BackupManagerImpl @Inject constructor(
     }
 
     override suspend fun cancelSync(backupFolder: BackupFolder) {
-        CoreLogger.i(BACKUP, "Canceling sync: ${backupFolder.bucketId}")
+        CoreLogger.i(BACKUP, "Canceling sync: ${backupFolder.bucketId.toBase36()}}")
         workManager.cancelUniqueWork(
             backupFolder.uniqueScanWorkName()
         ).await()
     }
 
     override fun sync(backupFolder: BackupFolder, uploadPriority: Long) {
-        CoreLogger.i(BACKUP, "Sync bucket: ${backupFolder.bucketId}")
+        CoreLogger.i(BACKUP, "Sync bucket: ${backupFolder.bucketId.toBase36()}}")
         workManager
             .beginUniqueWork(
                 backupFolder.uniqueScanWorkName(),

@@ -22,6 +22,7 @@ import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.backup.domain.repository.BackupFileRepository
 import me.proton.core.drive.backup.domain.repository.BackupFolderRepository
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.toBase36
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
@@ -38,6 +39,6 @@ class LogBackupStats @Inject constructor(
 
     suspend operator fun invoke(backupFolder: BackupFolder) {
         val statsForFolder = backupFileRepository.getStatsForFolder(backupFolder)
-        CoreLogger.d(LogTag.BACKUP, "Stats for ${backupFolder.bucketId}:\n${statsForFolder.joinToString("\n")}")
+        CoreLogger.d(LogTag.BACKUP, "Stats for ${backupFolder.bucketId.toBase36()}}:\n${statsForFolder.joinToString("\n")}")
     }
 }

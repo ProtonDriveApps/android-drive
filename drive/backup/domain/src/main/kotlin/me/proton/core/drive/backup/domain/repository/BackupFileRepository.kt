@@ -62,6 +62,7 @@ interface BackupFileRepository {
     suspend fun insertFiles(backupFiles: List<BackupFile>)
     suspend fun delete(folderId: FolderId, uriString: String)
     fun getBackupStatus(folderId: FolderId): Flow<BackupStatus>
+    fun getBackupStatus(backupFolder: BackupFolder): Flow<BackupStatus>
     suspend fun markAsEnqueued(folderId: FolderId, uriStrings: List<String>)
     suspend fun markAsCompleted(folderId: FolderId, uriString: String)
     suspend fun markAsFailed(folderId: FolderId, uriString: String)

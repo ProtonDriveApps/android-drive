@@ -225,12 +225,12 @@ class MultipleFileOrFolderOptionsViewModel @Inject constructor(
         const val KEY_ALBUM_ID = "albumId"
         const val KEY_ALBUM_SHARE_ID = "albumShareId"
 
-        private val options = setOfNotNull(
+        private val options = setOf(
             Option.TagPhotoFile,
             Option.RemoveFromAlbum,
             Option.AddToAlbums,
             Option.ShareMultiplePhotos,
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) Option.Download else null,
+            Option.Download,
             Option.Move,
             Option.Trash,
         )

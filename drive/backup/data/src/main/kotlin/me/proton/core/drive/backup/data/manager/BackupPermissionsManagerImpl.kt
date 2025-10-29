@@ -46,13 +46,9 @@ class BackupPermissionsManagerImpl @Inject constructor(
             Manifest.permission.ACCESS_MEDIA_LOCATION,
         )
 
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> listOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_MEDIA_LOCATION,
-        )
-
         else -> listOf(
             Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_MEDIA_LOCATION,
         )
     }
     private val _permissions = MutableStateFlow(checkForBackupPermissions())

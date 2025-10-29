@@ -53,7 +53,6 @@ import me.proton.core.drive.linknode.data.db.LinkAncestorDatabase
 import me.proton.core.drive.linkoffline.data.db.LinkOfflineDatabase
 import me.proton.core.drive.linktrash.data.db.LinkTrashDatabase
 import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
-import me.proton.core.drive.log.data.db.LogDatabase
 import me.proton.core.drive.messagequeue.data.storage.db.MessageQueueDatabase
 import me.proton.core.drive.notification.data.db.NotificationDatabase
 import me.proton.core.drive.photo.data.db.PhotoDatabase
@@ -252,9 +251,6 @@ abstract class DriveDatabaseBindsModule {
 
     @Binds
     abstract fun provideBaseDatabase(appDatabase: DriveDatabase): BaseDatabase
-
-    @Binds
-    abstract fun provideLogDatabase(appDatabase: DriveDatabase): LogDatabase
 
     @Binds
     abstract fun providePublicAddressKeyDatabase(appDatabase: DriveDatabase): PublicAddressKeyDatabase

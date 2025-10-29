@@ -53,8 +53,8 @@ class BackupNotificationBuilder @Inject constructor(
             setLocalOnly(true)
             if (event.state in stateWithProgress) {
                 setProgress(
-                    event.totalBackupPhotos,
-                    event.totalBackupPhotos - event.pendingBackupPhotos,
+                    event.total,
+                    event.total - event.pending,
                     false,
                 )
             }
@@ -74,9 +74,9 @@ class BackupNotificationBuilder @Inject constructor(
             Event.Backup.BackupState.IN_PROGRESS ->
                 appContext.resources.getQuantityString(
                     I18N.plurals.notification_content_text_backup_in_progress,
-                    pendingBackupPhotos,
+                    pending,
                     NumberFormat.getNumberInstance(Locale.getDefault())
-                        .format(pendingBackupPhotos),
+                        .format(pending),
                 )
 
             Event.Backup.BackupState.COMPLETE ->

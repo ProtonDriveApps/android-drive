@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2024 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <string name="onboarding_action_skip">Agora não</string>
+  <string name="onboarding_title">Guarde e encripte automaticamente as suas fotos e vídeos</string>
+  <string name="onboarding_description_part_one">Proteja as suas memórias com</string>
+  <string name="onboarding_description_part_two">armazenamento encriptado de ponta a ponta</string>
+  <string name="onboarding_description_free">grátis</string>
+  <string name="onboarding_action_primary">Ativar os envios da câmara</string>
+  <string name="onboarding_action_secondary">Mais opções de envio</string>
+</resources>

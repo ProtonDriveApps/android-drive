@@ -356,7 +356,8 @@ fun OfflineIcon(
         return
     }
     when (link.downloadState) {
-        is DownloadState.Downloaded -> Icon(
+        is DownloadState.Downloaded,
+        is DownloadState.Ready -> Icon(
             modifier = modifier.size(ExtraSmallIconSize),
             painter = painterResource(id = BasePresentation.drawable.ic_status_downloaded),
             tint = ProtonTheme.colors.iconWeak,
@@ -622,7 +623,7 @@ fun PreviewDownloadedListItem() {
             FilesListItem(
                 link = PREVIEW_DRIVELINK.copy(
                     isMarkedAsOffline = true,
-                    downloadState = DownloadState.Downloaded(),
+                    downloadState = DownloadState.Ready,
                 ),
                 onClick = {},
                 onLongClick = {},

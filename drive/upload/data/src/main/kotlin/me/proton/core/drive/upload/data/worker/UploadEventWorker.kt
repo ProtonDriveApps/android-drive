@@ -175,15 +175,11 @@ class UploadEventWorker @AssistedInject constructor(
 
     private fun createForegroundInfo(): kotlin.Result<ForegroundInfo> = runCatching {
         val transferNotification = transferDataNotification.getOrThrow()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ForegroundInfo(
-                transferNotification.first.id,
-                transferNotification.second,
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
-            )
-        } else {
-            ForegroundInfo(transferNotification.first.id, transferNotification.second)
-        }
+        ForegroundInfo(
+            transferNotification.first.id,
+            transferNotification.second,
+            ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC,
+        )
     }
 
     private suspend fun setForeground() {

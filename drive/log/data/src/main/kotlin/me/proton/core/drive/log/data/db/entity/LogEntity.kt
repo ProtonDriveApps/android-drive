@@ -20,12 +20,9 @@ package me.proton.core.drive.log.data.db.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import me.proton.core.account.data.entity.AccountEntity
 import me.proton.core.domain.entity.UserId
-import me.proton.core.drive.base.data.db.Column
 import me.proton.core.drive.base.data.db.Column.CONTENT
 import me.proton.core.drive.base.data.db.Column.CREATION_TIME
 import me.proton.core.drive.base.data.db.Column.ID
@@ -36,16 +33,11 @@ import me.proton.core.drive.base.data.db.Column.VALUE
 import me.proton.core.drive.log.domain.entity.Log
 
 @Entity(
-    foreignKeys = [
-        ForeignKey(
-            entity = AccountEntity::class,
-            parentColumns = [Column.Core.USER_ID],
-            childColumns = [USER_ID],
-            onDelete = ForeignKey.CASCADE
-        ),
-    ],
     indices = [
         Index(value = [USER_ID]),
+        Index(value = [USER_ID, CREATION_TIME]),
+        Index(value = [USER_ID, ID, CREATION_TIME]),
+        Index(value = [USER_ID, CREATION_TIME, LEVEL, ORIGIN]),
     ],
 )
 data class LogEntity(

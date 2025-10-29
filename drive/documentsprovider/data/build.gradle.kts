@@ -36,4 +36,5 @@ driveModule(
     implementation(project(":drive:drivelink-selection:domain"))
     implementation(project(":drive:trash:domain"))
     implementation(libs.core.account)
+    implementation(libs.androidx.paging.runtime.ktx)
 }

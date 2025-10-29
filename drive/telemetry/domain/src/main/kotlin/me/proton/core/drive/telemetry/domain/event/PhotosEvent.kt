@@ -32,6 +32,7 @@ object PhotosEvent {
         FAILED_DRIVE_STORAGE("failed", "out of drive storage"),
         FAILED_LOCAL_STORAGE("failed", "out of local storage"),
         FAILED_NOT_ALLOWED("failed", "feature flag"),
+        FAILED_INTEGRITY("failed", "integrity error"),
         PAUSED_CONNECTIVITY("paused", "no connection"),
         PAUSED_DISABLED("paused", "disabled by user"),
         PAUSED_BACKGROUND_RESTRICTIONS("paused", "background mode expired"),
@@ -69,7 +70,7 @@ object PhotosEvent {
             "reason_group" to reason.group,
             "reason" to reason.key,
             "result" to reason.group,
-            "mediaType" to mediaType?.value,
+            "media_type" to mediaType?.value,
         ),
     )
 

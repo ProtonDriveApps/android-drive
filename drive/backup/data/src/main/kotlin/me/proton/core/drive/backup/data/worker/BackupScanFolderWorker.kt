@@ -41,6 +41,7 @@ import me.proton.core.drive.base.data.extension.log
 import me.proton.core.drive.base.data.workmanager.addTags
 import me.proton.core.drive.base.domain.entity.TimestampS
 import me.proton.core.drive.base.domain.log.LogTag.BACKUP
+import me.proton.core.drive.base.domain.log.toBase36
 import me.proton.core.drive.link.domain.entity.FolderId
 import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
@@ -84,7 +85,7 @@ class BackupScanFolderWorker @AssistedInject constructor(
                 BACKUP,
                 """
                     Scan found ${files.size} files for folder:
-                    $bucketId after $timestamp (min:$min, max: $max),
+                    ${bucketId.toBase36()} after $timestamp (min:$min, max: $max),
                     priority $uploadPriority
                 """.trimIndent()
             )

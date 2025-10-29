@@ -18,7 +18,9 @@
 
 package me.proton.core.drive.drivelink.download.data.extension
 
+import me.proton.core.crypto.common.pgp.exception.CryptoException
 import me.proton.core.drive.base.data.extension.isHttpError
+import me.proton.core.drive.cryptobase.domain.exception.VerificationException
 import me.proton.core.drive.observability.domain.metrics.DownloadErrorsTotal
 import me.proton.core.network.domain.ApiException
 import me.proton.core.network.domain.isHttpError
@@ -44,5 +46,6 @@ fun Throwable.toDownloadErrorType(): DownloadErrorsTotal.Type = when(this) {
     is SocketTimeoutException,
     is ConnectException,
     is SSLHandshakeException -> DownloadErrorsTotal.Type.network_error
+    is CryptoException -> DownloadErrorsTotal.Type.decryption_error
     else -> DownloadErrorsTotal.Type.unknown
 }

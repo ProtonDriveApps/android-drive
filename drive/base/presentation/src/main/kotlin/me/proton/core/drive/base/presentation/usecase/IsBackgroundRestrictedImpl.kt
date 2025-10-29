@@ -24,9 +24,7 @@ import android.app.usage.UsageStatsManager
 import android.app.usage.UsageStatsManager.STANDBY_BUCKET_ACTIVE
 import android.app.usage.UsageStatsManager.STANDBY_BUCKET_RARE
 import android.content.Context
-import android.os.Build
 import android.os.PowerManager
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -55,17 +53,16 @@ class IsBackgroundRestrictedImpl @Inject constructor(
 
     private val flow = channelFlow {
         appLifecycleProvider.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-            val isLimited = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                !powerManager.isIgnoringBatteryOptimizations(appContext.packageName)
-                        && usageStatsManager.isLimitedByAppStandbyBucket()
-            } else {
-                false
-            }
+            val isLimited = !powerManager.isIgnoringBatteryOptimizations(appContext.packageName)
+                    && usageStatsManager.isLimitedByAppStandbyBucket()
             channel.send(isLimited)
         }
-    }.stateIn(appLifecycleProvider.lifecycle.coroutineScope, SharingStarted.WhileSubscribed(), false)
+    }.stateIn(
+        appLifecycleProvider.lifecycle.coroutineScope,
+        SharingStarted.WhileSubscribed(),
+        false
+    )
 
-    @RequiresApi(Build.VERSION_CODES.P)
     private fun UsageStatsManager.isLimitedByAppStandbyBucket(): Boolean {
         var maxBucket = 0
         return queryEventsForSelf(

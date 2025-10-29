@@ -37,7 +37,8 @@ fun Modifier.driveLinkSemantics(link: DriveLink, linkLayoutType: LayoutType) =
         this[DriveLinkSemanticsProperties.IsSharedWithUsers] = link.isSharedWithUsers
         this[DriveLinkSemanticsProperties.IsFavorite] = link.isFavorite
         this[DriveLinkSemanticsProperties.DownloadState] = when (link.downloadState) {
-            is DownloadState.Downloaded -> SemanticsDownloadState.Downloaded
+            is DownloadState.Downloaded,
+            is DownloadState.Ready -> SemanticsDownloadState.Downloaded
             DownloadState.Downloading -> SemanticsDownloadState.Downloading
             DownloadState.Error -> SemanticsDownloadState.Error
             null -> SemanticsDownloadState.Null

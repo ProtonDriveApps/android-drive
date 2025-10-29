@@ -81,7 +81,7 @@ class TagsMigrationPrepareFileImpl @Inject constructor(
 
         val downloadState = getDownloadState(fileId).toResult().getOrThrow()
 
-        if (downloadState is DownloadState.Downloaded) {
+        if (downloadState is DownloadState.Ready) {
             CoreLogger.d(
                 PHOTO,
                 "Skipping download for already download file: ${fileId.id.logId()}"

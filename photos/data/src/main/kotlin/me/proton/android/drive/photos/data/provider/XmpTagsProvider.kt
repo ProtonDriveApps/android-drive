@@ -19,6 +19,7 @@
 package me.proton.android.drive.photos.data.provider
 
 import android.net.Uri
+import androidx.core.net.toFile
 import androidx.exifinterface.media.ExifInterface
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.last
@@ -28,13 +29,16 @@ import me.proton.core.drive.base.domain.entity.toFileTypeCategory
 import me.proton.core.drive.base.domain.extension.getOrNull
 import me.proton.core.drive.base.domain.extension.toResult
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.usecase.GetCacheFolder
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.drivelink.domain.usecase.GetDriveLink
 import me.proton.core.drive.drivelink.download.domain.usecase.GetFile
 import me.proton.core.drive.link.domain.entity.FileId
 import me.proton.core.drive.link.domain.entity.PhotoTag
+import me.proton.core.drive.link.domain.extension.userId
 import me.proton.core.drive.photo.domain.provider.TagsProvider
 import me.proton.core.drive.upload.domain.resolver.UriResolver
+import me.proton.core.util.kotlin.CoreLogger
 import javax.inject.Inject
 
 class XmpTagsProvider @Inject internal constructor(
@@ -42,6 +46,7 @@ class XmpTagsProvider @Inject internal constructor(
     private val getDriveLink: GetDriveLink,
     private val getFile: GetFile,
     private val parser: XmpTagsMetadataParser,
+    private val getCacheFolder: GetCacheFolder,
 ) : TagsProvider {
     override suspend operator fun invoke(
         uriString: String,
@@ -66,7 +71,18 @@ class XmpTagsProvider @Inject internal constructor(
                     null
                 }
             }
-            ?.let { fileUri -> extractXmp(fileUri) }
+            ?.let { fileUri ->
+                extractXmp(fileUri).also {
+                    // delete file in cache folder to avoid filling up the cache during migration
+                    coRunCatching {
+                        fileUri.toFile().takeIf { file ->
+                            file.path.startsWith(getCacheFolder(fileId.userId).path)
+                        }?.delete()
+                    }.onFailure { error ->
+                        CoreLogger.w(LogTag.UPLOAD, error, "Cannot delete file $fileUri")
+                    }
+                }
+            }
             ?.let { xmpData -> parseXmpToPhotoTags(xmpData) }
     }.getOrNull(LogTag.UPLOAD, "Cannot get tags from xmp").orEmpty()
 

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2023 Proton AG.
+  ~ This file is part of Proton Core.
+  ~
+  ~ Proton Core is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Proton Core is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Proton Core.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<resources>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Creating link to file"
+            "Creating link to folder"
+    -->
+  <string name="shared_link_loading">A criar a ligação para %1$s</string>
+  <string name="shared_link_getting_link">A obter ligação</string>
+  <string name="shared_link_file">ficheiro</string>
+  <string name="shared_link_folder">pasta</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Anyone with this link can access your file"
+    -->
+  <string name="shared_link_accessibility_description_public">Qualquer pessoa com esta ligação terá acesso para %1$s.</string>
+  <!--
+        Variable %1$s is either "shared_link_file" or "shared_link_folder"
+        Example:
+            "Only the people with the link and the password can access this folder"
+    -->
+  <string name="shared_link_accessibility_description_password_protected">Apenas as pessoas com a ligação e a palavra-passe podem aceder a %1$s.</string>
+  <string name="shared_link_settings">Definições da ligação</string>
+  <string name="shared_link_options">Opções da ligação</string>
+  <string name="shared_link_privacy_settings">Definições de privacidade</string>
+  <string name="shared_link_password_protection">Proteção por palavra-passe</string>
+  <string name="shared_link_expiration_date">Data de expiração</string>
+  <string name="shared_link_action_copy_link">Copiar a ligação</string>
+  <string name="shared_link_action_copy_password">Copiar a palavra-passe</string>
+  <string name="shared_link_action_share_link">Partilhar a ligação</string>
+  <string name="shared_link_dialog_title_discard_changes">Descartar as alterações?</string>
+  <string name="shared_link_dialog_description">Perderá todas as alterações por guardar.</string>
+  <string name="shared_link_hint_expiration_date_field">Sem data de expiração</string>
+  <string name="shared_link_message_update_share_url">As definições de partilha foram atualizadas.</string>
+  <string name="shared_link_error_message_update_share_url">Erro ao atualizar as definições de partilha</string>
+  <!--
+        Variable %1$d is max number of characters for password
+        Example:
+            "Password length must be between 1 and 50 characters"
+    -->
+  <string name="shared_link_error_message_invalid_password_length">A palavra-passe deve ter entre 1 e %1$d carateres.</string>
+  <string name="shared_link_error_message_not_found">A ligação partilhada não existe ou expirou.</string>
+  <string name="shared_link_error_message_expiration_date_too_soon">A data de validade deve ser pelo menos amanhã.</string>
+  <!--
+        Variable %1$d is max number of days
+        Example:
+            "Expiration date must not be after more than 90 days"
+    -->
+  <string name="shared_link_error_message_expiration_date_too_late">Expiration date must not be after more than %1$d days</string>
+  <string name="shared_link_error_legacy_link">Esta é uma ligação antiga cuja gestão não é suportada. Recomenda-se que deixe de partilhar esta ligação e obtenha uma nova ligação.</string>
+  <string name="title_share_via_link">Partilhar por ligação</string>
+  <string name="shared_with_me_title">Partilhado comigo</string>
+  <string name="shared_by_me_title">Partilhado por mim</string>
+  <string name="shared_empty_title">Nada partilhado ainda</string>
+  <string name="shared_with_me_empty_description">Os ficheiros e pastas partilhados consigo aparecerão aqui.</string>
+  <string name="shared_by_me_empty_description">Partilhe com segurança os seus ficheiros e pastas com encriptação de ponta a ponta</string>
+  <string name="shared_by_me_invitation_banner_title">Itens partilhados pendentes</string>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "1 item shared with you"
+            "3 items shared with you"
+    -->
+  <plurals name="shared_by_me_invitation_banner_description">
+    <item quantity="one">%1$d item partilhado consigo</item>
+    <item quantity="other">%1$d itens partilhados consigo</item>
+  </plurals>
+  <!--
+        Variable %1$d is a quantity of item shared
+        Example:
+            "Pending shared items (1)"
+    -->
+  <string name="shared_user_invitations_title">Itens partilhados pendentes (%1$d)</string>
+  <!--
+        Variable %1$d is a quantity of albums shared
+        Example:
+            "Pending shared albums (2)"
+    -->
+  <string name="shared_user_album_invitations_title">Álbuns partilhados pendentes (%1$d)</string>
+  <string name="shared_user_invitations_title_empty">Sem itens partilhados pendentes</string>
+  <string name="shared_user_album_invitations_title_empty">Nenhum álbum partilhado pendente</string>
+  <string name="shared_user_invitations_description_empty">Todos os novos convites aparecerão aqui.</string>
+  <string name="shared_user_invitations_accept_button">Aceitar</string>
+  <string name="shared_user_invitations_decline_button">Recusar</string>
+  <string name="shared_user_invitations_accept_success">Item partilhado aceite</string>
+  <string name="shared_user_invitations_decline_success">Item partilhado recusado</string>
+  <string name="shared_user_album_invitations_accept_success">Convite aceite</string>
+  <string name="shared_user_album_invitations_decline_success">Convite recusado</string>
+</resources>

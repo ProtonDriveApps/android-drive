@@ -25,6 +25,7 @@ import me.proton.core.account.data.db.AccountDatabase
 import me.proton.core.auth.data.db.AuthDatabase
 import me.proton.core.challenge.data.db.ChallengeDatabase
 import me.proton.core.contact.data.local.db.ContactDatabase
+import me.proton.core.data.room.db.extension.dropTable
 import me.proton.core.drive.backup.data.db.BackupDatabase
 import me.proton.core.drive.base.data.db.BaseDatabase
 import me.proton.core.drive.device.data.db.DeviceDatabase
@@ -39,6 +40,9 @@ import me.proton.core.drive.link.selection.data.db.LinkSelectionDatabase
 import me.proton.core.drive.linktrash.data.db.LinkTrashDatabase
 import me.proton.core.drive.linkupload.data.db.LinkUploadDatabase
 import me.proton.core.drive.log.data.db.LogDatabase
+import me.proton.core.drive.log.data.db.entity.LogEntity
+import me.proton.core.drive.log.data.db.entity.LogLevelEntity
+import me.proton.core.drive.log.data.db.entity.LogOriginEntity
 import me.proton.core.drive.notification.data.db.NotificationDatabase
 import me.proton.core.drive.photo.data.db.PhotoDatabase
 import me.proton.core.drive.share.data.db.ShareDatabase
@@ -602,6 +606,27 @@ object DriveDatabaseMigrations {
     val MIGRATION_93_94 = object : Migration(93, 94) {
         override fun migrate(db: SupportSQLiteDatabase) {
             DriveLinkDownloadDatabase.MIGRATION_1.migrate(db)
+        }
+    }
+
+    val MIGRATION_94_95 = object : Migration(94, 95) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            AccountDatabase.MIGRATION_11.migrate(db)
+            FeatureFlagDatabase.MIGRATION_4.migrate(db)
+        }
+    }
+
+    val MIGRATION_95_96 = object : Migration(95, 96) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.dropTable("LogOriginEntity")
+            db.dropTable("LogLevelEntity")
+            db.dropTable("LogEntity")
+        }
+    }
+
+    val MIGRATION_96_97 = object : Migration(96, 97) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            PhotoDatabase.MIGRATION_7.migrate(db)
         }
     }
 }

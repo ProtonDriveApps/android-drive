@@ -23,7 +23,7 @@ androidx-media3 = "1.2.1"
 androidx-navigation = "2.7.7"
 androidx-paging = "3.1.1"
 androidx-paging-compose = "3.2.1"
-androidx-room = "2.6.1"
+androidx-room = "2.7.2"
 androidx-test = "1.5.0"
 androidx-test-orchestrator = "1.4.2"
 androidx-test-uiautomator = "2.2.0"
@@ -36,10 +36,10 @@ android-tools = "1.1.5"
 # Coil
 coil = "2.4.0"
 # Core
-core = "34.0.0"
+core = "35.0.0"
 core-test-quark = "14.1.0"
 # Dagger
-dagger = "2.49"
+dagger = "2.53.1"
 # Desugar
 desugar = "2.0.4"
 # Github
@@ -48,7 +48,7 @@ lottie = "6.6.6"
 # Google Play
 google-play-review = "2.0.1"
 # Gradle
-android-gradle-plugin = "8.7.3"
+android-gradle-plugin = "8.9.1"
 proton-detekt-plugin = "1.3.0"
 paparazzi-gradle-plugin = "1.3.4"
 # JaCoCo
@@ -137,6 +137,7 @@ androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "andr
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 ## Paging
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidx-paging" }
+androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "androidx-paging" }
 androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "androidx-paging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "androidx-paging-compose" }
 ## Room

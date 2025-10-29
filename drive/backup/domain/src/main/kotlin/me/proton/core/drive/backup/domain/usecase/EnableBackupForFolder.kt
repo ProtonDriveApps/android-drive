@@ -20,6 +20,7 @@ package me.proton.core.drive.backup.domain.usecase
 
 import me.proton.core.drive.backup.domain.entity.BackupFolder
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.log.toBase36
 import me.proton.core.drive.base.domain.util.coRunCatching
 import me.proton.core.drive.linkupload.domain.entity.UploadFileLink
 import me.proton.core.util.kotlin.CoreLogger
@@ -30,7 +31,7 @@ class EnableBackupForFolder @Inject constructor(
     private val syncFolders: SyncFolders,
 ) {
     suspend operator fun invoke(backupFolder: BackupFolder) = coRunCatching {
-        CoreLogger.d(LogTag.BACKUP, "Adding folder: ${backupFolder.bucketId}")
+        CoreLogger.d(LogTag.BACKUP, "Adding folder: ${backupFolder.bucketId.toBase36()}}")
         addFolder(backupFolder).getOrThrow()
         syncFolders(
             backupFolder = backupFolder,

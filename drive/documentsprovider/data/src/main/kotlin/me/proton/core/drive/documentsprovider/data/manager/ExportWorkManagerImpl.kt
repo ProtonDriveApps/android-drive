@@ -58,23 +58,21 @@ class ExportWorkManagerImpl @Inject constructor(
 
     override suspend fun exportToDownload(fileIds: List<FileId>): Result<Unit> = coRunCatching {
         require(fileIds.isNotEmpty()) { "List of files for export is empty" }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            val userId = fileIds.first().shareId.userId
-            val selectionId = selectLinks(fileIds).getOrThrow()
-            workManager.enqueueUniqueWork(
-                selectionId.uniqueExportWorkName,
-                ExistingWorkPolicy.KEEP,
-                ExportToDownloadWorker.getWorkRequest(
-                    userId = userId,
-                    selectionId = selectionId,
-                    tags = listOf(
-                        userId.uniqueExportWorkName,
-                        userId.id,
-                        selectionId.uniqueExportWorkName,
-                    ),
-                )
+        val userId = fileIds.first().shareId.userId
+        val selectionId = selectLinks(fileIds).getOrThrow()
+        workManager.enqueueUniqueWork(
+            selectionId.uniqueExportWorkName,
+            ExistingWorkPolicy.KEEP,
+            ExportToDownloadWorker.getWorkRequest(
+                userId = userId,
+                selectionId = selectionId,
+                tags = listOf(
+                    userId.uniqueExportWorkName,
+                    userId.id,
+                    selectionId.uniqueExportWorkName,
+                ),
             )
-        }
+        )
     }
 
     override fun cancel(fileId: FileId) {

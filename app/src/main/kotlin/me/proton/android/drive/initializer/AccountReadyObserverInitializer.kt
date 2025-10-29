@@ -31,6 +31,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import me.proton.android.drive.extension.log
 import me.proton.android.drive.stats.ObserveApplicationState
 import me.proton.android.drive.stats.ObserveWorkManager
 import me.proton.core.accountmanager.domain.AccountManager
@@ -40,6 +41,7 @@ import me.proton.core.accountmanager.presentation.onAccountRemoved
 import me.proton.core.domain.entity.UserId
 import me.proton.core.drive.announce.event.domain.usecase.AnnounceEvent
 import me.proton.core.drive.base.domain.log.LogTag
+import me.proton.core.drive.base.domain.usecase.HasBusinessPlan
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadManager
 import me.proton.core.presentation.app.AppLifecycleProvider
 import me.proton.core.util.kotlin.CoreLogger
@@ -71,13 +73,16 @@ class AccountReadyObserverInitializer : Initializer<Unit> {
                         announceEvent(userId, workers)
                     }.launchIn(scope)
                     fileDownloader.start(userId, scope.coroutineContext)
+                    hasBusinessPlan.refreshIfStale(userId)
+                        .onFailure { error ->
+                            error.log(LogTag.DEFAULT, "Failed refreshing business plan")
+                        }
                 }
                 .onAccountRemoved { account ->
                     fileDownloader.stop(account.userId)
                     scopes.remove(account.userId)?.cancel()
                 }
         }
-
     }
 
     override fun dependencies(): List<Class<out Initializer<*>>> = listOf()
@@ -92,5 +97,6 @@ class AccountReadyObserverInitializer : Initializer<Unit> {
         val observeWorkManager: ObserveWorkManager
         val announceEvent: AnnounceEvent
         val fileDownloader: DownloadManager.FileDownloader
+        val hasBusinessPlan: HasBusinessPlan
     }
 }

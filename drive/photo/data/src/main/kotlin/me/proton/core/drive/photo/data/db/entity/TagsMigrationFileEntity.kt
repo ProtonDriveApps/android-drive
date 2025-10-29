@@ -47,6 +47,7 @@ import me.proton.core.drive.share.data.db.ShareEntity
     indices = [
         Index(value = [USER_ID, VOLUME_ID]),
         Index(value = [USER_ID, SHARE_ID]),
+        Index(value = [USER_ID, SHARE_ID, ID]),
         Index(value = [USER_ID, VOLUME_ID, SHARE_ID, ID]),
     ],
 )

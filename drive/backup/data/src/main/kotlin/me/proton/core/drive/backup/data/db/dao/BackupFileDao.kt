@@ -213,6 +213,28 @@ abstract class BackupFileDao : BaseDao<BackupFileEntity>() {
 
     @Query(
         """
+        SELECT 
+            BackupFileEntity.state AS backupFileState, 
+            COUNT(*) AS count
+        FROM BackupFileEntity
+        WHERE 
+            BackupFileEntity.user_id = :userId AND  
+            BackupFileEntity.share_id = :shareId AND
+            BackupFileEntity.parent_id = :folderId AND
+            BackupFileEntity.bucket_id = :bucketId
+        GROUP BY backupFileState
+        ORDER BY backupFileState ASC
+        """
+    )
+    abstract fun getProgression(
+        userId: UserId,
+        shareId: String,
+        folderId: String,
+        bucketId: Int,
+    ): Flow<List<BackupStateCount>>
+
+    @Query(
+        """
         UPDATE BackupFileEntity SET state = :state
         WHERE 
             user_id = :userId AND

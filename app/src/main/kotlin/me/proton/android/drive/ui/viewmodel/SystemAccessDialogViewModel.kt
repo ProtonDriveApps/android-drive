@@ -18,8 +18,6 @@
 
 package me.proton.android.drive.ui.viewmodel
 
-import android.annotation.TargetApi
-import android.app.admin.DevicePolicyManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -36,20 +34,11 @@ class SystemAccessDialogViewModel @Inject constructor(
         dismiss: () -> Unit,
     ) = object : SystemAccessDialogViewEvent {
         override val onSettings = {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                context.showBiometricSettings()
-            } else {
-                context.showSetNewPasswordSettings()
-            }
+            context.showBiometricSettings()
             dismiss()
         }
     }
 
-    private fun Context.showSetNewPasswordSettings() {
-        startActivity(Intent(DevicePolicyManager.ACTION_SET_NEW_PASSWORD))
-    }
-
-    @TargetApi(Build.VERSION_CODES.P)
     private fun Context.showBiometricSettings() {
         val action = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             Settings.ACTION_BIOMETRIC_ENROLL

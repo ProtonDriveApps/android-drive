@@ -52,6 +52,7 @@ import me.proton.core.drive.drivelink.download.data.worker.WorkerKeys.KEY_VOLUME
 import me.proton.core.drive.drivelink.download.domain.extension.post
 import me.proton.core.drive.drivelink.download.domain.manager.DownloadErrorManager
 import me.proton.core.drive.drivelink.download.domain.usecase.DownloadMetricsNotifier
+import me.proton.core.drive.drivelink.download.domain.usecase.MoveFileIfExists
 import me.proton.core.drive.drivelink.download.domain.usecase.SetDownloadingAndGetRevision
 import me.proton.core.drive.file.base.domain.entity.Revision
 import me.proton.core.drive.link.domain.entity.FileId
@@ -81,6 +82,7 @@ class FileDownloadWorker @AssistedInject constructor(
     private val downloadErrorManager: DownloadErrorManager,
     private val downloadMetricsNotifier: DownloadMetricsNotifier,
     private val getThumbnailPermanentFile: GetThumbnailPermanentFile,
+    private val moveFileIfExists: MoveFileIfExists,
     canRun: CanRun,
     run: Run,
     done: Done,
@@ -94,11 +96,18 @@ class FileDownloadWorker @AssistedInject constructor(
     private val fileTags = inputData.getStringArray(KEY_FILE_TAGS).orEmpty().toList()
     override val logTag = fileId.logTag
 
-    override suspend fun doLimitedRetryWork(): Result =
-        try {
+    override suspend fun doLimitedRetryWork(): Result {
+        return try {
             CoreLogger.d(logTag, "Started downloading file with revision ${revisionId.logId()}")
             getThumbnailPermanentFile(VolumeId(volumeId), fileId, revisionId).getOrThrow()
-            downloadBlocks(fileId, setDownloadingAndGetRevision(fileId, revisionId).getOrThrow())
+            val revision = setDownloadingAndGetRevision(fileId, revisionId).getOrThrow()
+            val file = moveFileIfExists(fileId).getOrThrow()
+            if (file != null && file.exists()) {
+                CoreLogger.d(logTag, "File already downloaded")
+                setDownloadState(fileId, DownloadState.Ready)
+                return Result.success()
+            }
+            downloadBlocks(fileId, revision)
         } catch (e: Exception) {
             downloadErrorManager.post(fileId, e, e is CancellationException)
             downloadMetricsNotifier(fileId, false, e)
@@ -121,6 +130,7 @@ class FileDownloadWorker @AssistedInject constructor(
                 Result.failure()
             }
         }
+    }
 
     @SuppressLint("EnqueueWork")
     private suspend fun downloadBlocks(fileId: FileId, revision: Revision): Result {
@@ -159,6 +169,7 @@ class FileDownloadWorker @AssistedInject constructor(
             }.also { continuations ->
                 WorkContinuation.combine(continuations)
                     .then(verifyDownload())
+                    .then(decryptDownload())
                     .enqueue()
                     .await()
             }
@@ -167,6 +178,15 @@ class FileDownloadWorker @AssistedInject constructor(
     }
 
     private fun verifyDownload() = FileDownloadVerifyWorker.getWorkRequest(
+        userId = userId,
+        volumeId = volumeId,
+        fileId = fileId,
+        revisionId = revisionId,
+        retryable = isRetryable,
+        fileTags = fileTags,
+    )
+
+    private fun decryptDownload() = FileDownloadDecryptWorker.getWorkRequest(
         userId = userId,
         volumeId = volumeId,
         fileId = fileId,
